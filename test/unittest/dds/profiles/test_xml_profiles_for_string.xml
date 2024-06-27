@@ -130,6 +130,14 @@
                 </throughputController>
                 <useBuiltinTransports>true</useBuiltinTransports>
                 <name>test_name</name>
+                <flow_controller_descriptor_list>
+                    <flow_controller_descriptor>
+                        <name>test_flow_controller</name>
+                        <max_bytes_per_period>2048</max_bytes_per_period>
+                        <period_ms>45</period_ms>
+                        <scheduler>FIFO</scheduler>
+                    </flow_controller_descriptor>
+                </flow_controller_descriptor_list>
             </rtps>
         </participant>
 
@@ -261,7 +269,7 @@
                 <name>default_name</name>
             </rtps>
         </participant>
-        
+
         <publisher profile_name="test_publisher_profile_string">
             <topic>
                 <kind>NO_KEY</kind>
@@ -481,7 +489,7 @@
                 <increment>0</increment>
             </matchedSubscribersAllocation>
         </publisher>
-        
+
         <subscriber profile_name="test_subscriber_profile_string">
             <topic>
                 <kind>NO_KEY</kind>
@@ -578,7 +586,7 @@
                 <increment>5</increment>
             </matchedPublishersAllocation>
         </subscriber>
-        
+
         <subscriber profile_name="test_default_subscriber_profile_string" is_default_profile="true">
             <topic>
                 <kind>WITH_KEY</kind>

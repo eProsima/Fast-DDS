@@ -37,10 +37,6 @@
         <xs:restriction base="xs:unsignedShort"/>
     </xs:simpleType>
 
-    <xs:simpleType name="octetType">
-        <xs:restriction base="xs:unsignedByte"/>
-    </xs:simpleType>
-
     <xs:simpleType name="boolType">
         <xs:restriction base="xs:boolean"/> <!-- {true, false} -->
     </xs:simpleType>
@@ -616,6 +612,7 @@
     <xs:complexType name="publishModeQosPolicyType">
         <xs:all>
             <xs:element name="kind" type="publishModeQosKindType"/>
+            <xs:element name="flow_controller_name" type="string" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 
@@ -625,6 +622,39 @@
             <xs:element name="binary_properties" type="binaryPropertyVectorType" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
+
+    <!--Flow Controller Descriptor List Type:
+        └ flow_controller_descriptor [1~*]-->
+    <xs:complexType name="flowControllerDescriptorListType">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">   <!-- multiple instances of the elements -->
+            <xs:element name="flow_controller_descriptor" type="flowControllerDescriptorType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!--Flow Controller Descriptor Type:
+        ├ name                  [string] req,
+        ├ scheduler             [flowControllerSchedulerPolicy],
+        ├ max_bytes_per_period  [int32],
+        ├ period_ms             [uint64]-->
+    <xs:complexType name="flowControllerDescriptorType">
+        <xs:all>
+            <xs:element name="name" type="string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="scheduler" type="flowControllerSchedulerPolicy" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="max_bytes_per_period" type="int32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="period_ms" type="uint64" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+    <!--Flow Controller Scheduler Policy Type [string]:
+         ("FIFO", "ROUND_ROBIN", "HIGH_PRIORITY", "PRIORITY_WITH_RESERVATION")-->
+    <xs:simpleType name="flowControllerSchedulerPolicy">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="FIFO" />
+            <xs:enumeration value="ROUND_ROBIN" />
+            <xs:enumeration value="HIGH_PRIORITY" />
+            <xs:enumeration value="PRIORITY_WITH_RESERVATION" />
+        </xs:restriction>
+    </xs:simpleType>
 
     <xs:complexType name="domainIdVectorType">
         <xs:sequence>
@@ -736,6 +766,7 @@
                         </xs:element>
             <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
             <xs:element name="name" type="stringType" minOccurs="0"/>
+            <xs:element name="flow_controller_descriptor_list" type="flowControllerDescriptorListType" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 

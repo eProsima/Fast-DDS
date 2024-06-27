@@ -1794,6 +1794,7 @@ XMLP_ret XMLParser::fillDataNode(
                 <xs:element name="userData" type="octetVectorType" minOccurs="0"/>
                 <xs:element name="participantID" type="int32Type" minOccurs="0"/>
                 <xs:element name="throughputController" type="throughputControllerType" minOccurs="0"/>
+                <xs:element name="flow_controller_descriptors" type="flowControllerDescriptorsType" minOccurs="0"/>
                 <xs:element name="userTransports" type="stringListType" minOccurs="0"/>
                 <xs:element name="useBuiltinTransports" type="boolType" minOccurs="0"/>
                 <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
@@ -1962,6 +1963,16 @@ XMLP_ret XMLParser::fillDataNode(
                 return XMLP_ret::XML_ERROR;
             }
             logWarning(XML_PARSER, THROUGHPUT_CONT << " XML tag is deprecated");
+        }
+        else if (strcmp(name, FLOW_CONTROLLER_DESCRIPTOR_LIST) == 0)
+        {
+            // flow_controller_descriptors
+            if (XMLP_ret::XML_OK !=
+                    getXMLFlowControllerDescriptorList(p_aux0,
+                    participant_node.get()->rtps.flow_controllers, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, USER_TRANS) == 0)
         {
@@ -2284,6 +2295,13 @@ XMLP_ret XMLParser::fillDataNode(
     replier_node.get()->publisher.topic.topicDataType = replier_node.get()->reply_type;
     replier_node.get()->publisher.topic.topicName = replier_node.get()->reply_topic_name;
 
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::clear()
+{
+    std::lock_guard<std::mutex> lock(collections_mtx_);
+    flow_controller_descriptor_names_.clear();
     return XMLP_ret::XML_OK;
 }
 
