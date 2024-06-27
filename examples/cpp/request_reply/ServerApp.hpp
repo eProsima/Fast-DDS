@@ -22,20 +22,30 @@
 
 #include <string>
 
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+
 #include "Application.hpp"
-#include "CLIParser.hpp"
 
 namespace eprosima {
 namespace fastdds {
 namespace examples {
 namespace request_reply {
 
-class ServerApp : public Application
+using namespace eprosima::fastdds::dds;
+
+class ServerApp : public Application, public DataWriterListener, public DataReaderListener
 {
 public:
 
     ServerApp(
-            const CLIParser::config& config,
             const std::string& service_name);
 
     ~ServerApp();
@@ -45,6 +55,40 @@ public:
 
     //! Stop server
     void stop() override;
+
+    //! Publication matched method
+    void on_publication_matched(
+            DataWriter* writer,
+            const PublicationMatchedStatus& info) override;
+
+    //! Subscription matched method
+    void on_subscription_matched(
+            DataReader* reader,
+            const SubscriptionMatchedStatus& info) override;
+
+    //! Request received method
+    void on_data_available(
+            DataReader* reader) override;
+
+private:
+
+    DomainParticipant* participant_;
+
+    TypeSupport request_type_;
+
+    Topic* request_topic_;
+
+    Subscriber* subscriber_;
+
+    DataReader* request_reader_;
+
+    TypeSupport reply_type_;
+
+    Topic* reply_topic_;
+
+    Publisher* publisher_;
+
+    DataWriter* reply_writer_;
 };
 
 } // namespace request_reply

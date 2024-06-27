@@ -40,7 +40,7 @@ std::shared_ptr<Application> Application::make_app(
     {
         case CLIParser::EntityKind::SERVER:
         {
-            entity = std::make_shared<ServerApp>(config, service_name);
+            entity = std::make_shared<ServerApp>(service_name);
             break;
         }
         case CLIParser::EntityKind::CLIENT:
