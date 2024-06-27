@@ -1,0 +1,22 @@
+@extensibility(APPENDABLE)
+enum CalculatorOperationType
+{
+    ADDITION,
+    SUBTRACTION,
+    MULTIPLICATION,
+    DIVISION
+};
+
+@extensibility(APPENDABLE)
+struct CalculatorRequestType
+{
+    CalculatorOperationType operation;
+    short x;
+    short y;
+};
+
+@extensibility(APPENDABLE)
+struct CalculatorReplyType
+{
+    long z;
+};
