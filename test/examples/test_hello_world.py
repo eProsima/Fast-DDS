@@ -23,7 +23,7 @@ def test_hello_world():
             '@DOCKER_EXECUTABLE@ compose -f hello_world.compose.yml up',
             stderr=subprocess.STDOUT,
             shell=True,
-            timeout=30
+            timeout=20
         ).decode().split('\n')
 
         sent = 0

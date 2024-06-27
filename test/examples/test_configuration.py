@@ -60,7 +60,7 @@ def test_configuration(pub_args, sub_args):
         out = subprocess.check_output(command_prerequisites + '@DOCKER_EXECUTABLE@ compose -f configuration.compose.yml up',
             stderr=subprocess.STDOUT,
             shell=True,
-            timeout=40
+            timeout=20
         )
         render_out = out.decode().split('\n')
 
@@ -141,6 +141,7 @@ def test_configuration_expected_output(pub_args, sub_args, expected_message, n_m
     """."""
     ret = False
     out = ''
+    render_out = ''
     pub_requirements = '--reliable --transient-local --keep-last 10'
     sub_requirements = '--reliable --transient-local --keep-last 10'
 
@@ -149,7 +150,7 @@ def test_configuration_expected_output(pub_args, sub_args, expected_message, n_m
         out = subprocess.check_output(command_prerequisites + '@DOCKER_EXECUTABLE@ compose -f configuration.compose.yml up',
             stderr=subprocess.STDOUT,
             shell=True,
-            timeout=30
+            timeout=20
         )
         render_out = out.decode().split('\n')
 
