@@ -36,3 +36,60 @@ target_link_libraries(
     ${CMAKE_DL_LIBS})
 
 gtest_discover_tests(${THREAD_SETTINGS_TESTS_EXEC})
+
+if(EPROSIMA_TEST_DNS_NOT_SET_UP)
+    set(dns_filter "*ServerClientEnvironmentSetUpDNS*")
+endif()
+
+string(JOIN ":" SERVER_ATTRIBUTES_IGNORED_TESTS ${pkcs_filter} ${dns_filter})
+if(NOT SERVER_ATTRIBUTES_IGNORED_TESTS STREQUAL "")
+	message(STATUS "Ignoring tests '${SERVER_ATTRIBUTES_IGNORED_TESTS}'")
+    string(PREPEND SERVER_ATTRIBUTES_IGNORED_TESTS "-")
+endif()
+message(STATUS "SERVER_ATTRIBUTES_IGNORED_TESTS set to '${SERVER_ATTRIBUTES_IGNORED_TESTS}'")
+
+set(SERVER_ATTRIBUTES_TESTS_EXEC ServerAttributesTests)
+
+set(SERVER_ATTRIBUTES_TESTS_SOURCE
+    ServerAttributesTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ServerAttributes.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/GuidPrefix_t.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/network.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
+    )
+
+if(WIN32)
+    add_definitions(-D_WIN32_WINNT=0x0601)
+endif()
+
+add_executable(${SERVER_ATTRIBUTES_TESTS_EXEC} ${SERVER_ATTRIBUTES_TESTS_SOURCE})
+
+target_include_directories(
+    ${SERVER_ATTRIBUTES_TESTS_EXEC}
+    PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp)
+
+target_link_libraries(
+    ${SERVER_ATTRIBUTES_TESTS_EXEC}
+    GTest::gtest
+    ${CMAKE_DL_LIBS})
+
+if(MSVC OR MSVC_IDE)
+    target_link_libraries(${SERVER_ATTRIBUTES_TESTS_EXEC} ${PRIVACY} fastcdr iphlpapi Shlwapi ws2_32 fastdds::log)
+else()
+    target_link_libraries(${SERVER_ATTRIBUTES_TESTS_EXEC} ${PRIVACY} fastcdr fastdds::log)
+endif()
+
+gtest_discover_tests(${SERVER_ATTRIBUTES_TESTS_EXEC}
+    TEST_PREFIX "ServerAttributesTests."
+    TEST_FILTER ${SERVER_ATTRIBUTES_IGNORED_TESTS}
+    )
+
+unset(dns_filter)

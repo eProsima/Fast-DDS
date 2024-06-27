@@ -49,11 +49,7 @@ if(NOT LibP11_FOUND)
     set(pkcs_filter "*pkcs*")
 endif() # LibP11_FOUND
 
-if(EPROSIMA_TEST_DNS_NOT_SET_UP)
-    set(dns_filter "*ServerClientEnvironmentSetUpDNS*")
-endif()
-
-string(JOIN ":" BLACKBOX_HIGH_LEVEL_IGNORED_TESTS ${pkcs_filter} ${dns_filter})
+string(JOIN ":" BLACKBOX_HIGH_LEVEL_IGNORED_TESTS ${pkcs_filter})
 if(NOT BLACKBOX_HIGH_LEVEL_IGNORED_TESTS STREQUAL "")
 	message(STATUS "Ignoring tests '${BLACKBOX_HIGH_LEVEL_IGNORED_TESTS}'")
     string(PREPEND BLACKBOX_HIGH_LEVEL_IGNORED_TESTS "-")
@@ -245,5 +241,4 @@ set_property(DIRECTORY APPEND PROPERTY
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/environment_file.json
     ${CMAKE_CURRENT_BINARY_DIR}/environment_file.json COPYONLY)
 
-unset(dns_filter)
 unset(pkcs_filter)
