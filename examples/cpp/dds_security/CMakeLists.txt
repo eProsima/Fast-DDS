@@ -1,4 +1,4 @@
-# Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,18 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set(fastdds_FOUND TRUE)
-
-add_subdirectory(cpp/configuration)
-add_subdirectory(cpp/content_filter)
-add_subdirectory(cpp/custom_payload_pool)
-add_subdirectory(cpp/dds)
-add_subdirectory(cpp/delivery_mechanisms)
-<<<<<<< HEAD
-add_subdirectory(cpp/discovery_server)
-=======
-add_subdirectory(cpp/dds_security)
->>>>>>> 420ed93df (Refs #21266 Add secured hello world example)
-add_subdirectory(cpp/hello_world)
-add_subdirectory(cpp/rtps)
-add_subdirectory(cpp/xtypes)
+add_subdirectory(SecureHelloWorldExample)
