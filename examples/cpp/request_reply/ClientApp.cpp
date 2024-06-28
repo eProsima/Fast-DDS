@@ -30,6 +30,8 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
+#include <fastdds/rtps/common/GuidPrefix_t.hpp>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
 
 #include "Calculator.hpp"
 #include "CalculatorPubSubTypes.hpp"
@@ -53,10 +55,6 @@ Topic* create_topic(
 } // namespace detail
 
 /******** CLIENTAPP CLASS DEFINITION ********/
-// Define the constexpr so the linker can find the static members
-constexpr std::size_t ClientApp::request_writer_position_;
-constexpr std::size_t ClientApp::reply_reader_position_;
-
 ClientApp::ClientApp(
         const CLIParser::config& config,
         const std::string& service_name)
@@ -94,15 +92,18 @@ void ClientApp::on_publication_matched(
 {
     std::lock_guard<std::mutex> lock(mtx_);
 
+    rtps::GuidPrefix_t server_guid_prefix = rtps::iHandle2GUID(info.last_subscription_handle).guidPrefix;
+
     if (info.current_count_change == 1)
     {
         std::cout << "Remote request reader matched." << std::endl;
-        matched_state_.increase(request_writer_position_);
+
+        server_matched_status_.match_request_reader(server_guid_prefix, true);
     }
     else if (info.current_count_change == -1)
     {
         std::cout << "Remote request reader unmatched." << std::endl;
-        matched_state_.decrease(request_writer_position_);
+        server_matched_status_.match_request_reader(server_guid_prefix, false);
     }
     else
     {
@@ -232,14 +233,6 @@ void ClientApp::create_reply_entities(
     {
         throw std::runtime_error("Reply reader initialization failed");
     }
-}
-
-ClientApp::RequestInput::RequestInput(
-        const CLIParser::config& config)
-    : operation(config.operation)
-    , x(config.x)
-    , y(config.y)
-{
 }
 
 /******* HELPER FUNCTIONS DEFINITIONS *******/
