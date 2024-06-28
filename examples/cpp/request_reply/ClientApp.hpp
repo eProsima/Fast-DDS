@@ -82,7 +82,8 @@ private:
 
     struct RequestInput
     {
-        RequestInput(const CLIParser::config& config);
+        RequestInput(
+                const CLIParser::config& config);
 
         CLIParser::Operation operation = CLIParser::Operation::UNDEFINED;
 
@@ -119,18 +120,23 @@ private:
     class Uint8CountSet
     {
     public:
-        void increase(const size_t& position)
+
+        void increase(
+                const size_t& position)
         {
             assert(position <= (set_size - 1));
+
             if (inner_set_[position] < std::numeric_limits<std::uint8_t>::max())
             {
                 inner_set_[position] += 1;
             }
         }
 
-        void decrease(const size_t& position)
+        void decrease(
+                const size_t& position)
         {
             assert(position <= (set_size - 1));
+
             if (inner_set_[position] > 0)
             {
                 inner_set_[position] -= 1;
@@ -154,6 +160,7 @@ private:
         }
 
     private:
+
         std::array<std::uint8_t, set_size> inner_set_ = {0};
     };
 
