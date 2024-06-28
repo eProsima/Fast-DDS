@@ -23,6 +23,15 @@ on:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         required: true
         type: string
+      run-build:
+        description: 'Run build jobs of Fast DDS'
+        required: true
+        type: boolean
+      run-tests:
+        description: 'Run test suite of Fast DDS'
+        required: false
+        type: boolean
+        default: true
       use-ccache:
         description: 'Use CCache to speed up the build'
         required: false
@@ -42,6 +51,7 @@ jobs:
     # so we'll use that one for now, as clang 15 is the supported compiler for Fast DDS in macOS.
     # (see https://github.com/eProsima/Fast-DDS/blob/master/PLATFORM_SUPPORT.md#compilers)
     runs-on: macos-13
+    if: ${{ inputs.run-build == true }}
     strategy:
       fail-fast: false
       matrix:
@@ -139,7 +149,7 @@ jobs:
 
       - name: Colcon test
         id: test
-        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+        if: ${{ inputs.run-tests == true }}
         uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.meta
@@ -152,7 +162,7 @@ jobs:
 
       - name: Test summary
         uses: eProsima/eProsima-CI/multiplatform/junit_summary@v0
-        if: ${{ !cancelled() && !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+        if: ${{ !cancelled() && inputs.run-tests == true }}
         with:
           junit_reports_dir: "${{ steps.test.outputs.ctest_results_path }}"
           print_summary: 'True'
