@@ -1635,9 +1635,15 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
         {
             std::vector<uint32_t> boundsArray;
             dimensionsToArrayBounds(memberArray, boundsArray);
-            member = factory->create_array_type(
-                string_builder->build(),
-                boundsArray)->build();
+            DynamicTypeBuilder::_ref_type builder_ = factory->create_array_type( string_builder->build(), boundsArray);
+            if(nullptr != builder_)
+            {
+                member = builder_->build();
+            }
+            else
+            {
+                member = nullptr;
+            }
         }
     }
     else if (strncmp(memberType, WSTRING, WSTRING_len) == 0)
