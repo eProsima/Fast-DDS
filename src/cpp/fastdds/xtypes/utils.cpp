@@ -117,27 +117,7 @@ ReturnCode_t json_serialize(
     else
     {
         EPROSIMA_LOG_WARNING(XTYPES_UTILS,
-                "Error encountered while performing DynamicData to JSON stream serialization.");
-    }
-    return ret;
-}
-
-ReturnCode_t json_serialize(
-        const DynamicData::_ref_type& data,
-        std::string& output,
-        DynamicDataJsonFormat format) noexcept
-{
-    ReturnCode_t ret;
-    std::stringstream ss;
-
-    if (RETCODE_OK == (ret = json_serialize(data, ss, format)))
-    {
-        output = ss.str();
-    }
-    else
-    {
-        EPROSIMA_LOG_WARNING(XTYPES_UTILS,
-                "Error encountered while performing DynamicData to JSON string serialization.");
+                "Error encountered while performing DynamicData to JSON serialization.");
     }
     return ret;
 }
