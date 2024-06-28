@@ -63,7 +63,7 @@ bool has_user_transport(
     const auto& transports = att.userTransports;
     const auto end_it = transports.end();
     return end_it != std::find_if(transports.begin(), end_it,
-                   [](const decltype(*end_it)& item)
+                   [](const std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface>& item)
                    {
                        return nullptr != dynamic_cast<_Descriptor*>(item.get());
                    });

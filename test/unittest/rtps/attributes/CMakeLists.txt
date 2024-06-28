@@ -63,18 +63,19 @@ set(SERVER_ATTRIBUTES_TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     )
 
-if(WIN32)
-    add_definitions(-D_WIN32_WINNT=0x0601)
-endif()
-
 add_executable(${SERVER_ATTRIBUTES_TESTS_EXEC} ${SERVER_ATTRIBUTES_TESTS_SOURCE})
-
-target_include_directories(
-    ${SERVER_ATTRIBUTES_TESTS_EXEC}
-    PRIVATE
+target_compile_definitions(${SERVER_ATTRIBUTES_TESTS_EXEC} PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_include_directories( ${SERVER_ATTRIBUTES_TESTS_EXEC} PRIVATE
+    ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_BINARY_DIR}/include
-    ${PROJECT_SOURCE_DIR}/src/cpp)
+    ${PROJECT_SOURCE_DIR}/src/cpp
+    )
 
 target_link_libraries(
     ${SERVER_ATTRIBUTES_TESTS_EXEC}
