@@ -39,6 +39,18 @@ namespace fastdds {
 namespace examples {
 namespace request_reply {
 
+/******* HELPER FUNCTIONS DECLARATIONS *******/
+namespace detail {
+
+template<typename TypeSupportClass>
+Topic* create_topic(
+        const std::string& topic_name,
+        DomainParticipant* participant,
+        TypeSupport& type);
+
+} // namespace detail
+
+/******** SERVERAPP CLASS DEFINITION ********/
 ServerApp::ServerApp(
         const std::string& service_name)
     : participant_(nullptr)
@@ -51,133 +63,9 @@ ServerApp::ServerApp(
     , publisher_(nullptr)
     , reply_writer_(nullptr)
 {
-    // Create the participant
-    auto factory = DomainParticipantFactory::get_instance();
-
-    if (nullptr == factory)
-    {
-        throw std::runtime_error("Failed to get participant factory instance");
-    }
-
-    participant_ = factory->create_participant_with_default_profile(nullptr, StatusMask::none());
-
-    if (nullptr == participant_)
-    {
-        throw std::runtime_error("Participant initialization failed");
-    }
-
-    /********** REQUEST ENTITIES **********/
-    // Create the request TypeSupport
-    request_type_.reset(new CalculatorRequestTypePubSubType());
-
-    if (nullptr == request_type_)
-    {
-        throw std::runtime_error("Failed to create request type");
-    }
-
-    // Register the type
-    if (RETCODE_OK != request_type_.register_type(participant_))
-    {
-        throw std::runtime_error("Failed to register request type");
-    }
-
-    // Create the request topic
-    TopicQos topic_qos = TOPIC_QOS_DEFAULT;
-
-    if (RETCODE_OK != participant_->get_default_topic_qos(topic_qos))
-    {
-        throw std::runtime_error("Failed to get default topic qos");
-    }
-
-    request_topic_ = participant_->create_topic("rq/" + service_name, request_type_.get_type_name(), topic_qos);
-
-    if (nullptr == request_topic_)
-    {
-        throw std::runtime_error("Request topic initialization failed");
-    }
-
-    // Create the subscriber
-    SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
-
-    if (RETCODE_OK != participant_->get_default_subscriber_qos(sub_qos))
-    {
-        throw std::runtime_error("Failed to get default subscriber qos");
-    }
-
-    subscriber_ = participant_->create_subscriber(sub_qos, nullptr, StatusMask::none());
-
-    if (nullptr == subscriber_)
-    {
-        throw std::runtime_error("Subscriber initialization failed");
-    }
-
-    // Create the request reader
-    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
-
-    if (RETCODE_OK != subscriber_->get_default_datareader_qos(reader_qos))
-    {
-        throw std::runtime_error("Failed to get default datareader qos");
-    }
-
-    request_reader_ = subscriber_->create_datareader(request_topic_, reader_qos, this, StatusMask::all());
-
-    if (nullptr == request_reader_)
-    {
-        throw std::runtime_error("Request reader initialization failed");
-    }
-
-    /********** REPLY ENTITIES **********/
-    // Create the reply TypeSupport
-    reply_type_.reset(new CalculatorReplyTypePubSubType());
-
-    if (nullptr == reply_type_)
-    {
-        throw std::runtime_error("Failed to create reply type");
-    }
-
-    // Register the type
-    if (RETCODE_OK != reply_type_.register_type(participant_))
-    {
-        throw std::runtime_error("Failed to register reply type");
-    }
-
-    // Create the reply topic
-    reply_topic_ = participant_->create_topic("rr/" + service_name, reply_type_.get_type_name(), topic_qos);
-
-    if (nullptr == reply_topic_)
-    {
-        throw std::runtime_error("Reply topic initialization failed");
-    }
-
-    // Create the publisher
-    PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
-
-    if (RETCODE_OK != participant_->get_default_publisher_qos(pub_qos))
-    {
-        throw std::runtime_error("Failed to get default publisher qos");
-    }
-
-    publisher_ = participant_->create_publisher(pub_qos, nullptr, StatusMask::none());
-
-    if (nullptr == publisher_)
-    {
-        throw std::runtime_error("Publisher initialization failed");
-    }
-
-    // Create the reply writer
-    DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
-
-    if (RETCODE_OK != publisher_->get_default_datawriter_qos(writer_qos))
-    {
-        throw std::runtime_error("Failed to get default datawriter qos");
-    }
-
-    reply_writer_ = publisher_->create_datawriter(reply_topic_, writer_qos, this, StatusMask::all());
-
-    if (nullptr == reply_writer_)
-    {
-        throw std::runtime_error("Reply writer initialization failed");
-    }
+    create_participant();
+    create_request_entities(service_name);
+    create_reply_entities(service_name);
 }
 
 ServerApp::~ServerApp()
@@ -225,6 +113,159 @@ void ServerApp::on_data_available(
     static_cast<void>(reader);
 }
 
+void ServerApp::create_participant()
+{
+    // Create the participant
+    auto factory = DomainParticipantFactory::get_instance();
+
+    if (nullptr == factory)
+    {
+        throw std::runtime_error("Failed to get participant factory instance");
+    }
+
+    participant_ = factory->create_participant_with_default_profile(nullptr, StatusMask::none());
+
+    if (nullptr == participant_)
+    {
+        throw std::runtime_error("Participant initialization failed");
+    }
+}
+
+template<>
+Topic* ServerApp::create_topic<CalculatorRequestTypePubSubType>(
+        const std::string& topic_name,
+        TypeSupport& type)
+{
+    return detail::create_topic<CalculatorRequestTypePubSubType>(topic_name, participant_, type);
+}
+
+template<>
+Topic* ServerApp::create_topic<CalculatorReplyTypePubSubType>(
+        const std::string& topic_name,
+        TypeSupport& type)
+{
+    return detail::create_topic<CalculatorReplyTypePubSubType>(topic_name, participant_, type);
+}
+
+void ServerApp::create_request_entities(
+        const std::string& service_name)
+{
+    request_topic_ = create_topic<CalculatorRequestTypePubSubType>("rq/" + service_name, request_type_);
+
+    // Create the subscriber
+    SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
+
+    if (RETCODE_OK != participant_->get_default_subscriber_qos(sub_qos))
+    {
+        throw std::runtime_error("Failed to get default subscriber qos");
+    }
+
+    subscriber_ = participant_->create_subscriber(sub_qos, nullptr, StatusMask::none());
+
+    if (nullptr == subscriber_)
+    {
+        throw std::runtime_error("Subscriber initialization failed");
+    }
+
+    // Create the request reader
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+
+    if (RETCODE_OK != subscriber_->get_default_datareader_qos(reader_qos))
+    {
+        throw std::runtime_error("Failed to get default datareader qos");
+    }
+
+    request_reader_ = subscriber_->create_datareader(request_topic_, reader_qos, this, StatusMask::all());
+
+    if (nullptr == request_reader_)
+    {
+        throw std::runtime_error("Request reader initialization failed");
+    }
+}
+
+void ServerApp::create_reply_entities(
+        const std::string& service_name)
+{
+    reply_topic_ = create_topic<CalculatorReplyTypePubSubType>("rr/" + service_name, reply_type_);
+
+    // Create the publisher
+    PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
+
+    if (RETCODE_OK != participant_->get_default_publisher_qos(pub_qos))
+    {
+        throw std::runtime_error("Failed to get default publisher qos");
+    }
+
+    publisher_ = participant_->create_publisher(pub_qos, nullptr, StatusMask::none());
+
+    if (nullptr == publisher_)
+    {
+        throw std::runtime_error("Publisher initialization failed");
+    }
+
+    // Create the reply writer
+    DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
+
+    if (RETCODE_OK != publisher_->get_default_datawriter_qos(writer_qos))
+    {
+        throw std::runtime_error("Failed to get default datawriter qos");
+    }
+
+    reply_writer_ = publisher_->create_datawriter(reply_topic_, writer_qos, this, StatusMask::all());
+
+    if (nullptr == reply_writer_)
+    {
+        throw std::runtime_error("Reply writer initialization failed");
+    }
+}
+
+/******* HELPER FUNCTIONS DEFINITIONS *******/
+namespace detail {
+
+template<typename TypeSupportClass>
+Topic* create_topic(
+        const std::string& topic_name,
+        DomainParticipant* participant,
+        TypeSupport& type)
+{
+    assert(nullptr != participant);
+    assert(nullptr == type.get());
+
+    Topic* topic = nullptr;
+
+    // Create the TypeSupport
+    type.reset(new TypeSupportClass());
+
+    if (nullptr == type)
+    {
+        throw std::runtime_error("Failed to create type");
+    }
+
+    // Register the type
+    if (RETCODE_OK != type.register_type(participant))
+    {
+        throw std::runtime_error("Failed to register type");
+    }
+
+    // Create the topic
+    TopicQos topic_qos = TOPIC_QOS_DEFAULT;
+
+    if (RETCODE_OK != participant->get_default_topic_qos(topic_qos))
+    {
+        throw std::runtime_error("Failed to get default topic qos");
+    }
+
+    topic = participant->create_topic(topic_name, type.get_type_name(), topic_qos);
+
+    if (nullptr == topic)
+    {
+        throw std::runtime_error("Request topic initialization failed");
+    }
+
+    return topic;
+}
+
+} // namespace detail
 } // namespace request_reply
 } // namespace examples
 } // namespace fastdds

@@ -33,6 +33,7 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include "Application.hpp"
+#include "CalculatorPubSubTypes.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -72,6 +73,19 @@ public:
 
 private:
 
+    void create_participant();
+
+    template<typename TypeSupportClass>
+    Topic* create_topic(
+            const std::string& topic_name,
+            TypeSupport& type);
+
+    void create_request_entities(
+            const std::string& service_name);
+
+    void create_reply_entities(
+            const std::string& service_name);
+
     DomainParticipant* participant_;
 
     TypeSupport request_type_;
@@ -90,6 +104,16 @@ private:
 
     DataWriter* reply_writer_;
 };
+
+template<>
+Topic* ServerApp::create_topic<CalculatorRequestTypePubSubType>(
+        const std::string& topic_name,
+        TypeSupport& type);
+
+template<>
+Topic* ServerApp::create_topic<CalculatorReplyTypePubSubType>(
+        const std::string& topic_name,
+        TypeSupport& type);
 
 } // namespace request_reply
 } // namespace examples

@@ -39,6 +39,7 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include "Application.hpp"
+#include "CalculatorPubSubTypes.hpp"
 #include "CLIParser.hpp"
 
 namespace eprosima {
@@ -92,30 +93,6 @@ private:
         std::int16_t y = 0;
     };
 
-    RequestInput request_input_;
-
-    DomainParticipant* participant_;
-
-    TypeSupport request_type_;
-
-    Topic* request_topic_;
-
-    Publisher* publisher_;
-
-    DataWriter* request_writer_;
-
-    TypeSupport reply_type_;
-
-    Topic* reply_topic_;
-
-    Subscriber* subscriber_;
-
-    DataReader* reply_reader_;
-
-    mutable std::mutex mtx_;
-
-    std::condition_variable cv_;
-
     template<std::size_t set_size>
     class Uint8CountSet
     {
@@ -164,6 +141,43 @@ private:
         std::array<std::uint8_t, set_size> inner_set_ = {0};
     };
 
+    void create_participant();
+
+    template<typename TypeSupportClass>
+    Topic* create_topic(
+            const std::string& topic_name,
+            TypeSupport& type);
+
+    void create_request_entities(
+            const std::string& service_name);
+
+    void create_reply_entities(
+            const std::string& service_name);
+
+    RequestInput request_input_;
+
+    DomainParticipant* participant_;
+
+    TypeSupport request_type_;
+
+    Topic* request_topic_;
+
+    Publisher* publisher_;
+
+    DataWriter* request_writer_;
+
+    TypeSupport reply_type_;
+
+    Topic* reply_topic_;
+
+    Subscriber* subscriber_;
+
+    DataReader* reply_reader_;
+
+    mutable std::mutex mtx_;
+
+    std::condition_variable cv_;
+
     /**
      * @brief Set to represent the matched count of the request-reply endpoints:
      *
@@ -176,6 +190,16 @@ private:
 
     static constexpr std::size_t reply_reader_position_ = 1;
 };
+
+template<>
+Topic* ClientApp::create_topic<CalculatorRequestTypePubSubType>(
+        const std::string& topic_name,
+        TypeSupport& type);
+
+template<>
+Topic* ClientApp::create_topic<CalculatorReplyTypePubSubType>(
+        const std::string& topic_name,
+        TypeSupport& type);
 
 } // namespace request_reply
 } // namespace examples
