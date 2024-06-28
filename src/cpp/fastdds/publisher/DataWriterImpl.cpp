@@ -2108,7 +2108,15 @@ bool DataWriterImpl::release_payload_pool()
     else
     {
         auto topic_pool = std::static_pointer_cast<ITopicPayloadPool>(payload_pool_);
-        result = topic_pool->release_history(pool_config_, false);
+        PoolConfig config = pool_config_;
+
+        // Detect if we changed the pool config to preallocated
+        if (fixed_payload_size_)
+        {
+            config.memory_policy = PREALLOCATED_MEMORY_MODE;
+        }
+
+        result = topic_pool->release_history(config, false);
     }
 
     payload_pool_.reset();
