@@ -80,6 +80,11 @@ ClientApp::~ClientApp()
 
 void ClientApp::run()
 {
+    std::unique_lock<std::mutex> lock(mtx_);
+    cv_.wait(lock, [&]()
+            {
+                return server_matched_status_.is_any_server_matched();
+            });
 }
 
 void ClientApp::stop()
@@ -114,11 +119,30 @@ void ClientApp::on_publication_matched(
 }
 
 void ClientApp::on_subscription_matched(
-        DataReader* reader,
+        DataReader* /* reader */,
         const SubscriptionMatchedStatus& info)
 {
-    static_cast<void>(reader);
-    static_cast<void>(info);
+    std::lock_guard<std::mutex> lock(mtx_);
+
+    rtps::GuidPrefix_t server_guid_prefix = rtps::iHandle2GUID(info.last_publication_handle).guidPrefix;
+
+    if (info.current_count_change == 1)
+    {
+        std::cout << "Remote reply writer matched." << std::endl;
+
+        server_matched_status_.match_reply_writer(server_guid_prefix, true);
+    }
+    else if (info.current_count_change == -1)
+    {
+        std::cout << "Remote reply writer unmatched." << std::endl;
+        server_matched_status_.match_reply_writer(server_guid_prefix, false);
+    }
+    else
+    {
+        std::cout << info.current_count_change
+                  << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
+    }
+    cv_.notify_one();
 }
 
 void ClientApp::on_data_available(

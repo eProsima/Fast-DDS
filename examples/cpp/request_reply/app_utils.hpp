@@ -76,6 +76,20 @@ public:
         return matched_status_[guid_prefix].all();
     }
 
+    bool is_any_server_matched()
+    {
+        bool any_server_matched = false;
+        for (const auto& status : matched_status_)
+        {
+            if (status.second.all())
+            {
+                any_server_matched = true;
+                break;
+            }
+        }
+        return any_server_matched;
+    }
+
 private:
 
     std::map<rtps::GuidPrefix_t, std::bitset<2>> matched_status_;
