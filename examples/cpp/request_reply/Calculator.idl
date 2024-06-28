@@ -8,8 +8,15 @@ enum CalculatorOperationType
 };
 
 @extensibility(APPENDABLE)
+struct ClientID
+{
+    octet value[12];
+};
+
+@extensibility(APPENDABLE)
 struct CalculatorRequestType
 {
+    @key ClientID client_id;
     CalculatorOperationType operation;
     short x;
     short y;
@@ -18,5 +25,6 @@ struct CalculatorRequestType
 @extensibility(APPENDABLE)
 struct CalculatorReplyType
 {
+    @key ClientID client_id;
     long z;
 };

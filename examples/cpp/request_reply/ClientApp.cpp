@@ -76,6 +76,14 @@ ClientApp::ClientApp(
 
 ClientApp::~ClientApp()
 {
+    if (nullptr != participant_)
+    {
+        // Delete DDS entities contained within the DomainParticipant
+        participant_->delete_contained_entities();
+
+        // Delete DomainParticipant
+        DomainParticipantFactory::get_shared_instance()->delete_participant(participant_);
+    }
 }
 
 void ClientApp::run()
@@ -85,6 +93,11 @@ void ClientApp::run()
             {
                 return server_matched_status_.is_any_server_matched();
             });
+
+    if (!send_request())
+    {
+        throw std::runtime_error("Failed to send request");
+    }
 }
 
 void ClientApp::stop()
@@ -154,7 +167,7 @@ void ClientApp::on_data_available(
 void ClientApp::create_participant()
 {
     // Create the participant
-    auto factory = DomainParticipantFactory::get_instance();
+    auto factory = DomainParticipantFactory::get_shared_instance();
 
     if (nullptr == factory)
     {
@@ -257,6 +270,20 @@ void ClientApp::create_reply_entities(
     {
         throw std::runtime_error("Reply reader initialization failed");
     }
+}
+
+bool ClientApp::send_request()
+{
+    CalculatorRequestType request;
+
+    request.client_id(TypeConverter::to_calculator_type(participant_->guid().guidPrefix));
+    request.operation(TypeConverter::to_calculator_type(request_input_.operation));
+    request.x(request_input_.x);
+    request.y(request_input_.y);
+
+    std::cout << "Sending request" << std::endl;
+
+    return request_writer_->write(&request);
 }
 
 /******* HELPER FUNCTIONS DEFINITIONS *******/

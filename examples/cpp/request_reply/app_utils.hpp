@@ -20,6 +20,7 @@
 #ifndef FASTDDS_EXAMPLES_CPP_REQUEST_REPLY__APP_UTILS_HPP
 #define FASTDDS_EXAMPLES_CPP_REQUEST_REPLY__APP_UTILS_HPP
 
+#include <algorithm>
 #include <array>
 #include <bitset>
 #include <cstddef>
@@ -28,6 +29,7 @@
 
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
+#include "Calculator.hpp"
 #include "CLIParser.hpp"
 
 namespace eprosima {
@@ -73,7 +75,16 @@ public:
     bool is_matched(
             const rtps::GuidPrefix_t& guid_prefix)
     {
-        return matched_status_[guid_prefix].all();
+        bool is_server_matched = false;
+
+        auto status = matched_status_.find(guid_prefix);
+
+        if (status != matched_status_.end())
+        {
+            is_server_matched = status->second.all();
+        }
+
+        return is_server_matched;
     }
 
     bool is_any_server_matched()
@@ -88,6 +99,11 @@ public:
             }
         }
         return any_server_matched;
+    }
+
+    void clear()
+    {
+        matched_status_.clear();
     }
 
 private:
@@ -120,7 +136,21 @@ public:
     bool is_matched(
             const rtps::GuidPrefix_t& guid_prefix)
     {
-        return matched_status_[guid_prefix].all();
+        bool is_client_matched = false;
+
+        auto status = matched_status_.find(guid_prefix);
+
+        if (status != matched_status_.end())
+        {
+            is_client_matched = status->second.all();
+        }
+
+        return is_client_matched;
+    }
+
+    void clear()
+    {
+        matched_status_.clear();
     }
 
 private:
@@ -130,6 +160,46 @@ private:
     static const size_t request_writer_position = 0;
 
     static const size_t reply_reader_position = 1;
+};
+
+struct TypeConverter
+{
+    static CalculatorOperationType to_calculator_type(
+            const CLIParser::Operation& operation)
+    {
+        CalculatorOperationType calculator_operation;
+
+        switch (operation)
+        {
+            case CLIParser::Operation::ADDITION:
+                calculator_operation = CalculatorOperationType::ADDITION;
+                break;
+            case CLIParser::Operation::SUBTRACTION:
+                calculator_operation = CalculatorOperationType::SUBTRACTION;
+                break;
+            case CLIParser::Operation::MULTIPLICATION:
+                calculator_operation = CalculatorOperationType::MULTIPLICATION;
+                break;
+            case CLIParser::Operation::DIVISION:
+                calculator_operation = CalculatorOperationType::DIVISION;
+                break;
+            default:
+                throw std::invalid_argument("Invalid operation");
+                break;
+        }
+
+        return calculator_operation;
+    }
+
+    static ClientID to_calculator_type(
+            const rtps::GuidPrefix_t& guid_prefix)
+    {
+        ClientID client_id;
+        std::copy(std::begin(guid_prefix.value), std::end(guid_prefix.value), std::begin(client_id.value()));
+
+        return client_id;
+    }
+
 };
 
 } // namespace request_reply

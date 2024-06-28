@@ -31,6 +31,8 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
+#include <fastdds/rtps/common/GuidPrefix_t.hpp>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
 
 #include "Calculator.hpp"
 #include "CalculatorPubSubTypes.hpp"
@@ -71,6 +73,22 @@ ServerApp::ServerApp(
 
 ServerApp::~ServerApp()
 {
+    if (nullptr != participant_)
+    {
+        // Delete DDS entities contained within the DomainParticipant
+        participant_->delete_contained_entities();
+
+        // Delete DomainParticipant
+        DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    }
+
+    // Cleanup the pending requests
+    while (requests_.size() > 0)
+    {
+        requests_.pop();
+    }
+
+    client_matched_status_.clear();
 }
 
 void ServerApp::run()
@@ -89,24 +107,48 @@ void ServerApp::stop()
 }
 
 void ServerApp::on_publication_matched(
-        DataWriter* writer,
+        DataWriter* /* writer */,
         const PublicationMatchedStatus& info)
 {
-    static_cast<void>(writer);
-    static_cast<void>(info);
+    std::lock_guard<std::mutex> lock(mtx_);
+
+    rtps::GuidPrefix_t client_guid_prefix = rtps::iHandle2GUID(info.last_subscription_handle).guidPrefix;
+
+    if (info.current_count_change == 1)
+    {
+        std::cout << "Remote reply reader matched." << std::endl;
+        client_matched_status_.match_reply_reader(client_guid_prefix, true);
+    }
+    else if (info.current_count_change == -1)
+    {
+        std::cout << "Remote reply reader unmatched." << std::endl;
+        client_matched_status_.match_reply_reader(client_guid_prefix, false);
+    }
+    else
+    {
+        std::cout << info.current_count_change
+                  << " is not a valid value for PublicationMatchedStatus current count change" << std::endl;
+    }
 }
 
 void ServerApp::on_subscription_matched(
         DataReader* /* reader */,
         const SubscriptionMatchedStatus& info)
 {
+    std::lock_guard<std::mutex> lock(mtx_);
+
+    rtps::GuidPrefix_t client_guid_prefix = rtps::iHandle2GUID(info.last_publication_handle).guidPrefix;
+
     if (info.current_count_change == 1)
     {
         std::cout << "Remote request writer matched." << std::endl;
+        client_matched_status_.match_request_writer(client_guid_prefix, true);
+
     }
     else if (info.current_count_change == -1)
     {
         std::cout << "Remote request writer unmatched." << std::endl;
+        client_matched_status_.match_request_writer(client_guid_prefix, false);
     }
     else
     {
@@ -118,7 +160,27 @@ void ServerApp::on_subscription_matched(
 void ServerApp::on_data_available(
         DataReader* reader)
 {
-    static_cast<void>(reader);
+    bool new_request = false;
+
+    std::lock_guard<std::mutex> lock(mtx_);
+
+    SampleInfo info;
+    auto request = std::make_shared<CalculatorRequestType>();
+
+    while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(request.get(), &info)))
+    {
+        if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
+        {
+            std::cout << "Request received from client!" << std::endl;
+            requests_.push({info, request});
+            new_request = true;
+        }
+    }
+
+    if (new_request)
+    {
+        cv_.notify_one();
+    }
 }
 
 void ServerApp::create_participant()

@@ -22,7 +22,9 @@
 
 #include <atomic>
 #include <condition_variable>
+#include <memory>
 #include <mutex>
+#include <queue>
 #include <string>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -31,10 +33,12 @@
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
+#include "app_utils.hpp"
 #include "Application.hpp"
 #include "CalculatorPubSubTypes.hpp"
 
@@ -114,6 +118,17 @@ private:
     std::condition_variable cv_;
 
     std::atomic<bool> stop_;
+
+    RemoteClientMatchedStatus client_matched_status_;
+
+    struct Request
+    {
+        SampleInfo info;
+        std::shared_ptr<CalculatorRequestType> request;
+    };
+
+    std::queue<Request> requests_;
+
 };
 
 template<>

@@ -91,6 +91,8 @@ private:
     void create_reply_entities(
             const std::string& service_name);
 
+    bool send_request();
+
     RequestInput request_input_;
 
     DomainParticipant* participant_;
@@ -116,7 +118,6 @@ private:
     std::condition_variable cv_;
 
     RemoteServerMatchedStatus server_matched_status_;
-
 };
 
 template<>

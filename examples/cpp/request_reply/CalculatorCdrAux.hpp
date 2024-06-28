@@ -24,11 +24,14 @@
 
 #include "Calculator.hpp"
 
-constexpr uint32_t CalculatorRequestType_max_cdr_typesize {12UL};
-constexpr uint32_t CalculatorRequestType_max_key_cdr_typesize {0UL};
+constexpr uint32_t CalculatorRequestType_max_cdr_typesize {28UL};
+constexpr uint32_t CalculatorRequestType_max_key_cdr_typesize {16UL};
 
-constexpr uint32_t CalculatorReplyType_max_cdr_typesize {8UL};
-constexpr uint32_t CalculatorReplyType_max_key_cdr_typesize {0UL};
+constexpr uint32_t CalculatorReplyType_max_cdr_typesize {24UL};
+constexpr uint32_t CalculatorReplyType_max_key_cdr_typesize {16UL};
+
+constexpr uint32_t ClientID_max_cdr_typesize {16UL};
+constexpr uint32_t ClientID_max_key_cdr_typesize {0UL};
 
 
 
@@ -37,6 +40,10 @@ namespace fastcdr {
 
 class Cdr;
 class CdrSizeCalculator;
+
+eProsima_user_DllExport void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const ClientID& data);
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
