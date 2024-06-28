@@ -20,6 +20,7 @@
 #include "ServerApp.hpp"
 
 #include <iostream>
+#include <mutex>
 #include <stdexcept>
 
 #include <fastdds/dds/core/detail/DDSReturnCode.hpp>
@@ -74,10 +75,17 @@ ServerApp::~ServerApp()
 
 void ServerApp::run()
 {
+    std::unique_lock<std::mutex> lock(mtx_);
+    cv_.wait(lock, [this]() -> bool
+            {
+                return is_stopped();
+            });
 }
 
 void ServerApp::stop()
 {
+    stop_.store(true);
+    cv_.notify_one();
 }
 
 void ServerApp::on_publication_matched(
@@ -217,6 +225,11 @@ void ServerApp::create_reply_entities(
     {
         throw std::runtime_error("Reply writer initialization failed");
     }
+}
+
+bool ServerApp::is_stopped()
+{
+    return stop_.load();
 }
 
 /******* HELPER FUNCTIONS DEFINITIONS *******/

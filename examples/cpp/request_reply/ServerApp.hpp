@@ -20,6 +20,9 @@
 #ifndef FASTDDS_EXAMPLES_CPP_REQUEST_REPLY__SERVERAPP_HPP
 #define FASTDDS_EXAMPLES_CPP_REQUEST_REPLY__SERVERAPP_HPP
 
+#include <atomic>
+#include <condition_variable>
+#include <mutex>
 #include <string>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -86,6 +89,8 @@ private:
     void create_reply_entities(
             const std::string& service_name);
 
+    bool is_stopped();
+
     DomainParticipant* participant_;
 
     TypeSupport request_type_;
@@ -103,6 +108,12 @@ private:
     Publisher* publisher_;
 
     DataWriter* reply_writer_;
+
+    std::mutex mtx_;
+
+    std::condition_variable cv_;
+
+    std::atomic<bool> stop_;
 };
 
 template<>
