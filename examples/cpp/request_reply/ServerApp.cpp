@@ -135,12 +135,12 @@ void ServerApp::on_publication_matched(
 
     if (info.current_count_change == 1)
     {
-        request_reply_info("Remote reply reader matched with client " << client_guid_prefix);
+        request_reply_debug("Remote reply reader matched with client " << client_guid_prefix);
         client_matched_status_.match_reply_reader(client_guid_prefix, true);
     }
     else if (info.current_count_change == -1)
     {
-        request_reply_info("Remote reply reader unmatched from client " << client_guid_prefix);
+        request_reply_debug("Remote reply reader unmatched from client " << client_guid_prefix);
         client_matched_status_.match_reply_reader(client_guid_prefix, false);
 
         // Remove old replies since no one is waiting for them
@@ -167,13 +167,13 @@ void ServerApp::on_subscription_matched(
 
     if (info.current_count_change == 1)
     {
-        request_reply_info("Remote request writer matched with client " << client_guid_prefix);
+        request_reply_debug("Remote request writer matched with client " << client_guid_prefix);
         client_matched_status_.match_request_writer(client_guid_prefix, true);
 
     }
     else if (info.current_count_change == -1)
     {
-        request_reply_info("Remote request writer unmatched from client " << client_guid_prefix);
+        request_reply_debug("Remote request writer unmatched from client " << client_guid_prefix);
         client_matched_status_.match_request_writer(client_guid_prefix, false);
 
         // Remove old replies since no one is waiting for them
@@ -344,7 +344,7 @@ void ServerApp::reply_routine()
             requests_.pop();
 
             rtps::GuidPrefix_t client_guid_prefix = rtps::iHandle2GUID(request.info.publication_handle).guidPrefix;
-            request_reply_info("Processing request from client " << client_guid_prefix);
+            request_reply_debug("Processing request from client " << client_guid_prefix);
 
             // If none to the client's endpoints are matched, ignore the request as the client is gone
             if (!client_matched_status_.is_fully_unmatched(client_guid_prefix))
@@ -356,7 +356,7 @@ void ServerApp::reply_routine()
             // If the request's client is not fully matched, save it for later
             if (!client_matched_status_.is_matched(client_guid_prefix))
             {
-                request_reply_info("Client " << client_guid_prefix << " not fully matched, saving request for later");
+                request_reply_debug("Client " << client_guid_prefix << " not fully matched, saving request for later");
                 requests_.push(request);
             }
 

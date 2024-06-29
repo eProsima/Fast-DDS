@@ -53,6 +53,34 @@ struct RequestInput
     {
     }
 
+    std::string str()
+    {
+        std::string result = std::to_string(x);
+
+        switch (operation)
+        {
+            case CLIParser::Operation::ADDITION:
+                result += " + ";
+                break;
+            case CLIParser::Operation::SUBTRACTION:
+                result += " - ";
+                break;
+            case CLIParser::Operation::MULTIPLICATION:
+                result += " x ";
+                break;
+            case CLIParser::Operation::DIVISION:
+                result += " / ";
+                break;
+            default:
+                result += " UNDEFINED ";
+                break;
+        }
+
+        result += std::to_string(y);
+
+        return result;
+    }
+
     CLIParser::Operation operation = CLIParser::Operation::UNDEFINED;
 
     std::int16_t x = 0;
@@ -265,7 +293,16 @@ struct Timestamp
 
         return oss.str();
     }
+
 };
+
+#ifndef NDEGUB
+#define request_reply_debug(message) \
+    std::cout << C_B_WHITE << Timestamp::now() << C_B_BLUE << " [DEBUG] " << C_DEF \
+              << C_WHITE << message << C_DEF << std::endl
+#else
+#define request_reply_debug(message)
+#endif // ifdef NDEGUB
 
 #define request_reply_info(message) \
     std::cout << C_B_WHITE << Timestamp::now() << C_B_GREEN << " [INFO] " << C_DEF \

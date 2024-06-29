@@ -99,6 +99,7 @@ ClientApp::~ClientApp()
 
 void ClientApp::run()
 {
+    request_reply_debug("Waiting for a server to be available");
     {
         std::unique_lock<std::mutex> lock(mtx_);
         cv_.wait(lock, [&]()
@@ -109,7 +110,8 @@ void ClientApp::run()
 
     if (!is_stopped())
     {
-        // Give some time for all connections to be matched on both ends
+        request_reply_debug("One server is available. Waiting for some time to ensure matching on the server side");
+
         std::unique_lock<std::mutex> lock(mtx_);
         cv_.wait_for(lock, std::chrono::seconds(1), [&]()
                 {
@@ -144,13 +146,13 @@ void ClientApp::on_publication_matched(
 
     if (info.current_count_change == 1)
     {
-        request_reply_info("Remote request reader matched.");
+        request_reply_debug("Remote request reader matched.");
 
         server_matched_status_.match_request_reader(server_guid_prefix, true);
     }
     else if (info.current_count_change == -1)
     {
-        request_reply_info("Remote request reader unmatched.");
+        request_reply_debug("Remote request reader unmatched.");
         server_matched_status_.match_request_reader(server_guid_prefix, false);
     }
     else
@@ -171,13 +173,13 @@ void ClientApp::on_subscription_matched(
 
     if (info.current_count_change == 1)
     {
-        request_reply_info("Remote reply writer matched.");
+        request_reply_debug("Remote reply writer matched.");
 
         server_matched_status_.match_reply_writer(server_guid_prefix, true);
     }
     else if (info.current_count_change == -1)
     {
-        request_reply_info("Remote reply writer unmatched.");
+        request_reply_debug("Remote reply writer unmatched.");
         server_matched_status_.match_reply_writer(server_guid_prefix, false);
     }
     else
@@ -337,9 +339,11 @@ bool ClientApp::send_request()
     request.x(request_input_.x);
     request.y(request_input_.y);
 
-    request_reply_info("Sending request");
+    bool ret = request_writer_->write(&request);
 
-    return request_writer_->write(&request);
+    request_reply_info("Request sent: '" << request_input_.str() << "'");
+
+    return ret;
 }
 
 bool ClientApp::is_stopped()
