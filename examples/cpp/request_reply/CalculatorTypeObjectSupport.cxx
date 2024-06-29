@@ -446,34 +446,34 @@ void register_CalculatorReplyType_type_identifier(
             TypeObjectUtils::add_complete_struct_member(member_seq_CalculatorReplyType, member_client_id);
         }
         {
-            TypeIdentifierPair type_ids_z;
-            ReturnCode_t return_code_z {eprosima::fastdds::dds::RETCODE_OK};
-            return_code_z =
+            TypeIdentifierPair type_ids_result;
+            ReturnCode_t return_code_result {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_result =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_int32_t", type_ids_z);
+                "_int32_t", type_ids_result);
 
-            if (eprosima::fastdds::dds::RETCODE_OK != return_code_z)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_result)
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "z Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        "result Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_z = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+            StructMemberFlag member_flags_result = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_z = 0x00000001;
-            bool common_z_ec {false};
-            CommonStructMember common_z {TypeObjectUtils::build_common_struct_member(member_id_z, member_flags_z, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_z, common_z_ec))};
-            if (!common_z_ec)
+            MemberId member_id_result = 0x00000001;
+            bool common_result_ec {false};
+            CommonStructMember common_result {TypeObjectUtils::build_common_struct_member(member_id_result, member_flags_result, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_result, common_result_ec))};
+            if (!common_result_ec)
             {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure z member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure result member TypeIdentifier inconsistent.");
                 return;
             }
-            MemberName name_z = "z";
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_z;
+            MemberName name_result = "result";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_result;
             ann_custom_CalculatorReplyType.reset();
-            CompleteMemberDetail detail_z = TypeObjectUtils::build_complete_member_detail(name_z, member_ann_builtin_z, ann_custom_CalculatorReplyType);
-            CompleteStructMember member_z = TypeObjectUtils::build_complete_struct_member(common_z, detail_z);
-            TypeObjectUtils::add_complete_struct_member(member_seq_CalculatorReplyType, member_z);
+            CompleteMemberDetail detail_result = TypeObjectUtils::build_complete_member_detail(name_result, member_ann_builtin_result, ann_custom_CalculatorReplyType);
+            CompleteStructMember member_result = TypeObjectUtils::build_complete_struct_member(common_result, detail_result);
+            TypeObjectUtils::add_complete_struct_member(member_seq_CalculatorReplyType, member_result);
         }
         CompleteStructType struct_type_CalculatorReplyType = TypeObjectUtils::build_complete_struct_type(struct_flags_CalculatorReplyType, header_CalculatorReplyType, member_seq_CalculatorReplyType);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==

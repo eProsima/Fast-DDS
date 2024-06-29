@@ -26,5 +26,5 @@ struct CalculatorRequestType
 struct CalculatorReplyType
 {
     @key ClientID client_id;
-    long z;
+    long result;
 };

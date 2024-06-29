@@ -469,7 +469,7 @@ public:
     {
                     m_client_id = x.m_client_id;
 
-                    m_z = x.m_z;
+                    m_result = x.m_result;
 
     }
 
@@ -481,7 +481,7 @@ public:
             CalculatorReplyType&& x) noexcept
     {
         m_client_id = std::move(x.m_client_id);
-        m_z = x.m_z;
+        m_result = x.m_result;
     }
 
     /*!
@@ -494,7 +494,7 @@ public:
 
                     m_client_id = x.m_client_id;
 
-                    m_z = x.m_z;
+                    m_result = x.m_result;
 
         return *this;
     }
@@ -508,7 +508,7 @@ public:
     {
 
         m_client_id = std::move(x.m_client_id);
-        m_z = x.m_z;
+        m_result = x.m_result;
         return *this;
     }
 
@@ -520,7 +520,7 @@ public:
             const CalculatorReplyType& x) const
     {
         return (m_client_id == x.m_client_id &&
-           m_z == x.m_z);
+           m_result == x.m_result);
     }
 
     /*!
@@ -573,31 +573,31 @@ public:
 
 
     /*!
-     * @brief This function sets a value in member z
-     * @param _z New value for member z
+     * @brief This function sets a value in member result
+     * @param _result New value for member result
      */
-    eProsima_user_DllExport void z(
-            int32_t _z)
+    eProsima_user_DllExport void result(
+            int32_t _result)
     {
-        m_z = _z;
+        m_result = _result;
     }
 
     /*!
-     * @brief This function returns the value of member z
-     * @return Value of member z
+     * @brief This function returns the value of member result
+     * @return Value of member result
      */
-    eProsima_user_DllExport int32_t z() const
+    eProsima_user_DllExport int32_t result() const
     {
-        return m_z;
+        return m_result;
     }
 
     /*!
-     * @brief This function returns a reference to member z
-     * @return Reference to member z
+     * @brief This function returns a reference to member result
+     * @return Reference to member result
      */
-    eProsima_user_DllExport int32_t& z()
+    eProsima_user_DllExport int32_t& result()
     {
-        return m_z;
+        return m_result;
     }
 
 
@@ -605,7 +605,7 @@ public:
 private:
 
     ClientID m_client_id;
-    int32_t m_z{0};
+    int32_t m_result{0};
 
 };
 
