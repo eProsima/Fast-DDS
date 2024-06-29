@@ -40,8 +40,8 @@
 #include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/common/WriteParams.hpp>
 
-#include "Calculator.hpp"
-#include "CalculatorPubSubTypes.hpp"
+#include "types/Calculator.hpp"
+#include "types/CalculatorPubSubTypes.hpp"
 
 namespace eprosima {
 namespace fastdds {

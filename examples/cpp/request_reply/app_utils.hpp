@@ -29,8 +29,8 @@
 
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
-#include "Calculator.hpp"
 #include "CLIParser.hpp"
+#include "types/Calculator.hpp"
 
 namespace eprosima {
 namespace fastdds {

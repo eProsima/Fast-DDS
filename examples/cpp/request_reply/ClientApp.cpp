@@ -35,8 +35,8 @@
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
 
-#include "Calculator.hpp"
-#include "CalculatorPubSubTypes.hpp"
+#include "types/Calculator.hpp"
+#include "types/CalculatorPubSubTypes.hpp"
 
 namespace eprosima {
 namespace fastdds {

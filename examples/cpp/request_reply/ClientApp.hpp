@@ -37,8 +37,8 @@
 
 #include "app_utils.hpp"
 #include "Application.hpp"
-#include "CalculatorPubSubTypes.hpp"
 #include "CLIParser.hpp"
+#include "types/CalculatorPubSubTypes.hpp"
 
 namespace eprosima {
 namespace fastdds {

@@ -35,8 +35,8 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 endif()
 
 message(STATUS "Configuring ${PROJECT_NAME}...")
-file(GLOB REQUEST_REPLY_SOURCES_CXX "*.cxx")
-file(GLOB REQUEST_REPLY_SOURCES_CPP "*.cpp")
+file(GLOB_RECURSE REQUEST_REPLY_SOURCES_CXX "*.cxx")
+file(GLOB_RECURSE REQUEST_REPLY_SOURCES_CPP "*.cpp")
 
 add_executable(request_reply ${REQUEST_REPLY_SOURCES_CXX} ${REQUEST_REPLY_SOURCES_CPP})
 target_compile_definitions(request_reply PRIVATE
