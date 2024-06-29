@@ -19,9 +19,11 @@
 
 #include "ClientApp.hpp"
 
+#include <chrono>
 #include <iostream>
 #include <mutex>
 #include <stdexcept>
+#include <thread>
 
 #include <fastdds/dds/core/detail/DDSReturnCode.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
@@ -105,6 +107,9 @@ void ClientApp::run()
                     return server_matched_status_.is_any_server_matched();
                 });
     }
+
+    // Give some time for all connections to be matched on both ends
+    std::this_thread::sleep_for(std::chrono::seconds(1));
 
     if (!send_request())
     {
