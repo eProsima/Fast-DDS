@@ -50,18 +50,6 @@
 eProsima_user_DllExport void register_CalculatorOperationType_type_identifier(
         eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
- * @brief Register ClientID related TypeIdentifier.
- *        Fully-descriptive TypeIdentifiers are directly registered.
- *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
- *        indirectly registered as well.
- *
- * @param[out] TypeIdentifier of the registered type.
- *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
- *             Invalid TypeIdentifier is returned in case of error.
- */
-eProsima_user_DllExport void register_ClientID_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
-/**
  * @brief Register CalculatorRequestType related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is

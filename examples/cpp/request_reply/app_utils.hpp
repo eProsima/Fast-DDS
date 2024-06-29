@@ -26,6 +26,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <map>
+#include <string>
 
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
@@ -222,13 +223,12 @@ struct TypeConverter
         return calculator_operation;
     }
 
-    static ClientID to_calculator_type(
+    static std::string to_calculator_type(
             const rtps::GuidPrefix_t& guid_prefix)
     {
-        ClientID client_id;
-        std::copy(std::begin(guid_prefix.value), std::end(guid_prefix.value), std::begin(client_id.value()));
-
-        return client_id;
+        std::ostringstream client_id;
+        client_id << guid_prefix;
+        return client_id.str();
     }
 
 };

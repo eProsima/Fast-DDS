@@ -113,106 +113,6 @@ void register_CalculatorOperationType_type_identifier(
         }
     }
 }// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
-void register_ClientID_type_identifier(
-        TypeIdentifierPair& type_ids_ClientID)
-{
-
-    ReturnCode_t return_code_ClientID {eprosima::fastdds::dds::RETCODE_OK};
-    return_code_ClientID =
-        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-        "ClientID", type_ids_ClientID);
-    if (eprosima::fastdds::dds::RETCODE_OK != return_code_ClientID)
-    {
-        StructTypeFlag struct_flags_ClientID = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
-                false, false);
-        QualifiedTypeName type_name_ClientID = "ClientID";
-        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_ClientID;
-        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_ClientID;
-        AppliedAnnotationSeq tmp_ann_custom_ClientID;
-        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_ClientID;
-        if (!tmp_ann_custom_ClientID.empty())
-        {
-            ann_custom_ClientID = tmp_ann_custom_ClientID;
-        }
-
-        CompleteTypeDetail detail_ClientID = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_ClientID, ann_custom_ClientID, type_name_ClientID.to_string());
-        CompleteStructHeader header_ClientID;
-        header_ClientID = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_ClientID);
-        CompleteStructMemberSeq member_seq_ClientID;
-        {
-            TypeIdentifierPair type_ids_value;
-            ReturnCode_t return_code_value {eprosima::fastdds::dds::RETCODE_OK};
-            return_code_value =
-                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "anonymous_array_uint8_t_12", type_ids_value);
-
-            if (eprosima::fastdds::dds::RETCODE_OK != return_code_value)
-            {
-                return_code_value =
-                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                    "_byte", type_ids_value);
-
-                if (eprosima::fastdds::dds::RETCODE_OK != return_code_value)
-                {
-                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "Array element TypeIdentifier unknown to TypeObjectRegistry.");
-                    return;
-                }
-                bool element_identifier_anonymous_array_uint8_t_12_ec {false};
-                TypeIdentifier* element_identifier_anonymous_array_uint8_t_12 {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_value, element_identifier_anonymous_array_uint8_t_12_ec))};
-                if (!element_identifier_anonymous_array_uint8_t_12_ec)
-                {
-                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Array element TypeIdentifier inconsistent.");
-                    return;
-                }
-                EquivalenceKind equiv_kind_anonymous_array_uint8_t_12 = EK_COMPLETE;
-                if (TK_NONE == type_ids_value.type_identifier2()._d())
-                {
-                    equiv_kind_anonymous_array_uint8_t_12 = EK_BOTH;
-                }
-                CollectionElementFlag element_flags_anonymous_array_uint8_t_12 = 0;
-                PlainCollectionHeader header_anonymous_array_uint8_t_12 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_uint8_t_12, element_flags_anonymous_array_uint8_t_12);
-                {
-                    SBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(12));
-
-                    PlainArraySElemDefn array_sdefn = TypeObjectUtils::build_plain_array_s_elem_defn(header_anonymous_array_uint8_t_12, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_uint8_t_12));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_uint8_t_12", type_ids_value))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_uint8_t_12 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-            }
-            StructMemberFlag member_flags_value = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
-                    false, false, false, false);
-            MemberId member_id_value = 0x00000000;
-            bool common_value_ec {false};
-            CommonStructMember common_value {TypeObjectUtils::build_common_struct_member(member_id_value, member_flags_value, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_value, common_value_ec))};
-            if (!common_value_ec)
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure value member TypeIdentifier inconsistent.");
-                return;
-            }
-            MemberName name_value = "value";
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_value;
-            ann_custom_ClientID.reset();
-            CompleteMemberDetail detail_value = TypeObjectUtils::build_complete_member_detail(name_value, member_ann_builtin_value, ann_custom_ClientID);
-            CompleteStructMember member_value = TypeObjectUtils::build_complete_struct_member(common_value, detail_value);
-            TypeObjectUtils::add_complete_struct_member(member_seq_ClientID, member_value);
-        }
-        CompleteStructType struct_type_ClientID = TypeObjectUtils::build_complete_struct_type(struct_flags_ClientID, header_ClientID, member_seq_ClientID);
-        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_ClientID, type_name_ClientID.to_string(), type_ids_ClientID))
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "ClientID already registered in TypeObjectRegistry for a different type.");
-        }
-    }
-}
-// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_CalculatorRequestType_type_identifier(
         TypeIdentifierPair& type_ids_CalculatorRequestType)
 {
@@ -244,11 +144,21 @@ void register_CalculatorRequestType_type_identifier(
             ReturnCode_t return_code_client_id {eprosima::fastdds::dds::RETCODE_OK};
             return_code_client_id =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "ClientID", type_ids_client_id);
+                "anonymous_string_unbounded", type_ids_client_id);
 
             if (eprosima::fastdds::dds::RETCODE_OK != return_code_client_id)
             {
-            ::register_ClientID_type_identifier(type_ids_client_id);
+                {
+                    SBound bound = 0;
+                    StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
+                            "anonymous_string_unbounded", type_ids_client_id))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
+                    }
+                }
             }
             StructMemberFlag member_flags_client_id = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, true, false);
@@ -409,11 +319,21 @@ void register_CalculatorReplyType_type_identifier(
             ReturnCode_t return_code_client_id {eprosima::fastdds::dds::RETCODE_OK};
             return_code_client_id =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "ClientID", type_ids_client_id);
+                "anonymous_string_unbounded", type_ids_client_id);
 
             if (eprosima::fastdds::dds::RETCODE_OK != return_code_client_id)
             {
-            ::register_ClientID_type_identifier(type_ids_client_id);
+                {
+                    SBound bound = 0;
+                    StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
+                            "anonymous_string_unbounded", type_ids_client_id))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
+                    }
+                }
             }
             StructMemberFlag member_flags_client_id = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, true, false);

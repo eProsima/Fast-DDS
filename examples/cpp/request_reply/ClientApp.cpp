@@ -68,6 +68,8 @@ ClientApp::ClientApp(
     , request_writer_(nullptr)
     , reply_type_(nullptr)
     , reply_topic_(nullptr)
+    , reply_cf_topic_(nullptr)
+    , reply_topic_filter_expression_("")
     , subscriber_(nullptr)
     , reply_reader_(nullptr)
     , stop_(false)
@@ -89,6 +91,9 @@ ClientApp::~ClientApp()
         // Delete DomainParticipant
         DomainParticipantFactory::get_shared_instance()->delete_participant(participant_);
     }
+
+    server_matched_status_.clear();
+    reply_topic_filter_parameters_.clear();
 }
 
 void ClientApp::run()
@@ -265,6 +270,18 @@ void ClientApp::create_reply_entities(
     // Create the reply topic
     reply_topic_ = create_topic<CalculatorReplyTypePubSubType>("rr/" + service_name, reply_type_);
 
+    reply_topic_filter_expression_ = "client_id = '" +
+            TypeConverter::to_calculator_type(participant_->guid().guidPrefix) + "'";
+
+    reply_cf_topic_ = participant_->create_contentfilteredtopic("rr/" + service_name + "_cft", reply_topic_,
+                    reply_topic_filter_expression_,
+                    reply_topic_filter_parameters_);
+
+    if (nullptr == reply_cf_topic_)
+    {
+        throw std::runtime_error("Failed to create CFT");
+    }
+
     // Create the subscriber
     SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
 
@@ -288,7 +305,7 @@ void ClientApp::create_reply_entities(
         throw std::runtime_error("Failed to get default datareader qos");
     }
 
-    reply_reader_ = subscriber_->create_datareader(reply_topic_, reader_qos, this, StatusMask::all());
+    reply_reader_ = subscriber_->create_datareader(reply_cf_topic_, reader_qos, this, StatusMask::all());
 
     if (nullptr == reply_reader_)
     {

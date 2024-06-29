@@ -24,6 +24,7 @@
 #include <condition_variable>
 #include <mutex>
 #include <string>
+#include <vector>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
@@ -32,6 +33,7 @@
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/topic/ContentFilteredTopic.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
@@ -113,6 +115,12 @@ private:
     TypeSupport reply_type_;
 
     Topic* reply_topic_;
+
+    ContentFilteredTopic* reply_cf_topic_;
+
+    std::string reply_topic_filter_expression_;
+
+    std::vector<std::string> reply_topic_filter_parameters_;
 
     Subscriber* subscriber_;
 

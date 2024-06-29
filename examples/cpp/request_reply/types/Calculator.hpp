@@ -22,9 +22,10 @@
 #ifndef FAST_DDS_GENERATED__CALCULATOR_HPP
 #define FAST_DDS_GENERATED__CALCULATOR_HPP
 
-#include <array>
 #include <cstdint>
+#include <string>
 #include <utility>
+#include <fastcdr/cdr/fixed_size_string.hpp>
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -60,139 +61,6 @@ enum class CalculatorOperationType : int32_t
     SUBTRACTION,
     MULTIPLICATION,
     DIVISION
-};
-/*!
- * @brief This class represents the structure ClientID defined by the user in the IDL file.
- * @ingroup Calculator
- */
-class ClientID
-{
-public:
-
-    /*!
-     * @brief Default constructor.
-     */
-    eProsima_user_DllExport ClientID()
-    {
-    }
-
-    /*!
-     * @brief Default destructor.
-     */
-    eProsima_user_DllExport ~ClientID()
-    {
-    }
-
-    /*!
-     * @brief Copy constructor.
-     * @param x Reference to the object ClientID that will be copied.
-     */
-    eProsima_user_DllExport ClientID(
-            const ClientID& x)
-    {
-                    m_value = x.m_value;
-
-    }
-
-    /*!
-     * @brief Move constructor.
-     * @param x Reference to the object ClientID that will be copied.
-     */
-    eProsima_user_DllExport ClientID(
-            ClientID&& x) noexcept
-    {
-        m_value = std::move(x.m_value);
-    }
-
-    /*!
-     * @brief Copy assignment.
-     * @param x Reference to the object ClientID that will be copied.
-     */
-    eProsima_user_DllExport ClientID& operator =(
-            const ClientID& x)
-    {
-
-                    m_value = x.m_value;
-
-        return *this;
-    }
-
-    /*!
-     * @brief Move assignment.
-     * @param x Reference to the object ClientID that will be copied.
-     */
-    eProsima_user_DllExport ClientID& operator =(
-            ClientID&& x) noexcept
-    {
-
-        m_value = std::move(x.m_value);
-        return *this;
-    }
-
-    /*!
-     * @brief Comparison operator.
-     * @param x ClientID object to compare.
-     */
-    eProsima_user_DllExport bool operator ==(
-            const ClientID& x) const
-    {
-        return (m_value == x.m_value);
-    }
-
-    /*!
-     * @brief Comparison operator.
-     * @param x ClientID object to compare.
-     */
-    eProsima_user_DllExport bool operator !=(
-            const ClientID& x) const
-    {
-        return !(*this == x);
-    }
-
-    /*!
-     * @brief This function copies the value in member value
-     * @param _value New value to be copied in member value
-     */
-    eProsima_user_DllExport void value(
-            const std::array<uint8_t, 12>& _value)
-    {
-        m_value = _value;
-    }
-
-    /*!
-     * @brief This function moves the value in member value
-     * @param _value New value to be moved in member value
-     */
-    eProsima_user_DllExport void value(
-            std::array<uint8_t, 12>&& _value)
-    {
-        m_value = std::move(_value);
-    }
-
-    /*!
-     * @brief This function returns a constant reference to member value
-     * @return Constant reference to member value
-     */
-    eProsima_user_DllExport const std::array<uint8_t, 12>& value() const
-    {
-        return m_value;
-    }
-
-    /*!
-     * @brief This function returns a reference to member value
-     * @return Reference to member value
-     */
-    eProsima_user_DllExport std::array<uint8_t, 12>& value()
-    {
-        return m_value;
-    }
-
-
-
-private:
-
-    std::array<uint8_t, 12> m_value{0};
-
 };
 /*!
  * @brief This class represents the structure CalculatorRequestType defined by the user in the IDL file.
@@ -308,7 +176,7 @@ public:
      * @param _client_id New value to be copied in member client_id
      */
     eProsima_user_DllExport void client_id(
-            const ClientID& _client_id)
+            const std::string& _client_id)
     {
         m_client_id = _client_id;
     }
@@ -318,7 +186,7 @@ public:
      * @param _client_id New value to be moved in member client_id
      */
     eProsima_user_DllExport void client_id(
-            ClientID&& _client_id)
+            std::string&& _client_id)
     {
         m_client_id = std::move(_client_id);
     }
@@ -327,7 +195,7 @@ public:
      * @brief This function returns a constant reference to member client_id
      * @return Constant reference to member client_id
      */
-    eProsima_user_DllExport const ClientID& client_id() const
+    eProsima_user_DllExport const std::string& client_id() const
     {
         return m_client_id;
     }
@@ -336,7 +204,7 @@ public:
      * @brief This function returns a reference to member client_id
      * @return Reference to member client_id
      */
-    eProsima_user_DllExport ClientID& client_id()
+    eProsima_user_DllExport std::string& client_id()
     {
         return m_client_id;
     }
@@ -432,7 +300,7 @@ public:
 
 private:
 
-    ClientID m_client_id;
+    std::string m_client_id;
     CalculatorOperationType m_operation{CalculatorOperationType::ADDITION};
     int16_t m_x{0};
     int16_t m_y{0};
@@ -538,7 +406,7 @@ public:
      * @param _client_id New value to be copied in member client_id
      */
     eProsima_user_DllExport void client_id(
-            const ClientID& _client_id)
+            const std::string& _client_id)
     {
         m_client_id = _client_id;
     }
@@ -548,7 +416,7 @@ public:
      * @param _client_id New value to be moved in member client_id
      */
     eProsima_user_DllExport void client_id(
-            ClientID&& _client_id)
+            std::string&& _client_id)
     {
         m_client_id = std::move(_client_id);
     }
@@ -557,7 +425,7 @@ public:
      * @brief This function returns a constant reference to member client_id
      * @return Constant reference to member client_id
      */
-    eProsima_user_DllExport const ClientID& client_id() const
+    eProsima_user_DllExport const std::string& client_id() const
     {
         return m_client_id;
     }
@@ -566,7 +434,7 @@ public:
      * @brief This function returns a reference to member client_id
      * @return Reference to member client_id
      */
-    eProsima_user_DllExport ClientID& client_id()
+    eProsima_user_DllExport std::string& client_id()
     {
         return m_client_id;
     }
@@ -604,7 +472,7 @@ public:
 
 private:
 
-    ClientID m_client_id;
+    std::string m_client_id;
     int32_t m_result{0};
 
 };
