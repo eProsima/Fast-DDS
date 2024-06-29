@@ -23,7 +23,6 @@
 #include <iostream>
 #include <mutex>
 #include <stdexcept>
-#include <thread>
 
 #include <fastdds/dds/core/detail/DDSReturnCode.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
@@ -104,19 +103,29 @@ void ClientApp::run()
         std::unique_lock<std::mutex> lock(mtx_);
         cv_.wait(lock, [&]()
                 {
-                    return server_matched_status_.is_any_server_matched();
+                    return server_matched_status_.is_any_server_matched() || is_stopped();
                 });
     }
 
-    // Give some time for all connections to be matched on both ends
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-
-    if (!send_request())
+    if (!is_stopped())
     {
-        throw std::runtime_error("Failed to send request");
+        // Give some time for all connections to be matched on both ends
+        std::unique_lock<std::mutex> lock(mtx_);
+        cv_.wait_for(lock, std::chrono::seconds(1), [&]()
+                {
+                    return is_stopped();
+                });
     }
 
-    wait_for_reply();
+    if (!is_stopped())
+    {
+        if (!send_request())
+        {
+            throw std::runtime_error("Failed to send request");
+        }
+
+        wait_for_reply();
+    }
 }
 
 void ClientApp::stop()
