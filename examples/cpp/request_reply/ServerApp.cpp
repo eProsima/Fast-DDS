@@ -81,7 +81,7 @@ ServerApp::ServerApp(
     create_request_entities(service_name);
     create_reply_entities(service_name);
 
-    std::cout << "Server initialized with ID: " << participant_->guid().guidPrefix << std::endl;
+    request_reply_info("Server initialized with ID: " << participant_->guid().guidPrefix);
 }
 
 ServerApp::~ServerApp()
@@ -135,12 +135,12 @@ void ServerApp::on_publication_matched(
 
     if (info.current_count_change == 1)
     {
-        std::cout << "Remote reply reader matched with client " << client_guid_prefix << std::endl;
+        request_reply_info("Remote reply reader matched with client " << client_guid_prefix);
         client_matched_status_.match_reply_reader(client_guid_prefix, true);
     }
     else if (info.current_count_change == -1)
     {
-        std::cout << "Remote reply reader unmatched from client " << client_guid_prefix << std::endl;
+        request_reply_info("Remote reply reader unmatched from client " << client_guid_prefix);
         client_matched_status_.match_reply_reader(client_guid_prefix, false);
 
         // Remove old replies since no one is waiting for them
@@ -152,8 +152,8 @@ void ServerApp::on_publication_matched(
     }
     else
     {
-        std::cout << info.current_count_change
-                  << " is not a valid value for PublicationMatchedStatus current count change" << std::endl;
+        request_reply_error(info.current_count_change
+                << " is not a valid value for PublicationMatchedStatus current count change");
     }
 }
 
@@ -167,13 +167,13 @@ void ServerApp::on_subscription_matched(
 
     if (info.current_count_change == 1)
     {
-        std::cout << "Remote request writer matched with client " << client_guid_prefix << std::endl;
+        request_reply_info("Remote request writer matched with client " << client_guid_prefix);
         client_matched_status_.match_request_writer(client_guid_prefix, true);
 
     }
     else if (info.current_count_change == -1)
     {
-        std::cout << "Remote request writer unmatched from client " << client_guid_prefix << std::endl;
+        request_reply_info("Remote request writer unmatched from client " << client_guid_prefix);
         client_matched_status_.match_request_writer(client_guid_prefix, false);
 
         // Remove old replies since no one is waiting for them
@@ -185,8 +185,8 @@ void ServerApp::on_subscription_matched(
     }
     else
     {
-        std::cout << info.current_count_change
-                  << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
+        request_reply_error(
+            info.current_count_change << " is not a valid value for SubscriptionMatchedStatus current count change");
     }
 }
 
@@ -201,7 +201,7 @@ void ServerApp::on_data_available(
         if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
         {
             rtps::GuidPrefix_t client_guid_prefix = rtps::iHandle2GUID(info.publication_handle).guidPrefix;
-            std::cout << "Request received from client " << client_guid_prefix << std::endl;
+            request_reply_info("Request received from client " << client_guid_prefix);
 
             {
                 // Only lock to push the request into the queue so that the consumer thread gets
@@ -344,20 +344,19 @@ void ServerApp::reply_routine()
             requests_.pop();
 
             rtps::GuidPrefix_t client_guid_prefix = rtps::iHandle2GUID(request.info.publication_handle).guidPrefix;
-            std::cout << "Processing request from client " << client_guid_prefix << std::endl;
+            request_reply_info("Processing request from client " << client_guid_prefix);
 
             // If none to the client's endpoints are matched, ignore the request as the client is gone
             if (!client_matched_status_.is_fully_unmatched(client_guid_prefix))
             {
-                std::cout << "Ignoring request from already gone client " << client_guid_prefix << std::endl;
+                request_reply_info("Ignoring request from already gone client " << client_guid_prefix);
                 continue;
             }
 
             // If the request's client is not fully matched, save it for later
             if (!client_matched_status_.is_matched(client_guid_prefix))
             {
-                std::cout << "Client " << client_guid_prefix << " not fully matched, saving request for later" <<
-                    std::endl;
+                request_reply_info("Client " << client_guid_prefix << " not fully matched, saving request for later");
                 requests_.push(request);
             }
 
@@ -367,7 +366,7 @@ void ServerApp::reply_routine()
             // If the calculation fails, ignore the request, as the failure cause is a malformed request
             if (!calculate(*request.request, result))
             {
-                std::cerr << "Failed to calculate result for request from client " << client_guid_prefix << std::endl;
+                request_reply_error("Failed to calculate result for request from client " << client_guid_prefix);
                 continue;
             }
 
@@ -385,12 +384,12 @@ void ServerApp::reply_routine()
             if (!reply_writer_->write(&reply, write_params))
             {
                 // In case of failure, save the request for a later retry
-                std::cerr << "Failed to send reply to client " << client_guid_prefix << std::endl;
+                request_reply_error("Failed to send reply to client " << client_guid_prefix);
                 requests_.push(request);
             }
             else
             {
-                std::cout << "Reply sent to client " << client_guid_prefix << std::endl;
+                request_reply_info("Reply sent to client " << client_guid_prefix);
             }
         }
     }
@@ -423,7 +422,7 @@ bool ServerApp::calculate(
         {
             if (0 == request.y())
             {
-                std::cerr << "Division by zero request received" << std::endl;
+                request_reply_error("Division by zero request received");
                 success = false;
             }
             else
@@ -434,7 +433,7 @@ bool ServerApp::calculate(
         }
         default:
         {
-            std::cerr << "Unknown operation received" << std::endl;
+            request_reply_error("Unknown operation received");
             success = false;
             break;
         }

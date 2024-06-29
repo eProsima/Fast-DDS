@@ -23,11 +23,16 @@
 #include <algorithm>
 #include <array>
 #include <bitset>
+#include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <ctime>
+#include <iomanip>
+#include <iostream>
 #include <map>
 #include <string>
 
+#include <fastdds/dds/log/Colors.hpp>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
 #include "CLIParser.hpp"
@@ -232,6 +237,43 @@ struct TypeConverter
     }
 
 };
+
+struct Timestamp
+{
+    static std::string now()
+    {
+        // Get current time
+        auto now = std::chrono::system_clock::now();
+        auto time_t_now = std::chrono::system_clock::to_time_t(now);
+
+        // Convert to tm struct for local time
+        std::tm tm_now;
+#if defined(_WIN32) || defined(_WIN64)
+        localtime_s(&tm_now, &time_t_now);
+#else
+        localtime_r(&time_t_now, &tm_now);
+#endif // if defined(_WIN32) || defined(_WIN64)
+
+        // Format date and time
+        std::ostringstream oss;
+        oss << std::put_time(&tm_now, "%Y-%m-%dT%H:%M:%S");
+
+        // Add milliseconds
+        auto duration = now.time_since_epoch();
+        auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() % 1000;
+        oss << '.' << std::setfill('0') << std::setw(3) << milliseconds;
+
+        return oss.str();
+    }
+};
+
+#define request_reply_info(message) \
+    std::cout << C_B_WHITE << Timestamp::now() << C_B_GREEN << " [INFO] " << C_DEF \
+              << C_WHITE << message << C_DEF << std::endl
+
+#define request_reply_error(message) \
+    std::cerr << C_B_WHITE << Timestamp::now() << C_B_RED << " [ERROR] " << C_DEF \
+              << C_WHITE << message << C_DEF << std::endl
 
 } // namespace request_reply
 } // namespace examples

@@ -25,8 +25,7 @@
 #include <string>
 #include <thread>
 
-#include <fastdds/dds/log/Log.hpp>
-
+#include "app_utils.hpp"
 #include "Application.hpp"
 #include "CLIParser.hpp"
 
@@ -59,7 +58,7 @@ int main(
     }
     catch (const std::runtime_error& e)
     {
-        EPROSIMA_LOG_ERROR(app_name, e.what());
+        request_reply_error(e.what());
         ret = EXIT_FAILURE;
     }
 
@@ -69,8 +68,9 @@ int main(
 
         stop_app_handler = [&](int signum)
                 {
-                    std::cout << "\n" << CLIParser::parse_signal(signum) << " received, stopping " << app_name
-                              << " execution." << std::endl;
+                    request_reply_info(
+                        CLIParser::parse_signal(signum) << " received, stopping " << app_name << " execution.");
+
                     app->stop();
                 };
 
@@ -81,12 +81,10 @@ int main(
         signal(SIGHUP, signal_handler);
     #endif // _WIN32
 
-        std::cout << app_name << " running. Please press Ctrl+C to stop the "
-                  << app_name << " at any time." << std::endl;
+        request_reply_info(app_name << " running. Please press Ctrl+C to stop the " << app_name << " at any time.");
 
         thread.join();
     }
 
-    Log::Reset();
     return ret;
 }

@@ -80,7 +80,7 @@ ClientApp::ClientApp(
     create_request_entities(service_name);
     create_reply_entities(service_name);
 
-    std::cout << "Client initialized with ID: " << participant_->guid().guidPrefix << std::endl;
+    request_reply_info("Client initialized with ID: " << participant_->guid().guidPrefix);
 }
 
 ClientApp::~ClientApp()
@@ -135,19 +135,19 @@ void ClientApp::on_publication_matched(
 
     if (info.current_count_change == 1)
     {
-        std::cout << "Remote request reader matched." << std::endl;
+        request_reply_info("Remote request reader matched.");
 
         server_matched_status_.match_request_reader(server_guid_prefix, true);
     }
     else if (info.current_count_change == -1)
     {
-        std::cout << "Remote request reader unmatched." << std::endl;
+        request_reply_info("Remote request reader unmatched.");
         server_matched_status_.match_request_reader(server_guid_prefix, false);
     }
     else
     {
-        std::cout << info.current_count_change
-                  << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
+        request_reply_error(info.current_count_change
+                << " is not a valid value for SubscriptionMatchedStatus current count change");
     }
     cv_.notify_all();
 }
@@ -162,19 +162,19 @@ void ClientApp::on_subscription_matched(
 
     if (info.current_count_change == 1)
     {
-        std::cout << "Remote reply writer matched." << std::endl;
+        request_reply_info("Remote reply writer matched.");
 
         server_matched_status_.match_reply_writer(server_guid_prefix, true);
     }
     else if (info.current_count_change == -1)
     {
-        std::cout << "Remote reply writer unmatched." << std::endl;
+        request_reply_info("Remote reply writer unmatched.");
         server_matched_status_.match_reply_writer(server_guid_prefix, false);
     }
     else
     {
-        std::cout << info.current_count_change
-                  << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
+        request_reply_error(info.current_count_change
+                << " is not a valid value for SubscriptionMatchedStatus current count change");
     }
     cv_.notify_all();
 }
@@ -190,8 +190,9 @@ void ClientApp::on_data_available(
         if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
         {
             rtps::GuidPrefix_t server_guid_prefix = rtps::iHandle2GUID(info.publication_handle).guidPrefix;
-            std::cout << "Reply received from server " << server_guid_prefix
-                      << " with result: " << reply.result() << std::endl;
+            request_reply_info(
+                "Reply received from server " << server_guid_prefix << " with result: " << reply.result());
+
             stop();
             break;
         }
@@ -327,7 +328,7 @@ bool ClientApp::send_request()
     request.x(request_input_.x);
     request.y(request_input_.y);
 
-    std::cout << "Sending request" << std::endl;
+    request_reply_info("Sending request");
 
     return request_writer_->write(&request);
 }
