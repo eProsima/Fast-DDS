@@ -35,6 +35,7 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
+#include <fastdds/rtps/common/WriteParams.hpp>
 
 #include "types/Calculator.hpp"
 #include "types/CalculatorPubSubTypes.hpp"
@@ -339,9 +340,12 @@ bool ClientApp::send_request()
     request.x(request_input_.x);
     request.y(request_input_.y);
 
-    bool ret = request_writer_->write(&request);
 
-    request_reply_info("Request sent: '" << request_input_.str() << "'");
+    rtps::WriteParams wparams;
+    bool ret = request_writer_->write(&request, wparams);
+
+    request_reply_info(
+        "Request sent with ID '" << wparams.sample_identity().sequence_number() << "': '" << request_input_.str());
 
     return ret;
 }

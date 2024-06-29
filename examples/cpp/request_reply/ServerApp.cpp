@@ -38,6 +38,7 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
+#include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/common/WriteParams.hpp>
 
 #include "types/Calculator.hpp"
@@ -201,7 +202,9 @@ void ServerApp::on_data_available(
         if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
         {
             rtps::GuidPrefix_t client_guid_prefix = rtps::iHandle2GUID(info.publication_handle).guidPrefix;
-            request_reply_info("Request received from client " << client_guid_prefix);
+            rtps::SequenceNumber_t request_id = info.sample_identity.sequence_number();
+
+            request_reply_info("Request with ID '" << request_id << "' received from client " << client_guid_prefix);
 
             {
                 // Only lock to push the request into the queue so that the consumer thread gets
@@ -377,19 +380,22 @@ void ServerApp::reply_routine()
 
             // Prepare the WriteParams to link the reply to the request
             rtps::WriteParams write_params;
+            rtps::SequenceNumber_t request_id = request.info.sample_identity.sequence_number();
             write_params.related_sample_identity().writer_guid(request.info.sample_identity.writer_guid());
-            write_params.related_sample_identity().sequence_number(request.info.sample_identity.sequence_number());
+            write_params.related_sample_identity().sequence_number(request_id);
 
             // Send the reply
             if (!reply_writer_->write(&reply, write_params))
             {
                 // In case of failure, save the request for a later retry
-                request_reply_error("Failed to send reply to client " << client_guid_prefix);
+                request_reply_error(
+                    "Failed to send reply to request with ID '" << request_id << "' to client " << client_guid_prefix);
                 requests_.push(request);
             }
             else
             {
-                request_reply_info("Reply sent to client " << client_guid_prefix);
+                request_reply_info(
+                    "Reply to request with ID '" << request_id << "' sent to client " << client_guid_prefix);
             }
         }
     }
