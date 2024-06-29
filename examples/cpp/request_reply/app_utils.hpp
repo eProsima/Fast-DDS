@@ -163,6 +163,22 @@ public:
         return is_client_unmatched;
     }
 
+    bool no_client_matched()
+    {
+        bool no_client_matched = true;
+
+        for (const auto& status : matched_status_)
+        {
+            if (status.second.any())
+            {
+                no_client_matched = false;
+                break;
+            }
+        }
+
+        return no_client_matched;
+    }
+
     void clear()
     {
         matched_status_.clear();

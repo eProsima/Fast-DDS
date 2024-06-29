@@ -142,6 +142,13 @@ void ServerApp::on_publication_matched(
     {
         std::cout << "Remote reply reader unmatched from client " << client_guid_prefix << std::endl;
         client_matched_status_.match_reply_reader(client_guid_prefix, false);
+
+        // Remove old replies since no one is waiting for them
+        if (client_matched_status_.no_client_matched())
+        {
+            std::size_t removed;
+            reply_writer_->clear_history(&removed);
+        }
     }
     else
     {
@@ -168,6 +175,13 @@ void ServerApp::on_subscription_matched(
     {
         std::cout << "Remote request writer unmatched from client " << client_guid_prefix << std::endl;
         client_matched_status_.match_request_writer(client_guid_prefix, false);
+
+        // Remove old replies since no one is waiting for them
+        if (client_matched_status_.no_client_matched())
+        {
+            std::size_t removed;
+            reply_writer_->clear_history(&removed);
+        }
     }
     else
     {
