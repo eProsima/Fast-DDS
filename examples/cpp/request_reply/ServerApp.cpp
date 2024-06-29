@@ -19,13 +19,18 @@
 
 #include "ServerApp.hpp"
 
+#include <cstdint>
 #include <iostream>
+#include <memory>
 #include <mutex>
 #include <stdexcept>
+#include <thread>
 
 #include <fastdds/dds/core/detail/DDSReturnCode.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantExtendedQos.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
@@ -33,6 +38,7 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
+#include <fastdds/rtps/common/WriteParams.hpp>
 
 #include "Calculator.hpp"
 #include "CalculatorPubSubTypes.hpp"
@@ -65,14 +71,27 @@ ServerApp::ServerApp(
     , reply_topic_(nullptr)
     , publisher_(nullptr)
     , reply_writer_(nullptr)
+    , stop_(false)
 {
+    // Spawn the reply thread
+    reply_thread_ = std::thread(&ServerApp::reply_routine, this);
+
+    // Create the DDS entities
     create_participant();
     create_request_entities(service_name);
     create_reply_entities(service_name);
+
+    std::cout << "Server initialized with ID: " << participant_->guid().guidPrefix << std::endl;
 }
 
 ServerApp::~ServerApp()
 {
+    // Join reply thread
+    if (reply_thread_.joinable())
+    {
+        reply_thread_.join();
+    }
+
     if (nullptr != participant_)
     {
         // Delete DDS entities contained within the DomainParticipant
@@ -103,7 +122,7 @@ void ServerApp::run()
 void ServerApp::stop()
 {
     stop_.store(true);
-    cv_.notify_one();
+    cv_.notify_all();
 }
 
 void ServerApp::on_publication_matched(
@@ -116,12 +135,12 @@ void ServerApp::on_publication_matched(
 
     if (info.current_count_change == 1)
     {
-        std::cout << "Remote reply reader matched." << std::endl;
+        std::cout << "Remote reply reader matched with client " << client_guid_prefix << std::endl;
         client_matched_status_.match_reply_reader(client_guid_prefix, true);
     }
     else if (info.current_count_change == -1)
     {
-        std::cout << "Remote reply reader unmatched." << std::endl;
+        std::cout << "Remote reply reader unmatched from client " << client_guid_prefix << std::endl;
         client_matched_status_.match_reply_reader(client_guid_prefix, false);
     }
     else
@@ -141,13 +160,13 @@ void ServerApp::on_subscription_matched(
 
     if (info.current_count_change == 1)
     {
-        std::cout << "Remote request writer matched." << std::endl;
+        std::cout << "Remote request writer matched with client " << client_guid_prefix << std::endl;
         client_matched_status_.match_request_writer(client_guid_prefix, true);
 
     }
     else if (info.current_count_change == -1)
     {
-        std::cout << "Remote request writer unmatched." << std::endl;
+        std::cout << "Remote request writer unmatched from client " << client_guid_prefix << std::endl;
         client_matched_status_.match_request_writer(client_guid_prefix, false);
     }
     else
@@ -160,10 +179,6 @@ void ServerApp::on_subscription_matched(
 void ServerApp::on_data_available(
         DataReader* reader)
 {
-    bool new_request = false;
-
-    std::lock_guard<std::mutex> lock(mtx_);
-
     SampleInfo info;
     auto request = std::make_shared<CalculatorRequestType>();
 
@@ -171,15 +186,17 @@ void ServerApp::on_data_available(
     {
         if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
         {
-            std::cout << "Request received from client!" << std::endl;
-            requests_.push({info, request});
-            new_request = true;
-        }
-    }
+            rtps::GuidPrefix_t client_guid_prefix = rtps::iHandle2GUID(info.publication_handle).guidPrefix;
+            std::cout << "Request received from client " << client_guid_prefix << std::endl;
 
-    if (new_request)
-    {
-        cv_.notify_one();
+            {
+                // Only lock to push the request into the queue so that the consumer thread gets
+                // a chance to process it in between subsequent takes
+                std::lock_guard<std::mutex> lock(mtx_);
+                requests_.push({info, request});
+                cv_.notify_all();
+            }
+        }
     }
 }
 
@@ -292,6 +309,124 @@ void ServerApp::create_reply_entities(
 bool ServerApp::is_stopped()
 {
     return stop_.load();
+}
+
+void ServerApp::reply_routine()
+{
+    while (!is_stopped())
+    {
+        // Wait for a request to arrive
+        std::unique_lock<std::mutex> lock(mtx_);
+
+        cv_.wait(lock, [this]() -> bool
+                {
+                    return requests_.size() > 0 || is_stopped();
+                });
+
+        if (!is_stopped())
+        {
+            // Process one request per iteration
+            Request request = requests_.front();
+            requests_.pop();
+
+            rtps::GuidPrefix_t client_guid_prefix = rtps::iHandle2GUID(request.info.publication_handle).guidPrefix;
+            std::cout << "Processing request from client " << client_guid_prefix << std::endl;
+
+            // If none to the client's endpoints are matched, ignore the request as the client is gone
+            if (!client_matched_status_.is_fully_unmatched(client_guid_prefix))
+            {
+                std::cout << "Ignoring request from already gone client " << client_guid_prefix << std::endl;
+                continue;
+            }
+
+            // If the request's client is not fully matched, save it for later
+            if (!client_matched_status_.is_matched(client_guid_prefix))
+            {
+                std::cout << "Client " << client_guid_prefix << " not fully matched, saving request for later" <<
+                    std::endl;
+                requests_.push(request);
+            }
+
+            // Calculate the result
+            std::int32_t result;
+
+            // If the calculation fails, ignore the request, as the failure cause is a malformed request
+            if (!calculate(*request.request, result))
+            {
+                std::cerr << "Failed to calculate result for request from client " << client_guid_prefix << std::endl;
+                continue;
+            }
+
+            // Prepare the reply
+            CalculatorReplyType reply;
+            reply.client_id(request.request->client_id());
+            reply.result(result);
+
+            // Prepare the WriteParams to link the reply to the request
+            rtps::WriteParams write_params;
+            write_params.related_sample_identity().writer_guid(request.info.sample_identity.writer_guid());
+            write_params.related_sample_identity().sequence_number(request.info.sample_identity.sequence_number());
+
+            // Send the reply
+            if (!reply_writer_->write(&reply, write_params))
+            {
+                // In case of failure, save the request for a later retry
+                std::cerr << "Failed to send reply to client " << client_guid_prefix << std::endl;
+                requests_.push(request);
+            }
+            else
+            {
+                std::cout << "Reply sent to client " << client_guid_prefix << std::endl;
+            }
+        }
+    }
+}
+
+bool ServerApp::calculate(
+        const CalculatorRequestType& request,
+        std::int32_t& result)
+{
+    bool success = true;
+
+    switch (request.operation())
+    {
+        case CalculatorOperationType::ADDITION:
+        {
+            result = request.x() + request.y();
+            break;
+        }
+        case CalculatorOperationType::SUBTRACTION:
+        {
+            result = request.x() - request.y();
+            break;
+        }
+        case CalculatorOperationType::MULTIPLICATION:
+        {
+            result = request.x() * request.y();
+            break;
+        }
+        case CalculatorOperationType::DIVISION:
+        {
+            if (0 == request.y())
+            {
+                std::cerr << "Division by zero request received" << std::endl;
+                success = false;
+            }
+            else
+            {
+                result = request.x() / request.y();
+            }
+            break;
+        }
+        default:
+        {
+            std::cerr << "Unknown operation received" << std::endl;
+            success = false;
+            break;
+        }
+    }
+
+    return success;
 }
 
 /******* HELPER FUNCTIONS DEFINITIONS *******/

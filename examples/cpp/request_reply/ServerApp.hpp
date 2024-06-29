@@ -22,10 +22,12 @@
 
 #include <atomic>
 #include <condition_variable>
+#include <cstdint>
 #include <memory>
 #include <mutex>
 #include <queue>
 #include <string>
+#include <thread>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
@@ -95,6 +97,12 @@ private:
 
     bool is_stopped();
 
+    void reply_routine();
+
+    bool calculate(
+            const CalculatorRequestType& request,
+            std::int32_t& result);
+
     DomainParticipant* participant_;
 
     TypeSupport request_type_;
@@ -128,6 +136,8 @@ private:
     };
 
     std::queue<Request> requests_;
+
+    std::thread reply_thread_;
 
 };
 

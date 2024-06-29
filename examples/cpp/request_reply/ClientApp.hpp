@@ -20,6 +20,7 @@
 #ifndef FASTDDS_EXAMPLES_CPP_REQUEST_REPLY__CLIENTAPP_HPP
 #define FASTDDS_EXAMPLES_CPP_REQUEST_REPLY__CLIENTAPP_HPP
 
+#include <atomic>
 #include <condition_variable>
 #include <mutex>
 #include <string>
@@ -93,6 +94,10 @@ private:
 
     bool send_request();
 
+    bool is_stopped();
+
+    void wait_for_reply();
+
     RequestInput request_input_;
 
     DomainParticipant* participant_;
@@ -118,6 +123,8 @@ private:
     std::condition_variable cv_;
 
     RemoteServerMatchedStatus server_matched_status_;
+
+    std::atomic<bool> stop_;
 };
 
 template<>

@@ -19,6 +19,7 @@
 
 #include "ClientApp.hpp"
 
+#include <iostream>
 #include <mutex>
 #include <stdexcept>
 
@@ -29,6 +30,7 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
@@ -68,10 +70,13 @@ ClientApp::ClientApp(
     , reply_topic_(nullptr)
     , subscriber_(nullptr)
     , reply_reader_(nullptr)
+    , stop_(false)
 {
     create_participant();
     create_request_entities(service_name);
     create_reply_entities(service_name);
+
+    std::cout << "Client initialized with ID: " << participant_->guid().guidPrefix << std::endl;
 }
 
 ClientApp::~ClientApp()
@@ -88,20 +93,26 @@ ClientApp::~ClientApp()
 
 void ClientApp::run()
 {
-    std::unique_lock<std::mutex> lock(mtx_);
-    cv_.wait(lock, [&]()
-            {
-                return server_matched_status_.is_any_server_matched();
-            });
+    {
+        std::unique_lock<std::mutex> lock(mtx_);
+        cv_.wait(lock, [&]()
+                {
+                    return server_matched_status_.is_any_server_matched();
+                });
+    }
 
     if (!send_request())
     {
         throw std::runtime_error("Failed to send request");
     }
+
+    wait_for_reply();
 }
 
 void ClientApp::stop()
 {
+    stop_.store(true);
+    cv_.notify_all();
 }
 
 void ClientApp::on_publication_matched(
@@ -128,7 +139,7 @@ void ClientApp::on_publication_matched(
         std::cout << info.current_count_change
                   << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
     }
-    cv_.notify_one();
+    cv_.notify_all();
 }
 
 void ClientApp::on_subscription_matched(
@@ -155,13 +166,26 @@ void ClientApp::on_subscription_matched(
         std::cout << info.current_count_change
                   << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
     }
-    cv_.notify_one();
+    cv_.notify_all();
 }
 
 void ClientApp::on_data_available(
         DataReader* reader)
 {
-    static_cast<void>(reader);
+    SampleInfo info;
+    CalculatorReplyType reply;
+
+    while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(&reply, &info)))
+    {
+        if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
+        {
+            rtps::GuidPrefix_t server_guid_prefix = rtps::iHandle2GUID(info.publication_handle).guidPrefix;
+            std::cout << "Reply received from server " << server_guid_prefix
+                      << " with result: " << reply.result() << std::endl;
+            stop();
+            break;
+        }
+    }
 }
 
 void ClientApp::create_participant()
@@ -284,6 +308,20 @@ bool ClientApp::send_request()
     std::cout << "Sending request" << std::endl;
 
     return request_writer_->write(&request);
+}
+
+bool ClientApp::is_stopped()
+{
+    return stop_.load();
+}
+
+void ClientApp::wait_for_reply()
+{
+    std::unique_lock<std::mutex> lock(mtx_);
+    cv_.wait(lock, [&]()
+            {
+                return is_stopped();
+            });
 }
 
 /******* HELPER FUNCTIONS DEFINITIONS *******/

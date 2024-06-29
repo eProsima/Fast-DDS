@@ -148,6 +148,21 @@ public:
         return is_client_matched;
     }
 
+    bool is_fully_unmatched(
+            const rtps::GuidPrefix_t& guid_prefix)
+    {
+        bool is_client_unmatched = false;
+
+        auto status = matched_status_.find(guid_prefix);
+
+        if (status != matched_status_.end())
+        {
+            is_client_unmatched = !status->second.none();
+        }
+
+        return is_client_unmatched;
+    }
+
     void clear()
     {
         matched_status_.clear();
