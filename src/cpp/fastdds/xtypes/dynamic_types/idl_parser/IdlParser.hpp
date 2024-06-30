@@ -489,13 +489,17 @@ struct action<char_type>
         {
             case Context::CHAR:
                 state["type"] = "char";
+                break;
             case Context::UINT8:
                 state["type"] = "uint8";
+                break;
             case Context::INT8:
                 state["type"] = "int8";
+                break;
             default:
                 EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid char type " << ctx->char_translation);
                 state["type"] = "char";
+                break;
         }
     }
 
@@ -515,11 +519,14 @@ struct action<wide_char_type>
         {
             case Context::WCHAR_T:
                 state["type"] = "wchar";
+                break;
             case Context::CHAR16_T:
                 state["type"] = "char16";
+                break;
             default:
                 EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid wchar type " << ctx->char_translation);
                 state["type"] = "wchar";
+                break;
         }
     }
 
@@ -1409,10 +1416,11 @@ struct action<typedef_dcl>
         DynamicType::_ref_type alias_type = ctx->get_type(state, state["type"]);
         DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
         TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+        type_descriptor->kind(TK_ALIAS);
+        type_descriptor->name(alias_name);
         if (sizes_str.empty())
         {
-            type_descriptor->kind(TK_ALIAS);
-            type_descriptor->name(alias_name);
+            type_descriptor->base_type(alias_type);
         }
         else
         {
@@ -1421,9 +1429,8 @@ struct action<typedef_dcl>
             {
                 sizes.push_back(static_cast<uint32_t>(std::stoul(size)));
             }
-            type_descriptor->kind(TK_ARRAY);
-            type_descriptor->element_type(alias_type);
-            type_descriptor->bound(sizes);
+            DynamicTypeBuilder::_ref_type array_builder {factory->create_array_type(alias_type, sizes)};
+            type_descriptor->base_type(array_builder->build());
         }
 
         DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
