@@ -20,7 +20,7 @@
 #define FASTDDS_ENFORCE_LOG_INFO
 
 #include <DynamicTypeBuilderFactoryImpl.hpp>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <iostream>
 
