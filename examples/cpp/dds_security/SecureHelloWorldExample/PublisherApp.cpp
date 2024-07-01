@@ -36,7 +36,7 @@ namespace examples {
 namespace hello_world {
 
 PublisherApp::PublisherApp(
-        const CLIParser::publisher_config& config,
+        const CLIParser::entity_config& config,
         const std::string& topic_name)
     : participant_(nullptr)
     , publisher_(nullptr)

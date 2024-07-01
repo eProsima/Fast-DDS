@@ -13,19 +13,17 @@
 // limitations under the License.
 
 /**
- * @file WaitsetSubscriberApp.hpp
+ * @file SubscriberApp.hpp
  *
  */
 
-#ifndef _FASTDDS_HELLO_WORLD_WAITSET_SUBSCRIBER_APP_HPP_
-#define _FASTDDS_HELLO_WORLD_WAITSET_SUBSCRIBER_APP_HPP_
+#ifndef _FASTDDS_HELLO_WORLD_LISTENER_SUBSCRIBER_APP_HPP_
+#define _FASTDDS_HELLO_WORLD_LISTENER_SUBSCRIBER_APP_HPP_
 
-#include <fastdds/dds/core/condition/GuardCondition.hpp>
-#include <fastdds/dds/core/condition/WaitSet.hpp>
-#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
+#include <condition_variable>
+
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
-#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include "CLIParser.hpp"
@@ -39,15 +37,24 @@ namespace fastdds {
 namespace examples {
 namespace hello_world {
 
-class WaitsetSubscriberApp : public Application
+class SubscriberApp : public Application,  public DataReaderListener
 {
 public:
 
-    WaitsetSubscriberApp(
-            const CLIParser::subscriber_config& config,
+    SubscriberApp(
+            const CLIParser::entity_config& config,
             const std::string& topic_name);
 
-    ~WaitsetSubscriberApp();
+    ~SubscriberApp();
+
+    //! Subscription callback
+    void on_data_available(
+            DataReader* reader) override;
+
+    //! Subscriber matched method
+    void on_subscription_matched(
+            DataReader* reader,
+            const SubscriptionMatchedStatus& info) override;
 
     //! Run subscriber
     void run() override;
@@ -72,15 +79,15 @@ private:
 
     TypeSupport type_;
 
-    WaitSet wait_set_;
-
     uint16_t samples_;
 
     uint16_t received_samples_;
 
     std::atomic<bool> stop_;
 
-    GuardCondition terminate_condition_;
+    mutable std::mutex terminate_cv_mtx_;
+
+    std::condition_variable terminate_cv_;
 };
 
 } // namespace hello_world
@@ -88,4 +95,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_HELLO_WORLD_WAITSET_SUBSCRIBER_APP_HPP_ */
+#endif /* _FASTDDS_HELLO_WORLD_LISTENER_SUBSCRIBER_APP_HPP_ */

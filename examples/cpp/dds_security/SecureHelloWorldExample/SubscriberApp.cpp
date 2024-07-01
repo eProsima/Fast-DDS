@@ -13,17 +13,15 @@
 // limitations under the License.
 
 /**
- * @file WaitsetSubscriberApp.cpp
+ * @file ListenerSubscriber.cpp
  *
  */
 
-#include "WaitsetSubscriberApp.hpp"
+#include "SubscriberApp.hpp"
 
 #include <condition_variable>
 #include <stdexcept>
 
-#include <fastdds/dds/core/condition/GuardCondition.hpp>
-#include <fastdds/dds/core/condition/WaitSet.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
@@ -32,8 +30,8 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 
-#include "HelloWorldPubSubTypes.h"
 #include "CLIParser.hpp"
+#include "HelloWorldPubSubTypes.h"
 #include "Application.hpp"
 
 using namespace eprosima::fastdds::dds;
@@ -43,8 +41,8 @@ namespace fastdds {
 namespace examples {
 namespace hello_world {
 
-WaitsetSubscriberApp::WaitsetSubscriberApp(
-        const CLIParser::subscriber_config& config,
+SubscriberApp::SubscriberApp(
+        const CLIParser::entity_config& config,
         const std::string& topic_name)
     : participant_(nullptr)
     , subscriber_(nullptr)
@@ -56,6 +54,7 @@ WaitsetSubscriberApp::WaitsetSubscriberApp(
     , stop_(false)
 {
     // Create the participant
+
     auto factory = DomainParticipantFactory::get_instance();
     participant_ = factory->create_participant_with_default_profile(nullptr, StatusMask::none());
     if (participant_ == nullptr)
@@ -87,18 +86,14 @@ WaitsetSubscriberApp::WaitsetSubscriberApp(
     // Create the reader
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
     subscriber_->get_default_datareader_qos(reader_qos);
-    reader_ = subscriber_->create_datareader(topic_, reader_qos, nullptr, StatusMask::all());
+    reader_ = subscriber_->create_datareader(topic_, reader_qos, this, StatusMask::all());
     if (reader_ == nullptr)
     {
         throw std::runtime_error("DataReader initialization failed");
     }
-
-    // Prepare a wait-set
-    wait_set_.attach_condition(reader_->get_statuscondition());
-    wait_set_.attach_condition(terminate_condition_);
 }
 
-WaitsetSubscriberApp::~WaitsetSubscriberApp()
+SubscriberApp::~SubscriberApp()
 {
     if (nullptr != participant_)
     {
@@ -110,76 +105,63 @@ WaitsetSubscriberApp::~WaitsetSubscriberApp()
     }
 }
 
-void WaitsetSubscriberApp::run()
+void SubscriberApp::on_subscription_matched(
+        DataReader* /*reader*/,
+        const SubscriptionMatchedStatus& info)
 {
-    while (!is_stopped())
+    if (info.current_count_change == 1)
     {
-        ConditionSeq triggered_conditions;
-        ReturnCode_t ret_code = wait_set_.wait(triggered_conditions, eprosima::fastdds::c_TimeInfinite);
-        if (RETCODE_OK != ret_code)
+        std::cout << "Subscriber matched." << std::endl;
+    }
+    else if (info.current_count_change == -1)
+    {
+        std::cout << "Subscriber unmatched." << std::endl;
+    }
+    else
+    {
+        std::cout << info.current_count_change
+                  << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
+    }
+}
+
+void SubscriberApp::on_data_available(
+        DataReader* reader)
+{
+    SampleInfo info;
+    while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(&hello_, &info)))
+    {
+        if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
         {
-            EPROSIMA_LOG_ERROR(SUBSCRIBER_WAITSET, "Error waiting for conditions");
-            continue;
-        }
-        for (Condition* cond : triggered_conditions)
-        {
-            StatusCondition* status_cond = dynamic_cast<StatusCondition*>(cond);
-            if (nullptr != status_cond)
+            received_samples_++;
+            // Print Hello world message data
+            std::cout << "Message: '" << hello_.message() << "' with index: '" << hello_.index()
+                      << "' RECEIVED" << std::endl;
+            if (samples_ > 0 && (received_samples_ >= samples_))
             {
-                Entity* entity = status_cond->get_entity();
-                StatusMask changed_statuses = entity->get_status_changes();
-                if (changed_statuses.is_active(StatusMask::subscription_matched()))
-                {
-                    SubscriptionMatchedStatus status_;
-                    reader_->get_subscription_matched_status(status_);
-                    if (status_.current_count_change == 1)
-                    {
-                        std::cout << "Waitset Subscriber matched." << std::endl;
-                    }
-                    else if (status_.current_count_change == -1)
-                    {
-                        std::cout << "Waitset Subscriber unmatched." << std::endl;
-                    }
-                    else
-                    {
-                        std::cout << status_.current_count_change <<
-                            " is not a valid value for SubscriptionMatchedStatus current count change" <<
-                            std::endl;
-                    }
-                }
-                if (changed_statuses.is_active(StatusMask::data_available()))
-                {
-                    SampleInfo info;
-                    while ((!is_stopped()) &&
-                            (RETCODE_OK == reader_->take_next_sample(&hello_, &info)))
-                    {
-                        if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
-                        {
-                            received_samples_++;
-                            // Print Hello world message data
-                            std::cout << "Message: '" << hello_.message() << "' with index: '"
-                                      << hello_.index() << "' RECEIVED" << std::endl;
-                            if (samples_ > 0 && (received_samples_ >= samples_))
-                            {
-                                stop();
-                            }
-                        }
-                    }
-                }
+                stop();
             }
         }
     }
 }
 
-bool WaitsetSubscriberApp::is_stopped()
+void SubscriberApp::run()
+{
+    std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
+    terminate_cv_.wait(lck, [&]
+            {
+                return is_stopped();
+            });
+}
+
+bool SubscriberApp::is_stopped()
 {
     return stop_.load();
 }
 
-void WaitsetSubscriberApp::stop()
+void SubscriberApp::stop()
 {
     stop_.store(true);
-    terminate_condition_.set_trigger_value(true);
+    terminate_cv_.notify_all();
 }
 
 } // namespace hello_world

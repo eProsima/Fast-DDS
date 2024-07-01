@@ -20,9 +20,8 @@
 #include "Application.hpp"
 
 #include "CLIParser.hpp"
-#include "ListenerSubscriberApp.hpp"
+#include "SubscriberApp.hpp"
 #include "PublisherApp.hpp"
-#include "WaitsetSubscriberApp.hpp"
 
 using namespace eprosima::fastdds::dds;
 
@@ -43,14 +42,7 @@ std::shared_ptr<Application> Application::make_app(
             entity = std::make_shared<PublisherApp>(config.pub_config, topic_name);
             break;
         case CLIParser::EntityKind::SUBSCRIBER:
-            if (config.sub_config.use_waitset)
-            {
-                entity = std::make_shared<WaitsetSubscriberApp>(config.sub_config, topic_name);
-            }
-            else
-            {
-                entity = std::make_shared<ListenerSubscriberApp>(config.sub_config, topic_name);
-            }
+            entity = std::make_shared<SubscriberApp>(config.sub_config, topic_name);
             break;
         case CLIParser::EntityKind::UNDEFINED:
         default:

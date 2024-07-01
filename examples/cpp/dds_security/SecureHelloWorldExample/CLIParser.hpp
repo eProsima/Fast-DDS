@@ -42,25 +42,19 @@ public:
         UNDEFINED
     };
 
-    //! Publisher configuration structure (shared for both publisher and subscriber applications)
-    struct publisher_config
+    //! Configuration structure (shared for both publisher and subscriber applications)
+    struct entity_config
     {
         uint16_t samples = 0;
         uint32_t interval = 100; // milliseconds
-    };
-
-    //! Subscriber application configuration structure
-    struct subscriber_config : public publisher_config
-    {
-        bool use_waitset = false;
     };
 
     //! Configuration structure for the application
     struct hello_world_config
     {
         CLIParser::EntityKind entity = CLIParser::EntityKind::UNDEFINED;
-        publisher_config pub_config;
-        subscriber_config sub_config;
+        entity_config pub_config;
+        entity_config sub_config;
     };
 
     /**
@@ -87,8 +81,6 @@ public:
         std::cout << "Publisher options:"                                                               << std::endl;
         std::cout << "  -i <num>, --interval <num>          Time between samples in milliseconds"       << std::endl;
         std::cout << "                                      [1 <= <num> <= 4294967]"                    << std::endl;
-        std::cout << "Subscriber options:"                                                              << std::endl;
-        std::cout << "  -w, --waitset                   Use waitset & read condition"                   << std::endl;
         std::exit(return_code);
     }
 
@@ -185,18 +177,6 @@ public:
                 else
                 {
                     EPROSIMA_LOG_ERROR(CLI_PARSER, "missing argument for " + arg);
-                    print_help(EXIT_FAILURE);
-                }
-            }
-            else if (arg == "-w" || arg == "--waitset")
-            {
-                if (config.entity == CLIParser::EntityKind::SUBSCRIBER)
-                {
-                    config.sub_config.use_waitset = true;
-                }
-                else
-                {
-                    EPROSIMA_LOG_ERROR(CLI_PARSER, "waitset can only be used with the subscriber entity");
                     print_help(EXIT_FAILURE);
                 }
             }
