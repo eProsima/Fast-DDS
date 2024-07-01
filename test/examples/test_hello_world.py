@@ -31,12 +31,10 @@ def test_hello_world():
         for line in out:
             if 'SENT' in line:
                 sent += 1
-                continue
 
             if 'RECEIVED' in line:
                 received += 1
-                continue
-
+                
         if sent != 0 and received != 0 and sent * 2 == received:
             ret = True
         else:
