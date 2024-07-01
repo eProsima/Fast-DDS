@@ -55,6 +55,7 @@ Forthcoming
   * Custom Content filter example
   * Delivery mechanisms example with SHM, UDP, TCP, data-sharing and intra-process mechanisms.
   * Discovery server example.
+  * Request-reply example to showcase RPC paradigms over Fast DDS.
 * Removed `TypeConsistencyQos` from DataReader, and included `TypeConsistencyEnforcementQosPolicy` and `DataRepresentationQosPolicy`
 * Added new `flow_controller_descriptor_list` XML configuration, remove `ThroughtputController`.
 * Migrate `#define`s within `BuiltinEndpoints.hpp` to namespaced `constexpr` variables.
