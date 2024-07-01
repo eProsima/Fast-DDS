@@ -124,6 +124,9 @@ void PublisherApp::on_publication_matched(
         eprosima::fastdds::dds::DataWriter*,
         const eprosima::fastdds::dds::PublicationMatchedStatus& info)
 {
+    // Protect access to matched_
+    std::lock_guard<std::mutex> matched_lock(mutex_);
+
     if (info.current_count_change == 1)
     {
         matched_ = static_cast<int16_t>(info.current_count);
@@ -148,10 +151,11 @@ void PublisherApp::run()
     FlowControl st;
 
     /* Initialize your structure here */
-    int samples_fast = 0;
-    int samples_slow = 0;
+    uint16_t samples_fast = 0;
+    uint16_t samples_slow = 0;
     while (!is_stopped() && ((samples_ == 0) || ((samples_fast < samples_) && (samples_slow < samples_))))
     {
+
         st.wasFast(false);
         if (publish(slow_writer_, samples_slow, st))
         {
@@ -175,7 +179,7 @@ void PublisherApp::run()
 
 bool PublisherApp::publish(
         DataWriter* writer_,
-        const uint16_t& samples,
+        uint16_t& samples,
         FlowControl msg)
 {
     bool ret = false;
