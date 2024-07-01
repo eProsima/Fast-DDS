@@ -347,7 +347,8 @@ bool ClientApp::send_request()
     bool ret = request_writer_->write(&request, wparams);
 
     request_reply_info("ClientApp",
-            "Request sent with ID '" << wparams.sample_identity().sequence_number() << "': '" << request_input_.str());
+            "Request sent with ID '" << wparams.sample_identity().sequence_number() <<
+            "': '" << request_input_.str() << "'");
 
     return ret;
 }
