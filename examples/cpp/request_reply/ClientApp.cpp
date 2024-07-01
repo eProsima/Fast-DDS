@@ -80,7 +80,7 @@ ClientApp::ClientApp(
     create_request_entities(service_name);
     create_reply_entities(service_name);
 
-    request_reply_info("Client initialized with ID: " << participant_->guid().guidPrefix);
+    request_reply_info("ClientApp", "Client initialized with ID: " << participant_->guid().guidPrefix);
 }
 
 ClientApp::~ClientApp()
@@ -100,7 +100,7 @@ ClientApp::~ClientApp()
 
 void ClientApp::run()
 {
-    request_reply_debug("Waiting for a server to be available");
+    request_reply_debug("ClientApp", "Waiting for a server to be available");
     {
         std::unique_lock<std::mutex> lock(mtx_);
         cv_.wait(lock, [&]()
@@ -111,7 +111,8 @@ void ClientApp::run()
 
     if (!is_stopped())
     {
-        request_reply_debug("One server is available. Waiting for some time to ensure matching on the server side");
+        request_reply_debug("ClientApp",
+                "One server is available. Waiting for some time to ensure matching on the server side");
 
         // TODO(eduponz): This wait should be conditioned to upcoming fully-matched API on the endpoints
         std::unique_lock<std::mutex> lock(mtx_);
@@ -148,18 +149,18 @@ void ClientApp::on_publication_matched(
 
     if (info.current_count_change == 1)
     {
-        request_reply_debug("Remote request reader matched.");
+        request_reply_debug("ClientApp", "Remote request reader matched.");
 
         server_matched_status_.match_request_reader(server_guid_prefix, true);
     }
     else if (info.current_count_change == -1)
     {
-        request_reply_debug("Remote request reader unmatched.");
+        request_reply_debug("ClientApp", "Remote request reader unmatched.");
         server_matched_status_.match_request_reader(server_guid_prefix, false);
     }
     else
     {
-        request_reply_error(info.current_count_change
+        request_reply_error("ClientApp", info.current_count_change
                 << " is not a valid value for SubscriptionMatchedStatus current count change");
     }
     cv_.notify_all();
@@ -175,18 +176,18 @@ void ClientApp::on_subscription_matched(
 
     if (info.current_count_change == 1)
     {
-        request_reply_debug("Remote reply writer matched.");
+        request_reply_debug("ClientApp", "Remote reply writer matched.");
 
         server_matched_status_.match_reply_writer(server_guid_prefix, true);
     }
     else if (info.current_count_change == -1)
     {
-        request_reply_debug("Remote reply writer unmatched.");
+        request_reply_debug("ClientApp", "Remote reply writer unmatched.");
         server_matched_status_.match_reply_writer(server_guid_prefix, false);
     }
     else
     {
-        request_reply_error(info.current_count_change
+        request_reply_error("ClientApp", info.current_count_change
                 << " is not a valid value for SubscriptionMatchedStatus current count change");
     }
     cv_.notify_all();
@@ -203,8 +204,8 @@ void ClientApp::on_data_available(
         if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
         {
             rtps::GuidPrefix_t server_guid_prefix = rtps::iHandle2GUID(info.publication_handle).guidPrefix;
-            request_reply_info(
-                "Reply received from server " << server_guid_prefix << " with result: " << reply.result());
+            request_reply_info("ClientApp",
+                    "Reply received from server " << server_guid_prefix << " with result: " << reply.result());
 
             stop();
             break;
@@ -345,8 +346,8 @@ bool ClientApp::send_request()
     rtps::WriteParams wparams;
     bool ret = request_writer_->write(&request, wparams);
 
-    request_reply_info(
-        "Request sent with ID '" << wparams.sample_identity().sequence_number() << "': '" << request_input_.str());
+    request_reply_info("ClientApp",
+            "Request sent with ID '" << wparams.sample_identity().sequence_number() << "': '" << request_input_.str());
 
     return ret;
 }

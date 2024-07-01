@@ -297,20 +297,20 @@ struct Timestamp
 };
 
 #ifndef NDEGUB
-#define request_reply_debug(message) \
-    std::cout << C_B_WHITE << Timestamp::now() << C_B_BLUE << " [DEBUG] " << C_DEF \
-              << C_WHITE << message << C_DEF << std::endl
+#define request_reply_debug(context, message) \
+    std::cout << C_B_WHITE << Timestamp::now() << C_B_BLUE << " [DEBUG] " << C_B_WHITE \
+              << "[" << context << "] " << C_DEF << C_WHITE << message << C_DEF << std::endl
 #else
-#define request_reply_debug(message)
+#define request_reply_debug(context, message)
 #endif // ifdef NDEGUB
 
-#define request_reply_info(message) \
-    std::cout << C_B_WHITE << Timestamp::now() << C_B_GREEN << " [INFO] " << C_DEF \
-              << C_WHITE << message << C_DEF << std::endl
+#define request_reply_info(context, message) \
+    std::cout << C_B_WHITE << Timestamp::now() << C_B_GREEN << " [INFO] " << C_B_WHITE \
+              << "[" << context << "] " << C_DEF << C_WHITE << message << C_DEF << std::endl
 
-#define request_reply_error(message) \
-    std::cerr << C_B_WHITE << Timestamp::now() << C_B_RED << " [ERROR] " << C_DEF \
-              << C_WHITE << message << C_DEF << std::endl
+#define request_reply_error(context, message) \
+    std::cerr << C_B_WHITE << Timestamp::now() << C_B_RED << " [ERROR] " << C_B_WHITE \
+              << "[" << context << "] " << C_DEF << C_WHITE << message << C_DEF << std::endl
 
 } // namespace request_reply
 } // namespace examples

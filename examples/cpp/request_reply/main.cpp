@@ -58,7 +58,7 @@ int main(
     }
     catch (const std::runtime_error& e)
     {
-        request_reply_error(e.what());
+        request_reply_error("main", e.what());
         ret = EXIT_FAILURE;
     }
 
@@ -68,8 +68,8 @@ int main(
 
         stop_app_handler = [&](int signum)
                 {
-                    request_reply_info(
-                        CLIParser::parse_signal(signum) << " received, stopping " << app_name << " execution.");
+                    request_reply_info("main",
+                            CLIParser::parse_signal(signum) << " received, stopping " << app_name << " execution.");
 
                     app->stop();
                 };
@@ -81,7 +81,8 @@ int main(
         signal(SIGHUP, signal_handler);
     #endif // _WIN32
 
-        request_reply_info(app_name << " running. Please press Ctrl+C to stop the " << app_name << " at any time.");
+        request_reply_info("main",
+                app_name << " running. Please press Ctrl+C to stop the " << app_name << " at any time.");
 
         thread.join();
     }
