@@ -248,6 +248,14 @@ ReturnCode_t DataWriterImpl::enable()
         topic_att, type_->m_typeSize, qos_.endpoint().history_memory_policy);
     pool_config_ = PoolConfig::from_history_attributes(history_att);
 
+    // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
+    // grow, we translate the policy into bare PREALLOCATED
+    if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == pool_config_.memory_policy &&
+            (type_->is_bounded() || type_->is_plain(data_representation_)))
+    {
+        pool_config_.memory_policy = PREALLOCATED_MEMORY_MODE;
+    }
+
     WriterAttributes w_att;
     w_att.endpoint.durabilityKind = qos_.durability().durabilityKind();
     w_att.endpoint.endpointKind = WRITER;
@@ -2056,28 +2064,19 @@ std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
 {
     if (!payload_pool_)
     {
-        PoolConfig config = pool_config_;
-
-        // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
-        // grow, we translate the policy into bare PREALLOCATED
-        if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == config.memory_policy &&
-                (type_->is_bounded() || type_->is_plain(data_representation_)))
-        {
-            config.memory_policy = PREALLOCATED_MEMORY_MODE;
-        }
-
         // Avoid calling the serialization size functors on PREALLOCATED mode
-        fixed_payload_size_ = config.memory_policy == PREALLOCATED_MEMORY_MODE ? config.payload_initial_size : 0u;
+        fixed_payload_size_ =
+                pool_config_.memory_policy == PREALLOCATED_MEMORY_MODE ? pool_config_.payload_initial_size : 0u;
 
         // Get payload pool reference and allocate space for our history
         if (is_data_sharing_compatible_)
         {
-            payload_pool_ = DataSharingPayloadPool::get_writer_pool(config);
+            payload_pool_ = DataSharingPayloadPool::get_writer_pool(pool_config_);
         }
         else
         {
-            payload_pool_ = TopicPayloadPoolRegistry::get(topic_->get_name(), config);
-            if (!std::static_pointer_cast<ITopicPayloadPool>(payload_pool_)->reserve_history(config, false))
+            payload_pool_ = TopicPayloadPoolRegistry::get(topic_->get_name(), pool_config_);
+            if (!std::static_pointer_cast<ITopicPayloadPool>(payload_pool_)->reserve_history(pool_config_, false))
             {
                 payload_pool_.reset();
             }
@@ -2086,7 +2085,7 @@ std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
         // Prepare loans collection for plain types only
         if (type_->is_plain(data_representation_))
         {
-            loans_.reset(new LoanCollection(config));
+            loans_.reset(new LoanCollection(pool_config_));
         }
     }
 
@@ -2108,15 +2107,7 @@ bool DataWriterImpl::release_payload_pool()
     else
     {
         auto topic_pool = std::static_pointer_cast<ITopicPayloadPool>(payload_pool_);
-        PoolConfig config = pool_config_;
-
-        // Detect if we changed the pool config to preallocated
-        if (fixed_payload_size_)
-        {
-            config.memory_policy = PREALLOCATED_MEMORY_MODE;
-        }
-
-        result = topic_pool->release_history(config, false);
+        result = topic_pool->release_history(pool_config_, false);
     }
 
     payload_pool_.reset();
