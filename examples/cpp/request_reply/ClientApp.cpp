@@ -113,6 +113,7 @@ void ClientApp::run()
     {
         request_reply_debug("One server is available. Waiting for some time to ensure matching on the server side");
 
+        // TODO(eduponz): This wait should be conditioned to upcoming fully-matched API on the endpoints
         std::unique_lock<std::mutex> lock(mtx_);
         cv_.wait_for(lock, std::chrono::seconds(1), [&]()
                 {
