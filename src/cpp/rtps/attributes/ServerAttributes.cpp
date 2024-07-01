@@ -1,4 +1,4 @@
-// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -438,6 +438,21 @@ bool load_environment_server_info(
     }
 
     return true;
+}
+
+GUID_t RemoteServerAttributes::GetParticipant() const
+{
+    return GUID_t(guidPrefix, c_EntityId_RTPSParticipant);
+}
+
+GUID_t RemoteServerAttributes::GetPDPReader() const
+{
+    return GUID_t(guidPrefix, c_EntityId_SPDPReader);
+}
+
+GUID_t RemoteServerAttributes::GetPDPWriter() const
+{
+    return GUID_t(guidPrefix, c_EntityId_SPDPWriter);
 }
 
 } /* namespace rtps */

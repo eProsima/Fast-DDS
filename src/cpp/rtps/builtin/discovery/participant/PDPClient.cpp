@@ -933,21 +933,6 @@ void PDPClient::match_pdp_reader_nts_(
     }
 }
 
-GUID_t RemoteServerAttributes::GetParticipant() const
-{
-    return GUID_t(guidPrefix, c_EntityId_RTPSParticipant);
-}
-
-GUID_t RemoteServerAttributes::GetPDPReader() const
-{
-    return GUID_t(guidPrefix, c_EntityId_SPDPReader);
-}
-
-GUID_t RemoteServerAttributes::GetPDPWriter() const
-{
-    return GUID_t(guidPrefix, c_EntityId_SPDPWriter);
-}
-
 bool get_server_client_default_guidPrefix(
         int id,
         GuidPrefix_t& guid)
