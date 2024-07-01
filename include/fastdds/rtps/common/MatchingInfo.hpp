@@ -14,7 +14,6 @@
 
 /**
  * @file MatchingInfo.hpp
- *
  */
 
 #ifndef FASTDDS_RTPS_COMMON__MATCHINGINFO_HPP
@@ -27,9 +26,8 @@ namespace fastdds {
 namespace rtps {
 
 /**
- * @enum MatchingStatus, indicates whether the matched publication/subscription method of the PublisherListener or SubscriberListener has
+ * Indicates whether the matched publication/subscription method of the PublisherListener or SubscriberListener has
  * been called for a matching or a removal of a remote endpoint.
- * @ingroup COMMON_MODULE
  */
 #if defined(_WIN32)
 enum FASTDDS_EXPORTED_API MatchingStatus
@@ -37,10 +35,9 @@ enum FASTDDS_EXPORTED_API MatchingStatus
 #else
 enum MatchingStatus
 {
-#endif // if defined(_WIN32)
-    MATCHED_MATCHING,//!< MATCHED_MATCHING, new publisher/subscriber found
-    REMOVED_MATCHING //!< REMOVED_MATCHING, publisher/subscriber removed
-
+#endif                // if defined(_WIN32)
+    MATCHED_MATCHING, //!< MATCHED_MATCHING, new publisher/subscriber found
+    REMOVED_MATCHING  //!< REMOVED_MATCHING, publisher/subscriber removed
 };
 
 /**
@@ -51,7 +48,7 @@ class FASTDDS_EXPORTED_API MatchingInfo
 {
 public:
 
-    //!Default constructor
+    //! Default constructor
     MatchingInfo()
         : status(MATCHED_MATCHING)
     {
@@ -73,9 +70,9 @@ public:
     {
     }
 
-    //!Status
+    //! Status
     MatchingStatus status;
-    //!Remote endpoint GUID
+    //! Remote endpoint GUID
     GUID_t remoteEndpointGuid;
 };
 } // namespace rtps
