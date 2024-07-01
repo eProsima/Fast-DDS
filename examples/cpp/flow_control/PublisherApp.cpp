@@ -44,8 +44,7 @@ PublisherApp::PublisherApp(
     , stop_(false)
 {
     // Create Participant
-    DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
-
+    DomainParticipantQos pqos;
     // This controller allows 300kb per second.
     auto slow_flow_controller_descriptor = std::make_shared<eprosima::fastdds::rtps::FlowControllerDescriptor>();
     slow_flow_controller_descriptor->name = "slow_flow_controller_descriptor";
@@ -63,8 +62,10 @@ PublisherApp::PublisherApp(
     //Register the type
     type_.register_type(participant_);
 
-    // Create fast Publisher, which has no controller of its own.
-    publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr, StatusMask::none());
+    // Create fast Publisher, which has no controller of its own
+    PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
+    participant_->get_default_publisher_qos(pub_qos);
+    publisher_ = participant_->create_publisher(pub_qos, nullptr, StatusMask::none());
     if (publisher_ == nullptr)
     {
         throw std::runtime_error("Fast Publisher initialization failed");
@@ -80,6 +81,8 @@ PublisherApp::PublisherApp(
 
     // Create slow DataWriter
     DataWriterQos wsqos = DATAWRITER_QOS_DEFAULT;
+    // Retrieve default QoS, in case they have been previously set through an XML file
+    publisher_->get_default_datawriter_qos(wsqos);
     wsqos.publish_mode().kind = ASYNCHRONOUS_PUBLISH_MODE;
     wsqos.publish_mode().flow_controller_name = slow_flow_controller_descriptor->name;
     wsqos.properties().properties().emplace_back("fastdds.sfc.priority", config.priority);
@@ -96,6 +99,8 @@ PublisherApp::PublisherApp(
 
     // Create fast DataWriter
     DataWriterQos wfqos = DATAWRITER_QOS_DEFAULT;
+    // Retrieve default QoS, in case they have been previously set through an XML file
+    publisher_->get_default_datawriter_qos(wsqos);
     wfqos.publish_mode().kind = ASYNCHRONOUS_PUBLISH_MODE;
     // Disable Data Sharing to be consistent with the Slow Writer
     wfqos.data_sharing().off();

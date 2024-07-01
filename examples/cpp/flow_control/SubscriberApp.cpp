@@ -56,7 +56,10 @@ SubscriberApp::SubscriberApp(
     type_.register_type(participant_);
 
     // Create Subscriber
-    subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr, StatusMask::none());
+    SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
+    // Retrieve default QoS, in case they have been previously set with an XML file
+    participant_->get_default_subscriber_qos(sub_qos);
+    subscriber_ = participant_->create_subscriber(sub_qos, nullptr, StatusMask::none());
     if (subscriber_ == nullptr)
     {
         throw std::runtime_error("Subscriber initialization failed");
@@ -70,7 +73,9 @@ SubscriberApp::SubscriberApp(
     }
 
     // Create DataReader
-    reader_ = subscriber_->create_datareader(topic_, DATAREADER_QOS_DEFAULT, this, StatusMask::all());
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+    subscriber_->get_default_datareader_qos(reader_qos);
+    reader_ = subscriber_->create_datareader(topic_, reader_qos, this, StatusMask::all());
     if (reader_ == nullptr)
     {
         throw std::runtime_error("DataReader initialization failed");
