@@ -29,8 +29,8 @@ TYPED_TEST(FlowControllerPublishModes, sync_publish_mode)
     sync.init();
 
     // Instantiate writers.
-    eprosima::fastdds::rtps::RTPSWriter writer1;
-    eprosima::fastdds::rtps::RTPSWriter writer2;
+    eprosima::fastdds::rtps::BaseWriter writer1;
+    eprosima::fastdds::rtps::BaseWriter writer2;
 
     // Initialize callback to get info.
     auto send_functor_adding = [&](

@@ -40,8 +40,8 @@ TYPED_TEST(FlowControllerPublishModes, pure_sync_publish_mode)
 
 
     // Instantiate writers.
-    eprosima::fastdds::rtps::RTPSWriter writer1;
-    eprosima::fastdds::rtps::RTPSWriter writer2;
+    eprosima::fastdds::rtps::BaseWriter writer1;
+    eprosima::fastdds::rtps::BaseWriter writer2;
 
     // Register writers.
     pure_sync.register_writer(&writer1);

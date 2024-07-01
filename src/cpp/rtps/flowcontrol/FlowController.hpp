@@ -4,10 +4,10 @@
 #include <chrono>
 
 namespace eprosima {
-
 namespace fastdds {
 namespace rtps {
-class RTPSWriter;
+
+class BaseWriter;
 struct CacheChange_t;
 
 /*!
@@ -33,7 +33,7 @@ public:
      * @param writer Pointer to the writer to be registered. Cannot be nullptr.
      */
     virtual void register_writer(
-            fastdds::rtps::RTPSWriter* writer) = 0;
+            fastdds::rtps::BaseWriter* writer) = 0;
 
     /*!
      * Unregister a writer.
@@ -42,12 +42,12 @@ public:
      * @param writer Pointer to the writer to be unregistered. Cannot be nullptr.
      */
     virtual void unregister_writer(
-            fastdds::rtps::RTPSWriter* writer) = 0;
+            fastdds::rtps::BaseWriter* writer) = 0;
 
     /*!
      * Adds a CacheChange_t to be managed by this object.
      * The CacheChange_t has to be a new one, that is, it should have just been added to the writer's history before this call.
-     * This method should be called by RTPSWriter::unsent_change_added_to_history().
+     * This method should be called by BaseWriter::unsent_change_added_to_history().
      *
      * @param Pointer to the writer that owns the added CacheChange_t. Cannot be nullptr.
      * @param change Pointer to the new CacheChange_t to be managed by this object. Cannot be nullptr.
@@ -55,7 +55,7 @@ public:
      * @return true if the sample could be added. false otherwise.
      */
     virtual bool add_new_sample(
-            fastdds::rtps::RTPSWriter* writer,
+            fastdds::rtps::BaseWriter* writer,
             fastdds::rtps::CacheChange_t* change,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) = 0;
 
@@ -69,7 +69,7 @@ public:
      * @return true if the sample could be added. false otherwise.
      */
     virtual bool add_old_sample(
-            fastdds::rtps::RTPSWriter* writer,
+            fastdds::rtps::BaseWriter* writer,
             fastdds::rtps::CacheChange_t* change) = 0;
 
     /*!
