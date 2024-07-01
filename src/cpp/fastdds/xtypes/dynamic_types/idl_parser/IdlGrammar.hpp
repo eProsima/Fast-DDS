@@ -109,7 +109,7 @@ struct fixed_pt_literal;
 struct integer_literal : seq<
                                 not_at<float_literal>,
                                 not_at<fixed_pt_literal>,
-                                sor<oct_literal, hex_literal, dec_literal>
+                                sor<hex_literal, oct_literal, dec_literal>
                             > {};
 
 // float literals

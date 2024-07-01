@@ -691,8 +691,8 @@ struct action<boolean_literal>
  \
             std::istringstream ss(in.string()); \
             type value; \
-            if (#id == "octal") ss >> std::setbase(std::ios_base::oct) >> value; \
-            else if (#id == "hexa") ss >> std::setbase(std::ios_base::hex) >> value; \
+            if (std::string{#id} == "octal") ss >> std::oct >> value; \
+            else if (std::string{#id} == "hexa") ss >> std::hex >> value; \
             else ss >> value; \
  \
             DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()}; \
@@ -1108,10 +1108,10 @@ struct action<enum_dcl>
         {
             MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
             member_descriptor->name(tokens[i]);
-            member_descriptor->type(factory->get_primitive_type(TK_UINT32));
+            member_descriptor->type(factory->get_primitive_type(TK_INT32));
             builder->add_member(member_descriptor);
 
-            DynamicType::_ref_type member_type {factory->get_primitive_type(TK_UINT32)}; // TODO what about value?
+            DynamicType::_ref_type member_type {factory->get_primitive_type(TK_INT32)};
             DynamicData::_ref_type member_data {DynamicDataFactory::get_instance()->create_data(member_type)};
 
             module.create_constant(tokens[i], member_data, false, true); // Mark it as "from_enum"
