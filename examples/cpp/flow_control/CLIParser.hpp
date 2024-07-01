@@ -19,8 +19,8 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/flowcontrol/FlowControllerSchedulerPolicy.hpp>
 
-#ifndef _FASTDDS_FLOW_CONTROL_CLI_PARSER_HPP_
-#define _FASTDDS_FLOW_CONTROL_CLI_PARSER_HPP_
+#ifndef FASTDDS_FLOW_CONTROL_CLI_PARSER_HPP
+#define FASTDDS_FLOW_CONTROL_CLI_PARSER_HPP
 
 namespace eprosima {
 namespace fastdds {
@@ -79,22 +79,23 @@ public:
         std::cout << "                                  (Default: 0 [unlimited])"               << std::endl;
         std::cout << ""                                                                         << std::endl;
         std::cout << "Slow Publisher options:"                                                  << std::endl;
-        std::cout << "      --max-bytes <num>           Maximum number of bytes to be sent"     << std::endl;
+        std::cout << "  --max-bytes <num>               Maximum number of bytes to be sent"     << std::endl;
         std::cout << "                                  per period [0 <= <num> <= 2147483647]"  << std::endl;
+        std::cout << "                                  0 = no limits."                         << std::endl;
         std::cout << "                                  (Default: 300kB)"                       << std::endl;
-        std::cout << "      --period <num>              Period of time on which the"            << std::endl;
+        std::cout << "  --period <num>                  Period of time (ms) in which the"       << std::endl;
         std::cout << "                                  flow controller is allowed"             << std::endl;
         std::cout << "                                  to send the max bytes per period."      << std::endl;
         std::cout << "                                  (Default: 1000ms)"                      << std::endl;
-        std::cout << "      --scheduler <string>        Scheduler policy [FIFO, ROUND-ROBIN,"   << std::endl;
+        std::cout << "  --scheduler <string>            Scheduler policy [FIFO, ROUND-ROBIN,"   << std::endl;
         std::cout << "                                  HIGH-PRIORITY, PRIORITY-RESERVATION]"   << std::endl;
         std::cout << "                                  (Default: FIFO)"                        << std::endl;
-        std::cout << "      --bandwidth <string>        Bandwidth that the DataWriter can"      << std::endl;
+        std::cout << "  --bandwidth <string>            Bandwidth that the DataWriter can"      << std::endl;
         std::cout << "                                  request for PRIORITY_WITH_RESERVATION"  << std::endl;
         std::cout << "                                  express as a percentage of the total "  << std::endl;
         std::cout << "                                  flow controller limit: [0; 100]"        << std::endl;
         std::cout << "                                  (Default: 0)"                           << std::endl;
-        std::cout << "      --priority <string>         Priority for HIGH_PRIORITY and"         << std::endl;
+        std::cout << "  --priority <string>             Priority for HIGH_PRIORITY and"         << std::endl;
         std::cout << "                                  PRIORITY_WITH_RESERVATION schedulers"   << std::endl;
         std::cout << "                                  [-10 (highest) ; 10 (lowest)]"          << std::endl;
         std::cout << "                                  (Default: 10)"                          << std::endl;
@@ -102,11 +103,11 @@ public:
     }
 
     /**
-     * @brief Parse the command line options and return the configuration_config object
+     * @brief Parse the command line options and return the flow_control_config object
      *
      * @param argc number of arguments
      * @param argv array of arguments
-     * @return configuration_config object with the parsed options
+     * @return flow_control_config object with the parsed options
      *
      * @warning This method finishes the execution of the program if the input arguments are invalid
      */
@@ -136,6 +137,11 @@ public:
         {
             print_help(EXIT_SUCCESS);
         }
+        else
+        {
+            EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing entity argument " + first_argument);
+            print_help(EXIT_FAILURE);
+        }
 
         for (int i = 2; i < argc; ++i)
         {
@@ -151,17 +157,13 @@ public:
                 {
                     try
                     {
-                        int input = std::stoi(argv[i]);
-                        if (input < std::numeric_limits<uint16_t>::min() ||
-                                input > std::numeric_limits<uint16_t>::max())
+                        unsigned long input = std::stoul(argv[i]);
+                        if (input > std::numeric_limits<uint16_t>::max())
                         {
                             throw std::out_of_range("sample argument " + std::string(
                                               argv[i]) + " out of range [0, 65535].");
                         }
-                        else
-                        {
-                            config.samples = static_cast<uint16_t>(input);
-                        }
+                        config.samples = static_cast<uint16_t>(input);
                     }
                     catch (const std::invalid_argument& e)
                     {
@@ -189,16 +191,13 @@ public:
                     {
                         try
                         {
-                            int32_t input = std::stoi(argv[i]);
-                            if (input < 0 || input > std::numeric_limits<int32_t>::max())
+                            unsigned long input = std::stoul(argv[i]);
+                            if (input > std::numeric_limits<int32_t>::max())
                             {
                                 throw std::out_of_range("max-bytes argument " + std::string(
                                                   argv[i]) + " out of range [0, 2147483647].");
                             }
-                            else
-                            {
-                                config.max_bytes_per_period = input;
-                            }
+                            config.max_bytes_per_period = static_cast<int32_t>(input);
                         }
                         catch (const std::invalid_argument& e)
                         {
@@ -238,10 +237,7 @@ public:
                                 throw std::out_of_range("period argument " + std::string(
                                                   argv[i]) + " out of range.");
                             }
-                            else
-                            {
-                                config.period = input;
-                            }
+                            config.period = input;
                         }
                         catch (const std::invalid_argument& e)
                         {
@@ -314,13 +310,14 @@ public:
                 {
                     try
                     {
-                        int32_t input = std::stoi(argv[i]);
-                        if (input < 0 || input > 100)
+                        unsigned long input = std::stoul(argv[i]);
+                        if (input > 100)
                         {
                             throw std::out_of_range("bandwidth argument " + std::string(
                                               argv[i]) + " out of range.");
                         }
-                        else if (config.entity == CLIParser::EntityKind::PUBLISHER)
+
+                        if (config.entity == CLIParser::EntityKind::PUBLISHER)
                         {
                             config.bandwidth = argv[i];
                         }
@@ -354,13 +351,14 @@ public:
                 {
                     try
                     {
-                        int32_t input = std::stoi(argv[i]);
-                        if (input < -10 || input > 10)
+                        unsigned long input = std::stoul(argv[i]);
+                        if (input > 10)
                         {
                             throw std::out_of_range("priority argument " + std::string(
                                               argv[i]) + " out of range.");
                         }
-                        else if (config.entity == CLIParser::EntityKind::PUBLISHER)
+
+                        if (config.entity == CLIParser::EntityKind::PUBLISHER)
                         {
                             config.priority = argv[i];
                         }

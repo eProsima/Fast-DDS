@@ -11,22 +11,26 @@ and possible configurations of DDS deployments through *eProsima Fast DDS*.
 
 ## Description of the example
 
-eProsima Fast DDS provides a mechanism to control the data flow sent by a DataWriter. The Flow Control is implemented through objects called Flow Controllers. These controllers are registered on the creation of the DomainParticipant using a [Flow Controller Descriptor](https://fast-dds.docs.eprosima.com/en/latest/fastdds/api_reference/rtps/flowcontrol/FlowControllerDescriptor.html#flowcontrollerdescriptor), and then referenced on the creation of the DataWriter using Publish Mode Qos Policy.
+eProsima Fast DDS provides a mechanism to control the data flow sent by a DataWriter.
+The Flow Control is implemented through objects called Flow Controllers.
+These controllers are registered on the creation of the DomainParticipant using a [Flow Controller Descriptor](https://fast-dds.docs.eprosima.com/en/latest/fastdds/api_reference/rtps/flowcontrol/FlowControllerDescriptor.html#flowcontrollerdescriptor), and then referenced on the creation of the DataWriter using Publish Mode Qos Policy.
 
-A Flow Controller Descriptor is a simple struct that univocally defined a flow controller. It includes the following [FlowControllersQos](https://fast-dds.docs.eprosima.com/en/latest/fastdds/dds_layer/core/policy/eprosimaExtensions.html#flowcontrollersqos) settings and configurations:
+A Flow Controller Descriptor is a simple struct that univocally defines a flow controller.
+It includes the following [FlowControllersQos](https://fast-dds.docs.eprosima.com/en/latest/fastdds/dds_layer/core/policy/eprosimaExtensions.html#flowcontrollersqos) settings and configurations:
 * Name of the flow controller.
 * Scheduler policy used by the flow controller.
 * Maximum number of bytes to be sent to network per period.
 * Period of time in milliseconds on which the flow controller is allowed to send the maximum number of bytes per period.
 * Thread settings for the sender thread.
 
-When using Flow Controllers, the DataWriter may need specific parameters related to the priority and the bandwith. For more information, take a look at [Flow Controller Settings](https://fast-dds.docs.eprosima.com/en/latest/fastdds/property_policies/flow_control.html#flow-controller-settings).
-* Property `fastdds.sfc.priority` is used to set the priority of the DataWriter for HIGH_PRIORITY and PRIORITY_WITH_RESERVATION flow controllers. Allowed values are from -10 (highest priority) to 10 (lowest priority). The default value is the lowest priority.
-* Property `fastdds.sfc.bandwidth_reservation` is used to set the percentage of the bandwidth that the DataWriter is requesting for PRIORITY_WITH_RESERVATION flow controllers. Allowed values are from 0 to 100, and express a percentage of the total flow controller limit. By default, no bandwidth is reserved for the DataWriter.
+When using Flow Controllers, the DataWriter may need specific parameters related to the priority and the bandwith.
+For more information, please refer to [Flow Controller Settings](https://fast-dds.docs.eprosima.com/en/latest/fastdds/property_policies/flow_control.html#flow-controller-settings).
+* Property `fastdds.sfc.priority` is used to set the priority of the DataWriter for `HIGH_PRIORITY` and `PRIORITY_WITH_RESERVATION` flow controllers. Allowed values are from -10 (highest priority) to 10 (lowest priority). The default value is the lowest priority.
+* Property `fastdds.sfc.bandwidth_reservation` is used to set the percentage of the bandwidth that the DataWriter is requesting for `PRIORITY_WITH_RESERVATION` flow controllers. Allowed values are from 0 to 100, and express a percentage of the total flow controller limit. By default, no bandwidth is reserved for the DataWriter.
 
-Once instantiated the Flow Controller Descriptor, a flow controller will make sure there is a limit on the data it processes, so that no more than the specified size gets through it in the specified time.
+Once instantiated, a flow controller will make sure there is a limit on the data it processes, so that no more than the specified size gets through it in the specified time.
 
-In this example, the Fast DataWriter has no flow controller, while the Slow DataWriter has a flow controller limiting the maximum number of bytes to be sent per period and the period of time on which the DataWriter is allowed to send.
+In this example, the Fast DataWriter has no flow controller, while the Slow DataWriter has a flow controller limiting the maximum number of bytes to be sent per period, as well as the period of time on which the DataWriter is allowed to send.
 
 ## Run the example
 
@@ -68,7 +72,8 @@ One of them will run the publisher example application, and the other will run t
 
 ### Expected output
 
-Regardless of which application is run first, since the publisher will not start sending data until a subscriber is discovered, the expected output both for publishers and subscribers is a first displayed message acknowledging the match, followed by the amount of samples sent or received until Ctrl+C is pressed. The samples are sent every 2s. The Slow DataWriter sends a sample before the Fast DataWriter, but the sample is always received later according with the FlowControllerQos settings in the Flow Controller.
+Regardless of which application is run first, since the publisher will not start sending data until a subscriber is discovered, the expected output both for publishers and subscribers is a first displayed message acknowledging the match, followed by the amount of samples sent or received until Ctrl+C is pressed.
+The samples are sent every 2s. The Slow DataWriter sends a sample before the Fast DataWriter, but the sample is always received later according with the FlowControllerQos settings in the Flow Controller.
 
 ### Hello world publisher
 

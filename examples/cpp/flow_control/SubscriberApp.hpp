@@ -18,8 +18,8 @@
  */
 
 
-#ifndef FASTDDS_FLOW_CONTROL_SUBSCRIBER_APP_HPP_
-#define FASTDDS_FLOW_CONTROL_SUBSCRIBER_APP_HPP_
+#ifndef FASTDDS_FLOW_CONTROL_SUBSCRIBER_APP_HPP
+#define FASTDDS_FLOW_CONTROL_SUBSCRIBER_APP_HPP
 
 #include <condition_variable>
 
@@ -31,7 +31,7 @@
 
 #include "Application.hpp"
 #include "CLIParser.hpp"
-#include "FlowControlPubSubTypes.h"
+#include "FlowControlPubSubTypes.hpp"
 
 using namespace eprosima::fastdds::dds;
 
@@ -93,4 +93,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_FLOW_CONTROL_SUBSCRIBER_APP_HPP_
+#endif // FASTDDS_FLOW_CONTROL_SUBSCRIBER_APP_HPP

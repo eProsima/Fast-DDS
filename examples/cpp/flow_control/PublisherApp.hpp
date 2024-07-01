@@ -18,8 +18,8 @@
  */
 
 
-#ifndef FASTDDS_FLOW_CONTROL_PUBLISHER_APP_HPP_
-#define FASTDDS_FLOW_CONTROL_PUBLISHER_APP_HPP_
+#ifndef FASTDDS_FLOW_CONTROL_PUBLISHER_APP_HPP
+#define FASTDDS_FLOW_CONTROL_PUBLISHER_APP_HPP
 
 #include <condition_variable>
 
@@ -31,7 +31,7 @@
 
 #include "Application.hpp"
 #include "CLIParser.hpp"
-#include "FlowControlPubSubTypes.h"
+#include "FlowControlPubSubTypes.hpp"
 
 using namespace eprosima::fastdds::dds;
 
@@ -68,14 +68,12 @@ private:
     //! Publish a sample
     bool publish(
             DataWriter* writer_,
-            int& msgsent,
+            uint16_t& samples,
             FlowControl msg);
 
     DomainParticipant* participant_;
 
-    Publisher* fast_publisher_;
-
-    Publisher* slow_publisher_;
+    Publisher* publisher_;
 
     Topic* topic_;
 
@@ -95,7 +93,7 @@ private:
 
     std::atomic<bool> stop_;
 
-    const uint32_t period_ms_ = 2000; // in ms
+    const uint32_t send_period = 2000; // in ms
 };
 
 } // namespace flow_control
@@ -103,4 +101,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_FLOW_CONTROL_PUBLISHER_APP_HPP_ */
+#endif /* _FASTDDS_FLOW_CONTROL_PUBLISHER_APP_HPP */

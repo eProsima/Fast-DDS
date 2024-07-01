@@ -27,7 +27,6 @@
 
 #include "Application.hpp"
 #include "CLIParser.hpp"
-#include "FlowControlPubSubTypes.h"
 
 using namespace eprosima::fastdds::dds;
 
@@ -47,11 +46,7 @@ SubscriberApp::SubscriberApp(
     , stop_(false)
 {
     // Create Participant
-    DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
-    pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;
-    pqos.name("Participant_subscriber");
-
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     if (participant_ == nullptr)
     {
         throw std::runtime_error("Participant initialization failed");
@@ -117,24 +112,25 @@ void SubscriberApp::on_data_available(
         DataReader* reader)
 {
     SampleInfo info;
-    FlowControl st;
-    while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(&st, &info)))
+    FlowControl msg;
+    while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(&msg, &info)))
     {
         if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
         {
             static unsigned int fastMessages = 0;
             static unsigned int slowMessages = 0;
-            // Print your structure data here.
-            if (st.wasFast())
+
+            if (msg.wasFast())
             {
                 fastMessages++;
                 std::cout << "Sample RECEIVED from fast writer, count=" << fastMessages << std::endl;
             }
-            else 
+            else
             {
                 slowMessages++;
                 std::cout << "Sample RECEIVED from slow writer, count=" << slowMessages << std::endl;
             }
+
             if ((samples_ > 0) && (fastMessages >= samples_) && (slowMessages >= samples_))
             {
                 stop();

@@ -41,7 +41,7 @@ def test_flow_control():
             ret = True
         else:
             print('ERROR: sent: ' + str(sent) + ', but received: ' + str(received) +
-                  ' (expected: ' + str(sent * 2) + ')')
+                  ' (expected: ' + str(sent) + ')')
             raise subprocess.CalledProcessError(1, '')
 
     except subprocess.CalledProcessError:

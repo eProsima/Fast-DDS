@@ -18,10 +18,10 @@
  */
 
 #include <csignal>
+#include <functional>
 #include <stdexcept>
 #include <thread>
 
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
 #include "Application.hpp"

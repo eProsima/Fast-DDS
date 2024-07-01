@@ -34,8 +34,7 @@ namespace flow_control {
 PublisherApp::PublisherApp(
         const CLIParser::flow_control_config& config)
     : participant_(nullptr)
-    , fast_publisher_(nullptr)
-    , slow_publisher_(nullptr)
+    , publisher_(nullptr)
     , topic_(nullptr)
     , fast_writer_(nullptr)
     , slow_writer_(nullptr)
@@ -46,8 +45,6 @@ PublisherApp::PublisherApp(
 {
     // Create Participant
     DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
-    pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;
-    pqos.name("Participant_publisher");
 
     // This controller allows 300kb per second.
     auto slow_flow_controller_descriptor = std::make_shared<eprosima::fastdds::rtps::FlowControllerDescriptor>();
@@ -67,8 +64,8 @@ PublisherApp::PublisherApp(
     type_.register_type(participant_);
 
     // Create fast Publisher, which has no controller of its own.
-    fast_publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr, StatusMask::none());
-    if (fast_publisher_ == nullptr)
+    publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr, StatusMask::none());
+    if (publisher_ == nullptr)
     {
         throw std::runtime_error("Fast Publisher initialization failed");
     }
@@ -81,38 +78,34 @@ PublisherApp::PublisherApp(
         throw std::runtime_error("Topic initialization failed");
     }
 
-    // Create fast DataWriter
-    DataWriterQos wfqos = DATAWRITER_QOS_DEFAULT;
-    wfqos.publish_mode().kind = ASYNCHRONOUS_PUBLISH_MODE;
-    wfqos.data_sharing().off();
-
-    fast_writer_ = fast_publisher_->create_datawriter(topic_, wfqos, this, StatusMask::all());
-    if (fast_writer_ == nullptr)
-    {
-        throw std::runtime_error("Fast DataWriter initialization failed");
-    }
-    std::cout << "Fast publisher created, waiting for Subscribers." << std::endl;
-
-    // Create slow Publisher, with its own controller
-    slow_publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr, StatusMask::none());
-    if (slow_publisher_ == nullptr)
-    {
-        throw std::runtime_error("Slow Publisher initialization failed");
-    }
-
     // Create slow DataWriter
     DataWriterQos wsqos = DATAWRITER_QOS_DEFAULT;
     wsqos.publish_mode().kind = ASYNCHRONOUS_PUBLISH_MODE;
     wsqos.publish_mode().flow_controller_name = slow_flow_controller_descriptor->name;
     wsqos.properties().properties().emplace_back("fastdds.sfc.priority", config.priority);
     wsqos.properties().properties().emplace_back("fastdds.sfc.bandwidth_reservation", config.bandwidth);
+    // Disable Data Sharing to force the communication on a Transport,
+    // since a Flow Control is applied only on Transports.
     wsqos.data_sharing().off();
-    slow_writer_ = slow_publisher_->create_datawriter(topic_, wsqos, this, StatusMask::all());
+    slow_writer_ = publisher_->create_datawriter(topic_, wsqos, this, StatusMask::all());
     if (slow_writer_ == nullptr)
     {
         throw std::runtime_error("Slow DataWriter initialization failed");
     }
     std::cout << "Slow publisher created, waiting for Subscribers." << std::endl;
+
+    // Create fast DataWriter
+    DataWriterQos wfqos = DATAWRITER_QOS_DEFAULT;
+    wfqos.publish_mode().kind = ASYNCHRONOUS_PUBLISH_MODE;
+    // Disable Data Sharing to be consistent with the Slow Writer
+    wfqos.data_sharing().off();
+
+    fast_writer_ = publisher_->create_datawriter(topic_, wfqos, this, StatusMask::all());
+    if (fast_writer_ == nullptr)
+    {
+        throw std::runtime_error("Fast DataWriter initialization failed");
+    }
+    std::cout << "Fast publisher created, waiting for Subscribers." << std::endl;
 }
 
 PublisherApp::~PublisherApp()
@@ -155,25 +148,25 @@ void PublisherApp::run()
     FlowControl st;
 
     /* Initialize your structure here */
-    int msgsent_fast = 0;
-    int msgsent_slow = 0;
-    while (!is_stopped() && ((samples_ == 0) || ((msgsent_fast < samples_) && (msgsent_slow < samples_))))
+    int samples_fast = 0;
+    int samples_slow = 0;
+    while (!is_stopped() && ((samples_ == 0) || ((samples_fast < samples_) && (samples_slow < samples_))))
     {
         st.wasFast(false);
-        if (publish(slow_writer_, msgsent_slow, st))
+        if (publish(slow_writer_, samples_slow, st))
         {
-            std::cout << "Message SENT from SLOW WRITER, count=" << msgsent_slow << std::endl;
+            std::cout << "Message SENT from SLOW WRITER, count=" << samples_slow << std::endl;
         }
 
         st.wasFast(true);
-        if (publish(fast_writer_, msgsent_fast, st))
+        if (publish(fast_writer_, samples_fast, st))
         {
-            std::cout << "Message SENT from FAST WRITER, count=" << msgsent_fast << std::endl;
+            std::cout << "Message SENT from FAST WRITER, count=" << samples_fast << std::endl;
         }
 
         // Wait for period or stop event
         std::unique_lock<std::mutex> period_lock(mutex_);
-        cv_.wait_for(period_lock, std::chrono::milliseconds(period_ms_), [&]()
+        cv_.wait_for(period_lock, std::chrono::milliseconds(send_period), [&]()
                 {
                     return is_stopped();
                 });
@@ -182,7 +175,7 @@ void PublisherApp::run()
 
 bool PublisherApp::publish(
         DataWriter* writer_,
-        int& msgsent,
+        const uint16_t& samples,
         FlowControl msg)
 {
     bool ret = false;
@@ -197,7 +190,7 @@ bool PublisherApp::publish(
     if (!is_stopped())
     {
         ret = writer_->write(&msg);
-        ++msgsent;
+        ++samples;
     }
     return ret;
 }

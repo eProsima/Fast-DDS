@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_FLOW_CONTROL_APPLICATION_HPP_
-#define _FASTDDS_FLOW_CONTROL_APPLICATION_HPP_
+#ifndef FASTDDS_FLOW_CONTROL_APPLICATION_HPP
+#define FASTDDS_FLOW_CONTROL_APPLICATION_HPP
 
 #include <atomic>
 
@@ -52,4 +52,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_FLOW_CONTROL_APPLICATION_HPP_ */
+#endif /* FASTDDS_FLOW_CONTROL_APPLICATION_HPP */
