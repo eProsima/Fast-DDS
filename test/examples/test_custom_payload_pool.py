@@ -31,12 +31,10 @@ def test_custom_payload_pool():
         for line in out:
             if 'SENT' in line:
                 sent += 1
-                continue
 
             if 'RECEIVED' in line:
                 received += 1
-                continue
-
+                
         if sent != 0 and received != 0 and sent == received:
             ret = True
         else:

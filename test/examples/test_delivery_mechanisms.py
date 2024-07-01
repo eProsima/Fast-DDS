@@ -62,11 +62,10 @@ def test_delivery_mechanisms(pub_args, sub_args, isub_args, pubsub_args, repetit
         for line in out:
             if 'SENT' in line:
                 sent += 1
-                continue
 
             if 'RECEIVED' in line:
                 received += 1
-                continue
+
         if sent != 0 and received != 0 and repetitions == received:
             ret = True
         else:
@@ -142,8 +141,7 @@ def test_delivery_mechanisms_expected_output(pub_args, sub_args, pubsub_args, ex
         for line in render_out:
             if expected_message in line:
                 count += 1
-                continue
-
+                
         if count >= int(n_messages):
             ret = True
         else:

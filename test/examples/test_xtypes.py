@@ -31,12 +31,10 @@ def test_xtypes():
         for line in out:
             if 'sent' in line or 'SENT' in line:
                 sent += 1
-                continue
 
             if 'received' in line or 'RECEIVED' in line:
                 received += 1
-                continue
-
+                
         if sent != 0 and received != 0 and sent * 3 == received:
             ret = True
         else:

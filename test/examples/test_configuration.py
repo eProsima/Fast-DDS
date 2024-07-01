@@ -69,11 +69,9 @@ def test_configuration(pub_args, sub_args):
         for line in render_out:
             if 'SENT' in line:
                 sent += 1
-                continue
 
             if 'RECEIVED' in line:
                 received += 1
-                continue
 
         if sent != 0 and received != 0 and sent * 2 == received:
             ret = True
@@ -158,8 +156,7 @@ def test_configuration_expected_output(pub_args, sub_args, expected_message, n_m
         for line in render_out:
             if expected_message in line:
                 count += 1
-                continue
-
+                
         if count >= int(n_messages):
             ret = True
         else:

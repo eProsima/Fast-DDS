@@ -45,7 +45,6 @@ def test_content_filter(pub_reader_filters, sub_custom_filter):
         for line in out:
             if 'SENT' in line:
                 sent += 1
-                continue
 
             if 'RECEIVED' in line:
                 received += 1
@@ -53,8 +52,7 @@ def test_content_filter(pub_reader_filters, sub_custom_filter):
                 if match:
                     number = int(match.group(1))
                     data.append(number)
-                continue
-
+                
         ret = True
         if sent != 0 and received != 0:
             for elem in data:
