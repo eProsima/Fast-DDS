@@ -33,7 +33,7 @@ namespace rtps {
 
 class RTPSParticipantImpl;
 class RTPSWriter;
-class RTPSReader;
+class BaseReader;
 class IDataSharingNotifier;
 
 /**
@@ -202,7 +202,7 @@ public:
         return false;
     }
 
-    RTPSReader* local_reader()
+    BaseReader* local_reader()
     {
         return nullptr;
     }

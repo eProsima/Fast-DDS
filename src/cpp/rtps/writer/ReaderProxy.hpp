@@ -40,6 +40,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+class BaseReader;
 class StatefulWriter;
 class TimedEvent;
 class RTPSReader;
@@ -289,7 +290,7 @@ public:
      * Get the local reader on the same process (if any).
      * @return The local reader on the same process.
      */
-    inline RTPSReader* local_reader()
+    inline BaseReader* local_reader()
     {
         return locator_info_.local_reader();
     }

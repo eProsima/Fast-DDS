@@ -207,7 +207,7 @@ bool ReaderLocator::send(
     return true;
 }
 
-RTPSReader* ReaderLocator::local_reader()
+BaseReader* ReaderLocator::local_reader()
 {
     if (!local_reader_)
     {
