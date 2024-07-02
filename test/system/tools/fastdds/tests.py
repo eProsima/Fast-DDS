@@ -109,7 +109,7 @@ def test_fastdds_shm(install_path):
 
 def test_fastdds_discovery(install_path, setup_script_path):
     """Test that discovery command runs."""
-    args = ' discovery'
+    args = ' discovery -h'
     ret = subprocess.call(
         cmd(install_path=install_path,
             setup_script_path=setup_script_path,
@@ -123,9 +123,11 @@ def test_fastdds_discovery(install_path, setup_script_path):
 
 def test_ros_discovery(install_path, setup_script_path):
     """Test that discovery command runs."""
+    args = ' -h'
     ret = subprocess.call(
         cmd(install_path=install_path,
-            setup_script_path=setup_script_path),
+            setup_script_path=setup_script_path,
+            args=args),
         shell=True)
 
     if 0 != ret:

@@ -30,8 +30,6 @@ from pathlib import Path
 class Parser:
     """Discovery server tool parser."""
 
-    __help_message = 'fastdds discovery <discovery-args>\n\n'
-
     def __init__(self, argv):
         """
         Parse the sub-command and dispatch to the appropriate handler.
@@ -43,7 +41,7 @@ class Parser:
 
         try:
             result = subprocess.run(
-                [tool_path],
+                [tool_path, '-h'],
                 stdout=subprocess.PIPE,
                 universal_newlines=True
             )
@@ -52,7 +50,6 @@ class Parser:
                 sys.exit(result.returncode)
 
             if (
-                    len(argv) == 0 or
                     (len(argv) == 1 and argv[0] == '-h') or
                     (len(argv) == 1 and argv[0] == '--help')
                ):
@@ -68,9 +65,7 @@ class Parser:
             pass
 
         except BaseException as e:
-            self.__help_message += str(e)
-            self.__help_message += '\n fast-discovery-server tool not found!'
-            print(self.__help_message)
+            print('\n fast-discovery-server tool not found!')
             sys.exit(1)
 
     def __find_tool_path(self):

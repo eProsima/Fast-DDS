@@ -64,13 +64,11 @@ int main(
     // Discovery Server connection
     std::string connection_address = "127.0.0.1";   // default ip address
     uint16_t connection_port = 16166;   // default physical port
-    uint16_t connection_ds_id = 0;   // default DS id
     bool id_ds_set = false;
 
     // Discovery Server listening
     std::string listening_address = "127.0.0.1";   // default ip address
     uint16_t listening_port = 16166;   // default physical port
-    uint16_t listening_ds_id = 0;   // default DS id
     uint32_t timeout = 0;   // default DS id
 
     if (argc > 1)
@@ -190,16 +188,13 @@ int main(
                 }
 
                 case optionIndex::CONNECTION_PORT:
+                    id_ds_set = true;
                     connection_port = static_cast<uint16_t>(strtol(opt.arg, nullptr, 10));
                     break;
 
                 case optionIndex::CONNECTION_ADDRESS:
-                    connection_address = opt.arg;
-                    break;
-
-                case optionIndex::CONNECTION_DISCOVERY_SERVER_ID:
                     id_ds_set = true;
-                    connection_ds_id = static_cast<uint16_t>(strtol(opt.arg, nullptr, 10));
+                    connection_address = opt.arg;
                     break;
 
                 case optionIndex::LISTENING_PORT:
@@ -219,15 +214,6 @@ int main(
                     }
                     listening_address = opt.arg;
 
-                    break;
-
-                case optionIndex::LISTENING_DISCOVERY_SERVER_ID:
-                    if (type != EntityKind::SERVER)
-                    {
-                        print_warning("server", opt.name);
-                        break;
-                    }
-                    listening_ds_id = static_cast<uint16_t>(strtol(opt.arg, nullptr, 10));
                     break;
 
                 case optionIndex::TIMEOUT:
@@ -268,15 +254,6 @@ int main(
     //     return 1;
     // }
 
-    // Check that a DS has not same id itself and connection
-    if (id_ds_set && type == EntityKind::SERVER && listening_ds_id == connection_ds_id)
-    {
-        std::cerr << "ERROR: Discovery Servers ids must be different, "
-                  << " cannot connect to a server with same id " << listening_ds_id << std::endl;
-        option::printUsage(fwrite, stdout, usage, columns);
-        return 1;
-    }
-
     // Check that a DS has not same ip and port in listening and connection
     if (id_ds_set &&
             type == EntityKind::SERVER &&
@@ -299,7 +276,6 @@ int main(
                         topic_name,
                         connection_address,
                         connection_port,
-                        connection_ds_id,
                         transport))
             {
                 mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
@@ -319,7 +295,6 @@ int main(
                         static_cast<uint32_t>(count),
                         connection_address,
                         connection_port,
-                        connection_ds_id,
                         transport))
             {
                 mysub.run(static_cast<uint32_t>(count));
@@ -337,12 +312,10 @@ int main(
             if (myserver.init(
                         listening_address,
                         listening_port,
-                        listening_ds_id,
                         transport,
                         id_ds_set,
                         connection_address,
-                        connection_port,
-                        connection_ds_id))
+                        connection_port))
             {
                 myserver.run(timeout);
             }

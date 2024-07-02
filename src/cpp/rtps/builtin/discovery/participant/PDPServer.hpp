@@ -28,8 +28,8 @@
 #include <string>
 #include <vector>
 
-#include <fastdds/rtps/attributes/ServerAttributes.hpp>
 #include <fastdds/rtps/history/History.hpp>
+#include <rtps/attributes/ServerAttributes.hpp>
 #include <rtps/builtin/discovery/database/DiscoveryDataBase.hpp>
 #include <rtps/builtin/discovery/database/DiscoveryDataFilter.hpp>
 #include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpointsSecure.hpp>
@@ -127,7 +127,7 @@ public:
             bool dispose = false,
             fastdds::rtps::WriteParams& wparams = fastdds::rtps::WriteParams::WRITE_PARAM_DEFAULT) override;
 
-    // Force the sending of our DATA(p) to those servers that has not acked yet
+    // Force the sending of our DATA(p) to those servers in the initial server list
     void ping_remote_servers();
 
     // send a specific Data to specific locators
@@ -179,15 +179,6 @@ public:
     void awake_routine_thread(
             double interval_ms = 0);
 
-    void awake_server_thread();
-
-    /**
-     * Check if all servers have acknowledge this server PDP data
-     * This method must be called from a mutex protected context.
-     * @return True if all can reach the client
-     */
-    bool all_servers_acknowledge_pdp();
-
     /* The server's main routine. This includes all the discovery related tasks that the server needs to run
      * periodically to keep the discovery graph updated.
      * @return: True if there is pending work, false otherwise.
@@ -202,12 +193,12 @@ public:
     fastdds::rtps::ddb::DiscoveryDataBase& discovery_db();
 
     /**
-     * Access to the remote servers list
+     * Access to the remote servers locators list
      * This method is not thread safe.
      * The return reference may be invalidated if the user modifies simultaneously the remote server list.
-     * @return constant reference to the remote servers list
+     * @return constant reference to the remote servers locators list
      */
-    const RemoteServerList_t& servers();
+    const LocatorList& servers();
 
 protected:
 
@@ -286,8 +277,6 @@ protected:
             nlohmann::json& ddb_json,
             std::vector<nlohmann::json>& new_changes);
 
-    std::set<fastdds::rtps::GuidPrefix_t> servers_prefixes();
-
     // General file name for the prefix of every backup file
     std::ostringstream get_persistence_file_name_() const;
 
@@ -299,20 +288,20 @@ protected:
     void process_backup_store();
 
     /**
-     * Manually match the local PDP reader with the PDP writer of a given server. The function is
-     * not thread safe (nts) in the sense that it does not take the PDP mutex. It does however take
-     * temp_data_lock_
+     * Manually match the local PDP reader with the PDP writer of a given partipant of type server.
+     * The function is not thread safe (nts) in the sense that it does not take the PDP mutex.
+     * It does however take temp_data_lock_
      */
     void match_pdp_writer_nts_(
-            const eprosima::fastdds::rtps::RemoteServerAttributes& server_att);
+            const fastdds::rtps::ParticipantProxyData& pdata);
 
     /**
-     * Manually match the local PDP writer with the PDP reader of a given server. The function is
-     * not thread safe (nts) in the sense that it does not take the PDP mutex. It does however take
-     * temp_data_lock_
+     * Manually match the local PDP writer with the PDP reader of a given partipant of type server.
+     * The function is not thread safe (nts) in the sense that it does not take the PDP mutex.
+     * It does however take temp_data_lock_
      */
     void match_pdp_reader_nts_(
-            const eprosima::fastdds::rtps::RemoteServerAttributes& server_att);
+            const fastdds::rtps::ParticipantProxyData& pdata);
 
     /**
      * Release a change from the history of the PDP writer.
@@ -381,11 +370,6 @@ private:
      * TimedEvent for server routine
      */
     DServerRoutineEvent* routine_;
-
-    /**
-     * TimedEvent for server ping to other servers
-     */
-    DServerPingEvent* ping_;
 
     //! Discovery database
     fastdds::rtps::ddb::DiscoveryDataBase discovery_db_;

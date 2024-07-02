@@ -166,22 +166,20 @@ void BuiltinProtocols::filter_server_remote_locators(
 {
     eprosima::shared_lock<eprosima::shared_mutex> disc_lock(getDiscoveryMutex());
 
-    for (eprosima::fastdds::rtps::RemoteServerAttributes& rs : m_DiscoveryServers)
+    LocatorList_t allowed_locators;
+
+    for (auto loc : m_DiscoveryServers)
     {
-        LocatorList_t allowed_locators;
-        for (Locator_t& loc : rs.metatrafficUnicastLocatorList)
+        if (nf.is_locator_remote_or_allowed(loc))
         {
-            if (nf.is_locator_remote_or_allowed(loc))
-            {
-                allowed_locators.push_back(loc);
-            }
-            else
-            {
-                EPROSIMA_LOG_WARNING(RTPS_PDP, "Ignoring remote server locator " << loc << " : not allowed.");
-            }
+            allowed_locators.push_back(loc);
         }
-        rs.metatrafficUnicastLocatorList.swap(allowed_locators);
+        else
+        {
+            EPROSIMA_LOG_WARNING(RTPS_PDP, "Ignoring remote server locator " << loc << " : not allowed.");
+        }
     }
+    m_DiscoveryServers.swap(allowed_locators);
 }
 
 bool BuiltinProtocols::addLocalWriter(

@@ -740,11 +740,7 @@
 
     <!--builtin Discovery Configuration:
         ├ discoveryProtocol         [string] ("SIMPLE", "CLIENT", "SERVER", "BACKUP", "NONE"),
-        ├ discoveryServersList      [0~1],
-        |   └ RemoteServer          [1~*],
-        |      |   ╚ att. prefix    [string] REQ,
-        |      ├ metatrafficUnicastLocatorList   [0~1],
-        |      └ metatrafficMulticastLocatorList [0~1],
+        ├ discoveryServersList      [0~1] [locatorListType],
         ├ ignoreParticipantFlags    [string] ("NO_FILTER", "FILTER_DIFFERENT_HOST", "FILTER_DIFFERENT_PROCESS", "FILTER_SAME_PROCESS", "FILTER_DIFFERENT_PROCESS | FILTER_SAME_PROCESS"),
         ├ EDP                       [string] ("SIMPLE", "STATIC"),
         ├ simpleEDP                 [0~1],
@@ -773,21 +769,7 @@
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:element>
-                <xs:element name="discoveryServersList" minOccurs="0" maxOccurs="1">
-                    <xs:complexType>
-                        <xs:sequence minOccurs="1" maxOccurs="unbounded">
-                            <xs:element name="RemoteServer" minOccurs="1" maxOccurs="unbounded">
-                                <xs:complexType>
-                                    <xs:all>
-                                        <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
-                                        <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
-                                    </xs:all>
-                                    <xs:attribute name="prefix" type="prefixType" use="required"/>
-                                </xs:complexType>
-                            </xs:element>
-                        </xs:sequence>
-                    </xs:complexType>
-                </xs:element>
+                <xs:element name="discoveryServersList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="ignoreParticipantFlags" minOccurs="0" maxOccurs="1">
                     <xs:simpleType>
                         <xs:restriction base="xs:string">

@@ -169,11 +169,9 @@ enum  optionIndex
 
     CONNECTION_ADDRESS,
     CONNECTION_PORT,
-    CONNECTION_DISCOVERY_SERVER_ID,
 
     LISTENING_ADDRESS,
     LISTENING_PORT,
-    LISTENING_DISCOVERY_SERVER_ID,
     TIMEOUT,
 };
 
@@ -239,15 +237,6 @@ const option::Descriptor usage[] = {
         Arg::Transport,
         "  \t--transport <trans> \tUse Transport Protocol [udpv4|udpv6|tcpv4|tcpv6] (UDPv4 by default)."
     },
-    {
-        CONNECTION_DISCOVERY_SERVER_ID,
-        0,
-        "d",
-        "discovery-server-id",
-        Arg::Numeric,
-        "  -d <num>\t--connection-discovery-server-id <num> \tId of the Discovery Server to connect with. "
-        "GUID will be calculated from id (0 by default)."
-    },
 
     /// SUBSCRIBER OPTIONS
     {UNKNOWN_OPT, 0, "", "", Arg::None, "\nSubscriber options:"},
@@ -291,15 +280,6 @@ const option::Descriptor usage[] = {
         Arg::Transport,
         "  \t--transport <trans> \tUse Transport Protocol [udpv4|udpv6|tcpv4|tcpv6] (UDPv4 by default)."
     },
-    {
-        CONNECTION_DISCOVERY_SERVER_ID,
-        0,
-        "d",
-        "discovery-server-id",
-        Arg::Numeric,
-        "  -d <num>\t--connection-discovery-server-id <num> \tId of the Discovery Server to connect with. "
-        "GUID will be calculated from id (0 by default)."
-    },
 
     /// SERVER OPTIONS
     {UNKNOWN_OPT, 0, "", "", Arg::None, "\nDiscovery Server options:"},
@@ -310,14 +290,6 @@ const option::Descriptor usage[] = {
         "listening-address",
         Arg::String,
         "  \t--listening-address=<IPaddress>  \tServer address (Default address: 127.0.0.1)."
-    },
-    {
-        LISTENING_DISCOVERY_SERVER_ID,
-        0,
-        "",
-        "id",
-        Arg::Numeric,
-        "  \t--id <num> \tId of this Discovery Server. GUID will be calculated from id (0 by default)."
     },
     {
         LISTENING_PORT,
@@ -350,15 +322,6 @@ const option::Descriptor usage[] = {
         "connection-address",
         Arg::String,
         "  -c <num> \t--connection-address=<IPaddress>  \tServer address (Default address: 127.0.0.1)."
-    },
-    {
-        CONNECTION_DISCOVERY_SERVER_ID,
-        0,
-        "d",
-        "connection-discovery-server-id",
-        Arg::Numeric,
-        "  -d <num>\t--connection-discovery-server-id <num> \tId of the Discovery Server to connect with. "
-        "GUID will be calculated from id (if not set, this DS will not connect to other server)."
     },
     {
         TIMEOUT,

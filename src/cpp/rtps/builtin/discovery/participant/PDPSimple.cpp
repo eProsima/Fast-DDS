@@ -385,7 +385,7 @@ bool PDPSimple::create_dcps_participant_endpoints()
     if (!m_discovery.initialPeersList.empty())
     {
         auto entry = LocatorSelectorEntry::create_fully_selected_entry(
-            m_discovery.initialPeersList, LocatorList_t());
+            m_discovery.initialPeersList);
         mp_RTPSParticipant->createSenderResources(entry);
     }
 

@@ -49,6 +49,7 @@
 #include <rtps/writer/ReaderProxy.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
 #include <utils/shared_mutex.hpp>
+#include <rtps/common/GuidUtils.hpp>
 #include <utils/SystemInfo.hpp>
 #include <utils/TimeConversion.hpp>
 
@@ -188,17 +189,10 @@ ParticipantProxyData* PDPClient::createParticipantProxyData(
 
     // Verify if this participant is a server
     bool is_server = false;
-
+    std::string part_type = check_participant_type(participant_data.m_properties);
+    if (part_type == ParticipantType::SERVER || part_type == ParticipantType::BACKUP)
     {
-        eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
-
-        for (auto& svr : mp_builtin->m_DiscoveryServers)
-        {
-            if (data_matches_with_prefix(svr.guidPrefix, participant_data))
-            {
-                is_server = true;
-            }
-        }
+        is_server = true;
     }
 
     ParticipantProxyData* pdata = add_participant_proxy_data(participant_data.m_guid, is_server, &participant_data);
@@ -274,7 +268,7 @@ bool PDPClient::create_ds_pdp_best_effort_reader(
     ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
     ratt.endpoint.topicKind = WITH_KEY;
 
-    // change depending of backup mode
+    // Change depending on backup mode
     ratt.endpoint.durabilityKind = VOLATILE;
     ratt.endpoint.reliabilityKind = BEST_EFFORT;
 
@@ -440,34 +434,18 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
         return false;
     }
 
-    // Perform matching with remote servers and ensure output channels are open in the transport for the corresponding
-    // locators
+    // Ensure output channels are open in the transport for the corresponding locators
     {
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
-        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
-        {
-            auto entry = LocatorSelectorEntry::create_fully_selected_entry(
-                it.metatrafficUnicastLocatorList, it.metatrafficMulticastLocatorList);
-            mp_RTPSParticipant->createSenderResources(entry);
+        auto entry = LocatorSelectorEntry::create_fully_selected_entry(
+            mp_builtin->m_DiscoveryServers);
+        mp_RTPSParticipant->createSenderResources(entry);
 
-#if HAVE_SECURITY
-            if (!mp_RTPSParticipant->is_secure())
-            {
-                match_pdp_writer_nts_(it);
-                match_pdp_reader_nts_(it);
-            }
-            else if (!is_discovery_protected)
-            {
-                BaseReader::downcast(endpoints.reader.reader_)->allow_unknown_writers();
-            }
-#else
-            if (!is_discovery_protected)
-            {
-                match_pdp_writer_nts_(it);
-                match_pdp_reader_nts_(it);
-            }
-#endif // HAVE_SECURITY
+        // If SECURITY is disabled, this condition is ALWAYS true
+        if (!is_discovery_protected)
+        {
+            BaseReader::downcast(endpoints.reader.reader_)->allow_unknown_writers();
         }
     }
 
@@ -485,12 +463,30 @@ void PDPClient::assignRemoteEndpoints(
         {
             eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
-            // Verify if this participant is a server
-            for (auto& svr : mp_builtin->m_DiscoveryServers)
+            std::string part_type = check_participant_type(pdata->m_properties);
+            if (part_type == ParticipantType::SERVER || part_type == ParticipantType::BACKUP)
             {
-                if (data_matches_with_prefix(svr.guidPrefix, *pdata))
+                // Add new servers to the connected list
+                EPROSIMA_LOG_INFO(RTPS_PDP_CLIENT, "Server [" << pdata->m_guid.guidPrefix << "] matched.");
+                RemoteServerAttributes server;
+                server.guidPrefix = pdata->m_guid.guidPrefix;
+                for (const Locator_t& locator : pdata->metatraffic_locators.multicast)
                 {
-                    svr.is_connected = true;
+                    server.metatrafficMulticastLocatorList.push_back(locator);
+                }
+                for (const Locator_t& locator : pdata->metatraffic_locators.unicast)
+                {
+                    server.metatrafficUnicastLocatorList.push_back(locator);
+                }
+                connected_servers_.push_back(server);
+
+                // Match incoming server
+#if HAVE_SECURITY
+                if (!should_protect_discovery())
+#endif // HAVE_SECURITY
+                {
+                    match_pdp_writer_nts_(server);
+                    match_pdp_reader_nts_(server);
                 }
             }
         }
@@ -501,6 +497,10 @@ void PDPClient::assignRemoteEndpoints(
         {
             perform_builtin_endpoints_matching(*pdata);
         }
+    }
+    else
+    {
+        EPROSIMA_LOG_INFO(RTPS_PDP, "Ignoring new participant " << pdata->m_guid);
     }
 }
 
@@ -513,22 +513,25 @@ void PDPClient::notifyAboveRemoteEndpoints(
     {
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
-        // Verify if this participant is a server
-        for (auto& svr : mp_builtin->m_DiscoveryServers)
+        std::string part_type = check_participant_type(pdata.m_properties);
+        if (part_type == ParticipantType::SERVER || part_type == ParticipantType::BACKUP)
         {
-            if (data_matches_with_prefix(svr.guidPrefix, pdata))
+            // Add new servers to the connected list
+            EPROSIMA_LOG_INFO(RTPS_PDP_CLIENT, "Secure Server [" << pdata.m_guid.guidPrefix << "] matched.");
+            RemoteServerAttributes server;
+            server.guidPrefix = pdata.m_guid.guidPrefix;
+            for (const Locator_t& locator : pdata.metatraffic_locators.multicast)
             {
-                if (!svr.is_connected && nullptr != get_participant_proxy_data(svr.guidPrefix))
-                {
-                    //! mark proxy as connected from an unmangled prefix in case
-                    //! it could not be done in assignRemoteEndpoints()
-                    svr.is_connected = true;
-                }
-
-                match_pdp_reader_nts_(svr, pdata.m_guid.guidPrefix);
-                match_pdp_writer_nts_(svr, pdata.m_guid.guidPrefix);
-                break;
+                server.metatrafficMulticastLocatorList.push_back(locator);
             }
+            for (const Locator_t& locator : pdata.metatraffic_locators.unicast)
+            {
+                server.metatrafficUnicastLocatorList.push_back(locator);
+            }
+
+            // Match incoming server
+            match_pdp_writer_nts_(server);
+            match_pdp_reader_nts_(server);
         }
     }
 #endif // HAVE_SECURITY
@@ -594,12 +597,12 @@ void PDPClient::removeRemoteEndpoints(
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
         // Verify if this participant is a server
-        for (auto& svr : mp_builtin->m_DiscoveryServers)
+        for (auto it = connected_servers_.begin(); it != connected_servers_.end(); ++it)
         {
-            if (svr.guidPrefix == pdata->m_guid.guidPrefix)
+            if (it->guidPrefix == pdata->m_guid.guidPrefix)
             {
                 std::unique_lock<std::recursive_mutex> lock(*getMutex());
-                svr.is_connected = false;
+                it = connected_servers_.erase(it);
                 is_server = true;
                 mp_sync->restart_timer(); // enable announcement and sync mechanism till this server reappears
             }
@@ -627,7 +630,7 @@ void PDPClient::removeRemoteEndpoints(
             if (!should_protect_discovery())
 #endif // HAVE_SECURITY
             {
-                // rematch but discarding any previous state of the server
+                // Rematch but discarding any previous state of the server
                 // because we know the server shutdown intentionally
                 auto temp_writer_data = get_temporary_writer_proxies_pool().get();
 
@@ -674,10 +677,10 @@ bool PDPClient::all_servers_acknowledge_PDP()
 {
     auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
 
-    // check if already initialized
+    // Check if already initialized
     assert(endpoints->writer.history_ && endpoints->writer.writer_);
 
-    // get a reference to client proxy data
+    // Get a reference to client proxy data
     CacheChange_t* pPD;
     if (endpoints->writer.history_->get_min_change(&pPD))
     {
@@ -734,9 +737,9 @@ void PDPClient::announceParticipantState(
         // Add the write params to the sample
         if (dispose)
         {
-            // we must assure when the server is dying that all client are send at least a DATA(p)
-            // note here we can no longer receive and DATA or ACKNACK from clients.
-            // In order to avoid that we send the message directly as in the standard stateless PDP
+            // When the server is dying we must ensure that every client is sent at least a DATA(p).
+            // Note here we can no longer receive and DATA or ACKNACK from clients.
+            // In order to avoid that we send the message directly as in the standard stateless PDP.
 
             CacheChange_t* change = nullptr;
             change = history.create_change(
@@ -746,7 +749,7 @@ void PDPClient::announceParticipantState(
 
             if (nullptr != change)
             {
-                // update the sequence number
+                // Update the sequence number
                 change->sequenceNumber = history.next_sequence_number();
                 change->write_params = wp;
 
@@ -764,19 +767,14 @@ void PDPClient::announceParticipantState(
                 //    //locators.push_back(ep.multicastLocatorList);
                 //}
                 {
-                    // temporary workaround
+                    // Temporary workaround
                     eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
-                    for (auto& svr : mp_builtin->m_DiscoveryServers)
+                    for (auto& svr: connected_servers_)
                     {
-                        // if we are matched to a server report demise
-                        if (svr.is_connected)
-                        {
-                            //locators.push_back(svr.metatrafficMulticastLocatorList);
-                            locators.push_back(svr.metatrafficUnicastLocatorList);
-                            remote_readers.emplace_back(svr.guidPrefix,
-                                    endpoints->reader.reader_->getGuid().entityId);
-                        }
+                        locators.push_back(svr.metatrafficUnicastLocatorList);
+                        remote_readers.emplace_back(svr.guidPrefix,
+                                endpoints->reader.reader_->getGuid().entityId);
                     }
                 }
 
@@ -786,7 +784,7 @@ void PDPClient::announceParticipantState(
                 }
             }
 
-            // free change
+            // Free change
             history.release_change(change);
         }
         else
@@ -795,7 +793,7 @@ void PDPClient::announceParticipantState(
 
             if (!new_change)
             {
-                // retrieve the participant discovery data
+                // Retrieve the participant discovery data
                 CacheChange_t* pPD;
                 if (history.get_min_change(&pPD))
                 {
@@ -803,11 +801,17 @@ void PDPClient::announceParticipantState(
 
                     eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
-                    for (auto& svr : mp_builtin->m_DiscoveryServers)
+                    // An already connected server will be pinged again if there exists a non-connected server (2 or more servers scenario).
+                    // This is because we no longer use the GUID to match servers, so we cannot discern which servers are connected
+                    // and which are not. We cannot map servers in m_DiscoveryServers to connected_servers_.
+
+                    // Ping always not-connected servers. This is done to ensure ping is sent to new servers after a list update.
+                    locators = mp_builtin->m_DiscoveryServers;
+
+                    // Announce liveliness (lease duration) to all servers
+                    if (!_serverPing)
                     {
-                        // non-pinging announcements like lease duration ones must be
-                        // broadcast to all servers
-                        if (!svr.is_connected || !_serverPing)
+                        for (auto& svr : connected_servers_)
                         {
                             locators.push_back(svr.metatrafficMulticastLocatorList);
                             locators.push_back(svr.metatrafficUnicastLocatorList);
@@ -816,8 +820,8 @@ void PDPClient::announceParticipantState(
 
                     direct_send(getRTPSParticipant(), locators, *pPD);
 
-                    // ping done independtly of which triggered the announcement
-                    // note all event callbacks are currently serialized
+                    // Ping done independently of which triggered the announcement.
+                    // Note all event callbacks are currently serialized
                     _serverPing = false;
                 }
                 else
@@ -845,27 +849,18 @@ void PDPClient::update_remote_servers_list()
     {
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
-        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
-        {
-            if (!endpoints->reader.reader_->matched_writer_is_matched(it.GetPDPWriter()) ||
-                    !endpoints->writer.writer_->matched_reader_is_matched(it.GetPDPReader()))
-            {
-                auto entry = LocatorSelectorEntry::create_fully_selected_entry(
-                    it.metatrafficUnicastLocatorList, it.metatrafficMulticastLocatorList);
-                mp_RTPSParticipant->createSenderResources(entry);
-            }
+        // Create resources for remote servers. If a sender resource is already created, this step will be skipped for
+        // that locator.
+        auto entry = LocatorSelectorEntry::create_fully_selected_entry(
+            mp_builtin->m_DiscoveryServers);
+        mp_RTPSParticipant->createSenderResources(entry);
 
-            if (!endpoints->reader.reader_->matched_writer_is_matched(it.GetPDPWriter()))
-            {
-                match_pdp_writer_nts_(it);
-            }
-
-            if (!endpoints->writer.writer_->matched_reader_is_matched(it.GetPDPReader()))
-            {
-                match_pdp_reader_nts_(it);
-            }
-        }
+        BaseReader::downcast(endpoints->reader.reader_)->allow_unknown_writers();
     }
+    // Make at least one ping to the new servers.
+    _serverPing = true;
+    WriteParams __wp = WriteParams::write_params_default();
+    announceParticipantState(false, false, __wp);
     mp_sync->restart_timer();
 }
 
@@ -937,451 +932,6 @@ void PDPClient::match_pdp_reader_nts_(
     }
 }
 
-bool ros_super_client_env()
-{
-    std::string super_client_str;
-    bool super_client = false;
-    std::vector<std::string> true_vec = {"TRUE", "true", "True", "1"};
-    std::vector<std::string> false_vec = {"FALSE", "false", "False", "0"};
-
-    SystemInfo::get_env(ROS_SUPER_CLIENT, super_client_str);
-    if (super_client_str != "")
-    {
-        if (find(true_vec.begin(), true_vec.end(), super_client_str) != true_vec.end())
-        {
-            super_client = true;
-        }
-        else if (find(false_vec.begin(), false_vec.end(), super_client_str) != false_vec.end())
-        {
-            super_client = false;
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(RTPS_PDP,
-                    "Invalid value for ROS_SUPER_CLIENT environment variable : " << super_client_str);
-        }
-    }
-    return super_client;
-}
-
-const std::string& ros_discovery_server_env()
-{
-    static std::string servers;
-    SystemInfo::get_env(DEFAULT_ROS2_MASTER_URI, servers);
-    return servers;
-}
-
-bool load_environment_server_info(
-        RemoteServerList_t& attributes)
-{
-    return load_environment_server_info(ros_discovery_server_env(), attributes);
-}
-
-bool load_environment_server_info(
-        const std::string& list,
-        RemoteServerList_t& attributes)
-{
-    attributes.clear();
-    if (list.empty())
-    {
-        return true;
-    }
-
-    /* Parsing ancillary regex
-     * Addresses should be ; separated. IPLocator functions are used to identify them in the order:
-     * IPv4, IPv6 or try dns resolution.
-     **/
-    const static std::regex ROS2_SERVER_LIST_PATTERN(R"(([^;]*);?)");
-    const static std::regex ROS2_IPV4_ADDRESSPORT_PATTERN(R"(^((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:?(?:(\d+))?$)");
-    const static std::regex ROS2_IPV6_ADDRESSPORT_PATTERN(
-        R"(^\[?((?:[0-9a-fA-F]{0,4}\:){0,7}[0-9a-fA-F]{0,4})?(?:\])?:?(?:(\d+))?$)");
-    // Regex to handle DNS and UDPv4/6 expressions
-    const static std::regex ROS2_DNS_DOMAINPORT_PATTERN(R"(^(UDPv[46]?:\[[\w\.:-]{0,63}\]|[\w\.-]{0,63}):?(?:(\d+))?$)");
-    // Regex to handle TCPv4/6 expressions
-    const static std::regex ROS2_DNS_DOMAINPORT_PATTERN_TCP(
-        R"(^(TCPv[46]?:\[[\w\.:-]{0,63}\]):?(?:(\d+))?$)");
-
-    // Filling port info
-    auto process_port = [](int port, Locator_t& server)
-            {
-                if (port > std::numeric_limits<uint16_t>::max())
-                {
-                    throw std::out_of_range("Too large udp port passed into the server's list");
-                }
-
-                if (!IPLocator::setPhysicalPort(server, static_cast<uint16_t>(port)))
-                {
-                    std::stringstream ss;
-                    ss << "Wrong udp port passed into the server's list " << port;
-                    throw std::invalid_argument(ss.str());
-                }
-            };
-
-    // Add new server
-    auto add_server2qos = [](int id, std::forward_list<Locator>&& locators, RemoteServerList_t& attributes)
-            {
-                RemoteServerAttributes server_att;
-
-                // add the server to the list
-                if (!get_server_client_default_guidPrefix(id, server_att.guidPrefix))
-                {
-                    throw std::invalid_argument("The maximum number of default discovery servers has been reached");
-                }
-
-                // split multi and unicast locators
-                auto unicast = std::partition(locators.begin(), locators.end(), IPLocator::isMulticast);
-
-                LocatorList mlist;
-                std::copy(locators.begin(), unicast, std::back_inserter(mlist));
-                if (!mlist.empty())
-                {
-                    server_att.metatrafficMulticastLocatorList.push_back(std::move(mlist));
-                }
-
-                LocatorList ulist;
-                std::copy(unicast, locators.end(), std::back_inserter(ulist));
-                if (!ulist.empty())
-                {
-                    server_att.metatrafficUnicastLocatorList.push_back(std::move(ulist));
-                }
-
-                attributes.push_back(std::move(server_att));
-            };
-
-    try
-    {
-        // Do the parsing and populate the list
-        Locator_t server_locator(LOCATOR_KIND_UDPv4, DEFAULT_ROS2_SERVER_PORT);
-        int server_id = 0;
-
-        std::sregex_iterator server_it(
-            list.begin(),
-            list.end(),
-            ROS2_SERVER_LIST_PATTERN,
-            std::regex_constants::match_not_null);
-
-        while (server_it != std::sregex_iterator())
-        {
-            // Retrieve the address (IPv4, IPv6 or DNS name)
-            const std::smatch::value_type sm = *++(server_it->cbegin());
-
-            if (sm.matched)
-            {
-                // now we must parse the inner expression
-                std::smatch mr;
-                std::string locator(sm);
-
-                if (locator.empty())
-                {
-                    // it's intencionally empty to hint us to ignore this server
-                }
-                // Try first with IPv4
-                else if (std::regex_match(locator, mr, ROS2_IPV4_ADDRESSPORT_PATTERN,
-                        std::regex_constants::match_not_null))
-                {
-                    std::smatch::iterator it = mr.cbegin();
-
-                    // traverse submatches
-                    if (++it != mr.cend())
-                    {
-                        std::string address = it->str();
-                        server_locator.kind = LOCATOR_KIND_UDPv4;
-                        server_locator.set_Invalid_Address();
-
-                        if (!IPLocator::setIPv4(server_locator, address))
-                        {
-                            std::stringstream ss;
-                            ss << "Wrong ipv4 address passed into the server's list " << address;
-                            throw std::invalid_argument(ss.str());
-                        }
-
-                        if (IPLocator::isAny(server_locator))
-                        {
-                            // A server cannot be reach in all interfaces, it's clearly a localhost call
-                            IPLocator::setIPv4(server_locator, "127.0.0.1");
-                        }
-
-                        // get port if any
-                        int port = DEFAULT_ROS2_SERVER_PORT;
-                        if (++it != mr.cend() && it->matched)
-                        {
-                            port = stoi(it->str());
-                        }
-
-                        process_port( port, server_locator);
-                    }
-
-                    // add server to the list
-                    add_server2qos(server_id, std::forward_list<Locator>{server_locator}, attributes);
-                }
-                // Try IPv6 next
-                else if (std::regex_match(locator, mr, ROS2_IPV6_ADDRESSPORT_PATTERN,
-                        std::regex_constants::match_not_null))
-                {
-                    std::smatch::iterator it = mr.cbegin();
-
-                    // traverse submatches
-                    if (++it != mr.cend())
-                    {
-                        std::string address = it->str();
-                        server_locator.kind = LOCATOR_KIND_UDPv6;
-                        server_locator.set_Invalid_Address();
-
-                        if (!IPLocator::setIPv6(server_locator, address))
-                        {
-                            std::stringstream ss;
-                            ss << "Wrong ipv6 address passed into the server's list " << address;
-                            throw std::invalid_argument(ss.str());
-                        }
-
-                        if (IPLocator::isAny(server_locator))
-                        {
-                            // A server cannot be reach in all interfaces, it's clearly a localhost call
-                            IPLocator::setIPv6(server_locator, "::1");
-                        }
-
-                        // get port if any
-                        int port = DEFAULT_ROS2_SERVER_PORT;
-                        if (++it != mr.cend() && it->matched)
-                        {
-                            port = stoi(it->str());
-                        }
-
-                        process_port( port, server_locator);
-                    }
-
-                    // add server to the list
-                    add_server2qos(server_id, std::forward_list<Locator>{server_locator}, attributes);
-                }
-                // try resolve DNS
-                else if (std::regex_match(locator, mr, ROS2_DNS_DOMAINPORT_PATTERN,
-                        std::regex_constants::match_not_null))
-                {
-                    std::forward_list<Locator> flist;
-
-                    {
-                        std::stringstream new_locator(locator,
-                                std::ios_base::in |
-                                std::ios_base::out |
-                                std::ios_base::ate);
-
-                        // first try the formal notation, add default port if necessary
-                        if (!mr[2].matched)
-                        {
-                            new_locator << ":" << DEFAULT_ROS2_SERVER_PORT;
-                        }
-
-                        new_locator >> server_locator;
-                    }
-
-                    // Otherwise add all resolved locators
-                    switch ( server_locator.kind )
-                    {
-                        case LOCATOR_KIND_UDPv4:
-                        case LOCATOR_KIND_UDPv6:
-                            flist.push_front(server_locator);
-                            break;
-                        case LOCATOR_KIND_INVALID:
-                        {
-                            std::smatch::iterator it = mr.cbegin();
-
-                            // traverse submatches
-                            if (++it != mr.cend())
-                            {
-                                std::string domain_name = it->str();
-                                std::set<std::string> ipv4, ipv6;
-                                std::tie(ipv4, ipv6) = IPLocator::resolveNameDNS(domain_name);
-
-                                // get port if any
-                                int port = DEFAULT_ROS2_SERVER_PORT;
-                                if (++it != mr.cend() && it->matched)
-                                {
-                                    port = stoi(it->str());
-                                }
-
-                                for ( const std::string& loc : ipv4 )
-                                {
-                                    server_locator.kind = LOCATOR_KIND_UDPv4;
-                                    server_locator.set_Invalid_Address();
-                                    IPLocator::setIPv4(server_locator, loc);
-
-                                    if (IPLocator::isAny(server_locator))
-                                    {
-                                        // A server cannot be reach in all interfaces, it's clearly a localhost call
-                                        IPLocator::setIPv4(server_locator, "127.0.0.1");
-                                    }
-
-                                    process_port( port, server_locator);
-                                    flist.push_front(server_locator);
-                                }
-
-                                for ( const std::string& loc : ipv6 )
-                                {
-                                    server_locator.kind = LOCATOR_KIND_UDPv6;
-                                    server_locator.set_Invalid_Address();
-                                    IPLocator::setIPv6(server_locator, loc);
-
-                                    if (IPLocator::isAny(server_locator))
-                                    {
-                                        // A server cannot be reach in all interfaces, it's clearly a localhost call
-                                        IPLocator::setIPv6(server_locator, "::1");
-                                    }
-
-                                    process_port( port, server_locator);
-                                    flist.push_front(server_locator);
-                                }
-                            }
-                        }
-                    }
-
-                    if (flist.empty())
-                    {
-                        std::stringstream ss;
-                        ss << "Wrong domain name passed into the server's list " << locator;
-                        throw std::invalid_argument(ss.str());
-                    }
-
-                    // add server to the list
-                    add_server2qos(server_id, std::move(flist), attributes);
-                }
-                // try resolve TCP DNS
-                else if (std::regex_match(locator, mr, ROS2_DNS_DOMAINPORT_PATTERN_TCP,
-                        std::regex_constants::match_not_null))
-                {
-                    std::forward_list<Locator> flist;
-
-                    {
-                        std::stringstream new_locator(locator,
-                                std::ios_base::in |
-                                std::ios_base::out |
-                                std::ios_base::ate);
-
-                        // first try the formal notation, add default port if necessary
-                        if (!mr[2].matched)
-                        {
-                            new_locator << ":" << DEFAULT_TCP_SERVER_PORT;
-                        }
-
-                        new_locator >> server_locator;
-                    }
-
-                    // Otherwise add all resolved locators
-                    switch ( server_locator.kind )
-                    {
-                        case LOCATOR_KIND_TCPv4:
-                        case LOCATOR_KIND_TCPv6:
-                            IPLocator::setLogicalPort(server_locator, static_cast<uint16_t>(server_locator.port));
-                            flist.push_front(server_locator);
-                            break;
-                        case LOCATOR_KIND_INVALID:
-                        {
-                            std::smatch::iterator it = mr.cbegin();
-
-                            // traverse submatches
-                            if (++it != mr.cend())
-                            {
-                                std::string domain_name = it->str();
-                                std::set<std::string> ipv4, ipv6;
-                                std::tie(ipv4, ipv6) = IPLocator::resolveNameDNS(domain_name);
-
-                                // get port if any
-                                int port = DEFAULT_TCP_SERVER_PORT;
-                                if (++it != mr.cend() && it->matched)
-                                {
-                                    port = stoi(it->str());
-                                }
-
-                                for ( const std::string& loc : ipv4 )
-                                {
-                                    server_locator.kind = LOCATOR_KIND_TCPv4;
-                                    server_locator.set_Invalid_Address();
-                                    IPLocator::setIPv4(server_locator, loc);
-
-                                    if (IPLocator::isAny(server_locator))
-                                    {
-                                        // A server cannot be reach in all interfaces, it's clearly a localhost call
-                                        IPLocator::setIPv4(server_locator, "127.0.0.1");
-                                    }
-
-                                    process_port( port, server_locator);
-                                    IPLocator::setLogicalPort(server_locator, static_cast<uint16_t>(port));
-                                    flist.push_front(server_locator);
-                                }
-
-                                for ( const std::string& loc : ipv6 )
-                                {
-                                    server_locator.kind = LOCATOR_KIND_TCPv6;
-                                    server_locator.set_Invalid_Address();
-                                    IPLocator::setIPv6(server_locator, loc);
-
-                                    if (IPLocator::isAny(server_locator))
-                                    {
-                                        // A server cannot be reach in all interfaces, it's clearly a localhost call
-                                        IPLocator::setIPv6(server_locator, "::1");
-                                    }
-
-                                    process_port( port, server_locator);
-                                    IPLocator::setLogicalPort(server_locator, static_cast<uint16_t>(port));
-                                    flist.push_front(server_locator);
-                                }
-                            }
-                        }
-                    }
-
-                    if (flist.empty())
-                    {
-                        std::stringstream ss;
-                        ss << "Wrong domain name passed into the server's list " << locator;
-                        throw std::invalid_argument(ss.str());
-                    }
-
-                    // add server to the list
-                    add_server2qos(server_id, std::move(flist), attributes);
-                }
-                else
-                {
-                    std::stringstream ss;
-                    ss << "Wrong locator passed into the server's list " << locator;
-                    throw std::invalid_argument(ss.str());
-                }
-            }
-
-            // advance to the next server if any
-            ++server_id;
-            ++server_it;
-        }
-
-        // Check for server info
-        if (attributes.empty())
-        {
-            throw std::invalid_argument("No default server locators were provided.");
-        }
-    }
-    catch (std::exception& e)
-    {
-        EPROSIMA_LOG_ERROR(SERVER_CLIENT_DISCOVERY, e.what());
-        attributes.clear();
-        return false;
-    }
-
-    return true;
-}
-
-GUID_t RemoteServerAttributes::GetParticipant() const
-{
-    return GUID_t(guidPrefix, c_EntityId_RTPSParticipant);
-}
-
-GUID_t RemoteServerAttributes::GetPDPReader() const
-{
-    return GUID_t(guidPrefix, c_EntityId_SPDPReader);
-}
-
-GUID_t RemoteServerAttributes::GetPDPWriter() const
-{
-    return GUID_t(guidPrefix, c_EntityId_SPDPWriter);
-}
-
 bool get_server_client_default_guidPrefix(
         int id,
         GuidPrefix_t& guid)
@@ -1422,9 +972,15 @@ bool PDPClient::remove_remote_participant(
     rguid.entityId = endpoints->reader.reader_->getGuid().entityId;
     endpoints->writer.writer_->matched_reader_remove(rguid);
 
-    update_remote_servers_list();
+    // Reactivate ping routine
+    mp_sync->restart_timer();
 
     return false;
+}
+
+const std::list<eprosima::fastdds::rtps::RemoteServerAttributes>& PDPClient::connected_servers()
+{
+    return connected_servers_;
 }
 
 } /* namespace rtps */

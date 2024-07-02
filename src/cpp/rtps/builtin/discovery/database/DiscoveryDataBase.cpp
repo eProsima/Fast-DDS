@@ -37,11 +37,9 @@ namespace rtps {
 namespace ddb {
 
 DiscoveryDataBase::DiscoveryDataBase(
-        fastdds::rtps::GuidPrefix_t server_guid_prefix,
-        std::set<fastdds::rtps::GuidPrefix_t> servers)
+        const fastdds::rtps::GuidPrefix_t& server_guid_prefix)
     : server_guid_prefix_(server_guid_prefix)
-    , server_acked_by_all_(servers.size() == 0)
-    , servers_(servers)
+    , server_acked_by_all_(true)
     , enabled_(true)
     , new_updates_(0)
     , processing_backup_(false)
@@ -65,8 +63,23 @@ DiscoveryDataBase::~DiscoveryDataBase()
 void DiscoveryDataBase::add_server(
         fastdds::rtps::GuidPrefix_t server)
 {
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
     EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Server " << server << " added");
     servers_.insert(server);
+}
+
+void DiscoveryDataBase::remove_server(
+        fastdds::rtps::GuidPrefix_t server)
+{
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
+    if (servers_.erase(server) == 1)
+    {
+        EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Removing server " << server);
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Tried to remove " << server << " but it was not found");
+    }
 }
 
 void DiscoveryDataBase::remove_related_alive_from_history_nts(
@@ -180,7 +193,7 @@ bool DiscoveryDataBase::pdp_is_relevant(
     // Lock(shared mode) mutex locally
     std::lock_guard<std::recursive_mutex> guard(mutex_);
 
-    EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "PDP is " << change.instanceHandle << " relevant to " << reader_guid);
+    EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "PDP " << change.instanceHandle << " is relevant to " << reader_guid);
 
     auto it = participants_.find(change_guid_prefix);
     if (it != participants_.end())
@@ -594,14 +607,58 @@ void DiscoveryDataBase::create_participant_from_change_(
 }
 
 void DiscoveryDataBase::match_new_server_(
-        eprosima::fastdds::rtps::GuidPrefix_t& participant_prefix)
+        eprosima::fastdds::rtps::GuidPrefix_t& participant_prefix,
+        bool is_superclient)
 {
-    // Send Our DATA(p) to the new participant
-    // If this is not done, our data could be skip afterwards because a gap sent in newer DATA(p)s
-    //  so the new participant could never receive out data
+    // Send Our DATA(p) to the new participant.
+    // If this is not done, our data could be skipped afterwards because of a gap sent in newer DATA(p)s,
+    // so the new participant could never receive our data
     auto our_data_it = participants_.find(server_guid_prefix_);
     assert(our_data_it != participants_.end());
     add_pdp_to_send_(our_data_it->second.change());
+
+    if (!is_superclient)
+    {
+        // To obtain a mesh topology with servers, we need to:
+        // - Make all known servers relevant to the new server
+        // - Make the new server relevant to all known servers
+        // - Send DATA(p) of all known servers to the new server
+        // - Send Data(p) of the new server to all other servers
+        for (auto& part : participants_)
+        {
+            if (part.first != server_guid_prefix_ && !part.second.is_client() && !part.second.is_superclient())
+            {
+                if (part.first == participant_prefix)
+                {
+                    std::lock_guard<std::recursive_mutex> guard(mutex_);
+                    bool resend_new_pdp = false;
+                    for (auto& server: servers_)
+                    {
+                        if (server != participant_prefix)
+                        {
+                            // Make all known servers relevant to the new server, but not matched
+                            part.second.add_or_update_ack_participant(server, false);
+                            resend_new_pdp = true;
+                        }
+                    }
+                    if (resend_new_pdp)
+                    {
+                        // Send DATA(p) of the new server to all other servers.
+                        add_pdp_to_send_(part.second.change());
+                    }
+                }
+                else
+                {
+                    // Make the new server relevant to all known servers
+                    part.second.add_or_update_ack_participant(participant_prefix, false);
+                    // Send DATA(p) of all known servers to the new participant
+                    add_pdp_to_send_(part.second.change());
+                }
+            }
+        }
+    }
+    // The resources needed for TCP new connections are created during the matching process when the
+    // DATA(p) is receieved by each server.
 
     // Create virtual endpoints
     create_virtual_endpoints_(participant_prefix);
@@ -669,7 +726,8 @@ bool DiscoveryDataBase::participant_data_has_changed_(
         const DiscoveryParticipantChangeData& new_change_data)
 {
     return !(participant_info.is_local() == new_change_data.is_local() &&
-           participant_info.is_client() == new_change_data.is_client());
+           participant_info.is_client() == new_change_data.is_client() &&
+           participant_info.is_superclient() == new_change_data.is_superclient());
 }
 
 void DiscoveryDataBase::create_new_participant_from_change_(
@@ -699,7 +757,7 @@ void DiscoveryDataBase::create_new_participant_from_change_(
         // If the DATA(p) it's from this server, it is already in history and we do nothing here
         if (change_guid.guidPrefix != server_guid_prefix_)
         {
-            // If the participant is a new participant, mark that not everyone has ACKed this server's DATA(p)
+            // If the participant is a new participant, mark that not everyone has ACKed this server's DATA(p).
             // TODO if the new participant is a server it may be that our DATA(p) is already acked because he is
             //  our server and we have pinged it. But also if we are its server it could be the case that
             //  our DATA(p) is not acked even when it is our server. Solution: see in PDPServer how the change has
@@ -712,7 +770,7 @@ void DiscoveryDataBase::create_new_participant_from_change_(
                 !ret.first->second.is_client() && ret.first->second.is_local())
         {
             // Match new server and create virtual endpoints
-            match_new_server_(change_guid.guidPrefix);
+            match_new_server_(change_guid.guidPrefix, change_data.is_superclient());
         }
     }
     else
@@ -739,7 +797,7 @@ void DiscoveryDataBase::update_participant_from_change_(
         // If it is local and server the only possibility is it was a remote server and it must be converted to local
         if (!change_data.is_client())
         {
-            match_new_server_(change_guid.guidPrefix);
+            match_new_server_(change_guid.guidPrefix, change_data.is_superclient());
         }
 
         // Update the change data
@@ -821,7 +879,7 @@ void DiscoveryDataBase::create_writers_from_change_(
             // The change could be newer and at the same time not being an update.
             // This happens with DATAs coming from servers, since they take their own DATAs in and out frequently,
             // so the sequence number in `write_params` changes.
-            // To account for that, we discard the DATA if the payload is exactly the same as what wee have.
+            // To account for that, we discard the DATA if the payload is exactly the same as what we have.
             if (!(ch->serializedPayload == writer_it->second.change()->serializedPayload))
             {
                 // Update the change related to the writer and return the old change to the pool
@@ -838,11 +896,11 @@ void DiscoveryDataBase::create_writers_from_change_(
                 }
             }
         }
-        // if the cache is not new we have to release it, because it is repeated or outdated
+        // If the cache is not new we have to release it, because it is repeated or outdated
         else
         {
-            // if the change is the same that we already have, we update the ack list. This is because we have
-            //  received the data from two servers, so we have to set that both of them already know this data
+            // If the change is the same that we already have, we update the ack list. This is because we have
+            // received the data from two servers, so we have to set that both of them already know this data
             if (ch->write_params.sample_identity().sequence_number() ==
                     writer_it->second.change()->write_params.sample_identity().sequence_number())
             {
@@ -956,7 +1014,7 @@ void DiscoveryDataBase::create_readers_from_change_(
                 }
             }
         }
-        // if the cache is not new we have to release it, because it is repeated or outdated
+        // If the cache is not new we have to release it, because it is repeated or outdated
         else
         {
             // if the change is the same that we already have, we update the ack list. This is because we have
@@ -1014,7 +1072,7 @@ void DiscoveryDataBase::create_readers_from_change_(
         // we avoid backprogation of the data.
         reader_it->second.add_or_update_ack_participant(ch->writerGUID.guidPrefix, true);
 
-        // if topic is virtual, it must iterate over all readers
+        // If topic is virtual, it must iterate over all readers
         if (topic_name == virtual_topic_)
         {
             for (auto writer_it : writers_)
@@ -1091,11 +1149,12 @@ void DiscoveryDataBase::match_writer_reader_(
     // TODO reduce number of cases. This is more visual, but can be reduce joining them
     if (writer_info.is_virtual())
     {
-        // writer virtual
+        // Writer virtual
 
-        // If reader is virtual do not exchange info
-        // If not, writer needs all the info from this endpoint
-        if (!reader_info.is_virtual())
+        // If reader is virtual OR not local, do not exchange info. Servers do not redirect Data(p) of remote clients.
+        // Otherwise, writer needs all the info from this endpoint
+        if (!reader_info.is_virtual() &&
+                (reader_participant_info.is_local() || writer_participant_info.is_superclient()))
         {
             // Only if they do not have the info yet
             if (!reader_participant_info.is_relevant_participant(writer_guid.guidPrefix))
@@ -1173,9 +1232,10 @@ void DiscoveryDataBase::match_writer_reader_(
     {
         // Writer external
 
-        // if reader is external do not exchange info
-        // if not, reader needs all the info from this endpoint
-        if (reader_participant_info.is_local())
+        // If reader is external OR virtual, do not exchange info. Servers do not redirect Data(p) of remote clients.
+        // Otherwise, reader needs all the info from this endpoint
+        if (reader_participant_info.is_local() &&
+                (!reader_info.is_virtual() || reader_participant_info.is_superclient()))
         {
             // Only if they do not have the info yet
             if (!writer_participant_info.is_relevant_participant(reader_guid.guidPrefix))
@@ -1426,7 +1486,7 @@ bool DiscoveryDataBase::process_dirty_topics()
                             // If the status is 0, add DATA(r) to a `edp_publications_to_send_` (if it's not there).
                             if (add_edp_subscriptions_to_send_(readers_it->second.change()))
                             {
-                                EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Addind DATA(r) to send: "
+                                EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Adding DATA(r) to send: "
                                         << readers_it->second.change()->instanceHandle);
                             }
                         }
@@ -1436,7 +1496,7 @@ bool DiscoveryDataBase::process_dirty_topics()
                         // Add DATA(p) of the client with the writer to `pdp_to_send_` (if it's not there).
                         if (add_pdp_to_send_(parts_reader_it->second.change()))
                         {
-                            EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Addind readers' DATA(p) to send: "
+                            EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Adding readers' DATA(p) to send: "
                                     << parts_reader_it->second.change()->instanceHandle);
                         }
                         // Set topic as not-clearable.
@@ -1458,7 +1518,7 @@ bool DiscoveryDataBase::process_dirty_topics()
                             // If the status is 0, add DATA(w) to a `edp_subscriptions_to_send_` (if it's not there).
                             if (add_edp_publications_to_send_(writers_it->second.change()))
                             {
-                                EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Addind DATA(w) to send: "
+                                EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Adding DATA(w) to send: "
                                         << writers_it->second.change()->instanceHandle);
                             }
                         }
@@ -1468,7 +1528,7 @@ bool DiscoveryDataBase::process_dirty_topics()
                         // Add DATA(p) of the client with the reader to `pdp_to_send_` (if it's not there).
                         if (add_pdp_to_send_(parts_writer_it->second.change()))
                         {
-                            EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Addind writers' DATA(p) to send: "
+                            EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Adding writers' DATA(p) to send: "
                                     << parts_writer_it->second.change()->instanceHandle);
                         }
                         // Set topic as not-clearable.
@@ -1629,48 +1689,6 @@ const std::vector<fastdds::rtps::GuidPrefix_t> DiscoveryDataBase::direct_clients
         }
     }
     return direct_clients_and_servers;
-}
-
-bool DiscoveryDataBase::server_acked_by_my_servers()
-{
-    std::lock_guard<std::recursive_mutex> guard(mutex_);
-
-    if (servers_.size() == 0)
-    {
-        return true;
-    }
-
-    // Find the server's participant and check whether all its servers have ACKed the server's DATA(p)
-    auto this_server = participants_.find(server_guid_prefix_);
-    // check it is always there
-
-    assert(this_server != participants_.end());
-
-    for (auto prefix : servers_)
-    {
-        if (!this_server->second.is_matched(prefix))
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
-std::vector<fastdds::rtps::GuidPrefix_t> DiscoveryDataBase::ack_pending_servers()
-{
-    std::lock_guard<std::recursive_mutex> guard(mutex_);
-
-    std::vector<fastdds::rtps::GuidPrefix_t> ack_pending_servers;
-    // Find the server's participant and check whether all its servers have ACKed the server's DATA(p)
-    auto this_server = participants_.find(server_guid_prefix_);
-    for (auto prefix : servers_)
-    {
-        if (!this_server->second.is_matched(prefix))
-        {
-            ack_pending_servers.push_back(prefix);
-        }
-    }
-    return ack_pending_servers;
 }
 
 LocatorList DiscoveryDataBase::participant_metatraffic_locators(
@@ -2242,7 +2260,7 @@ std::map<eprosima::fastdds::rtps::GUID_t, DiscoveryEndpointInfo>::iterator Disco
     auto pit = participants_.find(it->first.guidPrefix);
     if (pit == participants_.end())
     {
-        EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Attempting to delete and orphan reader");
+        EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Attempting to delete an orphan reader");
         // Returning error here could lead to an infinite loop
     }
     else
@@ -2318,15 +2336,28 @@ bool DiscoveryDataBase::add_pdp_to_send_(
         eprosima::fastdds::rtps::CacheChange_t* change)
 {
     // Add DATA(p) to send in next iteration if it is not already there
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
     if (std::find(
                 pdp_to_send_.begin(),
                 pdp_to_send_.end(),
                 change) == pdp_to_send_.end())
     {
-        EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Addind DATA(p) to send: "
+        EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Adding DATA(p) to send: "
                 << change->instanceHandle);
         pdp_to_send_.push_back(change);
         return true;
+    }
+    return false;
+}
+
+bool DiscoveryDataBase::add_own_pdp_to_send_()
+{
+    if (!backup_in_progress())
+    {
+        auto our_data_it = participants_.find(server_guid_prefix_);
+        assert(our_data_it != participants_.end());
+
+        return add_pdp_to_send_(our_data_it->second.change());
     }
     return false;
 }
@@ -2340,7 +2371,7 @@ bool DiscoveryDataBase::add_edp_publications_to_send_(
                 edp_publications_to_send_.end(),
                 change) == edp_publications_to_send_.end())
     {
-        EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Addind DATA(w) to send: "
+        EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Adding DATA(w) to send: "
                 << change->instanceHandle);
         edp_publications_to_send_.push_back(change);
         return true;
@@ -2357,7 +2388,7 @@ bool DiscoveryDataBase::add_edp_subscriptions_to_send_(
                 edp_subscriptions_to_send_.end(),
                 change) == edp_subscriptions_to_send_.end())
     {
-        EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Addind DATA(r) to send: "
+        EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Adding DATA(r) to send: "
                 << change->instanceHandle);
         edp_subscriptions_to_send_.push_back(change);
         return true;

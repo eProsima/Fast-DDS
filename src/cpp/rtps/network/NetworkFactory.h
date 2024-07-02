@@ -308,12 +308,13 @@ public:
      *
      * @param send_resource_list List of send resources associated to the local participant.
      * @param remote_participant_locators List of locators associated to the remote participant.
-     * @param participant_initial_peers List of locators of the initial peers of the local participant.
+     * @param participant_initial_peers_and_ds List of locators of the initial peers and direct servers
+     * of the local participant.
      */
     void remove_participant_associated_send_resources(
             fastdds::rtps::SendResourceList& send_resource_list,
             const LocatorList_t& remote_participant_locators,
-            const LocatorList_t& participant_initial_peers) const;
+            const LocatorList_t& participant_initial_peers_and_ds) const;
 
     /**
      * Returns transports' netmask filter information (transport's netmask filter kind and allowlist).

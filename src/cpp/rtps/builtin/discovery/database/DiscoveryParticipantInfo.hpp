@@ -95,6 +95,11 @@ public:
         return participant_change_data_.is_client();
     }
 
+    bool is_superclient() const
+    {
+        return participant_change_data_.is_superclient();
+    }
+
     bool is_local() const
     {
         return participant_change_data_.is_local();

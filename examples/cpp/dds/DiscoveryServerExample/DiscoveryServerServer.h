@@ -44,12 +44,10 @@ public:
     bool init(
             const std::string& server_address,
             unsigned short server_port,
-            unsigned short server_id,
             TransportKind transport,
             bool has_connection_server,
             const std::string& connection_server_address,
-            unsigned short connection_server_port,
-            unsigned short connection_server_id);
+            unsigned short connection_server_port);
 
     //! Run
     void run(
