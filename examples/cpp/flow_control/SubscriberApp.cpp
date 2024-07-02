@@ -51,7 +51,8 @@ SubscriberApp::SubscriberApp(
     status_mask << StatusMask::data_available();
     status_mask << StatusMask::subscription_matched();
     // Create Participant
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT, this, status_mask);
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT, this,
+                    status_mask);
     if (participant_ == nullptr)
     {
         throw std::runtime_error("Participant initialization failed");
@@ -162,7 +163,7 @@ void SubscriberApp::on_data_writer_discovery(
         fast_writer_guid = info.info.guid().entityId;
         std::cout << "Fast writer id " << fast_writer_guid << std::endl;
     }
-    else if(info.info.m_qos.m_userData.data_vec() == slow_writer_id)
+    else if (info.info.m_qos.m_userData.data_vec() == slow_writer_id)
     {
         slow_writer_guid = info.info.guid().entityId;
         std::cout << "Slow writer id " << slow_writer_guid << std::endl;

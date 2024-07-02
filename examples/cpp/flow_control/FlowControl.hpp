@@ -79,9 +79,9 @@ public:
     eProsima_user_DllExport FlowControl(
             const FlowControl& x)
     {
-                    m_message = x.m_message;
+        m_message = x.m_message;
 
-                    m_index = x.m_index;
+        m_index = x.m_index;
 
     }
 
@@ -104,9 +104,9 @@ public:
             const FlowControl& x)
     {
 
-                    m_message = x.m_message;
+        m_message = x.m_message;
 
-                    m_index = x.m_index;
+        m_index = x.m_index;
 
         return *this;
     }
@@ -132,7 +132,7 @@ public:
             const FlowControl& x) const
     {
         return (m_message == x.m_message &&
-           m_index == x.m_index);
+               m_index == x.m_index);
     }
 
     /*!
@@ -183,7 +183,6 @@ public:
         return m_message;
     }
 
-
     /*!
      * @brief This function sets a value in member index
      * @param _index New value for member index
@@ -211,8 +210,6 @@ public:
     {
         return m_index;
     }
-
-
 
 private:
 
