@@ -26,6 +26,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
 #include <fastdds/publisher/DataWriterImpl.hpp>
+#include <rtps/writer/BaseWriter.hpp>
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 
 namespace eprosima {

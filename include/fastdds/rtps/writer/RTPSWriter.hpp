@@ -40,13 +40,6 @@
 
 namespace eprosima {
 namespace fastdds {
-
-namespace dds {
-
-class DataWriterImpl;
-
-} // namespace dds
-
 namespace rtps {
 
 struct CacheChange_t;
@@ -63,7 +56,6 @@ class RTPSWriter : public Endpoint
 {
     friend class WriterHistory;
     friend class RTPSParticipantImpl;
-    friend class fastdds::dds::DataWriterImpl;
 
 protected:
 
@@ -390,9 +382,6 @@ protected:
     virtual bool change_removed_by_history(
             CacheChange_t* a_change,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) = 0;
-
-    bool is_datasharing_compatible_with(
-            const ReaderProxyData& rdata) const;
 
 private:
 

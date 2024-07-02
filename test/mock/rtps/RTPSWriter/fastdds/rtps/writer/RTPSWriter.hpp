@@ -128,9 +128,6 @@ public:
 
     MOCK_CONST_METHOD0(is_datasharing_compatible, bool());
 
-    MOCK_CONST_METHOD1(is_datasharing_compatible_with, bool(
-            const ReaderProxyData& rdata));
-
     MOCK_METHOD1(reader_data_filter, void(
             fastdds::rtps::IReaderDataFilter* filter));
 

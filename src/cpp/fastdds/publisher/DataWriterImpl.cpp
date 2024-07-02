@@ -49,6 +49,7 @@
 #include <rtps/resources/ResourceEvent.h>
 #include <rtps/RTPSDomainImpl.hpp>
 #include <rtps/resources/TimedEvent.h>
+#include <rtps/writer/BaseWriter.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
 #include <utils/TimeConversion.hpp>
 #ifdef FASTDDS_STATISTICS
@@ -419,7 +420,7 @@ ReturnCode_t DataWriterImpl::enable()
         return RETCODE_ERROR;
     }
 
-    writer_ = writer;
+    writer_ = BaseWriter::downcast(writer);
     if (filtering_enabled)
     {
         writer_->reader_data_filter(this);

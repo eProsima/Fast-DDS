@@ -50,6 +50,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+class BaseWriter;
 class RTPSWriter;
 class RTPSParticipant;
 class TimedEvent;
@@ -387,8 +388,8 @@ protected:
 
     PublisherImpl* publisher_ = nullptr;
 
-    //! Pointer to the associated Data Writer.
-    fastdds::rtps::RTPSWriter* writer_ = nullptr;
+    //! Pointer to the associated RTPS Writer.
+    fastdds::rtps::BaseWriter* writer_ = nullptr;
 
     //! Pointer to the TopicDataType object.
     TypeSupport type_;

@@ -23,6 +23,7 @@
 #include <memory>
 
 #include <fastdds/fastdds_dll.hpp>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
@@ -180,6 +181,9 @@ public:
         result = false;
         return writer_guid == m_guid;
     }
+
+    bool is_datasharing_compatible_with(
+            const ReaderProxyData& rdata) const;
 
     /**
      * @brief Get a pointer to a BaseWriter object from a RTPSWriter pointer.

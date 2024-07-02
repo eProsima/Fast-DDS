@@ -200,27 +200,6 @@ bool RTPSWriter::is_datasharing_compatible() const
     return (m_att.data_sharing_configuration().kind() != dds::OFF);
 }
 
-bool RTPSWriter::is_datasharing_compatible_with(
-        const ReaderProxyData& rdata) const
-{
-    if (!is_datasharing_compatible() ||
-            rdata.m_qos.data_sharing.kind() == fastdds::dds::OFF)
-    {
-        return false;
-    }
-
-    for (auto id : rdata.m_qos.data_sharing.domain_ids())
-    {
-        if (std::find(m_att.data_sharing_configuration().domain_ids().begin(),
-                m_att.data_sharing_configuration().domain_ids().end(), id)
-                != m_att.data_sharing_configuration().domain_ids().end())
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
 }  // namespace rtps
 }  // namespace fastdds
 }  // namespace eprosima

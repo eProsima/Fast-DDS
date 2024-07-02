@@ -67,6 +67,9 @@ public:
             const LocatorSelectorSender&,
             std::chrono::steady_clock::time_point&));
 
+    MOCK_CONST_METHOD1(is_datasharing_compatible_with, bool(
+            const ReaderProxyData& rdata));
+
     // *INDENT-ON*
 
     virtual bool process_acknack(
