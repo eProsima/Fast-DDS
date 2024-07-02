@@ -101,13 +101,7 @@ public:
     LoanableSequence(
             LoanableSequence&&) = default;
 
-    /**
-     * @brief Move assignment operator for LoanableSequence.
-     *
-     * @param[in] other The other LoanableSequence to move from.
-     *
-     * @return A reference to this LoanableSequence.
-     */
+    /// Move assignment operator for LoanableSequence.
     LoanableSequence& operator =(
             LoanableSequence&&) = default;
 
