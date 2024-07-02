@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<dds>
-    <profiles xmlns="http://www.eprosima.com" >
+<dds xmlns="http://www.eprosima.com" >
+    <profiles>
         <participant profile_name="xtypes_participant_profile" is_default_profile="true">
             <domainId>0</domainId>
             <rtps>
@@ -52,7 +52,7 @@
         </data_reader>
     </profiles>
 
-    <types xmlns="http://www.eprosima.com" >
+    <types>
         <type>
             <struct name="HelloWorld">
                 <member name="index" type="uint32"/>
