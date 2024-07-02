@@ -38,16 +38,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(FlowControl_SOURCE)
-#define FlowControl_DllAPI __declspec( dllexport )
+#if defined(FLOWCONTROL_SOURCE)
+#define FLOWCONTROL_DllAPI __declspec( dllexport )
 #else
-#define FlowControl_DllAPI __declspec( dllimport )
-#endif // FlowControl_SOURCE
+#define FLOWCONTROL_DllAPI __declspec( dllimport )
+#endif // FLOWCONTROL_SOURCE
 #else
-#define FlowControl_DllAPI
+#define FLOWCONTROL_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define FlowControl_DllAPI
+#define FLOWCONTROL_DllAPI
 #endif // _WIN32
 
 /*!
@@ -79,9 +79,9 @@ public:
     eProsima_user_DllExport FlowControl(
             const FlowControl& x)
     {
-        m_message = x.m_message;
+                    m_message = x.m_message;
 
-        m_wasFast = x.m_wasFast;
+                    m_index = x.m_index;
 
     }
 
@@ -93,7 +93,7 @@ public:
             FlowControl&& x) noexcept
     {
         m_message = std::move(x.m_message);
-        m_wasFast = x.m_wasFast;
+        m_index = x.m_index;
     }
 
     /*!
@@ -104,9 +104,9 @@ public:
             const FlowControl& x)
     {
 
-        m_message = x.m_message;
+                    m_message = x.m_message;
 
-        m_wasFast = x.m_wasFast;
+                    m_index = x.m_index;
 
         return *this;
     }
@@ -120,7 +120,7 @@ public:
     {
 
         m_message = std::move(x.m_message);
-        m_wasFast = x.m_wasFast;
+        m_index = x.m_index;
         return *this;
     }
 
@@ -132,7 +132,7 @@ public:
             const FlowControl& x) const
     {
         return (m_message == x.m_message &&
-               m_wasFast == x.m_wasFast);
+           m_index == x.m_index);
     }
 
     /*!
@@ -183,38 +183,41 @@ public:
         return m_message;
     }
 
+
     /*!
-     * @brief This function sets a value in member wasFast
-     * @param _wasFast New value for member wasFast
+     * @brief This function sets a value in member index
+     * @param _index New value for member index
      */
-    eProsima_user_DllExport void wasFast(
-            char _wasFast)
+    eProsima_user_DllExport void index(
+            uint32_t _index)
     {
-        m_wasFast = _wasFast;
+        m_index = _index;
     }
 
     /*!
-     * @brief This function returns the value of member wasFast
-     * @return Value of member wasFast
+     * @brief This function returns the value of member index
+     * @return Value of member index
      */
-    eProsima_user_DllExport char wasFast() const
+    eProsima_user_DllExport uint32_t index() const
     {
-        return m_wasFast;
+        return m_index;
     }
 
     /*!
-     * @brief This function returns a reference to member wasFast
-     * @return Reference to member wasFast
+     * @brief This function returns a reference to member index
+     * @return Reference to member index
      */
-    eProsima_user_DllExport char& wasFast()
+    eProsima_user_DllExport uint32_t& index()
     {
-        return m_wasFast;
+        return m_index;
     }
+
+
 
 private:
 
     std::array<char, 600000> m_message{0};
-    char m_wasFast{0};
+    uint32_t m_index{0};
 
 };
 

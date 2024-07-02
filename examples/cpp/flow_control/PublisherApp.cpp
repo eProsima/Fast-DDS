@@ -158,22 +158,19 @@ void PublisherApp::on_publication_matched(
 void PublisherApp::run()
 {
     // Publication code
-    FlowControl st;
+    FlowControl msg;
 
     /* Initialize your structure here */
     uint16_t samples_fast = 0;
     uint16_t samples_slow = 0;
     while (!is_stopped() && ((samples_ == 0) || ((samples_fast < samples_) && (samples_slow < samples_))))
     {
-
-        st.wasFast(false);
-        if (publish(slow_writer_, samples_slow, st))
+        if (publish(slow_writer_, samples_slow, msg))
         {
             std::cout << "Message SENT from SLOW WRITER, count=" << samples_slow << std::endl;
         }
 
-        st.wasFast(true);
-        if (publish(fast_writer_, samples_fast, st))
+        if (publish(fast_writer_, samples_fast, msg))
         {
             std::cout << "Message SENT from FAST WRITER, count=" << samples_fast << std::endl;
         }
@@ -203,8 +200,9 @@ bool PublisherApp::publish(
 
     if (!is_stopped())
     {
-        ret = writer_->write(&msg);
         ++samples;
+        msg.index(samples);
+        ret = writer_->write(&msg);
     }
     return ret;
 }

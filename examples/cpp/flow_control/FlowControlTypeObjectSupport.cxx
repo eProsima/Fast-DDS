@@ -123,34 +123,34 @@ void register_FlowControl_type_identifier(
             TypeObjectUtils::add_complete_struct_member(member_seq_FlowControl, member_message);
         }
         {
-            TypeIdentifierPair type_ids_wasFast;
-            ReturnCode_t return_code_wasFast {eprosima::fastdds::dds::RETCODE_OK};
-            return_code_wasFast =
+            TypeIdentifierPair type_ids_index;
+            ReturnCode_t return_code_index {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_index =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_char", type_ids_wasFast);
+                "_uint32_t", type_ids_index);
 
-            if (eprosima::fastdds::dds::RETCODE_OK != return_code_wasFast)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_index)
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "wasFast Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        "index Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_wasFast = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+            StructMemberFlag member_flags_index = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_wasFast = 0x00000001;
-            bool common_wasFast_ec {false};
-            CommonStructMember common_wasFast {TypeObjectUtils::build_common_struct_member(member_id_wasFast, member_flags_wasFast, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_wasFast, common_wasFast_ec))};
-            if (!common_wasFast_ec)
+            MemberId member_id_index = 0x00000001;
+            bool common_index_ec {false};
+            CommonStructMember common_index {TypeObjectUtils::build_common_struct_member(member_id_index, member_flags_index, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_index, common_index_ec))};
+            if (!common_index_ec)
             {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure wasFast member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure index member TypeIdentifier inconsistent.");
                 return;
             }
-            MemberName name_wasFast = "wasFast";
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_wasFast;
+            MemberName name_index = "index";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_index;
             ann_custom_FlowControl.reset();
-            CompleteMemberDetail detail_wasFast = TypeObjectUtils::build_complete_member_detail(name_wasFast, member_ann_builtin_wasFast, ann_custom_FlowControl);
-            CompleteStructMember member_wasFast = TypeObjectUtils::build_complete_struct_member(common_wasFast, detail_wasFast);
-            TypeObjectUtils::add_complete_struct_member(member_seq_FlowControl, member_wasFast);
+            CompleteMemberDetail detail_index = TypeObjectUtils::build_complete_member_detail(name_index, member_ann_builtin_index, ann_custom_FlowControl);
+            CompleteStructMember member_index = TypeObjectUtils::build_complete_struct_member(common_index, detail_index);
+            TypeObjectUtils::add_complete_struct_member(member_seq_FlowControl, member_index);
         }
         CompleteStructType struct_type_FlowControl = TypeObjectUtils::build_complete_struct_type(struct_flags_FlowControl, header_FlowControl, member_seq_FlowControl);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==

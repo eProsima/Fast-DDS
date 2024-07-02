@@ -24,7 +24,7 @@
 
 #include "FlowControl.hpp"
 
-constexpr uint32_t FlowControl_max_cdr_typesize {600005UL};
+constexpr uint32_t FlowControl_max_cdr_typesize {600008UL};
 constexpr uint32_t FlowControl_max_key_cdr_typesize {0UL};
 
 
