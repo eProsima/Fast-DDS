@@ -26,15 +26,14 @@ namespace fastdds {
 namespace rtps {
 
 /**
- * @enum ChangeKind_t, different types of CacheChange_t.
- * @ingroup COMMON_MODULE
+ * Enumerates the different types of CacheChange_t.
  */
 enum FASTDDS_EXPORTED_API ChangeKind_t
 {
-    ALIVE,                            //!< ALIVE
-    NOT_ALIVE_DISPOSED,               //!< NOT_ALIVE_DISPOSED
-    NOT_ALIVE_UNREGISTERED,           //!< NOT_ALIVE_UNREGISTERED
-    NOT_ALIVE_DISPOSED_UNREGISTERED   //!< NOT_ALIVE_DISPOSED_UNREGISTERED
+    ALIVE,                          //!< ALIVE
+    NOT_ALIVE_DISPOSED,             //!< NOT_ALIVE_DISPOSED
+    NOT_ALIVE_UNREGISTERED,         //!< NOT_ALIVE_UNREGISTERED
+    NOT_ALIVE_DISPOSED_UNREGISTERED //!< NOT_ALIVE_DISPOSED_UNREGISTERED
 };
 
 } // namespace rtps

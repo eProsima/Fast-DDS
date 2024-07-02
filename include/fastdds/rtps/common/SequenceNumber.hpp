@@ -32,7 +32,6 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-
 //!@brief Structure SequenceNumber_t, different for each change in the same writer.
 //!@ingroup COMMON_MODULE
 struct FASTDDS_EXPORTED_API SequenceNumber_t
@@ -42,7 +41,7 @@ struct FASTDDS_EXPORTED_API SequenceNumber_t
     //!
     uint32_t low = 0;
 
-    //!Default constructor
+    //! Default constructor
     SequenceNumber_t() noexcept
     {
         high = 0;
@@ -64,8 +63,7 @@ struct FASTDDS_EXPORTED_API SequenceNumber_t
     /*!
      * @param u
      */
-    explicit
-    SequenceNumber_t(
+    explicit SequenceNumber_t(
             uint64_t u) noexcept
         : high(static_cast<int32_t>(u >> 32u))
         , low(static_cast<uint32_t>(u))
@@ -110,7 +108,7 @@ struct FASTDDS_EXPORTED_API SequenceNumber_t
     {
         assert(inc >= 0);
         uint32_t aux_low = low;
-        low +=  static_cast<uint32_t>(inc);
+        low += static_cast<uint32_t>(inc);
 
         if (low < aux_low)
         {
@@ -124,7 +122,7 @@ struct FASTDDS_EXPORTED_API SequenceNumber_t
 
     static SequenceNumber_t unknown() noexcept
     {
-        return { -1, 0 };
+        return {-1, 0};
     }
 
 };
@@ -366,8 +364,7 @@ struct SequenceNumberDiff
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-//!Structure SequenceNumberSet_t, contains a group of sequencenumbers.
-//!@ingroup COMMON_MODULE
+//! Structure SequenceNumberSet_t, contains a group of sequencenumbers.
 using SequenceNumberSet_t = BitmapRange<SequenceNumber_t, SequenceNumberDiff, 256>;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
