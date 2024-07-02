@@ -21,8 +21,9 @@
 
 #include <gmock/gmock.h>
 
-#include <fastdds/rtps/writer/LocatorSelectorSender.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
+
+#include <rtps/writer/LocatorSelectorSender.hpp>
 
 namespace eprosima {
 namespace fastdds {

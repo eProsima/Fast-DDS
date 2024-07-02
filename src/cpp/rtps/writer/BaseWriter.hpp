@@ -23,11 +23,12 @@
 #include <memory>
 
 #include <fastdds/fastdds_dll.hpp>
-#include <fastdds/rtps/writer/LocatorSelectorSender.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 #include <fastdds/statistics/rtps/monitor_service/connections_fwd.hpp>
+
+#include <rtps/writer/LocatorSelectorSender.hpp>
 
 namespace eprosima {
 namespace fastdds {

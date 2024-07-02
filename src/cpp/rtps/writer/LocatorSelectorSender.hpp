@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FASTDDS_RTPS_WRITER_LOCATORSELECTORSENDER_HPP
-#define FASTDDS_RTPS_WRITER_LOCATORSELECTORSENDER_HPP
+#ifndef RTPS_WRITER__LOCATORSELECTORSENDER_HPP
+#define RTPS_WRITER__LOCATORSELECTORSENDER_HPP
 
 #include <vector>
 
@@ -140,4 +140,5 @@ private:
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
-#endif // FASTDDS_RTPS_WRITER_LOCATORSELECTORSENDER_HPP
+
+#endif // RTPS_WRITER__LOCATORSELECTORSENDER_HPP
