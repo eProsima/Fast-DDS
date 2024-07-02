@@ -12939,10 +12939,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_enum)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicTypeBuilder::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type_builder;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("EnumStruct",
-            xml_type));
+            xml_type_builder));
 
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -12975,7 +12975,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_enum)
     member_descriptor->name("my_enum");
     builder->add_member(member_descriptor);
 
-    ASSERT_TRUE(xml_type->equals(builder->build()));
+    ASSERT_TRUE(xml_type_builder->equals(builder->build()));
 
 }
 
@@ -12984,10 +12984,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_alias)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicTypeBuilder::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type_builder;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("AliasStruct",
-            xml_type));
+            xml_type_builder));
 
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -13026,7 +13026,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_alias)
     member_descriptor->name("my_alias");
     builder->add_member(member_descriptor);
 
-    ASSERT_TRUE(xml_type->equals(builder->build()));
+    ASSERT_TRUE(xml_type_builder->equals(builder->build()));
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_alias_with_alias)
