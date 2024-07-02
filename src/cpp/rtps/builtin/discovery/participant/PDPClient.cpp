@@ -528,7 +528,6 @@ void PDPClient::notifyAboveRemoteEndpoints(
             {
                 server.metatrafficUnicastLocatorList.push_back(locator);
             }
-            connected_servers_.push_back(server);
 
             // Match incoming server
             match_pdp_writer_nts_(server);
