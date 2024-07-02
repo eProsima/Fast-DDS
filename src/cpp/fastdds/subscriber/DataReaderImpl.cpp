@@ -1103,7 +1103,7 @@ bool DataReaderImpl::on_new_cache_change_added(
     {
         if (!history_.set_next_deadline(
                     change->instanceHandle,
-                    steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
+                    steady_clock::now() + duration_cast<steady_clock::duration>(deadline_duration_us_)))
         {
             EPROSIMA_LOG_ERROR(SUBSCRIBER, "Could not set next deadline in the history");
         }
@@ -1241,7 +1241,7 @@ bool DataReaderImpl::deadline_missed()
 
     if (!history_.set_next_deadline(
                 timer_owner_,
-                steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_), true))
+                steady_clock::now() + duration_cast<steady_clock::duration>(deadline_duration_us_), true))
     {
         EPROSIMA_LOG_ERROR(SUBSCRIBER, "Could not set next deadline in the history");
         return false;
