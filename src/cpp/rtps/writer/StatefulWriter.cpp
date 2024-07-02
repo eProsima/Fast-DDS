@@ -402,14 +402,14 @@ bool StatefulWriter::intraprocess_delivery(
         CacheChange_t* change,
         ReaderProxy* reader_proxy)
 {
-    RTPSReader* reader = reader_proxy->local_reader();
+    BaseReader* reader = reader_proxy->local_reader();
     if (reader)
     {
         if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
         {
             change->write_params.sample_identity(change->write_params.related_sample_identity());
         }
-        return BaseReader::downcast(reader)->process_data_msg(change);
+        return reader->process_data_msg(change);
     }
     return false;
 }

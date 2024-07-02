@@ -31,7 +31,7 @@ namespace rtps {
 
 class RTPSParticipantImpl;
 class RTPSWriter;
-class RTPSReader;
+class BaseReader;
 class IDataSharingNotifier;
 
 /**
@@ -67,10 +67,10 @@ public:
         return is_local_reader_;
     }
 
-    RTPSReader* local_reader();
+    BaseReader* local_reader();
 
     void local_reader(
-            RTPSReader* local_reader)
+            BaseReader* local_reader)
     {
         local_reader_ = local_reader;
     }
@@ -260,7 +260,7 @@ private:
     LocatorSelectorEntry async_locator_info_;
     bool expects_inline_qos_;
     bool is_local_reader_;
-    RTPSReader* local_reader_;
+    BaseReader* local_reader_;
     std::vector<GuidPrefix_t> guid_prefix_as_vector_;
     std::vector<GUID_t> guid_as_vector_;
     IDataSharingNotifier* datasharing_notifier_;
