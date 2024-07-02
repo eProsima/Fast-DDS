@@ -705,9 +705,9 @@ sp_transport_t XMLProfileManager::getTransportById(
     return nullptr;
 }
 
-bool XMLProfileManager::insertDynamicTypeByName(
+bool XMLProfileManager::insertDynamicTypeBuilderByName(
         const std::string& type_name,
-        const eprosima::fastdds::dds::DynamicType::_ref_type& type)
+        const eprosima::fastdds::dds::DynamicTypeBuilder::_ref_type& type)
 {
     if (dynamic_types_.find(type_name) == dynamic_types_.end())
     {
@@ -718,8 +718,8 @@ bool XMLProfileManager::insertDynamicTypeByName(
     return false;
 }
 
-XMLP_ret XMLProfileManager::getDynamicTypeByName(
-        eprosima::fastdds::dds::DynamicType::_ref_type& dynamic_type,
+XMLP_ret XMLProfileManager::getDynamicTypeBuilderByName(
+        eprosima::fastdds::dds::DynamicTypeBuilder::_ref_type& dynamic_type,
         const std::string& type_name)
 {
     if (dynamic_types_.find(type_name) != dynamic_types_.end())

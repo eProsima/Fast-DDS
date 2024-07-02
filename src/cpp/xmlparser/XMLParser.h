@@ -58,7 +58,7 @@ typedef node_att_map_t::const_iterator node_att_map_cit_t;
 
 typedef std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> sp_transport_t;
 typedef std::map<std::string, sp_transport_t>  sp_transport_map_t;
-typedef std::map<std::string, fastdds::dds::DynamicType::_ref_type> p_dynamictype_map_t;
+typedef std::map<std::string, fastdds::dds::DynamicTypeBuilder::_ref_type> p_dynamictype_map_t;
 
 typedef std::unique_ptr<fastdds::dds::DomainParticipantFactoryQos> up_participantfactory_t;
 typedef DataNode<fastdds::dds::DomainParticipantFactoryQos>        node_participantfactory_t;

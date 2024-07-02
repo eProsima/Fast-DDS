@@ -68,7 +68,8 @@ private:
     bool publish();
 
     //! Create the dynamic type used by the PublisherApp
-    static DynamicType::_ref_type create_type();
+    static DynamicType::_ref_type create_type(
+            bool use_xml_type);
 
     //! Auxilary function to get a uint32_t value from a DynamicData object
     static uint32_t get_uint32_value(

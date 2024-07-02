@@ -55,6 +55,7 @@ SubscriberApp::SubscriberApp(
     , reader_(nullptr)
     , samples_(config.samples)
     , received_samples_(0)
+    , type_discovered_(false)
     , stop_(false)
 {
     // Create the participant

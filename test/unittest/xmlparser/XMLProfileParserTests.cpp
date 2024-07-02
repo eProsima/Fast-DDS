@@ -1784,13 +1784,14 @@ TEST_F(XMLProfileParserBasicTests, insertTransportByIdNegativeClauses)
 }
 
 /*
- * Test return code of the getDynamicTypeByName method when trying to retrieve a type which has not been parsed
+ * Test return code of the getDynamicTypeBuilderByName method when trying to retrieve a type which has not been parsed
  */
-TEST_F(XMLProfileParserBasicTests, getDynamicTypeByNameNegativeClausesNegativeClauses)
+TEST_F(XMLProfileParserBasicTests, getDynamicTypeBuilderByNameNegativeClausesNegativeClauses)
 {
-    eprosima::fastdds::dds::traits<eprosima::fastdds::dds::DynamicType>::ref_type type;
-    EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::getDynamicTypeByName(type, "wrong_type"));
-    ASSERT_FALSE(type);
+    eprosima::fastdds::dds::traits<eprosima::fastdds::dds::DynamicTypeBuilder>::ref_type type_builder;
+    EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR,
+            xmlparser::XMLProfileManager::getDynamicTypeBuilderByName(type_builder, "wrong_type"));
+    ASSERT_FALSE(type_builder);
 }
 
 /*
