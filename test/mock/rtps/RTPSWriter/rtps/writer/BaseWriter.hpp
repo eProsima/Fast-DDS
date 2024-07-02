@@ -111,6 +111,18 @@ public:
         return writer_guid == m_guid;
     }
 
+    virtual void unsent_change_added_to_history(
+            CacheChange_t*,
+            const std::chrono::time_point<std::chrono::steady_clock>&)
+    {
+    }
+
+    virtual bool change_removed_by_history(
+            CacheChange_t*)
+    {
+        return true;
+    }
+
     LocatorSelectorSender& get_general_locator_selector()
     {
         return general_locator_selector_;

@@ -20,6 +20,7 @@
 #define FASTDDS_RTPS_WRITER__RTPSWRITER_HPP
 
 #include <chrono>
+#include <cstdint>
 #include <functional>
 #include <limits>
 #include <memory>
@@ -27,26 +28,31 @@
 #include <vector>
 
 #include <fastdds/fastdds_dll.hpp>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/Endpoint.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/statistics/rtps/monitor_service/connections_fwd.hpp>
+#include <fastdds/rtps/common/SequenceNumber.hpp>
+#include <fastdds/rtps/common/Time_t.hpp>
+#include <fastdds/utils/TimedMutex.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
 struct CacheChange_t;
-class DataSharingNotifier;
 class FlowController;
-class WriterListener;
+class RTPSParticipantImpl;
 class WriterHistory;
+class WriterListener;
 
 /**
  * Class RTPSWriter, manages the sending of data to the readers. Is always associated with a HistoryCache.
@@ -54,9 +60,6 @@ class WriterHistory;
  */
 class RTPSWriter : public Endpoint
 {
-    friend class WriterHistory;
-    friend class RTPSParticipantImpl;
-
 protected:
 
     RTPSWriter(
@@ -363,25 +366,6 @@ protected:
     Duration_t liveliness_lease_duration_;
     /// The liveliness announcement period
     Duration_t liveliness_announcement_period_;
-
-    /**
-     * Add a change to the unsent list.
-     * @param change Pointer to the change to add.
-     * @param[in] max_blocking_time Maximum time this method has to complete the task.
-     */
-    virtual void unsent_change_added_to_history(
-            CacheChange_t* change,
-            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) = 0;
-
-    /**
-     * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.
-     * @param a_change Pointer to the change that is going to be removed.
-     * @param[in] max_blocking_time Maximum time this method has to complete the task.
-     * @return True if removed correctly.
-     */
-    virtual bool change_removed_by_history(
-            CacheChange_t* a_change,
-            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) = 0;
 
 private:
 

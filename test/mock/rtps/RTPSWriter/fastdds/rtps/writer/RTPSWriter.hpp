@@ -167,18 +167,6 @@ public:
         return true;
     }
 
-    virtual void unsent_change_added_to_history(
-            CacheChange_t*,
-            const std::chrono::time_point<std::chrono::steady_clock>&)
-    {
-    }
-
-    virtual bool change_removed_by_history(
-            CacheChange_t*)
-    {
-        return true;
-    }
-
     virtual bool is_acked_by_all(
             const SequenceNumber_t& /*seq_num*/) const
     {

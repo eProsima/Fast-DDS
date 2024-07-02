@@ -19,6 +19,7 @@
 #ifndef RTPS_WRITER__BASEWRITER_HPP
 #define RTPS_WRITER__BASEWRITER_HPP
 
+#include <chrono>
 #include <cstdint>
 #include <memory>
 
@@ -82,6 +83,25 @@ public:
             uint32_t enabled_writers) override;
 
 #endif // FASTDDS_STATISTICS
+
+    /**
+     * Add a change to the unsent list.
+     * @param change Pointer to the change to add.
+     * @param[in] max_blocking_time Maximum time this method has to complete the task.
+     */
+    virtual void unsent_change_added_to_history(
+            CacheChange_t* change,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) = 0;
+
+    /**
+     * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.
+     * @param a_change Pointer to the change that is going to be removed.
+     * @param[in] max_blocking_time Maximum time this method has to complete the task.
+     * @return True if removed correctly.
+     */
+    virtual bool change_removed_by_history(
+            CacheChange_t* a_change,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) = 0;
 
     /**
      * Tells writer the sample can be sent to the network.
