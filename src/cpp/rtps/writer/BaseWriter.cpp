@@ -21,22 +21,35 @@
 #include <cassert>
 #include <chrono>
 #include <cstdint>
+#include <exception>
 #include <memory>
 #include <mutex>
+#include <string>
+#include <vector>
 
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/Endpoint.hpp>
+#include <fastdds/rtps/attributes/PropertyPolicy.hpp>
+#include <fastdds/rtps/attributes/ResourceManagement.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
+#include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
+#include <fastdds/rtps/common/GuidPrefix_t.hpp>
+#include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
 #include <fastdds/rtps/history/IChangePool.hpp>
 #include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
+#include <fastdds/rtps/transport/NetworkBuffer.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/rtps/writer/WriterListener.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
 
+#include <rtps/DataSharing/WriterPool.hpp>
 #include <rtps/flowcontrol/FlowController.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/writer/LocatorSelectorSender.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -51,6 +64,8 @@ BaseWriter::BaseWriter(
         WriterListener* listen)
     : RTPSWriter(impl, guid, att, flow_controller, hist, listen)
 {
+    init(att);
+
     history_->mp_writer = this;
     history_->mp_mutex = &mp_mutex;
 
@@ -187,6 +202,41 @@ void BaseWriter::update_cached_info_nts(
 {
     locator_selector.locator_selector.reset(true);
     mp_RTPSParticipant->network_factory().select_locators(locator_selector.locator_selector);
+}
+
+void BaseWriter::init(
+        const WriterAttributes& att)
+{
+    {
+        const std::string* max_size_property =
+                PropertyPolicyHelper::find_property(att.endpoint.properties, "fastdds.max_message_size");
+        if (max_size_property != nullptr)
+        {
+            try
+            {
+                max_output_message_size_ = std::stoul(*max_size_property);
+            }
+            catch (const std::exception& e)
+            {
+                EPROSIMA_LOG_ERROR(RTPS_WRITER, "Error parsing max_message_size property: " << e.what());
+            }
+        }
+    }
+
+    fixed_payload_size_ = 0;
+    if (history_->m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE)
+    {
+        fixed_payload_size_ = history_->m_att.payloadMaxSize;
+    }
+
+    if (att.endpoint.data_sharing_configuration().kind() != dds::OFF)
+    {
+        std::shared_ptr<WriterPool> pool = std::dynamic_pointer_cast<WriterPool>(history_->get_payload_pool());
+        if (!pool || !pool->init_shared_memory(this, att.endpoint.data_sharing_configuration().shm_directory()))
+        {
+            EPROSIMA_LOG_ERROR(RTPS_WRITER, "Could not initialize DataSharing writer pool");
+        }
+    }
 }
 
 void BaseWriter::deinit()

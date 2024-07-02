@@ -217,6 +217,9 @@ protected:
             WriterHistory* hist,
             WriterListener* listen = nullptr);
 
+    void init(
+            const WriterAttributes& att);
+
     void deinit();
 
     void add_guid(

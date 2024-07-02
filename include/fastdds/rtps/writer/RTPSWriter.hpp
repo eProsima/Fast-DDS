@@ -393,9 +393,6 @@ private:
     RTPSWriter& operator =(
             const RTPSWriter&) = delete;
 
-    void init(
-            const WriterAttributes& att);
-
 };
 
 } // namespace rtps

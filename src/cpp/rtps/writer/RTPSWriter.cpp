@@ -57,42 +57,6 @@ RTPSWriter::RTPSWriter(
     , liveliness_lease_duration_(att.liveliness_lease_duration)
     , liveliness_announcement_period_(att.liveliness_announcement_period)
 {
-    init(att);
-}
-
-void RTPSWriter::init(
-        const WriterAttributes& att)
-{
-    {
-        const std::string* max_size_property =
-                PropertyPolicyHelper::find_property(att.endpoint.properties, "fastdds.max_message_size");
-        if (max_size_property != nullptr)
-        {
-            try
-            {
-                max_output_message_size_ = std::stoul(*max_size_property);
-            }
-            catch (const std::exception& e)
-            {
-                EPROSIMA_LOG_ERROR(RTPS_WRITER, "Error parsing max_message_size property: " << e.what());
-            }
-        }
-    }
-
-    fixed_payload_size_ = 0;
-    if (history_->m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE)
-    {
-        fixed_payload_size_ = history_->m_att.payloadMaxSize;
-    }
-
-    if (att.endpoint.data_sharing_configuration().kind() != dds::OFF)
-    {
-        std::shared_ptr<WriterPool> pool = std::dynamic_pointer_cast<WriterPool>(history_->get_payload_pool());
-        if (!pool || !pool->init_shared_memory(this, att.endpoint.data_sharing_configuration().shm_directory()))
-        {
-            EPROSIMA_LOG_ERROR(RTPS_WRITER, "Could not initialize DataSharing writer pool");
-        }
-    }
 }
 
 RTPSWriter::~RTPSWriter()
