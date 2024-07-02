@@ -129,7 +129,7 @@ public:
     MOCK_CONST_METHOD0(is_datasharing_compatible, bool());
 
     MOCK_METHOD1(reader_data_filter, void(
-            fastdds::rtps::IReaderDataFilter* filter));
+            IReaderDataFilter* filter));
 
     // *INDENT-ON*
 
