@@ -452,7 +452,7 @@ bool EDP::unpairReaderProxy(
 
     EPROSIMA_LOG_INFO(RTPS_EDP, reader_guid);
 
-    mp_RTPSParticipant->forEachUserWriter([&](RTPSWriter& w) -> bool
+    mp_RTPSParticipant->forEachUserWriter([&](BaseWriter& w) -> bool
             {
                 if (w.matched_reader_remove(reader_guid))
                 {
@@ -922,7 +922,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
 
     EPROSIMA_LOG_INFO(RTPS_EDP, rdata->guid() << " in topic: \"" << rdata->topicName() << "\"");
 
-    mp_RTPSParticipant->forEachUserWriter([&, rdata](RTPSWriter& w) -> bool
+    mp_RTPSParticipant->forEachUserWriter([&, rdata](BaseWriter& w) -> bool
             {
                 auto temp_writer_proxy_data = get_temporary_writer_proxies_pool().get();
                 GUID_t writerGUID = w.getGuid();
@@ -1001,7 +1001,7 @@ bool EDP::pairing_reader_proxy_with_local_writer(
 {
     EPROSIMA_LOG_INFO(RTPS_EDP, rdata.guid() << " in topic: \"" << rdata.topicName() << "\"");
 
-    mp_RTPSParticipant->forEachUserWriter([&](RTPSWriter& w) -> bool
+    mp_RTPSParticipant->forEachUserWriter([&](BaseWriter& w) -> bool
             {
                 GUID_t writerGUID = w.getGuid();
                 const GUID_t& reader_guid = rdata.guid();
@@ -1067,7 +1067,7 @@ bool EDP::pairing_remote_reader_with_local_writer_after_security(
     bool matched = false;
     bool found = false;
 
-    mp_RTPSParticipant->forEachUserWriter([&](RTPSWriter& w) -> bool
+    mp_RTPSParticipant->forEachUserWriter([&](BaseWriter& w) -> bool
             {
                 GUID_t writerGUID = w.getGuid();
 

@@ -776,7 +776,7 @@ void RTPSParticipantImpl::disable()
     }
 }
 
-const std::vector<RTPSWriter*>& RTPSParticipantImpl::getAllWriters() const
+const std::vector<BaseWriter*>& RTPSParticipantImpl::getAllWriters() const
 {
     return m_allWriterList;
 }
@@ -962,7 +962,7 @@ bool RTPSParticipantImpl::create_writer(
 
     normalize_endpoint_locators(param.endpoint);
 
-    RTPSWriter* SWriter = nullptr;
+    BaseWriter* SWriter = nullptr;
     SWriter = callback(guid, param, flow_controller, persistence, param.endpoint.reliabilityKind == RELIABLE);
 
     // restore attributes
@@ -1241,9 +1241,9 @@ bool RTPSParticipantImpl::create_writer(
 
     auto callback = [hist, listen, this]
                 (const GUID_t& guid, WriterAttributes& watt, fastdds::rtps::FlowController* flow_controller,
-                    IPersistenceService* persistence, bool is_reliable) -> RTPSWriter*
+                    IPersistenceService* persistence, bool is_reliable) -> BaseWriter*
             {
-                RTPSWriter* writer = nullptr;
+                BaseWriter* writer = nullptr;
 
                 if (is_reliable)
                 {
@@ -2052,7 +2052,7 @@ void RTPSParticipantImpl::deleteAllUserEndpoints()
         sort(m_allWriterList.begin(), m_allWriterList.end());
         sort(m_allReaderList.begin(), m_allReaderList.end());
 
-        vector<RTPSWriter*> writers;
+        vector<BaseWriter*> writers;
         set_difference(m_allWriterList.begin(), m_allWriterList.end(),
                 m_userWriterList.begin(), m_userWriterList.end(),
                 back_inserter(writers));

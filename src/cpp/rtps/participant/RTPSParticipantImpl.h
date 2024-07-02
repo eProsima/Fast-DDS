@@ -91,6 +91,7 @@ class MonitorService;
 namespace rtps {
 
 class BaseReader;
+class BaseWriter;
 
 } // namespace rtps
 
@@ -380,7 +381,7 @@ public:
     /*!
      * @remarks Non thread-safe.
      */
-    const std::vector<RTPSWriter*>& getAllWriters() const;
+    const std::vector<BaseWriter*>& getAllWriters() const;
 
     /*!
      * @remarks Non thread-safe.
@@ -581,12 +582,12 @@ private:
     //! Mutex to safely access endpoints collections
     mutable shared_mutex endpoints_list_mutex;
     //!Writer List.
-    std::vector<RTPSWriter*> m_allWriterList;
+    std::vector<BaseWriter*> m_allWriterList;
     //!Reader List
     std::vector<BaseReader*> m_allReaderList;
     //!Listen thread list.
     //!Writer List.
-    std::vector<RTPSWriter*> m_userWriterList;
+    std::vector<BaseWriter*> m_userWriterList;
     //!Reader List
     std::vector<BaseReader*> m_userReaderList;
     //!Network Factory
@@ -992,7 +993,7 @@ public:
         shared_lock<shared_mutex> _(endpoints_list_mutex);
 
         // traverse the list
-        for ( RTPSWriter* pw : m_userWriterList)
+        for (BaseWriter* pw : m_userWriterList)
         {
             if (!f(*pw))
             {
