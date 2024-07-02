@@ -378,7 +378,17 @@ bool PDPSimple::create_dcps_participant_endpoints()
 
     WriterAttributes watt = create_builtin_writer_attributes();
     watt.endpoint.reliabilityKind = BEST_EFFORT;
-    watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
+    if (!m_discovery.initialPeersList.empty())
+    {
+        if (mp_RTPSParticipant->has_tcp_transports())
+        {
+            mp_RTPSParticipant->create_tcp_connections(m_discovery.initialPeersList);
+        }
+        else
+        {
+            watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
+        }
+    }
 
     if (mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
             mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
