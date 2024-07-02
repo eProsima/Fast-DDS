@@ -15,7 +15,7 @@
 #include <map>
 #include <string>
 
-std::string expected_json_comprehensive_filled_eprosima_1 = R"({
+const std::string expected_json_comprehensive_filled_omg_1 = R"({
     "complex_array": [
         {
             "bitmask_sequence": [],
@@ -70,10 +70,7 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
                 ]
             ],
             "my_aliased_bounded_string": "my_aliased_bounded_string",
-            "my_aliased_enum": {
-                "name": "B",
-                "value": 1
-            },
+            "my_aliased_enum": "B",
             "my_aliased_struct": {
                 "my_bool": true,
                 "my_char": "e",
@@ -91,13 +88,7 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
                 "my_ushort": 1,
                 "my_wchar": "e"
             },
-            "my_bitmask": {
-                "active": [
-                    "flag0"
-                ],
-                "binary": "00000000000000000000000000000001",
-                "value": 1
-            },
+            "my_bitmask": 1,
             "my_bitset": {
                 "a": 0,
                 "b": false,
@@ -109,20 +100,14 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
             "my_bounded_wstring": "my_bounded_wstring",
             "my_char": "e",
             "my_double": 0.5,
-            "my_enum": {
-                "name": "B",
-                "value": 1
-            },
+            "my_enum": "B",
             "my_float": 0.5,
             "my_int8": 1,
             "my_long": 1,
             "my_longdouble": 0.5,
             "my_longlong": 1,
             "my_octet": 0,
-            "my_recursive_alias": {
-                "name": "B",
-                "value": 1
-            },
+            "my_recursive_alias": "B",
             "my_short": 1,
             "my_string": "my_string",
             "my_uint8": 1,
@@ -194,10 +179,7 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
                 ]
             ],
             "my_aliased_bounded_string": "my_aliased_bounded_string",
-            "my_aliased_enum": {
-                "name": "B",
-                "value": 1
-            },
+            "my_aliased_enum": "B",
             "my_aliased_struct": {
                 "my_bool": true,
                 "my_char": "e",
@@ -215,13 +197,7 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
                 "my_ushort": 1,
                 "my_wchar": "e"
             },
-            "my_bitmask": {
-                "active": [
-                    "flag0"
-                ],
-                "binary": "00000000000000000000000000000001",
-                "value": 1
-            },
+            "my_bitmask": 1,
             "my_bitset": {
                 "a": 0,
                 "b": false,
@@ -233,20 +209,14 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
             "my_bounded_wstring": "my_bounded_wstring",
             "my_char": "e",
             "my_double": 0.5,
-            "my_enum": {
-                "name": "B",
-                "value": 1
-            },
+            "my_enum": "B",
             "my_float": 0.5,
             "my_int8": 1,
             "my_long": 1,
             "my_longdouble": 0.5,
             "my_longlong": 1,
             "my_octet": 0,
-            "my_recursive_alias": {
-                "name": "B",
-                "value": 1
-            },
+            "my_recursive_alias": "B",
             "my_short": 1,
             "my_string": "my_string",
             "my_uint8": 1,
@@ -320,10 +290,7 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
                 ]
             ],
             "my_aliased_bounded_string": "",
-            "my_aliased_enum": {
-                "name": "A",
-                "value": 0
-            },
+            "my_aliased_enum": "A",
             "my_aliased_struct": {
                 "my_bool": false,
                 "my_char": "\u0000",
@@ -341,11 +308,7 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
                 "my_ushort": 0,
                 "my_wchar": "\u0000"
             },
-            "my_bitmask": {
-                "active": [],
-                "binary": "00000000000000000000000000000000",
-                "value": 0
-            },
+            "my_bitmask": 0,
             "my_bitset": {
                 "a": 0,
                 "b": false,
@@ -357,20 +320,14 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
             "my_bounded_wstring": "",
             "my_char": "\u0000",
             "my_double": 0.0,
-            "my_enum": {
-                "name": "A",
-                "value": 0
-            },
+            "my_enum": "A",
             "my_float": 0.0,
             "my_int8": 0,
             "my_long": 0,
             "my_longdouble": 0.0,
             "my_longlong": 0,
             "my_octet": 0,
-            "my_recursive_alias": {
-                "name": "A",
-                "value": 0
-            },
+            "my_recursive_alias": "A",
             "my_short": 0,
             "my_string": "",
             "my_uint8": 0,
@@ -437,10 +394,7 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
                 ]
             ],
             "my_aliased_bounded_string": "my_aliased_bounded_string",
-            "my_aliased_enum": {
-                "name": "B",
-                "value": 1
-            },
+            "my_aliased_enum": "B",
             "my_aliased_struct": {
                 "my_bool": true,
                 "my_char": "e",
@@ -458,13 +412,7 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
                 "my_ushort": 1,
                 "my_wchar": "e"
             },
-            "my_bitmask": {
-                "active": [
-                    "flag0"
-                ],
-                "binary": "00000000000000000000000000000001",
-                "value": 1
-            },
+            "my_bitmask": 1,
             "my_bitset": {
                 "a": 0,
                 "b": false,
@@ -476,20 +424,14 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
             "my_bounded_wstring": "my_bounded_wstring",
             "my_char": "e",
             "my_double": 0.5,
-            "my_enum": {
-                "name": "B",
-                "value": 1
-            },
+            "my_enum": "B",
             "my_float": 0.5,
             "my_int8": 1,
             "my_long": 1,
             "my_longdouble": 0.5,
             "my_longlong": 1,
             "my_octet": 0,
-            "my_recursive_alias": {
-                "name": "B",
-                "value": 1
-            },
+            "my_recursive_alias": "B",
             "my_short": 1,
             "my_string": "my_string",
             "my_uint8": 1,
@@ -563,10 +505,7 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
                 ]
             ],
             "my_aliased_bounded_string": "my_aliased_bounded_string",
-            "my_aliased_enum": {
-                "name": "B",
-                "value": 1
-            },
+            "my_aliased_enum": "B",
             "my_aliased_struct": {
                 "my_bool": true,
                 "my_char": "e",
@@ -584,13 +523,7 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
                 "my_ushort": 1,
                 "my_wchar": "e"
             },
-            "my_bitmask": {
-                "active": [
-                    "flag0"
-                ],
-                "binary": "00000000000000000000000000000001",
-                "value": 1
-            },
+            "my_bitmask": 1,
             "my_bitset": {
                 "a": 0,
                 "b": false,
@@ -602,20 +535,14 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
             "my_bounded_wstring": "my_bounded_wstring",
             "my_char": "e",
             "my_double": 0.5,
-            "my_enum": {
-                "name": "B",
-                "value": 1
-            },
+            "my_enum": "B",
             "my_float": 0.5,
             "my_int8": 1,
             "my_long": 1,
             "my_longdouble": 0.5,
             "my_longlong": 1,
             "my_octet": 0,
-            "my_recursive_alias": {
-                "name": "B",
-                "value": 1
-            },
+            "my_recursive_alias": "B",
             "my_short": 1,
             "my_string": "my_string",
             "my_uint8": 1,
@@ -689,10 +616,7 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
             ]
         ],
         "my_aliased_bounded_string": "my_aliased_bounded_string",
-        "my_aliased_enum": {
-            "name": "B",
-            "value": 1
-        },
+        "my_aliased_enum": "B",
         "my_aliased_struct": {
             "my_bool": true,
             "my_char": "e",
@@ -710,13 +634,7 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
             "my_ushort": 1,
             "my_wchar": "e"
         },
-        "my_bitmask": {
-            "active": [
-                "flag0"
-            ],
-            "binary": "00000000000000000000000000000001",
-            "value": 1
-        },
+        "my_bitmask": 1,
         "my_bitset": {
             "a": 0,
             "b": false,
@@ -728,20 +646,14 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
         "my_bounded_wstring": "my_bounded_wstring",
         "my_char": "e",
         "my_double": 0.5,
-        "my_enum": {
-            "name": "B",
-            "value": 1
-        },
+        "my_enum": "B",
         "my_float": 0.5,
         "my_int8": 1,
         "my_long": 1,
         "my_longdouble": 0.5,
         "my_longlong": 1,
         "my_octet": 0,
-        "my_recursive_alias": {
-            "name": "B",
-            "value": 1
-        },
+        "my_recursive_alias": "B",
         "my_short": 1,
         "my_string": "my_string",
         "my_uint8": 1,
@@ -762,7 +674,7 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
     }
 })";
 
-const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
+const std::string expected_json_comprehensive_filled_omg_2 = R"({
     "complex_array": [
         {
             "bitmask_sequence": [],
@@ -817,10 +729,7 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
                 ]
             ],
             "my_aliased_bounded_string": "my_aliased_bounded_string",
-            "my_aliased_enum": {
-                "name": "C",
-                "value": 2
-            },
+            "my_aliased_enum": "C",
             "my_aliased_struct": {
                 "my_bool": false,
                 "my_char": "o",
@@ -838,11 +747,7 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
                 "my_ushort": 2,
                 "my_wchar": "o"
             },
-            "my_bitmask": {
-                "active": [],
-                "binary": "00000000000000000000000000000000",
-                "value": 0
-            },
+            "my_bitmask": 0,
             "my_bitset": {
                 "a": 0,
                 "b": false,
@@ -854,20 +759,14 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
             "my_bounded_wstring": "my_bounded_wstring",
             "my_char": "o",
             "my_double": 1.0,
-            "my_enum": {
-                "name": "C",
-                "value": 2
-            },
+            "my_enum": "C",
             "my_float": 1.0,
             "my_int8": 2,
             "my_long": 2,
             "my_longdouble": 1.0,
             "my_longlong": 2,
             "my_octet": 0,
-            "my_recursive_alias": {
-                "name": "C",
-                "value": 2
-            },
+            "my_recursive_alias": "C",
             "my_short": 2,
             "my_string": "my_string",
             "my_uint8": 2,
@@ -939,10 +838,7 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
                 ]
             ],
             "my_aliased_bounded_string": "my_aliased_bounded_string",
-            "my_aliased_enum": {
-                "name": "C",
-                "value": 2
-            },
+            "my_aliased_enum": "C",
             "my_aliased_struct": {
                 "my_bool": false,
                 "my_char": "o",
@@ -960,11 +856,7 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
                 "my_ushort": 2,
                 "my_wchar": "o"
             },
-            "my_bitmask": {
-                "active": [],
-                "binary": "00000000000000000000000000000000",
-                "value": 0
-            },
+            "my_bitmask": 0,
             "my_bitset": {
                 "a": 0,
                 "b": false,
@@ -976,20 +868,14 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
             "my_bounded_wstring": "my_bounded_wstring",
             "my_char": "o",
             "my_double": 1.0,
-            "my_enum": {
-                "name": "C",
-                "value": 2
-            },
+            "my_enum": "C",
             "my_float": 1.0,
             "my_int8": 2,
             "my_long": 2,
             "my_longdouble": 1.0,
             "my_longlong": 2,
             "my_octet": 0,
-            "my_recursive_alias": {
-                "name": "C",
-                "value": 2
-            },
+            "my_recursive_alias": "C",
             "my_short": 2,
             "my_string": "my_string",
             "my_uint8": 2,
@@ -1063,10 +949,7 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
                 ]
             ],
             "my_aliased_bounded_string": "",
-            "my_aliased_enum": {
-                "name": "A",
-                "value": 0
-            },
+            "my_aliased_enum": "A",
             "my_aliased_struct": {
                 "my_bool": false,
                 "my_char": "\u0000",
@@ -1084,11 +967,7 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
                 "my_ushort": 0,
                 "my_wchar": "\u0000"
             },
-            "my_bitmask": {
-                "active": [],
-                "binary": "00000000000000000000000000000000",
-                "value": 0
-            },
+            "my_bitmask": 0,
             "my_bitset": {
                 "a": 0,
                 "b": false,
@@ -1100,20 +979,14 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
             "my_bounded_wstring": "",
             "my_char": "\u0000",
             "my_double": 0.0,
-            "my_enum": {
-                "name": "A",
-                "value": 0
-            },
+            "my_enum": "A",
             "my_float": 0.0,
             "my_int8": 0,
             "my_long": 0,
             "my_longdouble": 0.0,
             "my_longlong": 0,
             "my_octet": 0,
-            "my_recursive_alias": {
-                "name": "A",
-                "value": 0
-            },
+            "my_recursive_alias": "A",
             "my_short": 0,
             "my_string": "",
             "my_uint8": 0,
@@ -1180,10 +1053,7 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
                 ]
             ],
             "my_aliased_bounded_string": "my_aliased_bounded_string",
-            "my_aliased_enum": {
-                "name": "C",
-                "value": 2
-            },
+            "my_aliased_enum": "C",
             "my_aliased_struct": {
                 "my_bool": false,
                 "my_char": "o",
@@ -1201,11 +1071,7 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
                 "my_ushort": 2,
                 "my_wchar": "o"
             },
-            "my_bitmask": {
-                "active": [],
-                "binary": "00000000000000000000000000000000",
-                "value": 0
-            },
+            "my_bitmask": 0,
             "my_bitset": {
                 "a": 0,
                 "b": false,
@@ -1217,20 +1083,14 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
             "my_bounded_wstring": "my_bounded_wstring",
             "my_char": "o",
             "my_double": 1.0,
-            "my_enum": {
-                "name": "C",
-                "value": 2
-            },
+            "my_enum": "C",
             "my_float": 1.0,
             "my_int8": 2,
             "my_long": 2,
             "my_longdouble": 1.0,
             "my_longlong": 2,
             "my_octet": 0,
-            "my_recursive_alias": {
-                "name": "C",
-                "value": 2
-            },
+            "my_recursive_alias": "C",
             "my_short": 2,
             "my_string": "my_string",
             "my_uint8": 2,
@@ -1304,10 +1164,7 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
                 ]
             ],
             "my_aliased_bounded_string": "my_aliased_bounded_string",
-            "my_aliased_enum": {
-                "name": "C",
-                "value": 2
-            },
+            "my_aliased_enum": "C",
             "my_aliased_struct": {
                 "my_bool": false,
                 "my_char": "o",
@@ -1325,11 +1182,7 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
                 "my_ushort": 2,
                 "my_wchar": "o"
             },
-            "my_bitmask": {
-                "active": [],
-                "binary": "00000000000000000000000000000000",
-                "value": 0
-            },
+            "my_bitmask": 0,
             "my_bitset": {
                 "a": 0,
                 "b": false,
@@ -1341,20 +1194,14 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
             "my_bounded_wstring": "my_bounded_wstring",
             "my_char": "o",
             "my_double": 1.0,
-            "my_enum": {
-                "name": "C",
-                "value": 2
-            },
+            "my_enum": "C",
             "my_float": 1.0,
             "my_int8": 2,
             "my_long": 2,
             "my_longdouble": 1.0,
             "my_longlong": 2,
             "my_octet": 0,
-            "my_recursive_alias": {
-                "name": "C",
-                "value": 2
-            },
+            "my_recursive_alias": "C",
             "my_short": 2,
             "my_string": "my_string",
             "my_uint8": 2,
@@ -1428,10 +1275,7 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
             ]
         ],
         "my_aliased_bounded_string": "my_aliased_bounded_string",
-        "my_aliased_enum": {
-            "name": "C",
-            "value": 2
-        },
+        "my_aliased_enum": "C",
         "my_aliased_struct": {
             "my_bool": false,
             "my_char": "o",
@@ -1449,11 +1293,7 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
             "my_ushort": 2,
             "my_wchar": "o"
         },
-        "my_bitmask": {
-            "active": [],
-            "binary": "00000000000000000000000000000000",
-            "value": 0
-        },
+        "my_bitmask": 0,
         "my_bitset": {
             "a": 0,
             "b": false,
@@ -1465,20 +1305,14 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
         "my_bounded_wstring": "my_bounded_wstring",
         "my_char": "o",
         "my_double": 1.0,
-        "my_enum": {
-            "name": "C",
-            "value": 2
-        },
+        "my_enum": "C",
         "my_float": 1.0,
         "my_int8": 2,
         "my_long": 2,
         "my_longdouble": 1.0,
         "my_longlong": 2,
         "my_octet": 0,
-        "my_recursive_alias": {
-            "name": "C",
-            "value": 2
-        },
+        "my_recursive_alias": "C",
         "my_short": 2,
         "my_string": "my_string",
         "my_uint8": 2,
@@ -1499,7 +1333,7 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
     }
 })";
 
-const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
+const std::string expected_json_comprehensive_filled_omg_3 = R"({
     "complex_array": [
         {
             "bitmask_sequence": [],
@@ -1554,10 +1388,7 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
                 ]
             ],
             "my_aliased_bounded_string": "my_aliased_bounded_string",
-            "my_aliased_enum": {
-                "name": "A",
-                "value": 0
-            },
+            "my_aliased_enum": "A",
             "my_aliased_struct": {
                 "my_bool": true,
                 "my_char": "e",
@@ -1575,13 +1406,7 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
                 "my_ushort": 3,
                 "my_wchar": "e"
             },
-            "my_bitmask": {
-                "active": [
-                    "flag0"
-                ],
-                "binary": "00000000000000000000000000000001",
-                "value": 1
-            },
+            "my_bitmask": 1,
             "my_bitset": {
                 "a": 0,
                 "b": false,
@@ -1593,20 +1418,14 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
             "my_bounded_wstring": "my_bounded_wstring",
             "my_char": "e",
             "my_double": 1.5,
-            "my_enum": {
-                "name": "A",
-                "value": 0
-            },
+            "my_enum": "A",
             "my_float": 1.5,
             "my_int8": 3,
             "my_long": 3,
             "my_longdouble": 1.5,
             "my_longlong": 3,
             "my_octet": 0,
-            "my_recursive_alias": {
-                "name": "A",
-                "value": 0
-            },
+            "my_recursive_alias": "A",
             "my_short": 3,
             "my_string": "my_string",
             "my_uint8": 3,
@@ -1678,10 +1497,7 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
                 ]
             ],
             "my_aliased_bounded_string": "my_aliased_bounded_string",
-            "my_aliased_enum": {
-                "name": "A",
-                "value": 0
-            },
+            "my_aliased_enum": "A",
             "my_aliased_struct": {
                 "my_bool": true,
                 "my_char": "e",
@@ -1699,13 +1515,7 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
                 "my_ushort": 3,
                 "my_wchar": "e"
             },
-            "my_bitmask": {
-                "active": [
-                    "flag0"
-                ],
-                "binary": "00000000000000000000000000000001",
-                "value": 1
-            },
+            "my_bitmask": 1,
             "my_bitset": {
                 "a": 0,
                 "b": false,
@@ -1717,20 +1527,14 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
             "my_bounded_wstring": "my_bounded_wstring",
             "my_char": "e",
             "my_double": 1.5,
-            "my_enum": {
-                "name": "A",
-                "value": 0
-            },
+            "my_enum": "A",
             "my_float": 1.5,
             "my_int8": 3,
             "my_long": 3,
             "my_longdouble": 1.5,
             "my_longlong": 3,
             "my_octet": 0,
-            "my_recursive_alias": {
-                "name": "A",
-                "value": 0
-            },
+            "my_recursive_alias": "A",
             "my_short": 3,
             "my_string": "my_string",
             "my_uint8": 3,
@@ -1804,10 +1608,7 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
                 ]
             ],
             "my_aliased_bounded_string": "",
-            "my_aliased_enum": {
-                "name": "A",
-                "value": 0
-            },
+            "my_aliased_enum": "A",
             "my_aliased_struct": {
                 "my_bool": false,
                 "my_char": "\u0000",
@@ -1825,11 +1626,7 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
                 "my_ushort": 0,
                 "my_wchar": "\u0000"
             },
-            "my_bitmask": {
-                "active": [],
-                "binary": "00000000000000000000000000000000",
-                "value": 0
-            },
+            "my_bitmask": 0,
             "my_bitset": {
                 "a": 0,
                 "b": false,
@@ -1841,20 +1638,14 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
             "my_bounded_wstring": "",
             "my_char": "\u0000",
             "my_double": 0.0,
-            "my_enum": {
-                "name": "A",
-                "value": 0
-            },
+            "my_enum": "A",
             "my_float": 0.0,
             "my_int8": 0,
             "my_long": 0,
             "my_longdouble": 0.0,
             "my_longlong": 0,
             "my_octet": 0,
-            "my_recursive_alias": {
-                "name": "A",
-                "value": 0
-            },
+            "my_recursive_alias": "A",
             "my_short": 0,
             "my_string": "",
             "my_uint8": 0,
@@ -1921,10 +1712,7 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
                 ]
             ],
             "my_aliased_bounded_string": "my_aliased_bounded_string",
-            "my_aliased_enum": {
-                "name": "A",
-                "value": 0
-            },
+            "my_aliased_enum": "A",
             "my_aliased_struct": {
                 "my_bool": true,
                 "my_char": "e",
@@ -1942,13 +1730,7 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
                 "my_ushort": 3,
                 "my_wchar": "e"
             },
-            "my_bitmask": {
-                "active": [
-                    "flag0"
-                ],
-                "binary": "00000000000000000000000000000001",
-                "value": 1
-            },
+            "my_bitmask": 1,
             "my_bitset": {
                 "a": 0,
                 "b": false,
@@ -1960,20 +1742,14 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
             "my_bounded_wstring": "my_bounded_wstring",
             "my_char": "e",
             "my_double": 1.5,
-            "my_enum": {
-                "name": "A",
-                "value": 0
-            },
+            "my_enum": "A",
             "my_float": 1.5,
             "my_int8": 3,
             "my_long": 3,
             "my_longdouble": 1.5,
             "my_longlong": 3,
             "my_octet": 0,
-            "my_recursive_alias": {
-                "name": "A",
-                "value": 0
-            },
+            "my_recursive_alias": "A",
             "my_short": 3,
             "my_string": "my_string",
             "my_uint8": 3,
@@ -2047,10 +1823,7 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
                 ]
             ],
             "my_aliased_bounded_string": "my_aliased_bounded_string",
-            "my_aliased_enum": {
-                "name": "A",
-                "value": 0
-            },
+            "my_aliased_enum": "A",
             "my_aliased_struct": {
                 "my_bool": true,
                 "my_char": "e",
@@ -2068,13 +1841,7 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
                 "my_ushort": 3,
                 "my_wchar": "e"
             },
-            "my_bitmask": {
-                "active": [
-                    "flag0"
-                ],
-                "binary": "00000000000000000000000000000001",
-                "value": 1
-            },
+            "my_bitmask": 1,
             "my_bitset": {
                 "a": 0,
                 "b": false,
@@ -2086,20 +1853,14 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
             "my_bounded_wstring": "my_bounded_wstring",
             "my_char": "e",
             "my_double": 1.5,
-            "my_enum": {
-                "name": "A",
-                "value": 0
-            },
+            "my_enum": "A",
             "my_float": 1.5,
             "my_int8": 3,
             "my_long": 3,
             "my_longdouble": 1.5,
             "my_longlong": 3,
             "my_octet": 0,
-            "my_recursive_alias": {
-                "name": "A",
-                "value": 0
-            },
+            "my_recursive_alias": "A",
             "my_short": 3,
             "my_string": "my_string",
             "my_uint8": 3,
@@ -2173,10 +1934,7 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
             ]
         ],
         "my_aliased_bounded_string": "my_aliased_bounded_string",
-        "my_aliased_enum": {
-            "name": "A",
-            "value": 0
-        },
+        "my_aliased_enum": "A",
         "my_aliased_struct": {
             "my_bool": true,
             "my_char": "e",
@@ -2194,13 +1952,7 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
             "my_ushort": 3,
             "my_wchar": "e"
         },
-        "my_bitmask": {
-            "active": [
-                "flag0"
-            ],
-            "binary": "00000000000000000000000000000001",
-            "value": 1
-        },
+        "my_bitmask": 1,
         "my_bitset": {
             "a": 0,
             "b": false,
@@ -2212,20 +1964,14 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
         "my_bounded_wstring": "my_bounded_wstring",
         "my_char": "e",
         "my_double": 1.5,
-        "my_enum": {
-            "name": "A",
-            "value": 0
-        },
+        "my_enum": "A",
         "my_float": 1.5,
         "my_int8": 3,
         "my_long": 3,
         "my_longdouble": 1.5,
         "my_longlong": 3,
         "my_octet": 0,
-        "my_recursive_alias": {
-            "name": "A",
-            "value": 0
-        },
+        "my_recursive_alias": "A",
         "my_short": 3,
         "my_string": "my_string",
         "my_uint8": 3,
@@ -2246,8 +1992,7 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
     }
 })";
 
-std::map<int, std::string> expected_json_comprehensive_filled_eprosima = {
-    {1, expected_json_comprehensive_filled_eprosima_1},
-    {2, expected_json_comprehensive_filled_eprosima_2},
-    {3, expected_json_comprehensive_filled_eprosima_3}};
-
+// std::map<int, std::string> expected_json_comprehensive_filled_omg = {
+//     {1, expected_json_comprehensive_filled_omg_1},
+//     {2, expected_json_comprehensive_filled_omg_2},
+//     {3, expected_json_comprehensive_filled_omg_3}};

@@ -13,14 +13,13 @@
 // limitations under the License.
 
 /**
- * @file ComprehensiveCommon.cpp
+ * @file ComprehensiveImpl.cpp
  *
  */
 
 #include <string>
 #include <iostream>
 #include <fstream>
-#include <nlohmann/json.hpp>
 
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -36,8 +35,13 @@
 
 #include "../../types.hpp"
 #include "../gen/ComprehensiveType.hpp"
-#include "../gen/ComprehensiveTypePubSubTypes.h"
+#include "../gen/ComprehensiveTypePubSubTypes.hpp"
 #include "../gen/ComprehensiveTypeTypeObjectSupport.hpp"
+
+#include "../../comprehensive_type/json/ComprehensiveType_OMG.hpp"
+#include "../../comprehensive_type/json/ComprehensiveType_Filled_OMG.hpp"
+#include "../../comprehensive_type/json/ComprehensiveType_EPROSIMA.hpp"
+#include "../../comprehensive_type/json/ComprehensiveType_Filled_EPROSIMA.hpp"
 
 void fill_primitives_struct(
         traits<DynamicData>::ref_type dyn_data,
@@ -118,11 +122,9 @@ void fill_all_struct(
 
     fill_my_enum(dyn_data, "my_recursive_alias", index);
 
-
     // // sequences
     Int16Seq short_seq = {0, static_cast<int16_t>(index)};
     dyn_data->set_int16_values(dyn_data->get_member_id_by_name("short_sequence"), short_seq);
-
 
     // array
     Int32Seq long_array_seq = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
@@ -191,7 +193,6 @@ template <>
 traits<DynamicType>::ref_type create_dynamic_type<DataTypeKind::COMPREHENSIVE_TYPE>()
 {
     const auto type_name = "ComprehensiveType";
-
     eprosima::fastdds::dds::TypeSupport type(new ComprehensiveTypePubSubType());
 
     type->register_type_object_representation();
@@ -216,7 +217,7 @@ traits<DynamicType>::ref_type create_dynamic_type<DataTypeKind::COMPREHENSIVE_TY
 
 template <>
 traits<DynamicData>::ref_type create_dynamic_data<DataTypeKind::COMPREHENSIVE_TYPE>(
-        traits<DynamicType>::ref_type& dynamic_type,
+        const traits<DynamicType>::ref_type& dynamic_type,
         const bool& filled,
         const unsigned int& index)
 {
@@ -229,4 +230,59 @@ traits<DynamicData>::ref_type create_dynamic_data<DataTypeKind::COMPREHENSIVE_TY
     }
 
     return fill_dyn_data(dynamic_data, index);
+}
+
+template <>
+std::string get_expected_json<DataTypeKind::COMPREHENSIVE_TYPE>(
+        const DynamicDataJsonFormat& format,
+        const bool& filled,
+        const unsigned int& index)
+{
+    switch (format)
+    {
+        case DynamicDataJsonFormat::EPROSIMA:
+            if (filled)
+            {
+                switch (index)
+                {
+                    case 1:
+                        return expected_json_comprehensive_filled_eprosima_1;
+                    case 2:
+                        return expected_json_comprehensive_filled_eprosima_2;
+                    case 3:
+                        return expected_json_comprehensive_filled_eprosima_3;
+                    default:
+                        throw std::invalid_argument("Invalid index for filled EPROSIMA format");
+                }
+            }
+            else
+            {
+                return expected_json_comprehensive_eprosima_unfilled;
+            }
+            break;
+
+        case DynamicDataJsonFormat::OMG:
+            if (filled)
+            {
+                switch (index)
+                {
+                    case 1:
+                        return expected_json_comprehensive_filled_omg_1;
+                    case 2:
+                        return expected_json_comprehensive_filled_omg_2;
+                    case 3:
+                        return expected_json_comprehensive_filled_omg_3;
+                    default:
+                        throw std::invalid_argument("Invalid index for filled OMG format");
+                }
+            }
+            else
+            {
+                return expected_json_comprehensive_omg_unfilled;
+            }
+            break;
+
+        default:
+            throw std::invalid_argument("Unsupported format");
+    }
 }

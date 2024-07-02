@@ -47,7 +47,6 @@ union InnerUnion switch (short)
         long long second;
 };
 
-// union ComplexUnion switch (long)
 union ComplexUnion switch (short)
 {
     case 0:

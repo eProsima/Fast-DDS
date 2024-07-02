@@ -20,12 +20,10 @@
 #ifndef TYPES_HPP
 #define TYPES_HPP
 
-#include <fastdds/dds/core/ReturnCode.hpp>
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <string>
+
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::dds::xtypes;
@@ -40,7 +38,7 @@ traits<DynamicType>::ref_type create_dynamic_type();
 
 template <DataTypeKind Data>
 traits<DynamicData>::ref_type create_dynamic_data(
-        traits<DynamicType>::ref_type& dynamic_type,
+        const traits<DynamicType>::ref_type& dynamic_type,
         const bool& filled,
         const unsigned int& index = 0);
 
@@ -49,5 +47,10 @@ traits<DynamicData>::ref_type fill_dyn_data(
         traits<DynamicData>::ref_type& dyn_data,
         const unsigned int& index);
 
+template <DataTypeKind Data>
+std::string get_expected_json(
+        const DynamicDataJsonFormat& format,
+        const bool& filled,
+        const unsigned int& index = 0);
 
 #endif // TYPES_HPP

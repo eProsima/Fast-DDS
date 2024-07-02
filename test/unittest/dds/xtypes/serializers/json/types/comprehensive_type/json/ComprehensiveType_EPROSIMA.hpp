@@ -14,7 +14,7 @@
 
 #include <string>
 
-std::string expected_json_comprehensive_eprosima = R"({
+std::string expected_json_comprehensive_eprosima_unfilled = R"({
     "complex_array": [
         {
             "bitmask_sequence": [],
