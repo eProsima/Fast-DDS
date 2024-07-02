@@ -17,17 +17,18 @@
  *
  */
 
-#ifndef FASTDDS_EXAMPLES_CPP_HELLO_WORLD__APPLICATION_HPP
-#define FASTDDS_EXAMPLES_CPP_HELLO_WORLD__APPLICATION_HPP
+#ifndef FASTDDS_EXAMPLES_CPP_REQUEST_REPLY__APPLICATION_HPP
+#define FASTDDS_EXAMPLES_CPP_REQUEST_REPLY__APPLICATION_HPP
 
-#include <atomic>
+#include <memory>
+#include <string>
 
 #include "CLIParser.hpp"
 
 namespace eprosima {
 namespace fastdds {
 namespace examples {
-namespace hello_world {
+namespace request_reply {
 
 class Application
 {
@@ -44,13 +45,13 @@ public:
 
     //! Factory method to create applications based on configuration
     static std::shared_ptr<Application> make_app(
-            const CLIParser::hello_world_config& config,
-            const std::string& topic_name);
+            const CLIParser::config& config,
+            const std::string& service_name);
 };
 
-} // namespace hello_world
+} // namespace request_reply
 } // namespace examples
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* FASTDDS_EXAMPLES_CPP_HELLO_WORLD__APPLICATION_HPP */
+#endif /* FASTDDS_EXAMPLES_CPP_REQUEST_REPLY__APPLICATION_HPP */

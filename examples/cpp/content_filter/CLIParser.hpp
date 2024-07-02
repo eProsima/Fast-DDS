@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#ifndef FASTDDS_EXAMPLES_CPP_CONTENT_FILTER__CLIPARSER_HPP
+#define FASTDDS_EXAMPLES_CPP_CONTENT_FILTER__CLIPARSER_HPP
+
 #include <csignal>
 #include <cstdlib>
 #include <iostream>
 #include <thread>
 
 #include <fastdds/dds/log/Log.hpp>
-
-#ifndef _FASTDDS_CONTENT_FILTER_CLI_PARSER_HPP_
-#define _FASTDDS_CONTENT_FILTER_CLI_PARSER_HPP_
 
 namespace eprosima {
 namespace fastdds {
@@ -465,4 +465,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_CONTENT_FILTER_CLI_PARSER_HPP_
+#endif // FASTDDS_EXAMPLES_CPP_CONTENT_FILTER__CLIPARSER_HPP

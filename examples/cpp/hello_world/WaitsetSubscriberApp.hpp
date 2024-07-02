@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_HELLO_WORLD_WAITSET_SUBSCRIBER_APP_HPP_
-#define _FASTDDS_HELLO_WORLD_WAITSET_SUBSCRIBER_APP_HPP_
+#ifndef FASTDDS_EXAMPLES_CPP_HELLO_WORLD__WAITSETSUBSCRIBERAPP_HPP
+#define FASTDDS_EXAMPLES_CPP_HELLO_WORLD__WAITSETSUBSCRIBERAPP_HPP
 
 #include <fastdds/dds/core/condition/GuardCondition.hpp>
 #include <fastdds/dds/core/condition/WaitSet.hpp>
@@ -88,4 +88,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_HELLO_WORLD_WAITSET_SUBSCRIBER_APP_HPP_ */
+#endif /* FASTDDS_EXAMPLES_CPP_HELLO_WORLD__WAITSETSUBSCRIBERAPP_HPP */

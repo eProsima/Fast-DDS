@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_HELLO_WORLD_PUBLISHER_APP_HPP_
-#define _FASTDDS_HELLO_WORLD_PUBLISHER_APP_HPP_
+#ifndef FASTDDS_EXAMPLES_CPP_HELLO_WORLD__PUBLISHERAPP_HPP
+#define FASTDDS_EXAMPLES_CPP_HELLO_WORLD__PUBLISHERAPP_HPP
 
 #include <condition_variable>
 
@@ -96,4 +96,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_HELLO_WORLD_PUBLISHER_APP_HPP_ */
+#endif /* FASTDDS_EXAMPLES_CPP_HELLO_WORLD__PUBLISHERAPP_HPP */

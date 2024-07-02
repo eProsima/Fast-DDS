@@ -39,18 +39,18 @@
 
 
 /*!
- * @brief This class represents the TopicDataType of the type RequestType defined by the user in the IDL file.
+ * @brief This class represents the TopicDataType of the type CalculatorRequestType defined by the user in the IDL file.
  * @ingroup Calculator
  */
-class RequestTypePubSubType : public eprosima::fastdds::dds::TopicDataType
+class CalculatorRequestTypePubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    typedef RequestType type;
+    typedef CalculatorRequestType type;
 
-    eProsima_user_DllExport RequestTypePubSubType();
+    eProsima_user_DllExport CalculatorRequestTypePubSubType();
 
-    eProsima_user_DllExport ~RequestTypePubSubType() override;
+    eProsima_user_DllExport ~CalculatorRequestTypePubSubType() override;
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
@@ -94,7 +94,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
-        return true;
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
@@ -130,18 +130,18 @@ public:
 };
 
 /*!
- * @brief This class represents the TopicDataType of the type ReplyType defined by the user in the IDL file.
+ * @brief This class represents the TopicDataType of the type CalculatorReplyType defined by the user in the IDL file.
  * @ingroup Calculator
  */
-class ReplyTypePubSubType : public eprosima::fastdds::dds::TopicDataType
+class CalculatorReplyTypePubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    typedef ReplyType type;
+    typedef CalculatorReplyType type;
 
-    eProsima_user_DllExport ReplyTypePubSubType();
+    eProsima_user_DllExport CalculatorReplyTypePubSubType();
 
-    eProsima_user_DllExport ~ReplyTypePubSubType() override;
+    eProsima_user_DllExport ~CalculatorReplyTypePubSubType() override;
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
@@ -185,7 +185,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
-        return true;
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED

@@ -20,8 +20,8 @@
 #include <fastdds/rtps/attributes/BuiltinTransports.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 
-#ifndef _FASTDDS_DELIVERY_MECHANISMS_CLI_PARSER_HPP_
-#define _FASTDDS_DELIVERY_MECHANISMS_CLI_PARSER_HPP_
+#ifndef FASTDDS_EXAMPLES_CPP_DELIVERY_MECHANISMS__CLIPARSER_HPP
+#define FASTDDS_EXAMPLES_CPP_DELIVERY_MECHANISMS__CLIPARSER_HPP
 
 namespace eprosima {
 namespace fastdds {
@@ -415,4 +415,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_DELIVERY_MECHANISMS_CLI_PARSER_HPP_
+#endif // FASTDDS_EXAMPLES_CPP_DELIVERY_MECHANISMS__CLIPARSER_HPP

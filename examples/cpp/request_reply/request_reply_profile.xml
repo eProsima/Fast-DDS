@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dds xmlns="http://www.eprosima.com">
+    <profiles>
+        <participant profile_name="request_reply_participant_profile" is_default_profile="true">
+            <domainId>77</domainId>
+            <rtps>
+                <name>request_reply_participant</name>
+            </rtps>
+        </participant>
+        <data_writer profile_name="request_reply_datawriter_profile" is_default_profile="true">
+            <qos>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+            <topic>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>10000</depth>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>10000</max_samples>
+                    <max_instances>100</max_instances>
+                    <max_samples_per_instance>100</max_samples_per_instance>
+                </resourceLimitsQos>
+            </topic>
+        </data_writer>
+
+        <data_reader profile_name="request_reply_datareader_profile" is_default_profile="true">
+            <qos>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+            <topic>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>10000</depth>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>10000</max_samples>
+                    <max_instances>100</max_instances>
+                    <max_samples_per_instance>100</max_samples_per_instance>
+                </resourceLimitsQos>
+            </topic>
+        </data_reader>
+    </profiles>
+</dds>

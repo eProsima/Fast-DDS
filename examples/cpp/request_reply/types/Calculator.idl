@@ -1,0 +1,24 @@
+@extensibility(APPENDABLE)
+enum CalculatorOperationType
+{
+    ADDITION,
+    SUBTRACTION,
+    MULTIPLICATION,
+    DIVISION
+};
+
+@extensibility(APPENDABLE)
+struct CalculatorRequestType
+{
+    @key string client_id;
+    CalculatorOperationType operation;
+    short x;
+    short y;
+};
+
+@extensibility(APPENDABLE)
+struct CalculatorReplyType
+{
+    @key string client_id;
+    long result;
+};

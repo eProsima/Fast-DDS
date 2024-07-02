@@ -37,7 +37,7 @@ namespace fastcdr {
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const RequestType& data,
+        const CalculatorRequestType& data,
         size_t& current_alignment)
 {
     static_cast<void>(data);
@@ -51,12 +51,15 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
-                data.operation(), current_alignment);
+                data.client_id(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
-                data.x(), current_alignment);
+                data.operation(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
+                data.x(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
                 data.y(), current_alignment);
 
 
@@ -68,7 +71,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 template<>
 eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
-        const RequestType& data)
+        const CalculatorRequestType& data)
 {
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
@@ -77,9 +80,10 @@ eProsima_user_DllExport void serialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
-        << eprosima::fastcdr::MemberId(0) << data.operation()
-        << eprosima::fastcdr::MemberId(1) << data.x()
-        << eprosima::fastcdr::MemberId(2) << data.y()
+        << eprosima::fastcdr::MemberId(0) << data.client_id()
+        << eprosima::fastcdr::MemberId(1) << data.operation()
+        << eprosima::fastcdr::MemberId(2) << data.x()
+        << eprosima::fastcdr::MemberId(3) << data.y()
 ;
     scdr.end_serialize_type(current_state);
 }
@@ -87,7 +91,7 @@ eProsima_user_DllExport void serialize(
 template<>
 eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
-        RequestType& data)
+        CalculatorRequestType& data)
 {
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
@@ -98,14 +102,18 @@ eProsima_user_DllExport void deserialize(
                 switch (mid.id)
                 {
                                         case 0:
-                                                dcdr >> data.operation();
+                                                dcdr >> data.client_id();
                                             break;
 
                                         case 1:
-                                                dcdr >> data.x();
+                                                dcdr >> data.operation();
                                             break;
 
                                         case 2:
+                                                dcdr >> data.x();
+                                            break;
+
+                                        case 3:
                                                 dcdr >> data.y();
                                             break;
 
@@ -119,17 +127,22 @@ eProsima_user_DllExport void deserialize(
 
 void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
-        const RequestType& data)
+        const CalculatorRequestType& data)
 {
     static_cast<void>(scdr);
     static_cast<void>(data);
+                            scdr << data.client_id();
+
+
+
+
 }
 
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const ReplyType& data,
+        const CalculatorReplyType& data,
         size_t& current_alignment)
 {
     static_cast<void>(data);
@@ -143,7 +156,10 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
-                data.z(), current_alignment);
+                data.client_id(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
+                data.result(), current_alignment);
 
 
     calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
@@ -154,7 +170,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 template<>
 eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
-        const ReplyType& data)
+        const CalculatorReplyType& data)
 {
     eprosima::fastcdr::Cdr::state current_state(scdr);
     scdr.begin_serialize_type(current_state,
@@ -163,7 +179,8 @@ eProsima_user_DllExport void serialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
-        << eprosima::fastcdr::MemberId(0) << data.z()
+        << eprosima::fastcdr::MemberId(0) << data.client_id()
+        << eprosima::fastcdr::MemberId(1) << data.result()
 ;
     scdr.end_serialize_type(current_state);
 }
@@ -171,7 +188,7 @@ eProsima_user_DllExport void serialize(
 template<>
 eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
-        ReplyType& data)
+        CalculatorReplyType& data)
 {
     cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
             eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
@@ -182,7 +199,11 @@ eProsima_user_DllExport void deserialize(
                 switch (mid.id)
                 {
                                         case 0:
-                                                dcdr >> data.z();
+                                                dcdr >> data.client_id();
+                                            break;
+
+                                        case 1:
+                                                dcdr >> data.result();
                                             break;
 
                     default:
@@ -195,10 +216,13 @@ eProsima_user_DllExport void deserialize(
 
 void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
-        const ReplyType& data)
+        const CalculatorReplyType& data)
 {
     static_cast<void>(scdr);
     static_cast<void>(data);
+                            scdr << data.client_id();
+
+
 }
 
 
