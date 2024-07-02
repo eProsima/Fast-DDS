@@ -57,6 +57,45 @@ public:
 
     // *INDENT-ON*
 
+    virtual bool process_acknack(
+            const GUID_t& writer_guid,
+            const GUID_t& reader_guid,
+            uint32_t ack_count,
+            const SequenceNumberSet_t& sn_set,
+            bool final_flag,
+            bool& result,
+            fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown)
+    {
+        static_cast<void>(writer_guid);
+        static_cast<void>(reader_guid);
+        static_cast<void>(ack_count);
+        static_cast<void>(sn_set);
+        static_cast<void>(final_flag);
+        static_cast<void>(origin_vendor_id);
+
+        result = false;
+        return true;
+    }
+
+    virtual bool process_nack_frag(
+            const GUID_t& writer_guid,
+            const GUID_t& reader_guid,
+            uint32_t ack_count,
+            const SequenceNumber_t& seq_num,
+            const FragmentNumberSet_t& fragments_state,
+            bool& result,
+            fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown)
+    {
+        static_cast<void>(reader_guid);
+        static_cast<void>(ack_count);
+        static_cast<void>(seq_num);
+        static_cast<void>(fragments_state);
+        static_cast<void>(origin_vendor_id);
+
+        result = false;
+        return writer_guid == m_guid;
+    }
+
     LocatorSelectorSender& get_general_locator_selector()
     {
         return general_locator_selector_;

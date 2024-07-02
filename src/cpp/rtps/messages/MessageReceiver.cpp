@@ -32,6 +32,7 @@
 #include <rtps/messages/MessageReceiver.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/BaseReader.hpp>
+#include <rtps/writer/BaseWriter.hpp>
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
 #include <utils/shared_mutex.hpp>
@@ -45,8 +46,6 @@ using ParameterList = eprosima::fastdds::dds::ParameterList;
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
-
-using BaseReader = fastdds::rtps::BaseReader;
 
 MessageReceiver::MessageReceiver(
         RTPSParticipantImpl* participant,
@@ -250,7 +249,7 @@ void MessageReceiver::associateEndpoint(
     std::lock_guard<eprosima::shared_mutex> guard(mtx_);
     if (to_add->getAttributes().endpointKind == WRITER)
     {
-        const auto writer = dynamic_cast<RTPSWriter*>(to_add);
+        const auto writer = dynamic_cast<BaseWriter*>(to_add);
         for (const auto& it : associated_writers_)
         {
             if (it == writer)
@@ -295,7 +294,7 @@ void MessageReceiver::removeEndpoint(
 
     if (to_remove->getAttributes().endpointKind == WRITER)
     {
-        auto* var = dynamic_cast<RTPSWriter*>(to_remove);
+        auto* var = dynamic_cast<BaseWriter*>(to_remove);
         for (auto it = associated_writers_.begin(); it != associated_writers_.end(); ++it)
         {
             if (*it == var)
@@ -1216,7 +1215,7 @@ bool MessageReceiver::proc_Submsg_Acknack(
     }
 
     //Look for the correct writer to use the acknack
-    for (RTPSWriter* it : associated_writers_)
+    for (BaseWriter* it : associated_writers_)
     {
 #if HAVE_SECURITY
         if (was_decoded || !it->getAttributes().security_attributes().is_submessage_protected)
@@ -1416,7 +1415,7 @@ bool MessageReceiver::proc_Submsg_NackFrag(
     }
 
     //Look for the correct writer to use the acknack
-    for (RTPSWriter* it : associated_writers_)
+    for (BaseWriter* it : associated_writers_)
     {
 #if HAVE_SECURITY
         if (was_decoded || !it->getAttributes().security_attributes().is_submessage_protected)

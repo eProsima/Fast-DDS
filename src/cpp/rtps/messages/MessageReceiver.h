@@ -39,6 +39,7 @@ namespace fastdds {
 namespace rtps {
 
 class BaseReader;
+class BaseWriter;
 
 }  // namespace rtps
 }  // namespace fastdds
@@ -92,7 +93,7 @@ public:
 private:
 
     mutable eprosima::shared_mutex mtx_;
-    std::vector<RTPSWriter*> associated_writers_;
+    std::vector<BaseWriter*> associated_writers_;
     std::unordered_map<EntityId_t, std::vector<BaseReader*>> associated_readers_;
 
     RTPSParticipantImpl* participant_;

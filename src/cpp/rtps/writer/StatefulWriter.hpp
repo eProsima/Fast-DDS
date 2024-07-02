@@ -380,7 +380,7 @@ public:
             const GUID_t& reader_guid,
             uint32_t ack_count,
             const SequenceNumber_t& seq_num,
-            const FragmentNumberSet_t fragments_state,
+            const FragmentNumberSet_t& fragments_state,
             bool& result,
             fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown) override;
 

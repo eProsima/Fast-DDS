@@ -318,68 +318,6 @@ public:
     }
 
     /**
-     * Process an incoming ACKNACK submessage.
-     * @param[in] writer_guid      GUID of the writer the submessage is directed to.
-     * @param[in] reader_guid      GUID of the reader originating the submessage.
-     * @param[in] ack_count        Count field of the submessage.
-     * @param[in] sn_set           Sequence number bitmap field of the submessage.
-     * @param[in] final_flag       Final flag field of the submessage.
-     * @param[out] result          true if the writer could process the submessage.
-     *                             Only valid when returned value is true.
-     * @param[in] origin_vendor_id VendorId of the source participant from which the message was received
-     * @return true when the submessage was destinated to this writer, false otherwise.
-     */
-    virtual bool process_acknack(
-            const GUID_t& writer_guid,
-            const GUID_t& reader_guid,
-            uint32_t ack_count,
-            const SequenceNumberSet_t& sn_set,
-            bool final_flag,
-            bool& result,
-            fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown)
-    {
-        static_cast<void>(reader_guid);
-        static_cast<void>(ack_count);
-        static_cast<void>(sn_set);
-        static_cast<void>(final_flag);
-        static_cast<void>(origin_vendor_id);
-
-        result = false;
-        return writer_guid == m_guid;
-    }
-
-    /**
-     * Process an incoming NACKFRAG submessage.
-     * @param[in] writer_guid      GUID of the writer the submessage is directed to.
-     * @param[in] reader_guid      GUID of the reader originating the submessage.
-     * @param[in] ack_count        Count field of the submessage.
-     * @param[in] seq_num          Sequence number field of the submessage.
-     * @param[in] fragments_state  Fragment number bitmap field of the submessage.
-     * @param[out] result          true if the writer could process the submessage.
-     *                             Only valid when returned value is true.
-     * @param[in] origin_vendor_id VendorId of the source participant from which the message was received
-     * @return true when the submessage was destinated to this writer, false otherwise.
-     */
-    virtual bool process_nack_frag(
-            const GUID_t& writer_guid,
-            const GUID_t& reader_guid,
-            uint32_t ack_count,
-            const SequenceNumber_t& seq_num,
-            const FragmentNumberSet_t fragments_state,
-            bool& result,
-            fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown)
-    {
-        static_cast<void>(reader_guid);
-        static_cast<void>(ack_count);
-        static_cast<void>(seq_num);
-        static_cast<void>(fragments_state);
-        static_cast<void>(origin_vendor_id);
-
-        result = false;
-        return writer_guid == m_guid;
-    }
-
-    /**
      * @brief A method to retrieve the liveliness kind
      *
      * @return Liveliness kind
