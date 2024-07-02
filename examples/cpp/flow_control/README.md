@@ -32,6 +32,9 @@ Once instantiated, a flow controller will make sure there is a limit on the data
 
 In this example, the Fast DataWriter has no flow controller, while the Slow DataWriter has a flow controller limiting the maximum number of bytes to be sent per period, as well as the period of time on which the DataWriter is allowed to send.
 
+The information regarding the kind of a DataWriter, whether it is a slow or a fast one, is communicated through the user data field during the discovery phase. This user data is embedded within the discovery protocol, allowing other participants in the network to shared information without requiring direct communication or configuration.
+For more information, please refer to [UserDataQosPolicy](https://fast-dds.docs.eprosima.com/en/latest/fastdds/api_reference/dds_pim/core/policy/userdataqospolicy.html#userdataqospolicy).
+
 ## Run the example
 
 To launch this example, two different terminals are required.
