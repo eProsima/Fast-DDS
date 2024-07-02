@@ -23,6 +23,8 @@
 
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
+#include <rtps/messages/RTPSMessageGroup.hpp>
+#include <rtps/writer/DeliveryRetCode.hpp>
 #include <rtps/writer/LocatorSelectorSender.hpp>
 
 namespace eprosima {

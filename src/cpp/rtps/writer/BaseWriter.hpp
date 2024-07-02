@@ -28,6 +28,7 @@
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 #include <fastdds/statistics/rtps/monitor_service/connections_fwd.hpp>
 
+#include <rtps/writer/DeliveryRetCode.hpp>
 #include <rtps/writer/LocatorSelectorSender.hpp>
 
 namespace eprosima {

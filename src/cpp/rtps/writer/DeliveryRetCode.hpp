@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FASTDDS_RTPS_WRITER_DELIVERYRETCODE_HPP
-#define FASTDDS_RTPS_WRITER_DELIVERYRETCODE_HPP
+#ifndef RTPS_WRITER__DELIVERYRETCODE_HPP
+#define RTPS_WRITER__DELIVERYRETCODE_HPP
 
 #include <cstdint>
 
@@ -32,4 +32,4 @@ enum class DeliveryRetCode : uint32_t
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_RTPS_WRITER_DELIVERYRETCODE_HPP
+#endif // RTPS_WRITER__DELIVERYRETCODE_HPP

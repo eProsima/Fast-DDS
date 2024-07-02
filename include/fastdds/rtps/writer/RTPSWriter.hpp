@@ -35,7 +35,6 @@
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/Endpoint.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
-#include <fastdds/rtps/writer/DeliveryRetCode.hpp>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/statistics/rtps/monitor_service/connections_fwd.hpp>
 
@@ -53,7 +52,6 @@ namespace rtps {
 struct CacheChange_t;
 class DataSharingNotifier;
 class FlowController;
-class RTPSMessageGroup;
 class WriterListener;
 class WriterHistory;
 

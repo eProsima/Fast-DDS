@@ -30,9 +30,7 @@
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/Endpoint.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
-#include <fastdds/rtps/writer/DeliveryRetCode.hpp>
 #include <fastdds/rtps/writer/WriterListener.hpp>
-#include <rtps/messages/RTPSMessageGroup.hpp>
 
 namespace eprosima {
 namespace fastdds {
