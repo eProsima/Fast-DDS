@@ -23,7 +23,7 @@ services:
     environment:
       # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
       LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
-      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/dds_security/SecureHelloWorldExample
-      FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/dds_security/SecureHelloWorldExample/hello_world_profile.xml
-    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/hello_world@FILE_EXTENSION@ subscriber --samples 10 & $${EXAMPLE_DIR}/hello_world@FILE_EXTENSION@ publisher --samples 10"
+      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/security
+      FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/security/hello_world_profile.xml
+    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/security@FILE_EXTENSION@ subscriber --samples 10 & $${EXAMPLE_DIR}/security@FILE_EXTENSION@ publisher --samples 10"
     

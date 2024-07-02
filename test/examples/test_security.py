@@ -14,13 +14,13 @@
 
 import subprocess
 
-def test_hello_world():
+def test_security():
     """."""
     ret = False
     out = ''
     try:
         out = subprocess.check_output(
-            '@DOCKER_EXECUTABLE@ compose -f hello_world.compose.yml up',
+            '@DOCKER_EXECUTABLE@ compose -f security.compose.yml up',
             stderr=subprocess.STDOUT,
             shell=True,
             timeout=30

@@ -30,16 +30,16 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 
-#include "CLIParser.hpp"
-#include "HelloWorldPubSubTypes.h"
 #include "Application.hpp"
+#include "CLIParser.hpp"
+#include "HelloWorldPubSubTypes.hpp"
 
 using namespace eprosima::fastdds::dds;
 
 namespace eprosima {
 namespace fastdds {
 namespace examples {
-namespace hello_world {
+namespace security {
 
 SubscriberApp::SubscriberApp(
         const CLIParser::entity_config& config,
@@ -164,7 +164,7 @@ void SubscriberApp::stop()
     terminate_cv_.notify_all();
 }
 
-} // namespace hello_world
+} // namespace security
 } // namespace examples
 } // namespace fastdds
 } // namespace eprosima

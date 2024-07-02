@@ -17,8 +17,6 @@
  *
  */
 
-#include "PublisherApp.hpp"
-
 #include <condition_variable>
 #include <stdexcept>
 
@@ -28,12 +26,15 @@
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 
+#include "PublisherApp.hpp"
+#include "HelloWorldPubSubTypes.hpp"
+
 using namespace eprosima::fastdds::dds;
 
 namespace eprosima {
 namespace fastdds {
 namespace examples {
-namespace hello_world {
+namespace security {
 
 PublisherApp::PublisherApp(
         const CLIParser::entity_config& config,
@@ -173,7 +174,7 @@ void PublisherApp::stop()
     cv_.notify_one();
 }
 
-} // namespace hello_world
+} // namespace security
 } // namespace examples
 } // namespace fastdds
 } // namespace eprosima

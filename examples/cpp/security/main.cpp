@@ -29,7 +29,7 @@
 
 using eprosima::fastdds::dds::Log;
 
-using namespace eprosima::fastdds::examples::hello_world;
+using namespace eprosima::fastdds::examples::security;
 
 std::function<void(int)> stop_app_handler;
 void signal_handler(
@@ -43,8 +43,8 @@ int main(
         char** argv)
 {
     auto ret = EXIT_SUCCESS;
-    const std::string topic_name = "hello_world_topic";
-    CLIParser::hello_world_config config = CLIParser::parse_cli_options(argc, argv);
+    const std::string topic_name = "security_topic";
+    CLIParser::security_config config = CLIParser::parse_cli_options(argc, argv);
     uint16_t samples = 0;
     switch (config.entity)
     {

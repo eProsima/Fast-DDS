@@ -38,17 +38,17 @@ message(STATUS "Configuring secure hello world example...")
 file(GLOB SECURE_HELLO_WORLD_SOURCES_CXX "*.cxx")
 file(GLOB SECURE_HELLO_WORLD_SOURCES_CPP "*.cpp")
 
-add_executable(SecureHelloWorldExample ${SECURE_HELLO_WORLD_SOURCES_CXX} ${SECURE_HELLO_WORLD_SOURCES_CPP})
-target_compile_definitions(SecureHelloWorldExample PRIVATE
+add_executable(security ${SECURE_HELLO_WORLD_SOURCES_CXX} ${SECURE_HELLO_WORLD_SOURCES_CPP})
+target_compile_definitions(security PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     $<$<BOOL:${SHM_TRANSPORT_DEFAULT}>:SHM_TRANSPORT_BUILTIN> # Enable SHM as built-in transport
 )
-target_link_libraries(SecureHelloWorldExample fastdds fastcdr)
-install(TARGETS SecureHelloWorldExample
-    RUNTIME DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples/cpp/dds_security/SecureHelloWorldExample/${BIN_INSTALL_DIR})
+target_link_libraries(security fastdds fastcdr)
+install(TARGETS security
+    RUNTIME DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples/cpp/security/${BIN_INSTALL_DIR})
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/certs
-    DESTINATION examples/cpp/dds_security/SecureHelloWorldExample/${BIN_INSTALL_DIR})
+    DESTINATION examples/cpp/security/${BIN_INSTALL_DIR})
 # Copy the XML files over to the build directory
 file(GLOB_RECURSE XML_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.xml)
 # for each xml file detected
@@ -61,10 +61,10 @@ foreach(XML_FILE_COMPLETE_PATH ${XML_FILES})
         ${CMAKE_CURRENT_BINARY_DIR}/${XML_FILE}.xml # to relative build path
         COPYONLY)
     install(FILES ${XML_FILE_COMPLETE_PATH}
-        DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples/cpp/dds_security/SecureHelloWorldExample/${BIN_INSTALL_DIR})
+        DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples/cpp/security/${BIN_INSTALL_DIR})
 endforeach()
 
-add_custom_command(TARGET SecureHelloWorldExample POST_BUILD
+add_custom_command(TARGET security POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${PROJECT_SOURCE_DIR}/certs
             ${PROJECT_BINARY_DIR}/certs)

@@ -16,15 +16,16 @@
 #include <cstdlib>
 #include <iostream>
 #include <cmath>
+
 #include <fastdds/dds/log/Log.hpp>
 
-#ifndef _FASTDDS_HELLO_WORLD_CLI_PARSER_HPP_
-#define _FASTDDS_HELLO_WORLD_CLI_PARSER_HPP_
+#ifndef FASTDDS_EXAMPLES_CPP_SECURITY__CLI_PARSER_HPP
+#define FASTDDS_EXAMPLES_CPP_SECURITY__CLI_PARSER_HPP
 
 namespace eprosima {
 namespace fastdds {
 namespace examples {
-namespace hello_world {
+namespace security {
 
 using dds::Log;
 
@@ -50,7 +51,7 @@ public:
     };
 
     //! Configuration structure for the application
-    struct hello_world_config
+    struct security_config
     {
         CLIParser::EntityKind entity = CLIParser::EntityKind::UNDEFINED;
         entity_config pub_config;
@@ -67,7 +68,7 @@ public:
     static void print_help(
             uint8_t return_code)
     {
-        std::cout << "Usage: hello_world <entity> [options]"                                            << std::endl;
+        std::cout << "Usage: security <entity> [options]"                                            << std::endl;
         std::cout << ""                                                                                 << std::endl;
         std::cout << "Entities:"                                                                        << std::endl;
         std::cout << "  publisher                       Run a publisher entity"                         << std::endl;
@@ -93,11 +94,11 @@ public:
      *
      * @warning This method finishes the execution of the program if the input arguments are invalid
      */
-    static hello_world_config parse_cli_options(
+    static security_config parse_cli_options(
             int argc,
             char* argv[])
     {
-        hello_world_config config;
+        security_config config;
 
         if (argc < 2)
         {
@@ -283,9 +284,9 @@ public:
 
 };
 
-} // namespace hello_world
+} // namespace security
 } // namespace examples
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_HELLO_WORLD_CLI_PARSER_HPP_
+#endif // FASTDDS_EXAMPLES_CPP_SECURITY__CLI_PARSER_HPP

@@ -48,7 +48,7 @@ Forthcoming
 * Calling `DataReader::return_loan` returns `ReturnCode_t::RETCODE_OK` both for empty sequences and for sequences that were not loaned.
 * Refactor examples:
   * Hello world example with wait-sets and environment XML profiles.
-  * Secured hello world example with wait-sets and environment XML profiles.
+  * Secured hello world example with environment XML profiles.
   * Configuration example that condenses multiple QoS examples. Multiple configurations allowed through argument parsing.
   * Custom payload pool example that uses a user-defined payload pool instead of the default
   * X-Types example with dynamic type discovery and Hello world example compatibility.

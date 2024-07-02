@@ -13,49 +13,53 @@
 // limitations under the License.
 
 /**
- * @file PublisherApp.hpp
+ * @file SubscriberApp.hpp
  *
  */
 
-#ifndef _FASTDDS_HELLO_WORLD_PUBLISHER_APP_HPP_
-#define _FASTDDS_HELLO_WORLD_PUBLISHER_APP_HPP_
+#ifndef FASTDDS_EXAMPLES_CPP_SECURITY__HELLO_WORLD_SUBSCRIBER_APP_HPP
+#define FASTDDS_EXAMPLES_CPP_SECURITY__HELLO_WORLD_SUBSCRIBER_APP_HPP
 
 #include <condition_variable>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include "Application.hpp"
 #include "CLIParser.hpp"
-#include "HelloWorldPubSubTypes.h"
+#include "HelloWorld.hpp"
 
 using namespace eprosima::fastdds::dds;
 
 namespace eprosima {
 namespace fastdds {
 namespace examples {
-namespace hello_world {
+namespace security {
 
-class PublisherApp : public Application, public DataWriterListener
+class SubscriberApp : public Application,  public DataReaderListener
 {
 public:
 
-    PublisherApp(
+    SubscriberApp(
             const CLIParser::entity_config& config,
             const std::string& topic_name);
 
-    ~PublisherApp();
+    ~SubscriberApp();
 
-    //! Publisher matched method
-    void on_publication_matched(
-            DataWriter* writer,
-            const PublicationMatchedStatus& info) override;
+    //! Subscription callback
+    void on_data_available(
+            DataReader* reader) override;
 
-    //! Run publisher
+    //! Subscriber matched method
+    void on_subscription_matched(
+            DataReader* reader,
+            const SubscriptionMatchedStatus& info) override;
+
+    //! Run subscriber
     void run() override;
 
-    //! Stop publisher
+    //! Trigger the end of execution
     void stop() override;
 
 private:
@@ -63,38 +67,32 @@ private:
     //! Return the current state of execution
     bool is_stopped();
 
-    //! Publish a sample
-    bool publish();
-
     HelloWorld hello_;
 
     DomainParticipant* participant_;
 
-    Publisher* publisher_;
+    Subscriber* subscriber_;
 
     Topic* topic_;
 
-    DataWriter* writer_;
+    DataReader* reader_;
 
     TypeSupport type_;
 
-    const uint32_t period_ms_; // sleep time (ms) between consecutive samples
-
-    int16_t matched_;
-
     uint16_t samples_;
 
-    std::mutex mutex_;
-
-    std::condition_variable cv_;
+    uint16_t received_samples_;
 
     std::atomic<bool> stop_;
 
+    mutable std::mutex terminate_cv_mtx_;
+
+    std::condition_variable terminate_cv_;
 };
 
-} // namespace hello_world
+} // namespace security
 } // namespace examples
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_HELLO_WORLD_PUBLISHER_APP_HPP_ */
+#endif /* FASTDDS_EXAMPLES_CPP_SECURITY__HELLO_WORLD_SUBSCRIBER_APP_HPP */
