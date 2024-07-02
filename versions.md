@@ -68,6 +68,7 @@ Forthcoming
 * New `DomainParticipantExtendedQos` that includes both `DomainId` and `DomainParticipantQos` (extends `DomainParticipantFactory` API).
 * Make Blackbox tests not include any private API.
 * Remove all the private API include from Blackbox tests.
+* Setting vendor_id in the received CacheChange_t for Data and DataFrag.
 
 Version 2.14.0
 --------------
