@@ -96,6 +96,11 @@ public:
         return members_;
     }
 
+    TypeDescriptorImpl& get_descriptor() noexcept
+    {
+        return type_descriptor_;
+    }
+
     const TypeDescriptorImpl& get_descriptor() const noexcept
     {
         return type_descriptor_;

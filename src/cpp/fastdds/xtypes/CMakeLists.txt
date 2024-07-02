@@ -39,6 +39,8 @@ target_sources(fastdds-xtypes-dynamic-types-api INTERFACE
     ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/detail/dynamic_language_binding.hpp
     ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/detail/type_traits.hpp
 
+    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/utils.hpp
+
     dynamic_types/DynamicDataFactory.cpp
     dynamic_types/DynamicTypeBuilderFactory.cpp
     )
@@ -76,6 +78,9 @@ target_sources(fastdds-xtypes-dynamic-types-impl INTERFACE
     dynamic_types/TypeDescriptorImpl.hpp
     dynamic_types/VerbatimTextDescriptorImpl.cpp
     dynamic_types/VerbatimTextDescriptorImpl.hpp
+    serializers/json/dynamic_data_json.cpp
+    serializers/json/dynamic_data_json.hpp
+    utils.cpp
     )
 
 target_link_libraries(fastdds-xtypes-dynamic-types-impl INTERFACE fastdds-xtypes-dynamic-types-api)

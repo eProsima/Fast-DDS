@@ -94,6 +94,8 @@ public:
     MemberId get_member_id_by_name(
             const ObjectName& name) noexcept override;
 
+    MemberId selected_union_member() noexcept;
+
     //{{{ Getters
 
     //{{{ Primitive getters
@@ -406,6 +408,8 @@ public:
 
 
     traits<DynamicType>::ref_type type() noexcept override;
+
+    traits<DynamicTypeImpl>::ref_type enclosing_type() noexcept;
 
     //{{{ Encoding/decoding functions
 
