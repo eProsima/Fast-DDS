@@ -661,7 +661,7 @@ void LatencyTestPublisher::run()
 
 void LatencyTestPublisher::destroy_user_entities()
 {
-    // Static type endpoints shpuld have been removed for each payload iteration
+    // Static type endpoints should have been removed for each payload iteration
     if (dynamic_types_)
     {
         destroy_data_endpoints();
