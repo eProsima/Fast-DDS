@@ -42,6 +42,18 @@ public:
     {
     }
 
+    static BaseWriter* downcast(
+            RTPSWriter* writer)
+    {
+        return static_cast<BaseWriter*>(writer);
+    }
+
+    static BaseWriter* downcast(
+            fastdds::rtps::Endpoint* endpoint)
+    {
+        return static_cast<BaseWriter*>(endpoint);
+    }
+
     // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
     MOCK_METHOD4(deliver_sample_nts, DeliveryRetCode(
             CacheChange_t*,

@@ -181,6 +181,26 @@ public:
         return writer_guid == m_guid;
     }
 
+    /**
+     * @brief Get a pointer to a BaseWriter object from a RTPSWriter pointer.
+     *
+     * @param writer  Pointer to the RTPSWriter object.
+     *
+     * @return Pointer to the BaseWriter object.
+     */
+    static BaseWriter* downcast(
+            RTPSWriter* writer);
+
+    /**
+     * @brief Get a pointer to a BaseWriter object from a Endpoint pointer.
+     *
+     * @param endpoint  Pointer to the Endpoint object.
+     *
+     * @return Pointer to the BaseWriter object.
+     */
+    static BaseWriter* downcast(
+            Endpoint* endpoint);
+
     virtual ~BaseWriter();
 
 protected:

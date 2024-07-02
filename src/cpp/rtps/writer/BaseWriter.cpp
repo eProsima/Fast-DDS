@@ -18,12 +18,14 @@
 
 #include <rtps/writer/BaseWriter.hpp>
 
+#include <cassert>
 #include <chrono>
 #include <cstdint>
 #include <memory>
 #include <mutex>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/Endpoint.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/history/IChangePool.hpp>
@@ -55,6 +57,20 @@ BaseWriter::BaseWriter(
     flow_controller_->register_writer(this);
 
     EPROSIMA_LOG_INFO(RTPS_WRITER, "RTPSWriter created");
+}
+
+BaseWriter* BaseWriter::downcast(
+        RTPSWriter* writer)
+{
+    assert(nullptr != dynamic_cast<BaseWriter*>(writer));
+    return static_cast<BaseWriter*>(writer);
+}
+
+BaseWriter* BaseWriter::downcast(
+        Endpoint* endpoint)
+{
+    assert(nullptr != dynamic_cast<BaseWriter*>(endpoint));
+    return static_cast<BaseWriter*>(endpoint);
 }
 
 BaseWriter::~BaseWriter()

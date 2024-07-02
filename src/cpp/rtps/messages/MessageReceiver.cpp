@@ -249,7 +249,7 @@ void MessageReceiver::associateEndpoint(
     std::lock_guard<eprosima::shared_mutex> guard(mtx_);
     if (to_add->getAttributes().endpointKind == WRITER)
     {
-        const auto writer = dynamic_cast<BaseWriter*>(to_add);
+        const auto writer = BaseWriter::downcast(to_add);
         for (const auto& it : associated_writers_)
         {
             if (it == writer)
