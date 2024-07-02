@@ -114,7 +114,7 @@ void SubscriberApp::on_data_available(
         DataReader* reader)
 {
     SampleInfo info;
-    while (RETCODE_OK == reader->take_next_sample(&hello_, &info))
+    while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(&hello_, &info)))
     {
         if (ALIVE_INSTANCE_STATE == info.instance_state && info.valid_data &&
                 TK_STRUCTURE == remote_type_object_.complete()._d())

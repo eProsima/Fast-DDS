@@ -49,6 +49,7 @@ Forthcoming
   * X-Types example with dynamic type discovery and Hello world example compatibility.
   * Custom Content filter example
   * Delivery mechanisms example with SHM, UDP, TCP, data-sharing and intra-process mechanisms.
+  * Flow Controller example with `FlowControllersQos` and property settings.
 * Removed `TypeConsistencyQos` from DataReader, and included `TypeConsistencyEnforcementQosPolicy` and `DataRepresentationQosPolicy`
 * Added new `flow_controller_descriptor_list` XML configuration, remove `ThroughtputController`.
 * Migrate `#define`s within `BuiltinEndpoints.hpp` to namespaced `constexpr` variables.

@@ -14,7 +14,6 @@
 
 add_subdirectory(DiscoveryServerExample)
 add_subdirectory(DynamicHelloWorldExample)
-add_subdirectory(FlowControlExample)
 add_subdirectory(HelloWorldExampleDataSharing)
 add_subdirectory(HelloWorldExampleSharedMem)
 add_subdirectory(HelloWorldExampleTCP)

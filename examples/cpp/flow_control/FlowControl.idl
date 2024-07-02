@@ -1,0 +1,5 @@
+struct FlowControl
+{
+   char message[600000];
+   unsigned long index;
+};
