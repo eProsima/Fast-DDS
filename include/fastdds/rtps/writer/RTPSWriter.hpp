@@ -519,8 +519,6 @@ private:
     void init(
             const WriterAttributes& att);
 
-
-    RTPSWriter* next_[2] = { nullptr, nullptr };
 };
 
 } // namespace rtps
