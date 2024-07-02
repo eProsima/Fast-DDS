@@ -95,7 +95,7 @@ public:
 
     struct PortNode
     {
-        alignas(8) std::atomic<std::chrono::high_resolution_clock::rep> last_listeners_status_check_time_ms;
+        alignas(8) std::atomic<std::chrono::steady_clock::rep> last_listeners_status_check_time_ms;
         alignas(8) std::atomic<uint32_t> ref_counter;
 
         SharedMemSegment::Offset buffer;
@@ -320,17 +320,17 @@ public:
 
                 port_node->last_listeners_status_check_time_ms.exchange(
                     std::chrono::duration_cast<std::chrono::milliseconds>(
-                        std::chrono::high_resolution_clock::now().time_since_epoch()).count());
+                        std::chrono::steady_clock::now().time_since_epoch()).count());
 
                 return listeners_found == port_node->num_listeners;
             }
 
             void run()
             {
-                auto now = std::chrono::high_resolution_clock::now();
+                auto now = std::chrono::steady_clock::now();
 
                 auto timeout_elapsed = [](
-                    std::chrono::high_resolution_clock::time_point& now,
+                    std::chrono::steady_clock::time_point& now,
                     const PortContext& port_context)
                         {
                             return std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count()
@@ -865,14 +865,14 @@ public:
                 throw std::runtime_error("port is marked as not ok");
             }
 
-            auto t0 = std::chrono::high_resolution_clock::now();
+            auto t0 = std::chrono::steady_clock::now();
 
             // If in any moment during the timeout all waiting listeners are OK
             // then the port is OK
             bool is_check_ok = false;
             while ( !is_check_ok &&
                     std::chrono::duration_cast<std::chrono::milliseconds>
-                        (std::chrono::high_resolution_clock::now() - t0).count() < node_->healthy_check_timeout_ms)
+                        (std::chrono::steady_clock::now() - t0).count() < node_->healthy_check_timeout_ms)
             {
                 {
                     std::unique_lock<SharedMemSegment::mutex> lock(node_->empty_cv_mutex);
@@ -1275,7 +1275,7 @@ private:
         port_node->healthy_check_timeout_ms = healthy_check_timeout_ms;
         port_node->last_listeners_status_check_time_ms =
                 std::chrono::duration_cast<std::chrono::milliseconds>(
-            std::chrono::high_resolution_clock::now().time_since_epoch()).count();
+            std::chrono::steady_clock::now().time_since_epoch()).count();
         port_node->port_wait_timeout_ms = healthy_check_timeout_ms / 3;
         port_node->max_buffer_descriptors = max_buffer_descriptors;
         std::fill_n(port_node->listeners_status, PortNode::LISTENERS_STATUS_SIZE, PortNode::ListenerStatus());
