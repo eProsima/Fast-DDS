@@ -1063,7 +1063,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
         {
             if (!history_->set_next_deadline(
                         handle,
-                        steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
+                        steady_clock::now() + duration_cast<steady_clock::duration>(deadline_duration_us_)))
             {
                 EPROSIMA_LOG_ERROR(DATA_WRITER, "Could not set the next deadline in the history");
             }
@@ -1535,7 +1535,7 @@ bool DataWriterImpl::deadline_missed()
 
     if (!history_->set_next_deadline(
                 timer_owner_,
-                steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
+                steady_clock::now() + duration_cast<steady_clock::duration>(deadline_duration_us_)))
     {
         EPROSIMA_LOG_ERROR(DATA_WRITER, "Could not set the next deadline in the history");
         return false;
