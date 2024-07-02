@@ -55,6 +55,14 @@ public:
     }
 
     // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
+    MOCK_METHOD0(getMaxDataSize, uint32_t());
+
+    MOCK_METHOD1(calculateMaxDataSize, uint32_t(uint32_t));
+
+    MOCK_METHOD0(getRTPSParticipant, RTPSParticipantImpl* ());
+
+    MOCK_METHOD1(set_separate_sending, void(bool));
+
     MOCK_METHOD4(deliver_sample_nts, DeliveryRetCode(
             CacheChange_t*,
             RTPSMessageGroup&,
@@ -66,6 +74,12 @@ public:
             const uint32_t&,
             const LocatorSelectorSender&,
             std::chrono::steady_clock::time_point&));
+
+    MOCK_CONST_METHOD0(get_liveliness_kind, const fastdds::dds::LivelinessQosPolicyKind& ());
+
+    MOCK_CONST_METHOD0(get_liveliness_lease_duration, const Duration_t& ());
+
+    MOCK_CONST_METHOD0(is_datasharing_compatible, bool());
 
     MOCK_CONST_METHOD1(is_datasharing_compatible_with, bool(
             const ReaderProxyData& rdata));
@@ -109,6 +123,21 @@ public:
 
         result = false;
         return writer_guid == m_guid;
+    }
+
+    virtual bool try_remove_change(
+            const std::chrono::steady_clock::time_point&,
+            std::unique_lock<RecursiveTimedMutex>&)
+    {
+        return true;
+    }
+
+    virtual bool wait_for_acknowledgement(
+            const SequenceNumber_t&,
+            const std::chrono::steady_clock::time_point&,
+            std::unique_lock<RecursiveTimedMutex>&)
+    {
+        return true;
     }
 
     virtual void unsent_change_added_to_history(

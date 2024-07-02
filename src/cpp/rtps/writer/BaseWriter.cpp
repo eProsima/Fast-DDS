@@ -38,6 +38,7 @@
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
+#include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/history/IChangePool.hpp>
 #include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
@@ -121,6 +122,56 @@ void BaseWriter::set_enabled_statistics_writers_mask(
 
 #endif // FASTDDS_STATISTICS
 
+uint32_t BaseWriter::getMaxDataSize()
+{
+    uint32_t flow_max = flow_controller_->get_max_payload();
+    uint32_t part_max = mp_RTPSParticipant->getMaxMessageSize();
+    uint32_t max_size = flow_max > part_max ? part_max : flow_max;
+    if (max_output_message_size_ < max_size)
+    {
+        max_size = max_output_message_size_;
+    }
+
+    max_size =  calculateMaxDataSize(max_size);
+    return max_size &= ~3;
+}
+
+uint32_t BaseWriter::calculateMaxDataSize(
+        uint32_t length)
+{
+    constexpr uint32_t info_dst_message_length = 16;
+    constexpr uint32_t info_ts_message_length = 12;
+    constexpr uint32_t data_frag_submessage_header_length = 36;
+    constexpr uint32_t heartbeat_message_length = 32;
+
+    uint32_t maxDataSize = mp_RTPSParticipant->calculateMaxDataSize(length);
+
+    maxDataSize -= info_dst_message_length +
+            info_ts_message_length +
+            data_frag_submessage_header_length +
+            heartbeat_message_length;
+
+    //TODO(Ricardo) inlineqos in future.
+
+#if HAVE_SECURITY
+    if (getAttributes().security_attributes().is_submessage_protected)
+    {
+        maxDataSize -= mp_RTPSParticipant->security_manager().calculate_extra_size_for_rtps_submessage(m_guid);
+    }
+
+    if (getAttributes().security_attributes().is_payload_protected)
+    {
+        maxDataSize -= mp_RTPSParticipant->security_manager().calculate_extra_size_for_encoded_payload(m_guid);
+    }
+#endif // if HAVE_SECURITY
+
+#ifdef FASTDDS_STATISTICS
+    maxDataSize -= eprosima::fastdds::statistics::rtps::statistics_submessage_length;
+#endif // FASTDDS_STATISTICS
+
+    return maxDataSize;
+}
+
 void BaseWriter::add_statistics_sent_submessage(
         CacheChange_t* change,
         size_t num_locators)
@@ -145,6 +196,26 @@ bool BaseWriter::send_nts(
     return locator_selector.locator_selector.selected_size() == 0 ||
            participant->sendSync(buffers, total_bytes, m_guid, locator_selector.locator_selector.begin(),
                    locator_selector.locator_selector.end(), max_blocking_time_point);
+}
+
+const dds::LivelinessQosPolicyKind& BaseWriter::get_liveliness_kind() const
+{
+    return liveliness_kind_;
+}
+
+const Duration_t& BaseWriter::get_liveliness_lease_duration() const
+{
+    return liveliness_lease_duration_;
+}
+
+const Duration_t& BaseWriter::get_liveliness_announcement_period() const
+{
+    return liveliness_announcement_period_;
+}
+
+bool BaseWriter::is_datasharing_compatible() const
+{
+    return (m_att.data_sharing_configuration().kind() != dds::OFF);
 }
 
 bool BaseWriter::is_datasharing_compatible_with(

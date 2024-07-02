@@ -45,6 +45,7 @@ class BaseReader;
 namespace fastdds {
 namespace rtps {
 
+class BaseWriter;
 class BuiltinProtocols;
 class LivelinessManager;
 class ReaderHistory;
@@ -216,11 +217,11 @@ private:
     //!Pointer to the periodic assertion timer object for manual by participant liveliness writers
     TimedEvent* manual_liveliness_assertion_;
     //! List of the writers using automatic liveliness.
-    std::vector<RTPSWriter*> automatic_writers_;
+    std::vector<BaseWriter*> automatic_writers_;
     //! List of the writers using manual by participant liveliness.
-    std::vector<RTPSWriter*> manual_by_participant_writers_;
+    std::vector<BaseWriter*> manual_by_participant_writers_;
     //! List of writers using manual by topic liveliness
-    std::vector<RTPSWriter*> manual_by_topic_writers_;
+    std::vector<BaseWriter*> manual_by_topic_writers_;
 
     //! List of readers
     std::vector<BaseReader*> readers_;

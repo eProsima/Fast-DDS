@@ -48,7 +48,6 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-struct CacheChange_t;
 class FlowController;
 class RTPSParticipantImpl;
 class WriterHistory;
@@ -181,13 +180,6 @@ public:
      */
     FASTDDS_EXPORTED_API uint32_t getTypeMaxSerialized();
 
-    //!Get maximum size of the data
-    uint32_t getMaxDataSize();
-
-    //! Calculates the maximum size of the data
-    uint32_t calculateMaxDataSize(
-            uint32_t length);
-
     /**
      * Get listener
      * @return Listener
@@ -223,28 +215,6 @@ public:
     {
         return false;
     }
-
-    /**
-     * Tries to remove a change waiting a maximum of the provided microseconds.
-     * @param max_blocking_time_point Maximum time to wait for.
-     * @param lock Lock of the Change list.
-     * @return at least one change has been removed
-     */
-    virtual bool try_remove_change(
-            const std::chrono::steady_clock::time_point& max_blocking_time_point,
-            std::unique_lock<RecursiveTimedMutex>& lock) = 0;
-
-    /**
-     * Waits till a change has been acknowledged.
-     * @param seq Sequence number to wait for acknowledgement.
-     * @param max_blocking_time_point Maximum time to wait for.
-     * @param lock Lock of the Change list.
-     * @return true when change was acknowledged, false when timeout is reached.
-     */
-    virtual bool wait_for_acknowledgement(
-            const SequenceNumber_t& seq,
-            const std::chrono::steady_clock::time_point& max_blocking_time_point,
-            std::unique_lock<RecursiveTimedMutex>& lock) = 0;
 
 #ifdef FASTDDS_STATISTICS
 
@@ -283,63 +253,8 @@ public:
 
 #endif // FASTDDS_STATISTICS
 
-    /**
-     * Get RTPS participant
-     * @return RTPS participant
-     */
-    inline RTPSParticipantImpl* getRTPSParticipant() const
-    {
-        return mp_RTPSParticipant;
-    }
-
-    /**
-     * Enable or disable sending data to readers separately
-     * NOTE: This will only work for synchronous writers
-     * @param enable If separate sending should be enabled
-     */
-    void set_separate_sending (
-            bool enable)
-    {
-        separate_sending_enabled_ = enable;
-    }
-
-    /**
-     * Inform if data is sent to readers separately
-     * @return true if separate sending is enabled
-     */
-    bool get_separate_sending () const
-    {
-        return separate_sending_enabled_;
-    }
-
-    /**
-     * @brief A method to retrieve the liveliness kind
-     *
-     * @return Liveliness kind
-     */
-    const dds::LivelinessQosPolicyKind& get_liveliness_kind() const;
-
-    /**
-     * @brief A method to retrieve the liveliness lease duration
-     *
-     * @return Lease duration
-     */
-    const Duration_t& get_liveliness_lease_duration() const;
-
-    /**
-     * @brief A method to return the liveliness announcement period
-     *
-     * @return The announcement period
-     */
-    const Duration_t& get_liveliness_announcement_period() const;
-
     //! Liveliness lost status of this writer
     LivelinessLostStatus liveliness_lost_status_;
-
-    /**
-     * @return Whether the writer is data sharing compatible or not
-     */
-    bool is_datasharing_compatible() const;
 
 protected:
 

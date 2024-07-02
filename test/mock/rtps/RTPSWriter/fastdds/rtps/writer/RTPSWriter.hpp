@@ -112,21 +112,7 @@ public:
 #endif // FASTDDS_STATISTICS
 
     // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
-    MOCK_METHOD1(set_separate_sending, void(bool));
-
-    MOCK_METHOD0(getRTPSParticipant, RTPSParticipantImpl* ());
-
     MOCK_METHOD0 (getTypeMaxSerialized, uint32_t());
-
-    MOCK_METHOD1(calculateMaxDataSize, uint32_t(uint32_t));
-
-    MOCK_METHOD0(getMaxDataSize, uint32_t ());
-
-    MOCK_CONST_METHOD0(get_liveliness_kind, const fastdds::dds::LivelinessQosPolicyKind& ());
-
-    MOCK_CONST_METHOD0(get_liveliness_lease_duration, const Duration_t& ());
-
-    MOCK_CONST_METHOD0(is_datasharing_compatible, bool());
 
     MOCK_METHOD1(reader_data_filter, void(
             IReaderDataFilter* filter));
@@ -150,21 +136,6 @@ public:
 
     virtual void send_any_unsent_changes()
     {
-    }
-
-    virtual bool try_remove_change(
-            const std::chrono::steady_clock::time_point&,
-            std::unique_lock<RecursiveTimedMutex>&)
-    {
-        return true;
-    }
-
-    virtual bool wait_for_acknowledgement(
-            const SequenceNumber_t&,
-            const std::chrono::steady_clock::time_point&,
-            std::unique_lock<RecursiveTimedMutex>&)
-    {
-        return true;
     }
 
     virtual bool is_acked_by_all(

@@ -22,9 +22,12 @@
 #include <chrono>
 #include <cstdint>
 #include <memory>
+#include <vector>
 
 #include <fastdds/fastdds_dll.hpp>
+#include <fastdds/rtps/Endpoint.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
+#include <fastdds/rtps/transport/NetworkBuffer.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
@@ -32,6 +35,11 @@
 
 #include <rtps/writer/DeliveryRetCode.hpp>
 #include <rtps/writer/LocatorSelectorSender.hpp>
+#include <fastdds/rtps/common/VendorId_t.hpp>
+#include <fastdds/rtps/common/SequenceNumber.hpp>
+#include <fastdds/rtps/common/FragmentNumber.hpp>
+#include <fastdds/utils/TimedMutex.hpp>
+#include <mutex>
 
 namespace eprosima {
 namespace fastdds {
@@ -83,6 +91,13 @@ public:
             uint32_t enabled_writers) override;
 
 #endif // FASTDDS_STATISTICS
+
+    //!Get maximum size of the data
+    uint32_t getMaxDataSize();
+
+    //! Calculates the maximum size of the data
+    uint32_t calculateMaxDataSize(
+            uint32_t length);
 
     /**
      * Add a change to the unsent list.
@@ -201,6 +216,83 @@ public:
         result = false;
         return writer_guid == m_guid;
     }
+
+    /**
+     * Tries to remove a change waiting a maximum of the provided microseconds.
+     * @param max_blocking_time_point Maximum time to wait for.
+     * @param lock Lock of the Change list.
+     * @return at least one change has been removed
+     */
+    virtual bool try_remove_change(
+            const std::chrono::steady_clock::time_point& max_blocking_time_point,
+            std::unique_lock<RecursiveTimedMutex>& lock) = 0;
+
+    /**
+     * Waits till a change has been acknowledged.
+     * @param seq Sequence number to wait for acknowledgement.
+     * @param max_blocking_time_point Maximum time to wait for.
+     * @param lock Lock of the Change list.
+     * @return true when change was acknowledged, false when timeout is reached.
+     */
+    virtual bool wait_for_acknowledgement(
+            const SequenceNumber_t& seq,
+            const std::chrono::steady_clock::time_point& max_blocking_time_point,
+            std::unique_lock<RecursiveTimedMutex>& lock) = 0;
+
+    /**
+     * Get RTPS participant
+     * @return RTPS participant
+     */
+    inline RTPSParticipantImpl* getRTPSParticipant() const
+    {
+        return mp_RTPSParticipant;
+    }
+
+    /**
+     * Enable or disable sending data to readers separately
+     * NOTE: This will only work for synchronous writers
+     * @param enable If separate sending should be enabled
+     */
+    void set_separate_sending (
+            bool enable)
+    {
+        separate_sending_enabled_ = enable;
+    }
+
+    /**
+     * Inform if data is sent to readers separately
+     * @return true if separate sending is enabled
+     */
+    bool get_separate_sending() const
+    {
+        return separate_sending_enabled_;
+    }
+
+    /**
+     * @brief A method to retrieve the liveliness kind
+     *
+     * @return Liveliness kind
+     */
+    const dds::LivelinessQosPolicyKind& get_liveliness_kind() const;
+
+    /**
+     * @brief A method to retrieve the liveliness lease duration
+     *
+     * @return Lease duration
+     */
+    const Duration_t& get_liveliness_lease_duration() const;
+
+    /**
+     * @brief A method to return the liveliness announcement period
+     *
+     * @return The announcement period
+     */
+    const Duration_t& get_liveliness_announcement_period() const;
+
+    /**
+     * @return Whether the writer is data sharing compatible or not
+     */
+    bool is_datasharing_compatible() const;
 
     bool is_datasharing_compatible_with(
             const ReaderProxyData& rdata) const;

@@ -536,7 +536,9 @@ public:
     void set_separate_sending(
             bool separate_sending)
     {
-        writer_->set_separate_sending(separate_sending);
+        // TODO(MiguelCompany): Decide whether separate_sending should become an attribute of the writer.
+        // writer_->set_separate_sending(separate_sending);
+        static_cast<void>(separate_sending);
     }
 
     uint32_t get_matched() const

@@ -47,6 +47,7 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/BaseReader.hpp>
 #include <rtps/reader/StatefulReader.hpp>
+#include <rtps/writer/BaseWriter.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
 #include <utils/TimeConversion.hpp>
 
@@ -473,7 +474,7 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
         IReaderDataFilter* pdp_filter = static_cast<ddb::PDPDataFilter<ddb::DiscoveryDataBase>*>(&discovery_db_);
         wout->reader_data_filter(pdp_filter);
         // Enable separate sending so the filter can be called for each change and reader proxy
-        wout->set_separate_sending(true);
+        BaseWriter::downcast(wout)->set_separate_sending(true);
     }
     // Could not create PDP Writer, so return false
     else
