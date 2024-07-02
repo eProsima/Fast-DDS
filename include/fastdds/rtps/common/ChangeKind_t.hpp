@@ -26,8 +26,7 @@ namespace fastrtps {
 namespace rtps {
 
 /**
- * @enum ChangeKind_t, different types of CacheChange_t.
- * @ingroup COMMON_MODULE
+ * Enumerates the different types of CacheChange_t.
  */
 enum RTPS_DllAPI ChangeKind_t
 {

@@ -139,7 +139,7 @@ public:
      * Returns all participants that belongs to the specified domain_id.
      *
      * @param domain_id
-     * @return previously created DomainParticipants within the specified domain
+     * @return previously created DomainParticipant instances within the specified domain
      */
     RTPS_DllAPI std::vector<DomainParticipant*> lookup_participants(
             DomainId_t domain_id) const;

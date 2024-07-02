@@ -217,6 +217,7 @@ public:
      * @brief Indicates to FastDDS that the contained DataWriters are about to be modified
      *
      * @return RETCODE_OK if successful, an error code otherwise
+     *
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t suspend_publications();
@@ -225,6 +226,7 @@ public:
      * @brief Indicates to FastDDS that the modifications to the DataWriters are complete.
      *
      * @return RETCODE_OK if successful, an error code otherwise
+     *
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t resume_publications();
@@ -233,6 +235,7 @@ public:
      * @brief Signals the beginning of a set of coherent cache changes using the Datawriters attached to the publisher
      *
      * @return RETCODE_OK if successful, an error code otherwise
+     *
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t begin_coherent_changes();
@@ -241,6 +244,7 @@ public:
      * @brief Signals the end of a set of coherent cache changes
      *
      * @return RETCODE_OK if successful, an error code otherwise
+     *
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t end_coherent_changes();
@@ -322,6 +326,8 @@ public:
      * @param[out] writer_qos
      * @param[in] topic_qos
      * @return RETCODE_OK if successful, an error code otherwise
+     *
+     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI static ReturnCode_t copy_from_topic_qos(
             fastdds::dds::DataWriterQos& writer_qos,
