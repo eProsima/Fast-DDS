@@ -40,12 +40,14 @@
 #include <rtps/common/GuidUtils.hpp>
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/BaseReader.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 #include <rtps/transport/TCPv4Transport.h>
 #include <rtps/transport/TCPv6Transport.h>
 #include <rtps/transport/test_UDPv4Transport.h>
 #include <rtps/transport/UDPv4Transport.h>
 #include <rtps/transport/UDPv6Transport.h>
+#include <rtps/writer/BaseWriter.hpp>
 #include <utils/Host.hpp>
 #include <utils/SystemInfo.hpp>
 #include <xmlparser/XMLProfileManager.h>
@@ -53,8 +55,6 @@
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
-
-using BaseReader = fastdds::rtps::BaseReader;
 
 template<typename _Descriptor>
 bool has_user_transport(
@@ -707,7 +707,7 @@ BaseReader* RTPSDomainImpl::find_local_reader(
     return nullptr;
 }
 
-RTPSWriter* RTPSDomainImpl::find_local_writer(
+BaseWriter* RTPSDomainImpl::find_local_writer(
         const GUID_t& writer_guid)
 {
     auto instance = get_instance();

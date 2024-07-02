@@ -498,7 +498,7 @@ public:
     /***
      * @returns A pointer to a local writer given its endpoint guid, or nullptr if not found.
      */
-    RTPSWriter* find_local_writer(
+    BaseWriter* find_local_writer(
             const GUID_t& writer_guid);
 
     /**

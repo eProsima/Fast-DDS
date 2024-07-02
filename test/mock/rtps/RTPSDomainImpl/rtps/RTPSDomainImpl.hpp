@@ -25,6 +25,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+class BaseWriter;
 class IChangePool;
 class RTPSReader;
 class RTPSWriter;
@@ -58,7 +59,7 @@ public:
         return false;
     }
 
-    static RTPSWriter* find_local_writer(
+    static BaseWriter* find_local_writer(
             const GUID_t& /* writer_guid */ )
     {
         return nullptr;

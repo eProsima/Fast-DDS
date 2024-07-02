@@ -1377,7 +1377,7 @@ BaseReader* RTPSParticipantImpl::find_local_reader(
     return nullptr;
 }
 
-RTPSWriter* RTPSParticipantImpl::find_local_writer(
+BaseWriter* RTPSParticipantImpl::find_local_writer(
         const GUID_t& writer_guid)
 {
     shared_lock<shared_mutex> _(endpoints_list_mutex);
@@ -2771,7 +2771,7 @@ bool RTPSParticipantImpl::register_in_writer(
     }
     else if (!fastdds::statistics::is_statistics_builtin(writer_guid.entityId))
     {
-        RTPSWriter* writer = find_local_writer(writer_guid);
+        BaseWriter* writer = find_local_writer(writer_guid);
         res = writer->add_statistics_listener(listener);
     }
 
