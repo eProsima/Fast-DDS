@@ -67,7 +67,7 @@ static bool is_partition_empty(
     return partition.size() <= 1 && 0 == strlen(partition.name());
 }
 
-static bool compare(
+static bool is_same_type(
         const dds::xtypes::TypeInformation& t1,
         const dds::xtypes::TypeInformation& t2)
 {
@@ -525,7 +525,7 @@ bool EDP::valid_matching(
     if ((wdata->has_type_information() && wdata->type_information().assigned()) &&
             (rdata->has_type_information() && rdata->type_information().assigned()))
     {
-        if (!compare(wdata->type_information().type_information, rdata->type_information().type_information))
+        if (!is_same_type(wdata->type_information().type_information, rdata->type_information().type_information))
         {
             reason.set(MatchingFailureMask::different_typeinfo);
             return false;
