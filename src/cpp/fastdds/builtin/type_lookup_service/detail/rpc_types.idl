@@ -1,30 +1,30 @@
 //This directive is not supported yet.
 //#ifdef BASIC
 
-module dds { 
+module dds {
 
 //This directive is not supported yet.
 //#ifdef REDEFINE_DDS_TYPES
 
-  // The following DDS related types are 
+  // The following DDS related types are
   // borrowed from the RTPS v1.2 specification
   typedef octet GuidPrefix_t[12];
 
-  @nested
+  @final @nested
   struct EntityId_t
   {
     octet entityKey[3];
     octet entityKind;
   };
 
-  @nested
+  @final @nested
   struct GUID_t
   {
     GuidPrefix_t guidPrefix;
     EntityId_t entityId;
   };
 
-  @nested
+  @final @nested
   struct SequenceNumber_t
   {
     long high;
@@ -33,7 +33,7 @@ module dds {
 
 //#endif // REDEFINE_DDS_TYPES
 
-@nested
+@final @nested
 struct SampleIdentity
 {
   GUID_t           writer_guid;
@@ -58,15 +58,15 @@ enum RemoteExceptionCode_t
 
 typedef string<255> InstanceName;
 
-@nested
-struct RequestHeader 
+@final @nested
+struct RequestHeader
 {
     dds::SampleIdentity  requestId;
     InstanceName         instanceName;
 };
 
-@nested
-struct ReplyHeader 
+@final @nested
+struct ReplyHeader
 {
     dds::SampleIdentity             relatedRequestId;
     dds::rpc::RemoteExceptionCode_t remoteEx;
@@ -76,5 +76,4 @@ struct ReplyHeader
 
 }; // module dds
 
-//#endif // BASIC 
-
+//#endif // BASIC

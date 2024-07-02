@@ -306,7 +306,7 @@ private:
             }
 
 
-    int32_t m__d {1};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -565,7 +565,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -824,7 +824,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -1083,7 +1083,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -1342,7 +1342,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -1601,7 +1601,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -1860,7 +1860,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -2119,7 +2119,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -2378,7 +2378,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -2637,7 +2637,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -2896,7 +2896,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -3155,7 +3155,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -3414,7 +3414,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -3684,7 +3684,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -3954,7 +3954,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -4224,7 +4224,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -4494,7 +4494,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -4753,7 +4753,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -5023,7 +5023,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -5282,7 +5282,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -5552,7 +5552,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -5822,7 +5822,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -6092,7 +6092,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -6362,7 +6362,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -6632,7 +6632,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -6902,7 +6902,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -7248,7 +7248,7 @@ private:
             }
 
 
-    int16_t m__d {0};
+    int16_t m__d {32767};
 
     union
     {
@@ -7595,7 +7595,7 @@ private:
             }
 
 
-    uint16_t m__d {0};
+    uint16_t m__d {32767};
 
     union
     {
@@ -7942,7 +7942,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -8289,7 +8289,7 @@ private:
             }
 
 
-    uint32_t m__d {0};
+    uint32_t m__d {2147483647};
 
     union
     {
@@ -8636,7 +8636,7 @@ private:
             }
 
 
-    int64_t m__d {0};
+    int64_t m__d {9223372036854775807};
 
     union
     {
@@ -8983,7 +8983,7 @@ private:
             }
 
 
-    uint64_t m__d {0};
+    uint64_t m__d {9223372036854775807};
 
     union
     {
@@ -9667,7 +9667,7 @@ private:
             }
 
 
-    uint8_t m__d {2};
+    uint8_t m__d {127};
 
     union
     {
@@ -10014,7 +10014,7 @@ private:
             }
 
 
-    char m__d {1};
+    char m__d {127};
 
     union
     {
@@ -10361,7 +10361,7 @@ private:
             }
 
 
-    wchar_t m__d {1};
+    wchar_t m__d {32767};
 
     union
     {
@@ -11482,7 +11482,7 @@ private:
             }
 
 
-    InnerAliasHelper m__d {0};
+    InnerAliasHelper m__d {2147483647};
 
     union
     {
@@ -12145,7 +12145,7 @@ private:
             }
 
 
-    int32_t m__d {5};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -12743,7 +12743,7 @@ public:
             const std::vector<int16_t>& _f)
     {
         f_() = _f;
-        m__d = 5;
+        m__d = 2147483647;
     }
 
     /*!
@@ -12754,7 +12754,7 @@ public:
             std::vector<int16_t>&& _f)
     {
         f_() = _f;
-        m__d = 5;
+        m__d = 2147483647;
     }
 
     /*!
@@ -12900,7 +12900,7 @@ private:
             }
 
 
-    int32_t m__d {5};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -18368,6 +18368,432 @@ private:
 
     Union_Several_Fields_With_Default m_var_union_several_fields_with_default;
 
+};
+/*!
+ * @brief This class represents the union DefaultAnnotation defined by the user in the IDL file.
+ * @ingroup unions
+ */
+class DefaultAnnotation
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport DefaultAnnotation()
+    {
+        a_();
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~DefaultAnnotation()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object DefaultAnnotation that will be copied.
+     */
+    eProsima_user_DllExport DefaultAnnotation(
+            const DefaultAnnotation& x)
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            a_() = x.m_a;
+                            break;
+
+                        case 0x00000002:
+                            b_() = x.m_b;
+                            break;
+
+                        case 0x00000003:
+                            c_() = x.m_c;
+                            break;
+
+        }
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object DefaultAnnotation that will be copied.
+     */
+    eProsima_user_DllExport DefaultAnnotation(
+            DefaultAnnotation&& x) noexcept
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            a_() = std::move(x.m_a);
+                            break;
+
+                        case 0x00000002:
+                            b_() = std::move(x.m_b);
+                            break;
+
+                        case 0x00000003:
+                            c_() = std::move(x.m_c);
+                            break;
+
+        }
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object DefaultAnnotation that will be copied.
+     */
+    eProsima_user_DllExport DefaultAnnotation& operator =(
+            const DefaultAnnotation& x)
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            a_() = x.m_a;
+                            break;
+
+                        case 0x00000002:
+                            b_() = x.m_b;
+                            break;
+
+                        case 0x00000003:
+                            c_() = x.m_c;
+                            break;
+
+        }
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object DefaultAnnotation that will be copied.
+     */
+    eProsima_user_DllExport DefaultAnnotation& operator =(
+            DefaultAnnotation&& x) noexcept
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            a_() = std::move(x.m_a);
+                            break;
+
+                        case 0x00000002:
+                            b_() = std::move(x.m_b);
+                            break;
+
+                        case 0x00000003:
+                            c_() = std::move(x.m_c);
+                            break;
+
+        }
+
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x DefaultAnnotation object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const DefaultAnnotation& x) const
+    {
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
+        {
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_a == x.m_a);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_b == x.m_b);
+                                    break;
+
+                                case 0x00000003:
+                                    ret_value = (m_c == x.m_c);
+                                    break;
+
+            }
+        }
+
+        return ret_value;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x DefaultAnnotation object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const DefaultAnnotation& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function sets the discriminator value.
+     * @param __d New value for the discriminator.
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
+     */
+    eProsima_user_DllExport void _d(
+            int32_t __d)
+    {
+        bool valid_discriminator = false;
+
+        switch (__d)
+        {
+                        case 0:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
+
+                        case 1:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
+
+                        default:
+                            if (0x00000003 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
+
+        }
+
+        if (!valid_discriminator)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
+        }
+
+        m__d = __d;
+    }
+
+    /*!
+     * @brief This function returns the value of the discriminator.
+     * @return Value of the discriminator
+     */
+    eProsima_user_DllExport int32_t _d() const
+    {
+        return m__d;
+    }
+
+    /*!
+     * @brief This function sets a value in member a
+     * @param _a New value for member a
+     */
+    eProsima_user_DllExport void a(
+            uint8_t _a)
+    {
+        a_() = _a;
+        m__d = 0;
+    }
+
+    /*!
+     * @brief This function returns the value of member a
+     * @return Value of member a
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport uint8_t a() const
+    {
+        if (0x00000001 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_a;
+    }
+
+    /*!
+     * @brief This function returns a reference to member a
+     * @return Reference to member a
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport uint8_t& a()
+    {
+        if (0x00000001 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_a;
+    }
+
+
+    /*!
+     * @brief This function sets a value in member b
+     * @param _b New value for member b
+     */
+    eProsima_user_DllExport void b(
+            int16_t _b)
+    {
+        b_() = _b;
+        m__d = 1;
+    }
+
+    /*!
+     * @brief This function returns the value of member b
+     * @return Value of member b
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport int16_t b() const
+    {
+        if (0x00000002 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_b;
+    }
+
+    /*!
+     * @brief This function returns a reference to member b
+     * @return Reference to member b
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport int16_t& b()
+    {
+        if (0x00000002 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_b;
+    }
+
+
+    /*!
+     * @brief This function sets a value in member c
+     * @param _c New value for member c
+     */
+    eProsima_user_DllExport void c(
+            int32_t _c)
+    {
+        c_() = _c;
+        m__d = 2147483647;
+    }
+
+    /*!
+     * @brief This function returns the value of member c
+     * @return Value of member c
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport int32_t c() const
+    {
+        if (0x00000003 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_c;
+    }
+
+    /*!
+     * @brief This function returns a reference to member c
+     * @return Reference to member c
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport int32_t& c()
+    {
+        if (0x00000003 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_c;
+    }
+
+
+
+private:
+
+            uint8_t& a_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_a = {0};
+    ;
+                }
+
+                return m_a;
+            }
+
+            int16_t& b_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_b = {0};
+    ;
+                }
+
+                return m_b;
+            }
+
+            int32_t& c_()
+            {
+                if (0x00000003 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000003;
+                    member_destructor_ = nullptr;
+                    m_c = {0};
+    ;
+                }
+
+                return m_c;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        uint8_t m_a;
+        int16_t m_b;
+        int32_t m_c;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 
 #endif // _FAST_DDS_GENERATED_UNIONS_HPP_

@@ -2258,7 +2258,7 @@ private:
             }
 
 
-    StatusKind::StatusKind m__d {1};
+    StatusKind::StatusKind m__d {2147483647};
 
     union
     {

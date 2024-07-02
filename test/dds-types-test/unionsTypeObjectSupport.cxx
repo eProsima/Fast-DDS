@@ -6937,4 +6937,165 @@ void register_UnionSeveralFieldsWithDefault_type_identifier(
         }
     }
 }
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_DefaultAnnotation_type_identifier(
+        TypeIdentifierPair& type_ids_DefaultAnnotation)
+{
+    ReturnCode_t return_code_DefaultAnnotation {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_DefaultAnnotation =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "DefaultAnnotation", type_ids_DefaultAnnotation);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_DefaultAnnotation)
+    {
+        UnionTypeFlag union_flags_DefaultAnnotation = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
+                false, false);
+        QualifiedTypeName type_name_DefaultAnnotation = "DefaultAnnotation";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_DefaultAnnotation;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_DefaultAnnotation;
+        CompleteTypeDetail detail_DefaultAnnotation = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_DefaultAnnotation, ann_custom_DefaultAnnotation, type_name_DefaultAnnotation.to_string());
+        CompleteUnionHeader header_DefaultAnnotation = TypeObjectUtils::build_complete_union_header(detail_DefaultAnnotation);
+        UnionDiscriminatorFlag member_flags_DefaultAnnotation = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                false);
+        return_code_DefaultAnnotation =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+            "_int32_t", type_ids_DefaultAnnotation);
+
+        if (return_code_DefaultAnnotation != eprosima::fastdds::dds::RETCODE_OK)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "Union discriminator TypeIdentifier unknown to TypeObjectRegistry.");
+            return;
+        }
+        CommonDiscriminatorMember common_DefaultAnnotation;
+        if (EK_COMPLETE == type_ids_DefaultAnnotation.type_identifier1()._d() || TK_NONE == type_ids_DefaultAnnotation.type_identifier2()._d())
+        {
+            common_DefaultAnnotation = TypeObjectUtils::build_common_discriminator_member(member_flags_DefaultAnnotation, type_ids_DefaultAnnotation.type_identifier1());
+        }
+        else if (EK_COMPLETE == type_ids_DefaultAnnotation.type_identifier2()._d())
+        {
+            common_DefaultAnnotation = TypeObjectUtils::build_common_discriminator_member(member_flags_DefaultAnnotation, type_ids_DefaultAnnotation.type_identifier2());
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "DefaultAnnotation discriminator TypeIdentifier inconsistent.");
+            return;
+        }
+        type_ann_builtin_DefaultAnnotation.reset();
+        ann_custom_DefaultAnnotation.reset();
+        AppliedAnnotationSeq tmp_ann_custom_discriminator;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_discriminator;
+        if (!tmp_ann_custom_discriminator.empty())
+        {
+            ann_custom_DefaultAnnotation = tmp_ann_custom_discriminator;
+        }
+
+        CompleteDiscriminatorMember discriminator_DefaultAnnotation = TypeObjectUtils::build_complete_discriminator_member(common_DefaultAnnotation,
+                type_ann_builtin_DefaultAnnotation, ann_custom_DefaultAnnotation);
+        CompleteUnionMemberSeq member_seq_DefaultAnnotation;
+        {
+            return_code_DefaultAnnotation =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_byte", type_ids_DefaultAnnotation);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_DefaultAnnotation)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "a Union member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            UnionMemberFlag member_flags_a = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false);
+            UnionCaseLabelSeq label_seq_a;
+            TypeObjectUtils::add_union_case_label(label_seq_a, static_cast<int32_t>(0));
+            MemberId member_id_a = 0x00000001;
+            bool common_a_ec {false};
+            CommonUnionMember common_a {TypeObjectUtils::build_common_union_member(member_id_a,
+                    member_flags_a, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_DefaultAnnotation,
+                        common_a_ec), label_seq_a)};
+            if (!common_a_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Union a member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_a = "a";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+            ann_custom_DefaultAnnotation.reset();
+            CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_DefaultAnnotation);
+            CompleteUnionMember member_a = TypeObjectUtils::build_complete_union_member(common_a, detail_a);
+            TypeObjectUtils::add_complete_union_member(member_seq_DefaultAnnotation, member_a);
+        }
+        {
+            return_code_DefaultAnnotation =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int16_t", type_ids_DefaultAnnotation);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_DefaultAnnotation)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "b Union member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            UnionMemberFlag member_flags_b = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false);
+            UnionCaseLabelSeq label_seq_b;
+            TypeObjectUtils::add_union_case_label(label_seq_b, static_cast<int32_t>(1));
+            MemberId member_id_b = 0x00000002;
+            bool common_b_ec {false};
+            CommonUnionMember common_b {TypeObjectUtils::build_common_union_member(member_id_b,
+                    member_flags_b, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_DefaultAnnotation,
+                        common_b_ec), label_seq_b)};
+            if (!common_b_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Union b member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_b = "b";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_b;
+            ann_custom_DefaultAnnotation.reset();
+            CompleteMemberDetail detail_b = TypeObjectUtils::build_complete_member_detail(name_b, member_ann_builtin_b, ann_custom_DefaultAnnotation);
+            CompleteUnionMember member_b = TypeObjectUtils::build_complete_union_member(common_b, detail_b);
+            TypeObjectUtils::add_complete_union_member(member_seq_DefaultAnnotation, member_b);
+        }
+        {
+            return_code_DefaultAnnotation =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int32_t", type_ids_DefaultAnnotation);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_DefaultAnnotation)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "c Union member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            UnionMemberFlag member_flags_c = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    true, false);
+            UnionCaseLabelSeq label_seq_c;
+            MemberId member_id_c = 0x00000003;
+            bool common_c_ec {false};
+            CommonUnionMember common_c {TypeObjectUtils::build_common_union_member(member_id_c,
+                    member_flags_c, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_DefaultAnnotation,
+                        common_c_ec), label_seq_c)};
+            if (!common_c_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Union c member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_c = "c";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_c;
+            ann_custom_DefaultAnnotation.reset();
+            CompleteMemberDetail detail_c = TypeObjectUtils::build_complete_member_detail(name_c, member_ann_builtin_c, ann_custom_DefaultAnnotation);
+            CompleteUnionMember member_c = TypeObjectUtils::build_complete_union_member(common_c, detail_c);
+            TypeObjectUtils::add_complete_union_member(member_seq_DefaultAnnotation, member_c);
+        }
+        CompleteUnionType union_type_DefaultAnnotation = TypeObjectUtils::build_complete_union_type(union_flags_DefaultAnnotation, header_DefaultAnnotation, discriminator_DefaultAnnotation,
+                member_seq_DefaultAnnotation);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_union_type_object(union_type_DefaultAnnotation, type_name_DefaultAnnotation.to_string(), type_ids_DefaultAnnotation))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "DefaultAnnotation already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
 

@@ -7945,5 +7945,6 @@ void UnionSeveralFieldsWithDefaultPubSubType::register_type_object_representatio
 }
 
 
+
 // Include auxiliary functions like for serializing/deserializing.
 #include "unionsCdrAux.ipp"

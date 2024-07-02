@@ -1240,6 +1240,115 @@ public:
 
 };
 
+/*!
+ * @brief This class represents the TopicDataType of the type Dummy defined by the user in the IDL file.
+ * @ingroup dds_xtypes_typeobject
+ */
+class DummyPubSubType : public eprosima::fastdds::dds::TopicDataType
+{
+public:
+
+    typedef Dummy type;
+
+    eProsima_user_DllExport DummyPubSubType();
+
+    eProsima_user_DllExport ~DummyPubSubType() override;
+
+    eProsima_user_DllExport bool serialize(
+            const void* const data,
+            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
+    {
+        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+    }
+
+    eProsima_user_DllExport bool serialize(
+            const void* const data,
+            eprosima::fastdds::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+    eProsima_user_DllExport bool deserialize(
+            eprosima::fastdds::rtps::SerializedPayload_t* payload,
+            void* data) override;
+
+    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
+            const void* const data) override
+    {
+        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+    }
+
+    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
+            const void* const data,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+    eProsima_user_DllExport bool getKey(
+            const void* const data,
+            eprosima::fastdds::rtps::InstanceHandle_t* ihandle,
+            bool force_md5 = false) override;
+
+    eProsima_user_DllExport void* createData() override;
+
+    eProsima_user_DllExport void deleteData(
+            void* data) override;
+
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() override;
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+    eProsima_user_DllExport inline bool is_bounded() const override
+    {
+        return true;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+    eProsima_user_DllExport inline bool is_plain() const override
+    {
+        return is_plain_xcdrv1_impl();
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+        {
+            return is_plain_xcdrv2_impl();
+        }
+        else
+        {
+            return is_plain_xcdrv1_impl();
+        }
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+    eProsima_user_DllExport inline bool construct_sample(
+            void* memory) const override
+    {
+        new (memory) Dummy();
+        return true;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+    eprosima::fastdds::MD5 m_md5;
+    unsigned char* m_keyBuffer;
+
+private:
+
+    static constexpr bool is_plain_xcdrv1_impl()
+    {
+        return true;
+    }
+
+    static constexpr bool is_plain_xcdrv2_impl()
+    {
+        return true;
+    }
+
+};
+
 typedef std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifier> TypeIdentifierSeq;
 typedef uint32_t MemberId;
 

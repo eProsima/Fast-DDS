@@ -640,7 +640,7 @@ private:
             }
 
 
-    int32_t m__d {1};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -1270,7 +1270,7 @@ private:
             }
 
 
-    int32_t m__d {1};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -1638,7 +1638,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -2187,7 +2187,7 @@ private:
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2147483647};
 
     union
     {
