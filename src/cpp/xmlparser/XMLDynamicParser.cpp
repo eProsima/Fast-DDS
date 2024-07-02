@@ -381,7 +381,15 @@ static DynamicType::_ref_type getDiscriminatorTypeBuilder(
 
     DynamicTypeBuilder::_ref_type ret;
     XMLProfileManager::getDynamicTypeBuilderByName(ret, disc);
-    return ret->build();
+    if (nullptr != ret)
+    {
+        return ret->build();
+    }
+    else
+    {
+        return nullptr;
+    }
+
 }
 
 XMLP_ret XMLParser::parseXMLAliasDynamicType(
