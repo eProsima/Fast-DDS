@@ -38,6 +38,9 @@
 #include "CLIParser.hpp"
 #include "Application.hpp"
 
+#include "DiscoveryServerSubscriber.h"
+#include "types/HelloWorldPubSubTypes.hpp"
+
 using namespace eprosima::fastdds::dds;
 
 namespace eprosima {

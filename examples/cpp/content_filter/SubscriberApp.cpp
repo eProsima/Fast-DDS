@@ -17,8 +17,6 @@
  *
  */
 
-#include "SubscriberApp.hpp"
-
 #include <stdexcept>
 
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
@@ -31,7 +29,9 @@
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 
+#include "HelloWorldPubSubTypes.hpp"
 #include "HelloWorldTypeObjectSupport.hpp"
+#include "SubscriberApp.hpp"
 
 namespace eprosima {
 namespace fastdds {

@@ -21,6 +21,8 @@
 
 #include <condition_variable>
 #include <stdexcept>
+#include <csignal>
+#include <thread>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
@@ -32,6 +34,9 @@
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
+
+#include "DiscoveryServerPublisher.h"
+#include "types/HelloWorldPubSubTypes.hpp"
 
 using namespace eprosima::fastdds::dds;
 

@@ -17,8 +17,6 @@
  *
  */
 
-#include "PublisherApp.hpp"
-
 #include <thread>
 
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
@@ -31,7 +29,9 @@
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 
+#include "HelloWorldPubSubTypes.hpp"
 #include "HelloWorldTypeObjectSupport.hpp"
+#include "PublisherApp.hpp"
 
 namespace eprosima {
 namespace fastdds {
