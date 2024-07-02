@@ -135,8 +135,7 @@ ReturnCode_t TypeObjectRegistry::register_type_identifier(
     }
 #endif // !defined(NDEBUG)
 
-    ExtendedTypeDefn reset_type_id;
-    type_identifier.type_identifier2().extended_defn(reset_type_id);
+    type_identifier.type_identifier2().no_value({});
 
     switch (type_identifier.type_identifier1()._d())
     {
@@ -1409,9 +1408,8 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_dynamic_type(
 {
     ReturnCode_t ret_code {eprosima::fastdds::dds::RETCODE_OK};
     traits<DynamicTypeImpl>::ref_type dynamic_type_impl {traits<DynamicType>::narrow<DynamicTypeImpl>(dynamic_type)};
-    ExtendedTypeDefn reset_type_id;
-    type_ids.type_identifier1().extended_defn(reset_type_id);
-    type_ids.type_identifier2().extended_defn(reset_type_id);
+    type_ids.type_identifier1().no_value({});
+    type_ids.type_identifier2().no_value({});
 
     switch (dynamic_type_impl->get_kind())
     {
@@ -2099,7 +2097,7 @@ ReturnCode_t TypeObjectRegistry::typeidentifier_w_sequence_dynamic_type(
     else
     {
         ExtendedTypeDefn reset_type_id;
-        type_ids.type_identifier2().extended_defn(reset_type_id);
+        type_ids.type_identifier2().no_value({});
     }
 
     return ret_code;

@@ -46,6 +46,39 @@ namespace dds {
 
 typedef std::array<uint8_t, 12> GuidPrefix_t;
 
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct EntityId_t_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct EntityId_t_f
+{
+    typedef uint8_t EntityId_t::* type;
+    friend constexpr type get(
+            EntityId_t_f);
+};
+
+template struct EntityId_t_rob<EntityId_t_f, &EntityId_t::m_entityKind>;
+
+template <typename T, typename Tag>
+inline size_t constexpr EntityId_t_offset_of()
+{
+    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
+
 /*!
  * @brief This class represents the TopicDataType of the type EntityId_t defined by the user in the IDL file.
  * @ingroup rpc_types
@@ -110,14 +143,20 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return false;
+        return is_plain_xcdrv1_impl();
     }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
     {
-        static_cast<void>(data_representation);
-        return false;
+        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+        {
+            return is_plain_xcdrv2_impl();
+        }
+        else
+        {
+            return is_plain_xcdrv1_impl();
+        }
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -126,8 +165,8 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        static_cast<void>(memory);
-        return false;
+        new (memory) EntityId_t();
+        return true;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -135,7 +174,56 @@ public:
     eprosima::fastdds::MD5 m_md5;
     unsigned char* m_keyBuffer;
 
+private:
+
+    static constexpr bool is_plain_xcdrv1_impl()
+    {
+        return 4ULL ==
+               (detail::EntityId_t_offset_of<EntityId_t, detail::EntityId_t_f>() +
+               sizeof(uint8_t));
+    }
+
+    static constexpr bool is_plain_xcdrv2_impl()
+    {
+        return 4ULL ==
+               (detail::EntityId_t_offset_of<EntityId_t, detail::EntityId_t_f>() +
+               sizeof(uint8_t));
+    }
+
 };
+
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct GUID_t_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct GUID_t_f
+{
+    typedef eprosima::fastdds::dds::EntityId_t GUID_t::* type;
+    friend constexpr type get(
+            GUID_t_f);
+};
+
+template struct GUID_t_rob<GUID_t_f, &GUID_t::m_entityId>;
+
+template <typename T, typename Tag>
+inline size_t constexpr GUID_t_offset_of()
+{
+    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
 
 /*!
  * @brief This class represents the TopicDataType of the type GUID_t defined by the user in the IDL file.
@@ -201,14 +289,20 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return false;
+        return is_plain_xcdrv1_impl();
     }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
     {
-        static_cast<void>(data_representation);
-        return false;
+        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+        {
+            return is_plain_xcdrv2_impl();
+        }
+        else
+        {
+            return is_plain_xcdrv1_impl();
+        }
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -217,8 +311,8 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        static_cast<void>(memory);
-        return false;
+        new (memory) GUID_t();
+        return true;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -226,7 +320,56 @@ public:
     eprosima::fastdds::MD5 m_md5;
     unsigned char* m_keyBuffer;
 
+private:
+
+    static constexpr bool is_plain_xcdrv1_impl()
+    {
+        return 16ULL ==
+               (detail::GUID_t_offset_of<GUID_t, detail::GUID_t_f>() +
+               sizeof(eprosima::fastdds::dds::EntityId_t));
+    }
+
+    static constexpr bool is_plain_xcdrv2_impl()
+    {
+        return 16ULL ==
+               (detail::GUID_t_offset_of<GUID_t, detail::GUID_t_f>() +
+               sizeof(eprosima::fastdds::dds::EntityId_t));
+    }
+
 };
+
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct SequenceNumber_t_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct SequenceNumber_t_f
+{
+    typedef uint32_t SequenceNumber_t::* type;
+    friend constexpr type get(
+            SequenceNumber_t_f);
+};
+
+template struct SequenceNumber_t_rob<SequenceNumber_t_f, &SequenceNumber_t::m_low>;
+
+template <typename T, typename Tag>
+inline size_t constexpr SequenceNumber_t_offset_of()
+{
+    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
 
 /*!
  * @brief This class represents the TopicDataType of the type SequenceNumber_t defined by the user in the IDL file.
@@ -292,14 +435,20 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return false;
+        return is_plain_xcdrv1_impl();
     }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
     {
-        static_cast<void>(data_representation);
-        return false;
+        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+        {
+            return is_plain_xcdrv2_impl();
+        }
+        else
+        {
+            return is_plain_xcdrv1_impl();
+        }
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -308,8 +457,8 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        static_cast<void>(memory);
-        return false;
+        new (memory) SequenceNumber_t();
+        return true;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -317,7 +466,56 @@ public:
     eprosima::fastdds::MD5 m_md5;
     unsigned char* m_keyBuffer;
 
+private:
+
+    static constexpr bool is_plain_xcdrv1_impl()
+    {
+        return 8ULL ==
+               (detail::SequenceNumber_t_offset_of<SequenceNumber_t, detail::SequenceNumber_t_f>() +
+               sizeof(uint32_t));
+    }
+
+    static constexpr bool is_plain_xcdrv2_impl()
+    {
+        return 8ULL ==
+               (detail::SequenceNumber_t_offset_of<SequenceNumber_t, detail::SequenceNumber_t_f>() +
+               sizeof(uint32_t));
+    }
+
 };
+
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct SampleIdentity_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct SampleIdentity_f
+{
+    typedef eprosima::fastdds::dds::SequenceNumber_t SampleIdentity::* type;
+    friend constexpr type get(
+            SampleIdentity_f);
+};
+
+template struct SampleIdentity_rob<SampleIdentity_f, &SampleIdentity::m_sequence_number>;
+
+template <typename T, typename Tag>
+inline size_t constexpr SampleIdentity_offset_of()
+{
+    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
 
 /*!
  * @brief This class represents the TopicDataType of the type SampleIdentity defined by the user in the IDL file.
@@ -383,14 +581,20 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return false;
+        return is_plain_xcdrv1_impl();
     }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
     {
-        static_cast<void>(data_representation);
-        return false;
+        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+        {
+            return is_plain_xcdrv2_impl();
+        }
+        else
+        {
+            return is_plain_xcdrv1_impl();
+        }
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -399,14 +603,30 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        static_cast<void>(memory);
-        return false;
+        new (memory) SampleIdentity();
+        return true;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
     eprosima::fastdds::MD5 m_md5;
     unsigned char* m_keyBuffer;
+
+private:
+
+    static constexpr bool is_plain_xcdrv1_impl()
+    {
+        return 24ULL ==
+               (detail::SampleIdentity_offset_of<SampleIdentity, detail::SampleIdentity_f>() +
+               sizeof(eprosima::fastdds::dds::SequenceNumber_t));
+    }
+
+    static constexpr bool is_plain_xcdrv2_impl()
+    {
+        return 24ULL ==
+               (detail::SampleIdentity_offset_of<SampleIdentity, detail::SampleIdentity_f>() +
+               sizeof(eprosima::fastdds::dds::SequenceNumber_t));
+    }
 
 };
 namespace rpc
@@ -508,6 +728,39 @@ namespace rpc
 
     };
 
+    #ifndef SWIG
+    namespace detail {
+
+    template<typename Tag, typename Tag::type M>
+    struct ReplyHeader_rob
+    {
+        friend constexpr typename Tag::type get(
+                Tag)
+        {
+            return M;
+        }
+
+    };
+
+    struct ReplyHeader_f
+    {
+        typedef eprosima::fastdds::dds::rpc::RemoteExceptionCode_t ReplyHeader::* type;
+        friend constexpr type get(
+                ReplyHeader_f);
+    };
+
+    template struct ReplyHeader_rob<ReplyHeader_f, &ReplyHeader::m_remoteEx>;
+
+    template <typename T, typename Tag>
+    inline size_t constexpr ReplyHeader_offset_of()
+    {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+    }
+
+    } // namespace detail
+    #endif // ifndef SWIG
+
+
     /*!
      * @brief This class represents the TopicDataType of the type ReplyHeader defined by the user in the IDL file.
      * @ingroup rpc_types
@@ -572,14 +825,20 @@ namespace rpc
     #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
         eProsima_user_DllExport inline bool is_plain() const override
         {
-            return false;
+            return is_plain_xcdrv1_impl();
         }
 
         eProsima_user_DllExport inline bool is_plain(
                 eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
         {
-            static_cast<void>(data_representation);
-            return false;
+            if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+            {
+                return is_plain_xcdrv2_impl();
+            }
+            else
+            {
+                return is_plain_xcdrv1_impl();
+            }
         }
 
     #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -588,14 +847,30 @@ namespace rpc
         eProsima_user_DllExport inline bool construct_sample(
                 void* memory) const override
         {
-            static_cast<void>(memory);
-            return false;
+            new (memory) ReplyHeader();
+            return true;
         }
 
     #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
         eprosima::fastdds::MD5 m_md5;
         unsigned char* m_keyBuffer;
+
+    private:
+
+        static constexpr bool is_plain_xcdrv1_impl()
+        {
+            return 28ULL ==
+                   (detail::ReplyHeader_offset_of<ReplyHeader, detail::ReplyHeader_f>() +
+                   sizeof(eprosima::fastdds::dds::rpc::RemoteExceptionCode_t));
+        }
+
+        static constexpr bool is_plain_xcdrv2_impl()
+        {
+            return 28ULL ==
+                   (detail::ReplyHeader_offset_of<ReplyHeader, detail::ReplyHeader_f>() +
+                   sizeof(eprosima::fastdds::dds::rpc::RemoteExceptionCode_t));
+        }
 
     };
 } // namespace rpc

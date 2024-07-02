@@ -3,7 +3,7 @@
 #include "../../../../../../include/fastdds/dds/core/detail/DDSReturnCode.idl"
 #include "../../../../../../include/fastdds/dds/xtypes/type_representation/detail/dds-xtypes_typeobject.idl"
 #include "rpc_types.idl"
-    
+
 module dds {
 module builtin {
 
@@ -59,6 +59,7 @@ module builtin {
     };
 
     // @RPCRequestType // Annotation not defined
+    @final
     struct TypeLookup_Request {
         rpc::RequestHeader header;
         TypeLookup_Call data;
@@ -73,6 +74,7 @@ module builtin {
     };
 
     // @RPCReplyType // Annotation not defined
+    @final
     struct TypeLookup_Reply {
         rpc::ReplyHeader header;
         TypeLookup_Return return_value; //This name was changed from "return" to "return_value" to avoid problems in c++

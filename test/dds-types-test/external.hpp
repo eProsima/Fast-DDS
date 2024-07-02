@@ -3762,7 +3762,7 @@ private:
             }
 
 
-    uint8_t m__d {0};
+    uint8_t m__d {127};
 
     union
     {
@@ -4380,7 +4380,7 @@ private:
             }
 
 
-    uint8_t m__d {0};
+    uint8_t m__d {127};
 
     union
     {

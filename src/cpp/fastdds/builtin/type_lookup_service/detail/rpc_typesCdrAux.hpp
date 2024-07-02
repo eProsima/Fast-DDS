@@ -24,27 +24,27 @@
 
 #include "rpc_types.hpp"
 
-constexpr uint32_t eprosima_fastdds_dds_rpc_RequestHeader_max_cdr_typesize {304UL};
+constexpr uint32_t eprosima_fastdds_dds_rpc_RequestHeader_max_cdr_typesize {284UL};
 constexpr uint32_t eprosima_fastdds_dds_rpc_RequestHeader_max_key_cdr_typesize {0UL};
 
 
-constexpr uint32_t eprosima_fastdds_dds_EntityId_t_max_cdr_typesize {8UL};
+constexpr uint32_t eprosima_fastdds_dds_EntityId_t_max_cdr_typesize {4UL};
 constexpr uint32_t eprosima_fastdds_dds_EntityId_t_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t eprosima_fastdds_dds_GUID_t_max_cdr_typesize {24UL};
+constexpr uint32_t eprosima_fastdds_dds_GUID_t_max_cdr_typesize {16UL};
 constexpr uint32_t eprosima_fastdds_dds_GUID_t_max_key_cdr_typesize {0UL};
 
 
-constexpr uint32_t eprosima_fastdds_dds_rpc_ReplyHeader_max_cdr_typesize {48UL};
+constexpr uint32_t eprosima_fastdds_dds_rpc_ReplyHeader_max_cdr_typesize {28UL};
 constexpr uint32_t eprosima_fastdds_dds_rpc_ReplyHeader_max_key_cdr_typesize {0UL};
 
 
 
 
-constexpr uint32_t eprosima_fastdds_dds_SequenceNumber_t_max_cdr_typesize {12UL};
+constexpr uint32_t eprosima_fastdds_dds_SequenceNumber_t_max_cdr_typesize {8UL};
 constexpr uint32_t eprosima_fastdds_dds_SequenceNumber_t_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t eprosima_fastdds_dds_SampleIdentity_max_cdr_typesize {40UL};
+constexpr uint32_t eprosima_fastdds_dds_SampleIdentity_max_cdr_typesize {24UL};
 constexpr uint32_t eprosima_fastdds_dds_SampleIdentity_max_key_cdr_typesize {0UL};
 
 

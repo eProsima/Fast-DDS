@@ -175,6 +175,9 @@ constexpr uint32_t eprosima_fastdds_dds_xtypes_CompleteEnumeratedHeader_max_key_
 constexpr uint32_t eprosima_fastdds_dds_xtypes_CompleteBitsetHeader_max_cdr_typesize {653UL};
 constexpr uint32_t eprosima_fastdds_dds_xtypes_CompleteBitsetHeader_max_key_cdr_typesize {0UL};
 
+constexpr uint32_t eprosima_fastdds_dds_xtypes_Dummy_max_cdr_typesize {0UL};
+constexpr uint32_t eprosima_fastdds_dds_xtypes_Dummy_max_key_cdr_typesize {0UL};
+
 constexpr uint32_t eprosima_fastdds_dds_xtypes_CompleteBitfield_max_cdr_typesize {1408UL};
 constexpr uint32_t eprosima_fastdds_dds_xtypes_CompleteBitfield_max_key_cdr_typesize {0UL};
 
@@ -425,6 +428,10 @@ eProsima_user_DllExport void serialize_key(
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::ExtendedTypeDefn& data);
+
+eProsima_user_DllExport void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastdds::dds::xtypes::Dummy& data);
 
 
 
