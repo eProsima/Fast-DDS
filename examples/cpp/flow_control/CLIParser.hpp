@@ -192,7 +192,8 @@ public:
                         try
                         {
                             unsigned long input = std::stoul(argv[i]);
-                            if (input > std::numeric_limits<int32_t>::max())
+
+                            if (input > static_cast<unsigned long>(std::numeric_limits<int32_t>::max()))
                             {
                                 throw std::out_of_range("max-bytes argument " + std::string(
                                                   argv[i]) + " out of range [0, 2147483647].");
