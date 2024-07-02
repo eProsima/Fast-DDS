@@ -210,7 +210,6 @@ ReturnCode_t json_serialize_member(
         case TK_STRING8:
         case TK_STRING16:
         case TK_ENUM:
-        case TK_BITMASK:
         {
             return json_serialize_basic_member(data, member_id, member_kind, member_name, output, format);
         }
@@ -379,6 +378,151 @@ ReturnCode_t json_serialize_member(
             if (RETCODE_OK != (ret_return_loan = data->return_loaned_value(st_data)))
             {
                 EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while returning map loaned value.");
+            }
+            // Give priority to prior error if occurred
+            return RETCODE_OK != ret ? ret : ret_return_loan;
+        }
+        case TK_BITMASK:
+        {
+            traits<DynamicDataImpl>::ref_type st_data =
+                    traits<DynamicData>::narrow<DynamicDataImpl>(data->loan_value(member_id));
+            if (nullptr == st_data)
+            {
+                EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                        "Error encountered while serializing bitmask member to JSON: loan_value failed.");
+                return RETCODE_BAD_PARAMETER;
+            }
+
+            ReturnCode_t ret = RETCODE_OK;
+            traits<DynamicTypeImpl>::ref_type bitmask_type = st_data->enclosing_type();
+            TypeDescriptorImpl& bitmask_desc = bitmask_type->get_descriptor();
+
+            auto bound = bitmask_desc.bound().at(0);
+
+            if (format == DynamicDataJsonFormat::OMG)
+            {
+                if (9 > bound)
+                {
+                    uint8_t value;
+                    if (RETCODE_OK == (ret = st_data->get_uint8_value(value, MEMBER_ID_INVALID)))
+                    {
+                        json_insert(member_name, value, output);
+                    }
+                }
+                else if (17 > bound)
+                {
+                    uint16_t value;
+                    if (RETCODE_OK == (ret = st_data->get_uint16_value(value, MEMBER_ID_INVALID)))
+                    {
+                        json_insert(member_name, value, output);
+                    }
+                }
+                else if (33 > bound)
+                {
+                    uint32_t value;
+                    if (RETCODE_OK == (ret = st_data->get_uint32_value(value, MEMBER_ID_INVALID)))
+                    {
+                        json_insert(member_name, value, output);
+                    }
+                }
+                else
+                {
+                    uint64_t value;
+                    if (RETCODE_OK == (ret = st_data->get_uint64_value(value, MEMBER_ID_INVALID)))
+                    {
+                        json_insert(member_name, value, output);
+                    }
+                }
+
+                if (RETCODE_OK != ret)
+                {
+                    EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                            "Error encountered while serializing bitmask member to JSON: failed to get value.");
+                }
+            }
+            else if (format == DynamicDataJsonFormat::EPROSIMA)
+            {
+                nlohmann::json bitmask_dict;
+                uint64_t u64_value; // Auxiliar variable to check active bits afterwards
+                if (9 > bound)
+                {
+                    uint8_t value;
+                    if (RETCODE_OK == (ret = st_data->get_uint8_value(value, MEMBER_ID_INVALID)))
+                    {
+                        bitmask_dict["value"] = value;
+                        bitmask_dict["binary"] = std::bitset<8>(value).to_string();
+                        u64_value = static_cast<uint64_t>(value);
+                    }
+                }
+                else if (17 > bound)
+                {
+                    uint16_t value;
+                    if (RETCODE_OK == (ret = st_data->get_uint16_value(value, MEMBER_ID_INVALID)))
+                    {
+                        bitmask_dict["value"] = value;
+                        bitmask_dict["binary"] = std::bitset<16>(value).to_string();
+                        u64_value = static_cast<uint64_t>(value);
+                    }
+                }
+                else if (33 > bound)
+                {
+                    uint32_t value;
+                    if (RETCODE_OK == (ret = st_data->get_uint32_value(value, MEMBER_ID_INVALID)))
+                    {
+                        bitmask_dict["value"] = value;
+                        bitmask_dict["binary"] = std::bitset<32>(value).to_string();
+                        u64_value = static_cast<uint64_t>(value);
+                    }
+                }
+                else
+                {
+                    uint64_t value;
+                    if (RETCODE_OK == (ret = st_data->get_uint64_value(value, MEMBER_ID_INVALID)))
+                    {
+                        bitmask_dict["value"] = value;
+                        bitmask_dict["binary"] = std::bitset<64>(value).to_string();
+                        u64_value = value;
+                    }
+                }
+
+                if (RETCODE_OK != ret)
+                {
+                    EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                            "Error encountered while serializing bitmask member to JSON: failed to get value.");
+                }
+                else
+                {
+                    // Check active bits
+                    DynamicTypeMembersById bitmask_members;
+                    if (RETCODE_OK != (ret = bitmask_type->get_all_members(bitmask_members)))
+                    {
+                        EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                                "Error encountered while serializing bitmask member to JSON: get_all_members failed.");
+                    }
+                    else
+                    {
+                        std::vector<std::string> active_bits;
+                        for (const auto& it : bitmask_members)
+                        {
+                            if (u64_value & (0x01ull << it.second->get_id()))
+                            {
+                                active_bits.push_back(it.second->get_name().to_string());
+                            }
+                        }
+                        bitmask_dict["active"] = active_bits;
+
+                        // Insert custom bitmask value
+                        json_insert(member_name, bitmask_dict, output);
+                    }
+                }
+            }
+
+            // Return loaned value
+            // NOTE: this should always be done, even if something went wrong before
+            ReturnCode_t ret_return_loan;
+            if (RETCODE_OK != (ret_return_loan = data->return_loaned_value(st_data)))
+            {
+                EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while returning bitmask loaned value.");
             }
             // Give priority to prior error if occurred
             return RETCODE_OK != ret ? ret : ret_return_loan;
@@ -733,141 +877,6 @@ ReturnCode_t json_serialize_basic_member(
             }
             return ret;
         }
-        case TK_BITMASK:
-        {
-            MemberDescriptor::_ref_type bitmask_member_desc{traits<MemberDescriptor>::make_shared()};
-            ReturnCode_t ret = data->get_descriptor(bitmask_member_desc, member_id);
-            if (RETCODE_OK != ret)
-            {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS,
-                        "Error encountered while serializing TK_BITMASK member to JSON: get_descriptor failed.");
-                return ret;
-            }
-
-            traits<DynamicTypeImpl>::ref_type bitmask_type = traits<DynamicType>::narrow<DynamicTypeImpl>(
-                bitmask_member_desc->type())->resolve_alias_enclosed_type();
-            TypeDescriptorImpl& bitmask_desc = bitmask_type->get_descriptor();
-            auto bound = bitmask_desc.bound().at(0);
-
-            if (format == DynamicDataJsonFormat::OMG)
-            {
-                if (9 > bound)
-                {
-                    uint8_t value;
-                    if (RETCODE_OK == (ret = data->get_uint8_value(value, member_id)))
-                    {
-                        json_insert(member_name, value, output);
-                    }
-                }
-                else if (17 > bound)
-                {
-                    uint16_t value;
-                    if (RETCODE_OK == (ret = data->get_uint16_value(value, member_id)))
-                    {
-                        json_insert(member_name, value, output);
-                    }
-                }
-                else if (33 > bound)
-                {
-                    uint32_t value;
-                    if (RETCODE_OK == (ret = data->get_uint32_value(value, member_id)))
-                    {
-                        json_insert(member_name, value, output);
-                    }
-                }
-                else
-                {
-                    uint64_t value;
-                    if (RETCODE_OK == (ret = data->get_uint64_value(value, member_id)))
-                    {
-                        json_insert(member_name, value, output);
-                    }
-                }
-
-                if (RETCODE_OK != ret)
-                {
-                    EPROSIMA_LOG_WARNING(XTYPES_UTILS,
-                            "Error encountered while serializing TK_BITMASK member to JSON: failed to get value.");
-                }
-            }
-            else if (format == DynamicDataJsonFormat::EPROSIMA)
-            {
-                nlohmann::json bitmask_dict;
-                uint64_t u64_value; // Auxiliar variable to check active bits afterwards
-                if (9 > bound)
-                {
-                    uint8_t value;
-                    if (RETCODE_OK == (ret = data->get_uint8_value(value, member_id)))
-                    {
-                        bitmask_dict["value"] = value;
-                        bitmask_dict["binary"] = std::bitset<8>(value).to_string();
-                        u64_value = static_cast<uint64_t>(value);
-                    }
-                }
-                else if (17 > bound)
-                {
-                    uint16_t value;
-                    if (RETCODE_OK == (ret = data->get_uint16_value(value, member_id)))
-                    {
-                        bitmask_dict["value"] = value;
-                        bitmask_dict["binary"] = std::bitset<16>(value).to_string();
-                        u64_value = static_cast<uint64_t>(value);
-                    }
-                }
-                else if (33 > bound)
-                {
-                    uint32_t value;
-                    if (RETCODE_OK == (ret = data->get_uint32_value(value, member_id)))
-                    {
-                        bitmask_dict["value"] = value;
-                        bitmask_dict["binary"] = std::bitset<32>(value).to_string();
-                        u64_value = static_cast<uint64_t>(value);
-                    }
-                }
-                else
-                {
-                    uint64_t value;
-                    if (RETCODE_OK == (ret = data->get_uint64_value(value, member_id)))
-                    {
-                        bitmask_dict["value"] = value;
-                        bitmask_dict["binary"] = std::bitset<64>(value).to_string();
-                        u64_value = value;
-                    }
-                }
-
-                if (RETCODE_OK != ret)
-                {
-                    EPROSIMA_LOG_WARNING(XTYPES_UTILS,
-                            "Error encountered while serializing TK_BITMASK member to JSON: failed to get value.");
-                }
-                else
-                {
-                    // Check active bits
-                    DynamicTypeMembersById bitmask_members;
-                    if (RETCODE_OK != (ret = bitmask_type->get_all_members(bitmask_members)))
-                    {
-                        EPROSIMA_LOG_WARNING(XTYPES_UTILS,
-                                "Error encountered while serializing TK_BITMASK member to JSON: get_all_members failed.");
-                    }
-                    else
-                    {
-                        std::vector<std::string> active_bits;
-                        for (const auto& it : bitmask_members)
-                        {
-                            if (u64_value & (0x01ull << it.second->get_id()))
-                            {
-                                active_bits.push_back(it.second->get_name().to_string());
-                            }
-                        }
-                        bitmask_dict["active"] = active_bits;
-
-                        // Insert custom bitmask value
-                        json_insert(member_name, bitmask_dict, output);
-                    }
-                }
-            }
-            return ret;
-        }
         default:
             EPROSIMA_LOG_WARNING(XTYPES_UTILS,
                     "Error encountered while serializing basic member to JSON: unexpected kind " << member_kind <<
@@ -894,7 +903,8 @@ ReturnCode_t json_serialize_collection(
             if (RETCODE_OK !=
                     (ret =
                     json_serialize_member(data, static_cast<MemberId>(index),
-                    traits<DynamicType>::narrow<DynamicTypeImpl>(descriptor.element_type())->get_kind(), j_array,
+                    traits<DynamicType>::narrow<DynamicTypeImpl>(descriptor.element_type())->resolve_alias_enclosed_type()
+                            ->get_kind(), j_array,
                     format)))
             {
                 EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while serializing sequence collection to JSON.");
@@ -914,7 +924,8 @@ ReturnCode_t json_serialize_collection(
         nlohmann::json j_array = nlohmann::json::array();
         unsigned int index = 0;
         if (RETCODE_OK != (ret = json_serialize_array(data, traits<DynamicType>::narrow<DynamicTypeImpl>(
-                    descriptor.element_type())->get_kind(), index, bounds, j_array, format)))
+                    descriptor.element_type())->resolve_alias_enclosed_type()->get_kind(), index, bounds, j_array,
+                format)))
         {
             EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while serializing array collection to JSON.");
         }
