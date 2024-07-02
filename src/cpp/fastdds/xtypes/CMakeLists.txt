@@ -39,6 +39,8 @@ target_sources(fastdds-xtypes-dynamic-types-api INTERFACE
     ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/detail/dynamic_language_binding.hpp
     ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/detail/type_traits.hpp
 
+    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/utils.hpp
+
     dynamic_types/DynamicDataFactory.cpp
     dynamic_types/DynamicTypeBuilderFactory.cpp
     )

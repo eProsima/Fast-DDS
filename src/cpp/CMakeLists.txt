@@ -107,6 +107,7 @@ set(${PROJECT_NAME}_source_files
     fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
     fastdds/xtypes/type_representation/TypeObjectRegistry.cpp
     fastdds/xtypes/type_representation/TypeObjectUtils.cpp
+    fastdds/xtypes/utils.cpp
     rtps/attributes/EndpointSecurityAttributes.cpp
     rtps/attributes/PropertyPolicy.cpp
     rtps/attributes/RTPSParticipantAttributes.cpp
