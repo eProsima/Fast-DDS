@@ -180,42 +180,6 @@ uint32_t RTPSWriter::calculateMaxDataSize(
     return maxDataSize;
 }
 
-void RTPSWriter::add_guid(
-        LocatorSelectorSender& locator_selector,
-        const GUID_t& remote_guid)
-{
-    const GuidPrefix_t& prefix = remote_guid.guidPrefix;
-    locator_selector.all_remote_readers.push_back(remote_guid);
-    if (std::find(locator_selector.all_remote_participants.begin(),
-            locator_selector.all_remote_participants.end(), prefix) ==
-            locator_selector.all_remote_participants.end())
-    {
-        locator_selector.all_remote_participants.push_back(prefix);
-    }
-}
-
-void RTPSWriter::compute_selected_guids(
-        LocatorSelectorSender& locator_selector)
-{
-    locator_selector.all_remote_readers.clear();
-    locator_selector.all_remote_participants.clear();
-
-    for (LocatorSelectorEntry* entry : locator_selector.locator_selector.transport_starts())
-    {
-        if (entry->enabled)
-        {
-            add_guid(locator_selector, entry->remote_guid);
-        }
-    }
-}
-
-void RTPSWriter::update_cached_info_nts(
-        LocatorSelectorSender& locator_selector)
-{
-    locator_selector.locator_selector.reset(true);
-    mp_RTPSParticipant->network_factory().select_locators(locator_selector.locator_selector);
-}
-
 const dds::LivelinessQosPolicyKind& RTPSWriter::get_liveliness_kind() const
 {
     return liveliness_kind_;
@@ -255,19 +219,6 @@ bool RTPSWriter::is_datasharing_compatible_with(
         }
     }
     return false;
-}
-
-bool RTPSWriter::send_nts(
-        const std::vector<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
-        const uint32_t& total_bytes,
-        const LocatorSelectorSender& locator_selector,
-        std::chrono::steady_clock::time_point& max_blocking_time_point) const
-{
-    RTPSParticipantImpl* participant = getRTPSParticipant();
-
-    return locator_selector.locator_selector.selected_size() == 0 ||
-           participant->sendSync(buffers, total_bytes, m_guid, locator_selector.locator_selector.begin(),
-                   locator_selector.locator_selector.end(), max_blocking_time_point);
 }
 
 }  // namespace rtps

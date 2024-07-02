@@ -23,6 +23,7 @@
 #include <memory>
 
 #include <fastdds/fastdds_dll.hpp>
+#include <fastdds/rtps/writer/LocatorSelectorSender.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
@@ -79,6 +80,42 @@ public:
 
 #endif // FASTDDS_STATISTICS
 
+    /**
+     * Tells writer the sample can be sent to the network.
+     * This function should be used by a fastdds::rtps::FlowController.
+     *
+     * @param cache_change Pointer to the CacheChange_t that represents the sample which can be sent.
+     * @param group RTPSMessageGroup reference uses for generating the RTPS message.
+     * @param locator_selector RTPSMessageSenderInterface reference uses for selecting locators. The reference has to
+     * be a member of this RTPSWriter object.
+     * @param max_blocking_time Future timepoint where blocking send should end.
+     * @return Return code.
+     * @note Must be non-thread safe.
+     */
+    virtual DeliveryRetCode deliver_sample_nts(
+            CacheChange_t* cache_change,
+            RTPSMessageGroup& group,
+            LocatorSelectorSender& locator_selector,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) = 0;
+
+    virtual LocatorSelectorSender& get_general_locator_selector() = 0;
+
+    virtual LocatorSelectorSender& get_async_locator_selector() = 0;
+
+    /**
+     * Send a message through this interface.
+     *
+     * @param buffers Vector of NetworkBuffers to send with data already serialized.
+     * @param total_bytes Total number of bytes to send. Should be equal to the sum of the @c size field of all buffers.
+     * @param locator_selector RTPSMessageSenderInterface reference uses for selecting locators. The reference has to
+     * be a member of this RTPSWriter object.
+     * @param max_blocking_time_point Future timepoint where blocking send should end.
+     */
+    virtual bool send_nts(
+            const std::vector<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
+            const uint32_t& total_bytes,
+            const LocatorSelectorSender& locator_selector,
+            std::chrono::steady_clock::time_point& max_blocking_time_point) const;
 
     virtual ~BaseWriter();
 
@@ -93,6 +130,16 @@ protected:
             WriterListener* listen = nullptr);
 
     void deinit();
+
+    void add_guid(
+            LocatorSelectorSender& locator_selector,
+            const GUID_t& remote_guid);
+
+    void compute_selected_guids(
+            LocatorSelectorSender& locator_selector);
+
+    void update_cached_info_nts(
+            LocatorSelectorSender& locator_selector);
 
     void add_statistics_sent_submessage(
             CacheChange_t* change,

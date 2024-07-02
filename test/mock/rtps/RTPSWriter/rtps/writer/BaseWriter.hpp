@@ -21,6 +21,7 @@
 
 #include <gmock/gmock.h>
 
+#include <fastdds/rtps/writer/LocatorSelectorSender.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
 namespace eprosima {
@@ -29,6 +30,44 @@ namespace rtps {
 
 class BaseWriter : public RTPSWriter
 {
+
+public:
+
+    BaseWriter()
+        : general_locator_selector_(*this, ResourceLimitedContainerConfig())
+        , async_locator_selector_(*this, ResourceLimitedContainerConfig())
+    {
+    }
+
+    // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
+    MOCK_METHOD4(deliver_sample_nts, DeliveryRetCode(
+            CacheChange_t*,
+            RTPSMessageGroup&,
+            LocatorSelectorSender&,
+            const std::chrono::time_point<std::chrono::steady_clock>&));
+
+    MOCK_METHOD4(send_nts, bool(
+            const std::vector<eprosima::fastdds::rtps::NetworkBuffer>&,
+            const uint32_t&,
+            const LocatorSelectorSender&,
+            std::chrono::steady_clock::time_point&));
+
+    // *INDENT-ON*
+
+    LocatorSelectorSender& get_general_locator_selector()
+    {
+        return general_locator_selector_;
+    }
+
+    LocatorSelectorSender& get_async_locator_selector()
+    {
+        return async_locator_selector_;
+    }
+
+    LocatorSelectorSender general_locator_selector_;
+
+    LocatorSelectorSender async_locator_selector_;
+
 };
 
 } // namespace rtps

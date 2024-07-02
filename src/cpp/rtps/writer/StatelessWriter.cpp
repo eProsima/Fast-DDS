@@ -677,7 +677,7 @@ bool StatelessWriter::send_nts(
         const LocatorSelectorSender& locator_selector,
         std::chrono::steady_clock::time_point& max_blocking_time_point) const
 {
-    if (!RTPSWriter::send_nts(buffers, total_bytes, locator_selector, max_blocking_time_point))
+    if (!BaseWriter::send_nts(buffers, total_bytes, locator_selector, max_blocking_time_point))
     {
         return false;
     }

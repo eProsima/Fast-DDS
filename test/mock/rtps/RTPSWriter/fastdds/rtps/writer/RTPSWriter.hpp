@@ -31,7 +31,6 @@
 #include <fastdds/rtps/Endpoint.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/writer/DeliveryRetCode.hpp>
-#include <fastdds/rtps/writer/LocatorSelectorSender.hpp>
 #include <fastdds/rtps/writer/WriterListener.hpp>
 #include <rtps/messages/RTPSMessageGroup.hpp>
 
@@ -47,8 +46,6 @@ class RTPSWriter : public Endpoint
 public:
 
     RTPSWriter()
-        : general_locator_selector_(*this, ResourceLimitedContainerConfig())
-        , async_locator_selector_(*this, ResourceLimitedContainerConfig())
     {
         static uint8_t entity_id = 0;
         // Generate a guid.
@@ -130,18 +127,6 @@ public:
     MOCK_CONST_METHOD0(get_liveliness_kind, const fastdds::dds::LivelinessQosPolicyKind& ());
 
     MOCK_CONST_METHOD0(get_liveliness_lease_duration, const Duration_t& ());
-
-    MOCK_METHOD4(deliver_sample_nts, DeliveryRetCode(
-            CacheChange_t*,
-            RTPSMessageGroup&,
-            LocatorSelectorSender&,
-            const std::chrono::time_point<std::chrono::steady_clock>&));
-
-    MOCK_METHOD4(send_nts, bool(
-            const std::vector<eprosima::fastdds::rtps::NetworkBuffer>&,
-            const uint32_t&,
-            const LocatorSelectorSender&,
-            std::chrono::steady_clock::time_point&));
 
     MOCK_CONST_METHOD0(is_datasharing_compatible, bool());
 
@@ -250,16 +235,6 @@ public:
         return writer_guid == m_guid;
     }
 
-    LocatorSelectorSender& get_general_locator_selector()
-    {
-        return general_locator_selector_;
-    }
-
-    LocatorSelectorSender& get_async_locator_selector()
-    {
-        return async_locator_selector_;
-    }
-
     WriterHistory* history_;
 
     WriterListener* listener_;
@@ -269,10 +244,6 @@ public:
     WriterAttributes m_att;
 
     LivelinessLostStatus liveliness_lost_status_;
-
-    LocatorSelectorSender general_locator_selector_;
-
-    LocatorSelectorSender async_locator_selector_;
 };
 
 } // namespace rtps

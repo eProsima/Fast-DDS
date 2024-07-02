@@ -26,7 +26,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-class RTPSWriter;
+class BaseWriter;
 
 /*!
  * Class used by writers to inform a RTPSMessageGroup object which remote participants will be addressees of next RTPS
@@ -37,7 +37,7 @@ class LocatorSelectorSender : public RTPSMessageSenderInterface
 public:
 
     LocatorSelectorSender(
-            RTPSWriter& writer,
+            BaseWriter& writer,
             ResourceLimitedContainerConfig matched_readers_allocation
             )
         : locator_selector(matched_readers_allocation)
@@ -132,7 +132,7 @@ public:
 
 private:
 
-    RTPSWriter& writer_;
+    BaseWriter& writer_;
 
     RecursiveTimedMutex mutex_;
 };

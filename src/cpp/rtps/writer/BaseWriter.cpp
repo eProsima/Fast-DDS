@@ -103,6 +103,55 @@ void BaseWriter::add_statistics_sent_submessage(
 #endif // ifdef FASTDDS_STATISTICS
 }
 
+bool BaseWriter::send_nts(
+        const std::vector<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
+        const uint32_t& total_bytes,
+        const LocatorSelectorSender& locator_selector,
+        std::chrono::steady_clock::time_point& max_blocking_time_point) const
+{
+    RTPSParticipantImpl* participant = getRTPSParticipant();
+
+    return locator_selector.locator_selector.selected_size() == 0 ||
+           participant->sendSync(buffers, total_bytes, m_guid, locator_selector.locator_selector.begin(),
+                   locator_selector.locator_selector.end(), max_blocking_time_point);
+}
+
+void BaseWriter::add_guid(
+        LocatorSelectorSender& locator_selector,
+        const GUID_t& remote_guid)
+{
+    const GuidPrefix_t& prefix = remote_guid.guidPrefix;
+    locator_selector.all_remote_readers.push_back(remote_guid);
+    if (std::find(locator_selector.all_remote_participants.begin(),
+            locator_selector.all_remote_participants.end(), prefix) ==
+            locator_selector.all_remote_participants.end())
+    {
+        locator_selector.all_remote_participants.push_back(prefix);
+    }
+}
+
+void BaseWriter::compute_selected_guids(
+        LocatorSelectorSender& locator_selector)
+{
+    locator_selector.all_remote_readers.clear();
+    locator_selector.all_remote_participants.clear();
+
+    for (LocatorSelectorEntry* entry : locator_selector.locator_selector.transport_starts())
+    {
+        if (entry->enabled)
+        {
+            add_guid(locator_selector, entry->remote_guid);
+        }
+    }
+}
+
+void BaseWriter::update_cached_info_nts(
+        LocatorSelectorSender& locator_selector)
+{
+    locator_selector.locator_selector.reset(true);
+    mp_RTPSParticipant->network_factory().select_locators(locator_selector.locator_selector);
+}
+
 void BaseWriter::deinit()
 {
     // First, unregister changes from FlowController. This action must be protected.
