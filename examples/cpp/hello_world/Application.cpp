@@ -17,8 +17,8 @@
  *
  */
 
-#include "Application.hpp"
 
+#include "Application.hpp"
 #include "CLIParser.hpp"
 #include "ListenerSubscriberApp.hpp"
 #include "PublisherApp.hpp"

@@ -17,8 +17,6 @@
  *
  */
 
-#include "PublisherApp.hpp"
-
 #include <csignal>
 #include <thread>
 
@@ -27,6 +25,9 @@
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+
+#include "HelloWorldPubSubTypes.hpp"
+#include "PublisherApp.hpp"
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;

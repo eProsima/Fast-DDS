@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_DISCOVERYSERVERPUBLISHER_H_
-#define _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_DISCOVERYSERVERPUBLISHER_H_
+#ifndef FASTDDS_EXAMPLES_CPP_DDS_DISCOVERY_SERVER_EXAMPLE__DISCOVERY_SERVER_PUBLISHER_H
+#define FASTDDS_EXAMPLES_CPP_DDS_DISCOVERY_SERVER_EXAMPLE__DISCOVERY_SERVER_PUBLISHER_H
 
 #include <atomic>
 
@@ -26,8 +26,8 @@
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
-#include "types/HelloWorldPubSubTypes.hpp"
 #include "common.h"
+#include "types/HelloWorld.hpp"
 
 /**
  * Class used to group into a single working unit a Publisher with a DataWriter, its listener, and a TypeSupport member
@@ -124,4 +124,4 @@ private:
 
 
 
-#endif /* _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_DISCOVERYSERVERPUBLISHER_H_ */
+#endif /* FASTDDS_EXAMPLES_CPP_DDS_DISCOVERY_SERVER_EXAMPLE__DISCOVERY_SERVER_PUBLISHER_H */

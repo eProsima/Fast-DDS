@@ -32,9 +32,9 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 
-#include "HelloWorldPubSubTypes.hpp"
-#include "CLIParser.hpp"
 #include "Application.hpp"
+#include "CLIParser.hpp"
+#include "HelloWorldPubSubTypes.hpp"
 
 using namespace eprosima::fastdds::dds;
 

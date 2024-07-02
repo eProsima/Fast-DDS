@@ -17,7 +17,6 @@
  *
  */
 
-#include "DiscoveryServerSubscriber.h"
 
 #include <condition_variable>
 #include <csignal>
@@ -34,6 +33,9 @@
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
 #include <fastdds/utils/IPLocator.hpp>
+
+#include "DiscoveryServerSubscriber.h"
+#include "types/HelloWorldPubSubTypes.hpp"
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;

@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_DISCOVERYSERVERSUBSCRIBER_H_
-#define _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_DISCOVERYSERVERSUBSCRIBER_H_
+#ifndef FASTDDS_EXAMPLES_CPP_DDS_DISCOVERY_SERVER_EXAMPLE__DISCOVERY_SERVER_SUBSCRIBER_H
+#define FASTDDS_EXAMPLES_CPP_DDS_DISCOVERY_SERVER_EXAMPLE__DISCOVERY_SERVER_SUBSCRIBER_H
 
 #include <atomic>
 #include <condition_variable>
@@ -28,8 +28,8 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 
-#include "types/HelloWorldPubSubTypes.hpp"
 #include "common.h"
+#include "types/HelloWorld.hpp"
 
 /**
  * Class used to group into a single working unit a Subscriber with a DataReader, its listener, and a TypeSupport member
@@ -138,4 +138,4 @@ private:
     static std::condition_variable terminate_cv_;
 };
 
-#endif /* _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_DISCOVERYSERVERSUBSCRIBER_H_ */
+#endif /* FASTDDS_EXAMPLES_CPP_DDS_DISCOVERY_SERVER_EXAMPLE__DISCOVERY_SERVER_SUBSCRIBER_H */

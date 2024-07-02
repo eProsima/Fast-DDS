@@ -16,9 +16,6 @@
  * @file HelloWorldSubscriber.cpp
  *
  */
-
-#include "HelloWorldSubscriber.h"
-
 #include <chrono>
 #include <mutex>
 #include <thread>
@@ -29,6 +26,8 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+
+#include "HelloWorldSubscriber.h"
 
 using namespace eprosima::fastdds::dds;
 
