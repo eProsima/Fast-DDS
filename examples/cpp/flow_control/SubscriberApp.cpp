@@ -44,9 +44,14 @@ SubscriberApp::SubscriberApp(
     , type_(new FlowControlPubSubType())
     , samples_(config.samples)
     , stop_(false)
+    , slow_writer_guid({0})
+    , fast_writer_guid({0})
 {
+    StatusMask status_mask = StatusMask::none();
+    status_mask << StatusMask::data_available();
+    status_mask << StatusMask::subscription_matched();
     // Create Participant
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT, this, status_mask);
     if (participant_ == nullptr)
     {
         throw std::runtime_error("Participant initialization failed");
@@ -125,15 +130,15 @@ void SubscriberApp::on_data_available(
             static unsigned int fastMessages = 0;
             static unsigned int slowMessages = 0;
 
-            if (msg.wasFast())
+            if (info.sample_identity.writer_guid().entityId == fast_writer_guid)
             {
                 fastMessages++;
-                std::cout << "Sample RECEIVED from fast writer, count=" << fastMessages << std::endl;
+                std::cout << "Sample RECEIVED from FAST writer, count=" << fastMessages << std::endl;
             }
-            else
+            else if (info.sample_identity.writer_guid().entityId == slow_writer_guid)
             {
                 slowMessages++;
-                std::cout << "Sample RECEIVED from slow writer, count=" << slowMessages << std::endl;
+                std::cout << "Sample RECEIVED from SLOW writer, count=" << slowMessages << std::endl;
             }
 
             if ((samples_ > 0) && (fastMessages >= samples_) && (slowMessages >= samples_))
@@ -141,6 +146,26 @@ void SubscriberApp::on_data_available(
                 stop();
             }
         }
+    }
+}
+
+void SubscriberApp::on_data_writer_discovery(
+        DomainParticipant* /*participant*/,
+        eprosima::fastdds::rtps::WriterDiscoveryInfo&& info,
+        bool& /*should_be_ignored*/)
+{
+    std::vector<eprosima::fastdds::rtps::octet> slow_writer_id = {0};
+    std::vector<eprosima::fastdds::rtps::octet> fast_writer_id = {1};
+
+    if (info.info.m_qos.m_userData.data_vec() == fast_writer_id)
+    {
+        fast_writer_guid = info.info.guid().entityId;
+        std::cout << "Fast writer id " << fast_writer_guid << std::endl;
+    }
+    else if(info.info.m_qos.m_userData.data_vec() == slow_writer_id)
+    {
+        slow_writer_guid = info.info.guid().entityId;
+        std::cout << "Slow writer id " << slow_writer_guid << std::endl;
     }
 }
 

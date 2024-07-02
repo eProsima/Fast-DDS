@@ -90,6 +90,9 @@ PublisherApp::PublisherApp(
     // Disable Data Sharing to force the communication on a Transport,
     // since a Flow Control is applied only on Transports.
     wsqos.data_sharing().off();
+    // Set a user data value to share with the DataReader the information about the kind of Data Writer
+    // (0 for Slow and 1 for Fast)
+    wsqos.user_data().data_vec({0});
     slow_writer_ = publisher_->create_datawriter(topic_, wsqos, this, StatusMask::all());
     if (slow_writer_ == nullptr)
     {
@@ -104,7 +107,9 @@ PublisherApp::PublisherApp(
     wfqos.publish_mode().kind = ASYNCHRONOUS_PUBLISH_MODE;
     // Disable Data Sharing to be consistent with the Slow Writer
     wfqos.data_sharing().off();
-
+    // Set a user data value to share with the DataReader the information about the kind of Data Writer
+    // (0 for Slow and 1 for Fast)
+    wfqos.user_data().data_vec({1});
     fast_writer_ = publisher_->create_datawriter(topic_, wfqos, this, StatusMask::all());
     if (fast_writer_ == nullptr)
     {

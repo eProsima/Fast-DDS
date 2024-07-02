@@ -24,6 +24,7 @@
 #include <condition_variable>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
@@ -40,7 +41,7 @@ namespace fastdds {
 namespace examples {
 namespace flow_control {
 
-class SubscriberApp : public Application,  public DataReaderListener
+class SubscriberApp : public Application,  public DomainParticipantListener
 {
 public:
 
@@ -57,6 +58,11 @@ public:
     void on_subscription_matched(
             DataReader* reader,
             const SubscriptionMatchedStatus& info) override;
+
+    void on_data_writer_discovery(
+            DomainParticipant* participant,
+            eprosima::fastdds::rtps::WriterDiscoveryInfo&& info,
+            bool& should_be_ignored) override;
 
     //! Run subscriber
     void run() override;
@@ -86,6 +92,11 @@ private:
     mutable std::mutex terminate_cv_mtx_;
 
     std::condition_variable terminate_cv_;
+
+    eprosima::fastdds::rtps::EntityId_t slow_writer_guid;
+
+    eprosima::fastdds::rtps::EntityId_t fast_writer_guid;
+
 };
 
 } // namespace flow_control
