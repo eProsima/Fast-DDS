@@ -16,11 +16,10 @@
  * @file utils.hpp
  */
 
-#ifndef _FASTDDS_DDS_XTYPES_UTILS_HPP_
-#define _FASTDDS_DDS_XTYPES_UTILS_HPP_
+#ifndef FASTDDS_DDS_XTYPES_UTILS_HPP
+#define FASTDDS_DDS_XTYPES_UTILS_HPP
 
 #include <iostream>
-#include <string>
 
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
@@ -51,4 +50,4 @@ ReturnCode_t json_serialize(
 } // fastdds
 } // eprosima
 
-#endif // _FASTDDS_DDS_XTYPES_UTILS_HPP_
+#endif // FASTDDS_DDS_XTYPES_UTILS_HPP
