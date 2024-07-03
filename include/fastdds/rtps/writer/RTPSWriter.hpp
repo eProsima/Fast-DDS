@@ -124,11 +124,7 @@ public:
      * @return true if delivered. False otherwise.
      */
     FASTDDS_EXPORTED_API virtual bool has_been_fully_delivered(
-            const SequenceNumber_t& seq_num) const
-    {
-        static_cast<void>(seq_num);
-        return false;
-    }
+            const SequenceNumber_t& seq_num) const = 0;
 
     /**
      * Check if a specific change has been acknowledged by all Readers.
@@ -139,21 +135,17 @@ public:
      * @return True if acknowledged by all.
      */
     FASTDDS_EXPORTED_API virtual bool is_acked_by_all(
-            const SequenceNumber_t& seq_num) const
-    {
-        static_cast<void>(seq_num);
-        return false;
-    }
+            const SequenceNumber_t& seq_num) const = 0;
 
     /**
      * Waits until all changes were acknowledged or max_wait.
+     *
+     * @param max_wait Maximum time to wait.
+     *
      * @return True if all were acknowledged.
      */
     FASTDDS_EXPORTED_API virtual bool wait_for_all_acked(
-            const Duration_t& /*max_wait*/)
-    {
-        return true;
-    }
+            const Duration_t& max_wait) = 0;
 
     /**
      * Update the Attributes of the Writer.
@@ -184,26 +176,22 @@ public:
      * Get listener
      * @return Listener
      */
-    FASTDDS_EXPORTED_API inline WriterListener* getListener()
-    {
-        return listener_;
-    }
+    FASTDDS_EXPORTED_API virtual WriterListener* getListener() const = 0;
 
-    FASTDDS_EXPORTED_API inline bool set_listener(
-            WriterListener* listener)
-    {
-        listener_ = listener;
-        return true;
-    }
+    /**
+     * Set the listener.
+     *
+     * @param listener Pointer to the listener.
+     * @return True if correctly set.
+     */
+    FASTDDS_EXPORTED_API virtual bool set_listener(
+            WriterListener* listener) = 0;
 
     /**
      * Get the publication mode
      * @return publication mode
      */
-    FASTDDS_EXPORTED_API inline bool isAsync() const
-    {
-        return is_async_;
-    }
+    FASTDDS_EXPORTED_API virtual bool isAsync() const = 0;
 
     /**
      * @brief Returns if disable positive ACKs QoS is enabled.
@@ -211,10 +199,7 @@ public:
      * @return Best effort writers always return false.
      *         Reliable writers override this method.
      */
-    FASTDDS_EXPORTED_API virtual bool get_disable_positive_acks() const
-    {
-        return false;
-    }
+    FASTDDS_EXPORTED_API virtual bool get_disable_positive_acks() const = 0;
 
 #ifdef FASTDDS_STATISTICS
 

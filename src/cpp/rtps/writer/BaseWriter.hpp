@@ -26,12 +26,14 @@
 #include <vector>
 
 #include <fastdds/fastdds_dll.hpp>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/rtps/Endpoint.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/common/FragmentNumber.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
+#include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/transport/NetworkBuffer.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/statistics/IListeners.hpp>
@@ -64,6 +66,49 @@ class BaseWriter
 {
 
 public:
+
+    FASTDDS_EXPORTED_API bool has_been_fully_delivered(
+            const SequenceNumber_t& seq_num) const override
+    {
+        static_cast<void>(seq_num);
+        return false;
+    }
+
+    FASTDDS_EXPORTED_API bool is_acked_by_all(
+            const SequenceNumber_t& seq_num) const override
+    {
+        static_cast<void>(seq_num);
+        return false;
+    }
+
+    FASTDDS_EXPORTED_API bool wait_for_all_acked(
+            const Duration_t& max_wait) override
+    {
+        static_cast<void>(max_wait);
+        return true;
+    }
+
+    FASTDDS_EXPORTED_API WriterListener* getListener() const override
+    {
+        return listener_;
+    }
+
+    FASTDDS_EXPORTED_API bool set_listener(
+            WriterListener* listener) override
+    {
+        listener_ = listener;
+        return true;
+    }
+
+    FASTDDS_EXPORTED_API bool isAsync() const override
+    {
+        return is_async_;
+    }
+
+    FASTDDS_EXPORTED_API bool get_disable_positive_acks() const override
+    {
+        return false;
+    }
 
 #ifdef FASTDDS_STATISTICS
 
