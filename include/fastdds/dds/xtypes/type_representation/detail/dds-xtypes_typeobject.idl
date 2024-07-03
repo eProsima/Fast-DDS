@@ -247,7 +247,7 @@ module DDS { module XTypes {
 
 
     // eProsima extension to support TypeIdentifier no value cases.
-    @final
+    @final @nested
     struct Dummy
     {
     };
