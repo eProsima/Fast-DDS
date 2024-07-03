@@ -22,24 +22,25 @@
 #include <chrono>
 #include <cstdint>
 #include <memory>
+#include <mutex>
 #include <vector>
 
 #include <fastdds/fastdds_dll.hpp>
+#include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/rtps/Endpoint.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
+#include <fastdds/rtps/common/FragmentNumber.hpp>
+#include <fastdds/rtps/common/SequenceNumber.hpp>
+#include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/transport/NetworkBuffer.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 #include <fastdds/statistics/rtps/monitor_service/connections_fwd.hpp>
+#include <fastdds/utils/TimedMutex.hpp>
 
 #include <rtps/writer/DeliveryRetCode.hpp>
 #include <rtps/writer/LocatorSelectorSender.hpp>
-#include <fastdds/rtps/common/VendorId_t.hpp>
-#include <fastdds/rtps/common/SequenceNumber.hpp>
-#include <fastdds/rtps/common/FragmentNumber.hpp>
-#include <fastdds/utils/TimedMutex.hpp>
-#include <mutex>
 
 namespace eprosima {
 namespace fastdds {
@@ -290,6 +291,11 @@ public:
     const Duration_t& get_liveliness_announcement_period() const;
 
     /**
+     * @brief Notify the writer that it has lost liveliness
+     */
+    void liveliness_lost();
+
+    /**
      * @return Whether the writer is data sharing compatible or not
      */
     bool is_datasharing_compatible() const;
@@ -347,6 +353,9 @@ protected:
     void add_statistics_sent_submessage(
             CacheChange_t* change,
             size_t num_locators);
+
+    //! Liveliness lost status of this writer
+    LivelinessLostStatus liveliness_lost_status_;
 
 };
 

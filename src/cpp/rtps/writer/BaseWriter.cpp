@@ -213,6 +213,19 @@ const Duration_t& BaseWriter::get_liveliness_announcement_period() const
     return liveliness_announcement_period_;
 }
 
+void BaseWriter::liveliness_lost()
+{
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
+
+    liveliness_lost_status_.total_count++;
+    liveliness_lost_status_.total_count_change++;
+    if (listener_ != nullptr)
+    {
+        listener_->on_liveliness_lost(this, liveliness_lost_status_);
+    }
+    liveliness_lost_status_.total_count_change = 0u;
+}
+
 bool BaseWriter::is_datasharing_compatible() const
 {
     return (m_att.data_sharing_configuration().kind() != dds::OFF);

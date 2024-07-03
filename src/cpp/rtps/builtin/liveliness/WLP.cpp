@@ -1022,16 +1022,7 @@ void WLP::pub_liveliness_changed(
         {
             if (w->getGuid() == writer)
             {
-                std::unique_lock<RecursiveTimedMutex> lock(w->getMutex());
-
-                w->liveliness_lost_status_.total_count++;
-                w->liveliness_lost_status_.total_count_change++;
-                if (w->getListener() != nullptr)
-                {
-                    w->getListener()->on_liveliness_lost(w, w->liveliness_lost_status_);
-                }
-                w->liveliness_lost_status_.total_count_change = 0u;
-
+                w->liveliness_lost();
                 return;
             }
         }
@@ -1042,16 +1033,7 @@ void WLP::pub_liveliness_changed(
         {
             if (w->getGuid() == writer)
             {
-                std::unique_lock<RecursiveTimedMutex> lock(w->getMutex());
-
-                w->liveliness_lost_status_.total_count++;
-                w->liveliness_lost_status_.total_count_change++;
-                if (w->getListener() != nullptr)
-                {
-                    w->getListener()->on_liveliness_lost(w, w->liveliness_lost_status_);
-                }
-                w->liveliness_lost_status_.total_count_change = 0u;
-
+                w->liveliness_lost();
                 return;
             }
         }
@@ -1062,16 +1044,7 @@ void WLP::pub_liveliness_changed(
         {
             if (w->getGuid() == writer)
             {
-                std::unique_lock<RecursiveTimedMutex> lock(w->getMutex());
-
-                w->liveliness_lost_status_.total_count++;
-                w->liveliness_lost_status_.total_count_change++;
-                if (w->getListener() != nullptr)
-                {
-                    w->getListener()->on_liveliness_lost(w, w->liveliness_lost_status_);
-                }
-                w->liveliness_lost_status_.total_count_change = 0u;
-
+                w->liveliness_lost();
                 return;
             }
         }

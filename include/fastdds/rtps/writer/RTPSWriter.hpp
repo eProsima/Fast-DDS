@@ -253,9 +253,6 @@ public:
 
 #endif // FASTDDS_STATISTICS
 
-    //! Liveliness lost status of this writer
-    LivelinessLostStatus liveliness_lost_status_;
-
 protected:
 
     /// Is the data sent directly or announced by HB and THEN sent to the ones who ask for it?.
