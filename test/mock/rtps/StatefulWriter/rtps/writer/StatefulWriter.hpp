@@ -90,7 +90,9 @@ public:
 
     SequenceNumber_t next_sequence_number() const
     {
-        return mp_history->next_sequence_number();
+        return history_ ?
+               history_->next_sequence_number() :
+               mp_history->next_sequence_number();
     }
 
     void reader_data_filter(

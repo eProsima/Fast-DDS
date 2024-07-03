@@ -19,23 +19,11 @@
 
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
-#include <memory>
-#include <mutex>
+#include <fastdds/rtps/Endpoint.hpp>
+#include <fastdds/rtps/attributes/WriterAttributes.hpp>
+#include <fastdds/rtps/common/Guid.hpp>
 
-#include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/attributes/PropertyPolicy.hpp>
-#include <fastdds/rtps/history/WriterHistory.hpp>
-
-#include <rtps/DataSharing/DataSharingNotifier.hpp>
-#include <rtps/DataSharing/WriterPool.hpp>
-#include <rtps/history/BasicPayloadPool.hpp>
-#include <rtps/history/CacheChangePool.h>
-#include <rtps/messages/RTPSMessageCreator.hpp>
-#include <rtps/messages/RTPSMessageGroup.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
-#include <statistics/rtps/StatisticsBase.hpp>
-#include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
-#include "../flowcontrol/FlowController.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -44,18 +32,8 @@ namespace rtps {
 RTPSWriter::RTPSWriter(
         RTPSParticipantImpl* impl,
         const GUID_t& guid,
-        const WriterAttributes& att,
-        fastdds::rtps::FlowController* flow_controller,
-        WriterHistory* hist,
-        WriterListener* listen)
+        const WriterAttributes& att)
     : Endpoint(impl, guid, att.endpoint)
-    , flow_controller_(flow_controller)
-    , history_(hist)
-    , listener_(listen)
-    , is_async_(att.mode == SYNCHRONOUS_WRITER ? false : true)
-    , liveliness_kind_(att.liveliness_kind)
-    , liveliness_lease_duration_(att.liveliness_lease_duration)
-    , liveliness_announcement_period_(att.liveliness_announcement_period)
 {
 }
 

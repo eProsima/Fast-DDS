@@ -42,6 +42,8 @@ public:
     {
     }
 
+    virtual ~BaseWriter() = default;
+
     static BaseWriter* downcast(
             RTPSWriter* writer)
     {

@@ -66,7 +66,14 @@ BaseWriter::BaseWriter(
         FlowController* flow_controller,
         WriterHistory* hist,
         WriterListener* listen)
-    : RTPSWriter(impl, guid, att, flow_controller, hist, listen)
+    : RTPSWriter(impl, guid, att)
+    , flow_controller_(flow_controller)
+    , history_(hist)
+    , listener_(listen)
+    , is_async_(att.mode == SYNCHRONOUS_WRITER ? false : true)
+    , liveliness_kind_(att.liveliness_kind)
+    , liveliness_lease_duration_(att.liveliness_lease_duration)
+    , liveliness_announcement_period_(att.liveliness_announcement_period)
 {
     init(att);
 
