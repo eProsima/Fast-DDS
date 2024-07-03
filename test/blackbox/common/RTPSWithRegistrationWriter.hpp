@@ -533,12 +533,11 @@ public:
         return *this;
     }
 
-    void set_separate_sending(
+    RTPSWithRegistrationWriter& set_separate_sending(
             bool separate_sending)
     {
-        // TODO(MiguelCompany): Decide whether separate_sending should become an attribute of the writer.
-        // writer_->set_separate_sending(separate_sending);
-        static_cast<void>(separate_sending);
+        writer_attr_.separate_sending = separate_sending;
+        return *this;
     }
 
     uint32_t get_matched() const

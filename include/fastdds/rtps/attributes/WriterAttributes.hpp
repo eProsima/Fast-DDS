@@ -123,6 +123,9 @@ public:
 
     //! Flow controller name. Default: fastdds::rtps::FASTDDS_FLOW_CONTROLLER_DEFAULT.
     std::string flow_controller_name = fastdds::rtps::FASTDDS_FLOW_CONTROLLER_DEFAULT;
+
+    //! Whether to send data to each matched reader separately.
+    bool separate_sending = false;
 };
 
 } // namespace rtps

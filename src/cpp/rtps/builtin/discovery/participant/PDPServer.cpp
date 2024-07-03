@@ -446,6 +446,8 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
     watt.times.nack_response_delay = pdp_nack_response_delay;
     watt.times.nack_supression_duration = pdp_nack_supression_duration;
     watt.mode = ASYNCHRONOUS_WRITER;
+    // Enable separate sending so the filter can be called for each change and reader proxy
+    watt.separate_sending = true;
 #if HAVE_SECURITY
     if (secure)
     {
@@ -473,8 +475,6 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
         // Set pdp filter to writer
         IReaderDataFilter* pdp_filter = static_cast<ddb::PDPDataFilter<ddb::DiscoveryDataBase>*>(&discovery_db_);
         wout->reader_data_filter(pdp_filter);
-        // Enable separate sending so the filter can be called for each change and reader proxy
-        BaseWriter::downcast(wout)->set_separate_sending(true);
     }
     // Could not create PDP Writer, so return false
     else

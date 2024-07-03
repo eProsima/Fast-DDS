@@ -63,8 +63,6 @@ public:
 
     MOCK_METHOD0(getRTPSParticipant, RTPSParticipantImpl* ());
 
-    MOCK_METHOD1(set_separate_sending, void(bool));
-
     MOCK_METHOD4(deliver_sample_nts, DeliveryRetCode(
             CacheChange_t*,
             RTPSMessageGroup&,

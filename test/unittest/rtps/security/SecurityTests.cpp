@@ -39,8 +39,6 @@ void SecurityTest::initialization_ok()
             WillOnce(DoAll(SetArgPointee<0>(stateless_reader_), Return(true))).
             WillOnce(DoAll(SetArgPointee<0>(volatile_reader_), Return(true)));
 
-    EXPECT_CALL(*volatile_writer_, set_separate_sending(true)).Times(1);
-
     security_activated_ = manager_.init(security_attributes_, participant_properties_);
     ASSERT_TRUE(security_activated_);
     ASSERT_TRUE(manager_.is_security_initialized());

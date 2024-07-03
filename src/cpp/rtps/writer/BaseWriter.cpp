@@ -71,6 +71,7 @@ BaseWriter::BaseWriter(
     , history_(hist)
     , listener_(listen)
     , is_async_(att.mode == SYNCHRONOUS_WRITER ? false : true)
+    , separate_sending_enabled_(att.separate_sending)
     , liveliness_kind_(att.liveliness_kind)
     , liveliness_lease_duration_(att.liveliness_lease_duration)
     , liveliness_announcement_period_(att.liveliness_announcement_period)
