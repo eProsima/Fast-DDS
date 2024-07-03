@@ -39,9 +39,8 @@
 #include "CLIParser.hpp"
 #include "DeliveryMechanismsPubSubTypes.hpp"
 
-using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
-
+using namespace eprosima::fastdds::dds;
 namespace eprosima {
 namespace fastdds {
 namespace examples {
@@ -104,7 +103,7 @@ SubscriberApp::SubscriberApp(
         {
             // Large Data is a builtin transport
             pqos.transport().use_builtin_transports = true;
-            pqos.setup_transports(eprosima::fastdds::rtps::BuiltinTransports::LARGE_DATA);
+            pqos.setup_transports(BuiltinTransports::LARGE_DATA);
             break;
         }
         case CLIParser::DeliveryMechanismKind::TCPv4:
@@ -117,7 +116,7 @@ SubscriberApp::SubscriberApp(
             {
                 tcp_ip_address = config.tcp_ip_address;
             }
-            eprosima::fastdds::rtps::IPLocator::setIPv4(tcp_v4_initial_peers_locator_, tcp_ip_address);
+            IPLocator::setIPv4(tcp_v4_initial_peers_locator_, tcp_ip_address);
             pqos.wire_protocol().builtin.initialPeersList.push_back(tcp_v4_initial_peers_locator_);
             pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;
             pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(5, 0);
@@ -134,7 +133,7 @@ SubscriberApp::SubscriberApp(
             {
                 tcp_ip_address = config.tcp_ip_address;
             }
-            eprosima::fastdds::rtps::IPLocator::setIPv6(tcp_v6_initial_peers_locator_, tcp_ip_address);
+            IPLocator::setIPv6(tcp_v6_initial_peers_locator_, tcp_ip_address);
             pqos.wire_protocol().builtin.initialPeersList.push_back(tcp_v6_initial_peers_locator_);
             pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;
             pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(5, 0);

@@ -28,7 +28,6 @@ namespace fastdds {
 namespace examples {
 namespace delivery_mechanisms {
 
-using namespace eprosima::fastdds::dds;
 using dds::Log;
 
 class CLIParser

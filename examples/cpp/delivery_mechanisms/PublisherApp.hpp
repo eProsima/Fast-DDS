@@ -29,16 +29,13 @@
 
 #include "Application.hpp"
 #include "CLIParser.hpp"
-#include "DeliveryMechanismsPubSubTypes.hpp"
-
-using namespace eprosima::fastdds::dds;
 
 namespace eprosima {
 namespace fastdds {
 namespace examples {
 namespace delivery_mechanisms {
 
-class PublisherApp : public Application, public DataWriterListener
+class PublisherApp : public Application, public dds::DataWriterListener
 {
 public:
 
@@ -50,8 +47,8 @@ public:
 
     //! Publisher matched method
     void on_publication_matched(
-            DataWriter* writer,
-            const PublicationMatchedStatus& info) override;
+            dds::DataWriter* writer,
+            const dds::PublicationMatchedStatus& info) override;
 
     //! Run publisher
     void run() override;
@@ -67,15 +64,15 @@ private:
     //! Publish a sample
     bool publish();
 
-    DomainParticipant* participant_;
+    dds::DomainParticipant* participant_;
 
-    Publisher* publisher_;
+    dds::Publisher* publisher_;
 
-    Topic* topic_;
+    dds::Topic* topic_;
 
-    DataWriter* writer_;
+    dds::DataWriter* writer_;
 
-    TypeSupport type_;
+    dds::TypeSupport type_;
 
     std::condition_variable cv_;
 
