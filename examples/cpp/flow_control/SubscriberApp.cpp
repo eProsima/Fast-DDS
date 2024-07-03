@@ -20,6 +20,10 @@
 #include "SubscriberApp.hpp"
 
 #include <condition_variable>
+#include <cstdlib>
+#include <iostream>
+#include <mutex>
+#include <stdexcept>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
@@ -50,6 +54,7 @@ SubscriberApp::SubscriberApp(
     StatusMask status_mask = StatusMask::none();
     status_mask << StatusMask::data_available();
     status_mask << StatusMask::subscription_matched();
+
     // Create Participant
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT, this,
                     status_mask);
@@ -63,9 +68,11 @@ SubscriberApp::SubscriberApp(
 
     // Create Subscriber
     SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
+
     // Retrieve default QoS, in case they have been previously set with an XML file
     participant_->get_default_subscriber_qos(sub_qos);
     subscriber_ = participant_->create_subscriber(sub_qos, nullptr, StatusMask::none());
+
     if (subscriber_ == nullptr)
     {
         throw std::runtime_error("Subscriber initialization failed");
@@ -73,6 +80,7 @@ SubscriberApp::SubscriberApp(
 
     // Create Topic
     topic_ = participant_->create_topic("flow_control_topic", type_.get_type_name(), TOPIC_QOS_DEFAULT);
+
     if (topic_ == nullptr)
     {
         throw std::runtime_error("Topic initialization failed");
@@ -82,6 +90,7 @@ SubscriberApp::SubscriberApp(
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
     subscriber_->get_default_datareader_qos(reader_qos);
     reader_ = subscriber_->create_datareader(topic_, reader_qos, this, StatusMask::all());
+    
     if (reader_ == nullptr)
     {
         throw std::runtime_error("DataReader initialization failed");

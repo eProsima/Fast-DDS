@@ -226,43 +226,42 @@ public:
             }
             else if (arg == "--period")
             {
-                if (config.entity == CLIParser::EntityKind::PUBLISHER)
+                if (config.entity != CLIParser::EntityKind::PUBLISHER)
                 {
-                    if (++i < argc)
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "period argument is only valid for publisher entity");
+                    print_help(EXIT_FAILURE);
+                }
+                
+                if (++i < argc)
+                {
+                    try
                     {
-                        try
+                        uint64_t input = std::stoull(argv[i]);
+                        if (input > std::numeric_limits<uint64_t>::max())
                         {
-                            uint64_t input = std::stoull(argv[i]);
-                            if (input > std::numeric_limits<uint64_t>::max())
-                            {
-                                throw std::out_of_range("period argument " + std::string(
-                                                  argv[i]) + " out of range.");
-                            }
-                            config.period = input;
+                            throw std::out_of_range("period argument " + std::string(
+                                                argv[i]) + " out of range.");
                         }
-                        catch (const std::invalid_argument& e)
-                        {
-                            EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid period argument " + std::string(
-                                        argv[i]) + ": " + std::string(e.what()));
-                            print_help(EXIT_FAILURE);
-                        }
-                        catch (const std::out_of_range& e)
-                        {
-                            EPROSIMA_LOG_ERROR(CLI_PARSER, std::string(e.what()));
-                            print_help(EXIT_FAILURE);
-                        }
+                        config.period = input;
                     }
-                    else
+                    catch (const std::invalid_argument& e)
                     {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing period argument");
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid period argument " + std::string(
+                                    argv[i]) + ": " + std::string(e.what()));
+                        print_help(EXIT_FAILURE);
+                    }
+                    catch (const std::out_of_range& e)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, std::string(e.what()));
                         print_help(EXIT_FAILURE);
                     }
                 }
                 else
                 {
-                    EPROSIMA_LOG_ERROR(CLI_PARSER, "period argument is only valid for publisher entity");
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing period argument");
                     print_help(EXIT_FAILURE);
                 }
+
             }
             else if (arg == "--scheduler")
             {

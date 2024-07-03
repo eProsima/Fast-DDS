@@ -79,9 +79,9 @@ public:
     eProsima_user_DllExport FlowControl(
             const FlowControl& x)
     {
-        m_message = x.m_message;
+                    m_index = x.m_index;
 
-        m_index = x.m_index;
+                    m_message = x.m_message;
 
     }
 
@@ -92,8 +92,8 @@ public:
     eProsima_user_DllExport FlowControl(
             FlowControl&& x) noexcept
     {
-        m_message = std::move(x.m_message);
         m_index = x.m_index;
+        m_message = std::move(x.m_message);
     }
 
     /*!
@@ -104,9 +104,9 @@ public:
             const FlowControl& x)
     {
 
-        m_message = x.m_message;
+                    m_index = x.m_index;
 
-        m_index = x.m_index;
+                    m_message = x.m_message;
 
         return *this;
     }
@@ -119,8 +119,8 @@ public:
             FlowControl&& x) noexcept
     {
 
-        m_message = std::move(x.m_message);
         m_index = x.m_index;
+        m_message = std::move(x.m_message);
         return *this;
     }
 
@@ -131,8 +131,8 @@ public:
     eProsima_user_DllExport bool operator ==(
             const FlowControl& x) const
     {
-        return (m_message == x.m_message &&
-               m_index == x.m_index);
+        return (m_index == x.m_index &&
+           m_message == x.m_message);
     }
 
     /*!
@@ -144,6 +144,35 @@ public:
     {
         return !(*this == x);
     }
+
+    /*!
+     * @brief This function sets a value in member index
+     * @param _index New value for member index
+     */
+    eProsima_user_DllExport void index(
+            uint32_t _index)
+    {
+        m_index = _index;
+    }
+
+    /*!
+     * @brief This function returns the value of member index
+     * @return Value of member index
+     */
+    eProsima_user_DllExport uint32_t index() const
+    {
+        return m_index;
+    }
+
+    /*!
+     * @brief This function returns a reference to member index
+     * @return Reference to member index
+     */
+    eProsima_user_DllExport uint32_t& index()
+    {
+        return m_index;
+    }
+
 
     /*!
      * @brief This function copies the value in member message
@@ -183,38 +212,12 @@ public:
         return m_message;
     }
 
-    /*!
-     * @brief This function sets a value in member index
-     * @param _index New value for member index
-     */
-    eProsima_user_DllExport void index(
-            uint32_t _index)
-    {
-        m_index = _index;
-    }
 
-    /*!
-     * @brief This function returns the value of member index
-     * @return Value of member index
-     */
-    eProsima_user_DllExport uint32_t index() const
-    {
-        return m_index;
-    }
-
-    /*!
-     * @brief This function returns a reference to member index
-     * @return Reference to member index
-     */
-    eProsima_user_DllExport uint32_t& index()
-    {
-        return m_index;
-    }
 
 private:
 
-    std::array<char, 600000> m_message{0};
     uint32_t m_index{0};
+    std::array<char, 600000> m_message{0};
 
 };
 

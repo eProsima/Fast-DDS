@@ -21,7 +21,10 @@
 #ifndef FASTDDS_FLOW_CONTROL_SUBSCRIBER_APP_HPP
 #define FASTDDS_FLOW_CONTROL_SUBSCRIBER_APP_HPP
 
+#include <atomic>
 #include <condition_variable>
+#include <cstdlib>
+#include <mutex>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>

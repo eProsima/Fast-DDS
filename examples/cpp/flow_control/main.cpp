@@ -19,7 +19,10 @@
 
 #include <csignal>
 #include <functional>
+#include <iostream>
+#include <memory>
 #include <stdexcept>
+#include <string>
 #include <thread>
 
 #include <fastdds/dds/log/Log.hpp>

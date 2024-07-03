@@ -21,13 +21,17 @@
 #ifndef FASTDDS_FLOW_CONTROL_PUBLISHER_APP_HPP
 #define FASTDDS_FLOW_CONTROL_PUBLISHER_APP_HPP
 
+#include <atomic>
 #include <condition_variable>
+#include <cstdlib>
+#include <mutex>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include "Application.hpp"
 #include "CLIParser.hpp"
@@ -93,7 +97,7 @@ private:
 
     std::atomic<bool> stop_;
 
-    const uint32_t send_period = 2000; // in ms
+    const uint32_t send_period_ = 2000; // in ms
 };
 
 } // namespace flow_control

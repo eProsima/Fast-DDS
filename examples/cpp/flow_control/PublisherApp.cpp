@@ -19,9 +19,18 @@
 
 #include "PublisherApp.hpp"
 
+#include <condition_variable>
+#include <cstdlib>
+#include <iostream>
+#include <mutex>
 #include <stdexcept>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+
+#include "FlowControlPubSubTypes.hpp"
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
@@ -45,6 +54,7 @@ PublisherApp::PublisherApp(
 {
     // Create Participant
     DomainParticipantQos pqos;
+
     // This controller allows 300kb per second.
     auto slow_flow_controller_descriptor = std::make_shared<eprosima::fastdds::rtps::FlowControllerDescriptor>();
     slow_flow_controller_descriptor->name = "slow_flow_controller_descriptor";
@@ -54,6 +64,7 @@ PublisherApp::PublisherApp(
     pqos.flow_controllers().push_back(slow_flow_controller_descriptor);
 
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+
     if (participant_ == nullptr)
     {
         throw std::runtime_error("Participant initialization failed");
@@ -66,6 +77,7 @@ PublisherApp::PublisherApp(
     PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
     participant_->get_default_publisher_qos(pub_qos);
     publisher_ = participant_->create_publisher(pub_qos, nullptr, StatusMask::none());
+
     if (publisher_ == nullptr)
     {
         throw std::runtime_error("Fast Publisher initialization failed");
@@ -81,19 +93,23 @@ PublisherApp::PublisherApp(
 
     // Create slow DataWriter
     DataWriterQos wsqos = DATAWRITER_QOS_DEFAULT;
+
     // Retrieve default QoS, in case they have been previously set through an XML file
     publisher_->get_default_datawriter_qos(wsqos);
     wsqos.publish_mode().kind = ASYNCHRONOUS_PUBLISH_MODE;
     wsqos.publish_mode().flow_controller_name = slow_flow_controller_descriptor->name;
     wsqos.properties().properties().emplace_back("fastdds.sfc.priority", config.priority);
     wsqos.properties().properties().emplace_back("fastdds.sfc.bandwidth_reservation", config.bandwidth);
+
     // Disable Data Sharing to force the communication on a Transport,
     // since a Flow Control is applied only on Transports.
     wsqos.data_sharing().off();
+
     // Set a user data value to share with the DataReader the information about the kind of Data Writer
     // (0 for Slow and 1 for Fast)
     wsqos.user_data().data_vec({0});
     slow_writer_ = publisher_->create_datawriter(topic_, wsqos, this, StatusMask::all());
+
     if (slow_writer_ == nullptr)
     {
         throw std::runtime_error("Slow DataWriter initialization failed");
@@ -102,19 +118,24 @@ PublisherApp::PublisherApp(
 
     // Create fast DataWriter
     DataWriterQos wfqos = DATAWRITER_QOS_DEFAULT;
+
     // Retrieve default QoS, in case they have been previously set through an XML file
     publisher_->get_default_datawriter_qos(wsqos);
     wfqos.publish_mode().kind = ASYNCHRONOUS_PUBLISH_MODE;
+
     // Disable Data Sharing to be consistent with the Slow Writer
     wfqos.data_sharing().off();
+
     // Set a user data value to share with the DataReader the information about the kind of Data Writer
     // (0 for Slow and 1 for Fast)
     wfqos.user_data().data_vec({1});
     fast_writer_ = publisher_->create_datawriter(topic_, wfqos, this, StatusMask::all());
+
     if (fast_writer_ == nullptr)
     {
         throw std::runtime_error("Fast DataWriter initialization failed");
     }
+
     std::cout << "Fast publisher created, waiting for Subscribers." << std::endl;
 }
 
@@ -177,7 +198,7 @@ void PublisherApp::run()
 
         // Wait for period or stop event
         std::unique_lock<std::mutex> period_lock(mutex_);
-        cv_.wait_for(period_lock, std::chrono::milliseconds(send_period), [&]()
+        cv_.wait_for(period_lock, std::chrono::milliseconds(send_period_), [&]()
                 {
                     return is_stopped();
                 });
