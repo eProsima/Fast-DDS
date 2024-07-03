@@ -123,8 +123,12 @@ const std::string expected_json_comprehensive_filled_omg_1 = R"({
                 0,
                 1
             ],
-            "string_alias_unbounded_map": null,
-            "string_unbounded_map": null
+            "string_alias_unbounded_map": {
+                "0": "string_alias_unbounded_map"
+            },
+            "string_unbounded_map": {
+                "0": "string_unbounded_map"
+            }
         },
         {
             "bitmask_sequence": [],
@@ -232,8 +236,12 @@ const std::string expected_json_comprehensive_filled_omg_1 = R"({
                 0,
                 1
             ],
-            "string_alias_unbounded_map": null,
-            "string_unbounded_map": null
+            "string_alias_unbounded_map": {
+                "0": "string_alias_unbounded_map"
+            },
+            "string_unbounded_map": {
+                "0": "string_unbounded_map"
+            }
         }
     ],
     "complex_map": {
@@ -447,8 +455,12 @@ const std::string expected_json_comprehensive_filled_omg_1 = R"({
                 0,
                 1
             ],
-            "string_alias_unbounded_map": null,
-            "string_unbounded_map": null
+            "string_alias_unbounded_map": {
+                "0": "string_alias_unbounded_map"
+            },
+            "string_unbounded_map": {
+                "0": "string_unbounded_map"
+            }
         }
     },
     "complex_sequence": [
@@ -558,8 +570,12 @@ const std::string expected_json_comprehensive_filled_omg_1 = R"({
                 0,
                 1
             ],
-            "string_alias_unbounded_map": null,
-            "string_unbounded_map": null
+            "string_alias_unbounded_map": {
+                "0": "string_alias_unbounded_map"
+            },
+            "string_unbounded_map": {
+                "0": "string_unbounded_map"
+            }
         }
     ],
     "index": 1,
@@ -669,8 +685,12 @@ const std::string expected_json_comprehensive_filled_omg_1 = R"({
             0,
             1
         ],
-        "string_alias_unbounded_map": null,
-        "string_unbounded_map": null
+        "string_alias_unbounded_map": {
+            "0": "string_alias_unbounded_map"
+        },
+        "string_unbounded_map": {
+            "0": "string_unbounded_map"
+        }
     }
 })";
 
@@ -782,8 +802,12 @@ const std::string expected_json_comprehensive_filled_omg_2 = R"({
                 0,
                 2
             ],
-            "string_alias_unbounded_map": null,
-            "string_unbounded_map": null
+            "string_alias_unbounded_map": {
+                "0": "string_alias_unbounded_map"
+            },
+            "string_unbounded_map": {
+                "0": "string_unbounded_map"
+            }
         },
         {
             "bitmask_sequence": [],
@@ -891,8 +915,12 @@ const std::string expected_json_comprehensive_filled_omg_2 = R"({
                 0,
                 2
             ],
-            "string_alias_unbounded_map": null,
-            "string_unbounded_map": null
+            "string_alias_unbounded_map": {
+                "0": "string_alias_unbounded_map"
+            },
+            "string_unbounded_map": {
+                "0": "string_unbounded_map"
+            }
         }
     ],
     "complex_map": {
@@ -1106,8 +1134,12 @@ const std::string expected_json_comprehensive_filled_omg_2 = R"({
                 0,
                 2
             ],
-            "string_alias_unbounded_map": null,
-            "string_unbounded_map": null
+            "string_alias_unbounded_map": {
+                "0": "string_alias_unbounded_map"
+            },
+            "string_unbounded_map": {
+                "0": "string_unbounded_map"
+            }
         }
     },
     "complex_sequence": [
@@ -1217,8 +1249,12 @@ const std::string expected_json_comprehensive_filled_omg_2 = R"({
                 0,
                 2
             ],
-            "string_alias_unbounded_map": null,
-            "string_unbounded_map": null
+            "string_alias_unbounded_map": {
+                "0": "string_alias_unbounded_map"
+            },
+            "string_unbounded_map": {
+                "0": "string_unbounded_map"
+            }
         }
     ],
     "index": 2,
@@ -1328,8 +1364,12 @@ const std::string expected_json_comprehensive_filled_omg_2 = R"({
             0,
             2
         ],
-        "string_alias_unbounded_map": null,
-        "string_unbounded_map": null
+        "string_alias_unbounded_map": {
+            "0": "string_alias_unbounded_map"
+        },
+        "string_unbounded_map": {
+            "0": "string_unbounded_map"
+        }
     }
 })";
 
@@ -1441,8 +1481,12 @@ const std::string expected_json_comprehensive_filled_omg_3 = R"({
                 0,
                 3
             ],
-            "string_alias_unbounded_map": null,
-            "string_unbounded_map": null
+            "string_alias_unbounded_map": {
+                "0": "string_alias_unbounded_map"
+            },
+            "string_unbounded_map": {
+                "0": "string_unbounded_map"
+            }
         },
         {
             "bitmask_sequence": [],
@@ -1550,8 +1594,12 @@ const std::string expected_json_comprehensive_filled_omg_3 = R"({
                 0,
                 3
             ],
-            "string_alias_unbounded_map": null,
-            "string_unbounded_map": null
+            "string_alias_unbounded_map": {
+                "0": "string_alias_unbounded_map"
+            },
+            "string_unbounded_map": {
+                "0": "string_unbounded_map"
+            }
         }
     ],
     "complex_map": {
@@ -1765,8 +1813,12 @@ const std::string expected_json_comprehensive_filled_omg_3 = R"({
                 0,
                 3
             ],
-            "string_alias_unbounded_map": null,
-            "string_unbounded_map": null
+            "string_alias_unbounded_map": {
+                "0": "string_alias_unbounded_map"
+            },
+            "string_unbounded_map": {
+                "0": "string_unbounded_map"
+            }
         }
     },
     "complex_sequence": [
@@ -1876,8 +1928,12 @@ const std::string expected_json_comprehensive_filled_omg_3 = R"({
                 0,
                 3
             ],
-            "string_alias_unbounded_map": null,
-            "string_unbounded_map": null
+            "string_alias_unbounded_map": {
+                "0": "string_alias_unbounded_map"
+            },
+            "string_unbounded_map": {
+                "0": "string_unbounded_map"
+            }
         }
     ],
     "index": 3,
@@ -1987,8 +2043,12 @@ const std::string expected_json_comprehensive_filled_omg_3 = R"({
             0,
             3
         ],
-        "string_alias_unbounded_map": null,
-        "string_unbounded_map": null
+        "string_alias_unbounded_map": {
+            "0": "string_alias_unbounded_map"
+        },
+        "string_unbounded_map": {
+            "0": "string_unbounded_map"
+        }
     }
 })";
 

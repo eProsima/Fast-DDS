@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file ComprehensiveImpl.cpp
+ * @file ComprehensiveTypeImpl.cpp
  *
  */
 
@@ -38,9 +38,9 @@
 #include "../gen/ComprehensiveTypePubSubTypes.hpp"
 #include "../gen/ComprehensiveTypeTypeObjectSupport.hpp"
 
-#include "../../comprehensive_type/json/ComprehensiveType_OMG.hpp"
+#include "../../comprehensive_type/json/ComprehensiveType_Unfilled_OMG.hpp"
 #include "../../comprehensive_type/json/ComprehensiveType_Filled_OMG.hpp"
-#include "../../comprehensive_type/json/ComprehensiveType_EPROSIMA.hpp"
+#include "../../comprehensive_type/json/ComprehensiveType_Unfilled_EPROSIMA.hpp"
 #include "../../comprehensive_type/json/ComprehensiveType_Filled_EPROSIMA.hpp"
 
 void fill_primitives_struct(
@@ -122,7 +122,7 @@ void fill_all_struct(
 
     fill_my_enum(dyn_data, "my_recursive_alias", index);
 
-    // // sequences
+    // sequences
     Int16Seq short_seq = {0, static_cast<int16_t>(index)};
     dyn_data->set_int16_values(dyn_data->get_member_id_by_name("short_sequence"), short_seq);
 
@@ -131,9 +131,17 @@ void fill_all_struct(
     dyn_data->set_int32_values(dyn_data->get_member_id_by_name("long_array"), long_array_seq);
 
     // maps
+    traits<DynamicData>::ref_type dyn_data_string_unbounded_map = dyn_data->loan_value(dyn_data->get_member_id_by_name("string_unbounded_map"));
+    dyn_data_string_unbounded_map->set_string_value(dyn_data_string_unbounded_map->get_member_id_by_name("0"), "string_unbounded_map");
+    dyn_data->return_loaned_value(dyn_data_string_unbounded_map);
+
+    traits<DynamicData>::ref_type dyn_data_string_alias_unbounded_map = dyn_data->loan_value(dyn_data->get_member_id_by_name("string_alias_unbounded_map"));
+    dyn_data_string_alias_unbounded_map->set_string_value(dyn_data_string_alias_unbounded_map->get_member_id_by_name("0"), "string_alias_unbounded_map");
+    dyn_data->return_loaned_value(dyn_data_string_alias_unbounded_map);
+
     traits<DynamicData>::ref_type dyn_data_short_long_map = dyn_data->loan_value(dyn_data->get_member_id_by_name("short_long_map"));
     int32_t key {1};
-    dyn_data_short_long_map->set_int32_value(dyn_data_short_long_map->get_member_id_by_name(std::to_string(key)), static_cast<uint32_t>(index));
+    dyn_data_short_long_map->set_int32_value(dyn_data_short_long_map->get_member_id_by_name(std::to_string(key)), static_cast<int32_t>(index));
     dyn_data->return_loaned_value(dyn_data_short_long_map);
 
     // union
@@ -192,8 +200,8 @@ traits<DynamicData>::ref_type fill_dyn_data(
 template <>
 traits<DynamicType>::ref_type create_dynamic_type<DataTypeKind::COMPREHENSIVE_TYPE>()
 {
-    const auto type_name = "ComprehensiveType";
     eprosima::fastdds::dds::TypeSupport type(new ComprehensiveTypePubSubType());
+    const auto type_name = type->getName();
 
     type->register_type_object_representation();
 
@@ -218,7 +226,7 @@ traits<DynamicType>::ref_type create_dynamic_type<DataTypeKind::COMPREHENSIVE_TY
 template <>
 traits<DynamicData>::ref_type create_dynamic_data<DataTypeKind::COMPREHENSIVE_TYPE>(
         const traits<DynamicType>::ref_type& dynamic_type,
-        const bool& filled,
+        bool filled,
         const unsigned int& index)
 {
     // Create DynamicData
@@ -235,7 +243,7 @@ traits<DynamicData>::ref_type create_dynamic_data<DataTypeKind::COMPREHENSIVE_TY
 template <>
 std::string get_expected_json<DataTypeKind::COMPREHENSIVE_TYPE>(
         const DynamicDataJsonFormat& format,
-        const bool& filled,
+        bool filled,
         const unsigned int& index)
 {
     switch (format)

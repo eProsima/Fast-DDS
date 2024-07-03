@@ -51,11 +51,7 @@ void test_generic()
     {
         for (unsigned int fill_index = 0; fill_index <= 3; fill_index++)
         {
-            bool filled = true;
-            if (fill_index == 0)
-            {
-                filled = false;
-            }
+            bool filled = fill_index != 0;
 
             auto dyn_data = create_dynamic_data<Data>(dyn_type, filled, fill_index);
             std::stringstream generated_json;

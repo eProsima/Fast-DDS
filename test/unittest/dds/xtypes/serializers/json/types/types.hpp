@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef TYPES_HPP
-#define TYPES_HPP
+#ifndef _TEST_UNITTEST_DDS_XTYPES_SERIALIZERS_JSON_TYPES_TYPES_HPP_
+#define _TEST_UNITTEST_DDS_XTYPES_SERIALIZERS_JSON_TYPES_TYPES_HPP_
 
 #include <string>
 
@@ -39,7 +39,7 @@ traits<DynamicType>::ref_type create_dynamic_type();
 template <DataTypeKind Data>
 traits<DynamicData>::ref_type create_dynamic_data(
         const traits<DynamicType>::ref_type& dynamic_type,
-        const bool& filled,
+        bool filled,
         const unsigned int& index = 0);
 
 template <DataTypeKind Data>
@@ -50,7 +50,7 @@ traits<DynamicData>::ref_type fill_dyn_data(
 template <DataTypeKind Data>
 std::string get_expected_json(
         const DynamicDataJsonFormat& format,
-        const bool& filled,
+        bool filled,
         const unsigned int& index = 0);
 
-#endif // TYPES_HPP
+#endif // _TEST_UNITTEST_DDS_XTYPES_SERIALIZERS_JSON_TYPES_TYPES_HPP_
