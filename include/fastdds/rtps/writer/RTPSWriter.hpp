@@ -155,24 +155,6 @@ public:
             const WriterAttributes& att) = 0;
 
     /**
-     * Get Min Seq Num in History.
-     * @return Minimum sequence number in history
-     */
-    FASTDDS_EXPORTED_API SequenceNumber_t get_seq_num_min();
-
-    /**
-     * Get Max Seq Num in History.
-     * @return Maximum sequence number in history
-     */
-    FASTDDS_EXPORTED_API SequenceNumber_t get_seq_num_max();
-
-    /**
-     * Get maximum size of the serialized type
-     * @return Maximum size of the serialized type
-     */
-    FASTDDS_EXPORTED_API uint32_t getTypeMaxSerialized();
-
-    /**
      * Get listener
      * @return Listener
      */

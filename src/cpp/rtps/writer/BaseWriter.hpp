@@ -349,6 +349,24 @@ public:
             const ReaderProxyData& rdata) const;
 
     /**
+     * Get Min Seq Num in History.
+     * @return Minimum sequence number in history
+     */
+    SequenceNumber_t get_seq_num_min();
+
+    /**
+     * Get Max Seq Num in History.
+     * @return Maximum sequence number in history
+     */
+    SequenceNumber_t get_seq_num_max();
+
+    /**
+     * Get maximum size of the serialized type
+     * @return Maximum size of the serialized type
+     */
+    uint32_t getTypeMaxSerialized();
+
+    /**
      * @brief Get a pointer to a BaseWriter object from a RTPSWriter pointer.
      *
      * @param writer  Pointer to the RTPSWriter object.

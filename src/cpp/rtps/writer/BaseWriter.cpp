@@ -38,6 +38,7 @@
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
+#include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/history/IChangePool.hpp>
 #include <fastdds/rtps/history/IPayloadPool.hpp>
@@ -45,12 +46,14 @@
 #include <fastdds/rtps/transport/NetworkBuffer.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/rtps/writer/WriterListener.hpp>
+#include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
 
 #include <rtps/DataSharing/WriterPool.hpp>
 #include <rtps/flowcontrol/FlowController.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/writer/LocatorSelectorSender.hpp>
+#include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -250,6 +253,37 @@ bool BaseWriter::is_datasharing_compatible_with(
         }
     }
     return false;
+}
+
+SequenceNumber_t BaseWriter::get_seq_num_min()
+{
+    CacheChange_t* change;
+    if (history_->get_min_change(&change) && change != nullptr)
+    {
+        return change->sequenceNumber;
+    }
+    else
+    {
+        return c_SequenceNumber_Unknown;
+    }
+}
+
+SequenceNumber_t BaseWriter::get_seq_num_max()
+{
+    CacheChange_t* change;
+    if (history_->get_max_change(&change) && change != nullptr)
+    {
+        return change->sequenceNumber;
+    }
+    else
+    {
+        return c_SequenceNumber_Unknown;
+    }
+}
+
+uint32_t BaseWriter::getTypeMaxSerialized()
+{
+    return history_->getTypeMaxSerialized();
 }
 
 void BaseWriter::add_guid(

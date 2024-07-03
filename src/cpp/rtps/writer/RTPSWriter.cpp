@@ -63,37 +63,6 @@ RTPSWriter::~RTPSWriter()
 {
 }
 
-SequenceNumber_t RTPSWriter::get_seq_num_min()
-{
-    CacheChange_t* change;
-    if (history_->get_min_change(&change) && change != nullptr)
-    {
-        return change->sequenceNumber;
-    }
-    else
-    {
-        return c_SequenceNumber_Unknown;
-    }
-}
-
-SequenceNumber_t RTPSWriter::get_seq_num_max()
-{
-    CacheChange_t* change;
-    if (history_->get_max_change(&change) && change != nullptr)
-    {
-        return change->sequenceNumber;
-    }
-    else
-    {
-        return c_SequenceNumber_Unknown;
-    }
-}
-
-uint32_t RTPSWriter::getTypeMaxSerialized()
-{
-    return history_->getTypeMaxSerialized();
-}
-
 }  // namespace rtps
 }  // namespace fastdds
 }  // namespace eprosima

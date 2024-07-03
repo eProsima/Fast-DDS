@@ -44,6 +44,7 @@
 #if HAVE_SECURITY
 #include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #endif // if HAVE_SECURITY
+#include <rtps/writer/BaseWriter.hpp>
 #include <utils/collections/node_size_helpers.hpp>
 #include <utils/StringMatching.hpp>
 #ifdef FASTDDS_STATISTICS
@@ -232,7 +233,7 @@ bool EDP::newLocalWriterProxyData(
                 {
                     wpd->type_information(att.type_information);
                 }
-                wpd->typeMaxSerialized(writer->getTypeMaxSerialized());
+                wpd->typeMaxSerialized(BaseWriter::downcast(writer)->getTypeMaxSerialized());
                 wpd->m_qos.setQos(wqos, true);
                 wpd->userDefinedId(watt.getUserDefinedID());
                 wpd->persistence_guid(watt.persistence_guid);
