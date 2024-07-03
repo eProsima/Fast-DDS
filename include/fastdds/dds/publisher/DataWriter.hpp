@@ -198,12 +198,14 @@ public:
 
     /*!
      * @brief Informs that the application will be modifying a particular instance.
+     *
      * It gives an opportunity to the middleware to pre-configure itself to improve performance.
+     * The returned handle could be used in successive `write` or `dispose` operations.
      *
      * @param[in] instance Sample used to get the instance's key.
+     *
      * @return Handle containing the instance's key.
-     * This handle could be used in successive `write` or `dispose` operations.
-     * In case of error, HANDLE_NIL will be returned.
+     * @return HANDLE_NIL in case of error.
      */
     RTPS_DllAPI InstanceHandle_t register_instance(
             void* instance);
