@@ -35,6 +35,7 @@ Forthcoming
   * ReaderLocator
   * ReaderProxy
   * ChangeForReader
+  * ServerAttributes
 * Public API headers .h have been renamed to .hpp
 * Added create participant methods that use environment XML profile for participant configuration.
 * New TypeObjectRegistry class to register/query TypeObjects/TypeIdentifiers.
@@ -68,6 +69,13 @@ Forthcoming
 * New `DomainParticipantExtendedQos` that includes both `DomainId` and `DomainParticipantQos` (extends `DomainParticipantFactory` API).
 * Make Blackbox tests not include any private API.
 * Remove all the private API include from Blackbox tests.
+* Discovery Server refactor:
+  * Clients and Servers no longer need a known GUID to connect between them.
+  * Servers are now configured specifying a LocatorList, instead of a RemoteServerAttributes list.
+  * Servers connect through a mesh topology. For a new server to join the topology, it must be connected to any server in it.
+  * Servers only redirect discovery information of their direct clients.
+  * Remote Discovery servers connection list can now be updated and modified at runtime without restrictions.
+  * Fast DDS CLI has been updated to allow the creation of servers without GUID.
 
 Version 2.14.0
 --------------
