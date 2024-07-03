@@ -82,21 +82,3 @@ jobs:
       run-tests: true
       use-ccache: false
 
-  nightly-ubuntu-ci-2_6_x:
-    strategy:
-      fail-fast: false
-      matrix:
-        os-image:
-          - 'ubuntu-22.04'
-        security:
-          - true
-          - false
-    uses: eProsima/Fast-DDS/.github/workflows/reusable-ubuntu-ci.yml@2.6.x
-    with:
-      os-image: ${{ matrix.os-image }}
-      label: '${{ matrix.os-image }}-nightly-sec-${{ matrix.security }}-ubuntu-ci-2.6.x'
-      ctest-args: "-LE xfail"
-      fastdds-branch: '2.6.x'
-      security: ${{ matrix.security }}
-      run-tests: true
-      use-ccache: false
