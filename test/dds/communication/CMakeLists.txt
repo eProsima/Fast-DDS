@@ -206,3 +206,10 @@ if(Python3_Interpreter_FOUND)
         endif()
     endforeach()
 endif()
+
+# Add 'xfail' label to flaky tests
+set(DDS_COMMUNICATION_XFAIL_LIST XFAIL_DDS_COMMUNICATION)
+
+foreach(DDS_COMMUNICATION_XFAIL_TEST ${DDS_COMMUNICATION_XFAIL_LIST})
+    add_xfail_label(${CMAKE_CURRENT_SOURCE_DIR}/${DDS_COMMUNICATION_XFAIL_TEST}.list)
+endforeach()
