@@ -32,7 +32,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-
 //!@brief Structure SequenceNumber_t, different for each change in the same writer.
 //!@ingroup COMMON_MODULE
 struct RTPS_DllAPI SequenceNumber_t
@@ -42,7 +41,7 @@ struct RTPS_DllAPI SequenceNumber_t
     //!
     uint32_t low = 0;
 
-    //!Default constructor
+    //! Default constructor
     SequenceNumber_t() noexcept
     {
         high = 0;
@@ -366,8 +365,7 @@ struct SequenceNumberDiff
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-//!Structure SequenceNumberSet_t, contains a group of sequencenumbers.
-//!@ingroup COMMON_MODULE
+//! Structure SequenceNumberSet_t, contains a group of sequencenumbers.
 using SequenceNumberSet_t = BitmapRange<SequenceNumber_t, SequenceNumberDiff, 256>;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

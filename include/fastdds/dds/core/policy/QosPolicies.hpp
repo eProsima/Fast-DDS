@@ -2798,8 +2798,9 @@ public:
     //! Thread settings for the builtin transports reception threads
     rtps::ThreadSettings builtin_transports_reception_threads_;
 
-    /*! Maximum message size used to avoid fragmentation, set ONLY in LARGE_DATA. If this value is
-     * not zero, the network factory will allow the initialization of UDP transports with maxMessageSize
+    /*!
+     * @brief Maximum message size used to avoid fragmentation, set ONLY in LARGE_DATA.
+     * If this value is not zero, the network factory will allow the initialization of UDP transports with maxMessageSize
      * higher than 65500K.
      */
     uint32_t max_msg_size_no_frag;
