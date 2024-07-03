@@ -432,10 +432,10 @@ public:
             const GuidPrefix_t& guid_prefix);
 
     /**
-     * Get the list of remote servers to which the client should connect
-     * @return A reference to the list of RemoteServerAttributes
+     * Get the list of remote servers' locators to which the participant should connect
+     * @return A reference to the LocatorList
      */
-    std::list<eprosima::fastdds::rtps::RemoteServerAttributes>& remote_server_attributes();
+    fastdds::rtps::LocatorList& remote_server_locators();
 
     /**
      * Access the temporary proxy pool for reader proxies
@@ -573,6 +573,16 @@ protected:
             const ParticipantProxyData& participant_data);
 
     /**
+     * Obtains the participant type based on a Parameters Properties list.
+     *
+     * @param properties Parameter Properties list to check
+     *
+     * @return a string indicating the participant type.
+     */
+    std::string check_participant_type(
+            const fastdds::dds::ParameterPropertyList_t properties);
+
+    /**
      * Gets the key of a participant proxy data.
      *
      * @param [in] participant_guid GUID of the participant to look for.
@@ -605,6 +615,11 @@ protected:
     void notify_and_maybe_ignore_new_participant(
             ParticipantProxyData* pdata,
             bool& should_be_ignored);
+
+    /**
+     * Restores the `initial_announcements_` configuration to resend the initial announcements again.
+     */
+    void resend_ininitial_announcements();
 
 #ifdef FASTDDS_STATISTICS
 

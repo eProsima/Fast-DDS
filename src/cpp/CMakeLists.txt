@@ -110,6 +110,7 @@ set(${PROJECT_NAME}_source_files
     rtps/attributes/EndpointSecurityAttributes.cpp
     rtps/attributes/PropertyPolicy.cpp
     rtps/attributes/RTPSParticipantAttributes.cpp
+    rtps/attributes/ServerAttributes.cpp
     rtps/attributes/ThreadSettings.cpp
     rtps/attributes/TopicAttributes.cpp
     rtps/builtin/BuiltinProtocols.cpp
@@ -136,7 +137,6 @@ set(${PROJECT_NAME}_source_files
     rtps/builtin/discovery/participant/PDPServer.cpp
     rtps/builtin/discovery/participant/PDPServerListener.cpp
     rtps/builtin/discovery/participant/PDPSimple.cpp
-    rtps/builtin/discovery/participant/ServerAttributes.cpp
     rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp
     rtps/builtin/discovery/participant/timedevent/DServerEvent.cpp
     rtps/builtin/liveliness/WLP.cpp

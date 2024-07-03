@@ -226,6 +226,71 @@ bool PDP::data_matches_with_prefix(
     return ret_val;
 }
 
+std::string PDP::check_participant_type(
+        const fastdds::dds::ParameterPropertyList_t properties)
+{
+    auto participant_type = std::find_if(
+        properties.begin(),
+        properties.end(),
+        [](const fastdds::dds::ParameterProperty_t& property)
+        {
+            return property.first() == fastdds::dds::parameter_property_participant_type;
+        });
+
+    if (participant_type != properties.end())
+    {
+        if (participant_type->second() == fastdds::rtps::ParticipantType::SERVER)
+        {
+            return fastdds::rtps::ParticipantType::SERVER;
+        }
+        else if (participant_type->second() == fastdds::rtps::ParticipantType::BACKUP)
+        {
+            return fastdds::rtps::ParticipantType::BACKUP;
+        }
+        else if (participant_type->second() == fastdds::rtps::ParticipantType::SIMPLE)
+        {
+            return fastdds::rtps::ParticipantType::SIMPLE;
+        }
+        else if (participant_type->second() == fastdds::rtps::ParticipantType::CLIENT)
+        {
+            return fastdds::rtps::ParticipantType::CLIENT;
+        }
+        else if (participant_type->second() == fastdds::rtps::ParticipantType::SUPER_CLIENT)
+        {
+            return fastdds::rtps::ParticipantType::SUPER_CLIENT;
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(RTPS_PDP_LISTENER, "Wrong " << fastdds::dds::parameter_property_participant_type << ": "
+                                                           << participant_type->second());
+            return fastdds::rtps::ParticipantType::UNKNOWN;
+        }
+    }
+    else
+    {
+        EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, fastdds::dds::parameter_property_participant_type << " is not set");
+        // Fallback to checking whether participant is a SERVER looking for the persistence GUID
+        auto persistence_guid = std::find_if(
+            properties.begin(),
+            properties.end(),
+            [](const fastdds::dds::ParameterProperty_t& property)
+            {
+                return property.first() == fastdds::dds::parameter_property_persistence_guid;
+            });
+        // The presence of persistence GUID property suggests a SERVER. This assumption is made to keep
+        // backwards compatibility with Discovery Server v1.0. However, any participant that has been configured
+        // as persistent will have this property.
+        if (persistence_guid != properties.end())
+        {
+            return fastdds::rtps::ParticipantType::SERVER;
+        }
+        else
+        {
+            return fastdds::rtps::ParticipantType::CLIENT;
+        }
+    }
+}
+
 void PDP::initializeParticipantProxyData(
         ParticipantProxyData* participant_data)
 {
@@ -1370,7 +1435,7 @@ ParticipantProxyData* PDP::get_participant_proxy_data(
     return nullptr;
 }
 
-std::list<eprosima::fastdds::rtps::RemoteServerAttributes>& PDP::remote_server_attributes()
+fastdds::rtps::LocatorList& PDP::remote_server_locators()
 {
     return mp_builtin->m_DiscoveryServers;
 }
@@ -1406,6 +1471,7 @@ void PDP::check_remote_participant_liveliness(
 
 void PDP::set_next_announcement_interval()
 {
+    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
     if (initial_announcements_.count > 0)
     {
         --initial_announcements_.count;
@@ -1426,6 +1492,19 @@ void PDP::set_initial_announcement_interval()
         initial_announcements_.period = { 0, 1000000 };
     }
     set_next_announcement_interval();
+}
+
+void PDP::resend_ininitial_announcements()
+{
+    if (enabled_)
+    {
+        {
+            std::lock_guard<std::recursive_mutex> guardPDP(*mp_mutex);
+            initial_announcements_ = m_discovery.discovery_config.initial_announcements;
+        }
+        set_next_announcement_interval();
+        resetParticipantAnnouncement();
+    }
 }
 
 void PDP::set_external_participant_properties_(

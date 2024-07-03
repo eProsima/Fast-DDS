@@ -123,6 +123,14 @@ struct LocatorSelectorEntry
         return entry;
     }
 
+    static LocatorSelectorEntry create_fully_selected_entry(
+            const LocatorList_t& unicast_locators)
+    {
+        // Use previous overload with an empty multicast list
+        LocatorList_t empty_list {};
+        return create_fully_selected_entry(unicast_locators, empty_list);
+    }
+
     //! GUID of the remote entity.
     GUID_t remote_guid;
     //! List of unicast locators to send data to the remote entity.

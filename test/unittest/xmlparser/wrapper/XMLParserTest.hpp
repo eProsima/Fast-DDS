@@ -140,14 +140,6 @@ public:
         return getXMLPropertiesPolicy(elem, propertiesPolicy, ident);
     }
 
-    static XMLP_ret getXMLRemoteServer_wrapper(
-            tinyxml2::XMLElement* elem,
-            RemoteServerAttributes& attr,
-            uint8_t ident)
-    {
-        return getXMLRemoteServer(elem, attr, ident);
-    }
-
     static XMLP_ret getXMLTransports_wrapper(
             tinyxml2::XMLElement* elem,
             std::vector<std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface>>& transports,
@@ -187,14 +179,6 @@ public:
             uint8_t ident)
     {
         return getXMLString(elem, s, ident);
-    }
-
-    static XMLP_ret getXMLList_wrapper(
-            tinyxml2::XMLElement* elem,
-            eprosima::fastdds::rtps::RemoteServerList_t& list,
-            uint8_t ident)
-    {
-        return getXMLList(elem, list, ident);
     }
 
     static XMLP_ret getXMLBool_wrapper(

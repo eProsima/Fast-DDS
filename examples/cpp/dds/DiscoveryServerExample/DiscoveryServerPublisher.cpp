@@ -62,7 +62,6 @@ bool HelloWorldPublisher::init(
         const std::string& topic_name,
         const std::string& server_address,
         unsigned short server_port,
-        unsigned short server_id,
         TransportKind transport)
 {
     hello_.index(0);
@@ -142,7 +141,14 @@ bool HelloWorldPublisher::init(
 
             server_locator.kind = LOCATOR_KIND_TCPv6;
             eprosima::fastdds::rtps::IPLocator::setLogicalPort(server_locator, server_port);
-            eprosima::fastdds::rtps::IPLocator::setIPv6(server_locator, ip_server_address);
+            if (eprosima::fastdds::rtps::IPLocator::isIPv6(ip_server_address))
+            {
+                eprosima::fastdds::rtps::IPLocator::setIPv6(server_locator, ip_server_address);
+            }
+            else
+            {
+                eprosima::fastdds::rtps::IPLocator::setIPv6(server_locator, "::1");
+            }
             break;
         }
 
@@ -154,15 +160,8 @@ bool HelloWorldPublisher::init(
     pqos.wire_protocol().builtin.discovery_config.discoveryProtocol =
             eprosima::fastdds::rtps::DiscoveryProtocol::CLIENT;
 
-    // Set SERVER's GUID prefix
-    RemoteServerAttributes remote_server_att;
-    remote_server_att.guidPrefix = get_discovery_server_guid_from_id(server_id);
-
-    // Set SERVER's listening locator for PDP
-    remote_server_att.metatrafficUnicastLocatorList.push_back(server_locator);
-
     // Add remote SERVER to CLIENT's list of SERVERs
-    pqos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(remote_server_att);
+    pqos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server_locator);
 
     // Add descriptor
     pqos.transport().user_transports.push_back(descriptor);
@@ -179,7 +178,6 @@ bool HelloWorldPublisher::init(
         "Publisher Participant " << pqos.name() <<
         " created with GUID " << participant_->guid() <<
         " connecting to server <" << server_locator  << "> " <<
-        " with Guid: <" << remote_server_att.guidPrefix << "> " <<
         std::endl;
 
     // REGISTER THE TYPE

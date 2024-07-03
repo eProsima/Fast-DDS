@@ -29,7 +29,6 @@
 #include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <fastdds/rtps/attributes/ResourceManagement.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
-#include <fastdds/rtps/attributes/ServerAttributes.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/common/PortParameters.hpp>
@@ -127,6 +126,11 @@ inline std::ostream& operator <<(
     }
     return output;
 }
+
+// Port used if the ros environment variable doesn't specify one
+constexpr uint16_t DEFAULT_ROS2_SERVER_PORT = 11811;
+// Port used by default for tcp transport
+constexpr uint16_t DEFAULT_TCP_SERVER_PORT = 42100;
 
 //! Filtering flags when discovering participants
 enum ParticipantFilteringFlags : uint32_t
@@ -275,8 +279,8 @@ public:
      */
     Duration_t discoveryServer_client_syncperiod = { 0, 450 * 1000000}; // 450 milliseconds
 
-    //! Discovery Server settings, only needed if use_CLIENT_DiscoveryProtocol=true
-    eprosima::fastdds::rtps::RemoteServerList_t m_DiscoveryServers;
+    //! Discovery Server initial connections, needed if `discoveryProtocol` = CLIENT | SUPER_CLIENT | SERVER | BACKUP
+    eprosima::fastdds::rtps::LocatorList m_DiscoveryServers;
 
     //! Filtering participants out depending on location
     ParticipantFilteringFlags ignoreParticipantFlags = ParticipantFilteringFlags::NO_FILTER;

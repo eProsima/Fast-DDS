@@ -2013,7 +2013,7 @@ void TCPTransportInterface::fill_local_physical_port(
 void TCPTransportInterface::cleanup_sender_resources(
         SendResourceList& send_resource_list,
         const LocatorList& remote_participant_locators,
-        const LocatorList& participant_initial_peers) const
+        const LocatorList& participant_initial_peers_and_ds) const
 {
     // Since send resources handle physical locators, we need to convert the remote participant locators to physical
     std::set<Locator> remote_participant_physical_locators;
@@ -2030,8 +2030,8 @@ void TCPTransportInterface::cleanup_sender_resources(
         }
     }
 
-    // Exlude initial peers.
-    for (const auto& initial_peer : participant_initial_peers)
+    // Exclude initial peers.
+    for (const auto& initial_peer : participant_initial_peers_and_ds)
     {
         if (std::find(remote_participant_physical_locators.begin(), remote_participant_physical_locators.end(),
                 IPLocator::toPhysicalLocator(initial_peer)) != remote_participant_physical_locators.end())

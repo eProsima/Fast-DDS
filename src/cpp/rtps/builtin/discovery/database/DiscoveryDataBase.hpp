@@ -117,8 +117,7 @@ public:
     friend class AckedFunctor;
 
     DiscoveryDataBase(
-            fastdds::rtps::GuidPrefix_t server_guid_prefix,
-            std::set<fastdds::rtps::GuidPrefix_t> servers);
+            const fastdds::rtps::GuidPrefix_t& server_guid_prefix);
 
     ~DiscoveryDataBase();
 
@@ -289,10 +288,6 @@ public:
         server_acked_by_all_.store(s);
     }
 
-    bool server_acked_by_my_servers();
-
-    std::vector<fastdds::rtps::GuidPrefix_t> ack_pending_servers();
-
     ////////////
     // Data structures utils
 
@@ -307,11 +302,11 @@ public:
             std::map<eprosima::fastdds::rtps::InstanceHandle_t, fastdds::rtps::CacheChange_t*>& changes_map);
 
     // This function erase the last backup and all the changes that has arrived since then and create
-    // a new backup that shows the actual state of the database
+    // a new backup that shows the actual state of the database.
     // This way we can simulate the state of the database from a clean state of json backup, or from
     // an state in the middle of an routine execution, and every message that has arrived and has not
     // been process.
-    // By this, we do not lose any change or information in any case
+    // By this, we do not lose any change or information in any case.
     // This function must be called with the incoming datas blocked
     void clean_backup();
 
@@ -321,7 +316,7 @@ public:
         data_queues_mutex_.lock();
     }
 
-    // Unock the incoming of new data to the DDB queue
+    // Unlock the incoming of new data to the DDB queue
     void unlock_incoming_data()
     {
         data_queues_mutex_.unlock();
@@ -339,27 +334,34 @@ public:
         return new_updates_.exchange(0);
     }
 
-    // Check if an participant is stored as local. If the participant does not exist, it returns false
+    // Check if a participant is stored as local. If the participant does not exist, it returns false
     bool is_participant_local(
             const eprosima::fastdds::rtps::GuidPrefix_t& participant_prefix);
 
     //! Add a server to the list of remote servers
     void add_server(
-            fastdds::rtps::GuidPrefix_t server);
+            const fastdds::rtps::GuidPrefix_t server);
+
+    //! Remove a server from the list of remote servers
+    void remove_server(
+            const fastdds::rtps::GuidPrefix_t server);
 
     // Removes all the changes whose original sender was entity_guid_prefix from writer_history
     void remove_related_alive_from_history_nts(
             fastdds::rtps::WriterHistory* writer_history,
             const fastdds::rtps::GuidPrefix_t& entity_guid_prefix);
 
+    // Add own Data(p) in pdp_to_send if not already in it
+    bool add_own_pdp_to_send_();
+
 protected:
 
-    // change a cacheChange by update or new disposal
+    // Change a cacheChange by update or new disposal
     void update_change_and_unmatch_(
             fastdds::rtps::CacheChange_t* new_change,
             ddb::DiscoverySharedInfo& entity);
 
-    // update the acks
+    // Update the acks
     void add_ack_(
             const eprosima::fastdds::rtps::CacheChange_t* change,
             const eprosima::fastdds::rtps::GuidPrefix_t& acked_entity);
@@ -394,7 +396,8 @@ protected:
     // Functions related with create_participant_from_change_
 
     void match_new_server_(
-            eprosima::fastdds::rtps::GuidPrefix_t& participant_prefix);
+            eprosima::fastdds::rtps::GuidPrefix_t& participant_prefix,
+            bool is_superclient);
 
     void create_virtual_endpoints_(
             eprosima::fastdds::rtps::GuidPrefix_t& participant_prefix);
@@ -524,7 +527,7 @@ protected:
 
     DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryEDPDataQueueInfo> edp_data_queue_;
 
-    //! Covenient per-topic mapping of readers and writers to speed-up queries
+    //! Convenient per-topic mapping of readers and writers to speed-up queries
     std::map<std::string, std::vector<eprosima::fastdds::rtps::GUID_t>> readers_by_topic_;
     std::map<std::string, std::vector<eprosima::fastdds::rtps::GUID_t>> writers_by_topic_;
 
@@ -567,7 +570,7 @@ protected:
     //! Is own server DATA(p) acked by all other clients
     std::atomic<bool> server_acked_by_all_;
 
-    //! List of GUID prefixes of the remote servers
+    //! List of GUID prefixes of the connected remote servers
     std::set<fastdds::rtps::GuidPrefix_t> servers_;
 
     // The virtual topic associated with virtual writers and readers
