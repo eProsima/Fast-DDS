@@ -1218,7 +1218,7 @@ ReturnCode_t DataWriterImpl::set_qos(
             w_att.times = qos_.reliable_writer_qos().times;
             w_att.disable_positive_acks = qos_.reliable_writer_qos().disable_positive_acks.enabled;
             w_att.keep_duration = qos_.reliable_writer_qos().disable_positive_acks.duration;
-            writer_->updateAttributes(w_att);
+            writer_->update_attributes(w_att);
         }
 
         //Notify the participant that a Writer has changed its QOS

@@ -1586,7 +1586,7 @@ bool StatefulWriter::wait_for_acknowledgement(
 /*
  * PARAMETER_RELATED METHODS
  */
-void StatefulWriter::updateAttributes(
+void StatefulWriter::update_attributes(
         const WriterAttributes& att)
 {
     this->updateTimes(att.times);

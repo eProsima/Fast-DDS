@@ -88,7 +88,7 @@ public:
         return true;
     }
 
-    FASTDDS_EXPORTED_API WriterListener* getListener() const override
+    FASTDDS_EXPORTED_API WriterListener* get_listener() const override
     {
         return listener_;
     }
@@ -100,7 +100,7 @@ public:
         return true;
     }
 
-    FASTDDS_EXPORTED_API bool isAsync() const override
+    FASTDDS_EXPORTED_API bool is_async() const override
     {
         return is_async_;
     }

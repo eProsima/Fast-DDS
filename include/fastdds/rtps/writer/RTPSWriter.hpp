@@ -148,14 +148,14 @@ public:
      * Update the Attributes of the Writer.
      * @param att New attributes
      */
-    FASTDDS_EXPORTED_API virtual void updateAttributes(
+    FASTDDS_EXPORTED_API virtual void update_attributes(
             const WriterAttributes& att) = 0;
 
     /**
      * Get listener
      * @return Listener
      */
-    FASTDDS_EXPORTED_API virtual WriterListener* getListener() const = 0;
+    FASTDDS_EXPORTED_API virtual WriterListener* get_listener() const = 0;
 
     /**
      * Set the listener.
@@ -170,7 +170,7 @@ public:
      * Get the publication mode
      * @return publication mode
      */
-    FASTDDS_EXPORTED_API virtual bool isAsync() const = 0;
+    FASTDDS_EXPORTED_API virtual bool is_async() const = 0;
 
     /**
      * @brief Returns if disable positive ACKs QoS is enabled.

@@ -464,7 +464,7 @@ bool EDP::unpairReaderProxy(
 #endif // if HAVE_SECURITY
                     //MATCHED AND ADDED CORRECTLY:
                     WriterListener* listener = nullptr;
-                    if (nullptr != (listener = w.getListener()))
+                    if (nullptr != (listener = w.get_listener()))
                     {
                         MatchingInfo info;
                         info.status = REMOVED_MATCHING;
@@ -877,21 +877,21 @@ bool EDP::pairingWriter(
                             "RP:" << rdatait->guid() << " match W:" << W->getGuid() << ". WLoc:" <<
                             rdatait->remote_locators());
                     //MATCHED AND ADDED CORRECTLY:
-                    if (W->getListener() != nullptr)
+                    if (W->get_listener() != nullptr)
                     {
                         MatchingInfo info;
                         info.status = MATCHED_MATCHING;
                         info.remoteEndpointGuid = reader_guid;
-                        W->getListener()->on_writer_matched(W, info);
+                        W->get_listener()->on_writer_matched(W, info);
                     }
                 }
 #endif // if HAVE_SECURITY
             }
             else
             {
-                if (no_match_reason.test(MatchingFailureMask::incompatible_qos) && W->getListener() != nullptr)
+                if (no_match_reason.test(MatchingFailureMask::incompatible_qos) && W->get_listener() != nullptr)
                 {
-                    W->getListener()->on_offered_incompatible_qos(W, incompatible_qos);
+                    W->get_listener()->on_offered_incompatible_qos(W, incompatible_qos);
                 }
 
                 //EPROSIMA_LOG_INFO(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<wdatait->m_guid<<RTPS_DEF<<endl);
@@ -901,12 +901,12 @@ bool EDP::pairingWriter(
                     mp_RTPSParticipant->security_manager().remove_reader(W->getGuid(), participant_guid, reader_guid);
 #endif // if HAVE_SECURITY
                     //MATCHED AND ADDED CORRECTLY:
-                    if (W->getListener() != nullptr)
+                    if (W->get_listener() != nullptr)
                     {
                         MatchingInfo info;
                         info.status = REMOVED_MATCHING;
                         info.remoteEndpointGuid = reader_guid;
-                        W->getListener()->on_writer_matched(W, info);
+                        W->get_listener()->on_writer_matched(W, info);
                     }
                 }
             }
@@ -952,21 +952,21 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
                             "RP:" << rdata->guid() << " match W:" << w.getGuid() << ". RLoc:" <<
                                 rdata->remote_locators());
                             //MATCHED AND ADDED CORRECTLY:
-                            if (w.getListener() != nullptr)
+                            if (w.get_listener() != nullptr)
                             {
                                 MatchingInfo info;
                                 info.status = MATCHED_MATCHING;
                                 info.remoteEndpointGuid = reader_guid;
-                                w.getListener()->on_writer_matched(&w, info);
+                                w.get_listener()->on_writer_matched(&w, info);
                             }
                         }
 #endif // if HAVE_SECURITY
                     }
                     else
                     {
-                        if (no_match_reason.test(MatchingFailureMask::incompatible_qos) && w.getListener() != nullptr)
+                        if (no_match_reason.test(MatchingFailureMask::incompatible_qos) && w.get_listener() != nullptr)
                         {
-                            w.getListener()->on_offered_incompatible_qos(&w, incompatible_qos);
+                            w.get_listener()->on_offered_incompatible_qos(&w, incompatible_qos);
                         }
 
                         if (w.matched_reader_is_matched(reader_guid)
@@ -977,12 +977,12 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
                                 w.getGuid(), participant_guid, reader_guid);
 #endif // if HAVE_SECURITY
                             //MATCHED AND ADDED CORRECTLY:
-                            if (w.getListener() != nullptr)
+                            if (w.get_listener() != nullptr)
                             {
                                 MatchingInfo info;
                                 info.status = REMOVED_MATCHING;
                                 info.remoteEndpointGuid = reader_guid;
-                                w.getListener()->on_writer_matched(&w, info);
+                                w.get_listener()->on_writer_matched(&w, info);
                             }
                         }
                     }
@@ -1032,9 +1032,9 @@ bool EDP::pairing_reader_proxy_with_local_writer(
                         else
                         {
                             if (no_match_reason.test(MatchingFailureMask::incompatible_qos) &&
-                            w.getListener() != nullptr)
+                            w.get_listener() != nullptr)
                             {
-                                w.getListener()->on_offered_incompatible_qos(&w, incompatible_qos);
+                                w.get_listener()->on_offered_incompatible_qos(&w, incompatible_qos);
                             }
 
                             if (w.matched_reader_is_matched(reader_guid)
@@ -1043,12 +1043,12 @@ bool EDP::pairing_reader_proxy_with_local_writer(
                                 mp_RTPSParticipant->security_manager().remove_reader(w.getGuid(),
                                 remote_participant_guid, reader_guid);
                                 //MATCHED AND ADDED CORRECTLY:
-                                if (w.getListener() != nullptr)
+                                if (w.get_listener() != nullptr)
                                 {
                                     MatchingInfo info;
                                     info.status = REMOVED_MATCHING;
                                     info.remoteEndpointGuid = reader_guid;
-                                    w.getListener()->on_writer_matched(&w, info);
+                                    w.get_listener()->on_writer_matched(&w, info);
                                 }
                             }
                         }
@@ -1085,12 +1085,12 @@ bool EDP::pairing_remote_reader_with_local_writer_after_security(
                         matched = true;
 
                         //MATCHED AND ADDED CORRECTLY:
-                        if (w.getListener() != nullptr)
+                        if (w.get_listener() != nullptr)
                         {
                             MatchingInfo info;
                             info.status = MATCHED_MATCHING;
                             info.remoteEndpointGuid = reader_guid;
-                            w.getListener()->on_writer_matched(&w, info);
+                            w.get_listener()->on_writer_matched(&w, info);
                         }
                     }
                     // don't look anymore

@@ -308,10 +308,10 @@ public:
     }
 
     /*** Access RTPSWriter functions ***/
-    void updateAttributes(
+    void update_attributes(
             const eprosima::fastdds::rtps::WriterAttributes& att)
     {
-        writer_->updateAttributes(att);
+        writer_->update_attributes(att);
         return;
     }
 

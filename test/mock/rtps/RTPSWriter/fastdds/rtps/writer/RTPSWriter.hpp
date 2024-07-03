@@ -70,7 +70,7 @@ public:
         return false;
     }
 
-    WriterListener* getListener() const
+    WriterListener* get_listener() const
     {
         return listener_;
     }
@@ -129,7 +129,7 @@ public:
         return m_att.endpoint;
     }
 
-    virtual void updateAttributes(
+    virtual void update_attributes(
             const WriterAttributes&)
     {
     }

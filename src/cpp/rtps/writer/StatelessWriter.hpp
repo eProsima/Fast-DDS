@@ -137,7 +137,7 @@ public:
      * Update the Attributes of the Writer.
      * @param att New attributes
      */
-    void updateAttributes(
+    void update_attributes(
             const WriterAttributes& att) override
     {
         (void)att;
