@@ -1693,7 +1693,15 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
     {
         DynamicTypeBuilder::_ref_type type_builder;
         XMLProfileManager::getDynamicTypeBuilderByName(type_builder, memberType);
-        DynamicType::_ref_type type = type_builder->build();
+        DynamicType::_ref_type type;
+        if (nullptr != type_builder)
+        {
+            type = type_builder->build();
+        }
+        else
+        {
+            type = nullptr;
+        }
 
         if (!isArray)
         {
