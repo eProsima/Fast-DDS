@@ -226,12 +226,12 @@ public:
             TopicAttributes& topic_attributes);
 
     //!Add a new dynamic type instance along with its name.
-    static bool insertDynamicTypeByName(
+    static bool insertDynamicTypeBuilderByName(
             const std::string& type_name,
-            const fastdds::dds::DynamicType::_ref_type& type);
+            const fastdds::dds::DynamicTypeBuilder::_ref_type& type);
 
-    static XMLP_ret getDynamicTypeByName(
-            fastdds::dds::DynamicType::_ref_type& dynamic_type,
+    static XMLP_ret getDynamicTypeBuilderByName(
+            fastdds::dds::DynamicTypeBuilder::_ref_type& dynamic_type,
             const std::string& type_name);
 
     /**

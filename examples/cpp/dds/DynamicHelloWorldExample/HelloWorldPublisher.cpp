@@ -28,7 +28,6 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 
 using namespace eprosima::fastdds::dds;
 
@@ -49,18 +48,18 @@ bool HelloWorldPublisher::init()
         return false;
     }
 
-    DynamicType::_ref_type dyn_type;
+    DynamicTypeBuilder::_ref_type dyn_type_builder;
     if (RETCODE_OK !=
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("HelloWorld",
-            dyn_type))
+            dyn_type_builder))
     {
         std::cout <<
             "Error getting dynamic type \"HelloWorld\"." << std::endl;
         return false;
     }
 
-    TypeSupport m_type(new DynamicPubSubType(dyn_type));
-    m_Hello = DynamicDataFactory::get_instance()->create_data(dyn_type);
+    TypeSupport m_type(new DynamicPubSubType(dyn_type_builder->build()));
+    m_Hello = DynamicDataFactory::get_instance()->create_data(dyn_type_builder->build());
     m_Hello->set_string_value(m_Hello->get_member_id_by_name("message"), "Hello DDS Dynamic World");
     m_Hello->set_uint32_value(m_Hello->get_member_id_by_name("index"), 0);
     m_Hello->set_uint32_values(m_Hello->get_member_id_by_name("array"), {10, 20, 30, 40, 50, 60, 70, 80, 90, 100});

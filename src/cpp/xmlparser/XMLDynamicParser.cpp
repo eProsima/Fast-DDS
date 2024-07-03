@@ -379,9 +379,17 @@ static DynamicType::_ref_type getDiscriminatorTypeBuilder(
         return factory->create_wstring_type(0 == bound ? static_cast<uint32_t>(LENGTH_UNLIMITED) : bound)->build();
     }
 
-    DynamicType::_ref_type ret;
-    XMLProfileManager::getDynamicTypeByName(ret, disc);
-    return ret;
+    DynamicTypeBuilder::_ref_type ret;
+    XMLProfileManager::getDynamicTypeBuilderByName(ret, disc);
+    if (nullptr != ret)
+    {
+        return ret->build();
+    }
+    else
+    {
+        return nullptr;
+    }
+
 }
 
 XMLP_ret XMLParser::parseXMLAliasDynamicType(
@@ -453,8 +461,8 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(
             const char* name = p_root->Attribute(NAME);
             if (name != nullptr && name[0] != '\0')
             {
-                DynamicType::_ref_type aux_type;
-                XMLProfileManager::getDynamicTypeByName(aux_type, name);
+                DynamicTypeBuilder::_ref_type aux_type;
+                XMLProfileManager::getDynamicTypeBuilderByName(aux_type, name);
                 if (!aux_type)
                 {
                     TypeDescriptor::_ref_type alias_descriptor {traits<TypeDescriptor>::make_shared()};
@@ -464,7 +472,7 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(
                     DynamicTypeBuilder::_ref_type builder {DynamicTypeBuilderFactory::get_instance()->create_type(
                                                                alias_descriptor)};
                     if (nullptr == builder
-                            || false == XMLProfileManager::insertDynamicTypeByName(name, builder->build()))
+                            || false == XMLProfileManager::insertDynamicTypeBuilderByName(name, builder))
                     {
                         ret = XMLP_ret::XML_ERROR;
                     }
@@ -526,8 +534,8 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
         return XMLP_ret::XML_ERROR;
     }
 
-    DynamicType::_ref_type aux_type;
-    XMLProfileManager::getDynamicTypeByName(aux_type, name);
+    DynamicTypeBuilder::_ref_type aux_type;
+    XMLProfileManager::getDynamicTypeBuilderByName(aux_type, name);
     if (aux_type)
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing 'bitsetDcl' type: Type '" << name << "' already defined.");
@@ -569,8 +577,9 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
     const char* baseType = p_root->Attribute(BASE_TYPE);
     if (baseType != nullptr)
     {
-        DynamicType::_ref_type parent_type;
-        XMLProfileManager::getDynamicTypeByName(parent_type, baseType);
+        DynamicTypeBuilder::_ref_type parent_type_builder;
+        XMLProfileManager::getDynamicTypeBuilderByName(parent_type_builder, baseType);
+        DynamicType::_ref_type parent_type = parent_type_builder->build();
         if (parent_type && (TK_BITSET == parent_type->get_kind() ||
                 TK_BITSET ==
                 traits<DynamicType>::narrow<DynamicTypeImpl>(parent_type)->resolve_alias_enclosed_type()->get_kind()))
@@ -608,7 +617,7 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
 
         if (XMLP_ret::XML_OK == ret)
         {
-            if (false == XMLProfileManager::insertDynamicTypeByName(name, type_builder->build()))
+            if (false == XMLProfileManager::insertDynamicTypeBuilderByName(name, type_builder))
             {
                 ret = XMLP_ret::XML_ERROR;
             }
@@ -801,8 +810,8 @@ XMLP_ret XMLParser::parseXMLBitmaskDynamicType(
     {
         return XMLP_ret::XML_ERROR;
     }
-    DynamicType::_ref_type aux_type;
-    XMLProfileManager::getDynamicTypeByName(aux_type, name);
+    DynamicTypeBuilder::_ref_type aux_type;
+    XMLProfileManager::getDynamicTypeBuilderByName(aux_type, name);
     if (aux_type)
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing 'bitmaskDcl' type: Type '" << name << "' already defined.");
@@ -839,7 +848,7 @@ XMLP_ret XMLParser::parseXMLBitmaskDynamicType(
             }
         }
 
-        if (false == XMLProfileManager::insertDynamicTypeByName(name, type_builder->build()))
+        if (false == XMLProfileManager::insertDynamicTypeBuilderByName(name, type_builder))
         {
             ret = XMLP_ret::XML_ERROR;
         }
@@ -880,8 +889,8 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(
         return XMLP_ret::XML_ERROR;
     }
 
-    DynamicType::_ref_type aux_type;
-    XMLProfileManager::getDynamicTypeByName(aux_type, enumName);
+    DynamicTypeBuilder::_ref_type aux_type;
+    XMLProfileManager::getDynamicTypeBuilderByName(aux_type, enumName);
     if (aux_type)
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing 'enum' type: Type '" << enumName << "' already defined.");
@@ -920,7 +929,7 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(
             type_builder->add_member(md);
         }
 
-        if (false == XMLProfileManager::insertDynamicTypeByName(enumName, type_builder->build()))
+        if (false == XMLProfileManager::insertDynamicTypeBuilderByName(enumName, type_builder))
         {
             ret = XMLP_ret::XML_ERROR;
         }
@@ -958,8 +967,8 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(
         return XMLP_ret::XML_ERROR;
     }
 
-    DynamicType::_ref_type aux_type;
-    XMLProfileManager::getDynamicTypeByName(aux_type, name);
+    DynamicTypeBuilder::_ref_type aux_type;
+    XMLProfileManager::getDynamicTypeBuilderByName(aux_type, name);
     if (aux_type)
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing 'structDcl' type: Type '" << name << "' already defined.");
@@ -973,9 +982,9 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(
     const char* baseType = p_root->Attribute(BASE_TYPE);
     if (baseType != nullptr)
     {
-        DynamicType::_ref_type parent_type;
-        XMLProfileManager::getDynamicTypeByName(parent_type, baseType);
-
+        DynamicTypeBuilder::_ref_type parent_type_builder;
+        XMLProfileManager::getDynamicTypeBuilderByName(parent_type_builder, baseType);
+        DynamicType::_ref_type parent_type = parent_type_builder->build();
         if (parent_type && (TK_STRUCTURE == parent_type->get_kind() ||
                 TK_STRUCTURE ==
                 traits<DynamicType>::narrow<DynamicTypeImpl>(parent_type)->resolve_alias_enclosed_type()->get_kind()))
@@ -1013,7 +1022,7 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(
             }
         }
 
-        if (false == XMLProfileManager::insertDynamicTypeByName(name, type_builder->build()))
+        if (false == XMLProfileManager::insertDynamicTypeBuilderByName(name, type_builder))
         {
             ret = XMLP_ret::XML_ERROR;
         }
@@ -1059,8 +1068,8 @@ XMLP_ret XMLParser::parseXMLUnionDynamicType(
         return XMLP_ret::XML_ERROR;
     }
 
-    DynamicType::_ref_type aux_type;
-    XMLProfileManager::getDynamicTypeByName(aux_type, name);
+    DynamicTypeBuilder::_ref_type aux_type;
+    XMLProfileManager::getDynamicTypeBuilderByName(aux_type, name);
     if (aux_type)
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing 'unionDcl' type: Type '" << name << "' already defined.");
@@ -1134,7 +1143,7 @@ XMLP_ret XMLParser::parseXMLUnionDynamicType(
                     }
                 }
 
-                if (false == XMLProfileManager::insertDynamicTypeByName(name, type_builder->build()))
+                if (false == XMLProfileManager::insertDynamicTypeBuilderByName(name, type_builder))
                 {
                     ret = XMLP_ret::XML_ERROR;
                 }
@@ -1682,8 +1691,18 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
     }
     else // Complex type?
     {
+        DynamicTypeBuilder::_ref_type type_builder;
+        XMLProfileManager::getDynamicTypeBuilderByName(type_builder, memberType);
         DynamicType::_ref_type type;
-        XMLProfileManager::getDynamicTypeByName(type, memberType);
+        if (nullptr != type_builder)
+        {
+            type = type_builder->build();
+        }
+        else
+        {
+            type = nullptr;
+        }
+
         if (!isArray)
         {
             member = type;

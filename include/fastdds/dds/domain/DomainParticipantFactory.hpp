@@ -30,6 +30,7 @@
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
 #include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
 #include <fastdds/LibrarySettings.hpp>
 
@@ -344,7 +345,7 @@ public:
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_dynamic_type_builder_from_xml_by_name(
             const std::string& type_name,
-            DynamicType::_ref_type& type);
+            DynamicTypeBuilder::_ref_type& type);
 
     /**
      * @brief Return the TypeObjectRegistry member to access the public API.
