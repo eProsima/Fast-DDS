@@ -25,8 +25,8 @@
 
 #include "Helpers.hpp"
 
-#ifndef _FASTDDS_DISCOVERY_SERVER_CLI_PARSER_HPP_
-#define _FASTDDS_DISCOVERY_SERVER_CLI_PARSER_HPP_
+#ifndef FASTDDS_EXAMPLES_CPP_DISCOVERY_SERVER__CLIPARSER_HPP
+#define FASTDDS_EXAMPLES_CPP_DISCOVERY_SERVER__CLIPARSER_HPP
 
 namespace eprosima {
 namespace fastdds {
@@ -680,4 +680,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_DISCOVERY_SERVER_CLI_PARSER_HPP_
+#endif // FASTDDS_EXAMPLES_CPP_DISCOVERY_SERVER__CLIPARSER_HPP

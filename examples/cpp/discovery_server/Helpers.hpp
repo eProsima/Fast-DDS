@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_DISCOVERY_SERVER_EXAMPLE_HELPERS_HPP_
-#define _FASTDDS_DISCOVERY_SERVER_EXAMPLE_HELPERS_HPP_
+#ifndef FASTDDS_EXAMPLES_CPP_DISCOVERY_SERVER__HELPERS_HPP
+#define FASTDDS_EXAMPLES_CPP_DISCOVERY_SERVER__HELPERS_HPP
 
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/utils/IPLocator.hpp>
@@ -78,4 +78,4 @@ inline std::string get_ip_from_dns(
     return domain_name;
 }
 
-#endif /* _FASTDDS_DISCOVERY_SERVER_EXAMPLE_HELPERS_HPP_ */
+#endif /* FASTDDS_EXAMPLES_CPP_DISCOVERY_SERVER__HELPERS_HPP */
