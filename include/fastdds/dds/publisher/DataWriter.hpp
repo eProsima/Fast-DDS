@@ -447,8 +447,10 @@ public:
      *
      * @param[in] data Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
      * @param[in] handle InstanceHandle of the data
-     * @return RETCODE_PRECONDITION_NOT_MET if the handle introduced does not match with the one associated to the data,
-     * RETCODE_OK if the data is correctly sent and RETCODE_ERROR otherwise.
+     *
+     * @return RETCODE_PRECONDITION_NOT_MET if the handle introduced does not match with the one associated to the data.
+     * @return RETCODE_OK if the data is correctly sent.
+     * @return RETCODE_ERROR otherwise.
      */
     RTPS_DllAPI ReturnCode_t dispose(
             void* data,
