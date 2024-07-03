@@ -20,8 +20,8 @@
 #ifndef _FASTDDS_DISCOVERY_SERVER_EXAMPLE_HELPERS_HPP_
 #define _FASTDDS_DISCOVERY_SERVER_EXAMPLE_HELPERS_HPP_
 
-#include <fastdds/rtps/attributes/ServerAttributes.h>
-#include <fastdds/utils/IPLocator.h>
+#include <fastdds/rtps/common/GuidPrefix_t.hpp>
+#include <fastdds/utils/IPLocator.hpp>
 
 //! Transport kind enumeration
 enum class TransportKind : uint8_t
@@ -32,19 +32,6 @@ enum class TransportKind : uint8_t
     TCPv6,
     SHM,
 };
-
-inline eprosima::fastdds::rtps::GuidPrefix_t get_discovery_server_guid_from_id(
-        unsigned short id)
-{
-    eprosima::fastdds::rtps::GuidPrefix_t result;
-
-    // Get default DS guid and modify the one value expected to be changed
-    std::istringstream(eprosima::fastdds::rtps::DEFAULT_ROS2_SERVER_GUIDPREFIX) >> result;
-    result.value[2] =
-            static_cast<eprosima::fastdds::rtps::octet>(id); // This is done like this in Fast
-
-    return result;
-}
 
 inline bool is_ip(
         const std::string ip_str)
