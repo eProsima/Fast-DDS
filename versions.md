@@ -1,6 +1,11 @@
 Forthcoming
 -----------
 
+
+
+Version 2.6.9
+-------------
+
 * Added new `flow_controller_descriptor_list` XML configuration.
 
 Version 2.6.8
