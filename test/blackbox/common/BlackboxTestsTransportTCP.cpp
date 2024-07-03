@@ -674,7 +674,7 @@ TEST(TransportTCP, Client_reconnection)
     delete requester;
 }
 
-// Test copy constructor and copy assignment for TCPv4
+// Test zero listening port for TCPv4
 TEST_P(TransportTCP, TCPv4_autofill_port)
 {
     PubSubReader<HelloWorldPubSubType> p1(TEST_TOPIC_NAME);
@@ -704,7 +704,7 @@ TEST_P(TransportTCP, TCPv4_autofill_port)
     EXPECT_TRUE(IPLocator::getPhysicalPort(p2_locators.begin()[0]) == port);
 }
 
-// Test copy constructor and copy assignment for TCPv6
+// Test zero listening port for TCPv6
 TEST_P(TransportTCP, TCPv6_autofill_port)
 {
     PubSubReader<HelloWorldPubSubType> p1(TEST_TOPIC_NAME);
@@ -1323,6 +1323,66 @@ TEST_P(TransportTCP, large_message_large_data_send_receive)
     EXPECT_TRUE(data.empty());
 
     reader.block_for_all();
+}
+
+// Test CreateInitialConnection for TCP
+TEST_P(TransportTCP, TCP_initial_peers_connection)
+{
+    PubSubWriter<HelloWorldPubSubType> p1(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> p2(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> p3(TEST_TOPIC_NAME);
+
+    // Add TCP Transport with listening port
+    auto p1_transport = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+    p1_transport->add_listener_port(global_port);
+    auto p2_transport = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+    p2_transport->add_listener_port(global_port + 1);
+    auto p3_transport = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+    p3_transport->add_listener_port(global_port - 1);
+
+    // Add initial peer to clients
+    Locator_t initialPeerLocator;
+    initialPeerLocator.kind = LOCATOR_KIND_TCPv4;
+    IPLocator::setIPv4(initialPeerLocator, 127, 0, 0, 1);
+    initialPeerLocator.port = global_port;
+    LocatorList_t initial_peer_list;
+    initial_peer_list.push_back(initialPeerLocator);
+
+    // Setup participants
+    p1.disable_builtin_transport()
+            .add_user_transport_to_pparams(p1_transport);
+
+    p2.disable_builtin_transport()
+            .initial_peers(initial_peer_list)
+            .add_user_transport_to_pparams(p2_transport);
+
+    p3.disable_builtin_transport()
+            .initial_peers(initial_peer_list)
+            .add_user_transport_to_pparams(p3_transport);
+
+    // Init participants
+    p1.init();
+    p2.init();
+    p3.init();
+    ASSERT_TRUE(p1.isInitialized());
+    ASSERT_TRUE(p2.isInitialized());
+    ASSERT_TRUE(p3.isInitialized());
+
+    // Wait for discovery
+    p1.wait_discovery(2, std::chrono::seconds(0));
+    p2.wait_discovery(std::chrono::seconds(0), 1);
+    p3.wait_discovery(std::chrono::seconds(0), 1);
+
+    // Send and receive data
+    auto data = default_helloworld_data_generator();
+    p2.startReception(data);
+    p3.startReception(data);
+
+    p1.send(data);
+    EXPECT_TRUE(data.empty());
+
+    p2.block_for_all();
+    p3.block_for_all();
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
