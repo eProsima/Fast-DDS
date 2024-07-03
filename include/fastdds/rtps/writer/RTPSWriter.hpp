@@ -281,11 +281,6 @@ protected:
 
 private:
 
-    RecursiveTimedMutex& get_mutex()
-    {
-        return mp_mutex;
-    }
-
     RTPSWriter& operator =(
             const RTPSWriter&) = delete;
 
