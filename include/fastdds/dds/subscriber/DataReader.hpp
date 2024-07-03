@@ -590,17 +590,17 @@ public:
      *
      * If the DataReader has no samples that meet the constraints, the operations fails with RETCODE_NO_DATA.
      *
-     * @param[in,out] data_values     A LoanableCollection object where the received data samples will be returned.
-     * @param[in,out] sample_infos    A SampleInfoSeq object where the received sample info will be returned.
-     * @param[in]     max_samples     The maximum number of samples to be returned. If the special value
-     *                                @ref LENGTH_UNLIMITED is provided, as many samples will be returned as are
-     *                                available, up to the limits described in the documentation for @ref read().
-     * @param[in]     a_handle        The specified instance to return samples for. The method will fail with
-     *                                RETCODE_BAD_PARAMETER if the handle does not correspond to an existing
-     *                                data-object known to the DataReader.
-     * @param[in]     sample_states   Only data samples with @c sample_state matching one of these will be returned.
-     * @param[in]     view_states     Only data samples with @c view_state matching one of these will be returned.
-     * @param[in]     instance_states Only data samples with @c instance_state matching one of these will be returned.
+     * @param [in,out] data_values     A LoanableCollection object where the received data samples will be returned.
+     * @param [in,out] sample_infos    A SampleInfoSeq object where the received sample info will be returned.
+     * @param [in]     max_samples     The maximum number of samples to be returned. If the special value
+     *                                 @ref LENGTH_UNLIMITED is provided, as many samples will be returned as are
+     *                                 available, up to the limits described in the documentation for @ref read().
+     * @param [in]     a_handle        The specified instance to return samples for. The method will fail with
+     *                                 RETCODE_BAD_PARAMETER if the handle does not correspond to an existing
+     *                                 data-object known to the DataReader.
+     * @param [in]     sample_states   Only data samples with @c sample_state matching one of these will be returned.
+     * @param [in]     view_states     Only data samples with @c view_state matching one of these will be returned.
+     * @param [in]     instance_states Only data samples with @c instance_state matching one of these will be returned.
      *
      * @return Any of the standard return codes.
      */
