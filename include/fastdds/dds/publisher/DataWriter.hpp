@@ -198,12 +198,14 @@ public:
 
     /*!
      * @brief Informs that the application will be modifying a particular instance.
+     *
      * It gives an opportunity to the middleware to pre-configure itself to improve performance.
+     * The returned handle could be used in successive `write` or `dispose` operations.
      *
      * @param[in] instance Sample used to get the instance's key.
+     *
      * @return Handle containing the instance's key.
-     * This handle could be used in successive `write` or `dispose` operations.
-     * In case of error, HANDLE_NIL will be returned.
+     * @return HANDLE_NIL in case of error.
      */
     RTPS_DllAPI InstanceHandle_t register_instance(
             void* instance);
@@ -246,8 +248,8 @@ public:
      *
      * @param[in] instance Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
      * @param[in] handle Instance's key to be unregistered.
-     * @return Returns the operation's result.
-     * If the operation finishes successfully, ReturnCode_t::RETCODE_OK is returned.
+     *
+     * @return ReturnCode_t
      */
     RTPS_DllAPI ReturnCode_t unregister_instance(
             void* instance,
@@ -447,8 +449,10 @@ public:
      *
      * @param[in] data Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
      * @param[in] handle InstanceHandle of the data
-     * @return RETCODE_PRECONDITION_NOT_MET if the handle introduced does not match with the one associated to the data,
-     * RETCODE_OK if the data is correctly sent and RETCODE_ERROR otherwise.
+     *
+     * @return RETCODE_PRECONDITION_NOT_MET if the handle introduced does not match with the one associated to the data.
+     * @return RETCODE_OK if the data is correctly sent.
+     * @return RETCODE_ERROR otherwise.
      */
     RTPS_DllAPI ReturnCode_t dispose(
             void* data,
@@ -514,6 +518,7 @@ public:
      * @param[out] subscription_data subscription data struct
      * @param subscription_handle InstanceHandle_t of the subscription
      * @return RETCODE_OK
+     *
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t get_matched_subscription_data(
@@ -525,6 +530,7 @@ public:
      *
      * @param[out] subscription_handles Vector where the InstanceHandle_t are returned
      * @return RETCODE_OK
+     *
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t get_matched_subscriptions(
