@@ -1,0 +1,4 @@
+TwoPublishersCommunicationBestEffort
+SimpleCommunicationReliable
+SHMCommunicationSubscriberDiesWhileProcessingMessage
+

@@ -29,9 +29,3 @@ if(VIDEO_TESTS)
     add_subdirectory(video)
 endif()
 
-# Add 'xfail' label to flaky tests
-set(PERFORMANCE_XFAIL_LIST XFAIL_PERFORMANCE)
-
-foreach(PERFORMANCE_XFAIL_TEST ${PERFORMANCE_XFAIL_LIST})
-    add_xfail_label(${CMAKE_CURRENT_SOURCE_DIR}/${PERFORMANCE_XFAIL_TEST}.list)
-endforeach()

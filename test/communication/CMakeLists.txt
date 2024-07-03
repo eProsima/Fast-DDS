@@ -645,3 +645,10 @@ if(Python3_Interpreter_FOUND)
     endif()
 
 endif()
+
+# Add 'xfail' label to flaky tests
+set(COMMUNICATION_XFAIL_LIST XFAIL_COMMUNICATION)
+
+foreach(COMMUNICATION_XFAIL_TEST ${COMMUNICATION_XFAIL_LIST})
+    add_xfail_label(${CMAKE_CURRENT_SOURCE_DIR}/${COMMUNICATION_XFAIL_TEST}.list)
+endforeach()

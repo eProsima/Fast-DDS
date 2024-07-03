@@ -303,3 +303,10 @@ if(Python3_Interpreter_FOUND)
 
     endforeach(throughput_test_name)
 endif()
+
+# Add 'xfail' label to flaky tests
+set(THROUGHPUT_XFAIL_LIST XFAIL_THROUGHPUT)
+
+foreach(THROUGHPUT_XFAIL_TEST ${THROUGHPUT_XFAIL_LIST})
+    add_xfail_label(${CMAKE_CURRENT_SOURCE_DIR}/${THROUGHPUT_XFAIL_TEST}.list)
+endforeach()
