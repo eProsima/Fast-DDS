@@ -248,8 +248,8 @@ public:
      *
      * @param[in] instance Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
      * @param[in] handle Instance's key to be unregistered.
-     * @return Returns the operation's result.
-     * If the operation finishes successfully, ReturnCode_t::RETCODE_OK is returned.
+     *
+     * @return ReturnCode_t
      */
     RTPS_DllAPI ReturnCode_t unregister_instance(
             void* instance,
