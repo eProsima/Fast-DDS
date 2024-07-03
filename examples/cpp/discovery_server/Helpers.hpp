@@ -13,17 +13,18 @@
 // limitations under the License.
 
 /**
- * @file common.h
+ * @file Helpers.hpp
  *
  */
 
-#ifndef _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_COMMON_H_
-#define _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_COMMON_H_
+#ifndef FASTDDS_EXAMPLES_CPP_DISCOVERY_SERVER__HELPERS_HPP
+#define FASTDDS_EXAMPLES_CPP_DISCOVERY_SERVER__HELPERS_HPP
 
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/utils/IPLocator.hpp>
 
-enum class TransportKind
+//! Transport kind enumeration
+enum class TransportKind : uint8_t
 {
     UDPv4,
     UDPv6,
@@ -77,4 +78,4 @@ inline std::string get_ip_from_dns(
     return domain_name;
 }
 
-#endif /* _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_COMMON_H_ */
+#endif /* FASTDDS_EXAMPLES_CPP_DISCOVERY_SERVER__HELPERS_HPP */

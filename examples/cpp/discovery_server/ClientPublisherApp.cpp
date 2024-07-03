@@ -1,4 +1,4 @@
-// Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,14 +13,14 @@
 // limitations under the License.
 
 /**
- * @file DiscoveryServerPublisher.cpp
+ * @file ClientPublisherApp.cpp
  *
  */
 
-#include "DiscoveryServerPublisher.h"
+#include "ClientPublisherApp.hpp"
 
-#include <csignal>
-#include <thread>
+#include <condition_variable>
+#include <stdexcept>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
@@ -32,63 +32,58 @@
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
-#include <fastdds/utils/IPLocator.hpp>
 
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastdds::rtps;
 
-std::atomic<bool> HelloWorldPublisher::stop_(false);
+namespace eprosima {
+namespace fastdds {
+namespace examples {
+namespace discovery_server {
 
-HelloWorldPublisher::HelloWorldPublisher()
+ClientPublisherApp::ClientPublisherApp(
+        const CLIParser::client_publisher_config& config)
     : participant_(nullptr)
     , publisher_(nullptr)
     , topic_(nullptr)
     , writer_(nullptr)
     , type_(new HelloWorldPubSubType())
+    , matched_(0)
+    , samples_(config.samples)
+    , stop_(false)
+    , period_ms_(config.interval)
 {
-}
-
-bool HelloWorldPublisher::is_stopped()
-{
-    return stop_;
-}
-
-void HelloWorldPublisher::stop()
-{
-    stop_ = true;
-}
-
-bool HelloWorldPublisher::init(
-        const std::string& topic_name,
-        const std::string& server_address,
-        unsigned short server_port,
-        TransportKind transport)
-{
+    // Set up the data type with initial values
     hello_.index(0);
-    hello_.message("HelloWorld");
+    hello_.message("Hello world");
+
+    // Configure Participant QoS
     DomainParticipantQos pqos;
+
     pqos.name("DS-Client_pub");
     pqos.transport().use_builtin_transports = false;
 
-    std::string ip_server_address(server_address);
+    uint16_t server_port = config.connection_port;
+
+    std::string ip_server_address(config.connection_address);
+
     // Check if DNS is required
-    if (!is_ip(server_address))
+    if (!is_ip(config.connection_address))
     {
-        ip_server_address = get_ip_from_dns(server_address, transport);
+        ip_server_address = get_ip_from_dns(config.connection_address, config.transport_kind);
     }
 
     if (ip_server_address.empty())
     {
-        return false;
+        throw std::runtime_error("Invalid connection address");
     }
 
-    // Create DS SERVER locator
+    // Create DS locator
     eprosima::fastdds::rtps::Locator server_locator;
     eprosima::fastdds::rtps::IPLocator::setPhysicalPort(server_locator, server_port);
 
     std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> descriptor;
 
-    switch (transport)
+    switch (config.transport_kind)
     {
         case TransportKind::SHM:
             descriptor = std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
@@ -120,8 +115,6 @@ bool HelloWorldPublisher::init(
         case TransportKind::TCPv4:
         {
             auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
-            // descriptor_tmp->interfaceWhiteList.push_back(ip_server_address);
-            // One listening port must be added either in the pub or the sub
             descriptor_tmp->add_listener_port(0);
             descriptor = descriptor_tmp;
 
@@ -134,21 +127,12 @@ bool HelloWorldPublisher::init(
         case TransportKind::TCPv6:
         {
             auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
-            // descriptor_tmp->interfaceWhiteList.push_back(ip_server_address);
-            // One listening port must be added either in the pub or the sub
             descriptor_tmp->add_listener_port(0);
             descriptor = descriptor_tmp;
 
             server_locator.kind = LOCATOR_KIND_TCPv6;
             eprosima::fastdds::rtps::IPLocator::setLogicalPort(server_locator, server_port);
-            if (eprosima::fastdds::rtps::IPLocator::isIPv6(ip_server_address))
-            {
-                eprosima::fastdds::rtps::IPLocator::setIPv6(server_locator, ip_server_address);
-            }
-            else
-            {
-                eprosima::fastdds::rtps::IPLocator::setIPv6(server_locator, "::1");
-            }
+            eprosima::fastdds::rtps::IPLocator::setIPv6(server_locator, ip_server_address);
             break;
         }
 
@@ -166,12 +150,12 @@ bool HelloWorldPublisher::init(
     // Add descriptor
     pqos.transport().user_transports.push_back(descriptor);
 
-    // CREATE THE PARTICIPANT
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos, &listener_);
+    // Create Domainparticipant
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos, nullptr);
 
     if (participant_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Participant initialization failed");
     }
 
     std::cout <<
@@ -180,68 +164,71 @@ bool HelloWorldPublisher::init(
         " connecting to server <" << server_locator  << "> " <<
         std::endl;
 
-    // REGISTER THE TYPE
+    // Regsiter type
     type_.register_type(participant_);
 
-    // CREATE THE PUBLISHER
+    // Create the publisher
     publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
 
     if (publisher_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Publisher initialization failed");
     }
 
-    // CREATE THE TOPIC
-    topic_ = participant_->create_topic(topic_name, "HelloWorld", TOPIC_QOS_DEFAULT);
+    // Create the topic
+    topic_ = participant_->create_topic(config.topic_name, type_.get_type_name(), TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Topic initialization failed");
     }
 
-    // CREATE THE WRITER
+    // Create de data writer
     DataWriterQos wqos = DATAWRITER_QOS_DEFAULT;
-    writer_ = publisher_->create_datawriter(topic_, wqos, &listener_);
+
+    if (!config.reliable)
+    {
+        wqos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
+    }
+
+    if (!config.transient_local)
+    {
+        wqos.durability().kind = VOLATILE_DURABILITY_QOS;
+    }
+
+    writer_ = publisher_->create_datawriter(topic_, wqos, this);
 
     if (writer_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("DataWriter initialization failed");
     }
-    return true;
 }
 
-HelloWorldPublisher::~HelloWorldPublisher()
+ClientPublisherApp::~ClientPublisherApp()
 {
-    if (participant_ != nullptr)
+    if (nullptr != participant_)
     {
-        if (publisher_ != nullptr)
-        {
-            if (writer_ != nullptr)
-            {
-                publisher_->delete_datawriter(writer_);
-            }
-            participant_->delete_publisher(publisher_);
-        }
-        if (topic_ != nullptr)
-        {
-            participant_->delete_topic(topic_);
-        }
+        // Delete DDS entities contained within the DomainParticipant
+        participant_->delete_contained_entities();
+
+        // Delete DomainParticipant
         DomainParticipantFactory::get_instance()->delete_participant(participant_);
     }
 }
 
-void HelloWorldPublisher::PubListener::on_publication_matched(
-        eprosima::fastdds::dds::DataWriter*,
-        const eprosima::fastdds::dds::PublicationMatchedStatus& info)
+void ClientPublisherApp::on_publication_matched(
+        DataWriter* /*writer*/,
+        const PublicationMatchedStatus& info)
 {
     if (info.current_count_change == 1)
     {
-        matched_ = info.current_count;
+        matched_ = static_cast<int16_t>(info.current_count);
         std::cout << "Publisher matched." << std::endl;
+        cv_.notify_one();
     }
     else if (info.current_count_change == -1)
     {
-        matched_ = info.current_count;
+        matched_ = static_cast<int16_t>(info.current_count);
         std::cout << "Publisher unmatched." << std::endl;
     }
     else
@@ -251,61 +238,55 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
     }
 }
 
-void HelloWorldPublisher::PubListener::on_participant_discovery(
-        eprosima::fastdds::dds::DomainParticipant* /*participant*/,
-        eprosima::fastdds::rtps::ParticipantDiscoveryInfo&& info,
-        bool& should_be_ignored)
+void ClientPublisherApp::run()
 {
-    static_cast<void>(should_be_ignored);
-    if (info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+    while (!is_stopped() && ((samples_ == 0) || (hello_.index() < samples_)))
     {
-        std::cout << "Discovered Participant with GUID " << info.info.m_guid << std::endl;
-    }
-    else if (info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT ||
-            info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
-    {
-        std::cout << "Dropped Participant with GUID " << info.info.m_guid << std::endl;
+        if (publish())
+        {
+            std::cout << "Message: '" << hello_.message() << "' with index: '" << hello_.index()
+                      << "' SENT" << std::endl;
+        }
+        // Wait for period or stop event
+        std::unique_lock<std::mutex> period_lock(mutex_);
+        cv_.wait_for(period_lock, std::chrono::milliseconds(period_ms_), [&]()
+                {
+                    return is_stopped();
+                });
     }
 }
 
-void HelloWorldPublisher::runThread(
-        uint32_t samples,
-        uint32_t sleep)
+bool ClientPublisherApp::publish()
 {
-    while (!is_stopped() && (samples == 0 || hello_.index() < samples))
-    {
-        publish();
-        std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
-                  << " SENT" << std::endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
-    }
-}
-
-void HelloWorldPublisher::run(
-        uint32_t samples,
-        uint32_t sleep)
-{
-    stop_ = false;
-    std::thread thread(&HelloWorldPublisher::runThread, this, samples, sleep);
-    if (samples == 0)
-    {
-        std::cout << "Publisher running. Please press CTRL+C to stop the Publisher at any time." << std::endl;
-    }
-    else
-    {
-        std::cout << "Publisher running " << samples <<
-            " samples. Please press CTRL+C to stop the Publisher at any time." << std::endl;
-    }
-    signal(SIGINT, [](int signum)
+    bool ret = false;
+    // Wait for the data endpoints discovery
+    std::unique_lock<std::mutex> matched_lock(mutex_);
+    cv_.wait(matched_lock, [&]()
             {
-                std::cout << "SIGINT received, stopping Publisher execution." << std::endl;
-                static_cast<void>(signum); HelloWorldPublisher::stop();
+                // at least one has been discovered
+                return ((matched_ > 0) || is_stopped());
             });
-    thread.join();
+
+    if (!is_stopped())
+    {
+        hello_.index(hello_.index() + 1);
+        ret = writer_->write(&hello_);
+    }
+    return ret;
 }
 
-void HelloWorldPublisher::publish()
+bool ClientPublisherApp::is_stopped()
 {
-    hello_.index(hello_.index() + 1);
-    writer_->write(&hello_);
+    return stop_.load();
 }
+
+void ClientPublisherApp::stop()
+{
+    stop_.store(true);
+    cv_.notify_one();
+}
+
+} // namespace discovery_server
+} // namespace examples
+} // namespace fastdds
+} // namespace eprosima

@@ -1,4 +1,4 @@
-// Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,18 +13,20 @@
 // limitations under the License.
 
 /**
- * @file DiscoveryServerServer.cpp
+ * @file ServerApp.cpp
  *
  */
 
-#include "DiscoveryServerServer.h"
+#include "ServerApp.hpp"
 
 #include <condition_variable>
-#include <csignal>
-#include <mutex>
-#include <thread>
+#include <stdexcept>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
@@ -32,77 +34,58 @@
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
 
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastdds::rtps;
 
-std::atomic<bool> DiscoveryServer::stop_(false);
-std::mutex DiscoveryServer::terminate_cv_mtx_;
-std::condition_variable DiscoveryServer::terminate_cv_;
+namespace eprosima {
+namespace fastdds {
+namespace examples {
+namespace discovery_server {
 
-DiscoveryServer::DiscoveryServer()
+ServerApp::ServerApp(
+        const CLIParser::server_config& config)
     : participant_(nullptr)
-{
-}
-
-bool DiscoveryServer::is_stopped()
-{
-    return stop_;
-}
-
-void DiscoveryServer::stop()
-{
-    stop_ = true;
-    terminate_cv_.notify_all();
-}
-
-bool DiscoveryServer::init(
-        const std::string& server_address,
-        unsigned short server_port,
-        TransportKind transport,
-        bool has_connection_server,
-        const std::string& connection_server_address,
-        unsigned short connection_server_port)
+    , matched_(0)
+    , timeout_(config.timeout)
+    , start_time_(std::chrono::steady_clock::now())
+    , stop_(false)
 {
     DomainParticipantQos pqos;
     pqos.name("DS-Server");
     pqos.transport().use_builtin_transports = false;
 
-    std::string ip_listening_address(server_address);
-    std::string ip_connection_address(connection_server_address);
+    std::string ip_listening_address(config.listening_address);
+    std::string ip_connection_address(config.connection_address);
     // Check if DNS is required
-    if (!is_ip(server_address))
+    if (!is_ip(config.listening_address))
     {
-        ip_listening_address = get_ip_from_dns(server_address, transport);
+        ip_listening_address = get_ip_from_dns(config.listening_address, config.transport_kind);
     }
 
     if (ip_listening_address.empty())
     {
-        return false;
+        throw std::runtime_error("Invalid listening address");
     }
 
     // Do the same for connection
-    if (has_connection_server && !is_ip(connection_server_address))
+    if (config.is_also_client && !is_ip(config.connection_address))
     {
-        ip_connection_address = get_ip_from_dns(connection_server_address, transport);
+        ip_connection_address = get_ip_from_dns(config.connection_address, config.transport_kind);
     }
 
-    if (has_connection_server && ip_connection_address.empty())
+    if (config.is_also_client && ip_connection_address.empty())
     {
-        return false;
+        throw std::runtime_error("Invalid connection address");
     }
 
-    ///////////////////////////////
     // Configure Listening address
-    ///////////////////////////////
-
     // Create DS SERVER locator
     eprosima::fastdds::rtps::Locator listening_locator;
     eprosima::fastdds::rtps::Locator connection_locator;
-    eprosima::fastdds::rtps::IPLocator::setPhysicalPort(listening_locator, server_port);
-    eprosima::fastdds::rtps::IPLocator::setPhysicalPort(connection_locator, connection_server_port);
+    eprosima::fastdds::rtps::IPLocator::setPhysicalPort(listening_locator, config.listening_port);
+    eprosima::fastdds::rtps::IPLocator::setPhysicalPort(connection_locator, config.connection_port);
 
     std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> descriptor;
 
-    switch (transport)
+    switch (config.transport_kind)
     {
         case TransportKind::SHM:
             descriptor = std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
@@ -113,7 +96,6 @@ bool DiscoveryServer::init(
         case TransportKind::UDPv4:
         {
             auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
-            // descriptor_tmp->interfaceWhiteList.push_back(ip_listening_address);
             descriptor = descriptor_tmp;
 
             listening_locator.kind = LOCATOR_KIND_UDPv4;
@@ -126,7 +108,6 @@ bool DiscoveryServer::init(
         case TransportKind::UDPv6:
         {
             auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::UDPv6TransportDescriptor>();
-            // descriptor_tmp->interfaceWhiteList.push_back(ip_listening_address);
             descriptor = descriptor_tmp;
 
             listening_locator.kind = LOCATOR_KIND_UDPv6;
@@ -139,39 +120,30 @@ bool DiscoveryServer::init(
         case TransportKind::TCPv4:
         {
             auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
-            // descriptor_tmp->interfaceWhiteList.push_back(ip_listening_address);
-            descriptor_tmp->add_listener_port(server_port);
+            descriptor_tmp->add_listener_port(config.listening_port);
             descriptor = descriptor_tmp;
 
             listening_locator.kind = LOCATOR_KIND_TCPv4;
-            eprosima::fastdds::rtps::IPLocator::setLogicalPort(listening_locator, server_port);
+            eprosima::fastdds::rtps::IPLocator::setLogicalPort(listening_locator, config.listening_port);
             eprosima::fastdds::rtps::IPLocator::setIPv4(listening_locator, ip_listening_address);
             connection_locator.kind = LOCATOR_KIND_TCPv4;
             eprosima::fastdds::rtps::IPLocator::setIPv4(connection_locator, ip_connection_address);
-            eprosima::fastdds::rtps::IPLocator::setLogicalPort(connection_locator, connection_server_port);
+            eprosima::fastdds::rtps::IPLocator::setLogicalPort(connection_locator, config.connection_port);
             break;
         }
 
         case TransportKind::TCPv6:
         {
             auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
-            // descriptor_tmp->interfaceWhiteList.push_back(ip_listening_address);
-            descriptor_tmp->add_listener_port(server_port);
+            descriptor_tmp->add_listener_port(config.listening_port);
             descriptor = descriptor_tmp;
 
             listening_locator.kind = LOCATOR_KIND_TCPv6;
-            eprosima::fastdds::rtps::IPLocator::setLogicalPort(listening_locator, server_port);
-            if (eprosima::fastdds::rtps::IPLocator::isIPv6(ip_listening_address))
-            {
-                eprosima::fastdds::rtps::IPLocator::setIPv6(listening_locator, ip_listening_address);
-            }
-            else
-            {
-                eprosima::fastdds::rtps::IPLocator::setIPv6(listening_locator, "::1");
-            }
+            eprosima::fastdds::rtps::IPLocator::setLogicalPort(listening_locator, config.listening_port);
+            eprosima::fastdds::rtps::IPLocator::setIPv6(listening_locator, ip_listening_address);
             connection_locator.kind = LOCATOR_KIND_TCPv6;
             eprosima::fastdds::rtps::IPLocator::setIPv6(connection_locator, ip_connection_address);
-            eprosima::fastdds::rtps::IPLocator::setLogicalPort(connection_locator, connection_server_port);
+            eprosima::fastdds::rtps::IPLocator::setLogicalPort(connection_locator, config.connection_port);
             break;
         }
 
@@ -189,37 +161,29 @@ bool DiscoveryServer::init(
     // Set SERVER's listening locator for PDP
     pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(listening_locator);
 
-    ///////////////////////////////
     // Configure Connection address
-    ///////////////////////////////
-
-    if (has_connection_server)
+    if (config.is_also_client)
     {
         // Add remote SERVER to CLIENT's list of SERVERs
         pqos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(connection_locator);
     }
 
 
-    ///////////////////////////////
     // Create Participant
-    ///////////////////////////////
-
-    // CREATE THE PARTICIPANT
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos, &listener_);
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos, this);
 
     if (participant_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Participant initialization failed");
     }
 
-
-    if (has_connection_server)
+    if (config.is_also_client)
     {
         std::cout <<
             "Server Participant " << pqos.name() <<
             " created with GUID " << participant_->guid() <<
             " listening in address <" << listening_locator  << "> " <<
-            " connecting with Discovery Server <" << connection_locator  << "> " <<
+            " connected to address <" << connection_locator  << "> " <<
             std::endl;
     }
     else
@@ -230,63 +194,84 @@ bool DiscoveryServer::init(
             " listening in address <" << listening_locator  << "> " <<
             std::endl;
     }
-
-    return true;
 }
 
-DiscoveryServer::~DiscoveryServer()
+ServerApp::~ServerApp()
 {
-    if (participant_ != nullptr)
+    if (nullptr != participant_)
     {
+        // Delete DDS entities contained within the DomainParticipant
+        participant_->delete_contained_entities();
+
+        // Delete DomainParticipant
         DomainParticipantFactory::get_instance()->delete_participant(participant_);
     }
 }
 
-void DiscoveryServer::ServerListener::on_participant_discovery(
-        eprosima::fastdds::dds::DomainParticipant* /*participant*/,
-        eprosima::fastdds::rtps::ParticipantDiscoveryInfo&& info,
+void ServerApp::on_participant_discovery(
+        DomainParticipant*,
+        fastdds::rtps::ParticipantDiscoveryInfo&& info,
         bool& should_be_ignored)
 {
     static_cast<void>(should_be_ignored);
     if (info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
     {
         std::cout << "Discovered Participant with GUID " << info.info.m_guid << std::endl;
+        ++matched_;
     }
     else if (info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT ||
             info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
     {
         std::cout << "Dropped Participant with GUID " << info.info.m_guid << std::endl;
+        --matched_;
     }
 }
 
-void DiscoveryServer::run(
-        unsigned int timeout)
+void ServerApp::run()
 {
-    stop_ = false;
-    std::cout << "Server running. Please press CTRL+C to stop the Server." << std::endl;
-    signal(SIGINT, [](int signum)
-            {
-                std::cout << "SIGINT received, stopping Server execution." << std::endl;
-                static_cast<void>(signum); DiscoveryServer::stop();
-            });
-
-    if (timeout > 0)
+    while (!is_stopped())
     {
-        // Create a thread that will stop this process after timeout
-        std::thread t(
-            [=]
-                ()
-            {
-                std::this_thread::sleep_for(std::chrono::seconds(timeout));
-                std::cout << "Stopping Server execution due to timeout." << std::endl;
-                DiscoveryServer::stop();
-            });
-        t.detach();
-    }
+        // Wait for period or stop event
+        std::unique_lock<std::mutex> period_lock(mutex_);
 
-    std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
-    terminate_cv_.wait(lck, []
+        if (timeout_ != 0)
+        {
+            bool timeout = false;
+            cv_.wait_for(period_lock, std::chrono::seconds(timeout_), [&]()
+                    {
+                        timeout =
+                        ((std::chrono::steady_clock::now() - start_time_) >=
+                        std::chrono::milliseconds(timeout_ * 1000));
+                        return is_stopped() || timeout;
+                    });
+
+            if (timeout)
             {
-                return is_stopped();
-            });
+                stop();
+            }
+        }
+        else
+        {
+            cv_.wait(period_lock, [&]()
+                    {
+                        return is_stopped();
+                    });
+        }
+    }
 }
+
+bool ServerApp::is_stopped()
+{
+    return stop_.load();
+}
+
+void ServerApp::stop()
+{
+    stop_.store(true);
+    cv_.notify_one();
+}
+
+} // namespace discovery_server
+} // namespace examples
+} // namespace fastdds
+} // namespace eprosima

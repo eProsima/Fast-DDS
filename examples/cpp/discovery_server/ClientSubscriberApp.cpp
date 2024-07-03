@@ -1,4 +1,4 @@
-// Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,19 +13,20 @@
 // limitations under the License.
 
 /**
- * @file DiscoveryServerSubscriber.cpp
+ * @file ClientSubscriberApp.cpp
  *
  */
 
-#include "DiscoveryServerSubscriber.h"
+#include "ClientSubscriberApp.hpp"
 
 #include <condition_variable>
-#include <csignal>
-#include <mutex>
+#include <stdexcept>
 
+#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
@@ -33,56 +34,44 @@
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
-#include <fastdds/utils/IPLocator.hpp>
+
+#include "CLIParser.hpp"
+#include "Application.hpp"
 
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastdds::rtps;
 
-std::atomic<bool> HelloWorldSubscriber::stop_(false);
-std::mutex HelloWorldSubscriber::terminate_cv_mtx_;
-std::condition_variable HelloWorldSubscriber::terminate_cv_;
+namespace eprosima {
+namespace fastdds {
+namespace examples {
+namespace discovery_server {
 
-HelloWorldSubscriber::HelloWorldSubscriber()
+ClientSubscriberApp::ClientSubscriberApp(
+        const CLIParser::client_subscriber_config& config)
     : participant_(nullptr)
     , subscriber_(nullptr)
     , topic_(nullptr)
     , reader_(nullptr)
     , type_(new HelloWorldPubSubType())
-{
-}
-
-bool HelloWorldSubscriber::is_stopped()
-{
-    return stop_;
-}
-
-void HelloWorldSubscriber::stop()
-{
-    stop_ = true;
-    terminate_cv_.notify_all();
-}
-
-bool HelloWorldSubscriber::init(
-        const std::string& topic_name,
-        uint32_t max_messages,
-        const std::string& server_address,
-        unsigned short server_port,
-        TransportKind transport)
+    , samples_(config.samples)
+    , received_samples_(0)
+    , stop_(false)
 {
     DomainParticipantQos pqos;
     pqos.name("DS-Client_sub");
     pqos.transport().use_builtin_transports = false;
 
-    std::string ip_server_address(server_address);
+    uint16_t server_port = config.connection_port;
+
+    std::string ip_server_address(config.connection_address);
     // Check if DNS is required
-    if (!is_ip(server_address))
+    if (!is_ip(config.connection_address))
     {
-        ip_server_address = get_ip_from_dns(server_address, transport);
+        ip_server_address = get_ip_from_dns(config.connection_address, config.transport_kind);
     }
 
     if (ip_server_address.empty())
     {
-        return false;
+        throw std::runtime_error("Invalid connection address");
     }
 
     // Create DS SERVER locator
@@ -91,7 +80,7 @@ bool HelloWorldSubscriber::init(
 
     std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> descriptor;
 
-    switch (transport)
+    switch (config.transport_kind)
     {
         case TransportKind::SHM:
             descriptor = std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
@@ -144,14 +133,7 @@ bool HelloWorldSubscriber::init(
 
             server_locator.kind = LOCATOR_KIND_TCPv6;
             eprosima::fastdds::rtps::IPLocator::setLogicalPort(server_locator, server_port);
-            if (eprosima::fastdds::rtps::IPLocator::isIPv6(ip_server_address))
-            {
-                eprosima::fastdds::rtps::IPLocator::setIPv6(server_locator, ip_server_address);
-            }
-            else
-            {
-                eprosima::fastdds::rtps::IPLocator::setIPv6(server_locator, "::1");
-            }
+            eprosima::fastdds::rtps::IPLocator::setIPv6(server_locator, ip_server_address);
             break;
         }
 
@@ -169,13 +151,13 @@ bool HelloWorldSubscriber::init(
     // Add descriptor
     pqos.transport().user_transports.push_back(descriptor);
 
-    // CREATE THE PARTICIPANT
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos, &listener_,
+    // Create the Domainparticipant
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos, nullptr,
                     StatusMask::all() >> StatusMask::data_on_readers());
 
     if (participant_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Participant initialization failed");
     }
 
     std::cout <<
@@ -184,82 +166,71 @@ bool HelloWorldSubscriber::init(
         " connecting to server <" << server_locator  << "> " <<
         std::endl;
 
-    // REGISTER THE TYPE
+    // Register the type
     type_.register_type(participant_);
 
-    // CREATE THE SUBSCRIBER
+    // Create the subscriber
     subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
 
     if (subscriber_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Subscriber initialization failed");
     }
 
-    // CREATE THE TOPIC
+    // Create the topic
     topic_ = participant_->create_topic(
-        topic_name,
-        "HelloWorld",
+        config.topic_name,
+        type_.get_type_name(),
         TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Topic initialization failed");
     }
 
-    // CREATE THE READER
-    if (max_messages > 0)
-    {
-        listener_.set_max_messages(max_messages);
-    }
+    // Create the data reader
     DataReaderQos rqos = DATAREADER_QOS_DEFAULT;
-    reader_ = subscriber_->create_datareader(topic_, rqos, &listener_);
+
+    if (config.reliable)
+    {
+        rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    }
+
+    if (config.transient_local)
+    {
+        rqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    }
+
+    reader_ = subscriber_->create_datareader(topic_, rqos, this);
 
     if (reader_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("DataWriter initialization failed");
     }
-
-    return true;
 }
 
-HelloWorldSubscriber::~HelloWorldSubscriber()
+ClientSubscriberApp::~ClientSubscriberApp()
 {
-    if (participant_ != nullptr)
+    if (nullptr != participant_)
     {
-        if (topic_ != nullptr)
-        {
-            participant_->delete_topic(topic_);
-        }
-        if (subscriber_ != nullptr)
-        {
-            if (reader_ != nullptr)
-            {
-                subscriber_->delete_datareader(reader_);
-            }
-            participant_->delete_subscriber(subscriber_);
-        }
+        // Delete DDS entities contained within the DomainParticipant
+        participant_->delete_contained_entities();
+
+        // Delete DomainParticipant
         DomainParticipantFactory::get_instance()->delete_participant(participant_);
     }
 }
 
-void HelloWorldSubscriber::SubListener::set_max_messages(
-        uint32_t max_messages)
-{
-    max_messages_ = max_messages;
-}
-
-void HelloWorldSubscriber::SubListener::on_subscription_matched(
-        DataReader*,
+void ClientSubscriberApp::on_subscription_matched(
+        DataReader* /*reader*/,
         const SubscriptionMatchedStatus& info)
 {
     if (info.current_count_change == 1)
     {
-        matched_ = info.current_count;
         std::cout << "Subscriber matched." << std::endl;
     }
     else if (info.current_count_change == -1)
     {
-        matched_ = info.current_count;
         std::cout << "Subscriber unmatched." << std::endl;
     }
     else
@@ -269,18 +240,19 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
     }
 }
 
-void HelloWorldSubscriber::SubListener::on_data_available(
+void ClientSubscriberApp::on_data_available(
         DataReader* reader)
 {
     SampleInfo info;
-    while ((reader->take_next_sample(&hello_, &info) == RETCODE_OK) && !is_stopped())
+    while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(&hello_, &info)))
     {
-        if (info.instance_state == ALIVE_INSTANCE_STATE)
+        if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
         {
-            samples_++;
-            // Print your structure data here.
-            std::cout << "Message " << hello_.message() << " " << hello_.index() << " RECEIVED" << std::endl;
-            if (max_messages_ > 0 && (samples_ >= max_messages_))
+            received_samples_++;
+            // Print Hello world message data
+            std::cout << "Message: '" << hello_.message() << "' with index: '" << hello_.index()
+                      << "' RECEIVED" << std::endl;
+            if (samples_ > 0 && (received_samples_ >= samples_))
             {
                 stop();
             }
@@ -288,44 +260,27 @@ void HelloWorldSubscriber::SubListener::on_data_available(
     }
 }
 
-void HelloWorldSubscriber::SubListener::on_participant_discovery(
-        eprosima::fastdds::dds::DomainParticipant* /*participant*/,
-        eprosima::fastdds::rtps::ParticipantDiscoveryInfo&& info,
-        bool& should_be_ignored)
+void ClientSubscriberApp::run()
 {
-    static_cast<void>(should_be_ignored);
-    if (info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
-    {
-        std::cout << "Discovered Participant with GUID " << info.info.m_guid << std::endl;
-    }
-    else if (info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT ||
-            info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
-    {
-        std::cout << "Dropped Participant with GUID " << info.info.m_guid << std::endl;
-    }
-}
-
-void HelloWorldSubscriber::run(
-        uint32_t samples)
-{
-    stop_ = false;
-    if (samples > 0)
-    {
-        std::cout << "Subscriber running until " << samples <<
-            " samples have been received. Please press CTRL+C to stop the Subscriber at any time." << std::endl;
-    }
-    else
-    {
-        std::cout << "Subscriber running. Please press CTRL+C to stop the Subscriber." << std::endl;
-    }
-    signal(SIGINT, [](int signum)
-            {
-                std::cout << "SIGINT received, stopping Subscriber execution." << std::endl;
-                static_cast<void>(signum); HelloWorldSubscriber::stop();
-            });
     std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
-    terminate_cv_.wait(lck, []
+    terminate_cv_.wait(lck, [&]
             {
                 return is_stopped();
             });
 }
+
+bool ClientSubscriberApp::is_stopped()
+{
+    return stop_.load();
+}
+
+void ClientSubscriberApp::stop()
+{
+    stop_.store(true);
+    terminate_cv_.notify_all();
+}
+
+} // namespace discovery_server
+} // namespace examples
+} // namespace fastdds
+} // namespace eprosima
