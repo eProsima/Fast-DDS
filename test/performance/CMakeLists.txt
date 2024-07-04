@@ -28,3 +28,4 @@ add_subdirectory(throughput)
 if(VIDEO_TESTS)
     add_subdirectory(video)
 endif()
+

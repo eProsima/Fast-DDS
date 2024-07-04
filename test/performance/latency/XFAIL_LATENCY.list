@@ -1,0 +1,3 @@
+performance.latency.interprocess_best_effort_shm.security
+performance.latency.interprocess_reliable_shm
+performance.latency.interprocess_best_effort_shm.data_loans_and_sharing

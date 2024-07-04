@@ -302,3 +302,10 @@ if(Python3_Interpreter_FOUND)
 
     endforeach(latency_test_name)
 endif()
+
+# Add 'xfail' label to flaky tests
+set(LATENCY_XFAIL_LIST XFAIL_LATENCY)
+
+foreach(LATENCY_XFAIL_TEST ${LATENCY_XFAIL_LIST})
+    add_xfail_label(${CMAKE_CURRENT_SOURCE_DIR}/${LATENCY_XFAIL_TEST}.list)
+endforeach()
