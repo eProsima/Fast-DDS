@@ -42,7 +42,7 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Time_t.hpp>
 
 #include "./ros2/Context.hpp"
 #include "./ros2/DataReaderHolder.hpp"
@@ -53,7 +53,7 @@
 #include "./ros2/TopicHolder.hpp"
 
 #include "BlackboxTests.hpp"
-#include "../types/HelloWorldPubSubTypes.h"
+#include "../types/HelloWorldPubSubTypes.hpp"
 
 namespace eprosima {
 namespace fastdds {

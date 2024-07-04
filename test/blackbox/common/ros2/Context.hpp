@@ -45,13 +45,13 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Time_t.hpp>
 
 #include "./DataReaderHolder.hpp"
 #include "./DataWriterHolder.hpp"
 #include "./TopicHolder.hpp"
 #include "../BlackboxTests.hpp"
-#include "../../types/HelloWorldPubSubTypes.h"
+#include "../../types/HelloWorldPubSubTypes.hpp"
 
 namespace eprosima {
 namespace testing {
