@@ -24,7 +24,6 @@ add_subdirectory(cpp/flow_control)
 add_subdirectory(cpp/hello_world)
 add_subdirectory(cpp/request_reply)
 add_subdirectory(cpp/rtps)
-add_subdirectory(cpp/static_edp_discovery)
 add_subdirectory(cpp/xtypes)
 
 if (SECURITY)
