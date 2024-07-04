@@ -89,8 +89,8 @@ SubscriberApp::SubscriberApp(
     // Create DataReader
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
     subscriber_->get_default_datareader_qos(reader_qos);
-    reader_ = subscriber_->create_datareader(topic_, reader_qos, this, StatusMask::all());
-    
+    reader_ = subscriber_->create_datareader(topic_, reader_qos);
+
     if (reader_ == nullptr)
     {
         throw std::runtime_error("DataReader initialization failed");
@@ -137,21 +137,25 @@ void SubscriberApp::on_data_available(
     {
         if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
         {
-            static unsigned int fastMessages = 0;
-            static unsigned int slowMessages = 0;
+            static unsigned int fast_messages = 0;
+            static unsigned int slow_messages = 0;
 
-            if (info.sample_identity.writer_guid().entityId == fast_writer_guid)
+            auto it_f = std::find(fast_writer_guid.begin(), fast_writer_guid.end(), info.sample_identity.writer_guid());
+
+            auto it_s = std::find(slow_writer_guid.begin(), slow_writer_guid.end(), info.sample_identity.writer_guid());
+
+            if (it_f != fast_writer_guid.end())
             {
-                fastMessages++;
-                std::cout << "Sample RECEIVED from FAST writer, index=" << msg.index() << std::endl;
+                fast_messages++;
+                std::cout << "Sample RECEIVED from FAST writer with id " << *it_f << ", index=" << msg.index() << std::endl;
             }
-            else if (info.sample_identity.writer_guid().entityId == slow_writer_guid)
+            else if (it_s != slow_writer_guid.end())
             {
-                slowMessages++;
-                std::cout << "Sample RECEIVED from SLOW writer, index=" << msg.index() << std::endl;
+                slow_messages++;
+                std::cout << "Sample RECEIVED from SLOW writer with id " << *it_s << ", index=" << msg.index() << std::endl;
             }
 
-            if ((samples_ > 0) && (fastMessages >= samples_) && (slowMessages >= samples_))
+            if ((samples_ > 0) && (fast_messages >= samples_) && (slow_messages >= samples_))
             {
                 stop();
             }
@@ -169,13 +173,45 @@ void SubscriberApp::on_data_writer_discovery(
 
     if (info.info.m_qos.m_userData.data_vec() == fast_writer_id)
     {
-        fast_writer_guid = info.info.guid().entityId;
-        std::cout << "Fast writer id " << fast_writer_guid << std::endl;
+        if (info.status ==
+                eprosima::fastdds::rtps::WriterDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_WRITER)
+        {
+            fast_writer_guid.push_back(info.info.guid());
+
+            std::cout << "Fast writer with id " << info.info.guid() << " matched" << std::endl;
+        }
+        else if (info.status ==
+                eprosima::fastdds::rtps::WriterDiscoveryInfo::DISCOVERY_STATUS::REMOVED_WRITER)
+        {
+            auto it = std::find(fast_writer_guid.begin(), fast_writer_guid.end(), info.info.guid());
+
+            if (it != fast_writer_guid.end())
+            {
+                fast_writer_guid.erase(it);
+                std::cout << "Fast writer with id " << info.info.guid() << " removed" << std::endl;
+            }
+        }
     }
     else if (info.info.m_qos.m_userData.data_vec() == slow_writer_id)
     {
-        slow_writer_guid = info.info.guid().entityId;
-        std::cout << "Slow writer id " << slow_writer_guid << std::endl;
+        if (info.status ==
+                eprosima::fastdds::rtps::WriterDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_WRITER)
+        {
+            slow_writer_guid.push_back(info.info.guid());
+
+            std::cout << "Slow writer with id " << info.info.guid() << " matched" << std::endl;
+        }
+        else if (info.status ==
+                eprosima::fastdds::rtps::WriterDiscoveryInfo::DISCOVERY_STATUS::REMOVED_WRITER)
+        {
+            auto it = std::find(slow_writer_guid.begin(), slow_writer_guid.end(), info.info.guid());
+
+            if (it != slow_writer_guid.end())
+            {
+                slow_writer_guid.erase(it);
+                std::cout << "Slow writer with id " << info.info.guid() << " removed" << std::endl;
+            }
+        }
     }
 }
 

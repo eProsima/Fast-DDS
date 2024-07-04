@@ -96,9 +96,9 @@ private:
 
     std::condition_variable terminate_cv_;
 
-    eprosima::fastdds::rtps::EntityId_t slow_writer_guid;
+    std::vector<eprosima::fastdds::rtps::GUID_t> slow_writer_guid;
 
-    eprosima::fastdds::rtps::EntityId_t fast_writer_guid;
+    std::vector<eprosima::fastdds::rtps::GUID_t> fast_writer_guid;
 
 };
 
