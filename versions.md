@@ -78,6 +78,7 @@ Forthcoming
   * Remote Discovery servers connection list can now be updated and modified at runtime without restrictions.
   * Fast DDS CLI has been updated to allow the creation of servers without GUID.
 * Refactor in XML Parser to return DynamicTypeBuilder instead of DynamicType
+* Setting vendor_id in the received CacheChange_t for Data and DataFrag.
 
 Version 2.14.0
 --------------
