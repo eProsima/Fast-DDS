@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FASTDDS_XTYPES_SERIALIZERS_JSON_DYNAMIC_DATA_JSON_HPP
-#define FASTDDS_XTYPES_SERIALIZERS_JSON_DYNAMIC_DATA_JSON_HPP
+#ifndef FASTDDS_XTYPES_SERIALIZERS_JSON__DYNAMIC_DATA_JSON_HPP
+#define FASTDDS_XTYPES_SERIALIZERS_JSON__DYNAMIC_DATA_JSON_HPP
 
 #include <iostream>
 #include <string>
@@ -95,4 +95,4 @@ void json_insert(
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_XTYPES_SERIALIZERS_JSON_DYNAMIC_DATA_JSON_HPP
+#endif // FASTDDS_XTYPES_SERIALIZERS_JSON__DYNAMIC_DATA_JSON_HPP

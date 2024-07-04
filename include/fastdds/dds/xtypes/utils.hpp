@@ -16,8 +16,8 @@
  * @file utils.hpp
  */
 
-#ifndef FASTDDS_DDS_XTYPES_UTILS_HPP
-#define FASTDDS_DDS_XTYPES_UTILS_HPP
+#ifndef FASTDDS_DDS_XTYPES__UTILS_HPP
+#define FASTDDS_DDS_XTYPES__UTILS_HPP
 
 #include <iostream>
 
@@ -50,4 +50,4 @@ ReturnCode_t json_serialize(
 } // fastdds
 } // eprosima
 
-#endif // FASTDDS_DDS_XTYPES_UTILS_HPP
+#endif // FASTDDS_DDS_XTYPES__UTILS_HPP
