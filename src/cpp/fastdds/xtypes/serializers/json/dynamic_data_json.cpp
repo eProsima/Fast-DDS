@@ -49,7 +49,7 @@ ReturnCode_t json_serialize(
 {
     if (nullptr == data)
     {
-        EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                 "Encountered null data value while performing DynamicData to JSON serialization.");
         return RETCODE_BAD_PARAMETER;
     }
@@ -62,7 +62,7 @@ ReturnCode_t json_serialize(
             ReturnCode_t ret = data->type()->get_all_members(members);
             if (RETCODE_OK != ret)
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                         "Error encountered while serializing structure to JSON: get_all_members failed.");
                 return ret;
             }
@@ -70,7 +70,7 @@ ReturnCode_t json_serialize(
             {
                 if (RETCODE_OK != (ret = json_serialize_member(data, it.second, output, format)))
                 {
-                    EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                    EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                             "Error encountered while serializing structure member '" << it.second->get_name() <<
                             "' to JSON.");
                     break;
@@ -80,7 +80,7 @@ ReturnCode_t json_serialize(
         }
         default:
         {
-            EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Only structs are supported by json_serialize method.");
+            EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Only structs are supported by json_serialize method.");
             return RETCODE_BAD_PARAMETER;
         }
     }
@@ -141,7 +141,7 @@ ReturnCode_t json_serialize_member(
                     traits<DynamicData>::narrow<DynamicDataImpl>(data->loan_value(member_id));
             if (nullptr == st_data)
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                         "Error encountered while serializing " << kind_str << " member to JSON: loan_value failed.");
                 return RETCODE_BAD_PARAMETER;
             }
@@ -152,7 +152,7 @@ ReturnCode_t json_serialize_member(
             ReturnCode_t ret = st_data->enclosing_type()->get_all_members(members);
             if (RETCODE_OK != ret)
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                         "Error encountered while serializing " << kind_str <<
                         " member to JSON: get_all_members failed.");
             }
@@ -162,7 +162,7 @@ ReturnCode_t json_serialize_member(
                 {
                     if (RETCODE_OK != (ret = json_serialize_member(st_data, it.second, j_struct, format)))
                     {
-                        EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                                 "Error encountered while serializing " << kind_str << " member '" << it.second->get_name() <<
                                 "' to JSON.");
                         break;
@@ -180,7 +180,7 @@ ReturnCode_t json_serialize_member(
             ReturnCode_t ret_return_loan;
             if (RETCODE_OK != (ret_return_loan = data->return_loaned_value(st_data)))
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                         "Error encountered while returning " << kind_str << " loaned value.");
             }
             // Give priority to prior error if occurred
@@ -192,7 +192,7 @@ ReturnCode_t json_serialize_member(
                     traits<DynamicData>::narrow<DynamicDataImpl>(data->loan_value(member_id));
             if (nullptr == st_data)
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                         "Error encountered while serializing union member to JSON: loan_value failed.");
                 return RETCODE_BAD_PARAMETER;
             }
@@ -204,7 +204,7 @@ ReturnCode_t json_serialize_member(
                             st_data->selected_union_member());
             if (RETCODE_OK != ret)
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                         "Error encountered while serializing union member to JSON: get_member failed.");
             }
             else
@@ -220,7 +220,7 @@ ReturnCode_t json_serialize_member(
             ReturnCode_t ret_return_loan;
             if (RETCODE_OK != (ret_return_loan = data->return_loaned_value(st_data)))
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while returning union loaned value.");
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while returning union loaned value.");
             }
             // Give priority to prior error if occurred
             return RETCODE_OK != ret ? ret : ret_return_loan;
@@ -233,7 +233,7 @@ ReturnCode_t json_serialize_member(
                     traits<DynamicData>::narrow<DynamicDataImpl>(data->loan_value(member_id));
             if (nullptr == st_data)
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                         "Error encountered while serializing " << kind_str << " member to JSON: loan_value failed.");
                 return RETCODE_BAD_PARAMETER;
             }
@@ -246,7 +246,7 @@ ReturnCode_t json_serialize_member(
             ReturnCode_t ret_return_loan;
             if (RETCODE_OK != (ret_return_loan = data->return_loaned_value(st_data)))
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                         "Error encountered while returning " << kind_str << " loaned value.");
             }
             // Give priority to prior error if occurred
@@ -258,7 +258,7 @@ ReturnCode_t json_serialize_member(
                     traits<DynamicData>::narrow<DynamicDataImpl>(data->loan_value(member_id));
             if (nullptr == st_data)
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                         "Error encountered while serializing map member to JSON: loan_value failed.");
                 return RETCODE_BAD_PARAMETER;
             }
@@ -274,7 +274,7 @@ ReturnCode_t json_serialize_member(
             std::map<std::string, MemberId> key_to_id;
             if (RETCODE_OK != (ret = st_data->get_keys(key_to_id)))
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                         "Error encountered while serializing map member to JSON: get_keys failed.");
             }
 
@@ -294,7 +294,7 @@ ReturnCode_t json_serialize_member(
                     MemberId id = st_data->get_member_id_at_index(i);
                     if (MEMBER_ID_INVALID == id)
                     {
-                        EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                                 "Error encountered while serializing map member's member to JSON: invalid member id.");
                         ret = RETCODE_BAD_PARAMETER;
                         break;
@@ -303,7 +303,7 @@ ReturnCode_t json_serialize_member(
                     auto it = id_to_key.find(id);
                     if (it == id_to_key.end())
                     {
-                        EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                                 "Error encountered while serializing map member's member to JSON: key not found.");
                         ret = RETCODE_BAD_PARAMETER;
                         break;
@@ -314,7 +314,7 @@ ReturnCode_t json_serialize_member(
                             json_serialize_member(st_data, id, value_type->get_kind(), it->second, j_map,
                             format)))
                     {
-                        EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                                 "Error encountered while serializing map member's member to JSON.");
                         break;
                     }
@@ -332,7 +332,7 @@ ReturnCode_t json_serialize_member(
             ReturnCode_t ret_return_loan;
             if (RETCODE_OK != (ret_return_loan = data->return_loaned_value(st_data)))
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while returning map loaned value.");
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while returning map loaned value.");
             }
             // Give priority to prior error if occurred
             return RETCODE_OK != ret ? ret : ret_return_loan;
@@ -343,7 +343,7 @@ ReturnCode_t json_serialize_member(
                     traits<DynamicData>::narrow<DynamicDataImpl>(data->loan_value(member_id));
             if (nullptr == st_data)
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                         "Error encountered while serializing bitmask member to JSON: loan_value failed.");
                 return RETCODE_BAD_PARAMETER;
             }
@@ -391,7 +391,7 @@ ReturnCode_t json_serialize_member(
 
                 if (RETCODE_OK != ret)
                 {
-                    EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                    EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                             "Error encountered while serializing bitmask member to JSON: failed to get value.");
                 }
             }
@@ -442,7 +442,7 @@ ReturnCode_t json_serialize_member(
 
                 if (RETCODE_OK != ret)
                 {
-                    EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                    EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                             "Error encountered while serializing bitmask member to JSON: failed to get value.");
                 }
                 else
@@ -451,7 +451,7 @@ ReturnCode_t json_serialize_member(
                     DynamicTypeMembersById bitmask_members;
                     if (RETCODE_OK != (ret = bitmask_type->get_all_members(bitmask_members)))
                     {
-                        EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                                 "Error encountered while serializing bitmask member to JSON: get_all_members failed.");
                     }
                     else
@@ -477,7 +477,7 @@ ReturnCode_t json_serialize_member(
             ReturnCode_t ret_return_loan;
             if (RETCODE_OK != (ret_return_loan = data->return_loaned_value(st_data)))
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while returning bitmask loaned value.");
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while returning bitmask loaned value.");
             }
             // Give priority to prior error if occurred
             return RETCODE_OK != ret ? ret : ret_return_loan;
@@ -485,12 +485,12 @@ ReturnCode_t json_serialize_member(
         case TK_ALIAS:
         {
             // This should not happen, as this method should always be called with the enclosed type
-            EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+            EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                     "Error encountered while serializing member to JSON: unexpected TK_ALIAS kind.");
             return RETCODE_BAD_PARAMETER;
         }
         default:
-            EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+            EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                     "Error encountered while serializing map member to JSON: unexpected kind " << member_kind <<
                     " found.");
             return RETCODE_BAD_PARAMETER;
@@ -519,7 +519,7 @@ ReturnCode_t json_serialize_basic_member(
     {
         case TK_NONE:
         {
-            EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+            EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                     "Error encountered while serializing basic member to JSON: unexpected TK_NONE kind.");
             return RETCODE_BAD_PARAMETER;
         }
@@ -533,7 +533,7 @@ ReturnCode_t json_serialize_basic_member(
             }
             else
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while serializing TK_BOOLEAN member to JSON.");
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing TK_BOOLEAN member to JSON.");
             }
             return ret;
         }
@@ -547,7 +547,7 @@ ReturnCode_t json_serialize_basic_member(
             }
             else
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while serializing TK_BYTE member to JSON.");
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing TK_BYTE member to JSON.");
             }
             return ret;
         }
@@ -561,7 +561,7 @@ ReturnCode_t json_serialize_basic_member(
             }
             else
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while serializing TK_INT8 member to JSON.");
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing TK_INT8 member to JSON.");
             }
             return ret;
         }
@@ -575,7 +575,7 @@ ReturnCode_t json_serialize_basic_member(
             }
             else
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while serializing TK_INT16 member to JSON.");
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing TK_INT16 member to JSON.");
             }
             return ret;
         }
@@ -589,7 +589,7 @@ ReturnCode_t json_serialize_basic_member(
             }
             else
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while serializing TK_INT32 member to JSON.");
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing TK_INT32 member to JSON.");
             }
             return ret;
         }
@@ -603,7 +603,7 @@ ReturnCode_t json_serialize_basic_member(
             }
             else
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while serializing TK_INT64 member to JSON.");
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing TK_INT64 member to JSON.");
             }
             return ret;
         }
@@ -617,7 +617,7 @@ ReturnCode_t json_serialize_basic_member(
             }
             else
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while serializing TK_UINT8 member to JSON.");
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing TK_UINT8 member to JSON.");
             }
             return ret;
         }
@@ -631,7 +631,7 @@ ReturnCode_t json_serialize_basic_member(
             }
             else
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while serializing TK_UINT16 member to JSON.");
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing TK_UINT16 member to JSON.");
             }
             return ret;
         }
@@ -645,7 +645,7 @@ ReturnCode_t json_serialize_basic_member(
             }
             else
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while serializing TK_UINT32 member to JSON.");
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing TK_UINT32 member to JSON.");
             }
             return ret;
         }
@@ -659,7 +659,7 @@ ReturnCode_t json_serialize_basic_member(
             }
             else
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while serializing TK_UINT64 member to JSON.");
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing TK_UINT64 member to JSON.");
             }
             return ret;
         }
@@ -673,7 +673,7 @@ ReturnCode_t json_serialize_basic_member(
             }
             else
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while serializing TK_FLOAT32 member to JSON.");
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing TK_FLOAT32 member to JSON.");
             }
             return ret;
         }
@@ -687,7 +687,7 @@ ReturnCode_t json_serialize_basic_member(
             }
             else
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while serializing TK_FLOAT64 member to JSON.");
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing TK_FLOAT64 member to JSON.");
             }
             return ret;
         }
@@ -701,7 +701,7 @@ ReturnCode_t json_serialize_basic_member(
             }
             else
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while serializing TK_FLOAT128 member to JSON.");
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing TK_FLOAT128 member to JSON.");
             }
             return ret;
         }
@@ -716,7 +716,7 @@ ReturnCode_t json_serialize_basic_member(
             }
             else
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while serializing TK_CHAR8 member to JSON.");
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing TK_CHAR8 member to JSON.");
             }
             return ret;
         }
@@ -734,7 +734,7 @@ ReturnCode_t json_serialize_basic_member(
             }
             else
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while serializing TK_CHAR16 member to JSON.");
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing TK_CHAR16 member to JSON.");
             }
             return ret;
         }
@@ -748,7 +748,7 @@ ReturnCode_t json_serialize_basic_member(
             }
             else
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while serializing TK_STRING8 member to JSON.");
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing TK_STRING8 member to JSON.");
             }
             return ret;
         }
@@ -765,7 +765,7 @@ ReturnCode_t json_serialize_basic_member(
             }
             else
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while serializing TK_STRING16 member to JSON.");
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing TK_STRING16 member to JSON.");
             }
             return ret;
         }
@@ -775,7 +775,7 @@ ReturnCode_t json_serialize_basic_member(
             ReturnCode_t ret = data->get_int32_value(value, member_id);
             if (RETCODE_OK != ret)
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while serializing TK_ENUM member to JSON.");
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing TK_ENUM member to JSON.");
                 return ret;
             }
 
@@ -795,7 +795,7 @@ ReturnCode_t json_serialize_basic_member(
                 MemberDescriptor::_ref_type enum_desc{traits<MemberDescriptor>::make_shared()};
                 if (RETCODE_OK != (ret = data->get_descriptor(enum_desc, member_id)))
                 {
-                    EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                    EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                             "Error encountered while serializing TK_ENUM member to JSON: get_descriptor failed.");
                     return ret;
                 }
@@ -808,7 +808,7 @@ ReturnCode_t json_serialize_basic_member(
                     traits<DynamicType>::narrow<DynamicTypeImpl>(enum_type)->resolve_alias_enclosed_type()->
                             get_all_members_by_name(all_members)))
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                         "Error encountered while serializing TK_ENUM member to JSON: get_all_members_by_name failed.");
                 return ret;
             }
@@ -841,13 +841,13 @@ ReturnCode_t json_serialize_basic_member(
             }
             else
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                         "Error encountered while serializing TK_ENUM member to JSON: enum value not found.");
             }
             return ret;
         }
         default:
-            EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+            EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                     "Error encountered while serializing basic member to JSON: unexpected kind " << member_kind <<
                     " found.");
             return RETCODE_BAD_PARAMETER;
@@ -876,7 +876,7 @@ ReturnCode_t json_serialize_collection(
                             ->get_kind(), j_array,
                     format)))
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while serializing sequence collection to JSON.");
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing sequence collection to JSON.");
                 break;
             }
         }
@@ -896,7 +896,7 @@ ReturnCode_t json_serialize_collection(
                     descriptor.element_type())->resolve_alias_enclosed_type()->get_kind(), index, bounds, j_array,
                 format)))
         {
-            EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while serializing array collection to JSON.");
+            EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing array collection to JSON.");
         }
         else
         {
@@ -925,7 +925,7 @@ ReturnCode_t json_serialize_array(
                     json_serialize_member(data, static_cast<MemberId>(index++), member_kind, j_array,
                     format)))
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS, "Error encountered while serializing array element to JSON.");
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing array element to JSON.");
                 break;
             }
         }
@@ -940,7 +940,7 @@ ReturnCode_t json_serialize_array(
                     json_serialize_array(data, member_kind, index,
                     std::vector<unsigned int>(bounds.begin() + 1, bounds.end()), inner_array, format)))
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                         "Error encountered while serializing array's array element to JSON.");
                 break;
             }
