@@ -247,6 +247,4 @@ ReturnCode_t get_default_type_kind(
 } // fastdds
 } // eprosima
 
-#include "dyn_type_tree.ipp"
-
 #endif // _FASTDDS_DDS_XTYPES_DYN_TYPE_TREE_HPP_

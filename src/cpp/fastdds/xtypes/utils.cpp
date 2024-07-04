@@ -40,7 +40,7 @@
 
 #include "dynamic_types/DynamicDataImpl.hpp"
 #include "serializers/json/dynamic_data_json.hpp"
-#include "type_conversion/dyn_type_tree.hpp"
+#include "serializers/idl/dynamic_type_idl.hpp"
 
 #include "utils/collections/TreeNode.hpp"
 

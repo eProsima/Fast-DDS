@@ -20,59 +20,59 @@
 
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
-#include "type_objects/alias_struct/alias_struct.hpp"
-#include "type_objects/alias_struct/alias_structPubSubTypes.hpp"
+#include "gen/alias_struct/alias_struct.hpp"
+#include "gen/alias_struct/alias_structPubSubTypes.hpp"
 
-#include "type_objects/arrays_and_sequences/arrays_and_sequences.hpp"
-#include "type_objects/arrays_and_sequences/arrays_and_sequencesPubSubTypes.hpp"
+#include "gen/arrays_and_sequences/arrays_and_sequences.hpp"
+#include "gen/arrays_and_sequences/arrays_and_sequencesPubSubTypes.hpp"
 
-#include "type_objects/basic_array_struct/basic_array_struct.hpp"
-#include "type_objects/basic_array_struct/basic_array_structPubSubTypes.hpp"
+#include "gen/basic_array_struct/basic_array_struct.hpp"
+#include "gen/basic_array_struct/basic_array_structPubSubTypes.hpp"
 
-#include "type_objects/basic_struct/basic_struct.hpp"
-#include "type_objects/basic_struct/basic_structPubSubTypes.hpp"
+#include "gen/basic_struct/basic_struct.hpp"
+#include "gen/basic_struct/basic_structPubSubTypes.hpp"
 
-#include "type_objects/bitmask_struct/bitmask_struct.hpp"
-#include "type_objects/bitmask_struct/bitmask_structPubSubTypes.hpp"
+#include "gen/bitmask_struct/bitmask_struct.hpp"
+#include "gen/bitmask_struct/bitmask_structPubSubTypes.hpp"
 
-#include "type_objects/bitset_struct/bitset_struct.hpp"
-#include "type_objects/bitset_struct/bitset_structPubSubTypes.hpp"
+#include "gen/bitset_struct/bitset_struct.hpp"
+#include "gen/bitset_struct/bitset_structPubSubTypes.hpp"
 
-#include "type_objects/char_sequence/char_sequence.hpp"
-#include "type_objects/char_sequence/char_sequencePubSubTypes.hpp"
+#include "gen/char_sequence/char_sequence.hpp"
+#include "gen/char_sequence/char_sequencePubSubTypes.hpp"
 
-#include "type_objects/complex_nested_arrays/complex_nested_arrays.hpp"
-#include "type_objects/complex_nested_arrays/complex_nested_arraysPubSubTypes.hpp"
+#include "gen/complex_nested_arrays/complex_nested_arrays.hpp"
+#include "gen/complex_nested_arrays/complex_nested_arraysPubSubTypes.hpp"
 
-#include "type_objects/enum_struct/enum_struct.hpp"
-#include "type_objects/enum_struct/enum_structPubSubTypes.hpp"
+#include "gen/enum_struct/enum_struct.hpp"
+#include "gen/enum_struct/enum_structPubSubTypes.hpp"
 
-#include "type_objects/extensibility_struct/extensibility_struct.hpp"
-#include "type_objects/extensibility_struct/extensibility_structPubSubTypes.hpp"
+#include "gen/extensibility_struct/extensibility_struct.hpp"
+#include "gen/extensibility_struct/extensibility_structPubSubTypes.hpp"
 
-#include "type_objects/float_bounded_sequence/float_bounded_sequence.hpp"
-#include "type_objects/float_bounded_sequence/float_bounded_sequencePubSubTypes.hpp"
+#include "gen/float_bounded_sequence/float_bounded_sequence.hpp"
+#include "gen/float_bounded_sequence/float_bounded_sequencePubSubTypes.hpp"
 
-#include "type_objects/hello_world/hello_world.hpp"
-#include "type_objects/hello_world/hello_worldPubSubTypes.hpp"
+#include "gen/hello_world/hello_world.hpp"
+#include "gen/hello_world/hello_worldPubSubTypes.hpp"
 
-#include "type_objects/inheritance_struct/inheritance_struct.hpp"
-#include "type_objects/inheritance_struct/inheritance_structPubSubTypes.hpp"
+#include "gen/inheritance_struct/inheritance_struct.hpp"
+#include "gen/inheritance_struct/inheritance_structPubSubTypes.hpp"
 
-#include "type_objects/key_struct/key_struct.hpp"
-#include "type_objects/key_struct/key_structPubSubTypes.hpp"
+#include "gen/key_struct/key_struct.hpp"
+#include "gen/key_struct/key_structPubSubTypes.hpp"
 
-#include "type_objects/map_struct/map_struct.hpp"
-#include "type_objects/map_struct/map_structPubSubTypes.hpp"
+#include "gen/map_struct/map_struct.hpp"
+#include "gen/map_struct/map_structPubSubTypes.hpp"
 
-#include "type_objects/nested_struct/nested_struct.hpp"
-#include "type_objects/nested_struct/nested_structPubSubTypes.hpp"
+#include "gen/nested_struct/nested_struct.hpp"
+#include "gen/nested_struct/nested_structPubSubTypes.hpp"
 
-#include "type_objects/numeric_array/numeric_array.hpp"
-#include "type_objects/numeric_array/numeric_arrayPubSubTypes.hpp"
+#include "gen/numeric_array/numeric_array.hpp"
+#include "gen/numeric_array/numeric_arrayPubSubTypes.hpp"
 
-#include "type_objects/union_struct/union_struct.hpp"
-#include "type_objects/union_struct/union_structPubSubTypes.hpp"
+#include "gen/union_struct/union_struct.hpp"
+#include "gen/union_struct/union_structPubSubTypes.hpp"
 
 namespace test {
 

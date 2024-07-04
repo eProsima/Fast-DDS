@@ -78,6 +78,8 @@ target_sources(fastdds-xtypes-dynamic-types-impl INTERFACE
     dynamic_types/TypeDescriptorImpl.hpp
     dynamic_types/VerbatimTextDescriptorImpl.cpp
     dynamic_types/VerbatimTextDescriptorImpl.hpp
+    serializers/idl/dynamic_type_idl.cpp
+    serializers/idl/dynamic_type_idl.hpp
     serializers/json/dynamic_data_json.cpp
     serializers/json/dynamic_data_json.hpp
     utils.cpp

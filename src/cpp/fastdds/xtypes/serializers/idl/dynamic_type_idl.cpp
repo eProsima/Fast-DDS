@@ -20,10 +20,12 @@
 #include <vector>
 
 #include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/core/Types.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/detail/dynamic_language_binding.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 
+#include "dynamic_type_idl.hpp"
 
 namespace eprosima {
 namespace fastdds {

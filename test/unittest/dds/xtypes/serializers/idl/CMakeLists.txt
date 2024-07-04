@@ -86,34 +86,27 @@ configure_file(
     COPYONLY)
 
 set(RESOURCEDYNTYPETOIDLTESTS_SOURCE
-    DynamicTypeSerializationTests.cpp
+    DynTypeIDLTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/utils.cpp)
 
-file(GLOB DATATYPE_SOURCES_CPP "types/type_objects/**/*.cpp")
-file(GLOB DATATYPE_SOURCES_CXX "types/type_objects/**/*.cxx")
-
-set(
-    DATATYPE_SOURCES
-        ${DATATYPE_SOURCES_CPP}
-        ${DATATYPE_SOURCES_CXX}
-    )
+file(GLOB DATATYPE_SOURCES "types/gen/**/*.cxx")
 
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)
 endif()
 
-add_executable(DynamicTypeSerializationTests ${RESOURCEDYNTYPETOIDLTESTS_SOURCE} ${DATATYPE_SOURCES})
-target_compile_definitions(DynamicTypeSerializationTests PRIVATE
+add_executable(DynTypeIDLTests ${RESOURCEDYNTYPETOIDLTESTS_SOURCE} ${DATATYPE_SOURCES})
+target_compile_definitions(DynTypeIDLTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
-target_include_directories(DynamicTypeSerializationTests PRIVATE
+target_include_directories(DynTypeIDLTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(DynamicTypeSerializationTests
+target_link_libraries(DynTypeIDLTests
     fastcdr
     fastdds
     GTest::gtest
     ${CMAKE_DL_LIBS})
-gtest_discover_tests(DynamicTypeSerializationTests SOURCES ${TYPEOBJECTUTILSTESTS_SOURCE})
+gtest_discover_tests(DynTypeIDLTests SOURCES ${TYPEOBJECTUTILSTESTS_SOURCE})

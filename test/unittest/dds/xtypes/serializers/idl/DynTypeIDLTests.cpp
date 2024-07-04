@@ -32,7 +32,7 @@ using namespace eprosima;
 using namespace eprosima::fastdds::dds;
 
 
-class DynamicTypeSerializationTests : public ::testing::TestWithParam<std::string>
+class DynTypeIDLTests : public ::testing::TestWithParam<std::string>
 {
 public:
 
@@ -67,7 +67,7 @@ protected:
  *  - Verify that the IDL serialization finished successfully.
  *  - Verify that the two IDLs match.
  */
-TEST_P(DynamicTypeSerializationTests, to_idl)
+TEST_P(DynTypeIDLTests, to_idl)
 {
     const std::string type = GetParam();
 
@@ -92,8 +92,8 @@ TEST_P(DynamicTypeSerializationTests, to_idl)
 }
 
 INSTANTIATE_TEST_SUITE_P(
-        DynamicTypeSerializationTests,
-        DynamicTypeSerializationTests,
+        DynTypeIDLTests,
+        DynTypeIDLTests,
         ::testing::ValuesIn(test::supported_types)
 );
 
