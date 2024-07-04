@@ -779,19 +779,33 @@ ReturnCode_t json_serialize_basic_member(
                 return ret;
             }
 
-            MemberDescriptor::_ref_type enum_desc{traits<MemberDescriptor>::make_shared()};
-            if (RETCODE_OK != (ret = data->get_descriptor(enum_desc, member_id)))
+            // Get enumeration type to obtain the names of the different values
+            // NOTE: a different approach is required for collections and other "holder" types (e.g. structures),
+            // as unlike with DynamicData::loan_value or DynamicData::get_X_value, DynamicData::get_descriptor method
+            // is not meant to work with sequences nor arrays according to XTypes standard.
+            traits<DynamicType>::ref_type enum_type;
+            TypeKind holder_kind = data->enclosing_type()->get_kind();
+            if (TK_ARRAY == holder_kind || TK_SEQUENCE == holder_kind)
             {
-                EPROSIMA_LOG_WARNING(XTYPES_UTILS,
-                        "Error encountered while serializing TK_ENUM member to JSON: get_descriptor failed.");
-                return ret;
+                TypeDescriptorImpl& collection_descriptor = data->enclosing_type()->get_descriptor();
+                enum_type = collection_descriptor.element_type();
+            }
+            else
+            {
+                MemberDescriptor::_ref_type enum_desc{traits<MemberDescriptor>::make_shared()};
+                if (RETCODE_OK != (ret = data->get_descriptor(enum_desc, member_id)))
+                {
+                    EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                            "Error encountered while serializing TK_ENUM member to JSON: get_descriptor failed.");
+                    return ret;
+                }
+                enum_type = enum_desc->type();
             }
 
             DynamicTypeMembersByName all_members;
             if (RETCODE_OK !=
                     (ret =
-                    traits<DynamicType>::narrow<DynamicTypeImpl>(enum_desc->type())->resolve_alias_enclosed_type()
-                            ->
+                    traits<DynamicType>::narrow<DynamicTypeImpl>(enum_type)->resolve_alias_enclosed_type()->
                             get_all_members_by_name(all_members)))
             {
                 EPROSIMA_LOG_WARNING(XTYPES_UTILS,
