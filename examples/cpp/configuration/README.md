@@ -138,6 +138,8 @@ Otherwise, the entities are considered incompatible (and they will not match).
 The argument **``-i``** ``<period>`` or **``--interval``** ``<period>`` configures the **publisher** application with the sending samples period (in milliseconds).
 It should be always **greater** than the deadline period, otherwise ``on_offered_deadline_missed`` will be triggered any time a sample is sent.
 
+If **``--deadline``** is not configured, it takes the _eProsima Fast DDS_ default value (infinite).
+
 ## Disable positive ACKs QoS
 
 Using argument **``--disable-positive-ack``** will configure  the corresponding endpoint to **not** exchange positive acknowledge messages.
@@ -171,6 +173,8 @@ The following table represents the compatibility matrix (compatible ✔️ vs in
 </table>
 
 The argument **``--ack-keep-duration``** ``<duration>`` configures the **publisher** application with the duration (in milliseconds) it keeps the data before considering it as acknowledged.
+
+If **``--ack-keep-duration``** is not configured, it takes the _eProsima Fast DDS_ default value (infinite).
 
 ## Durability QoS
 
@@ -281,6 +285,9 @@ The following table represents the compatibility matrix (compatible ✔️ vs in
 
 The argument **``-i``** ``<period>`` or **``--interval``** ``<period>`` configures the **publisher** application with the sending samples period (in milliseconds).
 It should be always **lower** than the liveliness lease duration, otherwise liveliness will be lost after sending each sample and recovered when sending the next sample.
+
+
+If **``--liveliness``**  or  **``--liveliness-assert``** are not configured, they take the _eProsima Fast DDS_ default values (infinite).
 
 ## Ownership QoS
 
