@@ -231,7 +231,7 @@ public:
                     EPROSIMA_LOG_ERROR(CLI_PARSER, "period argument is only valid for publisher entity");
                     print_help(EXIT_FAILURE);
                 }
-                
+
                 if (++i < argc)
                 {
                     try
@@ -240,7 +240,7 @@ public:
                         if (input > std::numeric_limits<uint64_t>::max())
                         {
                             throw std::out_of_range("period argument " + std::string(
-                                                argv[i]) + " out of range.");
+                                              argv[i]) + " out of range.");
                         }
                         config.period = input;
                     }
