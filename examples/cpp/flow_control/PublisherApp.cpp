@@ -80,7 +80,7 @@ PublisherApp::PublisherApp(
 
     if (publisher_ == nullptr)
     {
-        throw std::runtime_error("Fast Publisher initialization failed");
+        throw std::runtime_error("Publisher initialization failed");
     }
 
     // Create Topic
@@ -182,18 +182,27 @@ void PublisherApp::run()
     FlowControl msg;
 
     /* Initialize your structure here */
-    uint16_t samples_fast = 0;
-    uint16_t samples_slow = 0;
-    while (!is_stopped() && ((samples_ == 0) || ((samples_fast < samples_) && (samples_slow < samples_))))
+
+    while (!is_stopped() && ((samples_ == 0) || (msg.index() < samples_)))
     {
-        if (publish(slow_writer_, samples_slow, msg))
+        msg.index(msg.index() + 1);
+
+        if (publish(slow_writer_, msg))
         {
-            std::cout << "Message SENT from SLOW WRITER, count=" << samples_slow << std::endl;
+            std::cout << "Message SENT from SLOW WRITER, count=" << msg.index() << std::endl;
+        }
+        else
+        {
+            throw std::runtime_error("Slow Publisher failed sending a message");
         }
 
-        if (publish(fast_writer_, samples_fast, msg))
+        if (publish(fast_writer_, msg))
         {
-            std::cout << "Message SENT from FAST WRITER, count=" << samples_fast << std::endl;
+            std::cout << "Message SENT from FAST WRITER, count=" << msg.index() << std::endl;
+        }
+        else
+        {
+            throw std::runtime_error("Fast Publisher failed sending a message");
         }
 
         // Wait for period or stop event
@@ -207,7 +216,6 @@ void PublisherApp::run()
 
 bool PublisherApp::publish(
         DataWriter* writer_,
-        uint16_t& samples,
         FlowControl msg)
 {
     bool ret = false;
@@ -221,8 +229,6 @@ bool PublisherApp::publish(
 
     if (!is_stopped())
     {
-        ++samples;
-        msg.index(samples);
         ret = writer_->write(&msg);
     }
     return ret;

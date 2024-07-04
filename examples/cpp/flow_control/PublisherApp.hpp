@@ -72,7 +72,6 @@ private:
     //! Publish a sample
     bool publish(
             DataWriter* writer_,
-            uint16_t& samples,
             FlowControl msg);
 
     DomainParticipant* participant_;
