@@ -55,16 +55,17 @@ Forthcoming
 * Calling `DataReader::return_loan` returns `ReturnCode_t::RETCODE_OK` both for empty sequences and for sequences that were not loaned.
 * Refactor examples:
   * Hello world example with wait-sets and environment XML profiles.
-  * Security example with environment XML profiles.
-  * Configuration example that condenses multiple QoS examples. Multiple configurations allowed through argument parsing.
-  * Custom payload pool example that uses a user-defined payload pool instead of the default
   * X-Types example with dynamic type discovery and Hello world example compatibility.
-  * Custom Content filter example
+  * Configuration example that condenses multiple QoS examples. Multiple configurations allowed through argument parsing.
+  * Custom content filter example with lower and upper bounds for data based on the index.
+  * Custom payload pool example that uses a user-defined payload pool instead of the default
   * Delivery mechanisms example with SHM, UDP, TCP, data-sharing and intra-process mechanisms.
   * Discovery server example.
-  * Request-reply example to showcase RPC paradigms over Fast DDS.
-  * Static EDP discovery example to avoid EDP meta-traffic.
   * Flow Controller example with `FlowControllersQos` and property settings.
+  * Request-reply example to showcase RPC paradigms over Fast DDS.
+  * Security example with environment XML profiles.
+  * Static EDP discovery example to avoid EDP meta-traffic.
+  * Topic instances example, compatible with _ShapesDemo_ app.
 * Removed `TypeConsistencyQos` from DataReader, and included `TypeConsistencyEnforcementQosPolicy` and `DataRepresentationQosPolicy`
 * Added new `flow_controller_descriptor_list` XML configuration, remove `ThroughtputController`.
 * Migrate `#define`s within `BuiltinEndpoints.hpp` to namespaced `constexpr` variables.
