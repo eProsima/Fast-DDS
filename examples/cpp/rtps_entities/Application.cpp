@@ -20,8 +20,10 @@
 #include "Application.hpp"
 
 #include "CLIParser.hpp"
+#include "ReaderApp.hpp"
+#include "WriterApp.hpp"
 
-using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastdds::rtps;
 
 namespace eprosima {
 namespace fastdds {

@@ -19,6 +19,9 @@
 
 #include "ReaderApp.hpp"
 
+#include <condition_variable>
+#include <stdexcept>
+
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
@@ -32,72 +35,124 @@
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
 
-TestReaderRegistered::TestReaderRegistered()
-    : mp_participant(nullptr)
-    , mp_reader(nullptr)
-    , mp_history(nullptr)
+namespace eprosima {
+namespace fastdds {
+namespace examples {
+namespace rtps_entities {
+
+ReaderApp::ReaderApp(
+        const CLIParser::rtps_entities_config& config,
+        const std::string& topic_name)
+    : samples_(config.samples)
+    , rtps_participant_(nullptr)
+    , rtps_reader_(nullptr)
+    , reader_history_(nullptr)
+    , stop_(false)
 {
 
+    // Create RTPS Participant
+    RTPSParticipantAttributes part_attr;
+    part_attr.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SIMPLE;
+    part_attr.builtin.use_WriterLivelinessProtocol = true;
+    rtps_participant_ = RTPSDomain::createParticipant(0, part_attr);
 
-}
-
-TestReaderRegistered::~TestReaderRegistered()
-{
-    RTPSDomain::removeRTPSParticipant(mp_participant);
-    delete(mp_history);
-}
-
-bool TestReaderRegistered::init()
-{
-    //CREATE PARTICIPANT
-    RTPSParticipantAttributes PParam;
-    PParam.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SIMPLE;
-    PParam.builtin.use_WriterLivelinessProtocol = true;
-    mp_participant = RTPSDomain::createParticipant(0, PParam);
-    if (mp_participant == nullptr)
+    if (rtps_participant_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("RTPS Participant creation failed");
     }
-    //CREATE READERHISTORY
+
+    // Reader History Attributes
     HistoryAttributes hatt;
     hatt.payloadMaxSize = 255;
-    mp_history = new ReaderHistory(hatt);
+    reader_history_ = new ReaderHistory(hatt);
 
-    //CREATE READER
-    ReaderAttributes ratt;
-    Locator_t loc(22222);
-    ratt.endpoint.unicastLocatorList.push_back(loc);
-    mp_reader = RTPSDomain::createRTPSReader(mp_participant, ratt, mp_history, &m_listener);
-    if (mp_reader == nullptr)
+    // Create RTPS Reader
+    ReaderAttributes reader_att;
+    rtps_reader_ = RTPSDomain::createRTPSReader(rtps_participant_, reader_att, reader_history_, this);
+
+    if (rtps_reader_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("RTPS Reader creation failed");
     }
 
-    return true;
+    if (!register_entity(topic_name))
+    {
+        throw std::runtime_error("Entity registration failed");
+    }
 }
 
-bool TestReaderRegistered::reg()
+ReaderApp::~ReaderApp()
 {
-    std::cout << "Registering Reader" << std::endl;
-    TopicAttributes Tatt;
-    Tatt.topicKind = NO_KEY;
-    Tatt.topicDataType = "string";
-    Tatt.topicName = "exampleTopic";
-    eprosima::fastdds::dds::ReaderQos Rqos;
-    return mp_participant->registerReader(mp_reader, Tatt, Rqos);
+    RTPSDomain::removeRTPSParticipant(rtps_participant_);
+    delete(reader_history_);
 }
 
-void TestReaderRegistered::run()
+bool ReaderApp::register_entity(std::string topic_name)
 {
-    printf("Press Enter to stop the Reader.\n");
-    std::cin.ignore();
+    std::cout << "Registering RTPS Reader" << std::endl;
+
+    TopicAttributes topic_att;
+    topic_att.topicKind = NO_KEY;
+    topic_att.topicDataType = "string";
+    topic_att.topicName = topic_name;
+
+    eprosima::fastdds::dds::ReaderQos reader_qos;
+    return rtps_participant_->registerReader(rtps_reader_, topic_att, reader_qos);
 }
 
-void TestReaderRegistered::MyListener::on_new_cache_change_added(
+void ReaderApp::on_reader_matched(
+        eprosima::fastdds::rtps::RTPSReader*,
+        const eprosima::fastdds::rtps::MatchingInfo& info)
+
+{
+    if (info.status == MATCHED_MATCHING)
+    {
+        std::cout << "Remote endpoint with GUID " << info.remoteEndpointGuid << " matched." << std::endl;
+    }
+    else if (info.status == REMOVED_MATCHING)
+    {
+        std::cout << "Remote endpoint with GUID " << info.remoteEndpointGuid << " unmatched." << std::endl;
+    }
+}
+
+void ReaderApp::run()
+{
+    std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
+    terminate_cv_.wait(lck, [&]
+            {
+                return is_stopped();
+            });
+}
+
+void ReaderApp::on_new_cache_change_added(
         RTPSReader* reader,
         const CacheChange_t* const change)
 {
-    printf("Received: %s\n", change->serializedPayload.data);
-    reader->get_history()->remove_change((CacheChange_t*)change);
-    n_received++;
+    if (!is_stopped())
+    {
+        std::cout << "Message: " << change->serializedPayload.data << " RECEIVED" << std::endl;
+        reader->get_history()->remove_change((CacheChange_t*)change);
+        samples_received_++;
+
+        if ((samples_ > 0) && (samples_received_ >= samples_))
+        {
+            stop();
+        }
+    }
 }
+
+bool ReaderApp::is_stopped()
+{
+    return stop_.load();
+}
+
+void ReaderApp::stop()
+{
+    stop_.store(true);
+    terminate_cv_.notify_all();
+}
+
+} // namespace rtps_entities
+} // namespace examples
+} // namespace fastdds
+} // namespace eprosima

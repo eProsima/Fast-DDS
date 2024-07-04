@@ -20,63 +20,80 @@
 #ifndef FASTDDS_EXAMPLES_CPP_RTPS_ENTITIES__READERAPP_HPP
 #define FASTDDS_EXAMPLES_CPP_RTPS_ENTITIES__READERAPP_HPP
 
-#include <fastdds/rtps/reader/ReaderListener.hpp>
+#include <condition_variable>
+#include <string>
 
+#include <fastdds/rtps/history/ReaderHistory.hpp>
+#include <fastdds/rtps/participant/RTPSParticipant.hpp>
+#include <fastdds/rtps/reader/ReaderListener.hpp>
+#include <fastdds/rtps/reader/RTPSReader.hpp>
+
+#include "CLIParser.hpp"
+#include "Application.hpp"
+
+using namespace eprosima::fastdds::rtps;
 
 namespace eprosima {
 namespace fastdds {
-namespace rtps {
-class RTPSParticipant;
-class ReaderHistory;
-class RTPSReader;
-} // namespace rtps
-} // namespace fastdds
-} // namespace eprosima
+namespace examples {
+namespace rtps_entities {
 
-class TestReaderRegistered
+class ReaderApp : public Application, public ReaderListener
 {
 public:
 
-    TestReaderRegistered();
-    virtual ~TestReaderRegistered();
-    eprosima::fastdds::rtps::RTPSParticipant* mp_participant;
-    eprosima::fastdds::rtps::RTPSReader* mp_reader;
-    eprosima::fastdds::rtps::ReaderHistory* mp_history;
-    bool init(); //Initialization
-    bool reg(); //Register
-    void run(); //Run
-    class MyListener : public eprosima::fastdds::rtps::ReaderListener
-    {
-    public:
+    ReaderApp(
+        const CLIParser::rtps_entities_config& config,
+        const std::string& topic_name);
 
-        MyListener()
-            : n_received(0)
-            , n_matched(0)
-        {
-        }
+    virtual ~ReaderApp();
 
-        ~MyListener()
-        {
-        }
+    //! Run RTPS Reader
+    void run();
 
-        void on_new_cache_change_added(
-                eprosima::fastdds::rtps::RTPSReader* reader,
-                const eprosima::fastdds::rtps::CacheChange_t* const change) override;
-        void on_reader_matched(
-                eprosima::fastdds::rtps::RTPSReader*,
-                const eprosima::fastdds::rtps::MatchingInfo& info) override
+    //! New CacheChange_t added to the history callback
+    void on_new_cache_change_added(
+            RTPSReader* reader,
+            const CacheChange_t* const change) override;
 
-        {
-            if (info.status == eprosima::fastdds::rtps::MATCHED_MATCHING)
-            {
-                n_matched++;
-            }
-        }
+    //! Reader matched method
+    void on_reader_matched(
+            RTPSReader*,
+            const MatchingInfo& info) override;
 
-        uint32_t n_received;
-        uint32_t n_matched;
-    }
-    m_listener;
+    //! Trigger the end of execution
+    void stop() override;
+
+private:
+
+    //! Register entity
+    bool register_entity(std::string topic_name);
+
+    //! Return the current state of execution
+    bool is_stopped();
+
+    uint16_t samples_;
+
+    uint16_t samples_received_;
+
+    uint16_t matched_;
+
+    RTPSParticipant* rtps_participant_;
+
+    RTPSReader* rtps_reader_;
+
+    ReaderHistory* reader_history_;
+
+    std::atomic<bool> stop_;
+
+    mutable std::mutex terminate_cv_mtx_;
+
+    std::condition_variable terminate_cv_;
 };
+
+} // namespace rtps_entities
+} // namespace examples
+} // namespace fastdds
+} // namespace eprosima
 
 #endif /* FASTDDS_EXAMPLES_CPP_RTPS_ENTITIES__READERAPP_HPP */

@@ -62,8 +62,8 @@ public:
         std::cout << "Usage: rtps_entities <entity> [options]"                                  << std::endl;
         std::cout << ""                                                                         << std::endl;
         std::cout << "Entities:"                                                                << std::endl;
-        std::cout << "  writer                          Run a Rtps Writer entity"               << std::endl;
-        std::cout << "  reader                          Run a Rtps Reader entity"               << std::endl;
+        std::cout << "  writer                          Run a RTPS Writer entity"               << std::endl;
+        std::cout << "  reader                          Run a RTPS Reader entity"               << std::endl;
         std::cout << ""                                                                         << std::endl;
         std::cout << "Common options:"                                                          << std::endl;
         std::cout << "  -h, --help                      Print this help message"                << std::endl;
@@ -201,9 +201,9 @@ public:
         switch (entity)
         {
             case EntityKind::WRITER:
-                return "Rtps Writer";
+                return "RTPS Writer";
             case EntityKind::READER:
-                return "Rtps Reader";
+                return "RTPS Reader";
             case EntityKind::UNDEFINED:
             default:
                 return "Undefined entity";
