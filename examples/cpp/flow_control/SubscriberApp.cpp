@@ -48,8 +48,6 @@ SubscriberApp::SubscriberApp(
     , type_(new FlowControlPubSubType())
     , samples_(config.samples)
     , stop_(false)
-    , slow_writer_guid({0})
-    , fast_writer_guid({0})
 {
     StatusMask status_mask = StatusMask::none();
     status_mask << StatusMask::data_available();
