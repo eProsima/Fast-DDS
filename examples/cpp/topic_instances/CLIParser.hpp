@@ -103,7 +103,7 @@ public:
             int index)
     {
         std::array<const char*, 10> shape_colors =
-            { "RED", "BLUE", "GREEN", "YELLOW", "ORANGE", "CYAN", "MAGENTA", "PURPLE", "GREY", "BLACK"};
+        { "RED", "BLUE", "GREEN", "YELLOW", "ORANGE", "CYAN", "MAGENTA", "PURPLE", "GREY", "BLACK"};
         return shape_colors[index % 10];
     }
 
@@ -354,11 +354,11 @@ public:
                 {
                     std::string input = argv[++i];
                     if (input == "CIRCLE" || input == "SQUARE" || input == "TRIANGLE" ||
-                        input == "Circle" || input == "Square" || input == "Triangle" ||
-                        input == "circle" || input == "square" || input == "triangle")
+                            input == "Circle" || input == "Square" || input == "Triangle" ||
+                            input == "circle" || input == "square" || input == "triangle")
                     {
-                        transform(input.begin(), input.begin(), input.begin(),::toupper);
-                        transform(input.begin()+1, input.end(), input.begin()+1,::tolower);
+                        transform(input.begin(), input.begin(), input.begin(), ::toupper);
+                        transform(input.begin() + 1, input.end(), input.begin() + 1, ::tolower);
                         if (config.entity == CLIParser::EntityKind::PUBLISHER)
                         {
                             config.pub_config.topic_name = input;
@@ -629,7 +629,7 @@ public:
                                 input == "green" || input == "purple" || input == "yellow" || input == "grey" ||
                                 input == "orange" || input == "black")
                         {
-                            transform(input.begin(), input.end(), input.begin(),::toupper);
+                            transform(input.begin(), input.end(), input.begin(), ::toupper);
                             config.pub_config.shape_config.color = input;
                         }
                         else

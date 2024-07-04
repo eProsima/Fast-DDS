@@ -58,7 +58,7 @@ SubscriberApp::SubscriberApp(
     pqos.properties().properties().emplace_back("fastdds.application.id", "SHAPES_DEMO", true);
     pqos.properties().properties().emplace_back("fastdds.application.metadata", "", true);
     participant_ = DomainParticipantFactory::get_instance()->create_participant(
-                config.domain, pqos, nullptr, StatusMask::none());
+        config.domain, pqos, nullptr, StatusMask::none());
 
     if (participant_ == nullptr)
     {

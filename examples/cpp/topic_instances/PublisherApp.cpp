@@ -65,7 +65,7 @@ PublisherApp::PublisherApp(
     pqos.properties().properties().emplace_back("fastdds.application.id", "SHAPES_DEMO", true);
     pqos.properties().properties().emplace_back("fastdds.application.metadata", "", true);
     participant_ = DomainParticipantFactory::get_instance()->create_participant(
-                config.domain, pqos, nullptr, StatusMask::none());
+        config.domain, pqos, nullptr, StatusMask::none());
     if (participant_ == nullptr)
     {
         throw std::runtime_error("Participant initialization failed");
@@ -192,7 +192,7 @@ bool PublisherApp::publish()
     {
         // Update shape values
         move(shape_config_.x, shape_config_.y, shape_config_.direction);
-        for (int i = 0; i < instances_;  i++)
+        for (int i = 0; i < instances_; i++)
         {
             bool write_ret = false;
             // Prepare new shapes values
@@ -250,7 +250,8 @@ void PublisherApp::move(
         {
             y -= shape_config_.step;
 
-            if (static_cast<uint64_t>(y) < shape_config_.lower_th && static_cast<uint64_t>(x) > shape_config_.lower_th + 1)
+            if (static_cast<uint64_t>(y) < shape_config_.lower_th &&
+                    static_cast<uint64_t>(x) > shape_config_.lower_th + 1)
             {
                 direction = CLIParser::ShapeDirection::RIGHT;
             }
@@ -299,7 +300,8 @@ void PublisherApp::move(
             x += shape_config_.step;
             y += shape_config_.step;
 
-            if (static_cast<uint64_t>(x) > (shape_config_.width / 2) && static_cast<uint64_t>(y) > (shape_config_.height / 2))
+            if (static_cast<uint64_t>(x) > (shape_config_.width / 2) &&
+                    static_cast<uint64_t>(y) > (shape_config_.height / 2))
             {
                 direction = CLIParser::ShapeDirection::UP;
             }
