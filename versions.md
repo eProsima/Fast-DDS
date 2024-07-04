@@ -2,6 +2,7 @@ Forthcoming
 -----------
 
 * Added new `flow_controller_descriptor_list` XML configuration.
+* Setting vendor_id in the received CacheChange_t for Data and DataFrag.
 
 Version 2.14.0
 --------------

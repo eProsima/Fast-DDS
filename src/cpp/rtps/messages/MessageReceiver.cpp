@@ -812,6 +812,9 @@ bool MessageReceiver::proc_Submsg_Data(
         return false;
     }
 
+    // Get the vendor id
+    ch.vendor_id = source_vendor_id_;
+
     //Jump ahead if more parameters are before inlineQos (not in this version, maybe if further minor versions.)
     if (octetsToInlineQos > RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG)
     {
@@ -987,6 +990,9 @@ bool MessageReceiver::proc_Submsg_DataFrag(
         EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Invalid message received, bad sequence Number");
         return false;
     }
+
+    // Get the vendor id
+    ch.vendor_id = source_vendor_id_;
 
     // READ FRAGMENT NUMBER
     uint32_t fragmentStartingNum;
