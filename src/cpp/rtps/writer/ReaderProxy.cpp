@@ -53,7 +53,7 @@ ReaderProxy::ReaderProxy(
     , is_reliable_(false)
     , disable_positive_acks_(false)
     , writer_(writer)
-    , changes_for_reader_(resource_limits_from_history(writer->history_->m_att, 0))
+    , changes_for_reader_(resource_limits_from_history(writer->get_history()->m_att, 0))
     , nack_supression_event_(nullptr)
     , initial_heartbeat_event_(nullptr)
     , timers_enabled_(false)

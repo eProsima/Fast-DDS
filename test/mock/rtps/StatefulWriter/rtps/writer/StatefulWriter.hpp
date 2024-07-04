@@ -41,11 +41,11 @@ public:
         : participant_(participant)
         , mp_history(new WriterHistory())
     {
+        mp_history->m_att.initialReservedCaches = 0;
     }
 
     StatefulWriter()
-        : participant_(nullptr)
-        , mp_history(new WriterHistory())
+        : StatefulWriter(nullptr)
     {
     }
 
@@ -88,11 +88,14 @@ public:
         return SequenceNumber_t::unknown();
     }
 
+    WriterHistory* get_history() const override
+    {
+        return history_ ? history_ : mp_history;
+    }
+
     SequenceNumber_t next_sequence_number() const
     {
-        return history_ ?
-               history_->next_sequence_number() :
-               mp_history->next_sequence_number();
+        return get_history()->next_sequence_number();
     }
 
     void reader_data_filter(

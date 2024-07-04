@@ -44,6 +44,11 @@ public:
 
     virtual ~BaseWriter() = default;
 
+    virtual WriterHistory* get_history() const
+    {
+        return history_;
+    }
+
     static BaseWriter* downcast(
             RTPSWriter* writer)
     {

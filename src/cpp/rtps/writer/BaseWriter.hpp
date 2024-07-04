@@ -138,6 +138,11 @@ public:
 
 #endif // FASTDDS_STATISTICS
 
+    WriterHistory* get_history() const
+    {
+        return history_;
+    }
+
     //!Get maximum size of the data
     uint32_t getMaxDataSize();
 

@@ -150,9 +150,9 @@ public:
         return true;
     }
 
-    WriterHistory* history_;
+    WriterHistory* history_ = nullptr;
 
-    WriterListener* listener_;
+    WriterListener* listener_ = nullptr;
 
     GUID_t m_guid;
 
