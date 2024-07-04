@@ -1547,6 +1547,17 @@ traits<DynamicTypeImpl>::ref_type DynamicDataImpl::enclosing_type() noexcept
     return enclosing_type_;
 }
 
+ReturnCode_t DynamicDataImpl::get_keys(
+        std::map<std::string, MemberId>& key_to_id) noexcept
+{
+    if (TK_MAP == enclosing_type_->get_kind())
+    {
+        key_to_id = key_to_id_;
+        return RETCODE_OK;
+    }
+    return RETCODE_BAD_PARAMETER;
+}
+
 traits<DynamicData>::ref_type DynamicDataImpl::_this()
 {
     return shared_from_this();

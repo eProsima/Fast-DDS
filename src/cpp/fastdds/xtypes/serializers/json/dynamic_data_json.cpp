@@ -270,19 +270,54 @@ ReturnCode_t json_serialize_member(
                 map_desc.key_element_type())->resolve_alias_enclosed_type();
             traits<DynamicTypeImpl>::ref_type value_type = traits<DynamicType>::narrow<DynamicTypeImpl>(
                 map_desc.element_type())->resolve_alias_enclosed_type();
-            uint32_t size = st_data->get_item_count();
-            for (uint32_t i = 0; i < size; ++i)
+
+            std::map<std::string, MemberId> key_to_id;
+            if (RETCODE_OK != (ret = st_data->get_keys(key_to_id)))
             {
-                // TODO: use actual map key as dictionary key once available in API
-                MemberId id = st_data->get_member_id_at_index(i);
-                if (RETCODE_OK !=
-                        (ret =
-                        json_serialize_member(st_data, id, value_type->get_kind(), std::to_string(id), j_map,
-                        format)))
+                EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                        "Error encountered while serializing map member to JSON: get_keys failed.");
+            }
+
+            if (RETCODE_OK == ret)
+            {
+                std::map<MemberId, std::string> id_to_key;
+                for (const auto& it : key_to_id)
                 {
-                    EPROSIMA_LOG_WARNING(XTYPES_UTILS,
-                            "Error encountered while serializing map member's member to JSON.");
-                    break;
+                    id_to_key[it.second] = it.first;
+                }
+                assert(id_to_key.size() == key_to_id.size());
+
+                uint32_t size = st_data->get_item_count();
+                assert(size == key_to_id.size());
+                for (uint32_t i = 0; i < size; ++i)
+                {
+                    MemberId id = st_data->get_member_id_at_index(i);
+                    if (MEMBER_ID_INVALID == id)
+                    {
+                        EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                                "Error encountered while serializing map member's member to JSON: invalid member id.");
+                        ret = RETCODE_BAD_PARAMETER;
+                        break;
+                    }
+
+                    auto it = id_to_key.find(id);
+                    if (it == id_to_key.end())
+                    {
+                        EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                                "Error encountered while serializing map member's member to JSON: key not found.");
+                        ret = RETCODE_BAD_PARAMETER;
+                        break;
+                    }
+
+                    if (RETCODE_OK !=
+                            (ret =
+                            json_serialize_member(st_data, id, value_type->get_kind(), it->second, j_map,
+                            format)))
+                    {
+                        EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                                "Error encountered while serializing map member's member to JSON.");
+                        break;
+                    }
                 }
             }
 
