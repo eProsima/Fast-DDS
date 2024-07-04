@@ -58,7 +58,7 @@ void register_ColorBitset_type_identifier(
             uint16_t position_red = 0;
             BitsetMemberFlag flags_red = 0;
             uint8_t bitcount_red = 3;
-            TypeKind holder_type_red = TK_BYTE;
+            TypeKind holder_type_red = TK_UINT8;
             CommonBitfield common_red = TypeObjectUtils::build_common_bitfield(position_red, flags_red, bitcount_red, holder_type_red);
             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_red;
             ann_custom_ColorBitset.reset();
