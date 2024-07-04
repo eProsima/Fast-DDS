@@ -31,8 +31,8 @@ namespace dds {
 
 ReturnCode_t json_serialize(
         const DynamicData::_ref_type& data,
-        std::ostream& output,
-        DynamicDataJsonFormat format) noexcept
+        const DynamicDataJsonFormat& format,
+        std::ostream& output) noexcept
 {
     ReturnCode_t ret;
     nlohmann::json j;

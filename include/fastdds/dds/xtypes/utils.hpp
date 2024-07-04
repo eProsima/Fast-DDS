@@ -37,14 +37,14 @@ enum class DynamicDataJsonFormat
 /*!
  * Serializes a @ref DynamicData into a JSON object, which is then dumped into an \c std::ostream.
  * @param[in] data @ref DynamicData reference to be serialized.
- * @param[in,out] output \c std::ostream reference where the JSON object is dumped.
  * @param[in] format @ref DynamicDataJsonFormat JSON serialization format.
+ * @param[in,out] output \c std::ostream reference where the JSON object is dumped.
  * @retval RETCODE_OK when serialization fully succeeds, and inner (member serialization) failing code otherwise.
  */
 ReturnCode_t json_serialize(
         const DynamicData::_ref_type& data,
-        std::ostream& output,
-        DynamicDataJsonFormat format) noexcept;
+        const DynamicDataJsonFormat& format,
+        std::ostream& output) noexcept;
 
 } // dds
 } // fastdds
