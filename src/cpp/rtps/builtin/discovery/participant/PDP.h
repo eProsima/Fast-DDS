@@ -286,17 +286,6 @@ public:
             const GUID_t& writer_guid);
 
     /**
-     * This method removes and deletes a WriterProxyData object from its corresponding RTPSParticipant.
-     *
-     * @param [in] writer_guid GUID_t of the writer to remove.
-     * @param [in] reason Why the writer is being removed (dropped, removed, or ignored)
-     * @return true if found and deleted.
-     */
-    bool removeWriterProxyData(
-            const GUID_t& writer_guid,
-            WRITER_DISCOVERY_STATUS reason);
-
-    /**
      * Create the SPDP Writer and Reader
      * @return True if correct.
      */

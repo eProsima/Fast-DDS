@@ -844,13 +844,6 @@ bool PDP::removeWriterProxyData(
     return false;
 }
 
-bool PDP::removeWriterProxyData(
-        const GUID_t& /*writer_guid*/,
-        WRITER_DISCOVERY_STATUS /*reason*/)
-{
-    return false;
-}
-
 bool PDP::lookup_participant_name(
         const GUID_t& guid,
         fastcdr::string_255& name)
