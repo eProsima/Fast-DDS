@@ -373,40 +373,6 @@ bool StatefulReader::matched_writer_remove(
         const GUID_t& writer_guid,
         bool removed_by_lease)
 {
-<<<<<<< HEAD
-
-    if (is_alive_ && liveliness_lease_duration_ < c_TimeInfinite)
-    {
-        auto wlp = this->mp_RTPSParticipant->wlp();
-        if ( wlp != nullptr)
-        {
-            LivelinessData::WriterStatus writer_liveliness_status;
-            wlp->sub_liveliness_manager_->remove_writer(
-                writer_guid,
-                liveliness_kind_,
-                liveliness_lease_duration_,
-                writer_liveliness_status);
-
-            if (writer_liveliness_status == LivelinessData::WriterStatus::ALIVE)
-            {
-                wlp->update_liveliness_changed_status(writer_guid, this, -1, 0);
-            }
-            else if (writer_liveliness_status == LivelinessData::WriterStatus::NOT_ALIVE)
-            {
-                wlp->update_liveliness_changed_status(writer_guid, this, 0, -1);
-            }
-
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS,
-                    "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
-        }
-    }
-
-    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
-=======
->>>>>>> 9243eadae (Fix topic interference on `liveliness_changed` status (#4988))
     WriterProxy* wproxy = nullptr;
     if (is_alive_)
     {
@@ -488,13 +454,12 @@ bool StatefulReader::matched_writer_remove(
 
             if (writer_liveliness_status == LivelinessData::WriterStatus::ALIVE)
             {
-                update_liveliness_changed_status(writer_guid, -1, 0);
+                wlp->update_liveliness_changed_status(writer_guid, this, -1, 0);
             }
             else if (writer_liveliness_status == LivelinessData::WriterStatus::NOT_ALIVE)
             {
-                update_liveliness_changed_status(writer_guid, 0, -1);
+                wlp->update_liveliness_changed_status(writer_guid, this, 0, -1);
             }
-
         }
         else
         {

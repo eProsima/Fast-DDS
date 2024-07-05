@@ -225,24 +225,6 @@ bool StatelessReader::matched_writer_remove(
 {
     bool ret_val = false;
 
-<<<<<<< HEAD
-            if (writer_liveliness_status == LivelinessData::WriterStatus::ALIVE)
-            {
-                wlp->update_liveliness_changed_status(writer_guid, this, -1, 0);
-            }
-            else if (writer_liveliness_status == LivelinessData::WriterStatus::NOT_ALIVE)
-            {
-                wlp->update_liveliness_changed_status(writer_guid, this, 0, -1);
-            }
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS,
-                    "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
-        }
-    }
-=======
->>>>>>> 9243eadae (Fix topic interference on `liveliness_changed` status (#4988))
     {
         std::unique_lock<RecursiveTimedMutex> guard(mp_mutex);
 
@@ -302,11 +284,11 @@ bool StatelessReader::matched_writer_remove(
 
             if (writer_liveliness_status == LivelinessData::WriterStatus::ALIVE)
             {
-                update_liveliness_changed_status(writer_guid, -1, 0);
+                wlp->update_liveliness_changed_status(writer_guid, this, -1, 0);
             }
             else if (writer_liveliness_status == LivelinessData::WriterStatus::NOT_ALIVE)
             {
-                update_liveliness_changed_status(writer_guid, 0, -1);
+                wlp->update_liveliness_changed_status(writer_guid, this, 0, -1);
             }
         }
         else
