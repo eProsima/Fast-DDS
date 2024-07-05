@@ -457,8 +457,8 @@ bool EDP::unpairReaderProxy(
             {
                 if (w.matched_reader_remove(reader_guid))
                 {
-                    const GUID_t& writer_guid = w.getGuid();
 #if HAVE_SECURITY
+                    const GUID_t& writer_guid = w.getGuid();
                     mp_RTPSParticipant->security_manager().remove_reader(writer_guid,
                     participant_guid, reader_guid);
 #endif // if HAVE_SECURITY
