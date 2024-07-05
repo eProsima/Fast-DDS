@@ -39,6 +39,65 @@
 using namespace eprosima::fastdds::dds::xtypes;
 
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_ValueStruct_type_identifier(
+        TypeIdentifierPair& type_ids_ValueStruct)
+{
+
+    ReturnCode_t return_code_ValueStruct {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_ValueStruct =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "ValueStruct", type_ids_ValueStruct);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_ValueStruct)
+    {
+        StructTypeFlag struct_flags_ValueStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
+                false, false);
+        QualifiedTypeName type_name_ValueStruct = "ValueStruct";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_ValueStruct;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_ValueStruct;
+        CompleteTypeDetail detail_ValueStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_ValueStruct, ann_custom_ValueStruct, type_name_ValueStruct.to_string());
+        CompleteStructHeader header_ValueStruct;
+        header_ValueStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_ValueStruct);
+        CompleteStructMemberSeq member_seq_ValueStruct;
+        {
+            TypeIdentifierPair type_ids_value;
+            ReturnCode_t return_code_value {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_value =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_bool", type_ids_value);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_value)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "value Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_value = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_value = 0x00000000;
+            bool common_value_ec {false};
+            CommonStructMember common_value {TypeObjectUtils::build_common_struct_member(member_id_value, member_flags_value, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_value, common_value_ec))};
+            if (!common_value_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure value member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_value = "value";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_value;
+            ann_custom_ValueStruct.reset();
+            CompleteMemberDetail detail_value = TypeObjectUtils::build_complete_member_detail(name_value, member_ann_builtin_value, ann_custom_ValueStruct);
+            CompleteStructMember member_value = TypeObjectUtils::build_complete_struct_member(common_value, detail_value);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ValueStruct, member_value);
+        }
+        CompleteStructType struct_type_ValueStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_ValueStruct, header_ValueStruct, member_seq_ValueStruct);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_ValueStruct, type_name_ValueStruct.to_string(), type_ids_ValueStruct))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "ValueStruct already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_map_struct_type_identifier(
         TypeIdentifierPair& type_ids_map_struct)
 {
@@ -59,44 +118,44 @@ void register_map_struct_type_identifier(
         header_map_struct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_map_struct);
         CompleteStructMemberSeq member_seq_map_struct;
         {
-            TypeIdentifierPair type_ids_my_map;
-            ReturnCode_t return_code_my_map {eprosima::fastdds::dds::RETCODE_OK};
-            return_code_my_map =
+            TypeIdentifierPair type_ids_my_basic_map;
+            ReturnCode_t return_code_my_basic_map {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_my_basic_map =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "anonymous_map_anonymous_string_unbounded_bool_unbounded", type_ids_my_map);
+                "anonymous_map_anonymous_string_unbounded_bool_unbounded", type_ids_my_basic_map);
 
-            if (eprosima::fastdds::dds::RETCODE_OK != return_code_my_map)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_my_basic_map)
             {
-                return_code_my_map =
+                return_code_my_basic_map =
                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                    "_bool", type_ids_my_map);
+                    "_bool", type_ids_my_basic_map);
 
-                if (eprosima::fastdds::dds::RETCODE_OK != return_code_my_map)
+                if (eprosima::fastdds::dds::RETCODE_OK != return_code_my_basic_map)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Map element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
                 bool element_identifier_anonymous_map_anonymous_string_unbounded_bool_unbounded_ec {false};
-                TypeIdentifier* element_identifier_anonymous_map_anonymous_string_unbounded_bool_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_my_map, element_identifier_anonymous_map_anonymous_string_unbounded_bool_unbounded_ec))};
+                TypeIdentifier* element_identifier_anonymous_map_anonymous_string_unbounded_bool_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_my_basic_map, element_identifier_anonymous_map_anonymous_string_unbounded_bool_unbounded_ec))};
                 if (!element_identifier_anonymous_map_anonymous_string_unbounded_bool_unbounded_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "anonymous_map_anonymous_string_unbounded_bool_unbounded inconsistent element TypeIdentifier.");
                     return;
                 }
-                return_code_my_map =
+                return_code_my_basic_map =
                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                    "anonymous_string_unbounded", type_ids_my_map);
+                    "anonymous_string_unbounded", type_ids_my_basic_map);
 
-                if (eprosima::fastdds::dds::RETCODE_OK != return_code_my_map)
+                if (eprosima::fastdds::dds::RETCODE_OK != return_code_my_basic_map)
                 {
                     {
                         SBound bound = 0;
                         StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
                         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                                 TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
-                                "anonymous_string_unbounded", type_ids_my_map))
+                                "anonymous_string_unbounded", type_ids_my_basic_map))
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
@@ -104,7 +163,7 @@ void register_map_struct_type_identifier(
                     }
                 }
                 bool key_identifier_anonymous_map_anonymous_string_unbounded_bool_unbounded_ec {false};
-                TypeIdentifier* key_identifier_anonymous_map_anonymous_string_unbounded_bool_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_my_map, key_identifier_anonymous_map_anonymous_string_unbounded_bool_unbounded_ec))};
+                TypeIdentifier* key_identifier_anonymous_map_anonymous_string_unbounded_bool_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_my_basic_map, key_identifier_anonymous_map_anonymous_string_unbounded_bool_unbounded_ec))};
                 if (!key_identifier_anonymous_map_anonymous_string_unbounded_bool_unbounded_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
@@ -131,29 +190,124 @@ void register_map_struct_type_identifier(
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_map_anonymous_string_unbounded_bool_unbounded), key_flags_anonymous_map_anonymous_string_unbounded_bool_unbounded,
                                 eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_anonymous_string_unbounded_bool_unbounded));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_anonymous_string_unbounded_bool_unbounded", type_ids_my_map))
+                            TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_anonymous_string_unbounded_bool_unbounded", type_ids_my_basic_map))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_map_anonymous_string_unbounded_bool_unbounded already registered in TypeObjectRegistry for a different type.");
                     }
                 }
             }
-            StructMemberFlag member_flags_my_map = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+            StructMemberFlag member_flags_my_basic_map = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_my_map = 0x00000000;
-            bool common_my_map_ec {false};
-            CommonStructMember common_my_map {TypeObjectUtils::build_common_struct_member(member_id_my_map, member_flags_my_map, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_my_map, common_my_map_ec))};
-            if (!common_my_map_ec)
+            MemberId member_id_my_basic_map = 0x00000000;
+            bool common_my_basic_map_ec {false};
+            CommonStructMember common_my_basic_map {TypeObjectUtils::build_common_struct_member(member_id_my_basic_map, member_flags_my_basic_map, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_my_basic_map, common_my_basic_map_ec))};
+            if (!common_my_basic_map_ec)
             {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure my_map member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure my_basic_map member TypeIdentifier inconsistent.");
                 return;
             }
-            MemberName name_my_map = "my_map";
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_my_map;
+            MemberName name_my_basic_map = "my_basic_map";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_my_basic_map;
             ann_custom_map_struct.reset();
-            CompleteMemberDetail detail_my_map = TypeObjectUtils::build_complete_member_detail(name_my_map, member_ann_builtin_my_map, ann_custom_map_struct);
-            CompleteStructMember member_my_map = TypeObjectUtils::build_complete_struct_member(common_my_map, detail_my_map);
-            TypeObjectUtils::add_complete_struct_member(member_seq_map_struct, member_my_map);
+            CompleteMemberDetail detail_my_basic_map = TypeObjectUtils::build_complete_member_detail(name_my_basic_map, member_ann_builtin_my_basic_map, ann_custom_map_struct);
+            CompleteStructMember member_my_basic_map = TypeObjectUtils::build_complete_struct_member(common_my_basic_map, detail_my_basic_map);
+            TypeObjectUtils::add_complete_struct_member(member_seq_map_struct, member_my_basic_map);
+        }
+        {
+            TypeIdentifierPair type_ids_my_complex_map;
+            ReturnCode_t return_code_my_complex_map {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_my_complex_map =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded", type_ids_my_complex_map);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_my_complex_map)
+            {
+                return_code_my_complex_map =
+                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                    "ValueStruct", type_ids_my_complex_map);
+
+                if (eprosima::fastdds::dds::RETCODE_OK != return_code_my_complex_map)
+                {
+                ::register_ValueStruct_type_identifier(type_ids_my_complex_map);
+                }
+                bool element_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded_ec {false};
+                TypeIdentifier* element_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_my_complex_map, element_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded_ec))};
+                if (!element_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded_ec)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded inconsistent element TypeIdentifier.");
+                    return;
+                }
+                return_code_my_complex_map =
+                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                    "anonymous_string_unbounded", type_ids_my_complex_map);
+
+                if (eprosima::fastdds::dds::RETCODE_OK != return_code_my_complex_map)
+                {
+                    {
+                        SBound bound = 0;
+                        StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
+                        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
+                                "anonymous_string_unbounded", type_ids_my_complex_map))
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
+                        }
+                    }
+                }
+                bool key_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded_ec {false};
+                TypeIdentifier* key_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_my_complex_map, key_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded_ec))};
+                if (!key_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded_ec)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded inconsistent key TypeIdentifier.");
+                    return;
+                }
+                EquivalenceKind equiv_kind_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded = EK_BOTH;
+                if ((EK_COMPLETE == key_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded->_d()) ||
+                        (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded->seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded->seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded->array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded->array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded->map_sdefn().header().equiv_kind())) ||
+                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded->map_ldefn().header().equiv_kind())))
+                {
+                    equiv_kind_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded = EK_COMPLETE;
+                }
+                CollectionElementFlag element_flags_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded = 0;
+                CollectionElementFlag key_flags_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded = 0;
+                PlainCollectionHeader header_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded, element_flags_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded);
+                {
+                    SBound bound = 0;
+                    PlainMapSTypeDefn map_sdefn = TypeObjectUtils::build_plain_map_s_type_defn(header_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded, bound,
+                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded), key_flags_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded,
+                                eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded));
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded", type_ids_my_complex_map))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_map_anonymous_string_unbounded_ValueStruct_unbounded already registered in TypeObjectRegistry for a different type.");
+                    }
+                }
+            }
+            StructMemberFlag member_flags_my_complex_map = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_my_complex_map = 0x00000001;
+            bool common_my_complex_map_ec {false};
+            CommonStructMember common_my_complex_map {TypeObjectUtils::build_common_struct_member(member_id_my_complex_map, member_flags_my_complex_map, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_my_complex_map, common_my_complex_map_ec))};
+            if (!common_my_complex_map_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure my_complex_map member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_my_complex_map = "my_complex_map";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_my_complex_map;
+            ann_custom_map_struct.reset();
+            CompleteMemberDetail detail_my_complex_map = TypeObjectUtils::build_complete_member_detail(name_my_complex_map, member_ann_builtin_my_complex_map, ann_custom_map_struct);
+            CompleteStructMember member_my_complex_map = TypeObjectUtils::build_complete_struct_member(common_my_complex_map, detail_my_complex_map);
+            TypeObjectUtils::add_complete_struct_member(member_seq_map_struct, member_my_complex_map);
         }
         CompleteStructType struct_type_map_struct = TypeObjectUtils::build_complete_struct_type(struct_flags_map_struct, header_map_struct, member_seq_map_struct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==

@@ -69,8 +69,16 @@ configure_file(
     ${CMAKE_CURRENT_BINARY_DIR}/types/idls/key_struct.idl
     COPYONLY)
 configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/map_bounded_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/map_bounded_struct.idl
+    COPYONLY)
+configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/map_struct.idl
     ${CMAKE_CURRENT_BINARY_DIR}/types/idls/map_struct.idl
+    COPYONLY)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/multi_array_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/multi_array_struct.idl
     COPYONLY)
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/nested_struct.idl
@@ -79,6 +87,10 @@ configure_file(
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/numeric_array.idl
     ${CMAKE_CURRENT_BINARY_DIR}/types/idls/numeric_array.idl
+    COPYONLY)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/string_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/string_struct.idl
     COPYONLY)
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/union_struct.idl

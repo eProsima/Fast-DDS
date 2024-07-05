@@ -1,0 +1,4 @@
+struct map_bounded_struct
+{
+    map<string, boolean, 10> my_map;
+};

@@ -1,4 +1,10 @@
+struct ValueStruct
+{
+    boolean value;
+};
+
 struct map_struct
 {
-    map<string, boolean> my_map;
+    map<string, boolean> my_basic_map;
+    map<string, ValueStruct> my_complex_map;
 };

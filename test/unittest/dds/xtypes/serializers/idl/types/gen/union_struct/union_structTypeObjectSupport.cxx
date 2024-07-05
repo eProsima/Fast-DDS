@@ -39,165 +39,254 @@
 using namespace eprosima::fastdds::dds::xtypes;
 
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
-void register_MyUnion_type_identifier(
-        TypeIdentifierPair& type_ids_MyUnion)
+void register_BasicUnion_type_identifier(
+        TypeIdentifierPair& type_ids_BasicUnion)
 {
-    ReturnCode_t return_code_MyUnion {eprosima::fastdds::dds::RETCODE_OK};
-    return_code_MyUnion =
+    ReturnCode_t return_code_BasicUnion {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_BasicUnion =
         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-        "MyUnion", type_ids_MyUnion);
-    if (eprosima::fastdds::dds::RETCODE_OK != return_code_MyUnion)
+        "BasicUnion", type_ids_BasicUnion);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_BasicUnion)
     {
-        UnionTypeFlag union_flags_MyUnion = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
+        UnionTypeFlag union_flags_BasicUnion = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
-        QualifiedTypeName type_name_MyUnion = "MyUnion";
-        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_MyUnion;
-        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_MyUnion;
-        CompleteTypeDetail detail_MyUnion = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_MyUnion, ann_custom_MyUnion, type_name_MyUnion.to_string());
-        CompleteUnionHeader header_MyUnion = TypeObjectUtils::build_complete_union_header(detail_MyUnion);
-        UnionDiscriminatorFlag member_flags_MyUnion = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+        QualifiedTypeName type_name_BasicUnion = "BasicUnion";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_BasicUnion;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_BasicUnion;
+        CompleteTypeDetail detail_BasicUnion = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_BasicUnion, ann_custom_BasicUnion, type_name_BasicUnion.to_string());
+        CompleteUnionHeader header_BasicUnion = TypeObjectUtils::build_complete_union_header(detail_BasicUnion);
+        UnionDiscriminatorFlag member_flags_BasicUnion = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                 false);
-        return_code_MyUnion =
+        return_code_BasicUnion =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "_int32_t", type_ids_MyUnion);
+            "_int16_t", type_ids_BasicUnion);
 
-        if (return_code_MyUnion != eprosima::fastdds::dds::RETCODE_OK)
+        if (return_code_BasicUnion != eprosima::fastdds::dds::RETCODE_OK)
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "Union discriminator TypeIdentifier unknown to TypeObjectRegistry.");
             return;
         }
-        CommonDiscriminatorMember common_MyUnion;
-        if (EK_COMPLETE == type_ids_MyUnion.type_identifier1()._d() || TK_NONE == type_ids_MyUnion.type_identifier2()._d())
+        CommonDiscriminatorMember common_BasicUnion;
+        if (EK_COMPLETE == type_ids_BasicUnion.type_identifier1()._d() || TK_NONE == type_ids_BasicUnion.type_identifier2()._d())
         {
-            common_MyUnion = TypeObjectUtils::build_common_discriminator_member(member_flags_MyUnion, type_ids_MyUnion.type_identifier1());
+            common_BasicUnion = TypeObjectUtils::build_common_discriminator_member(member_flags_BasicUnion, type_ids_BasicUnion.type_identifier1());
         }
-        else if (EK_COMPLETE == type_ids_MyUnion.type_identifier2()._d())
+        else if (EK_COMPLETE == type_ids_BasicUnion.type_identifier2()._d())
         {
-            common_MyUnion = TypeObjectUtils::build_common_discriminator_member(member_flags_MyUnion, type_ids_MyUnion.type_identifier2());
+            common_BasicUnion = TypeObjectUtils::build_common_discriminator_member(member_flags_BasicUnion, type_ids_BasicUnion.type_identifier2());
         }
         else
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "MyUnion discriminator TypeIdentifier inconsistent.");
+                    "BasicUnion discriminator TypeIdentifier inconsistent.");
             return;
         }
-        type_ann_builtin_MyUnion.reset();
-        ann_custom_MyUnion.reset();
-        CompleteDiscriminatorMember discriminator_MyUnion = TypeObjectUtils::build_complete_discriminator_member(common_MyUnion,
-                type_ann_builtin_MyUnion, ann_custom_MyUnion);
-        CompleteUnionMemberSeq member_seq_MyUnion;
+        type_ann_builtin_BasicUnion.reset();
+        ann_custom_BasicUnion.reset();
+        CompleteDiscriminatorMember discriminator_BasicUnion = TypeObjectUtils::build_complete_discriminator_member(common_BasicUnion,
+                type_ann_builtin_BasicUnion, ann_custom_BasicUnion);
+        CompleteUnionMemberSeq member_seq_BasicUnion;
         {
-            return_code_MyUnion =
+            return_code_BasicUnion =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_byte", type_ids_MyUnion);
+                "anonymous_string_unbounded", type_ids_BasicUnion);
 
-            if (eprosima::fastdds::dds::RETCODE_OK != return_code_MyUnion)
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "octet_value Union member TypeIdentifier unknown to TypeObjectRegistry.");
-                return;
-            }
-            UnionMemberFlag member_flags_octet_value = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
-                    false, false);
-            UnionCaseLabelSeq label_seq_octet_value;
-            TypeObjectUtils::add_union_case_label(label_seq_octet_value, static_cast<int32_t>(1));
-            MemberId member_id_octet_value = 0x00000001;
-            bool common_octet_value_ec {false};
-            CommonUnionMember common_octet_value {TypeObjectUtils::build_common_union_member(member_id_octet_value,
-                    member_flags_octet_value, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_MyUnion,
-                        common_octet_value_ec), label_seq_octet_value)};
-            if (!common_octet_value_ec)
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Union octet_value member TypeIdentifier inconsistent.");
-                return;
-            }
-            MemberName name_octet_value = "octet_value";
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_octet_value;
-            ann_custom_MyUnion.reset();
-            CompleteMemberDetail detail_octet_value = TypeObjectUtils::build_complete_member_detail(name_octet_value, member_ann_builtin_octet_value, ann_custom_MyUnion);
-            CompleteUnionMember member_octet_value = TypeObjectUtils::build_complete_union_member(common_octet_value, detail_octet_value);
-            TypeObjectUtils::add_complete_union_member(member_seq_MyUnion, member_octet_value);
-        }
-        {
-            return_code_MyUnion =
-                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_int32_t", type_ids_MyUnion);
-
-            if (eprosima::fastdds::dds::RETCODE_OK != return_code_MyUnion)
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "long_value Union member TypeIdentifier unknown to TypeObjectRegistry.");
-                return;
-            }
-            UnionMemberFlag member_flags_long_value = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
-                    false, false);
-            UnionCaseLabelSeq label_seq_long_value;
-            TypeObjectUtils::add_union_case_label(label_seq_long_value, static_cast<int32_t>(2));
-            MemberId member_id_long_value = 0x00000002;
-            bool common_long_value_ec {false};
-            CommonUnionMember common_long_value {TypeObjectUtils::build_common_union_member(member_id_long_value,
-                    member_flags_long_value, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_MyUnion,
-                        common_long_value_ec), label_seq_long_value)};
-            if (!common_long_value_ec)
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Union long_value member TypeIdentifier inconsistent.");
-                return;
-            }
-            MemberName name_long_value = "long_value";
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_long_value;
-            ann_custom_MyUnion.reset();
-            CompleteMemberDetail detail_long_value = TypeObjectUtils::build_complete_member_detail(name_long_value, member_ann_builtin_long_value, ann_custom_MyUnion);
-            CompleteUnionMember member_long_value = TypeObjectUtils::build_complete_union_member(common_long_value, detail_long_value);
-            TypeObjectUtils::add_complete_union_member(member_seq_MyUnion, member_long_value);
-        }
-        {
-            return_code_MyUnion =
-                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "anonymous_string_unbounded", type_ids_MyUnion);
-
-            if (eprosima::fastdds::dds::RETCODE_OK != return_code_MyUnion)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_BasicUnion)
             {
                 {
                     SBound bound = 0;
                     StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
-                            "anonymous_string_unbounded", type_ids_MyUnion))
+                            "anonymous_string_unbounded", type_ids_BasicUnion))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
                     }
                 }
             }
-            UnionMemberFlag member_flags_string_value = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+            UnionMemberFlag member_flags_first = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false);
-            UnionCaseLabelSeq label_seq_string_value;
-            TypeObjectUtils::add_union_case_label(label_seq_string_value, static_cast<int32_t>(3));
-            MemberId member_id_string_value = 0x00000003;
-            bool common_string_value_ec {false};
-            CommonUnionMember common_string_value {TypeObjectUtils::build_common_union_member(member_id_string_value,
-                    member_flags_string_value, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_MyUnion,
-                        common_string_value_ec), label_seq_string_value)};
-            if (!common_string_value_ec)
+            UnionCaseLabelSeq label_seq_first;
+            TypeObjectUtils::add_union_case_label(label_seq_first, static_cast<int32_t>(0));
+            MemberId member_id_first = 0x00000001;
+            bool common_first_ec {false};
+            CommonUnionMember common_first {TypeObjectUtils::build_common_union_member(member_id_first,
+                    member_flags_first, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_BasicUnion,
+                        common_first_ec), label_seq_first)};
+            if (!common_first_ec)
             {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Union string_value member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Union first member TypeIdentifier inconsistent.");
                 return;
             }
-            MemberName name_string_value = "string_value";
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_string_value;
-            ann_custom_MyUnion.reset();
-            CompleteMemberDetail detail_string_value = TypeObjectUtils::build_complete_member_detail(name_string_value, member_ann_builtin_string_value, ann_custom_MyUnion);
-            CompleteUnionMember member_string_value = TypeObjectUtils::build_complete_union_member(common_string_value, detail_string_value);
-            TypeObjectUtils::add_complete_union_member(member_seq_MyUnion, member_string_value);
+            MemberName name_first = "first";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_first;
+            ann_custom_BasicUnion.reset();
+            CompleteMemberDetail detail_first = TypeObjectUtils::build_complete_member_detail(name_first, member_ann_builtin_first, ann_custom_BasicUnion);
+            CompleteUnionMember member_first = TypeObjectUtils::build_complete_union_member(common_first, detail_first);
+            TypeObjectUtils::add_complete_union_member(member_seq_BasicUnion, member_first);
         }
-        CompleteUnionType union_type_MyUnion = TypeObjectUtils::build_complete_union_type(union_flags_MyUnion, header_MyUnion, discriminator_MyUnion,
-                member_seq_MyUnion);
+        {
+            return_code_BasicUnion =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int64_t", type_ids_BasicUnion);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_BasicUnion)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "second Union member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            UnionMemberFlag member_flags_second = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    true, false);
+            UnionCaseLabelSeq label_seq_second;
+            TypeObjectUtils::add_union_case_label(label_seq_second, static_cast<int32_t>(1));
+            MemberId member_id_second = 0x00000002;
+            bool common_second_ec {false};
+            CommonUnionMember common_second {TypeObjectUtils::build_common_union_member(member_id_second,
+                    member_flags_second, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_BasicUnion,
+                        common_second_ec), label_seq_second)};
+            if (!common_second_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Union second member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_second = "second";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_second;
+            ann_custom_BasicUnion.reset();
+            CompleteMemberDetail detail_second = TypeObjectUtils::build_complete_member_detail(name_second, member_ann_builtin_second, ann_custom_BasicUnion);
+            CompleteUnionMember member_second = TypeObjectUtils::build_complete_union_member(common_second, detail_second);
+            TypeObjectUtils::add_complete_union_member(member_seq_BasicUnion, member_second);
+        }
+        CompleteUnionType union_type_BasicUnion = TypeObjectUtils::build_complete_union_type(union_flags_BasicUnion, header_BasicUnion, discriminator_BasicUnion,
+                member_seq_BasicUnion);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_union_type_object(union_type_MyUnion, type_name_MyUnion.to_string(), type_ids_MyUnion))
+                TypeObjectUtils::build_and_register_union_type_object(union_type_BasicUnion, type_name_BasicUnion.to_string(), type_ids_BasicUnion))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "MyUnion already registered in TypeObjectRegistry for a different type.");
+                    "BasicUnion already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_ComplexUnion_type_identifier(
+        TypeIdentifierPair& type_ids_ComplexUnion)
+{
+    ReturnCode_t return_code_ComplexUnion {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_ComplexUnion =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "ComplexUnion", type_ids_ComplexUnion);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_ComplexUnion)
+    {
+        UnionTypeFlag union_flags_ComplexUnion = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
+                false, false);
+        QualifiedTypeName type_name_ComplexUnion = "ComplexUnion";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_ComplexUnion;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_ComplexUnion;
+        CompleteTypeDetail detail_ComplexUnion = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_ComplexUnion, ann_custom_ComplexUnion, type_name_ComplexUnion.to_string());
+        CompleteUnionHeader header_ComplexUnion = TypeObjectUtils::build_complete_union_header(detail_ComplexUnion);
+        UnionDiscriminatorFlag member_flags_ComplexUnion = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                false);
+        return_code_ComplexUnion =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+            "_int32_t", type_ids_ComplexUnion);
+
+        if (return_code_ComplexUnion != eprosima::fastdds::dds::RETCODE_OK)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "Union discriminator TypeIdentifier unknown to TypeObjectRegistry.");
+            return;
+        }
+        CommonDiscriminatorMember common_ComplexUnion;
+        if (EK_COMPLETE == type_ids_ComplexUnion.type_identifier1()._d() || TK_NONE == type_ids_ComplexUnion.type_identifier2()._d())
+        {
+            common_ComplexUnion = TypeObjectUtils::build_common_discriminator_member(member_flags_ComplexUnion, type_ids_ComplexUnion.type_identifier1());
+        }
+        else if (EK_COMPLETE == type_ids_ComplexUnion.type_identifier2()._d())
+        {
+            common_ComplexUnion = TypeObjectUtils::build_common_discriminator_member(member_flags_ComplexUnion, type_ids_ComplexUnion.type_identifier2());
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "ComplexUnion discriminator TypeIdentifier inconsistent.");
+            return;
+        }
+        type_ann_builtin_ComplexUnion.reset();
+        ann_custom_ComplexUnion.reset();
+        CompleteDiscriminatorMember discriminator_ComplexUnion = TypeObjectUtils::build_complete_discriminator_member(common_ComplexUnion,
+                type_ann_builtin_ComplexUnion, ann_custom_ComplexUnion);
+        CompleteUnionMemberSeq member_seq_ComplexUnion;
+        {
+            return_code_ComplexUnion =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int32_t", type_ids_ComplexUnion);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_ComplexUnion)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "third Union member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            UnionMemberFlag member_flags_third = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false);
+            UnionCaseLabelSeq label_seq_third;
+            TypeObjectUtils::add_union_case_label(label_seq_third, static_cast<int32_t>(0));
+            TypeObjectUtils::add_union_case_label(label_seq_third, static_cast<int32_t>(1));
+            MemberId member_id_third = 0x00000001;
+            bool common_third_ec {false};
+            CommonUnionMember common_third {TypeObjectUtils::build_common_union_member(member_id_third,
+                    member_flags_third, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_ComplexUnion,
+                        common_third_ec), label_seq_third)};
+            if (!common_third_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Union third member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_third = "third";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_third;
+            ann_custom_ComplexUnion.reset();
+            CompleteMemberDetail detail_third = TypeObjectUtils::build_complete_member_detail(name_third, member_ann_builtin_third, ann_custom_ComplexUnion);
+            CompleteUnionMember member_third = TypeObjectUtils::build_complete_union_member(common_third, detail_third);
+            TypeObjectUtils::add_complete_union_member(member_seq_ComplexUnion, member_third);
+        }
+        {
+            return_code_ComplexUnion =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "BasicUnion", type_ids_ComplexUnion);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_ComplexUnion)
+            {
+            ::register_BasicUnion_type_identifier(type_ids_ComplexUnion);
+            }
+            UnionMemberFlag member_flags_fourth = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    true, false);
+            UnionCaseLabelSeq label_seq_fourth;
+            MemberId member_id_fourth = 0x00000002;
+            bool common_fourth_ec {false};
+            CommonUnionMember common_fourth {TypeObjectUtils::build_common_union_member(member_id_fourth,
+                    member_flags_fourth, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_ComplexUnion,
+                        common_fourth_ec), label_seq_fourth)};
+            if (!common_fourth_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Union fourth member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_fourth = "fourth";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_fourth;
+            ann_custom_ComplexUnion.reset();
+            CompleteMemberDetail detail_fourth = TypeObjectUtils::build_complete_member_detail(name_fourth, member_ann_builtin_fourth, ann_custom_ComplexUnion);
+            CompleteUnionMember member_fourth = TypeObjectUtils::build_complete_union_member(common_fourth, detail_fourth);
+            TypeObjectUtils::add_complete_union_member(member_seq_ComplexUnion, member_fourth);
+        }
+        CompleteUnionType union_type_ComplexUnion = TypeObjectUtils::build_complete_union_type(union_flags_ComplexUnion, header_ComplexUnion, discriminator_ComplexUnion,
+                member_seq_ComplexUnion);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_union_type_object(union_type_ComplexUnion, type_name_ComplexUnion.to_string(), type_ids_ComplexUnion))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "ComplexUnion already registered in TypeObjectRegistry for a different type.");
         }
     }
 }
@@ -222,62 +311,60 @@ void register_union_struct_type_identifier(
         header_union_struct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_union_struct);
         CompleteStructMemberSeq member_seq_union_struct;
         {
-            TypeIdentifierPair type_ids_index;
-            ReturnCode_t return_code_index {eprosima::fastdds::dds::RETCODE_OK};
-            return_code_index =
+            TypeIdentifierPair type_ids_my_basic_union;
+            ReturnCode_t return_code_my_basic_union {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_my_basic_union =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_uint32_t", type_ids_index);
+                "BasicUnion", type_ids_my_basic_union);
 
-            if (eprosima::fastdds::dds::RETCODE_OK != return_code_index)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_my_basic_union)
             {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "index Structure member TypeIdentifier unknown to TypeObjectRegistry.");
-                return;
+            ::register_BasicUnion_type_identifier(type_ids_my_basic_union);
             }
-            StructMemberFlag member_flags_index = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+            StructMemberFlag member_flags_my_basic_union = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_index = 0x00000000;
-            bool common_index_ec {false};
-            CommonStructMember common_index {TypeObjectUtils::build_common_struct_member(member_id_index, member_flags_index, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_index, common_index_ec))};
-            if (!common_index_ec)
+            MemberId member_id_my_basic_union = 0x00000000;
+            bool common_my_basic_union_ec {false};
+            CommonStructMember common_my_basic_union {TypeObjectUtils::build_common_struct_member(member_id_my_basic_union, member_flags_my_basic_union, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_my_basic_union, common_my_basic_union_ec))};
+            if (!common_my_basic_union_ec)
             {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure index member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure my_basic_union member TypeIdentifier inconsistent.");
                 return;
             }
-            MemberName name_index = "index";
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_index;
+            MemberName name_my_basic_union = "my_basic_union";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_my_basic_union;
             ann_custom_union_struct.reset();
-            CompleteMemberDetail detail_index = TypeObjectUtils::build_complete_member_detail(name_index, member_ann_builtin_index, ann_custom_union_struct);
-            CompleteStructMember member_index = TypeObjectUtils::build_complete_struct_member(common_index, detail_index);
-            TypeObjectUtils::add_complete_struct_member(member_seq_union_struct, member_index);
+            CompleteMemberDetail detail_my_basic_union = TypeObjectUtils::build_complete_member_detail(name_my_basic_union, member_ann_builtin_my_basic_union, ann_custom_union_struct);
+            CompleteStructMember member_my_basic_union = TypeObjectUtils::build_complete_struct_member(common_my_basic_union, detail_my_basic_union);
+            TypeObjectUtils::add_complete_struct_member(member_seq_union_struct, member_my_basic_union);
         }
         {
-            TypeIdentifierPair type_ids_union_value;
-            ReturnCode_t return_code_union_value {eprosima::fastdds::dds::RETCODE_OK};
-            return_code_union_value =
+            TypeIdentifierPair type_ids_my_complex_union;
+            ReturnCode_t return_code_my_complex_union {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_my_complex_union =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "MyUnion", type_ids_union_value);
+                "ComplexUnion", type_ids_my_complex_union);
 
-            if (eprosima::fastdds::dds::RETCODE_OK != return_code_union_value)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_my_complex_union)
             {
-            ::register_MyUnion_type_identifier(type_ids_union_value);
+            ::register_ComplexUnion_type_identifier(type_ids_my_complex_union);
             }
-            StructMemberFlag member_flags_union_value = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+            StructMemberFlag member_flags_my_complex_union = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_union_value = 0x00000001;
-            bool common_union_value_ec {false};
-            CommonStructMember common_union_value {TypeObjectUtils::build_common_struct_member(member_id_union_value, member_flags_union_value, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_union_value, common_union_value_ec))};
-            if (!common_union_value_ec)
+            MemberId member_id_my_complex_union = 0x00000001;
+            bool common_my_complex_union_ec {false};
+            CommonStructMember common_my_complex_union {TypeObjectUtils::build_common_struct_member(member_id_my_complex_union, member_flags_my_complex_union, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_my_complex_union, common_my_complex_union_ec))};
+            if (!common_my_complex_union_ec)
             {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure union_value member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure my_complex_union member TypeIdentifier inconsistent.");
                 return;
             }
-            MemberName name_union_value = "union_value";
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_union_value;
+            MemberName name_my_complex_union = "my_complex_union";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_my_complex_union;
             ann_custom_union_struct.reset();
-            CompleteMemberDetail detail_union_value = TypeObjectUtils::build_complete_member_detail(name_union_value, member_ann_builtin_union_value, ann_custom_union_struct);
-            CompleteStructMember member_union_value = TypeObjectUtils::build_complete_struct_member(common_union_value, detail_union_value);
-            TypeObjectUtils::add_complete_struct_member(member_seq_union_struct, member_union_value);
+            CompleteMemberDetail detail_my_complex_union = TypeObjectUtils::build_complete_member_detail(name_my_complex_union, member_ann_builtin_my_complex_union, ann_custom_union_struct);
+            CompleteStructMember member_my_complex_union = TypeObjectUtils::build_complete_struct_member(common_my_complex_union, detail_my_complex_union);
+            TypeObjectUtils::add_complete_struct_member(member_seq_union_struct, member_my_complex_union);
         }
         CompleteStructType struct_type_union_struct = TypeObjectUtils::build_complete_struct_type(struct_flags_union_struct, header_union_struct, member_seq_union_struct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==

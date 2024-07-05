@@ -55,24 +55,25 @@
 #endif // _WIN32
 
 /*!
- * @brief This class represents the union MyUnion defined by the user in the IDL file.
+ * @brief This class represents the union BasicUnion defined by the user in the IDL file.
  * @ingroup union_struct
  */
-class MyUnion
+class BasicUnion
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport MyUnion()
+    eProsima_user_DllExport BasicUnion()
     {
+        second_();
     }
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~MyUnion()
+    eProsima_user_DllExport ~BasicUnion()
     {
         if (member_destructor_)
         {
@@ -82,25 +83,21 @@ public:
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object MyUnion that will be copied.
+     * @param x Reference to the object BasicUnion that will be copied.
      */
-    eProsima_user_DllExport MyUnion(
-            const MyUnion& x)
+    eProsima_user_DllExport BasicUnion(
+            const BasicUnion& x)
     {
         m__d = x.m__d;
 
         switch (x.selected_member_)
         {
                         case 0x00000001:
-                            octet_value_() = x.m_octet_value;
+                            first_() = x.m_first;
                             break;
 
                         case 0x00000002:
-                            long_value_() = x.m_long_value;
-                            break;
-
-                        case 0x00000003:
-                            string_value_() = x.m_string_value;
+                            second_() = x.m_second;
                             break;
 
         }
@@ -108,25 +105,21 @@ public:
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object MyUnion that will be copied.
+     * @param x Reference to the object BasicUnion that will be copied.
      */
-    eProsima_user_DllExport MyUnion(
-            MyUnion&& x) noexcept
+    eProsima_user_DllExport BasicUnion(
+            BasicUnion&& x) noexcept
     {
         m__d = x.m__d;
 
         switch (x.selected_member_)
         {
                         case 0x00000001:
-                            octet_value_() = std::move(x.m_octet_value);
+                            first_() = std::move(x.m_first);
                             break;
 
                         case 0x00000002:
-                            long_value_() = std::move(x.m_long_value);
-                            break;
-
-                        case 0x00000003:
-                            string_value_() = std::move(x.m_string_value);
+                            second_() = std::move(x.m_second);
                             break;
 
         }
@@ -134,25 +127,21 @@ public:
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object MyUnion that will be copied.
+     * @param x Reference to the object BasicUnion that will be copied.
      */
-    eProsima_user_DllExport MyUnion& operator =(
-            const MyUnion& x)
+    eProsima_user_DllExport BasicUnion& operator =(
+            const BasicUnion& x)
     {
         m__d = x.m__d;
 
         switch (x.selected_member_)
         {
                         case 0x00000001:
-                            octet_value_() = x.m_octet_value;
+                            first_() = x.m_first;
                             break;
 
                         case 0x00000002:
-                            long_value_() = x.m_long_value;
-                            break;
-
-                        case 0x00000003:
-                            string_value_() = x.m_string_value;
+                            second_() = x.m_second;
                             break;
 
         }
@@ -162,25 +151,21 @@ public:
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object MyUnion that will be copied.
+     * @param x Reference to the object BasicUnion that will be copied.
      */
-    eProsima_user_DllExport MyUnion& operator =(
-            MyUnion&& x) noexcept
+    eProsima_user_DllExport BasicUnion& operator =(
+            BasicUnion&& x) noexcept
     {
         m__d = x.m__d;
 
         switch (x.selected_member_)
         {
                         case 0x00000001:
-                            octet_value_() = std::move(x.m_octet_value);
+                            first_() = std::move(x.m_first);
                             break;
 
                         case 0x00000002:
-                            long_value_() = std::move(x.m_long_value);
-                            break;
-
-                        case 0x00000003:
-                            string_value_() = std::move(x.m_string_value);
+                            second_() = std::move(x.m_second);
                             break;
 
         }
@@ -190,10 +175,10 @@ public:
 
     /*!
      * @brief Comparison operator.
-     * @param x MyUnion object to compare.
+     * @param x BasicUnion object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const MyUnion& x) const
+            const BasicUnion& x) const
     {
         bool ret_value {false};
 
@@ -203,15 +188,11 @@ public:
             switch (selected_member_)
             {
                                 case 0x00000001:
-                                    ret_value = (m_octet_value == x.m_octet_value);
+                                    ret_value = (m_first == x.m_first);
                                     break;
 
                                 case 0x00000002:
-                                    ret_value = (m_long_value == x.m_long_value);
-                                    break;
-
-                                case 0x00000003:
-                                    ret_value = (m_string_value == x.m_string_value);
+                                    ret_value = (m_second == x.m_second);
                                     break;
 
             }
@@ -222,10 +203,360 @@ public:
 
     /*!
      * @brief Comparison operator.
-     * @param x MyUnion object to compare.
+     * @param x BasicUnion object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const MyUnion& x) const
+            const BasicUnion& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function sets the discriminator value.
+     * @param __d New value for the discriminator.
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
+     */
+    eProsima_user_DllExport void _d(
+            int16_t __d)
+    {
+        bool valid_discriminator = false;
+
+        switch (__d)
+        {
+                        case 0:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
+
+                        case 1:
+                        default:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
+
+        }
+
+        if (!valid_discriminator)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
+        }
+
+        m__d = __d;
+    }
+
+    /*!
+     * @brief This function returns the value of the discriminator.
+     * @return Value of the discriminator
+     */
+    eProsima_user_DllExport int16_t _d() const
+    {
+        return m__d;
+    }
+
+    /*!
+     * @brief This function copies the value in member first
+     * @param _first New value to be copied in member first
+     */
+    eProsima_user_DllExport void first(
+            const std::string& _first)
+    {
+        first_() = _first;
+        m__d = 0;
+    }
+
+    /*!
+     * @brief This function moves the value in member first
+     * @param _first New value to be moved in member first
+     */
+    eProsima_user_DllExport void first(
+            std::string&& _first)
+    {
+        first_() = _first;
+        m__d = 0;
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member first
+     * @return Constant reference to member first
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport const std::string& first() const
+    {
+        if (0x00000001 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_first;
+    }
+
+    /*!
+     * @brief This function returns a reference to member first
+     * @return Reference to member first
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport std::string& first()
+    {
+        if (0x00000001 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_first;
+    }
+
+
+    /*!
+     * @brief This function sets a value in member second
+     * @param _second New value for member second
+     */
+    eProsima_user_DllExport void second(
+            int64_t _second)
+    {
+        second_() = _second;
+        m__d = 2;
+    }
+
+    /*!
+     * @brief This function returns the value of member second
+     * @return Value of member second
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport int64_t second() const
+    {
+        if (0x00000002 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_second;
+    }
+
+    /*!
+     * @brief This function returns a reference to member second
+     * @return Reference to member second
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport int64_t& second()
+    {
+        if (0x00000002 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_second;
+    }
+
+
+
+private:
+
+            std::string& first_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_first.~basic_string();};
+                    new(&m_first) std::string();
+    ;
+                }
+
+                return m_first;
+            }
+
+            int64_t& second_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+    ;
+                }
+
+                return m_second;
+            }
+
+
+    int16_t m__d {2};
+
+    union
+    {
+        std::string m_first;
+        int64_t m_second;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
+};
+/*!
+ * @brief This class represents the union ComplexUnion defined by the user in the IDL file.
+ * @ingroup union_struct
+ */
+class ComplexUnion
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport ComplexUnion()
+    {
+        fourth_();
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~ComplexUnion()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object ComplexUnion that will be copied.
+     */
+    eProsima_user_DllExport ComplexUnion(
+            const ComplexUnion& x)
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            third_() = x.m_third;
+                            break;
+
+                        case 0x00000002:
+                            fourth_() = x.m_fourth;
+                            break;
+
+        }
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object ComplexUnion that will be copied.
+     */
+    eProsima_user_DllExport ComplexUnion(
+            ComplexUnion&& x) noexcept
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            third_() = std::move(x.m_third);
+                            break;
+
+                        case 0x00000002:
+                            fourth_() = std::move(x.m_fourth);
+                            break;
+
+        }
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object ComplexUnion that will be copied.
+     */
+    eProsima_user_DllExport ComplexUnion& operator =(
+            const ComplexUnion& x)
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            third_() = x.m_third;
+                            break;
+
+                        case 0x00000002:
+                            fourth_() = x.m_fourth;
+                            break;
+
+        }
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object ComplexUnion that will be copied.
+     */
+    eProsima_user_DllExport ComplexUnion& operator =(
+            ComplexUnion&& x) noexcept
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            third_() = std::move(x.m_third);
+                            break;
+
+                        case 0x00000002:
+                            fourth_() = std::move(x.m_fourth);
+                            break;
+
+        }
+
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x ComplexUnion object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const ComplexUnion& x) const
+    {
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
+        {
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_third == x.m_third);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_fourth == x.m_fourth);
+                                    break;
+
+            }
+        }
+
+        return ret_value;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x ComplexUnion object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const ComplexUnion& x) const
     {
         return !(*this == x);
     }
@@ -242,6 +573,7 @@ public:
 
         switch (__d)
         {
+                        case 0:
                         case 1:
                             if (0x00000001 == selected_member_)
                             {
@@ -249,15 +581,8 @@ public:
                             }
                             break;
 
-                        case 2:
+                        default:
                             if (0x00000002 == selected_member_)
-                            {
-                                valid_discriminator = true;
-                            }
-                            break;
-
-                        case 3:
-                            if (0x00000003 == selected_member_)
                             {
                                 valid_discriminator = true;
                             }
@@ -283,156 +608,104 @@ public:
     }
 
     /*!
-     * @brief This function sets a value in member octet_value
-     * @param _octet_value New value for member octet_value
+     * @brief This function sets a value in member third
+     * @param _third New value for member third
      */
-    eProsima_user_DllExport void octet_value(
-            uint8_t _octet_value)
+    eProsima_user_DllExport void third(
+            int32_t _third)
     {
-        octet_value_() = _octet_value;
-        m__d = 1;
+        third_() = _third;
+        m__d = 0;
     }
 
     /*!
-     * @brief This function returns the value of member octet_value
-     * @return Value of member octet_value
+     * @brief This function returns the value of member third
+     * @return Value of member third
      * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    eProsima_user_DllExport uint8_t octet_value() const
+    eProsima_user_DllExport int32_t third() const
     {
         if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
 
-        return m_octet_value;
+        return m_third;
     }
 
     /*!
-     * @brief This function returns a reference to member octet_value
-     * @return Reference to member octet_value
+     * @brief This function returns a reference to member third
+     * @return Reference to member third
      * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    eProsima_user_DllExport uint8_t& octet_value()
+    eProsima_user_DllExport int32_t& third()
     {
         if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
 
-        return m_octet_value;
+        return m_third;
     }
 
 
     /*!
-     * @brief This function sets a value in member long_value
-     * @param _long_value New value for member long_value
+     * @brief This function copies the value in member fourth
+     * @param _fourth New value to be copied in member fourth
      */
-    eProsima_user_DllExport void long_value(
-            int32_t _long_value)
+    eProsima_user_DllExport void fourth(
+            const BasicUnion& _fourth)
     {
-        long_value_() = _long_value;
+        fourth_() = _fourth;
         m__d = 2;
     }
 
     /*!
-     * @brief This function returns the value of member long_value
-     * @return Value of member long_value
+     * @brief This function moves the value in member fourth
+     * @param _fourth New value to be moved in member fourth
+     */
+    eProsima_user_DllExport void fourth(
+            BasicUnion&& _fourth)
+    {
+        fourth_() = _fourth;
+        m__d = 2;
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member fourth
+     * @return Constant reference to member fourth
      * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    eProsima_user_DllExport int32_t long_value() const
+    eProsima_user_DllExport const BasicUnion& fourth() const
     {
         if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
 
-        return m_long_value;
+        return m_fourth;
     }
 
     /*!
-     * @brief This function returns a reference to member long_value
-     * @return Reference to member long_value
+     * @brief This function returns a reference to member fourth
+     * @return Reference to member fourth
      * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    eProsima_user_DllExport int32_t& long_value()
+    eProsima_user_DllExport BasicUnion& fourth()
     {
         if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
 
-        return m_long_value;
+        return m_fourth;
     }
 
-
-    /*!
-     * @brief This function copies the value in member string_value
-     * @param _string_value New value to be copied in member string_value
-     */
-    eProsima_user_DllExport void string_value(
-            const std::string& _string_value)
-    {
-        string_value_() = _string_value;
-        m__d = 3;
-    }
-
-    /*!
-     * @brief This function moves the value in member string_value
-     * @param _string_value New value to be moved in member string_value
-     */
-    eProsima_user_DllExport void string_value(
-            std::string&& _string_value)
-    {
-        string_value_() = _string_value;
-        m__d = 3;
-    }
-
-    /*!
-     * @brief This function returns a constant reference to member string_value
-     * @return Constant reference to member string_value
-     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
-     */
-    eProsima_user_DllExport const std::string& string_value() const
-    {
-        if (0x00000003 != selected_member_)
-        {
-            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
-        }
-
-        return m_string_value;
-    }
-
-    /*!
-     * @brief This function returns a reference to member string_value
-     * @return Reference to member string_value
-     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
-     */
-    eProsima_user_DllExport std::string& string_value()
-    {
-        if (0x00000003 != selected_member_)
-        {
-            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
-        }
-
-        return m_string_value;
-    }
-
-
-    void _default()
-    {
-        if (member_destructor_)
-        {
-            member_destructor_();
-        }
-
-        selected_member_ = 0x0FFFFFFFu;
-    }
 
 
 private:
 
-            uint8_t& octet_value_()
+            int32_t& third_()
             {
                 if (0x00000001 != selected_member_)
                 {
@@ -443,14 +716,14 @@ private:
 
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
-                    m_octet_value = {0};
+                    m_third = {0};
     ;
                 }
 
-                return m_octet_value;
+                return m_third;
             }
 
-            int32_t& long_value_()
+            BasicUnion& fourth_()
             {
                 if (0x00000002 != selected_member_)
                 {
@@ -460,40 +733,21 @@ private:
                     }
 
                     selected_member_ = 0x00000002;
-                    member_destructor_ = nullptr;
-                    m_long_value = {0};
+                    member_destructor_ = [&]() {m_fourth.~BasicUnion();};
+                    new(&m_fourth) BasicUnion();
     ;
                 }
 
-                return m_long_value;
-            }
-
-            std::string& string_value_()
-            {
-                if (0x00000003 != selected_member_)
-                {
-                    if (member_destructor_)
-                    {
-                        member_destructor_();
-                    }
-
-                    selected_member_ = 0x00000003;
-                    member_destructor_ = [&]() {m_string_value.~basic_string();};
-                    new(&m_string_value) std::string();
-    ;
-                }
-
-                return m_string_value;
+                return m_fourth;
             }
 
 
-    int32_t m__d {0};
+    int32_t m__d {2};
 
     union
     {
-        uint8_t m_octet_value;
-        int32_t m_long_value;
-        std::string m_string_value;
+        int32_t m_third;
+        BasicUnion m_fourth;
     };
 
     uint32_t selected_member_ {0x0FFFFFFFu};
@@ -529,9 +783,9 @@ public:
     eProsima_user_DllExport union_struct(
             const union_struct& x)
     {
-                    m_index = x.m_index;
+                    m_my_basic_union = x.m_my_basic_union;
 
-                    m_union_value = x.m_union_value;
+                    m_my_complex_union = x.m_my_complex_union;
 
     }
 
@@ -542,8 +796,8 @@ public:
     eProsima_user_DllExport union_struct(
             union_struct&& x) noexcept
     {
-        m_index = x.m_index;
-        m_union_value = std::move(x.m_union_value);
+        m_my_basic_union = std::move(x.m_my_basic_union);
+        m_my_complex_union = std::move(x.m_my_complex_union);
     }
 
     /*!
@@ -554,9 +808,9 @@ public:
             const union_struct& x)
     {
 
-                    m_index = x.m_index;
+                    m_my_basic_union = x.m_my_basic_union;
 
-                    m_union_value = x.m_union_value;
+                    m_my_complex_union = x.m_my_complex_union;
 
         return *this;
     }
@@ -569,8 +823,8 @@ public:
             union_struct&& x) noexcept
     {
 
-        m_index = x.m_index;
-        m_union_value = std::move(x.m_union_value);
+        m_my_basic_union = std::move(x.m_my_basic_union);
+        m_my_complex_union = std::move(x.m_my_complex_union);
         return *this;
     }
 
@@ -581,8 +835,8 @@ public:
     eProsima_user_DllExport bool operator ==(
             const union_struct& x) const
     {
-        return (m_index == x.m_index &&
-           m_union_value == x.m_union_value);
+        return (m_my_basic_union == x.m_my_basic_union &&
+           m_my_complex_union == x.m_my_complex_union);
     }
 
     /*!
@@ -596,78 +850,88 @@ public:
     }
 
     /*!
-     * @brief This function sets a value in member index
-     * @param _index New value for member index
+     * @brief This function copies the value in member my_basic_union
+     * @param _my_basic_union New value to be copied in member my_basic_union
      */
-    eProsima_user_DllExport void index(
-            uint32_t _index)
+    eProsima_user_DllExport void my_basic_union(
+            const BasicUnion& _my_basic_union)
     {
-        m_index = _index;
+        m_my_basic_union = _my_basic_union;
     }
 
     /*!
-     * @brief This function returns the value of member index
-     * @return Value of member index
+     * @brief This function moves the value in member my_basic_union
+     * @param _my_basic_union New value to be moved in member my_basic_union
      */
-    eProsima_user_DllExport uint32_t index() const
+    eProsima_user_DllExport void my_basic_union(
+            BasicUnion&& _my_basic_union)
     {
-        return m_index;
+        m_my_basic_union = std::move(_my_basic_union);
     }
 
     /*!
-     * @brief This function returns a reference to member index
-     * @return Reference to member index
+     * @brief This function returns a constant reference to member my_basic_union
+     * @return Constant reference to member my_basic_union
      */
-    eProsima_user_DllExport uint32_t& index()
+    eProsima_user_DllExport const BasicUnion& my_basic_union() const
     {
-        return m_index;
+        return m_my_basic_union;
+    }
+
+    /*!
+     * @brief This function returns a reference to member my_basic_union
+     * @return Reference to member my_basic_union
+     */
+    eProsima_user_DllExport BasicUnion& my_basic_union()
+    {
+        return m_my_basic_union;
     }
 
 
     /*!
-     * @brief This function copies the value in member union_value
-     * @param _union_value New value to be copied in member union_value
+     * @brief This function copies the value in member my_complex_union
+     * @param _my_complex_union New value to be copied in member my_complex_union
      */
-    eProsima_user_DllExport void union_value(
-            const MyUnion& _union_value)
+    eProsima_user_DllExport void my_complex_union(
+            const ComplexUnion& _my_complex_union)
     {
-        m_union_value = _union_value;
+        m_my_complex_union = _my_complex_union;
     }
 
     /*!
-     * @brief This function moves the value in member union_value
-     * @param _union_value New value to be moved in member union_value
+     * @brief This function moves the value in member my_complex_union
+     * @param _my_complex_union New value to be moved in member my_complex_union
      */
-    eProsima_user_DllExport void union_value(
-            MyUnion&& _union_value)
+    eProsima_user_DllExport void my_complex_union(
+            ComplexUnion&& _my_complex_union)
     {
-        m_union_value = std::move(_union_value);
+        m_my_complex_union = std::move(_my_complex_union);
     }
 
     /*!
-     * @brief This function returns a constant reference to member union_value
-     * @return Constant reference to member union_value
+     * @brief This function returns a constant reference to member my_complex_union
+     * @return Constant reference to member my_complex_union
      */
-    eProsima_user_DllExport const MyUnion& union_value() const
+    eProsima_user_DllExport const ComplexUnion& my_complex_union() const
     {
-        return m_union_value;
+        return m_my_complex_union;
     }
 
     /*!
-     * @brief This function returns a reference to member union_value
-     * @return Reference to member union_value
+     * @brief This function returns a reference to member my_complex_union
+     * @return Reference to member my_complex_union
      */
-    eProsima_user_DllExport MyUnion& union_value()
+    eProsima_user_DllExport ComplexUnion& my_complex_union()
     {
-        return m_union_value;
+        return m_my_complex_union;
     }
 
 
 
 private:
 
-    uint32_t m_index{0};
-    MyUnion m_union_value;
+    BasicUnion m_my_basic_union;
+    ComplexUnion m_my_complex_union;
 
 };
 

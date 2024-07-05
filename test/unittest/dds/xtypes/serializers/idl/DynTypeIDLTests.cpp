@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <fstream>
+#include <iostream>
 #include <iterator>
 #include <string>
 
@@ -34,13 +35,6 @@ using namespace eprosima::fastdds::dds;
 
 class DynTypeIDLTests : public ::testing::TestWithParam<std::string>
 {
-public:
-
-    void SetUp()
-    {
-        test::register_dynamic_types();
-    }
-
 protected:
 
     void get_dynamic_type(
@@ -57,6 +51,32 @@ protected:
         dyn_type = DynamicTypeBuilderFactory::get_instance()->create_type_w_type_object(
                         type_objs.complete_type_object)->build();
     }
+
+    std::string snake_to_camel(
+            const std::string& snake_case)
+    {
+        std::string camel_case;
+        bool to_upper = true;
+
+        for (char ch : snake_case)
+        {
+            if (ch == '_')
+            {
+                to_upper = true;
+            }
+            else if (to_upper)
+            {
+                camel_case += std::toupper(ch);
+                to_upper = false;
+            }
+            else
+            {
+                camel_case += ch;
+            }
+        }
+
+        return camel_case;
+    }
 };
 
 /**
@@ -71,6 +91,8 @@ TEST_P(DynTypeIDLTests, to_idl)
 {
     const std::string type = GetParam();
 
+    test::register_type_object_representation(type);
+
     // Read the IDL file as a string
     const auto file_name = std::string("types/idls/") + type + ".idl";
 
@@ -84,11 +106,11 @@ TEST_P(DynTypeIDLTests, to_idl)
     get_dynamic_type(type, dyn_type);
 
     // Serialize DynamicType to IDL
-    std::string idl_serialization;
+    std::stringstream idl_serialization;
     ASSERT_EQ(idl_serialize(dyn_type, idl_serialization), RETCODE_OK);
 
     // Compare IDLs
-    ASSERT_EQ(idl_file, idl_serialization);
+    ASSERT_EQ(idl_file, idl_serialization.str());
 }
 
 INSTANTIATE_TEST_SUITE_P(

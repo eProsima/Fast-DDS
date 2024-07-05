@@ -53,6 +53,129 @@
 #endif // _WIN32
 
 /*!
+ * @brief This class represents the structure ValueStruct defined by the user in the IDL file.
+ * @ingroup map_struct
+ */
+class ValueStruct
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport ValueStruct()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~ValueStruct()
+    {
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object ValueStruct that will be copied.
+     */
+    eProsima_user_DllExport ValueStruct(
+            const ValueStruct& x)
+    {
+                    m_value = x.m_value;
+
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object ValueStruct that will be copied.
+     */
+    eProsima_user_DllExport ValueStruct(
+            ValueStruct&& x) noexcept
+    {
+        m_value = x.m_value;
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object ValueStruct that will be copied.
+     */
+    eProsima_user_DllExport ValueStruct& operator =(
+            const ValueStruct& x)
+    {
+
+                    m_value = x.m_value;
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object ValueStruct that will be copied.
+     */
+    eProsima_user_DllExport ValueStruct& operator =(
+            ValueStruct&& x) noexcept
+    {
+
+        m_value = x.m_value;
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x ValueStruct object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const ValueStruct& x) const
+    {
+        return (m_value == x.m_value);
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x ValueStruct object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const ValueStruct& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function sets a value in member value
+     * @param _value New value for member value
+     */
+    eProsima_user_DllExport void value(
+            bool _value)
+    {
+        m_value = _value;
+    }
+
+    /*!
+     * @brief This function returns the value of member value
+     * @return Value of member value
+     */
+    eProsima_user_DllExport bool value() const
+    {
+        return m_value;
+    }
+
+    /*!
+     * @brief This function returns a reference to member value
+     * @return Reference to member value
+     */
+    eProsima_user_DllExport bool& value()
+    {
+        return m_value;
+    }
+
+
+
+private:
+
+    bool m_value{false};
+
+};
+/*!
  * @brief This class represents the structure map_struct defined by the user in the IDL file.
  * @ingroup map_struct
  */
@@ -81,7 +204,9 @@ public:
     eProsima_user_DllExport map_struct(
             const map_struct& x)
     {
-                    m_my_map = x.m_my_map;
+                    m_my_basic_map = x.m_my_basic_map;
+
+                    m_my_complex_map = x.m_my_complex_map;
 
     }
 
@@ -92,7 +217,8 @@ public:
     eProsima_user_DllExport map_struct(
             map_struct&& x) noexcept
     {
-        m_my_map = std::move(x.m_my_map);
+        m_my_basic_map = std::move(x.m_my_basic_map);
+        m_my_complex_map = std::move(x.m_my_complex_map);
     }
 
     /*!
@@ -103,7 +229,9 @@ public:
             const map_struct& x)
     {
 
-                    m_my_map = x.m_my_map;
+                    m_my_basic_map = x.m_my_basic_map;
+
+                    m_my_complex_map = x.m_my_complex_map;
 
         return *this;
     }
@@ -116,7 +244,8 @@ public:
             map_struct&& x) noexcept
     {
 
-        m_my_map = std::move(x.m_my_map);
+        m_my_basic_map = std::move(x.m_my_basic_map);
+        m_my_complex_map = std::move(x.m_my_complex_map);
         return *this;
     }
 
@@ -127,7 +256,8 @@ public:
     eProsima_user_DllExport bool operator ==(
             const map_struct& x) const
     {
-        return (m_my_map == x.m_my_map);
+        return (m_my_basic_map == x.m_my_basic_map &&
+           m_my_complex_map == x.m_my_complex_map);
     }
 
     /*!
@@ -141,48 +271,88 @@ public:
     }
 
     /*!
-     * @brief This function copies the value in member my_map
-     * @param _my_map New value to be copied in member my_map
+     * @brief This function copies the value in member my_basic_map
+     * @param _my_basic_map New value to be copied in member my_basic_map
      */
-    eProsima_user_DllExport void my_map(
-            const std::map<std::string, bool>& _my_map)
+    eProsima_user_DllExport void my_basic_map(
+            const std::map<std::string, bool>& _my_basic_map)
     {
-        m_my_map = _my_map;
+        m_my_basic_map = _my_basic_map;
     }
 
     /*!
-     * @brief This function moves the value in member my_map
-     * @param _my_map New value to be moved in member my_map
+     * @brief This function moves the value in member my_basic_map
+     * @param _my_basic_map New value to be moved in member my_basic_map
      */
-    eProsima_user_DllExport void my_map(
-            std::map<std::string, bool>&& _my_map)
+    eProsima_user_DllExport void my_basic_map(
+            std::map<std::string, bool>&& _my_basic_map)
     {
-        m_my_map = std::move(_my_map);
+        m_my_basic_map = std::move(_my_basic_map);
     }
 
     /*!
-     * @brief This function returns a constant reference to member my_map
-     * @return Constant reference to member my_map
+     * @brief This function returns a constant reference to member my_basic_map
+     * @return Constant reference to member my_basic_map
      */
-    eProsima_user_DllExport const std::map<std::string, bool>& my_map() const
+    eProsima_user_DllExport const std::map<std::string, bool>& my_basic_map() const
     {
-        return m_my_map;
+        return m_my_basic_map;
     }
 
     /*!
-     * @brief This function returns a reference to member my_map
-     * @return Reference to member my_map
+     * @brief This function returns a reference to member my_basic_map
+     * @return Reference to member my_basic_map
      */
-    eProsima_user_DllExport std::map<std::string, bool>& my_map()
+    eProsima_user_DllExport std::map<std::string, bool>& my_basic_map()
     {
-        return m_my_map;
+        return m_my_basic_map;
+    }
+
+
+    /*!
+     * @brief This function copies the value in member my_complex_map
+     * @param _my_complex_map New value to be copied in member my_complex_map
+     */
+    eProsima_user_DllExport void my_complex_map(
+            const std::map<std::string, ValueStruct>& _my_complex_map)
+    {
+        m_my_complex_map = _my_complex_map;
+    }
+
+    /*!
+     * @brief This function moves the value in member my_complex_map
+     * @param _my_complex_map New value to be moved in member my_complex_map
+     */
+    eProsima_user_DllExport void my_complex_map(
+            std::map<std::string, ValueStruct>&& _my_complex_map)
+    {
+        m_my_complex_map = std::move(_my_complex_map);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member my_complex_map
+     * @return Constant reference to member my_complex_map
+     */
+    eProsima_user_DllExport const std::map<std::string, ValueStruct>& my_complex_map() const
+    {
+        return m_my_complex_map;
+    }
+
+    /*!
+     * @brief This function returns a reference to member my_complex_map
+     * @return Reference to member my_complex_map
+     */
+    eProsima_user_DllExport std::map<std::string, ValueStruct>& my_complex_map()
+    {
+        return m_my_complex_map;
     }
 
 
 
 private:
 
-    std::map<std::string, bool> m_my_map;
+    std::map<std::string, bool> m_my_basic_map;
+    std::map<std::string, ValueStruct> m_my_complex_map;
 
 };
 

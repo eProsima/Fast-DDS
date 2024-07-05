@@ -1,0 +1,11 @@
+struct ColorAmount
+{
+    long red;
+    long green;
+    long blue;
+};
+
+struct multi_array_struct
+{
+    ColorAmount colors[5][5][5];
+};

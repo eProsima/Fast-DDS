@@ -13,13 +13,13 @@
 // limitations under the License.
 
 /*!
- * @file dyn_type_tree.hpp
+ * @file dynamic_type_idl.hpp
  */
 
-#ifndef _FASTDDS_DDS_XTYPES_DYN_TYPE_TREE_HPP_
-#define _FASTDDS_DDS_XTYPES_DYN_TYPE_TREE_HPP_
+#ifndef FASTDDS_DDS_XTYPES_SERIALIZERS_IDL__DYNAMIC_TYPE_IDL_HPP
+#define FASTDDS_DDS_XTYPES_SERIALIZERS_IDL__DYNAMIC_TYPE_IDL_HPP
 
-#include <string>
+#include <iostream>
 #include <utility>
 #include <vector>
 
@@ -82,51 +82,51 @@ ReturnCode_t dyn_type_to_tree(
  * @brief Converts a DynamicType to a string.
  *
  * @param dyn_type The DynamicType to convert.
- * @param type_str The string representation of the DynamicType.
+ * @param idl The idl representation of the DynamicType.
  */
-ReturnCode_t type_kind_to_str(
+ReturnCode_t type_kind_to_idl(
         const DynamicType::_ref_type& dyn_type,
-        std::string& type_str) noexcept;
+        std::ostream& idl) noexcept;
 
 /**
- * @brief Converts a DynamicType of \c TK_ARRAY kind to a string.
+ * @brief Converts a DynamicType of \c TK_ARRAY kind to an idl.
  *
  * @param dyn_type The DynamicType kind to convert.
  * @param array_str The string representation of the DynamicType kind.
  */
-ReturnCode_t array_kind_to_str(
+ReturnCode_t array_kind_to_idl(
         const DynamicType::_ref_type& dyn_type,
-        std::string& array_str) noexcept;
+        std::ostream& idl) noexcept;
 
 /**
- * @brief Converts a DynamicType of \c TK_MAP kind to a string.
+ * @brief Converts a DynamicType of \c TK_MAP kind to an idl.
  *
  * @param dyn_type The DynamicType to convert.
- * @param map_str The string representation of the DynamicType.
+ * @param idl The idl representation of the DynamicType.
  */
-ReturnCode_t map_kind_to_str(
+ReturnCode_t map_kind_to_idl(
         const DynamicType::_ref_type& dyn_type,
-        std::string& map_str) noexcept;
+        std::ostream& idl) noexcept;
 
 /**
- * @brief Converts a DynamicType of \c TK_SEQUENCE kind to a string.
+ * @brief Converts a DynamicType of \c TK_SEQUENCE kind to an idl.
  *
  * @param dyn_type The DynamicType to convert.
- * @param sequence_str The string representation of the DynamicType.
+ * @param idl The idl representation of the DynamicType.
  */
-ReturnCode_t sequence_kind_to_str(
+ReturnCode_t sequence_kind_to_idl(
         const DynamicType::_ref_type& dyn_type,
-        std::string& sequence_str) noexcept;
+        std::ostream& idl) noexcept;
 
 /**
- * @brief Gathers the members of a DynamicType.
+ * @brief Converts a DynamicType of \c TK_STRING8 or \c TK_STRING16 kind to an idl.
  *
- * @param dyn_type The DynamicType to gather the members from.
- * @param result The vector of (name, member_descriptor) to store the members.
+ * @param dyn_type The DynamicType to convert.
+ * @param idl The idl representation of the DynamicType.
  */
-ReturnCode_t get_members_sorted(
+ReturnCode_t string_kind_to_idl(
         const DynamicType::_ref_type& dyn_type,
-        std::vector<std::pair<std::string, MemberDescriptor::_ref_type>>& result) noexcept;
+        std::ostream& idl) noexcept;
 
 /**
  * @brief Gathers the \c element_type of the DynamicType.
@@ -154,84 +154,84 @@ ReturnCode_t container_size(
 //////////////////////////////
 
 /**
- * @brief Converts a tree to an IDL string.
+ * @brief Converts a tree to an IDL stream.
  *
  * @param root The root node of the tree.
- * @param dyn_type_str The string representation of the tree.
+ * @param idl The idl representation of the tree.
  */
 ReturnCode_t dyn_type_tree_to_idl(
         const utilities::collections::TreeNode<TreeNodeType>& root,
-        std::string& dyn_type_str) noexcept;
+        std::ostream& idl) noexcept;
 
 /**
- * @brief Converts a tree with a \c TK_ALIAS root to an IDL string.
+ * @brief Converts a tree with a \c TK_ALIAS root to an IDL stream.
  *
  * @param node The root node of the tree.
- * @param alias_str The string representation of the tree.
+ * @param idl The idl representation of the tree.
  */
-ReturnCode_t alias_to_str(
+ReturnCode_t alias_to_idl(
         const utilities::collections::TreeNode<TreeNodeType>& node,
-        std::string& alias_str) noexcept;
+        std::ostream& idl) noexcept;
 
 /**
- * @brief Converts a tree with a \c TK_BITMASK root to an IDL string.
+ * @brief Converts a tree with a \c TK_BITMASK root to an IDL stream.
  *
  * @param node The root node of the tree.
- * @param union_str The string representation of the tree.
+ * @param idl The idl representation of the tree.
  */
-ReturnCode_t bitmask_to_str(
+ReturnCode_t bitmask_to_idl(
         const utilities::collections::TreeNode<TreeNodeType>& node,
-        std::string& bitset_str) noexcept;
+        std::ostream& idl) noexcept;
 
 /**
- * @brief Converts a tree with a \c TK_BITSET root to an IDL string.
+ * @brief Converts a tree with a \c TK_BITSET root to an IDL stream.
  *
  * @param node The root node of the tree.
- * @param union_str The string representation of the tree.
+ * @param idl The idl representation of the tree.
  */
-ReturnCode_t bitset_to_str(
+ReturnCode_t bitset_to_idl(
         const utilities::collections::TreeNode<TreeNodeType>& node,
-        std::string& bitset_str) noexcept;
+        std::ostream& idl) noexcept;
 
 /**
- * @brief Converts a tree with a \c TK_ENUM root to an IDL string.
+ * @brief Converts a tree with a \c TK_ENUM root to an IDL stream.
  *
  * @param node The root node of the tree.
- * @param enum_str The string representation of the tree.
+ * @param idl The idl representation of the tree.
  */
-ReturnCode_t enum_to_str(
+ReturnCode_t enum_to_idl(
         const utilities::collections::TreeNode<TreeNodeType>& node,
-        std::string& enum_str) noexcept;
+        std::ostream& idl) noexcept;
 
 /**
- * @brief Converts a tree with a \c TK_STRUCTURE root to an IDL string.
+ * @brief Converts a tree with a \c TK_STRUCTURE root to an IDL stream.
  *
  * @param node The root node of the tree.
- * @param struct_str The string representation of the tree.
+ * @param idl The idl representation of the tree.
  */
-ReturnCode_t struct_to_str(
+ReturnCode_t struct_to_idl(
         const utilities::collections::TreeNode<TreeNodeType>& node,
-        std::string& struct_str) noexcept;
+        std::ostream& idl) noexcept;
 
 /**
- * @brief Converts a tree with a \c TK_UNION root to an IDL string.
+ * @brief Converts a tree with a \c TK_UNION root to an IDL stream.
  *
  * @param node The root node of the tree.
- * @param union_str The string representation of the tree.
+ * @param idl The idl representation of the tree.
  */
-ReturnCode_t union_to_str(
+ReturnCode_t union_to_idl(
         const utilities::collections::TreeNode<TreeNodeType>& node,
-        std::string& union_str) noexcept;
+        std::ostream& idl) noexcept;
 
 /**
  * @brief Converts a simple tree to an IDL string.
  *
  * @param node The root node of the tree.
- * @param node_str The string representation of the tree.
+ * @param idl The idl representation of the tree.
  */
-ReturnCode_t node_to_str(
+ReturnCode_t node_to_idl(
         const utilities::collections::TreeNode<TreeNodeType>& node,
-        std::string& node_str) noexcept;
+        std::ostream& idl) noexcept;
 
 /**
  * @brief Finds the default type kind for a variable with a given size.
@@ -247,4 +247,4 @@ ReturnCode_t get_default_type_kind(
 } // fastdds
 } // eprosima
 
-#endif // _FASTDDS_DDS_XTYPES_DYN_TYPE_TREE_HPP_
+#endif // FASTDDS_DDS_XTYPES_SERIALIZERS_IDL__DYNAMIC_TYPE_IDL_HPP

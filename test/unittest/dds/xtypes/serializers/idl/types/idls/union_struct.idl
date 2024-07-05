@@ -1,15 +1,23 @@
-union MyUnion switch (long)
+union BasicUnion switch (short)
 {
+    case 0:
+        string first;
     case 1:
-        octet octet_value;
-    case 2:
-        long long_value;
-    case 3:
-        string string_value;
+    default:
+        long long second;
+};
+
+union ComplexUnion switch (long)
+{
+    case 0:
+    case 1:
+        long third;
+    default:
+        BasicUnion fourth;
 };
 
 struct union_struct
 {
-    unsigned long index;
-    MyUnion union_value;
+    BasicUnion my_basic_union;
+    ComplexUnion my_complex_union;
 };

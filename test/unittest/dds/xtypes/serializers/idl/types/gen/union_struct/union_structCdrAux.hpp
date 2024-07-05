@@ -24,7 +24,7 @@
 
 #include "union_struct.hpp"
 
-constexpr uint32_t union_struct_max_cdr_typesize {276UL};
+constexpr uint32_t union_struct_max_cdr_typesize {548UL};
 constexpr uint32_t union_struct_max_key_cdr_typesize {0UL};
 
 

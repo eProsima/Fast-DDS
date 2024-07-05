@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <cassert>
 #include <cstdint>
 #include <iostream>
 #include <set>
@@ -31,10 +32,11 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+using namespace eprosima::utilities::collections;
+
 constexpr auto TYPE_OPENING = "\n{\n";
 constexpr auto TYPE_CLOSURE = "};\n";
 constexpr auto TAB_SEPARATOR = "    ";
-
 
 //////////////////////////
 // DYNAMIC TYPE TO TREE //
@@ -43,64 +45,72 @@ constexpr auto TAB_SEPARATOR = "    ";
 ReturnCode_t dyn_type_to_tree(
         const DynamicType::_ref_type& type,
         const std::string& member_name,
-        utilities::collections::TreeNode<TreeNodeType>& node) noexcept
+        TreeNode<TreeNodeType>& node) noexcept
 {
     ReturnCode_t ret = RETCODE_OK;
 
-    switch (type->get_kind())
+    const auto kind = type->get_kind();
+
+    if (kind == TK_STRUCTURE)
     {
-        case TK_STRUCTURE:
-        {
             // If is struct, the call is recursive.
             // Create new tree node
-            utilities::collections::TreeNode<TreeNodeType> parent(member_name, type->get_name().to_string(), type);
+            TreeNode<TreeNodeType> parent(member_name, type->get_name().to_string(), type);
 
             // Get its base class
             TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
             ret = type->get_descriptor(type_descriptor);
 
-            if (ret != RETCODE_OK)
+            if (RETCODE_OK != ret)
             {
                 return ret;
             }
 
             // Add base class as a new branch
             const auto base_type = type_descriptor->base_type();
+            std::uint32_t first_member = 0;
 
-            if (base_type != nullptr)
+            if (nullptr != base_type)
             {
-                utilities::collections::TreeNode<TreeNodeType> child;
+                TreeNode<TreeNodeType> child;
                 ret = dyn_type_to_tree(base_type, "PARENT", child);
 
-                if (ret != RETCODE_OK)
+                if (RETCODE_OK != ret)
                 {
                     return ret;
                 }
 
                 child.info.is_base = true;
 
-                // Add each member with its name as a new child in a branch (recursion)
+                // If the struct is derived from a base, the first members of the struct are the members of the base.
+                first_member = base_type->get_member_count();
+
                 parent.add_branch(child);
             }
 
-            // Get all members of this struct
-            std::vector<std::pair<std::string, MemberDescriptor::_ref_type>> members_by_name;
-            ret = get_members_sorted(type, members_by_name);
-
-            if (ret != RETCODE_OK)
+            // Add each member as a new branch except for the members of its base class
+            for (std::uint32_t index = first_member; index < type->get_member_count(); index++)
             {
-                return ret;
-            }
+                traits<DynamicTypeMember>::ref_type member;
+                ret = type->get_member_by_index(member, index);
 
-            for (const auto& member : members_by_name)
-            {
-                const auto& member_name = member.first;
-                const auto& member_descriptor = member.second;
+                if (RETCODE_OK != ret)
+                {
+                    return ret;
+                }
 
-                utilities::collections::TreeNode<TreeNodeType> child;
-                ret = dyn_type_to_tree(member_descriptor->type(), member_name, child);
+                MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+                ret = member->get_descriptor(member_descriptor);
 
-                if (ret != RETCODE_OK)
+                if (RETCODE_OK != ret)
+                {
+                    return ret;
+                }
+
+                TreeNode<TreeNodeType> child;
+                ret = dyn_type_to_tree(member_descriptor->type(), member_descriptor->name().to_string(), child);
+
+                if (RETCODE_OK != ret)
                 {
                     return ret;
                 }
@@ -112,65 +122,102 @@ ReturnCode_t dyn_type_to_tree(
             }
 
             node = parent;
-            break;
-        }
-        case TK_ARRAY:
-        case TK_SEQUENCE:
+    }
+    else
+    {
+        std::stringstream idl;
+        ret = type_kind_to_idl(type, idl);
+
+        if (RETCODE_OK != ret)
         {
-            // If container (array or struct) has exactly one branch
+            return ret;
+        }
+
+        node = TreeNode<TreeNodeType>(member_name, idl.str(), type);
+
+        if (kind == TK_ARRAY || kind == TK_SEQUENCE)
+        {
+            // If container (array or sequence) has exactly one branch
             // Calculate child branch
             DynamicType::_ref_type internal_type;
             ret = container_internal_type(type, internal_type);
 
-            if (ret != RETCODE_OK)
+            if (RETCODE_OK != ret)
             {
                 return ret;
             }
 
-            std::string internal_str;
-            ret = type_kind_to_str(type, internal_str);
+            TreeNode<TreeNodeType> child;
+            ret = dyn_type_to_tree(internal_type, "CONTAINER_MEMBER", child);
 
-            if (ret != RETCODE_OK)
+            if (RETCODE_OK != ret)
             {
                 return ret;
             }
 
-            // Create this node
-            utilities::collections::TreeNode<TreeNodeType> container(member_name, internal_str, type);
-            // Add branch
-            ret = dyn_type_to_tree(internal_type, "CONTAINER_MEMBER", node);
-
-            if (ret != RETCODE_OK)
-            {
-                return ret;
-            }
-
-            container.add_branch(node);
-
-            node = container;
-            break;
+            node.add_branch(child);
         }
-        default:
+        else if (kind == TK_MAP)
         {
-            std::string type_str;
-            ret = type_kind_to_str(type, type_str);
+            // Add value branch
+            TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+            ret = type->get_descriptor(type_descriptor);
 
-            if (ret != RETCODE_OK)
+            if (RETCODE_OK != ret)
             {
                 return ret;
             }
 
-            node = utilities::collections::TreeNode<TreeNodeType>(member_name, type_str, type);
-            break;
+            TreeNode<TreeNodeType> value;
+            ret = dyn_type_to_tree(type_descriptor->element_type(), "VALUE", value);
+
+            if (RETCODE_OK != ret)
+            {
+                return ret;
+            }
+
+            node.add_branch(value);
+        }
+        else if (kind == TK_UNION)
+        {
+            // Add each member as a new branch
+            for (std::uint32_t index = 1; index < type->get_member_count(); index++)
+            {
+                traits<DynamicTypeMember>::ref_type member;
+                ret = type->get_member_by_index(member, index);
+
+                if (RETCODE_OK != ret)
+                {
+                    return ret;
+                }
+
+                MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+                ret = member->get_descriptor(member_descriptor);
+
+                if (RETCODE_OK != ret)
+                {
+                    return ret;
+                }
+
+                TreeNode<TreeNodeType> child;
+                ret = dyn_type_to_tree(member_descriptor->type(), member_descriptor->name().to_string(), child);
+
+                if (RETCODE_OK != ret)
+                {
+                    return ret;
+                }
+
+                node.add_branch(child);
+            }
         }
     }
 
     return ret;
 }
 
-ReturnCode_t type_kind_to_str(
+ReturnCode_t type_kind_to_idl(
         const DynamicType::_ref_type& dyn_type,
-        std::string& type_str) noexcept
+        std::ostream& idl) noexcept
 {
     ReturnCode_t ret = RETCODE_OK;
 
@@ -178,102 +225,98 @@ ReturnCode_t type_kind_to_str(
     {
         case TK_BOOLEAN:
         {
-            type_str = "boolean";
+            idl << "boolean";
             break;
         }
         case TK_BYTE:
         {
-            type_str = "octet";
+            idl << "octet";
             break;
         }
         case TK_INT8:
         {
-            type_str = "char";
+            idl << "char";
             break;
         }
         case TK_INT16:
         {
-            type_str = "short";
+            idl << "short";
             break;
         }
         case TK_INT32:
         {
-            type_str = "long";
+            idl << "long";
             break;
         }
         case TK_INT64:
         {
-            type_str = "long long";
+            idl << "long long";
             break;
         }
         case TK_UINT8:
         {
-            type_str = "unsigned char";
+            idl << "unsigned char";
             break;
         }
         case TK_UINT16:
         {
-            type_str = "unsigned short";
+            idl << "unsigned short";
             break;
         }
         case TK_UINT32:
         {
-            type_str = "unsigned long";
+            idl << "unsigned long";
             break;
         }
         case TK_UINT64:
         {
-            type_str = "unsigned long long";
+            idl << "unsigned long long";
             break;
         }
         case TK_FLOAT32:
         {
-            type_str = "float";
+            idl << "float";
             break;
         }
         case TK_FLOAT64:
         {
-            type_str = "double";
+            idl << "double";
             break;
         }
         case TK_FLOAT128:
         {
-            type_str = "long double";
+            idl << "long double";
             break;
         }
         case TK_CHAR8:
         {
-            type_str = "char";
+            idl << "char";
             break;
         }
         case TK_CHAR16:
         {
-            type_str = "wchar";
+            idl << "wchar";
             break;
         }
         case TK_STRING8:
-        {
-            type_str = "string";
-            break;
-        }
         case TK_STRING16:
         {
-            type_str = "wstring";
+            ret = string_kind_to_idl(dyn_type, idl);
             break;
         }
         case TK_ARRAY:
         {
-            ret = array_kind_to_str(dyn_type, type_str);
+            ret = array_kind_to_idl(dyn_type, idl);
             break;
         }
         case TK_SEQUENCE:
         {
-            ret = sequence_kind_to_str(dyn_type, type_str);
+            ret = sequence_kind_to_idl(dyn_type, idl);
             break;
         }
         case TK_MAP:
         {
-            ret = map_kind_to_str(dyn_type, type_str);
+            ret = map_kind_to_idl(dyn_type, idl);
             break;
         }
         case TK_ALIAS:
@@ -283,7 +326,7 @@ ReturnCode_t type_kind_to_str(
         case TK_STRUCTURE:
         case TK_UNION:
         {
-            type_str = dyn_type->get_name().to_string();
+            idl << dyn_type->get_name().to_string();
             break;
         }
         case TK_NONE:
@@ -301,29 +344,25 @@ ReturnCode_t type_kind_to_str(
     return ret;
 }
 
-ReturnCode_t array_kind_to_str(
+ReturnCode_t array_kind_to_idl(
         const DynamicType::_ref_type& dyn_type,
-        std::string& array_str) noexcept
+        std::ostream& idl) noexcept
 {
-    if (dyn_type->get_kind() != TK_ARRAY)
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Type is not an array.");
-        return RETCODE_BAD_PARAMETER;
-    }
+    assert(dyn_type->get_kind() == TK_ARRAY);
 
     ReturnCode_t ret = RETCODE_OK;
 
     DynamicType::_ref_type internal_type;
     ret = container_internal_type(dyn_type, internal_type);
 
-    if (ret != RETCODE_OK)
+    if (RETCODE_OK != ret)
     {
         return ret;
     }
 
-    ret = type_kind_to_str(internal_type, array_str);
+    ret = type_kind_to_idl(internal_type, idl);
 
-    if (ret != RETCODE_OK)
+    if (RETCODE_OK != ret)
     {
         return ret;
     }
@@ -331,168 +370,144 @@ ReturnCode_t array_kind_to_str(
     BoundSeq bounds;
     ret = container_size(dyn_type, bounds);
 
-    if (ret != RETCODE_OK)
+    if (RETCODE_OK != ret)
     {
         return ret;
     }
 
     for (const auto& bound : bounds)
     {
-        array_str += "[";
-        array_str += std::to_string(bound);
-        array_str += "]";
+        idl << "[" << std::to_string(bound) << "]";
     }
 
     return ret;
 }
 
-ReturnCode_t map_kind_to_str(
+ReturnCode_t map_kind_to_idl(
         const DynamicType::_ref_type& dyn_type,
-        std::string& map_str) noexcept
+        std::ostream& idl) noexcept
 {
-    if (dyn_type->get_kind() != TK_MAP)
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Type is not a map.");
-        return RETCODE_BAD_PARAMETER;
-    }
+    assert(dyn_type->get_kind() == TK_MAP);
 
     ReturnCode_t ret = RETCODE_OK;
 
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     ret = dyn_type->get_descriptor(type_descriptor);
 
-    if (ret != RETCODE_OK)
+    if (RETCODE_OK != ret)
     {
         return ret;
     }
 
-    std::string key_str;
+    idl << "map<";
+
     const auto key_type = type_descriptor->key_element_type();
-    ret = type_kind_to_str(key_type, key_str);
+    ret = type_kind_to_idl(key_type, idl);
 
-    if (ret != RETCODE_OK)
+    if (RETCODE_OK != ret)
     {
         return ret;
     }
 
-    std::string value_str;
+    idl << ", ";
+
     const auto value_type = type_descriptor->element_type();
-    ret = type_kind_to_str(value_type, value_str);
+    ret = type_kind_to_idl(value_type, idl);
 
-    if (ret != RETCODE_OK)
+    if (RETCODE_OK != ret)
     {
         return ret;
     }
 
-    std::stringstream ss;
+    BoundSeq bounds;
+    ret = container_size(dyn_type, bounds);
 
-    ss << "map<" << key_str << ", " << value_str << ">";
+    if (RETCODE_OK != ret)
+    {
+        return ret;
+    }
 
-    map_str = ss.str();
+    if (bounds.size() == 1)
+    {
+        idl << ", " << std::to_string(bounds[0]);
+    }
+
+    idl << ">";
 
     return ret;
 }
 
-ReturnCode_t sequence_kind_to_str(
+ReturnCode_t sequence_kind_to_idl(
         const DynamicType::_ref_type& dyn_type,
-        std::string& sequence_str) noexcept
+        std::ostream& idl) noexcept
 {
-    if (dyn_type->get_kind() != TK_SEQUENCE)
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Type is not a sequence.");
-        return RETCODE_BAD_PARAMETER;
-    }
+    assert(dyn_type->get_kind() == TK_SEQUENCE);
 
     ReturnCode_t ret = RETCODE_OK;
 
     DynamicType::_ref_type internal_type;
     ret = container_internal_type(dyn_type, internal_type);
 
-    if (ret != RETCODE_OK)
+    if (RETCODE_OK != ret)
     {
         return ret;
     }
 
-    ret = type_kind_to_str(internal_type, sequence_str);
+    idl << "sequence<";
 
-    if (ret != RETCODE_OK)
+    ret = type_kind_to_idl(internal_type, idl);
+
+    if (RETCODE_OK != ret)
     {
         return ret;
     }
-
-    sequence_str = "sequence<" + sequence_str;
 
     BoundSeq bounds;
     ret = container_size(dyn_type, bounds);
 
-    if (ret != RETCODE_OK)
+    if (RETCODE_OK != ret)
     {
         return ret;
     }
 
-    for (const auto& bound : bounds)
+    if (1 == bounds.size())
     {
-        const auto UNBOUNDED = static_cast<std::uint32_t>(LENGTH_UNLIMITED);
-
-        if (bound != UNBOUNDED)
-        {
-            sequence_str += ", " + std::to_string(bound);
-        }
+        idl << ", " << std::to_string(bounds[0]);
     }
 
-    sequence_str += ">";
+    idl << ">";
 
     return ret;
 }
 
-ReturnCode_t get_members_sorted(
+ReturnCode_t string_kind_to_idl(
         const DynamicType::_ref_type& dyn_type,
-        std::vector<std::pair<std::string, MemberDescriptor::_ref_type>>& result) noexcept
+        std::ostream& idl) noexcept
 {
+    assert(dyn_type->get_kind() == TK_STRING8 || dyn_type->get_kind() == TK_STRING16);
+
     ReturnCode_t ret = RETCODE_OK;
 
-    // Skip the inherited members
-    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
-    ret = dyn_type->get_descriptor(type_descriptor);
+    if (dyn_type->get_kind() == TK_STRING16)
+    {
+        idl << "wstring";
+    }
+    else
+    {
+        idl << "string";
+    }
 
-    if (ret != RETCODE_OK)
+    BoundSeq bounds;
+    ret = container_size(dyn_type, bounds);
+
+    if (RETCODE_OK != ret)
     {
         return ret;
     }
 
-    const auto base_type = type_descriptor->base_type();
-
-    std::uint32_t first_member = 0;
-
-    if (base_type != nullptr)
+    if (1 == bounds.size())
     {
-        // If the struct has a base type, the first member is the base type
-        first_member = base_type->get_member_count();
-    }
-
-    // Collect its members
-    for (std::uint32_t index = first_member; index < dyn_type->get_member_count(); index++)
-    {
-        traits<DynamicTypeMember>::ref_type member;
-        ret = dyn_type->get_member_by_index(member, index);
-
-        if (ret != RETCODE_OK)
-        {
-            return ret;
-        }
-
-        MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
-        ret = member->get_descriptor(member_descriptor);
-
-        if (ret != RETCODE_OK)
-        {
-            return ret;
-        }
-
-        result.emplace_back(
-            std::make_pair<std::string, MemberDescriptor::_ref_type>(
-                member_descriptor->name().to_string(),
-                std::move(member_descriptor)));
+        idl << "<" << std::to_string(bounds[0]) << ">";
     }
 
     return ret;
@@ -507,7 +522,7 @@ ReturnCode_t container_internal_type(
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     ret = dyn_type->get_descriptor(type_descriptor);
 
-    if (ret != RETCODE_OK)
+    if (RETCODE_OK != ret)
     {
         return ret;
     }
@@ -526,24 +541,30 @@ ReturnCode_t container_size(
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     ret = dyn_type->get_descriptor(type_descriptor);
 
-    if (ret != RETCODE_OK)
+    if (RETCODE_OK != ret)
     {
         return ret;
     }
 
     bounds = type_descriptor->bound();
 
+    static const auto UNBOUNDED = static_cast<std::uint32_t>(LENGTH_UNLIMITED);
+
+    if (1 == bounds.size() && UNBOUNDED == bounds[0])
+    {
+        bounds.clear();
+    }
+
     return ret;
 }
-
 
 //////////////////////////////
 // DYNAMIC TYPE TREE TO IDL //
 //////////////////////////////
 
 ReturnCode_t dyn_type_tree_to_idl(
-        const utilities::collections::TreeNode<TreeNodeType>& root,
-        std::string& dyn_type_str) noexcept
+        const TreeNode<TreeNodeType>& root,
+        std::ostream& idl) noexcept
 {
     ReturnCode_t ret = RETCODE_OK;
 
@@ -559,39 +580,38 @@ ReturnCode_t dyn_type_tree_to_idl(
             continue;
         }
 
-        std::string kind_str;
         const auto kind = node.info.dynamic_type->get_kind();
 
         switch (kind)
         {
             case TK_ALIAS:
             {
-                ret = alias_to_str(node, kind_str);
+                ret = alias_to_idl(node, idl);
                 break;
             }
             case TK_BITMASK:
             {
-                ret = bitmask_to_str(node, kind_str);
+                ret = bitmask_to_idl(node, idl);
                 break;
             }
             case TK_BITSET:
             {
-                ret = bitset_to_str(node, kind_str);
+                ret = bitset_to_idl(node, idl);
                 break;
             }
             case TK_ENUM:
             {
-                ret = enum_to_str(node, kind_str);
+                ret = enum_to_idl(node, idl);
                 break;
             }
             case TK_STRUCTURE:
             {
-                ret = struct_to_str(node, kind_str);
+                ret = struct_to_idl(node, idl);
                 break;
             }
             case TK_UNION:
             {
-                ret = union_to_str(node, kind_str);
+                ret = union_to_idl(node, idl);
                 break;
             }
             default:
@@ -600,87 +620,74 @@ ReturnCode_t dyn_type_tree_to_idl(
             }
         }
 
-        if (ret != RETCODE_OK)
+        if (RETCODE_OK != ret)
         {
             return ret;
         }
 
-        dyn_type_str += kind_str + "\n";
+        idl << "\n";
         types_written.insert(node.info.type_kind_name);
     }
 
     // Write struct parent node at last, after all its dependencies
-    // NOTE: not a requirement for Foxglove IDL Parser, dependencies can be placed after parent
-    std::string struct_str;
-    ret = struct_to_str(root, struct_str);
+    ret = struct_to_idl(root, idl);
 
-    if (ret != RETCODE_OK)
+    if (RETCODE_OK != ret)
     {
         return ret;
     }
 
-    dyn_type_str += struct_str;
-
     return ret;
 }
 
-ReturnCode_t alias_to_str(
-        const utilities::collections::TreeNode<TreeNodeType>& node,
-        std::string& alias_str) noexcept
+ReturnCode_t alias_to_idl(
+        const TreeNode<TreeNodeType>& node,
+        std::ostream& idl) noexcept
 {
-    if (node.info.dynamic_type->get_kind() != TK_ALIAS)
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Type is not an alias.");
-        return RETCODE_BAD_PARAMETER;
-    }
+    assert(node.info.dynamic_type->get_kind() == TK_ALIAS);
 
     ReturnCode_t ret = RETCODE_OK;
 
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     ret = node.info.dynamic_type->get_descriptor(type_descriptor);
 
-    if (ret != RETCODE_OK)
+    if (RETCODE_OK != ret)
     {
         return ret;
     }
+
+    idl << "typedef ";
 
     // Find the base type of the alias
-    std::string base_type_kind_str;
-    ret = type_kind_to_str(type_descriptor->base_type(), base_type_kind_str);
+    ret = type_kind_to_idl(type_descriptor->base_type(), idl);
 
-    if (ret != RETCODE_OK)
+    if (RETCODE_OK != ret)
     {
         return ret;
     }
 
-    alias_str = "typedef ";
-    alias_str += base_type_kind_str + " ";
-    alias_str += type_descriptor->name().to_string() + ";\n";
+    idl << " " << node.info.type_kind_name << ";\n";
 
     return ret;
 }
 
-ReturnCode_t bitmask_to_str(
-        const utilities::collections::TreeNode<TreeNodeType>& node,
-        std::string& bitset_str) noexcept
+ReturnCode_t bitmask_to_idl(
+        const TreeNode<TreeNodeType>& node,
+        std::ostream& idl) noexcept
 {
-    if (node.info.dynamic_type->get_kind() != TK_BITMASK)
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Type is not a bitmask.");
-        return RETCODE_BAD_PARAMETER;
-    }
+    assert(node.info.dynamic_type->get_kind() == TK_BITMASK);
 
     ReturnCode_t ret = RETCODE_OK;
 
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     ret = node.info.dynamic_type->get_descriptor(type_descriptor);
 
-    if (ret != RETCODE_OK)
+    if (RETCODE_OK != ret)
     {
         return ret;
     }
 
-    if (type_descriptor->bound().size() != 1)
+    if (1 != type_descriptor->bound().size())
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Bitmask type must have exactly one bound.");
         return RETCODE_BAD_PARAMETER;
@@ -690,12 +697,12 @@ ReturnCode_t bitmask_to_str(
     static constexpr std::uint32_t DEFAULT_BITMASK_SIZE = 32;
     const auto bitmask_size = type_descriptor->bound()[0];
 
-    if (bitmask_size != DEFAULT_BITMASK_SIZE)
+    if (DEFAULT_BITMASK_SIZE != bitmask_size)
     {
-        bitset_str = "@bit_bound(" + std::to_string(bitmask_size) + ")\n";
+        idl << "@bit_bound(" << std::to_string(bitmask_size) << ")\n";
     }
 
-    bitset_str += "bitmask " + node.info.type_kind_name + TYPE_OPENING;
+    idl << "bitmask " << node.info.type_kind_name << TYPE_OPENING;
 
     const auto member_count = node.info.dynamic_type->get_member_count();
 
@@ -703,62 +710,58 @@ ReturnCode_t bitmask_to_str(
 
     for (std::uint32_t index = 0; index < member_count; index++)
     {
-        traits<DynamicTypeMember>::ref_type member;
+        DynamicTypeMember::_ref_type member;
         ret = node.info.dynamic_type->get_member_by_index(member, index);
 
-        if (ret != RETCODE_OK)
+        if (RETCODE_OK != ret)
         {
             return ret;
         }
 
-        bitset_str += TAB_SEPARATOR;
+        idl << TAB_SEPARATOR;
 
         // Annotation with the position
         const auto id = member->get_id();
 
         if (id != pos)
         {
-            bitset_str += "@position(" + std::to_string(id) + ") ";
+            idl << "@position(" << std::to_string(id) << ") ";
         }
 
-        bitset_str += member->get_name().to_string();
+        idl << member->get_name().to_string();
 
         // Add comma if not last member
         if (index < member_count - 1)
         {
-            bitset_str += ",";
+            idl << ",";
         }
 
-        bitset_str += "\n";
+        idl << "\n";
 
         // The position is always sequential
         pos = id + 1;
     }
 
     // Close definition
-    bitset_str += TYPE_CLOSURE;
+    idl << TYPE_CLOSURE;
 
     return ret;
 }
 
-ReturnCode_t bitset_to_str(
-        const utilities::collections::TreeNode<TreeNodeType>& node,
-        std::string& bitset_str) noexcept
+ReturnCode_t bitset_to_idl(
+        const TreeNode<TreeNodeType>& node,
+        std::ostream& idl) noexcept
 {
-    if (node.info.dynamic_type->get_kind() != TK_BITSET)
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Type is not a bitset.");
-        return RETCODE_BAD_PARAMETER;
-    }
+    assert(node.info.dynamic_type->get_kind() == TK_BITSET);
 
     ReturnCode_t ret = RETCODE_OK;
 
-    bitset_str = "bitset " + node.info.type_kind_name + TYPE_OPENING;
+    idl << "bitset " << node.info.type_kind_name << TYPE_OPENING;
 
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     ret = node.info.dynamic_type->get_descriptor(type_descriptor);
 
-    if (ret != RETCODE_OK)
+    if (RETCODE_OK != ret)
     {
         return ret;
     }
@@ -773,7 +776,7 @@ ReturnCode_t bitset_to_str(
         traits<DynamicTypeMember>::ref_type member;
         ret = node.info.dynamic_type->get_member_by_index(member, index);
 
-        if (ret != RETCODE_OK)
+        if (RETCODE_OK != ret)
         {
             return ret;
         }
@@ -787,20 +790,15 @@ ReturnCode_t bitset_to_str(
             const auto bits = id - bits_set;
             bits_set += bits;
 
-            bitset_str += TAB_SEPARATOR;
-            bitset_str += "bitfield<";
-            bitset_str += std::to_string(bits);
-            bitset_str += ">;\n";
+            idl << TAB_SEPARATOR << "bitfield<" << std::to_string(bits) << ">;\n";
         }
 
-        bitset_str += TAB_SEPARATOR;
-        bitset_str += "bitfield<";
-        bitset_str += std::to_string(bits[index]);
+        idl << TAB_SEPARATOR << "bitfield<" << std::to_string(bits[index]);
 
         MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
         ret = member->get_descriptor(member_descriptor);
 
-        if (ret != RETCODE_OK)
+        if (RETCODE_OK != ret)
         {
             return ret;
         }
@@ -808,7 +806,7 @@ ReturnCode_t bitset_to_str(
         TypeKind default_type_kind;
         ret = get_default_type_kind(bits[index], default_type_kind);
 
-        if (ret != RETCODE_OK)
+        if (RETCODE_OK != ret)
         {
             return ret;
         }
@@ -817,76 +815,62 @@ ReturnCode_t bitset_to_str(
         // set it explicitly.
         if (member_descriptor->type()->get_kind() != default_type_kind)
         {
-            // The type of the bitfield is not the default type. Write it.
-            std::string type_str;
-            type_kind_to_str(member_descriptor->type(), type_str);
+            idl << ", ";
 
-            bitset_str += ", ";
-            bitset_str += type_str;
+            // The type of the bitfield is not the default type. Write it.
+            type_kind_to_idl(member_descriptor->type(), idl);
         }
 
-        bitset_str += "> ";
-        bitset_str += member->get_name().to_string();
-        bitset_str += ";\n";
+        idl << "> " << member->get_name().to_string() << ";\n";
 
         bits_set += bits[index];
     }
 
     // Close definition
-    bitset_str += TYPE_CLOSURE;
+    idl << TYPE_CLOSURE;
 
     return ret;
 }
 
-ReturnCode_t enum_to_str(
-        const utilities::collections::TreeNode<TreeNodeType>& node,
-        std::string& enum_str) noexcept
+ReturnCode_t enum_to_idl(
+        const TreeNode<TreeNodeType>& node,
+        std::ostream& idl) noexcept
 {
-    if (node.info.dynamic_type->get_kind() != TK_ENUM)
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Type is not an enum.");
-        return RETCODE_BAD_PARAMETER;
-    }
+    assert(node.info.dynamic_type->get_kind() == TK_ENUM);
 
     ReturnCode_t ret = RETCODE_OK;
 
-    enum_str = "enum " + node.info.type_kind_name + TYPE_OPENING + TAB_SEPARATOR;
+    idl << "enum " << node.info.type_kind_name << TYPE_OPENING << TAB_SEPARATOR;
 
     for (std::uint32_t index = 0; index < node.info.dynamic_type->get_member_count(); index++)
     {
         traits<DynamicTypeMember>::ref_type member;
         ret = node.info.dynamic_type->get_member_by_index(member, index);
 
-        if (ret != RETCODE_OK)
+        if (RETCODE_OK != ret)
         {
             return ret;
         }
 
-        if (index != 0)
+        if (0 != index)
         {
-            enum_str += ",\n";
-            enum_str += TAB_SEPARATOR;
+            idl << ",\n" << TAB_SEPARATOR;
         }
 
-        enum_str += member->get_name().to_string();
+        idl << member->get_name().to_string();
     }
 
     // Close definition
-    enum_str += "\n";
-    enum_str += TYPE_CLOSURE;
+    idl << "\n" << TYPE_CLOSURE;
 
     return ret;
 }
 
-ReturnCode_t struct_to_str(
-        const utilities::collections::TreeNode<TreeNodeType>& node,
-        std::string& struct_str) noexcept
+ReturnCode_t struct_to_idl(
+        const TreeNode<TreeNodeType>& node,
+        std::ostream& idl) noexcept
 {
-    if (node.info.dynamic_type->get_kind() != TK_STRUCTURE)
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Type is not a struct.");
-        return RETCODE_BAD_PARAMETER;
-    }
+    assert(node.info.dynamic_type->get_kind() == TK_STRUCTURE);
 
     ReturnCode_t ret = RETCODE_OK;
 
@@ -894,7 +878,7 @@ ReturnCode_t struct_to_str(
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     ret = node.info.dynamic_type->get_descriptor(type_descriptor);
 
-    if (ret != RETCODE_OK)
+    if (RETCODE_OK != ret)
     {
         return ret;
     }
@@ -903,12 +887,12 @@ ReturnCode_t struct_to_str(
     {
         case ExtensibilityKind::FINAL:
         {
-            struct_str = "@extensibility(FINAL)\n";
+            idl << "@extensibility(FINAL)\n";
             break;
         }
         case ExtensibilityKind::MUTABLE:
         {
-            struct_str = "@extensibility(MUTABLE)\n";
+            idl << "@extensibility(MUTABLE)\n";
             break;
         }
         case ExtensibilityKind::APPENDABLE:
@@ -924,23 +908,22 @@ ReturnCode_t struct_to_str(
     }
 
     // Add types name
-    struct_str += "struct " + node.info.type_kind_name;
+    idl << "struct " << node.info.type_kind_name;
 
     // Add inheritance
-    if (type_descriptor->base_type() != nullptr)
+    if (nullptr != type_descriptor->base_type())
     {
-        std::string base_type_str;
-        ret = type_kind_to_str(type_descriptor->base_type(), base_type_str);
+        idl << " : ";
 
-        if (ret != RETCODE_OK)
+        ret = type_kind_to_idl(type_descriptor->base_type(), idl);
+
+        if (RETCODE_OK != ret)
         {
             return ret;
         }
-
-        struct_str += " : " + base_type_str;
     }
 
-    struct_str += TYPE_OPENING;
+    idl << TYPE_OPENING;
 
     // Add struct attributes
     for (auto const& child : node.branches())
@@ -950,47 +933,43 @@ ReturnCode_t struct_to_str(
             continue;
         }
 
-        std::string child_str;
-        node_to_str(child.info, child_str);
+        node_to_idl(child.info, idl);
 
-        struct_str += child_str + ";\n";
+        idl << ";\n";
     }
 
     // Close definition
-    struct_str += TYPE_CLOSURE;
+    idl << TYPE_CLOSURE;
 
     return ret;
 }
 
-ReturnCode_t union_to_str(
-        const utilities::collections::TreeNode<TreeNodeType>& node,
-        std::string& union_str) noexcept
+ReturnCode_t union_to_idl(
+        const TreeNode<TreeNodeType>& node,
+        std::ostream& idl) noexcept
 {
-    if (node.info.dynamic_type->get_kind() != TK_UNION)
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Type is not a union.");
-        return RETCODE_BAD_PARAMETER;
-    }
+    assert(node.info.dynamic_type->get_kind() == TK_UNION);
 
     ReturnCode_t ret = RETCODE_OK;
 
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     ret = node.info.dynamic_type->get_descriptor(type_descriptor);
 
-    if (ret != RETCODE_OK)
+    if (RETCODE_OK != ret)
     {
         return ret;
     }
 
-    std::string discriminant_type_str;
-    ret = type_kind_to_str(type_descriptor->discriminator_type(), discriminant_type_str);
+    idl << "union " << node.info.type_kind_name << " switch (";
 
-    if (ret != RETCODE_OK)
+    ret = type_kind_to_idl(type_descriptor->discriminator_type(), idl);
+
+    if (RETCODE_OK != ret)
     {
         return ret;
     }
 
-    union_str = "union " + node.info.type_kind_name + " switch (" + discriminant_type_str + ")" + TYPE_OPENING;
+    idl << ")" << TYPE_OPENING;
 
     for (std::uint32_t index = 1; index < node.info.dynamic_type->get_member_count(); index++)
     {
@@ -1000,68 +979,57 @@ ReturnCode_t union_to_str(
         MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
         ret = member->get_descriptor(member_descriptor);
 
-        if (ret != RETCODE_OK)
+        if (RETCODE_OK != ret)
         {
             return ret;
         }
 
         const auto labels = member_descriptor->label();  // WARNING: There might be casting issues as discriminant type is currently not taken into consideration
-        bool first_iter = true;
 
         for (const auto& label : labels)
         {
-            if (first_iter)
-            {
-                union_str += TAB_SEPARATOR;
-            }
-            else
-            {
-                union_str += " ";
-            }
-
-            first_iter = false;
-
-            union_str += "case " + std::to_string(label) + ":";
+            idl << TAB_SEPARATOR << "case " << std::to_string(label) << ":\n";
         }
 
-        std::string member_str;
-        ret = type_kind_to_str(member_descriptor->type(), member_str);
+        if (member_descriptor->is_default_label())
+        {
+            idl << TAB_SEPARATOR << "default:\n";
+        }
 
-        if (ret != RETCODE_OK)
+        idl << TAB_SEPARATOR << TAB_SEPARATOR;
+
+        ret = type_kind_to_idl(member_descriptor->type(), idl);
+
+        if (RETCODE_OK != ret)
         {
             return ret;
         }
 
-        union_str += "\n";
-        union_str += TAB_SEPARATOR;
-        union_str += TAB_SEPARATOR;
-        union_str += member_str + " ";
-        union_str += member->get_name().to_string();
-        union_str += ";\n";
+        idl << " " << member->get_name().to_string() << ";\n";
     }
 
     // Close definition
-    union_str += TYPE_CLOSURE;
+    idl << TYPE_CLOSURE;
 
     return ret;
 }
 
-ReturnCode_t node_to_str(
-        const utilities::collections::TreeNode<TreeNodeType>& node,
-        std::string& node_str) noexcept
+ReturnCode_t node_to_idl(
+        const TreeNode<TreeNodeType>& node,
+        std::ostream& idl) noexcept
 {
-    node_str = TAB_SEPARATOR;
+    idl << TAB_SEPARATOR;
 
     if (node.info.is_key)
     {
-        node_str += "@key ";
+        idl << "@key ";
     }
 
-    if (node.info.dynamic_type->get_kind() == TK_ARRAY)
+    if (TK_ARRAY == node.info.dynamic_type->get_kind())
     {
         const auto dim_pos = node.info.type_kind_name.find("[");
 
-        if (dim_pos == std::string::npos)
+        if (std::string::npos == dim_pos)
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Array type name is not well formed.");
             return RETCODE_BAD_PARAMETER;
@@ -1070,11 +1038,11 @@ ReturnCode_t node_to_str(
         const auto kind_name_str = node.info.type_kind_name.substr(0, dim_pos);
         const auto dim_str = node.info.type_kind_name.substr(dim_pos, std::string::npos);
 
-        node_str += kind_name_str + " " + node.info.member_name + dim_str;
+        idl << kind_name_str << " " << node.info.member_name << dim_str;
     }
     else
     {
-        node_str += node.info.type_kind_name + " " + node.info.member_name;
+        idl << node.info.type_kind_name << " " << node.info.member_name;
     }
 
     return RETCODE_OK;
@@ -1106,7 +1074,7 @@ ReturnCode_t get_default_type_kind(
     }
     else
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Size is not supported.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Size " << size << " is not supported.");
         return RETCODE_BAD_PARAMETER;
     }
 

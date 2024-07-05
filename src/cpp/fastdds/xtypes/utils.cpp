@@ -12,41 +12,42 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <bitset>
-#include <codecvt>
-#include <iomanip>
 #include <iostream>
-#include <set>
-#include <sstream>
-#include <string>
 
 #include <nlohmann/json.hpp>
 
-#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/detail/dynamic_language_binding.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeMember.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 #include <fastdds/dds/xtypes/utils.hpp>
 
 #include "dynamic_types/DynamicDataImpl.hpp"
-#include "dynamic_types/DynamicTypeImpl.hpp"
-#include "dynamic_types/DynamicTypeMemberImpl.hpp"
-#include "dynamic_types/MemberDescriptorImpl.hpp"
-#include "dynamic_types/TypeDescriptorImpl.hpp"
-
-#include "dynamic_types/DynamicDataImpl.hpp"
-#include "serializers/json/dynamic_data_json.hpp"
 #include "serializers/idl/dynamic_type_idl.hpp"
-
+#include "serializers/json/dynamic_data_json.hpp"
 #include "utils/collections/TreeNode.hpp"
+
+#include <iostream>
+
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+
+ReturnCode_t idl_serialize(
+        const DynamicType::_ref_type& dynamic_type,
+        std::ostream& output) noexcept
+{
+    // Create a tree representation of the dynamic type
+    utilities::collections::TreeNode<TreeNodeType> parent_type;
+    const auto ret = dyn_type_to_tree(dynamic_type, "PARENT", parent_type);
+
+    if (ret != RETCODE_OK)
+    {
+        return ret;
+    }
+
+    // Serialize the tree to IDL
+    return dyn_type_tree_to_idl(parent_type, output);
+}
 
 ReturnCode_t json_serialize(
         const DynamicData::_ref_type& data,
@@ -65,23 +66,6 @@ ReturnCode_t json_serialize(
                 "Error encountered while performing DynamicData to JSON serialization.");
     }
     return ret;
-}
-
-ReturnCode_t idl_serialize(
-        const traits<DynamicType>::ref_type& dynamic_type,
-        std::string& output) noexcept
-{
-    // Create a tree representation of the dynamic type
-    utilities::collections::TreeNode<TreeNodeType> parent_type;
-    const auto ret = dyn_type_to_tree(dynamic_type, "PARENT", parent_type);
-
-    if (ret != RETCODE_OK)
-    {
-        return ret;
-    }
-
-    // Serialize the tree to IDL
-    return dyn_type_tree_to_idl(parent_type, output);
 }
 
 } // namespace dds
