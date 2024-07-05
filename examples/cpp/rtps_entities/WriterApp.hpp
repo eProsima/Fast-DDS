@@ -20,60 +20,80 @@
 #ifndef FASTDDS_EXAMPLES_CPP_RTPS_ENTITIES__WRITERAPP_HPP
 #define FASTDDS_EXAMPLES_CPP_RTPS_ENTITIES__WRITERAPP_HPP
 
+#include <condition_variable>
+
+#include <fastdds/rtps/history/WriterHistory.hpp>
+#include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/writer/WriterListener.hpp>
+
+#include "CLIParser.hpp"
+#include "Application.hpp"
+
+using namespace eprosima::fastdds::rtps;
 
 namespace eprosima {
 namespace fastdds {
-namespace rtps {
-class RTPSParticipant;
-class WriterHistory;
-} // namespace rtps
-} // namespace fastdds
-} // namespace eprosima
+namespace examples {
+namespace rtps_entities {
 
-class TestWriterRegistered
+class WriterApp : public Application, public WriterListener
 {
 public:
 
-    TestWriterRegistered();
-    virtual ~TestWriterRegistered();
-    eprosima::fastdds::rtps::RTPSParticipant* mp_participant;
-    eprosima::fastdds::rtps::RTPSWriter* mp_writer;
-    eprosima::fastdds::rtps::WriterHistory* mp_history;
-    bool init(); //Initialize writer
-    bool reg(); //Register the Writer
-    void run(
-            uint16_t samples);  //Run the Writer
-    class MyListener : public eprosima::fastdds::rtps::WriterListener
-    {
-    public:
+    WriterApp(
+        const CLIParser::rtps_entities_config& config,
+        const std::string& topic_name);
 
-        MyListener()
-            : n_matched(0)
-        {
-        }
+    virtual ~WriterApp();
 
-        ~MyListener()
-        {
-        }
+    //! Run RTPS Writer
+    void run();
 
-        void onWriterMatched(
-                eprosima::fastdds::rtps::RTPSWriter*,
-                eprosima::fastdds::rtps::MatchingInfo& info) override
-        {
-            if (info.status == eprosima::fastdds::rtps::MATCHED_MATCHING)
-            {
-                ++n_matched;
-            }
-        }
+    //! Add a new change to Writer History
+    void add_change_to_history();
 
-        int n_matched;
+    //! Writer matched method
+    void onWriterMatched(
+            RTPSWriter*,
+            MatchingInfo& info) override;
 
-    private:
+    //! Trigger the end of execution
+    void stop() override;
 
-        using eprosima::fastdds::rtps::WriterListener::onWriterMatched;
-    }
-    m_listener;
+private:
+
+    //! Register entity
+    bool register_entity(std::string topic_name);
+
+    //! Return the current state of execution
+    bool is_stopped();
+
+    uint16_t samples_;
+
+    uint16_t samples_sent_;
+
+    std::vector<GUID_t> remote_endpoints_guid;
+
+    RTPSParticipant* rtps_participant_;
+
+    RTPSWriter* rtps_writer_;
+
+    WriterHistory* writer_history_;
+
+    int16_t matched_;
+
+    std::atomic<bool> stop_;
+
+    mutable std::mutex terminate_cv_mtx_;
+
+    std::condition_variable terminate_cv_;
+
+    const uint32_t period_ms_ = 100; // in ms
 };
+
+} // namespace rtps_entities
+} // namespace examples
+} // namespace fastdds
+} // namespace eprosima
 
 #endif /* FASTDDS_EXAMPLES_CPP_RTPS_ENTITIES__WRITERAPP_HPP */
