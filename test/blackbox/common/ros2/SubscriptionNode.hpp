@@ -23,7 +23,6 @@
 
 #include <gtest/gtest.h>
 
-#include <fastdds/dds/core/detail/DDSReturnCode.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
@@ -32,6 +31,7 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastrtps/types/TypesBase.h>
 
 #include "./Context.hpp"
 #include "./DataReaderHolder.hpp"

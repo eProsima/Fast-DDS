@@ -23,7 +23,6 @@
 
 #include <gtest/gtest.h>
 
-#include <fastdds/dds/core/detail/DDSReturnCode.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -42,7 +41,10 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/rtps/common/Time_t.hpp>
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastrtps/attributes/LibrarySettingsAttributes.h>
+#include <fastrtps/types/TypesBase.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include "./ros2/Context.hpp"
 #include "./ros2/DataReaderHolder.hpp"
@@ -53,7 +55,7 @@
 #include "./ros2/TopicHolder.hpp"
 
 #include "BlackboxTests.hpp"
-#include "../types/HelloWorldPubSubTypes.hpp"
+#include "../types/HelloWorldPubSubTypes.h"
 
 namespace eprosima {
 namespace fastdds {
@@ -69,14 +71,16 @@ namespace ros2 = eprosima::testing::ros2;
  */
 TEST(DDS_ROS2, test_automatic_liveliness_changed)
 {
+    using namespace eprosima::fastrtps;
+
     // Force intraprocess
-    auto factory = DomainParticipantFactory::get_shared_instance();
-    LibrarySettings old_library_settings;
-    factory->get_library_settings(old_library_settings);
+    LibrarySettingsAttributes old_library_settings;
+    old_library_settings = xmlparser::XMLProfileManager::library_settings();
+
     {
-        LibrarySettings library_settings;
+        LibrarySettingsAttributes library_settings;
         library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        factory->set_library_settings(library_settings);
+        xmlparser::XMLProfileManager::library_settings(library_settings);
     }
 
     {
@@ -159,7 +163,7 @@ TEST(DDS_ROS2, test_automatic_liveliness_changed)
         sub->stop();
     }
 
-    factory->set_library_settings(old_library_settings);
+    xmlparser::XMLProfileManager::library_settings(old_library_settings);
 }
 
 } // namespace dds

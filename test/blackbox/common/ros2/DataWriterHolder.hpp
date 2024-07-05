@@ -17,9 +17,9 @@
 
 #include <gtest/gtest.h>
 
-#include <fastdds/dds/core/detail/DDSReturnCode.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastrtps/types/TypesBase.h>
 
 #include "./GenericHolder.hpp"
 

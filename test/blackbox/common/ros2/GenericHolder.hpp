@@ -15,7 +15,7 @@
 #ifndef FASTDDS_TEST_BLACKBOX_COMMON_ROS2__GENERICHOLDER_HPP
 #define FASTDDS_TEST_BLACKBOX_COMMON_ROS2__GENERICHOLDER_HPP
 
-#include <fastdds/dds/core/detail/DDSReturnCode.hpp>
+#include <fastrtps/types/TypesBase.h>
 
 #include <gtest/gtest.h>
 
@@ -41,36 +41,36 @@
  * GENERIC_HOLDER_CLASS(DomainParticipant, Topic, delete_topic, topic) generates TopicHolder.
  * GENERIC_HOLDER_CLASS(DomainParticipantFactory, DomainParticipant, delete_participant, participant) generates DomainParticipantHolder.
  */
-#define GENERIC_HOLDER_CLASS(_Factory, _Entity, _Release, _Getter) \
-class _Entity##Holder                                              \
-{                                                                  \
-public:                                                            \
-    _Entity##Holder(                                               \
-            _Factory* factory,                                     \
-            _Entity* entity)                                       \
-        : factory_(factory)                                        \
-        , entity_(entity)                                          \
-    {                                                              \
-    }                                                              \
-                                                                   \
-    ~_Entity##Holder()                                             \
-    {                                                              \
-        if (nullptr != factory_ && nullptr != entity_)             \
-        {                                                          \
-            EXPECT_EQ(RETCODE_OK, factory_->_Release(entity_));    \
-        }                                                          \
-    }                                                              \
-                                                                   \
-    _Entity* _Getter()                                             \
-    {                                                              \
-        return entity_;                                            \
-    }                                                              \
-                                                                   \
-private:                                                           \
-                                                                   \
-    _Factory* factory_ = nullptr;                                  \
-    _Entity* entity_ = nullptr;                                    \
-                                                                   \
+#define GENERIC_HOLDER_CLASS(_Factory, _Entity, _Release, _Getter)             \
+class _Entity##Holder                                                          \
+{                                                                              \
+public:                                                                        \
+    _Entity##Holder(                                                           \
+            _Factory* factory,                                                 \
+            _Entity* entity)                                                   \
+        : factory_(factory)                                                    \
+        , entity_(entity)                                                      \
+    {                                                                          \
+    }                                                                          \
+                                                                               \
+    ~_Entity##Holder()                                                         \
+    {                                                                          \
+        if (nullptr != factory_ && nullptr != entity_)                         \
+        {                                                                      \
+            EXPECT_EQ(ReturnCode_t::RETCODE_OK, factory_->_Release(entity_));  \
+        }                                                                      \
+    }                                                                          \
+                                                                               \
+    _Entity* _Getter()                                                         \
+    {                                                                          \
+        return entity_;                                                        \
+    }                                                                          \
+                                                                               \
+private:                                                                       \
+                                                                               \
+    _Factory* factory_ = nullptr;                                              \
+    _Entity* entity_ = nullptr;                                                \
+                                                                               \
 };
 // *INDENT-ON*
 

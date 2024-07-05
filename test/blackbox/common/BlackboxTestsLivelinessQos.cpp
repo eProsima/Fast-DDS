@@ -2100,13 +2100,13 @@ static void test_liveliness_qos_independent_topics(
 
     // Check liveliness changed status on both readers
     {
-        auto liveliness = reader1.get_liveliness_changed_status();
+        auto liveliness = reader1.liveliness_changed_status();
         EXPECT_EQ(liveliness.alive_count, 1);
         EXPECT_EQ(liveliness.not_alive_count, 0);
     }
 
     {
-        auto liveliness = reader2.get_liveliness_changed_status();
+        auto liveliness = reader2.liveliness_changed_status();
         EXPECT_EQ(liveliness.alive_count, 0);
         EXPECT_EQ(liveliness.not_alive_count, 0);
     }
@@ -2117,13 +2117,13 @@ static void test_liveliness_qos_independent_topics(
 
     // Check liveliness changed status on both readers
     {
-        auto liveliness = reader1.get_liveliness_changed_status();
+        auto liveliness = reader1.liveliness_changed_status();
         EXPECT_EQ(liveliness.alive_count, 1);
         EXPECT_EQ(liveliness.not_alive_count, 0);
     }
 
     {
-        auto liveliness = reader2.get_liveliness_changed_status();
+        auto liveliness = reader2.liveliness_changed_status();
         EXPECT_EQ(liveliness.alive_count, 1);
         EXPECT_EQ(liveliness.not_alive_count, 0);
     }
@@ -2134,13 +2134,13 @@ static void test_liveliness_qos_independent_topics(
 
     // Check liveliness changed status on both readers
     {
-        auto liveliness = reader1.get_liveliness_changed_status();
+        auto liveliness = reader1.liveliness_changed_status();
         EXPECT_EQ(liveliness.alive_count, 1);
         EXPECT_EQ(liveliness.not_alive_count, 0);
     }
 
     {
-        auto liveliness = reader2.get_liveliness_changed_status();
+        auto liveliness = reader2.liveliness_changed_status();
         EXPECT_EQ(liveliness.alive_count, 0);
         EXPECT_EQ(liveliness.not_alive_count, 0);
     }
@@ -2153,13 +2153,13 @@ static void test_liveliness_qos_independent_topics(
 
     // Check liveliness changed status on both readers
     {
-        auto liveliness = reader1.get_liveliness_changed_status();
+        auto liveliness = reader1.liveliness_changed_status();
         EXPECT_EQ(liveliness.alive_count, 1);
         EXPECT_EQ(liveliness.not_alive_count, 0);
     }
 
     {
-        auto liveliness = reader2.get_liveliness_changed_status();
+        auto liveliness = reader2.liveliness_changed_status();
         EXPECT_EQ(liveliness.alive_count, 1);
         EXPECT_EQ(liveliness.not_alive_count, 0);
     }
@@ -2170,13 +2170,13 @@ static void test_liveliness_qos_independent_topics(
 
     // Check liveliness changed status on both readers
     {
-        auto liveliness = reader1.get_liveliness_changed_status();
+        auto liveliness = reader1.liveliness_changed_status();
         EXPECT_EQ(liveliness.alive_count, 0);
         EXPECT_EQ(liveliness.not_alive_count, 0);
     }
 
     {
-        auto liveliness = reader2.get_liveliness_changed_status();
+        auto liveliness = reader2.liveliness_changed_status();
         EXPECT_EQ(liveliness.alive_count, 1);
         EXPECT_EQ(liveliness.not_alive_count, 0);
     }
@@ -2187,13 +2187,13 @@ static void test_liveliness_qos_independent_topics(
 
     // Check liveliness changed status on both readers
     {
-        auto liveliness = reader1.get_liveliness_changed_status();
+        auto liveliness = reader1.liveliness_changed_status();
         EXPECT_EQ(liveliness.alive_count, 0);
         EXPECT_EQ(liveliness.not_alive_count, 0);
     }
 
     {
-        auto liveliness = reader2.get_liveliness_changed_status();
+        auto liveliness = reader2.liveliness_changed_status();
         EXPECT_EQ(liveliness.alive_count, 0);
         EXPECT_EQ(liveliness.not_alive_count, 0);
     }

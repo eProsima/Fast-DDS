@@ -17,9 +17,9 @@
 
 #include <gtest/gtest.h>
 
-#include <fastdds/dds/core/detail/DDSReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
+#include <fastrtps/types/TypesBase.h>
 
 #include "./GenericHolder.hpp"
 
