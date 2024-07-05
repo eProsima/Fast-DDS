@@ -18,7 +18,15 @@
 std::string expected_json_comprehensive_filled_eprosima_1 = R"({
     "complex_array": [
         {
-            "bitmask_sequence": [],
+            "bitmask_sequence": [
+                {
+                    "active": [
+                        "flag0"
+                    ],
+                    "binary": "00000000000000000000000000000001",
+                    "value": 1
+                }
+            ],
             "complex_union": {
                 "fourth": {
                     "second": 1
@@ -132,7 +140,7 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
             "my_wchar": "e",
             "my_wstring": "my_string",
             "short_long_map": {
-                "0": 1
+                "1": 1
             },
             "short_sequence": [
                 0,
@@ -146,7 +154,15 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
             }
         },
         {
-            "bitmask_sequence": [],
+            "bitmask_sequence": [
+                {
+                    "active": [
+                        "flag0"
+                    ],
+                    "binary": "00000000000000000000000000000001",
+                    "value": 1
+                }
+            ],
             "complex_union": {
                 "fourth": {
                     "second": 1
@@ -260,7 +276,7 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
             "my_wchar": "e",
             "my_wstring": "my_string",
             "short_long_map": {
-                "0": 1
+                "1": 1
             },
             "short_sequence": [
                 0,
@@ -393,7 +409,15 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
             "string_unbounded_map": null
         },
         "1": {
-            "bitmask_sequence": [],
+            "bitmask_sequence": [
+                {
+                    "active": [
+                        "flag0"
+                    ],
+                    "binary": "00000000000000000000000000000001",
+                    "value": 1
+                }
+            ],
             "complex_union": {
                 "fourth": {
                     "second": 1
@@ -507,7 +531,7 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
             "my_wchar": "e",
             "my_wstring": "my_string",
             "short_long_map": {
-                "0": 1
+                "1": 1
             },
             "short_sequence": [
                 0,
@@ -523,7 +547,15 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
     },
     "complex_sequence": [
         {
-            "bitmask_sequence": [],
+            "bitmask_sequence": [
+                {
+                    "active": [
+                        "flag0"
+                    ],
+                    "binary": "00000000000000000000000000000001",
+                    "value": 1
+                }
+            ],
             "complex_union": {
                 "fourth": {
                     "second": 1
@@ -637,7 +669,7 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
             "my_wchar": "e",
             "my_wstring": "my_string",
             "short_long_map": {
-                "0": 1
+                "1": 1
             },
             "short_sequence": [
                 0,
@@ -653,7 +685,15 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
     ],
     "index": 1,
     "inner_struct": {
-        "bitmask_sequence": [],
+        "bitmask_sequence": [
+            {
+                "active": [
+                    "flag0"
+                ],
+                "binary": "00000000000000000000000000000001",
+                "value": 1
+            }
+        ],
         "complex_union": {
             "fourth": {
                 "second": 1
@@ -767,7 +807,7 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
         "my_wchar": "e",
         "my_wstring": "my_string",
         "short_long_map": {
-            "0": 1
+            "1": 1
         },
         "short_sequence": [
             0,
@@ -785,7 +825,13 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
 const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
     "complex_array": [
         {
-            "bitmask_sequence": [],
+            "bitmask_sequence": [
+                {
+                    "active": [],
+                    "binary": "00000000000000000000000000000000",
+                    "value": 0
+                }
+            ],
             "complex_union": {
                 "fourth": {
                     "second": 2
@@ -897,7 +943,7 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
             "my_wchar": "o",
             "my_wstring": "my_string",
             "short_long_map": {
-                "0": 2
+                "1": 2
             },
             "short_sequence": [
                 0,
@@ -911,7 +957,13 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
             }
         },
         {
-            "bitmask_sequence": [],
+            "bitmask_sequence": [
+                {
+                    "active": [],
+                    "binary": "00000000000000000000000000000000",
+                    "value": 0
+                }
+            ],
             "complex_union": {
                 "fourth": {
                     "second": 2
@@ -1023,7 +1075,7 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
             "my_wchar": "o",
             "my_wstring": "my_string",
             "short_long_map": {
-                "0": 2
+                "1": 2
             },
             "short_sequence": [
                 0,
@@ -1156,7 +1208,13 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
             "string_unbounded_map": null
         },
         "1": {
-            "bitmask_sequence": [],
+            "bitmask_sequence": [
+                {
+                    "active": [],
+                    "binary": "00000000000000000000000000000000",
+                    "value": 0
+                }
+            ],
             "complex_union": {
                 "fourth": {
                     "second": 2
@@ -1268,7 +1326,7 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
             "my_wchar": "o",
             "my_wstring": "my_string",
             "short_long_map": {
-                "0": 2
+                "1": 2
             },
             "short_sequence": [
                 0,
@@ -1284,7 +1342,13 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
     },
     "complex_sequence": [
         {
-            "bitmask_sequence": [],
+            "bitmask_sequence": [
+                {
+                    "active": [],
+                    "binary": "00000000000000000000000000000000",
+                    "value": 0
+                }
+            ],
             "complex_union": {
                 "fourth": {
                     "second": 2
@@ -1396,7 +1460,7 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
             "my_wchar": "o",
             "my_wstring": "my_string",
             "short_long_map": {
-                "0": 2
+                "1": 2
             },
             "short_sequence": [
                 0,
@@ -1412,7 +1476,13 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
     ],
     "index": 2,
     "inner_struct": {
-        "bitmask_sequence": [],
+        "bitmask_sequence": [
+            {
+                "active": [],
+                "binary": "00000000000000000000000000000000",
+                "value": 0
+            }
+        ],
         "complex_union": {
             "fourth": {
                 "second": 2
@@ -1524,7 +1594,7 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
         "my_wchar": "o",
         "my_wstring": "my_string",
         "short_long_map": {
-            "0": 2
+            "1": 2
         },
         "short_sequence": [
             0,
@@ -1542,7 +1612,15 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
 const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
     "complex_array": [
         {
-            "bitmask_sequence": [],
+            "bitmask_sequence": [
+                {
+                    "active": [
+                        "flag0"
+                    ],
+                    "binary": "00000000000000000000000000000001",
+                    "value": 1
+                }
+            ],
             "complex_union": {
                 "fourth": {
                     "second": 3
@@ -1656,7 +1734,7 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
             "my_wchar": "e",
             "my_wstring": "my_string",
             "short_long_map": {
-                "0": 3
+                "1": 3
             },
             "short_sequence": [
                 0,
@@ -1670,7 +1748,15 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
             }
         },
         {
-            "bitmask_sequence": [],
+            "bitmask_sequence": [
+                {
+                    "active": [
+                        "flag0"
+                    ],
+                    "binary": "00000000000000000000000000000001",
+                    "value": 1
+                }
+            ],
             "complex_union": {
                 "fourth": {
                     "second": 3
@@ -1784,7 +1870,7 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
             "my_wchar": "e",
             "my_wstring": "my_string",
             "short_long_map": {
-                "0": 3
+                "1": 3
             },
             "short_sequence": [
                 0,
@@ -1917,7 +2003,15 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
             "string_unbounded_map": null
         },
         "1": {
-            "bitmask_sequence": [],
+            "bitmask_sequence": [
+                {
+                    "active": [
+                        "flag0"
+                    ],
+                    "binary": "00000000000000000000000000000001",
+                    "value": 1
+                }
+            ],
             "complex_union": {
                 "fourth": {
                     "second": 3
@@ -2031,7 +2125,7 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
             "my_wchar": "e",
             "my_wstring": "my_string",
             "short_long_map": {
-                "0": 3
+                "1": 3
             },
             "short_sequence": [
                 0,
@@ -2047,7 +2141,15 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
     },
     "complex_sequence": [
         {
-            "bitmask_sequence": [],
+            "bitmask_sequence": [
+                {
+                    "active": [
+                        "flag0"
+                    ],
+                    "binary": "00000000000000000000000000000001",
+                    "value": 1
+                }
+            ],
             "complex_union": {
                 "fourth": {
                     "second": 3
@@ -2161,7 +2263,7 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
             "my_wchar": "e",
             "my_wstring": "my_string",
             "short_long_map": {
-                "0": 3
+                "1": 3
             },
             "short_sequence": [
                 0,
@@ -2177,7 +2279,15 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
     ],
     "index": 3,
     "inner_struct": {
-        "bitmask_sequence": [],
+        "bitmask_sequence": [
+            {
+                "active": [
+                    "flag0"
+                ],
+                "binary": "00000000000000000000000000000001",
+                "value": 1
+            }
+        ],
         "complex_union": {
             "fourth": {
                 "second": 3
@@ -2291,7 +2401,7 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
         "my_wchar": "e",
         "my_wstring": "my_string",
         "short_long_map": {
-            "0": 3
+            "1": 3
         },
         "short_sequence": [
             0,

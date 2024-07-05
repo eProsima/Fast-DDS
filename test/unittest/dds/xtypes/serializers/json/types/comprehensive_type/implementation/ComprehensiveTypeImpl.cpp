@@ -43,6 +43,8 @@
 #include "../../comprehensive_type/json/ComprehensiveType_Unfilled_EPROSIMA.hpp"
 #include "../../comprehensive_type/json/ComprehensiveType_Filled_EPROSIMA.hpp"
 
+using namespace eprosima::fastdds::dds;
+
 void fill_primitives_struct(
         traits<DynamicData>::ref_type dyn_data,
         const unsigned int& index)
@@ -106,10 +108,10 @@ void fill_all_struct(
     traits<DynamicData>::ref_type dyn_data_my_bitmask = dyn_data->loan_value(dyn_data->get_member_id_by_name("my_bitmask"));
     index % 2 ? dyn_data_my_bitmask->set_boolean_value(dyn_data_my_bitmask->get_member_id_by_name("flag0"), true) :
                 dyn_data_my_bitmask->set_boolean_value(dyn_data_my_bitmask->get_member_id_by_name("flag0"),false);
-    // traits<DynamicData>::ref_type dyn_data_bitmask_sequence = dyn_data->loan_value(dyn_data->get_member_id_by_name("bitmask_sequence"));
-    // dyn_data_bitmask_sequence->set_complex_value(dyn_data_bitmask_sequence->get_member_id_by_name("my_bitmask"), dyn_data_my_bitmask);
+    traits<DynamicData>::ref_type dyn_data_bitmask_sequence = dyn_data->loan_value(dyn_data->get_member_id_by_name("bitmask_sequence"));
+    dyn_data_bitmask_sequence->set_complex_value(0, dyn_data_my_bitmask);
     dyn_data->return_loaned_value(dyn_data_my_bitmask);
-    // dyn_data->return_loaned_value(dyn_data_bitmask_sequence);
+    dyn_data->return_loaned_value(dyn_data_bitmask_sequence);
 
     // alias
     traits<DynamicData>::ref_type dyn_data_my_aliased_struct = dyn_data->loan_value(dyn_data->get_member_id_by_name("my_aliased_struct"));

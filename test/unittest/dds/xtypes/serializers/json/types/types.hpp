@@ -17,16 +17,13 @@
  *
  */
 
-#ifndef _TEST_UNITTEST_DDS_XTYPES_SERIALIZERS_JSON_TYPES_TYPES_HPP_
-#define _TEST_UNITTEST_DDS_XTYPES_SERIALIZERS_JSON_TYPES_TYPES_HPP_
+#ifndef TEST_UNITTEST_DDS_XTYPES_SERIALIZERS_JSON_TYPES__TYPES_HPP_
+#define TEST_UNITTEST_DDS_XTYPES_SERIALIZERS_JSON_TYPES__TYPES_HPP_
 
 #include <string>
 
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
-
-using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastdds::dds::xtypes;
 
 enum class DataTypeKind
 {
@@ -34,23 +31,23 @@ enum class DataTypeKind
 };
 
 template <DataTypeKind Data>
-traits<DynamicType>::ref_type create_dynamic_type();
+eprosima::fastdds::dds::traits<eprosima::fastdds::dds::DynamicType>::ref_type create_dynamic_type();
 
 template <DataTypeKind Data>
-traits<DynamicData>::ref_type create_dynamic_data(
-        const traits<DynamicType>::ref_type& dynamic_type,
+eprosima::fastdds::dds::traits<eprosima::fastdds::dds::DynamicData>::ref_type create_dynamic_data(
+        const eprosima::fastdds::dds::traits<eprosima::fastdds::dds::DynamicType>::ref_type& dynamic_type,
         bool filled,
         const unsigned int& index = 0);
 
 template <DataTypeKind Data>
-traits<DynamicData>::ref_type fill_dyn_data(
-        traits<DynamicData>::ref_type& dyn_data,
+eprosima::fastdds::dds::traits<eprosima::fastdds::dds::DynamicData>::ref_type fill_dyn_data(
+        eprosima::fastdds::dds::traits<eprosima::fastdds::dds::DynamicData>::ref_type& dyn_data,
         const unsigned int& index);
 
 template <DataTypeKind Data>
 std::string get_expected_json(
-        const DynamicDataJsonFormat& format,
+        const eprosima::fastdds::dds::DynamicDataJsonFormat& format,
         bool filled,
         const unsigned int& index = 0);
 
-#endif // _TEST_UNITTEST_DDS_XTYPES_SERIALIZERS_JSON_TYPES_TYPES_HPP_
+#endif // TEST_UNITTEST_DDS_XTYPES_SERIALIZERS_JSON_TYPES__TYPES_HPP_
