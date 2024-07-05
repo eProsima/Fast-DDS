@@ -64,25 +64,26 @@ public:
      */
     void on_participant_discovery(
             DomainParticipant* /*participant*/,
-            rtps::ParticipantDiscoveryInfo&& info,
+            rtps::PARTICIPANT_DISCOVERY_STATUS status,
+            const rtps::ParticipantProxyData& info,
             bool& /*should_be_ignored*/) override
     {
-        if (info.status == rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+        if (status == rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
         {
             std::cout << "Publisher participant " << //participant->getGuid() <<
                 " discovered participant " << info.info.m_guid << std::endl;
         }
-        else if (info.status == rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
+        else if (status == rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
         {
             std::cout << "Publisher participant " << //participant->getGuid() <<
                 " detected changes on participant " << info.info.m_guid << std::endl;
         }
-        else if (info.status == rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+        else if (status == rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
         {
             std::cout << "Publisher participant " << //participant->getGuid() <<
                 " removed participant " << info.info.m_guid << std::endl;
         }
-        else if (info.status == rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+        else if (status == rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
         {
             std::cout << "Publisher participant " << //participant->getGuid() <<
                 " dropped participant " << info.info.m_guid << std::endl;

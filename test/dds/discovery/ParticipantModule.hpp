@@ -46,7 +46,8 @@ public:
 
     void on_participant_discovery(
             DomainParticipant* participant,
-            ParticipantDiscoveryInfo&& info,
+            PARTICIPANT_DISCOVERY_STATUS status,
+            const ParticipantProxyData& info,
             bool& should_be_ignored) override;
 
     bool init();

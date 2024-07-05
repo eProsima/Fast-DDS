@@ -1035,7 +1035,7 @@ void PDPServer::announceParticipantState(
  */
 bool PDPServer::remove_remote_participant(
         const GUID_t& partGUID,
-        ParticipantDiscoveryInfo::DISCOVERY_STATUS reason)
+        ParticipantDiscoveryInfo::PARTICIPANT_DISCOVERY_STATUS reason)
 {
     auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
 

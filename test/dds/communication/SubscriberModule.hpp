@@ -61,7 +61,8 @@ public:
 
     void on_participant_discovery(
             DomainParticipant* /*participant*/,
-            fastdds::rtps::ParticipantDiscoveryInfo&& info,
+            PARTICIPANT_DISCOVERY_STATUS status,
+            const ParticipantProxyData& info,
             bool& should_be_ignored) override;
 
 #if HAVE_SECURITY

@@ -297,11 +297,10 @@ void PDPServerListener::on_new_cache_change_added(
                     {
                         std::lock_guard<std::mutex> cb_lock(pdp_server()->callback_mtx_);
                         ParticipantDiscoveryInfo info(*pdata);
-                        info.status = status;
 
                         listener->on_participant_discovery(
                             pdp_server()->getRTPSParticipant()->getUserRTPSParticipant(),
-                            std::move(info), should_be_ignored);
+                            status, std::move(info), should_be_ignored);
                     }
                     if (should_be_ignored)
                     {

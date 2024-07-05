@@ -136,7 +136,7 @@ public:
      */
     bool remove_remote_participant(
             const GUID_t& participant_guid,
-            ParticipantDiscoveryInfo::DISCOVERY_STATUS reason) override;
+            ParticipantDiscoveryInfo::PARTICIPANT_DISCOVERY_STATUS reason) override;
 
 #if HAVE_SECURITY
     bool pairing_remote_writer_with_local_reader_after_security(

@@ -86,22 +86,23 @@ bool ParticipantModule::init()
 
 void ParticipantModule::on_participant_discovery(
         DomainParticipant* participant,
-        ParticipantDiscoveryInfo&& info,
+        PARTICIPANT_DISCOVERY_STATUS status,
+        const ParticipantProxyData& info,
         bool& should_be_ignored)
 {
     static_cast<void>(should_be_ignored);
-    if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+    if (status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
     {
         std::cout << "Participant " << participant->guid() << " discovered participant " << info.info.m_guid << ": "
                   << ++matched_ << std::endl;
     }
-    else if (info.status == ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
+    else if (status == ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
     {
         std::cout << "Participant " << participant->guid() << " detected changes on participant " << info.info.m_guid
                   << std::endl;
     }
-    else if (info.status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
-            info.status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+    else if (status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
+            status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
     {
         std::cout << "Participant " << participant->guid() << " undiscovered participant " << info.info.m_guid << ": "
                   << --matched_ << std::endl;

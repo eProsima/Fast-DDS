@@ -251,11 +251,11 @@ void PDPListener::process_alive_data(
             {
                 std::lock_guard<std::mutex> cb_lock(parent_pdp_->callback_mtx_);
                 ParticipantDiscoveryInfo info(old_data_copy);
-                info.status = ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT;
 
                 listener->on_participant_discovery(
                     parent_pdp_->getRTPSParticipant()->getUserRTPSParticipant(),
-                    std::move(info),
+                    ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT,
+                    info,
                     should_be_ignored);
             }
             if (should_be_ignored)

@@ -49,7 +49,8 @@ public:
     //! Publisher matched method
     void on_participant_discovery(
             DomainParticipant* participant,
-            fastdds::rtps::ParticipantDiscoveryInfo&& info,
+            fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS status,
+            const fastdds::rtps::ParticipantProxyData& info,
             bool& should_be_ignored) override;
 
     //! Run publisher

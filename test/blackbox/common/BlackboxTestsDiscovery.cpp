@@ -1600,15 +1600,16 @@ TEST(Discovery, discovery_cyclone_participant_with_custom_pid)
 
         void on_participant_discovery(
                 DomainParticipant*,
-                ParticipantDiscoveryInfo&& info,
+                PARTICIPANT_DISCOVERY_STATUS status,
+                const ParticipantProxyData& info,
                 bool& should_be_ignored) override
         {
             should_be_ignored = false;
-            if (ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT == info.status)
+            if (ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT == status)
             {
                 discovered_participants_++;
             }
-            else if (ParticipantDiscoveryInfo::REMOVED_PARTICIPANT == info.status)
+            else if (ParticipantDiscoveryInfo::REMOVED_PARTICIPANT == status)
             {
                 discovered_participants_--;
             }

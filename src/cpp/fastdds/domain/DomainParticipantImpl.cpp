@@ -1533,14 +1533,15 @@ ReturnCode_t DomainParticipantImpl::unregister_type(
 
 void DomainParticipantImpl::MyRTPSParticipantListener::on_participant_discovery(
         RTPSParticipant*,
-        ParticipantDiscoveryInfo&& info,
+        PARTICIPANT_DISCOVERY_STATUS reason,
+        const ParticipantProxyData& info,
         bool& should_be_ignored)
 {
     should_be_ignored = false;
     Sentry sentinel(this);
     if (sentinel)
     {
-        participant_->listener_->on_participant_discovery(participant_->participant_, std::move(info),
+        participant_->listener_->on_participant_discovery(participant_->participant_, reason, std::move(info),
                 should_be_ignored);
     }
 }

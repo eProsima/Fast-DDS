@@ -33,14 +33,14 @@ namespace rtps {
  */
 struct ParticipantDiscoveryInfo
 {
-    //!Enum DISCOVERY_STATUS, four different status for discovered participants.
+    //!Enum PARTICIPANT_DISCOVERY_STATUS, four different status for discovered participants.
     //!@ingroup RTPS_MODULE
     // *INDENT-OFF* eduponz: Does not understand the #if correctly and ends up removing the ;
     //                       at the end of the enum, which does not build.
 #if defined(_WIN32)
-    enum FASTDDS_EXPORTED_API DISCOVERY_STATUS
+    enum FASTDDS_EXPORTED_API PARTICIPANT_DISCOVERY_STATUS
 #else
-    enum DISCOVERY_STATUS
+    enum PARTICIPANT_DISCOVERY_STATUS
 #endif // if defined(_WIN32)
     {
         DISCOVERED_PARTICIPANT,
@@ -63,7 +63,7 @@ struct ParticipantDiscoveryInfo
     }
 
     //! Status
-    DISCOVERY_STATUS status;
+    PARTICIPANT_DISCOVERY_STATUS status;
 
     /**
      * @brief Participant discovery info

@@ -320,7 +320,7 @@ public:
      */
     virtual bool remove_remote_participant(
             const GUID_t& participant_guid,
-            ParticipantDiscoveryInfo::DISCOVERY_STATUS reason);
+            ParticipantDiscoveryInfo::PARTICIPANT_DISCOVERY_STATUS reason);
 
     /**
      * This method returns the BuiltinAttributes of the local participant.
@@ -644,7 +644,7 @@ private:
     void actions_on_remote_participant_removed(
             ParticipantProxyData* pdata,
             const GUID_t& partGUID,
-            ParticipantDiscoveryInfo::DISCOVERY_STATUS reason,
+            ParticipantDiscoveryInfo::PARTICIPANT_DISCOVERY_STATUS reason,
             RTPSParticipantListener* listener);
 
 };

@@ -82,13 +82,14 @@ class PubSubWriterReader
 #endif // if HAVE_SECURITY
         void on_participant_discovery(
                 eprosima::fastdds::dds::DomainParticipant* participant,
-                eprosima::fastdds::rtps::ParticipantDiscoveryInfo&& info,
+                eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS status,
+                const eprosima::fastdds::rtps::ParticipantProxyData& info,
                 bool& should_be_ignored) override
         {
             static_cast<void>(should_be_ignored);
             static_cast<void>(participant);
 
-            switch (info.status)
+            switch (status)
             {
                 case eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT:
                     info_add(discovered_participants_, info.info.m_guid);

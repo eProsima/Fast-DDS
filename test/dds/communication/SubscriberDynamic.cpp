@@ -61,25 +61,26 @@ public:
      */
     void on_participant_discovery(
             DomainParticipant* /*participant*/,
-            ParticipantDiscoveryInfo&& info,
+            PARTICIPANT_DISCOVERY_STATUS status,
+            const ParticipantProxyData& info,
             bool& /*should_be_ignored*/) override
     {
-        if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+        if (status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
         {
             std::cout << "Subscriber participant " << //participant->getGuid() <<
                 " discovered participant " << info.info.m_guid << std::endl;
         }
-        else if (info.status == ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
+        else if (status == ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
         {
             std::cout << "Subscriber participant " << //participant->getGuid() <<
                 " detected changes on participant " << info.info.m_guid << std::endl;
         }
-        else if (info.status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+        else if (status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
         {
             std::cout << "Subscriber participant " << //participant->getGuid() <<
                 " removed participant " << info.info.m_guid << std::endl;
         }
-        else if (info.status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+        else if (status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
         {
             std::cout << "Subscriber participant " << //participant->getGuid() <<
                 " dropped participant " << info.info.m_guid << std::endl;
