@@ -159,7 +159,7 @@ void PDPListener::on_new_cache_change_added(
     else if (reader->matched_writer_is_matched(writer_guid))
     {
         reader->getMutex().unlock();
-        if (parent_pdp_->remove_remote_participant(guid, ParticipantDiscoveryInfo::REMOVED_PARTICIPANT))
+        if (parent_pdp_->remove_remote_participant(guid, PARTICIPANT_DISCOVERY_STATUS::REMOVED_PARTICIPANT))
         {
 #ifdef FASTDDS_STATISTICS
             //! Removal of a participant proxy should trigger
@@ -250,11 +250,11 @@ void PDPListener::process_alive_data(
 
             {
                 std::lock_guard<std::mutex> cb_lock(parent_pdp_->callback_mtx_);
-                ParticipantDiscoveryInfo info(old_data_copy);
+                ParticipantProxyData info(old_data_copy);
 
                 listener->on_participant_discovery(
                     parent_pdp_->getRTPSParticipant()->getUserRTPSParticipant(),
-                    ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT,
+                    PARTICIPANT_DISCOVERY_STATUS::CHANGED_QOS_PARTICIPANT,
                     info,
                     should_be_ignored);
             }

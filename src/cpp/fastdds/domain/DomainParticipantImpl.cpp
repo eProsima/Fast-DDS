@@ -41,6 +41,7 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
@@ -1533,8 +1534,8 @@ ReturnCode_t DomainParticipantImpl::unregister_type(
 
 void DomainParticipantImpl::MyRTPSParticipantListener::on_participant_discovery(
         RTPSParticipant*,
-        PARTICIPANT_DISCOVERY_STATUS reason,
-        const ParticipantProxyData& info,
+        eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS reason,
+        const eprosima::fastdds::rtps::ParticipantProxyData& info,
         bool& should_be_ignored)
 {
     should_be_ignored = false;

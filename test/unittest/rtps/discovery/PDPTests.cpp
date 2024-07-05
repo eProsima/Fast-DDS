@@ -210,7 +210,7 @@ public:
 
     bool remove_remote_participant(
             const GUID_t& /*participant_guid*/,
-            ParticipantDiscoveryInfo::PARTICIPANT_DISCOVERY_STATUS /*reason*/) override
+            PARTICIPANT_DISCOVERY_STATUS /*reason*/) override
     {
         return true;
     }

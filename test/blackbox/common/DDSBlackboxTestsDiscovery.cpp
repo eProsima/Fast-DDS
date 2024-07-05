@@ -600,7 +600,7 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
             static_cast<void>(should_be_ignored);
             std::unique_lock<std::mutex> lck(*mtx_);
             if (status ==
-                    eprosima::fastdds::rtps::ParticipantDiscoveryInfo::PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
+                    eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
             {
                 static_cast<void>(participant);
                 if (nullptr != remote_participant_info)
@@ -779,7 +779,7 @@ TEST(DDSDiscovery, DDSDiscoveryDoesNotDropUDPLocator)
                 bool& should_be_ignored) override
         {
             static_cast<void>(should_be_ignored);
-            if (status == info.DISCOVERED_PARTICIPANT)
+            if (status == PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
             {
                 std::lock_guard<std::mutex> guard(mtx);
                 guid = info.info.m_guid;
@@ -1842,7 +1842,7 @@ TEST(DDSDiscovery, DataracePDP)
                 const ParticipantProxyData& info,
                 bool& /*should_be_ignored*/) override
         {
-            if (status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+            if (status == eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
             {
                 try
                 {
@@ -1854,8 +1854,8 @@ TEST(DDSDiscovery, DataracePDP)
                 }
                 destruction_future.wait();
             }
-            else if (status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
-                    status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+            else if (status == eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::REMOVED_PARTICIPANT ||
+                    status == eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::DROPPED_PARTICIPANT)
             {
                 try
                 {

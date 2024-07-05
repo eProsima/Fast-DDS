@@ -61,8 +61,8 @@ public:
 
     void on_participant_discovery(
             DomainParticipant* /*participant*/,
-            PARTICIPANT_DISCOVERY_STATUS status,
-            const ParticipantProxyData& info,
+            eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS status,
+            const eprosima::fastdds::rtps::ParticipantProxyData& info,
             bool& should_be_ignored) override;
 
 #if HAVE_SECURITY

@@ -80,8 +80,8 @@ class PubSubWriter
 
         void on_participant_discovery(
                 eprosima::fastdds::dds::DomainParticipant*,
-                fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS status,
-                const fastdds::rtps::ParticipantProxyData& info,
+                eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS status,
+                const eprosima::fastdds::rtps::ParticipantProxyData& info,
                 bool& should_be_ignored) override
         {
             static_cast<void>(should_be_ignored);
@@ -90,12 +90,12 @@ class PubSubWriter
                 writer_.discovery_result_ = writer_.onDiscovery_(info);
             }
 
-            if (status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+            if (status == eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
             {
                 writer_.participant_matched();
             }
-            else if (status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
-                    status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+            else if (status == eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::REMOVED_PARTICIPANT ||
+                    status == eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::DROPPED_PARTICIPANT)
             {
                 writer_.participant_unmatched();
             }

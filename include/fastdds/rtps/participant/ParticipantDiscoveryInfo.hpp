@@ -27,30 +27,30 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+//!Enum PARTICIPANT_DISCOVERY_STATUS, four different status for discovered participants.
+//!@ingroup RTPS_MODULE
+// *INDENT-OFF* eduponz: Does not understand the #if correctly and ends up removing the ;
+//                       at the end of the enum, which does not build.
+#if defined(_WIN32)
+enum FASTDDS_EXPORTED_API PARTICIPANT_DISCOVERY_STATUS
+#else
+enum PARTICIPANT_DISCOVERY_STATUS
+#endif // if defined(_WIN32)
+{
+    DISCOVERED_PARTICIPANT,
+    CHANGED_QOS_PARTICIPANT,
+    REMOVED_PARTICIPANT,
+    DROPPED_PARTICIPANT,
+    IGNORED_PARTICIPANT
+};
+// *INDENT-ON*
+
 /**
  * Class ParticipantDiscoveryInfo with discovery information of the Participant.
  * @ingroup RTPS_MODULE
  */
 struct ParticipantDiscoveryInfo
 {
-    //!Enum PARTICIPANT_DISCOVERY_STATUS, four different status for discovered participants.
-    //!@ingroup RTPS_MODULE
-    // *INDENT-OFF* eduponz: Does not understand the #if correctly and ends up removing the ;
-    //                       at the end of the enum, which does not build.
-#if defined(_WIN32)
-    enum FASTDDS_EXPORTED_API PARTICIPANT_DISCOVERY_STATUS
-#else
-    enum PARTICIPANT_DISCOVERY_STATUS
-#endif // if defined(_WIN32)
-    {
-        DISCOVERED_PARTICIPANT,
-        CHANGED_QOS_PARTICIPANT,
-        REMOVED_PARTICIPANT,
-        DROPPED_PARTICIPANT,
-        IGNORED_PARTICIPANT
-    };
-    // *INDENT-ON*
-
     ParticipantDiscoveryInfo(
             const ParticipantProxyData& data)
         : status(DISCOVERED_PARTICIPANT)

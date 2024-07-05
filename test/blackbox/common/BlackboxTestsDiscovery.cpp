@@ -890,17 +890,17 @@ TEST_P(Discovery, PubSubAsReliableHelloworldParticipantDiscovery)
     ASSERT_TRUE(writer.isInitialized());
 
     int count = 0;
-    reader.setOnDiscoveryFunction([&writer, &count](const ParticipantDiscoveryInfo& info) -> bool
+    reader.setOnDiscoveryFunction([&writer, &count](const ParticipantProxyData& info) -> bool
             {
                 if (info.info.m_guid == writer.participant_guid())
                 {
-                    if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+                    if (info.status == PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
                     {
                         std::cout << "Discovered participant " << info.info.m_guid << std::endl;
                         ++count;
                     }
-                    else if (info.status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
-                    info.status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+                    else if (info.status == PARTICIPANT_DISCOVERY_STATUS::REMOVED_PARTICIPANT ||
+                    info.status == PARTICIPANT_DISCOVERY_STATUS::DROPPED_PARTICIPANT)
                     {
                         std::cout << "Removed participant " << info.info.m_guid << std::endl;
                         return ++count == 2;
@@ -1605,11 +1605,11 @@ TEST(Discovery, discovery_cyclone_participant_with_custom_pid)
                 bool& should_be_ignored) override
         {
             should_be_ignored = false;
-            if (ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT == status)
+            if (PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT == status)
             {
                 discovered_participants_++;
             }
-            else if (ParticipantDiscoveryInfo::REMOVED_PARTICIPANT == status)
+            else if (PARTICIPANT_DISCOVERY_STATUS::REMOVED_PARTICIPANT == status)
             {
                 discovered_participants_--;
             }

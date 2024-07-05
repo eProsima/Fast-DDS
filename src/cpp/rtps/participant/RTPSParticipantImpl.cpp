@@ -2717,7 +2717,7 @@ bool RTPSParticipantImpl::ignore_participant(
         ignored_participants_.insert(participant_guid);
     }
     pdp()->remove_remote_participant(GUID_t(participant_guid, c_EntityId_RTPSParticipant),
-            ParticipantDiscoveryInfo::PARTICIPANT_DISCOVERY_STATUS::IGNORED_PARTICIPANT);
+            PARTICIPANT_DISCOVERY_STATUS::IGNORED_PARTICIPANT);
 
     return true;
 

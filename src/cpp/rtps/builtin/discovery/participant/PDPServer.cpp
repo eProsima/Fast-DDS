@@ -1035,13 +1035,13 @@ void PDPServer::announceParticipantState(
  */
 bool PDPServer::remove_remote_participant(
         const GUID_t& partGUID,
-        ParticipantDiscoveryInfo::PARTICIPANT_DISCOVERY_STATUS reason)
+        PARTICIPANT_DISCOVERY_STATUS reason)
 {
     auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
 
     // Notify the DiscoveryDataBase on lease duration removal because the listener
     // has already notified the database in all other cases
-    if (ParticipantDiscoveryInfo::DROPPED_PARTICIPANT == reason)
+    if (PARTICIPANT_DISCOVERY_STATUS::DROPPED_PARTICIPANT == reason)
     {
         CacheChange_t* pC = nullptr;
 

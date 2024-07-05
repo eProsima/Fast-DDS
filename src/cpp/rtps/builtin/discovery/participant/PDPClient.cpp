@@ -951,7 +951,7 @@ bool get_server_client_default_guidPrefix(
 
 bool PDPClient::remove_remote_participant(
         const GUID_t& partGUID,
-        ParticipantDiscoveryInfo::PARTICIPANT_DISCOVERY_STATUS reason)
+        PARTICIPANT_DISCOVERY_STATUS reason)
 {
     if (PDP::remove_remote_participant(partGUID, reason))
     {

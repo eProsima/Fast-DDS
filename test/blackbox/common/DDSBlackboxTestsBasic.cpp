@@ -535,7 +535,7 @@ TEST(DDSBasic, IgnoreParticipant)
                 bool& should_be_ignored) override
         {
             std::cout << "Using custom listener" << std::endl;
-            if (status == info.DISCOVERED_PARTICIPANT)
+            if (status == PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
             {
                 std::cout << "Discovered participant" << std::endl;
                 if (info.info.m_userData == std::vector<eprosima::fastdds::rtps::octet>({ 'i', 'g', 'n' }))

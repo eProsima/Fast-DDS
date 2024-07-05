@@ -91,18 +91,18 @@ void ParticipantModule::on_participant_discovery(
         bool& should_be_ignored)
 {
     static_cast<void>(should_be_ignored);
-    if (status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+    if (status == PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
     {
         std::cout << "Participant " << participant->guid() << " discovered participant " << info.info.m_guid << ": "
                   << ++matched_ << std::endl;
     }
-    else if (status == ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
+    else if (status == PARTICIPANT_DISCOVERY_STATUS::CHANGED_QOS_PARTICIPANT)
     {
         std::cout << "Participant " << participant->guid() << " detected changes on participant " << info.info.m_guid
                   << std::endl;
     }
-    else if (status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
-            status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+    else if (status == PARTICIPANT_DISCOVERY_STATUS::REMOVED_PARTICIPANT ||
+            status == PARTICIPANT_DISCOVERY_STATUS::DROPPED_PARTICIPANT)
     {
         std::cout << "Participant " << participant->guid() << " undiscovered participant " << info.info.m_guid << ": "
                   << --matched_ << std::endl;

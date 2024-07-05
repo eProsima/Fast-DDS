@@ -79,7 +79,7 @@ public:
         on_participant_discovery_mock(participant, status, info, should_be_ignored);
     }
 
-    MOCK_METHOD3(on_participant_discovery_mock, void (RTPSParticipant*, PARTICIPANT_DISCOVERY_STATUS, const ParticipantProxyData&, bool&));
+    MOCK_METHOD3(on_participant_discovery_mock, void (RTPSParticipant*, PARTICIPANT_DISCOVERY_STATUS&, const ParticipantProxyData&, bool&));
 
 #if HAVE_SECURITY
     void onParticipantAuthentication(
