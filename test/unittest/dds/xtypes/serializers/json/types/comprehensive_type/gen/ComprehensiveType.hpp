@@ -1522,6 +1522,8 @@ public:
 
                     m_bitmask_sequence = x.m_bitmask_sequence;
 
+                    m_enum_sequence = x.m_enum_sequence;
+
                     m_short_sequence = x.m_short_sequence;
 
                     m_long_array = x.m_long_array;
@@ -1560,6 +1562,7 @@ public:
         m_my_aliased_bounded_string = std::move(x.m_my_aliased_bounded_string);
         m_my_recursive_alias = x.m_my_recursive_alias;
         m_bitmask_sequence = std::move(x.m_bitmask_sequence);
+        m_enum_sequence = std::move(x.m_enum_sequence);
         m_short_sequence = std::move(x.m_short_sequence);
         m_long_array = std::move(x.m_long_array);
         m_string_unbounded_map = std::move(x.m_string_unbounded_map);
@@ -1601,6 +1604,8 @@ public:
 
                     m_bitmask_sequence = x.m_bitmask_sequence;
 
+                    m_enum_sequence = x.m_enum_sequence;
+
                     m_short_sequence = x.m_short_sequence;
 
                     m_long_array = x.m_long_array;
@@ -1640,6 +1645,7 @@ public:
         m_my_aliased_bounded_string = std::move(x.m_my_aliased_bounded_string);
         m_my_recursive_alias = x.m_my_recursive_alias;
         m_bitmask_sequence = std::move(x.m_bitmask_sequence);
+        m_enum_sequence = std::move(x.m_enum_sequence);
         m_short_sequence = std::move(x.m_short_sequence);
         m_long_array = std::move(x.m_long_array);
         m_string_unbounded_map = std::move(x.m_string_unbounded_map);
@@ -1673,6 +1679,7 @@ public:
            m_my_aliased_bounded_string == x.m_my_aliased_bounded_string &&
            m_my_recursive_alias == x.m_my_recursive_alias &&
            m_bitmask_sequence == x.m_bitmask_sequence &&
+           m_enum_sequence == x.m_enum_sequence &&
            m_short_sequence == x.m_short_sequence &&
            m_long_array == x.m_long_array &&
            m_string_unbounded_map == x.m_string_unbounded_map &&
@@ -2093,6 +2100,45 @@ public:
 
 
     /*!
+     * @brief This function copies the value in member enum_sequence
+     * @param _enum_sequence New value to be copied in member enum_sequence
+     */
+    eProsima_user_DllExport void enum_sequence(
+            const std::vector<MyEnum>& _enum_sequence)
+    {
+        m_enum_sequence = _enum_sequence;
+    }
+
+    /*!
+     * @brief This function moves the value in member enum_sequence
+     * @param _enum_sequence New value to be moved in member enum_sequence
+     */
+    eProsima_user_DllExport void enum_sequence(
+            std::vector<MyEnum>&& _enum_sequence)
+    {
+        m_enum_sequence = std::move(_enum_sequence);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member enum_sequence
+     * @return Constant reference to member enum_sequence
+     */
+    eProsima_user_DllExport const std::vector<MyEnum>& enum_sequence() const
+    {
+        return m_enum_sequence;
+    }
+
+    /*!
+     * @brief This function returns a reference to member enum_sequence
+     * @return Reference to member enum_sequence
+     */
+    eProsima_user_DllExport std::vector<MyEnum>& enum_sequence()
+    {
+        return m_enum_sequence;
+    }
+
+
+    /*!
      * @brief This function copies the value in member short_sequence
      * @param _short_sequence New value to be copied in member short_sequence
      */
@@ -2418,6 +2464,7 @@ private:
     MyAliasedBoundedString m_my_aliased_bounded_string;
     MyRecursiveAlias m_my_recursive_alias{MyEnum::A};
     std::vector<MyBitMask> m_bitmask_sequence;
+    std::vector<MyEnum> m_enum_sequence;
     std::vector<int16_t> m_short_sequence;
     std::array<std::array<std::array<int32_t, 4>, 3>, 2> m_long_array{ {{ {{0}} }} };
     std::map<std::string, std::string> m_string_unbounded_map;

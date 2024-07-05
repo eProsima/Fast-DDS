@@ -32,6 +32,12 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
                     "second": 1
                 }
             },
+            "enum_sequence": [
+                {
+                    "name": "B",
+                    "value": 1
+                }
+            ],
             "inner_union": {
                 "second": 1
             },
@@ -168,6 +174,12 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
                     "second": 1
                 }
             },
+            "enum_sequence": [
+                {
+                    "name": "B",
+                    "value": 1
+                }
+            ],
             "inner_union": {
                 "second": 1
             },
@@ -292,123 +304,6 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
     ],
     "complex_map": {
         "0": {
-            "bitmask_sequence": [],
-            "complex_union": {
-                "fourth": {
-                    "second": 0
-                }
-            },
-            "inner_union": {
-                "second": 0
-            },
-            "long_array": [
-                [
-                    [
-                        0,
-                        0,
-                        0,
-                        0
-                    ],
-                    [
-                        0,
-                        0,
-                        0,
-                        0
-                    ],
-                    [
-                        0,
-                        0,
-                        0,
-                        0
-                    ]
-                ],
-                [
-                    [
-                        0,
-                        0,
-                        0,
-                        0
-                    ],
-                    [
-                        0,
-                        0,
-                        0,
-                        0
-                    ],
-                    [
-                        0,
-                        0,
-                        0,
-                        0
-                    ]
-                ]
-            ],
-            "my_aliased_bounded_string": "",
-            "my_aliased_enum": {
-                "name": "A",
-                "value": 0
-            },
-            "my_aliased_struct": {
-                "my_bool": false,
-                "my_char": "\u0000",
-                "my_double": 0.0,
-                "my_float": 0.0,
-                "my_int8": 0,
-                "my_long": 0,
-                "my_longdouble": 0.0,
-                "my_longlong": 0,
-                "my_octet": 0,
-                "my_short": 0,
-                "my_uint8": 0,
-                "my_ulong": 0,
-                "my_ulonglong": 0,
-                "my_ushort": 0,
-                "my_wchar": "\u0000"
-            },
-            "my_bitmask": {
-                "active": [],
-                "binary": "00000000000000000000000000000000",
-                "value": 0
-            },
-            "my_bitset": {
-                "a": 0,
-                "b": false,
-                "c": 0,
-                "d": 0
-            },
-            "my_bool": false,
-            "my_bounded_string": "",
-            "my_bounded_wstring": "",
-            "my_char": "\u0000",
-            "my_double": 0.0,
-            "my_enum": {
-                "name": "A",
-                "value": 0
-            },
-            "my_float": 0.0,
-            "my_int8": 0,
-            "my_long": 0,
-            "my_longdouble": 0.0,
-            "my_longlong": 0,
-            "my_octet": 0,
-            "my_recursive_alias": {
-                "name": "A",
-                "value": 0
-            },
-            "my_short": 0,
-            "my_string": "",
-            "my_uint8": 0,
-            "my_ulong": 0,
-            "my_ulonglong": 0,
-            "my_ushort": 0,
-            "my_wchar": "\u0000",
-            "my_wstring": "",
-            "short_long_map": null,
-            "short_sequence": [],
-            "string_alias_unbounded_map": null,
-            "string_unbounded_map": null
-        },
-        "1": {
             "bitmask_sequence": [
                 {
                     "active": [
@@ -423,6 +318,12 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
                     "second": 1
                 }
             },
+            "enum_sequence": [
+                {
+                    "name": "B",
+                    "value": 1
+                }
+            ],
             "inner_union": {
                 "second": 1
             },
@@ -561,6 +462,12 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
                     "second": 1
                 }
             },
+            "enum_sequence": [
+                {
+                    "name": "B",
+                    "value": 1
+                }
+            ],
             "inner_union": {
                 "second": 1
             },
@@ -699,6 +606,12 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
                 "second": 1
             }
         },
+        "enum_sequence": [
+            {
+                "name": "B",
+                "value": 1
+            }
+        ],
         "inner_union": {
             "second": 1
         },
@@ -837,6 +750,12 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
                     "second": 2
                 }
             },
+            "enum_sequence": [
+                {
+                    "name": "C",
+                    "value": 2
+                }
+            ],
             "inner_union": {
                 "second": 2
             },
@@ -969,6 +888,12 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
                     "second": 2
                 }
             },
+            "enum_sequence": [
+                {
+                    "name": "C",
+                    "value": 2
+                }
+            ],
             "inner_union": {
                 "second": 2
             },
@@ -1091,123 +1016,6 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
     ],
     "complex_map": {
         "0": {
-            "bitmask_sequence": [],
-            "complex_union": {
-                "fourth": {
-                    "second": 0
-                }
-            },
-            "inner_union": {
-                "second": 0
-            },
-            "long_array": [
-                [
-                    [
-                        0,
-                        0,
-                        0,
-                        0
-                    ],
-                    [
-                        0,
-                        0,
-                        0,
-                        0
-                    ],
-                    [
-                        0,
-                        0,
-                        0,
-                        0
-                    ]
-                ],
-                [
-                    [
-                        0,
-                        0,
-                        0,
-                        0
-                    ],
-                    [
-                        0,
-                        0,
-                        0,
-                        0
-                    ],
-                    [
-                        0,
-                        0,
-                        0,
-                        0
-                    ]
-                ]
-            ],
-            "my_aliased_bounded_string": "",
-            "my_aliased_enum": {
-                "name": "A",
-                "value": 0
-            },
-            "my_aliased_struct": {
-                "my_bool": false,
-                "my_char": "\u0000",
-                "my_double": 0.0,
-                "my_float": 0.0,
-                "my_int8": 0,
-                "my_long": 0,
-                "my_longdouble": 0.0,
-                "my_longlong": 0,
-                "my_octet": 0,
-                "my_short": 0,
-                "my_uint8": 0,
-                "my_ulong": 0,
-                "my_ulonglong": 0,
-                "my_ushort": 0,
-                "my_wchar": "\u0000"
-            },
-            "my_bitmask": {
-                "active": [],
-                "binary": "00000000000000000000000000000000",
-                "value": 0
-            },
-            "my_bitset": {
-                "a": 0,
-                "b": false,
-                "c": 0,
-                "d": 0
-            },
-            "my_bool": false,
-            "my_bounded_string": "",
-            "my_bounded_wstring": "",
-            "my_char": "\u0000",
-            "my_double": 0.0,
-            "my_enum": {
-                "name": "A",
-                "value": 0
-            },
-            "my_float": 0.0,
-            "my_int8": 0,
-            "my_long": 0,
-            "my_longdouble": 0.0,
-            "my_longlong": 0,
-            "my_octet": 0,
-            "my_recursive_alias": {
-                "name": "A",
-                "value": 0
-            },
-            "my_short": 0,
-            "my_string": "",
-            "my_uint8": 0,
-            "my_ulong": 0,
-            "my_ulonglong": 0,
-            "my_ushort": 0,
-            "my_wchar": "\u0000",
-            "my_wstring": "",
-            "short_long_map": null,
-            "short_sequence": [],
-            "string_alias_unbounded_map": null,
-            "string_unbounded_map": null
-        },
-        "1": {
             "bitmask_sequence": [
                 {
                     "active": [],
@@ -1220,6 +1028,12 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
                     "second": 2
                 }
             },
+            "enum_sequence": [
+                {
+                    "name": "C",
+                    "value": 2
+                }
+            ],
             "inner_union": {
                 "second": 2
             },
@@ -1354,6 +1168,12 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
                     "second": 2
                 }
             },
+            "enum_sequence": [
+                {
+                    "name": "C",
+                    "value": 2
+                }
+            ],
             "inner_union": {
                 "second": 2
             },
@@ -1488,6 +1308,12 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
                 "second": 2
             }
         },
+        "enum_sequence": [
+            {
+                "name": "C",
+                "value": 2
+            }
+        ],
         "inner_union": {
             "second": 2
         },
@@ -1626,6 +1452,12 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
                     "second": 3
                 }
             },
+            "enum_sequence": [
+                {
+                    "name": "A",
+                    "value": 0
+                }
+            ],
             "inner_union": {
                 "second": 3
             },
@@ -1762,6 +1594,12 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
                     "second": 3
                 }
             },
+            "enum_sequence": [
+                {
+                    "name": "A",
+                    "value": 0
+                }
+            ],
             "inner_union": {
                 "second": 3
             },
@@ -1886,123 +1724,6 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
     ],
     "complex_map": {
         "0": {
-            "bitmask_sequence": [],
-            "complex_union": {
-                "fourth": {
-                    "second": 0
-                }
-            },
-            "inner_union": {
-                "second": 0
-            },
-            "long_array": [
-                [
-                    [
-                        0,
-                        0,
-                        0,
-                        0
-                    ],
-                    [
-                        0,
-                        0,
-                        0,
-                        0
-                    ],
-                    [
-                        0,
-                        0,
-                        0,
-                        0
-                    ]
-                ],
-                [
-                    [
-                        0,
-                        0,
-                        0,
-                        0
-                    ],
-                    [
-                        0,
-                        0,
-                        0,
-                        0
-                    ],
-                    [
-                        0,
-                        0,
-                        0,
-                        0
-                    ]
-                ]
-            ],
-            "my_aliased_bounded_string": "",
-            "my_aliased_enum": {
-                "name": "A",
-                "value": 0
-            },
-            "my_aliased_struct": {
-                "my_bool": false,
-                "my_char": "\u0000",
-                "my_double": 0.0,
-                "my_float": 0.0,
-                "my_int8": 0,
-                "my_long": 0,
-                "my_longdouble": 0.0,
-                "my_longlong": 0,
-                "my_octet": 0,
-                "my_short": 0,
-                "my_uint8": 0,
-                "my_ulong": 0,
-                "my_ulonglong": 0,
-                "my_ushort": 0,
-                "my_wchar": "\u0000"
-            },
-            "my_bitmask": {
-                "active": [],
-                "binary": "00000000000000000000000000000000",
-                "value": 0
-            },
-            "my_bitset": {
-                "a": 0,
-                "b": false,
-                "c": 0,
-                "d": 0
-            },
-            "my_bool": false,
-            "my_bounded_string": "",
-            "my_bounded_wstring": "",
-            "my_char": "\u0000",
-            "my_double": 0.0,
-            "my_enum": {
-                "name": "A",
-                "value": 0
-            },
-            "my_float": 0.0,
-            "my_int8": 0,
-            "my_long": 0,
-            "my_longdouble": 0.0,
-            "my_longlong": 0,
-            "my_octet": 0,
-            "my_recursive_alias": {
-                "name": "A",
-                "value": 0
-            },
-            "my_short": 0,
-            "my_string": "",
-            "my_uint8": 0,
-            "my_ulong": 0,
-            "my_ulonglong": 0,
-            "my_ushort": 0,
-            "my_wchar": "\u0000",
-            "my_wstring": "",
-            "short_long_map": null,
-            "short_sequence": [],
-            "string_alias_unbounded_map": null,
-            "string_unbounded_map": null
-        },
-        "1": {
             "bitmask_sequence": [
                 {
                     "active": [
@@ -2017,6 +1738,12 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
                     "second": 3
                 }
             },
+            "enum_sequence": [
+                {
+                    "name": "A",
+                    "value": 0
+                }
+            ],
             "inner_union": {
                 "second": 3
             },
@@ -2155,6 +1882,12 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
                     "second": 3
                 }
             },
+            "enum_sequence": [
+                {
+                    "name": "A",
+                    "value": 0
+                }
+            ],
             "inner_union": {
                 "second": 3
             },
@@ -2293,6 +2026,12 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
                 "second": 3
             }
         },
+        "enum_sequence": [
+            {
+                "name": "A",
+                "value": 0
+            }
+        ],
         "inner_union": {
             "second": 3
         },
@@ -2415,9 +2154,3 @@ const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
         }
     }
 })";
-
-// std::map<int, std::string> expected_json_comprehensive_filled_eprosima = {
-//     {1, expected_json_comprehensive_filled_eprosima_1},
-//     {2, expected_json_comprehensive_filled_eprosima_2},
-//     {3, expected_json_comprehensive_filled_eprosima_3}};
-

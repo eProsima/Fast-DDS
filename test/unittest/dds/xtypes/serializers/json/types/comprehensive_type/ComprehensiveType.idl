@@ -87,6 +87,7 @@ struct AllStruct : PrimitivesStruct
 
     // sequence
     sequence<MyBitMask> bitmask_sequence;
+    sequence<MyEnum> enum_sequence;
     sequence<short, 5> short_sequence;
 
     // array

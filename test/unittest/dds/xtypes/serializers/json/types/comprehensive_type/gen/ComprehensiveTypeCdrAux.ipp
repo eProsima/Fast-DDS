@@ -631,27 +631,30 @@ eProsima_user_DllExport size_t calculate_serialized_size(
                 data.bitmask_sequence(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(26),
-                data.short_sequence(), current_alignment);
+                data.enum_sequence(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(27),
-                data.long_array(), current_alignment);
+                data.short_sequence(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(28),
-                data.string_unbounded_map(), current_alignment);
+                data.long_array(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(29),
-                data.string_alias_unbounded_map(), current_alignment);
+                data.string_unbounded_map(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(30),
-                data.short_long_map(), current_alignment);
+                data.string_alias_unbounded_map(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(31),
-                data.inner_union(), current_alignment);
+                data.short_long_map(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(32),
-                data.complex_union(), current_alignment);
+                data.inner_union(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(33),
+                data.complex_union(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(34),
                 data.my_bitset(), current_alignment);
 
 
@@ -698,14 +701,15 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(23) << data.my_aliased_bounded_string()
         << eprosima::fastcdr::MemberId(24) << data.my_recursive_alias()
         << eprosima::fastcdr::MemberId(25) << data.bitmask_sequence()
-        << eprosima::fastcdr::MemberId(26) << data.short_sequence()
-        << eprosima::fastcdr::MemberId(27) << data.long_array()
-        << eprosima::fastcdr::MemberId(28) << data.string_unbounded_map()
-        << eprosima::fastcdr::MemberId(29) << data.string_alias_unbounded_map()
-        << eprosima::fastcdr::MemberId(30) << data.short_long_map()
-        << eprosima::fastcdr::MemberId(31) << data.inner_union()
-        << eprosima::fastcdr::MemberId(32) << data.complex_union()
-        << eprosima::fastcdr::MemberId(33) << data.my_bitset()
+        << eprosima::fastcdr::MemberId(26) << data.enum_sequence()
+        << eprosima::fastcdr::MemberId(27) << data.short_sequence()
+        << eprosima::fastcdr::MemberId(28) << data.long_array()
+        << eprosima::fastcdr::MemberId(29) << data.string_unbounded_map()
+        << eprosima::fastcdr::MemberId(30) << data.string_alias_unbounded_map()
+        << eprosima::fastcdr::MemberId(31) << data.short_long_map()
+        << eprosima::fastcdr::MemberId(32) << data.inner_union()
+        << eprosima::fastcdr::MemberId(33) << data.complex_union()
+        << eprosima::fastcdr::MemberId(34) << data.my_bitset()
 ;
     scdr.end_serialize_type(current_state);
 }
@@ -828,34 +832,38 @@ eProsima_user_DllExport void deserialize(
                                             break;
 
                                         case 26:
-                                                dcdr >> data.short_sequence();
+                                                dcdr >> data.enum_sequence();
                                             break;
 
                                         case 27:
-                                                dcdr >> data.long_array();
+                                                dcdr >> data.short_sequence();
                                             break;
 
                                         case 28:
-                                                dcdr >> data.string_unbounded_map();
+                                                dcdr >> data.long_array();
                                             break;
 
                                         case 29:
-                                                dcdr >> data.string_alias_unbounded_map();
+                                                dcdr >> data.string_unbounded_map();
                                             break;
 
                                         case 30:
-                                                dcdr >> data.short_long_map();
+                                                dcdr >> data.string_alias_unbounded_map();
                                             break;
 
                                         case 31:
-                                                dcdr >> data.inner_union();
+                                                dcdr >> data.short_long_map();
                                             break;
 
                                         case 32:
-                                                dcdr >> data.complex_union();
+                                                dcdr >> data.inner_union();
                                             break;
 
                                         case 33:
+                                                dcdr >> data.complex_union();
+                                            break;
+
+                                        case 34:
                                                 dcdr >> data.my_bitset();
                                             break;
 

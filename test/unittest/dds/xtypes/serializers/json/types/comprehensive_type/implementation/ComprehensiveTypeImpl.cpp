@@ -128,6 +128,21 @@ void fill_all_struct(
     Int16Seq short_seq = {0, static_cast<int16_t>(index)};
     dyn_data->set_int16_values(dyn_data->get_member_id_by_name("short_sequence"), short_seq);
 
+    Int32Seq enum_seq;
+    switch (index % 3)
+    {
+        case 0:
+            enum_seq = {static_cast<int32_t>(0)};
+            break;
+        case 1:
+            enum_seq = {static_cast<int32_t>(1)};
+            break;
+        case 2:
+            enum_seq = {static_cast<int32_t>(2)};
+            break;
+    }
+    dyn_data->set_int32_values(dyn_data->get_member_id_by_name("enum_sequence"), enum_seq);
+
     // array
     Int32Seq long_array_seq = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
     dyn_data->set_int32_values(dyn_data->get_member_id_by_name("long_array"), long_array_seq);
@@ -187,9 +202,7 @@ traits<DynamicData>::ref_type fill_dyn_data(
 
     // complex map
     traits<DynamicData>::ref_type dyn_data_complex_map = dyn_data->loan_value(dyn_data->get_member_id_by_name("complex_map"));
-    int16_t key {0};
-    dyn_data_complex_map->set_int16_value(dyn_data_complex_map->get_member_id_by_name(std::to_string(key)), static_cast<uint16_t>(index));
-    dyn_data_complex_map->set_complex_value(dyn_data_complex_map->get_member_id_by_name(std::to_string(1)), dyn_data_all_struct);
+    dyn_data_complex_map->set_complex_value(dyn_data_complex_map->get_member_id_by_name(std::to_string(0)), dyn_data_all_struct);
     dyn_data->return_loaned_value(dyn_data_complex_map);
 
     // Return AllStruct loaned DynamicData

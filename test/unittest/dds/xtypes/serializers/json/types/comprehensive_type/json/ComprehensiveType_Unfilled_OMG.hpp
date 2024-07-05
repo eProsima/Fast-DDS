@@ -23,6 +23,7 @@ std::string expected_json_comprehensive_omg_unfilled = R"({
                     "second": 0
                 }
             },
+            "enum_sequence": [],
             "inner_union": {
                 "second": 0
             },
@@ -127,6 +128,7 @@ std::string expected_json_comprehensive_omg_unfilled = R"({
                     "second": 0
                 }
             },
+            "enum_sequence": [],
             "inner_union": {
                 "second": 0
             },
@@ -235,6 +237,7 @@ std::string expected_json_comprehensive_omg_unfilled = R"({
                 "second": 0
             }
         },
+        "enum_sequence": [],
         "inner_union": {
             "second": 0
         },

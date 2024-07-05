@@ -1618,6 +1618,66 @@ void register_AllStruct_type_identifier(
             TypeObjectUtils::add_complete_struct_member(member_seq_AllStruct, member_bitmask_sequence);
         }
         {
+            TypeIdentifierPair type_ids_enum_sequence;
+            ReturnCode_t return_code_enum_sequence {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_enum_sequence =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "anonymous_sequence_MyEnum_unbounded", type_ids_enum_sequence);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_enum_sequence)
+            {
+                return_code_enum_sequence =
+                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                    "MyEnum", type_ids_enum_sequence);
+
+                if (eprosima::fastdds::dds::RETCODE_OK != return_code_enum_sequence)
+                {
+                ::register_MyEnum_type_identifier(type_ids_enum_sequence);
+                }
+                bool element_identifier_anonymous_sequence_MyEnum_unbounded_ec {false};
+                TypeIdentifier* element_identifier_anonymous_sequence_MyEnum_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_enum_sequence, element_identifier_anonymous_sequence_MyEnum_unbounded_ec))};
+                if (!element_identifier_anonymous_sequence_MyEnum_unbounded_ec)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Sequence element TypeIdentifier inconsistent.");
+                    return;
+                }
+                EquivalenceKind equiv_kind_anonymous_sequence_MyEnum_unbounded = EK_COMPLETE;
+                if (TK_NONE == type_ids_enum_sequence.type_identifier2()._d())
+                {
+                    equiv_kind_anonymous_sequence_MyEnum_unbounded = EK_BOTH;
+                }
+                CollectionElementFlag element_flags_anonymous_sequence_MyEnum_unbounded = 0;
+                PlainCollectionHeader header_anonymous_sequence_MyEnum_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_sequence_MyEnum_unbounded, element_flags_anonymous_sequence_MyEnum_unbounded);
+                {
+                    SBound bound = 0;
+                    PlainSequenceSElemDefn seq_sdefn = TypeObjectUtils::build_plain_sequence_s_elem_defn(header_anonymous_sequence_MyEnum_unbounded, bound,
+                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_MyEnum_unbounded));
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_s_sequence_type_identifier(seq_sdefn, "anonymous_sequence_MyEnum_unbounded", type_ids_enum_sequence))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_sequence_MyEnum_unbounded already registered in TypeObjectRegistry for a different type.");
+                    }
+                }
+            }
+            StructMemberFlag member_flags_enum_sequence = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_enum_sequence = 0x0000001a;
+            bool common_enum_sequence_ec {false};
+            CommonStructMember common_enum_sequence {TypeObjectUtils::build_common_struct_member(member_id_enum_sequence, member_flags_enum_sequence, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_enum_sequence, common_enum_sequence_ec))};
+            if (!common_enum_sequence_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure enum_sequence member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_enum_sequence = "enum_sequence";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_enum_sequence;
+            ann_custom_AllStruct.reset();
+            CompleteMemberDetail detail_enum_sequence = TypeObjectUtils::build_complete_member_detail(name_enum_sequence, member_ann_builtin_enum_sequence, ann_custom_AllStruct);
+            CompleteStructMember member_enum_sequence = TypeObjectUtils::build_complete_struct_member(common_enum_sequence, detail_enum_sequence);
+            TypeObjectUtils::add_complete_struct_member(member_seq_AllStruct, member_enum_sequence);
+        }
+        {
             TypeIdentifierPair type_ids_short_sequence;
             ReturnCode_t return_code_short_sequence {eprosima::fastdds::dds::RETCODE_OK};
             return_code_short_sequence =
@@ -1664,7 +1724,7 @@ void register_AllStruct_type_identifier(
             }
             StructMemberFlag member_flags_short_sequence = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_short_sequence = 0x0000001a;
+            MemberId member_id_short_sequence = 0x0000001b;
             bool common_short_sequence_ec {false};
             CommonStructMember common_short_sequence {TypeObjectUtils::build_common_struct_member(member_id_short_sequence, member_flags_short_sequence, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_short_sequence, common_short_sequence_ec))};
             if (!common_short_sequence_ec)
@@ -1732,7 +1792,7 @@ void register_AllStruct_type_identifier(
             }
             StructMemberFlag member_flags_long_array = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_long_array = 0x0000001b;
+            MemberId member_id_long_array = 0x0000001c;
             bool common_long_array_ec {false};
             CommonStructMember common_long_array {TypeObjectUtils::build_common_struct_member(member_id_long_array, member_flags_long_array, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_long_array, common_long_array_ec))};
             if (!common_long_array_ec)
@@ -1837,7 +1897,7 @@ void register_AllStruct_type_identifier(
             }
             StructMemberFlag member_flags_string_unbounded_map = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_string_unbounded_map = 0x0000001c;
+            MemberId member_id_string_unbounded_map = 0x0000001d;
             bool common_string_unbounded_map_ec {false};
             CommonStructMember common_string_unbounded_map {TypeObjectUtils::build_common_struct_member(member_id_string_unbounded_map, member_flags_string_unbounded_map, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_string_unbounded_map, common_string_unbounded_map_ec))};
             if (!common_string_unbounded_map_ec)
@@ -1932,7 +1992,7 @@ void register_AllStruct_type_identifier(
             }
             StructMemberFlag member_flags_string_alias_unbounded_map = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_string_alias_unbounded_map = 0x0000001d;
+            MemberId member_id_string_alias_unbounded_map = 0x0000001e;
             bool common_string_alias_unbounded_map_ec {false};
             CommonStructMember common_string_alias_unbounded_map {TypeObjectUtils::build_common_struct_member(member_id_string_alias_unbounded_map, member_flags_string_alias_unbounded_map, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_string_alias_unbounded_map, common_string_alias_unbounded_map_ec))};
             if (!common_string_alias_unbounded_map_ec)
@@ -2021,7 +2081,7 @@ void register_AllStruct_type_identifier(
             }
             StructMemberFlag member_flags_short_long_map = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_short_long_map = 0x0000001e;
+            MemberId member_id_short_long_map = 0x0000001f;
             bool common_short_long_map_ec {false};
             CommonStructMember common_short_long_map {TypeObjectUtils::build_common_struct_member(member_id_short_long_map, member_flags_short_long_map, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_short_long_map, common_short_long_map_ec))};
             if (!common_short_long_map_ec)
@@ -2049,7 +2109,7 @@ void register_AllStruct_type_identifier(
             }
             StructMemberFlag member_flags_inner_union = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_inner_union = 0x0000001f;
+            MemberId member_id_inner_union = 0x00000020;
             bool common_inner_union_ec {false};
             CommonStructMember common_inner_union {TypeObjectUtils::build_common_struct_member(member_id_inner_union, member_flags_inner_union, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_inner_union, common_inner_union_ec))};
             if (!common_inner_union_ec)
@@ -2077,7 +2137,7 @@ void register_AllStruct_type_identifier(
             }
             StructMemberFlag member_flags_complex_union = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_complex_union = 0x00000020;
+            MemberId member_id_complex_union = 0x00000021;
             bool common_complex_union_ec {false};
             CommonStructMember common_complex_union {TypeObjectUtils::build_common_struct_member(member_id_complex_union, member_flags_complex_union, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_complex_union, common_complex_union_ec))};
             if (!common_complex_union_ec)
@@ -2105,7 +2165,7 @@ void register_AllStruct_type_identifier(
             }
             StructMemberFlag member_flags_my_bitset = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_my_bitset = 0x00000021;
+            MemberId member_id_my_bitset = 0x00000022;
             bool common_my_bitset_ec {false};
             CommonStructMember common_my_bitset {TypeObjectUtils::build_common_struct_member(member_id_my_bitset, member_flags_my_bitset, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_my_bitset, common_my_bitset_ec))};
             if (!common_my_bitset_ec)
