@@ -1,5 +1,0 @@
-struct hello_world
-{
-    unsigned long index;
-    string message;
-};

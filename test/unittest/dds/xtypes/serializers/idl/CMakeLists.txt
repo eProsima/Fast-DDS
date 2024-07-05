@@ -13,95 +13,59 @@
 # limitations under the License.
 
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/alias_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/alias_struct.idl
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/alias_struct/alias_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/alias_struct/alias_struct.idl
     COPYONLY)
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/arrays_and_sequences.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/arrays_and_sequences.idl
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/array_struct/array_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/array_struct/array_struct.idl
     COPYONLY)
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/basic_array_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/basic_array_struct.idl
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/bitmask_struct/bitmask_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/bitmask_struct/bitmask_struct.idl
     COPYONLY)
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/basic_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/basic_struct.idl
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/bitset_struct/bitset_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/bitset_struct/bitset_struct.idl
     COPYONLY)
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/bitmask_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/bitmask_struct.idl
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/enum_struct/enum_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/enum_struct/enum_struct.idl
     COPYONLY)
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/bitset_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/bitset_struct.idl
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/extensibility_struct/extensibility_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/extensibility_struct/extensibility_struct.idl
     COPYONLY)
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/char_sequence.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/char_sequence.idl
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/key_struct/key_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/key_struct/key_struct.idl
     COPYONLY)
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/complex_nested_arrays.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/complex_nested_arrays.idl
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/map_struct/map_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/map_struct/map_struct.idl
     COPYONLY)
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/inheritance_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/inheritance_struct.idl
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/sequence_struct/sequence_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/sequence_struct/sequence_struct.idl
     COPYONLY)
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/enum_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/enum_struct.idl
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/string_struct/string_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/string_struct/string_struct.idl
     COPYONLY)
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/extensibility_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/extensibility_struct.idl
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/struct_struct/struct_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/struct_struct/struct_struct.idl
     COPYONLY)
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/float_bounded_sequence.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/float_bounded_sequence.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/hello_world.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/hello_world.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/key_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/key_struct.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/map_bounded_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/map_bounded_struct.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/map_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/map_struct.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/multi_array_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/multi_array_struct.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/nested_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/nested_struct.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/numeric_array.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/numeric_array.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/string_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/string_struct.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/union_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/union_struct.idl
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/union_struct/union_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/union_struct/union_struct.idl
     COPYONLY)
 
 set(RESOURCEDYNTYPETOIDLTESTS_SOURCE
     DynTypeIDLTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/utils.cpp)
 
-file(GLOB DATATYPE_SOURCES "types/gen/**/*.cxx")
+file(GLOB DATATYPE_SOURCES "types/**/gen/*.cxx")
 
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)

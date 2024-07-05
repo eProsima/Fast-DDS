@@ -94,7 +94,7 @@ TEST_P(DynTypeIDLTests, to_idl)
     test::register_type_object_representation(type);
 
     // Read the IDL file as a string
-    const auto file_name = std::string("types/idls/") + type + ".idl";
+    const auto file_name = std::string("types/") + type + "/" + type + ".idl";
 
     std::ifstream file(file_name);
     ASSERT_TRUE(file.is_open());
@@ -103,7 +103,7 @@ TEST_P(DynTypeIDLTests, to_idl)
 
     // Get Dynamic type
     DynamicType::_ref_type dyn_type;
-    get_dynamic_type(type, dyn_type);
+    get_dynamic_type(snake_to_camel(type), dyn_type);
 
     // Serialize DynamicType to IDL
     std::stringstream idl_serialization;
