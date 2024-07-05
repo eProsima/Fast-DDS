@@ -650,7 +650,7 @@ protected:
                 fastdds::rtps::ReaderDiscoveryInfo&& info,
                 bool& should_be_ignored) override;
 
-        void onWriterDiscovery(
+        void on_writer_discovery(
                 fastdds::rtps::RTPSParticipant* participant,
                 fastdds::rtps::WriterDiscoveryInfo&& info,
                 bool& should_be_ignored) override;

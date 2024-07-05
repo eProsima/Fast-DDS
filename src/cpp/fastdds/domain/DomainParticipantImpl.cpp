@@ -1579,7 +1579,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
     }
 }
 
-void DomainParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
+void DomainParticipantImpl::MyRTPSParticipantListener::on_writer_discovery(
         RTPSParticipant*,
         WriterDiscoveryInfo&& info,
         bool& should_be_ignored)

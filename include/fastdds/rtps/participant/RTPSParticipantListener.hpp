@@ -102,7 +102,7 @@ public:
      * @param [out] info Remote writer information. User can take ownership of the object.
      * @param [out] should_be_ignored Flag to indicate the library to automatically ignore the discovered Writer.
      */
-    virtual void onWriterDiscovery(
+    virtual void on_writer_discovery(
             RTPSParticipant* participant,
             WriterDiscoveryInfo&& info,
             bool& should_be_ignored)

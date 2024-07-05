@@ -828,7 +828,7 @@ bool PDP::removeWriterProxyData(
                     WriterDiscoveryInfo info(std::move(*pW));
                     bool should_be_ignored = false;
                     info.status = WriterDiscoveryInfo::REMOVED_WRITER;
-                    listener->onWriterDiscovery(participant, std::move(info), should_be_ignored);
+                    listener->on_writer_discovery(participant, std::move(info), should_be_ignored);
                 }
 
                 // Clear writer proxy data and move to pool in order to allow reuse
@@ -1023,7 +1023,7 @@ WriterProxyData* PDP::addWriterProxyData(
                     WriterDiscoveryInfo info(*ret_val);
                     bool should_be_ignored = false;
                     info.status = WriterDiscoveryInfo::CHANGED_QOS_WRITER;
-                    listener->onWriterDiscovery(participant, std::move(info), should_be_ignored);
+                    listener->on_writer_discovery(participant, std::move(info), should_be_ignored);
                 }
 
                 return ret_val;
@@ -1074,7 +1074,7 @@ WriterProxyData* PDP::addWriterProxyData(
                 WriterDiscoveryInfo info(*ret_val);
                 bool should_be_ignored = false;
                 info.status = WriterDiscoveryInfo::DISCOVERED_WRITER;
-                listener->onWriterDiscovery(participant, std::move(info), should_be_ignored);
+                listener->on_writer_discovery(participant, std::move(info), should_be_ignored);
             }
 
             return ret_val;
@@ -1306,7 +1306,7 @@ void PDP::actions_on_remote_participant_removed(
                     WriterDiscoveryInfo info(std::move(*wit));
                     bool should_be_ignored = false;
                     info.status = WriterDiscoveryInfo::REMOVED_WRITER;
-                    listener->onWriterDiscovery(participant, std::move(info), should_be_ignored);
+                    listener->on_writer_discovery(participant, std::move(info), should_be_ignored);
                 }
             }
         }
