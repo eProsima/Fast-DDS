@@ -23,9 +23,9 @@
 #include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/utils/fixed_size_bitmap.hpp>
 
-#include <set>
-#include <cmath>
 #include <algorithm>
+#include <cmath>
+#include <set>
 
 namespace eprosima {
 namespace fastdds {
@@ -33,8 +33,7 @@ namespace rtps {
 
 using FragmentNumber_t = uint32_t;
 
-//!Structure FragmentNumberSet_t, contains a group of fragmentnumbers.
-//!@ingroup COMMON_MODULE
+//! Structure FragmentNumberSet_t, contains a group of fragmentnumbers.
 using FragmentNumberSet_t = BitmapRange<FragmentNumber_t>;
 
 inline std::ostream& operator <<(
