@@ -130,7 +130,7 @@ public:
      */
     virtual void on_writer_discovery(
             RTPSReader* reader,
-            WriterDiscoveryInfo::DISCOVERY_STATUS reason,
+            WRITER_DISCOVERY_STATUS reason,
             const GUID_t& writer_guid,
             const WriterProxyData* writer_info)
     {

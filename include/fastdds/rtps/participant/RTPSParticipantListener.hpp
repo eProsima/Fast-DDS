@@ -20,6 +20,7 @@
 #ifndef FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANTLISTENER_HPP
 #define FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANTLISTENER_HPP
 
+#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.hpp>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.hpp>
@@ -98,16 +99,19 @@ public:
      * This method is called when a new Writer is discovered, or a previously discovered writer changes
      * its QOS or is removed.
      *
-     * @param [out] participant Pointer to the Participant which discovered the remote writer.
-     * @param [out] info Remote writer information. User can take ownership of the object.
-     * @param [out] should_be_ignored Flag to indicate the library to automatically ignore the discovered Writer.
+     * @param [in]  participant        Pointer to the Participant which discovered the remote writer.
+     * @param [in]  reason             The reason motivating this method to be called.
+     * @param [in]  info               Remote writer information.
+     * @param [out] should_be_ignored  Flag to indicate the library to automatically ignore the discovered writer.
      */
     virtual void on_writer_discovery(
             RTPSParticipant* participant,
-            WriterDiscoveryInfo&& info,
+            WRITER_DISCOVERY_STATUS reason,
+            const WriterProxyData& info,
             bool& should_be_ignored)
     {
         static_cast<void>(participant);
+        static_cast<void>(reason);
         static_cast<void>(info);
         should_be_ignored = false;
     }

@@ -652,7 +652,8 @@ protected:
 
         void on_writer_discovery(
                 fastdds::rtps::RTPSParticipant* participant,
-                fastdds::rtps::WriterDiscoveryInfo&& info,
+                fastdds::rtps::WRITER_DISCOVERY_STATUS reason,
+                const fastdds::rtps::WriterProxyData& info,
                 bool& should_be_ignored) override;
 
         DomainParticipantImpl* participant_;

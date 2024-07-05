@@ -25,47 +25,21 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-/**
- * Class WriterDiscoveryInfo with discovery information of the writer.
- * @ingroup RTPS_MODULE
- */
-struct WriterDiscoveryInfo
-{
-public:
-
-    //!Enum DISCOVERY_STATUS, four different status for discovered writers.
-    //!@ingroup RTPS_MODULE
-    // *INDENT-OFF* : Does not understand the #if correctly and ends up removing the ;
-    //                at the end of the enum, which does not build.
+//! Enum WRITER_DISCOVERY_STATUS, four different status for discovered writers.
+// *INDENT-OFF* : Does not understand the #if correctly and ends up removing the ;
+//                at the end of the enum, which does not build.
 #if defined(_WIN32)
-    enum FASTDDS_EXPORTED_API DISCOVERY_STATUS
+enum class FASTDDS_EXPORTED_API WRITER_DISCOVERY_STATUS
 #else
-    enum  DISCOVERY_STATUS
+enum class WRITER_DISCOVERY_STATUS
 #endif // if defined(_WIN32)
-    {
-        DISCOVERED_WRITER,
-        CHANGED_QOS_WRITER,
-        REMOVED_WRITER,
-        IGNORED_WRITER
-    };
-    // *INDENT-ON*
-    WriterDiscoveryInfo(
-            const WriterProxyData& data)
-        : status(DISCOVERED_WRITER)
-        , info(data)
-    {
-    }
-
-    virtual ~WriterDiscoveryInfo()
-    {
-    }
-
-    //! Status
-    DISCOVERY_STATUS status;
-
-    //! Participant discovery info
-    const WriterProxyData& info;
+{
+    DISCOVERED_WRITER,
+    CHANGED_QOS_WRITER,
+    REMOVED_WRITER,
+    IGNORED_WRITER
 };
+// *INDENT-ON*
 
 } // namespace rtps
 } // namespace fastdds

@@ -139,20 +139,23 @@ class PubSubWriter
 
         void on_data_writer_discovery(
                 eprosima::fastdds::dds::DomainParticipant*,
-                eprosima::fastdds::rtps::WriterDiscoveryInfo&& info,
+                eprosima::fastdds::rtps::WRITER_DISCOVERY_STATUS reason,
+                const eprosima::fastdds::rtps::WriterProxyData& info,
                 bool& /*should_be_ignored*/) override
         {
-            if (info.status == eprosima::fastdds::rtps::WriterDiscoveryInfo::DISCOVERED_WRITER)
+            using eprosima::fastdds::rtps::WRITER_DISCOVERY_STATUS;
+
+            if (reason == WRITER_DISCOVERY_STATUS::DISCOVERED_WRITER)
             {
-                writer_.add_writer_info(info.info);
+                writer_.add_writer_info(info);
             }
-            else if (info.status == eprosima::fastdds::rtps::WriterDiscoveryInfo::CHANGED_QOS_WRITER)
+            else if (reason == WRITER_DISCOVERY_STATUS::CHANGED_QOS_WRITER)
             {
-                writer_.change_writer_info(info.info);
+                writer_.change_writer_info(info);
             }
-            else if (info.status == eprosima::fastdds::rtps::WriterDiscoveryInfo::REMOVED_WRITER)
+            else if (reason == WRITER_DISCOVERY_STATUS::REMOVED_WRITER)
             {
-                writer_.remove_writer_info(info.info);
+                writer_.remove_writer_info(info);
             }
         }
 

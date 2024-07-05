@@ -86,7 +86,7 @@ using rtps::EndpointKind_t;
 using rtps::ReaderDiscoveryInfo;
 using rtps::ReaderProxyData;
 using rtps::ResourceEvent;
-using rtps::WriterDiscoveryInfo;
+using rtps::WRITER_DISCOVERY_STATUS;
 using rtps::WriterProxyData;
 
 DomainParticipantImpl::DomainParticipantImpl(
@@ -1581,7 +1581,8 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
 
 void DomainParticipantImpl::MyRTPSParticipantListener::on_writer_discovery(
         RTPSParticipant*,
-        WriterDiscoveryInfo&& info,
+        WRITER_DISCOVERY_STATUS reason,
+        const WriterProxyData& info,
         bool& should_be_ignored)
 {
     should_be_ignored = false;
@@ -1592,7 +1593,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_writer_discovery(
         DomainParticipantListener* listener = participant_->listener_;
         if (nullptr != listener)
         {
-            listener->on_data_writer_discovery(participant_->participant_, std::move(info), should_be_ignored);
+            listener->on_data_writer_discovery(participant_->participant_, reason, info, should_be_ignored);
         }
     }
 }

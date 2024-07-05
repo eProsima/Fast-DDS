@@ -370,13 +370,14 @@ TEST(DataWriterTests, get_guid)
 
         void on_data_writer_discovery(
                 DomainParticipant*,
-                fastdds::rtps::WriterDiscoveryInfo&& info,
+                fastdds::rtps::WRITER_DISCOVERY_STATUS reason,
+                const fastdds::rtps::WriterProxyData& info,
                 bool& /*should_be_ignored*/) override
         {
             std::unique_lock<std::mutex> lock(mutex);
-            if (fastdds::rtps::WriterDiscoveryInfo::DISCOVERED_WRITER == info.status)
+            if (fastdds::rtps::WRITER_DISCOVERY_STATUS::DISCOVERED_WRITER == reason)
             {
-                guid = info.info.guid();
+                guid = info.guid();
                 cv.notify_one();
             }
         }

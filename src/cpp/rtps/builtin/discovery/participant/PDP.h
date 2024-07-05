@@ -294,7 +294,7 @@ public:
      */
     bool removeWriterProxyData(
             const GUID_t& writer_guid,
-            WriterDiscoveryInfo::DISCOVERY_STATUS reason);
+            WRITER_DISCOVERY_STATUS reason);
 
     /**
      * Create the SPDP Writer and Reader

@@ -132,19 +132,21 @@ class PubSubWriterReader
 
         void on_data_writer_discovery(
                 eprosima::fastdds::dds::DomainParticipant* participant,
-                eprosima::fastdds::rtps::WriterDiscoveryInfo&& info,
+                eprosima::fastdds::rtps::WRITER_DISCOVERY_STATUS reason,
+                const eprosima::fastdds::rtps::WriterProxyData& info,
                 bool& /*should_be_ignored*/) override
         {
-            (void)participant;
+            using eprosima::fastdds::rtps::WRITER_DISCOVERY_STATUS;
+            static_cast<void>(participant);
 
-            switch (info.status)
+            switch (reason)
             {
-                case eprosima::fastdds::rtps::WriterDiscoveryInfo::DISCOVERED_WRITER:
-                    info_add(discovered_publishers_, info.info.guid());
+                case WRITER_DISCOVERY_STATUS::DISCOVERED_WRITER:
+                    info_add(discovered_publishers_, info.guid());
                     break;
 
-                case eprosima::fastdds::rtps::WriterDiscoveryInfo::REMOVED_WRITER:
-                    info_remove(discovered_publishers_, info.info.guid());
+                case WRITER_DISCOVERY_STATUS::REMOVED_WRITER:
+                    info_remove(discovered_publishers_, info.guid());
                     break;
 
                 default:
