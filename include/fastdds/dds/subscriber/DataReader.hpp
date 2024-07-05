@@ -977,7 +977,7 @@ public:
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_matched_publication_data(
-            builtin::PublicationBuiltinTopicData& publication_data,
+            PublicationBuiltinTopicData& publication_data,
             const fastdds::rtps::InstanceHandle_t& publication_handle) const;
 
     /**

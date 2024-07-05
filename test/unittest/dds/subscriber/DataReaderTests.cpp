@@ -2636,7 +2636,7 @@ TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
     DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
     ASSERT_NE(data_reader, nullptr);
 
-    builtin::PublicationBuiltinTopicData publication_data;
+    PublicationBuiltinTopicData publication_data;
     InstanceHandle_t publication_handle;
     EXPECT_EQ(
         RETCODE_UNSUPPORTED,
