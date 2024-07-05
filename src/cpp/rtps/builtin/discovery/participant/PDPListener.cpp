@@ -253,7 +253,7 @@ void PDPListener::process_alive_data(
                 ParticipantDiscoveryInfo info(old_data_copy);
                 info.status = ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT;
 
-                listener->onParticipantDiscovery(
+                listener->on_participant_discovery(
                     parent_pdp_->getRTPSParticipant()->getUserRTPSParticipant(),
                     std::move(info),
                     should_be_ignored);

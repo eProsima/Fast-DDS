@@ -634,7 +634,7 @@ protected:
             assert(!(callback_counter_ > 0));
         }
 
-        void onParticipantDiscovery(
+        void on_participant_discovery(
                 fastdds::rtps::RTPSParticipant* participant,
                 fastdds::rtps::ParticipantDiscoveryInfo&& info,
                 bool& should_be_ignored) override;

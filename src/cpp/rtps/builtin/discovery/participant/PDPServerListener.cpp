@@ -299,7 +299,7 @@ void PDPServerListener::on_new_cache_change_added(
                         ParticipantDiscoveryInfo info(*pdata);
                         info.status = status;
 
-                        listener->onParticipantDiscovery(
+                        listener->on_participant_discovery(
                             pdp_server()->getRTPSParticipant()->getUserRTPSParticipant(),
                             std::move(info), should_be_ignored);
                     }

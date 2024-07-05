@@ -1531,7 +1531,7 @@ ReturnCode_t DomainParticipantImpl::unregister_type(
     return RETCODE_OK;
 }
 
-void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(
+void DomainParticipantImpl::MyRTPSParticipantListener::on_participant_discovery(
         RTPSParticipant*,
         ParticipantDiscoveryInfo&& info,
         bool& should_be_ignored)

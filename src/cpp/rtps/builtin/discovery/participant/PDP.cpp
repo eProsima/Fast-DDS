@@ -678,7 +678,7 @@ void PDP::notify_and_maybe_ignore_new_participant(
             info.status = ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT;
 
 
-            listener->onParticipantDiscovery(
+            listener->on_participant_discovery(
                 getRTPSParticipant()->getUserRTPSParticipant(),
                 std::move(info),
                 should_be_ignored);
@@ -1331,7 +1331,7 @@ void PDP::actions_on_remote_participant_removed(
         ParticipantDiscoveryInfo info(*pdata);
         info.status = reason;
         bool should_be_ignored = false;
-        listener->onParticipantDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(
+        listener->on_participant_discovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(
                     info), should_be_ignored);
     }
 

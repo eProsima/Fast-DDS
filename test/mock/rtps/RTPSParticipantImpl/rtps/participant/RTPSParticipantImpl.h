@@ -70,15 +70,15 @@ class MockParticipantListener : public RTPSParticipantListener
 {
 public:
 
-    void onParticipantDiscovery(
+    void on_participant_discovery(
             RTPSParticipant* participant,
             ParticipantDiscoveryInfo&& info,
             bool& should_be_ignored) override
     {
-        onParticipantDiscovery_mock(participant, info, should_be_ignored);
+        on_participant_discovery_mock(participant, info, should_be_ignored);
     }
 
-    MOCK_METHOD3(onParticipantDiscovery_mock, void (RTPSParticipant*, const ParticipantDiscoveryInfo&, bool&));
+    MOCK_METHOD3(on_participant_discovery_mock, void (RTPSParticipant*, const ParticipantDiscoveryInfo&, bool&));
 
 #if HAVE_SECURITY
     void onParticipantAuthentication(

@@ -55,7 +55,7 @@ public:
      * @param [out] info Remote participant information. User can take ownership of the object.
      * @param [out] should_be_ignored Flag to indicate the library to automatically ignore the discovered Participant.
      */
-    virtual void onParticipantDiscovery(
+    virtual void on_participant_discovery(
             RTPSParticipant* participant,
             ParticipantDiscoveryInfo&& info,
             bool& should_be_ignored)
