@@ -226,7 +226,7 @@ traits<DynamicType>::ref_type create_dynamic_type<DataTypeKind::COMPREHENSIVE_TY
                 type_name, type_object_pair))
 
     {
-        std::cout << "ERROR" << std::endl;
+        std::cout << "Failed to get type objects for " << type_name << " type." << std::endl;
         return nullptr;
     }
 

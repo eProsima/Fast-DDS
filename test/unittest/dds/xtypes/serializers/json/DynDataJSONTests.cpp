@@ -47,6 +47,8 @@ void test_generic()
     std::vector<DynamicDataJsonFormat> format_options = {DynamicDataJsonFormat::EPROSIMA, DynamicDataJsonFormat::OMG};
     auto dyn_type = create_dynamic_type<Data>();
 
+    ASSERT_NE(dyn_type, nullptr);
+
     for (const auto& format_kind : format_options)
     {
         for (unsigned int fill_index = 0; fill_index <= 3; fill_index++)
@@ -54,6 +56,9 @@ void test_generic()
             bool filled = fill_index != 0;
 
             auto dyn_data = create_dynamic_data<Data>(dyn_type, filled, fill_index);
+
+            ASSERT_NE(dyn_data, nullptr);
+
             std::stringstream generated_json;
             generated_json << std::setw(4);
             const auto ret = json_serialize(

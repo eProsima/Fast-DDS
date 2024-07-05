@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <map>
 #include <string>
 
 std::string expected_json_comprehensive_filled_eprosima_1 = R"({
