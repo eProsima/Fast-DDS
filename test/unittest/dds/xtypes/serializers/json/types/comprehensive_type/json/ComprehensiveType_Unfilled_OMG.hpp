@@ -91,7 +91,7 @@ std::string expected_json_comprehensive_omg_unfilled = R"({
             "my_bitmask": 0,
             "my_bitset": {
                 "a": 0,
-                "b": false,
+                "b": 0,
                 "c": 0,
                 "d": 0
             },
@@ -196,7 +196,7 @@ std::string expected_json_comprehensive_omg_unfilled = R"({
             "my_bitmask": 0,
             "my_bitset": {
                 "a": 0,
-                "b": false,
+                "b": 0,
                 "c": 0,
                 "d": 0
             },
@@ -305,7 +305,7 @@ std::string expected_json_comprehensive_omg_unfilled = R"({
         "my_bitmask": 0,
         "my_bitset": {
             "a": 0,
-            "b": false,
+            "b": 0,
             "c": 0,
             "d": 0
         },

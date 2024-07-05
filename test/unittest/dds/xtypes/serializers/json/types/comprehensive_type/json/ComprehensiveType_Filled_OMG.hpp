@@ -96,7 +96,7 @@ const std::string expected_json_comprehensive_filled_omg_1 = R"({
             "my_bitmask": 1,
             "my_bitset": {
                 "a": 0,
-                "b": false,
+                "b": 0,
                 "c": 0,
                 "d": 1
             },
@@ -214,7 +214,7 @@ const std::string expected_json_comprehensive_filled_omg_1 = R"({
             "my_bitmask": 1,
             "my_bitset": {
                 "a": 0,
-                "b": false,
+                "b": 0,
                 "c": 0,
                 "d": 1
             },
@@ -334,7 +334,7 @@ const std::string expected_json_comprehensive_filled_omg_1 = R"({
             "my_bitmask": 1,
             "my_bitset": {
                 "a": 0,
-                "b": false,
+                "b": 0,
                 "c": 0,
                 "d": 1
             },
@@ -454,7 +454,7 @@ const std::string expected_json_comprehensive_filled_omg_1 = R"({
             "my_bitmask": 1,
             "my_bitset": {
                 "a": 0,
-                "b": false,
+                "b": 0,
                 "c": 0,
                 "d": 1
             },
@@ -574,7 +574,7 @@ const std::string expected_json_comprehensive_filled_omg_1 = R"({
         "my_bitmask": 1,
         "my_bitset": {
             "a": 0,
-            "b": false,
+            "b": 0,
             "c": 0,
             "d": 1
         },
@@ -696,7 +696,7 @@ const std::string expected_json_comprehensive_filled_omg_2 = R"({
             "my_bitmask": 0,
             "my_bitset": {
                 "a": 0,
-                "b": false,
+                "b": 0,
                 "c": 0,
                 "d": 2
             },
@@ -814,7 +814,7 @@ const std::string expected_json_comprehensive_filled_omg_2 = R"({
             "my_bitmask": 0,
             "my_bitset": {
                 "a": 0,
-                "b": false,
+                "b": 0,
                 "c": 0,
                 "d": 2
             },
@@ -934,7 +934,7 @@ const std::string expected_json_comprehensive_filled_omg_2 = R"({
             "my_bitmask": 0,
             "my_bitset": {
                 "a": 0,
-                "b": false,
+                "b": 0,
                 "c": 0,
                 "d": 2
             },
@@ -1054,7 +1054,7 @@ const std::string expected_json_comprehensive_filled_omg_2 = R"({
             "my_bitmask": 0,
             "my_bitset": {
                 "a": 0,
-                "b": false,
+                "b": 0,
                 "c": 0,
                 "d": 2
             },
@@ -1174,7 +1174,7 @@ const std::string expected_json_comprehensive_filled_omg_2 = R"({
         "my_bitmask": 0,
         "my_bitset": {
             "a": 0,
-            "b": false,
+            "b": 0,
             "c": 0,
             "d": 2
         },
@@ -1296,7 +1296,7 @@ const std::string expected_json_comprehensive_filled_omg_3 = R"({
             "my_bitmask": 1,
             "my_bitset": {
                 "a": 0,
-                "b": false,
+                "b": 0,
                 "c": 0,
                 "d": 3
             },
@@ -1414,7 +1414,7 @@ const std::string expected_json_comprehensive_filled_omg_3 = R"({
             "my_bitmask": 1,
             "my_bitset": {
                 "a": 0,
-                "b": false,
+                "b": 0,
                 "c": 0,
                 "d": 3
             },
@@ -1534,7 +1534,7 @@ const std::string expected_json_comprehensive_filled_omg_3 = R"({
             "my_bitmask": 1,
             "my_bitset": {
                 "a": 0,
-                "b": false,
+                "b": 0,
                 "c": 0,
                 "d": 3
             },
@@ -1654,7 +1654,7 @@ const std::string expected_json_comprehensive_filled_omg_3 = R"({
             "my_bitmask": 1,
             "my_bitset": {
                 "a": 0,
-                "b": false,
+                "b": 0,
                 "c": 0,
                 "d": 3
             },
@@ -1774,7 +1774,7 @@ const std::string expected_json_comprehensive_filled_omg_3 = R"({
         "my_bitmask": 1,
         "my_bitset": {
             "a": 0,
-            "b": false,
+            "b": 0,
             "c": 0,
             "d": 3
         },

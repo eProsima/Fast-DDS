@@ -529,7 +529,14 @@ ReturnCode_t json_serialize_basic_member(
             ReturnCode_t ret = data->get_boolean_value(value, member_id);
             if (RETCODE_OK == ret)
             {
-                json_insert(member_name, value, output);
+                if (TK_BITSET == data->enclosing_type()->get_kind())
+                {
+                    json_insert(member_name, static_cast<int>(value), output);
+                }
+                else
+                {
+                    json_insert(member_name, value, output);
+                }
             }
             else
             {
