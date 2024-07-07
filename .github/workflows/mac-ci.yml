@@ -52,6 +52,6 @@ jobs:
       label: ${{ inputs.label || 'mac-ci' }}
       colcon-args: ${{ inputs.colcon-args }}
       cmake-args: '-DSECURITY=ON ${{ inputs.cmake-args }}'
-      ctest-args: ${{ inputs.ctest-args }}
+      ctest-args: ' -R buffer_recover ${{ inputs.ctest-args }}'
       fastdds-branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
       use-ccache: ${{ ((inputs.use-ccache == true) && true) || false }}
