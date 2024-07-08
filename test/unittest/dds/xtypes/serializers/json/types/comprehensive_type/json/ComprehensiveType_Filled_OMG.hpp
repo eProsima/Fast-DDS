@@ -14,7 +14,8 @@
 
 #include <string>
 
-const std::string expected_json_comprehensive_filled_omg_1 = R"({
+const std::string expected_json_comprehensive_filled_omg_1 =
+        R"({
     "complex_array": [
         {
             "bitmask_sequence": [
@@ -614,7 +615,8 @@ const std::string expected_json_comprehensive_filled_omg_1 = R"({
     }
 })";
 
-const std::string expected_json_comprehensive_filled_omg_2 = R"({
+const std::string expected_json_comprehensive_filled_omg_2 =
+        R"({
     "complex_array": [
         {
             "bitmask_sequence": [
@@ -1214,7 +1216,8 @@ const std::string expected_json_comprehensive_filled_omg_2 = R"({
     }
 })";
 
-const std::string expected_json_comprehensive_filled_omg_3 = R"({
+const std::string expected_json_comprehensive_filled_omg_3 =
+        R"({
     "complex_array": [
         {
             "bitmask_sequence": [

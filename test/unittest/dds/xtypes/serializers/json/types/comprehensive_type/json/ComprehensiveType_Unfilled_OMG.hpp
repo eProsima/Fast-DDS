@@ -14,7 +14,8 @@
 
 #include <string>
 
-std::string expected_json_comprehensive_omg_unfilled = R"({
+std::string expected_json_comprehensive_omg_unfilled =
+        R"({
     "complex_array": [
         {
             "bitmask_sequence": [],

@@ -62,9 +62,9 @@ void test_generic()
             std::stringstream generated_json;
             generated_json << std::setw(4);
             const auto ret = json_serialize(
-                        dyn_data,
-                        format_kind,
-                        generated_json);
+                dyn_data,
+                format_kind,
+                generated_json);
 
             ASSERT_EQ(ret, RETCODE_OK);
             ASSERT_EQ(generated_json.str(), get_expected_json<Data>(format_kind, filled, fill_index));

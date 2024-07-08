@@ -14,7 +14,8 @@
 
 #include <string>
 
-std::string expected_json_comprehensive_filled_eprosima_1 = R"({
+std::string expected_json_comprehensive_filled_eprosima_1 =
+        R"({
     "complex_array": [
         {
             "bitmask_sequence": [
@@ -734,7 +735,8 @@ std::string expected_json_comprehensive_filled_eprosima_1 = R"({
     }
 })";
 
-const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
+const std::string expected_json_comprehensive_filled_eprosima_2 =
+        R"({
     "complex_array": [
         {
             "bitmask_sequence": [
@@ -1434,7 +1436,8 @@ const std::string expected_json_comprehensive_filled_eprosima_2 = R"({
     }
 })";
 
-const std::string expected_json_comprehensive_filled_eprosima_3 = R"({
+const std::string expected_json_comprehensive_filled_eprosima_3 =
+        R"({
     "complex_array": [
         {
             "bitmask_sequence": [

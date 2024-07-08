@@ -50,12 +50,12 @@ void fill_primitives_struct(
         const unsigned int& index)
 {
     index % 2 ? dyn_data->set_boolean_value(dyn_data->get_member_id_by_name("my_bool"), true) :
-                    dyn_data->set_boolean_value(dyn_data->get_member_id_by_name("my_bool"), false);
+    dyn_data->set_boolean_value(dyn_data->get_member_id_by_name("my_bool"), false);
     dyn_data->set_uint8_value(dyn_data->get_member_id_by_name("my_octet"), static_cast<uint8_t>(index));
     index % 2 ? dyn_data->set_char8_value(dyn_data->get_member_id_by_name("my_char"), static_cast<char>('e')):
-                    dyn_data->set_char8_value(dyn_data->get_member_id_by_name("my_char"), static_cast<char>('o'));
+    dyn_data->set_char8_value(dyn_data->get_member_id_by_name("my_char"), static_cast<char>('o'));
     index % 2 ? dyn_data->set_char16_value(dyn_data->get_member_id_by_name("my_wchar"), static_cast<wchar_t>(L'e')):
-                    dyn_data->set_char16_value(dyn_data->get_member_id_by_name("my_wchar"), static_cast<wchar_t>(L'o'));
+    dyn_data->set_char16_value(dyn_data->get_member_id_by_name("my_wchar"), static_cast<wchar_t>(L'o'));
     dyn_data->set_int32_value(dyn_data->get_member_id_by_name("my_long"), static_cast<int32_t>(index));
     dyn_data->set_uint32_value(dyn_data->get_member_id_by_name("my_ulong"), static_cast<uint32_t>(index));
     dyn_data->set_int8_value(dyn_data->get_member_id_by_name("my_int8"), static_cast<int8_t>(index));
@@ -64,9 +64,10 @@ void fill_primitives_struct(
     dyn_data->set_uint16_value(dyn_data->get_member_id_by_name("my_ushort"), static_cast<uint16_t>(index));
     dyn_data->set_int64_value(dyn_data->get_member_id_by_name("my_longlong"), static_cast<int64_t>(index));
     dyn_data->set_uint64_value(dyn_data->get_member_id_by_name("my_ulonglong"), static_cast<uint64_t>(index));
-    dyn_data->set_float32_value(dyn_data->get_member_id_by_name("my_float"), static_cast<float>(0.5*index));
-    dyn_data->set_float64_value(dyn_data->get_member_id_by_name("my_double"), static_cast<double>(0.5*index));
-    dyn_data->set_float128_value(dyn_data->get_member_id_by_name("my_longdouble"), static_cast<long double>(0.5*index));
+    dyn_data->set_float32_value(dyn_data->get_member_id_by_name("my_float"), static_cast<float>(0.5 * index));
+    dyn_data->set_float64_value(dyn_data->get_member_id_by_name("my_double"), static_cast<double>(0.5 * index));
+    dyn_data->set_float128_value(dyn_data->get_member_id_by_name("my_longdouble"),
+            static_cast<long double>(0.5 * index));
 }
 
 void fill_my_enum(
@@ -105,22 +106,26 @@ void fill_all_struct(
     fill_my_enum(dyn_data, "my_enum", index);
 
     // bitmask
-    traits<DynamicData>::ref_type dyn_data_my_bitmask = dyn_data->loan_value(dyn_data->get_member_id_by_name("my_bitmask"));
+    traits<DynamicData>::ref_type dyn_data_my_bitmask =
+            dyn_data->loan_value(dyn_data->get_member_id_by_name("my_bitmask"));
     index % 2 ? dyn_data_my_bitmask->set_boolean_value(dyn_data_my_bitmask->get_member_id_by_name("flag0"), true) :
-                dyn_data_my_bitmask->set_boolean_value(dyn_data_my_bitmask->get_member_id_by_name("flag0"),false);
-    traits<DynamicData>::ref_type dyn_data_bitmask_sequence = dyn_data->loan_value(dyn_data->get_member_id_by_name("bitmask_sequence"));
+    dyn_data_my_bitmask->set_boolean_value(dyn_data_my_bitmask->get_member_id_by_name("flag0"), false);
+    traits<DynamicData>::ref_type dyn_data_bitmask_sequence =
+            dyn_data->loan_value(dyn_data->get_member_id_by_name("bitmask_sequence"));
     dyn_data_bitmask_sequence->set_complex_value(0, dyn_data_my_bitmask);
     dyn_data->return_loaned_value(dyn_data_my_bitmask);
     dyn_data->return_loaned_value(dyn_data_bitmask_sequence);
 
     // alias
-    traits<DynamicData>::ref_type dyn_data_my_aliased_struct = dyn_data->loan_value(dyn_data->get_member_id_by_name("my_aliased_struct"));
+    traits<DynamicData>::ref_type dyn_data_my_aliased_struct =
+            dyn_data->loan_value(dyn_data->get_member_id_by_name("my_aliased_struct"));
     fill_primitives_struct(dyn_data_my_aliased_struct, index);
     dyn_data->return_loaned_value(dyn_data_my_aliased_struct);
 
     fill_my_enum(dyn_data, "my_aliased_enum", index);
 
-    dyn_data->set_string_value(dyn_data->get_member_id_by_name("my_aliased_bounded_string"), "my_aliased_bounded_string");
+    dyn_data->set_string_value(dyn_data->get_member_id_by_name("my_aliased_bounded_string"),
+            "my_aliased_bounded_string");
 
     fill_my_enum(dyn_data, "my_recursive_alias", index);
 
@@ -148,33 +153,43 @@ void fill_all_struct(
     dyn_data->set_int32_values(dyn_data->get_member_id_by_name("long_array"), long_array_seq);
 
     // maps
-    traits<DynamicData>::ref_type dyn_data_string_unbounded_map = dyn_data->loan_value(dyn_data->get_member_id_by_name("string_unbounded_map"));
-    dyn_data_string_unbounded_map->set_string_value(dyn_data_string_unbounded_map->get_member_id_by_name("0"), "string_unbounded_map");
+    traits<DynamicData>::ref_type dyn_data_string_unbounded_map =
+            dyn_data->loan_value(dyn_data->get_member_id_by_name("string_unbounded_map"));
+    dyn_data_string_unbounded_map->set_string_value(dyn_data_string_unbounded_map->get_member_id_by_name(
+                "0"), "string_unbounded_map");
     dyn_data->return_loaned_value(dyn_data_string_unbounded_map);
 
-    traits<DynamicData>::ref_type dyn_data_string_alias_unbounded_map = dyn_data->loan_value(dyn_data->get_member_id_by_name("string_alias_unbounded_map"));
-    dyn_data_string_alias_unbounded_map->set_string_value(dyn_data_string_alias_unbounded_map->get_member_id_by_name("0"), "string_alias_unbounded_map");
+    traits<DynamicData>::ref_type dyn_data_string_alias_unbounded_map = dyn_data->loan_value(dyn_data->get_member_id_by_name(
+                        "string_alias_unbounded_map"));
+    dyn_data_string_alias_unbounded_map->set_string_value(dyn_data_string_alias_unbounded_map->get_member_id_by_name(
+                "0"), "string_alias_unbounded_map");
     dyn_data->return_loaned_value(dyn_data_string_alias_unbounded_map);
 
-    traits<DynamicData>::ref_type dyn_data_short_long_map = dyn_data->loan_value(dyn_data->get_member_id_by_name("short_long_map"));
+    traits<DynamicData>::ref_type dyn_data_short_long_map =
+            dyn_data->loan_value(dyn_data->get_member_id_by_name("short_long_map"));
     int32_t key {1};
-    dyn_data_short_long_map->set_int32_value(dyn_data_short_long_map->get_member_id_by_name(std::to_string(key)), static_cast<int32_t>(index));
+    dyn_data_short_long_map->set_int32_value(dyn_data_short_long_map->get_member_id_by_name(std::to_string(
+                key)), static_cast<int32_t>(index));
     dyn_data->return_loaned_value(dyn_data_short_long_map);
 
     // union
-    traits<DynamicData>::ref_type dyn_data_inner_union = dyn_data->loan_value(dyn_data->get_member_id_by_name("inner_union"));
-    dyn_data_inner_union->set_int64_value(dyn_data_inner_union->get_member_id_by_name("second"), static_cast<int64_t>(index));
-    traits<DynamicData>::ref_type dyn_data_complex_union = dyn_data->loan_value(dyn_data->get_member_id_by_name("complex_union"));
-    dyn_data_complex_union->set_complex_value(dyn_data_complex_union->get_member_id_by_name("fourth"), dyn_data_inner_union);
+    traits<DynamicData>::ref_type dyn_data_inner_union =
+            dyn_data->loan_value(dyn_data->get_member_id_by_name("inner_union"));
+    dyn_data_inner_union->set_int64_value(dyn_data_inner_union->get_member_id_by_name("second"),
+            static_cast<int64_t>(index));
+    traits<DynamicData>::ref_type dyn_data_complex_union =
+            dyn_data->loan_value(dyn_data->get_member_id_by_name("complex_union"));
+    dyn_data_complex_union->set_complex_value(dyn_data_complex_union->get_member_id_by_name(
+                "fourth"), dyn_data_inner_union);
     dyn_data->return_loaned_value(dyn_data_complex_union);
     dyn_data->return_loaned_value(dyn_data_inner_union);
 
     // bitset
-    traits<DynamicData>::ref_type dyn_data_my_bitset = dyn_data->loan_value(dyn_data->get_member_id_by_name("my_bitset"));
+    traits<DynamicData>::ref_type dyn_data_my_bitset =
+            dyn_data->loan_value(dyn_data->get_member_id_by_name("my_bitset"));
     dyn_data_my_bitset->set_int16_value(dyn_data_my_bitset->get_member_id_by_name("d"), static_cast<int16_t>(index));
     dyn_data->return_loaned_value(dyn_data_my_bitset);
 }
-
 
 traits<DynamicData>::ref_type fill_dyn_data(
         traits<DynamicData>::ref_type dyn_data,
@@ -184,16 +199,19 @@ traits<DynamicData>::ref_type fill_dyn_data(
     dyn_data->set_uint32_value(dyn_data->get_member_id_by_name("index"), index);
 
     // inner struct
-    traits<DynamicData>::ref_type dyn_data_all_struct = dyn_data->loan_value(dyn_data->get_member_id_by_name("inner_struct"));
+    traits<DynamicData>::ref_type dyn_data_all_struct =
+            dyn_data->loan_value(dyn_data->get_member_id_by_name("inner_struct"));
     fill_all_struct(dyn_data_all_struct, index);
 
     // complex sequence
-    traits<DynamicData>::ref_type dyn_data_complex_sequence = dyn_data->loan_value(dyn_data->get_member_id_by_name("complex_sequence"));
+    traits<DynamicData>::ref_type dyn_data_complex_sequence =
+            dyn_data->loan_value(dyn_data->get_member_id_by_name("complex_sequence"));
     dyn_data_complex_sequence->set_complex_value(0, dyn_data_all_struct);
     dyn_data->return_loaned_value(dyn_data_complex_sequence);
 
     // complex array
-    traits<DynamicData>::ref_type dyn_data_complex_array = dyn_data->loan_value(dyn_data->get_member_id_by_name("complex_array"));
+    traits<DynamicData>::ref_type dyn_data_complex_array =
+            dyn_data->loan_value(dyn_data->get_member_id_by_name("complex_array"));
     for (unsigned int i = 0; i < 2; i++)
     {
         dyn_data_complex_array->set_complex_value(i, dyn_data_all_struct);
@@ -201,8 +219,10 @@ traits<DynamicData>::ref_type fill_dyn_data(
     dyn_data->return_loaned_value(dyn_data_complex_array);
 
     // complex map
-    traits<DynamicData>::ref_type dyn_data_complex_map = dyn_data->loan_value(dyn_data->get_member_id_by_name("complex_map"));
-    dyn_data_complex_map->set_complex_value(dyn_data_complex_map->get_member_id_by_name(std::to_string(0)), dyn_data_all_struct);
+    traits<DynamicData>::ref_type dyn_data_complex_map =
+            dyn_data->loan_value(dyn_data->get_member_id_by_name("complex_map"));
+    dyn_data_complex_map->set_complex_value(dyn_data_complex_map->get_member_id_by_name(std::to_string(
+                0)), dyn_data_all_struct);
     dyn_data->return_loaned_value(dyn_data_complex_map);
 
     // Return AllStruct loaned DynamicData
@@ -232,7 +252,7 @@ traits<DynamicType>::ref_type create_dynamic_type<DataTypeKind::COMPREHENSIVE_TY
 
     // Create DynamicType
     auto type_builder = DynamicTypeBuilderFactory::get_instance()->create_type_w_type_object(
-            type_object_pair.complete_type_object);
+        type_object_pair.complete_type_object);
     const auto dynamic_type = type_builder->build();
 
     return dynamic_type;
