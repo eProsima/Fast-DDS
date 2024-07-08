@@ -45,17 +45,11 @@ struct ParticipantBuiltinTopicData
     //!Participant name
     fastcdr::string_255 participant_name;
 
-    //!Default unicast locators
-    ResourceLimitedVector<Locator_t> default_unicast_locator_list;
-
-    //!Default multicast locators
-    ResourceLimitedVector<Locator_t> default_multicast_locator_list;
-
-    //!Metatraffic unicast locators
-    ResourceLimitedVector<Locator_t> metatraffic_unicast_locator_list;
-
-    //!Metatraffic multicast locators
-    ResourceLimitedVector<Locator_t> metatraffic_multicast_locator_list;
+    //!Metatraffic locators
+    RemoteLocatorList metatraffic_locators;
+    
+    //!Default locators
+    RemoteLocatorList default_locators;
 
     //! Lease Duration
     Duration_t lease_duration;

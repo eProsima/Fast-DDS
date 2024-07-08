@@ -103,8 +103,16 @@ void from_proxy_to_builtin(
         const ParticipantProxyData& proxy_data,
         ParticipantBuiltinTopicData& builtin_data)
 {
-    static_cast<void>(proxy_data);
-    static_cast<void>(builtin_data);
+    from_proxy_to_builtin(proxy_data.m_guid.guidPrefix, builtin_data.key.value);
+
+    builtin_data.user_data = proxy_data.m_userData;
+    builtin_data.metatraffic_locators = proxy_data.metatraffic_locators;
+    builtin_data.default_locators = proxy_data.default_locators;
+    builtin_data.participant_name = proxy_data.m_participantName;
+    builtin_data.properties = proxy_data.m_properties;
+    builtin_data.lease_duration = proxy_data.m_leaseDuration;
+    builtin_data.vendor_id = proxy_data.m_VendorId;
+    builtin_data.domain_id = proxy_data.m_domain_id;
 }
 
 void from_proxy_to_builtin(
