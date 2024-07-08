@@ -698,7 +698,7 @@ public:
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_discovered_participant_data(
-            builtin::ParticipantBuiltinTopicData& participant_data,
+            ParticipantBuiltinTopicData& participant_data,
             const InstanceHandle_t& participant_handle) const;
 
     /**

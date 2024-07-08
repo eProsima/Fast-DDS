@@ -3660,7 +3660,7 @@ TEST(ParticipantTests, UnsupportedMethods)
 
     // Discovery methods
     std::vector<InstanceHandle_t> handle_vector({InstanceHandle_t()});
-    builtin::ParticipantBuiltinTopicData pbtd;
+    ParticipantBuiltinTopicData pbtd;
     builtin::TopicBuiltinTopicData tbtd;
 
     ASSERT_EQ(participant->get_discovered_participants(handle_vector), RETCODE_UNSUPPORTED);
