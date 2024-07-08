@@ -31,10 +31,10 @@
  * the eProsima Fast DDS library.
  *
  * CASES:
- *  1. Serialization of raw DynamicData to JSON using the EPROSIMA format.
- *  2. Serialization of filled DynamicData to JSON using the EPROSIMA format.
- *  3. Serialization of raw DynamicData to JSON using the OMG format.
- *  4. Serialization of filled DynamicData to JSON using the OMG format.
+ *  1. Serialization of an unfilled DynamicData to JSON using the EPROSIMA format.
+ *  2. Serialization of a filled DynamicData to JSON using the EPROSIMA format.
+ *  3. Serialization of an unfilled DynamicData to JSON using the OMG format.
+ *  4. Serialization of a filled DynamicData to JSON using the OMG format.
  *
  *  Each case verifies that the generated JSON matches the expected JSON string.
  */

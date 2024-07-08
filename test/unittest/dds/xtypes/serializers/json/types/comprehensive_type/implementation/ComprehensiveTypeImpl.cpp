@@ -244,6 +244,12 @@ traits<DynamicData>::ref_type create_dynamic_data<DataTypeKind::COMPREHENSIVE_TY
         bool filled,
         const unsigned int& index)
 {
+    if (dynamic_type == nullptr)
+    {
+        std::cout << "Error creating dynamic data because the provided dynamic type is nullptr." << std::endl;
+        return nullptr;
+    }
+
     // Create DynamicData
     auto dynamic_data = DynamicDataFactory::get_instance()->create_data(dynamic_type);
 
