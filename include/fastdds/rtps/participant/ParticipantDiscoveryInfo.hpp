@@ -45,35 +45,6 @@ enum PARTICIPANT_DISCOVERY_STATUS
 };
 // *INDENT-ON*
 
-/**
- * Class ParticipantDiscoveryInfo with discovery information of the Participant.
- * @ingroup RTPS_MODULE
- */
-struct ParticipantDiscoveryInfo
-{
-    ParticipantDiscoveryInfo(
-            const ParticipantProxyData& data)
-        : status(DISCOVERED_PARTICIPANT)
-        , info(data)
-    {
-    }
-
-    virtual ~ParticipantDiscoveryInfo()
-    {
-    }
-
-    //! Status
-    PARTICIPANT_DISCOVERY_STATUS status;
-
-    /**
-     * @brief Participant discovery info
-     *
-     * @todo This is a reference to an object that could be deleted, thus it should not be a reference
-     * (intraprocess case -> BlackboxTests_DDS_PIM.DDSDiscovery.ParticipantProxyPhysicalData).
-     */
-    const ParticipantProxyData& info;
-};
-
 #if HAVE_SECURITY
 struct ParticipantAuthenticationInfo
 {
