@@ -22,23 +22,52 @@
 
 #include <fastdds/dds/builtin/topic/BuiltinTopicKey.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/common/RemoteLocators.hpp>
 
 namespace eprosima {
 namespace fastdds {
-namespace dds {
-namespace builtin {
+namespace rtps {
 
 struct ParticipantBuiltinTopicData
 {
     //! Builtin topic Key
-    BuiltinTopicKey_t key;
+    dds::builtin::BuiltinTopicKey_t key;
 
     //! UserData QoS
-    UserDataQosPolicy user_data;
+    dds::UserDataQosPolicy user_data;
+
+    //! Participant GUID
+    GUID_t guid;
+
+    //! Properties
+    dds::PropertyPolicyQos properties;
+
+    //!Participant name
+    fastcdr::string_255 participant_name;
+
+    //!Default unicast locators
+    LocatorList default_unicast_locator_list;
+
+    //!Default multicast locators
+    LocatorList default_multicast_locator_list;
+
+    //!Metatraffic unicast locators
+    LocatorList metatraffic_unicast_locator_list;
+
+    //!Metatraffic multicast locators
+    LocatorList metatraffic_multicast_locator_list;
+
+    //! Lease Duration
+    Duration_t lease_duration;
+
+    // Vendor id
+    VendorId_t vendor_id;
+
+    // Participant domain id
+    dds::DomainId_t domain_id;
 };
 
-} // builtin
-} // dds
+} // rtps
 } // fastdds
 } // eprosima
 
