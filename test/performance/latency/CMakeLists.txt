@@ -309,3 +309,12 @@ set(LATENCY_XFAIL_LIST XFAIL_LATENCY)
 foreach(LATENCY_XFAIL_TEST ${LATENCY_XFAIL_LIST})
     add_xfail_label(${CMAKE_CURRENT_SOURCE_DIR}/${LATENCY_XFAIL_TEST}.list)
 endforeach()
+
+# If there is security, add a secure test as well with loans
+if(ADD_LATENCY_SECURITY)
+    set(LATENCY_SECURITY_XFAIL_LIST XFAIL_LATENCY_SECURITY)
+
+    foreach(LATENCY_SECURITY_XFAIL_TEST ${LATENCY_SECURITY_XFAIL_LIST})
+        add_xfail_label(${CMAKE_CURRENT_SOURCE_DIR}/${LATENCY_SECURITY_XFAIL_TEST}.list)
+    endforeach()
+endif()
