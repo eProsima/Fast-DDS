@@ -18,7 +18,7 @@ Each example application (publisher and subscriber) creates the required DDS ent
 Each application inherits from the corresponding listener(s) class(es), overriding the listener's method associated to each event.
 When an event occurs, the callback method is triggered.
 
-By default, the publisher will send five samples with the same shape size and coordinates, but with different _color_ values (key type).
+By default, the publisher will send four samples with the same shape size and coordinates, but with different _color_ values (key type).
 On the other hand, the subscriber is configured to handle the same amount of instances.
 In that way, each keyed _color_ is managed separately, having its own _History QoS depth_.
 Refer to the [Topic, keys and instances](https://fast-dds.docs.eprosima.com/en/stable/fastdds/dds_layer/topic/instances.html#topics-keys-and-instances) section in the _eProsima Fast DDS_ documentation section for more information.
@@ -71,7 +71,7 @@ All the example available flags can be queried running the executable with the `
 
 Regardless of which application is run first, since the publisher will not start sending data until a subscriber is discovered, the expected output both for publishers and subscribers is a first displayed message acknowledging the match, followed by the amount of samples sent or received until Ctrl+C is pressed.
 
-In this example, five different messages are sent per sample, each one associated to different keys (colors).
+In this example, four different messages are sent per sample, each one associated to different keys (colors).
 
 ### Topic instances publisher
 
@@ -82,12 +82,10 @@ RED Shape with size 30 at X:113, Y:113 SENT
 BLUE Shape with size 30 at X:113, Y:113 SENT
 GREEN Shape with size 30 at X:113, Y:113 SENT
 YELLOW Shape with size 30 at X:113, Y:113 SENT
-ORANGE Shape with size 30 at X:113, Y:113 SENT
 RED Shape with size 30 at X:116, Y:113 SENT
 BLUE Shape with size 30 at X:116, Y:113 SENT
 GREEN Shape with size 30 at X:116, Y:113 SENT
 YELLOW Shape with size 30 at X:116, Y:113 SENT
-ORANGE Shape with size 30 at X:116, Y:113 SENT
 ...
 ```
 
@@ -102,12 +100,10 @@ RED Shape with size 30 at X:113, Y:113 RECEIVED
 BLUE Shape with size 30 at X:113, Y:113 RECEIVED
 GREEN Shape with size 30 at X:113, Y:113 RECEIVED
 YELLOW Shape with size 30 at X:113, Y:113 RECEIVED
-ORANGE Shape with size 30 at X:113, Y:113 RECEIVED
 RED Shape with size 30 at X:116, Y:113 RECEIVED
 BLUE Shape with size 30 at X:116, Y:113 RECEIVED
 GREEN Shape with size 30 at X:116, Y:113 RECEIVED
 YELLOW Shape with size 30 at X:116, Y:113 RECEIVED
-ORANGE Shape with size 30 at X:116, Y:113 RECEIVED
 ...
 ```
 
@@ -120,7 +116,6 @@ RED Shape with size 30 at X:122, Y:113 SENT
 BLUE Shape with size 30 at X:122, Y:113 SENT
 GREEN Shape with size 30 at X:122, Y:113 SENT
 YELLOW Shape with size 30 at X:122, Y:113 SENT
-ORANGE Shape with size 30 at X:122, Y:113 SENT
 Publisher unmatched.
 ```
 

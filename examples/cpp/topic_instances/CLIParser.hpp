@@ -77,7 +77,7 @@ public:
     struct subscriber_config
     {
         uint16_t domain = 0;
-        uint16_t instances = 5;
+        uint16_t instances = 4;
         uint16_t samples = 0;
         std::string topic_name = "Square";
     };
@@ -130,7 +130,7 @@ public:
         std::cout << "                                  (Default: 0)"                           << std::endl;
         std::cout << "  -i <num>, --instances <num>     Number of instances to create "         << std::endl;
         std::cout << "                                  [0 < <num> <= 10 (N colors)]"           << std::endl;
-        std::cout << "                                  (Default: 5 [5 colors])"                << std::endl;
+        std::cout << "                                  (Default: 4 [4 colors])"                << std::endl;
         std::cout << "  -n <str>, --name <str>          Shape Topic name. Possible values are:" << std::endl;
         std::cout << "                                   · Square "                             << std::endl;
         std::cout << "                                   · Triangle "                           << std::endl;
@@ -146,8 +146,8 @@ public:
         std::cout << "                                   · GREEN       · PURPLE "               << std::endl;
         std::cout << "                                   · YELLOW      · GREY "                 << std::endl;
         std::cout << "                                   · ORANGE      · BLACK "                << std::endl;
-        std::cout << "                                  (Default: 5 colors simultaneously: "    << std::endl;
-        std::cout << "                                   RED, BLUE, GREEN, YELLOW, and ORANGE)" << std::endl;
+        std::cout << "                                  (Default: first 4 colors: "             << std::endl;
+        std::cout << "                                   RED, BLUE, GREEN, and YELLOW)"         << std::endl;
         std::cout << "            --height <num>        Shape bounds height "                   << std::endl;
         std::cout << "                                  (Default: 265)"                         << std::endl;
         std::cout << "            --interval <num>      Time between samples in milliseconds "  << std::endl;
