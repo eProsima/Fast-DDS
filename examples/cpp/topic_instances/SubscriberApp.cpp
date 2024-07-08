@@ -176,7 +176,8 @@ void SubscriberApp::on_data_available(
         {
             std::cout << shape_.color() << " Shape has been disposed by all publishers" << std::endl;
         }
-        else {
+        else
+        {
             std::cout << "Received instance state: " << info.instance_state << std::endl;
         }
 
@@ -235,7 +236,7 @@ bool SubscriberApp::instances_disposed()
     bool ret = true;
     if (samples_per_instance_.size() > 0)
     {
-        for(std::map<InstanceHandle_t, uint32_t>::iterator it = samples_per_instance_.begin();
+        for (std::map<InstanceHandle_t, uint32_t>::iterator it = samples_per_instance_.begin();
                 it != samples_per_instance_.end(); ++it)
         {
             if (std::find(disposed_instances_.begin(), disposed_instances_.end(),
@@ -252,7 +253,6 @@ bool SubscriberApp::instances_disposed()
     }
     return ret;
 }
-
 
 } // namespace topic_instances
 } // namespace examples

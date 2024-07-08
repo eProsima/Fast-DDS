@@ -103,7 +103,7 @@ private:
 
     std::vector<InstanceHandle_t> instance_handles_;
 
-    std::map<InstanceHandle_t, std::pair<ShapeType,CLIParser::shape_configuration>> shapes_;
+    std::map<InstanceHandle_t, std::pair<ShapeType, CLIParser::shape_configuration>> shapes_;
 
     std::map<InstanceHandle_t, uint32_t> samples_per_instance_;
 

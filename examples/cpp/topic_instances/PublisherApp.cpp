@@ -180,7 +180,7 @@ void PublisherApp::run()
     // Dispose all instances if manually stopped
     if (is_stopped())
     {
-        for (int i= 0; i < instances_; i++)
+        for (int i = 0; i < instances_; i++)
         {
             writer_->dispose(&shapes_[instance_handles_[i]].first, instance_handles_[i]);
             std::cout << shapes_[instance_handles_[i]].first.color() << " shape instance disposed" << std::endl;
@@ -228,7 +228,7 @@ void PublisherApp::publish()
                 instance_handles_.push_back(instance);
 
                 // Store shape and configuration
-                std::pair<ShapeType,CLIParser::shape_configuration> shape_data(shape_, shape_configuration);
+                std::pair<ShapeType, CLIParser::shape_configuration> shape_data(shape_, shape_configuration);
                 shapes_[instance] = shape_data;
             }
             else
@@ -269,7 +269,7 @@ void PublisherApp::publish()
                 }
 
                 // Update sample data
-                std::pair<ShapeType,CLIParser::shape_configuration> shape_data(shape_, shape_configuration);
+                std::pair<ShapeType, CLIParser::shape_configuration> shape_data(shape_, shape_configuration);
                 shapes_[instance] = shape_data;
 
                 // Check if last sample has been sent
