@@ -50,19 +50,19 @@ public:
     struct shape_configuration
     {
         // Configurable variables
-        size_t step = 3;
-        size_t size = 30;
-        size_t width = 230;
-        size_t height = 265;
+        int step = 3;
+        int size = 30;
+        int width = 230;
+        int height = 265;
         std::string color = "RED";
         // Non configurable variables
         int x = 0;
         int y = 0;
         CLIParser::ShapeDirection direction = CLIParser::ShapeDirection::DOWN;
         // Dependant variables
-        size_t lower_th = 0;        // size   - 5
-        size_t horizontal_th = 0;   // width  - lower_th;
-        size_t vertical_th = 0;     // height - lower_th;
+        int lower_th = 0;           // size   - 5
+        int horizontal_th = 0;      // width  - lower_th;
+        int vertical_th = 0;        // height - lower_th;
     };
 
     //! Entity kind enumeration
@@ -102,9 +102,10 @@ public:
     static std::string shape_color(
             int index)
     {
-        std::array<const char*, 10> shape_colors =
+        const int max_colors = 10;
+        const std::array<std::string, max_colors> shape_colors =
         { "RED", "BLUE", "GREEN", "YELLOW", "ORANGE", "CYAN", "MAGENTA", "PURPLE", "GREY", "BLACK"};
-        return shape_colors[index % 10];
+        return shape_colors[index % max_colors];
     }
 
     /**
@@ -467,7 +468,7 @@ public:
                     {
                         if (config.entity == CLIParser::EntityKind::PUBLISHER)
                         {
-                            size_t input = std::stoi(argv[++i]);
+                            int input = std::stoi(argv[++i]);
                             if (input > 0)
                             {
                                 config.pub_config.shape_config.step = input;
@@ -508,7 +509,7 @@ public:
                     {
                         if (config.entity == CLIParser::EntityKind::PUBLISHER)
                         {
-                            size_t input = std::stoi(argv[++i]);
+                            int input = std::stoi(argv[++i]);
                             if (input > 0)
                             {
                                 config.pub_config.shape_config.width = input;
@@ -549,7 +550,7 @@ public:
                     {
                         if (config.entity == CLIParser::EntityKind::PUBLISHER)
                         {
-                            size_t input = std::stoi(argv[++i]);
+                            int input = std::stoi(argv[++i]);
                             if (input > 0)
                             {
                                 config.pub_config.shape_config.height = input;
@@ -660,8 +661,8 @@ public:
         // Calculate shape bounds if applies
         if (config.entity == CLIParser::EntityKind::PUBLISHER)
         {
-            config.pub_config.shape_config.x = config.pub_config.shape_config.width / 2;
-            config.pub_config.shape_config.y = config.pub_config.shape_config.height / 2;
+            config.pub_config.shape_config.x = static_cast<int>(config.pub_config.shape_config.width / 2);
+            config.pub_config.shape_config.y = static_cast<int>(config.pub_config.shape_config.height / 2);
             config.pub_config.shape_config.lower_th = config.pub_config.shape_config.size - 5;
             config.pub_config.shape_config.horizontal_th =
                     config.pub_config.shape_config.width - config.pub_config.shape_config.lower_th;

@@ -250,12 +250,11 @@ void PublisherApp::move(
         {
             y -= shape_config_.step;
 
-            if (static_cast<uint64_t>(y) < shape_config_.lower_th &&
-                    static_cast<uint64_t>(x) > shape_config_.lower_th + 1)
+            if (y < shape_config_.lower_th && x > shape_config_.lower_th)
             {
                 direction = CLIParser::ShapeDirection::RIGHT;
             }
-            else if (static_cast<uint64_t>(y) < shape_config_.lower_th)
+            else if (y < shape_config_.lower_th)
             {
                 direction = CLIParser::ShapeDirection::DIAGONAL;
             }
@@ -266,7 +265,7 @@ void PublisherApp::move(
         {
             y += shape_config_.step;
 
-            if (static_cast<uint64_t>(y) > shape_config_.vertical_th)
+            if (y > shape_config_.vertical_th)
             {
                 direction = CLIParser::ShapeDirection::LEFT;
             }
@@ -277,7 +276,7 @@ void PublisherApp::move(
         {
             x -= shape_config_.step;
 
-            if (static_cast<uint64_t>(x) < shape_config_.lower_th)
+            if (x < shape_config_.lower_th)
             {
                 direction = CLIParser::ShapeDirection::UP;
             }
@@ -288,7 +287,7 @@ void PublisherApp::move(
         {
             x += shape_config_.step;
 
-            if (static_cast<uint64_t>(x) > shape_config_.horizontal_th)
+            if (x > shape_config_.horizontal_th)
             {
                 direction = CLIParser::ShapeDirection::DOWN;
             }
@@ -300,8 +299,7 @@ void PublisherApp::move(
             x += shape_config_.step;
             y += shape_config_.step;
 
-            if (static_cast<uint64_t>(x) > (shape_config_.width / 2) &&
-                    static_cast<uint64_t>(y) > (shape_config_.height / 2))
+            if (x > (shape_config_.width / 2) && y > (shape_config_.height / 2))
             {
                 direction = CLIParser::ShapeDirection::UP;
             }
