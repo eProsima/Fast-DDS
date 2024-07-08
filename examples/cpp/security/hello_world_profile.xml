@@ -15,19 +15,19 @@
                     <!-- Configure DDS:Auth:PKI-DH plugin -->
                     <property>
                         <name>dds.sec.auth.builtin.PKI-DH.identity_ca</name>
-                        <value>file://maincacert.pem</value>
+                        <value>file://certs/maincacert.pem</value>
                     </property>
                     <property>
                         <name>dds.sec.auth.builtin.PKI-DH.identity_certificate</name>
-                        <value>file://partcert.pem</value>
+                        <value>file://certs/partcert.pem</value>
                     </property>
                     <property>
                         <name>dds.sec.auth.builtin.PKI-DH.identity_crl</name>
-                        <value>file://crl.pem</value>
+                        <value>file://certs/crl.pem</value>
                     </property>
                     <property>
                         <name>dds.sec.auth.builtin.PKI-DH.private_key</name>
-                        <value>file://partkey.pem</value>
+                        <value>file://certs/partkey.pem</value>
                     </property>
                     <property>
                         <name>dds.sec.auth.builtin.PKI-DH.password</name>
@@ -45,15 +45,15 @@
                     <!-- Configure DDS:Access:Permissions plugin -->
                     <property>
                         <name>dds.sec.access.builtin.Access-Permissions.permissions_ca</name>
-                        <value>file://maincacet.pem</value>
+                        <value>file://certs/maincacet.pem</value>
                     </property>
                     <property>
                         <name>dds.sec.access.builtin.Access-Permissions.governance</name>
-                        <value>file://governance.smime</value>
+                        <value>file://certs/governance.smime</value>
                     </property>
                     <property>
                         <name>dds.sec.access.builtin.Access-Permissions.permissions</name>
-                        <value>file://permissions.smime</value>
+                        <value>file://certs/permissions.smime</value>
                     </property>
                 </properties>
 

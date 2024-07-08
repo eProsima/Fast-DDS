@@ -1,14 +1,13 @@
-# Secure Hello world example
+# Security example
 
-The *eProsima Fast DDS hello world* example is a simple application intended to demonstrate a basic DDS deployment with security builtin plugins.
+The *eProsima Fast DDS security* example is a simple application intended to demonstrate a basic DDS deployment with security builtin plugins.
 
 This example is part of the suite of examples designed by eProsima that aims to illustrate the features and possible configurations of DDS deployments through *eProsima Fast DDS*.
 
-In this case, the *secure hello world* example describes the simplest deployment of a Fast DDS publisher and subscriber using the DDS Security specification.
+In this case, the *security* example describes the simplest deployment of a Fast DDS publisher and subscriber using the DDS Security specification.
 
 * [Description of the example](#description-of-the-example)
 * [Run the example](#run-the-example)
-* [Wait-set subscriber](#wait-set-subscriber)
 * [XML profile playground](#xml-profile-playground)
 
 ## Description of the example

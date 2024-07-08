@@ -47,14 +47,17 @@ public:
     struct entity_config
     {
         uint16_t samples = 0;
-        uint32_t interval = 100; // milliseconds
+    };
+    struct publisher_config : entity_config
+    {
+        uint32_t interval = 1000;
     };
 
     //! Configuration structure for the application
     struct security_config
     {
         CLIParser::EntityKind entity = CLIParser::EntityKind::UNDEFINED;
-        entity_config pub_config;
+        publisher_config pub_config;
         entity_config sub_config;
     };
 
@@ -68,7 +71,7 @@ public:
     static void print_help(
             uint8_t return_code)
     {
-        std::cout << "Usage: security <entity> [options]"                                            << std::endl;
+        std::cout << "Usage: security <entity> [options]"                                               << std::endl;
         std::cout << ""                                                                                 << std::endl;
         std::cout << "Entities:"                                                                        << std::endl;
         std::cout << "  publisher                       Run a publisher entity"                         << std::endl;

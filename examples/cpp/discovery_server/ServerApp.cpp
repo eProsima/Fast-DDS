@@ -17,10 +17,7 @@
  *
  */
 
-<<<<<<< HEAD:examples/cpp/discovery_server/ServerApp.cpp
 #include "ServerApp.hpp"
-=======
->>>>>>> cb54401dd (Refs #21266: Update fastdds examples guards and namespaces):examples/cpp/dds/DiscoveryServerExample/DiscoveryServerServer.cpp
 
 #include <condition_variable>
 #include <stdexcept>
@@ -35,8 +32,6 @@
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
-
-#include "DiscoveryServerServer.h"
 
 using namespace eprosima::fastdds::dds;
 

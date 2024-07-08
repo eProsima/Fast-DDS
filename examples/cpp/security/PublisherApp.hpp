@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef FASTDDS_EXAMPLES_CPP_SECURITY__HELLO_WORLD_PUBLISHER_APP_HPP
-#define FASTDDS_EXAMPLES_CPP_SECURITY__HELLO_WORLD_PUBLISHER_APP_HPP
+#ifndef FASTDDS_EXAMPLES_CPP_SECURITY__PUBLISHER_APP_HPP
+#define FASTDDS_EXAMPLES_CPP_SECURITY__PUBLISHER_APP_HPP
 
 #include <condition_variable>
 
@@ -42,7 +42,7 @@ class PublisherApp : public Application, public DataWriterListener
 public:
 
     PublisherApp(
-            const CLIParser::entity_config& config,
+            const CLIParser::publisher_config& config,
             const std::string& topic_name);
 
     ~PublisherApp();
@@ -97,4 +97,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* FASTDDS_EXAMPLES_CPP_SECURITY__HELLO_WORLD_PUBLISHER_APP_HPP */
+#endif /* FASTDDS_EXAMPLES_CPP_SECURITY__PUBLISHER_APP_HPP */

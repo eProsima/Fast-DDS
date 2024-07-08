@@ -35,8 +35,7 @@
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
 
-#include "DiscoveryServerPublisher.h"
-#include "types/HelloWorldPubSubTypes.hpp"
+#include "HelloWorldPubSubTypes.hpp"
 
 using namespace eprosima::fastdds::dds;
 

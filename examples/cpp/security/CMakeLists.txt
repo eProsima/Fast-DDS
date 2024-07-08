@@ -14,7 +14,7 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-project(fastdds_secure_hello_world_example VERSION 1 LANGUAGES CXX)
+project(fastdds_security_example VERSION 1 LANGUAGES CXX)
 
 # Find requirements
 if(NOT fastcdr_FOUND)

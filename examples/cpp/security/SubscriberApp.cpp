@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file ListenerSubscriber.cpp
+ * @file SubscriberApp.cpp
  *
  */
 
