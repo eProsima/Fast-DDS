@@ -607,7 +607,7 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
                 {
                     delete remote_participant_info;
                 }
-                remote_participant_info = new ParticipantProxyData(info.info);
+                remote_participant_info = new ParticipantProxyData(info);
                 found_->store(true);
                 cv_->notify_one();
             }
@@ -782,8 +782,8 @@ TEST(DDSDiscovery, DDSDiscoveryDoesNotDropUDPLocator)
             if (status == PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
             {
                 std::lock_guard<std::mutex> guard(mtx);
-                guid = info.info.m_guid;
-                metatraffic = info.info.metatraffic_locators;
+                guid = info.m_guid;
+                metatraffic = info.metatraffic_locators;
                 cv.notify_all();
             }
         }

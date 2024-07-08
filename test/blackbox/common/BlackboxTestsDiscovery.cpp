@@ -892,17 +892,17 @@ TEST_P(Discovery, PubSubAsReliableHelloworldParticipantDiscovery)
     int count = 0;
     reader.setOnDiscoveryFunction([&writer, &count](const ParticipantProxyData& info) -> bool
             {
-                if (info.info.m_guid == writer.participant_guid())
+                if (info.m_guid == writer.participant_guid())
                 {
                     if (info.status == PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
                     {
-                        std::cout << "Discovered participant " << info.info.m_guid << std::endl;
+                        std::cout << "Discovered participant " << info.m_guid << std::endl;
                         ++count;
                     }
                     else if (info.status == PARTICIPANT_DISCOVERY_STATUS::REMOVED_PARTICIPANT ||
                     info.status == PARTICIPANT_DISCOVERY_STATUS::DROPPED_PARTICIPANT)
                     {
-                        std::cout << "Removed participant " << info.info.m_guid << std::endl;
+                        std::cout << "Removed participant " << info.m_guid << std::endl;
                         return ++count == 2;
                     }
                 }
@@ -935,16 +935,16 @@ TEST_P(Discovery, PubSubAsReliableHelloworldUserData)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    reader.setOnDiscoveryFunction([&writer](const ParticipantDiscoveryInfo& info) -> bool
+    reader.setOnDiscoveryFunction([&writer](const ParticipantProxyData& info) -> bool
             {
-                if (info.info.m_guid == writer.participant_guid())
+                if (info.m_guid == writer.participant_guid())
                 {
                     std::cout << "Received USER_DATA from the writer: ";
-                    for (auto i: info.info.m_userData)
+                    for (auto i: info.m_userData)
                     {
                         std::cout << i << ' ';
                     }
-                    return info.info.m_userData == std::vector<octet>({'a', 'b', 'c', 'd'});
+                    return info.m_userData == std::vector<octet>({'a', 'b', 'c', 'd'});
                 }
 
                 return false;
@@ -1601,7 +1601,7 @@ TEST(Discovery, discovery_cyclone_participant_with_custom_pid)
         void on_participant_discovery(
                 DomainParticipant*,
                 PARTICIPANT_DISCOVERY_STATUS status,
-                const ParticipantProxyData& info,
+                const ParticipantProxyData& /*info*/,
                 bool& should_be_ignored) override
         {
             should_be_ignored = false;

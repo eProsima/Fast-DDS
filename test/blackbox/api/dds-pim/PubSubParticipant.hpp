@@ -40,6 +40,7 @@
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 
 /**
@@ -874,13 +875,13 @@ public:
     }
 
     void set_on_discovery_function(
-            std::function<bool(const eprosima::fastdds::rtps::ParticipantDiscoveryInfo&)> f)
+            std::function<bool(const eprosima::fastdds::rtps::ParticipantProxyData&)> f)
     {
         on_discovery_ = f;
     }
 
     void set_on_participant_qos_update_function(
-            std::function<bool(const eprosima::fastdds::rtps::ParticipantDiscoveryInfo&)> f)
+            std::function<bool(const eprosima::fastdds::rtps::ParticipantProxyData&)> f)
     {
         on_participant_qos_update_ = f;
     }
@@ -974,8 +975,8 @@ private:
     std::mutex mutex_discovery_;
     std::condition_variable cv_discovery_;
     std::atomic<unsigned int> matched_;
-    std::function<bool(const eprosima::fastdds::rtps::ParticipantDiscoveryInfo& info)> on_discovery_;
-    std::function<bool(const eprosima::fastdds::rtps::ParticipantDiscoveryInfo& info)> on_participant_qos_update_;
+    std::function<bool(const eprosima::fastdds::rtps::ParticipantProxyData& info)> on_discovery_;
+    std::function<bool(const eprosima::fastdds::rtps::ParticipantProxyData& info)> on_participant_qos_update_;
     std::atomic_bool discovery_result_;
     std::atomic_bool participant_qos_updated_;
 

@@ -34,6 +34,7 @@ namespace fastdds {
 namespace dds {
 
 class DomainParticipant;
+class ParticipantProxyData;
 
 /**
  * Class DomainParticipantListener, overrides behaviour towards certain events.

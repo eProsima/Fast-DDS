@@ -71,22 +71,22 @@ public:
         if (status == rtps::PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
         {
             std::cout << "Publisher participant " << //participant->getGuid() <<
-                " discovered participant " << info.info.m_guid << std::endl;
+                " discovered participant " << info.m_guid << std::endl;
         }
         else if (status == rtps::PARTICIPANT_DISCOVERY_STATUS::CHANGED_QOS_PARTICIPANT)
         {
             std::cout << "Publisher participant " << //participant->getGuid() <<
-                " detected changes on participant " << info.info.m_guid << std::endl;
+                " detected changes on participant " << info.m_guid << std::endl;
         }
         else if (status == rtps::PARTICIPANT_DISCOVERY_STATUS::REMOVED_PARTICIPANT)
         {
             std::cout << "Publisher participant " << //participant->getGuid() <<
-                " removed participant " << info.info.m_guid << std::endl;
+                " removed participant " << info.m_guid << std::endl;
         }
         else if (status == rtps::PARTICIPANT_DISCOVERY_STATUS::DROPPED_PARTICIPANT)
         {
             std::cout << "Publisher participant " << //participant->getGuid() <<
-                " dropped participant " << info.info.m_guid << std::endl;
+                " dropped participant " << info.m_guid << std::endl;
             if (exit_on_lost_liveliness_)
             {
                 run = false;

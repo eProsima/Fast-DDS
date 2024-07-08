@@ -14,8 +14,8 @@
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/LibrarySettings.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/common/Types.hpp>
-#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <gtest/gtest.h>
 
 #include "BlackboxTests.hpp"
@@ -113,13 +113,13 @@ TEST_P(PropertyQos, send_property_qos)
 
     PubSubParticipant<HelloWorldPubSubType> participant_2(0u, 0u, 0u, 0u);
 
-    participant_2.set_on_discovery_function([&](const rtps::ParticipantDiscoveryInfo& info) -> bool
+    participant_2.set_on_discovery_function([&](const rtps::ParticipantProxyData& info) -> bool
             {
                 std::cout << "Received Property Qos: ";
 
                 // Check the external has arrived and the internal does not
                 bool property_received = false;
-                for (auto i : info.info.m_properties)
+                for (auto i : info.m_properties)
                 {
                     std::cout << i.first() << " :{ " << i.second() << " } ; ";
 

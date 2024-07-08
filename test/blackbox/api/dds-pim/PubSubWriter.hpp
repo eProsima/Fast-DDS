@@ -2019,7 +2019,7 @@ protected:
     std::string participant_profile_ = "";
     std::string datawriter_profile_ = "";
 
-    std::function<bool(const eprosima::fastdds::rtps::ParticipantDiscoveryInfo& info)> onDiscovery_;
+    std::function<bool(const eprosima::fastdds::rtps::ParticipantProxyData& info)> onDiscovery_;
 
     //! A mutex for liveliness
     std::mutex liveliness_mutex_;

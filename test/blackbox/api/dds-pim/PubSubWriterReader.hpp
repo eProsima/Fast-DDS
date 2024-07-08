@@ -92,16 +92,16 @@ class PubSubWriterReader
             switch (status)
             {
                 case eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT:
-                    info_add(discovered_participants_, info.info.m_guid);
+                    info_add(discovered_participants_, info.m_guid);
                     break;
 
                 case eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::REMOVED_PARTICIPANT:
-                    info_remove(discovered_participants_, info.info.m_guid);
+                    info_remove(discovered_participants_, info.m_guid);
                     break;
 
                 case eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::DROPPED_PARTICIPANT:
-                    std::cout << "Participant " << info.info.m_guid << " has been dropped";
-                    info_remove(discovered_participants_, info.info.m_guid);
+                    std::cout << "Participant " << info.m_guid << " has been dropped";
+                    info_remove(discovered_participants_, info.m_guid);
                     break;
 
                 default:

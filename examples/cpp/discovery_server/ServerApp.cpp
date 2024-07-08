@@ -217,13 +217,13 @@ void ServerApp::on_participant_discovery(
     static_cast<void>(should_be_ignored);
     if (status == eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
     {
-        std::cout << "Discovered Participant with GUID " << info.info.m_guid << std::endl;
+        std::cout << "Discovered Participant with GUID " << info.m_guid << std::endl;
         ++matched_;
     }
     else if (status == eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::DROPPED_PARTICIPANT ||
             status == eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::REMOVED_PARTICIPANT)
     {
-        std::cout << "Dropped Participant with GUID " << info.info.m_guid << std::endl;
+        std::cout << "Dropped Participant with GUID " << info.m_guid << std::endl;
         --matched_;
     }
 }

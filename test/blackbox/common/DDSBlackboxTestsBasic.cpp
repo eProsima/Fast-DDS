@@ -38,6 +38,7 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
 
@@ -538,7 +539,7 @@ TEST(DDSBasic, IgnoreParticipant)
             if (status == PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
             {
                 std::cout << "Discovered participant" << std::endl;
-                if (info.info.m_userData == std::vector<eprosima::fastdds::rtps::octet>({ 'i', 'g', 'n' }))
+                if (info.m_userData == std::vector<eprosima::fastdds::rtps::octet>({ 'i', 'g', 'n' }))
                 {
                     std::cout << "Ignoring participant" << std::endl;
                     should_be_ignored = true;

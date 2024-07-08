@@ -1689,7 +1689,7 @@ public:
     }
 
     void setOnDiscoveryFunction(
-            std::function<bool(const eprosima::fastdds::rtps::ParticipantDiscoveryInfo&)> f)
+            std::function<bool(const eprosima::fastdds::rtps::ParticipantProxyData&)> f)
     {
         onDiscovery_ = f;
     }
@@ -2129,7 +2129,7 @@ protected:
     std::string participant_profile_ = "";
     std::string datareader_profile_ = "";
 
-    std::function<bool(const eprosima::fastdds::rtps::ParticipantDiscoveryInfo& info)> onDiscovery_;
+    std::function<bool(const eprosima::fastdds::rtps::ParticipantProxyData& info)> onDiscovery_;
     EndpointDiscoveryFunctor onEndpointDiscovery_;
 
     //! True to take data from history. On False, read_ is checked.

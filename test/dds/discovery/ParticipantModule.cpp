@@ -26,6 +26,7 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <fastdds/utils/IPLocator.hpp>
@@ -93,18 +94,18 @@ void ParticipantModule::on_participant_discovery(
     static_cast<void>(should_be_ignored);
     if (status == PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
     {
-        std::cout << "Participant " << participant->guid() << " discovered participant " << info.info.m_guid << ": "
+        std::cout << "Participant " << participant->guid() << " discovered participant " << info.m_guid << ": "
                   << ++matched_ << std::endl;
     }
     else if (status == PARTICIPANT_DISCOVERY_STATUS::CHANGED_QOS_PARTICIPANT)
     {
-        std::cout << "Participant " << participant->guid() << " detected changes on participant " << info.info.m_guid
+        std::cout << "Participant " << participant->guid() << " detected changes on participant " << info.m_guid
                   << std::endl;
     }
     else if (status == PARTICIPANT_DISCOVERY_STATUS::REMOVED_PARTICIPANT ||
             status == PARTICIPANT_DISCOVERY_STATUS::DROPPED_PARTICIPANT)
     {
-        std::cout << "Participant " << participant->guid() << " undiscovered participant " << info.info.m_guid << ": "
+        std::cout << "Participant " << participant->guid() << " undiscovered participant " << info.m_guid << ": "
                   << --matched_ << std::endl;
     }
 }

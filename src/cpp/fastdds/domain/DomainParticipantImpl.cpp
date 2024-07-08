@@ -41,7 +41,6 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
@@ -74,7 +73,6 @@ namespace dds {
 
 using xmlparser::XMLProfileManager;
 using xmlparser::XMLP_ret;
-using rtps::ParticipantDiscoveryInfo;
 using rtps::RTPSDomain;
 using rtps::RTPSDomainImpl;
 using rtps::RTPSParticipant;
