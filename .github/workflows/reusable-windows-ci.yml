@@ -141,22 +141,10 @@ jobs:
           skip_existing: 'true'
 
       - name: Prepare build meta file
-        run: |
-            $build_meta_file = '${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_build.meta'
-            $test_meta_file = '${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_test.meta'
-            $build_test_meta_file = '${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_build_test.meta'
-
-            # Read the content of the build meta file
-            $build_meta_content = Get-Content -Path $build_meta_file
-
-            # Read the content of the test meta file, starting from line 4 (skipping "name" line [1], cmake project name line [2] and "cmake-args" line [3])
-            $test_meta_content = Get-Content -Path $test_meta_file | Select-Object -Skip 3
-
-            # Combine the content of the build meta file and the test meta file
-            $combined_content = $build_meta_content + $test_meta_content
-
-            # Write the combined content to the build test meta file
-            $combined_content | Out-File -FilePath $build_test_meta_file -Encoding UTF8
+        uses: eProsima/eProsima-CI/windows/merge_yaml_metas@v0
+        with:
+          metas: "@('${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta', '${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.meta')"
+          path: '${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build_test.meta'
 
       - name: Build
         id: build
