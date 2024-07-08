@@ -22,9 +22,9 @@
 
 #include <fastdds/dds/builtin/topic/BuiltinTopicKey.hpp>
 #include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
-#include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
 #include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
+#include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
@@ -86,8 +86,28 @@ void from_proxy_to_builtin(
         const WriterProxyData& proxy_data,
         PublicationBuiltinTopicData& builtin_data)
 {
-    static_cast<void>(proxy_data);
-    static_cast<void>(builtin_data);
+    from_proxy_to_builtin(proxy_data.guid().entityId, builtin_data.key.value);
+    from_proxy_to_builtin(proxy_data.guid().guidPrefix, builtin_data.participant_key.value);
+
+    builtin_data.topic_name = proxy_data.topicName();
+    builtin_data.type_name = proxy_data.typeName();
+    builtin_data.durability = proxy_data.m_qos.m_durability;
+    builtin_data.durability_service = proxy_data.m_qos.m_durabilityService;
+    builtin_data.deadline = proxy_data.m_qos.m_deadline;
+    builtin_data.latency_budget = proxy_data.m_qos.m_latencyBudget;
+    builtin_data.liveliness = proxy_data.m_qos.m_liveliness;
+    builtin_data.reliability = proxy_data.m_qos.m_reliability;
+    builtin_data.lifespan = proxy_data.m_qos.m_lifespan;
+    builtin_data.user_data = proxy_data.m_qos.m_userData;
+    builtin_data.ownership = proxy_data.m_qos.m_ownership;
+    builtin_data.ownership_strength = proxy_data.m_qos.m_ownershipStrength;
+    builtin_data.destination_order = proxy_data.m_qos.m_destinationOrder;
+    builtin_data.presentation = proxy_data.m_qos.m_presentation;
+    builtin_data.partition = proxy_data.m_qos.m_partition;
+    builtin_data.topic_data = proxy_data.m_qos.m_topicData;
+    builtin_data.group_data = proxy_data.m_qos.m_groupData;
+
+    // TODO(MiguelCompany): Extend PublicationBuiltinTopicData with additional information
 }
 
 } // namespace rtps
