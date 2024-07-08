@@ -23,10 +23,13 @@ On the other hand, the subscriber is configured to handle the same amount of ins
 In that way, each keyed _color_ is managed separately, having its own _History QoS depth_.
 Refer to the [Topic, keys and instances](https://fast-dds.docs.eprosima.com/en/stable/fastdds/dds_layer/topic/instances.html#topics-keys-and-instances) section in the _eProsima Fast DDS_ documentation section for more information.
 
-Both publisher and subscriber are configured as `KEEP_LAST_HISTORY_QOS`, with a _depth_ depending of the amount of samples given my CLI command (if no _samples_ limit provided, the _max_samples_per_instance_ value is considered, which is `400` by default).
+Publisher registers an instance for each key value, and disposes the instance when finished sending samples.
+Disposing the instance let other subscribers know that there will be no more samples coming from that writer related to that topic key, but allows late-join subscribers to receive the already sent samples.
+
+Both publisher and subscriber are configured as `KEEP_LAST_HISTORY_QOS`, with a _depth_ depending of the amount of samples given my CLI command (if no _samples_ limit provided, the _max_samples_per_instance_ value is considered, which is `400` by default) **plus one** (so it has enough space to allocate the disposal message too).
 
 If an amount of _samples_ is provided, the publisher application has a timeout (by default is `10` seconds) to make it wait a short period of time after sending all expected samples.
-That allows to perform a late-join check: when a new subscriber matches with the publisher that has already sent all its samples, the subscriber receives all samples for all instances, even though the total amount of samples received is higher than the _History QoS depth_ set, due to each _History QoS depth_ is independent per each instance.
+That allows to perform a late-join check scenario: when a new subscriber matches with the publisher that has already sent all its samples, the subscriber receives all samples for all instances, even though the total amount of samples received is higher than the _History QoS depth_ set, due to each _History QoS depth_ is independent per each instance.
 
 ## Run the example
 

@@ -98,7 +98,7 @@ PublisherApp::PublisherApp(
     writer_qos.reliability().kind = ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
     writer_qos.durability().kind = DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS;
     writer_qos.history().kind = HistoryQosPolicyKind::KEEP_LAST_HISTORY_QOS;
-    uint32_t sample_limit = samples_;
+    uint32_t sample_limit = samples_ + 1; // include dispose sample
     if (sample_limit == 0)
     {
         sample_limit = DATAWRITER_QOS_DEFAULT.resource_limits().max_samples_per_instance;
@@ -176,11 +176,20 @@ void PublisherApp::run()
                     return is_stopped();
                 });
     }
+
+    // Dispose all instances if manually stopped
+    if (is_stopped())
+    {
+        for (int i= 0; i < instances_; i++)
+        {
+            writer_->dispose(&shapes_[instance_handles_[i]].first, instance_handles_[i]);
+            std::cout << shapes_[instance_handles_[i]].first.color() << " shape instance disposed" << std::endl;
+        }
+    }
 }
 
-bool PublisherApp::publish()
+void PublisherApp::publish()
 {
-    bool ret = false;
     // Wait for the data endpoints discovery
     std::unique_lock<std::mutex> matched_lock(mutex_);
     cv_.wait(matched_lock, [&]()
@@ -190,42 +199,88 @@ bool PublisherApp::publish()
             });
     if (!is_stopped())
     {
-        // Update shape values
-        move(shape_config_.x, shape_config_.y, shape_config_.direction);
+        // Register instance check
+        bool instances_already_registered = (instance_handles_.size() > 0);
+
+        // Iterate per instance
         for (int i = 0; i < instances_; i++)
         {
-            bool write_ret = false;
-            // Prepare new shapes values
-            std::string color = instances_ == 1 ? shape_config_.color : CLIParser::shape_color(i);
-            shape_.color(color);
-            shape_.shapesize(shape_config_.size);
-            shape_.x(shape_config_.x);
-            shape_.y(shape_config_.y);
-            // Send shape
-            write_ret = writer_->write(&shape_);
+            InstanceHandle_t instance;
+            ShapeType shape_;
+            CLIParser::shape_configuration shape_configuration;
+            bool ret = false;
 
-            // Print shape if successfully performed write call
-            if (write_ret)
+            // Register instance if not already registered
+            if (!instances_already_registered)
+            {
+                int n_dirs = 5; // There are 5 directions: LEFT, RIGHT, UP, DOWN, DIAGONAL
+                CLIParser::ShapeDirection shape_dir = CLIParser::ShapeDirection(i % n_dirs);    // different directions
+                std::string color = instances_ == 1 ? shape_config_.color : CLIParser::shape_color(i);
+
+                // Create ShapeType and configuration associated to the instance
+                shape_configuration = CLIParser::shape_configuration(shape_config_);
+                shape_configuration.direction = shape_dir;
+                shape_.color(color);
+
+                // Register instance
+                std::cout << "Registering instance for " << shape_.color() << " shape" << std::endl;
+                instance = writer_->register_instance(&shape_);
+                instance_handles_.push_back(instance);
+
+                // Store shape and configuration
+                std::pair<ShapeType,CLIParser::shape_configuration> shape_data(shape_, shape_configuration);
+                shapes_[instance] = shape_data;
+            }
+            else
+            {
+                instance = instance_handles_[i];
+                shape_ = shapes_[instance].first;
+                shape_configuration = shapes_[instance].second;
+            }
+
+            // Move the shape
+            move(shape_configuration.x, shape_configuration.y, shape_configuration.direction);
+
+            // Set shape values
+            shape_.shapesize(shape_configuration.size);
+            shape_.x(shape_configuration.x);
+            shape_.y(shape_configuration.y);
+
+            // Send shape
+            ret = writer_->write(&shape_, instance);
+
+
+            // Successfully performed write call
+            if (RETCODE_OK == ret)
             {
                 // Print sent shape data
                 std::cout << shape_.color() << " Shape with size " << shape_.shapesize()
                           << " at X:" << shape_.x() << ", Y:" << shape_.y() << " SENT" << std::endl;
                 // Add the sent sample to the corresponding instance counter
-                if (samples_per_instance_.count(color) > 0)
+                if (samples_per_instance_.count(instance) > 0)
                 {
                     // Instance exists in the map, increase the counter
-                    samples_per_instance_[color]++;
+                    samples_per_instance_[instance]++;
                 }
                 else
                 {
                     // Instance does not exist in the map, set it with value 1
-                    samples_per_instance_[color] = 1;
+                    samples_per_instance_[instance] = 1;
+                }
+
+                // Update sample data
+                std::pair<ShapeType,CLIParser::shape_configuration> shape_data(shape_, shape_configuration);
+                shapes_[instance] = shape_data;
+
+                // Check if last sample has been sent
+                if (samples_ > 0 && samples_per_instance_[instance] == samples_)
+                {
+                    std::cout << shape_.color() << " shape instance disposed" << std::endl;
+                    writer_->dispose(&shape_, instance);
                 }
             }
-            ret = i == 0 ? write_ret : ret && write_ret;
         }
     }
-    return ret;
 }
 
 bool PublisherApp::is_stopped()

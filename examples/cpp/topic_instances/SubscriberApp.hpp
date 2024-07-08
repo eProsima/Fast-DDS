@@ -73,6 +73,9 @@ private:
     //! Check if all instances have received all samples
     bool instances_received_all_samples();
 
+    //! Check if all instances have been disposed
+    bool instances_disposed();
+
     ShapeType shape_;
 
     DomainParticipant* participant_;
@@ -94,6 +97,8 @@ private:
     std::atomic<bool> stop_;
 
     std::map<InstanceHandle_t, uint32_t> samples_per_instance_;
+
+    std::vector<InstanceHandle_t> disposed_instances_;
 };
 
 } // namespace topic_instances

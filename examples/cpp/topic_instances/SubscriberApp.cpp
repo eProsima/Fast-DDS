@@ -162,10 +162,28 @@ void SubscriberApp::on_data_available(
             // Print the shape
             std::cout << shape_.color() << " Shape with size " << shape_.shapesize()
                       << " at X:" << shape_.x() << ", Y:" << shape_.y() << " RECEIVED" << std::endl;
-            if ((samples_ > 0) && instances_received_all_samples())
+        }
+        else if (info.instance_state == NOT_ALIVE_DISPOSED_INSTANCE_STATE)
+        {
+            std::cout << shape_.color() << " Shape has been disposed" << std::endl;
+            if (std::find(disposed_instances_.begin(), disposed_instances_.end(),
+                    info.instance_handle) == disposed_instances_.end())
             {
-                stop();
+                disposed_instances_.push_back(info.instance_handle);
             }
+        }
+        else if (info.instance_state == NOT_ALIVE_NO_WRITERS_INSTANCE_STATE)
+        {
+            std::cout << shape_.color() << " Shape has been disposed by all publishers" << std::endl;
+        }
+        else {
+            std::cout << "Received instance state: " << info.instance_state << std::endl;
+        }
+
+        // Check if the execution should be stopped
+        if ((samples_ > 0) && instances_received_all_samples() && instances_disposed())
+        {
+            stop();
         }
     }
 }
@@ -211,6 +229,30 @@ bool SubscriberApp::instances_received_all_samples()
     }
     return ret;
 }
+
+bool SubscriberApp::instances_disposed()
+{
+    bool ret = true;
+    if (samples_per_instance_.size() > 0)
+    {
+        for(std::map<InstanceHandle_t, uint32_t>::iterator it = samples_per_instance_.begin();
+                it != samples_per_instance_.end(); ++it)
+        {
+            if (std::find(disposed_instances_.begin(), disposed_instances_.end(),
+                    it->first) == disposed_instances_.end())
+            {
+                ret = false;
+                break;
+            }
+        }
+    }
+    else
+    {
+        ret = false;
+    }
+    return ret;
+}
+
 
 } // namespace topic_instances
 } // namespace examples

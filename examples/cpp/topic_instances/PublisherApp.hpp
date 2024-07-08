@@ -64,7 +64,7 @@ private:
     bool is_stopped();
 
     //! Publish a sample
-    bool publish();
+    void publish();
 
     //! Check if all instances have sent the expected number of samples
     bool instances_sent_all_samples();
@@ -74,8 +74,6 @@ private:
             int& x,
             int& y,
             CLIParser::ShapeDirection& direction);
-
-    ShapeType shape_;
 
     DomainParticipant* participant_;
 
@@ -101,11 +99,15 @@ private:
 
     uint16_t instances_;
 
-    std::map<std::string, uint32_t> samples_per_instance_;
+    CLIParser::shape_configuration shape_config_;
+
+    std::vector<InstanceHandle_t> instance_handles_;
+
+    std::map<InstanceHandle_t, std::pair<ShapeType,CLIParser::shape_configuration>> shapes_;
+
+    std::map<InstanceHandle_t, uint32_t> samples_per_instance_;
 
     std::atomic<bool> stop_;
-
-    CLIParser::shape_configuration shape_config_;
 };
 
 } // namespace topic_instances
