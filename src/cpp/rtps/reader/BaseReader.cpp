@@ -35,6 +35,7 @@
 #include <fastdds/rtps/reader/ReaderListener.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 
+#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/DataSharing/DataSharingListener.hpp>
 #include <rtps/DataSharing/DataSharingNotification.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
@@ -120,6 +121,20 @@ BaseReader::~BaseReader()
     // ensure that the payload pool is destroyed after the change pool.
     change_pool_.reset();
     payload_pool_.reset();
+}
+
+bool BaseReader::matched_writer_add(
+        const GUID_t& writer_guid,
+        const GUID_t& writer_persistence_guid,
+        const PublicationBuiltinTopicData& wqos,
+        const RemoteLocatorList& locators)
+{
+    WriterProxyData wdata(locators.unicast.size(), locators.multicast.size());
+    from_builtin_to_proxy(wqos, wdata);
+    wdata.guid(writer_guid);
+    wdata.persistence_guid(writer_persistence_guid);
+    wdata.set_locators(locators);
+    return matched_writer_add(wdata);
 }
 
 ReaderListener* BaseReader::get_listener() const

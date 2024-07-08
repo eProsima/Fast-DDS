@@ -41,7 +41,8 @@
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
-#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
+#include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
@@ -296,32 +297,36 @@ public:
                 std::cout << "ERROR: locator has to be registered previous to call this" << std::endl;
             }
 
-            //Add remote writer (in this case a reader in the same machine)
+            // Add remote writer (in this case a reader in the same machine)
             eprosima::fastdds::rtps::GUID_t guid = participant_->getGuid();
 
-            eprosima::fastdds::rtps::WriterProxyData wattr(4u, 1u);
+            eprosima::fastdds::rtps::RemoteLocatorList locators;
             eprosima::fastdds::rtps::Locator_t loc;
             IPLocator::setIPv4(loc, ip_);
             loc.port = static_cast<uint16_t>(port_);
-            wattr.add_multicast_locator(loc);
-            wattr.m_qos.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
-            wattr.guid().guidPrefix.value[0] = guid.guidPrefix.value[0];
-            wattr.guid().guidPrefix.value[1] = guid.guidPrefix.value[1];
-            wattr.guid().guidPrefix.value[2] = guid.guidPrefix.value[2];
-            wattr.guid().guidPrefix.value[3] = guid.guidPrefix.value[3];
-            wattr.guid().guidPrefix.value[4] = guid.guidPrefix.value[4];
-            wattr.guid().guidPrefix.value[5] = guid.guidPrefix.value[5];
-            wattr.guid().guidPrefix.value[6] = guid.guidPrefix.value[6];
-            wattr.guid().guidPrefix.value[7] = guid.guidPrefix.value[7];
-            wattr.guid().guidPrefix.value[8] = 2;
-            wattr.guid().guidPrefix.value[9] = 0;
-            wattr.guid().guidPrefix.value[10] = 0;
-            wattr.guid().guidPrefix.value[11] = 0;
-            wattr.guid().entityId.value[0] = 0;
-            wattr.guid().entityId.value[1] = 0;
-            wattr.guid().entityId.value[2] = 2;
-            wattr.guid().entityId.value[3] = 3;
-            reader_->matched_writer_add(wattr);
+            locators.add_multicast_locator(loc);
+
+            eprosima::fastdds::rtps::PublicationBuiltinTopicData wqos{};
+            wqos.reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+
+            eprosima::fastdds::rtps::GUID_t wguid;
+            wguid.guidPrefix.value[0] = guid.guidPrefix.value[0];
+            wguid.guidPrefix.value[1] = guid.guidPrefix.value[1];
+            wguid.guidPrefix.value[2] = guid.guidPrefix.value[2];
+            wguid.guidPrefix.value[3] = guid.guidPrefix.value[3];
+            wguid.guidPrefix.value[4] = guid.guidPrefix.value[4];
+            wguid.guidPrefix.value[5] = guid.guidPrefix.value[5];
+            wguid.guidPrefix.value[6] = guid.guidPrefix.value[6];
+            wguid.guidPrefix.value[7] = guid.guidPrefix.value[7];
+            wguid.guidPrefix.value[8] = 2;
+            wguid.guidPrefix.value[9] = 0;
+            wguid.guidPrefix.value[10] = 0;
+            wguid.guidPrefix.value[11] = 0;
+            wguid.entityId.value[0] = 0;
+            wguid.entityId.value[1] = 0;
+            wguid.entityId.value[2] = 2;
+            wguid.entityId.value[3] = 3;
+            reader_->matched_writer_add(wguid, wguid, wqos, locators);
         }
     }
 

@@ -42,6 +42,7 @@
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/BaseReader.hpp>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/reader/StatelessReader.hpp>
 #include <rtps/resources/TimedEvent.h>
@@ -640,7 +641,7 @@ void PDPSimple::match_pdp_remote_endpoints(
     uint32_t pdp_writer_mask = fastdds::rtps::DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
     EntityId_t reader_entity_id = c_EntityId_SPDPReader;
     EntityId_t writer_entity_id = c_EntityId_SPDPWriter;
-    RTPSReader* reader = endpoints->reader.reader_;
+    BaseReader* reader = endpoints->reader.reader_;
     RTPSWriter* writer = endpoints->writer.writer_;
 
 #if HAVE_SECURITY

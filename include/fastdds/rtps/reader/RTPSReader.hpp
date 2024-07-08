@@ -24,7 +24,9 @@
 
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
+#include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
+#include <fastdds/rtps/common/RemoteLocators.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/Endpoint.hpp>
@@ -57,12 +59,18 @@ public:
     /**
      * @brief Add a matched writer represented by its attributes.
      *
-     * @param wdata  Discovery information regarding the writer to add.
+     * @param writer_guid              GUID of the writer being matched.
+     * @param writer_persistence_guid  Persistence GUID of the writer being matched.
+     * @param wqos                     QoS of the writer being matched.
+     * @param locators                 Locators where the writer being matched is listening.
      *
      * @return True if correctly added.
      */
     FASTDDS_EXPORTED_API virtual bool matched_writer_add(
-            const WriterProxyData& wdata) = 0;
+            const GUID_t& writer_guid,
+            const GUID_t& writer_persistence_guid,
+            const PublicationBuiltinTopicData& wqos,
+            const RemoteLocatorList& locators) = 0;
 
     /**
      * @brief Remove a writer from the matched writers.

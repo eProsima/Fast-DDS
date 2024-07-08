@@ -26,6 +26,7 @@
 #include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
 #include <fastdds/rtps/Endpoint.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
+#include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/EntityId_t.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
@@ -60,6 +61,22 @@ class BaseReader
 {
 
 public:
+
+    bool matched_writer_add(
+            const GUID_t& writer_guid,
+            const GUID_t& writer_persistence_guid,
+            const PublicationBuiltinTopicData& wqos,
+            const RemoteLocatorList& locators) override;
+
+    /**
+     * @brief Add a matched writer represented by its attributes.
+     *
+     * @param wdata  Discovery information regarding the writer to add.
+     *
+     * @return True if correctly added.
+     */
+    virtual bool matched_writer_add(
+            const WriterProxyData& wdata) = 0;
 
     fastdds::rtps::ReaderListener* get_listener() const override;
 
