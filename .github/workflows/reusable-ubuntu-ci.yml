@@ -27,6 +27,10 @@ on:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         required: true
         type: string
+      fastcdr-branch:
+        description: 'Branch or tag of Fast CDR repository (https://github.com/eProsima/Fast-CDR)'
+        required: false
+        type: string
       security:
         description: 'Enable security features'
         required: false
@@ -104,6 +108,20 @@ jobs:
         if: ${{ inputs.use-ccache == true }}
         with:
           api_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get Fast CDR branch
+        id: get_fastcdr_branch
+        uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
+        with:
+          remote_repository: eProsima/Fast-CDR
+          fallback_branch: master
+
+      - name: Download Fast CDR
+        run: |
+            cd src
+            git clone -b ${{ steps.get_fastcdr_branch.outputs.deduced_branch }} https://github.com/eProsima/Fast-CDR.git fastcdr
+            cd ..
+        shell: bash
 
       - name: Fetch Fast DDS dependencies
         uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
