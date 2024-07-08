@@ -51,9 +51,9 @@
 
 typedef int16_t MyShort;
 
-typedef uint32_t MyLong;
-
 typedef MyShort MyRecursiveShort;
+
+typedef uint32_t MyLong;
 
 /*!
  * @brief This class represents the structure AliasStruct defined by the user in the IDL file.
@@ -84,11 +84,11 @@ public:
     eProsima_user_DllExport AliasStruct(
             const AliasStruct& x)
     {
-                    m_my_short = x.m_my_short;
+                    m_my_recursive_short = x.m_my_recursive_short;
 
                     m_my_long = x.m_my_long;
 
-                    m_my_recursive_short = x.m_my_recursive_short;
+                    m_my_short = x.m_my_short;
 
     }
 
@@ -99,9 +99,9 @@ public:
     eProsima_user_DllExport AliasStruct(
             AliasStruct&& x) noexcept
     {
-        m_my_short = x.m_my_short;
-        m_my_long = x.m_my_long;
         m_my_recursive_short = x.m_my_recursive_short;
+        m_my_long = x.m_my_long;
+        m_my_short = x.m_my_short;
     }
 
     /*!
@@ -112,11 +112,11 @@ public:
             const AliasStruct& x)
     {
 
-                    m_my_short = x.m_my_short;
+                    m_my_recursive_short = x.m_my_recursive_short;
 
                     m_my_long = x.m_my_long;
 
-                    m_my_recursive_short = x.m_my_recursive_short;
+                    m_my_short = x.m_my_short;
 
         return *this;
     }
@@ -129,9 +129,9 @@ public:
             AliasStruct&& x) noexcept
     {
 
-        m_my_short = x.m_my_short;
-        m_my_long = x.m_my_long;
         m_my_recursive_short = x.m_my_recursive_short;
+        m_my_long = x.m_my_long;
+        m_my_short = x.m_my_short;
         return *this;
     }
 
@@ -142,9 +142,9 @@ public:
     eProsima_user_DllExport bool operator ==(
             const AliasStruct& x) const
     {
-        return (m_my_short == x.m_my_short &&
+        return (m_my_recursive_short == x.m_my_recursive_short &&
            m_my_long == x.m_my_long &&
-           m_my_recursive_short == x.m_my_recursive_short);
+           m_my_short == x.m_my_short);
     }
 
     /*!
@@ -158,31 +158,31 @@ public:
     }
 
     /*!
-     * @brief This function sets a value in member my_short
-     * @param _my_short New value for member my_short
+     * @brief This function sets a value in member my_recursive_short
+     * @param _my_recursive_short New value for member my_recursive_short
      */
-    eProsima_user_DllExport void my_short(
-            MyShort _my_short)
+    eProsima_user_DllExport void my_recursive_short(
+            MyRecursiveShort _my_recursive_short)
     {
-        m_my_short = _my_short;
+        m_my_recursive_short = _my_recursive_short;
     }
 
     /*!
-     * @brief This function returns the value of member my_short
-     * @return Value of member my_short
+     * @brief This function returns the value of member my_recursive_short
+     * @return Value of member my_recursive_short
      */
-    eProsima_user_DllExport MyShort my_short() const
+    eProsima_user_DllExport MyRecursiveShort my_recursive_short() const
     {
-        return m_my_short;
+        return m_my_recursive_short;
     }
 
     /*!
-     * @brief This function returns a reference to member my_short
-     * @return Reference to member my_short
+     * @brief This function returns a reference to member my_recursive_short
+     * @return Reference to member my_recursive_short
      */
-    eProsima_user_DllExport MyShort& my_short()
+    eProsima_user_DllExport MyRecursiveShort& my_recursive_short()
     {
-        return m_my_short;
+        return m_my_recursive_short;
     }
 
 
@@ -216,40 +216,40 @@ public:
 
 
     /*!
-     * @brief This function sets a value in member my_recursive_short
-     * @param _my_recursive_short New value for member my_recursive_short
+     * @brief This function sets a value in member my_short
+     * @param _my_short New value for member my_short
      */
-    eProsima_user_DllExport void my_recursive_short(
-            MyRecursiveShort _my_recursive_short)
+    eProsima_user_DllExport void my_short(
+            MyShort _my_short)
     {
-        m_my_recursive_short = _my_recursive_short;
+        m_my_short = _my_short;
     }
 
     /*!
-     * @brief This function returns the value of member my_recursive_short
-     * @return Value of member my_recursive_short
+     * @brief This function returns the value of member my_short
+     * @return Value of member my_short
      */
-    eProsima_user_DllExport MyRecursiveShort my_recursive_short() const
+    eProsima_user_DllExport MyShort my_short() const
     {
-        return m_my_recursive_short;
+        return m_my_short;
     }
 
     /*!
-     * @brief This function returns a reference to member my_recursive_short
-     * @return Reference to member my_recursive_short
+     * @brief This function returns a reference to member my_short
+     * @return Reference to member my_short
      */
-    eProsima_user_DllExport MyRecursiveShort& my_recursive_short()
+    eProsima_user_DllExport MyShort& my_short()
     {
-        return m_my_recursive_short;
+        return m_my_short;
     }
 
 
 
 private:
 
-    MyShort m_my_short{0};
-    MyLong m_my_long{0};
     MyRecursiveShort m_my_recursive_short{0};
+    MyLong m_my_long{0};
+    MyShort m_my_short{0};
 
 };
 

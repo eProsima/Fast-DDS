@@ -14,11 +14,10 @@
 
 /**
  * @file TreeNode.hpp
- *
  */
 
-#ifndef FASTDDS_UTILS_COLLECTIONS_TREE_HPP_
-#define FASTDDS_UTILS_COLLECTIONS_TREE_HPP_
+#ifndef FASTDDS_UTILS_COLLECTIONS__TREE_NODE_HPP
+#define FASTDDS_UTILS_COLLECTIONS__TREE_NODE_HPP
 
 #include <list>
 
@@ -79,6 +78,15 @@ protected:
     std::list<TreeNode> branches_;
 };
 
+template <typename Info>
+inline std::ostream& operator <<(
+        std::ostream& output,
+        const TreeNode<Info>& node)
+{
+    output << node.info;
+    return output;
+}
+
 } /* namespace collections */
 } /* namespace utilities */
 } /* namespace eprosima */
@@ -86,4 +94,4 @@ protected:
 // Include implementation template file
 #include "impl/TreeNode.ipp"
 
-#endif /* FASTDDS_UTILS_COLLECTIONS_TREE_HPP_ */
+#endif /* FASTDDS_UTILS_COLLECTIONS__TREE_NODE_HPP */

@@ -27,13 +27,13 @@
 constexpr uint32_t NestedStructElement_max_cdr_typesize {5UL};
 constexpr uint32_t NestedStructElement_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t ParentStruct_max_cdr_typesize {272UL};
+constexpr uint32_t ParentStruct_max_cdr_typesize {280UL};
 constexpr uint32_t ParentStruct_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t GrandparentStruct_max_cdr_typesize {8UL};
 constexpr uint32_t GrandparentStruct_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t StructStruct_max_cdr_typesize {278UL};
+constexpr uint32_t StructStruct_max_cdr_typesize {286UL};
 constexpr uint32_t StructStruct_max_key_cdr_typesize {0UL};
 
 

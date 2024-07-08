@@ -7,6 +7,7 @@ struct ParentStruct : GrandparentStruct
 {
     short my_short;
     string my_string;
+    GrandparentStruct my_grandparent;
 };
 
 struct NestedStructElement

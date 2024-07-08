@@ -38,10 +38,11 @@ enum class DynamicDataJsonFormat
 };
 
 /**
- * @brief Serializes a DynamicType into its IDL representation.
+ * @brief Serializes a @ref DynamicType into its IDL representation.
  *
- * @param [in] dynamic_type The DynamicType to serialize.
+ * @param [in] dynamic_type The @ref DynamicType to serialize.
  * @param [in,out] output The IDL representation.
+ * @retval RETCODE_OK when serialization fully succeeds, and inner (member serialization) failing code otherwise.
  */
 FASTDDS_EXPORTED_API ReturnCode_t idl_serialize(
         const DynamicType::_ref_type& dynamic_type,

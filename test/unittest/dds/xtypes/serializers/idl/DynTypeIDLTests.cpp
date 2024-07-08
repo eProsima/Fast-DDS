@@ -104,10 +104,13 @@ TEST_P(DynTypeIDLTests, to_idl)
     // Get Dynamic type
     DynamicType::_ref_type dyn_type;
     get_dynamic_type(snake_to_camel(type), dyn_type);
+    ASSERT_NE(dyn_type, nullptr);
 
     // Serialize DynamicType to IDL
     std::stringstream idl_serialization;
     ASSERT_EQ(idl_serialize(dyn_type, idl_serialization), RETCODE_OK);
+
+    std::cout << idl_serialization.str() << std::endl;
 
     // Compare IDLs
     ASSERT_EQ(idl_file, idl_serialization.str());

@@ -14,11 +14,10 @@
 
 /**
  * @file TreeNode.ipp
- *
  */
 
-#ifndef SRC_CPP_UTILS_COLLECTIONS_IMPL_TREE_IPP_
-#define SRC_CPP_UTILS_COLLECTIONS_IMPL_TREE_IPP_
+#ifndef FASTDDS_UTILS_COLLECTIONS_IMPL__TREE_NODE_IPP
+#define FASTDDS_UTILS_COLLECTIONS_IMPL__TREE_NODE_IPP
 
 #include <algorithm>
 
@@ -128,4 +127,4 @@ std::list<TreeNode<Info>> TreeNode<Info>::all_nodes() const noexcept
 } /* namespace utilities */
 } /* namespace eprosima */
 
-#endif  /* SRC_CPP_UTILS_COLLECTIONS_IMPL_TREE_IPP_ */
+#endif  /* FASTDDS_UTILS_COLLECTIONS_IMPL__TREE_NODE_IPP */

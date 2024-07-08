@@ -38,8 +38,8 @@
 #endif  // GEN_API_VER
 
 typedef int16_t MyShort;
-typedef uint32_t MyLong;
 typedef MyShort MyRecursiveShort;
+typedef uint32_t MyLong;
 
 /*!
  * @brief This class represents the TopicDataType of the type AliasStruct defined by the user in the IDL file.

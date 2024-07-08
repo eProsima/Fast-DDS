@@ -61,6 +61,13 @@ struct TreeNodeType
     bool is_key;
 };
 
+inline std::ostream& operator <<(
+        std::ostream& output,
+        const TreeNodeType& info)
+{
+    output << info.type_kind_name;
+    return output;
+}
 
 //////////////////////////
 // DYNAMIC TYPE TO TREE //
@@ -127,27 +134,6 @@ ReturnCode_t sequence_kind_to_idl(
 ReturnCode_t string_kind_to_idl(
         const DynamicType::_ref_type& dyn_type,
         std::ostream& idl) noexcept;
-
-/**
- * @brief Gathers the \c element_type of the DynamicType.
- *
- * @param dyn_type The DynamicType to gather the members from.
- * @param internal_type The internal type of the DynamicType's \c type_descriptor.
- */
-ReturnCode_t container_internal_type(
-        const DynamicType::_ref_type& dyn_type,
-        DynamicType::_ref_type& internal_type) noexcept;
-
-/**
- * @brief Gathers the \c bounds of the DynamicType.
- *
- * @param dyn_type The DynamicType to gather the members from.
- * @param bounds The vector to store the bounds in.
- */
-ReturnCode_t container_size(
-        const DynamicType::_ref_type& dyn_type,
-        BoundSeq& bounds) noexcept;
-
 
 //////////////////////////////
 // DYNAMIC TYPE TREE TO IDL //
@@ -232,6 +218,30 @@ ReturnCode_t union_to_idl(
 ReturnCode_t node_to_idl(
         const utilities::collections::TreeNode<TreeNodeType>& node,
         std::ostream& idl) noexcept;
+
+///////////////////////
+// AUXILIARY METHODS //
+///////////////////////
+
+/**
+ * @brief Gathers the \c element_type of the DynamicType.
+ *
+ * @param dyn_type The DynamicType to gather the members from.
+ * @param element_type The element type of the DynamicType's \c type_descriptor.
+ */
+ReturnCode_t get_element_type(
+        const DynamicType::_ref_type& dyn_type,
+        DynamicType::_ref_type& element_type) noexcept;
+
+/**
+ * @brief Gathers the \c bounds of the DynamicType.
+ *
+ * @param dyn_type The DynamicType to gather the members from.
+ * @param bounds The vector to store the bounds in.
+ */
+ReturnCode_t get_bounds(
+        const DynamicType::_ref_type& dyn_type,
+        BoundSeq& bounds) noexcept;
 
 /**
  * @brief Finds the default type kind for a variable with a given size.

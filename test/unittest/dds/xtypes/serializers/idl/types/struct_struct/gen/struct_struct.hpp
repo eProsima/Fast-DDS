@@ -209,6 +209,8 @@ public:
 
                     m_my_string = x.m_my_string;
 
+                    m_my_grandparent = x.m_my_grandparent;
+
     }
 
     /*!
@@ -222,6 +224,7 @@ public:
     {
         m_my_short = x.m_my_short;
         m_my_string = std::move(x.m_my_string);
+        m_my_grandparent = std::move(x.m_my_grandparent);
     }
 
     /*!
@@ -237,6 +240,8 @@ public:
 
                     m_my_string = x.m_my_string;
 
+                    m_my_grandparent = x.m_my_grandparent;
+
         return *this;
     }
 
@@ -251,6 +256,7 @@ public:
 
         m_my_short = x.m_my_short;
         m_my_string = std::move(x.m_my_string);
+        m_my_grandparent = std::move(x.m_my_grandparent);
         return *this;
     }
 
@@ -266,7 +272,8 @@ public:
                     return false;
                 }
         return (m_my_short == x.m_my_short &&
-           m_my_string == x.m_my_string);
+           m_my_string == x.m_my_string &&
+           m_my_grandparent == x.m_my_grandparent);
     }
 
     /*!
@@ -347,11 +354,51 @@ public:
     }
 
 
+    /*!
+     * @brief This function copies the value in member my_grandparent
+     * @param _my_grandparent New value to be copied in member my_grandparent
+     */
+    eProsima_user_DllExport void my_grandparent(
+            const GrandparentStruct& _my_grandparent)
+    {
+        m_my_grandparent = _my_grandparent;
+    }
+
+    /*!
+     * @brief This function moves the value in member my_grandparent
+     * @param _my_grandparent New value to be moved in member my_grandparent
+     */
+    eProsima_user_DllExport void my_grandparent(
+            GrandparentStruct&& _my_grandparent)
+    {
+        m_my_grandparent = std::move(_my_grandparent);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member my_grandparent
+     * @return Constant reference to member my_grandparent
+     */
+    eProsima_user_DllExport const GrandparentStruct& my_grandparent() const
+    {
+        return m_my_grandparent;
+    }
+
+    /*!
+     * @brief This function returns a reference to member my_grandparent
+     * @return Reference to member my_grandparent
+     */
+    eProsima_user_DllExport GrandparentStruct& my_grandparent()
+    {
+        return m_my_grandparent;
+    }
+
+
 
 private:
 
     int16_t m_my_short{0};
     std::string m_my_string;
+    GrandparentStruct m_my_grandparent;
 
 };
 /*!

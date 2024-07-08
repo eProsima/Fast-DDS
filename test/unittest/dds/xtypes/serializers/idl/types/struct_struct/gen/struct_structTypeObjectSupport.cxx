@@ -206,6 +206,34 @@ void register_ParentStruct_type_identifier(
             CompleteStructMember member_my_string = TypeObjectUtils::build_complete_struct_member(common_my_string, detail_my_string);
             TypeObjectUtils::add_complete_struct_member(member_seq_ParentStruct, member_my_string);
         }
+        {
+            TypeIdentifierPair type_ids_my_grandparent;
+            ReturnCode_t return_code_my_grandparent {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_my_grandparent =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "GrandparentStruct", type_ids_my_grandparent);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_my_grandparent)
+            {
+            ::register_GrandparentStruct_type_identifier(type_ids_my_grandparent);
+            }
+            StructMemberFlag member_flags_my_grandparent = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_my_grandparent = 0x00000003;
+            bool common_my_grandparent_ec {false};
+            CommonStructMember common_my_grandparent {TypeObjectUtils::build_common_struct_member(member_id_my_grandparent, member_flags_my_grandparent, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_my_grandparent, common_my_grandparent_ec))};
+            if (!common_my_grandparent_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure my_grandparent member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_my_grandparent = "my_grandparent";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_my_grandparent;
+            ann_custom_ParentStruct.reset();
+            CompleteMemberDetail detail_my_grandparent = TypeObjectUtils::build_complete_member_detail(name_my_grandparent, member_ann_builtin_my_grandparent, ann_custom_ParentStruct);
+            CompleteStructMember member_my_grandparent = TypeObjectUtils::build_complete_struct_member(common_my_grandparent, detail_my_grandparent);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ParentStruct, member_my_grandparent);
+        }
         CompleteStructType struct_type_ParentStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_ParentStruct, header_ParentStruct, member_seq_ParentStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                 TypeObjectUtils::build_and_register_struct_type_object(struct_type_ParentStruct, type_name_ParentStruct.to_string(), type_ids_ParentStruct))
@@ -328,7 +356,7 @@ void register_StructStruct_type_identifier(
             }
             StructMemberFlag member_flags_my_nested_element = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_my_nested_element = 0x00000003;
+            MemberId member_id_my_nested_element = 0x00000004;
             bool common_my_nested_element_ec {false};
             CommonStructMember common_my_nested_element {TypeObjectUtils::build_common_struct_member(member_id_my_nested_element, member_flags_my_nested_element, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_my_nested_element, common_my_nested_element_ec))};
             if (!common_my_nested_element_ec)
@@ -358,7 +386,7 @@ void register_StructStruct_type_identifier(
             }
             StructMemberFlag member_flags_my_char = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_my_char = 0x00000004;
+            MemberId member_id_my_char = 0x00000005;
             bool common_my_char_ec {false};
             CommonStructMember common_my_char {TypeObjectUtils::build_common_struct_member(member_id_my_char, member_flags_my_char, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_my_char, common_my_char_ec))};
             if (!common_my_char_ec)

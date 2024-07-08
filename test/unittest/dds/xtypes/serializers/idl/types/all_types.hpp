@@ -16,6 +16,9 @@
  * @file all_types.hpp
  */
 
+#ifndef TEST_UNITTEST_DDS_XTYPES_SERIALIZERS_IDL_TYPES__ALL_TYPES_HPP
+#define TEST_UNITTEST_DDS_XTYPES_SERIALIZERS_IDL_TYPES__ALL_TYPES_HPP
+
 #include <string>
 
 #include <fastdds/dds/topic/TypeSupport.hpp>
@@ -100,75 +103,68 @@ void register_type_object_representation(
 {
     using namespace eprosima::fastdds::dds;
 
+    TypeSupport type_support;
+
     if (type_name == SupportedTypes::ALIAS_STRUCT)
     {
-        TypeSupport type_alias_struct(new AliasStructPubSubType());
-        type_alias_struct->register_type_object_representation();
+        type_support.reset(new AliasStructPubSubType());
     }
     else if (type_name == SupportedTypes::ARRAY_STRUCT)
     {
-        TypeSupport type_array_struct(new ArrayStructPubSubType());
-        type_array_struct->register_type_object_representation();
+        type_support.reset(new ArrayStructPubSubType());
     }
     else if (type_name == SupportedTypes::BITMASK_STRUCT)
     {
-        TypeSupport type_bitmask_struct(new BitmaskStructPubSubType());
-        type_bitmask_struct->register_type_object_representation();
+        type_support.reset(new BitmaskStructPubSubType());
     }
     else if (type_name == SupportedTypes::BITSET_STRUCT)
     {
-        TypeSupport type_bitset_struct(new BitsetStructPubSubType());
-        type_bitset_struct->register_type_object_representation();
+        type_support.reset(new BitsetStructPubSubType());
     }
     else if (type_name == SupportedTypes::ENUM_STRUCT)
     {
-        TypeSupport type_enum_struct(new EnumStructPubSubType());
-        type_enum_struct->register_type_object_representation();
+        type_support.reset(new EnumStructPubSubType());
     }
     else if (type_name == SupportedTypes::EXTENSIBILITY_STRUCT)
     {
-        TypeSupport type_extensibility_struct(new ExtensibilityStructPubSubType());
-        type_extensibility_struct->register_type_object_representation();
+        type_support.reset(new ExtensibilityStructPubSubType());
     }
     else if (type_name == SupportedTypes::KEY_STRUCT)
     {
-        TypeSupport type_key_struct(new KeyStructPubSubType());
-        type_key_struct->register_type_object_representation();
+        type_support.reset(new KeyStructPubSubType());
     }
     else if (type_name == SupportedTypes::MAP_STRUCT)
     {
-        TypeSupport type_map_struct(new MapStructPubSubType());
-        type_map_struct->register_type_object_representation();
+        type_support.reset(new MapStructPubSubType());
     }
     else if (type_name == SupportedTypes::PRIMITIVE_STRUCT)
     {
-        TypeSupport type_primitives_struct(new PrimitivesStructPubSubType());
-        type_primitives_struct->register_type_object_representation();
+        type_support.reset(new PrimitivesStructPubSubType());
     }
     else if (type_name == SupportedTypes::SEQUENCE_STRUCT)
     {
-        TypeSupport type_sequence_struct(new SequenceStructPubSubType());
-        type_sequence_struct->register_type_object_representation();
+        type_support.reset(new SequenceStructPubSubType());
     }
     else if (type_name == SupportedTypes::STRING_STRUCT)
     {
-        TypeSupport type_string_struct(new StringStructPubSubType());
-        type_string_struct->register_type_object_representation();
+        type_support.reset(new StringStructPubSubType());
     }
     else if (type_name == SupportedTypes::STRUCT_STRUCT)
     {
-        TypeSupport type_struct_struct(new StructStructPubSubType());
-        type_struct_struct->register_type_object_representation();
+        type_support.reset(new StructStructPubSubType());
     }
     else if (type_name == SupportedTypes::UNION_STRUCT)
     {
-        TypeSupport type_union_struct(new UnionStructPubSubType());
-        type_union_struct->register_type_object_representation();
+        type_support.reset(new UnionStructPubSubType());
     }
     else
     {
         ASSERT_FALSE(true) << "Type not supported";
     }
+
+    type_support->register_type_object_representation();
 }
 
 } /* namespace test */
+
+#endif /* TEST_UNITTEST_DDS_XTYPES_SERIALIZERS_IDL_TYPES__ALL_TYPES_HPP */

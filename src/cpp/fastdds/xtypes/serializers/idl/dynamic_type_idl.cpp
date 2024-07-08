@@ -55,7 +55,7 @@ ReturnCode_t dyn_type_to_tree(
     {
             // If is struct, the call is recursive.
             // Create new tree node
-            TreeNode<TreeNodeType> parent(member_name, type->get_name().to_string(), type);
+            node = TreeNode<TreeNodeType>(member_name, type->get_name().to_string(), type);
 
             // Get its base class
             TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
@@ -63,6 +63,7 @@ ReturnCode_t dyn_type_to_tree(
 
             if (RETCODE_OK != ret)
             {
+                EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Error getting type descriptor of " << node << ".");
                 return ret;
             }
 
@@ -72,20 +73,22 @@ ReturnCode_t dyn_type_to_tree(
 
             if (nullptr != base_type)
             {
-                TreeNode<TreeNodeType> child;
-                ret = dyn_type_to_tree(base_type, "PARENT", child);
+                TreeNode<TreeNodeType> base;
+                ret = dyn_type_to_tree(base_type, "PARENT", base);
 
                 if (RETCODE_OK != ret)
                 {
+                    EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Error getting base type of " << node << ".");
                     return ret;
                 }
 
-                child.info.is_base = true;
+                base.info.is_base = true;
 
-                // If the struct is derived from a base, the first members of the struct are the members of the base.
+                // If the struct is derived from a base, according to the xtypes standard, the first members of the
+                // struct are the members of the base.
                 first_member = base_type->get_member_count();
 
-                parent.add_branch(child);
+                node.add_branch(base);
             }
 
             // Add each member as a new branch except for the members of its base class
@@ -96,6 +99,8 @@ ReturnCode_t dyn_type_to_tree(
 
                 if (RETCODE_OK != ret)
                 {
+                    EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
+                                       "Error getting member of " << node << " at index " << index << ".");
                     return ret;
                 }
 
@@ -104,6 +109,9 @@ ReturnCode_t dyn_type_to_tree(
 
                 if (RETCODE_OK != ret)
                 {
+                    EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
+                                       "Error getting member descriptor of member " << member->get_name() <<
+                                       " of " << node << ".");
                     return ret;
                 }
 
@@ -112,16 +120,17 @@ ReturnCode_t dyn_type_to_tree(
 
                 if (RETCODE_OK != ret)
                 {
+                    EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
+                                       "Error building tree of member " << member->get_name() <<
+                                       " of " << node << ".");
                     return ret;
                 }
 
                 child.info.is_key = member_descriptor->is_key();
 
                 // Add each member with its name as a new child in a branch (recursion)
-                parent.add_branch(child);
+                node.add_branch(child);
             }
-
-            node = parent;
     }
     else
     {
@@ -130,53 +139,58 @@ ReturnCode_t dyn_type_to_tree(
 
         if (RETCODE_OK != ret)
         {
+            EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
+                               "Error getting IDL representation of " << type->get_name().to_string() << ".");
             return ret;
         }
 
         node = TreeNode<TreeNodeType>(member_name, idl.str(), type);
 
-        if (kind == TK_ARRAY || kind == TK_SEQUENCE)
+        if (kind == TK_ALIAS)
         {
-            // If container (array or sequence) has exactly one branch
-            // Calculate child branch
-            DynamicType::_ref_type internal_type;
-            ret = container_internal_type(type, internal_type);
+            TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+            ret = node.info.dynamic_type->get_descriptor(type_descriptor);
 
             if (RETCODE_OK != ret)
             {
+                EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Error getting type descriptor of " << node << ".");
+                return ret;
+            }
+
+            // Add a branch for the base type of the alias
+            TreeNode<TreeNodeType> base;
+            ret = dyn_type_to_tree(type_descriptor->base_type(), "BASE", base);
+
+            if (RETCODE_OK != ret)
+            {
+                EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Error building tree of " << base << ".");
+                return ret;
+            }
+
+            node.add_branch(base);
+        }
+        else if (kind == TK_ARRAY || kind == TK_MAP || kind == TK_SEQUENCE)
+        {
+            // Add a branch for the element type of the container
+            DynamicType::_ref_type element_type;
+            ret = get_element_type(type, element_type);
+
+            if (RETCODE_OK != ret)
+            {
+                EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Error getting element type of " << node << ".");
                 return ret;
             }
 
             TreeNode<TreeNodeType> child;
-            ret = dyn_type_to_tree(internal_type, "CONTAINER_MEMBER", child);
+            ret = dyn_type_to_tree(element_type, "CONTAINER_MEMBER", child);
 
             if (RETCODE_OK != ret)
             {
+                EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Error building tree of " << child << ".");
                 return ret;
             }
 
             node.add_branch(child);
-        }
-        else if (kind == TK_MAP)
-        {
-            // Add value branch
-            TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
-            ret = type->get_descriptor(type_descriptor);
-
-            if (RETCODE_OK != ret)
-            {
-                return ret;
-            }
-
-            TreeNode<TreeNodeType> value;
-            ret = dyn_type_to_tree(type_descriptor->element_type(), "VALUE", value);
-
-            if (RETCODE_OK != ret)
-            {
-                return ret;
-            }
-
-            node.add_branch(value);
         }
         else if (kind == TK_UNION)
         {
@@ -188,6 +202,8 @@ ReturnCode_t dyn_type_to_tree(
 
                 if (RETCODE_OK != ret)
                 {
+                    EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
+                                       "Error getting member of " << node << " at index " << index << ".");
                     return ret;
                 }
 
@@ -196,6 +212,9 @@ ReturnCode_t dyn_type_to_tree(
 
                 if (RETCODE_OK != ret)
                 {
+                    EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
+                                       "Error getting member descriptor of member " << member->get_name() <<
+                                       " of " << node << ".");
                     return ret;
                 }
 
@@ -204,6 +223,9 @@ ReturnCode_t dyn_type_to_tree(
 
                 if (RETCODE_OK != ret)
                 {
+                    EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
+                                       "Error building tree of member " << member->get_name() <<
+                                       " of " << node << ".");
                     return ret;
                 }
 
@@ -221,7 +243,9 @@ ReturnCode_t type_kind_to_idl(
 {
     ReturnCode_t ret = RETCODE_OK;
 
-    switch (dyn_type->get_kind())
+    const auto kind = dyn_type->get_kind();
+
+    switch (kind)
     {
         case TK_BOOLEAN:
         {
@@ -331,11 +355,13 @@ ReturnCode_t type_kind_to_idl(
         }
         case TK_NONE:
         {
+            EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Failed to convert TK_NONE to stream.");
             ret = RETCODE_UNSUPPORTED;
             break;
         }
         default:
         {
+            EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Failed to convert unknown type (" << kind << ") to stream.");
             ret = RETCODE_BAD_PARAMETER;
             break;
         }
@@ -352,26 +378,32 @@ ReturnCode_t array_kind_to_idl(
 
     ReturnCode_t ret = RETCODE_OK;
 
-    DynamicType::_ref_type internal_type;
-    ret = container_internal_type(dyn_type, internal_type);
+    DynamicType::_ref_type element_type;
+    ret = get_element_type(dyn_type, element_type);
 
     if (RETCODE_OK != ret)
     {
+        EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
+                           "Error getting element type of " << dyn_type->get_name().to_string() << ".");
         return ret;
     }
 
-    ret = type_kind_to_idl(internal_type, idl);
+    ret = type_kind_to_idl(element_type, idl);
 
     if (RETCODE_OK != ret)
     {
+        EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
+                           "Error getting IDL representation of " << element_type->get_name().to_string() << ".");
         return ret;
     }
 
     BoundSeq bounds;
-    ret = container_size(dyn_type, bounds);
+    ret = get_bounds(dyn_type, bounds);
 
     if (RETCODE_OK != ret)
     {
+        EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
+                           "Error getting bounds of " << dyn_type->get_name().to_string() << ".");
         return ret;
     }
 
@@ -396,6 +428,8 @@ ReturnCode_t map_kind_to_idl(
 
     if (RETCODE_OK != ret)
     {
+        EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
+                           "Error getting type descriptor of " << dyn_type->get_name().to_string() << ".");
         return ret;
     }
 
@@ -406,6 +440,8 @@ ReturnCode_t map_kind_to_idl(
 
     if (RETCODE_OK != ret)
     {
+        EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
+                           "Error getting IDL representation of " << key_type->get_name().to_string() << ".");
         return ret;
     }
 
@@ -416,18 +452,24 @@ ReturnCode_t map_kind_to_idl(
 
     if (RETCODE_OK != ret)
     {
+        EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
+                           "Error getting IDL representation of " << value_type->get_name().to_string() << ".");
         return ret;
     }
 
     BoundSeq bounds;
-    ret = container_size(dyn_type, bounds);
+    ret = get_bounds(dyn_type, bounds);
 
     if (RETCODE_OK != ret)
     {
+        EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
+                           "Error getting bounds of " << dyn_type->get_name().to_string() << ".");
         return ret;
     }
 
-    if (bounds.size() == 1)
+    assert(bounds.size() <= 1);
+
+    if (1 == bounds.size())
     {
         idl << ", " << std::to_string(bounds[0]);
     }
@@ -445,30 +487,38 @@ ReturnCode_t sequence_kind_to_idl(
 
     ReturnCode_t ret = RETCODE_OK;
 
-    DynamicType::_ref_type internal_type;
-    ret = container_internal_type(dyn_type, internal_type);
+    DynamicType::_ref_type element_type;
+    ret = get_element_type(dyn_type, element_type);
 
     if (RETCODE_OK != ret)
     {
+        EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
+                           "Error getting element type of " << dyn_type->get_name().to_string() << ".");
         return ret;
     }
 
     idl << "sequence<";
 
-    ret = type_kind_to_idl(internal_type, idl);
+    ret = type_kind_to_idl(element_type, idl);
 
     if (RETCODE_OK != ret)
     {
+        EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
+                           "Error getting IDL representation of " << element_type->get_name().to_string() << ".");
         return ret;
     }
 
     BoundSeq bounds;
-    ret = container_size(dyn_type, bounds);
+    ret = get_bounds(dyn_type, bounds);
 
     if (RETCODE_OK != ret)
     {
+        EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
+                           "Error getting bounds of " << dyn_type->get_name().to_string() << ".");
         return ret;
     }
+
+    assert(bounds.size() <= 1);
 
     if (1 == bounds.size())
     {
@@ -498,61 +548,20 @@ ReturnCode_t string_kind_to_idl(
     }
 
     BoundSeq bounds;
-    ret = container_size(dyn_type, bounds);
+    ret = get_bounds(dyn_type, bounds);
 
     if (RETCODE_OK != ret)
     {
+        EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
+                           "Error getting bounds of " << dyn_type->get_name().to_string() << ".");
         return ret;
     }
+
+    assert(bounds.size() <= 1);
 
     if (1 == bounds.size())
     {
         idl << "<" << std::to_string(bounds[0]) << ">";
-    }
-
-    return ret;
-}
-
-ReturnCode_t container_internal_type(
-        const DynamicType::_ref_type& dyn_type,
-        DynamicType::_ref_type& internal_type) noexcept
-{
-    ReturnCode_t ret = RETCODE_OK;
-
-    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
-    ret = dyn_type->get_descriptor(type_descriptor);
-
-    if (RETCODE_OK != ret)
-    {
-        return ret;
-    }
-
-    internal_type = type_descriptor->element_type();
-
-    return ret;
-}
-
-ReturnCode_t container_size(
-        const DynamicType::_ref_type& dyn_type,
-        BoundSeq& bounds) noexcept
-{
-    ReturnCode_t ret = RETCODE_OK;
-
-    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
-    ret = dyn_type->get_descriptor(type_descriptor);
-
-    if (RETCODE_OK != ret)
-    {
-        return ret;
-    }
-
-    bounds = type_descriptor->bound();
-
-    static const auto UNBOUNDED = static_cast<std::uint32_t>(LENGTH_UNLIMITED);
-
-    if (1 == bounds.size() && UNBOUNDED == bounds[0])
-    {
-        bounds.clear();
     }
 
     return ret;
@@ -570,13 +579,12 @@ ReturnCode_t dyn_type_tree_to_idl(
 
     std::set<std::string> types_written;
 
-    // For every Node, check if it is of a "writable" type (i.e. struct, enum or union).
-    // If it is, check if it is not yet written
-    // If it is not, write it down
+    // Write the dependencies of the root node
     for (const auto& node : root.all_nodes())
     {
         if (types_written.find(node.info.type_kind_name) != types_written.end())
         {
+            // The type has already been written. Skip it.
             continue;
         }
 
@@ -622,6 +630,7 @@ ReturnCode_t dyn_type_tree_to_idl(
 
         if (RETCODE_OK != ret)
         {
+            EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Error writing " << node.info.type_kind_name << " to IDL.");
             return ret;
         }
 
@@ -629,11 +638,12 @@ ReturnCode_t dyn_type_tree_to_idl(
         types_written.insert(node.info.type_kind_name);
     }
 
-    // Write struct parent node at last, after all its dependencies
+    // Write the struct root node at last, after all its dependencies
     ret = struct_to_idl(root, idl);
 
     if (RETCODE_OK != ret)
     {
+        EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Error writing " << root.info.type_kind_name << " to IDL.");
         return ret;
     }
 
@@ -653,6 +663,7 @@ ReturnCode_t alias_to_idl(
 
     if (RETCODE_OK != ret)
     {
+        EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Error getting type descriptor of " << node << ".");
         return ret;
     }
 
@@ -663,6 +674,7 @@ ReturnCode_t alias_to_idl(
 
     if (RETCODE_OK != ret)
     {
+        EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Error getting IDL representation of " << node << ".");
         return ret;
     }
 
@@ -679,23 +691,24 @@ ReturnCode_t bitmask_to_idl(
 
     ReturnCode_t ret = RETCODE_OK;
 
-    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
-    ret = node.info.dynamic_type->get_descriptor(type_descriptor);
+    BoundSeq bounds;
+    ret = get_bounds(node.info.dynamic_type, bounds);
 
     if (RETCODE_OK != ret)
     {
+        EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Error getting bounds of " << node << ".");
         return ret;
     }
 
-    if (1 != type_descriptor->bound().size())
+    if (1 != bounds.size())
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Bitmask type must have exactly one bound.");
+        EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Bitmask type has " << bounds.size() << " bounds instead of one.");
         return RETCODE_BAD_PARAMETER;
     }
 
     // Annotation with the bitmask size
     static constexpr std::uint32_t DEFAULT_BITMASK_SIZE = 32;
-    const auto bitmask_size = type_descriptor->bound()[0];
+    const auto bitmask_size = bounds[0];
 
     if (DEFAULT_BITMASK_SIZE != bitmask_size)
     {
@@ -715,6 +728,7 @@ ReturnCode_t bitmask_to_idl(
 
         if (RETCODE_OK != ret)
         {
+            EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Error getting member of " << node << " at index " << index << ".");
             return ret;
         }
 
@@ -763,6 +777,7 @@ ReturnCode_t bitset_to_idl(
 
     if (RETCODE_OK != ret)
     {
+        EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Error getting type descriptor of " << node << ".");
         return ret;
     }
 
@@ -778,6 +793,7 @@ ReturnCode_t bitset_to_idl(
 
         if (RETCODE_OK != ret)
         {
+            EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Error getting member of " << node << " at index " << index << ".");
             return ret;
         }
 
@@ -800,6 +816,7 @@ ReturnCode_t bitset_to_idl(
 
         if (RETCODE_OK != ret)
         {
+            EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Error getting member descriptor of " << member->get_name() << ".");
             return ret;
         }
 
@@ -808,6 +825,7 @@ ReturnCode_t bitset_to_idl(
 
         if (RETCODE_OK != ret)
         {
+            EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Error getting default type kind.");
             return ret;
         }
 
@@ -849,6 +867,7 @@ ReturnCode_t enum_to_idl(
 
         if (RETCODE_OK != ret)
         {
+            EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Error getting member of " << node << " at index " << index << ".");
             return ret;
         }
 
@@ -880,6 +899,7 @@ ReturnCode_t struct_to_idl(
 
     if (RETCODE_OK != ret)
     {
+        EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Error getting type descriptor of " << node << ".");
         return ret;
     }
 
@@ -902,7 +922,7 @@ ReturnCode_t struct_to_idl(
         }
         default:
         {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Extensibility kind not supported.");
+            EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Extensibility kind not supported.");
             return RETCODE_BAD_PARAMETER;
         }
     }
@@ -910,15 +930,19 @@ ReturnCode_t struct_to_idl(
     // Add types name
     idl << "struct " << node.info.type_kind_name;
 
+    const auto base_type = type_descriptor->base_type();
+
     // Add inheritance
-    if (nullptr != type_descriptor->base_type())
+    if (nullptr != base_type)
     {
         idl << " : ";
 
-        ret = type_kind_to_idl(type_descriptor->base_type(), idl);
+        ret = type_kind_to_idl(base_type, idl);
 
         if (RETCODE_OK != ret)
         {
+            EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
+                               "Error getting IDL representation of " << base_type->get_name().to_string() << ".");
             return ret;
         }
     }
@@ -957,6 +981,7 @@ ReturnCode_t union_to_idl(
 
     if (RETCODE_OK != ret)
     {
+        EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Error getting type descriptor of " << node << ".");
         return ret;
     }
 
@@ -981,6 +1006,7 @@ ReturnCode_t union_to_idl(
 
         if (RETCODE_OK != ret)
         {
+            EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Error getting member descriptor of " << member->get_name() << ".");
             return ret;
         }
 
@@ -1031,7 +1057,7 @@ ReturnCode_t node_to_idl(
 
         if (std::string::npos == dim_pos)
         {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Array type name is not well formed.");
+            EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Array type name is not well formed.");
             return RETCODE_BAD_PARAMETER;
         }
 
@@ -1046,6 +1072,59 @@ ReturnCode_t node_to_idl(
     }
 
     return RETCODE_OK;
+}
+
+///////////////////////
+// AUXILIARY METHODS //
+///////////////////////
+
+ReturnCode_t get_element_type(
+        const DynamicType::_ref_type& dyn_type,
+        DynamicType::_ref_type& element_type) noexcept
+{
+    ReturnCode_t ret = RETCODE_OK;
+
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    ret = dyn_type->get_descriptor(type_descriptor);
+
+    if (RETCODE_OK != ret)
+    {
+        EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
+                           "Error getting type descriptor of " << dyn_type->get_name().to_string() << ".");
+        return ret;
+    }
+
+    element_type = type_descriptor->element_type();
+
+    return ret;
+}
+
+ReturnCode_t get_bounds(
+        const DynamicType::_ref_type& dyn_type,
+        BoundSeq& bounds) noexcept
+{
+    ReturnCode_t ret = RETCODE_OK;
+
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    ret = dyn_type->get_descriptor(type_descriptor);
+
+    if (RETCODE_OK != ret)
+    {
+        EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
+                           "Error getting type descriptor of " << dyn_type->get_name().to_string() << ".");
+        return ret;
+    }
+
+    bounds = type_descriptor->bound();
+
+    static constexpr auto UNBOUNDED = static_cast<std::uint32_t>(LENGTH_UNLIMITED);
+
+    if (1 == bounds.size() && UNBOUNDED == bounds[0])
+    {
+        bounds.clear();
+    }
+
+    return ret;
 }
 
 ReturnCode_t get_default_type_kind(
@@ -1074,7 +1153,7 @@ ReturnCode_t get_default_type_kind(
     }
     else
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Size " << size << " is not supported.");
+        EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Size " << size << " is not supported.");
         return RETCODE_BAD_PARAMETER;
     }
 
