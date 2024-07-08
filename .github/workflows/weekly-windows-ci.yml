@@ -3,7 +3,7 @@ name: Fast DDS Windows CI (weekly)
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 * * * 1' # Run at minute 0 on Monday
+    - cron: '0 0 * * 1' # Run at minute 0 on Monday
 
 jobs:
 
