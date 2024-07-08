@@ -52,11 +52,11 @@ PublisherApp::PublisherApp(
     , type_(new ShapeTypePubSubType())
     , matched_(0)
     , period_ms_(config.interval)
-    , timeout_ms_(config.timeout)
+    , timeout_s_(config.timeout)
     , samples_(config.samples)
     , instances_(config.instances)
-    , stop_(false)
     , shape_config_(config.shape_config)
+    , stop_(false)
 {
     // Create the participant
     DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
@@ -167,11 +167,11 @@ void PublisherApp::run()
     }
 
     // Wait for the timeout to expire if not stopped
-    if (!is_stopped() && timeout_ms_ > 0)
+    if (!is_stopped() && timeout_s_ > 0)
     {
-        std::cout << "Publisher stopping... waiting for " << timeout_ms_ << " ms" << std::endl;
+        std::cout << "Publisher stopping... waiting for " << timeout_s_ << "s to late-joiners" << std::endl;
         std::unique_lock<std::mutex> timeout_lock(mutex_);
-        cv_.wait_for(timeout_lock, std::chrono::milliseconds(timeout_ms_), [&]()
+        cv_.wait_for(timeout_lock, std::chrono::seconds(timeout_s_), [&]()
                 {
                     return is_stopped();
                 });

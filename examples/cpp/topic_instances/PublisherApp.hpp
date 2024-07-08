@@ -95,7 +95,7 @@ private:
 
     uint32_t period_ms_;
 
-    uint32_t timeout_ms_;
+    uint32_t timeout_s_;
 
     uint16_t samples_;
 

@@ -86,7 +86,7 @@ public:
     struct publisher_config : public subscriber_config
     {
         uint16_t interval = 100;
-        uint16_t timeout = 10000;
+        uint16_t timeout = 10;
         shape_configuration shape_config;
     };
 
@@ -153,13 +153,14 @@ public:
         std::cout << "            --interval <num>      Time between samples in milliseconds "  << std::endl;
         std::cout << "                                  (Default: 100)"                         << std::endl;
         std::cout << "            --size <num>          Shape size "                            << std::endl;
+        std::cout << "                                  [10 <= <num> <= 100]"                   << std::endl;
         std::cout << "                                  (Default: 30)"                          << std::endl;
         std::cout << "            --step <num>          Shape step movement "                   << std::endl;
         std::cout << "                                  (Default: 3)"                           << std::endl;
         std::cout << "  -t <num>, --timeout <num>       Wait time until automatically stop the" << std::endl;
         std::cout << "                                  publisher execution once all samples "  << std::endl;
-        std::cout << "                                  have been sent, in milliseconds "       << std::endl;
-        std::cout << "                                  (Default: 10000 [10s])"                 << std::endl;
+        std::cout << "                                  have been sent, in seconds "            << std::endl;
+        std::cout << "                                  (Default: 10)"                          << std::endl;
         std::cout << "  -w <num>, --width <num>         Shape bounds width "                    << std::endl;
         std::cout << "                                  (Default: 230)"                         << std::endl;
         std::exit(return_code);
@@ -427,14 +428,14 @@ public:
                     {
                         if (config.entity == CLIParser::EntityKind::PUBLISHER)
                         {
-                            size_t input = std::stoi(argv[++i]);
-                            if (input > 0)
+                            int input = std::stoi(argv[++i]);
+                            if (input >= 5)
                             {
                                 config.pub_config.shape_config.size = input;
                             }
                             else
                             {
-                                throw std::invalid_argument("size must be greater than 0");
+                                throw std::invalid_argument("size must be equal or greater than 5");
                             }
                         }
                         else
