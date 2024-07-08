@@ -44,6 +44,9 @@
 #include "map_struct/gen/map_struct.hpp"
 #include "map_struct/gen/map_structPubSubTypes.hpp"
 
+#include "primitives_struct/gen/primitives_struct.hpp"
+#include "primitives_struct/gen/primitives_structPubSubTypes.hpp"
+
 #include "sequence_struct/gen/sequence_struct.hpp"
 #include "sequence_struct/gen/sequence_structPubSubTypes.hpp"
 
@@ -68,6 +71,7 @@ const std::string ENUM_STRUCT{"enum_struct"};
 const std::string EXTENSIBILITY_STRUCT{"extensibility_struct"};
 const std::string KEY_STRUCT{"key_struct"};
 const std::string MAP_STRUCT{"map_struct"};
+const std::string PRIMITIVE_STRUCT{"primitives_struct"};
 const std::string SEQUENCE_STRUCT{"sequence_struct"};
 const std::string STRING_STRUCT{"string_struct"};
 const std::string STRUCT_STRUCT{"struct_struct"};
@@ -84,6 +88,7 @@ const std::vector<std::string> supported_types = {
     SupportedTypes::EXTENSIBILITY_STRUCT,
     SupportedTypes::KEY_STRUCT,
     SupportedTypes::MAP_STRUCT,
+    SupportedTypes::PRIMITIVE_STRUCT,
     SupportedTypes::SEQUENCE_STRUCT,
     SupportedTypes::STRING_STRUCT,
     SupportedTypes::STRUCT_STRUCT,
@@ -134,6 +139,11 @@ void register_type_object_representation(
     {
         TypeSupport type_map_struct(new MapStructPubSubType());
         type_map_struct->register_type_object_representation();
+    }
+    else if (type_name == SupportedTypes::PRIMITIVE_STRUCT)
+    {
+        TypeSupport type_primitives_struct(new PrimitivesStructPubSubType());
+        type_primitives_struct->register_type_object_representation();
     }
     else if (type_name == SupportedTypes::SEQUENCE_STRUCT)
     {

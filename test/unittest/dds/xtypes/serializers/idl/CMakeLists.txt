@@ -45,6 +45,10 @@ configure_file(
     ${CMAKE_CURRENT_BINARY_DIR}/types/map_struct/map_struct.idl
     COPYONLY)
 configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/primitives_struct/primitives_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/primitives_struct/primitives_struct.idl
+    COPYONLY)
+configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/types/sequence_struct/sequence_struct.idl
     ${CMAKE_CURRENT_BINARY_DIR}/types/sequence_struct/sequence_struct.idl
     COPYONLY)

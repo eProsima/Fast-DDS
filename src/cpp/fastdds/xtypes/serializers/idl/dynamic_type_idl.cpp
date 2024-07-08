@@ -235,7 +235,7 @@ ReturnCode_t type_kind_to_idl(
         }
         case TK_INT8:
         {
-            idl << "char";
+            idl << "int8";
             break;
         }
         case TK_INT16:
@@ -255,7 +255,7 @@ ReturnCode_t type_kind_to_idl(
         }
         case TK_UINT8:
         {
-            idl << "unsigned char";
+            idl << "uint8";
             break;
         }
         case TK_UINT16:
