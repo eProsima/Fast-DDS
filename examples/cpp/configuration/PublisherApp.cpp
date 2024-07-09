@@ -139,16 +139,30 @@ PublisherApp::PublisherApp(
                       "DataWriter initialization failed: ownership strength is only valid with exclusive ownership");
         }
         writer_qos.ownership_strength().value = config.ownership_strength;
-        writer_qos.deadline().period = eprosima::fastdds::Duration_t(config.deadline * 1e-3);
+        if (config.deadline > 0)
+        {
+            writer_qos.deadline().period = eprosima::fastdds::Duration_t(config.deadline * 1e-3);
+        }
         writer_qos.reliable_writer_qos().disable_positive_acks.enabled = config.disable_positive_ack;
-        writer_qos.reliable_writer_qos().disable_positive_acks.duration = eprosima::fastdds::Duration_t(
-            config.ack_keep_duration * 1e-3);
-        writer_qos.lifespan().duration = eprosima::fastdds::Duration_t(config.lifespan * 1e-3);
+        if (config.ack_keep_duration > 0)
+        {
+            writer_qos.reliable_writer_qos().disable_positive_acks.duration = eprosima::fastdds::Duration_t(
+                config.ack_keep_duration * 1e-3);
+        }
+        if (config.lifespan > 0)
+        {
+            writer_qos.lifespan().duration = eprosima::fastdds::Duration_t(config.lifespan * 1e-3);
+        }
         writer_qos.liveliness().kind = config.liveliness;
-        writer_qos.liveliness().lease_duration = eprosima::fastdds::Duration_t(
-            config.liveliness_lease * 1e-3);
-        writer_qos.liveliness().announcement_period = eprosima::fastdds::Duration_t(
-            config.liveliness_assert * 1e-3);
+        if (config.liveliness_lease > 0)
+        {
+            writer_qos.liveliness().lease_duration = eprosima::fastdds::Duration_t(config.liveliness_lease * 1e-3);
+        }
+        if (config.liveliness_assert > 0)
+        {
+            writer_qos.liveliness().announcement_period = eprosima::fastdds::Duration_t(
+                config.liveliness_assert * 1e-3);
+        }
         writer_ = publisher_->create_datawriter(topic_, writer_qos, this, StatusMask::all());
     }
     else
