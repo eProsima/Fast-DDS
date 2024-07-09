@@ -26,7 +26,7 @@ namespace fastdds {
 namespace dds {
 
 /**
- * Indicates if the samples are from an alive @ref DataWriter or not.
+ * Indicates if the samples are from an alive @ref eprosima::fastdds::dds::DataWriter or not.
  *
  * For each instance, the middleware internally maintains an instance state. The instance state
  * can be:
