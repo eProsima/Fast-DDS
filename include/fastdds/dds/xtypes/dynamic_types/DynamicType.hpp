@@ -37,7 +37,7 @@ public:
 
     /*!
      * Provides a summary of the state of this type overwriting a provided object (see [standard] 7.5.2.8.7)
-     * @param[inout] descriptor @ref TypeDescriptor reference where copied the information.
+     * @param [inout] descriptor @ref TypeDescriptor reference where copied the information.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the copy was successful.
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil.
@@ -59,8 +59,8 @@ public:
 
     /*!
      * Returns the member that corresponds to the specified name.
-     * @param[inout] member @ref DynamicTypeMember reference used to return the reference to the member.
-     * @param[in] name Member name of the member being queried.
+     * @param [inout] member @ref DynamicTypeMember reference used to return the reference to the member.
+     * @param [in] name Member name of the member being queried.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the member was found.
      * @retval RETCODE_BAD_PARAMETER when the member doesn't exist.
@@ -71,7 +71,7 @@ public:
 
     /*!
      * Returns all members by @ref ObjectName.
-     * @param[inout] member @ref DynamicTypeMembersByName reference where the information is copied.
+     * @param [inout] member @ref DynamicTypeMembersByName reference where the information is copied.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK
      */
@@ -80,8 +80,8 @@ public:
 
     /*!
      * Returns the member that corresponds to the specified @ref MemberId.
-     * @param[inout] member @ref DynamicTypeMember reference used to return the reference to the member.
-     * @param[in] id @ref MemberId
+     * @param [inout] member @ref DynamicTypeMember reference used to return the reference to the member.
+     * @param [in] id @ref MemberId
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the member was found.
      * @retval RETCODE_BAD_PARAMETER when the member doesn't exist.
@@ -92,7 +92,7 @@ public:
 
     /*!
      * Returns all members by @ref MemberId.
-     * @param[inout] member @ref DynamicTypeMembersById reference where the information is copied.
+     * @param [inout] member @ref DynamicTypeMembersById reference where the information is copied.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK
      */
@@ -107,8 +107,8 @@ public:
 
     /**
      * This operation returns the member that corresponds to the specified index.
-     * @param[inout] member @ref DynamicTypeMember reference used to return the reference to the member.
-     * @param[in] index Index
+     * @param [inout] member @ref DynamicTypeMember reference used to return the reference to the member.
+     * @param [in] index Index
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the member was found.
      * @retval RETCODE_BAD_PARAMETER when the index is out-of-range.
@@ -125,8 +125,8 @@ public:
 
     /*!
      * Returns an applied annotation by index.
-     * @param[inout] descriptor @ref AnnotationDescriptor reference where the information is copied.
-     * @param[in] idx Index.
+     * @param [inout] descriptor @ref AnnotationDescriptor reference where the information is copied.
+     * @param [in] idx Index.
      * @return standard @ref ReturnCode_t
      * @retval RETCODE_OK when the copy was successful.
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil or index is out-of-range.
@@ -143,8 +143,8 @@ public:
 
     /*!
      * Returns an applied verbatim text by index.
-     * @param[inout] descriptor @ref VerbatimTextDescriptor reference where the information is copied.
-     * @param[in] idx Index.
+     * @param [inout] descriptor @ref VerbatimTextDescriptor reference where the information is copied.
+     * @param [in] idx Index.
      * @return standard @ref ReturnCode_t
      * @retval RETCODE_OK when the copy was successful.
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil or index is out-of-range.
@@ -155,7 +155,7 @@ public:
 
     /**
      * State comparison according with the [standard] sections \b 7.5.2.8.4
-     * @param[in] other @ref DynamicType reference to compare to
+     * @param [in] other @ref DynamicType reference to compare to
      * @return \b bool `true` on equality
      */
     FASTDDS_EXPORTED_API virtual bool equals(

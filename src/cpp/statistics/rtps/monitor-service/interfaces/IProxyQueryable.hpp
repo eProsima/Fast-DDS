@@ -37,8 +37,8 @@ struct IProxyQueryable
      * proxy of an entity. This is in the form of
      * a sequence of octets.
      *
-     * @param[in] guid The GUID_t identifying the target entity
-     * @param[out] msg Pointer containig the serialized proxy
+     * @param [in] guid The GUID_t identifying the target entity
+     * @param [out] msg Pointer containig the serialized proxy
      * @return Whether the operation succeeds or not
      */
     virtual bool get_serialized_proxy(
@@ -50,7 +50,7 @@ struct IProxyQueryable
      * local entities. This includes the participant
      * and user endpoints
      *
-     * @param[out] guids The collections of GUID_t of the local entities
+     * @param [out] guids The collections of GUID_t of the local entities
      */
     virtual bool get_all_local_proxies(
             std::vector<fastdds::rtps::GUID_t>& guids) = 0;

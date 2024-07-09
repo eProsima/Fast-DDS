@@ -103,7 +103,7 @@ public:
 
     /**
      * Remove a RTPSParticipant and delete all its associated Writers, Readers, resources, etc.
-     * @param[in] p Pointer to the RTPSParticipant;
+     * @param [in] p Pointer to the RTPSParticipant;
      * @return True if correct.
      */
     static bool removeRTPSParticipant(

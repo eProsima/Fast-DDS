@@ -33,9 +33,9 @@ namespace collections {
  * @tparam ValueType          Type of the item to insert. The collection should support to insert a value of this type.
  * @tparam LessThanPredicate  Predicate that performs ValueType < CollectionType::value_type comparison.
  *
- * @param[in,out] collection The collection to be modified.
- * @param[in]     item       The item to be inserted.
- * @param[in]     pred       The predicate to use for comparisons.
+ * @param [in,out] collection The collection to be modified.
+ * @param [in]     item       The item to be inserted.
+ * @param [in]     pred       The predicate to use for comparisons.
  */
 template<
     typename CollectionType,

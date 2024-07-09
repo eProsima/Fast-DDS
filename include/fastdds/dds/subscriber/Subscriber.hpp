@@ -230,7 +230,7 @@ public:
      * @brief This operation allows the application to access the DataReader objects that contain samples with the
      * specified sample_states, view_states, and instance_states.
      *
-     * @param[out] readers Vector of DataReader where the list of existing readers is returned
+     * @param [out] readers Vector of DataReader where the list of existing readers is returned
      * @param sample_states Vector of SampleStateKind
      * @param view_states Vector of ViewStateKind
      * @param instance_states Vector of InstanceStateKind
@@ -361,8 +361,8 @@ public:
     /**
      * @brief Copies TopicQos into the corresponding DataReaderQos
      *
-     * @param[in, out] reader_qos
-     * @param[in] topic_qos
+     * @param [in, out] reader_qos
+     * @param [in] topic_qos
      * @return RETCODE_OK if successful, an error code otherwise
      *
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED

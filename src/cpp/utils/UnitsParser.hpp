@@ -30,7 +30,7 @@ namespace utils {
 /**
  * Converts the string to uppercase.
  *
- * @param[in] st String to convert
+ * @param [in] st String to convert
  */
 inline void to_uppercase(
         std::string& st) noexcept;
@@ -38,8 +38,8 @@ inline void to_uppercase(
 /**
  * Converts a numeric value with units to bytes.
  *
- * @param[in] value Numeric value to convert
- * @param[in] units Units to use for the conversion
+ * @param [in] value Numeric value to convert
+ * @param [in] units Units to use for the conversion
  * @return The value in bytes
  */
 uint32_t parse_value_and_units(

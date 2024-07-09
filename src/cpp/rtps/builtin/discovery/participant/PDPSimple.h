@@ -77,7 +77,7 @@ public:
      * Force the sending of our local DPD to all remote RTPSParticipants and multicast Locators.
      * @param new_change If true a new change (with new seqNum) is created and sent; if false the last change is re-sent
      * @param dispose Sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED
-     * @param[in, out] wparams  allows to identify the change
+     * @param [in, out] wparams  allows to identify the change
      */
     void announceParticipantState(
             bool new_change,

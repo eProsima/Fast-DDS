@@ -90,10 +90,10 @@ public:
      * Virtual method that is called when a new change is received.
      * In this implementation this method just calls add_change. The user can overload this method in case
      * he needs to perform additional checks before adding the change.
-     * @param[in] change Pointer to the change
-     * @param[in] unknown_missing_changes_up_to The number of changes from the same writer with a lower sequence number that
+     * @param [in] change Pointer to the change
+     * @param [in] unknown_missing_changes_up_to The number of changes from the same writer with a lower sequence number that
      *                                      could potentially be received in the future.
-     * @param[out] rejection_reason In case of been rejected the sample, it will contain the reason of the rejection.
+     * @param [out] rejection_reason In case of been rejected the sample, it will contain the reason of the rejection.
      * @return True if added.
      */
     FASTDDS_EXPORTED_API virtual bool received_change(
@@ -108,7 +108,7 @@ public:
     /**
      * Called when a fragmented change is received completely by the Subscriber. Will find its instance and store it.
      * @pre Change should be already present in the history.
-     * @param[in] change The received change
+     * @param [in] change The received change
      * @return
      */
     FASTDDS_EXPORTED_API bool virtual completed_change(
@@ -121,9 +121,9 @@ public:
     /**
      * Called when a fragmented change is received completely by the Subscriber. Will find its instance and store it.
      * @pre Change should be already present in the history.
-     * @param[in] change The received change
-     * @param[in] unknown_missing_changes_up_to Number of missing changes before this one
-     * @param[out] rejection_reason In case of been rejected the sample, it will contain the reason of the rejection.
+     * @param [in] change The received change
+     * @param [in] unknown_missing_changes_up_to Number of missing changes before this one
+     * @param [out] rejection_reason In case of been rejected the sample, it will contain the reason of the rejection.
      * @return
      */
     FASTDDS_EXPORTED_API virtual bool completed_change(
@@ -160,7 +160,7 @@ public:
      * Remove a specific change from the history.
      * No Thread Safe
      * @param removal iterator to the change for removal
-     * @param[in] max_blocking_time Maximum time this method has to complete the task.
+     * @param [in] max_blocking_time Maximum time this method has to complete the task.
      * @param release specifies if the change must be returned to the pool
      * @return iterator to the next change if any
      */
@@ -220,8 +220,8 @@ public:
     /*!
      * @brief This function should be called by reader if a writer updates its ownership strength.
      *
-     * @param[in] writer_guid Guid of the writer which changes its ownership strength.
-     * @param[out] ownership_strength New value of the writer's Ownership strength.
+     * @param [in] writer_guid Guid of the writer which changes its ownership strength.
+     * @param [out] ownership_strength New value of the writer's Ownership strength.
      */
     FASTDDS_EXPORTED_API virtual void writer_update_its_ownership_strength_nts(
             const GUID_t& writer_guid,

@@ -75,8 +75,8 @@ public:
      * Serialize method, it should be implemented by the user, since it is abstract.
      * It is VERY IMPORTANT that the user sets the SerializedPayload length correctly.
      *
-     * @param[in] data Pointer to the data
-     * @param[out] payload Pointer to the payload
+     * @param [in] data Pointer to the data
+     * @param [out] payload Pointer to the payload
      * @return True if correct.
      */
     // TODO(jlbueno) Remove when Fast DDS-Gen is updated
@@ -90,9 +90,9 @@ public:
      * will call the serialize method in which the topic data representation is not considered.
      * It is VERY IMPORTANT that the user sets the SerializedPayload length correctly.
      *
-     * @param[in] data Pointer to the data
-     * @param[out] payload Pointer to the payload
-     * @param[in] data_representation Representation that should be used to encode the data into the payload.
+     * @param [in] data Pointer to the data
+     * @param [out] payload Pointer to the payload
+     * @param [in] data_representation Representation that should be used to encode the data into the payload.
      * @return True if correct.
      */
     FASTDDS_EXPORTED_API virtual bool serialize(
@@ -103,8 +103,8 @@ public:
     /**
      * Deserialize method, it should be implemented by the user, since it is abstract.
      *
-     * @param[in] payload Pointer to the payload
-     * @param[out] data Pointer to the data
+     * @param [in] payload Pointer to the payload
+     * @param [out] data Pointer to the data
      * @return True if correct.
      */
     FASTDDS_EXPORTED_API virtual bool deserialize(
@@ -114,7 +114,7 @@ public:
     /*!
      * @brief Returns a function which can be used to calculate the serialized size of the provided data.
      *
-     * @param[in] data Pointer to data.
+     * @param [in] data Pointer to data.
      * @return Functor which calculates the serialized size of the data.
      */
     // FASTDDS_TODO_BEFORE(3, 0, "Remove this overload")
@@ -124,8 +124,8 @@ public:
     /*!
      * @brief Returns a function which can be used to calculate the serialized size of the provided data.
      *
-     * @param[in] data Pointer to data.
-     * @param[in] data_representation Representation that should be used for calculating the serialized size.
+     * @param [in] data Pointer to data.
+     * @param [in] data_representation Representation that should be used for calculating the serialized size.
      * @return Functor which calculates the serialized size of the data.
      */
     FASTDDS_EXPORTED_API virtual std::function<uint32_t()> getSerializedSizeProvider(
@@ -149,9 +149,9 @@ public:
     /**
      * Get the key associated with the data.
      *
-     * @param[in] data Pointer to the data.
-     * @param[out] ihandle Pointer to the Handle.
-     * @param[in] force_md5 Force MD5 checking.
+     * @param [in] data Pointer to the data.
+     * @param [out] ihandle Pointer to the Handle.
+     * @param [in] force_md5 Force MD5 checking.
      * @return True if correct.
      */
     FASTDDS_EXPORTED_API virtual bool getKey(

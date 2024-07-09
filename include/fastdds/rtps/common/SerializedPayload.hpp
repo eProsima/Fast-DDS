@@ -122,7 +122,7 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
 
     /*!
      * Copy another structure (including allocating new space for the data).
-     * @param[in] serData Pointer to the structure to copy
+     * @param [in] serData Pointer to the structure to copy
      * @param with_limit if true, the function will fail when providing a payload too big
      * @return True if correct
      */
@@ -132,7 +132,7 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
 
     /*!
      * Allocate new space for fragmented data
-     * @param[in] serData Pointer to the structure to copy
+     * @param [in] serData Pointer to the structure to copy
      * @return True if correct
      */
     bool reserve_fragmented(

@@ -232,8 +232,8 @@ protected:
      * @param receive_buffer vector with enough capacity (not size) to accomodate a full receive buffer. That
      * capacity must not be less than the receive_buffer_size supplied to this class during construction.
      * @param receive_buffer_capacity Maximum size of the receive_buffer.
-     * @param[out] receive_buffer_size Size of the received buffer.
-     * @param[out] remote_locator Locator describing the remote restination we received a packet from.
+     * @param [out] receive_buffer_size Size of the received buffer.
+     * @param [out] remote_locator Locator describing the remote restination we received a packet from.
      */
     bool Receive(
             octet* receive_buffer,

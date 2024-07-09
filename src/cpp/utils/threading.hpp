@@ -31,8 +31,8 @@ struct ThreadSettings;
 /**
  * @brief Give a name to the thread calling this function.
  *
- * @param[in, out]  thread_name_buffer  Buffer to store the name of the thread.
- * @param[in]       name  A null-terminated string with the name to give to the calling thread.
+ * @param [in, out]  thread_name_buffer  Buffer to store the name of the thread.
+ * @param [in]       name  A null-terminated string with the name to give to the calling thread.
  *                        The implementation for certain platforms may truncate the final thread
  *                         name if there is a limit on the length of the name of a thread.
  */
@@ -43,12 +43,12 @@ void set_name_to_current_thread(
 /**
  * @brief Give a name to the thread calling this function.
  *
- * @param[in, out]  thread_name_buffer  Buffer to store the name of the thread.
- * @param[in]       fmt   A null-terminated string to be used as the format argument of
+ * @param [in, out]  thread_name_buffer  Buffer to store the name of the thread.
+ * @param [in]       fmt   A null-terminated string to be used as the format argument of
  *                        a `snprintf` like function, in order to accomodate the restrictions of
  *                        the OS. Those restrictions may truncate the final thread name if there
  *                        is a limit on the length of the name of a thread.
- * @param[in]       arg   Single variadic argument passed to the formatting function.
+ * @param [in]       arg   Single variadic argument passed to the formatting function.
  */
 void set_name_to_current_thread(
         std::array<char, 16>& thread_name_buffer,
@@ -58,13 +58,13 @@ void set_name_to_current_thread(
 /**
  * @brief Give a name to the thread calling this function.
  *
- * @param[in, out]  thread_name_buffer  Buffer to store the name of the thread.
- * @param[in]       fmt   A null-terminated string to be used as the format argument of
+ * @param [in, out]  thread_name_buffer  Buffer to store the name of the thread.
+ * @param [in]       fmt   A null-terminated string to be used as the format argument of
  *                        a `snprintf` like function, in order to accomodate the restrictions of
  *                        the OS. Those restrictions may truncate the final thread name if there
  *                        is a limit on the length of the name of a thread.
- * @param[in]       arg1  First variadic argument passed to the formatting function.
- * @param[in]       arg2  Second variadic argument passed to the formatting function.
+ * @param [in]       arg1  First variadic argument passed to the formatting function.
+ * @param [in]       arg2  Second variadic argument passed to the formatting function.
  */
 void set_name_to_current_thread(
         std::array<char, 16>& thread_name_buffer,
@@ -75,8 +75,8 @@ void set_name_to_current_thread(
 /**
  * @brief Apply thread settings to the thread calling this function.
  *
- * @param[in]  thread_name  Name of the thread.
- * @param[in]  settings  Thread settings to apply.
+ * @param [in]  thread_name  Name of the thread.
+ * @param [in]  settings  Thread settings to apply.
  */
 void apply_thread_settings_to_current_thread(
         const char* thread_name,
@@ -88,10 +88,10 @@ void apply_thread_settings_to_current_thread(
  * This wrapper will create a thread on which the incoming functor will be called after
  * giving it a custom name and applying the thread settings.
  *
- * @param[in]  func      Functor with the logic to be run on the created thread.
- * @param[in]  settings  Thread settings to apply to the created thread.
- * @param[in]  name      Name (format) for the created thread.
- * @param[in]  args      Additional arguments to complete the thread name.
+ * @param [in]  func      Functor with the logic to be run on the created thread.
+ * @param [in]  settings  Thread settings to apply to the created thread.
+ * @param [in]  name      Name (format) for the created thread.
+ * @param [in]  args      Additional arguments to complete the thread name.
  *                       See @ref set_name_to_current_thread for details.
  */
 template<typename Functor, typename ... Args>

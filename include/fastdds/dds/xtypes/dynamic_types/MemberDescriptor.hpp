@@ -49,14 +49,14 @@ public:
 
     /*!
      * Modifies the underlying member's name by copy.
-     * @param[in] name Member's name.
+     * @param [in] name Member's name.
      */
     virtual void name(
             const ObjectName& name) = 0;
 
     /*!
      * Modifies the underlying member's name by move.
-     * @param[in] name Member's name.
+     * @param [in] name Member's name.
      */
     virtual void name(
             ObjectName&& name) = 0;
@@ -75,7 +75,7 @@ public:
 
     /*!
      * Modifies the underlying @ref MemberId.
-     * @param[in] id @ref MemberId to be set.
+     * @param [in] id @ref MemberId to be set.
      */
     virtual void id(
             MemberId id) = 0;
@@ -94,7 +94,7 @@ public:
 
     /*!
      * Modifies the underlying member's type reference.
-     * @param[in] type @ref DynamicType reference.
+     * @param [in] type @ref DynamicType reference.
      */
     virtual void type(
             traits<DynamicType>::ref_type type) = 0;
@@ -113,14 +113,14 @@ public:
 
     /*!
      * Modifies the underlying default value by copy.
-     * @param[in] default_value Default value.
+     * @param [in] default_value Default value.
      */
     virtual void default_value(
             const std::string& default_value) = 0;
 
     /*!
      * Modifies the underlying default value by move.
-     * @param[in] default_value Default value.
+     * @param [in] default_value Default value.
      */
     virtual void default_value(
             std::string&& default_value) = 0;
@@ -151,14 +151,14 @@ public:
 
     /*!
      * Modifies the labels the member belongs to by copy.
-     * @param[in] label @ref UnionCaseLabelSeq
+     * @param [in] label @ref UnionCaseLabelSeq
      */
     virtual void label(
             const UnionCaseLabelSeq& label) = 0;
 
     /*!
      * Modifies the labels the member belongs to by move.
-     * @param[in] label @ref UnionCaseLabelSeq
+     * @param [in] label @ref UnionCaseLabelSeq
      */
     virtual void label(
             UnionCaseLabelSeq&& label) = 0;
@@ -177,7 +177,7 @@ public:
 
     /*!
      * Modifies the @ref TryConstructKind of the member.
-     * @param[in] try_construct_kind @ref TryConstructKind.
+     * @param [in] try_construct_kind @ref TryConstructKind.
      */
     virtual void try_construct_kind(
             TryConstructKind try_construct_kind) = 0;
@@ -196,7 +196,7 @@ public:
 
     /*!
      * Modifies if the member is key.
-     * @param[in] is_key Boolean
+     * @param [in] is_key Boolean
      */
     virtual void is_key(
             bool is_key) = 0;
@@ -215,7 +215,7 @@ public:
 
     /*!
      * Modifies if the member is optional.
-     * @param[in] is_optional Boolean
+     * @param [in] is_optional Boolean
      */
     virtual void is_optional(
             bool is_optional) = 0;
@@ -234,7 +234,7 @@ public:
 
     /*!
      * Modifies if the member is must_understand.
-     * @param[in] is_must_understand Boolean
+     * @param [in] is_must_understand Boolean
      */
     virtual void is_must_understand(
             bool is_must_understand) = 0;
@@ -253,7 +253,7 @@ public:
 
     /*!
      * Modifies if the member is shared.
-     * @param[in] is_shared Boolean
+     * @param [in] is_shared Boolean
      */
     virtual void is_shared(
             bool is_shared) = 0;
@@ -272,14 +272,14 @@ public:
 
     /*!
      * Modifies if the member is default_label.
-     * @param[in] is_default_label Boolean
+     * @param [in] is_default_label Boolean
      */
     virtual void is_default_label(
             bool is_default_label) = 0;
 
     /*!
      * Overwrites the contents of this descriptor with those of another descriptor (see [standard] 7.5.2.7.1).
-     * @param[in] descriptor reference.
+     * @param [in] descriptor reference.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the copy was successful.
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil.
@@ -289,7 +289,7 @@ public:
 
     /*!
      * Compares according with the [standard] section \b 7.5.2.7.4.
-     * @param[in] descriptor reference to compare to.
+     * @param [in] descriptor reference to compare to.
      * @return \b bool `true` on equality
      */
     virtual bool equals(

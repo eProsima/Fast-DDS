@@ -42,8 +42,8 @@ public:
 
     /*!
      * Retrieves the @ref MemberDescriptor associated to a member.
-     * @param[inout] value Non-nil @ref MemberDescriptor reference where the information is copied.
-     * @param[in] id Identifier of the member to be retrieved.
+     * @param [inout] value Non-nil @ref MemberDescriptor reference where the information is copied.
+     * @param [in] id Identifier of the member to be retrieved.
      * @retval RETCODE_OK when the copy was successful.
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil or member identifier is not found.
      */
@@ -70,7 +70,7 @@ public:
      * @li Aggregated type.
      * @li Map type.
      * @li Bitmask type.
-     * @param[in] name string
+     * @param [in] name string
      * @return MemberId or MEMBER_ID_INVALID on failure
      */
     FASTDDS_EXPORTED_API virtual MemberId get_member_id_by_name(
@@ -86,7 +86,7 @@ public:
      * @li Map type.
      * @li Array type.
      * @li Bitmask type.
-     * @param[in] index Index.
+     * @param [in] index Index.
      * @return MemberId or MEMBER_ID_INVALID on failure
      */
     FASTDDS_EXPORTED_API virtual MemberId get_member_id_at_index(
@@ -132,7 +132,7 @@ public:
      * @li If bitmask type, clear the indicated bit.
      * @li If enumerated type, set it to the first value of the enumerated type.
      * @li If primitive type, set it to its default value.
-     * @param[in] id Identifier of the member to purge
+     * @param [in] id Identifier of the member to purge
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the cleaning was successful.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid.
@@ -143,7 +143,7 @@ public:
     /*!
      * \b Loans a @ref DynamicData reference within the sample
      * @remarks This loan shall be returned by the @ref DynamicData::return_loaned_value operation
-     * @param[in] id identifier of the object to retrieve
+     * @param [in] id identifier of the object to retrieve
      * @return @ref DynamicData reference loaned or \b nil on outstanding loaned data
      */
     FASTDDS_EXPORTED_API virtual traits<DynamicData>::ref_type loan_value(
@@ -151,7 +151,7 @@ public:
 
     /*!
      * Returns a loan retrieved using @ref DynamicData::loan_value.
-     * @param[in] value @ref DynamicData reference previously loaned
+     * @param [in] value @ref DynamicData reference previously loaned
      * @retval RETCODE_OK when the loan was returned successfully.
      * @retval RETCODE_PRECONDITION_NOT_MET when the loan is invalid.
      */
@@ -167,8 +167,8 @@ public:
 
     /*!
      * Retrieves an \b int32 value associated to an identifier.
-     * @param[inout] value \b int32 to populate
-     * @param[in] id identifier of the member to query.
+     * @param [inout] value \b int32 to populate
+     * @param [in] id identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b int32.
@@ -179,8 +179,8 @@ public:
 
     /*!
      * Sets an \b int32 value associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value \b int32 to set
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value \b int32 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b int32.
@@ -191,8 +191,8 @@ public:
 
     /*!
      * Retrieves an \b uint32 value associated to an identifier.
-     * @param[inout] value \b uint32 to populate
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b uint32 to populate
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b uint32.
@@ -203,8 +203,8 @@ public:
 
     /*!
      * Sets an \b uint32 value associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value \b uint32 to set.
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value \b uint32 to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b uint32.
@@ -215,8 +215,8 @@ public:
 
     /*!
      * Retrieves an \b int8 value associated to an identifier.
-     * @param[inout] value \b int8 to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b int8 to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b int8.
@@ -227,8 +227,8 @@ public:
 
     /*!
      * Sets an \b int8 value associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value \b int8 to set.
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value \b int8 to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b int8.
@@ -239,8 +239,8 @@ public:
 
     /*!
      * Retrieves an \b uint8 value associated to an identifier.
-     * @param[inout] value \b uint8 to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b uint8 to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b uint8.
@@ -251,8 +251,8 @@ public:
 
     /*!
      * Sets an \b uint8 value associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value \b uint8 to set.
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value \b uint8 to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b uint8.
@@ -263,7 +263,7 @@ public:
 
     /*!
      * Retrieves an \b int16 value associated to an identifier.
-     * @param[inout] value \b int16 to populate.
+     * @param [inout] value \b int16 to populate.
      * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
@@ -275,8 +275,8 @@ public:
 
     /*!
      * Sets an \b int16 value associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value \b int16 to set.
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value \b int16 to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b int16.
@@ -287,8 +287,8 @@ public:
 
     /*!
      * Retrieves an \b uint16 value associated to an identifier.
-     * @param[inout] value \b uint16 to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b uint16 to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b uint16.
@@ -299,8 +299,8 @@ public:
 
     /*!
      * Sets an \b uint16 value associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value \b uint16 to set.
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value \b uint16 to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b uint16.
@@ -311,8 +311,8 @@ public:
 
     /*!
      * Retrieves an \b int64 value associated to an identifier.
-     * @param[inout] value \b int64 to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b int64 to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b int64.
@@ -323,8 +323,8 @@ public:
 
     /*!
      * Sets an \b int64 value associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value \b int64 to set.
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value \b int64 to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b int64.
@@ -335,8 +335,8 @@ public:
 
     /*!
      * Retrieves an \b uint64 value associated to an identifier.
-     * @param[inout] value \b uint64 to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b uint64 to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b uint64.
@@ -347,8 +347,8 @@ public:
 
     /*!
      * Sets an \b uint64 value associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value \b uint64 to set.
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value \b uint64 to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b uint64.
@@ -359,8 +359,8 @@ public:
 
     /*!
      * Retrieves an \b float32 value associated to an identifier.
-     * @param[inout] value \b float32 to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b float32 to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b float32.
@@ -371,8 +371,8 @@ public:
 
     /*!
      * Sets an \b float32 value associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value \b float32 to set.
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value \b float32 to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b float32.
@@ -383,8 +383,8 @@ public:
 
     /*!
      * Retrieves an \b float64 value associated to an identifier.
-     * @param[inout] value \b float64 to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b float64 to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b float64.
@@ -395,8 +395,8 @@ public:
 
     /*!
      * Sets an \b float64 value associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value \b float64 to set.
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value \b float64 to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b float64.
@@ -407,8 +407,8 @@ public:
 
     /*!
      * Retrieves an \b float128 value associated to an identifier.
-     * @param[inout] value \b float128 to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b float128 to populate.
+     * @param [in] id Identifier of the member to query.
      * @remarks Only available on platforms supporting long double
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
@@ -420,8 +420,8 @@ public:
 
     /*!
      * Sets an \b float128 value associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value \b float128 to set.
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value \b float128 to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b float128.
@@ -432,8 +432,8 @@ public:
 
     /*!
      * Retrieves an \b char8 value associated to an identifier.
-     * @param[inout] value \b char8 to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b char8 to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b char8.
@@ -444,8 +444,8 @@ public:
 
     /*!
      * Sets an \b char8 value associated to an identifier
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value \b char8 to set.
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value \b char8 to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b char8.
@@ -456,8 +456,8 @@ public:
 
     /*!
      * Retrieves an \b char16 value associated to an identifier.
-     * @param[inout] value \b char16 to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b char16 to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b char16.
@@ -468,8 +468,8 @@ public:
 
     /*!
      * Sets an \b char16 value associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value \b char16 to set.
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value \b char16 to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b char16.
@@ -480,8 +480,8 @@ public:
 
     /*!
      * Retrieves an \b byte value associated to an identifier.
-     * @param[inout] value \b byte to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b byte to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b byte.
@@ -492,8 +492,8 @@ public:
 
     /*!
      * Sets an \b byte value associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value \b byte to set.
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value \b byte to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b byte.
@@ -504,8 +504,8 @@ public:
 
     /*!
      * Retrieves an \b bool value associated to an identifier.
-     * @param[in] id Identifier of the member to query.
-     * @param[inout] value \b bool to populate.
+     * @param [in] id Identifier of the member to query.
+     * @param [inout] value \b bool to populate.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b bool.
@@ -516,8 +516,8 @@ public:
 
     /*!
      * Sets an \b bool value associated to an identifier
-     * @param[in] id identifier of the member to set.
-     * @param[in] value \b bool to set.
+     * @param [in] id identifier of the member to set.
+     * @param [in] value \b bool to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b bool.
@@ -528,8 +528,8 @@ public:
 
     /*!
      * Retrieves an \b string value associated to an identifier.
-     * @param[inout] value \b string to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b string to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b string.
@@ -540,8 +540,8 @@ public:
 
     /*!
      * Sets an \b string value associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value \b string to set.
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value \b string to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b string
@@ -553,8 +553,8 @@ public:
 
     /*!
      * Retrieves an \b wstring value associated to an identifier.
-     * @param[inout] value \b wstring to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b wstring to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b wstring.
@@ -565,8 +565,8 @@ public:
 
     /*!
      * Sets an \b wstring value associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value \b wstring to set.
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value \b wstring to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b wstring
@@ -578,8 +578,8 @@ public:
 
     /*!
      * Retrieves a \b complex value associated to an identifier.
-     * @param[inout] value @ref DynamicData reference to populate
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value @ref DynamicData reference to populate
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b complex.
@@ -590,8 +590,8 @@ public:
 
     /*!
      * Sets a \b complex value associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value @ref DynamicData reference to set
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value @ref DynamicData reference to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the value reference is nil or @ref MemberId is invalid or the member type is
@@ -603,8 +603,8 @@ public:
 
     /*!
      * Retrieves a sequence of \b int32 values associated to an identifier.
-     * @param[inout] value \b Sequence of \b int32 to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b Sequence of \b int32 to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b int32.
@@ -615,8 +615,8 @@ public:
 
     /*!
      * Sets a sequence of \b int32 values associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value Sequence of \b int32 to set
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value Sequence of \b int32 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b int32.
@@ -627,8 +627,8 @@ public:
 
     /*!
      * Retrieves a sequence of \b uint32 values associated to an identifier.
-     * @param[inout] value \b Sequence of \b uint32 to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b Sequence of \b uint32 to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b uint32.
@@ -639,8 +639,8 @@ public:
 
     /*!
      * Sets a sequence of \b uint32 values associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value Sequence of \b uint32 to set
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value Sequence of \b uint32 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b uint32.
@@ -651,8 +651,8 @@ public:
 
     /*!
      * Retrieves a sequence of \b int8 values associated to an identifier.
-     * @param[inout] value \b Sequence of \b int8 to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b Sequence of \b int8 to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b int8.
@@ -663,8 +663,8 @@ public:
 
     /*!
      * Sets a sequence of \b int8 values associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value Sequence of \b int8 to set
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value Sequence of \b int8 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b int8.
@@ -675,8 +675,8 @@ public:
 
     /*!
      * Retrieves a sequence of \b uint8 values associated to an identifier.
-     * @param[inout] value \b Sequence of \b uint8 to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b Sequence of \b uint8 to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b uint8.
@@ -687,8 +687,8 @@ public:
 
     /*!
      * Sets a sequence of \b uint8 values associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value Sequence of \b uint8 to set
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value Sequence of \b uint8 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b uint8.
@@ -699,8 +699,8 @@ public:
 
     /*!
      * Retrieves a sequence of \b int16 values associated to an identifier.
-     * @param[inout] value \b Sequence of \b int16 to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b Sequence of \b int16 to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b int16.
@@ -711,8 +711,8 @@ public:
 
     /*!
      * Sets a sequence of \b int16 values associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value Sequence of \b int16 to set
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value Sequence of \b int16 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b int16.
@@ -723,8 +723,8 @@ public:
 
     /*!
      * Retrieves a sequence of \b uint16 values associated to an identifier.
-     * @param[inout] value \b Sequence of \b uint16 to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b Sequence of \b uint16 to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b uint16.
@@ -735,8 +735,8 @@ public:
 
     /*!
      * Sets a sequence of \b uint16 values associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value Sequence of \b uint16 to set
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value Sequence of \b uint16 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b uint16.
@@ -747,8 +747,8 @@ public:
 
     /*!
      * Retrieves a sequence of \b int64 values associated to an identifier.
-     * @param[inout] value \b Sequence of \b int64 to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b Sequence of \b int64 to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b int64.
@@ -759,8 +759,8 @@ public:
 
     /*!
      * Sets a sequence of \b int64 values associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value Sequence of \b int64 to set
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value Sequence of \b int64 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b int64.
@@ -771,8 +771,8 @@ public:
 
     /*!
      * Retrieves a sequence of \b uint64 values associated to an identifier.
-     * @param[inout] value \b Sequence of \b uint64 to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b Sequence of \b uint64 to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b uint64.
@@ -783,8 +783,8 @@ public:
 
     /*!
      * Sets a sequence of \b uint64 values associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value Sequence of \b uint64 to set
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value Sequence of \b uint64 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b uint64.
@@ -795,8 +795,8 @@ public:
 
     /*!
      * Retrieves a sequence of \b float32 values associated to an identifier.
-     * @param[inout] value \b Sequence of \b float32 to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b Sequence of \b float32 to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b float32.
@@ -807,8 +807,8 @@ public:
 
     /*!
      * Sets a sequence of \b float32 values associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value Sequence of \b float32 to set
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value Sequence of \b float32 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b float32.
@@ -819,8 +819,8 @@ public:
 
     /*!
      * Retrieves a sequence of \b float64 values associated to an identifier.
-     * @param[inout] value \b Sequence of \b float64 to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b Sequence of \b float64 to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b float64.
@@ -831,8 +831,8 @@ public:
 
     /*!
      * Sets a sequence of \b float64 values associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value Sequence of \b float64 to set
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value Sequence of \b float64 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b float64.
@@ -843,8 +843,8 @@ public:
 
     /*!
      * Retrieves a sequence of \b float128 values associated to an identifier.
-     * @param[inout] value \b Sequence of \b float128 to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b Sequence of \b float128 to populate.
+     * @param [in] id Identifier of the member to query.
      * @remarks Only available on platforms supporting long double
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
@@ -857,8 +857,8 @@ public:
 
     /*!
      * Sets a sequence of \b float128 values associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value Sequence of \b float128 to set
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value Sequence of \b float128 to set
      * @remarks Only available on platforms supporting long double
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
@@ -870,8 +870,8 @@ public:
 
     /*!
      * Retrieves a sequence of \b char8 values associated to an identifier.
-     * @param[inout] value \b Sequence of \b char8 to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b Sequence of \b char8 to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b char8.
@@ -882,8 +882,8 @@ public:
 
     /*!
      * Sets a sequence of \b char8 values associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value Sequence of \b char8 to set
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value Sequence of \b char8 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b char8.
@@ -894,8 +894,8 @@ public:
 
     /*!
      * Retrieves a sequence of \b char16 values associated to an identifier.
-     * @param[inout] value \b Sequence of \b char16 to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b Sequence of \b char16 to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b char16.
@@ -906,8 +906,8 @@ public:
 
     /*!
      * Sets a sequence of \b char16 values associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value Sequence of \b char16 to set
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value Sequence of \b char16 to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b char16.
@@ -918,8 +918,8 @@ public:
 
     /*!
      * Retrieves a sequence of \b byte values associated to an identifier.
-     * @param[inout] value \b Sequence of \b byte to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b Sequence of \b byte to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b byte.
@@ -930,8 +930,8 @@ public:
 
     /*!
      * Sets a sequence of \b byte values associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value Sequence of \b byte to set
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value Sequence of \b byte to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b byte.
@@ -942,8 +942,8 @@ public:
 
     /*!
      * Retrieves a sequence of \b bool values associated to an identifier.
-     * @param[inout] value \b Sequence of \b bool to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b Sequence of \b bool to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b bool.
@@ -954,8 +954,8 @@ public:
 
     /*!
      * Sets a sequence of \b bool values associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value Sequence of \b bool to set
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value Sequence of \b bool to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b bool.
@@ -966,8 +966,8 @@ public:
 
     /*!
      * Retrieves a sequence of \b string values associated to an identifier.
-     * @param[inout] value \b Sequence of \b string to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b Sequence of \b string to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b string.
@@ -978,8 +978,8 @@ public:
 
     /*!
      * Sets a sequence of \b string values associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value Sequence of \b string to set
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value Sequence of \b string to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b string.
@@ -990,8 +990,8 @@ public:
 
     /*!
      * Retrieves a sequence of \b wstring values associated to an identifier.
-     * @param[inout] value \b Sequence of \b wstring to populate.
-     * @param[in] id Identifier of the member to query.
+     * @param [inout] value \b Sequence of \b wstring to populate.
+     * @param [in] id Identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b wstring.
@@ -1002,8 +1002,8 @@ public:
 
     /*!
      * Sets a sequence of \b wstring values associated to an identifier.
-     * @param[in] id Identifier of the member to set.
-     * @param[in] value Sequence of \b wstring to set
+     * @param [in] id Identifier of the member to set.
+     * @param [in] value Sequence of \b wstring to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b wstring.

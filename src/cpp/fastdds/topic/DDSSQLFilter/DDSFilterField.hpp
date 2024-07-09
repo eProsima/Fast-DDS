@@ -59,9 +59,9 @@ public:
     /**
      * Construct a DDSFilterField.
      *
-     * @param[in]  type_id       TypeIdentifier representing the primitive data type of the fieldname.
-     * @param[in]  access_path   Access path to the field.
-     * @param[in]  data_kind     Kind of data the field represents.
+     * @param [in]  type_id       TypeIdentifier representing the primitive data type of the fieldname.
+     * @param [in]  access_path   Access path to the field.
+     * @param [in]  data_kind     Kind of data the field represents.
      */
     DDSFilterField(
             const std::shared_ptr<xtypes::TypeIdentifier>& type_id,
@@ -97,7 +97,7 @@ public:
      * Perform the deserialization of the field represented by this DDSFilterField.
      * Will notify the predicates where this DDSFilterField is being used.
      *
-     * @param[in]  data  The dynamic representation of the payload being filtered.
+     * @param [in]  data  The dynamic representation of the payload being filtered.
      *
      * @return Whether the deserialization process succeeded.
      *
@@ -112,8 +112,8 @@ public:
     /**
      * Perform the deserialization of a specific step of the access path.
      *
-     * @param[in]  data  The dynamic representation of the step being processed.
-     * @param[in]  n     The step on the access path being processed.
+     * @param [in]  data  The dynamic representation of the step being processed.
+     * @param [in]  n     The step on the access path being processed.
      *
      * @return Whether the deserialization process succeeded.
      *

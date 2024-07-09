@@ -76,8 +76,8 @@ public:
      * If the CacheChange_t is currently managed by this object, remove it.
      * This method should be called whenever a CacheChange_t is removed from the writer's history.
      *
-     * @param[in] change Pointer to the change which should be removed if it is currently managed by this object.
-     * @param[in] max_blocking_time Maximum time this method has to complete the task.
+     * @param [in] change Pointer to the change which should be removed if it is currently managed by this object.
+     * @param [in] max_blocking_time Maximum time this method has to complete the task.
      * @return true if the sample could be removed. false otherwise.
      */
     virtual bool remove_change(

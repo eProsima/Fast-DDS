@@ -133,7 +133,7 @@ public:
     /**
      * Add a change to the unsent list.
      * @param change Pointer to the change to add.
-     * @param[in] max_blocking_time Maximum time this method has to complete the task.
+     * @param [in] max_blocking_time Maximum time this method has to complete the task.
      */
     virtual void unsent_change_added_to_history(
             CacheChange_t* change,
@@ -142,7 +142,7 @@ public:
     /**
      * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.
      * @param a_change Pointer to the change that is going to be removed.
-     * @param[in] max_blocking_time Maximum time this method has to complete the task.
+     * @param [in] max_blocking_time Maximum time this method has to complete the task.
      * @return True if removed correctly.
      */
     virtual bool change_removed_by_history(
@@ -198,14 +198,14 @@ public:
 
     /**
      * Process an incoming ACKNACK submessage.
-     * @param[in] writer_guid      GUID of the writer the submessage is directed to.
-     * @param[in] reader_guid      GUID of the reader originating the submessage.
-     * @param[in] ack_count        Count field of the submessage.
-     * @param[in] sn_set           Sequence number bitmap field of the submessage.
-     * @param[in] final_flag       Final flag field of the submessage.
-     * @param[out] result          true if the writer could process the submessage.
+     * @param [in] writer_guid      GUID of the writer the submessage is directed to.
+     * @param [in] reader_guid      GUID of the reader originating the submessage.
+     * @param [in] ack_count        Count field of the submessage.
+     * @param [in] sn_set           Sequence number bitmap field of the submessage.
+     * @param [in] final_flag       Final flag field of the submessage.
+     * @param [out] result          true if the writer could process the submessage.
      *                             Only valid when returned value is true.
-     * @param[in] origin_vendor_id VendorId of the source participant from which the message was received
+     * @param [in] origin_vendor_id VendorId of the source participant from which the message was received
      * @return true when the submessage was destinated to this writer, false otherwise.
      */
     virtual bool process_acknack(
@@ -219,14 +219,14 @@ public:
 
     /**
      * Process an incoming NACKFRAG submessage.
-     * @param[in] writer_guid      GUID of the writer the submessage is directed to.
-     * @param[in] reader_guid      GUID of the reader originating the submessage.
-     * @param[in] ack_count        Count field of the submessage.
-     * @param[in] seq_num          Sequence number field of the submessage.
-     * @param[in] fragments_state  Fragment number bitmap field of the submessage.
-     * @param[out] result          true if the writer could process the submessage.
+     * @param [in] writer_guid      GUID of the writer the submessage is directed to.
+     * @param [in] reader_guid      GUID of the reader originating the submessage.
+     * @param [in] ack_count        Count field of the submessage.
+     * @param [in] seq_num          Sequence number field of the submessage.
+     * @param [in] fragments_state  Fragment number bitmap field of the submessage.
+     * @param [out] result          true if the writer could process the submessage.
      *                             Only valid when returned value is true.
-     * @param[in] origin_vendor_id VendorId of the source participant from which the message was received
+     * @param [in] origin_vendor_id VendorId of the source participant from which the message was received
      * @return true when the submessage was destinated to this writer, false otherwise.
      */
     virtual bool process_nack_frag(

@@ -31,10 +31,10 @@ public:
 
     /**
      * This function filters out SHM locators when they cannot be used for communication on the local host.
-     * @param[in] is_shm_transport_available Indicates whether the participant has SHM transport enabled.
-     * @param[in,out] target_locators_list List where parsed locators are stored
-     * @param[in] temp_locator New locator to parse
-     * @param[in] is_unicast true if temp_locator is unicast, false if it is multicast
+     * @param [in] is_shm_transport_available Indicates whether the participant has SHM transport enabled.
+     * @param [in,out] target_locators_list List where parsed locators are stored
+     * @param [in] temp_locator New locator to parse
+     * @param [in] is_unicast true if temp_locator is unicast, false if it is multicast
      */
     static void filter_locators(
             bool is_shm_transport_available,

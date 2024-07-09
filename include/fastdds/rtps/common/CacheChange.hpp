@@ -134,7 +134,7 @@ struct FASTDDS_EXPORTED_API CacheChange_t
 
     /*!
      * Copy a different change into this one. All the elements are copied, included the data, allocating new memory.
-     * @param[in] ch_ptr Pointer to the change.
+     * @param [in] ch_ptr Pointer to the change.
      * @return True if correct.
      */
     bool copy(
@@ -159,7 +159,7 @@ struct FASTDDS_EXPORTED_API CacheChange_t
     /*!
      * Copy information form a different change into this one.
      * All the elements are copied except data.
-     * @param[in] ch_ptr Pointer to the change.
+     * @param [in] ch_ptr Pointer to the change.
      */
     void copy_not_memcpy(
             const CacheChange_t* ch_ptr)

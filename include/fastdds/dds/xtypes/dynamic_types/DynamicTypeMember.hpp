@@ -41,7 +41,7 @@ public:
 
     /*!
      * Provides a summary of the state of this type overwriting a provided object (see [standard] 7.5.2.6.2)
-     * @param[inout] descriptor @ref MemberDescriptor reference where  the information is copied.
+     * @param [inout] descriptor @ref MemberDescriptor reference where  the information is copied.
      * @return standard @ref ReturnCode_t
      * @retval RETCODE_OK when the copy was successful.
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil.
@@ -57,8 +57,8 @@ public:
 
     /*!
      * Returns an applied annotation by index.
-     * @param[inout] descriptor @ref AnnotationDescriptor reference where the information is copied.
-     * @param[in] idx Index.
+     * @param [inout] descriptor @ref AnnotationDescriptor reference where the information is copied.
+     * @param [in] idx Index.
      * @return standard @ref ReturnCode_t
      * @retval RETCODE_OK when the copy was successful.
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil or index is out-of-range.
@@ -75,8 +75,8 @@ public:
 
     /*!
      * Returns an applied verbatim text by index.
-     * @param[inout] descriptor @ref VerbatimTextDescriptor reference where the information is copied.
-     * @param[in] idx Index.
+     * @param [inout] descriptor @ref VerbatimTextDescriptor reference where the information is copied.
+     * @param [in] idx Index.
      * @return standard @ref ReturnCode_t
      * @retval RETCODE_OK when the copy was successful.
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil or index is out-of-range.
@@ -87,7 +87,7 @@ public:
 
     /**
      * State comparison according with the [standard] sections \b 7.5.2.6.3
-     * @param[in] other @ref DynamicTypeMember reference to compare to
+     * @param [in] other @ref DynamicTypeMember reference to compare to
      * @return \b bool `true` on equality
      */
     FASTDDS_EXPORTED_API virtual bool equals(

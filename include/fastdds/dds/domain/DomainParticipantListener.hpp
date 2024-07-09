@@ -63,9 +63,9 @@ public:
      * This method is called when a new Participant is discovered, or a previously discovered participant changes
      * its QOS or is removed.
      *
-     * @param[out] participant Pointer to the Participant which discovered the remote participant.
-     * @param[out] info Remote participant information. User can take ownership of the object.
-     * @param[out] should_be_ignored Flag to indicate the library to automatically ignore the discovered Participant.
+     * @param [out] participant Pointer to the Participant which discovered the remote participant.
+     * @param [out] info Remote participant information. User can take ownership of the object.
+     * @param [out] should_be_ignored Flag to indicate the library to automatically ignore the discovered Participant.
      */
     virtual void on_participant_discovery(
             DomainParticipant* participant,
@@ -81,8 +81,8 @@ public:
     /*!
      * This method is called when a new Participant is authenticated.
      *
-     * @param[out] participant Pointer to the authenticated Participant.
-     * @param[out] info Remote participant authentication information. User can take ownership of the object.
+     * @param [out] participant Pointer to the authenticated Participant.
+     * @param [out] info Remote participant authentication information. User can take ownership of the object.
      */
     virtual void onParticipantAuthentication(
             DomainParticipant* participant,
@@ -98,9 +98,9 @@ public:
      * This method is called when a new DataReader is discovered, or a previously discovered DataReader changes
      * its QOS or is removed.
      *
-     * @param[out] participant Pointer to the Participant which discovered the remote DataReader.
-     * @param[out] info Remote DataReader information. User can take ownership of the object.
-     * @param[out] should_be_ignored Flag to indicate the library to automatically ignore the discovered DataReader.
+     * @param [out] participant Pointer to the Participant which discovered the remote DataReader.
+     * @param [out] info Remote DataReader information. User can take ownership of the object.
+     * @param [out] should_be_ignored Flag to indicate the library to automatically ignore the discovered DataReader.
      */
     virtual void on_data_reader_discovery(
             DomainParticipant* participant,
@@ -116,9 +116,9 @@ public:
      * This method is called when a new DataWriter is discovered, or a previously discovered DataWriter changes
      * its QOS or is removed.
      *
-     * @param[out] participant Pointer to the Participant which discovered the remote DataWriter.
-     * @param[out] info Remote DataWriter information. User can take ownership of the object.
-     * @param[out] should_be_ignored Flag to indicate the library to automatically ignore the discovered DataWriter.
+     * @param [out] participant Pointer to the Participant which discovered the remote DataWriter.
+     * @param [out] info Remote DataWriter information. User can take ownership of the object.
+     * @param [out] should_be_ignored Flag to indicate the library to automatically ignore the discovered DataWriter.
      */
     virtual void on_data_writer_discovery(
             DomainParticipant* participant,

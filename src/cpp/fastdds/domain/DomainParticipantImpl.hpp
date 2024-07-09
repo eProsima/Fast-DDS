@@ -148,7 +148,7 @@ public:
     /**
      * Create a Publisher in this Participant.
      * @param qos QoS of the Publisher.
-     * @param[out] impl Return a pointer to the created Publisher's implementation.
+     * @param [out] impl Return a pointer to the created Publisher's implementation.
      * @param listenerer Pointer to the listener.
      * @param mask StatusMask
      * @return Pointer to the created Publisher.
@@ -325,7 +325,7 @@ public:
     /**
      * @brief Locally ignore a remote domain participant.
      *
-     * @param[in] handle Identifier of the remote participant to ignore.
+     * @param [in] handle Identifier of the remote participant to ignore.
      * @return RETCODE_NOT_ENABLED if the participant is not enabled.
      *         RETCODE_ERROR if unable to ignore.
      *         RETCODE_OK if successful.
@@ -342,7 +342,7 @@ public:
     /**
      * @brief Locally ignore a remote datawriter.
      *
-     * @param[in] handle Identifier of the remote datawriter to ignore.
+     * @param [in] handle Identifier of the remote datawriter to ignore.
      * @return true if correctly ignored. False otherwise.
      */
     bool ignore_publication(
@@ -351,7 +351,7 @@ public:
     /**
      * @brief Locally ignore a remote datareader.
      *
-     * @param[in] handle Identifier of the remote datareader to ignore.
+     * @param [in] handle Identifier of the remote datareader to ignore.
      * @return true if correctly ignored. False otherwise.
      */
     bool ignore_subscription(

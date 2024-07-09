@@ -514,8 +514,8 @@ public:
         /**
          * Try to enqueue a buffer descriptor in the port.
          * If the port queue is full returns inmediatelly with false value.
-         * @param[in] buffer_descriptor buffer descriptor to be enqueued
-         * @param[out] listeners_active false if no active listeners => buffer not enqueued
+         * @param [in] buffer_descriptor buffer descriptor to be enqueued
+         * @param [out] listeners_active false if no active listeners => buffer not enqueued
          * @return false in overflow case, true otherwise.
          */
         bool try_push(
@@ -563,9 +563,9 @@ public:
 
         /**
          * Waits while the port is empty and listener is not closed
-         * @param[in] listener reference to the listener that will wait for an incoming buffer descriptor.
-         * @param[in] is_listener_closed this reference can become true in the middle of the waiting process,
-         * @param[in] listener_index to update the port's listener_status,
+         * @param [in] listener reference to the listener that will wait for an incoming buffer descriptor.
+         * @param [in] is_listener_closed this reference can become true in the middle of the waiting process,
+         * @param [in] listener_index to update the port's listener_status,
          * if that happens wait is aborted.
          */
         void wait_pop(
@@ -784,7 +784,7 @@ public:
          *
          * \pre Current port is zombie, as reported by is_zombie()
          *
-         * @param[OUT] buffer_descriptor Descriptor of the buffer that was being processed by the first processing listener
+         * @param [OUT] buffer_descriptor Descriptor of the buffer that was being processed by the first processing listener
          * @return True if there was at least one processing listener. False if not.
          */
         bool get_and_remove_blocked_processing(

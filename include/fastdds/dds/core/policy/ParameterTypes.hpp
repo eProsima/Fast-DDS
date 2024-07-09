@@ -1659,7 +1659,7 @@ public:
     /**
      * Add the parameter to a CDRMessage_t message.
      *
-     * @param[in,out] msg Pointer to the message where the parameter should be added.
+     * @param [in,out] msg Pointer to the message where the parameter should be added.
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
@@ -1668,7 +1668,7 @@ public:
     /**
      * Read the parameter from a CDRMessage_t message.
      *
-     * @param[in,out] msg Pointer to the message from where the parameter should be taken.
+     * @param [in,out] msg Pointer to the message from where the parameter should be taken.
      * @param size Size of the parameter field to read
      * @return True if the parameter was correctly taken.
      */

@@ -1054,7 +1054,7 @@ public:
     /**
      * @brief Query if the participant is found in the ignored collection
      *
-     * @param[in] participant_guid Participant to be queried
+     * @param [in] participant_guid Participant to be queried
      * @return True if found in the ignored collection. False otherwise.
      */
     bool is_participant_ignored(
@@ -1063,7 +1063,7 @@ public:
     /**
      * @brief Query if the writer is found in the ignored collection
      *
-     * @param[in] writer_guid Writer to be queried
+     * @param [in] writer_guid Writer to be queried
      * @return True if found in the ignored collection. False otherwise.
      */
     bool is_writer_ignored(
@@ -1072,7 +1072,7 @@ public:
     /**
      * @brief Query if the reader is found in the ignored collection
      *
-     * @param[in] reader_guid Reader to be queried
+     * @param [in] reader_guid Reader to be queried
      * @return True if found in the ignored collection. False otherwise.
      */
     bool is_reader_ignored(
@@ -1081,7 +1081,7 @@ public:
     /**
      * @brief Add a Participant into the corresponding ignore collection.
      *
-     * @param[in] participant_guid Participant that is to be ignored.
+     * @param [in] participant_guid Participant that is to be ignored.
      * @return True if correctly included into the ignore collection. False otherwise.
      */
     bool ignore_participant(
@@ -1090,7 +1090,7 @@ public:
     /**
      * @brief Add a Writer into the corresponding ignore collection.
      *
-     * @param[in] writer_guid Writer that is to be ignored.
+     * @param [in] writer_guid Writer that is to be ignored.
      * @return True if correctly included into the ignore collection. False otherwise.
      */
     bool ignore_writer(
@@ -1099,7 +1099,7 @@ public:
     /**
      * @brief Add a Reader into the corresponding ignore collection.
      *
-     * @param[in] reader_guid Reader that is to be ignored.
+     * @param [in] reader_guid Reader that is to be ignored.
      * @return True if correctly included into the ignore collection. False otherwise.
      */
     bool ignore_reader(

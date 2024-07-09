@@ -95,9 +95,9 @@ public:
      * @pre type_name must not be empty.
      * @pre complete_type_object must be consistent (only checked in Debug build mode).
      *
-     * @param[in] type_name Name of the type being registered.
-     * @param[in] complete_type_object CompleteTypeObject related to the given type name.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the CompleteTypeObject just registered and the
+     * @param [in] type_name Name of the type being registered.
+     * @param [in] complete_type_object CompleteTypeObject related to the given type name.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the CompleteTypeObject just registered and the
      * generated MinimalTypeObject.
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeObject registered with the
@@ -121,8 +121,8 @@ public:
      * @pre @ref TypeIdentifierPair::type_identifier1 discriminator must match TypeObject discriminator or be TK_NONE.
      *      @ref TypeIdentifierPair::type_identifier1 consistency is only checked in Debug build mode.
      *
-     * @param[in] type_object Related TypeObject being registered.
-     * @param[in,out] type_ids Returns the registered @ref TypeIdentifierPair.
+     * @param [in] type_object Related TypeObject being registered.
+     * @param [in,out] type_ids Returns the registered @ref TypeIdentifierPair.
      * @ref TypeIdentifierPair::type_identifier1 might be TK_NONE.
      * In other case this function will check it is consistence with the provided @TypeObject.
      * @return ReturnCode_t RETCODE_OK if correctly registered.
@@ -148,9 +148,9 @@ public:
      * @pre @ref TypeIdentifierPair::type_identifier1 discriminator must match TypeObject discriminator or be TK_NONE.
      *      @ref TypeIdentifierPair::type_identifier1 consistency is only checked in Debug build mode.
      *
-     * @param[in] type_object Related TypeObject being registered.
-     * @param[in,out] type_ids Returns the registered @ref TypeIdentifierPair.
-     * @param[in] build_minimal Minimal TypeObject should be built.
+     * @param [in] type_object Related TypeObject being registered.
+     * @param [in,out] type_ids Returns the registered @ref TypeIdentifierPair.
+     * @param [in] build_minimal Minimal TypeObject should be built.
      * @ref TypeIdentifierPair::type_identifier1 might be TK_NONE.
      * In other case this function will check it is consistence with the provided @TypeObject.
      * @return ReturnCode_t RETCODE_OK if correctly registered.
@@ -170,8 +170,8 @@ public:
      * @pre TypeIdentifier must be consistent (only checked in Debug build mode).
      * @pre type_name must not be empty.
      *
-     * @param[in] type_name Name of the type being registered.
-     * @param[inout] type_identifier @ref TypeIdentifierPair related to the given type name. It must be set in
+     * @param [in] type_name Name of the type being registered.
+     * @param [inout] type_identifier @ref TypeIdentifierPair related to the given type name. It must be set in
      * @ref TypeIdentifierPair::type_identifier1. At the end this object is filled with both TypeIdentifiers.
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
@@ -188,8 +188,8 @@ public:
      *
      * @pre type_name must not be empty.
      *
-     * @param[in] type_name Name of the type being queried.
-     * @param[out] type_objects Both complete and minimal TypeObjects related with the given type_name.
+     * @param [in] type_name Name of the type being queried.
+     * @param [out] type_objects Both complete and minimal TypeObjects related with the given type_name.
      * @return ReturnCode_t RETCODE_OK if the TypeObjects are found in the registry.
      *                      RETCODE_NO_DATA if the given type_name has not been registered.
      *                      RETCODE_BAD_PARAMETER if the type_name correspond to a indirect hash TypeIdentifier.
@@ -204,8 +204,8 @@ public:
      *
      * @pre type_name must not be empty.
      *
-     * @param[in] type_name Name of the type being queried.
-     * @param[out] type_identifiers For direct hash TypeIdentifiers, both minimal and complete TypeIdentifiers are
+     * @param [in] type_name Name of the type being queried.
+     * @param [out] type_identifiers For direct hash TypeIdentifiers, both minimal and complete TypeIdentifiers are
      *                              returned.
      *                              For indirect hash TypeIdentifiers, only the corresponding TypeIdentifier is returned
      * @return ReturnCode_t RETCODE_OK if the TypeIdentifiers are found in the registry.
@@ -221,8 +221,8 @@ public:
      *
      * @pre TypeIdentifier must be a direct hash TypeIdentifier.
      *
-     * @param[in] type_identifier TypeIdentifier being queried.
-     * @param[out] type_object TypeObject related with the given TypeIdentifier.
+     * @param [in] type_identifier TypeIdentifier being queried.
+     * @param [out] type_object TypeObject related with the given TypeIdentifier.
      * @return ReturnCode_t RETCODE_OK if the TypeObject is found within the registry.
      *                      RETCODE_NO_DATA if the given TypeIdentifier is not found in the registry.
      *                      RETCODE_PRECONDITION_NOT_MET if the TypeIdentifier is not a direct hash.
@@ -236,9 +236,9 @@ public:
      *
      * @pre type_ids must not be empty. At least @ref TypeIdentifierPair::type_identifier1 must be filled.
      *
-     * @param[in] type_ids @ref TypeIdentifierPair which type information is queried.
-     * @param[out] type_information Related TypeInformation for the given @ref TypeIdentifier.
-     * @param[in] with_dependencies
+     * @param [in] type_ids @ref TypeIdentifierPair which type information is queried.
+     * @param [out] type_information Related TypeInformation for the given @ref TypeIdentifier.
+     * @param [in] with_dependencies
      * @return ReturnCode_t RETCODE_OK if the type_ids are found within the registry.
      *                      RETCODE_NO_DATA if the given type_ids is not found.
      *                      RETCODE_BAD_PARAMETER if the given @ref TypeIdentifier corresponds to a indirect hash TypeIdentifier.
@@ -252,8 +252,8 @@ public:
     /**
      * @brief Get the type dependencies of the given direct hash type identifiers.
      *
-     * @param[in] type_identifiers Sequence with the queried direct hash TypeIdentifiers.
-     * @param[in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param [in] type_identifiers Sequence with the queried direct hash TypeIdentifiers.
+     * @param [in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any given TypeIdentifier is unknown to the registry.
      *                      RETCODE_BAD_PARAMETER if any given TypeIdentifier is not a direct hash.
@@ -265,7 +265,7 @@ public:
     /**
      * @brief Check if the given TypeIdentfierWithSize is known by the registry.
      *
-     * @param[in] type_identifier_with_size TypeIdentfierWithSize to query.
+     * @param [in] type_identifier_with_size TypeIdentfierWithSize to query.
      * @return true if TypeIdentfierWithSize is known. false otherwise.
      */
     bool is_type_identifier_known(
@@ -274,7 +274,7 @@ public:
     /**
      * @brief Check if a given TypeIdentifier corresponds to a builtin annotation.
      *
-     * @param[in] type_identifier TypeIdentifier to check.
+     * @param [in] type_identifier TypeIdentifier to check.
      * @return true if the TypeIdentifier is from a builtin annotation. false otherwise.
      */
     bool is_builtin_annotation(
@@ -283,8 +283,8 @@ public:
     /**
      * @brief Calculate the TypeIdentifier given a TypeObject.
      *
-     * @param[in] type_object TypeObject which is to be hashed.
-     * @param[out] type_object_serialized_size
+     * @param [in] type_object TypeObject which is to be hashed.
+     * @param [out] type_object_serialized_size
      * @return const TypeIdentifier related with the given TypeObject.
      */
     const TypeIdentifier calculate_type_identifier(
@@ -294,8 +294,8 @@ public:
     /**
      * @brief Register DynamicType TypeObject.
      *
-     * @param[in] dynamic_type DynamicType to be registered.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the registered DynamicType TypeObject.
+     * @param [in] dynamic_type DynamicType to be registered.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the registered DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_dynamic_type(
@@ -305,8 +305,8 @@ public:
     /**
      * @brief Check if two given types are compatible according to the given TypeConsistencyEnforcement QoS.
      *
-     * @param[in] type_identifiers Pair of TypeIdentifiers to check compatibility.
-     * @param[in] type_consistency_qos TypeConsistencyEnforcement QoS to apply.
+     * @param [in] type_identifiers Pair of TypeIdentifiers to check compatibility.
+     * @param [in] type_consistency_qos TypeConsistencyEnforcement QoS to apply.
      * @return ReturnCode_t RETCODE_OK if the two types are compatible.
      *                      RETCODE_ERROR if the types are not compatible according to the TypeConsistencyEnforcement
      *                      QoS.
@@ -318,8 +318,8 @@ public:
     /**
      * @brief Get the type dependencies of the given TypeObject.
      *
-     * @param[in] type_object TypeObject queried for its dependencies.
-     * @param[in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param [in] type_object TypeObject queried for its dependencies.
+     * @param [in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
      *                      RETCODE_BAD_PARAMETER if any given TypeIdentifier is not a direct hash.
@@ -350,8 +350,8 @@ protected:
     /**
      * @brief Get the type dependencies of the given type identifiers.
      *
-     * @param[in] type_identifiers Sequence with the queried TypeIdentifiers.
-     * @param[in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param [in] type_identifiers Sequence with the queried TypeIdentifiers.
+     * @param [in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any given TypeIdentifier is unknown to the registry.
      *                      RETCODE_BAD_PARAMETER if any given TypeIdentifier is fully descriptive.
@@ -363,8 +363,8 @@ protected:
     /**
      * @brief Add type dependency to the sequence.
      *
-     * @param[in] type_id TypeIdentifier to be added.
-     * @param[in,out] type_dependencies TypeIdentfierWithSize sequence.
+     * @param [in] type_id TypeIdentifier to be added.
+     * @param [in,out] type_dependencies TypeIdentfierWithSize sequence.
      */
     void add_dependency(
             const TypeIdentifier& type_id,
@@ -373,8 +373,8 @@ protected:
     /**
      * @brief Get the type dependencies of custom annotations.
      *
-     * @param[in] custom_annotation_seq Sequence of custom annotations.
-     * @param[in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param [in] custom_annotation_seq Sequence of custom annotations.
+     * @param [in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
      */
@@ -386,8 +386,8 @@ protected:
      * @brief Get the type dependencies of plain sequences or arrays.
      *
      * @tparam T Either PlainSequenceSElemDefn, PlainSequenceLElemDefn, PlainArraySElemDefn or PlainArrayLElemDefn.
-     * @param[in] collection_type Plain collection Type.
-     * @param[in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param [in] collection_type Plain collection Type.
+     * @param [in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
      *                      RETCODE_BAD_PARAMETER if the collection type is fully descriptive.
@@ -421,8 +421,8 @@ protected:
      * @brief Get the type dependencies of plain maps.
      *
      * @tparam T Either PlainMapSTypeDefn or PlainMapLTypeDefn.
-     * @param[in] map_type Plain map Type.
-     * @param[in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param [in] map_type Plain map Type.
+     * @param [in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
      *                      RETCODE_BAD_PARAMETER if both the key and the elements types are fully descriptive.
@@ -462,8 +462,8 @@ protected:
      * @brief Get the alias type dependencies.
      *
      * @tparam T Either a CompleteAliasType or MinimalAliasType.
-     * @param[in] alias_type Alias Type.
-     * @param[in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param [in] alias_type Alias Type.
+     * @param [in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
      */
@@ -496,8 +496,8 @@ protected:
      * @brief Get the annotation type dependencies.
      *
      * @tparam T Either a CompleteAnnotationType or MinimalAnnotationType.
-     * @param[in] annotation_type Annotation Type.
-     * @param[in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param [in] annotation_type Annotation Type.
+     * @param [in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
      */
@@ -529,8 +529,8 @@ protected:
      * @brief Get the structure type dependencies.
      *
      * @tparam T Either a CompleteStructType or MinimalStructType.
-     * @param[in] struct_type Structure Type.
-     * @param[in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param [in] struct_type Structure Type.
+     * @param [in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
      */
@@ -570,8 +570,8 @@ protected:
      * @brief Get the union type dependencies.
      *
      * @tparam T Either a CompleteUnionType or MinimalUnionType.
-     * @param[in] union_type Union Type.
-     * @param[in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param [in] union_type Union Type.
+     * @param [in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
      */
@@ -613,8 +613,8 @@ protected:
      * @brief Get the sequence/array type dependencies.
      *
      * @tparam T Either a CompleteSequenceType/MinimalSequenceType/CompleteArrayType/MinimalArrayType.
-     * @param[in] collection_type Sequence or Array Type.
-     * @param[in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param [in] collection_type Sequence or Array Type.
+     * @param [in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
      */
@@ -647,8 +647,8 @@ protected:
      * @brief Get the map type dependencies.
      *
      * @tparam T Either a CompleteMapType or MinimalmapType.
-     * @param[in] map_type Map Type.
-     * @param[in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param [in] map_type Map Type.
+     * @param [in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
      */
@@ -686,7 +686,7 @@ protected:
     /**
      * @brief Check if a given name corresponds to a builtin annotation.
      *
-     * @param[in] name to check.
+     * @param [in] name to check.
      * @return true if the name is from a builtin annotation. false otherwise.
      */
     bool is_builtin_annotation_name(
@@ -695,7 +695,7 @@ protected:
     /**
      * @brief Build minimal TypeObject given a CompleteTypeObject.
      *
-     * @param[in] complete_type_object CompleteTypeObject.
+     * @param [in] complete_type_object CompleteTypeObject.
      * @return const minimal TypeObject instance.
      */
     const TypeObject build_minimal_from_complete_type_object(
@@ -704,7 +704,7 @@ protected:
     /**
      * @brief Build MinimalAliasType given a CompleteAliasType.
      *
-     * @param[in] complete_alias_type CompleteAliasType.
+     * @param [in] complete_alias_type CompleteAliasType.
      * @return const MinimalAliasType instance.
      */
     const MinimalAliasType build_minimal_from_complete_alias_type(
@@ -713,7 +713,7 @@ protected:
     /**
      * @brief Build MinimalAnnotationType given a CompleteAnnotationType.
      *
-     * @param[in] complete_annotation_type CompleteAnnotationType.
+     * @param [in] complete_annotation_type CompleteAnnotationType.
      * @return const MinimalAnnotationType instance.
      */
     const MinimalAnnotationType build_minimal_from_complete_annotation_type(
@@ -722,7 +722,7 @@ protected:
     /**
      * @brief Build MinimalStructType given a CompleteStructType.
      *
-     * @param[in] complete_struct_type CompleteStructType.
+     * @param [in] complete_struct_type CompleteStructType.
      * @return const MinimalStructType instance.
      */
     const MinimalStructType build_minimal_from_complete_struct_type(
@@ -731,7 +731,7 @@ protected:
     /**
      * @brief Build MinimalUnionType given a CompleteUnionType.
      *
-     * @param[in] complete_union_type CompleteUnionType.
+     * @param [in] complete_union_type CompleteUnionType.
      * @return const MinimalUnionType instance.
      */
     const MinimalUnionType build_minimal_from_complete_union_type(
@@ -740,7 +740,7 @@ protected:
     /**
      * @brief Build MinimalBitsetType given a CompleteBitsetType.
      *
-     * @param[in] complete_bitset_type CompleteBitsetType.
+     * @param [in] complete_bitset_type CompleteBitsetType.
      * @return const MinimalBitsetType instance.
      */
     const MinimalBitsetType build_minimal_from_complete_bitset_type(
@@ -749,7 +749,7 @@ protected:
     /**
      * @brief Build MinimalSequenceType given a CompleteSequenceType.
      *
-     * @param[in] complete_sequence_type CompleteSequenceType.
+     * @param [in] complete_sequence_type CompleteSequenceType.
      * @return const MinimalSequenceType instance.
      */
     const MinimalSequenceType build_minimal_from_complete_sequence_type(
@@ -758,7 +758,7 @@ protected:
     /**
      * @brief Build MinimalArrayType given a CompleteArrayType.
      *
-     * @param[in] complete_array_type CompleteArrayType.
+     * @param [in] complete_array_type CompleteArrayType.
      * @return const MinimalArrayType instance.
      */
     const MinimalArrayType build_minimal_from_complete_array_type(
@@ -767,7 +767,7 @@ protected:
     /**
      * @brief Build MinimalMapType given a CompleteMapType.
      *
-     * @param[in] complete_map_type CompleteMapType.
+     * @param [in] complete_map_type CompleteMapType.
      * @return const MinimalMapType instance.
      */
     const MinimalMapType build_minimal_from_complete_map_type(
@@ -776,7 +776,7 @@ protected:
     /**
      * @brief Build MinimalEnumeratedType given a CompleteEnumeratedType.
      *
-     * @param[in] complete_enumerated_type CompleteEnumeratedType.
+     * @param [in] complete_enumerated_type CompleteEnumeratedType.
      * @return const MinimalEnumeratedType instance.
      */
     const MinimalEnumeratedType build_minimal_from_complete_enumerated_type(
@@ -785,7 +785,7 @@ protected:
     /**
      * @brief Build MinimalBitmaskType given a CompleteBitmaskType.
      *
-     * @param[in] complete_bitmask_type CompleteBitmaskType.
+     * @param [in] complete_bitmask_type CompleteBitmaskType.
      * @return const MinimalBitmaskType instance.
      */
     const MinimalBitmaskType build_minimal_from_complete_bitmask_type(
@@ -809,8 +809,8 @@ protected:
     /**
      * @brief Register DynamicType TypeObject of an Alias type.
      *
-     * @param[in] dynamic_type Alias DynamicType to be registered.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
+     * @param [in] dynamic_type Alias DynamicType to be registered.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_alias_dynamic_type(
@@ -820,8 +820,8 @@ protected:
     /**
      * @brief Register DynamicType TypeObject of an Annotation type.
      *
-     * @param[in] dynamic_type Annotation DynamicType to be registered.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
+     * @param [in] dynamic_type Annotation DynamicType to be registered.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_annotation_dynamic_type(
@@ -831,8 +831,8 @@ protected:
     /**
      * @brief Register DynamicType TypeObject of a Structure type.
      *
-     * @param[in] dynamic_type Structure DynamicType to be registered.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
+     * @param [in] dynamic_type Structure DynamicType to be registered.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_struct_dynamic_type(
@@ -842,8 +842,8 @@ protected:
     /**
      * @brief Register DynamicType TypeObject of a Union type.
      *
-     * @param[in] dynamic_type Union DynamicType to be registered.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
+     * @param [in] dynamic_type Union DynamicType to be registered.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_union_dynamic_type(
@@ -853,8 +853,8 @@ protected:
     /**
      * @brief Register DynamicType TypeObject of a Bitset type.
      *
-     * @param[in] dynamic_type Bitset DynamicType to be registered.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
+     * @param [in] dynamic_type Bitset DynamicType to be registered.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_bitset_dynamic_type(
@@ -864,8 +864,8 @@ protected:
     /**
      * @brief Register DynamicType TypeObject of a Sequence type.
      *
-     * @param[in] dynamic_type Sequence DynamicType to be registered.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
+     * @param [in] dynamic_type Sequence DynamicType to be registered.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_sequence_dynamic_type(
@@ -875,8 +875,8 @@ protected:
     /**
      * @brief Register DynamicType TypeObject of a Array type.
      *
-     * @param[in] dynamic_type Array DynamicType to be registered.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
+     * @param [in] dynamic_type Array DynamicType to be registered.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_array_dynamic_type(
@@ -886,8 +886,8 @@ protected:
     /**
      * @brief Register DynamicType TypeObject of a Map type.
      *
-     * @param[in] dynamic_type Map DynamicType to be registered.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
+     * @param [in] dynamic_type Map DynamicType to be registered.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_map_dynamic_type(
@@ -897,8 +897,8 @@ protected:
     /**
      * @brief Register DynamicType TypeObject of a Enumeration type.
      *
-     * @param[in] dynamic_type Enumeration DynamicType to be registered.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
+     * @param [in] dynamic_type Enumeration DynamicType to be registered.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_enum_dynamic_type(
@@ -908,8 +908,8 @@ protected:
     /**
      * @brief Register DynamicType TypeObject of a Bitmask type.
      *
-     * @param[in] dynamic_type Bitmask DynamicType to be registered.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
+     * @param [in] dynamic_type Bitmask DynamicType to be registered.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_bitmask_dynamic_type(
@@ -919,8 +919,8 @@ protected:
     /**
      * @brief Register DynamicType indirect-hash TypeIdentifier of a Sequence type.
      *
-     * @param[in] dynamic_type Sequence DynamicType to be registered.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
+     * @param [in] dynamic_type Sequence DynamicType to be registered.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t typeidentifier_w_sequence_dynamic_type(
@@ -930,8 +930,8 @@ protected:
     /**
      * @brief Register DynamicType indirect-hash TypeIdentifier of a Array type.
      *
-     * @param[in] dynamic_type Array DynamicType to be registered.
-     * @param[out] type_id Complete indirect hash TypeIdentifier corresponding to the Array DynamicType.
+     * @param [in] dynamic_type Array DynamicType to be registered.
+     * @param [out] type_id Complete indirect hash TypeIdentifier corresponding to the Array DynamicType.
      *                     TypeIdentifier is required to define dependencies within the parent TypeObject
      *                     (if applicable).
      * @return ReturnCode_t RETCODE_OK always.
@@ -943,8 +943,8 @@ protected:
     /**
      * @brief Register DynamicType indirect-hash TypeIdentifier of a Map type.
      *
-     * @param[in] dynamic_type Map DynamicType to be registered.
-     * @param[out] type_id Complete indirect hash TypeIdentifier corresponding to the Map DynamicType.
+     * @param [in] dynamic_type Map DynamicType to be registered.
+     * @param [out] type_id Complete indirect hash TypeIdentifier corresponding to the Map DynamicType.
      *                     TypeIdentifier is required to define dependencies within the parent TypeObject
      *                     (if applicable).
      * @return ReturnCode_t RETCODE_OK always.
@@ -956,8 +956,8 @@ protected:
     /**
      * @brief Register DynamicType fully-descriptive TypeIdentifier of a String type.
      *
-     * @param[in] dynamic_type String DynamicType to be registered.
-     * @param[out] type_id Fully-descriptive TypeIdentifier corresponding to the String DynamicType.
+     * @param [in] dynamic_type String DynamicType to be registered.
+     * @param [out] type_id Fully-descriptive TypeIdentifier corresponding to the String DynamicType.
      *                     TypeIdentifier is required to define dependencies within the parent TypeObject
      *                     (if applicable).
      * @return ReturnCode_t RETCODE_OK always.
@@ -969,8 +969,8 @@ protected:
     /**
      * @brief Register DynamicType fully-descriptive TypeIdentifier of a Wide String type.
      *
-     * @param[in] dynamic_type Wide String DynamicType to be registered.
-     * @param[out] type_id Fully-descriptive TypeIdentifier corresponding to the Wide String DynamicType.
+     * @param [in] dynamic_type Wide String DynamicType to be registered.
+     * @param [out] type_id Fully-descriptive TypeIdentifier corresponding to the Wide String DynamicType.
      *                     TypeIdentifier is required to define dependencies within the parent TypeObject
      *                     (if applicable).
      * @return ReturnCode_t RETCODE_OK always.
@@ -982,8 +982,8 @@ protected:
     /**
      * @brief Apply DynamicType custom annotations to TypeObject.
      *
-     * @param[in] dynamic_type DynamicType being registered.
-     * @param[out] tmp_ann_custom Sequence with TypeObject AppliedAnnotationSeq.
+     * @param [in] dynamic_type DynamicType being registered.
+     * @param [out] tmp_ann_custom Sequence with TypeObject AppliedAnnotationSeq.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t  apply_custom_annotations(
@@ -993,8 +993,8 @@ protected:
     /**
      * @brief Apply DynamicType verbatim annotation to TypeObject.
      *
-     * @param[in] dynamic_type DynamicType being registered.
-     * @param[out] ann_builtin Verbatim annotation applied to TypeObject.
+     * @param [in] dynamic_type DynamicType being registered.
+     * @param [out] ann_builtin Verbatim annotation applied to TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t apply_verbatim_annotation(
@@ -1004,9 +1004,9 @@ protected:
     /**
      * @brief Set the annotation parameter value object
      *
-     * @param[in] kind Annotation Parameter DynamicType TypeKind
-     * @param[in] value String representation of the annotation parameter value to be set.
-     * @param[out] param_value AnnotationParameterValue instance.
+     * @param [in] kind Annotation Parameter DynamicType TypeKind
+     * @param [in] value String representation of the annotation parameter value to be set.
+     * @param [out] param_value AnnotationParameterValue instance.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t set_annotation_parameter_value(
@@ -1017,8 +1017,8 @@ protected:
     /**
      * @brief Wrap CompleteTypeDetail construction
      *
-     * @param[in] dynamic_type DynamicType to build the CompleteTypeDetail
-     * @param[out] detail CompleteTypeDetail instance
+     * @param [in] dynamic_type DynamicType to build the CompleteTypeDetail
+     * @param [out] detail CompleteTypeDetail instance
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t complete_type_detail(
@@ -1039,7 +1039,7 @@ protected:
     /**
      * @brief Auxiliary function to translate ExtensibilityKind namespace.
      *
-     * @param[in] extensibility_kind to be translated.
+     * @param [in] extensibility_kind to be translated.
      * @return const ExtensibilityKind translated.
      */
     ExtensibilityKind extensibility_kind(
@@ -1048,7 +1048,7 @@ protected:
     /**
      * @brief Auxiliary function to translate TryConstructKind namespace.
      *
-     * @param[in] try_construct_kind to be translated.
+     * @param [in] try_construct_kind to be translated.
      * @return const @ref TryConstructFailAction translated.
      */
     TryConstructFailAction try_construct_kind(
@@ -1057,7 +1057,7 @@ protected:
     /**
      * @brief Auxiliary function to translate TypeKind namespace.
      *
-     * @param[in] type_kind to be translated.
+     * @param [in] type_kind to be translated.
      * @return const TypeKind translated.
      */
     TypeKind type_kind(
@@ -1066,7 +1066,7 @@ protected:
     /**
      * @brief Auxiliary method to get the equivalence kind from a sequence/array.
      *
-     * @param[in] element_type_id Collection element TypeIdentifier.
+     * @param [in] element_type_id Collection element TypeIdentifier.
      * @return EquivalenceKind corresponding to the collection.
      */
     EquivalenceKind equivalence_kind(
@@ -1075,8 +1075,8 @@ protected:
     /**
      * @brief Auxiliary method to get the equivalence kind from a map collection.
      *
-     * @param[in] element_type_id Collection element TypeIdentifier.
-     * @param[in] key_type_id Map key TypeIdentifier.
+     * @param [in] element_type_id Collection element TypeIdentifier.
+     * @param [in] key_type_id Map key TypeIdentifier.
      * @return EquivalenceKind corresponding to the collection.
      */
     EquivalenceKind equivalence_kind(

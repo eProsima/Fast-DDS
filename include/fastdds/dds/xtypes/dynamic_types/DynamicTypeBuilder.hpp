@@ -36,7 +36,7 @@ public:
 
     /*!
      * Provides a summary of the state of this type overwriting a provided object.
-     * @param[inout] descriptor @ref TypeDescriptor
+     * @param [inout] descriptor @ref TypeDescriptor
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the copy was successful.
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil.
@@ -58,8 +58,8 @@ public:
 
     /*!
      * Returns a member looked for by name.
-     * @param[inout] member @ref DynamicTypeMember reference used to return the member.
-     * @param[in] name Member name.
+     * @param [inout] member @ref DynamicTypeMember reference used to return the member.
+     * @param [in] name Member name.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when member was found.
      * @retval RETCODE_BAD_PARAMETER when member wasn't found.
@@ -70,7 +70,7 @@ public:
 
     /*!
      * Returns all members sorted by name.
-     * @param[inout] member DynamicTypeMemberByName reference used to return all members.
+     * @param [inout] member DynamicTypeMemberByName reference used to return all members.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK always.
      */
@@ -78,8 +78,8 @@ public:
             DynamicTypeMembersByName& member) = 0;
     /*!
      * Returns a member looked for by @ref MemberId.
-     * @param[inout] member @ref DynamicTypeMember reference used to return the member.
-     * @param[in] id Member identifier.
+     * @param [inout] member @ref DynamicTypeMember reference used to return the member.
+     * @param [in] id Member identifier.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when member was found.
      * @retval RETCODE_BAD_PARAMETER when member wasn't found.
@@ -90,7 +90,7 @@ public:
 
     /*!
      * Returns all members sorted by MemberId.
-     * @param[inout] member DynamicTypeMemberById reference used to return all members.
+     * @param [inout] member DynamicTypeMemberById reference used to return all members.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK always.
      */
@@ -105,8 +105,8 @@ public:
 
     /*!
      * This operation returns the member that corresponds to the specified index.
-     * @param[inout] member @ref DynamicTypeMember reference used to return the member.
-     * @param[in] index Index
+     * @param [inout] member @ref DynamicTypeMember reference used to return the member.
+     * @param [in] index Index
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when member was found.
      * @retval RETCODE_BAD_PARAMETER when index is out-of-range.
@@ -123,8 +123,8 @@ public:
 
     /*!
      * This operation returns the annotation that corresponds to the specified index.
-     * @param[inout] descriptor @ref AnnotationDescriptor reference where information is copied.
-     * @param[in] idx Index
+     * @param [inout] descriptor @ref AnnotationDescriptor reference where information is copied.
+     * @param [in] idx Index
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when member was found.
      * @retval RETCODE_BAD_PARAMETER when reference is nil or index is out-of-range.
@@ -135,7 +135,7 @@ public:
 
     /*!
      * Compares current state against a @ref DynamicType reference.
-     * @param[in] other @ref DynamicType reference to compare to.
+     * @param [in] other @ref DynamicType reference to compare to.
      * @return \b bool `true` on equality
      */
     FASTDDS_EXPORTED_API virtual bool equals(
@@ -144,7 +144,7 @@ public:
     /*!
      * Adds a 'member' to this type, where the new 'member' has the meaning defined in the specification of
      * the DynamicTypeMember class.
-     * @param[in] descriptor @ref MemberDescriptor reference used for the new member.
+     * @param [in] descriptor @ref MemberDescriptor reference used for the new member.
      * @return ReturnCode_t
      * @retval RETCODE_OK when the member was created successfully.
      * @retval RETCODE_BAD_PARAMETER when there is an inconsistency.
@@ -155,7 +155,7 @@ public:
 
     /*!
      * Apply the given annotation to this type.
-     * @param[in] descriptor @ref AnnotationDescriptor reference to be applied.
+     * @param [in] descriptor @ref AnnotationDescriptor reference to be applied.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the annotation was applied successful.
      * @retval RETCODE_BAD_PARAMETER when there is an inconsistency.
@@ -165,8 +165,8 @@ public:
 
     /*!
      * Apply the given annotation to a member of this type.
-     * @param[in] member_id Member identifier.
-     * @param[in] descriptor @ref AnnotationDescriptor reference to be applied.
+     * @param [in] member_id Member identifier.
+     * @param [in] descriptor @ref AnnotationDescriptor reference to be applied.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the annotation was applied successful.
      * @retval RETCODE_BAD_PARAMETER when there is an inconsistency.

@@ -151,7 +151,7 @@ public:
      *
      * @param data Pointer to data
      * @param payload Pointer to payload
-     * @param[in] data_representation Representation that should be used to encode the data into the payload.
+     * @param [in] data_representation Representation that should be used to encode the data into the payload.
      * @return true if it is serialized correctly, false if not
      */
     FASTDDS_EXPORTED_API virtual bool serialize(
@@ -173,7 +173,7 @@ public:
     /*!
      * @brief Returns a function which can be used to calculate the serialized size of the provided data.
      *
-     * @param[in] data Pointer to data.
+     * @param [in] data Pointer to data.
      * @return Functor which calculates the serialized size of the data.
      */
     FASTDDS_EXPORTED_API virtual std::function<uint32_t()> get_serialized_size_provider(
@@ -185,8 +185,8 @@ public:
     /*!
      * @brief Returns a function which can be used to calculate the serialized size of the provided data.
      *
-     * @param[in] data Pointer to data.
-     * @param[in] data_representation Representation that should be used for calculating the serialized size.
+     * @param [in] data Pointer to data.
+     * @param [in] data_representation Representation that should be used for calculating the serialized size.
      * @return Functor which calculates the serialized size of the data.
      */
     FASTDDS_EXPORTED_API virtual std::function<uint32_t()> get_serialized_size_provider(

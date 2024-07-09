@@ -45,15 +45,15 @@ public:
 
     /*!
      * Modifies the underlying type reference.
-     * @param[in] type @ref DynamicType reference.
+     * @param [in] type @ref DynamicType reference.
      */
     virtual void type(
             traits<DynamicType>::ref_type type) = 0;
 
     /**
      * Getter given a key for the @b value property.
-     * @param[inout] value The value.
-     * @param[in] key Key used to retrieve the value.
+     * @param [inout] value The value.
+     * @param [in] key Key used to retrieve the value.
      * @return @ref ReturnCode_t returns operation success
      */
     virtual ReturnCode_t get_value(
@@ -62,7 +62,7 @@ public:
 
     /**
      * Getter for all the values.
-     * @param[inout] value @ref Parameters interface to the strings map.
+     * @param [inout] value @ref Parameters interface to the strings map.
      * @return @ref ReturnCode_t returns operation success.
      */
     virtual ReturnCode_t get_all_value(
@@ -70,8 +70,8 @@ public:
 
     /**
      * Setter given a key for the @b value property.
-     * @param[in] key null terminated string
-     * @param[in] value null terminated string
+     * @param [in] key null terminated string
+     * @param [in] value null terminated string
      * @return @ref ReturnCode_t returns operation success
      */
     virtual ReturnCode_t set_value(
@@ -80,7 +80,7 @@ public:
 
     /**
      * Overwrites the contents of this descriptor with those of another descriptor (see [standard] 7.5.2.3.1)
-     * @param[in] descriptor object
+     * @param [in] descriptor object
      * @return standard @ref ReturnCode_t
      * @retval RETCODE_OK when the copy was successful.
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil.
@@ -90,7 +90,7 @@ public:
 
     /**
      * State comparison according with the [standard] sections \b 7.5.2.3.2
-     * @param[in] descriptor reference.
+     * @param [in] descriptor reference.
      * @return \b bool `true` on equality
      */
     virtual bool equals(

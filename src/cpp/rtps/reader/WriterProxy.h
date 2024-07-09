@@ -113,7 +113,7 @@ public:
     /**
      * Update the missing changes up to the provided sequenceNumber.
      * All changes with status UNKNOWN with seq_num <= input seq_num are marked MISSING.
-     * @param[in] seq_num Pointer to the SequenceNumber.
+     * @param [in] seq_num Pointer to the SequenceNumber.
      */
     void missing_changes_update(
             const SequenceNumber_t& seq_num);
@@ -121,7 +121,7 @@ public:
     /**
      * Update the lost changes up to the provided sequenceNumber.
      * All changes with status UNKNOWN or MISSING with seq_num < input seq_num are marked LOST.
-     * @param[in] seq_num Pointer to the SequenceNumber.
+     * @param [in] seq_num Pointer to the SequenceNumber.
      */
     int32_t lost_changes_update(
             const SequenceNumber_t& seq_num);
@@ -226,7 +226,7 @@ public:
 
     /**
      * Checks whether a cache change was already received from this proxy.
-     * @param[in] seq_num Sequence number of the cache change to check.
+     * @param [in] seq_num Sequence number of the cache change to check.
      * @return true if the cache change was received, false otherwise.
      */
     bool change_was_received(
@@ -361,7 +361,7 @@ private:
 
     /**
      * Set initial value for last acked sequence number.
-     * @param[in] seq_num last acked sequence number.
+     * @param [in] seq_num last acked sequence number.
      */
     void loaded_from_storage(
             const SequenceNumber_t& seq_num);

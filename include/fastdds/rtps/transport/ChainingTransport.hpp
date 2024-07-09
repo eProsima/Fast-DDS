@@ -352,7 +352,7 @@ public:
      * @param receive_buffer_size Size of the raw data. It will be used as bounds check for the previous argument.
      * It must not exceed the \c receiveBufferSize fed to this class during construction.
      * @param local_locator Locator mapping to the local channel we're listening to.
-     * @param[out] remote_locator Locator describing the remote destination we received a packet from.
+     * @param [out] remote_locator Locator describing the remote destination we received a packet from.
      */
     FASTDDS_EXPORTED_API virtual void receive(
             TransportReceiverInterface* next_receiver,

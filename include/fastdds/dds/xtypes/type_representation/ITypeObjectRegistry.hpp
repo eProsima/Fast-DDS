@@ -52,9 +52,9 @@ public:
      * @pre type_name must not be empty.
      * @pre complete_type_object must be consistent (only checked in Debug build mode).
      *
-     * @param[in] type_name Name of the type being registered.
-     * @param[in] complete_type_object CompleteTypeObject related to the given type name.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the CompleteTypeObject just registered and the
+     * @param [in] type_name Name of the type being registered.
+     * @param [in] complete_type_object CompleteTypeObject related to the given type name.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the CompleteTypeObject just registered and the
      * generated MinimalTypeObject.
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeObject registered with the
@@ -78,8 +78,8 @@ public:
      * @pre @ref TypeIdentifierPair::type_identifier1 discriminator must match TypeObject discriminator or be TK_NONE.
      *      @ref TypeIdentifierPair::type_identifier1 consistency is only checked in Debug build mode.
      *
-     * @param[in] type_object Related TypeObject being registered.
-     * @param[inout] type_ids Returns the registered @ref TypeIdentifier.
+     * @param [in] type_object Related TypeObject being registered.
+     * @param [inout] type_ids Returns the registered @ref TypeIdentifier.
      * @ref TypeIdentifierPair::type_identifier1 might be TK_NONE.
      * In other case this function will check it is consistence with the provided @ref TypeObject.
      * @return ReturnCode_t RETCODE_OK if correctly registered.
@@ -94,8 +94,8 @@ public:
     /**
      * @brief Register DynamicType TypeObject.
      *
-     * @param[in] dynamic_type DynamicType to be registered.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the registered DynamicType TypeObject.
+     * @param [in] dynamic_type DynamicType to be registered.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the registered DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     virtual FASTDDS_EXPORTED_API ReturnCode_t register_typeobject_w_dynamic_type(
@@ -109,8 +109,8 @@ public:
      * @pre TypeIdentifier must be consistent (only checked in Debug build mode).
      * @pre type_name must not be empty.
      *
-     * @param[in] type_name Name of the type being registered.
-     * @param[in,out] type_identifier @ref TypeIdentifierPair related to the given type name. It must be set in
+     * @param [in] type_name Name of the type being registered.
+     * @param [in,out] type_identifier @ref TypeIdentifierPair related to the given type name. It must be set in
      * @ref TypeIdentifierPair::type_identifier1. At the end this object is filled with both TypeIdentifiers.
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
@@ -127,8 +127,8 @@ public:
      *
      * @pre type_name must not be empty.
      *
-     * @param[in] type_name Name of the type being queried.
-     * @param[out] type_objects Both complete and minimal TypeObjects related with the given type_name.
+     * @param [in] type_name Name of the type being queried.
+     * @param [out] type_objects Both complete and minimal TypeObjects related with the given type_name.
      * @return ReturnCode_t RETCODE_OK if the TypeObjects are found in the registry.
      *                      RETCODE_NO_DATA if the given type_name has not been registered.
      *                      RETCODE_BAD_PARAMETER if the type_name correspond to a indirect hash TypeIdentifier.
@@ -143,8 +143,8 @@ public:
      *
      * @pre type_name must not be empty.
      *
-     * @param[in] type_name Name of the type being queried.
-     * @param[out] type_identifiers For direct hash TypeIdentifiers, both minimal and complete TypeIdentifiers are
+     * @param [in] type_name Name of the type being queried.
+     * @param [out] type_identifiers For direct hash TypeIdentifiers, both minimal and complete TypeIdentifiers are
      *                              returned.
      *                              For indirect hash TypeIdentifiers, only the corresponding TypeIdentifier is returned
      * @return ReturnCode_t RETCODE_OK if the TypeIdentifiers are found in the registry.
@@ -160,8 +160,8 @@ public:
      *
      * @pre TypeIdentifier must be a direct hash TypeIdentifier.
      *
-     * @param[in] type_identifier TypeIdentifier being queried.
-     * @param[out] type_object TypeObject related with the given TypeIdentifier.
+     * @param [in] type_identifier TypeIdentifier being queried.
+     * @param [out] type_object TypeObject related with the given TypeIdentifier.
      * @return ReturnCode_t RETCODE_OK if the TypeObject is found within the registry.
      *                      RETCODE_NO_DATA if the given TypeIdentifier is not found in the registry.
      *                      RETCODE_PRECONDITION_NOT_MET if the TypeIdentifier is not a direct hash.
@@ -175,9 +175,9 @@ public:
      *
      * @pre type_ids must not be empty.
      *
-     * @param[in] type_ids @ref TypeIdentifierPair which type information is queried.
-     * @param[out] type_information Related TypeInformation for the given @ref TypeIdentifier.
-     * @param[in] with_dependencies
+     * @param [in] type_ids @ref TypeIdentifierPair which type information is queried.
+     * @param [out] type_information Related TypeInformation for the given @ref TypeIdentifier.
+     * @param [in] with_dependencies
      * @return ReturnCode_t RETCODE_OK if the type_ids are found within the registry.
      *                      RETCODE_NO_DATA if the given type_ids is not found.
      *                      RETCODE_BAD_PARAMETER if the given @ref TypeIdentifier corresponds to a indirect hash TypeIdentifier.

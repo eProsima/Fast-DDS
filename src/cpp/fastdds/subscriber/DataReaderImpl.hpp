@@ -263,7 +263,7 @@ public:
     /*!
      * @brief Get the SAMPLE_LOST communication status
      *
-     * @param[out] status SampleLostStatus object where the status is returned.
+     * @param [out] status SampleLostStatus object where the status is returned.
      *
      * @return RETCODE_OK
      */
@@ -273,7 +273,7 @@ public:
     /*!
      * @brief Get the SAMPLE_REJECTED communication status
      *
-     * @param[out] status SampleRejectedStatus object where the status is returned.
+     * @param [out] status SampleRejectedStatus object where the status is returned.
      *
      * @return RETCODE_OK
      */
@@ -616,8 +616,8 @@ protected:
     /*!
      * @brief Update SampleRejectedStatus with information about a new rejected sample.
      *
-     * @param[in] Reason why the new sample was rejected.
-     * @param[in] New sample which was rejected.
+     * @param [in] Reason why the new sample was rejected.
+     * @param [in] New sample which was rejected.
      */
     const SampleRejectedStatus& update_sample_rejected_status(
             SampleRejectedStatusKind reason,

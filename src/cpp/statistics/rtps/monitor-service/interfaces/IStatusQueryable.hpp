@@ -39,9 +39,9 @@ struct IStatusQueryable
      * @brief Interface for requesting the IncompatibleQosStatus
      * of and entity identified by its guid.
      *
-     * @param[in] guid The GUID_t identifying the target entity
-     * @param[in] status_kind The monitor service status kind that has changed
-     * @param[out] status The requested entity status
+     * @param [in] guid The GUID_t identifying the target entity
+     * @param [in] status_kind The monitor service status kind that has changed
+     * @param [out] status The requested entity status
      * @return Whether the operation succeeded or not
      */
     virtual bool get_monitoring_status(

@@ -166,7 +166,7 @@ public:
      * No Thread Safe
      * @param removal iterator to the change for removal
      * @param release specifies if the change should be return to the pool
-     * @param[in] max_blocking_time Maximum time this method has to complete the task.
+     * @param [in] max_blocking_time Maximum time this method has to complete the task.
      * @return iterator to the next change if any
      */
     FASTDDS_EXPORTED_API iterator remove_change_nts(
@@ -208,7 +208,7 @@ public:
 
     /**
      * Remove the CacheChange_t with the minimum sequenceNumber.
-     * @param[in] max_blocking_time Maximum time this method has to complete the task.
+     * @param [in] max_blocking_time Maximum time this method has to complete the task.
      * @return True if correctly removed.
      */
     FASTDDS_EXPORTED_API bool remove_min_change(

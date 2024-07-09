@@ -65,7 +65,7 @@ protected:
      * May propagate the change up the expression tree by calling
      * @ref child_has_changed on the parent of this condition.
      *
-     * @param[in] state New state for this condition.
+     * @param [in] state New state for this condition.
      *
      * @post The state of this condition will be @c state.
      */
@@ -85,7 +85,7 @@ protected:
     /**
      * Set the result of this condition.
      *
-     * @param[in]  result   The result to be set.
+     * @param [in]  result   The result to be set.
      *
      * @post The state of this condition will not be UNDECIDED.
      */
@@ -115,7 +115,7 @@ protected:
     /**
      * A child condition will call this method whenever its state is changed.
      *
-     * @param[in] child The child condition
+     * @param [in] child The child condition
      */
     virtual void child_has_changed(
             const DDSFilterCondition& child) noexcept = 0;

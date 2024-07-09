@@ -82,8 +82,8 @@ void tmutex_stop_recording();
 
 /*!
  * @brief If recording process is active then the mutex will be recorded.
- * @param[in] type Type of the lock used by the mutex.
- * @param[in] mutex Pointer of the mutex to be recorded.
+ * @param [in] type Type of the lock used by the mutex.
+ * @param [in] mutex Pointer of the mutex to be recorded.
  */
 void tmutex_record_mutex_(
         LockType type,
@@ -91,7 +91,7 @@ void tmutex_record_mutex_(
 
 /*!
  * @brief Gets the pointer of the selected recorded mutex.
- * @param[in] index Position of the recorded mutex.
+ * @param [in] index Position of the recorded mutex.
  * @return Pointer to the selected mutex.
  */
 pthread_mutex_t* tmutex_get_mutex(
@@ -99,7 +99,7 @@ pthread_mutex_t* tmutex_get_mutex(
 
 /*!
  * @brief Locks the selected recorded mutex.
- * @param[in] index Position of the recorded mutex.
+ * @param [in] index Position of the recorded mutex.
  * @return true if locking a timed mutex. false otherwise
  */
 bool tmutex_lock_mutex(
@@ -107,7 +107,7 @@ bool tmutex_lock_mutex(
 
 /*!
  * @brief Unlocks the selected recorded mutex.
- * @param[in] index Position of the recorded mutex.
+ * @param [in] index Position of the recorded mutex.
  */
 void tmutex_unlock_mutex(
         size_t index);
