@@ -688,7 +688,8 @@ bool WLP::add_local_writer(
                     wqos.m_liveliness.kind,
                     wqos.m_liveliness.lease_duration))
         {
-            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Could not add writer " << writer->getGuid() << " to liveliness manager");
+            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS,
+                    "Could not add writer " << writer->getGuid() << " to liveliness manager");
         }
     }
     else if (wqos.m_liveliness.kind == dds::MANUAL_BY_TOPIC_LIVELINESS_QOS)
@@ -700,7 +701,8 @@ bool WLP::add_local_writer(
                     wqos.m_liveliness.kind,
                     wqos.m_liveliness.lease_duration))
         {
-            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Could not add writer " << writer->getGuid() << " to liveliness manager");
+            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS,
+                    "Could not add writer " << writer->getGuid() << " to liveliness manager");
         }
     }
 
