@@ -184,7 +184,6 @@ public:
      *  * EPROSIMA_LOG_WARNING(cat, msg);
      *  * EPROSIMA_LOG_ERROR(cat, msg);
      *
-     * @todo this method takes 2 mutexes (same mutex) internally.
      * This is a very high sensible point of the code and it should be refactored to be as efficient as possible.
      */
     FASTDDS_EXPORTED_API static void QueueLog(

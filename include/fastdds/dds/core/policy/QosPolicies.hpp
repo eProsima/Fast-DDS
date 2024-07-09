@@ -2066,7 +2066,7 @@ public:
 };
 
 /**
- * Enum @ref DataRepresentationId, different kinds of topic data representation
+ * Enum DataRepresentationId, different kinds of topic data representation
  */
 typedef enum DataRepresentationId : int16_t
 {
