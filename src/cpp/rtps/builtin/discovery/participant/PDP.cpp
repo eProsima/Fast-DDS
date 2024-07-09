@@ -1337,7 +1337,7 @@ void PDP::actions_on_remote_participant_removed(
 
         bool should_be_ignored = false;
         listener->on_participant_discovery(mp_RTPSParticipant->getUserRTPSParticipant(), reason,
-                    std::move(info), should_be_ignored);
+                std::move(info), should_be_ignored);
     }
 
     {

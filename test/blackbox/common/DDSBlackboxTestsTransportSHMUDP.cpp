@@ -207,7 +207,9 @@ static void shm_metatraffic_test(
     PubSubWriter<HelloWorldPubSubType> writer(topic_name + "/" + value);
     PubSubReader<HelloWorldPubSubType> reader(topic_name + "/" + value);
 
-    auto discovery_checker = [unicast, multicast](const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& info, eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS /*status*/)
+    auto discovery_checker =
+            [unicast, multicast](const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& info,
+                    eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS /*status*/)
             {
                 check_shm_locators(info, unicast, multicast);
                 return true;
