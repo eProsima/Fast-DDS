@@ -42,7 +42,7 @@ ReturnCode_t json_serialize(
     }
     else
     {
-        EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                 "Error encountered while performing DynamicData to JSON serialization.");
     }
     return ret;
