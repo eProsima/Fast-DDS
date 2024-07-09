@@ -98,16 +98,6 @@ public:
         subscriber_config sub_config;
     };
 
-    //! Get the shape color as a string
-    static std::string shape_color(
-            int index)
-    {
-        const int max_colors = 10;
-        const std::array<std::string, max_colors> shape_colors =
-        { "RED", "BLUE", "GREEN", "YELLOW", "ORANGE", "CYAN", "MAGENTA", "PURPLE", "GREY", "BLACK"};
-        return shape_colors[index % max_colors];
-    }
-
     /**
      * @brief Print usage help message and exit with the given return code
      *
@@ -719,6 +709,23 @@ public:
             default:
                 return "Undefined entity";
         }
+    }
+
+    //! Get the shape color as a string
+    static std::string shape_color(
+            int index)
+    {
+        constexpr int max_colors = 10;
+        const auto& shape_colors = get_shape_colors();
+        return shape_colors[index % max_colors];
+    }
+
+private:
+
+    //! Private method to declare constant array of colors
+    static constexpr std::array<const char*, 10> get_shape_colors()
+    {
+        return { "RED", "BLUE", "GREEN", "YELLOW", "ORANGE", "CYAN", "MAGENTA", "PURPLE", "GREY", "BLACK" };
     }
 
 };
