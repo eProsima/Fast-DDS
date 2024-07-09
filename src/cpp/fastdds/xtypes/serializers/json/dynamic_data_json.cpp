@@ -398,7 +398,7 @@ ReturnCode_t json_serialize_member(
             else if (format == DynamicDataJsonFormat::EPROSIMA)
             {
                 nlohmann::json bitmask_dict;
-                uint64_t u64_value; // Auxiliar variable to check active bits afterwards
+                uint64_t u64_value{0}; // Auxiliar variable to check active bits afterwards
                 if (9 > bound)
                 {
                     uint8_t value;
