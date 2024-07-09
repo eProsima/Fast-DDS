@@ -31,6 +31,7 @@ on:
         description: 'Branch or tag of Fast CDR repository (https://github.com/eProsima/Fast-CDR)'
         required: false
         type: string
+        default: 'master'
       security:
         description: 'Enable security features'
         required: false
@@ -120,14 +121,14 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/Fast-CDR
-          fallback_branch: master
+          fallback_branch: ${{ inputs.fastcdr-branch }}
 
       - name: Download Fast CDR
-        run: |
-            cd src
-            git clone -b ${{ steps.get_fastcdr_branch.outputs.deduced_branch }} https://github.com/eProsima/Fast-CDR.git fastcdr
-            cd ..
-        shell: bash
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          repository: eProsima/Fast-CDR
+          path: ${{ github.workspace }}/src/fastcdr
+          ref: ${{ steps.get_fastcdr_branch.outputs.deduced_branch }}
 
       - name: Fetch Fast DDS dependencies
         uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
@@ -324,6 +325,7 @@ jobs:
           cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
           cmake_args_default: ''
           cmake_build_type: ${{ matrix.cmake-build-type }}
+          workspace_dependencies: ${{ github.workspace }}/install
           workspace: ${{ github.workspace }}
 
       - name: Upload python build artifacts
