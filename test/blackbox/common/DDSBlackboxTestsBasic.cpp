@@ -962,7 +962,7 @@ TEST(DDSBasic, successful_destruction_among_intraprocess_participants)
 
         std::vector<std::shared_ptr<PubSubParticipant<HelloWorldPubSubType>>> reception_participants;
 
-        size_t num_reception_participants = 5;
+        size_t num_reception_participants = 50;
 
         for (size_t i = 0; i < num_reception_participants; i++)
         {
@@ -992,6 +992,7 @@ TEST(DDSBasic, successful_destruction_among_intraprocess_participants)
                 });
 
         std::vector<std::thread> reception_threads;
+        reception_threads.reserve(num_reception_participants);
         for (auto& reception_participant : reception_participants)
         {
             reception_threads.emplace_back([&reception_participant]()
@@ -1000,8 +1001,9 @@ TEST(DDSBasic, successful_destruction_among_intraprocess_participants)
                     for (auto& data : data_21)
                     {
                         reception_participant->send_sample(data);
-                        data_21.pop_back();
                     }
+
+                    reception_participant.reset();
                 });
         }
 
