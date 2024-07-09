@@ -107,20 +107,20 @@ public:
             ParticipantProxyData* pdata);
     /**
      * Add a local writer to the liveliness protocol.
-     * @param W Pointer to the RTPSWriter.
+     * @param writer Pointer to the RTPSWriter.
      * @param wqos Quality of service policies for the writer.
      * @return True if correct.
      */
     bool add_local_writer(
-            RTPSWriter* W,
+            RTPSWriter* writer,
             const fastdds::dds::WriterQos& wqos);
     /**
      * Remove a local writer from the liveliness protocol.
-     * @param W Pointer to the RTPSWriter.
+     * @param writer Pointer to the RTPSWriter.
      * @return True if removed.
      */
     bool remove_local_writer(
-            RTPSWriter* W);
+            RTPSWriter* writer);
 
     /**
      * @brief Adds a local reader to the liveliness protocol

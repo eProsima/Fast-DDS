@@ -617,14 +617,14 @@ void WLP::removeRemoteEndpoints(
 }
 
 bool WLP::add_local_writer(
-        RTPSWriter* W,
+        RTPSWriter* writer,
         const fastdds::dds::WriterQos& wqos)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 
-    EPROSIMA_LOG_INFO(RTPS_LIVELINESS, W->getGuid().entityId << " to Liveliness Protocol");
+    EPROSIMA_LOG_INFO(RTPS_LIVELINESS, writer->getGuid().entityId << " to Liveliness Protocol");
 
-    BaseWriter* base_writer = BaseWriter::downcast(W);
+    BaseWriter* base_writer = BaseWriter::downcast(writer);
 
     double wAnnouncementPeriodMilliSec(fastdds::rtps::TimeConv::Duration_t2MilliSecondsDouble(wqos.m_liveliness.
                     announcement_period));
@@ -684,11 +684,11 @@ bool WLP::add_local_writer(
         manual_by_participant_writers_.push_back(base_writer);
 
         if (!pub_liveliness_manager_->add_writer(
-                    W->getGuid(),
+                    writer->getGuid(),
                     wqos.m_liveliness.kind,
                     wqos.m_liveliness.lease_duration))
         {
-            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Could not add writer " << W->getGuid() << " to liveliness manager");
+            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Could not add writer " << writer->getGuid() << " to liveliness manager");
         }
     }
     else if (wqos.m_liveliness.kind == dds::MANUAL_BY_TOPIC_LIVELINESS_QOS)
@@ -696,11 +696,11 @@ bool WLP::add_local_writer(
         manual_by_topic_writers_.push_back(base_writer);
 
         if (!pub_liveliness_manager_->add_writer(
-                    W->getGuid(),
+                    writer->getGuid(),
                     wqos.m_liveliness.kind,
                     wqos.m_liveliness.lease_duration))
         {
-            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Could not add writer " << W->getGuid() << " to liveliness manager");
+            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Could not add writer " << writer->getGuid() << " to liveliness manager");
         }
     }
 
@@ -708,14 +708,14 @@ bool WLP::add_local_writer(
 }
 
 bool WLP::remove_local_writer(
-        RTPSWriter* W)
+        RTPSWriter* writer)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 
-    EPROSIMA_LOG_INFO(RTPS_LIVELINESS, W->getGuid().entityId << " from Liveliness Protocol");
+    EPROSIMA_LOG_INFO(RTPS_LIVELINESS, writer->getGuid().entityId << " from Liveliness Protocol");
 
     LivelinessData::WriterStatus writer_status;
-    BaseWriter* base_writer = BaseWriter::downcast(W);
+    BaseWriter* base_writer = BaseWriter::downcast(writer);
 
     if (base_writer->get_liveliness_kind() == dds::AUTOMATIC_LIVELINESS_QOS)
     {
