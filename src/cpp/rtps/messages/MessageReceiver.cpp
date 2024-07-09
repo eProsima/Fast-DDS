@@ -690,13 +690,18 @@ bool MessageReceiver::willAReaderAcceptMsgDirectedTo(
     {
         for (const auto& readers : associated_readers_)
         {
-            for (const auto& it : readers.second)
+            if (0 < readers.second.size())
             {
+<<<<<<< HEAD
                 if (it->m_acceptMessagesToUnknownReaders)
                 {
                     first_reader = it;
                     return true;
                 }
+=======
+                first_reader = readers.second.front();
+                return true;
+>>>>>>> dff42e0f6 (Fix compilation on VS 2022 in Debug (#5040))
             }
         }
     }

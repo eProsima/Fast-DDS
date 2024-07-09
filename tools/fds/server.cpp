@@ -79,6 +79,16 @@ int fastdds_discovery_server(
         return 1;
     }
 
+<<<<<<< HEAD
+=======
+    if (options[UNKNOWN])
+    {
+        EPROSIMA_LOG_ERROR(CLI, "Unknown option: " << options[UNKNOWN].name);
+        option::printUsage(std::cout, usage);
+        return 1;
+    }
+
+>>>>>>> dff42e0f6 (Fix compilation on VS 2022 in Debug (#5040))
     // No arguments beyond options
     int noopts = parse.nonOptionsCount();
     if (noopts)
