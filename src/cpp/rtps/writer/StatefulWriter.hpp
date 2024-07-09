@@ -57,6 +57,8 @@ public:
 
     virtual ~StatefulWriter();
 
+    //vvvvvvvvvvvvvvvvvvvvv [Exported API] vvvvvvvvvvvvvvvvvvvvv
+
     bool matched_reader_add(
             const ReaderProxyData& data) final;
 
@@ -92,6 +94,10 @@ public:
     bool get_connections(
             fastdds::statistics::rtps::ConnectionList& connection_list) final;
 #endif // ifdef FASTDDS_STATISTICS
+
+    //^^^^^^^^^^^^^^^^^^^^^^ [Exported API] ^^^^^^^^^^^^^^^^^^^^^^^
+
+    //vvvvvvvvvvvvvvvvvvvvv [BaseWriter API] vvvvvvvvvvvvvvvvvvvvvv
 
     void unsent_change_added_to_history(
             CacheChange_t* p,
@@ -143,6 +149,8 @@ public:
             const SequenceNumber_t& seq,
             const std::chrono::steady_clock::time_point& max_blocking_time_point,
             std::unique_lock<RecursiveTimedMutex>& lock) final;
+
+    //^^^^^^^^^^^^^^^^^^^^^^ [BaseWriter API] ^^^^^^^^^^^^^^^^^^^^^^^
 
     /**
      * @brief Sends a change directly to a intraprocess reader.
@@ -202,9 +210,9 @@ public:
     /**
      * @brief Increment the HB count.
      */
-    inline void incrementHBCount()
+    inline void increment_hb_count()
     {
-        on_heartbeat(++m_heartbeatCount);
+        on_heartbeat(++heartbeat_count_);
     }
 
     template <typename Function>
@@ -247,9 +255,9 @@ public:
      * Get count of heartbeats
      * @return count of heartbeats
      */
-    inline Count_t getHeartbeatCount() const
+    inline Count_t get_heartbeat_count() const
     {
-        return this->m_heartbeatCount;
+        return this->heartbeat_count_;
     }
 
     /**
@@ -257,7 +265,7 @@ public:
      *
      * @return Number of the matched readers
      */
-    inline size_t getMatchedReadersSize() const
+    inline size_t get_matched_readers_size() const
     {
         std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
         return matched_remote_readers_.size()
@@ -270,7 +278,7 @@ public:
      *
      * @param times WriterTimes parameter.
      */
-    void updateTimes(
+    void update_times(
             const WriterTimes& times);
 
     /**
@@ -278,7 +286,7 @@ public:
      *
      * @param att WriterAttributes parameter.
      */
-    void updatePositiveAcks(
+    void update_positive_acks_times(
             const WriterAttributes& att);
 
     /**
@@ -332,45 +340,8 @@ protected:
 
 private:
 
-    void init(
-            RTPSParticipantImpl* pimpl,
-            const WriterAttributes& att);
-
-    //!Timed Event to manage the periodic HB to the Reader.
-    TimedEvent* periodic_hb_event_;
-
-    //! Timed Event to manage the Acknack response delay.
-    TimedEvent* nack_response_event_;
-
-    //! A timed event to mark samples as acknowledget (used only if disable positive ACKs QoS is enabled)
-    TimedEvent* ack_event_;
-
-    //!Count of the sent heartbeats.
-    Count_t m_heartbeatCount;
-    //!WriterTimes
-    WriterTimes m_times;
-
-    //! Vector containing all the remote ReaderProxies.
-    ResourceLimitedVector<ReaderProxy*> matched_remote_readers_;
-    //! Vector containing all the inactive, ready for reuse, ReaderProxies.
-    ResourceLimitedVector<ReaderProxy*> matched_readers_pool_;
-
-    using ReaderProxyIterator = ResourceLimitedVector<ReaderProxy*>::iterator;
-    using ReaderProxyConstIterator = ResourceLimitedVector<ReaderProxy*>::const_iterator;
-
-    //!To avoid notifying twice of the same sequence number
-    SequenceNumber_t next_all_acked_notify_sequence_;
-    SequenceNumber_t min_readers_low_mark_;
-
-    // TODO Join this mutex when main mutex would not be recursive.
-    std::mutex all_acked_mutex_;
-    std::condition_variable all_acked_cond_;
-    // TODO Also remove when main mutex not recursive.
-    bool all_acked_;
-    std::condition_variable_any may_remove_change_cond_;
-    unsigned int may_remove_change_;
-
-private:
+    StatefulWriter& operator =(
+            const StatefulWriter&) = delete;
 
     bool is_acked_by_all_nts(
             const SequenceNumber_t seq) const;
@@ -425,18 +396,56 @@ private:
      *
      * @param group     Reference to the Message Group to which the GAP messages are to be added.
      */
-    void add_gaps_for_holes_in_history_(
+    void add_gaps_for_holes_in_history(
             RTPSMessageGroup& group);
 
-    //! True to disable piggyback heartbeats
+    void init(
+            RTPSParticipantImpl* pimpl,
+            const WriterAttributes& att);
+
+    /// Timed Event to manage the periodic HB to the Reader.
+    TimedEvent* periodic_hb_event_;
+
+    /// Timed Event to manage the Acknack response delay.
+    TimedEvent* nack_response_event_;
+
+    /// A timed event to mark samples as acknowledget (used only if disable positive ACKs QoS is enabled)
+    TimedEvent* ack_event_;
+
+    /// Count of the sent heartbeats.
+    Count_t heartbeat_count_;
+    /// WriterTimes
+    WriterTimes times_;
+
+    /// Vector containing all the remote ReaderProxies.
+    ResourceLimitedVector<ReaderProxy*> matched_remote_readers_;
+    /// Vector containing all the inactive, ready for reuse, ReaderProxies.
+    ResourceLimitedVector<ReaderProxy*> matched_readers_pool_;
+
+    using ReaderProxyIterator = ResourceLimitedVector<ReaderProxy*>::iterator;
+    using ReaderProxyConstIterator = ResourceLimitedVector<ReaderProxy*>::const_iterator;
+
+    /// To avoid notifying twice of the same sequence number
+    SequenceNumber_t next_all_acked_notify_sequence_;
+    SequenceNumber_t min_readers_low_mark_;
+
+    // TODO Join this mutex when main mutex would not be recursive.
+    std::mutex all_acked_mutex_;
+    std::condition_variable all_acked_cond_;
+    // TODO Also remove when main mutex not recursive.
+    bool all_acked_;
+    std::condition_variable_any may_remove_change_cond_;
+    unsigned int may_remove_change_;
+
+    /// True to disable piggyback heartbeats
     bool disable_heartbeat_piggyback_;
-    //! True to disable positive ACKs
+    /// True to disable positive ACKs
     bool disable_positive_acks_;
-    //! Keep duration for disable positive ACKs QoS, in microseconds
+    /// Keep duration for disable positive ACKs QoS, in microseconds
     std::chrono::duration<double, std::ratio<1, 1000000>> keep_duration_us_;
-    //! Last acknowledged cache change (only used if using disable positive ACKs QoS)
+    /// Last acknowledged cache change (only used if using disable positive ACKs QoS)
     SequenceNumber_t last_sequence_number_;
-    //! Biggest sequence number removed from history
+    /// Biggest sequence number removed from history
     SequenceNumber_t biggest_removed_sequence_number_;
 
     const uint32_t sendBufferSize_;
@@ -446,14 +455,11 @@ private:
     bool there_are_remote_readers_ = false;
     bool there_are_local_readers_ = false;
 
-    StatefulWriter& operator =(
-            const StatefulWriter&) = delete;
-
-    //! The filter for the reader
+    /// The filter for the reader
     fastdds::rtps::IReaderDataFilter* reader_data_filter_ = nullptr;
-    //! Vector containing all the active ReaderProxies for intraprocess delivery.
+    /// Vector containing all the active ReaderProxies for intraprocess delivery.
     ResourceLimitedVector<ReaderProxy*> matched_local_readers_;
-    //! Vector containing all the active ReaderProxies for datasharing delivery.
+    /// Vector containing all the active ReaderProxies for datasharing delivery.
     ResourceLimitedVector<ReaderProxy*> matched_datasharing_readers_;
     bool there_are_datasharing_readers_ = false;
 

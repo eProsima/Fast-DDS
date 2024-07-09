@@ -179,8 +179,8 @@ StatefulWriter::StatefulWriter(
     , periodic_hb_event_(nullptr)
     , nack_response_event_(nullptr)
     , ack_event_(nullptr)
-    , m_heartbeatCount(0)
-    , m_times(att.times)
+    , heartbeat_count_(0)
+    , times_(att.times)
     , matched_remote_readers_(att.matched_readers_allocation)
     , matched_readers_pool_(att.matched_readers_allocation)
     , next_all_acked_notify_sequence_(0, 1)
@@ -217,7 +217,7 @@ void StatefulWriter::init(
         {
             return send_periodic_heartbeat();
         },
-        fastdds::rtps::TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeat_period));
+        fastdds::rtps::TimeConv::Time_t2MilliSecondsDouble(times_.heartbeat_period));
 
     nack_response_event_ = new TimedEvent(
         pimpl->getEventResource(),
@@ -226,7 +226,7 @@ void StatefulWriter::init(
             perform_nack_response();
             return false;
         },
-        fastdds::rtps::TimeConv::Time_t2MilliSecondsDouble(m_times.nack_response_delay));
+        fastdds::rtps::TimeConv::Time_t2MilliSecondsDouble(times_.nack_response_delay));
 
     if (disable_positive_acks_)
     {
@@ -241,7 +241,7 @@ void StatefulWriter::init(
 
     for (size_t n = 0; n < att.matched_readers_allocation.initial; ++n)
     {
-        matched_readers_pool_.push_back(new ReaderProxy(m_times, part_att.allocation.locators, this));
+        matched_readers_pool_.push_back(new ReaderProxy(times_, part_att.allocation.locators, this));
     }
 }
 
@@ -454,9 +454,9 @@ bool StatefulWriter::intraprocess_heartbeat(
         if ((first_seq != c_SequenceNumber_Unknown && last_seq != c_SequenceNumber_Unknown) &&
                 (liveliness || reader_proxy->has_changes()))
         {
-            incrementHBCount();
+            increment_hb_count();
             returned_value = BaseReader::downcast(reader)->process_heartbeat_msg(
-                m_guid, m_heartbeatCount, first_seq, last_seq, true, liveliness, c_VendorId_eProsima);
+                m_guid, heartbeat_count_, first_seq, last_seq, true, liveliness, c_VendorId_eProsima);
         }
     }
 
@@ -543,7 +543,7 @@ void StatefulWriter::send_heartbeat_to_all_readers()
                 (SequenceNumber_t::unknown() != get_seq_num_min() &&
                 SequenceNumber_t::unknown() != get_seq_num_max()));
 
-            add_gaps_for_holes_in_history_(group);
+            add_gaps_for_holes_in_history(group);
 
             send_heartbeat_nts_(locator_selector_general_.all_remote_readers.size(), group, disable_positive_acks_);
         }
@@ -1011,10 +1011,10 @@ bool StatefulWriter::matched_reader_add(
     if (matched_readers_pool_.empty())
     {
         size_t max_readers = matched_readers_pool_.max_size();
-        if (getMatchedReadersSize() + matched_readers_pool_.size() < max_readers)
+        if (get_matched_readers_size() + matched_readers_pool_.size() < max_readers)
         {
             const RTPSParticipantAttributes& part_att = mp_RTPSParticipant->getRTPSParticipantAttributes();
-            rp = new ReaderProxy(m_times, part_att.allocation.locators, this);
+            rp = new ReaderProxy(times_, part_att.allocation.locators, this);
         }
         else
         {
@@ -1250,7 +1250,7 @@ bool StatefulWriter::matched_reader_remove(
     update_reader_info(locator_selector_general_, false);
     update_reader_info(locator_selector_async_, false);
 
-    if (getMatchedReadersSize() == 0)
+    if (get_matched_readers_size() == 0)
     {
         periodic_hb_event_->cancel_timer();
     }
@@ -1586,14 +1586,14 @@ bool StatefulWriter::wait_for_acknowledgement(
 void StatefulWriter::update_attributes(
         const WriterAttributes& att)
 {
-    this->updateTimes(att.times);
+    this->update_times(att.times);
     if (this->get_disable_positive_acks())
     {
-        this->updatePositiveAcks(att);
+        this->update_positive_acks_times(att);
     }
 }
 
-void StatefulWriter::updatePositiveAcks(
+void StatefulWriter::update_positive_acks_times(
         const WriterAttributes& att)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
@@ -1607,22 +1607,22 @@ void StatefulWriter::updatePositiveAcks(
     ack_event_->restart_timer();
 }
 
-void StatefulWriter::updateTimes(
+void StatefulWriter::update_times(
         const WriterTimes& times)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    if (m_times.heartbeat_period != times.heartbeat_period)
+    if (times_.heartbeat_period != times.heartbeat_period)
     {
         periodic_hb_event_->update_interval(times.heartbeat_period);
     }
-    if (m_times.nack_response_delay != times.nack_response_delay)
+    if (times_.nack_response_delay != times.nack_response_delay)
     {
         if (nack_response_event_ != nullptr)
         {
             nack_response_event_->update_interval(times.nack_response_delay);
         }
     }
-    if (m_times.nack_supression_duration != times.nack_supression_duration)
+    if (times_.nack_supression_duration != times.nack_supression_duration)
     {
         for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
                 [&times](ReaderProxy* reader)
@@ -1637,7 +1637,7 @@ void StatefulWriter::updateTimes(
             it->update_nack_supression_interval(times.nack_supression_duration);
         }
     }
-    m_times = times;
+    times_ = times;
 }
 
 SequenceNumber_t StatefulWriter::next_sequence_number() const
@@ -1764,7 +1764,7 @@ void StatefulWriter::send_heartbeat_to_nts(
                     assert(firstSeq <= lastSeq);
                     if (!liveliness)
                     {
-                        add_gaps_for_holes_in_history_(group);
+                        add_gaps_for_holes_in_history(group);
                     }
                 }
 
@@ -1811,8 +1811,8 @@ void StatefulWriter::send_heartbeat_nts_(
         assert(firstSeq <= lastSeq);
     }
 
-    incrementHBCount();
-    message_group.add_heartbeat(firstSeq, lastSeq, m_heartbeatCount, final, liveliness);
+    increment_hb_count();
+    message_group.add_heartbeat(firstSeq, lastSeq, heartbeat_count_, final, liveliness);
     // Update calculate of heartbeat piggyback.
     currentUsageSendBufferSize_ = static_cast<int32_t>(sendBufferSize_);
 
@@ -2212,7 +2212,7 @@ bool StatefulWriter::get_connections(
 
 #endif // ifdef FASTDDS_STATISTICS
 
-void StatefulWriter::add_gaps_for_holes_in_history_(
+void StatefulWriter::add_gaps_for_holes_in_history(
         RTPSMessageGroup& group)
 {
     SequenceNumber_t firstSeq = get_seq_num_min();

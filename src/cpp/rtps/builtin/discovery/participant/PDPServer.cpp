@@ -1612,11 +1612,11 @@ void PDPServer::send_announcement(
     if (dispose)
     {
         RTPSMessageGroup group(getRTPSParticipant(), endpoints->writer.writer_, &sender);
-        endpoints->writer.writer_->fastdds::rtps::StatefulWriter::incrementHBCount();
+        endpoints->writer.writer_->fastdds::rtps::StatefulWriter::increment_hb_count();
         group.add_heartbeat(
             change->sequenceNumber,
             change->sequenceNumber,
-            endpoints->writer.writer_->getHeartbeatCount(),
+            endpoints->writer.writer_->get_heartbeat_count(),
             true,
             false);
 

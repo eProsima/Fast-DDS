@@ -289,7 +289,7 @@ void StatelessWriter::unsent_change_added_to_history(
     }
 
     // Now for the rest of readers
-    if (!fixed_locators_.empty() || getMatchedReadersSize() > 0)
+    if (!fixed_locators_.empty() || get_matched_readers_size() > 0)
     {
         flow_controller_->add_new_sample(this, change, max_blocking_time);
     }
@@ -369,7 +369,7 @@ bool StatelessWriter::has_been_fully_delivered(
         }
     }
 
-    if (getMatchedReadersSize() > 0)
+    if (get_matched_readers_size() > 0)
     {
         return is_acked_by_all(seq_num);
     }
@@ -485,7 +485,7 @@ bool StatelessWriter::matched_reader_add(
     if (matched_readers_pool_.empty())
     {
         size_t max_readers = matched_readers_pool_.max_size();
-        if (getMatchedReadersSize() + matched_readers_pool_.size() < max_readers)
+        if (get_matched_readers_size() + matched_readers_pool_.size() < max_readers)
         {
             const RemoteLocatorsAllocationAttributes& loc_alloc =
                     mp_RTPSParticipant->getRTPSParticipantAttributes().allocation.locators;

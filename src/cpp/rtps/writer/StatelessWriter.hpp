@@ -57,6 +57,8 @@ public:
 
     virtual ~StatelessWriter();
 
+    //vvvvvvvvvvvvvvvvvvvvv [Exported API] vvvvvvvvvvvvvvvvvvvvv
+
     bool matched_reader_add(
             const ReaderProxyData& data) final;
 
@@ -100,21 +102,14 @@ public:
             fastdds::statistics::rtps::ConnectionList& connection_list) final;
 #endif // FASTDDS_STATISTICS
 
-    /**
-     * Add a specific change to all ReaderLocators.
-     * @param change Pointer to the change.
-     * @param [in] max_blocking_time Maximum time this method has to complete the task.
-     */
+    //^^^^^^^^^^^^^^^^^^^^^^ [Exported API] ^^^^^^^^^^^^^^^^^^^^^^^
+
+    //vvvvvvvvvvvvvvvvvvvvv [BaseWriter API] vvvvvvvvvvvvvvvvvvvvvv
+
     void unsent_change_added_to_history(
             CacheChange_t* change,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) override;
 
-    /**
-     * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.
-     * @param change Pointer to the change that is going to be removed.
-     * @param [in] max_blocking_time Maximum time this method has to complete the task.
-     * @return True if removed correctly.
-     */
     bool change_removed_by_history(
             CacheChange_t* change,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) override;
@@ -168,6 +163,8 @@ public:
             const std::chrono::steady_clock::time_point& max_blocking_time_point,
             std::unique_lock<RecursiveTimedMutex>& lock) final;
 
+    //^^^^^^^^^^^^^^^^^^^^^^ [BaseWriter API] ^^^^^^^^^^^^^^^^^^^^^^^
+
     /**
      * @brief Set the locators to which the writer should always send data.
      *
@@ -189,7 +186,7 @@ public:
      * Get the number of matched readers
      * @return Number of the matched readers
      */
-    inline size_t getMatchedReadersSize() const
+    inline size_t get_matched_readers_size() const
     {
         std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
         return matched_remote_readers_.size()

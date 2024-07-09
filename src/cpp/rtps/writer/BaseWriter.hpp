@@ -67,6 +67,8 @@ class BaseWriter
 
 public:
 
+    //vvvvvvvvvvvvvvvvvvvvv [Exported API] vvvvvvvvvvvvvvvvvvvvv
+
     WriterListener* get_listener() const final;
 
     bool set_listener(
@@ -87,22 +89,9 @@ public:
 
 #endif // FASTDDS_STATISTICS
 
-    /**
-     * @brief Get the WriterHistory associated with this writer.
-     *
-     * @return pointer to the WriterHistory associated with this writer.
-     */
-    inline WriterHistory* get_history() const
-    {
-        return history_;
-    }
+    //^^^^^^^^^^^^^^^^^^^^^^^ [Exported API] ^^^^^^^^^^^^^^^^^^^^^^^
 
-    /**
-     * @brief Get biggest output payload size allowed by this writer.
-     *
-     * @return Maximum number of bytes allowed for the payload.
-     */
-    uint32_t get_max_allowed_payload_size();
+    //vvvvvvvvvvvvvvvvvvvv [Implementation API] vvvvvvvvvvvvvvvvvvvv
 
     /**
      * Add a change to the unsent list.
@@ -233,6 +222,25 @@ public:
             const SequenceNumber_t& seq,
             const std::chrono::steady_clock::time_point& max_blocking_time_point,
             std::unique_lock<RecursiveTimedMutex>& lock) = 0;
+
+    //^^^^^^^^^^^^^^^^^^^^ [Implementation API] ^^^^^^^^^^^^^^^^^^^^
+
+    /**
+     * @brief Get the WriterHistory associated with this writer.
+     *
+     * @return pointer to the WriterHistory associated with this writer.
+     */
+    inline WriterHistory* get_history() const
+    {
+        return history_;
+    }
+
+    /**
+     * @brief Get biggest output payload size allowed by this writer.
+     *
+     * @return Maximum number of bytes allowed for the payload.
+     */
+    uint32_t get_max_allowed_payload_size();
 
     /**
      * @brief Get the RTPS participant that this writer belongs to.
