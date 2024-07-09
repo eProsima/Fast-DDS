@@ -96,7 +96,7 @@ bool WriterApp::register_entity(std::string topic_name)
 
     TopicAttributes topic_att;
     topic_att.topicKind = NO_KEY;
-    topic_att.topicDataType = "string";
+    topic_att.topicDataType = "HelloWorld";
     topic_att.topicName = topic_name;
 
     eprosima::fastdds::dds::WriterQos writer_qos;

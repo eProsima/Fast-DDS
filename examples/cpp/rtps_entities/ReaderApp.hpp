@@ -64,10 +64,37 @@ public:
     //! Trigger the end of execution
     void stop() override;
 
+
+
+
+void on_requested_incompatible_qos(
+        RTPSReader* reader,
+        eprosima::fastdds::dds::PolicyMask qos);
+
+void on_sample_lost(
+        RTPSReader* reader,
+        int32_t sample_lost_since_last_update);
+
+void on_writer_discovery(
+        RTPSReader* reader,
+        WriterDiscoveryInfo::DISCOVERY_STATUS reason,
+        const GUID_t& writer_guid,
+        const WriterProxyData* writer_info);
+
+void on_sample_rejected(
+        RTPSReader* reader,
+        eprosima::fastdds::dds::SampleRejectedStatusKind reason,
+        const CacheChange_t* const change);
+
+void on_incompatible_type(
+        RTPSReader* reader);
+
 private:
 
     //! Register entity
     bool register_entity(std::string topic_name);
+
+
 
     //! Return the current state of execution
     bool is_stopped();

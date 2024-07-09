@@ -76,6 +76,7 @@ ListenerSubscriberApp::ListenerSubscriberApp(
     // Create the topic
     TopicQos topic_qos = TOPIC_QOS_DEFAULT;
     participant_->get_default_topic_qos(topic_qos);
+    std::cout << "type_.get_type_name() " << type_.get_type_name() << std::endl;
     topic_ = participant_->create_topic(topic_name, type_.get_type_name(), topic_qos);
     if (topic_ == nullptr)
     {

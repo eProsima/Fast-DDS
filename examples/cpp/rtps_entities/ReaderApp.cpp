@@ -27,10 +27,13 @@
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/attributes/TopicAttributes.hpp>
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/rtps/RTPSDomain.hpp>
+
+#include "HelloWorld.hpp"
 
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
@@ -91,9 +94,11 @@ bool ReaderApp::register_entity(std::string topic_name)
 {
     std::cout << "Registering RTPS Reader" << std::endl;
 
+
     TopicAttributes topic_att;
     topic_att.topicKind = NO_KEY;
-    topic_att.topicDataType = "string";
+
+    topic_att.topicDataType = "HelloWorld";
     topic_att.topicName = topic_name;
 
     eprosima::fastdds::dds::ReaderQos reader_qos;
@@ -115,6 +120,8 @@ void ReaderApp::on_reader_matched(
     }
 }
 
+
+
 void ReaderApp::run()
 {
     std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
@@ -130,7 +137,21 @@ void ReaderApp::on_new_cache_change_added(
 {
     if (!is_stopped())
     {
-        std::cout << "Message: " << change->serializedPayload.data << " RECEIVED" << std::endl;
+        unsigned long index;
+        std::string message;
+
+        index = static_cast<unsigned long>(change->serializedPayload.data[7]) << 24
+                | static_cast<unsigned long>(change->serializedPayload.data[6]) << 16
+                | static_cast<unsigned long>(change->serializedPayload.data[5]) << 8
+                | static_cast<unsigned long>(change->serializedPayload.data[4]);
+
+        std::cout << " Message:";
+        for (uint8_t i = 0; i < change->serializedPayload.length; ++i)
+        {
+            std::cout <<change->serializedPayload.data[i] << " ";
+        }
+        std::cout << " with index " << index << " RECEIVED" << std::endl;
+
         reader->get_history()->remove_change((CacheChange_t*)change);
         samples_received_++;
 
@@ -141,6 +162,8 @@ void ReaderApp::on_new_cache_change_added(
     }
 }
 
+
+
 bool ReaderApp::is_stopped()
 {
     return stop_.load();
@@ -150,6 +173,61 @@ void ReaderApp::stop()
 {
     stop_.store(true);
     terminate_cv_.notify_all();
+}
+
+
+
+
+
+void ReaderApp::on_requested_incompatible_qos(
+        RTPSReader* reader,
+        eprosima::fastdds::dds::PolicyMask qos)
+{
+    static_cast<void>(reader);
+    static_cast<void>(qos);
+    std::cout << "on_requested_incompatible_qos " <<std::endl;
+
+}
+
+void ReaderApp::on_sample_lost(
+        RTPSReader* reader,
+        int32_t sample_lost_since_last_update)
+{
+    static_cast<void>(reader);
+    static_cast<void>(sample_lost_since_last_update);
+        std::cout << "on_sample_lost " <<std::endl;
+
+}
+
+void ReaderApp::on_writer_discovery(
+        RTPSReader* reader,
+        WriterDiscoveryInfo::DISCOVERY_STATUS reason,
+        const GUID_t& writer_guid,
+        const WriterProxyData* writer_info)
+{
+    static_cast<void>(reader);
+    static_cast<void>(reason);
+    static_cast<void>(writer_guid);
+    static_cast<void>(writer_info);
+    std::cout << "on_writer_discovery " <<std::endl;
+}
+
+void ReaderApp::on_sample_rejected(
+        RTPSReader* reader,
+        eprosima::fastdds::dds::SampleRejectedStatusKind reason,
+        const CacheChange_t* const change)
+{
+    static_cast<void>(reader);
+    static_cast<void>(reason);
+    static_cast<void>(change);
+    std::cout << "on_sample_rejected " <<std::endl;
+}
+
+void ReaderApp::on_incompatible_type(
+        RTPSReader* reader)
+{
+    static_cast<void>(reader);
+    std::cout << "on_incompatible_type " <<std::endl;
 }
 
 } // namespace rtps_entities
