@@ -695,9 +695,9 @@ bool MessageReceiver::willAReaderAcceptMsgDirectedTo(
     {
         for (const auto& readers : associated_readers_)
         {
-            for (const auto& it : readers.second)
+            if (0 < readers.second.size())
             {
-                first_reader = it;
+                first_reader = readers.second.front();
                 return true;
             }
         }
