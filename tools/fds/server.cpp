@@ -77,9 +77,9 @@ int fastdds_discovery_server(
         return 1;
     }
 
-    for (option::Option* opt = options[UNKNOWN]; opt; opt = opt->next())
+    if (options[UNKNOWN])
     {
-        EPROSIMA_LOG_ERROR(CLI, "Unknown option: " << opt->name);
+        EPROSIMA_LOG_ERROR(CLI, "Unknown option: " << options[UNKNOWN].name);
         option::printUsage(std::cout, usage);
         return 1;
     }
