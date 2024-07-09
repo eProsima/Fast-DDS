@@ -383,6 +383,18 @@ bool StatelessWriter::is_acked_by_all(
     return seq_num.to64long() <= last_sequence_number_sent_;
 }
 
+bool StatelessWriter::wait_for_all_acked(
+        const Duration_t& max_wait)
+{
+    static_cast<void>(max_wait);
+    return true;
+}
+
+bool StatelessWriter::get_disable_positive_acks() const
+{
+    return false;
+}
+
 bool StatelessWriter::try_remove_change(
         const std::chrono::steady_clock::time_point&,
         std::unique_lock<RecursiveTimedMutex>&)
@@ -666,6 +678,44 @@ void StatelessWriter::unsent_changes_reset()
                 flow_controller_->add_new_sample(this, change,
                 std::chrono::steady_clock::now() + std::chrono::hours(24));
             });
+}
+
+bool StatelessWriter::process_acknack(
+        const GUID_t& writer_guid,
+        const GUID_t& reader_guid,
+        uint32_t ack_count,
+        const SequenceNumberSet_t& sn_set,
+        bool final_flag,
+        bool& result,
+        fastdds::rtps::VendorId_t origin_vendor_id)
+{
+    static_cast<void>(reader_guid);
+    static_cast<void>(ack_count);
+    static_cast<void>(sn_set);
+    static_cast<void>(final_flag);
+    static_cast<void>(origin_vendor_id);
+
+    result = false;
+    return writer_guid == m_guid;
+}
+
+bool StatelessWriter::process_nack_frag(
+        const GUID_t& writer_guid,
+        const GUID_t& reader_guid,
+        uint32_t ack_count,
+        const SequenceNumber_t& seq_num,
+        const FragmentNumberSet_t& fragments_state,
+        bool& result,
+        fastdds::rtps::VendorId_t origin_vendor_id)
+{
+    static_cast<void>(reader_guid);
+    static_cast<void>(ack_count);
+    static_cast<void>(seq_num);
+    static_cast<void>(fragments_state);
+    static_cast<void>(origin_vendor_id);
+
+    result = false;
+    return writer_guid == m_guid;
 }
 
 bool StatelessWriter::send_nts(

@@ -111,27 +111,6 @@ BaseWriter::~BaseWriter()
     history_->mp_mutex = nullptr;
 }
 
-bool BaseWriter::has_been_fully_delivered(
-        const SequenceNumber_t& seq_num) const
-{
-    static_cast<void>(seq_num);
-    return false;
-}
-
-bool BaseWriter::is_acked_by_all(
-        const SequenceNumber_t& seq_num) const
-{
-    static_cast<void>(seq_num);
-    return false;
-}
-
-bool BaseWriter::wait_for_all_acked(
-        const Duration_t& max_wait)
-{
-    static_cast<void>(max_wait);
-    return true;
-}
-
 WriterListener* BaseWriter::get_listener() const
 {
     return listener_;
@@ -147,11 +126,6 @@ bool BaseWriter::set_listener(
 bool BaseWriter::is_async() const
 {
     return is_async_;
-}
-
-bool BaseWriter::get_disable_positive_acks() const
-{
-    return false;
 }
 
 #ifdef FASTDDS_STATISTICS
@@ -250,44 +224,6 @@ bool BaseWriter::send_nts(
     return locator_selector.locator_selector.selected_size() == 0 ||
            participant->sendSync(buffers, total_bytes, m_guid, locator_selector.locator_selector.begin(),
                    locator_selector.locator_selector.end(), max_blocking_time_point);
-}
-
-bool BaseWriter::process_acknack(
-        const GUID_t& writer_guid,
-        const GUID_t& reader_guid,
-        uint32_t ack_count,
-        const SequenceNumberSet_t& sn_set,
-        bool final_flag,
-        bool& result,
-        fastdds::rtps::VendorId_t origin_vendor_id)
-{
-    static_cast<void>(reader_guid);
-    static_cast<void>(ack_count);
-    static_cast<void>(sn_set);
-    static_cast<void>(final_flag);
-    static_cast<void>(origin_vendor_id);
-
-    result = false;
-    return writer_guid == m_guid;
-}
-
-bool BaseWriter::process_nack_frag(
-        const GUID_t& writer_guid,
-        const GUID_t& reader_guid,
-        uint32_t ack_count,
-        const SequenceNumber_t& seq_num,
-        const FragmentNumberSet_t& fragments_state,
-        bool& result,
-        fastdds::rtps::VendorId_t origin_vendor_id)
-{
-    static_cast<void>(reader_guid);
-    static_cast<void>(ack_count);
-    static_cast<void>(seq_num);
-    static_cast<void>(fragments_state);
-    static_cast<void>(origin_vendor_id);
-
-    result = false;
-    return writer_guid == m_guid;
 }
 
 const dds::LivelinessQosPolicyKind& BaseWriter::get_liveliness_kind() const

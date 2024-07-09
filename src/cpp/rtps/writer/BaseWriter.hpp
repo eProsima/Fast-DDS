@@ -67,49 +67,23 @@ class BaseWriter
 
 public:
 
-    FASTDDS_EXPORTED_API bool has_been_fully_delivered(
-            const SequenceNumber_t& seq_num) const override;
+    WriterListener* get_listener() const final;
 
-    FASTDDS_EXPORTED_API bool is_acked_by_all(
-            const SequenceNumber_t& seq_num) const override;
+    bool set_listener(
+            WriterListener* listener) final;
 
-    FASTDDS_EXPORTED_API bool wait_for_all_acked(
-            const Duration_t& max_wait) override;
-
-    FASTDDS_EXPORTED_API WriterListener* get_listener() const override;
-
-    FASTDDS_EXPORTED_API bool set_listener(
-            WriterListener* listener) override;
-
-    FASTDDS_EXPORTED_API bool is_async() const override;
-
-    FASTDDS_EXPORTED_API bool get_disable_positive_acks() const override;
+    bool is_async() const final;
 
 #ifdef FASTDDS_STATISTICS
 
-    /**
-     * Add a listener to receive statistics backend callbacks
-     * @param listener
-     * @return true if successfully added
-     */
-    FASTDDS_EXPORTED_API bool add_statistics_listener(
-            std::shared_ptr<fastdds::statistics::IListener> listener) override;
+    bool add_statistics_listener(
+            std::shared_ptr<fastdds::statistics::IListener> listener) final;
 
-    /**
-     * Remove a listener from receiving statistics backend callbacks
-     * @param listener
-     * @return true if successfully removed
-     */
-    FASTDDS_EXPORTED_API bool remove_statistics_listener(
-            std::shared_ptr<fastdds::statistics::IListener> listener) override;
+    bool remove_statistics_listener(
+            std::shared_ptr<fastdds::statistics::IListener> listener) final;
 
-    /**
-     * @brief Set the enabled statistics writers mask
-     *
-     * @param enabled_writers The new mask to set
-     */
-    FASTDDS_EXPORTED_API void set_enabled_statistics_writers_mask(
-            uint32_t enabled_writers) override;
+    void set_enabled_statistics_writers_mask(
+            uint32_t enabled_writers) final;
 
 #endif // FASTDDS_STATISTICS
 
@@ -215,7 +189,7 @@ public:
             const SequenceNumberSet_t& sn_set,
             bool final_flag,
             bool& result,
-            fastdds::rtps::VendorId_t origin_vendor_id);
+            fastdds::rtps::VendorId_t origin_vendor_id) = 0;
 
     /**
      * Process an incoming NACKFRAG submessage.
@@ -236,7 +210,7 @@ public:
             const SequenceNumber_t& seq_num,
             const FragmentNumberSet_t& fragments_state,
             bool& result,
-            fastdds::rtps::VendorId_t origin_vendor_id);
+            fastdds::rtps::VendorId_t origin_vendor_id) = 0;
 
     /**
      * Tries to remove a change waiting a maximum of the provided microseconds.
