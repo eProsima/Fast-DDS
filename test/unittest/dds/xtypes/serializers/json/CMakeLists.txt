@@ -12,6 +12,39 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/comprehensive_type/json/ComprehensiveType_Unfilled_EPROSIMA.json
+    ${CMAKE_CURRENT_BINARY_DIR}/types/comprehensive_type/json/ComprehensiveType_Unfilled_EPROSIMA.json
+    COPYONLY)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/comprehensive_type/json/ComprehensiveType_Filled_EPROSIMA_1.json
+    ${CMAKE_CURRENT_BINARY_DIR}/types/comprehensive_type/json/ComprehensiveType_Filled_EPROSIMA_1.json
+    COPYONLY)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/comprehensive_type/json/ComprehensiveType_Filled_EPROSIMA_2.json
+    ${CMAKE_CURRENT_BINARY_DIR}/types/comprehensive_type/json/ComprehensiveType_Filled_EPROSIMA_2.json
+    COPYONLY)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/comprehensive_type/json/ComprehensiveType_Filled_EPROSIMA_3.json
+    ${CMAKE_CURRENT_BINARY_DIR}/types/comprehensive_type/json/ComprehensiveType_Filled_EPROSIMA_3.json
+    COPYONLY)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/comprehensive_type/json/ComprehensiveType_Unfilled_OMG.json
+    ${CMAKE_CURRENT_BINARY_DIR}/types/comprehensive_type/json/ComprehensiveType_Unfilled_OMG.json
+    COPYONLY)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/comprehensive_type/json/ComprehensiveType_Filled_OMG_1.json
+    ${CMAKE_CURRENT_BINARY_DIR}/types/comprehensive_type/json/ComprehensiveType_Filled_OMG_1.json
+    COPYONLY)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/comprehensive_type/json/ComprehensiveType_Filled_OMG_2.json
+    ${CMAKE_CURRENT_BINARY_DIR}/types/comprehensive_type/json/ComprehensiveType_Filled_OMG_2.json
+    COPYONLY)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/comprehensive_type/json/ComprehensiveType_Filled_OMG_3.json
+    ${CMAKE_CURRENT_BINARY_DIR}/types/comprehensive_type/json/ComprehensiveType_Filled_OMG_3.json
+    COPYONLY)
+
 set(SERIALIZE_JSON_SOURCE
     DynDataJSONTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/utils.cpp)

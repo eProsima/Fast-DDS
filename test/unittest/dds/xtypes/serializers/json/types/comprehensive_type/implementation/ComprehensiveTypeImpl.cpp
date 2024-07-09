@@ -17,9 +17,10 @@
  *
  */
 
-#include <string>
-#include <iostream>
 #include <fstream>
+#include <iostream>
+#include <stdexcept>
+#include <string>
 
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -37,11 +38,6 @@
 #include "../gen/ComprehensiveType.hpp"
 #include "../gen/ComprehensiveTypePubSubTypes.hpp"
 #include "../gen/ComprehensiveTypeTypeObjectSupport.hpp"
-
-#include "../../comprehensive_type/json/ComprehensiveType_Unfilled_OMG.hpp"
-#include "../../comprehensive_type/json/ComprehensiveType_Filled_OMG.hpp"
-#include "../../comprehensive_type/json/ComprehensiveType_Unfilled_EPROSIMA.hpp"
-#include "../../comprehensive_type/json/ComprehensiveType_Filled_EPROSIMA.hpp"
 
 using namespace eprosima::fastdds::dds;
 
@@ -287,6 +283,8 @@ std::string get_expected_json<DataTypeKind::COMPREHENSIVE_TYPE>(
         bool filled,
         const unsigned int& index)
 {
+    std::string json;
+
     switch (format)
     {
         case DynamicDataJsonFormat::EPROSIMA:
@@ -295,18 +293,21 @@ std::string get_expected_json<DataTypeKind::COMPREHENSIVE_TYPE>(
                 switch (index)
                 {
                     case 1:
-                        return expected_json_comprehensive_filled_eprosima_1;
+                        json = "ComprehensiveType_Filled_EPROSIMA_1";
+                        break;
                     case 2:
-                        return expected_json_comprehensive_filled_eprosima_2;
+                        json = "ComprehensiveType_Filled_EPROSIMA_2";
+                        break;
                     case 3:
-                        return expected_json_comprehensive_filled_eprosima_3;
+                        json = "ComprehensiveType_Filled_EPROSIMA_3";
+                        break;
                     default:
                         throw std::invalid_argument("Invalid index for filled EPROSIMA format");
                 }
             }
             else
             {
-                return expected_json_comprehensive_eprosima_unfilled;
+                json = "ComprehensiveType_Unfilled_EPROSIMA";
             }
             break;
 
@@ -316,22 +317,36 @@ std::string get_expected_json<DataTypeKind::COMPREHENSIVE_TYPE>(
                 switch (index)
                 {
                     case 1:
-                        return expected_json_comprehensive_filled_omg_1;
+                        json = "ComprehensiveType_Filled_OMG_1";
+                        break;
                     case 2:
-                        return expected_json_comprehensive_filled_omg_2;
+                        json = "ComprehensiveType_Filled_OMG_2";
+                        break;
                     case 3:
-                        return expected_json_comprehensive_filled_omg_3;
+                        json = "ComprehensiveType_Filled_OMG_3";
+                        break;
                     default:
                         throw std::invalid_argument("Invalid index for filled OMG format");
                 }
             }
             else
             {
-                return expected_json_comprehensive_omg_unfilled;
+                json = "ComprehensiveType_Unfilled_OMG";
             }
             break;
 
         default:
             throw std::invalid_argument("Unsupported format");
     }
+
+    // JSON file to read
+    const auto file_name = std::string("types/comprehensive_type/json/") + json + ".json";
+    std::ifstream file(file_name);
+    if (!file.is_open())
+    {
+        throw std::runtime_error("Could not open file: " + file_name);
+    }
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    return buffer.str();
 }
