@@ -68,47 +68,22 @@ class BaseWriter
 public:
 
     FASTDDS_EXPORTED_API bool has_been_fully_delivered(
-            const SequenceNumber_t& seq_num) const override
-    {
-        static_cast<void>(seq_num);
-        return false;
-    }
+            const SequenceNumber_t& seq_num) const override;
 
     FASTDDS_EXPORTED_API bool is_acked_by_all(
-            const SequenceNumber_t& seq_num) const override
-    {
-        static_cast<void>(seq_num);
-        return false;
-    }
+            const SequenceNumber_t& seq_num) const override;
 
     FASTDDS_EXPORTED_API bool wait_for_all_acked(
-            const Duration_t& max_wait) override
-    {
-        static_cast<void>(max_wait);
-        return true;
-    }
+            const Duration_t& max_wait) override;
 
-    FASTDDS_EXPORTED_API WriterListener* get_listener() const override
-    {
-        return listener_;
-    }
+    FASTDDS_EXPORTED_API WriterListener* get_listener() const override;
 
     FASTDDS_EXPORTED_API bool set_listener(
-            WriterListener* listener) override
-    {
-        listener_ = listener;
-        return true;
-    }
+            WriterListener* listener) override;
 
-    FASTDDS_EXPORTED_API bool is_async() const override
-    {
-        return is_async_;
-    }
+    FASTDDS_EXPORTED_API bool is_async() const override;
 
-    FASTDDS_EXPORTED_API bool get_disable_positive_acks() const override
-    {
-        return false;
-    }
+    FASTDDS_EXPORTED_API bool get_disable_positive_acks() const override;
 
 #ifdef FASTDDS_STATISTICS
 
@@ -138,7 +113,12 @@ public:
 
 #endif // FASTDDS_STATISTICS
 
-    WriterHistory* get_history() const
+    /**
+     * @brief Get the WriterHistory associated with this writer.
+     *
+     * @return pointer to the WriterHistory associated with this writer.
+     */
+    inline WriterHistory* get_history() const
     {
         return history_;
     }
@@ -225,17 +205,7 @@ public:
             const SequenceNumberSet_t& sn_set,
             bool final_flag,
             bool& result,
-            fastdds::rtps::VendorId_t origin_vendor_id)
-    {
-        static_cast<void>(reader_guid);
-        static_cast<void>(ack_count);
-        static_cast<void>(sn_set);
-        static_cast<void>(final_flag);
-        static_cast<void>(origin_vendor_id);
-
-        result = false;
-        return writer_guid == m_guid;
-    }
+            fastdds::rtps::VendorId_t origin_vendor_id);
 
     /**
      * Process an incoming NACKFRAG submessage.
@@ -256,17 +226,7 @@ public:
             const SequenceNumber_t& seq_num,
             const FragmentNumberSet_t& fragments_state,
             bool& result,
-            fastdds::rtps::VendorId_t origin_vendor_id)
-    {
-        static_cast<void>(reader_guid);
-        static_cast<void>(ack_count);
-        static_cast<void>(seq_num);
-        static_cast<void>(fragments_state);
-        static_cast<void>(origin_vendor_id);
-
-        result = false;
-        return writer_guid == m_guid;
-    }
+            fastdds::rtps::VendorId_t origin_vendor_id);
 
     /**
      * Tries to remove a change waiting a maximum of the provided microseconds.
@@ -291,8 +251,9 @@ public:
             std::unique_lock<RecursiveTimedMutex>& lock) = 0;
 
     /**
-     * Get RTPS participant
-     * @return RTPS participant
+     * @brief Get the RTPS participant that this writer belongs to.
+     *
+     * @return pointer to the RTPSParticipantImpl object that created this writer.
      */
     inline RTPSParticipantImpl* getRTPSParticipant() const
     {
@@ -300,10 +261,11 @@ public:
     }
 
     /**
-     * Inform if data is sent to readers separately
+     * @brief Inform if data is sent to readers separately.
+     *
      * @return true if separate sending is enabled
      */
-    bool get_separate_sending() const
+    inline bool get_separate_sending() const
     {
         return separate_sending_enabled_;
     }
@@ -436,7 +398,6 @@ protected:
     Duration_t liveliness_lease_duration_;
     /// The liveliness announcement period
     Duration_t liveliness_announcement_period_;
-
 
 };
 
