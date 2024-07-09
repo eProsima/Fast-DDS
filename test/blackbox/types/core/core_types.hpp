@@ -4592,7 +4592,7 @@ public:
             const SubmessageHeader& _unknown_submsg)
     {
         unknown_submsg_() = _unknown_submsg;
-        m__d = 1;
+        m__d = 127;
     }
 
     /*!
@@ -4603,7 +4603,7 @@ public:
             SubmessageHeader&& _unknown_submsg)
     {
         unknown_submsg_() = _unknown_submsg;
-        m__d = 1;
+        m__d = 127;
     }
 
     /*!
@@ -4731,7 +4731,7 @@ private:
             }
 
 
-    char m__d {1};
+    char m__d {127};
 
     union
     {

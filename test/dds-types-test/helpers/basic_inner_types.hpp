@@ -670,7 +670,7 @@ public:
             int16_t _shortValue)
     {
         shortValue_() = _shortValue;
-        m__d = 2;
+        m__d = 2147483647;
     }
 
     /*!
@@ -762,7 +762,7 @@ private:
             }
 
 
-    int32_t m__d {2};
+    int32_t m__d {2147483647};
 
     union
     {

@@ -678,7 +678,7 @@ private:
             }
 
 
-    int32_t m__d {2};
+    int32_t m__d {2147483647};
 
     union
     {
@@ -1761,7 +1761,7 @@ private:
             }
 
 
-    int32_t m__d {2};
+    int32_t m__d {2147483647};
 
     union
     {

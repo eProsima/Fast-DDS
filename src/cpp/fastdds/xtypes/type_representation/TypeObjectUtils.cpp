@@ -360,6 +360,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_s_string_type_identifier(
         bool wstring)
 {
     type_ids.type_identifier1().string_sdefn(string);
+    type_ids.type_identifier2().no_value({});
     if (wstring)
     {
         type_ids.type_identifier1()._d(TI_STRING16_SMALL);
@@ -377,6 +378,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_l_string_type_identifier(
     string_ldefn_consistency(string);
 #endif // !defined(NDEBUG)
     type_ids.type_identifier1().string_ldefn(string);
+    type_ids.type_identifier2().no_value({});
     if (wstring)
     {
         type_ids.type_identifier1()._d(TI_STRING16_LARGE);
@@ -393,6 +395,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_s_sequence_type_identifier(
     seq_sdefn_consistency(plain_seq);
 #endif // !defined(NDEBUG)
     type_ids.type_identifier1().seq_sdefn(plain_seq);
+    type_ids.type_identifier2().no_value({});
     return type_object_registry_observer().register_type_identifier(type_name, type_ids);
 }
 
@@ -405,6 +408,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_l_sequence_type_identifier(
     seq_ldefn_consistency(plain_seq);
 #endif // !defined(NDEBUG)
     type_ids.type_identifier1().seq_ldefn(plain_seq);
+    type_ids.type_identifier2().no_value({});
     return type_object_registry_observer().register_type_identifier(type_name, type_ids);
 }
 
@@ -417,6 +421,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_s_array_type_identifier(
     array_sdefn_consistency(plain_array);
 #endif // !defined(NDEBUG)
     type_ids.type_identifier1().array_sdefn(plain_array);
+    type_ids.type_identifier2().no_value({});
     return type_object_registry_observer().register_type_identifier(type_name, type_ids);
 }
 
@@ -429,6 +434,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_l_array_type_identifier(
     array_ldefn_consistency(plain_array);
 #endif // !defined(NDEBUG)
     type_ids.type_identifier1().array_ldefn(plain_array);
+    type_ids.type_identifier2().no_value({});
     return type_object_registry_observer().register_type_identifier(type_name, type_ids);
 }
 
@@ -441,6 +447,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_s_map_type_identifier(
     map_sdefn_consistency(plain_map);
 #endif // !defined(NDEBUG)
     type_ids.type_identifier1().map_sdefn(plain_map);
+    type_ids.type_identifier2().no_value({});
     return type_object_registry_observer().register_type_identifier(type_name, type_ids);
 }
 
@@ -453,6 +460,7 @@ ReturnCode_t TypeObjectUtils::build_and_register_l_map_type_identifier(
     map_ldefn_consistency(plain_map);
 #endif // !defined(NDEBUG)
     type_ids.type_identifier1().map_ldefn(plain_map);
+    type_ids.type_identifier2().no_value({});
     return type_object_registry_observer().register_type_identifier(type_name, type_ids);
 }
 

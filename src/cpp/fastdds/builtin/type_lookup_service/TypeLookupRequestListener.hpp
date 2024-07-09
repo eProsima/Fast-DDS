@@ -25,8 +25,10 @@
 #include <queue>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
+#include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/reader/ReaderListener.hpp>
 #include <fastdds/rtps/writer/WriterListener.hpp>
 #include <fastdds/xtypes/type_representation/TypeIdentifierWithSizeHashSpecialization.h>
@@ -36,8 +38,7 @@
 
 namespace std {
 
-template <>
-struct hash<eprosima::fastdds::dds::xtypes::TypeIdentifierSeq>
+template <> struct hash<eprosima::fastdds::dds::xtypes::TypeIdentifierSeq>
 {
     std::size_t operator ()(
             const eprosima::fastdds::dds::xtypes::TypeIdentifierSeq& k) const
@@ -54,7 +55,7 @@ struct hash<eprosima::fastdds::dds::xtypes::TypeIdentifierSeq>
 
 };
 
-} // std
+} // namespace std
 
 namespace eprosima {
 namespace fastdds {
@@ -111,10 +112,12 @@ protected:
      * @brief Gets TypeObject from TypeObjectRegistry, creates and sends reply.
      * @param request_id[in] The SampleIdentity of the request.
      * @param request[in] The request data.
+     * @param vendor_id[in] Vendor identifier that sent the request.
      */
     void check_get_types_request(
             SampleIdentity request_id,
-            const TypeLookup_getTypes_In& request);
+            const TypeLookup_getTypes_In& request,
+            const rtps::VendorId_t& vendor_id);
 
     /**
      * @brief Gets type dependencies from TypeObjectRegistry, creates and sends reply.
@@ -132,7 +135,8 @@ protected:
      * @param continuation_point[in] The continuation point of the previous request.
      * @return The reply containing the dependent types.
      */
-    TypeLookup_getTypeDependencies_Out prepare_get_type_dependencies_response(
+    TypeLookup_getTypeDependencies_Out
+    prepare_get_type_dependencies_response(
             const xtypes::TypeIdentifierSeq& id_seq,
             const std::unordered_set<xtypes::TypeIdentfierWithSize>& type_dependencies,
             const std::vector<uint8_t>& continuation_point);
@@ -147,7 +151,8 @@ protected:
             SampleIdentity request_id,
             rpc::RemoteExceptionCode_t exception_code,
             TypeLookup_getTypeDependencies_Out& out);
-    void answer_request(
+    void
+    answer_request(
             SampleIdentity request_id,
             rpc::RemoteExceptionCode_t exception_code,
             TypeLookup_getTypes_Out& out);
@@ -175,11 +180,11 @@ protected:
     std::mutex requests_with_continuation_mutex_;
 
     //! Collection of the requests that needed continuation points.
-    std::unordered_map <xtypes::TypeIdentifierSeq,
-            std::unordered_set<xtypes::TypeIdentfierWithSize>> requests_with_continuation_;
+    std::unordered_map<xtypes::TypeIdentifierSeq, std::unordered_set<xtypes::TypeIdentfierWithSize>>
+    requests_with_continuation_;
 
     eprosima::thread request_processor_thread;
-    std::queue<TypeLookup_Request> requests_queue_;
+    std::queue<std::pair<TypeLookup_Request, rtps::VendorId_t>> requests_queue_;
     std::mutex request_processor_cv_mutex_;
     std::condition_variable request_processor_cv_;
     bool processing_ = false;

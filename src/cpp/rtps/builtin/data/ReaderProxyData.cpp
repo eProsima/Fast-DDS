@@ -995,6 +995,20 @@ bool ReaderProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_TYPE_INFORMATION:
                     {
+                        VendorId_t local_vendor_id = source_vendor_id;
+                        if (c_VendorId_Unknown == local_vendor_id)
+                        {
+                            local_vendor_id = ((c_VendorId_Unknown == vendor_id) ? c_VendorId_eProsima : vendor_id);
+                        }
+
+                        // Ignore this PID when coming from other vendors
+                        if (c_VendorId_eProsima != local_vendor_id)
+                        {
+                            EPROSIMA_LOG_INFO(RTPS_PROXY_DATA,
+                                    "Ignoring PID" << pid << " from vendor " << local_vendor_id);
+                            return true;
+                        }
+
                         if (!dds::QosPoliciesSerializer<dds::xtypes::TypeInformationParameter>::read_from_cdr_message(
                                     type_information(), msg, plength))
                         {

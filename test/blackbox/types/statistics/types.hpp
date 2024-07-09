@@ -3900,7 +3900,7 @@ private:
             }
 
 
-    uint32_t m__d {1};
+    uint32_t m__d {2147483647};
 
     union
     {

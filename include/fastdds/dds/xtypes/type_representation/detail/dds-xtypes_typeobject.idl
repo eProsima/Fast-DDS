@@ -2,7 +2,7 @@
 
 // The types in this file shall be serialized with XCDR encoding version 2
 module DDS { module XTypes {
-    
+
     // ---------- Equivalence Kinds -------------------
     typedef octet EquivalenceKind;
     const octet EK_MINIMAL   = 0xF1; // 0x1111 0001
@@ -11,7 +11,7 @@ module DDS { module XTypes {
 
     // ---------- TypeKinds (begin) -------------------
     typedef octet TypeKind;
-    
+
     // Primitive TKs
     const octet TK_NONE       = 0x00;
     const octet TK_BOOLEAN    = 0x01;
@@ -46,7 +46,7 @@ module DDS { module XTypes {
     const octet TK_STRUCTURE  = 0x51;
     const octet TK_UNION      = 0x52;
     const octet TK_BITSET     = 0x53;
-      
+
     // Collection TKs
     const octet TK_SEQUENCE   = 0x60;
     const octet TK_ARRAY      = 0x61;
@@ -62,10 +62,10 @@ module DDS { module XTypes {
 
     const octet TI_PLAIN_SEQUENCE_SMALL = 0x80;
     const octet TI_PLAIN_SEQUENCE_LARGE = 0x81;
-    
+
     const octet TI_PLAIN_ARRAY_SMALL    = 0x90;
     const octet TI_PLAIN_ARRAY_LARGE    = 0x91;
-    
+
     const octet TI_PLAIN_MAP_SMALL      = 0xA0;
     const octet TI_PLAIN_MAP_LARGE      = 0xA1;
 
@@ -93,12 +93,12 @@ module DDS { module XTypes {
     // using UTF-8 encoding and without a 'nul' terminator.
     // Example: the member name "color" has NameHash {0x70, 0xDD, 0xA5, 0xDF}
     typedef octet NameHash[4];
-    
+
     // Long Bound of a collection type
     typedef unsigned long LBound;
     typedef sequence<LBound> LBoundSeq;
     const LBound INVALID_LBOUND = 0;
-    
+
     // Short Bound of a collection type
     typedef octet SBound;
     typedef sequence<SBound> SBoundSeq;
@@ -110,7 +110,7 @@ module DDS { module XTypes {
         case EK_MINIMAL:
             EquivalenceHash  hash;
     };
-       
+
     // Flags that apply to struct/union/collection/enum/bitmask/bitset
     // members/elements and DO affect type assignability
     // Depending on the flag it may not apply to members of all types
@@ -121,10 +121,10 @@ module DDS { module XTypes {
         @position(1)  TRY_CONSTRUCT2,     // T2 | 10 = USE_DEFAULT, 11 = TRIM
         @position(2)  IS_EXTERNAL,        // X  StructMember, UnionMember,
 	                                  //    CollectionElement
-        @position(3)  IS_OPTIONAL,        // O  StructMember 
+        @position(3)  IS_OPTIONAL,        // O  StructMember
         @position(4)  IS_MUST_UNDERSTAND, // M  StructMember
         @position(5)  IS_KEY,          // K  StructMember, UnionDiscriminator
-        @position(6)  IS_DEFAULT       // D  UnionMember, EnumerationLiteral 
+        @position(6)  IS_DEFAULT       // D  UnionMember, EnumerationLiteral
     };
     typedef MemberFlag   CollectionElementFlag;   // T1, T2, X
     typedef MemberFlag   StructMemberFlag;        // T1, T2, O, M, K, X
@@ -138,15 +138,15 @@ module DDS { module XTypes {
 
     // Mask used to remove the flags that do no affect assignability
     // Selects  T1, T2, O, M, K, D
-    const   unsigned short  MemberFlagMinimalMask = 0x003f;  
+    const   unsigned short  MemberFlagMinimalMask = 0x003f;
 
     // Flags that apply to type declarationa and DO affect assignability
     // Depending on the flag it may not apply to all types
     // When not all, the applicable  types are listed
     @bit_bound(16)
     bitmask TypeFlag {
-        @position(0) IS_FINAL,        // F |  
-        @position(1) IS_APPENDABLE,   // A |-  Struct, Union 
+        @position(0) IS_FINAL,        // F |
+        @position(1) IS_APPENDABLE,   // A |-  Struct, Union
         @position(2) IS_MUTABLE,      // M |   (exactly one flag)
 
         @position(3) IS_NESTED,       // N     Struct, Union
@@ -166,13 +166,13 @@ module DDS { module XTypes {
 
    // Forward declaration
    union TypeIdentifier;
-     
+
     // 1 Byte
     @extensibility(FINAL) @nested
     struct StringSTypeDefn {
     	SBound                  bound;
     };
-    
+
     // 4 Bytes
     @extensibility(FINAL) @nested
     struct StringLTypeDefn {
@@ -184,58 +184,58 @@ module DDS { module XTypes {
         EquivalenceKind        equiv_kind;
         CollectionElementFlag  element_flags;
     };
-    
+
     @extensibility(FINAL) @nested
     struct PlainSequenceSElemDefn {
         PlainCollectionHeader  header;
         SBound                 bound;
-        @external TypeIdentifier element_identifier; 
+        @external TypeIdentifier element_identifier;
     };
 
     @extensibility(FINAL) @nested
     struct PlainSequenceLElemDefn {
         PlainCollectionHeader  header;
         LBound                 bound;
-        @external TypeIdentifier element_identifier; 
+        @external TypeIdentifier element_identifier;
     };
 
     @extensibility(FINAL) @nested
     struct PlainArraySElemDefn {
         PlainCollectionHeader  header;
         SBoundSeq              array_bound_seq;
-        @external TypeIdentifier element_identifier; 
+        @external TypeIdentifier element_identifier;
     };
 
     @extensibility(FINAL) @nested
     struct PlainArrayLElemDefn {
         PlainCollectionHeader  header;
         LBoundSeq              array_bound_seq;
-        @external TypeIdentifier element_identifier; 
+        @external TypeIdentifier element_identifier;
     };
 
     @extensibility(FINAL) @nested
     struct PlainMapSTypeDefn {
         PlainCollectionHeader  header;
         SBound                 bound;
-        @external TypeIdentifier element_identifier; 
+        @external TypeIdentifier element_identifier;
         CollectionElementFlag  key_flags;
-        @external TypeIdentifier key_identifier; 
+        @external TypeIdentifier key_identifier;
     };
 
     @extensibility(FINAL) @nested
     struct PlainMapLTypeDefn {
         PlainCollectionHeader  header;
         LBound                 bound;
-        @external TypeIdentifier element_identifier; 
+        @external TypeIdentifier element_identifier;
         CollectionElementFlag  key_flags;
-        @external TypeIdentifier key_identifier; 
+        @external TypeIdentifier key_identifier;
     };
 
     // Used for Types that have cyclic depencencies with other types
     @extensibility(APPENDABLE) @nested
     struct StronglyConnectedComponentId {
         TypeObjectHashId sc_component_id; // Hash StronglyConnectedComponent
-        long   scc_length; // StronglyConnectedComponent.length 
+        long   scc_length; // StronglyConnectedComponent.length
         long   scc_index ; // identify type in Strongly Connected Comp.
     };
 
@@ -244,13 +244,19 @@ module DDS { module XTypes {
     struct ExtendedTypeDefn {
         // Empty. Available for future extension
     };
- 
 
-    
-    // The TypeIdentifier uniquely identifies a type (a set of equivalent 
+
+    // eProsima extension to support TypeIdentifier no value cases.
+    @final @nested
+    struct Dummy
+    {
+    };
+
+
+    // The TypeIdentifier uniquely identifies a type (a set of equivalent
     // types according to an equivalence relationship:  COMPLETE, MNIMAL).
     //
-    // In some cases (primitive types, strings, plain types) the identifier 
+    // In some cases (primitive types, strings, plain types) the identifier
     // is a explicit description of the type.
     // In other cases the Identifier is a Hash of the type description
     //
@@ -266,31 +272,28 @@ module DDS { module XTypes {
     //   - COMMON indicates the TypeIdentifier identifies equivalent types
     //     according to both the MINIMAL and the COMMON equivalence relation.
     //     This means the TypeIdentifier is the same for both relationships
-    // 
+    //
     @extensibility(FINAL) @nested
-    union TypeIdentifier switch (octet) { 
+    union TypeIdentifier switch (@default(TK_NONE) octet) {
         // ============  Primitive types - use TypeKind ====================
-        // All primitive types fall here. 
-        // Commented-out because Unions cannot have cases with no member.
-        /*
+        // All primitive types fall here.
         case TK_NONE:
-        case TK_BOOLEAN:       
-        case TK_BYTE_TYPE:
-        case TK_INT8_TYPE:
-        case TK_INT16_TYPE:
-        case TK_INT32_TYPE:
-        case TK_INT64_TYPE:
-        case TK_UINT8_TYPE:
-        case TK_UINT16_TYPE:
-        case TK_UINT32_TYPE:
-        case TK_UINT64_TYPE:
-        case TK_FLOAT32_TYPE:
-        case TK_FLOAT64_TYPE:
-        case TK_FLOAT128_TYPE:        
-        case TK_CHAR8_TYPE:
-        case TK_CHAR16_TYPE:
-            // No Value
-        */
+        case TK_BOOLEAN:
+        case TK_BYTE:
+        case TK_INT8:
+        case TK_INT16:
+        case TK_INT32:
+        case TK_INT64:
+        case TK_UINT8:
+        case TK_UINT16:
+        case TK_UINT32:
+        case TK_UINT64:
+        case TK_FLOAT32:
+        case TK_FLOAT64:
+        case TK_FLOAT128:
+        case TK_CHAR8:
+        case TK_CHAR16:
+            Dummy                   no_value;
 
         // ============ Strings - use TypeIdentifierKind ===================
         case TI_STRING8_SMALL:
@@ -316,12 +319,12 @@ module DDS { module XTypes {
             PlainMapSTypeDefn       map_sdefn;
         case TI_PLAIN_MAP_LARGE:
             PlainMapLTypeDefn       map_ldefn;
-    
+
         // ============  Types that are mutually dependent on each other ===
         case TI_STRONGLY_CONNECTED_COMPONENT:
             StronglyConnectedComponentId  sc_component_id;
 
-        // ============  The remaining cases - use EquivalenceKind ========= 
+        // ============  The remaining cases - use EquivalenceKind =========
         case EK_COMPLETE:
         case EK_MINIMAL:
             EquivalenceHash         equivalence_hash;
@@ -330,7 +333,7 @@ module DDS { module XTypes {
         // Future extensions
         default:
             ExtendedTypeDefn        extended_defn;
-    };   
+    };
     typedef sequence<TypeIdentifier> TypeIdentifierSeq;
 
 
@@ -345,7 +348,7 @@ module DDS { module XTypes {
     struct ExtendedAnnotationParameterValue {
         // Empty. Available for future extension
     };
-    
+
     /* Literal value of an annotation member: either the default value in its
      * definition or the value applied in its usage.
      */
@@ -384,9 +387,9 @@ module DDS { module XTypes {
         case TK_ENUM:
             long                enumerated_value;
         case TK_STRING8:
-            string<ANNOTATION_STR_VALUE_MAX_LEN>  string8_value;   
+            string<ANNOTATION_STR_VALUE_MAX_LEN>  string8_value;
         case TK_STRING16:
-            wstring<ANNOTATION_STR_VALUE_MAX_LEN> string16_value;  
+            wstring<ANNOTATION_STR_VALUE_MAX_LEN> string16_value;
         default:
             ExtendedAnnotationParameterValue      extended_value;
     };
@@ -394,8 +397,8 @@ module DDS { module XTypes {
     // The application of an annotation to some type or type member
     @extensibility(APPENDABLE) @nested
     struct AppliedAnnotationParameter {
-       NameHash                  paramname_hash;          
-       AnnotationParameterValue  value;      
+       NameHash                  paramname_hash;
+       AnnotationParameterValue  value;
     };
     // Sorted by AppliedAnnotationParameter.paramname_hash
     typedef
@@ -456,7 +459,7 @@ module DDS { module XTypes {
     };
     // Ordered by the member_index
     typedef sequence<CompleteStructMember> CompleteStructMemberSeq;
-    
+
     // Member of an aggregate type
     @extensibility(APPENDABLE) @nested
     struct MinimalStructMember {
@@ -466,7 +469,7 @@ module DDS { module XTypes {
     // Ordered by common.member_id
     typedef sequence<MinimalStructMember> MinimalStructMemberSeq;
 
-    
+
     @extensibility(APPENDABLE) @nested
     struct AppliedBuiltinTypeAnnotations {
         @optional AppliedVerbatimAnnotation verbatim;  // @verbatim(...)
@@ -476,11 +479,11 @@ module DDS { module XTypes {
     struct MinimalTypeDetail {
         // Empty. Available for future extension
     };
- 
+
     @extensibility(FINAL) @nested
     struct CompleteTypeDetail {
-         @optional AppliedBuiltinTypeAnnotations  ann_builtin;        
-         @optional AppliedAnnotationSeq           ann_custom;     
+         @optional AppliedBuiltinTypeAnnotations  ann_builtin;
+         @optional AppliedAnnotationSeq           ann_custom;
          QualifiedTypeName                        type_name;
     };
 
@@ -620,7 +623,7 @@ module DDS { module XTypes {
     struct CompleteAnnotationHeader {
         QualifiedTypeName         annotation_name;
     };
-    
+
     @extensibility(APPENDABLE) @nested
     struct MinimalAnnotationHeader {
         // Empty. Available for future extension
@@ -654,7 +657,7 @@ module DDS { module XTypes {
         @optional AppliedBuiltinMemberAnnotations  ann_builtin;
         @optional AppliedAnnotationSeq             ann_custom;
     };
-    
+
     @extensibility(APPENDABLE) @nested
     struct MinimalAliasBody {
         CommonAliasBody       common;
@@ -664,7 +667,7 @@ module DDS { module XTypes {
     struct CompleteAliasHeader {
         CompleteTypeDetail    detail;
     };
-    
+
     @extensibility(APPENDABLE) @nested
     struct MinimalAliasHeader {
         // Empty. Available for future extension
@@ -712,7 +715,7 @@ module DDS { module XTypes {
     struct CommonCollectionHeader {
         LBound                    bound;
     };
-    
+
     @extensibility(APPENDABLE) @nested
     struct CompleteCollectionHeader {
         CommonCollectionHeader        common;
@@ -731,7 +734,7 @@ module DDS { module XTypes {
         CompleteCollectionHeader   header;
         CompleteCollectionElement  element;
     };
-    
+
     @extensibility(FINAL) @nested
     struct MinimalSequenceType {
         CollectionTypeFlag         collection_flag;
@@ -744,7 +747,7 @@ module DDS { module XTypes {
     struct CommonArrayHeader {
         LBoundSeq           bound_seq;
     };
-    
+
     @extensibility(APPENDABLE) @nested
     struct CompleteArrayHeader {
         CommonArrayHeader   common;
@@ -786,7 +789,7 @@ module DDS { module XTypes {
         MinimalCollectionElement    key;
         MinimalCollectionElement    element;
     };
- 
+
     // --- Enumeration: ----------------------------------------------------
     typedef unsigned short BitBound;
 
@@ -796,7 +799,7 @@ module DDS { module XTypes {
         long                     value;
         EnumeratedLiteralFlag    flags;
     };
-      
+
     // Constant in an enumerated type
     @extensibility(APPENDABLE) @nested
     struct CompleteEnumeratedLiteral {
@@ -830,12 +833,12 @@ module DDS { module XTypes {
     struct MinimalEnumeratedHeader {
         CommonEnumeratedHeader  common;
     };
-    
+
     // Enumerated type
     @extensibility(FINAL) @nested
     struct CompleteEnumeratedType  {
         EnumTypeFlag                    enum_flags; // unused
-        CompleteEnumeratedHeader        header; 
+        CompleteEnumeratedHeader        header;
         CompleteEnumeratedLiteralSeq    literal_seq;
     };
 
@@ -843,9 +846,9 @@ module DDS { module XTypes {
     @extensibility(FINAL) @nested
     struct MinimalEnumeratedType  {
         EnumTypeFlag                  enum_flags; // unused
-        MinimalEnumeratedHeader       header; 
+        MinimalEnumeratedHeader       header;
         MinimalEnumeratedLiteralSeq   literal_seq;
-    };  
+    };
 
     // --- Bitmask: --------------------------------------------------------
     // Bit in a bit mask
@@ -854,12 +857,12 @@ module DDS { module XTypes {
         unsigned short         position;
         BitflagFlag            flags;
     };
-    
+
     @extensibility(APPENDABLE) @nested
     struct CompleteBitflag {
         CommonBitflag          common;
         CompleteMemberDetail   detail;
-    }; 
+    };
     // Ordered by Bitflag.position
     typedef sequence<CompleteBitflag> CompleteBitflagSeq;
 
@@ -867,7 +870,7 @@ module DDS { module XTypes {
     struct MinimalBitflag {
         CommonBitflag        common;
         MinimalMemberDetail  detail;
-    }; 
+    };
     // Ordered by Bitflag.position
     typedef sequence<MinimalBitflag> MinimalBitflagSeq;
 
@@ -882,14 +885,14 @@ module DDS { module XTypes {
 
     @extensibility(APPENDABLE) @nested
     struct CompleteBitmaskType {
-        BitmaskTypeFlag          bitmask_flags; // unused 
+        BitmaskTypeFlag          bitmask_flags; // unused
         CompleteBitmaskHeader    header;
         CompleteBitflagSeq       flag_seq;
     };
 
     @extensibility(APPENDABLE) @nested
     struct MinimalBitmaskType {
-        BitmaskTypeFlag          bitmask_flags; // unused 
+        BitmaskTypeFlag          bitmask_flags; // unused
         MinimalBitmaskHeader     header;
         MinimalBitflagSeq        flag_seq;
     };
@@ -900,14 +903,14 @@ module DDS { module XTypes {
         unsigned short        position;
         BitsetMemberFlag      flags;
         octet                 bitcount;
-        TypeKind              holder_type; // Must be primitive integer type      
+        TypeKind              holder_type; // Must be primitive integer type
     };
-    
+
     @extensibility(APPENDABLE) @nested
     struct CompleteBitfield {
         CommonBitfield           common;
         CompleteMemberDetail     detail;
-    };  
+    };
     // Ordered by Bitfield.position
     typedef sequence<CompleteBitfield> CompleteBitfieldSeq;
 
@@ -915,7 +918,7 @@ module DDS { module XTypes {
     struct MinimalBitfield {
         CommonBitfield       common;
         NameHash             name_hash;
-    };  
+    };
     // Ordered by Bitfield.position
     typedef sequence<MinimalBitfield> MinimalBitfieldSeq;
 
@@ -931,18 +934,18 @@ module DDS { module XTypes {
 
     @extensibility(APPENDABLE) @nested
     struct CompleteBitsetType  {
-        BitsetTypeFlag         bitset_flags; // unused 
+        BitsetTypeFlag         bitset_flags; // unused
         CompleteBitsetHeader   header;
         CompleteBitfieldSeq    field_seq;
     };
 
     @extensibility(APPENDABLE) @nested
     struct MinimalBitsetType  {
-        BitsetTypeFlag       bitset_flags; // unused 
-        MinimalBitsetHeader  header;   
+        BitsetTypeFlag       bitset_flags; // unused
+        MinimalBitsetHeader  header;
         MinimalBitfieldSeq   field_seq;
     };
- 
+
     // --- Type Object: ---------------------------------------------------
     // The types associated with each case selection must have extensibility
     // kind APPENDABLE or MUTABLE so that they can be extended in the future
@@ -974,10 +977,10 @@ module DDS { module XTypes {
             CompleteEnumeratedType enumerated_type;
         case TK_BITMASK:
             CompleteBitmaskType    bitmask_type;
-    
+
         // ===================  Future extensibility  ============
         default:
-            CompleteExtendedType   extended_type;    
+            CompleteExtendedType   extended_type;
     };
 
     @extensibility(MUTABLE) @nested
@@ -1008,10 +1011,10 @@ module DDS { module XTypes {
             MinimalEnumeratedType  enumerated_type;
         case TK_BITMASK:
             MinimalBitmaskType     bitmask_type;
-    
+
         // ===================  Future extensibility  ============
         default:
-            MinimalExtendedType    extended_type;    
+            MinimalExtendedType    extended_type;
     };
 
     @extensibility(APPENDABLE)  @nested
@@ -1026,7 +1029,7 @@ module DDS { module XTypes {
     // Set of TypeObjects representing a strong component: Equivalence class
     // for the Strong Connectivity relationship (mutual reachability between
     // types).
-    // Ordered by fully qualified typename lexicographic order 
+    // Ordered by fully qualified typename lexicographic order
     typedef TypeObjectSeq        StronglyConnectedComponent;
 
     @extensibility(FINAL)  @nested
@@ -1072,6 +1075,3 @@ module DDS { module XTypes {
 
 };  // end of module XTypes
 };  // end module DDS
-
-
-
