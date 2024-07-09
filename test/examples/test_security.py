@@ -37,11 +37,11 @@ def test_security():
                 received += 1
                 continue
 
-        if sent != 0 and received != 0 and sent * 2 == received:
+        if sent != 0 and received != 0 and sent == received:
             ret = True
         else:
             print('ERROR: sent: ' + str(sent) + ', but received: ' + str(received) +
-                  ' (expected: ' + str(sent * 2) + ')')
+                  ' (expected: ' + str(sent) + ')')
             raise subprocess.CalledProcessError(1, '')
 
     except subprocess.CalledProcessError:

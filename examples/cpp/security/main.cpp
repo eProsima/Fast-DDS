@@ -43,7 +43,7 @@ int main(
         char** argv)
 {
     auto ret = EXIT_SUCCESS;
-    const std::string topic_name = "security_topic";
+    const std::string topic_name = "HelloWorldTopic";
     CLIParser::security_config config = CLIParser::parse_cli_options(argc, argv);
     uint16_t samples = 0;
     switch (config.entity)

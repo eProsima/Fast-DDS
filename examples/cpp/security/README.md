@@ -23,7 +23,20 @@ For simplicity, in this example, the subscriber class inherits from the listener
 ## Run the example
 
 To launch this example, two different terminals are required.
-One of them will run the publisher example application, and the other will run the subscriber application.
+One of them will run the publisher example application, and the other will run the subscriber application. Before running both applications, it is necessary to export the path of the folder where the certificates are located in the environment variable ``CERTS_PATH``:
+
+* Ubuntu ( / MacOS )
+
+    ```shell
+    user@machine:example_path$ export CERTS_PATH=<path_to_certs_folder>
+    ```
+
+* Windows
+
+    ```powershell
+    example_path> set CERTS_PATH=<path_to_certs_folder>
+    ```
+
 
 ### Secure Hello world publisher
 
@@ -104,15 +117,29 @@ This is accomplished by setting the environment variable ``FASTDDS_DEFAULT_PROFI
 
 * Ubuntu ( / MacOS )
 
+- Publisher profile:
+
     ```shell
-    user@machine:example_path$ export FASTDDS_DEFAULT_PROFILES_FILE=hello_world_profile.xml
+    user@machine:example_path$ export FASTDDS_DEFAULT_PROFILES_FILE=secure_publisher_profile.xml
+    ```
+- Subscriber profile:
+
+    ```shell
+    user@machine:example_path$ export FASTDDS_DEFAULT_PROFILES_FILE=secure_subscriber_profile.xml
     ```
 
 * Windows
 
+- Publisher profile:
+
     ```powershell
-    example_path> set FASTDDS_DEFAULT_PROFILES_FILE=hello_world_profile.xml
+    example_path> set FASTDDS_DEFAULT_PROFILES_FILE=secure_publisher_profile.xml
     ```
+- Subscriber profile:
+
+    ```powershell
+    example_path> set FASTDDS_DEFAULT_PROFILES_FILE=secure_subscriber_profile.xml
+    ``` 
 
 The example provides with an XML profiles files with certain QoS:
 
