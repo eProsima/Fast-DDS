@@ -25,6 +25,7 @@
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <fastdds/rtps/reader/ReaderDiscoveryStatus.hpp>
 #include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
@@ -74,7 +75,7 @@ public:
     virtual void on_participant_discovery(
             DomainParticipant* participant,
             fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS reason,
-            const fastdds::rtps::ParticipantProxyData& info,
+            const ParticipantBuiltinTopicData& info,
             bool& should_be_ignored)
     {
         static_cast<void>(participant);

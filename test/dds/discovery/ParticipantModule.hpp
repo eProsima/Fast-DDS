@@ -21,6 +21,7 @@
 
 #include <string>
 
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
@@ -48,7 +49,7 @@ public:
     void on_participant_discovery(
             DomainParticipant* participant,
             PARTICIPANT_DISCOVERY_STATUS status,
-            const ParticipantProxyData& info,
+            const ParticipantBuiltinTopicData& info,
             bool& should_be_ignored) override;
 
     bool init();

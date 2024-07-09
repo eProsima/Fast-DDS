@@ -24,6 +24,7 @@
 #include <fastcdr/Cdr.h>
 #include <fastcdr/FastBuffer.h>
 
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
@@ -1601,7 +1602,7 @@ TEST(Discovery, discovery_cyclone_participant_with_custom_pid)
         void on_participant_discovery(
                 DomainParticipant*,
                 PARTICIPANT_DISCOVERY_STATUS status,
-                const ParticipantProxyData& /*info*/,
+                const ParticipantBuiltinTopicData& /*info*/,
                 bool& should_be_ignored) override
         {
             should_be_ignored = false;

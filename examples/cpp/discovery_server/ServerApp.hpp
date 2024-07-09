@@ -22,6 +22,7 @@
 
 #include <condition_variable>
 
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>

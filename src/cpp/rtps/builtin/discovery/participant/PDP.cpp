@@ -27,6 +27,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
@@ -674,7 +675,9 @@ void PDP::notify_and_maybe_ignore_new_participant(
     {
         {
             std::lock_guard<std::mutex> cb_lock(callback_mtx_);
-            ParticipantProxyData info(*pdata);
+
+            ParticipantBuiltinTopicData info;
+            from_proxy_to_builtin(*pdata, info);
 
             listener->on_participant_discovery(
                 getRTPSParticipant()->getUserRTPSParticipant(),
@@ -1327,7 +1330,9 @@ void PDP::actions_on_remote_participant_removed(
     if (listener)
     {
         std::lock_guard<std::mutex> lock(callback_mtx_);
-        ParticipantProxyData info(*pdata);
+
+        ParticipantBuiltinTopicData info;
+        from_proxy_to_builtin(*pdata, info);
 
         bool should_be_ignored = false;
         listener->on_participant_discovery(mp_RTPSParticipant->getUserRTPSParticipant(), reason,

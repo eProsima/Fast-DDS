@@ -25,6 +25,7 @@
 #include <condition_variable>
 #include <mutex>
 
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
@@ -41,6 +42,7 @@
 #include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
 #include "fastdds/topic/DDSSQLFilter/DDSFilterFactory.hpp"
 #include <fastdds/topic/TopicProxyFactory.hpp>
+#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/reader/StatefulReader.hpp>
 
 namespace eprosima {
@@ -637,7 +639,7 @@ protected:
         void on_participant_discovery(
                 fastdds::rtps::RTPSParticipant* participant,
                 fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS reason,
-                const fastdds::rtps::ParticipantProxyData& info,
+                const ParticipantBuiltinTopicData& info,
                 bool& should_be_ignored) override;
 
 #if HAVE_SECURITY

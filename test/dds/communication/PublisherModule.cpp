@@ -215,28 +215,28 @@ void PublisherModule::on_publication_matched(
 void PublisherModule::on_participant_discovery(
         DomainParticipant* /*participant*/,
         PARTICIPANT_DISCOVERY_STATUS status,
-        const ParticipantProxyData& info,
+        const ParticipantBuiltinTopicData& info,
         bool& /*should_be_ignored*/)
 {
     if (status == PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
     {
         std::cout << "Publisher participant " << //participant->getGuid() <<
-            " discovered participant " << info.m_guid << std::endl;
+            " discovered participant " << info.guid << std::endl;
     }
     else if (status == PARTICIPANT_DISCOVERY_STATUS::CHANGED_QOS_PARTICIPANT)
     {
         std::cout << "Publisher participant " << //participant->getGuid() <<
-            " detected changes on participant " << info.m_guid << std::endl;
+            " detected changes on participant " << info.guid << std::endl;
     }
     else if (status == PARTICIPANT_DISCOVERY_STATUS::REMOVED_PARTICIPANT)
     {
         std::cout << "Publisher participant " << // participant->getGuid() <<
-            " removed participant " << info.m_guid << std::endl;
+            " removed participant " << info.guid << std::endl;
     }
     else if (status == PARTICIPANT_DISCOVERY_STATUS::DROPPED_PARTICIPANT)
     {
         std::cout << "Publisher participant " << //participant->getGuid() <<
-            " dropped participant " << info.m_guid << std::endl;
+            " dropped participant " << info.guid << std::endl;
         if (exit_on_lost_liveliness_)
         {
             run_ = false;

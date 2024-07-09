@@ -32,6 +32,7 @@
 #if _MSC_VER
 #include <Windows.h>
 #endif // _MSC_VER
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/common/InstanceHandle.hpp>
 #include <fastdds/dds/core/condition/GuardCondition.hpp>
 #include <fastdds/dds/core/condition/StatusCondition.hpp>
@@ -81,7 +82,7 @@ class PubSubWriter
         void on_participant_discovery(
                 eprosima::fastdds::dds::DomainParticipant*,
                 eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS status,
-                const eprosima::fastdds::rtps::ParticipantProxyData& info,
+                const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& info,
                 bool& should_be_ignored) override
         {
             static_cast<void>(should_be_ignored);
@@ -2019,7 +2020,7 @@ protected:
     std::string participant_profile_ = "";
     std::string datawriter_profile_ = "";
 
-    std::function<bool(const eprosima::fastdds::rtps::ParticipantProxyData& info)> onDiscovery_;
+    std::function<bool(const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& info)> onDiscovery_;
 
     //! A mutex for liveliness
     std::mutex liveliness_mutex_;

@@ -26,6 +26,7 @@
 
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -58,6 +59,7 @@
 #include <fastdds/topic/TopicProxy.hpp>
 #include <fastdds/topic/TopicProxyFactory.hpp>
 #include <fastdds/utils/QosConverters.hpp>
+#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 #include <utils/SystemInfo.hpp>
@@ -1533,7 +1535,7 @@ ReturnCode_t DomainParticipantImpl::unregister_type(
 void DomainParticipantImpl::MyRTPSParticipantListener::on_participant_discovery(
         RTPSParticipant*,
         eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS reason,
-        const eprosima::fastdds::rtps::ParticipantProxyData& info,
+        const ParticipantBuiltinTopicData& info,
         bool& should_be_ignored)
 {
     should_be_ignored = false;

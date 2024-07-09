@@ -594,7 +594,7 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
         void on_participant_discovery(
                 DomainParticipant* participant,
                 eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS status,
-                const eprosima::fastdds::rtps::ParticipantProxyData& info,
+                const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& info,
                 bool& should_be_ignored)
         {
             static_cast<void>(should_be_ignored);
@@ -607,7 +607,7 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
                 {
                     delete remote_participant_info;
                 }
-                remote_participant_info = new ParticipantProxyData(info);
+                remote_participant_info = new ParticipantBuiltinTopicData(info);
                 found_->store(true);
                 cv_->notify_one();
             }
@@ -775,14 +775,14 @@ TEST(DDSDiscovery, DDSDiscoveryDoesNotDropUDPLocator)
         void on_participant_discovery(
                 DomainParticipant* /*participant*/,
                 PARTICIPANT_DISCOVERY_STATUS status,
-                const ParticipantProxyData& info,
+                const ParticipantBuiltinTopicData& info,
                 bool& should_be_ignored) override
         {
             static_cast<void>(should_be_ignored);
             if (status == PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
             {
                 std::lock_guard<std::mutex> guard(mtx);
-                guid = info.m_guid;
+                guid = info.guid;
                 metatraffic = info.metatraffic_locators;
                 cv.notify_all();
             }
@@ -1839,7 +1839,7 @@ TEST(DDSDiscovery, DataracePDP)
         void on_participant_discovery(
                 DomainParticipant* /*participant*/,
                 PARTICIPANT_DISCOVERY_STATUS status,
-                const ParticipantProxyData& info,
+                const ParticipantBuiltinTopicData& info,
                 bool& /*should_be_ignored*/) override
         {
             if (status == eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)

@@ -40,7 +40,7 @@
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 
 /**
@@ -164,7 +164,7 @@ private:
         void on_participant_discovery(
                 eprosima::fastdds::dds::DomainParticipant*,
                 fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS status,
-                const fastdds::rtps::ParticipantProxyData& info,
+                const fastdds::rtps::ParticipantBuiltinTopicData& info,
                 bool& should_be_ignored)
         {
             static_cast<void>(should_be_ignored);
@@ -875,13 +875,13 @@ public:
     }
 
     void set_on_discovery_function(
-            std::function<bool(const eprosima::fastdds::rtps::ParticipantProxyData&)> f)
+            std::function<bool(const eprosima::fastdds::dds::ParticipantBuiltinTopicData&)> f)
     {
         on_discovery_ = f;
     }
 
     void set_on_participant_qos_update_function(
-            std::function<bool(const eprosima::fastdds::rtps::ParticipantProxyData&)> f)
+            std::function<bool(const eprosima::fastdds::dds::ParticipantBuiltinTopicData&)> f)
     {
         on_participant_qos_update_ = f;
     }
@@ -975,8 +975,8 @@ private:
     std::mutex mutex_discovery_;
     std::condition_variable cv_discovery_;
     std::atomic<unsigned int> matched_;
-    std::function<bool(const eprosima::fastdds::rtps::ParticipantProxyData& info)> on_discovery_;
-    std::function<bool(const eprosima::fastdds::rtps::ParticipantProxyData& info)> on_participant_qos_update_;
+    std::function<bool(const eprosima::fastdds::dds::ParticipantBuiltinTopicData& info)> on_discovery_;
+    std::function<bool(const eprosima::fastdds::dds::ParticipantBuiltinTopicData& info)> on_participant_qos_update_;
     std::atomic_bool discovery_result_;
     std::atomic_bool participant_qos_updated_;
 

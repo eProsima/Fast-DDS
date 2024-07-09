@@ -27,6 +27,7 @@
 
 // Include first possible mocks (depending on include on CMakeLists.txt)
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/history/IChangePool.hpp>
 #include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
@@ -74,13 +75,13 @@ public:
     void on_participant_discovery(
             RTPSParticipant* participant,
             PARTICIPANT_DISCOVERY_STATUS status,
-            const ParticipantProxyData& info,
+            const ParticipantBuiltinTopicData& info,
             bool& should_be_ignored) override
     {
         on_participant_discovery_mock(participant, status, info, should_be_ignored);
     }
 
-    MOCK_METHOD3(on_participant_discovery_mock, void (RTPSParticipant*, PARTICIPANT_DISCOVERY_STATUS, const ParticipantProxyData&, bool&));
+    MOCK_METHOD3(on_participant_discovery_mock, void (RTPSParticipant*, PARTICIPANT_DISCOVERY_STATUS, const ParticipantBuiltinTopicData&, bool&));
 
 #if HAVE_SECURITY
     void onParticipantAuthentication(

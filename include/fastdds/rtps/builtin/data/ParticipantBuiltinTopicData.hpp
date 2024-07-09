@@ -30,6 +30,25 @@ namespace rtps {
 
 struct ParticipantBuiltinTopicData
 {
+    //! Constructor from ParticipantBuiltinTopicData
+    ParticipantBuiltinTopicData(const ParticipantBuiltinTopicData& pdata)
+    : key(pdata.key)
+    , user_data(pdata.user_data)
+    , guid(pdata.guid)
+    , properties(pdata.properties)
+    , participant_name(pdata.participant_name)
+    , metatraffic_locators(pdata.metatraffic_locators)
+    , default_locators(pdata.default_locators)
+    , lease_duration(pdata.lease_duration)
+    , vendor_id(pdata.vendor_id)
+    , domain_id(pdata.domain_id)
+    {
+    }
+
+    //! Default constructor
+    ParticipantBuiltinTopicData()
+    {}
+
     //! Builtin topic Key
     BuiltinTopicKey_t key;
 
@@ -47,7 +66,7 @@ struct ParticipantBuiltinTopicData
 
     //!Metatraffic locators
     RemoteLocatorList metatraffic_locators;
-    
+
     //!Default locators
     RemoteLocatorList default_locators;
 

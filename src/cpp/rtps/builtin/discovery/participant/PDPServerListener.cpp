@@ -22,10 +22,12 @@
 #include <memory>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 
+#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/discovery/database/DiscoveryParticipantChangeData.hpp>
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpoints.hpp>
@@ -296,7 +298,8 @@ void PDPServerListener::on_new_cache_change_added(
                     bool should_be_ignored = false;
                     {
                         std::lock_guard<std::mutex> cb_lock(pdp_server()->callback_mtx_);
-                        ParticipantProxyData info(*pdata);
+                        ParticipantBuiltinTopicData info;
+                        from_proxy_to_builtin(*pdata, info);
 
                         listener->on_participant_discovery(
                             pdp_server()->getRTPSParticipant()->getUserRTPSParticipant(),

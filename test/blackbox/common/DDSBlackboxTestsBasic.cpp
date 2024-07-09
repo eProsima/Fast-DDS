@@ -22,6 +22,7 @@
 #include <gmock/gmock.h>
 
 #include <fastdds/core/policy/ParameterSerializer.hpp>
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
@@ -532,14 +533,14 @@ TEST(DDSBasic, IgnoreParticipant)
         void on_participant_discovery(
                 DomainParticipant* /*participant*/,
                 eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS status,
-                const eprosima::fastdds::rtps::ParticipantProxyData& info,
+                const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& info,
                 bool& should_be_ignored) override
         {
             std::cout << "Using custom listener" << std::endl;
             if (status == PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
             {
                 std::cout << "Discovered participant" << std::endl;
-                if (info.m_userData == std::vector<eprosima::fastdds::rtps::octet>({ 'i', 'g', 'n' }))
+                if (info.user_data == std::vector<eprosima::fastdds::rtps::octet>({ 'i', 'g', 'n' }))
                 {
                     std::cout << "Ignoring participant" << std::endl;
                     should_be_ignored = true;

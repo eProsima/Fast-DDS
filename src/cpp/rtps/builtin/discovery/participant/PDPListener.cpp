@@ -23,12 +23,14 @@
 
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 
+#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/builtin/discovery/participant/PDPEndpoints.hpp>
@@ -240,7 +242,8 @@ void PDPListener::process_alive_data(
         }
 
         // Copy proxy to be passed forward before releasing PDP mutex
-        ParticipantProxyData old_data_copy(*old_data);
+        ParticipantBuiltinTopicData old_topic_data_copy;
+        from_proxy_to_builtin(*old_data, old_topic_data_copy);
 
         lock.unlock();
 
@@ -251,7 +254,7 @@ void PDPListener::process_alive_data(
 
             {
                 std::lock_guard<std::mutex> cb_lock(parent_pdp_->callback_mtx_);
-                ParticipantProxyData info(old_data_copy);
+                ParticipantBuiltinTopicData info(old_topic_data_copy);
 
                 listener->on_participant_discovery(
                     parent_pdp_->getRTPSParticipant()->getUserRTPSParticipant(),

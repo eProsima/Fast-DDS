@@ -19,6 +19,7 @@
 #ifndef TEST_COMMUNICATION_SUBSCRIBER_HPP
 #define TEST_COMMUNICATION_SUBSCRIBER_HPP
 
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
@@ -63,7 +64,7 @@ public:
     void on_participant_discovery(
             DomainParticipant* /*participant*/,
             eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS status,
-            const eprosima::fastdds::rtps::ParticipantProxyData& info,
+            const ParticipantBuiltinTopicData& info,
             bool& should_be_ignored) override;
 
 #if HAVE_SECURITY

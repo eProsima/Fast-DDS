@@ -83,7 +83,7 @@ class PubSubWriterReader
         void on_participant_discovery(
                 eprosima::fastdds::dds::DomainParticipant* participant,
                 eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS status,
-                const eprosima::fastdds::rtps::ParticipantProxyData& info,
+                const eprosima::fastdds::dds::ParticipantBuiltinTopicData& info,
                 bool& should_be_ignored) override
         {
             static_cast<void>(should_be_ignored);
@@ -92,16 +92,16 @@ class PubSubWriterReader
             switch (status)
             {
                 case eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT:
-                    info_add(discovered_participants_, info.m_guid);
+                    info_add(discovered_participants_, info.guid);
                     break;
 
                 case eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::REMOVED_PARTICIPANT:
-                    info_remove(discovered_participants_, info.m_guid);
+                    info_remove(discovered_participants_, info.guid);
                     break;
 
                 case eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::DROPPED_PARTICIPANT:
                     std::cout << "Participant " << info.m_guid << " has been dropped";
-                    info_remove(discovered_participants_, info.m_guid);
+                    info_remove(discovered_participants_, info.guid);
                     break;
 
                 default:

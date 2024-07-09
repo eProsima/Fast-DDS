@@ -19,6 +19,7 @@
 #ifndef TEST_DDS_COMMUNICATION_PUBLISHERMODULE_HPP
 #define TEST_DDS_COMMUNICATION_PUBLISHERMODULE_HPP
 
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
@@ -65,7 +66,7 @@ public:
     void on_participant_discovery(
             DomainParticipant* /*participant*/,
             fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS status,
-            const fastdds::rtps::ParticipantProxyData& info,
+            const ParticipantBuiltinTopicData& info,
             bool& should_be_ignored) override;
 
 #if HAVE_SECURITY

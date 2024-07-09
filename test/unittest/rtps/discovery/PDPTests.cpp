@@ -260,7 +260,7 @@ public:
     void on_participant_discovery(
             fastdds::dds::DomainParticipant* participant,
             fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS /*status*/,
-            const fastdds::rtps::ParticipantProxyData& /*info*/,
+            const fastdds::rtps::ParticipantBuiltinTopicData& /*info*/,
             bool& /*should_be_ignored*/) override
     {
         if (std::find(p_matched_.begin(), p_matched_.end(), participant->guid()) == p_matched_.end())

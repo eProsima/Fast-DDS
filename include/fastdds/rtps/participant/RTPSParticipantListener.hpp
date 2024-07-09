@@ -60,7 +60,7 @@ public:
     virtual void on_participant_discovery(
             RTPSParticipant* participant,
             PARTICIPANT_DISCOVERY_STATUS reason,
-            const ParticipantProxyData& info,
+            const ParticipantBuiltinTopicData& info,
             bool& should_be_ignored)
     {
         static_cast<void>(participant);
