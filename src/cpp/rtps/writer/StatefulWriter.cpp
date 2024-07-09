@@ -925,7 +925,7 @@ void StatefulWriter::update_reader_info(
 
     if (create_sender_resources)
     {
-        RTPSParticipantImpl* part = getRTPSParticipant();
+        RTPSParticipantImpl* part = get_participant_impl();
         locator_selector.locator_selector.for_each([part](const Locator_t& loc)
                 {
                     part->createSenderResources(loc);

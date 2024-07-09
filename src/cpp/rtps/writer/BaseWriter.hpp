@@ -123,12 +123,12 @@ public:
         return history_;
     }
 
-    //!Get maximum size of the data
-    uint32_t getMaxDataSize();
-
-    //! Calculates the maximum size of the data
-    uint32_t calculateMaxDataSize(
-            uint32_t length);
+    /**
+     * @brief Get biggest output payload size allowed by this writer.
+     *
+     * @return Maximum number of bytes allowed for the payload.
+     */
+    uint32_t get_max_allowed_payload_size();
 
     /**
      * Add a change to the unsent list.
@@ -167,8 +167,18 @@ public:
             LocatorSelectorSender& locator_selector,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) = 0;
 
+    /**
+     * @brief Get the general locator selector.
+     *
+     * @return Reference to the general locator selector.
+     */
     virtual LocatorSelectorSender& get_general_locator_selector() = 0;
 
+    /**
+     * @brief Get the async locator selector.
+     *
+     * @return Reference to the async locator selector.
+     */
     virtual LocatorSelectorSender& get_async_locator_selector() = 0;
 
     /**
@@ -255,7 +265,7 @@ public:
      *
      * @return pointer to the RTPSParticipantImpl object that created this writer.
      */
-    inline RTPSParticipantImpl* getRTPSParticipant() const
+    inline RTPSParticipantImpl* get_participant_impl() const
     {
         return mp_RTPSParticipant;
     }
@@ -317,12 +327,6 @@ public:
     SequenceNumber_t get_seq_num_max();
 
     /**
-     * Get maximum size of the serialized type
-     * @return Maximum size of the serialized type
-     */
-    uint32_t getTypeMaxSerialized();
-
-    /**
      * @brief Get a pointer to a BaseWriter object from a RTPSWriter pointer.
      *
      * @param writer  Pointer to the RTPSWriter object.
@@ -373,7 +377,7 @@ protected:
             CacheChange_t* change,
             size_t num_locators);
 
-    //! Liveliness lost status of this writer
+    /// Liveliness lost status of this writer
     LivelinessLostStatus liveliness_lost_status_;
     /// Is the data sent directly or announced by HB and THEN sent to the ones who ask for it?.
     bool push_mode_ = true;
@@ -398,6 +402,18 @@ protected:
     Duration_t liveliness_lease_duration_;
     /// The liveliness announcement period
     Duration_t liveliness_announcement_period_;
+
+private:
+
+    /**
+     * @brief Calculate the maximum payload size that can be sent in a single datagram.
+     *
+     * @param datagram_length Length of the datagram.
+     *
+     * @return Maximum payload size.
+     */
+    uint32_t calculate_max_payload_size(
+            uint32_t datagram_length);
 
 };
 

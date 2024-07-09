@@ -112,8 +112,6 @@ public:
 #endif // FASTDDS_STATISTICS
 
     // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
-    MOCK_METHOD0 (getTypeMaxSerialized, uint32_t());
-
     MOCK_METHOD1(reader_data_filter, void(
             IReaderDataFilter* filter));
 

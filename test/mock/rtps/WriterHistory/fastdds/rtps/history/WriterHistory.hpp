@@ -236,6 +236,11 @@ public:
         return mp_mutex;
     }
 
+    inline uint32_t getTypeMaxSerialized()
+    {
+        return m_att.payloadMaxSize;
+    }
+
     HistoryAttributes m_att;
     std::vector<CacheChange_t*> m_changes;
 

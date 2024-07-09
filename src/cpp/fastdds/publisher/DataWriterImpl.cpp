@@ -1153,7 +1153,7 @@ ReturnCode_t DataWriterImpl::get_sending_locators(
         return RETCODE_NOT_ENABLED;
     }
 
-    writer_->getRTPSParticipant()->get_sending_locators(locators);
+    writer_->get_participant_impl()->get_sending_locators(locators);
     return RETCODE_OK;
 }
 

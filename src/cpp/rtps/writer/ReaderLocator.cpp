@@ -40,7 +40,7 @@ ReaderLocator::ReaderLocator(
         size_t max_unicast_locators,
         size_t max_multicast_locators)
     : owner_(owner)
-    , participant_owner_(owner->getRTPSParticipant())
+    , participant_owner_(owner->get_participant_impl())
     , general_locator_info_(max_unicast_locators, max_multicast_locators)
     , async_locator_info_(max_unicast_locators, max_multicast_locators)
     , expects_inline_qos_(false)

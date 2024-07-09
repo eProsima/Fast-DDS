@@ -269,15 +269,6 @@ public:
     }
 
     /**
-     * Get the RTPS participant
-     * @return RTPS participant
-     */
-    inline RTPSParticipantImpl* getRTPSParticipant() const
-    {
-        return mp_RTPSParticipant;
-    }
-
-    /**
      * Get the number of matched readers
      * @return Number of the matched readers
      */

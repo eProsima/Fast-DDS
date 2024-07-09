@@ -62,11 +62,9 @@ public:
     }
 
     // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
-    MOCK_METHOD0(getMaxDataSize, uint32_t());
+    MOCK_METHOD0(get_max_allowed_payload_size, uint32_t());
 
-    MOCK_METHOD1(calculateMaxDataSize, uint32_t(uint32_t));
-
-    MOCK_METHOD0(getRTPSParticipant, RTPSParticipantImpl* ());
+    MOCK_METHOD0(get_participant_impl, RTPSParticipantImpl* ());
 
     MOCK_METHOD4(deliver_sample_nts, DeliveryRetCode(
             CacheChange_t*,

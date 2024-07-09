@@ -176,7 +176,7 @@ void BaseWriter::set_enabled_statistics_writers_mask(
 
 #endif // FASTDDS_STATISTICS
 
-uint32_t BaseWriter::getMaxDataSize()
+uint32_t BaseWriter::get_max_allowed_payload_size()
 {
     uint32_t flow_max = flow_controller_->get_max_payload();
     uint32_t part_max = mp_RTPSParticipant->getMaxMessageSize();
@@ -186,21 +186,21 @@ uint32_t BaseWriter::getMaxDataSize()
         max_size = max_output_message_size_;
     }
 
-    max_size =  calculateMaxDataSize(max_size);
+    max_size = calculate_max_payload_size(max_size);
     return max_size &= ~3;
 }
 
-uint32_t BaseWriter::calculateMaxDataSize(
-        uint32_t length)
+uint32_t BaseWriter::calculate_max_payload_size(
+        uint32_t datagram_length)
 {
     constexpr uint32_t info_dst_message_length = 16;
     constexpr uint32_t info_ts_message_length = 12;
     constexpr uint32_t data_frag_submessage_header_length = 36;
     constexpr uint32_t heartbeat_message_length = 32;
 
-    uint32_t maxDataSize = mp_RTPSParticipant->calculateMaxDataSize(length);
+    uint32_t max_data_size = mp_RTPSParticipant->calculateMaxDataSize(datagram_length);
 
-    maxDataSize -= info_dst_message_length +
+    max_data_size -= info_dst_message_length +
             info_ts_message_length +
             data_frag_submessage_header_length +
             heartbeat_message_length;
@@ -210,20 +210,20 @@ uint32_t BaseWriter::calculateMaxDataSize(
 #if HAVE_SECURITY
     if (getAttributes().security_attributes().is_submessage_protected)
     {
-        maxDataSize -= mp_RTPSParticipant->security_manager().calculate_extra_size_for_rtps_submessage(m_guid);
+        max_data_size -= mp_RTPSParticipant->security_manager().calculate_extra_size_for_rtps_submessage(m_guid);
     }
 
     if (getAttributes().security_attributes().is_payload_protected)
     {
-        maxDataSize -= mp_RTPSParticipant->security_manager().calculate_extra_size_for_encoded_payload(m_guid);
+        max_data_size -= mp_RTPSParticipant->security_manager().calculate_extra_size_for_encoded_payload(m_guid);
     }
 #endif // if HAVE_SECURITY
 
 #ifdef FASTDDS_STATISTICS
-    maxDataSize -= eprosima::fastdds::statistics::rtps::statistics_submessage_length;
+    max_data_size -= eprosima::fastdds::statistics::rtps::statistics_submessage_length;
 #endif // FASTDDS_STATISTICS
 
-    return maxDataSize;
+    return max_data_size;
 }
 
 void BaseWriter::add_statistics_sent_submessage(
@@ -245,7 +245,7 @@ bool BaseWriter::send_nts(
         const LocatorSelectorSender& locator_selector,
         std::chrono::steady_clock::time_point& max_blocking_time_point) const
 {
-    RTPSParticipantImpl* participant = getRTPSParticipant();
+    RTPSParticipantImpl* participant = get_participant_impl();
 
     return locator_selector.locator_selector.selected_size() == 0 ||
            participant->sendSync(buffers, total_bytes, m_guid, locator_selector.locator_selector.begin(),
@@ -368,11 +368,6 @@ SequenceNumber_t BaseWriter::get_seq_num_max()
     {
         return c_SequenceNumber_Unknown;
     }
-}
-
-uint32_t BaseWriter::getTypeMaxSerialized()
-{
-    return history_->getTypeMaxSerialized();
 }
 
 void BaseWriter::add_guid(

@@ -60,7 +60,7 @@ ReaderProxy::ReaderProxy(
     , next_expected_acknack_count_(0)
     , last_nackfrag_count_(0)
 {
-    auto participant = writer_->getRTPSParticipant();
+    auto participant = writer_->get_participant_impl();
     if (nullptr != participant)
     {
         nack_supression_event_ = new TimedEvent(participant->getEventResource(),

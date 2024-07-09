@@ -462,7 +462,7 @@ void WriterHistory::set_fragments(
     // Fragment if necessary
     if (high_mark_for_frag_ == 0)
     {
-        high_mark_for_frag_ = mp_writer->getMaxDataSize();
+        high_mark_for_frag_ = mp_writer->get_max_allowed_payload_size();
     }
 
     uint32_t final_high_mark_for_frag = high_mark_for_frag_;
