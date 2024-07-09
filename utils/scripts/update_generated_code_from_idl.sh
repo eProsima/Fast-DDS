@@ -45,6 +45,19 @@ files_needing_output_dir=(
     './thirdparty/dds-types-test/IDL/strings.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/structures.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/unions.idl|../../../test/dds-types-test'
+    './test/unittest/dds/xtypes/serializers/idl/types/alias_struct/alias_struct.idl|./gen'
+    './test/unittest/dds/xtypes/serializers/idl/types/array_struct/array_struct.idl|./gen'
+    './test/unittest/dds/xtypes/serializers/idl/types/bitmask_struct/bitmask_struct.idl|./gen'
+    './test/unittest/dds/xtypes/serializers/idl/types/bitset_struct/bitset_struct.idl|./gen'
+    './test/unittest/dds/xtypes/serializers/idl/types/enum_struct/enum_struct.idl|./gen'
+    './test/unittest/dds/xtypes/serializers/idl/types/extensibility_struct/extensibility_struct.idl|./gen'
+    './test/unittest/dds/xtypes/serializers/idl/types/key_struct/key_struct.idl|./gen'
+    './test/unittest/dds/xtypes/serializers/idl/types/map_struct/map_struct.idl|./gen'
+    './test/unittest/dds/xtypes/serializers/idl/types/primitives_struct/primitives_struct.idl|./gen'
+    './test/unittest/dds/xtypes/serializers/idl/types/sequence_struct/sequence_struct.idl|./gen'
+    './test/unittest/dds/xtypes/serializers/idl/types/string_struct/string_struct.idl|./gen'
+    './test/unittest/dds/xtypes/serializers/idl/types/struct_struct/struct_struct.idl|./gen'
+    './test/unittest/dds/xtypes/serializers/idl/types/union_struct/union_struct.idl|./gen'
     )
 
 files_needing_no_typesupport=(

@@ -110,8 +110,6 @@ TEST_P(DynTypeIDLTests, to_idl)
     std::stringstream idl_serialization;
     ASSERT_EQ(idl_serialize(dyn_type, idl_serialization), RETCODE_OK);
 
-    std::cout << idl_serialization.str() << std::endl;
-
     // Compare IDLs
     ASSERT_EQ(idl_file, idl_serialization.str());
 }

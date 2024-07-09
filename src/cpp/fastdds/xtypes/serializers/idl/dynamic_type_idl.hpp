@@ -224,9 +224,9 @@ ReturnCode_t node_to_idl(
 ///////////////////////
 
 /**
- * @brief Gathers the \c element_type of the DynamicType.
+ * @brief Gathers the \c element_type of the @ref DynamicType.
  *
- * @param dyn_type The DynamicType to gather the members from.
+ * @param dyn_type The DynamicType to gather the \c element_type from.
  * @param element_type The element type of the DynamicType's \c type_descriptor.
  */
 ReturnCode_t get_element_type(
@@ -234,10 +234,12 @@ ReturnCode_t get_element_type(
         DynamicType::_ref_type& element_type) noexcept;
 
 /**
- * @brief Gathers the \c bounds of the DynamicType.
+ * @brief Gathers the \c bounds of the @ref DynamicType.
  *
- * @param dyn_type The DynamicType to gather the members from.
- * @param bounds The vector to store the bounds in.
+ * If there is a single bound of LENGTH_UNLIMITED, the bounds will be empty.
+ *
+ * @param dyn_type The DynamicType to gather the \c bounds from.
+ * @param bounds The bounds of the DynamicType's \c type_descriptor.
  */
 ReturnCode_t get_bounds(
         const DynamicType::_ref_type& dyn_type,

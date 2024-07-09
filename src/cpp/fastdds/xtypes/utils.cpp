@@ -36,17 +36,30 @@ ReturnCode_t idl_serialize(
         const DynamicType::_ref_type& dynamic_type,
         std::ostream& output) noexcept
 {
+    ReturnCode_t ret = RETCODE_OK;
+
     // Create a tree representation of the dynamic type
     utilities::collections::TreeNode<TreeNodeType> parent_type;
-    const auto ret = dyn_type_to_tree(dynamic_type, "PARENT", parent_type);
+    ret = dyn_type_to_tree(dynamic_type, "PARENT", parent_type);
 
     if (ret != RETCODE_OK)
     {
+        EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                "Failed to convert DynamicType to tree.");
         return ret;
     }
 
     // Serialize the tree to IDL
-    return dyn_type_tree_to_idl(parent_type, output);
+    ret = dyn_type_tree_to_idl(parent_type, output);
+
+    if (ret != RETCODE_OK)
+    {
+        EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+                "Failed to convert DynamicType tree to IDL.");
+        return ret;
+    }
+
+    return RETCODE_OK;
 }
 
 ReturnCode_t json_serialize(

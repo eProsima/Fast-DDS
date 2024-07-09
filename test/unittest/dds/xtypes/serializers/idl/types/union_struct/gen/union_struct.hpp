@@ -318,7 +318,7 @@ public:
             int64_t _second)
     {
         second_() = _second;
-        m__d = 2;
+        m__d = 32767;
     }
 
     /*!
@@ -392,7 +392,7 @@ private:
             }
 
 
-    int16_t m__d {2};
+    int16_t m__d {32767};
 
     union
     {
@@ -657,7 +657,7 @@ public:
             const BasicUnion& _fourth)
     {
         fourth_() = _fourth;
-        m__d = 2;
+        m__d = 2147483647;
     }
 
     /*!
@@ -668,7 +668,7 @@ public:
             BasicUnion&& _fourth)
     {
         fourth_() = _fourth;
-        m__d = 2;
+        m__d = 2147483647;
     }
 
     /*!
@@ -742,7 +742,7 @@ private:
             }
 
 
-    int32_t m__d {2};
+    int32_t m__d {2147483647};
 
     union
     {
