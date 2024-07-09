@@ -776,16 +776,6 @@ void RTPSParticipantImpl::disable()
     }
 }
 
-const std::vector<BaseWriter*>& RTPSParticipantImpl::getAllWriters() const
-{
-    return m_allWriterList;
-}
-
-const std::vector<BaseReader*>& RTPSParticipantImpl::getAllReaders() const
-{
-    return m_allReaderList;
-}
-
 RTPSParticipantImpl::~RTPSParticipantImpl()
 {
     disable();

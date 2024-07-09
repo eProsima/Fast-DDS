@@ -378,16 +378,6 @@ public:
         return mp_userParticipant;
     }
 
-    /*!
-     * @remarks Non thread-safe.
-     */
-    const std::vector<BaseWriter*>& getAllWriters() const;
-
-    /*!
-     * @remarks Non thread-safe.
-     */
-    const std::vector<BaseReader*>& getAllReaders() const;
-
     uint32_t getMaxMessageSize() const;
 
     uint32_t getMaxDataSize();
