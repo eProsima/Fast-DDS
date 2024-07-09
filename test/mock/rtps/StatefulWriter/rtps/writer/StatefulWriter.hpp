@@ -32,7 +32,7 @@ namespace rtps {
 class RTPSParticipantImpl;
 class ReaderProxy;
 
-class StatefulWriter : public fastdds::rtps::BaseWriter
+class StatefulWriter : public BaseWriter
 {
 public:
 
@@ -99,12 +99,12 @@ public:
     }
 
     void reader_data_filter(
-            fastdds::rtps::IReaderDataFilter* filter)
+            IReaderDataFilter* filter)
     {
         reader_data_filter_ = filter;
     }
 
-    const fastdds::rtps::IReaderDataFilter* reader_data_filter() const
+    const IReaderDataFilter* reader_data_filter() const
     {
         return reader_data_filter_;
     }
@@ -128,7 +128,7 @@ private:
 
     WriterHistory* mp_history;
 
-    fastdds::rtps::IReaderDataFilter* reader_data_filter_;
+    IReaderDataFilter* reader_data_filter_;
 
 };
 

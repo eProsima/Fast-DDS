@@ -46,7 +46,7 @@ class RTPSMessageGroup;
  * Class StatelessWriter, specialization of BaseWriter that manages writers that don't keep state of the matched readers.
  * @ingroup WRITER_MODULE
  */
-class StatelessWriter : public fastdds::rtps::BaseWriter
+class StatelessWriter : public BaseWriter
 {
     friend class RTPSParticipantImpl;
     friend class RTPSMessageGroup;
@@ -57,7 +57,7 @@ protected:
             RTPSParticipantImpl* participant,
             const GUID_t& guid,
             const WriterAttributes& attributes,
-            fastdds::rtps::FlowController* flow_controller,
+            FlowController* flow_controller,
             WriterHistory* history,
             WriterListener* listener = nullptr);
 
@@ -118,7 +118,7 @@ public:
      *                (i.e. treat all samples as relevant).
      */
     void reader_data_filter(
-            fastdds::rtps::IReaderDataFilter* filter) final
+            IReaderDataFilter* filter) final
     {
         reader_data_filter_ = filter;
     }
@@ -128,7 +128,7 @@ public:
      *
      * @return The content filter used on this writer.
      */
-    const fastdds::rtps::IReaderDataFilter* reader_data_filter() const final
+    const IReaderDataFilter* reader_data_filter() const final
     {
         return reader_data_filter_;
     }
@@ -183,7 +183,7 @@ public:
      * @param max_blocking_time_point Future timepoint where blocking send should end.
      */
     bool send_nts(
-            const std::vector<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
+            const std::vector<NetworkBuffer>& buffers,
             const uint32_t& total_bytes,
             const LocatorSelectorSender& locator_selector,
             std::chrono::steady_clock::time_point& max_blocking_time_point) const override;
@@ -202,7 +202,7 @@ public:
 
     /*!
      * Tells writer the sample can be sent to the network.
-     * This function should be used by a fastdds::rtps::FlowController.
+     * This function should be used by a FlowController.
      *
      * @param cache_change Pointer to the CacheChange_t that represents the sample which can be sent.
      * @param group RTPSMessageGroup reference uses for generating the RTPS message.
@@ -271,7 +271,7 @@ private:
 
     LocatorSelectorSender locator_selector_;
 
-    fastdds::rtps::IReaderDataFilter* reader_data_filter_ = nullptr;
+    IReaderDataFilter* reader_data_filter_ = nullptr;
 };
 
 } // namespace rtps

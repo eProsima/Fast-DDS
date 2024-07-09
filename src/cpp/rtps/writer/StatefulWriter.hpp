@@ -44,7 +44,7 @@ class TimedEvent;
  * Class StatefulWriter, specialization of BaseWriter that maintains information of each matched Reader.
  * @ingroup WRITER_MODULE
  */
-class StatefulWriter : public fastdds::rtps::BaseWriter
+class StatefulWriter : public BaseWriter
 {
     friend class RTPSParticipantImpl;
     friend class ReaderProxy;

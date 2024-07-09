@@ -49,9 +49,6 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using BaseReader = fastdds::rtps::BaseReader;
-using BaseWriter = fastdds::rtps::BaseWriter;
-
 /**
  * Loops over all the readers in the vector, applying the given routine.
  * The loop continues until the result of the routine is true for any reader

@@ -29,7 +29,7 @@ namespace rtps {
 
 class RTPSParticipantImpl;
 
-class StatelessWriter : public fastdds::rtps::BaseWriter
+class StatelessWriter : public BaseWriter
 {
 public:
 
