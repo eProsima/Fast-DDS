@@ -149,7 +149,7 @@ public:
                 print_help(EXIT_FAILURE);
             }
 
-            consume_client_arguments(argc, argv, config);
+            consume_client_arguments(argv, config);
         }
 
         return config;
@@ -217,12 +217,9 @@ private:
      * @warning This method finishes the execution of the program if the input arguments are invalid
      */
     static void consume_client_arguments(
-            const int argc,
             const char* const argv[],
             config& config)
     {
-        static_cast<void>(argc);
-        assert(argc >= 5);
         config.x = consume_int16_argument(argv[2]);
         config.operation = consume_operation_argument(argv[3]);
         config.y = consume_int16_argument(argv[4]);

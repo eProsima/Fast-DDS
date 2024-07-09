@@ -351,7 +351,7 @@ void ServerApp::reply_routine()
             rtps::GuidPrefix_t client_guid_prefix = rtps::iHandle2GUID(request.info.publication_handle).guidPrefix;
             request_reply_debug("ServerApp", "Processing request from client " << client_guid_prefix);
 
-            // If none to the client's endpoints are matched, ignore the request as the client is gone
+            // If none of the client's endpoints are matched, ignore the request as the client is gone
             if (!client_matched_status_.is_fully_unmatched(client_guid_prefix))
             {
                 request_reply_info("ServerApp", "Ignoring request from already gone client " << client_guid_prefix);
@@ -364,6 +364,7 @@ void ServerApp::reply_routine()
                 request_reply_debug("ServerApp",
                         "Client " << client_guid_prefix << " not fully matched, saving request for later");
                 requests_.push(request);
+                continue;
             }
 
             // Calculate the result

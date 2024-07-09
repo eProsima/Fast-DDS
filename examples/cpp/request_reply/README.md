@@ -21,6 +21,7 @@ sequenceDiagram
 participant Client
 participant Client Request Writer
 participant Client Reply Reader
+
 participant Server
 participant Server Request Reader
 participant Server Reply Writer
