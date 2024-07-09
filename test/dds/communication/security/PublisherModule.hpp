@@ -19,18 +19,17 @@
 #ifndef TEST_DDS_COMMUNICATION_PUBLISHERMODULE_HPP
 #define TEST_DDS_COMMUNICATION_PUBLISHERMODULE_HPP
 
+#include <mutex>
+#include <condition_variable>
+
 #include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 
 #include "types/FixedSizedPubSubTypes.hpp"
 #include "types/HelloWorldPubSubTypes.hpp"
-
-#include <mutex>
-#include <condition_variable>
 
 namespace eprosima {
 namespace fastdds {

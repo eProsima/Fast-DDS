@@ -21,9 +21,8 @@
 
 #include <gmock/gmock.h>
 
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
-
 #include <rtps/builtin/BuiltinProtocols.h>
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/messages/CDRMessage.hpp>
 

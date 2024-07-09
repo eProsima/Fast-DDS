@@ -17,6 +17,7 @@
 #include <fastdds/rtps/common/LocatorWithMask.hpp>
 #include <fastdds/utils/IPLocator.hpp>
 
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/network/utils/external_locators.hpp>
 
 using namespace eprosima::fastdds::rtps;

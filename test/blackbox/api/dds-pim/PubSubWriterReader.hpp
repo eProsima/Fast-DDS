@@ -100,7 +100,7 @@ class PubSubWriterReader
                     break;
 
                 case eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::DROPPED_PARTICIPANT:
-                    std::cout << "Participant " << info.m_guid << " has been dropped";
+                    std::cout << "Participant " << info.guid << " has been dropped";
                     info_remove(discovered_participants_, info.guid);
                     break;
 

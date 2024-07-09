@@ -19,20 +19,20 @@
 #ifndef TEST_COMMUNICATION_SUBSCRIBER_HPP
 #define TEST_COMMUNICATION_SUBSCRIBER_HPP
 
-#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
-#include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/domain/DomainParticipantListener.hpp>
-#include <fastdds/dds/subscriber/SubscriberListener.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
-#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
-
-#include "types/FixedSizedPubSubTypes.hpp"
-#include "types/HelloWorldPubSubTypes.hpp"
-
 #include <mutex>
 #include <condition_variable>
 #include <map>
 #include <chrono>
+
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
+#include <fastdds/dds/subscriber/SubscriberListener.hpp>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
+
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
+#include "types/FixedSizedPubSubTypes.hpp"
+#include "types/HelloWorldPubSubTypes.hpp"
 
 namespace eprosima {
 namespace fastdds {

@@ -21,7 +21,6 @@
 #include <fastdds/core/policy/ParameterSerializer.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
@@ -30,6 +29,7 @@
 
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/messages/CDRMessage.hpp>
 #include <rtps/network/NetworkFactory.h>
 

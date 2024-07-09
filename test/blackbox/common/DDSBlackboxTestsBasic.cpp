@@ -39,7 +39,6 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
 
@@ -537,7 +536,7 @@ TEST(DDSBasic, IgnoreParticipant)
                 bool& should_be_ignored) override
         {
             std::cout << "Using custom listener" << std::endl;
-            if (status == PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
+            if (status == eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
             {
                 std::cout << "Discovered participant" << std::endl;
                 if (info.user_data == std::vector<eprosima::fastdds::rtps::octet>({ 'i', 'g', 'n' }))

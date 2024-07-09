@@ -30,7 +30,6 @@ namespace fastdds {
 namespace rtps {
 
 class RTPSParticipant;
-class ParticipantProxyData;
 
 /**
  * Class RTPSParticipantListener with virtual method that the user can overload to respond to certain events.

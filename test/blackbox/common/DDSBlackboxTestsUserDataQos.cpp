@@ -14,10 +14,10 @@
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/LibrarySettings.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/common/Types.hpp>
 #include <gtest/gtest.h>
 
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include "BlackboxTests.hpp"
 #include "PubSubParticipant.hpp"
 
@@ -84,25 +84,25 @@ TEST_P(UserDataQos, update_user_data_qos)
 
     PubSubParticipant<HelloWorldPubSubType> participant_2(0u, 0u, 0u, 0u);
 
-    participant_2.set_on_discovery_function([&](const rtps::ParticipantProxyData& info) -> bool
+    participant_2.set_on_discovery_function([&](const rtps::ParticipantBuiltinTopicData& info) -> bool
             {
                 std::cout << "Received USER_DATA: ";
-                for (auto i : info.m_userData)
+                for (auto i : info.user_data)
                 {
                     std::cout << i << ' ';
                 }
                 std::cout << std::endl;
-                return info.m_userData == std::vector<rtps::octet>({'a', 'b', 'c', 'd', 'e'});
+                return info.user_data == std::vector<rtps::octet>({'a', 'b', 'c', 'd', 'e'});
             });
-    participant_2.set_on_participant_qos_update_function([&](const rtps::ParticipantProxyData& info) -> bool
+    participant_2.set_on_participant_qos_update_function([&](const rtps::ParticipantBuiltinTopicData& info) -> bool
             {
                 std::cout << "Received USER_DATA: ";
-                for (auto i : info.m_userData)
+                for (auto i : info.user_data)
                 {
                     std::cout << i << ' ';
                 }
                 std::cout << std::endl;
-                return info.m_userData == std::vector<rtps::octet>({'f', 'g'});
+                return info.user_data == std::vector<rtps::octet>({'f', 'g'});
             });
 
     ASSERT_TRUE(participant_2.init_participant());

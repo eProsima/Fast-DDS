@@ -2724,16 +2724,16 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_user_data)
     sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
     sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
-    reader.setOnDiscoveryFunction([&writer](const ParticipantProxyData& info) -> bool
+    reader.setOnDiscoveryFunction([&writer](const ParticipantBuiltinTopicData& info, PARTICIPANT_DISCOVERY_STATUS /*status*/) -> bool
             {
-                if (info.m_guid == writer.participant_guid())
+                if (info.guid == writer.participant_guid())
                 {
                     std::cout << "Received USER_DATA from the writer: ";
-                    for (auto i : info.m_userData)
+                    for (auto i : info.user_data)
                     {
                         std::cout << i << ' ';
                     }
-                    return info.m_userData == std::vector<octet>({ 'a', 'b', 'c', 'd', 'e' });
+                    return info.user_data == std::vector<octet>({ 'a', 'b', 'c', 'd', 'e' });
                 }
 
                 return false;

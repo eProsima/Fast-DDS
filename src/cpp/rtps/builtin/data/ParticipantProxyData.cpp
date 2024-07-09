@@ -17,7 +17,7 @@
  *
  */
 
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 
 #include <chrono>
 #include <mutex>

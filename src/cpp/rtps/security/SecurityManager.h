@@ -26,7 +26,6 @@
 #include <thread>
 
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/common/SerializedPayload.hpp>
 #include <fastdds/rtps/reader/ReaderListener.hpp>
@@ -34,6 +33,7 @@
 
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/resources/TimedEvent.h>
 #include <rtps/security/authentication/Handshake.h>
 #include <rtps/security/common/ParticipantGenericMessage.h>

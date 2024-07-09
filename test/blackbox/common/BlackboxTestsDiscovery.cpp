@@ -891,19 +891,19 @@ TEST_P(Discovery, PubSubAsReliableHelloworldParticipantDiscovery)
     ASSERT_TRUE(writer.isInitialized());
 
     int count = 0;
-    reader.setOnDiscoveryFunction([&writer, &count](const ParticipantProxyData& info) -> bool
+    reader.setOnDiscoveryFunction([&writer, &count](const ParticipantBuiltinTopicData& info, PARTICIPANT_DISCOVERY_STATUS status) -> bool
             {
-                if (info.m_guid == writer.participant_guid())
+                if (info.guid == writer.participant_guid())
                 {
-                    if (info.status == PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
+                    if (status == PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
                     {
-                        std::cout << "Discovered participant " << info.m_guid << std::endl;
+                        std::cout << "Discovered participant " << info.guid << std::endl;
                         ++count;
                     }
-                    else if (info.status == PARTICIPANT_DISCOVERY_STATUS::REMOVED_PARTICIPANT ||
-                    info.status == PARTICIPANT_DISCOVERY_STATUS::DROPPED_PARTICIPANT)
+                    else if (status == PARTICIPANT_DISCOVERY_STATUS::REMOVED_PARTICIPANT ||
+                    status == PARTICIPANT_DISCOVERY_STATUS::DROPPED_PARTICIPANT)
                     {
-                        std::cout << "Removed participant " << info.m_guid << std::endl;
+                        std::cout << "Removed participant " << info.guid << std::endl;
                         return ++count == 2;
                     }
                 }
@@ -936,16 +936,16 @@ TEST_P(Discovery, PubSubAsReliableHelloworldUserData)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    reader.setOnDiscoveryFunction([&writer](const ParticipantProxyData& info) -> bool
+    reader.setOnDiscoveryFunction([&writer](const ParticipantBuiltinTopicData& info, PARTICIPANT_DISCOVERY_STATUS /*status*/) -> bool
             {
-                if (info.m_guid == writer.participant_guid())
+                if (info.guid == writer.participant_guid())
                 {
                     std::cout << "Received USER_DATA from the writer: ";
-                    for (auto i: info.m_userData)
+                    for (auto i: info.user_data)
                     {
                         std::cout << i << ' ';
                     }
-                    return info.m_userData == std::vector<octet>({'a', 'b', 'c', 'd'});
+                    return info.user_data == std::vector<octet>({'a', 'b', 'c', 'd'});
                 }
 
                 return false;

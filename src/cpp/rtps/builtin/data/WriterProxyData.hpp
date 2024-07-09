@@ -38,7 +38,6 @@ namespace rtps {
 
 struct CDRMessage_t;
 class NetworkFactory;
-class ParticipantProxyData;
 
 /**
  **@ingroup BUILTIN_MODULE

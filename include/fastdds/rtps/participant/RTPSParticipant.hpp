@@ -27,7 +27,6 @@
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/fastdds_dll.hpp>
@@ -69,6 +68,7 @@ class WriterAttributes;
 class ReaderAttributes;
 class ResourceEvent;
 class WLP;
+class ParticipantProxyData;
 
 /**
  * @brief Class RTPSParticipant, contains the public API for a RTPSParticipant.

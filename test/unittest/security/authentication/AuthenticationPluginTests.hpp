@@ -19,10 +19,10 @@
 
 // Include first necessary mocks
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <security/authentication/PKIDH.h>
 #include <security/OpenSSLInit.hpp>
 

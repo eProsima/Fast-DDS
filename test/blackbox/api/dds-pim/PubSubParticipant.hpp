@@ -163,8 +163,8 @@ private:
 
         void on_participant_discovery(
                 eprosima::fastdds::dds::DomainParticipant*,
-                fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS status,
-                const fastdds::rtps::ParticipantBuiltinTopicData& info,
+                eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS status,
+                const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& info,
                 bool& should_be_ignored)
         {
             static_cast<void>(should_be_ignored);

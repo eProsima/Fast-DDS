@@ -21,7 +21,6 @@
 #define FASTDDS_RTPS_PARTICIPANT__PARTICIPANTDISCOVERYINFO_HPP
 
 #include <fastdds/fastdds_dll.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 
 namespace eprosima {
 namespace fastdds {

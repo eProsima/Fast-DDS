@@ -14,6 +14,8 @@
 
 #include "SecurityTests.hpp"
 
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
+
 TEST_F(SecurityTest, discovered_participant_validation_remote_identity_fail)
 {
     initialization_ok();

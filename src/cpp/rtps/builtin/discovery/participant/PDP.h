@@ -38,6 +38,7 @@
 
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <statistics/rtps/monitor-service/interfaces/IProxyObserver.hpp>
 #include <statistics/rtps/monitor-service/interfaces/IProxyQueryable.hpp>
 #include <utils/ProxyPool.hpp>

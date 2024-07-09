@@ -20,8 +20,8 @@
 #include <gtest/gtest.h>
 
 // TODO(jlbueno): remove private header
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
-
 #include "../types/statistics/monitorservice_typesPubSubTypes.hpp"
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
@@ -705,7 +705,7 @@ struct ProxySampleValidator : public SampleValidator
                 if (guid.entityId == c_EntityId_RTPSParticipant)
                 {
                     RTPSParticipantAllocationAttributes att;
-                    ParticipantProxyData pdata(att);
+                    eprosima::fastdds::rtps::ParticipantProxyData pdata(att);
 
                     ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(pdata,
                             data),
