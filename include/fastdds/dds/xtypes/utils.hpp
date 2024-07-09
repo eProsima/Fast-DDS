@@ -43,7 +43,7 @@ enum class DynamicDataJsonFormat
  */
 ReturnCode_t json_serialize(
         const DynamicData::_ref_type& data,
-        const DynamicDataJsonFormat& format,
+        DynamicDataJsonFormat format,
         std::ostream& output) noexcept;
 
 } // dds

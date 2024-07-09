@@ -265,7 +265,7 @@ ReturnCode_t json_serialize_member(
 
             ReturnCode_t ret = RETCODE_OK;
             nlohmann::json j_map;
-            TypeDescriptorImpl& map_desc = st_data->enclosing_type()->get_descriptor();
+            const TypeDescriptorImpl& map_desc = st_data->enclosing_type()->get_descriptor();
             traits<DynamicTypeImpl>::ref_type key_type = traits<DynamicType>::narrow<DynamicTypeImpl>(
                 map_desc.key_element_type())->resolve_alias_enclosed_type();
             traits<DynamicTypeImpl>::ref_type value_type = traits<DynamicType>::narrow<DynamicTypeImpl>(
@@ -350,7 +350,7 @@ ReturnCode_t json_serialize_member(
 
             ReturnCode_t ret = RETCODE_OK;
             traits<DynamicTypeImpl>::ref_type bitmask_type = st_data->enclosing_type();
-            TypeDescriptorImpl& bitmask_desc = bitmask_type->get_descriptor();
+            const TypeDescriptorImpl& bitmask_desc = bitmask_type->get_descriptor();
 
             auto bound = bitmask_desc.bound().at(0);
 
@@ -794,7 +794,7 @@ ReturnCode_t json_serialize_basic_member(
             TypeKind holder_kind = data->enclosing_type()->get_kind();
             if (TK_ARRAY == holder_kind || TK_SEQUENCE == holder_kind)
             {
-                TypeDescriptorImpl& collection_descriptor = data->enclosing_type()->get_descriptor();
+                const TypeDescriptorImpl& collection_descriptor = data->enclosing_type()->get_descriptor();
                 enum_type = collection_descriptor.element_type();
             }
             else
@@ -870,7 +870,7 @@ ReturnCode_t json_serialize_collection(
     ReturnCode_t ret = RETCODE_OK;
     if (data->enclosing_type()->get_kind() == TK_SEQUENCE)
     {
-        TypeDescriptorImpl& descriptor = data->enclosing_type()->get_descriptor();
+        const TypeDescriptorImpl& descriptor = data->enclosing_type()->get_descriptor();
 
         auto count = data->get_item_count();
         nlohmann::json j_array = nlohmann::json::array();
@@ -894,7 +894,7 @@ ReturnCode_t json_serialize_collection(
     }
     else
     {
-        TypeDescriptorImpl& descriptor = data->enclosing_type()->get_descriptor();
+        const TypeDescriptorImpl& descriptor = data->enclosing_type()->get_descriptor();
 
         const BoundSeq& bounds = descriptor.bound();
         nlohmann::json j_array = nlohmann::json::array();
