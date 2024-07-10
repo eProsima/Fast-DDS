@@ -124,12 +124,12 @@ void ClientApp::run()
 
     if (!is_stopped())
     {
-        if (!send_request())
+        if (!send_requests())
         {
             throw std::runtime_error("Failed to send request");
         }
 
-        wait_for_reply();
+        wait_for_replies();
     }
 }
 
@@ -203,12 +203,52 @@ void ClientApp::on_data_available(
     {
         if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
         {
-            rtps::GuidPrefix_t server_guid_prefix = rtps::iHandle2GUID(info.publication_handle).guidPrefix;
-            request_reply_info("ClientApp",
-                    "Reply received from server " << server_guid_prefix << " with result: " << reply.result());
+            std::lock_guard<std::mutex> lock(mtx_);
 
-            stop();
-            break;
+            rtps::GuidPrefix_t server_guid_prefix = rtps::iHandle2GUID(info.publication_handle).guidPrefix;
+
+            auto request_status = requests_status_.find(info.related_sample_identity);
+
+            if (requests_status_.end() != request_status)
+            {
+                if (!request_status->second)
+                {
+                    request_status->second = true;
+                    request_reply_info("ClientApp",
+                            "Reply received from server " << server_guid_prefix << " with result: " << reply.result());
+                }
+                else
+                {
+                    request_reply_debug("ClientApp",
+                            "Duplicate reply received from server " << server_guid_prefix << " with result: "
+                                                                    << reply.result());
+                    continue;
+                }
+            }
+            else
+            {
+                request_reply_error("ClientApp",
+                        "Reply received from server " << server_guid_prefix << " with unknown request ID '"
+                                                      << info.related_sample_identity.sequence_number() << "'");
+                continue;
+            }
+
+            // Check if all responses have been received
+            if (requests_status_.size() == 4)
+            {
+                bool all_responses_received = true;
+
+                for (auto status : requests_status_)
+                {
+                    all_responses_received &= status.second;
+                }
+
+                if (all_responses_received)
+                {
+                    stop();
+                    break;
+                }
+            }
         }
     }
 }
@@ -333,22 +373,50 @@ void ClientApp::create_reply_entities(
     }
 }
 
-bool ClientApp::send_request()
+bool ClientApp::send_requests()
 {
     CalculatorRequestType request;
 
     request.client_id(TypeConverter::to_string(participant_->guid().guidPrefix));
-    request.operation(CalculatorOperationType::ADDITION);
     request.x(request_input_.first);
     request.y(request_input_.second);
 
+    request.operation(CalculatorOperationType::ADDITION);
+    bool ret = send_request(request);
 
+    if (ret)
+    {
+        request.operation(CalculatorOperationType::SUBTRACTION);
+        ret = send_request(request);
+    }
+
+    if (ret)
+    {
+        request.operation(CalculatorOperationType::MULTIPLICATION);
+        ret = send_request(request);
+    }
+
+    if (ret)
+    {
+        request.operation(CalculatorOperationType::DIVISION);
+        ret = send_request(request);
+    }
+
+    return ret;
+}
+
+bool ClientApp::send_request(
+        const CalculatorRequestType& request)
+{
     rtps::WriteParams wparams;
     bool ret = request_writer_->write(&request, wparams);
 
     request_reply_info("ClientApp",
             "Request sent with ID '" << wparams.sample_identity().sequence_number() <<
-            "': '" << request_input_.first << " + " << request_input_.second << "'");
+            "': '" << TypeConverter::to_string(request) << "'");
+
+    std::lock_guard<std::mutex> lock(mtx_);
+    requests_status_[wparams.sample_identity()] = false;
 
     return ret;
 }
@@ -358,7 +426,7 @@ bool ClientApp::is_stopped()
     return stop_.load();
 }
 
-void ClientApp::wait_for_reply()
+void ClientApp::wait_for_replies()
 {
     std::unique_lock<std::mutex> lock(mtx_);
     cv_.wait(lock, [&]()

@@ -22,6 +22,7 @@
 
 #include <atomic>
 #include <condition_variable>
+#include <map>
 #include <mutex>
 #include <string>
 #include <utility>
@@ -37,10 +38,12 @@
 #include <fastdds/dds/topic/ContentFilteredTopic.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/rtps/common/SampleIdentity.hpp>
 
 #include "app_utils.hpp"
 #include "Application.hpp"
 #include "CLIParser.hpp"
+#include "types/Calculator.hpp"
 #include "types/CalculatorPubSubTypes.hpp"
 
 namespace eprosima {
@@ -95,11 +98,14 @@ private:
     void create_reply_entities(
             const std::string& service_name);
 
-    bool send_request();
+    bool send_requests();
+
+    bool send_request(
+            const CalculatorRequestType& request);
 
     bool is_stopped();
 
-    void wait_for_reply();
+    void wait_for_replies();
 
     std::pair<std::int16_t, std::int16_t> request_input_;
 
@@ -134,6 +140,8 @@ private:
     RemoteServerMatchedStatus server_matched_status_;
 
     std::atomic<bool> stop_;
+
+    std::map<rtps::SampleIdentity, bool> requests_status_;
 };
 
 template<>
