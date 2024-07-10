@@ -207,26 +207,28 @@ struct LogResources
 
         /*   Flush() two steps strategy:
 
-             I must assure Log::Run swaps the queues because only swapping the queues the background content
+             We must assure Log::Run swaps the queues twice
+             because its the only way the content in the background queue
              will be consumed (first Run() loop).
 
-             Then, I must assure the new front queue content is consumed (second Run() loop).
+             Then, we must assure the new front queue content is consumed (second Run() loop).
          */
 
-        int last_loop = -1;
+        int last_loop = current_loop_;
 
         for (int i = 0; i < 2; ++i)
         {
             cv_.wait(guard,
                     [&]()
                     {
-                        /* I must avoid:
-                         + the two calls be processed without an intermediate Run() loop (by using last_loop sequence number)
+                        /* We must avoid:
+                         + the two calls be processed without an intermediate Run() loop
+                           (by using last_loop sequence number and checking if the foreground queue is empty)
                          + deadlock by absence of Run() loop activity (by using BothEmpty() call)
                          */
                         return !logging_ ||
-                        (logs_.Empty() &&
-                        (last_loop != current_loop_ || logs_.BothEmpty()));
+                        logs_.BothEmpty() ||
+                        (last_loop != current_loop_ && logs_.Empty());
                     });
 
             last_loop = current_loop_;
