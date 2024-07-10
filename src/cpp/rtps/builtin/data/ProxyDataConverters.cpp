@@ -138,10 +138,19 @@ void from_proxy_to_builtin(
     builtin_data.topic_data = proxy_data.m_qos.m_topicData;
     builtin_data.group_data = proxy_data.m_qos.m_groupData;
 
-    builtin_data.guid = proxy_data.guid();
-    builtin_data.type_information = proxy_data.type_information();
+    if (proxy_data.has_type_information())
+    {
+        builtin_data.type_information = proxy_data.type_information();
+    }
+    builtin_data.representation = proxy_data.m_qos.representation;
 
-    // TODO(MiguelCompany): Extend PublicationBuiltinTopicData with additional information
+    builtin_data.disable_positive_acks = proxy_data.m_qos.m_disablePositiveACKs;
+    builtin_data.data_sharing = proxy_data.m_qos.data_sharing;
+    builtin_data.guid = proxy_data.guid();
+    builtin_data.persistence_guid = proxy_data.persistence_guid();
+    builtin_data.remote_locators = proxy_data.remote_locators();
+    builtin_data.max_serialized_size = proxy_data.typeMaxSerialized();
+    builtin_data.loopback_transformation = proxy_data.networkConfiguration();
 }
 
 void from_builtin_to_proxy(
@@ -170,10 +179,16 @@ void from_builtin_to_proxy(
     proxy_data.m_qos.m_topicData = builtin_data.topic_data;
     proxy_data.m_qos.m_groupData = builtin_data.group_data;
 
-    proxy_data.guid(builtin_data.guid);
     proxy_data.type_information(builtin_data.type_information);
+    proxy_data.m_qos.representation = builtin_data.representation;
 
-    // TODO(MiguelCompany): Extend PublicationBuiltinTopicData with additional information
+    proxy_data.m_qos.m_disablePositiveACKs = builtin_data.disable_positive_acks;
+    proxy_data.m_qos.data_sharing = builtin_data.data_sharing;
+    proxy_data.guid(builtin_data.guid);
+    proxy_data.persistence_guid(builtin_data.persistence_guid);
+    proxy_data.set_locators(builtin_data.remote_locators);
+    proxy_data.typeMaxSerialized(builtin_data.max_serialized_size);
+    proxy_data.networkConfiguration(builtin_data.loopback_transformation);
 }
 
 } // namespace rtps

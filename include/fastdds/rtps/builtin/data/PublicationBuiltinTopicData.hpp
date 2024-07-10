@@ -19,11 +19,14 @@
 #ifndef FASTDDS_RTPS_BUILTIN_DATA__PUBLICATIONBUILTINTOPICDATA_HPP
 #define FASTDDS_RTPS_BUILTIN_DATA__PUBLICATIONBUILTINTOPICDATA_HPP
 
+#include <cstdint>
 #include <string>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/builtin/data/BuiltinTopicKey.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
+#include <fastdds/rtps/common/RemoteLocators.hpp>
+#include <fastdds/rtps/common/Types.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -92,11 +95,37 @@ struct PublicationBuiltinTopicData
     /// Group Data Qos, implemented in the library.
     dds::GroupDataQosPolicy group_data;
 
-    /// GUID
-    GUID_t guid;
+    // X-Types 1.3
 
     /// Type information
     dds::xtypes::TypeInformationParameter type_information;
+
+    /// Data representation
+    dds::DataRepresentationQosPolicy representation;
+
+    // eProsima extensions
+
+    /// Disable positive acks, implemented in the library.
+    dds::DisablePositiveACKsQosPolicy disable_positive_acks;
+
+    /// Information for data sharing compatibility check.
+    dds::DataSharingQosPolicy data_sharing;
+
+    /// GUID
+    GUID_t guid;
+
+    /// Persistence GUID
+    GUID_t persistence_guid;
+
+    /// Remote locators
+    RemoteLocatorList remote_locators;
+
+    /// Maximum serialized size of data type
+    uint32_t max_serialized_size = 0;
+
+    /// Network configuration
+    NetworkConfigSet_t loopback_transformation;
+
 };
 
 }   // namespace rtps
