@@ -23,6 +23,7 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/builtin/data/BuiltinTopicKey.hpp>
+#include <fastdds/rtps/common/Guid.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -30,66 +31,69 @@ namespace rtps {
 
 struct PublicationBuiltinTopicData
 {
-    //! Builtin topic Key
+    /// Builtin topic Key
     BuiltinTopicKey_t key;
 
-    //! Builtin participant topic Key
+    /// Builtin participant topic Key
     BuiltinTopicKey_t participant_key;
 
-    //! Topic name
+    /// Topic name
     std::string topic_name;
 
-    //! Type name
+    /// Type name
     std::string type_name;
 
     // DataWriter Qos
 
-    //!Durability Qos, implemented in the library.
+    /// Durability Qos, implemented in the library.
     dds::DurabilityQosPolicy durability;
 
-    //!Durability Service Qos, NOT implemented in the library.
+    /// Durability Service Qos, NOT implemented in the library.
     dds::DurabilityServiceQosPolicy durability_service;
 
-    //!Deadline Qos, implemented in the library.
+    /// Deadline Qos, implemented in the library.
     dds::DeadlineQosPolicy deadline;
 
-    //!Latency Budget Qos, NOT implemented in the library.
+    /// Latency Budget Qos, NOT implemented in the library.
     dds::LatencyBudgetQosPolicy latency_budget;
 
-    //!Liveliness Qos, implemented in the library.
+    /// Liveliness Qos, implemented in the library.
     dds::LivelinessQosPolicy liveliness;
 
-    //!Reliability Qos, implemented in the library.
+    /// Reliability Qos, implemented in the library.
     dds::ReliabilityQosPolicy reliability;
 
-    //!Lifespan Qos, implemented in the library.
+    /// Lifespan Qos, implemented in the library.
     dds::LifespanQosPolicy lifespan;
 
-    //!User Data Qos, implemented in the library.
+    /// User Data Qos, implemented in the library.
     dds::UserDataQosPolicy user_data;
 
-    //!Ownership Qos, implemented in the library.
+    /// Ownership Qos, implemented in the library.
     dds::OwnershipQosPolicy ownership;
 
-    //!Ownership Strength Qos, implemented in the library.
+    /// Ownership Strength Qos, implemented in the library.
     dds::OwnershipStrengthQosPolicy ownership_strength;
 
-    //!Destination Order Qos, NOT implemented in the library.
+    /// Destination Order Qos, NOT implemented in the library.
     dds::DestinationOrderQosPolicy destination_order;
 
     // Publisher Qos
 
-    //!Presentation Qos, NOT implemented in the library.
+    /// Presentation Qos, NOT implemented in the library.
     dds::PresentationQosPolicy presentation;
 
-    //!Partition Qos, implemented in the library.
+    /// Partition Qos, implemented in the library.
     dds::PartitionQosPolicy partition;
 
-    //!Topic Data Qos, NOT implemented in the library.
+    /// Topic Data Qos, NOT implemented in the library.
     dds::TopicDataQosPolicy topic_data;
 
-    //!Group Data Qos, implemented in the library.
+    /// Group Data Qos, implemented in the library.
     dds::GroupDataQosPolicy group_data;
+
+    /// GUID
+    GUID_t guid;
 };
 
 }   // namespace rtps

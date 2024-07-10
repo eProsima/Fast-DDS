@@ -132,10 +132,13 @@ void from_proxy_to_builtin(
     builtin_data.ownership = proxy_data.m_qos.m_ownership;
     builtin_data.ownership_strength = proxy_data.m_qos.m_ownershipStrength;
     builtin_data.destination_order = proxy_data.m_qos.m_destinationOrder;
+
     builtin_data.presentation = proxy_data.m_qos.m_presentation;
     builtin_data.partition = proxy_data.m_qos.m_partition;
     builtin_data.topic_data = proxy_data.m_qos.m_topicData;
     builtin_data.group_data = proxy_data.m_qos.m_groupData;
+
+    builtin_data.guid = proxy_data.guid();
 
     // TODO(MiguelCompany): Extend PublicationBuiltinTopicData with additional information
 }
@@ -160,10 +163,13 @@ void from_builtin_to_proxy(
     proxy_data.m_qos.m_ownership = builtin_data.ownership;
     proxy_data.m_qos.m_ownershipStrength = builtin_data.ownership_strength;
     proxy_data.m_qos.m_destinationOrder = builtin_data.destination_order;
+
     proxy_data.m_qos.m_presentation = builtin_data.presentation;
     proxy_data.m_qos.m_partition = builtin_data.partition;
     proxy_data.m_qos.m_topicData = builtin_data.topic_data;
     proxy_data.m_qos.m_groupData = builtin_data.group_data;
+
+    proxy_data.guid(builtin_data.guid);
 
     // TODO(MiguelCompany): Extend PublicationBuiltinTopicData with additional information
 }
