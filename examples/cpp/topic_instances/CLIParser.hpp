@@ -711,15 +711,6 @@ public:
         }
     }
 
-    //! Get the shape color as a string
-    static std::string shape_color(
-            int index)
-    {
-        constexpr int max_colors = 10;
-        const auto& shape_colors = get_shape_colors();
-        return shape_colors[index % max_colors];
-    }
-
 private:
 
     //! Private method to declare constant array of colors
@@ -728,6 +719,16 @@ private:
         return { "RED", "BLUE", "GREEN", "YELLOW", "ORANGE", "CYAN", "MAGENTA", "PURPLE", "GREY", "BLACK" };
     }
 
+public:
+
+    //! Get the shape color as a string
+    static std::string shape_color(
+            int index)
+    {
+        constexpr int max_colors = 10;
+        const auto& shape_colors = get_shape_colors();
+        return shape_colors[index % max_colors];
+    }
 };
 
 } // namespace topic_instances
