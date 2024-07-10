@@ -349,7 +349,7 @@ public:
                             input == "Circle" || input == "Square" || input == "Triangle" ||
                             input == "circle" || input == "square" || input == "triangle")
                     {
-                        transform(input.begin(), input.begin(), input.begin(), ::toupper);
+                        transform(input.begin(), input.begin() + 1, input.begin(), ::toupper);
                         transform(input.begin() + 1, input.end(), input.begin() + 1, ::tolower);
                         if (config.entity == CLIParser::EntityKind::PUBLISHER)
                         {
