@@ -48,11 +48,11 @@ namespace fastdds {
 
 namespace rtps {
 
+struct PublicationBuiltinTopicData;
 class RTPSParticipant;
-class WriterProxyData;
 class ReaderProxyData;
 
-} //namespace rtps
+} // namespace rtps
 
 class PublisherAttributes;
 class SubscriberAttributes;
@@ -653,7 +653,7 @@ protected:
         void on_writer_discovery(
                 fastdds::rtps::RTPSParticipant* participant,
                 fastdds::rtps::WRITER_DISCOVERY_STATUS reason,
-                const fastdds::rtps::WriterProxyData& info,
+                const fastdds::rtps::PublicationBuiltinTopicData& info,
                 bool& should_be_ignored) override;
 
         DomainParticipantImpl* participant_;

@@ -191,17 +191,17 @@ void SubscriberApp::on_data_available(
 void SubscriberApp::on_data_writer_discovery(
         DomainParticipant* /*participant*/,
         eprosima::fastdds::rtps::WRITER_DISCOVERY_STATUS /*reason*/,
-        const eprosima::fastdds::rtps::WriterProxyData& info,
+        const eprosima::fastdds::dds::PublicationBuiltinTopicData& info,
         bool& should_be_ignored)
 {
     // We don't want to ignore the writer
     should_be_ignored = false;
 
     // Check if the discovered topic is the one we are interested in
-    if (topic_name_ == info.topicName().to_string())
+    if (topic_name_ == info.topic_name)
     {
         // Get remote type information and use it to retrieve the type object
-        auto type_info = info.type_information().type_information;
+        auto type_info = info.type_information.type_information;
         auto type_id = type_info.complete().typeid_with_size().type_id();
 
         if (RETCODE_OK != DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
@@ -209,8 +209,8 @@ void SubscriberApp::on_data_writer_discovery(
                     remote_type_object_))
         {
             std::cout << "Cannot get discovered type from registry:" << std::endl;
-            std::cout << "  - Topic name: " << info.topicName() << std::endl;
-            std::cout << "  - Type name:  " << info.typeName() << std::endl;
+            std::cout << "  - Topic name: " << info.topic_name << std::endl;
+            std::cout << "  - Type name:  " << info.type_name << std::endl;
         }
 
         // Notify run thread that type has been discovered

@@ -39,6 +39,7 @@
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <fastdds/utils/IPLocator.hpp>
 #include <rtps/builtin/BuiltinProtocols.h>
+#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/data/ProxyHashTables.hpp>
 #include <rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include <rtps/builtin/discovery/endpoint/EDPStatic.h>
@@ -828,7 +829,9 @@ bool PDP::removeWriterProxyData(
                     RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
                     bool should_be_ignored = false;
                     auto status = WRITER_DISCOVERY_STATUS::REMOVED_WRITER;
-                    listener->on_writer_discovery(participant, status, *pW, should_be_ignored);
+                    PublicationBuiltinTopicData info;
+                    from_proxy_to_builtin(*pW, info);
+                    listener->on_writer_discovery(participant, status, info, should_be_ignored);
                 }
 
                 // Clear writer proxy data and move to pool in order to allow reuse
@@ -1015,7 +1018,9 @@ WriterProxyData* PDP::addWriterProxyData(
                     RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
                     bool should_be_ignored = false;
                     auto status = WRITER_DISCOVERY_STATUS::CHANGED_QOS_WRITER;
-                    listener->on_writer_discovery(participant, status, *ret_val, should_be_ignored);
+                    PublicationBuiltinTopicData info;
+                    from_proxy_to_builtin(*ret_val, info);
+                    listener->on_writer_discovery(participant, status, info, should_be_ignored);
                 }
 
                 return ret_val;
@@ -1065,7 +1070,9 @@ WriterProxyData* PDP::addWriterProxyData(
                 RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
                 bool should_be_ignored = false;
                 auto status = WRITER_DISCOVERY_STATUS::DISCOVERED_WRITER;
-                listener->on_writer_discovery(participant, status, *ret_val, should_be_ignored);
+                PublicationBuiltinTopicData info;
+                from_proxy_to_builtin(*ret_val, info);
+                listener->on_writer_discovery(participant, status, info, should_be_ignored);
             }
 
             return ret_val;
@@ -1296,7 +1303,9 @@ void PDP::actions_on_remote_participant_removed(
                     RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
                     bool should_be_ignored = false;
                     auto status = WRITER_DISCOVERY_STATUS::REMOVED_WRITER;
-                    listener->on_writer_discovery(participant, status, *wit, should_be_ignored);
+                    PublicationBuiltinTopicData info;
+                    from_proxy_to_builtin(*wit, info);
+                    listener->on_writer_discovery(participant, status, info, should_be_ignored);
                 }
             }
         }

@@ -1582,7 +1582,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
 void DomainParticipantImpl::MyRTPSParticipantListener::on_writer_discovery(
         RTPSParticipant*,
         WRITER_DISCOVERY_STATUS reason,
-        const WriterProxyData& info,
+        const PublicationBuiltinTopicData& info,
         bool& should_be_ignored)
 {
     should_be_ignored = false;

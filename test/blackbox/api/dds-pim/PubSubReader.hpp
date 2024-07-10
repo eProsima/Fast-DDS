@@ -79,7 +79,7 @@ public:
     typedef typename type_support::type type;
     typedef std::function<bool(
         eprosima::fastdds::rtps::WRITER_DISCOVERY_STATUS reason,
-        const eprosima::fastdds::rtps::WriterProxyData& info)> EndpointDiscoveryFunctor;
+        const eprosima::fastdds::dds::PublicationBuiltinTopicData& info)> EndpointDiscoveryFunctor;
 
 protected:
 
@@ -125,7 +125,7 @@ protected:
         void on_data_writer_discovery(
                 eprosima::fastdds::dds::DomainParticipant*,
                 eprosima::fastdds::rtps::WRITER_DISCOVERY_STATUS reason,
-                const eprosima::fastdds::rtps::WriterProxyData& info,
+                const eprosima::fastdds::dds::PublicationBuiltinTopicData& info,
                 bool& /*should_be_ignored*/) override
         {
             if (reader_.onEndpointDiscovery_ != nullptr)
