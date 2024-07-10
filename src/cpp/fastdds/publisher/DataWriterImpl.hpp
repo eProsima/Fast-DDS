@@ -164,9 +164,9 @@ public:
      *
      * @param data Pointer to the data.
      *
-     * @return true if data is correctly delivered to the lower layers, false otherwise.
+     * @return any of the standard return codes.
      */
-    bool write(
+    ReturnCode_t write(
             const void* const data);
 
     /**
@@ -175,9 +175,9 @@ public:
      * @param data Pointer to the data.
      * @param params Extra write parameters.
      *
-     * @return true if data is correctly delivered to the lower layers, false otherwise.
+     * @return any of the standard return codes.
      */
-    bool write(
+    ReturnCode_t write(
             const void* const data,
             fastdds::rtps::WriteParams& params);
 
