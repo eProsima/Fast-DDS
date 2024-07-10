@@ -29,11 +29,10 @@
 #include <vector>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
-#include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
-#include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/ContentFilteredTopic.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
@@ -53,7 +52,7 @@ namespace request_reply {
 
 using namespace eprosima::fastdds::dds;
 
-class ClientApp : public Application, public DataReaderListener, public DataWriterListener
+class ClientApp : public Application, public DomainParticipantListener
 {
 public:
 
@@ -68,6 +67,12 @@ public:
 
     //! Trigger the end of execution
     void stop() override;
+
+    //! Participant discovery method
+    void on_participant_discovery(
+            DomainParticipant* participant,
+            rtps::ParticipantDiscoveryInfo&& info,
+            bool& should_be_ignored) override;
 
     //! Publication matched method
     void on_publication_matched(

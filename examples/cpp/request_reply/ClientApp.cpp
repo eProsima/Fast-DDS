@@ -141,6 +141,53 @@ void ClientApp::stop()
     cv_.notify_all();
 }
 
+void ClientApp::on_participant_discovery(
+        DomainParticipant* /* participant */,
+        rtps::ParticipantDiscoveryInfo&& info,
+        bool& should_be_ignored)
+{
+    std::lock_guard<std::mutex> lock(mtx_);
+
+    should_be_ignored = false;
+
+    rtps::GuidPrefix_t remote_participant_guid_prefix = info.info.m_guid.guidPrefix;
+    std::string status_str = TypeConverter::to_string(info.status);
+
+    if (info.info.m_userData.data_vec().size() != 1)
+    {
+        should_be_ignored = true;
+        request_reply_debug("ClientApp", "Ignoring participant with invalid user data: "
+                << remote_participant_guid_prefix);
+    }
+
+    if (!should_be_ignored)
+    {
+        CLIParser::EntityKind entity_kind = static_cast<CLIParser::EntityKind>(info.info.m_userData.data_vec()[0]);
+        if (CLIParser::EntityKind::SERVER != entity_kind)
+        {
+            should_be_ignored = true;
+            request_reply_debug("ClientApp", "Ignoring " << status_str << " "
+                                                         << CLIParser::parse_entity_kind(entity_kind)
+                                                         << ": " << remote_participant_guid_prefix);
+        }
+    }
+
+    if (!should_be_ignored)
+    {
+        std::string server_str = CLIParser::parse_entity_kind(CLIParser::EntityKind::SERVER);
+
+        if (info.status == rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
+        {
+            request_reply_debug("ClientApp", server_str << " " << status_str << ": " << remote_participant_guid_prefix);
+        }
+        else if (info.status == rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::REMOVED_PARTICIPANT ||
+                info.status == rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::DROPPED_PARTICIPANT)
+        {
+            request_reply_debug("ClientApp", server_str << " " << status_str << ": " << remote_participant_guid_prefix);
+        }
+    }
+}
+
 void ClientApp::on_publication_matched(
         DataWriter* /* writer */,
         const PublicationMatchedStatus& info)
@@ -265,12 +312,17 @@ void ClientApp::create_participant()
         throw std::runtime_error("Failed to get participant factory instance");
     }
 
+    StatusMask participant_mask = StatusMask::none();
+    participant_mask << StatusMask::publication_matched();
+    participant_mask << StatusMask::subscription_matched();
+    participant_mask << StatusMask::data_available();
+
     DomainParticipantExtendedQos participant_qos;
     factory->get_participant_extended_qos_from_default_profile(participant_qos);
 
     participant_qos.user_data().data_vec().push_back(static_cast<uint8_t>(CLIParser::EntityKind::CLIENT));
 
-    participant_ = factory->create_participant(participant_qos.domainId(), participant_qos);
+    participant_ = factory->create_participant(participant_qos.domainId(), participant_qos, this, participant_mask);
 
     if (nullptr == participant_)
     {
@@ -323,7 +375,7 @@ void ClientApp::create_request_entities(
         throw std::runtime_error("Failed to get default datawriter qos");
     }
 
-    request_writer_ = publisher_->create_datawriter(request_topic_, writer_qos, this, StatusMask::all());
+    request_writer_ = publisher_->create_datawriter(request_topic_, writer_qos, nullptr, StatusMask::none());
 
     if (nullptr == request_writer_)
     {
@@ -372,7 +424,7 @@ void ClientApp::create_reply_entities(
         throw std::runtime_error("Failed to get default datareader qos");
     }
 
-    reply_reader_ = subscriber_->create_datareader(reply_cf_topic_, reader_qos, this, StatusMask::all());
+    reply_reader_ = subscriber_->create_datareader(reply_cf_topic_, reader_qos, nullptr, StatusMask::none());
 
     if (nullptr == reply_reader_)
     {
