@@ -94,6 +94,9 @@ struct PublicationBuiltinTopicData
 
     /// GUID
     GUID_t guid;
+
+    /// Type information
+    dds::xtypes::TypeInformationParameter type_information;
 };
 
 }   // namespace rtps

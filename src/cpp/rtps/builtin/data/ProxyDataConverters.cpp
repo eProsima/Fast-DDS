@@ -139,6 +139,7 @@ void from_proxy_to_builtin(
     builtin_data.group_data = proxy_data.m_qos.m_groupData;
 
     builtin_data.guid = proxy_data.guid();
+    builtin_data.type_information = proxy_data.type_information();
 
     // TODO(MiguelCompany): Extend PublicationBuiltinTopicData with additional information
 }
@@ -170,6 +171,7 @@ void from_builtin_to_proxy(
     proxy_data.m_qos.m_groupData = builtin_data.group_data;
 
     proxy_data.guid(builtin_data.guid);
+    proxy_data.type_information(builtin_data.type_information);
 
     // TODO(MiguelCompany): Extend PublicationBuiltinTopicData with additional information
 }
