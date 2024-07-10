@@ -47,21 +47,10 @@ public:
         UNDEFINED
     };
 
-    //! Operation enumeration
-    enum class Operation : std::uint8_t
-    {
-        ADDITION,
-        SUBTRACTION,
-        MULTIPLICATION,
-        DIVISION,
-        UNDEFINED
-    };
-
     //! Configuration structure for the application
     struct config
     {
         CLIParser::EntityKind entity = CLIParser::EntityKind::UNDEFINED;
-        CLIParser::Operation operation = CLIParser::Operation::UNDEFINED;
         std::int16_t x = 0;
         std::int16_t y = 0;
     };
@@ -76,8 +65,15 @@ public:
     static void print_help(
             const std::uint8_t return_code)
     {
-        std::cout << "Service to perform an operation on two 16-bit integers"    << std::endl;
+        std::cout << "Service to perform several operations (addition, "         << std::endl;
+        std::cout << "subtraction, multiplication, and division) on two 16-bit"  << std::endl;
+        std::cout << "integers"                                                  << std::endl;
+        std::cout << ""                                                          << std::endl;
         std::cout << "Usage: request_reply <entity> [options] [arguments]"       << std::endl;
+        std::cout << ""                                                          << std::endl;
+        std::cout << "Example:"                                                  << std::endl;
+        std::cout << "  - request_reply server"                                  << std::endl;
+        std::cout << "  - request_reply client 4 5"                              << std::endl;
         std::cout << ""                                                          << std::endl;
         std::cout << "Entities:"                                                 << std::endl;
         std::cout << "  server                        Run a server entity"       << std::endl;
@@ -87,7 +83,8 @@ public:
         std::cout << "  -h, --help                    Print this help message"   << std::endl;
         std::cout << ""                                                          << std::endl;
         std::cout << "Client arguments:"                                         << std::endl;
-        std::cout << "  [NUMBER] <+|-|x|/> [NUMBER]   Operation to be performed" << std::endl;
+        std::cout << "  [NUMBER] [NUMBER]             The numbers of which the"  << std::endl;
+        std::cout << "                                operations are performed"  << std::endl;
         std::exit(return_code);
     }
 
@@ -143,7 +140,7 @@ public:
 
         if (CLIParser::EntityKind::CLIENT == config.entity)
         {
-            if (argc != 5)
+            if (argc != 4)
             {
                 EPROSIMA_LOG_ERROR(CLI_PARSER, "Incorrect number of arguments for client entity");
                 print_help(EXIT_FAILURE);
@@ -209,9 +206,9 @@ private:
     /**
      * @brief Consume the client arguments and store them in the config object
      *
-     * @param[in] argc number of arguments
-     * @param[in] argv array of arguments
+     * @pre argc == 4
      *
+     * @param[in] argv array of arguments
      * @param[in,out] config config object to store the arguments
      *
      * @warning This method finishes the execution of the program if the input arguments are invalid
@@ -221,8 +218,7 @@ private:
             config& config)
     {
         config.x = consume_int16_argument(argv[2]);
-        config.operation = consume_operation_argument(argv[3]);
-        config.y = consume_int16_argument(argv[4]);
+        config.y = consume_int16_argument(argv[3]);
     }
 
     /**
@@ -263,45 +259,6 @@ private:
         }
 
         return value;
-    }
-
-    /**
-     * @brief Consume an operation argument and return it
-     *
-     * @param[in] arg string argument to consume
-     *
-     * @return Operation operation argument
-     *
-     * @warning This method finishes the execution of the program if the input arguments are invalid
-     */
-    static Operation consume_operation_argument(
-            const std::string& arg)
-    {
-        Operation operation = Operation::UNDEFINED;
-
-        if (arg == "+")
-        {
-            operation = Operation::ADDITION;
-        }
-        else if (arg == "-")
-        {
-            operation = Operation::SUBTRACTION;
-        }
-        else if (arg == "x")
-        {
-            operation = Operation::MULTIPLICATION;
-        }
-        else if (arg == "/")
-        {
-            operation = Operation::DIVISION;
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid operation argument: " + arg);
-            print_help(EXIT_FAILURE);
-        }
-
-        return operation;
     }
 
 };

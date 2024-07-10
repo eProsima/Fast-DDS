@@ -24,6 +24,7 @@
 #include <condition_variable>
 #include <mutex>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -100,7 +101,7 @@ private:
 
     void wait_for_reply();
 
-    RequestInput request_input_;
+    std::pair<std::int16_t, std::int16_t> request_input_;
 
     DomainParticipant* participant_;
 

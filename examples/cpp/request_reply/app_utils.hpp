@@ -35,58 +35,12 @@
 #include <fastdds/dds/log/Colors.hpp>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
-#include "CLIParser.hpp"
 #include "types/Calculator.hpp"
 
 namespace eprosima {
 namespace fastdds {
 namespace examples {
 namespace request_reply {
-
-struct RequestInput
-{
-    RequestInput(
-            const CLIParser::config& config)
-        : operation(config.operation)
-        , x(config.x)
-        , y(config.y)
-    {
-    }
-
-    std::string str()
-    {
-        std::string result = std::to_string(x);
-
-        switch (operation)
-        {
-            case CLIParser::Operation::ADDITION:
-                result += " + ";
-                break;
-            case CLIParser::Operation::SUBTRACTION:
-                result += " - ";
-                break;
-            case CLIParser::Operation::MULTIPLICATION:
-                result += " x ";
-                break;
-            case CLIParser::Operation::DIVISION:
-                result += " / ";
-                break;
-            default:
-                result += " UNDEFINED ";
-                break;
-        }
-
-        result += std::to_string(y);
-
-        return result;
-    }
-
-    CLIParser::Operation operation = CLIParser::Operation::UNDEFINED;
-
-    std::int16_t x = 0;
-
-    std::int16_t y = 0;
-};
 
 class RemoteServerMatchedStatus
 {
@@ -229,34 +183,39 @@ private:
 
 struct TypeConverter
 {
-    static CalculatorOperationType to_calculator_type(
-            const CLIParser::Operation& operation)
+    static std::string to_string(
+            const CalculatorRequestType& request)
     {
-        CalculatorOperationType calculator_operation;
-
-        switch (operation)
-        {
-            case CLIParser::Operation::ADDITION:
-                calculator_operation = CalculatorOperationType::ADDITION;
-                break;
-            case CLIParser::Operation::SUBTRACTION:
-                calculator_operation = CalculatorOperationType::SUBTRACTION;
-                break;
-            case CLIParser::Operation::MULTIPLICATION:
-                calculator_operation = CalculatorOperationType::MULTIPLICATION;
-                break;
-            case CLIParser::Operation::DIVISION:
-                calculator_operation = CalculatorOperationType::DIVISION;
-                break;
-            default:
-                throw std::invalid_argument("Invalid operation");
-                break;
-        }
-
-        return calculator_operation;
+        std::ostringstream request_ss;
+        request_ss << request.x() << " " << to_string(request.operation()) << " " << request.y();
+        return request_ss.str();
     }
 
-    static std::string to_calculator_type(
+    static std::string to_string(
+            const CalculatorOperationType& operation)
+    {
+        std::string operation_str = "Unknown";
+        switch (operation)
+        {
+            case CalculatorOperationType::ADDITION:
+                operation_str = "+";
+                break;
+            case CalculatorOperationType::SUBTRACTION:
+                operation_str = "-";
+                break;
+            case CalculatorOperationType::MULTIPLICATION:
+                operation_str = "*";
+                break;
+            case CalculatorOperationType::DIVISION:
+                operation_str = "/";
+                break;
+            default:
+                break;
+        }
+        return operation_str;
+    }
+
+    static std::string to_string(
             const rtps::GuidPrefix_t& guid_prefix)
     {
         std::ostringstream client_id;

@@ -62,7 +62,7 @@ Topic* create_topic(
 ClientApp::ClientApp(
         const CLIParser::config& config,
         const std::string& service_name)
-    : request_input_(config)
+    : request_input_({config.x, config.y})
     , participant_(nullptr)
     , request_type_(nullptr)
     , request_topic_(nullptr)
@@ -291,7 +291,7 @@ void ClientApp::create_reply_entities(
     reply_topic_ = create_topic<CalculatorReplyTypePubSubType>("rr/" + service_name, reply_type_);
 
     reply_topic_filter_expression_ = "client_id = '" +
-            TypeConverter::to_calculator_type(participant_->guid().guidPrefix) + "'";
+            TypeConverter::to_string(participant_->guid().guidPrefix) + "'";
 
     reply_cf_topic_ = participant_->create_contentfilteredtopic("rr/" + service_name + "_cft", reply_topic_,
                     reply_topic_filter_expression_,
@@ -337,10 +337,10 @@ bool ClientApp::send_request()
 {
     CalculatorRequestType request;
 
-    request.client_id(TypeConverter::to_calculator_type(participant_->guid().guidPrefix));
-    request.operation(TypeConverter::to_calculator_type(request_input_.operation));
-    request.x(request_input_.x);
-    request.y(request_input_.y);
+    request.client_id(TypeConverter::to_string(participant_->guid().guidPrefix));
+    request.operation(CalculatorOperationType::ADDITION);
+    request.x(request_input_.first);
+    request.y(request_input_.second);
 
 
     rtps::WriteParams wparams;
@@ -348,7 +348,7 @@ bool ClientApp::send_request()
 
     request_reply_info("ClientApp",
             "Request sent with ID '" << wparams.sample_identity().sequence_number() <<
-            "': '" << request_input_.str() << "'");
+            "': '" << request_input_.first << " + " << request_input_.second << "'");
 
     return ret;
 }
