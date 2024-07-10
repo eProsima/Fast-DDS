@@ -20,6 +20,7 @@
 #include "ClientApp.hpp"
 
 #include <chrono>
+#include <cstdint>
 #include <iostream>
 #include <mutex>
 #include <stdexcept>
@@ -37,6 +38,7 @@
 #include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/common/WriteParams.hpp>
 
+#include "CLIParser.hpp"
 #include "types/Calculator.hpp"
 #include "types/CalculatorPubSubTypes.hpp"
 
@@ -263,7 +265,12 @@ void ClientApp::create_participant()
         throw std::runtime_error("Failed to get participant factory instance");
     }
 
-    participant_ = factory->create_participant_with_default_profile(nullptr, StatusMask::none());
+    DomainParticipantExtendedQos participant_qos;
+    factory->get_participant_extended_qos_from_default_profile(participant_qos);
+
+    participant_qos.user_data().data_vec().push_back(static_cast<uint8_t>(CLIParser::EntityKind::CLIENT));
+
+    participant_ = factory->create_participant(participant_qos.domainId(), participant_qos);
 
     if (nullptr == participant_)
     {

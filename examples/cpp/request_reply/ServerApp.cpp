@@ -42,6 +42,7 @@
 #include <fastdds/rtps/common/WriteParams.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 
+#include "CLIParser.hpp"
 #include "types/Calculator.hpp"
 #include "types/CalculatorPubSubTypes.hpp"
 
@@ -137,17 +138,43 @@ void ServerApp::on_participant_discovery(
     should_be_ignored = false;
 
     rtps::GuidPrefix_t remote_participant_guid_prefix = info.info.m_guid.guidPrefix;
+    std::string status_str = TypeConverter::to_string(info.status);
 
-    if (info.status == rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+    if (info.info.m_userData.data_vec().size() != 1)
     {
-        request_reply_debug("ServerApp", "Participant discovered: " << remote_participant_guid_prefix);
+        should_be_ignored = true;
+        request_reply_debug("ServerApp", "Ignoring participant with invalid user data: "
+                << remote_participant_guid_prefix);
     }
-    else if (info.status == rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
-    {
-        client_matched_status_.match_reply_reader(remote_participant_guid_prefix, false);
-        client_matched_status_.match_request_writer(remote_participant_guid_prefix, false);
 
-        request_reply_debug("ServerApp", "Participant removed: " << remote_participant_guid_prefix);
+    if (!should_be_ignored)
+    {
+        CLIParser::EntityKind entity_kind = static_cast<CLIParser::EntityKind>(info.info.m_userData.data_vec()[0]);
+        if (CLIParser::EntityKind::CLIENT != entity_kind)
+        {
+            should_be_ignored = true;
+            request_reply_debug("ServerApp", "Ignoring " << status_str << " "
+                                                         << CLIParser::parse_entity_kind(entity_kind)
+                                                         << ": " << remote_participant_guid_prefix);
+        }
+    }
+
+    if (!should_be_ignored)
+    {
+        std::string client_str = CLIParser::parse_entity_kind(CLIParser::EntityKind::CLIENT);
+
+        if (info.status == rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
+        {
+            request_reply_debug("ServerApp", client_str << " " << status_str << ": " << remote_participant_guid_prefix);
+        }
+        else if (info.status == rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::REMOVED_PARTICIPANT ||
+                info.status == rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::DROPPED_PARTICIPANT)
+        {
+            client_matched_status_.match_reply_reader(remote_participant_guid_prefix, false);
+            client_matched_status_.match_request_writer(remote_participant_guid_prefix, false);
+
+            request_reply_debug("ServerApp", client_str << " " << status_str << ": " << remote_participant_guid_prefix);
+        }
     }
 }
 
@@ -258,7 +285,12 @@ void ServerApp::create_participant()
     participant_mask << StatusMask::subscription_matched();
     participant_mask << StatusMask::data_available();
 
-    participant_ = factory->create_participant_with_default_profile(this, participant_mask);
+    DomainParticipantExtendedQos participant_qos;
+    factory->get_participant_extended_qos_from_default_profile(participant_qos);
+
+    participant_qos.user_data().data_vec().push_back(static_cast<uint8_t>(CLIParser::EntityKind::SERVER));
+
+    participant_ = factory->create_participant(participant_qos.domainId(), participant_qos, this, participant_mask);
 
     if (nullptr == participant_)
     {
@@ -310,7 +342,7 @@ void ServerApp::create_request_entities(
         throw std::runtime_error("Failed to get default datareader qos");
     }
 
-    request_reader_ = subscriber_->create_datareader(request_topic_, reader_qos);
+    request_reader_ = subscriber_->create_datareader(request_topic_, reader_qos, nullptr, StatusMask::none());
 
     if (nullptr == request_reader_)
     {
@@ -346,7 +378,7 @@ void ServerApp::create_reply_entities(
         throw std::runtime_error("Failed to get default datawriter qos");
     }
 
-    reply_writer_ = publisher_->create_datawriter(reply_topic_, writer_qos);
+    reply_writer_ = publisher_->create_datawriter(reply_topic_, writer_qos, nullptr, StatusMask::none());
 
     if (nullptr == reply_writer_)
     {

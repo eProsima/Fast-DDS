@@ -34,6 +34,7 @@
 
 #include <fastdds/dds/log/Colors.hpp>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 
 #include "types/Calculator.hpp"
 
@@ -221,6 +222,35 @@ struct TypeConverter
         std::ostringstream client_id;
         client_id << guid_prefix;
         return client_id.str();
+    }
+
+    static std::string to_string(
+            const rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS& info)
+    {
+        std::string info_str = "Unknown";
+
+        switch (info)
+        {
+            case rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_PARTICIPANT:
+                info_str = "discovered";
+                break;
+            case rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::CHANGED_QOS_PARTICIPANT:
+                info_str = "changed QoS";
+                break;
+            case rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::REMOVED_PARTICIPANT:
+                info_str = "removed";
+                break;
+            case rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::DROPPED_PARTICIPANT:
+                info_str = "dropped";
+                break;
+            case rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::IGNORED_PARTICIPANT:
+                info_str = "ignored";
+                break;
+            default:
+                break;
+        }
+
+        return info_str;
     }
 
 };
