@@ -1583,7 +1583,7 @@ TEST_F(SHMTransportTests, buffer_recover)
 
     // Sleeping the thread waiting for the port timeout
     // is more risky as the healthy timeout port watchdog
-    // can be triggered, so we chosse the second option.
+    // can be triggered, so we choose the second option.
 
     {
         auto buf = segment->alloc_buffer(1u, std::chrono::steady_clock::time_point());
