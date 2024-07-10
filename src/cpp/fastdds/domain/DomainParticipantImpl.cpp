@@ -87,7 +87,6 @@ using rtps::ReaderDiscoveryInfo;
 using rtps::ReaderProxyData;
 using rtps::ResourceEvent;
 using rtps::WRITER_DISCOVERY_STATUS;
-using rtps::WriterProxyData;
 
 DomainParticipantImpl::DomainParticipantImpl(
         DomainParticipant* dp,

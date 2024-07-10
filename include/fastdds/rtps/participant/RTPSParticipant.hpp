@@ -58,11 +58,11 @@ class TopicAttributes;
 
 namespace rtps {
 
+struct PublicationBuiltinTopicData;
 class RTPSParticipantImpl;
 class RTPSParticipantListener;
 class RTPSWriter;
 class RTPSReader;
-class WriterProxyData;
 class ReaderProxyData;
 class EndpointAttributes;
 class WriterAttributes;
@@ -162,7 +162,7 @@ public:
             RTPSReader* Reader,
             const TopicAttributes& topicAtt,
             const fastdds::dds::ReaderQos& rqos,
-            const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
+            const ContentFilterProperty* content_filter = nullptr);
 
     /**
      * Update participant attributes.
@@ -195,7 +195,7 @@ public:
             RTPSReader* Reader,
             const TopicAttributes& topicAtt,
             const fastdds::dds::ReaderQos& rqos,
-            const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
+            const ContentFilterProperty* content_filter = nullptr);
 
     /**
      * Returns a list with the participant names.
@@ -291,7 +291,7 @@ public:
      *
      * @return A vector with all registered transports' netmask filter information.
      */
-    std::vector<fastdds::rtps::TransportNetmaskFilterInfo> get_netmask_filter_info() const;
+    std::vector<TransportNetmaskFilterInfo> get_netmask_filter_info() const;
 
 #if HAVE_SECURITY
 
@@ -404,11 +404,11 @@ public:
      * @return true if the operation succeeds.
      */
     bool fill_discovery_data_from_cdr_message(
-            fastdds::rtps::ParticipantProxyData& data,
+            ParticipantProxyData& data,
             fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
-     * fills in the WriterProxyData from a MonitorService Message
+     * fills in the PublicationBuiltinTopicData from a MonitorService Message
      *
      * @param [out] data Proxy to fill.
      * @param [in] msg MonitorService Message to get the proxy information from.
@@ -416,8 +416,8 @@ public:
      * @return true if the operation succeeds.
      */
     bool fill_discovery_data_from_cdr_message(
-            fastdds::rtps::WriterProxyData& data,
-            fastdds::statistics::MonitorServiceStatusData& msg);
+            PublicationBuiltinTopicData& data,
+            const fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
      * fills in the ReaderProxyData from a MonitorService Message
@@ -428,7 +428,7 @@ public:
      * @return true if the operation succeeds.
      */
     bool fill_discovery_data_from_cdr_message(
-            fastdds::rtps::ReaderProxyData& data,
+            ReaderProxyData& data,
             fastdds::statistics::MonitorServiceStatusData& msg);
 
 #endif // FASTDDS_STATISTICS

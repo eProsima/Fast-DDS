@@ -44,7 +44,6 @@ namespace rtps {
 struct CacheChange_t;
 class ReaderListener;
 class RTPSParticipantImpl;
-class WriterProxyData;
 
 /**
  * Class RTPSReader, manages the reception of data from its matched writers.

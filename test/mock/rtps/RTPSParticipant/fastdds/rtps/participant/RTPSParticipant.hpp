@@ -62,11 +62,11 @@ class TopicAttributes;
 
 namespace rtps {
 
+struct PublicationBuiltinTopicData;
 class RTPSParticipantImpl;
 class RTPSParticipantListener;
 class RTPSWriter;
 class RTPSReader;
-class WriterProxyData;
 class ReaderProxyData;
 class ResourceEvent;
 class WLP;
@@ -133,8 +133,8 @@ public:
     }
 
     bool fill_discovery_data_from_cdr_message(
-            fastdds::rtps::WriterProxyData& /*data*/,
-            fastdds::statistics::MonitorServiceStatusData& /*msg*/)
+            fastdds::rtps::PublicationBuiltinTopicData& /*data*/,
+            const fastdds::statistics::MonitorServiceStatusData& /*msg*/)
     {
         return true;
     }

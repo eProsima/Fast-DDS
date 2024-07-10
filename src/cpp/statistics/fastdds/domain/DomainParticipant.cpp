@@ -126,8 +126,8 @@ fastdds::dds::ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_messa
 }
 
 fastdds::dds::ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_message(
-        fastdds::rtps::WriterProxyData& data,
-        fastdds::statistics::MonitorServiceStatusData& msg)
+        fastdds::dds::PublicationBuiltinTopicData& data,
+        const fastdds::statistics::MonitorServiceStatusData& msg)
 {
 #ifdef FASTDDS_STATISTICS
     return static_cast<DomainParticipantImpl*>(impl_)->fill_discovery_data_from_cdr_message(data, msg);
