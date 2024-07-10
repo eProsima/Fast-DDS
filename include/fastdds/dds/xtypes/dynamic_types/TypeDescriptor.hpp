@@ -48,7 +48,7 @@ public:
 
     /*!
      * Modifies the underlying @ref TypeKind.
-     * @param[in] kind @ref TypeKind to be set.
+     * @param [in] kind @ref TypeKind to be set.
      */
     virtual void kind(
             TypeKind kind) = 0;
@@ -67,14 +67,14 @@ public:
 
     /*!
      * Modifies the underlying type name by copy.
-     * @param[in] name Fully qualified name.
+     * @param [in] name Fully qualified name.
      */
     virtual void name(
             const ObjectName& name) = 0;
 
     /*!
      * Modifies the underlying type name by move.
-     * @param[in] name Fully qualified name.
+     * @param [in] name Fully qualified name.
      */
     virtual void name(
             ObjectName&& name) = 0;
@@ -93,7 +93,7 @@ public:
 
     /*!
      * Modifies the underlying base type reference.
-     * @param[in] type @ref DynamicType reference.
+     * @param [in] type @ref DynamicType reference.
      */
     virtual void base_type(
             traits<DynamicType>::ref_type type) = 0;
@@ -112,7 +112,7 @@ public:
 
     /*!
      * Modifies the underlying discriminator type reference.
-     * @param[in] type @ref DynamicType reference.
+     * @param [in] type @ref DynamicType reference.
      */
     virtual void discriminator_type(
             traits<DynamicType>::ref_type type) = 0;
@@ -131,14 +131,14 @@ public:
 
     /*!
      * Modifies the underlying bound by copy.
-     * @param[in] bound @ref BoundSeq
+     * @param [in] bound @ref BoundSeq
      */
     virtual void bound(
             const BoundSeq& bound) = 0;
 
     /*!
      * Modifies the underlying bound by move.
-     * @param[in] bound @ref BoundSeq
+     * @param [in] bound @ref BoundSeq
      */
     virtual void bound(
             BoundSeq&& bound) = 0;
@@ -157,7 +157,7 @@ public:
 
     /*!
      * Modifies the underlying element type reference.
-     * @param[in] type @ref DynamicType reference.
+     * @param [in] type @ref DynamicType reference.
      */
     virtual void element_type(
             traits<DynamicType>::ref_type type) = 0;
@@ -176,7 +176,7 @@ public:
 
     /*!
      * Modifies the underlying key element type reference.
-     * @param[in] type @ref DynamicType reference.
+     * @param [in] type @ref DynamicType reference.
      */
     virtual void key_element_type(
             traits<DynamicType>::ref_type type) = 0;
@@ -196,7 +196,7 @@ public:
 
     /*!
      * Modifies the extensibility kind.
-     * @param[in] extensibility_kind @ref ExtensibilityKind
+     * @param [in] extensibility_kind @ref ExtensibilityKind
      */
     virtual void extensibility_kind(
             ExtensibilityKind extensibility_kind) = 0;
@@ -215,14 +215,14 @@ public:
 
     /*!
      * Modifies the is_nested property.
-     * @param[in] is_nested Boolean value to be set.
+     * @param [in] is_nested Boolean value to be set.
      */
     virtual void is_nested(
             bool is_nested) = 0;
 
     /*!
      * Overwrites the contents of this descriptor with those of another descriptor (see [standard] 7.5.2.4.3).
-     * @param[in] descriptor reference.
+     * @param [in] descriptor reference.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the copy was successful.
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil.
@@ -232,7 +232,7 @@ public:
 
     /*!
      * Compares according with the [standard] section \b 7.5.2.4.6.
-     * @param[in] descriptor reference to compare to.
+     * @param [in] descriptor reference to compare to.
      * @return \b bool `true` on equality
      */
     virtual bool equals(

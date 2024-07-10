@@ -56,21 +56,17 @@ public:
     bool on_local_entity_connections_change(
             const fastdds::rtps::GUID_t& guid) const override;
 
-    void onWriterMatched(
+    void on_writer_matched(
             fastdds::rtps::RTPSWriter* writer,
-            fastdds::rtps::MatchingInfo& info) override;
+            const fastdds::rtps::MatchingInfo& info) override;
 
-    void onWriterChangeReceivedByAll(
+    void on_writer_change_received_by_all(
             fastdds::rtps::RTPSWriter* writer,
             fastdds::rtps::CacheChange_t* change) override;
 
 protected:
 
     MonitorService* monitor_srv_;
-
-private:
-
-    using fastdds::rtps::WriterListener::onWriterMatched;
 
 };
 

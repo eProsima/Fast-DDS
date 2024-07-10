@@ -45,36 +45,23 @@ typedef enum RTPSWriterPublishMode : octet
  */
 struct WriterTimes
 {
-    //! Initial heartbeat delay. Default value ~11ms.
-    Duration_t initialHeartbeatDelay;
-    //! Periodic HB period, default value 3s.
-    Duration_t heartbeatPeriod;
-    //!Delay to apply to the response of a ACKNACK message, default value ~5ms.
-    Duration_t nackResponseDelay;
-    //!This time allows the RTPSWriter to ignore nack messages too soon after the data as sent, default value 0s.
-    Duration_t nackSupressionDuration;
-
-    WriterTimes()
-    {
-        //initialHeartbeatDelay.fraction = 50*1000*1000;
-        initialHeartbeatDelay.nanosec = 12 * 1000 * 1000;
-        heartbeatPeriod.seconds = 3;
-        //nackResponseDelay.fraction = 20*1000*1000;
-        nackResponseDelay.nanosec = 5 * 1000 * 1000;
-    }
-
-    virtual ~WriterTimes()
-    {
-    }
-
     bool operator ==(
             const WriterTimes& b) const
     {
-        return (this->initialHeartbeatDelay == b.initialHeartbeatDelay) &&
-               (this->heartbeatPeriod == b.heartbeatPeriod) &&
-               (this->nackResponseDelay == b.nackResponseDelay) &&
-               (this->nackSupressionDuration == b.nackSupressionDuration);
+        return (initial_heartbeat_delay == b.initial_heartbeat_delay) &&
+               (heartbeat_period == b.heartbeat_period) &&
+               (nack_response_delay == b.nack_response_delay) &&
+               (nack_supression_duration == b.nack_supression_duration);
     }
+
+    /// Initial heartbeat delay. Default value 12ms.
+    Duration_t initial_heartbeat_delay {0, 12 * 1000 * 1000};
+    /// Periodic HB period, default value 3s.
+    Duration_t heartbeat_period {3, 0};
+    /// Delay to apply to the response of a ACKNACK message, default value 5ms.
+    Duration_t nack_response_delay {0, 5 * 1000 * 1000};
+    /// This time allows the RTPSWriter to ignore nack messages too soon after the data as sent, default value 0s.
+    Duration_t nack_supression_duration {0, 0};
 
 };
 
@@ -136,6 +123,9 @@ public:
 
     //! Flow controller name. Default: fastdds::rtps::FASTDDS_FLOW_CONTROLLER_DEFAULT.
     std::string flow_controller_name = fastdds::rtps::FASTDDS_FLOW_CONTROLLER_DEFAULT;
+
+    //! Whether to send data to each matched reader separately.
+    bool separate_sending = false;
 };
 
 } // namespace rtps

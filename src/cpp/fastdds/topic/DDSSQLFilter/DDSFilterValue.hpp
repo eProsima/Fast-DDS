@@ -87,7 +87,7 @@ public:
      * Explicit kind constructor.
      * Constructs a zero-valued, specific kind DDSFilterValue.
      *
-     * @param[in] kind  The kind with which to construct the DDSFilterValue.
+     * @param [in] kind  The kind with which to construct the DDSFilterValue.
      */
     explicit DDSFilterValue(
             ValueKind data_kind) noexcept

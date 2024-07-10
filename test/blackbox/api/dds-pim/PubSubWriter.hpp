@@ -334,10 +334,10 @@ public:
                 eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.
-        datawriter_qos_.reliable_writer_qos().times.heartbeatPeriod.seconds = 0;
-        datawriter_qos_.reliable_writer_qos().times.heartbeatPeriod.nanosec = 100000000;
-        datawriter_qos_.reliable_writer_qos().times.nackResponseDelay.seconds = 0;
-        datawriter_qos_.reliable_writer_qos().times.nackResponseDelay.nanosec = 100000000;
+        datawriter_qos_.reliable_writer_qos().times.heartbeat_period.seconds = 0;
+        datawriter_qos_.reliable_writer_qos().times.heartbeat_period.nanosec = 100000000;
+        datawriter_qos_.reliable_writer_qos().times.nack_response_delay.seconds = 0;
+        datawriter_qos_.reliable_writer_qos().times.nack_response_delay.nanosec = 100000000;
 
         // Increase default max_blocking_time to 1 second, as our CI infrastructure shows some
         // big CPU overhead sometimes
@@ -1142,14 +1142,14 @@ public:
     PubSubWriter& heartbeat_period_seconds(
             int32_t sec)
     {
-        datawriter_qos_.reliable_writer_qos().times.heartbeatPeriod.seconds = sec;
+        datawriter_qos_.reliable_writer_qos().times.heartbeat_period.seconds = sec;
         return *this;
     }
 
     PubSubWriter& heartbeat_period_nanosec(
             uint32_t nanosec)
     {
-        datawriter_qos_.reliable_writer_qos().times.heartbeatPeriod.nanosec = nanosec;
+        datawriter_qos_.reliable_writer_qos().times.heartbeat_period.nanosec = nanosec;
         return *this;
     }
 

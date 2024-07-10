@@ -44,8 +44,8 @@ namespace utils {
 /**
  * Obtains the DataWriterQos from the PublisherAttributes provided.
  *
- * @param[out] qos Pointer to the QoS to write on
- * @param[in] attr Pointer to the attributes from which to obtain data
+ * @param [out] qos Pointer to the QoS to write on
+ * @param [in] attr Pointer to the attributes from which to obtain data
  */
 void set_qos_from_attributes(
         DataWriterQos& qos,
@@ -54,8 +54,8 @@ void set_qos_from_attributes(
 /**
  * Obtains the DataReaderQos from the SubscriberAttributes provided.
  *
- * @param[out] qos Pointer to the QoS to write on
- * @param[in] attr Pointer to the attributes from which to obtain data
+ * @param [out] qos Pointer to the QoS to write on
+ * @param [in] attr Pointer to the attributes from which to obtain data
  */
 void set_qos_from_attributes(
         DataReaderQos& qos,
@@ -72,8 +72,8 @@ void set_qos_from_attributes(
  * - If any property from the RTPSParticipantAttributes property is also in the DomainParticipantQos, then the
  *   value in the DomainParticipantQos is overridden with that of the RTPSParticipantAttributes.
  *
- * @param[in, out] qos The DomainParticipantQos to set
- * @param[in] attr The RTPSParticipantAttributes from which the @c qos is set.
+ * @param [in, out] qos The DomainParticipantQos to set
+ * @param [in] attr The RTPSParticipantAttributes from which the @c qos is set.
  */
 void set_qos_from_attributes(
         DomainParticipantQos& qos,
@@ -90,8 +90,8 @@ void set_qos_from_attributes(
  * - If any property from the ParticipantAttributes property is also in the DomainParticipantExtendedQos, then the
  *   value in the DomainParticipantExtendedQos is overridden with that of the ParticipantAttributes.
  *
- * @param[in, out] extended_qos The DomainParticipantExtendedQos to set
- * @param[in] attr The ParticipantAttributes from which the @c extended_qos is set.
+ * @param [in, out] extended_qos The DomainParticipantExtendedQos to set
+ * @param [in] attr The ParticipantAttributes from which the @c extended_qos is set.
  */
 void set_extended_qos_from_attributes(
         DomainParticipantExtendedQos& extended_qos,
@@ -100,8 +100,8 @@ void set_extended_qos_from_attributes(
 /**
  * Obtains the RTPSParticipantAttributes from the DomainParticipantQos provided.
  *
- * @param[out] attr Pointer to the attributes from which to obtain data
- * @param[in] qos Pointer to the QoS to write on
+ * @param [out] attr Pointer to the attributes from which to obtain data
+ * @param [in] qos Pointer to the QoS to write on
  */
 void set_attributes_from_qos(
         fastdds::rtps::RTPSParticipantAttributes& attr,
@@ -110,8 +110,8 @@ void set_attributes_from_qos(
 /**
  * Obtains the ParticipantAttributes from the DomainParticipantExtendedQos provided.
  *
- * @param[out] attr Pointer to the attributes from which to obtain data
- * @param[in] extended_qos Pointer to the QoS to write on
+ * @param [out] attr Pointer to the attributes from which to obtain data
+ * @param [in] extended_qos Pointer to the QoS to write on
  */
 void set_attributes_from_extended_qos(
         eprosima::fastdds::ParticipantAttributes& attr,
@@ -120,8 +120,8 @@ void set_attributes_from_extended_qos(
 /**
  * Obtains the TopicQos from the TopicAttributes provided.
  *
- * @param[out] qos Pointer to the QoS to write on
- * @param[in] attr Pointer to the attributes from which to obtain data
+ * @param [out] qos Pointer to the QoS to write on
+ * @param [in] attr Pointer to the attributes from which to obtain data
  */
 void set_qos_from_attributes(
         TopicQos& qos,
@@ -130,8 +130,8 @@ void set_qos_from_attributes(
 /**
  * Obtains the SubscriberQos from the SubscriberAttributes provided.
  *
- * @param[out] qos Pointer to the QoS to write on
- * @param[in] attr Pointer to the attributes from which to obtain data
+ * @param [out] qos Pointer to the QoS to write on
+ * @param [in] attr Pointer to the attributes from which to obtain data
  */
 void set_qos_from_attributes(
         SubscriberQos& qos,
@@ -140,8 +140,8 @@ void set_qos_from_attributes(
 /**
  * Obtains the PublisherQos from the PublisherAttributes provided.
  *
- * @param[out] qos Pointer to the QoS to write on
- * @param[in] attr Pointer to the attributes from which to obtain data
+ * @param [out] qos Pointer to the QoS to write on
+ * @param [in] attr Pointer to the attributes from which to obtain data
  */
 void set_qos_from_attributes(
         PublisherQos& qos,
@@ -150,8 +150,8 @@ void set_qos_from_attributes(
 /**
  * Obtains the ReplierQos from the ReplierAttributes provided.
  *
- * @param[out] qos Pointer to the QoS to write on
- * @param[in] attr Pointer to the attributes from which to obtain data
+ * @param [out] qos Pointer to the QoS to write on
+ * @param [in] attr Pointer to the attributes from which to obtain data
  */
 void set_qos_from_attributes(
         ReplierQos& qos,
@@ -160,8 +160,8 @@ void set_qos_from_attributes(
 /**
  * Obtains the RequesterQos from the RequesterAttributes provided.
  *
- * @param[out] qos Pointer to the QoS to write on
- * @param[in] attr Pointer to the attributes from which to obtain data
+ * @param [out] qos Pointer to the QoS to write on
+ * @param [in] attr Pointer to the attributes from which to obtain data
  */
 void set_qos_from_attributes(
         RequesterQos& qos,

@@ -328,9 +328,9 @@ TEST(DDSBasic, MultithreadedReaderCreationDoesNotDeadlock)
  * Read a parameterList from a CDRMessage.
  * Search for PID_CUSTOM_RELATED_SAMPLE_IDENTITY and PID_RELATED_SAMPLE_IDENTITY.
  * Overwrite PID_CUSTOM_RELATED_SAMPLE_IDENTITY to just leave the new one in msg.
- * @param[in] msg Reference to the message.
- * @param[out] exists_pid_related_sample_identity True if the parameter is inside msg.
- * @param[out] exists_pid_custom_related_sample_identity True if the parameter is inside msg.
+ * @param [in] msg Reference to the message.
+ * @param [out] exists_pid_related_sample_identity True if the parameter is inside msg.
+ * @param [out] exists_pid_custom_related_sample_identity True if the parameter is inside msg.
  * @return true if parsing was correct, false otherwise.
  */
 bool check_related_sample_identity_field(

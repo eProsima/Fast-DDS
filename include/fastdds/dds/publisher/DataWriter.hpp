@@ -184,7 +184,7 @@ public:
      * @brief Informs that the application will be modifying a particular instance.
      * It gives an opportunity to the middleware to pre-configure itself to improve performance.
      *
-     * @param[in] instance Sample used to get the instance's key.
+     * @param [in] instance Sample used to get the instance's key.
      * @return Handle containing the instance's key.
      * This handle could be used in successive `write` or `dispose` operations.
      * In case of error, HANDLE_NIL will be returned.
@@ -220,8 +220,8 @@ public:
      * Informs the middleware that the DataWriter is not intending to modify any more of that data instance.
      * Also indicates that the middleware can locally remove all information regarding that instance.
      *
-     * @param[in] instance Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
-     * @param[in] handle Instance's key to be unregistered.
+     * @param [in] instance Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
+     * @param [in] handle Instance's key to be unregistered.
      * @return Returns the operation's result.
      * If the operation finishes successfully, RETCODE_OK is returned.
      */
@@ -262,8 +262,8 @@ public:
      * data-object known to the DataWriter. If the implementation is not able to check invalid handles then the result
      * in this situation is unspecified.
      *
-     * @param[in,out] key_holder  Sample where the key fields will be returned.
-     * @param[in] handle          Handle to the instance to retrieve the key values from.
+     * @param [in,out] key_holder  Sample where the key fields will be returned.
+     * @param [in] handle          Handle to the instance to retrieve the key values from.
      *
      * @return Any of the standard return codes.
      */
@@ -278,7 +278,7 @@ public:
      * instance handle as an argument. The instance parameter is only used for the purpose of examining the fields that
      * define the key.
      *
-     * @param[in] instance Data pointer to the sample
+     * @param [in] instance Data pointer to the sample
      *
      * @return handle of the given instance
      */
@@ -318,7 +318,7 @@ public:
     /**
      * @brief Returns the offered deadline missed status
      *
-     * @param[out] status Deadline missed status struct
+     * @param [out] status Deadline missed status struct
      * @return RETCODE_OK
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_offered_deadline_missed_status(
@@ -327,7 +327,7 @@ public:
     /**
      * @brief Returns the offered incompatible qos status
      *
-     * @param[out] status Offered incompatible qos status struct
+     * @param [out] status Offered incompatible qos status struct
      * @return RETCODE_OK
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_offered_incompatible_qos_status(
@@ -336,7 +336,7 @@ public:
     /**
      * @brief Returns the publication matched status
      *
-     * @param[out] status publication matched status struct
+     * @param [out] status publication matched status struct
      * @return RETCODE_OK
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_publication_matched_status(
@@ -412,8 +412,8 @@ public:
      * on the values of the handle parameter and the corresponding error behavior are the same specified for the
      * unregister_instance operation.
      *
-     * @param[in] data Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
-     * @param[in] handle InstanceHandle of the data
+     * @param [in] data Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
+     * @param [in] handle InstanceHandle of the data
      * @return RETCODE_PRECONDITION_NOT_MET if the handle introduced does not match with the one associated to the data,
      * RETCODE_OK if the data is correctly sent and RETCODE_ERROR otherwise.
      */
@@ -478,7 +478,7 @@ public:
     /**
      * @brief Retrieves in a subscription associated with the DataWriter
      *
-     * @param[out] subscription_data subscription data struct
+     * @param [out] subscription_data subscription data struct
      * @param subscription_handle InstanceHandle_t of the subscription
      * @return RETCODE_OK
      *
@@ -491,7 +491,7 @@ public:
     /**
      * @brief Fills the given vector with the InstanceHandle_t of matched DataReaders
      *
-     * @param[out] subscription_handles Vector where the InstanceHandle_t are returned
+     * @param [out] subscription_handles Vector where the InstanceHandle_t are returned
      * @return RETCODE_OK
      *
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED

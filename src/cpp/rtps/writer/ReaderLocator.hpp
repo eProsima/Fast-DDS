@@ -30,7 +30,7 @@ namespace fastdds {
 namespace rtps {
 
 class RTPSParticipantImpl;
-class RTPSWriter;
+class BaseWriter;
 class BaseReader;
 class IDataSharingNotifier;
 
@@ -48,12 +48,12 @@ public:
     /**
      * Construct a ReaderLocator.
      *
-     * @param owner                   Pointer to the RTPSWriter creating this object.
+     * @param owner                   Pointer to the BaseWriter creating this object.
      * @param max_unicast_locators    Maximum number of unicast locators to hold.
      * @param max_multicast_locators  Maximum number of multicast locators to hold.
      */
     ReaderLocator(
-            RTPSWriter* owner,
+            BaseWriter* owner,
             size_t max_unicast_locators,
             size_t max_multicast_locators);
 
@@ -254,7 +254,7 @@ public:
 
 private:
 
-    RTPSWriter* owner_;
+    BaseWriter* owner_;
     RTPSParticipantImpl* participant_owner_;
     LocatorSelectorEntry general_locator_info_;
     LocatorSelectorEntry async_locator_info_;

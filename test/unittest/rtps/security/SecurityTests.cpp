@@ -39,8 +39,6 @@ void SecurityTest::initialization_ok()
             WillOnce(DoAll(SetArgPointee<0>(stateless_reader_), Return(true))).
             WillOnce(DoAll(SetArgPointee<0>(volatile_reader_), Return(true)));
 
-    EXPECT_CALL(*volatile_writer_, set_separate_sending(true)).Times(1);
-
     security_activated_ = manager_.init(security_attributes_, participant_properties_);
     ASSERT_TRUE(security_activated_);
     ASSERT_TRUE(manager_.is_security_initialized());
@@ -251,7 +249,7 @@ void SecurityTest::final_message_process_ok(
 
     stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 
-    volatile_writer_->listener_->onWriterChangeReceivedByAll(volatile_writer_, kx_change_to_remove);
+    volatile_writer_->listener_->on_writer_change_received_by_all(volatile_writer_, kx_change_to_remove);
 
     if (final_message_change == nullptr)
     {

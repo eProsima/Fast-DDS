@@ -257,8 +257,8 @@ void VideoTestPublisher::init(
                 eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
         datawriter_qos_data.publish_mode().kind = PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE;
     }
-    datawriter_qos_data.reliable_writer_qos().times.heartbeatPeriod.seconds = 0;
-    datawriter_qos_data.reliable_writer_qos().times.heartbeatPeriod.nanosec = 100000000;
+    datawriter_qos_data.reliable_writer_qos().times.heartbeat_period.seconds = 0;
+    datawriter_qos_data.reliable_writer_qos().times.heartbeat_period.nanosec = 100000000;
 
     mp_data_dw = mp_datapub->create_datawriter(mp_video_topic, datawriter_qos_data, &this->m_datapublistener);
     ASSERT_NE(mp_data_dw, nullptr);

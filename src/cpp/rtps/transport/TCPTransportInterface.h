@@ -375,8 +375,8 @@ public:
      * @param receive_buffer vector with enough capacity (not size) to accomodate a full receive buffer. That
      * capacity must not be less than the receive_buffer_size supplied to this class during construction.
      * @param receive_buffer_capacity maximum size of the buffer.
-     * @param[out] receive_buffer_size Size of the packet received.
-     * @param[out] remote_locator associated remote locator.
+     * @param [out] receive_buffer_size Size of the packet received.
+     * @param [out] remote_locator associated remote locator.
      */
     bool Receive(
             std::weak_ptr<RTCPMessageManager>& rtcp_manager,

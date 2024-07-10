@@ -47,6 +47,7 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/BaseReader.hpp>
 #include <rtps/reader/StatefulReader.hpp>
+#include <rtps/writer/BaseWriter.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
 #include <utils/TimeConversion.hpp>
 
@@ -441,10 +442,12 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
     watt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
     watt.endpoint.external_unicast_locators = mp_builtin->m_att.metatraffic_external_unicast_locators;
     watt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
-    watt.times.heartbeatPeriod = pdp_heartbeat_period;
-    watt.times.nackResponseDelay = pdp_nack_response_delay;
-    watt.times.nackSupressionDuration = pdp_nack_supression_duration;
+    watt.times.heartbeat_period = pdp_heartbeat_period;
+    watt.times.nack_response_delay = pdp_nack_response_delay;
+    watt.times.nack_supression_duration = pdp_nack_supression_duration;
     watt.mode = ASYNCHRONOUS_WRITER;
+    // Enable separate sending so the filter can be called for each change and reader proxy
+    watt.separate_sending = true;
 #if HAVE_SECURITY
     if (secure)
     {
@@ -472,8 +475,6 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
         // Set pdp filter to writer
         IReaderDataFilter* pdp_filter = static_cast<ddb::PDPDataFilter<ddb::DiscoveryDataBase>*>(&discovery_db_);
         wout->reader_data_filter(pdp_filter);
-        // Enable separate sending so the filter can be called for each change and reader proxy
-        wout->set_separate_sending(true);
     }
     // Could not create PDP Writer, so return false
     else
@@ -1277,7 +1278,7 @@ History::iterator PDPServer::process_change_acknowledgement(
     else
     {
         // If `StatefulWriter::is_acked_by_all()`:
-        if (writer->is_acked_by_all(c))
+        if (writer->is_acked_by_all(c->sequenceNumber))
         {
             // Remove entry from `participants_|writers_|readers_`
             // AND put the change in changes_release
@@ -1611,11 +1612,11 @@ void PDPServer::send_announcement(
     if (dispose)
     {
         RTPSMessageGroup group(getRTPSParticipant(), endpoints->writer.writer_, &sender);
-        endpoints->writer.writer_->fastdds::rtps::StatefulWriter::incrementHBCount();
+        endpoints->writer.writer_->fastdds::rtps::StatefulWriter::increment_hb_count();
         group.add_heartbeat(
             change->sequenceNumber,
             change->sequenceNumber,
-            endpoints->writer.writer_->getHeartbeatCount(),
+            endpoints->writer.writer_->get_heartbeat_count(),
             true,
             false);
 

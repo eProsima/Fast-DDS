@@ -203,8 +203,8 @@ bool LatencyTestSubscriber::init(
                 rp.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
 
                 RTPSReliableWriterQos rw_qos;
-                rw_qos.times.heartbeatPeriod.seconds = 0;
-                rw_qos.times.heartbeatPeriod.nanosec = 100000000;
+                rw_qos.times.heartbeat_period.seconds = 0;
+                rw_qos.times.heartbeat_period.nanosec = 100000000;
                 dw_qos_.reliable_writer_qos(rw_qos);
             }
             else

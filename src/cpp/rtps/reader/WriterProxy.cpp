@@ -31,6 +31,7 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/resources/TimedEvent.h>
 #include <rtps/reader/StatefulReader.hpp>
+#include <rtps/writer/BaseWriter.hpp>
 
 #if !defined(NDEBUG) && !defined(ANDROID) && defined(FASTDDS_SOURCE) && defined(__unix__)
 #define SHOULD_DEBUG_LINUX
@@ -53,7 +54,7 @@ WriterProxy::~WriterProxy()
     if (is_alive_ && is_on_same_process_)
     {
         EPROSIMA_LOG_WARNING(RTPS_READER, "Automatically unmatching on ~WriterProxy");
-        RTPSWriter* writer = RTPSDomainImpl::find_local_writer(guid());
+        BaseWriter* writer = RTPSDomainImpl::find_local_writer(guid());
         if (writer)
         {
             writer->matched_reader_remove(reader_->getGuid());
@@ -501,7 +502,7 @@ bool WriterProxy::perform_initial_ack_nack()
         SequenceNumberSet_t sns(SequenceNumber_t(0, 0));
         if (is_on_same_process_)
         {
-            RTPSWriter* writer = RTPSDomainImpl::find_local_writer(guid());
+            BaseWriter* writer = RTPSDomainImpl::find_local_writer(guid());
             if (writer)
             {
                 bool tmp;

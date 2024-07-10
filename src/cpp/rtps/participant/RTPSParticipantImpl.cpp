@@ -776,16 +776,6 @@ void RTPSParticipantImpl::disable()
     }
 }
 
-const std::vector<RTPSWriter*>& RTPSParticipantImpl::getAllWriters() const
-{
-    return m_allWriterList;
-}
-
-const std::vector<BaseReader*>& RTPSParticipantImpl::getAllReaders() const
-{
-    return m_allReaderList;
-}
-
 RTPSParticipantImpl::~RTPSParticipantImpl()
 {
     disable();
@@ -962,7 +952,7 @@ bool RTPSParticipantImpl::create_writer(
 
     normalize_endpoint_locators(param.endpoint);
 
-    RTPSWriter* SWriter = nullptr;
+    BaseWriter* SWriter = nullptr;
     SWriter = callback(guid, param, flow_controller, persistence, param.endpoint.reliabilityKind == RELIABLE);
 
     // restore attributes
@@ -1241,9 +1231,9 @@ bool RTPSParticipantImpl::create_writer(
 
     auto callback = [hist, listen, this]
                 (const GUID_t& guid, WriterAttributes& watt, fastdds::rtps::FlowController* flow_controller,
-                    IPersistenceService* persistence, bool is_reliable) -> RTPSWriter*
+                    IPersistenceService* persistence, bool is_reliable) -> BaseWriter*
             {
-                RTPSWriter* writer = nullptr;
+                BaseWriter* writer = nullptr;
 
                 if (is_reliable)
                 {
@@ -1377,7 +1367,7 @@ BaseReader* RTPSParticipantImpl::find_local_reader(
     return nullptr;
 }
 
-RTPSWriter* RTPSParticipantImpl::find_local_writer(
+BaseWriter* RTPSParticipantImpl::find_local_writer(
         const GUID_t& writer_guid)
 {
     shared_lock<shared_mutex> _(endpoints_list_mutex);
@@ -2052,7 +2042,7 @@ void RTPSParticipantImpl::deleteAllUserEndpoints()
         sort(m_allWriterList.begin(), m_allWriterList.end());
         sort(m_allReaderList.begin(), m_allReaderList.end());
 
-        vector<RTPSWriter*> writers;
+        vector<BaseWriter*> writers;
         set_difference(m_allWriterList.begin(), m_allWriterList.end(),
                 m_userWriterList.begin(), m_userWriterList.end(),
                 back_inserter(writers));
@@ -2771,7 +2761,7 @@ bool RTPSParticipantImpl::register_in_writer(
     }
     else if (!fastdds::statistics::is_statistics_builtin(writer_guid.entityId))
     {
-        RTPSWriter* writer = find_local_writer(writer_guid);
+        BaseWriter* writer = find_local_writer(writer_guid);
         res = writer->add_statistics_listener(listener);
     }
 

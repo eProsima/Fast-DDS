@@ -18,8 +18,6 @@
 #ifndef FASTDDS_RTPS_WRITER__STATELESSWRITER_HPP
 #define FASTDDS_RTPS_WRITER__STATELESSWRITER_HPP
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
 #include <condition_variable>
 #include <memory>
 #include <mutex>
@@ -32,6 +30,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
+#include <rtps/writer/BaseWriter.hpp>
 #include <rtps/writer/ChangeForReader.hpp>
 #include <rtps/writer/ReaderLocator.hpp>
 
@@ -39,198 +38,161 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-class RTPSMessageGroup;
-
 /**
- * Class StatelessWriter, specialization of RTPSWriter that manages writers that don't keep state of the matched readers.
+ * Class StatelessWriter, specialization of BaseWriter that manages writers that don't keep state of the matched readers.
  * @ingroup WRITER_MODULE
  */
-class StatelessWriter : public RTPSWriter
+class StatelessWriter : public BaseWriter
 {
-    friend class RTPSParticipantImpl;
-    friend class RTPSMessageGroup;
 
-protected:
+public:
 
     StatelessWriter(
             RTPSParticipantImpl* participant,
             const GUID_t& guid,
             const WriterAttributes& attributes,
-            fastdds::rtps::FlowController* flow_controller,
+            FlowController* flow_controller,
             WriterHistory* history,
             WriterListener* listener = nullptr);
 
-public:
-
     virtual ~StatelessWriter();
 
-    /**
-     * Add a specific change to all ReaderLocators.
-     * @param change Pointer to the change.
-     * @param[in] max_blocking_time Maximum time this method has to complete the task.
-     */
-    void unsent_change_added_to_history(
-            CacheChange_t* change,
-            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) override;
+    //vvvvvvvvvvvvvvvvvvvvv [Exported API] vvvvvvvvvvvvvvvvvvvvv
 
-    /**
-     * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.
-     * @param change Pointer to the change that is going to be removed.
-     * @param[in] max_blocking_time Maximum time this method has to complete the task.
-     * @return True if removed correctly.
-     */
-    bool change_removed_by_history(
-            CacheChange_t* change,
-            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) override;
-
-    /**
-     * Add a matched reader.
-     * @param data Pointer to the ReaderProxyData object added.
-     * @return True if added.
-     */
     bool matched_reader_add(
-            const ReaderProxyData& data) override;
+            const ReaderProxyData& data) final;
 
-    /**
-     * Remove a matched reader.
-     * @param reader_guid GUID of the reader to remove.
-     * @return True if removed.
-     */
     bool matched_reader_remove(
-            const GUID_t& reader_guid) override;
+            const GUID_t& reader_guid) final;
 
-    /**
-     * Tells us if a specific Reader is matched against this writer
-     * @param reader_guid GUID of the reader to check.
-     * @return True if it was matched.
-     */
     bool matched_reader_is_matched(
-            const GUID_t& reader_guid) override;
+            const GUID_t& reader_guid) final;
 
-    /**
-     * @brief Set a content filter to perform content filtering on this writer.
-     *
-     * This method sets a content filter that will be used to check whether a cache change is relevant
-     * for a reader or not.
-     *
-     * @param filter  The content filter to use on this writer. May be @c nullptr to remove the content filter
-     *                (i.e. treat all samples as relevant).
-     */
     void reader_data_filter(
-            fastdds::rtps::IReaderDataFilter* filter) final
+            IReaderDataFilter* filter) final
     {
         reader_data_filter_ = filter;
     }
 
-    /**
-     * @brief Get the content filter used to perform content filtering on this writer.
-     *
-     * @return The content filter used on this writer.
-     */
-    const fastdds::rtps::IReaderDataFilter* reader_data_filter() const final
+    const IReaderDataFilter* reader_data_filter() const final
     {
         return reader_data_filter_;
     }
 
-    /**
-     * Update the Attributes of the Writer.
-     * @param att New attributes
-     */
-    void updateAttributes(
-            const WriterAttributes& att) override
+    bool has_been_fully_delivered(
+            const SequenceNumber_t& seq_num) const final;
+
+    bool is_acked_by_all(
+            const SequenceNumber_t& seq_num) const final;
+
+    bool wait_for_all_acked(
+            const Duration_t& max_wait) final;
+
+    void update_attributes(
+            const WriterAttributes& att) final
     {
-        (void)att;
+        static_cast<void>(att);
         //FOR NOW THERE IS NOTHING TO UPDATE.
     }
 
-    bool set_fixed_locators(
-            const LocatorList_t& locator_list);
+    bool get_disable_positive_acks() const final;
 
-    //!Reset the unsent changes.
-    void unsent_changes_reset();
+#ifdef FASTDDS_STATISTICS
+    bool get_connections(
+            fastdds::statistics::rtps::ConnectionList& connection_list) final;
+#endif // FASTDDS_STATISTICS
 
-    /**
-     * @brief Check if a specific change has been delivered to the transport layer at least once for every matched
-     * remote RTPSReader.
-     *
-     * @param seq_num Sequence number of the change to check.
-     * @return true if delivered.
-     * @return false otherwise.
-     */
-    bool has_been_fully_delivered(
-            const SequenceNumber_t& seq_num) const override;
+    //^^^^^^^^^^^^^^^^^^^^^^ [Exported API] ^^^^^^^^^^^^^^^^^^^^^^^
 
-    bool is_acked_by_all(
-            const CacheChange_t* change) const override;
+    //vvvvvvvvvvvvvvvvvvvvv [BaseWriter API] vvvvvvvvvvvvvvvvvvvvvv
+
+    void unsent_change_added_to_history(
+            CacheChange_t* change,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) override;
+
+    bool change_removed_by_history(
+            CacheChange_t* change,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) override;
+
+    DeliveryRetCode deliver_sample_nts(
+            CacheChange_t* cache_change,
+            RTPSMessageGroup& group,
+            LocatorSelectorSender& locator_selector,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) final;
+
+    LocatorSelectorSender& get_general_locator_selector() final
+    {
+        return locator_selector_;
+    }
+
+    LocatorSelectorSender& get_async_locator_selector() final
+    {
+        return locator_selector_;
+    }
+
+    bool send_nts(
+            const std::vector<NetworkBuffer>& buffers,
+            const uint32_t& total_bytes,
+            const LocatorSelectorSender& locator_selector,
+            std::chrono::steady_clock::time_point& max_blocking_time_point) const final;
+
+    bool process_acknack(
+            const GUID_t& writer_guid,
+            const GUID_t& reader_guid,
+            uint32_t ack_count,
+            const SequenceNumberSet_t& sn_set,
+            bool final_flag,
+            bool& result,
+            fastdds::rtps::VendorId_t origin_vendor_id) final;
+
+    bool process_nack_frag(
+            const GUID_t& writer_guid,
+            const GUID_t& reader_guid,
+            uint32_t ack_count,
+            const SequenceNumber_t& seq_num,
+            const FragmentNumberSet_t& fragments_state,
+            bool& result,
+            fastdds::rtps::VendorId_t origin_vendor_id) final;
 
     bool try_remove_change(
             const std::chrono::steady_clock::time_point&,
-            std::unique_lock<RecursiveTimedMutex>&) override;
+            std::unique_lock<RecursiveTimedMutex>&) final;
 
     bool wait_for_acknowledgement(
             const SequenceNumber_t& seq,
             const std::chrono::steady_clock::time_point& max_blocking_time_point,
-            std::unique_lock<RecursiveTimedMutex>& lock) override;
+            std::unique_lock<RecursiveTimedMutex>& lock) final;
+
+    //^^^^^^^^^^^^^^^^^^^^^^ [BaseWriter API] ^^^^^^^^^^^^^^^^^^^^^^^
 
     /**
-     * Send a message through this interface.
+     * @brief Set the locators to which the writer should always send data.
      *
-     * @param buffers Vector of NetworkBuffers to send with data already serialized.
-     * @param total_bytes Total number of bytes to send. Should be equal to the sum of the @c size field of all buffers.
-     * @param locator_selector RTPSMessageSenderInterface reference uses for selecting locators. The reference has to
-     * be a member of this RTPSWriter object.
-     * @param max_blocking_time_point Future timepoint where blocking send should end.
+     * This method is used to configure the initial peers list on the PDP writer.
+     *
+     * @param locator_list List of locators to which the writer should always send data.
+     *
+     * @return true if the locators were set successfully.
      */
-    bool send_nts(
-            const std::vector<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
-            const uint32_t& total_bytes,
-            const LocatorSelectorSender& locator_selector,
-            std::chrono::steady_clock::time_point& max_blocking_time_point) const override;
+    bool set_fixed_locators(
+            const LocatorList_t& locator_list);
+
+    /**
+     * Reset the unsent changes.
+     */
+    void unsent_changes_reset();
 
     /**
      * Get the number of matched readers
      * @return Number of the matched readers
      */
-    inline size_t getMatchedReadersSize() const
+    inline size_t get_matched_readers_size() const
     {
         std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
         return matched_remote_readers_.size()
                + matched_local_readers_.size()
                + matched_datasharing_readers_.size();
     }
-
-    /*!
-     * Tells writer the sample can be sent to the network.
-     * This function should be used by a fastdds::rtps::FlowController.
-     *
-     * @param cache_change Pointer to the CacheChange_t that represents the sample which can be sent.
-     * @param group RTPSMessageGroup reference uses for generating the RTPS message.
-     * @param locator_selector RTPSMessageSenderInterface reference uses for selecting locators. The reference has to
-     * be a member of this RTPSWriter object.
-     * @param max_blocking_time Future timepoint where blocking send should end.
-     * @return Return code.
-     * @note Must be non-thread safe.
-     */
-    DeliveryRetCode deliver_sample_nts(
-            CacheChange_t* cache_change,
-            RTPSMessageGroup& group,
-            LocatorSelectorSender& locator_selector,
-            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) override;
-
-    LocatorSelectorSender& get_general_locator_selector() override
-    {
-        return locator_selector_;
-    }
-
-    LocatorSelectorSender& get_async_locator_selector() override
-    {
-        return locator_selector_;
-    }
-
-#ifdef FASTDDS_STATISTICS
-    bool get_connections(
-            fastdds::statistics::rtps::ConnectionList& connection_list) override;
-#endif // ifdef FASTDDS_STATISTICS
 
 private:
 
@@ -252,11 +214,6 @@ private:
             CacheChange_t* change,
             ReaderLocator& reader_locator);
 
-    //! Check if a specific sequence number has been sent to every remote RTPSReader
-    bool is_acked_by_all(
-            const SequenceNumber_t& seq_num) const;
-
-
     bool is_inline_qos_expected_ = false;
     LocatorList_t fixed_locators_;
     ResourceLimitedVector<std::unique_ptr<ReaderLocator>> matched_remote_readers_;
@@ -275,12 +232,12 @@ private:
 
     LocatorSelectorSender locator_selector_;
 
-    fastdds::rtps::IReaderDataFilter* reader_data_filter_ = nullptr;
+    IReaderDataFilter* reader_data_filter_ = nullptr;
 };
 
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif // FASTDDS_RTPS_WRITER__STATELESSWRITER_HPP
+

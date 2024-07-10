@@ -158,8 +158,8 @@ const char* const ROS_SUPER_CLIENT = "ROS_SUPER_CLIENT";
 /**
  * Retrieves a semicolon-separated list of locators from a string, and
  * populates a LocatorList_t.
- * @param[in] list servers listening locator list.
- * @param[out] servers_list reference to a LocatorList_t to populate.
+ * @param [in] list servers listening locator list.
+ * @param [out] servers_list reference to a LocatorList_t to populate.
  * @return true if parsing succeeds, false otherwise (or if the list is empty)
  */
 bool load_environment_server_info(
@@ -174,7 +174,7 @@ bool load_environment_server_info(
  * servers list) or directly from the environment.
  * The value contained in the file takes precedence over the environment value (if both are set).
  *
- * @param[out] servers_list reference to a LocatorList_t to populate.
+ * @param [out] servers_list reference to a LocatorList_t to populate.
  * @return true if parsing succeeds, false otherwise
  */
 bool load_environment_server_info(

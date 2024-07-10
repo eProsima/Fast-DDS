@@ -21,13 +21,15 @@
 
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
+#include <rtps/writer/BaseWriter.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
 class RTPSParticipantImpl;
 
-class StatelessWriter : public RTPSWriter
+class StatelessWriter : public BaseWriter
 {
 public:
 

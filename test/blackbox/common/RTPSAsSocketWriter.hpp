@@ -69,10 +69,10 @@ public:
         hattr_.memoryPolicy = eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.
-        writer_attr_.times.heartbeatPeriod.seconds = 0;
-        writer_attr_.times.heartbeatPeriod.nanosec = 100000000;
-        writer_attr_.times.nackResponseDelay.seconds = 0;
-        writer_attr_.times.nackResponseDelay.nanosec = 100000000;
+        writer_attr_.times.heartbeat_period.seconds = 0;
+        writer_attr_.times.heartbeat_period.nanosec = 100000000;
+        writer_attr_.times.nack_response_delay.seconds = 0;
+        writer_attr_.times.nack_response_delay.nanosec = 100000000;
     }
 
     virtual ~RTPSAsSocketWriter()
@@ -87,7 +87,7 @@ public:
         }
     }
 
-    void onWriterChangeReceivedByAll(
+    void on_writer_change_received_by_all(
             eprosima::fastdds::rtps::RTPSWriter* /*writer*/,
             eprosima::fastdds::rtps::CacheChange_t* change) override
     {
@@ -287,14 +287,14 @@ public:
     RTPSAsSocketWriter& heartbeat_period_seconds(
             int32_t sec)
     {
-        writer_attr_.times.heartbeatPeriod.seconds = sec;
+        writer_attr_.times.heartbeat_period.seconds = sec;
         return *this;
     }
 
     RTPSAsSocketWriter& heartbeat_period_nanosec(
             uint32_t nanosec)
     {
-        writer_attr_.times.heartbeatPeriod.nanosec = nanosec;
+        writer_attr_.times.heartbeat_period.nanosec = nanosec;
         return *this;
     }
 
@@ -308,10 +308,10 @@ public:
     }
 
     /*** Access RTPSWriter functions ***/
-    void updateAttributes(
+    void update_attributes(
             const eprosima::fastdds::rtps::WriterAttributes& att)
     {
-        writer_->updateAttributes(att);
+        writer_->update_attributes(att);
         return;
     }
 

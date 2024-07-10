@@ -1116,6 +1116,7 @@ bool SecurityManager::create_participant_stateless_message_writer()
     watt.endpoint.reliabilityKind = BEST_EFFORT;
     watt.endpoint.topicKind = NO_KEY;
     watt.matched_readers_allocation = pattr.allocation.participants;
+    watt.separate_sending = true;
 
     RTPSWriter* wout = nullptr;
     if (participant_->createWriter(&wout, watt,
@@ -1124,7 +1125,6 @@ bool SecurityManager::create_participant_stateless_message_writer()
     {
         participant_->set_endpoint_rtps_protection_supports(wout, false);
         participant_stateless_message_writer_ = dynamic_cast<StatelessWriter*>(wout);
-        participant_stateless_message_writer_->set_separate_sending(true);
         auth_source_guid = participant_stateless_message_writer_->getGuid();
 
         return true;
@@ -1271,6 +1271,7 @@ bool SecurityManager::create_participant_volatile_message_secure_writer()
     watt.endpoint.security_attributes().plugin_endpoint_attributes =
             PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
     watt.matched_readers_allocation = pattr.allocation.participants;
+    watt.separate_sending = true;
 
     RTPSWriter* wout = nullptr;
     if (participant_->createWriter(&wout, watt,
@@ -1279,7 +1280,6 @@ bool SecurityManager::create_participant_volatile_message_secure_writer()
     {
         participant_->set_endpoint_rtps_protection_supports(wout, false);
         participant_volatile_message_secure_writer_ = dynamic_cast<StatefulWriter*>(wout);
-        participant_volatile_message_secure_writer_->set_separate_sending(true);
         return true;
     }
 
@@ -4342,7 +4342,7 @@ bool SecurityManager::DiscoveredParticipantInfo::check_guid_comes_from(
     return ret;
 }
 
-void SecurityManager::onWriterChangeReceivedByAll(
+void SecurityManager::on_writer_change_received_by_all(
         RTPSWriter* writer,
         CacheChange_t* change)
 {

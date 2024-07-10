@@ -336,7 +336,7 @@ void EDPSimpleSUBListener::on_new_cache_change_added(
     }
 }
 
-void EDPSimplePUBListener::onWriterChangeReceivedByAll(
+void EDPSimplePUBListener::on_writer_change_received_by_all(
         RTPSWriter* writer,
         CacheChange_t* change)
 {
@@ -355,7 +355,7 @@ void EDPSimplePUBListener::onWriterChangeReceivedByAll(
     }
 }
 
-void EDPSimpleSUBListener::onWriterChangeReceivedByAll(
+void EDPSimpleSUBListener::on_writer_change_received_by_all(
         RTPSWriter* writer,
         CacheChange_t* change)
 {

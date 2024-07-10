@@ -61,8 +61,8 @@ public:
     /**
      * @brief This operation enables a Statistics DataWriter
      *
-     * @param[in] topic_name Name of the topic associated to the Statistics DataWriter
-     * @param[in] dwqos DataWriterQos to be set
+     * @param [in] topic_name Name of the topic associated to the Statistics DataWriter
+     * @param [in] dwqos DataWriterQos to be set
      * @return RETCODE_BAD_PARAMETER if the topic name provided does not correspond to any Statistics DataWriter,
      * RETCODE_INCONSISTENT_POLICY if the DataWriterQos provided is inconsistent,
      * RETCODE_OK if the DataWriter has been created or if it has been created previously,
@@ -75,8 +75,8 @@ public:
     /**
      * @brief This operation enables a Statistics DataWriter from a provided XML defined profile
      *
-     * @param[in] profile_name Name for the profile to be used to fill the QoS structure.
-     * @param[in] topic_name Name of the statistics topic to be enabled.
+     * @param [in] profile_name Name for the profile to be used to fill the QoS structure.
+     * @param [in] topic_name Name of the statistics topic to be enabled.
      * @return RETCODE_BAD_PARAMETER if the topic name provided does not correspond to any Statistics DataWriter,
      * RETCODE_INCONSISTENT_POLICY if the DataWriterQos provided is inconsistent,
      * RETCODE_OK if the DataWriter has been created or if it has been created previously,
@@ -89,7 +89,7 @@ public:
     /**
      * @brief This operation disables a Statistics DataWriter
      *
-     * @param[in] topic_name Name of the topic associated to the Statistics DataWriter
+     * @param [in] topic_name Name of the topic associated to the Statistics DataWriter
      * @return RETCODE_UNSUPPORTED if the FASTDDS_STATISTICS CMake option has not been set,
      * RETCODE_BAD_PARAMETER if the topic name provided does not correspond to any Statistics DataWriter,
      * RETCODE_OK if the DataWriter has been correctly deleted or does not exist,
@@ -251,9 +251,9 @@ protected:
     /**
      * Auxiliary function to register the statistics type depending on the statistics topic name.
      * It also creates the topic (or finds it if already created) and returns the pointer.
-     * @param[out] topic pointer to the created topic pointer.
+     * @param [out] topic pointer to the created topic pointer.
      * If the method returns false the parameter is not modified.
-     * @param[in] topic_name string with the statistics topic name.
+     * @param [in] topic_name string with the statistics topic name.
      * @return true if successful.
      * false in case there is incompatibility between the type associated to the Topic and the expected type.
      */
@@ -265,9 +265,9 @@ protected:
      * Auxiliary function that checks if the topic is already created within the domain participant.
      * If it is not, it creates the topic and registers the type. It also checks if the type can be registered.
      * If succesfull, it returns the pointer to the found or created topic.
-     * @param[out] topic pointer to the found or created topic pointer.
-     * @param[in] topic_name string with the topic name to find or create.
-     * @param[in] type TypeSupport to register.
+     * @param [out] topic pointer to the found or created topic pointer.
+     * @param [in] topic_name string with the topic name to find or create.
+     * @param [in] type TypeSupport to register.
      * @return false if the topic is found but uses another type different from the expected one or if register_type
      * fails because there is another TypeSupport using the same name. true otherwise.
      */

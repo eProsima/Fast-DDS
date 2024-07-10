@@ -43,7 +43,6 @@ public:
         : max_data_size_(payload_size)
         , pool_size_(pool_size)
         , free_history_size_(0)
-        , writer_(nullptr)
     {
     }
 
@@ -134,8 +133,7 @@ public:
             const RTPSWriter* writer,
             const std::string& shared_dir)
     {
-        writer_ = writer;
-        segment_id_ = writer_->getGuid();
+        segment_id_ = writer->getGuid();
         segment_name_ = generate_segment_name(shared_dir, segment_id_);
         std::unique_ptr<T> local_segment;
         size_t payload_size;
@@ -352,8 +350,6 @@ private:
     uint32_t free_history_size_;    //< Number of elements currently unused in the shared history
 
     FixedSizeQueue<PayloadNode*> free_payloads_;    //< Pointers to the free payloads in the pool
-
-    const RTPSWriter* writer_;      //< Writer that is owner of the pool
 
     bool is_initialized_ = false;   //< Whether the pool has been initialized on shared memory
 

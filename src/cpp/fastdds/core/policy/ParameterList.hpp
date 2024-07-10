@@ -51,9 +51,9 @@ public:
 
     /**
      * Update the information of a cache change parsing the inline qos from a CDRMessage
-     * @param[inout] change Reference to the cache change to be updated.
-     * @param[in] msg Pointer to the message (the pos should be correct, otherwise the behaviour is undefined).
-     * @param[out] qos_size Number of bytes processed.
+     * @param [inout] change Reference to the cache change to be updated.
+     * @param [in] msg Pointer to the message (the pos should be correct, otherwise the behaviour is undefined).
+     * @param [out] qos_size Number of bytes processed.
      * @return true if parsing was correct, false otherwise.
      */
     static bool updateCacheChangeFromInlineQos(
@@ -63,10 +63,10 @@ public:
 
     /**
      * Read a parameterList from a CDRMessage
-     * @param[in] msg Reference to the message (the pos should be correct, otherwise the behaviour is undefined).
-     * @param[in] processor Function to process each of the parameters in the list.
-     * @param[in] use_encapsulation Whether encapsulation field should be read.
-     * @param[out] qos_size Number of bytes processed.
+     * @param [in] msg Reference to the message (the pos should be correct, otherwise the behaviour is undefined).
+     * @param [in] processor Function to process each of the parameters in the list.
+     * @param [in] use_encapsulation Whether encapsulation field should be read.
+     * @param [out] qos_size Number of bytes processed.
      * @return true if parsing was correct, false otherwise.
      */
     template<typename Pred>
@@ -141,9 +141,9 @@ public:
 
     /**
      * Read guid from the KEY_HASH or another specific PID parameter of a CDRMessage
-     * @param[in,out] msg Reference to the message (pos should be correct, otherwise the behaviour is undefined).
-     * @param[in] search_pid Specific PID to search
-     * @param[out] guid Reference where the guid will be written.
+     * @param [in,out] msg Reference to the message (pos should be correct, otherwise the behaviour is undefined).
+     * @param [in] search_pid Specific PID to search
+     * @param [out] guid Reference where the guid will be written.
      * @return true if a guid is returned, false otherwise.
      */
     static bool read_guid_from_cdr_msg(
@@ -153,8 +153,8 @@ public:
 
     /**
      * Read change instanceHandle from the KEY_HASH or another specific PID parameter of a CDRMessage
-     * @param[in,out] change Pointer to the cache change.
-     * @param[in] search_pid Specific PID to search
+     * @param [in,out] change Pointer to the cache change.
+     * @param [in] search_pid Specific PID to search
      * @return True when instanceHandle is updated.
      */
     static bool readInstanceHandleFromCDRMsg(

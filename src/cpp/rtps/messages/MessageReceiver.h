@@ -39,6 +39,7 @@ namespace fastdds {
 namespace rtps {
 
 class BaseReader;
+class BaseWriter;
 
 }  // namespace rtps
 }  // namespace fastdds
@@ -92,7 +93,7 @@ public:
 private:
 
     mutable eprosima::shared_mutex mtx_;
-    std::vector<RTPSWriter*> associated_writers_;
+    std::vector<BaseWriter*> associated_writers_;
     std::unordered_map<EntityId_t, std::vector<BaseReader*>> associated_readers_;
 
     RTPSParticipantImpl* participant_;
@@ -175,10 +176,10 @@ private:
      * -Modify the message receiver state if necessary.
      * -Add information to the history.
      * -Return an error if the message is malformed.
-     * @param[in,out] msg      Pointer to the message
-     * @param[in] smh          Pointer to the submessage header
-     * @param[out] WriterID    Writer EntityID (only for DATA messages)
-     * @param[in] was_decoded  Whether the submessage being processed came from decoding a secured submessage
+     * @param [in,out] msg      Pointer to the message
+     * @param [in] smh          Pointer to the submessage header
+     * @param [out] WriterID    Writer EntityID (only for DATA messages)
+     * @param [in] was_decoded  Whether the submessage being processed came from decoding a secured submessage
      * @return True if correct, false otherwise
      */
 
@@ -235,9 +236,9 @@ private:
     /**
      * @name Variants of received data message processing functions.
      *
-     * @param[in] reader_id    The ID of the reader to which the changes is addressed
-     * @param[in] change       The CacheChange with the received data to process
-     * @param[in] was_decoded  Whether the submessage being processed came from decoding a secured submessage
+     * @param [in] reader_id    The ID of the reader to which the changes is addressed
+     * @param [in] change       The CacheChange with the received data to process
+     * @param [in] was_decoded  Whether the submessage being processed came from decoding a secured submessage
      */
     ///@{
  #if HAVE_SECURITY
@@ -256,13 +257,13 @@ private:
     /**
      * @name Variants of received data fragment message processing functions.
      *
-     * @param[in] reader_id The ID of the reader to which the changes is addressed
-     * @param[in] change    The CacheChange with the received data to process
+     * @param [in] reader_id The ID of the reader to which the changes is addressed
+     * @param [in] change    The CacheChange with the received data to process
      *
-     * @param[in] sample_size             The size of the message
-     * @param[in] fragment_starting_num   The index of the first fragment in the message
-     * @param[in] fragments_in_submessage The number of fragments in the message
-     * @param[in] was_decoded             Whether the submessage being processed came from decoding a secured
+     * @param [in] sample_size             The size of the message
+     * @param [in] fragment_starting_num   The index of the first fragment in the message
+     * @param [in] fragments_in_submessage The number of fragments in the message
+     * @param [in] was_decoded             Whether the submessage being processed came from decoding a secured
      *                                    submessage
      */
     ///@{

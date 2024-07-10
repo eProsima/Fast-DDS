@@ -30,6 +30,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
 #include <rtps/reader/BaseReader.hpp>
+#include <rtps/writer/BaseWriter.hpp>
 #include <utils/shared_memory/BoostAtExitRegistry.hpp>
 #include <utils/SystemInfo.hpp>
 
@@ -45,8 +46,6 @@ namespace rtps {
  */
 class RTPSDomainImpl
 {
-
-    using BaseReader = fastdds::rtps::BaseReader;
 
 public:
 
@@ -104,7 +103,7 @@ public:
 
     /**
      * Remove a RTPSParticipant and delete all its associated Writers, Readers, resources, etc.
-     * @param[in] p Pointer to the RTPSParticipant;
+     * @param [in] p Pointer to the RTPSParticipant;
      * @return True if correct.
      */
     static bool removeRTPSParticipant(
@@ -186,7 +185,7 @@ public:
      *
      * @returns A pointer to a local writer given its endpoint guid, or nullptr if not found.
      */
-    static RTPSWriter* find_local_writer(
+    static BaseWriter* find_local_writer(
             const GUID_t& writer_guid);
 
     /**

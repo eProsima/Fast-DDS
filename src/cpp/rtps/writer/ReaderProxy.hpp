@@ -124,13 +124,13 @@ public:
     /**
      * Check if a specific change is marked to be sent to this reader.
      *
-     * @param[in]  seq_num Sequence number of the change to be checked.
-     * @param[out] next_unsent_frag Return next fragment to be sent.
-     * @param[out] gap_seq Return, when it is its first delivery (should be relevant seq_num), the sequence number of
+     * @param [in]  seq_num Sequence number of the change to be checked.
+     * @param [out] next_unsent_frag Return next fragment to be sent.
+     * @param [out] gap_seq Return, when it is its first delivery (should be relevant seq_num), the sequence number of
      * the first sequence of the gap [first, seq_num). Otherwise return SequenceNumber_t::unknown().
-     * @param[in]  min_seq Minimum sequence number managed by the History. It could be SequenceNumber_t::unknown() if
+     * @param [in]  min_seq Minimum sequence number managed by the History. It could be SequenceNumber_t::unknown() if
      * history is empty.
-     * @param[out] need_reactivate_periodic_heartbeat Indicates if the heartbeat period event has to be restarted.
+     * @param [out] need_reactivate_periodic_heartbeat Indicates if the heartbeat period event has to be restarted.
      *
      * @return true if the change is marked to be sent. False otherwise.
      */
@@ -154,7 +154,7 @@ public:
      * @param seq_num_set Bitmap of sequence numbers.
      * @param gap_builder RTPSGapBuilder reference uses for adding  each requested change that is irrelevant for the
      * requester.
-     * @param[in] min_seq_in_history Minimum SequenceNumber_t in the writer's history. If writer's history is empty,
+     * @param [in] min_seq_in_history Minimum SequenceNumber_t in the writer's history. If writer's history is empty,
      * SequenceNumber_t::unknown() is expected.
      * @return true if at least one change has been marked as REQUESTED, false otherwise.
      */
@@ -186,9 +186,9 @@ public:
 
     /**
      * @brief Mark a particular fragment as sent.
-     * @param[in]  seq_num Sequence number of the change to update.
-     * @param[in]  frag_num Fragment number to mark as sent.
-     * @param[out] was_last_fragment Indicates if the fragment was the last one pending.
+     * @param [in]  seq_num Sequence number of the change to update.
+     * @param [in]  frag_num Fragment number to mark as sent.
+     * @param [out] was_last_fragment Indicates if the fragment was the last one pending.
      * @return true when the change was found, false otherwise.
      */
     bool mark_fragment_as_sent_for_change(
@@ -469,8 +469,8 @@ private:
 
     /*!
      * @brief Adds requested fragments. These fragments will be sent in next NackResponseDelay.
-     * @param[in] seq_num Sequence number to be paired with the requested fragments.
-     * @param[in] frag_set set containing the requested fragments to be sent.
+     * @param [in] seq_num Sequence number to be paired with the requested fragments.
+     * @param [in] frag_set set containing the requested fragments to be sent.
      * @return True if there is at least one requested fragment. False in other case.
      */
     bool requested_fragment_set(

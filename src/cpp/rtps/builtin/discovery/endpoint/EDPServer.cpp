@@ -80,13 +80,15 @@ bool EDPServer::createSEDPEndpoints()
         /* If the participant declares that it will have publications, then it needs a writer to announce them, and a
          * reader to receive information about subscriptions that might match the participant's publications.
          *    1. Create publications writer
-         *       1.1. Set writer's data filter
-         *       1.2. Enable separate sending
+         *       1.1. Enable separate sending
+         *       1.2. Set writer's data filter
          *    2. Create subscriptions reader
          */
 
         // 1. Set publications writer history and create the writer. Set `created` to the result.
         publications_writer_.second = new WriterHistory(writer_history_att);
+        // 1.1. Enable separate sending so the filter can be called for each change and reader proxy
+        watt.separate_sending = true;
 
         created &= this->mp_RTPSParticipant->createWriter(&waux, watt, publications_writer_.second,
                         publications_listener_, c_EntityId_SEDPPubWriter, true);
@@ -95,13 +97,11 @@ bool EDPServer::createSEDPEndpoints()
         {
             // Cast publications writer to a StatefulWriter, since we now that's what it is
             publications_writer_.first = dynamic_cast<StatefulWriter*>(waux);
-            // 1.1. Set publications writer data filter
+            // 1.2. Set publications writer data filter
             IReaderDataFilter* edp_publications_filter =
                     static_cast<ddb::EDPDataFilter<ddb::DiscoveryDataBase,
                             true>*>(&dynamic_cast<PDPServer*>(mp_PDP)->discovery_db());
             publications_writer_.first->reader_data_filter(edp_publications_filter);
-            // 1.2. Enable separate sending so the filter can be called for each change and reader proxy
-            publications_writer_.first->set_separate_sending(true);
             EPROSIMA_LOG_INFO(RTPS_EDP, "SEDP Publications Writer created");
 
             // TODO check if this should be done here or below
@@ -149,13 +149,15 @@ bool EDPServer::createSEDPEndpoints()
         /* If the participant declares that it will have subscriptions, then it needs a writer to announce them, and a
          * reader to receive information about publications that might match the participant's subscriptions.
          *    1. Create subscriptions writer
-         *       1.1. Set writer's data filter
-         *       1.2. Enable separate sending
+         *       1.1. Enable separate sending
+         *       1.2. Set writer's data filter
          *    2. Create publications reader
          */
 
         // 1. Set subscriptions writer history and create the writer. Set `created` to the result.
         subscriptions_writer_.second = new WriterHistory(writer_history_att);
+        // 1.1. Enable separate sending so the filter can be called for each change and reader proxy
+        watt.separate_sending = true;
         created &= this->mp_RTPSParticipant->createWriter(&waux, watt, subscriptions_writer_.second,
                         subscriptions_listener_, c_EntityId_SEDPSubWriter, true);
 
@@ -163,13 +165,11 @@ bool EDPServer::createSEDPEndpoints()
         {
             // Cast subscriptions writer to a StatefulWriter, since we now that's what it is
             subscriptions_writer_.first = dynamic_cast<StatefulWriter*>(waux);
-            // 1.1. Set subscriptions writer data filter
+            // 1.2. Set subscriptions writer data filter
             IReaderDataFilter* edp_subscriptions_filter =
                     static_cast<ddb::EDPDataFilter<ddb::DiscoveryDataBase,
                             false>*>(&dynamic_cast<PDPServer*>(mp_PDP)->discovery_db());
             subscriptions_writer_.first->reader_data_filter(edp_subscriptions_filter);
-            // 1.2. Enable separate sending so the filter can be called for each change and reader proxy
-            subscriptions_writer_.first->set_separate_sending(true);
             EPROSIMA_LOG_INFO(RTPS_EDP, "SEDP Subscriptions Writer created");
 
             // TODO check if this should be done here or below

@@ -130,8 +130,8 @@ inline std::ostream& operator <<(
 
 /**
  * Returns the guidPrefix associated to the given server id
- * @param[in] id of the default server whose guidPrefix we want to retrieve
- * @param[out] guid reference to the guidPrefix to modify
+ * @param [in] id of the default server whose guidPrefix we want to retrieve
+ * @param [out] guid reference to the guidPrefix to modify
  * @return true if the server guid can be delivered
  */
 FASTDDS_EXPORTED_API bool get_server_client_default_guidPrefix(

@@ -72,9 +72,9 @@ private:
         {
         }
 
-        void onWriterMatched(
+        void on_writer_matched(
                 eprosima::fastdds::rtps::RTPSWriter* /*writer*/,
-                eprosima::fastdds::rtps::MatchingInfo& info) override
+                const eprosima::fastdds::rtps::MatchingInfo& info) override
         {
             if (info.status == eprosima::fastdds::rtps::MATCHED_MATCHING)
             {
@@ -96,8 +96,6 @@ private:
         }
 
     private:
-
-        using eprosima::fastdds::rtps::WriterListener::onWriterMatched;
 
         Listener& operator =(
                 const Listener&) = delete;
@@ -133,10 +131,10 @@ public:
         topic_attr_.topicName = t.str();
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.
-        writer_attr_.times.heartbeatPeriod.seconds = 0;
-        writer_attr_.times.heartbeatPeriod.nanosec = 100000000;
-        writer_attr_.times.nackResponseDelay.seconds = 0;
-        writer_attr_.times.nackResponseDelay.nanosec = 100000000;
+        writer_attr_.times.heartbeat_period.seconds = 0;
+        writer_attr_.times.heartbeat_period.nanosec = 100000000;
+        writer_attr_.times.nack_response_delay.seconds = 0;
+        writer_attr_.times.nack_response_delay.nanosec = 100000000;
 
         participant_attr_.builtin.discovery_config.discoveryProtocol =
                 eprosima::fastdds::rtps::DiscoveryProtocol::SIMPLE;
@@ -419,14 +417,14 @@ public:
     RTPSWithRegistrationWriter& heartbeat_period_seconds(
             int32_t sec)
     {
-        writer_attr_.times.heartbeatPeriod.seconds = sec;
+        writer_attr_.times.heartbeat_period.seconds = sec;
         return *this;
     }
 
     RTPSWithRegistrationWriter& heartbeat_period_nanosec(
             uint32_t nanosec)
     {
-        writer_attr_.times.heartbeatPeriod.nanosec = nanosec;
+        writer_attr_.times.heartbeat_period.nanosec = nanosec;
         return *this;
     }
 
@@ -535,10 +533,11 @@ public:
         return *this;
     }
 
-    void set_separate_sending(
+    RTPSWithRegistrationWriter& set_separate_sending(
             bool separate_sending)
     {
-        writer_->set_separate_sending(separate_sending);
+        writer_attr_.separate_sending = separate_sending;
+        return *this;
     }
 
     uint32_t get_matched() const

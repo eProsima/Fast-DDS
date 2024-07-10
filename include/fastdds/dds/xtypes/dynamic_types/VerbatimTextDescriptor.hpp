@@ -45,14 +45,14 @@ public:
 
     /*!
      * Sets the location within the generated output at which the output text should be inserted.
-     * @param[in] placement The location.
+     * @param [in] placement The location.
      */
     virtual void placement(
             const std::string& placement) = 0;
 
     /*!
      * Sets the location within the generated output at which the output text should be inserted.
-     * @param[in] placement The location.
+     * @param [in] placement The location.
      */
     virtual void placement(
             std::string&& placement) = 0;
@@ -71,21 +71,21 @@ public:
 
     /*!
      * Sets the literal output text.
-     * @param[in] text The text.
+     * @param [in] text The text.
      */
     virtual void text(
             const std::string& text) = 0;
 
     /*!
      * Sets the literal output text.
-     * @param[in] text The text.
+     * @param [in] text The text.
      */
     virtual void text(
             std::string&& text) = 0;
 
     /*!
      * Overwrites the contents of this descriptor with those of another descriptor.
-     * @param[in] descriptor reference.
+     * @param [in] descriptor reference.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the copy was successful.
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil.
@@ -95,7 +95,7 @@ public:
 
     /*!
      * Compares.
-     * @param[in] descriptor reference to compare to.
+     * @param [in] descriptor reference to compare to.
      * @return \b bool `true` on equality
      */
     virtual bool equals(

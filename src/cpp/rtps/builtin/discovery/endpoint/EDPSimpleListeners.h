@@ -145,7 +145,7 @@ public:
      * @param writer Pointer to the RTPSWriter.
      * @param change Pointer to the affected CacheChange_t.
      */
-    void onWriterChangeReceivedByAll(
+    void on_writer_change_received_by_all(
             RTPSWriter* writer,
             CacheChange_t* change) override;
 
@@ -189,7 +189,7 @@ public:
      * @param writer Pointer to the RTPSWriter.
      * @param change Pointer to the affected CacheChange_t.
      */
-    void onWriterChangeReceivedByAll(
+    void on_writer_change_received_by_all(
             RTPSWriter* writer,
             CacheChange_t* change) override;
 

@@ -51,8 +51,8 @@ public:
     /**
      * @brief Build TypeObjectHashId instance.
      *
-     * @param[in] discriminator TypeObjectHashId discriminator to be set.
-     * @param[in] hash StronglyConnectedComponent equivalence hash to be set.
+     * @param [in] discriminator TypeObjectHashId discriminator to be set.
+     * @param [in] hash StronglyConnectedComponent equivalence hash to be set.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given discriminator is not
      *            EK_COMPLETE/EK_MINIMAL.
      * @return const TypeObjectHashId instance.
@@ -64,8 +64,8 @@ public:
     /**
      * @brief Build CollectionElementFlag instance.
      *
-     * @param[in] try_construct_kind try_construct annotation value.
-     * @param[in] external external annotation value.
+     * @param [in] try_construct_kind try_construct annotation value.
+     * @param [in] external external annotation value.
      * @return CollectionElementFlag instance.
      */
     FASTDDS_EXPORTED_API static CollectionElementFlag build_collection_element_flag(
@@ -75,11 +75,11 @@ public:
     /**
      * @brief Build StructMemberFlag instance.
      *
-     * @param[in] try_construct_kind try_construct annotation value.
-     * @param[in] optional optional annotation value.
-     * @param[in] must_understand must_understand annotation value.
-     * @param[in] key key annotation value.
-     * @param[in] external external annotation value.
+     * @param [in] try_construct_kind try_construct annotation value.
+     * @param [in] optional optional annotation value.
+     * @param [in] must_understand must_understand annotation value.
+     * @param [in] key key annotation value.
+     * @param [in] external external annotation value.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if both key and optional flags are
      *            enabled.
      * @return StructMemberFlag instance.
@@ -94,9 +94,9 @@ public:
     /**
      * @brief Build UnionMemberFlag instance.
      *
-     * @param[in] try_construct_kind try_construct annotation value.
-     * @param[in] default_member is default member.
-     * @param[in] external external annotation value.
+     * @param [in] try_construct_kind try_construct annotation value.
+     * @param [in] default_member is default member.
+     * @param [in] external external annotation value.
      * @return UnionMemberFlag instance.
      */
     FASTDDS_EXPORTED_API static UnionMemberFlag build_union_member_flag(
@@ -107,8 +107,8 @@ public:
     /**
      * @brief Build UnionDiscriminatorFlag instance.
      *
-     * @param[in] try_construct_kind try_construct annotation value.
-     * @param[in] key key annotation value.
+     * @param [in] try_construct_kind try_construct annotation value.
+     * @param [in] key key annotation value.
      * @return UnionDiscriminatorFlag instance.
      */
     FASTDDS_EXPORTED_API static UnionDiscriminatorFlag build_union_discriminator_flag(
@@ -118,7 +118,7 @@ public:
     /**
      * @brief Build EnumeratedLiteralFlag instance.
      *
-     * @param[in] default_literal default_literal annotation value.
+     * @param [in] default_literal default_literal annotation value.
      * @return EnumeratedLiteralFlag instance.
      */
     FASTDDS_EXPORTED_API static EnumeratedLiteralFlag build_enumerated_literal_flag(
@@ -134,9 +134,9 @@ public:
     /**
      * @brief Build StructTypeFlag instance.
      *
-     * @param[in] extensibility_kind extensibility annotation value.
-     * @param[in] nested nested annotation value.
-     * @param[in] autoid_hash autoid annotation has HASH value.
+     * @param [in] extensibility_kind extensibility annotation value.
+     * @param [in] nested nested annotation value.
+     * @param [in] autoid_hash autoid annotation has HASH value.
      * @return StructTypeFlag instance.
      */
     FASTDDS_EXPORTED_API static StructTypeFlag build_struct_type_flag(
@@ -147,9 +147,9 @@ public:
     /**
      * @brief Build UnionTypeFlag instance.
      *
-     * @param[in] extensibility_kind extensibility annotation value.
-     * @param[in] nested nested annotation value.
-     * @param[in] autoid_hash autoid annotation has HASH value.
+     * @param [in] extensibility_kind extensibility annotation value.
+     * @param [in] nested nested annotation value.
+     * @param [in] autoid_hash autoid annotation has HASH value.
      * @return UnionTypeFlag instance.
      */
     FASTDDS_EXPORTED_API static UnionTypeFlag build_union_type_flag(
@@ -172,7 +172,7 @@ public:
      * @brief Build StringSTypeDefn instance.
      *
      * @pre bound > 0 (INVALID_SBOUND)
-     * @param[in] bound Bound for the small string/wstring.
+     * @param [in] bound Bound for the small string/wstring.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if bound is 0.
      * @return const StringSTypeDefn instance.
      */
@@ -183,7 +183,7 @@ public:
      * @brief Build StringLTypeDefn instance.
      *
      * @pre bound > 255
-     * @param[in] bound Bound for the large string/wstring.
+     * @param [in] bound Bound for the large string/wstring.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if bound is lower than 256.
      * @return const StringLTypeDefn instance.
      */
@@ -193,8 +193,8 @@ public:
     /**
      * @brief Build PlainCollectionHeader instance.
      *
-     * @param[in] equiv_kind EquivalenceKind: EK_MINIMAL/EK_COMPLETE/EK_BOTH
-     * @param[in] element_flags CollectionElementFlags to be set. This element must be constructed with the corresponding
+     * @param [in] equiv_kind EquivalenceKind: EK_MINIMAL/EK_COMPLETE/EK_BOTH
+     * @param [in] element_flags CollectionElementFlags to be set. This element must be constructed with the corresponding
      *                      builder to ensure its consistency.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError if the given element_flags are inconsistent.
      *            This exception is only thrown in Debug build mode.
@@ -209,9 +209,9 @@ public:
      *
      * @pre bound > 0 (INVALID_SBOUND)
      * @pre element_identifier has been initialized.
-     * @param[in] header PlainCollectionHeader to be set.
-     * @param[in] s_bound Sequence bound.
-     * @param[in] element_identifier Sequence element TypeIdentifier.
+     * @param [in] header PlainCollectionHeader to be set.
+     * @param [in] s_bound Sequence bound.
+     * @param [in] element_identifier Sequence element TypeIdentifier.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception
      *              1. The given bound is 0.
      *              2. The given TypeIdentifier EquivalenceKind is not consistent with the one contained in the header.
@@ -229,9 +229,9 @@ public:
      *
      * @pre bound > 255
      * @pre element_identifier has been initialized.
-     * @param[in] header PlainCollectionHeader to be set.
-     * @param[in] l_bound Sequence bound.
-     * @param[in] element_identifier Sequence element TypeIdentifier.
+     * @param [in] header PlainCollectionHeader to be set.
+     * @param [in] l_bound Sequence bound.
+     * @param [in] element_identifier Sequence element TypeIdentifier.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception
      *              1. Bound lower than 256.
      *              2. The given TypeIdentifier EquivalenceKind is not consistent with the one contained in the header.
@@ -249,8 +249,8 @@ public:
      *
      * @tparam array Either a SBoundSeq or LBoundSeq.
      * @tparam element Either a SBound or LBound.
-     * @param[in,out] array_bound_seq Sequence with the array bounds.
-     * @param[in] dimension_bound Dimension bound to be added into the sequence.
+     * @param [in,out] array_bound_seq Sequence with the array bounds.
+     * @param [in] dimension_bound Dimension bound to be added into the sequence.
      */
     template<typename element>
     static void add_array_dimension(
@@ -269,9 +269,9 @@ public:
      *
      * @pre Any element in array_bound_seq must be greater than 0 (INVALID_SBOUND)
      * @pre element_identifier has been initialized.
-     * @param[in] header PlainCollectionHeader to be set.
-     * @param[in] array_bound_seq Bounds for the array dimensions.
-     * @param[in] element_identifier Array element TypeIdentifier.
+     * @param [in] header PlainCollectionHeader to be set.
+     * @param [in] array_bound_seq Bounds for the array dimensions.
+     * @param [in] element_identifier Array element TypeIdentifier.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception
      *              1. Any given bound in array_bound_seq is 0.
      *              2. The given TypeIdentifier EquivalenceKind is not consistent with the one contained in the header.
@@ -289,9 +289,9 @@ public:
      *
      * @pre At least one element of array_bound_seq must be greater than 255 and no element must be 0 (INVALID_SBOUND)
      * @pre element_identifier has been initialized.
-     * @param[in] header PlainCollectionHeader to be set.
-     * @param[in] array_bound_seq Bounds for the array dimensions.
-     * @param[in] element_identifier Array element TypeIdentifier.
+     * @param [in] header PlainCollectionHeader to be set.
+     * @param [in] array_bound_seq Bounds for the array dimensions.
+     * @param [in] element_identifier Array element TypeIdentifier.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception
      *              1. Any given bound in array_bound_seq is 0.
      *              2. There is no dimension with a bound greater than 255.
@@ -310,11 +310,11 @@ public:
      *
      * @pre bound > 0 (INVALID_SBOUND)
      * @pre Both element_identifier and key_identifier have been initialized.
-     * @param[in] header PlainCollectionHeader to be set.
-     * @param[in] bound Map bound.
-     * @param[in] element_identifier Map element TypeIdentifier.
-     * @param[in] key_flags Flags applying to map key.
-     * @param[in] key_identifier Map key TypeIdentifier.
+     * @param [in] header PlainCollectionHeader to be set.
+     * @param [in] bound Map bound.
+     * @param [in] element_identifier Map element TypeIdentifier.
+     * @param [in] key_flags Flags applying to map key.
+     * @param [in] key_identifier Map key TypeIdentifier.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception
      *              1. Given bound is zero (INVALID_SBOUND)
      *              2. Inconsistent element_identifier EquivalenceKind with the one contained in the header.
@@ -338,11 +338,11 @@ public:
      *
      * @pre bound > 255
      * @pre Both element_identifier and key_identifier have been initialized.
-     * @param[in] header PlainCollectionHeader to be set.
-     * @param[in] bound Map bound.
-     * @param[in] element_identifier Map element TypeIdentifier.
-     * @param[in] key_flags Flags applying to map key.
-     * @param[in] key_identifier Map key TypeIdentifier.
+     * @param [in] header PlainCollectionHeader to be set.
+     * @param [in] bound Map bound.
+     * @param [in] element_identifier Map element TypeIdentifier.
+     * @param [in] key_flags Flags applying to map key.
+     * @param [in] key_identifier Map key TypeIdentifier.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception
      *              1. Given bound is lower than 256
      *              2. Inconsistent element_identifier EquivalenceKind with the one contained in the header.
@@ -364,9 +364,9 @@ public:
     /**
      * @brief Build StronglyConnectedComponentId instance.
      *
-     * @param[in] sc_component_id Strongly Connected Component (SCC) ID.
-     * @param[in] scc_length Number of components within SCC.
-     * @param[in] scc_index Identify specific component within SCC.
+     * @param [in] sc_component_id Strongly Connected Component (SCC) ID.
+     * @param [in] scc_length Number of components within SCC.
+     * @param [in] scc_index Identify specific component within SCC.
      * @return const StronglyConnectedComponentId instance.
      */
     FASTDDS_EXPORTED_API static const StronglyConnectedComponentId build_strongly_connected_component_id(
@@ -392,10 +392,10 @@ public:
     /**
      * @brief Register small string/wstring TypeIdentifier into TypeObjectRegistry.
      *
-     * @param[in] string StringSTypeDefn union member to set.
-     * @param[in] type_name Type name to be registered.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the StringSTypeDefn just registered.
-     * @param[in] wstring Flag to build a wstring. Default false.
+     * @param [in] string StringSTypeDefn union member to set.
+     * @param [in] type_name Type name to be registered.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the StringSTypeDefn just registered.
+     * @param [in] wstring Flag to build a wstring. Default false.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given member is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -412,10 +412,10 @@ public:
     /**
      * @brief Register large string/wstring TypeIdentifier into TypeObjectRegistry.
      *
-     * @param[in] string StringLTypeDefn union member to set.
-     * @param[in] type_name Type name to be registered.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the StringLTypeDefn just registered.
-     * @param[in] wstring Flag to build a wstring. Default false.
+     * @param [in] string StringLTypeDefn union member to set.
+     * @param [in] type_name Type name to be registered.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the StringLTypeDefn just registered.
+     * @param [in] wstring Flag to build a wstring. Default false.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given member is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -432,9 +432,9 @@ public:
     /**
      * @brief Register small sequence TypeIdentifier into TypeObjectRegistry.
      *
-     * @param[in] plain_seq PlainSequenceSElemDefn union member to set.
-     * @param[in] type_name Type name to be registered.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the PlainSequenceSElemDefn just registered.
+     * @param [in] plain_seq PlainSequenceSElemDefn union member to set.
+     * @param [in] type_name Type name to be registered.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the PlainSequenceSElemDefn just registered.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given member is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -450,9 +450,9 @@ public:
     /**
      * @brief Register large sequence TypeIdentifier into TypeObjectRegistry.
      *
-     * @param[in] plain_seq PlainSequenceLElemDefn union member to set.
-     * @param[in] type_name Type name to be registered.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the PlainSequenceLElemDefn just registered.
+     * @param [in] plain_seq PlainSequenceLElemDefn union member to set.
+     * @param [in] type_name Type name to be registered.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the PlainSequenceLElemDefn just registered.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given member is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -468,9 +468,9 @@ public:
     /**
      * @brief Register small array TypeIdentifier into TypeObjectRegistry.
      *
-     * @param[in] plain_array PlainArraySElemDefn union member to set.
-     * @param[in] type_name Type name to be registered.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the PlainArraySElemDefn just registered.
+     * @param [in] plain_array PlainArraySElemDefn union member to set.
+     * @param [in] type_name Type name to be registered.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the PlainArraySElemDefn just registered.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given member is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -486,9 +486,9 @@ public:
     /**
      * @brief Register large array TypeIdentifier into TypeObjectRegistry.
      *
-     * @param[in] plain_array PlainArrayLElemDefn union member to set.
-     * @param[in] type_name Type name to be registered.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the PlainArrayLElemDefn just registered.
+     * @param [in] plain_array PlainArrayLElemDefn union member to set.
+     * @param [in] type_name Type name to be registered.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the PlainArrayLElemDefn just registered.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given member is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -504,9 +504,9 @@ public:
     /**
      * @brief Register small map TypeIdentifier into TypeObjectRegistry.
      *
-     * @param[in] plain_map PlainMapSTypeDefn union member to set.
-     * @param[in] type_name Type name to be registered.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the PlainMapSTypeDefn just registered.
+     * @param [in] plain_map PlainMapSTypeDefn union member to set.
+     * @param [in] type_name Type name to be registered.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the PlainMapSTypeDefn just registered.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given member is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -522,9 +522,9 @@ public:
     /**
      * @brief Register large map TypeIdentifier into TypeObjectRegistry.
      *
-     * @param[in] plain_map PlainMapLTypeDefn union member to set.
-     * @param[in] type_name Type name to be registered.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the PlainMapLTypeDefn just registered.
+     * @param [in] plain_map PlainMapLTypeDefn union member to set.
+     * @param [in] type_name Type name to be registered.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the PlainMapLTypeDefn just registered.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given member is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -540,8 +540,8 @@ public:
     /**
      * @brief Register StronglyConnectedComponent TypeIdentifier into TypeObjectRegistry.
      *
-     * @param[in] scc StronglyConnectedComponent union member to set.
-     * @param[in] type_name Type name to be registered.
+     * @param [in] scc StronglyConnectedComponent union member to set.
+     * @param [in] type_name Type name to be registered.
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
      *                      the given type_name.
@@ -563,7 +563,7 @@ public:
     /**
      * @brief Build AnnotationParameterValue instance.
      *
-     * @param[in] boolean_value Boolean value to set in the union.
+     * @param [in] boolean_value Boolean value to set in the union.
      * @return const AnnotationParameterValue instance.
      */
     FASTDDS_EXPORTED_API static const AnnotationParameterValue build_annotation_parameter_value(
@@ -572,7 +572,7 @@ public:
     /**
      * @brief Build AnnotationParameterValue instance.
      *
-     * @param[in] byte_value Byte value to set in the union.
+     * @param [in] byte_value Byte value to set in the union.
      * @return const AnnotationParameterValue instance.
      */
     FASTDDS_EXPORTED_API static const AnnotationParameterValue build_annotation_parameter_value_byte(
@@ -581,7 +581,7 @@ public:
     /**
      * @brief Build AnnotationParameterValue instance.
      *
-     * @param[in] int8_value Int8 value to set in the union.
+     * @param [in] int8_value Int8 value to set in the union.
      * @return const AnnotationParameterValue instance.
      */
     FASTDDS_EXPORTED_API static const AnnotationParameterValue build_annotation_parameter_value(
@@ -590,7 +590,7 @@ public:
     /**
      * @brief Build AnnotationParameterValue instance.
      *
-     * @param[in] uint8_value Unsigned int8 value to set in the union.
+     * @param [in] uint8_value Unsigned int8 value to set in the union.
      * @return const AnnotationParameterValue instance.
      */
     FASTDDS_EXPORTED_API static const AnnotationParameterValue build_annotation_parameter_value(
@@ -599,7 +599,7 @@ public:
     /**
      * @brief Build AnnotationParameterValue instance.
      *
-     * @param[in] int16_value Short value to set in the union.
+     * @param [in] int16_value Short value to set in the union.
      * @return const AnnotationParameterValue instance.
      */
     FASTDDS_EXPORTED_API static const AnnotationParameterValue build_annotation_parameter_value(
@@ -608,7 +608,7 @@ public:
     /**
      * @brief Build AnnotationParameterValue instance.
      *
-     * @param[in] uint16_value Unsigned short value to set in the union.
+     * @param [in] uint16_value Unsigned short value to set in the union.
      * @return const AnnotationParameterValue instance.
      */
     FASTDDS_EXPORTED_API static const AnnotationParameterValue build_annotation_parameter_value(
@@ -617,7 +617,7 @@ public:
     /**
      * @brief Build AnnotationParameterValue instance.
      *
-     * @param[in] int32_value Long value to set in the union.
+     * @param [in] int32_value Long value to set in the union.
      * @return const AnnotationParameterValue instance.
      */
     FASTDDS_EXPORTED_API static const AnnotationParameterValue build_annotation_parameter_value(
@@ -626,7 +626,7 @@ public:
     /**
      * @brief Build AnnotationParameterValue instance.
      *
-     * @param[in] uint32_value Unsigned long value to set in the union.
+     * @param [in] uint32_value Unsigned long value to set in the union.
      * @return const AnnotationParameterValue instance.
      */
     FASTDDS_EXPORTED_API static const AnnotationParameterValue build_annotation_parameter_value(
@@ -635,7 +635,7 @@ public:
     /**
      * @brief Build AnnotationParameterValue instance.
      *
-     * @param[in] int64_value Long long value to set in the union.
+     * @param [in] int64_value Long long value to set in the union.
      * @return const AnnotationParameterValue instance.
      */
     FASTDDS_EXPORTED_API static const AnnotationParameterValue build_annotation_parameter_value(
@@ -644,7 +644,7 @@ public:
     /**
      * @brief Build AnnotationParameterValue instance.
      *
-     * @param[in] uint64_value Unsigned long long value to set in the union.
+     * @param [in] uint64_value Unsigned long long value to set in the union.
      * @return const AnnotationParameterValue instance.
      */
     FASTDDS_EXPORTED_API static const AnnotationParameterValue build_annotation_parameter_value(
@@ -653,7 +653,7 @@ public:
     /**
      * @brief Build AnnotationParameterValue instance.
      *
-     * @param[in] float32_value Float value to set in the union.
+     * @param [in] float32_value Float value to set in the union.
      * @return const AnnotationParameterValue instance.
      */
     FASTDDS_EXPORTED_API static const AnnotationParameterValue build_annotation_parameter_value(
@@ -662,7 +662,7 @@ public:
     /**
      * @brief Build AnnotationParameterValue instance.
      *
-     * @param[in] float64_value Double value to set in the union.
+     * @param [in] float64_value Double value to set in the union.
      * @return const AnnotationParameterValue instance.
      */
     FASTDDS_EXPORTED_API static const AnnotationParameterValue build_annotation_parameter_value(
@@ -671,7 +671,7 @@ public:
     /**
      * @brief Build AnnotationParameterValue instance.
      *
-     * @param[in] float128_value Long double value to set in the union.
+     * @param [in] float128_value Long double value to set in the union.
      * @return const AnnotationParameterValue instance.
      */
     FASTDDS_EXPORTED_API static const AnnotationParameterValue build_annotation_parameter_value(
@@ -680,7 +680,7 @@ public:
     /**
      * @brief Build AnnotationParameterValue instance.
      *
-     * @param[in] char_value Char value to set in the union.
+     * @param [in] char_value Char value to set in the union.
      * @return const AnnotationParameterValue instance.
      */
     FASTDDS_EXPORTED_API static const AnnotationParameterValue build_annotation_parameter_value(
@@ -689,7 +689,7 @@ public:
     /**
      * @brief Build AnnotationParameterValue instance.
      *
-     * @param[in] wchar_value Wide char value to set in the union.
+     * @param [in] wchar_value Wide char value to set in the union.
      * @return const AnnotationParameterValue instance.
      */
     FASTDDS_EXPORTED_API static const AnnotationParameterValue build_annotation_parameter_value(
@@ -698,7 +698,7 @@ public:
     /**
      * @brief Build AnnotationParameterValue instance.
      *
-     * @param[in] enumerated_value Enumerated value to set in the union.
+     * @param [in] enumerated_value Enumerated value to set in the union.
      * @return const AnnotationParameterValue instance.
      */
     FASTDDS_EXPORTED_API static const AnnotationParameterValue build_annotation_parameter_value_enum(
@@ -707,7 +707,7 @@ public:
     /**
      * @brief Build AnnotationParameterValue instance.
      *
-     * @param[in] string8_value String value to set in the union.
+     * @param [in] string8_value String value to set in the union.
      * @return const AnnotationParameterValue instance.
      */
     FASTDDS_EXPORTED_API static const AnnotationParameterValue build_annotation_parameter_value(
@@ -716,7 +716,7 @@ public:
     /**
      * @brief Build AnnotationParameterValue instance.
      *
-     * @param[in] string16_value Wide string value to set in the union.
+     * @param [in] string16_value Wide string value to set in the union.
      * @return const AnnotationParameterValue instance.
      */
     FASTDDS_EXPORTED_API static const AnnotationParameterValue build_annotation_parameter_value(
@@ -725,8 +725,8 @@ public:
     /**
      * @brief Build AppliedAnnotationParameter instance.
      *
-     * @param[in] paramname_hash Parameter name hash.
-     * @param[in] value Parameter value.
+     * @param [in] paramname_hash Parameter name hash.
+     * @param [in] value Parameter value.
      * @return const AppliedAnnotationParameter instance.
      */
     FASTDDS_EXPORTED_API static const AppliedAnnotationParameter build_applied_annotation_parameter(
@@ -736,10 +736,10 @@ public:
     /**
      * @brief Add AppliedAnnotationParameter to the sequence.
      *
-     * @param[in,out] param_seq AppliedAnnotationParameter sequence to be modified.
+     * @param [in,out] param_seq AppliedAnnotationParameter sequence to be modified.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the parameter being added has
      *            already been included in the sequence.
-     * @param[in] param AppliedAnnotationParameter to be added.
+     * @param [in] param AppliedAnnotationParameter to be added.
      */
     FASTDDS_EXPORTED_API static void add_applied_annotation_parameter(
             AppliedAnnotationParameterSeq& param_seq,
@@ -748,8 +748,8 @@ public:
     /**
      * @brief Build AppliedAnnotation instance.
      *
-     * @param[in] annotation_typeid Annotation TypeIdentifier.
-     * @param[in] param_seq Annotation parameters.
+     * @param [in] annotation_typeid Annotation TypeIdentifier.
+     * @param [in] param_seq Annotation parameters.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given annotation_typeid TypeIdentifier does not correspond to an annotation TypeObject (only in
      *                 Debug build mode).
@@ -765,8 +765,8 @@ public:
     /**
      * @brief Add AppliedAnnotation to the sequence.
      *
-     * @param[in,out] ann_custom_seq AppliedAnnotation sequence to be modified.
-     * @param[in] ann_custom AppliedAnnotation to be added.
+     * @param [in,out] ann_custom_seq AppliedAnnotation sequence to be modified.
+     * @param [in] ann_custom AppliedAnnotation to be added.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given AppliedAnnotation is not consistent (only in Debug build mode).
      *              2. Given AppliedAnnotation is already present in the sequence.
@@ -778,9 +778,9 @@ public:
     /**
      * @brief Build AppliedVerbatimAnnotation instance.
      *
-     * @param[in] placement Verbatim annotation placement parameter.
-     * @param[in] language Verbatim annotation language parameter.
-     * @param[in] text Verbatim annotation text parameter.
+     * @param [in] placement Verbatim annotation placement parameter.
+     * @param [in] language Verbatim annotation language parameter.
+     * @param [in] text Verbatim annotation text parameter.
      * @return const AppliedVerbatimAnnotation instance.
      */
     FASTDDS_EXPORTED_API static const AppliedVerbatimAnnotation build_applied_verbatim_annotation(
@@ -793,10 +793,10 @@ public:
     /**
      * @brief Build AppliedBuiltinMemberAnnotations instance.
      *
-     * @param[in] unit Unit annotation value.
-     * @param[in] min Min annotation value.
-     * @param[in] max Max annotation value.
-     * @param[in] hash_id Hashid annotation value.
+     * @param [in] unit Unit annotation value.
+     * @param [in] min Min annotation value.
+     * @param [in] max Max annotation value.
+     * @param [in] hash_id Hashid annotation value.
      * @return const AppliedBuiltinMemberAnnotations instance.
      */
     FASTDDS_EXPORTED_API static const AppliedBuiltinMemberAnnotations build_applied_builtin_member_annotations(
@@ -808,9 +808,9 @@ public:
     /**
      * @brief Build CommonStructMember instance.
      *
-     * @param[in] member_id Member identifier.
-     * @param[in] member_flags Member flags: optional, must_understand, key, and external.
-     * @param[in] member_type_id Member TypeIdentifier.
+     * @param [in] member_id Member identifier.
+     * @param [in] member_flags Member flags: optional, must_understand, key, and external.
+     * @param [in] member_type_id Member TypeIdentifier.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception:
      *              1. The given flags are not consistent (only in Debug build mode).
      *              2. The given TypeIdentifier is not consistent (only in Debug build mode).
@@ -824,9 +824,9 @@ public:
     /**
      * @brief Build CompleteMemberDetail instance.
      *
-     * @param[in] name Member name.
-     * @param[in] ann_builtin Member builtin annotations.
-     * @param[in] ann_custom Member custom annotations.
+     * @param [in] name Member name.
+     * @param [in] ann_builtin Member builtin annotations.
+     * @param [in] ann_custom Member custom annotations.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Empty member name.
      *              2. Given AppliedAnnotationSeq is not consistent (only Debug build mode).
@@ -844,8 +844,8 @@ public:
     /**
      * @brief Build CompleteStructMember instance.
      *
-     * @param[in] common CommonStructMember to be set.
-     * @param[in] detail CompleteMemberDetail to be set.
+     * @param [in] common CommonStructMember to be set.
+     * @param [in] detail CompleteMemberDetail to be set.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given CommonStructMember is inconsistent (only Debug build mode).
      *              2. Given CompleteMemberDetail is inconsistent (only Debug build mode).
@@ -858,8 +858,8 @@ public:
     /**
      * @brief Add CompleteStructMember to the sequence.
      *
-     * @param[in,out] member_seq CompleteStructMember sequence to be modified.
-     * @param[in] member CompleteStructMember to be added.
+     * @param [in,out] member_seq CompleteStructMember sequence to be modified.
+     * @param [in] member CompleteStructMember to be added.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given CompleteStructMember is not consistent (only in Debug build mode).
      *              2. There is already another member in the sequence with the same member id or the same member name
@@ -876,7 +876,7 @@ public:
     /**
      * @brief Build AppliedBuiltinTypeAnnotations instance.
      *
-     * @param[in] verbatim AppliedVerbatimAnnotation to be set.
+     * @param [in] verbatim AppliedVerbatimAnnotation to be set.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given verbatim annotation
      *            is inconsistent (only in Debug build mode).
      * @return const AppliedBuiltinTypeAnnotations instance.
@@ -891,9 +891,9 @@ public:
     /**
      * @brief Build CompleteTypeDetail instance.
      *
-     * @param[in] ann_builtin Verbatim annotation.
-     * @param[in] ann_custom Applied annotations.
-     * @param[in] type_name Name of the type.
+     * @param [in] ann_builtin Verbatim annotation.
+     * @param [in] ann_custom Applied annotations.
+     * @param [in] type_name Name of the type.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. any applied annotation is not consistent (only Debug build mode).
      * @return const CompleteTypeDetail instance.
@@ -906,8 +906,8 @@ public:
     /**
      * @brief Build CompleteStructHeader instance.
      *
-     * @param[in] base_type TypeIdentifier of the parent structure (inheritance).
-     * @param[in] detail CompleteTypeDetail.
+     * @param [in] base_type TypeIdentifier of the parent structure (inheritance).
+     * @param [in] detail CompleteTypeDetail.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given TypeIdentifier is not consistent (direct HASH or empty TypeIdentifier). In Debug build
      *                 mode the corresponding TypeObject is also checked in case of direct HASH TypeIdentifier.
@@ -925,9 +925,9 @@ public:
     /**
      * @brief Build CompleteStructType instance.
      *
-     * @param[in] struct_flags StructTypeFlags.
-     * @param[in] header CompleteStructHeader.
-     * @param[in] member_seq Sequence of CompleteStructMembers.
+     * @param [in] struct_flags StructTypeFlags.
+     * @param [in] header CompleteStructHeader.
+     * @param [in] member_seq Sequence of CompleteStructMembers.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given StructTypeFlag is not consistent (only in Debug build mode).
      *              2. Given CompleteStructHeader is not consistent (only in Debug build mode).
@@ -950,8 +950,8 @@ public:
     /**
      * @brief Add label to the union case label sequence.
      *
-     * @param[in,out] label_seq Sequence to be modified.
-     * @param[in] label Label to be added.
+     * @param [in,out] label_seq Sequence to be modified.
+     * @param [in] label Label to be added.
      */
     FASTDDS_EXPORTED_API static void add_union_case_label(
             UnionCaseLabelSeq& label_seq,
@@ -960,10 +960,10 @@ public:
     /**
      * @brief Build CommonUnionMember instance.
      *
-     * @param[in] member_id Member identifier.
-     * @param[in] member_flags Member flags.
-     * @param[in] type_id Member TypeIdentifier.
-     * @param[in] label_seq Member applicable case labels.
+     * @param [in] member_id Member identifier.
+     * @param [in] member_flags Member flags.
+     * @param [in] type_id Member TypeIdentifier.
+     * @param [in] label_seq Member applicable case labels.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given UnionMemberFlags are not consistent (only Debug build mode).
      *              2. Given TypeIdentifier is not consistent (only Debug build mode).
@@ -978,8 +978,8 @@ public:
     /**
      * @brief Build CompleteUnionMember instance.
      *
-     * @param[in] common CommonUnionMember.
-     * @param[in] detail CompleteMemberDetail.
+     * @param [in] common CommonUnionMember.
+     * @param [in] detail CompleteMemberDetail.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given CommonUnionMember is not consistent (only in Debug build mode).
      *              2. Given CompleteMemberDetail is not consistent (only in Debug build mode).
@@ -992,8 +992,8 @@ public:
     /**
      * @brief Add CompleteUnionMember to sequence.
      *
-     * @param[in,out] complete_union_member_seq Sequence to be modified.
-     * @param[in] member Complete union member to be added.
+     * @param [in,out] complete_union_member_seq Sequence to be modified.
+     * @param [in] member Complete union member to be added.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given CompleteUnionMember is not consistent (only in Debug build mode).
      *              2. There is already another member in the sequence with the same member id or the same member name
@@ -1014,8 +1014,8 @@ public:
     /**
      * @brief Build CommonDiscriminatorMember instance.
      *
-     * @param[in] member_flags Discriminator flags.
-     * @param[in] type_id Discriminator TypeIdentifier.
+     * @param [in] member_flags Discriminator flags.
+     * @param [in] type_id Discriminator TypeIdentifier.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given discriminator flags are inconsistent (only in Debug build mode).
      *              2. Given TypeIdentifier is not consistent.
@@ -1032,9 +1032,9 @@ public:
     /**
      * @brief Build CompleteDiscriminatorMember instance.
      *
-     * @param[in] common CommonDiscriminatorMember.
-     * @param[in] ann_builtin Verbatim annotation.
-     * @param[in] ann_custom Applied annotations.
+     * @param [in] common CommonDiscriminatorMember.
+     * @param [in] ann_builtin Verbatim annotation.
+     * @param [in] ann_custom Applied annotations.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given CommonDiscriminatorMember is inconsistent (only in Debug build mode).
      *              2. AppliedBuiltinTypeAnnotation is inconsistent (only in Debug build mode).
@@ -1069,10 +1069,10 @@ public:
     /**
      * @brief Build CompleteUnionType instance.
      *
-     * @param[in] union_flags
-     * @param[in] header
-     * @param[in] discriminator
-     * @param[in] member_seq
+     * @param [in] union_flags
+     * @param [in] header
+     * @param [in] discriminator
+     * @param [in] member_seq
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given UnionTypeFlags are not consistent (only in Debug build mode).
      *              2. Given CompleteUnionHeader is not consistent (only in Debug build mode).
@@ -1097,8 +1097,8 @@ public:
     /**
      * @brief Build CommonAnnotationParameter instance.
      *
-     * @param[in] member_flags AnnotationParameterFlag: empty. No flags apply. It must be zero.
-     * @param[in] member_type_id Member TypeIdentifier.
+     * @param [in] member_flags AnnotationParameterFlag: empty. No flags apply. It must be zero.
+     * @param [in] member_type_id Member TypeIdentifier.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given AnnotationParameterFlag are not empty.
      *              2. Given TypeIdentifier is not consistent (only in Debug build mode).
@@ -1111,9 +1111,9 @@ public:
     /**
      * @brief Build CompleteAnnotationParameter instance.
      *
-     * @param[in] common CommonAnnotationParameter.
-     * @param[in] name Member name.
-     * @param[in] default_value Annotation default value.
+     * @param [in] common CommonAnnotationParameter.
+     * @param [in] name Member name.
+     * @param [in] default_value Annotation default value.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given CommonAnnotationParameter is inconsistent (only in Debug build mode).
      *              2. CommonAnnotationParameter TypeIdentifier is inconsistent with AnnotationParameterValue type.
@@ -1128,8 +1128,8 @@ public:
     /**
      * @brief Add CompleteAnnotationParameter to sequence.
      *
-     * @param[in,out] sequence Sequence to be modified.
-     * @param[in] param Complete annotation parameter to be added.
+     * @param [in,out] sequence Sequence to be modified.
+     * @param [in] param Complete annotation parameter to be added.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given CompleteAnnotationParameter is not consistent (only in Debug build mode).
      *              2. There is already another member in the sequence with the same member id or the same member name
@@ -1146,7 +1146,7 @@ public:
     /**
      * @brief Build CompleteAnnotationHeader instance.
      *
-     * @param[in] annotation_name Qualified annotation type name.
+     * @param [in] annotation_name Qualified annotation type name.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError if the annotation_name is empty.
      * @return const CompleteAnnotationHeader instance.
      */
@@ -1160,9 +1160,9 @@ public:
     /**
      * @brief Build CompleteAnnotationType instance.
      *
-     * @param[in] annotation_flag Unused. No flags apply. It must be 0.
-     * @param[in] header CompleteAnnotationHeader.
-     * @param[in] member_seq CompleteAnnotationParameter sequence.
+     * @param [in] annotation_flag Unused. No flags apply. It must be 0.
+     * @param [in] header CompleteAnnotationHeader.
+     * @param [in] member_seq CompleteAnnotationParameter sequence.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Any annotation flag is set.
      *              2. Given header is inconsistent (only in Debug build mode).
@@ -1184,8 +1184,8 @@ public:
     /**
      * @brief Build CommonAliasBody instance.
      *
-     * @param[in] related_flags AliasMemberFlag: unused. No flags apply. It must be 0.
-     * @param[in] related_type Related TypeIdentifier.
+     * @param [in] related_flags AliasMemberFlag: unused. No flags apply. It must be 0.
+     * @param [in] related_type Related TypeIdentifier.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Any alias member flag is set.
      *              2. Non-consistent TypeIdentifier (only in Debug build mode).
@@ -1198,9 +1198,9 @@ public:
     /**
      * @brief Build CompleteAliasBody instance.
      *
-     * @param[in] common CommonAliasBody.
-     * @param[in] ann_builtin Applied builtin member annotations: unit, max, min, range, hashid
-     * @param[in] ann_custom Applied custom annotations
+     * @param [in] common CommonAliasBody.
+     * @param [in] ann_builtin Applied builtin member annotations: unit, max, min, range, hashid
+     * @param [in] ann_custom Applied custom annotations
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given CommonAliasBody is inconsistent (only Debug build mode).
      *              2. AppliedAnnotationSeq is inconsistent (only Debug build mode).
@@ -1219,7 +1219,7 @@ public:
     /**
      * @brief Build CompleteAliasHeader instance.
      *
-     * @param[in] detail Complete type detail.
+     * @param [in] detail Complete type detail.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given CompleteTypeDetail is
      *            inconsistent (only in Debug build mode).
      * @return const CompleteAliasHeader instance.
@@ -1234,9 +1234,9 @@ public:
     /**
      * @brief Build CompleteAliasType instance.
      *
-     * @param[in] alias_flags Alias type flags: unused. No flags apply. It must be zero.
-     * @param[in] header CompleteAliasHeader.
-     * @param[in] body CompleteAliasBody.
+     * @param [in] alias_flags Alias type flags: unused. No flags apply. It must be zero.
+     * @param [in] header CompleteAliasHeader.
+     * @param [in] body CompleteAliasBody.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Any alias type flag is set.
      *              2. Inconsistent header and/or body (only in Debug build mode).
@@ -1257,8 +1257,8 @@ public:
     /**
      * @brief Build CompleteElementDetail instance.
      *
-     * @param[in] ann_builtin Applied builtin member annotations: unit, max, min, range, hashid
-     * @param[in] ann_custom Applied custom annotations
+     * @param [in] ann_builtin Applied builtin member annotations: unit, max, min, range, hashid
+     * @param [in] ann_custom Applied custom annotations
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. AppliedAnnotationSeq is inconsistent (only Debug build mode).
      *              2. hashid builtin annotation is applied.
@@ -1271,8 +1271,8 @@ public:
     /**
      * @brief Build CommonCollectionElement instance.
      *
-     * @param[in] element_flags CollectionElementFlag.
-     * @param[in] type TypeIdentifier.
+     * @param [in] element_flags CollectionElementFlag.
+     * @param [in] type TypeIdentifier.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given collection element flags are not consistent (only in Debug build mode).
      *              2. Given TypeIdentifier is not consistent (only in Debug build mode).
@@ -1285,8 +1285,8 @@ public:
     /**
      * @brief Build CompleteCollectionElement instance.
      *
-     * @param[in] common CommonCollectionElement.
-     * @param[in] detail CompleteElementDetail.
+     * @param [in] common CommonCollectionElement.
+     * @param [in] detail CompleteElementDetail.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given CommonCollectionElement is not consistent (only in Debug build mode).
      *              2. Given CompleteElementDetail is not consistent (only in Debug build mode).
@@ -1303,7 +1303,7 @@ public:
     /**
      * @brief Build CommonCollectionHeader instance.
      *
-     * @param[in] bound Collection bound.
+     * @param [in] bound Collection bound.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given bound is not
      *            consistent.
      * @return const CommonCollectionHeader instance.
@@ -1314,8 +1314,8 @@ public:
     /**
      * @brief Build CompleteCollectionHeader instance.
      *
-     * @param[in] common CommonCollectionHeader
-     * @param[in] detail CompleteTypeDetail
+     * @param [in] common CommonCollectionHeader
+     * @param [in] detail CompleteTypeDetail
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given CommonCollectionHeader is inconsistent (only in Debug build mode).
      *              2. Given CompleteTypeDetail is inconsistent (only in Debug build mode).
@@ -1335,9 +1335,9 @@ public:
     /**
      * @brief Build CompleteSequenceType instance.
      *
-     * @param[in] collection_flag collection type flag: unused. No flags apply. It must be 0.
-     * @param[in] header CompleteCollectionHeader.
-     * @param[in] element CompleteCollectionElement.
+     * @param [in] collection_flag collection type flag: unused. No flags apply. It must be 0.
+     * @param [in] header CompleteCollectionHeader.
+     * @param [in] element CompleteCollectionElement.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Any collection flag is set.
      *              2. Given header is inconsistent (only in Debug build mode).
@@ -1359,7 +1359,7 @@ public:
     /**
      * @brief Build CommonArrayHeader instance.
      *
-     * @param[in] bound_seq Sequence of the dimension's bounds.
+     * @param [in] bound_seq Sequence of the dimension's bounds.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if any given bound is 0 (invalid).
      * @return const CommonArrayHeader instance.
      */
@@ -1369,8 +1369,8 @@ public:
     /**
      * @brief Build CompleteArrayHeader instance.
      *
-     * @param[in] common CommonArrayHeader.
-     * @param[in] detail CompleteTypeDetail.
+     * @param [in] common CommonArrayHeader.
+     * @param [in] detail CompleteTypeDetail.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given CommonArrayHeader is inconsistent (only in Debug build mode).
      *              2. Given CompleteTypeDetail is inconsistent (only in Debug build mode).
@@ -1387,9 +1387,9 @@ public:
     /**
      * @brief Build CompleteArrayType instance.
      *
-     * @param[in] collection_flag collection type flag: unused. No flags apply. It must be 0.
-     * @param[in] header CompleteArrayHeader.
-     * @param[in] element CompleteCollectionElement.
+     * @param [in] collection_flag collection type flag: unused. No flags apply. It must be 0.
+     * @param [in] header CompleteArrayHeader.
+     * @param [in] element CompleteCollectionElement.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Any collection flag is set.
      *              2. Given header is inconsistent (only in Debug build mode).
@@ -1411,10 +1411,10 @@ public:
     /**
      * @brief Build CompleteMapType instance.
      *
-     * @param[in] collection_flag collection type flag: unused. No flags apply. It must be 0.
-     * @param[in] header CompleteArrayHeader.
-     * @param[in] key CompleteCollectionElement describing map key.
-     * @param[in] element CompleteCollectionElement describing map element.
+     * @param [in] collection_flag collection type flag: unused. No flags apply. It must be 0.
+     * @param [in] header CompleteArrayHeader.
+     * @param [in] key CompleteCollectionElement describing map key.
+     * @param [in] element CompleteCollectionElement describing map element.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Any collection flag is set.
      *              2. Given header is inconsistent (only in Debug build mode).
@@ -1439,8 +1439,8 @@ public:
     /**
      * @brief Build CommonEnumeratedLiteral instance.
      *
-     * @param[in] value Enumerated literal value.
-     * @param[in] flags Enumerated literal flags: only default flag apply.
+     * @param [in] value Enumerated literal value.
+     * @param [in] flags Enumerated literal flags: only default flag apply.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if any other flag different from
      *            default is set (only in Debug build mode).
      * @return const CommonEnumeratedLiteral instance.
@@ -1452,8 +1452,8 @@ public:
     /**
      * @brief Build CompleteEnumeratedLiteral instance.
      *
-     * @param[in] common CommonEnumeratedLiteral.
-     * @param[in] detail CompleteMemberDetail.
+     * @param [in] common CommonEnumeratedLiteral.
+     * @param [in] detail CompleteMemberDetail.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given CommonEnumeratedLiteral is inconsistent (only in Debug build mode).
      *              2. Given CompleteMemberDetail is inconsistent (only in Debug build mode).
@@ -1466,8 +1466,8 @@ public:
     /**
      * @brief Add CompleteEnumeratedLiteral to sequence.
      *
-     * @param[in] sequence Sequence to be modified.
-     * @param[in,out] enum_literal CompleteEnumeratedLiteral to be added.
+     * @param [in] sequence Sequence to be modified.
+     * @param [in,out] enum_literal CompleteEnumeratedLiteral to be added.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given CommonEnumeratedLiteral is not consistent (only in Debug build mode).
      *              2. There is already another literal in the sequence with the same value or the same member name
@@ -1484,10 +1484,10 @@ public:
     /**
      * @brief Build CommonEnumeratedHeader instance.
      *
-     * @param[in] bit_bound XTypes v1.3 Clause 7.3.1.2.1.5 It is important to note that the value member of the
+     * @param [in] bit_bound XTypes v1.3 Clause 7.3.1.2.1.5 It is important to note that the value member of the
      *                      [bit_bound] annotation may take any value from 1 to 32, inclusive, when this annotation is
      *                      applied to an enumerated type.
-     * @param[in] bitmask Flag in case that the header being built corresponds to a Bitmask. By default is false.
+     * @param [in] bitmask Flag in case that the header being built corresponds to a Bitmask. By default is false.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given bit_bound is not
      *            consistent.
      * @return const CommonEnumeratedHeader instance.
@@ -1499,9 +1499,9 @@ public:
     /**
      * @brief Build CompleteEnumeratedHeader instance.
      *
-     * @param[in] common CommonEnumeratedHeader.
-     * @param[in] detail CompleteTypeDetail.
-     * @param[in] bitmask flag set if the given header corresponds to a bitmask. Only required in Debug build mode.
+     * @param [in] common CommonEnumeratedHeader.
+     * @param [in] detail CompleteTypeDetail.
+     * @param [in] bitmask flag set if the given header corresponds to a bitmask. Only required in Debug build mode.
      *                    Set to false by default.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given CommonEnumeratedHeader is inconsistent (only in Debug build mode).
@@ -1520,9 +1520,9 @@ public:
     /**
      * @brief Build CompleteEnumeratedType instance.
      *
-     * @param[in] enum_flags Enumeration flags: unused. No flags apply. It must be 0.
-     * @param[in] header CompleteEnumeratedHeader.
-     * @param[in] literal_seq Sequence of CompleteEnumeratedLiterals.
+     * @param [in] enum_flags Enumeration flags: unused. No flags apply. It must be 0.
+     * @param [in] header CompleteEnumeratedHeader.
+     * @param [in] literal_seq Sequence of CompleteEnumeratedLiterals.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Any flag is set.
      *              2. Given CompleteEnumeratedHeader is inconsistent (only in Debug build mode).
@@ -1544,8 +1544,8 @@ public:
     /**
      * @brief Build CommonBitflag instance.
      *
-     * @param[in] position Bit position in the bitmask.
-     * @param[in] flags Bit flags: unused. No flags apply. It must be 0.
+     * @param [in] position Bit position in the bitmask.
+     * @param [in] flags Bit flags: unused. No flags apply. It must be 0.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. any given flag is set.
      *              2. given position is inconsistent. XTypes v1.3 Clause 7.2.2.4.1.2 Each bit in this subset is
@@ -1560,8 +1560,8 @@ public:
     /**
      * @brief Build CompleteBitflag instance.
      *
-     * @param[in] common CommonBitflag.
-     * @param[in] detail CompleteMemberDetail.
+     * @param [in] common CommonBitflag.
+     * @param [in] detail CompleteMemberDetail.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given CommonBitflag is inconsistent (only in Debug build mode).
      *              2. Given CompleteMemberDetail is inconsistent (only in Debug build mode).
@@ -1575,8 +1575,8 @@ public:
     /**
      * @brief Add complete bitflag to the sequence.
      *
-     * @param[in,out] sequence Sequence to be modified.
-     * @param[in] bitflag CompleteBitflag to be added.
+     * @param [in,out] sequence Sequence to be modified.
+     * @param [in] bitflag CompleteBitflag to be added.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given bitflag is inconsistent (only in Debug build mode).
      *              2. There is already another bitflag in the sequence with the same position or the same name
@@ -1599,9 +1599,9 @@ public:
     /**
      * @brief Build CompleteBitmaskType instance.
      *
-     * @param[in] bitmask_flags Bitmask flags: unused. No flags apply. It must be 0.
-     * @param[in] header CompleteBitmaskHeader/CompleteEnumeratedHeader
-     * @param[in] flag_seq Sequence of CompleteBitflag.
+     * @param [in] bitmask_flags Bitmask flags: unused. No flags apply. It must be 0.
+     * @param [in] header CompleteBitmaskHeader/CompleteEnumeratedHeader
+     * @param [in] flag_seq Sequence of CompleteBitflag.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. any given flag is set.
      *              2. Given header is inconsistent (only in Debug build mode).
@@ -1619,11 +1619,11 @@ public:
     /**
      * @brief Build CommonBitfield instance.
      *
-     * @param[in] position Bitfield starting position bit.
-     * @param[in] flags Bitfield flags: unused. No flags apply. It must be 0.
-     * @param[in] bitcount Bitfield number of bits. IDL v4.2 Clause 7.4.13.4.3.2 The first one (positive_int_const) is
+     * @param [in] position Bitfield starting position bit.
+     * @param [in] flags Bitfield flags: unused. No flags apply. It must be 0.
+     * @param [in] bitcount Bitfield number of bits. IDL v4.2 Clause 7.4.13.4.3.2 The first one (positive_int_const) is
      *                 the number of bits that can be stored (its [bitfield] size). The maximum value is 64.
-     * @param[in] holder_type Type used to manipulate the bitfield. IDL v4.2 Clause 7.4.13.4.3.2 The second optional one
+     * @param [in] holder_type Type used to manipulate the bitfield. IDL v4.2 Clause 7.4.13.4.3.2 The second optional one
      *                    (destination_type) specifies the type that will be used to manipulate the bit field as a
      *                    whole. This type can be boolean, octet or any integer type either signed or unsigned.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
@@ -1642,8 +1642,8 @@ public:
     /**
      * @brief Build CompleteBitfield instance.
      *
-     * @param[in] common CommonBitfield.
-     * @param[in] detail CompleteMemberDetail.
+     * @param [in] common CommonBitfield.
+     * @param [in] detail CompleteMemberDetail.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given CommonBitfield is inconsistent (only Debug build mode).
      *              2. Give CompleteMemberDetail is inconsistent (only Debug build mode).
@@ -1657,8 +1657,8 @@ public:
     /**
      * @brief Add complete bitfield to the sequence.
      *
-     * @param[in,out] sequence Sequence to be modified.
-     * @param[in] bitfield CompleteBitfield to be added.
+     * @param [in,out] sequence Sequence to be modified.
+     * @param [in] bitfield CompleteBitfield to be added.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given bitfield is inconsistent (only in Debug build mode).
      *              2. There is another bitfield with the same name and/or the same position.
@@ -1674,7 +1674,7 @@ public:
     /**
      * @brief Build CompleteBitsetHeader instance.
      *
-     * @param[in] detail CompleteTypeDetail
+     * @param [in] detail CompleteTypeDetail
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given CompleteTypeDetail is
      *            inconsistent (only in Debug build mode).
      * @return const CompleteBitsetHeader instance.
@@ -1689,9 +1689,9 @@ public:
     /**
      * @brief Build CompleteBitsetType instance.
      *
-     * @param[in] bitset_flags Bitset flags: unused. No flags apply. It must be 0.
-     * @param[in] header CompleteBitsetHeader.
-     * @param[in] field_seq Sequence of complete bitfields.
+     * @param [in] bitset_flags Bitset flags: unused. No flags apply. It must be 0.
+     * @param [in] header CompleteBitsetHeader.
+     * @param [in] field_seq Sequence of complete bitfields.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Any given flag is set.
      *              2. Given header is inconsistent (only in Debug build mode).
@@ -1721,9 +1721,9 @@ public:
      * @brief Register alias TypeObject into TypeObjectRegistry.
      *        CompleteAliasType is provided and the minimal TypeObject is constructed from the complete one.
      *
-     * @param[in] alias_type CompleteAliasType.
-     * @param[in] type_name Name to be registered in the registry.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the CompleteAliasType just registered and the
+     * @param [in] alias_type CompleteAliasType.
+     * @param [in] type_name Name to be registered in the registry.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the CompleteAliasType just registered and the
      * generated MinimalAliasType.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given type is inconsistent
      *            (only in Debug build mode).
@@ -1741,9 +1741,9 @@ public:
      * @brief Register annotation TypeObject into TypeObjectRegistry.
      *        CompleteAnnotationType is provided and the minimal TypeObject is constructed from the complete one.
      *
-     * @param[in] annotation_type CompleteAnnotationType.
-     * @param[in] type_name Name to be registered in the registry.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the CompleteAnnotationType just registered and the
+     * @param [in] annotation_type CompleteAnnotationType.
+     * @param [in] type_name Name to be registered in the registry.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the CompleteAnnotationType just registered and the
      * generated MinimalAnnotationType.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given type is inconsistent
      *            (only in Debug build mode).
@@ -1761,9 +1761,9 @@ public:
      * @brief Register structure TypeObject into TypeObjectRegistry.
      *        CompleteStructType is provided and the minimal TypeObject is constructed from the complete one.
      *
-     * @param[in] struct_type CompleteStructType.
-     * @param[in] type_name Name to be registered in the registry.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the CompleteStructType just registered and the
+     * @param [in] struct_type CompleteStructType.
+     * @param [in] type_name Name to be registered in the registry.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the CompleteStructType just registered and the
      * generated MinimalStructType.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given type is inconsistent
      *            (only in Debug build mode).
@@ -1781,9 +1781,9 @@ public:
      * @brief Register union TypeObject into TypeObjectRegistry.
      *        CompleteUnionType is provided and the minimal TypeObject is constructed from the complete one.
      *
-     * @param[in] union_type CompleteUnionType.
-     * @param[in] type_name Name to be registered in the registry.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the CompleteUnionType just registered and the
+     * @param [in] union_type CompleteUnionType.
+     * @param [in] type_name Name to be registered in the registry.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the CompleteUnionType just registered and the
      * generated MinimalUnionType.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given type is inconsistent
      *            (only in Debug build mode).
@@ -1801,9 +1801,9 @@ public:
      * @brief Register bitset TypeObject into TypeObjectRegistry.
      *        CompleteBitsetType is provided and the minimal TypeObject is constructed from the complete one.
      *
-     * @param[in] bitset_type CompleteBitsetType.
-     * @param[in] type_name Name to be registered in the registry.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the CompleteBitsetType just registered and the
+     * @param [in] bitset_type CompleteBitsetType.
+     * @param [in] type_name Name to be registered in the registry.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the CompleteBitsetType just registered and the
      * generated MinimalBitsetType.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given type is inconsistent
      *            (only in Debug build mode).
@@ -1821,8 +1821,8 @@ public:
      * @brief Register sequence TypeObject into TypeObjectRegistry.
      *        CompleteSequenceType is provided and the minimal TypeObject is constructed from the complete one.
      *
-     * @param[in] sequence_type CompleteSequenceType.
-     * @param[in] type_name Name to be registered in the registry.
+     * @param [in] sequence_type CompleteSequenceType.
+     * @param [in] type_name Name to be registered in the registry.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given type is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -1838,8 +1838,8 @@ public:
      * @brief Register array TypeObject into TypeObjectRegistry.
      *        CompleteArrayType is provided and the minimal TypeObject is constructed from the complete one.
      *
-     * @param[in] array_type CompleteArrayType.
-     * @param[in] type_name Name to be registered in the registry.
+     * @param [in] array_type CompleteArrayType.
+     * @param [in] type_name Name to be registered in the registry.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given type is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -1855,8 +1855,8 @@ public:
      * @brief Register map TypeObject into TypeObjectRegistry.
      *        CompleteMapType is provided and the minimal TypeObject is constructed from the complete one.
      *
-     * @param[in] map_type CompleteMapType.
-     * @param[in] type_name Name to be registered in the registry.
+     * @param [in] map_type CompleteMapType.
+     * @param [in] type_name Name to be registered in the registry.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given type is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -1872,9 +1872,9 @@ public:
      * @brief Register enumeration TypeObject into TypeObjectRegistry.
      *        CompleteEnumeratedType is provided and the minimal TypeObject is constructed from the complete one.
      *
-     * @param[in] enumerated_type CompleteEnumeratedType.
-     * @param[in] type_name Name to be registered in the registry.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the CompleteEnumeratedType just registered and the
+     * @param [in] enumerated_type CompleteEnumeratedType.
+     * @param [in] type_name Name to be registered in the registry.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the CompleteEnumeratedType just registered and the
      * generated MinimalEnumeratedType.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given type is inconsistent
      *            (only in Debug build mode).
@@ -1892,9 +1892,9 @@ public:
      * @brief Register bitmask TypeObject into TypeObjectRegistry.
      *        CompleteBitmaskType is provided and the minimal TypeObject is constructed from the complete one.
      *
-     * @param[in] bitmask_type CompleteBitmaskType.
-     * @param[in] type_name Name to be registered in the registry.
-     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the CompleteBitmaskType just registered and the
+     * @param [in] bitmask_type CompleteBitmaskType.
+     * @param [in] type_name Name to be registered in the registry.
+     * @param [out] type_ids @ref TypeIdentifierPair corresponding to the CompleteBitmaskType just registered and the
      * generated MinimalBitmaskType.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given type is inconsistent
      *            (only in Debug build mode).
@@ -1914,7 +1914,7 @@ public:
     /**
      * @brief Calculate the MD5 hash of the provided name.
      *
-     * @param[in] name String which hash is calculated.
+     * @param [in] name String which hash is calculated.
      * @return const NameHash Hash of the given string.
      */
     FASTDDS_EXPORTED_API static const NameHash name_hash(
@@ -1923,7 +1923,7 @@ public:
     /**
      * @brief Check TypeObject consistency.
      *
-     * @param[in] type_object Instance to be checked.
+     * @param [in] type_object Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            TypeObject is not consistent.
      */
@@ -1933,8 +1933,8 @@ public:
     /**
      * @brief If one of the @ref TypeIdentifier in @ref TypeIdentifierPair is minimal, returns its reference.
      *
-     * @param[in] type_ids @ref TypeIdentifierPair used to retrieve the @ref TypeIdentifier.
-     * @param[out] ec Returns if there was an error.
+     * @param [in] type_ids @ref TypeIdentifierPair used to retrieve the @ref TypeIdentifier.
+     * @param [out] ec Returns if there was an error.
      * @return Reference to the minimal @ref TypeIdentifier.
      */
     FASTDDS_EXPORTED_API static const TypeIdentifier& retrieve_minimal_type_identifier(
@@ -1944,8 +1944,8 @@ public:
     /**
      * @brief If one of the @ref TypeIdentifier in @ref TypeIdentifierPair is complete, returns its reference.
      *
-     * @param[in] type_ids @ref TypeIdentifierPair used to retrieve the @ref TypeIdentifier.
-     * @param[out] ec Returns if there was an error.
+     * @param [in] type_ids @ref TypeIdentifierPair used to retrieve the @ref TypeIdentifier.
+     * @param [out] ec Returns if there was an error.
      * @return Reference to the complete @ref TypeIdentifier.
      */
     FASTDDS_EXPORTED_API static const TypeIdentifier& retrieve_complete_type_identifier(
@@ -1969,8 +1969,8 @@ protected:
     /**
      * @brief Set the try construct behavior in a given MemberFlag
      *
-     * @param[in,out] member_flag Bitmask to be set.
-     * @param[in] try_construct_kind @ref TryConstructFailAction.
+     * @param [in,out] member_flag Bitmask to be set.
+     * @param [in] try_construct_kind @ref TryConstructFailAction.
      */
     static void set_try_construct_behavior(
             MemberFlag& member_flag,
@@ -1979,10 +1979,10 @@ protected:
     /**
      * @brief Set the TypeFlag object.
      *
-     * @param[in,out] type_flag Bitmask to be set.
-     * @param[in] extensibility_kind ExtensibilityKind
-     * @param[in] nested nested annotation value.
-     * @param[in] autoid_hash autoid annotation has HASH value.
+     * @param [in,out] type_flag Bitmask to be set.
+     * @param [in] extensibility_kind ExtensibilityKind
+     * @param [in] nested nested annotation value.
+     * @param [in] autoid_hash autoid annotation has HASH value.
      */
     static void set_type_flag(
             TypeFlag& type_flag,
@@ -1993,8 +1993,8 @@ protected:
     /**
      * @brief Set the extensibility kind in a given TypeFlag.
      *
-     * @param[in,out] type_flag Bitmask to be set.
-     * @param[in] extensibility_kind ExtensibilityKind.
+     * @param [in,out] type_flag Bitmask to be set.
+     * @param [in] extensibility_kind ExtensibilityKind.
      */
     static void set_extensibility_kind(
             TypeFlag& type_flag,
@@ -2010,7 +2010,7 @@ protected:
      *          descriptive TypeIdentifier. They are recognized by the contained PlainCollectionHeader having
      *          EquivalenceKind set to EK_BOTH.
      *
-     * @param[in] type_identifier TypeIdentifier to check.
+     * @param [in] type_identifier TypeIdentifier to check.
      * @return true if the given TypeIdentifier is fully-descriptive. false otherwise.
      */
     static bool is_fully_descriptive_type_identifier(
@@ -2022,7 +2022,7 @@ protected:
      *        These are HASH TypeIdentifiers with discriminator EK_MINIMAL, EK_COMPLETE or
      *        TI_STRONGLY_CONNECTED_COMPONENT.
      *
-     * @param[in] type_identifier TypeIdentifier to check.
+     * @param [in] type_identifier TypeIdentifier to check.
      * @return true if the given TypeIdentifier is direct hash. false otherwise.
      */
     static bool is_direct_hash_type_identifier(
@@ -2037,7 +2037,7 @@ protected:
      *           TI_PLAIN_ARRAY_LARGE, TI_PLAIN_MAP_SMALL, or TI_PLAIN_MAP_LARGE.
      *        2. Having the contained PlainCollectionHeader with EquivalenceKind EK_MINIMAL or EK_COMPLETE.
      *
-     * @param[in] type_identifier TypeIdentifier to check.
+     * @param [in] type_identifier TypeIdentifier to check.
      * @return true if the given TypeIdentifier is indirect hash. false otherwise.
      */
     static bool is_indirect_hash_type_identifier(
@@ -2054,7 +2054,7 @@ protected:
     /**
      * @brief Check LBound consistency: must be greater than 255.
      *
-     * @param[in] bound LBound to be checked.
+     * @param [in] bound LBound to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given LBound is not
      *            consistent.
      */
@@ -2065,7 +2065,7 @@ protected:
      * @brief Check that the array_bound_seq is consistent: non-empty.
      *
      * @tparam T Either SBoundSeq or LBoundSeq
-     * @param[in] array Sequence to be checked.
+     * @param [in] array Sequence to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given array is not
      *            consistent.
      */
@@ -2089,7 +2089,7 @@ protected:
     /**
      * @brief Check LBoundSeq consistency.
      *
-     * @param[in] bound_seq Instance to be checked.
+     * @param [in] bound_seq Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given LBoundSeq is
      *            not consistent.
      */
@@ -2099,7 +2099,7 @@ protected:
     /**
      * @brief Check CollectionElementFlag consistency.
      *
-     * @param[in] collection_element_flag CollectionElementFlag to be checked.
+     * @param [in] collection_element_flag CollectionElementFlag to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given CollectionElementFlag
      *            is not consistent.
      */
@@ -2111,7 +2111,7 @@ protected:
      *        XTypes v1.3 Clause 7.2.2.4.4.4.8 Key members shall never be optional, and they shall always have their
      *        "must understand" attribute set to true.
      *
-     * @param[in] member_flags MemberFlag to be checked.
+     * @param [in] member_flags MemberFlag to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given StructMemberFlag is not
      *            consistent.
      */
@@ -2121,7 +2121,7 @@ protected:
     /**
      * @brief Check UnionMemberFlag consistency.
      *
-     * @param[in] union_member_flag UnionMemberFlag to be checked.
+     * @param [in] union_member_flag UnionMemberFlag to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given UnionMemberFlag
      *            is not consistent.
      */
@@ -2131,7 +2131,7 @@ protected:
     /**
      * @brief Check UnionDiscriminatorFlag consistency.
      *
-     * @param[in] union_discriminator_flag UnionDiscriminatorFlag to be checked.
+     * @param [in] union_discriminator_flag UnionDiscriminatorFlag to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given UnionDiscriminatorFlag
      *            is not consistent.
      */
@@ -2141,7 +2141,7 @@ protected:
     /**
      * @brief Check EnumeratedLiteralFlag consistency: any flag different from default are not set.
      *
-     * @param[in] enumerated_literal_flag Instance to be checked.
+     * @param [in] enumerated_literal_flag Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given EnumeratedLiteralFlag
      *            is not consistent.
      */
@@ -2151,7 +2151,7 @@ protected:
     /**
      * @brief Check TypeFlag consistency: exactly one extensibility flag is set.
      *
-     * @param[in] type_flag Instance to be checked.
+     * @param [in] type_flag Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given TypeFlag
      *            is not consistent.
      */
@@ -2162,7 +2162,7 @@ protected:
      * @brief Check empty flags consistency.
      *
      * @tparam T Either MemberFlag or TypeFlag.
-     * @param[in] flags Instance to be checked.
+     * @param [in] flags Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            flags are not consistent: empty (0).
      */
@@ -2179,7 +2179,7 @@ protected:
     /**
      * @brief Check EquivalenceKind consistency.
      *
-     * @param[in] equiv_kind Instance to be checked.
+     * @param [in] equiv_kind Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given EquivalenceKind
      *            is not consistent.
      */
@@ -2191,7 +2191,7 @@ protected:
      *          - CollectionElementFlag consistent
      *          - Consistent EquivalenceKind
      *
-     * @param[in] header PlainCollectionHeader to be checked.
+     * @param [in] header PlainCollectionHeader to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given PlainCollectionHeader
      *            is not consistent.
      */
@@ -2203,8 +2203,8 @@ protected:
      *        1. TypeIdentifier initialized
      *        2. Consistency of EquivalenceKinds
      *
-     * @param[in] header PlainCollectionHeader to be checked.
-     * @param[in] element_identifier TypeIdentifier to be checked.
+     * @param [in] header PlainCollectionHeader to be checked.
+     * @param [in] element_identifier TypeIdentifier to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given parameters are not
      *            consistent.
      */
@@ -2215,7 +2215,7 @@ protected:
     /**
      * @brief Retrieves the equivalence kind of a component within a map.
      *
-     * @param[in] identifier TypeIdentifier of the component to be checked.
+     * @param [in] identifier TypeIdentifier of the component to be checked.
      * @return EK_COMPLETE if the component equivalence kind is EK_COMPLETE.
      * @return EK_MINIMAL if the component equivalence kind is EK_MINIMAL.
      * @return EK_BOTH if the component equivalence kind is EK_BOTH.
@@ -2230,8 +2230,8 @@ protected:
      *        2. TypeIdentifier initialized
      *        3. Consistency of EquivalenceKinds
      *
-     * @param[in] header PlainCollectionHeader of the map to be checked.
-     * @param[in] type_identifier TypeIdentifier to be checked.
+     * @param [in] header PlainCollectionHeader of the map to be checked.
+     * @param [in] type_identifier TypeIdentifier to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given parameters are not
      *            consistent.
      */
@@ -2245,7 +2245,7 @@ protected:
      *        and unsigned integer types and of narrow and wide string types.
      *        In Debug build mode, this method also checks that the string/wstring bound is consistent.
      *
-     * @param[in] key_identifier TypeIdentifier to be checked.
+     * @param [in] key_identifier TypeIdentifier to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given TypeIdentifier is not
      *            consistent.
      */
@@ -2255,7 +2255,7 @@ protected:
     /**
      * @brief Check StringLTypeDefn consistency.
      *
-     * @param[in] string Instance to be checked.
+     * @param [in] string Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given StringLTypeDefn is not
      *            consistent.
      */
@@ -2265,7 +2265,7 @@ protected:
     /**
      * @brief Check PlainSequenceSElemDefn consistency.
      *
-     * @param[in] plain_seq Instance to be checked.
+     * @param [in] plain_seq Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given PlainSequenceSElemDefn
      *            is not consistent.
      */
@@ -2275,7 +2275,7 @@ protected:
     /**
      * @brief Check PlainSequenceLElemDefn consistency.
      *
-     * @param[in] plain_seq Instance to be checked.
+     * @param [in] plain_seq Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given PlainSequenceLElemDefn
      *            is not consistent.
      */
@@ -2285,7 +2285,7 @@ protected:
     /**
      * @brief Check PlainArraySElemDefn consistency.
      *
-     * @param[in] plain_array Instance to be checked.
+     * @param [in] plain_array Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given PlainArraySElemDefn is
      *            not consistent.
      */
@@ -2295,7 +2295,7 @@ protected:
     /**
      * @brief Check PlainArrayLElemDefn consistency.
      *
-     * @param[in] plain_array Instance to be checked.
+     * @param [in] plain_array Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given PlainArrayLElemDefn is
      *            not consistent.
      */
@@ -2305,7 +2305,7 @@ protected:
     /**
      * @brief Check PlainMapSTypeDefn consistency.
      *
-     * @param[in] plain_map Instance to be checked.
+     * @param [in] plain_map Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given PlainMapSTypeDefn is
      *            not consistent.
      */
@@ -2315,7 +2315,7 @@ protected:
     /**
      * @brief Check PlainMapLTypeDefn consistency.
      *
-     * @param[in] plain_map Instance to be checked.
+     * @param [in] plain_map Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given PlainMapLTypeDefn is
      *            not consistent.
      */
@@ -2325,7 +2325,7 @@ protected:
     /**
      * @brief Check direct hash TypeIdentifier consistency.
      *
-     * @param[in] type_id Instance to be checked.
+     * @param [in] type_id Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given TypeIdentifier is
      *            not consistent.
      */
@@ -2335,7 +2335,7 @@ protected:
     /**
      * @brief Check TypeIdentifier consistency.
      *
-     * @param[in] type_identifier Instance to be checked.
+     * @param [in] type_identifier Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given TypeIdentifier is
      *            not consistent.
      */
@@ -2345,7 +2345,7 @@ protected:
     /**
      * @brief Check AppliedAnnotationParameterSeq consistency.
      *
-     * @param[in] applied_annotation_parameter_seq Instance to be checked.
+     * @param [in] applied_annotation_parameter_seq Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            AppliedAnnotationParameterSeq is not consistent.
      */
@@ -2355,7 +2355,7 @@ protected:
     /**
      * @brief Check AppliedAnnotation TypeIdentifier consistency.
      *
-     * @param[in] annotation_type_id Instance to be checked.
+     * @param [in] annotation_type_id Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            AppliedAnnotation TypeIdentifier is not consistent.
      */
@@ -2365,7 +2365,7 @@ protected:
     /**
      * @brief Check AppliedAnnotation consistency.
      *
-     * @param[in] applied_annotation Instance to be checked.
+     * @param [in] applied_annotation Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given AppliedAnnotation is
      *            not consistent.
      */
@@ -2375,7 +2375,7 @@ protected:
     /**
      * @brief Check AppliedAnnotationSeq consistency.
      *
-     * @param[in] applied_annotation_seq Instance to be checked.
+     * @param [in] applied_annotation_seq Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given AppliedAnnotationSeq is
      *            not consistent.
      */
@@ -2385,7 +2385,7 @@ protected:
     /**
      * @brief Check AppliedVerbatimAnnotation consistency.
      *
-     * @param[in] applied_verbatim_annotation Instance to be checked.
+     * @param [in] applied_verbatim_annotation Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      * AppliedVerbatimAnnotation is not consistent.
      */
@@ -2395,7 +2395,7 @@ protected:
     /**
      * @brief Check CommonStructMember consistency.
      *
-     * @param[in] common_struct_member Instance to be checked.
+     * @param [in] common_struct_member Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given CommonStructMember is
      *            not consistent.
      */
@@ -2405,7 +2405,7 @@ protected:
     /**
      * @brief Check CompleteMemberDetail consistency.
      *
-     * @param[in] complete_member_detail Instance to be checked.
+     * @param [in] complete_member_detail Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given CompleteMemberDetail is
      *            not consistent.
      */
@@ -2415,8 +2415,8 @@ protected:
     /**
      * @brief Check cross-consistency between CommonStructMember and CompleteMemberDetail.
      *
-     * @param[in] common_struct_member CommonStructMember to be checked.
-     * @param[in] complete_member_detail CompleteMemberDetail to be checked.
+     * @param [in] common_struct_member CommonStructMember to be checked.
+     * @param [in] complete_member_detail CompleteMemberDetail to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the hashid builtin applied
      *            annotation is set and inconsistent with the member id.
      */
@@ -2427,8 +2427,8 @@ protected:
     /**
      * @brief Check consistency between a string value and the MemberId (algorithm XTypes v1.3 Clause 7.3.1.2.1.1)
      *
-     * @param[in] member_id MemberId to be checked.
-     * @param[in] string_value String provided with either hashid annotation or the member name.
+     * @param [in] member_id MemberId to be checked.
+     * @param [in] string_value String provided with either hashid annotation or the member name.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given data is inconsistent.
      */
     static void string_member_id_consistency(
@@ -2438,7 +2438,7 @@ protected:
     /**
      * @brief Check CompleteStructMember consistency.
      *
-     * @param[in] complete_struct_member Instance to be checked.
+     * @param [in] complete_struct_member Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given CompleteStructMember is
      *            not consistent.
      */
@@ -2448,7 +2448,7 @@ protected:
     /**
      * @brief Check CompleteStructMemberSeq consistency.
      *
-     * @param[in] complete_struct_member_seq Instance to be checked.
+     * @param [in] complete_struct_member_seq Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given CompleteStructMemberSeq
      *            is not consistent.
      */
@@ -2458,7 +2458,7 @@ protected:
     /**
      * @brief Check AppliedBuiltinTypeAnnotations consistency.
      *
-     * @param[in] applied_builtin_type_annotations Instance to be checked.
+     * @param [in] applied_builtin_type_annotations Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            AppliedBuiltinTypeAnnotations is not consistent.
      */
@@ -2468,7 +2468,7 @@ protected:
     /**
      * @brief Check CompleteTypeDetail consistency.
      *
-     * @param[in] complete_type_detail Instance to be checked.
+     * @param [in] complete_type_detail Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given CompleteTypeDetail is
      *            not consistent.
      */
@@ -2478,7 +2478,7 @@ protected:
     /**
      * @brief Check CompleteStructHeader base_type TypeIdentifier consistency.
      *
-     * @param[in] base_type Instance to be checked.
+     * @param [in] base_type Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given TypeIdentifier is
      *            not consistent.
      */
@@ -2488,7 +2488,7 @@ protected:
     /**
      * @brief Check CompleteStructHeader consistency.
      *
-     * @param[in] complete_struct_header Instance to be checked.
+     * @param [in] complete_struct_header Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given CompleteStructHeader
      *            is not consistent.
      */
@@ -2498,7 +2498,7 @@ protected:
     /**
      * @brief Check CompleteStructType consistency.
      *
-     * @param[in] complete_struct_type Instance to be checked.
+     * @param [in] complete_struct_type Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given CompleteStructType
      *            is not consistent.
      */
@@ -2508,7 +2508,7 @@ protected:
     /**
      * @brief Check MinimalStructType consistency.
      *
-     * @param[in] minimal_struct_type Instance to be checked.
+     * @param [in] minimal_struct_type Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given MinimalStructType
      *            is not consistent.
      */
@@ -2518,7 +2518,7 @@ protected:
     /**
      * @brief Check UnionCaseLabelSeq consistency.
      *
-     * @param[in] union_case_label_seq Instance to be checked.
+     * @param [in] union_case_label_seq Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given UnionCaseLabelSeq
      *            is not consistent.
      */
@@ -2528,7 +2528,7 @@ protected:
     /**
      * @brief Check CommonUnionMember consistency.
      *
-     * @param[in] common_union_member Instance to be checked.
+     * @param [in] common_union_member Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given CommonUnionMember
      *            is not consistent.
      */
@@ -2538,8 +2538,8 @@ protected:
     /**
      * @brief Check cross-consistency between CommonStructMember and CompleteMemberDetail.
      *
-     * @param[in] common_union_member CommonStructMember to be checked.
-     * @param[in] complete_member_detail CompleteMemberDetail to be checked.
+     * @param [in] common_union_member CommonStructMember to be checked.
+     * @param [in] complete_member_detail CompleteMemberDetail to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the hashid builtin annotation is
      *            set and the member id is not consistent.
      */
@@ -2550,7 +2550,7 @@ protected:
     /**
      * @brief Check CompleteUnionMember consistency.
      *
-     * @param[in] complete_union_member Instance to be checked.
+     * @param [in] complete_union_member Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given CompleteUnionMember
      *            is not consistent.
      */
@@ -2560,7 +2560,7 @@ protected:
     /**
      * @brief Check CompleteUnionMemberSeq consistency.
      *
-     * @param[in] complete_union_member_seq Instance to be checked.
+     * @param [in] complete_union_member_seq Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given CompleteUnionMemberSeq
      *            is not consistent.
      */
@@ -2570,7 +2570,7 @@ protected:
     /**
      * @brief Check discriminator TypeIdentifier consistency.
      *
-     * @param[in] type_id Instance to be checked.
+     * @param [in] type_id Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given TypeIdentifier
      *            is not consistent.
      */
@@ -2580,7 +2580,7 @@ protected:
     /**
      * @brief Check CommonDiscriminatorMember consistency.
      *
-     * @param[in] common_discriminator_member Instance to be checked.
+     * @param [in] common_discriminator_member Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CommonDiscriminatorMember is not consistent.
      */
@@ -2590,7 +2590,7 @@ protected:
     /**
      * @brief Check CompleteDiscriminatorMember consistency.
      *
-     * @param[in] complete_discriminator_member Instance to be checked.
+     * @param [in] complete_discriminator_member Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteDiscriminatorMember is not consistent.
      */
@@ -2600,7 +2600,7 @@ protected:
     /**
      * @brief Check CompleteUnionHeader consistency.
      *
-     * @param[in] complete_union_header Instance to be checked.
+     * @param [in] complete_union_header Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteUnionHeader is not consistent.
      */
@@ -2610,7 +2610,7 @@ protected:
     /**
      * @brief Check CompleteUnionType consistency.
      *
-     * @param[in] complete_union_type Instance to be checked.
+     * @param [in] complete_union_type Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteUnionType is not consistent.
      */
@@ -2620,7 +2620,7 @@ protected:
     /**
      * @brief Check MinimalUnionType consistency.
      *
-     * @param[in] minimal_union_type Instance to be checked.
+     * @param [in] minimal_union_type Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            MinimalUnionType is not consistent.
      */
@@ -2642,7 +2642,7 @@ protected:
     /**
      * @brief Check CommonAnnotationParameter consistency.
      *
-     * @param[in] common_annotation_parameter Instance to be checked.
+     * @param [in] common_annotation_parameter Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CommonAnnotationParameter is not consistent.
      */
@@ -2652,7 +2652,7 @@ protected:
     /**
      * @brief Check CompleteAnnotationParameter consistency.
      *
-     * @param[in] complete_annotation_parameter Instance to be checked.
+     * @param [in] complete_annotation_parameter Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteAnnotationParameter is not consistent.
      */
@@ -2662,7 +2662,7 @@ protected:
     /**
      * @brief Check CompleteAnnotationParameterSeq consistency.
      *
-     * @param[in] complete_annotation_parameter_seq Instance to be checked.
+     * @param [in] complete_annotation_parameter_seq Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteAnnotationParameterSeq is not consistent.
      */
@@ -2672,7 +2672,7 @@ protected:
     /**
      * @brief Check CompleteAnnotationHeader consistency.
      *
-     * @param[in] complete_annotation_header Instance to be checked.
+     * @param [in] complete_annotation_header Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteAnnotationHeader is not consistent.
      */
@@ -2682,7 +2682,7 @@ protected:
     /**
      * @brief Check CompleteAnnotationType consistency.
      *
-     * @param[in] complete_annotation_type Instance to be checked.
+     * @param [in] complete_annotation_type Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteAnnotationType is not consistent.
      */
@@ -2692,7 +2692,7 @@ protected:
     /**
      * @brief Check MinimalAnnotationType consistency.
      *
-     * @param[in] minimal_annotation_type Instance to be checked.
+     * @param [in] minimal_annotation_type Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            MinimalAnnotationType is not consistent.
      */
@@ -2702,7 +2702,7 @@ protected:
     /**
      * @brief Check CommonAliasBody consistency.
      *
-     * @param[in] common_alias_body Instance to be checked.
+     * @param [in] common_alias_body Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CommonAliasBody is not consistent.
      */
@@ -2712,7 +2712,7 @@ protected:
     /**
      * @brief Check that hashid builtin annotation has not been set.
      *
-     * @param[in] ann_builtin Instance to be checked.
+     * @param [in] ann_builtin Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            AppliedBuiltinMemberAnnotations is not consistent.
      */
@@ -2722,7 +2722,7 @@ protected:
     /**
      * @brief Check CompleteAliasBody consistency.
      *
-     * @param[in] complete_alias_body Instance to be checked.
+     * @param [in] complete_alias_body Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteAliasBody is not consistent.
      */
@@ -2732,7 +2732,7 @@ protected:
     /**
      * @brief Check CompleteAliasHeader consistency.
      *
-     * @param[in] complete_alias_header Instance to be checked.
+     * @param [in] complete_alias_header Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteAliasHeader is not consistent.
      */
@@ -2742,7 +2742,7 @@ protected:
     /**
      * @brief Check CompleteAliasType consistency.
      *
-     * @param[in] complete_alias_type Instance to be checked.
+     * @param [in] complete_alias_type Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteAliasType is not consistent.
      */
@@ -2752,7 +2752,7 @@ protected:
     /**
      * @brief Check MinimalAliasType consistency.
      *
-     * @param[in] minimal_alias_type Instance to be checked.
+     * @param [in] minimal_alias_type Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            MinimalAliasType is not consistent.
      */
@@ -2762,7 +2762,7 @@ protected:
     /**
      * @brief Check CompleteElementDetail consistency.
      *
-     * @param[in] complete_element_detail Instance to be checked.
+     * @param [in] complete_element_detail Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteElementDetail is not consistent.
      */
@@ -2772,7 +2772,7 @@ protected:
     /**
      * @brief Check CommonCollectionElement consistency.
      *
-     * @param[in] common_collection_element Instance to be checked.
+     * @param [in] common_collection_element Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CommonCollectionElement is not consistent.
      */
@@ -2782,7 +2782,7 @@ protected:
     /**
      * @brief Check CompleteCollectionElement consistency.
      *
-     * @param[in] complete_collection_element Instance to be checked.
+     * @param [in] complete_collection_element Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteCollectionElement is not consistent.
      */
@@ -2792,7 +2792,7 @@ protected:
     /**
      * @brief Check CompleteCollectionHeader consistency.
      *
-     * @param[in] complete_collection_header Instance to be checked.
+     * @param [in] complete_collection_header Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteCollectionHeader is not consistent.
      */
@@ -2802,7 +2802,7 @@ protected:
     /**
      * @brief Check CompleteSequenceType consistency.
      *
-     * @param[in] complete_sequence_type Instance to be checked.
+     * @param [in] complete_sequence_type Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteSequenceType is not consistent.
      */
@@ -2812,7 +2812,7 @@ protected:
     /**
      * @brief Check MinimalSequenceType consistency.
      *
-     * @param[in] minimal_sequence_type Instance to be checked.
+     * @param [in] minimal_sequence_type Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            MinimalSequenceType is not consistent.
      */
@@ -2822,7 +2822,7 @@ protected:
     /**
      * @brief Check CommonArrayHeader consistency.
      *
-     * @param[in] common_array_header Instance to be checked.
+     * @param [in] common_array_header Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CommonArrayHeader is not consistent.
      */
@@ -2832,7 +2832,7 @@ protected:
     /**
      * @brief Check CompleteArrayHeader consistency.
      *
-     * @param[in] complete_array_header Instance to be checked.
+     * @param [in] complete_array_header Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteArrayHeader is not consistent.
      */
@@ -2842,7 +2842,7 @@ protected:
     /**
      * @brief Check CompleteArrayType consistency.
      *
-     * @param[in] complete_array_type Instance to be checked.
+     * @param [in] complete_array_type Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteArrayType is not consistent.
      */
@@ -2852,7 +2852,7 @@ protected:
     /**
      * @brief Check MinimalArrayType consistency.
      *
-     * @param[in] minimal_array_type Instance to be checked.
+     * @param [in] minimal_array_type Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            MinimalArrayType is not consistent.
      */
@@ -2862,7 +2862,7 @@ protected:
     /**
      * @brief Check CompleteMapType consistency.
      *
-     * @param[in] complete_map_type Instance to be checked.
+     * @param [in] complete_map_type Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteMapType is not consistent.
      */
@@ -2872,7 +2872,7 @@ protected:
     /**
      * @brief Check MinimalMapType consistency.
      *
-     * @param[in] minimal_map_type Instance to be checked.
+     * @param [in] minimal_map_type Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            MinimalMapType is not consistent.
      */
@@ -2882,7 +2882,7 @@ protected:
     /**
      * @brief Check CommonEnumeratedLiteral consistency.
      *
-     * @param[in] common_enumerated_literal Instance to be checked.
+     * @param [in] common_enumerated_literal Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CommonEnumeratedLiteral is not consistent.
      */
@@ -2892,7 +2892,7 @@ protected:
     /**
      * @brief Check CompleteEnumeratedLiteral consistency.
      *
-     * @param[in] complete_enumerated_literal Instance to be checked.
+     * @param [in] complete_enumerated_literal Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteEnumeratedLiteral is not consistent.
      */
@@ -2902,7 +2902,7 @@ protected:
     /**
      * @brief Check CompleteEnumeratedLiteralSeq consistency.
      *
-     * @param[in] complete_enumerated_literal_seq Instance to be checked.
+     * @param [in] complete_enumerated_literal_seq Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteEnumeratedLiteralSeq is not consistent.
      */
@@ -2912,7 +2912,7 @@ protected:
     /**
      * @brief Check enumeration BitBound consistency.
      *
-     * @param[in] bit_bound Instance to be checked.
+     * @param [in] bit_bound Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            BitBound is not consistent.
      */
@@ -2922,7 +2922,7 @@ protected:
     /**
      * @brief Check bitmask BitBound consistency.
      *
-     * @param[in] bit_bound Instance to be checked.
+     * @param [in] bit_bound Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            BitBound is not consistent.
      */
@@ -2932,8 +2932,8 @@ protected:
     /**
      * @brief Check CommonEnumeratedHeader consistency.
      *
-     * @param[in] common_enumerated_header Instance to be checked.
-     * @param[in] bitmask flag in case that the header corresponds to a Bitmask. By default is false.
+     * @param [in] common_enumerated_header Instance to be checked.
+     * @param [in] bitmask flag in case that the header corresponds to a Bitmask. By default is false.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CommonEnumeratedHeader is not consistent.
      */
@@ -2944,8 +2944,8 @@ protected:
     /**
      * @brief Check CompleteEnumeratedHeader consistency.
      *
-     * @param[in] complete_enumerated_header Instance to be checked.
-     * @param[in] bitmask Flag in case that the header corresponds to a Bitmask. By default is false.
+     * @param [in] complete_enumerated_header Instance to be checked.
+     * @param [in] bitmask Flag in case that the header corresponds to a Bitmask. By default is false.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteEnumeratedHeader is not consistent.
      */
@@ -2956,7 +2956,7 @@ protected:
     /**
      * @brief Check CompleteEnumeratedType consistency.
      *
-     * @param[in] complete_enumerated_type Instance to be checked.
+     * @param [in] complete_enumerated_type Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteEnumeratedType is not consistent.
      */
@@ -2966,7 +2966,7 @@ protected:
     /**
      * @brief Check MinimalEnumeratedType consistency.
      *
-     * @param[in] minimal_enumerated_type Instance to be checked.
+     * @param [in] minimal_enumerated_type Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            MinimalEnumeratedType is not consistent.
      */
@@ -2976,7 +2976,7 @@ protected:
     /**
      * @brief Check bitflag position consistency.
      *
-     * @param[in] position Instance to be checked.
+     * @param [in] position Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            bitflag position is not consistent.
      */
@@ -2986,7 +2986,7 @@ protected:
     /**
      * @brief Check CommonBitflag consistency.
      *
-     * @param[in] common_bitflag Instance to be checked.
+     * @param [in] common_bitflag Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CommonBitflag is not consistent.
      */
@@ -2996,7 +2996,7 @@ protected:
     /**
      * @brief Check CompleteBitflag consistency.
      *
-     * @param[in] complete_bitflag Instance to be checked.
+     * @param [in] complete_bitflag Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteBitflag is not consistent.
      */
@@ -3006,7 +3006,7 @@ protected:
     /**
      * @brief Check CompleteBitflagSeq consistency.
      *
-     * @param[in] complete_bitflag_seq Instance to be checked.
+     * @param [in] complete_bitflag_seq Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteBitflagSeq is not consistent.
      */
@@ -3016,7 +3016,7 @@ protected:
     /**
      * @brief Check CompleteBitmaskType consistency.
      *
-     * @param[in] complete_bitmask_type Instance to be checked.
+     * @param [in] complete_bitmask_type Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteBitmaskType is not consistent.
      */
@@ -3026,7 +3026,7 @@ protected:
     /**
      * @brief Check MinimalBitmaskType consistency.
      *
-     * @param[in] minimal_bitmask_type Instance to be checked.
+     * @param [in] minimal_bitmask_type Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            MinimalBitmaskType is not consistent.
      */
@@ -3036,8 +3036,8 @@ protected:
     /**
      * @brief Check consistency between the holder type and the bitcount.
      *
-     * @param[in] holder_type TypeKind of the bitfield holder type.
-     * @param[in] bitcount Bitfield number of bits.
+     * @param [in] holder_type TypeKind of the bitfield holder type.
+     * @param [in] bitcount Bitfield number of bits.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given data is inconsistent.
      */
     static void bitfield_holder_type_consistency(
@@ -3047,7 +3047,7 @@ protected:
     /**
      * @brief Check CommonBitfield consistency.
      *
-     * @param[in] common_bitfield Instance to be checked.
+     * @param [in] common_bitfield Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CommonBitfield is not consistent.
      */
@@ -3057,7 +3057,7 @@ protected:
     /**
      * @brief Check CompleteBitfield consistency.
      *
-     * @param[in] complete_bitfield Instance to be checked.
+     * @param [in] complete_bitfield Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteBitfield is not consistent.
      */
@@ -3067,7 +3067,7 @@ protected:
     /**
      * @brief Check CompleteBitfieldSeq consistency.
      *
-     * @param[in] complete_bitfield_seq Instance to be checked.
+     * @param [in] complete_bitfield_seq Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteBitfieldSeq is not consistent.
      */
@@ -3077,7 +3077,7 @@ protected:
     /**
      * @brief Check CompleteBitsetHeader consistency.
      *
-     * @param[in] complete_bitset_header Instance to be checked.
+     * @param [in] complete_bitset_header Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteBitsetHeader is not consistent.
      */
@@ -3087,7 +3087,7 @@ protected:
     /**
      * @brief Check CompleteBitsetType consistency.
      *
-     * @param[in] complete_bitset_type Instance to be checked.
+     * @param [in] complete_bitset_type Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteBitsetType is not consistent.
      */
@@ -3097,7 +3097,7 @@ protected:
     /**
      * @brief Check MinimalBitsetType consistency.
      *
-     * @param[in] minimal_bitset_type Instance to be checked.
+     * @param [in] minimal_bitset_type Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            MinimalBitsetType is not consistent.
      */
@@ -3107,7 +3107,7 @@ protected:
     /**
      * @brief Check CompleteTypeObject consistency.
      *
-     * @param[in] complete_type_object Instance to be checked.
+     * @param [in] complete_type_object Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            CompleteTypeObject is not consistent.
      */
@@ -3117,7 +3117,7 @@ protected:
     /**
      * @brief Check MinimalTypeObject consistency.
      *
-     * @param[in] minimal_type_object Instance to be checked.
+     * @param [in] minimal_type_object Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            MinimalTypeObject is not consistent.
      */

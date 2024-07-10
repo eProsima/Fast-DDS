@@ -35,7 +35,7 @@ namespace rtps {
 class IChangePool;
 class IPayloadPool;
 class ReaderProxy;
-class RTPSWriter;
+class BaseWriter;
 
 class WriterHistory
 {
@@ -236,6 +236,11 @@ public:
         return mp_mutex;
     }
 
+    inline uint32_t getTypeMaxSerialized()
+    {
+        return m_att.payloadMaxSize;
+    }
+
     HistoryAttributes m_att;
     std::vector<CacheChange_t*> m_changes;
 
@@ -245,7 +250,7 @@ public:
     SequenceNumber_t last_sequence_number_;
     RecursiveTimedMutex* mp_mutex;
     bool m_isHistoryFull;
-    RTPSWriter* mp_writer;
+    BaseWriter* mp_writer;
 
 };
 

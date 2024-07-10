@@ -392,9 +392,9 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
     watt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
     watt.endpoint.external_unicast_locators = mp_builtin->m_att.metatraffic_external_unicast_locators;
     watt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
-    watt.times.heartbeatPeriod = pdp_heartbeat_period;
-    watt.times.nackResponseDelay = pdp_nack_response_delay;
-    watt.times.nackSupressionDuration = pdp_nack_supression_duration;
+    watt.times.heartbeat_period = pdp_heartbeat_period;
+    watt.times.nack_response_delay = pdp_nack_response_delay;
+    watt.times.nack_supression_duration = pdp_nack_supression_duration;
 
 #if HAVE_SECURITY
     if (is_discovery_protected)
@@ -684,7 +684,7 @@ bool PDPClient::all_servers_acknowledge_PDP()
     CacheChange_t* pPD;
     if (endpoints->writer.history_->get_min_change(&pPD))
     {
-        return endpoints->writer.writer_->is_acked_by_all(pPD);
+        return endpoints->writer.writer_->is_acked_by_all(pPD->sequenceNumber);
     }
     else
     {

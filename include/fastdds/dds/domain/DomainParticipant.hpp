@@ -680,7 +680,7 @@ public:
     /**
      * Retrieves the list of DomainParticipants that have been discovered in the domain and are not "ignored".
      *
-     * @param[out] participant_handles Reference to the vector where discovered participants will be returned
+     * @param [out] participant_handles Reference to the vector where discovered participants will be returned
      * @return RETCODE_OK if everything correct, error code otherwise
      *
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
@@ -691,7 +691,7 @@ public:
     /**
      * Retrieves the DomainParticipant data of a discovered not ignored participant.
      *
-     * @param[out] participant_data Reference to the ParticipantBuiltinTopicData object to return the data
+     * @param [out] participant_data Reference to the ParticipantBuiltinTopicData object to return the data
      * @param participant_handle InstanceHandle of DomainParticipant to retrieve the data from
      * @return RETCODE_OK if everything correct, PRECONDITION_NOT_MET if participant does not exist
      *
@@ -704,7 +704,7 @@ public:
     /**
      * Retrieves the list of topics that have been discovered in the domain and are not "ignored".
      *
-     * @param[out] topic_handles Reference to the vector where discovered topics will be returned
+     * @param [out] topic_handles Reference to the vector where discovered topics will be returned
      * @return RETCODE_OK if everything correct, error code otherwise
      *
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
@@ -715,7 +715,7 @@ public:
     /**
      * Retrieves the Topic data of a discovered not ignored topic.
      *
-     * @param[out] topic_data Reference to the TopicBuiltinTopicData object to return the data
+     * @param [out] topic_data Reference to the TopicBuiltinTopicData object to return the data
      * @param topic_handle InstanceHandle of Topic to retrieve the data from
      * @return RETCODE_OK if everything correct, PRECONDITION_NOT_MET if topic does not exist
      *

@@ -10,12 +10,12 @@
 #include "FlowController.hpp"
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
-#include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/utils/TimedConditionVariable.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
 
-#include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/messages/RTPSMessageGroup.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/writer/BaseWriter.hpp>
 #include <utils/thread.hpp>
 #include <utils/threading.hpp>
 
@@ -379,12 +379,12 @@ private:
 struct FlowControllerFifoSchedule
 {
     void register_writer(
-            RTPSWriter*) const
+            BaseWriter*) const
     {
     }
 
     void unregister_writer(
-            RTPSWriter*) const
+            BaseWriter*) const
     {
     }
 
@@ -394,14 +394,14 @@ struct FlowControllerFifoSchedule
     }
 
     void add_new_sample(
-            RTPSWriter*,
+            BaseWriter*,
             CacheChange_t* change)
     {
         queue_.add_new_sample(change);
     }
 
     void add_old_sample(
-            RTPSWriter*,
+            BaseWriter*,
             CacheChange_t* change)
     {
         queue_.add_old_sample(change);
@@ -449,7 +449,7 @@ private:
 //! Round Robin scheduling
 struct FlowControllerRoundRobinSchedule
 {
-    using element = std::tuple<RTPSWriter*, FlowQueue>;
+    using element = std::tuple<BaseWriter*, FlowQueue>;
     using container = std::vector<element>;
     using iterator = container::iterator;
 
@@ -459,9 +459,9 @@ struct FlowControllerRoundRobinSchedule
     }
 
     void register_writer(
-            RTPSWriter* writer)
+            BaseWriter* writer)
     {
-        RTPSWriter* current_writer = nullptr;
+        BaseWriter* current_writer = nullptr;
 
         if (writers_queue_.end() != next_writer_)
         {
@@ -482,11 +482,11 @@ struct FlowControllerRoundRobinSchedule
     }
 
     void unregister_writer(
-            RTPSWriter* writer)
+            BaseWriter* writer)
     {
         // Queue cannot be empty, as writer should be present
         assert(writers_queue_.end() != next_writer_);
-        RTPSWriter* current_writer = std::get<0>(*next_writer_);
+        BaseWriter* current_writer = std::get<0>(*next_writer_);
         assert(nullptr != current_writer);
 
         auto it = find(writer);
@@ -526,7 +526,7 @@ struct FlowControllerRoundRobinSchedule
     }
 
     void add_new_sample(
-            RTPSWriter* writer,
+            BaseWriter* writer,
             CacheChange_t* change)
     {
         auto it = find(writer);
@@ -535,7 +535,7 @@ struct FlowControllerRoundRobinSchedule
     }
 
     void add_old_sample(
-            RTPSWriter* writer,
+            BaseWriter* writer,
             CacheChange_t* change)
     {
         auto it = find(writer);
@@ -581,7 +581,7 @@ struct FlowControllerRoundRobinSchedule
 private:
 
     iterator find(
-            const RTPSWriter* writer)
+            const BaseWriter* writer)
     {
         return std::find_if(writers_queue_.begin(), writers_queue_.end(),
                        [writer](const element& current_writer) -> bool
@@ -599,7 +599,7 @@ private:
 struct FlowControllerHighPrioritySchedule
 {
     void register_writer(
-            RTPSWriter* writer)
+            BaseWriter* writer)
     {
         assert(nullptr != writer);
         int32_t priority = 10;
@@ -638,7 +638,7 @@ struct FlowControllerHighPrioritySchedule
     }
 
     void unregister_writer(
-            RTPSWriter* writer)
+            BaseWriter* writer)
     {
         auto it = priorities_.find(writer);
         assert(it != priorities_.end());
@@ -651,14 +651,14 @@ struct FlowControllerHighPrioritySchedule
     }
 
     void add_new_sample(
-            RTPSWriter* writer,
+            BaseWriter* writer,
             CacheChange_t* change)
     {
         find_queue(writer).add_new_sample(change);
     }
 
     void add_old_sample(
-            RTPSWriter* writer,
+            BaseWriter* writer,
             CacheChange_t* change)
     {
         find_queue(writer).add_old_sample(change);
@@ -700,7 +700,7 @@ struct FlowControllerHighPrioritySchedule
 private:
 
     FlowQueue& find_queue(
-            RTPSWriter* writer)
+            BaseWriter* writer)
     {
         // Find priority.
         auto priority_it = priorities_.find(writer);
@@ -712,14 +712,14 @@ private:
 
     std::map<int32_t, FlowQueue> writers_queue_;
 
-    std::unordered_map<RTPSWriter*, int32_t> priorities_;
+    std::unordered_map<BaseWriter*, int32_t> priorities_;
 };
 
 //! Priority with reservation scheduling
 struct FlowControllerPriorityWithReservationSchedule
 {
     void register_writer(
-            RTPSWriter* writer)
+            BaseWriter* writer)
     {
         assert(nullptr != writer);
         int32_t priority = 10;
@@ -786,7 +786,7 @@ struct FlowControllerPriorityWithReservationSchedule
     }
 
     void unregister_writer(
-            RTPSWriter* writer)
+            BaseWriter* writer)
     {
         auto it = writers_queue_.find(writer);
         assert(it != writers_queue_.end());
@@ -812,7 +812,7 @@ struct FlowControllerPriorityWithReservationSchedule
     }
 
     void add_new_sample(
-            RTPSWriter* writer,
+            BaseWriter* writer,
             CacheChange_t* change)
     {
         // Find writer queue..
@@ -822,7 +822,7 @@ struct FlowControllerPriorityWithReservationSchedule
     }
 
     void add_old_sample(
-            RTPSWriter* writer,
+            BaseWriter* writer,
             CacheChange_t* change)
     {
         // Find writer queue..
@@ -905,10 +905,10 @@ struct FlowControllerPriorityWithReservationSchedule
 
 private:
 
-    using map_writers = std::unordered_map<RTPSWriter*, std::tuple<FlowQueue, int32_t, uint32_t,
+    using map_writers = std::unordered_map<BaseWriter*, std::tuple<FlowQueue, int32_t, uint32_t,
                     uint32_t>>;
 
-    using map_priorities = std::map<int32_t, std::vector<RTPSWriter*>>;
+    using map_priorities = std::map<int32_t, std::vector<BaseWriter*>>;
 
     map_writers writers_queue_;
 
@@ -916,7 +916,7 @@ private:
 
     uint32_t bandwidth_limit_ = 0;
 
-    RTPSWriter* writer_being_processed_ = nullptr;
+    BaseWriter* writer_being_processed_ = nullptr;
 
     uint32_t size_being_processed_ = 0;
 };
@@ -972,7 +972,7 @@ public:
      * @param writer Pointer to the writer to be registered. Cannot be nullptr.
      */
     void register_writer(
-            RTPSWriter* writer) override
+            BaseWriter* writer) override
     {
         std::unique_lock<fastdds::TimedMutex> lock(mutex_);
         auto ret = writers_.insert({ writer->getGuid(), writer});
@@ -987,7 +987,7 @@ public:
      * @param writer Pointer to the writer to be unregistered. Cannot be nullptr.
      */
     void unregister_writer(
-            RTPSWriter* writer) override
+            BaseWriter* writer) override
     {
         std::unique_lock<fastdds::TimedMutex> lock(mutex_);
         writers_.erase(writer->getGuid());
@@ -997,7 +997,7 @@ public:
     /*
      * Adds the CacheChange_t to be managed by this object.
      * The CacheChange_t has to be a new one, that is, it has to be added to the writer's history before this call.
-     * This function should be called by RTPSWriter::unsent_change_added_to_history().
+     * This function should be called by BaseWriter::unsent_change_added_to_history().
      * This function has two specializations depending on template parameter PublishMode.
      *
      * @param Pointer to the writer which the added CacheChante_t is responsable. Cannot be nullptr.
@@ -1005,7 +1005,7 @@ public:
      * @return true if sample could be added. false in other case.
      */
     bool add_new_sample(
-            RTPSWriter* writer,
+            BaseWriter* writer,
             CacheChange_t* change,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) override
     {
@@ -1022,7 +1022,7 @@ public:
      * @return true if sample could be added. false in other case.
      */
     bool add_old_sample(
-            RTPSWriter* writer,
+            BaseWriter* writer,
             CacheChange_t* change) override
     {
         return add_old_sample_impl(writer, change,
@@ -1033,8 +1033,8 @@ public:
      * If currently the CacheChange_t is managed by this object, remove it.
      * This funcion should be called when a CacheChange_t is removed from the writer's history.
      *
-     * @param[in] change Pointer to the change which should be removed if it is currently managed by this object.
-     * @param[in] max_blocking_time Maximum time this method has to complete the task.
+     * @param [in] change Pointer to the change which should be removed if it is currently managed by this object.
+     * @param [in] max_blocking_time Maximum time this method has to complete the task.
      * @return true if the sample could be removed. false otherwise.
      */
     bool remove_change(
@@ -1083,7 +1083,7 @@ private:
     template<typename PubMode = PublishMode>
     typename std::enable_if<!std::is_same<FlowControllerPureSyncPublishMode, PubMode>::value, void>::type
     register_writer_impl(
-            RTPSWriter* writer)
+            BaseWriter* writer)
     {
         std::unique_lock<fastdds::TimedMutex> in_lock(async_mode.changes_interested_mutex);
         sched.register_writer(writer);
@@ -1092,7 +1092,7 @@ private:
     template<typename PubMode = PublishMode>
     typename std::enable_if<std::is_same<FlowControllerPureSyncPublishMode, PubMode>::value, void>::type
     register_writer_impl(
-            RTPSWriter*)
+            BaseWriter*)
     {
         // Do nothing.
     }
@@ -1100,7 +1100,7 @@ private:
     template<typename PubMode = PublishMode>
     typename std::enable_if<!std::is_same<FlowControllerPureSyncPublishMode, PubMode>::value, void>::type
     unregister_writer_impl(
-            RTPSWriter* writer)
+            BaseWriter* writer)
     {
         std::unique_lock<fastdds::TimedMutex> in_lock(async_mode.changes_interested_mutex);
         sched.unregister_writer(writer);
@@ -1109,7 +1109,7 @@ private:
     template<typename PubMode = PublishMode>
     typename std::enable_if<std::is_same<FlowControllerPureSyncPublishMode, PubMode>::value, void>::type
     unregister_writer_impl(
-            RTPSWriter*)
+            BaseWriter*)
     {
         // Do nothing.
     }
@@ -1122,7 +1122,7 @@ private:
     template<typename PubMode = PublishMode>
     typename std::enable_if<!std::is_same<FlowControllerPureSyncPublishMode, PubMode>::value, bool>::type
     enqueue_new_sample_impl(
-            RTPSWriter* writer,
+            BaseWriter* writer,
             CacheChange_t* change,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
     {
@@ -1151,7 +1151,7 @@ private:
     template<typename PubMode = PublishMode>
     typename std::enable_if<std::is_same<FlowControllerPureSyncPublishMode, PubMode>::value, bool>::type
     constexpr enqueue_new_sample_impl(
-            RTPSWriter*,
+            BaseWriter*,
             CacheChange_t*,
             const std::chrono::time_point<std::chrono::steady_clock>&) const
     {
@@ -1162,14 +1162,14 @@ private:
     /*!
      * This function tries to send the sample synchronously.
      * That is, it uses the user's thread, which is the one calling this function, to send the sample.
-     * It calls new function `RTPSWriter::deliver_sample_nts()` for sending the sample.
+     * It calls new function `BaseWriter::deliver_sample_nts()` for sending the sample.
      * If this function fails (for example because non-blocking socket is full), this function stores internally the sample to
      * try sending it again asynchronously.
      */
     template<typename PubMode = PublishMode>
     typename std::enable_if<std::is_base_of<FlowControllerPureSyncPublishMode, PubMode>::value, bool>::type
     add_new_sample_impl(
-            RTPSWriter* writer,
+            BaseWriter* writer,
             CacheChange_t* change,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
     {
@@ -1207,7 +1207,7 @@ private:
     template<typename PubMode = PublishMode>
     typename std::enable_if<!std::is_base_of<FlowControllerPureSyncPublishMode, PubMode>::value, bool>::type
     add_new_sample_impl(
-            RTPSWriter* writer,
+            BaseWriter* writer,
             CacheChange_t* change,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
     {
@@ -1222,7 +1222,7 @@ private:
     template<typename PubMode = PublishMode>
     typename std::enable_if<!std::is_same<FlowControllerPureSyncPublishMode, PubMode>::value, bool>::type
     add_old_sample_impl(
-            RTPSWriter* writer,
+            BaseWriter* writer,
             CacheChange_t* change,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
     {
@@ -1253,7 +1253,7 @@ private:
     template<typename PubMode = PublishMode>
     typename std::enable_if<std::is_same<FlowControllerPureSyncPublishMode, PubMode>::value, bool>::type
     constexpr add_old_sample_impl(
-            RTPSWriter*,
+            BaseWriter*,
             CacheChange_t*,
             const std::chrono::time_point<std::chrono::steady_clock>&) const
     {
@@ -1381,7 +1381,7 @@ private:
                 }
             }
 
-            RTPSWriter* current_writer = nullptr;
+            BaseWriter* current_writer = nullptr;
             while (nullptr != change_to_process)
             {
                 // Fast check if next change will enter.
@@ -1481,7 +1481,7 @@ private:
 
     RTPSParticipantImpl* participant_ = nullptr;
 
-    std::map<GUID_t, RTPSWriter*> writers_;
+    std::map<GUID_t, BaseWriter*> writers_;
 
     scheduler sched;
 

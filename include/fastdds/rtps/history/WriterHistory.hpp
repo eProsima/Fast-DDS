@@ -14,7 +14,6 @@
 
 /**
  * @file WriterHistory.hpp
- *
  */
 
 #ifndef FASTDDS_RTPS_HISTORY__WRITERHISTORY_HPP
@@ -36,8 +35,8 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+class BaseWriter;
 class HistoryAttributes;
-class RTPSWriter;
 class WriteParams;
 
 /**
@@ -46,7 +45,7 @@ class WriteParams;
  */
 class WriterHistory : public rtps::History
 {
-    friend class RTPSWriter;
+    friend class BaseWriter;
     friend class PersistentWriter;
     friend class IPersistenceService;
 
@@ -167,7 +166,7 @@ public:
      * No Thread Safe
      * @param removal iterator to the change for removal
      * @param release specifies if the change should be return to the pool
-     * @param[in] max_blocking_time Maximum time this method has to complete the task.
+     * @param [in] max_blocking_time Maximum time this method has to complete the task.
      * @return iterator to the next change if any
      */
     FASTDDS_EXPORTED_API iterator remove_change_nts(
@@ -209,7 +208,7 @@ public:
 
     /**
      * Remove the CacheChange_t with the minimum sequenceNumber.
-     * @param[in] max_blocking_time Maximum time this method has to complete the task.
+     * @param [in] max_blocking_time Maximum time this method has to complete the task.
      * @return True if correctly removed.
      */
     FASTDDS_EXPORTED_API bool remove_min_change(
@@ -302,10 +301,10 @@ protected:
         return true;
     }
 
-    //!Last CacheChange Sequence Number added to the History.
+    //! Last CacheChange Sequence Number added to the History.
     SequenceNumber_t m_lastCacheChangeSeqNum {};
-    //!Pointer to the associated RTPSWriter;
-    RTPSWriter* mp_writer = nullptr;
+    //! Pointer to the associated writer
+    BaseWriter* mp_writer = nullptr;
 
     uint32_t high_mark_for_frag_ = 0;
 

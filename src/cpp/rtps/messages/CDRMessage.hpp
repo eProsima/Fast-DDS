@@ -50,9 +50,9 @@ namespace CDRMessage {
  * Methods to read different data types from a CDR message. Pointers to the message and to the data types are provided.
  * The read position is updated in the message. It fails if you attempt to read outside the
  * boundaries of the message.
- * @param[in] msg Pointer to message.
- * @param[out] data_ptr Pointer to data.
- * @param[in] size Number of bytes (if necessary).
+ * @param [in] msg Pointer to message.
+ * @param [out] data_ptr Pointer to data.
+ * @param [in] size Number of bytes (if necessary).
  * @return True if correct.
  */
 /// @{
@@ -173,7 +173,7 @@ bool readParticipantGenericMessage(
 
 /**
  * Initialize given CDR message with default size. It frees the memory already allocated and reserves new one.
- * @param[in,out] msg Pointer to the message to initialize.
+ * @param [in,out] msg Pointer to the message to initialize.
  * @param data_size Size of the data the message is suppose to carry
  * @return True if correct.
  */
@@ -187,8 +187,8 @@ bool wrapVector(
 
 /**
  * Append given CDRMessage to existing CDR Message. Joins two messages into the first one if it has space.
- * @param[out] first Pointer to first message.
- * @param[in] second Pointer to second message.
+ * @param [out] first Pointer to first message.
+ * @param [in] second Pointer to second message.
  ** @return True if correct.
  */
 bool appendMsg(
@@ -200,9 +200,9 @@ bool appendMsg(
  * Methods to add different data types to a CDR message. Pointers to the message and to the data types are provided.
  * The write position is updated in the message. It fails if you attempt to write outside the
  * boundaries of the message.
- * @param[in,out] Pointer to message.
- * @param[in] data Data to add (might be a pointer).
- * @param[in] byteSize Number of bytes (if necessary).
+ * @param [in,out] Pointer to message.
+ * @param [in] data Data to add (might be a pointer).
+ * @param [in] byteSize Number of bytes (if necessary).
  * @return True if correct.
  */
 /// @{

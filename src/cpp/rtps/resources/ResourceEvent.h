@@ -55,11 +55,11 @@ public:
     /*!
      * @brief Method to initialize the internal thread.
      *
-     * @param[in]  thread_cfg  Settings to apply to the created thread.
-     * @param[in]  name_fmt    A null-terminated string to be used as the format argument of
+     * @param [in]  thread_cfg  Settings to apply to the created thread.
+     * @param [in]  name_fmt    A null-terminated string to be used as the format argument of
      *                         a `snprintf` like function, taking `thread_id` as additional
      *                         argument, and used to give a name to the created thread.
-     * @param[in]  thread_id   Single variadic argument passed to the formatting function.
+     * @param [in]  thread_id   Single variadic argument passed to the formatting function.
      */
     void init_thread(
             const fastdds::rtps::ThreadSettings& thread_cfg = {},

@@ -11,8 +11,11 @@ Forthcoming
     * Several methods that were meant for internal use have been removed from public API
     * All public methods now have `snake_case` names
     * All public attributes now have `snake_case` names
-  * RTPSWriter, WriterHistory:
+  * RTPSWriter, WriterListener, WriterAttributes, WriterHistory:
     * The responsibility of managing both the `CacheChange` and `Payload` pools has been moved to the `WriterHistory`.
+    * Several methods that were meant for internal use have been removed from public API
+    * All public methods now have `snake_case` names
+    * All public attributes now have `snake_case` names
 * Public API that is no longer public:
   * XML Parser API no longer public.
   * ParticipantAttributes

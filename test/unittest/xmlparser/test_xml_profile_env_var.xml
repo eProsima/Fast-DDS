@@ -257,22 +257,22 @@
                 </groupData>
             </qos>
             <times>
-                <initialHeartbeatDelay>
+                <initial_heartbeat_delay>
                     <sec>${XML_PROFILES_ENV_VAR_87}</sec>
                     <nanosec>${XML_PROFILES_ENV_VAR_88}</nanosec>
-                </initialHeartbeatDelay>
-                <heartbeatPeriod>
+                </initial_heartbeat_delay>
+                <heartbeat_period>
                     <sec>${XML_PROFILES_ENV_VAR_89}</sec>
                     <nanosec>${XML_PROFILES_ENV_VAR_90}</nanosec>
-                </heartbeatPeriod>
-                <nackResponseDelay>
+                </heartbeat_period>
+                <nack_response_delay>
                     <sec>${XML_PROFILES_ENV_VAR_91}</sec>
                     <nanosec>${XML_PROFILES_ENV_VAR_92}</nanosec>
-                </nackResponseDelay>
-                <nackSupressionDuration>
+                </nack_response_delay>
+                <nack_supression_duration>
                     <sec>${XML_PROFILES_ENV_VAR_93}</sec>
                     <nanosec>${XML_PROFILES_ENV_VAR_94}</nanosec>
-                </nackSupressionDuration>
+                </nack_supression_duration>
             </times>
             <unicastLocatorList>
                 <locator>

@@ -88,9 +88,9 @@ private:
     /**
      * @brief Check that the ParticipantMessageData kind is a valid one for WLP and extract the liveliness kind.
      *
-     * @param[in] serialized_kind A pointer to the first octet of the kind array. The function assumes 4 elements
+     * @param [in] serialized_kind A pointer to the first octet of the kind array. The function assumes 4 elements
      *        in the array.
-     * @param[out] liveliness_kind A reference to the LivelinessQosPolicyKind.
+     * @param [out] liveliness_kind A reference to the LivelinessQosPolicyKind.
      *
      * @return True if the kind corresponds with one for WLP, false otherwise.
      */

@@ -72,7 +72,7 @@ TEST(RTPSAck, EnableUpdatabilityOfPositiveAcksPeriodRTPSLayer)
     w_att.disable_positive_acks = true;
     w_att.keep_duration = eprosima::fastdds::Duration_t(2, 0);
 
-    writer.updateAttributes(w_att);
+    writer.update_attributes(w_att);
 
     data = default_helloworld_data_generator();
 
@@ -97,7 +97,7 @@ TEST(RTPSAck, EnableUpdatabilityOfPositiveAcksPeriodRTPSLayer)
     // Update attributes at RTPS layer
     w_att.disable_positive_acks = false;
 
-    writer.updateAttributes(w_att);
+    writer.update_attributes(w_att);
 
     // Check that positive_acks feature is not changed at runtime
     EXPECT_TRUE(writer.get_disable_positive_acks());

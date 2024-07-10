@@ -30,10 +30,7 @@
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/Endpoint.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
-#include <fastdds/rtps/writer/DeliveryRetCode.hpp>
-#include <fastdds/rtps/writer/LocatorSelectorSender.hpp>
 #include <fastdds/rtps/writer/WriterListener.hpp>
-#include <rtps/messages/RTPSMessageGroup.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -47,8 +44,6 @@ class RTPSWriter : public Endpoint
 public:
 
     RTPSWriter()
-        : general_locator_selector_(*this, ResourceLimitedContainerConfig())
-        , async_locator_selector_(*this, ResourceLimitedContainerConfig())
     {
         static uint8_t entity_id = 0;
         // Generate a guid.
@@ -75,7 +70,7 @@ public:
         return false;
     }
 
-    WriterListener* getListener() const
+    WriterListener* get_listener() const
     {
         return listener_;
     }
@@ -117,39 +112,8 @@ public:
 #endif // FASTDDS_STATISTICS
 
     // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
-    MOCK_METHOD1(set_separate_sending, void(bool));
-
-    MOCK_METHOD0(getRTPSParticipant, RTPSParticipantImpl* ());
-
-    MOCK_METHOD0 (getTypeMaxSerialized, uint32_t());
-
-    MOCK_METHOD1(calculateMaxDataSize, uint32_t(uint32_t));
-
-    MOCK_METHOD0(getMaxDataSize, uint32_t ());
-
-    MOCK_CONST_METHOD0(get_liveliness_kind, const fastdds::dds::LivelinessQosPolicyKind& ());
-
-    MOCK_CONST_METHOD0(get_liveliness_lease_duration, const Duration_t& ());
-
-    MOCK_METHOD4(deliver_sample_nts, DeliveryRetCode(
-            CacheChange_t*,
-            RTPSMessageGroup&,
-            LocatorSelectorSender&,
-            const std::chrono::time_point<std::chrono::steady_clock>&));
-
-    MOCK_METHOD4(send_nts, bool(
-            const std::vector<eprosima::fastdds::rtps::NetworkBuffer>&,
-            const uint32_t&,
-            const LocatorSelectorSender&,
-            std::chrono::steady_clock::time_point&));
-
-    MOCK_CONST_METHOD0(is_datasharing_compatible, bool());
-
-    MOCK_CONST_METHOD1(is_datasharing_compatible_with, bool(
-            const ReaderProxyData& rdata));
-
     MOCK_METHOD1(reader_data_filter, void(
-            fastdds::rtps::IReaderDataFilter* filter));
+            IReaderDataFilter* filter));
 
     // *INDENT-ON*
 
@@ -163,7 +127,7 @@ public:
         return m_att.endpoint;
     }
 
-    virtual void updateAttributes(
+    virtual void update_attributes(
             const WriterAttributes&)
     {
     }
@@ -172,35 +136,8 @@ public:
     {
     }
 
-    virtual bool try_remove_change(
-            const std::chrono::steady_clock::time_point&,
-            std::unique_lock<RecursiveTimedMutex>&)
-    {
-        return true;
-    }
-
-    virtual bool wait_for_acknowledgement(
-            const SequenceNumber_t&,
-            const std::chrono::steady_clock::time_point&,
-            std::unique_lock<RecursiveTimedMutex>&)
-    {
-        return true;
-    }
-
-    virtual void unsent_change_added_to_history(
-            CacheChange_t*,
-            const std::chrono::time_point<std::chrono::steady_clock>&)
-    {
-    }
-
-    virtual bool change_removed_by_history(
-            CacheChange_t*)
-    {
-        return true;
-    }
-
     virtual bool is_acked_by_all(
-            const CacheChange_t* /*a_change*/) const
+            const SequenceNumber_t& /*seq_num*/) const
     {
         return false;
     }
@@ -211,68 +148,15 @@ public:
         return true;
     }
 
-    virtual bool process_acknack(
-            const GUID_t& writer_guid,
-            const GUID_t& reader_guid,
-            uint32_t ack_count,
-            const SequenceNumberSet_t& sn_set,
-            bool final_flag,
-            bool& result,
-            fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown)
-    {
-        static_cast<void>(writer_guid);
-        static_cast<void>(reader_guid);
-        static_cast<void>(ack_count);
-        static_cast<void>(sn_set);
-        static_cast<void>(final_flag);
-        static_cast<void>(origin_vendor_id);
+    WriterHistory* history_ = nullptr;
 
-        result = false;
-        return true;
-    }
-
-    virtual bool process_nack_frag(
-            const GUID_t& writer_guid,
-            const GUID_t& reader_guid,
-            uint32_t ack_count,
-            const SequenceNumber_t& seq_num,
-            const FragmentNumberSet_t fragments_state,
-            bool& result,
-            fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown)
-    {
-        static_cast<void>(reader_guid);
-        static_cast<void>(ack_count);
-        static_cast<void>(seq_num);
-        static_cast<void>(fragments_state);
-        static_cast<void>(origin_vendor_id);
-
-        result = false;
-        return writer_guid == m_guid;
-    }
-
-    LocatorSelectorSender& get_general_locator_selector()
-    {
-        return general_locator_selector_;
-    }
-
-    LocatorSelectorSender& get_async_locator_selector()
-    {
-        return async_locator_selector_;
-    }
-
-    WriterHistory* history_;
-
-    WriterListener* listener_;
+    WriterListener* listener_ = nullptr;
 
     GUID_t m_guid;
 
     WriterAttributes m_att;
 
     LivelinessLostStatus liveliness_lost_status_;
-
-    LocatorSelectorSender general_locator_selector_;
-
-    LocatorSelectorSender async_locator_selector_;
 };
 
 } // namespace rtps

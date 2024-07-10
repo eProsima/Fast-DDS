@@ -496,11 +496,10 @@ TEST(RTPS, RTPSUnavailableSampleGapWhenSeparateSending)
             disable_builtin_transport().
             reliability(eprosima::fastdds::rtps::ReliabilityKind_t::RELIABLE).
             history_depth(3).
+            set_separate_sending(true).
             add_user_transport_to_pparams(test_transport).init();
 
     ASSERT_TRUE(writer.isInitialized());
-
-    writer.set_separate_sending(true);
 
     // Wait for discovery.
     writer.wait_discovery();

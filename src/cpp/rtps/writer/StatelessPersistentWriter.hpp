@@ -18,8 +18,6 @@
 #ifndef RTPS_WRITER__STATELESSPERSISTENTWRITER_HPP
 #define RTPS_WRITER__STATELESSPERSISTENTWRITER_HPP
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
 #include <rtps/writer/PersistentWriter.hpp>
 #include <rtps/writer/StatelessWriter.hpp>
 
@@ -35,7 +33,8 @@ class IPersistenceService;
  */
 class StatelessPersistentWriter : public StatelessWriter, private PersistentWriter
 {
-    friend class RTPSParticipantImpl;
+
+public:
 
     StatelessPersistentWriter(
             RTPSParticipantImpl*,
@@ -46,33 +45,30 @@ class StatelessPersistentWriter : public StatelessWriter, private PersistentWrit
             WriterListener* listen = nullptr,
             IPersistenceService* persistence = nullptr);
 
-public:
-
     virtual ~StatelessPersistentWriter();
 
     /**
      * Add a specific change to all ReaderLocators.
      * @param p Pointer to the change.
-     * @param[in] max_blocking_time Maximum time this method has to complete the task.
+     * @param [in] max_blocking_time Maximum time this method has to complete the task.
      */
     void unsent_change_added_to_history(
             CacheChange_t* p,
-            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) override;
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) final;
 
     /**
      * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.
      * @param a_change Pointer to the change that is going to be removed.
-     * @param[in] max_blocking_time Maximum time this method has to complete the task.
+     * @param [in] max_blocking_time Maximum time this method has to complete the task.
      * @return True if removed correctly.
      */
     bool change_removed_by_history(
             CacheChange_t* a_change,
-            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) override;
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) final;
 };
 
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* RTPS_WRITER__STATELESSPERSISTENTWRITER_HPP */
+#endif  // RTPS_WRITER__STATELESSPERSISTENTWRITER_HPP

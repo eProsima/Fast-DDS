@@ -86,7 +86,7 @@ public:
     /*!
      * Initialize the instance copying the information from a @ref DynamicType.
      *
-     * @param[in] @ref DynamicType reference used to initialize the instance.
+     * @param [in] @ref DynamicType reference used to initialize the instance.
      * @return Currently always return RETCODE_OK.
      */
     ReturnCode_t copy_from(

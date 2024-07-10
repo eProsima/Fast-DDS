@@ -397,9 +397,9 @@ void EDPSimple::set_builtin_writer_attributes(
     attributes = mp_PDP->create_builtin_writer_attributes();
 
     // Timings are configured using EDP default values
-    attributes.times.heartbeatPeriod = edp_heartbeat_period;
-    attributes.times.nackResponseDelay = edp_nack_response_delay;
-    attributes.times.nackSupressionDuration = edp_nack_supression_duration;
+    attributes.times.heartbeat_period = edp_heartbeat_period;
+    attributes.times.nack_response_delay = edp_nack_response_delay;
+    attributes.times.nack_supression_duration = edp_nack_supression_duration;
 }
 
 bool EDPSimple::createSEDPEndpoints()

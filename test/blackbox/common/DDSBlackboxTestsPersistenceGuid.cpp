@@ -261,14 +261,14 @@ TEST_P(PersistenceGuid, SetPersistenceGuidByXML)
                                 </reliability>                                                    \
                             </qos>                                                                \
                             <times>                                                               \
-                                <heartbeatPeriod>                                                 \
+                                <heartbeat_period>                                                 \
                                     <sec>0</sec>                                                  \
                                     <nanosec>100000000</nanosec>                                  \
-                                </heartbeatPeriod>                                                \
-                                <nackResponseDelay>                                               \
+                                </heartbeat_period>                                                \
+                                <nack_response_delay>                                               \
                                     <sec>0</sec>                                                  \
                                     <nanosec>100000000</nanosec>                                  \
-                                </nackResponseDelay>                                              \
+                                </nack_response_delay>                                              \
                             </times>                                                              \
                             <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>               \
                             <propertiesPolicy>                                                    \

@@ -56,8 +56,8 @@ public:
     /**
      * @brief This operation enables a Statistics DataWriter
      *
-     * @param[in] topic_name Name of the topic associated to the Statistics DataWriter
-     * @param[in] dwqos DataWriterQos to be set
+     * @param [in] topic_name Name of the topic associated to the Statistics DataWriter
+     * @param [in] dwqos DataWriterQos to be set
      * @return RETCODE_UNSUPPORTED if the FASTDDS_STATISTICS CMake option has not been set,
      * RETCODE_BAD_PARAMETER if the topic name provided does not correspond to any Statistics DataWriter,
      * RETCODE_INCONSISTENT_POLICY if the DataWriterQos provided are inconsistent,
@@ -71,8 +71,8 @@ public:
     /**
      * @brief This operation enables a Statistics DataWriter from a given profile
      *
-     * @param[in] profile_name DataWriter QoS profile name
-     * @param[in] topic_name Name of the statistics topic to be enabled.
+     * @param [in] profile_name DataWriter QoS profile name
+     * @param [in] topic_name Name of the statistics topic to be enabled.
      * @return RETCODE_UNSUPPORTED if the FASTDDS_STATISTICS CMake option has not been set,
      * RETCODE_BAD_PARAMETER if the topic name provided does not correspond to any Statistics DataWriter,
      * RETCODE_INCONSISTENT_POLICY if the DataWriterQos provided in profile are inconsistent,

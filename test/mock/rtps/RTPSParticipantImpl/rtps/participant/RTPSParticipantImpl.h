@@ -39,6 +39,7 @@
 #if HAVE_SECURITY
 #include <rtps/security/SecurityManager.h>
 #endif // if HAVE_SECURITY
+#include <rtps/writer/BaseWriter.hpp>
 
 
 namespace eprosima {
@@ -405,7 +406,7 @@ public:
         return nullptr;
     }
 
-    RTPSWriter* find_local_writer(
+    BaseWriter* find_local_writer(
             const GUID_t&)
     {
         return nullptr;

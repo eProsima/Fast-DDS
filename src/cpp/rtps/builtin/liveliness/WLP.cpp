@@ -39,6 +39,7 @@
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/resources/ResourceEvent.h>
 #include <rtps/resources/TimedEvent.h>
+#include <rtps/writer/BaseWriter.hpp>
 #include <rtps/writer/LivelinessManager.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
 #include <utils/TimeConversion.hpp>
@@ -616,11 +617,14 @@ void WLP::removeRemoteEndpoints(
 }
 
 bool WLP::add_local_writer(
-        RTPSWriter* W,
+        RTPSWriter* writer,
         const fastdds::dds::WriterQos& wqos)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
-    EPROSIMA_LOG_INFO(RTPS_LIVELINESS, W->getGuid().entityId << " to Liveliness Protocol");
+
+    EPROSIMA_LOG_INFO(RTPS_LIVELINESS, writer->getGuid().entityId << " to Liveliness Protocol");
+
+    BaseWriter* base_writer = BaseWriter::downcast(writer);
 
     double wAnnouncementPeriodMilliSec(fastdds::rtps::TimeConv::Duration_t2MilliSecondsDouble(wqos.m_liveliness.
                     announcement_period));
@@ -650,7 +654,7 @@ bool WLP::add_local_writer(
             }
             automatic_liveliness_assertion_->restart_timer();
         }
-        automatic_writers_.push_back(W);
+        automatic_writers_.push_back(base_writer);
     }
     else if (wqos.m_liveliness.kind == dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     {
@@ -677,53 +681,54 @@ bool WLP::add_local_writer(
             }
             manual_liveliness_assertion_->restart_timer();
         }
-        manual_by_participant_writers_.push_back(W);
+        manual_by_participant_writers_.push_back(base_writer);
 
         if (!pub_liveliness_manager_->add_writer(
-                    W->getGuid(),
+                    writer->getGuid(),
                     wqos.m_liveliness.kind,
                     wqos.m_liveliness.lease_duration))
         {
-            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Could not add writer " << W->getGuid() << " to liveliness manager");
+            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS,
+                    "Could not add writer " << writer->getGuid() << " to liveliness manager");
         }
     }
     else if (wqos.m_liveliness.kind == dds::MANUAL_BY_TOPIC_LIVELINESS_QOS)
     {
-        manual_by_topic_writers_.push_back(W);
+        manual_by_topic_writers_.push_back(base_writer);
 
         if (!pub_liveliness_manager_->add_writer(
-                    W->getGuid(),
+                    writer->getGuid(),
                     wqos.m_liveliness.kind,
                     wqos.m_liveliness.lease_duration))
         {
-            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Could not add writer " << W->getGuid() << " to liveliness manager");
+            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS,
+                    "Could not add writer " << writer->getGuid() << " to liveliness manager");
         }
     }
 
     return true;
 }
 
-typedef std::vector<RTPSWriter*>::iterator t_WIT;
-
 bool WLP::remove_local_writer(
-        RTPSWriter* W)
+        RTPSWriter* writer)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 
-    EPROSIMA_LOG_INFO(RTPS_LIVELINESS, W->getGuid().entityId << " from Liveliness Protocol");
+    EPROSIMA_LOG_INFO(RTPS_LIVELINESS, writer->getGuid().entityId << " from Liveliness Protocol");
 
     LivelinessData::WriterStatus writer_status;
+    BaseWriter* base_writer = BaseWriter::downcast(writer);
 
-    if (W->get_liveliness_kind() == dds::AUTOMATIC_LIVELINESS_QOS)
+    if (base_writer->get_liveliness_kind() == dds::AUTOMATIC_LIVELINESS_QOS)
     {
         auto it = std::find(
             automatic_writers_.begin(),
             automatic_writers_.end(),
-            W);
+            base_writer);
 
         if (it == automatic_writers_.end())
         {
-            EPROSIMA_LOG_WARNING(RTPS_LIVELINESS, "Writer " << W->getGuid() << " not found.");
+            EPROSIMA_LOG_WARNING(RTPS_LIVELINESS, "Writer " << base_writer->getGuid() << " not found.");
             return false;
         }
 
@@ -749,29 +754,29 @@ bool WLP::remove_local_writer(
         automatic_liveliness_assertion_->update_interval_millisec(min_automatic_ms_);
         return true;
     }
-    else if (W->get_liveliness_kind() == dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+    else if (base_writer->get_liveliness_kind() == dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     {
         auto it = std::find(
             manual_by_participant_writers_.begin(),
             manual_by_participant_writers_.end(),
-            W);
+            base_writer);
 
         if (it == manual_by_participant_writers_.end())
         {
-            EPROSIMA_LOG_WARNING(RTPS_LIVELINESS, "Writer " << W->getGuid() << " not found.");
+            EPROSIMA_LOG_WARNING(RTPS_LIVELINESS, "Writer " << base_writer->getGuid() << " not found.");
             return false;
         }
 
         manual_by_participant_writers_.erase(it);
 
         if (!pub_liveliness_manager_->remove_writer(
-                    W->getGuid(),
-                    W->get_liveliness_kind(),
-                    W->get_liveliness_lease_duration(),
+                    base_writer->getGuid(),
+                    base_writer->get_liveliness_kind(),
+                    base_writer->get_liveliness_lease_duration(),
                     writer_status))
         {
             EPROSIMA_LOG_ERROR(RTPS_LIVELINESS,
-                    "Could not remove writer " << W->getGuid() << " from liveliness manager");
+                    "Could not remove writer " << base_writer->getGuid() << " from liveliness manager");
         }
 
         min_manual_by_participant_ms_ = std::numeric_limits<double>::max();
@@ -794,34 +799,34 @@ bool WLP::remove_local_writer(
         manual_liveliness_assertion_->update_interval_millisec(min_manual_by_participant_ms_);
         return true;
     }
-    else if (W->get_liveliness_kind() == dds::MANUAL_BY_TOPIC_LIVELINESS_QOS)
+    else if (base_writer->get_liveliness_kind() == dds::MANUAL_BY_TOPIC_LIVELINESS_QOS)
     {
         auto it = std::find(
             manual_by_topic_writers_.begin(),
             manual_by_topic_writers_.end(),
-            W);
+            base_writer);
 
         if (it == manual_by_topic_writers_.end())
         {
-            EPROSIMA_LOG_WARNING(RTPS_LIVELINESS, "Writer " << W->getGuid() << " not found.");
+            EPROSIMA_LOG_WARNING(RTPS_LIVELINESS, "Writer " << base_writer->getGuid() << " not found.");
             return false;
         }
 
         manual_by_topic_writers_.erase(it);
 
         if (!pub_liveliness_manager_->remove_writer(
-                    W->getGuid(),
-                    W->get_liveliness_kind(),
-                    W->get_liveliness_lease_duration(),
+                    base_writer->getGuid(),
+                    base_writer->get_liveliness_kind(),
+                    base_writer->get_liveliness_lease_duration(),
                     writer_status))
         {
             EPROSIMA_LOG_ERROR(RTPS_LIVELINESS,
-                    "Could not remove writer " << W->getGuid() << " from liveliness manager");
+                    "Could not remove writer " << base_writer->getGuid() << " from liveliness manager");
         }
         return true;
     }
 
-    EPROSIMA_LOG_WARNING(RTPS_LIVELINESS, "Writer " << W->getGuid() << " not found.");
+    EPROSIMA_LOG_WARNING(RTPS_LIVELINESS, "Writer " << base_writer->getGuid() << " not found.");
     return false;
 }
 
@@ -1015,60 +1020,33 @@ void WLP::pub_liveliness_changed(
 
     if (kind == dds::AUTOMATIC_LIVELINESS_QOS)
     {
-        for (RTPSWriter* w: automatic_writers_)
+        for (BaseWriter* w: automatic_writers_)
         {
             if (w->getGuid() == writer)
             {
-                std::unique_lock<RecursiveTimedMutex> lock(w->getMutex());
-
-                w->liveliness_lost_status_.total_count++;
-                w->liveliness_lost_status_.total_count_change++;
-                if (w->getListener() != nullptr)
-                {
-                    w->getListener()->on_liveliness_lost(w, w->liveliness_lost_status_);
-                }
-                w->liveliness_lost_status_.total_count_change = 0u;
-
+                w->liveliness_lost();
                 return;
             }
         }
     }
     else if (kind == dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     {
-        for (RTPSWriter* w: manual_by_participant_writers_)
+        for (BaseWriter* w: manual_by_participant_writers_)
         {
             if (w->getGuid() == writer)
             {
-                std::unique_lock<RecursiveTimedMutex> lock(w->getMutex());
-
-                w->liveliness_lost_status_.total_count++;
-                w->liveliness_lost_status_.total_count_change++;
-                if (w->getListener() != nullptr)
-                {
-                    w->getListener()->on_liveliness_lost(w, w->liveliness_lost_status_);
-                }
-                w->liveliness_lost_status_.total_count_change = 0u;
-
+                w->liveliness_lost();
                 return;
             }
         }
     }
     else if (kind == dds::MANUAL_BY_TOPIC_LIVELINESS_QOS)
     {
-        for (RTPSWriter* w: manual_by_topic_writers_)
+        for (BaseWriter* w: manual_by_topic_writers_)
         {
             if (w->getGuid() == writer)
             {
-                std::unique_lock<RecursiveTimedMutex> lock(w->getMutex());
-
-                w->liveliness_lost_status_.total_count++;
-                w->liveliness_lost_status_.total_count_change++;
-                if (w->getListener() != nullptr)
-                {
-                    w->getListener()->on_liveliness_lost(w, w->liveliness_lost_status_);
-                }
-                w->liveliness_lost_status_.total_count_change = 0u;
-
+                w->liveliness_lost();
                 return;
             }
         }

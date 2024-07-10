@@ -23,6 +23,8 @@
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
+#include <rtps/writer/BaseWriter.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -30,7 +32,7 @@ namespace rtps {
 class RTPSParticipantImpl;
 class ReaderProxy;
 
-class StatefulWriter : public RTPSWriter
+class StatefulWriter : public BaseWriter
 {
 public:
 
@@ -39,11 +41,11 @@ public:
         : participant_(participant)
         , mp_history(new WriterHistory())
     {
+        mp_history->m_att.initialReservedCaches = 0;
     }
 
     StatefulWriter()
-        : participant_(nullptr)
-        , mp_history(new WriterHistory())
+        : StatefulWriter(nullptr)
     {
     }
 
@@ -86,18 +88,23 @@ public:
         return SequenceNumber_t::unknown();
     }
 
+    WriterHistory* get_history() const override
+    {
+        return history_ ? history_ : mp_history;
+    }
+
     SequenceNumber_t next_sequence_number() const
     {
-        return mp_history->next_sequence_number();
+        return get_history()->next_sequence_number();
     }
 
     void reader_data_filter(
-            fastdds::rtps::IReaderDataFilter* filter)
+            IReaderDataFilter* filter)
     {
         reader_data_filter_ = filter;
     }
 
-    const fastdds::rtps::IReaderDataFilter* reader_data_filter() const
+    const IReaderDataFilter* reader_data_filter() const
     {
         return reader_data_filter_;
     }
@@ -121,7 +128,7 @@ private:
 
     WriterHistory* mp_history;
 
-    fastdds::rtps::IReaderDataFilter* reader_data_filter_;
+    IReaderDataFilter* reader_data_filter_;
 
 };
 

@@ -251,7 +251,7 @@ inline SequenceNumber_t operator -(
 
 /**
  * Add one uint32_t to a SequenceNumber_t
- * @param[in] seq Base sequence number
+ * @param [in] seq Base sequence number
  * @param inc value to add to the base
  * @return Result of the addition
  */

@@ -91,6 +91,7 @@ class MonitorService;
 namespace rtps {
 
 class BaseReader;
+class BaseWriter;
 
 } // namespace rtps
 
@@ -377,16 +378,6 @@ public:
         return mp_userParticipant;
     }
 
-    /*!
-     * @remarks Non thread-safe.
-     */
-    const std::vector<RTPSWriter*>& getAllWriters() const;
-
-    /*!
-     * @remarks Non thread-safe.
-     */
-    const std::vector<BaseReader*>& getAllReaders() const;
-
     uint32_t getMaxMessageSize() const;
 
     uint32_t getMaxDataSize();
@@ -497,7 +488,7 @@ public:
     /***
      * @returns A pointer to a local writer given its endpoint guid, or nullptr if not found.
      */
-    RTPSWriter* find_local_writer(
+    BaseWriter* find_local_writer(
             const GUID_t& writer_guid);
 
     /**
@@ -581,12 +572,12 @@ private:
     //! Mutex to safely access endpoints collections
     mutable shared_mutex endpoints_list_mutex;
     //!Writer List.
-    std::vector<RTPSWriter*> m_allWriterList;
+    std::vector<BaseWriter*> m_allWriterList;
     //!Reader List
     std::vector<BaseReader*> m_allReaderList;
     //!Listen thread list.
     //!Writer List.
-    std::vector<RTPSWriter*> m_userWriterList;
+    std::vector<BaseWriter*> m_userWriterList;
     //!Reader List
     std::vector<BaseReader*> m_userReaderList;
     //!Network Factory
@@ -992,7 +983,7 @@ public:
         shared_lock<shared_mutex> _(endpoints_list_mutex);
 
         // traverse the list
-        for ( RTPSWriter* pw : m_userWriterList)
+        for (BaseWriter* pw : m_userWriterList)
         {
             if (!f(*pw))
             {
@@ -1063,7 +1054,7 @@ public:
     /**
      * @brief Query if the participant is found in the ignored collection
      *
-     * @param[in] participant_guid Participant to be queried
+     * @param [in] participant_guid Participant to be queried
      * @return True if found in the ignored collection. False otherwise.
      */
     bool is_participant_ignored(
@@ -1072,7 +1063,7 @@ public:
     /**
      * @brief Query if the writer is found in the ignored collection
      *
-     * @param[in] writer_guid Writer to be queried
+     * @param [in] writer_guid Writer to be queried
      * @return True if found in the ignored collection. False otherwise.
      */
     bool is_writer_ignored(
@@ -1081,7 +1072,7 @@ public:
     /**
      * @brief Query if the reader is found in the ignored collection
      *
-     * @param[in] reader_guid Reader to be queried
+     * @param [in] reader_guid Reader to be queried
      * @return True if found in the ignored collection. False otherwise.
      */
     bool is_reader_ignored(
@@ -1090,7 +1081,7 @@ public:
     /**
      * @brief Add a Participant into the corresponding ignore collection.
      *
-     * @param[in] participant_guid Participant that is to be ignored.
+     * @param [in] participant_guid Participant that is to be ignored.
      * @return True if correctly included into the ignore collection. False otherwise.
      */
     bool ignore_participant(
@@ -1099,7 +1090,7 @@ public:
     /**
      * @brief Add a Writer into the corresponding ignore collection.
      *
-     * @param[in] writer_guid Writer that is to be ignored.
+     * @param [in] writer_guid Writer that is to be ignored.
      * @return True if correctly included into the ignore collection. False otherwise.
      */
     bool ignore_writer(
@@ -1108,7 +1099,7 @@ public:
     /**
      * @brief Add a Reader into the corresponding ignore collection.
      *
-     * @param[in] reader_guid Reader that is to be ignored.
+     * @param [in] reader_guid Reader that is to be ignored.
      * @return True if correctly included into the ignore collection. False otherwise.
      */
     bool ignore_reader(

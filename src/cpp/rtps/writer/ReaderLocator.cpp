@@ -26,6 +26,7 @@
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/BaseReader.hpp>
+#include <rtps/writer/BaseWriter.hpp>
 #include <rtps/DataSharing/DataSharingListener.hpp>
 #include <rtps/DataSharing/DataSharingNotifier.hpp>
 #include "rtps/RTPSDomainImpl.hpp"
@@ -34,14 +35,12 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using BaseReader = fastdds::rtps::BaseReader;
-
 ReaderLocator::ReaderLocator(
-        RTPSWriter* owner,
+        BaseWriter* owner,
         size_t max_unicast_locators,
         size_t max_multicast_locators)
     : owner_(owner)
-    , participant_owner_(owner->getRTPSParticipant())
+    , participant_owner_(owner->get_participant_impl())
     , general_locator_info_(max_unicast_locators, max_multicast_locators)
     , async_locator_info_(max_unicast_locators, max_multicast_locators)
     , expects_inline_qos_(false)

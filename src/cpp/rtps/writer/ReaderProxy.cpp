@@ -53,14 +53,14 @@ ReaderProxy::ReaderProxy(
     , is_reliable_(false)
     , disable_positive_acks_(false)
     , writer_(writer)
-    , changes_for_reader_(resource_limits_from_history(writer->mp_history->m_att, 0))
+    , changes_for_reader_(resource_limits_from_history(writer->get_history()->m_att, 0))
     , nack_supression_event_(nullptr)
     , initial_heartbeat_event_(nullptr)
     , timers_enabled_(false)
     , next_expected_acknack_count_(0)
     , last_nackfrag_count_(0)
 {
-    auto participant = writer_->getRTPSParticipant();
+    auto participant = writer_->get_participant_impl();
     if (nullptr != participant)
     {
         nack_supression_event_ = new TimedEvent(participant->getEventResource(),
@@ -69,7 +69,7 @@ ReaderProxy::ReaderProxy(
                             writer_->perform_nack_supression(guid());
                             return false;
                         },
-                        fastdds::rtps::TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
+                        fastdds::rtps::TimeConv::Time_t2MilliSecondsDouble(times.nack_supression_duration));
 
         initial_heartbeat_event_ = new TimedEvent(participant->getEventResource(),
                         [&]() -> bool
@@ -388,7 +388,7 @@ void ReaderProxy::acked_changes_set(
                     if (current_sequence <= changes_low_mark_)
                     {
                         CacheChange_t* change = nullptr;
-                        if (writer_->mp_history->get_change(current_sequence, writer_->getGuid(), &change))
+                        if (writer_->get_history()->get_change(current_sequence, writer_->getGuid(), &change))
                         {
                             should_sort = true;
                             ChangeForReader_t cr(change);

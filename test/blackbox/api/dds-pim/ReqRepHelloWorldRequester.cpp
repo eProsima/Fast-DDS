@@ -49,8 +49,8 @@ ReqRepHelloWorldRequester::ReqRepHelloWorldRequester()
     datareader_qos_.endpoint().history_memory_policy = eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     datawriter_qos_.endpoint().history_memory_policy = eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
-    datawriter_qos_.reliable_writer_qos().times.heartbeatPeriod.seconds = 1;
-    datawriter_qos_.reliable_writer_qos().times.heartbeatPeriod.nanosec = 0;
+    datawriter_qos_.reliable_writer_qos().times.heartbeat_period.seconds = 1;
+    datawriter_qos_.reliable_writer_qos().times.heartbeat_period.nanosec = 0;
 }
 
 ReqRepHelloWorldRequester::~ReqRepHelloWorldRequester()

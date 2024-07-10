@@ -324,8 +324,8 @@ public:
     /**
      * @brief Copies TopicQos into the corresponding DataWriterQos
      *
-     * @param[out] writer_qos
-     * @param[in] topic_qos
+     * @param [out] writer_qos
+     * @param [in] topic_qos
      * @return RETCODE_OK if successful, an error code otherwise
      *
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED

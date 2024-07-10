@@ -49,6 +49,7 @@
 #include <rtps/resources/ResourceEvent.h>
 #include <rtps/RTPSDomainImpl.hpp>
 #include <rtps/resources/TimedEvent.h>
+#include <rtps/writer/BaseWriter.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
 #include <utils/TimeConversion.hpp>
 #ifdef FASTDDS_STATISTICS
@@ -419,7 +420,7 @@ ReturnCode_t DataWriterImpl::enable()
         return RETCODE_ERROR;
     }
 
-    writer_ = writer;
+    writer_ = BaseWriter::downcast(writer);
     if (filtering_enabled)
     {
         writer_->reader_data_filter(this);
@@ -1152,7 +1153,7 @@ ReturnCode_t DataWriterImpl::get_sending_locators(
         return RETCODE_NOT_ENABLED;
     }
 
-    writer_->getRTPSParticipant()->get_sending_locators(locators);
+    writer_->get_participant_impl()->get_sending_locators(locators);
     return RETCODE_OK;
 }
 
@@ -1217,7 +1218,7 @@ ReturnCode_t DataWriterImpl::set_qos(
             w_att.times = qos_.reliable_writer_qos().times;
             w_att.disable_positive_acks = qos_.reliable_writer_qos().disable_positive_acks.enabled;
             w_att.keep_duration = qos_.reliable_writer_qos().disable_positive_acks.duration;
-            writer_->updateAttributes(w_att);
+            writer_->update_attributes(w_att);
         }
 
         //Notify the participant that a Writer has changed its QOS
@@ -1281,9 +1282,9 @@ const Publisher* DataWriterImpl::get_publisher() const
     return publisher_->get_publisher();
 }
 
-void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
+void DataWriterImpl::InnerDataWriterListener::on_writer_matched(
         RTPSWriter* /*writer*/,
-        const PublicationMatchedStatus& info)
+        const MatchingInfo& info)
 {
     data_writer_->update_publication_matched_status(info);
 
@@ -1323,7 +1324,7 @@ void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
     data_writer_->user_datawriter_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
 
-void DataWriterImpl::InnerDataWriterListener::onWriterChangeReceivedByAll(
+void DataWriterImpl::InnerDataWriterListener::on_writer_change_received_by_all(
         RTPSWriter* /*writer*/,
         CacheChange_t* ch)
 {
@@ -1459,9 +1460,9 @@ ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
 }
 
 void DataWriterImpl::update_publication_matched_status(
-        const PublicationMatchedStatus& status)
+        const MatchingInfo& status)
 {
-    auto count_change = status.current_count_change;
+    auto count_change = status.status == MATCHED_MATCHING ? 1 : -1;
     publication_matched_status_.current_count += count_change;
     publication_matched_status_.current_count_change += count_change;
     if (count_change > 0)
@@ -1469,7 +1470,7 @@ void DataWriterImpl::update_publication_matched_status(
         publication_matched_status_.total_count += count_change;
         publication_matched_status_.total_count_change += count_change;
     }
-    publication_matched_status_.last_subscription_handle = status.last_subscription_handle;
+    publication_matched_status_.last_subscription_handle = status.remoteEndpointGuid;
 }
 
 ReturnCode_t DataWriterImpl::get_publication_matched_status(
@@ -1894,7 +1895,7 @@ ReturnCode_t DataWriterImpl::check_qos(
             EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK, "BEST_EFFORT incompatible with pull mode");
             return RETCODE_INCONSISTENT_POLICY;
         }
-        if (c_TimeInfinite == qos.reliable_writer_qos().times.heartbeatPeriod)
+        if (c_TimeInfinite == qos.reliable_writer_qos().times.heartbeat_period)
         {
             EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK, "Infinite heartbeat period incompatible with pull mode");
             return RETCODE_INCONSISTENT_POLICY;

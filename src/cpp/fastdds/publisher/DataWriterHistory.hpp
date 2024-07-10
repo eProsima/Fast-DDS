@@ -98,7 +98,7 @@ public:
      * This operation will return @c nullptr if the InstanceHandle_t handle does not correspond to an existing
      * data-object known to the DataWriterHistory.
      *
-     * @param[in] handle  Handle to the instance to retrieve the key values from.
+     * @param [in] handle  Handle to the instance to retrieve the key values from.
      *
      * @return Pointer to the serialized payload of the sample with which the instance was registered.
      */
@@ -187,7 +187,7 @@ public:
     /**
      * Remove a change by the publisher History.
      * @param change Pointer to the CacheChange_t.
-     * @param[in] max_blocking_time Maximum time this method has to complete the task.
+     * @param [in] max_blocking_time Maximum time this method has to complete the task.
      * @return True if removed.
      */
     bool remove_change_pub(
@@ -227,7 +227,7 @@ public:
 
     /*!
      * @brief Checks if the instance's key is registered.
-     * @param[in] handle Instance's key.
+     * @param [in] handle Instance's key.
      * return `true` if instance's key is registered in the history.
      */
     bool is_key_registered(

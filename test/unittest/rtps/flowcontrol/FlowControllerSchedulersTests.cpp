@@ -26,7 +26,7 @@ namespace fastdds {
 namespace rtps {
 std::ostream& operator <<(
         std::ostream& output,
-        const RTPSWriter& writer)
+        const BaseWriter& writer)
 {
     return output << "Writer" << writer.getGuid().entityId.value[3];
 }
@@ -107,16 +107,16 @@ TEST_F(FlowControllerSchedulers, Fifo)
     async.init();
 
     // Instantiate writers.
-    RTPSWriter writer1;
-    RTPSWriter writer2;
-    RTPSWriter writer3;
-    RTPSWriter writer4;
-    RTPSWriter writer5;
-    RTPSWriter writer6;
-    RTPSWriter writer7;
-    RTPSWriter writer8;
-    RTPSWriter writer9;
-    RTPSWriter writer10;
+    BaseWriter writer1;
+    BaseWriter writer2;
+    BaseWriter writer3;
+    BaseWriter writer4;
+    BaseWriter writer5;
+    BaseWriter writer6;
+    BaseWriter writer7;
+    BaseWriter writer8;
+    BaseWriter writer9;
+    BaseWriter writer10;
 
     // Initialize callback to get info.
     auto send_functor = [&](
@@ -708,16 +708,16 @@ TEST_F(FlowControllerSchedulers, RoundRobin)
     async.init();
 
     // Instantiate writers.
-    RTPSWriter writer1;
-    RTPSWriter writer2;
-    RTPSWriter writer3;
-    RTPSWriter writer4;
-    RTPSWriter writer5;
-    RTPSWriter writer6;
-    RTPSWriter writer7;
-    RTPSWriter writer8;
-    RTPSWriter writer9;
-    RTPSWriter writer10;
+    BaseWriter writer1;
+    BaseWriter writer2;
+    BaseWriter writer3;
+    BaseWriter writer4;
+    BaseWriter writer5;
+    BaseWriter writer6;
+    BaseWriter writer7;
+    BaseWriter writer8;
+    BaseWriter writer9;
+    BaseWriter writer10;
 
     // Initialize callback to get info.
     auto send_functor = [&](
@@ -1310,35 +1310,35 @@ TEST_F(FlowControllerSchedulers, HighPriority)
 
     // Instantiate writers.
     Property priority_property;
-    RTPSWriter writer1;
+    BaseWriter writer1;
     priority_property.name("fastdds.sfc.priority");
     priority_property.value("1");
     writer1.m_att.endpoint.properties.properties().push_back(priority_property);
-    RTPSWriter writer2;
+    BaseWriter writer2;
     priority_property.value("2");
     writer2.m_att.endpoint.properties.properties().push_back(priority_property);
-    RTPSWriter writer3;
+    BaseWriter writer3;
     priority_property.value("3");
     writer3.m_att.endpoint.properties.properties().push_back(priority_property);
-    RTPSWriter writer4;
+    BaseWriter writer4;
     priority_property.value("4");
     writer4.m_att.endpoint.properties.properties().push_back(priority_property);
-    RTPSWriter writer5;
+    BaseWriter writer5;
     priority_property.value("5");
     writer5.m_att.endpoint.properties.properties().push_back(priority_property);
-    RTPSWriter writer6;
+    BaseWriter writer6;
     priority_property.value("6");
     writer6.m_att.endpoint.properties.properties().push_back(priority_property);
-    RTPSWriter writer7;
+    BaseWriter writer7;
     priority_property.value("7");
     writer7.m_att.endpoint.properties.properties().push_back(priority_property);
-    RTPSWriter writer8;
+    BaseWriter writer8;
     priority_property.value("8");
     writer8.m_att.endpoint.properties.properties().push_back(priority_property);
-    RTPSWriter writer9;
+    BaseWriter writer9;
     priority_property.value("9");
     writer9.m_att.endpoint.properties.properties().push_back(priority_property);
-    RTPSWriter writer10;
+    BaseWriter writer10;
     priority_property.value("10");
     writer10.m_att.endpoint.properties.properties().push_back(priority_property);
 
@@ -1934,35 +1934,35 @@ TEST_F(FlowControllerSchedulers, PriorityWithReservation)
 
     // Instantiate writers.
     Property priority_property;
-    RTPSWriter writer1;
+    BaseWriter writer1;
     priority_property.name("fastdds.sfc.priority");
     priority_property.value("1");
     writer1.m_att.endpoint.properties.properties().push_back(priority_property);
-    RTPSWriter writer2;
+    BaseWriter writer2;
     priority_property.value("2");
     writer2.m_att.endpoint.properties.properties().push_back(priority_property);
-    RTPSWriter writer3;
+    BaseWriter writer3;
     priority_property.value("3");
     writer3.m_att.endpoint.properties.properties().push_back(priority_property);
-    RTPSWriter writer4;
+    BaseWriter writer4;
     priority_property.value("4");
     writer4.m_att.endpoint.properties.properties().push_back(priority_property);
-    RTPSWriter writer5;
+    BaseWriter writer5;
     priority_property.value("5");
     writer5.m_att.endpoint.properties.properties().push_back(priority_property);
-    RTPSWriter writer6;
+    BaseWriter writer6;
     priority_property.value("6");
     writer6.m_att.endpoint.properties.properties().push_back(priority_property);
-    RTPSWriter writer7;
+    BaseWriter writer7;
     priority_property.value("7");
     writer7.m_att.endpoint.properties.properties().push_back(priority_property);
-    RTPSWriter writer8;
+    BaseWriter writer8;
     priority_property.value("8");
     writer8.m_att.endpoint.properties.properties().push_back(priority_property);
-    RTPSWriter writer9;
+    BaseWriter writer9;
     priority_property.value("9");
     writer9.m_att.endpoint.properties.properties().push_back(priority_property);
-    RTPSWriter writer10;
+    BaseWriter writer10;
     priority_property.value("10");
     writer10.m_att.endpoint.properties.properties().push_back(priority_property);
     Property reservation_property;

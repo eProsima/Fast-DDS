@@ -49,7 +49,7 @@ public:
     /**
      * Creates a new @ref DynamicData reference based on the given @ref DynamicType reference.
      * All objects returned by this operation should eventually be deleted by calling delete_data.
-     * @param[in] type @ref DynamicType reference associated.
+     * @param [in] type @ref DynamicType reference associated.
      * @return new @ref DynamicData reference
      */
     FASTDDS_EXPORTED_API virtual traits<DynamicData>::ref_type create_data(
@@ -57,7 +57,7 @@ public:
 
     /**
      * Resets the internal reference if it is cached.
-     * @param[in] data @ref DynamicData reference whose internal cached reference to reset.
+     * @param [in] data @ref DynamicData reference whose internal cached reference to reset.
      * @return standard ReturnCode_t
      * @retval RETCODE_BAD_PARAMETER if reference is nil.
      * @retval RETCODE_OK is otherwise returned.

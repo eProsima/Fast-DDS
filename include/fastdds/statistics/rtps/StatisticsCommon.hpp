@@ -135,6 +135,7 @@ struct StatisticsWriterAncillary;
 class StatisticsWriterImpl
     : protected StatisticsListenersImpl
 {
+    friend class fastdds::rtps::RTPSMessageGroup;
 
     /**
      * Create the auxiliary structure
@@ -277,6 +278,8 @@ protected:
 
 class StatisticsWriterImpl
 {
+    friend class fastdds::rtps::RTPSMessageGroup;
+
 protected:
 
     // TODO: methods for listeners callbacks

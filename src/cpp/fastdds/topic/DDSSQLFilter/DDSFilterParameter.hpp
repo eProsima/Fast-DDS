@@ -39,7 +39,7 @@ public:
     /**
      * Sets the value of this DDSFilterParameter given from an input string.
      *
-     * @param[in] parameter  The string from which to set the value.
+     * @param [in] parameter  The string from which to set the value.
      *
      * @return whether the parsing of the string correspond to a valid literal value.
      */

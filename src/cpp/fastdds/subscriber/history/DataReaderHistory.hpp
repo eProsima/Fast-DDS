@@ -103,7 +103,7 @@ public:
      * No Thread Safe.
      *
      * @param removal iterator to the CacheChange_t to remove.
-     * @param[in] max_blocking_time Maximum time this method has to complete the task.
+     * @param [in] max_blocking_time Maximum time this method has to complete the task.
      * @param release defaults to true and hints if the CacheChange_t should return to the pool
      *
      * @return iterator to the next CacheChange_t or end iterator.
@@ -139,7 +139,7 @@ public:
      *
      * @pre Change should not be already present in the history.
      *
-     * @param[in] change The received change
+     * @param [in] change The received change
      * @param unknown_missing_changes_up_to Number of missing changes before this one
      *
      * @return Whether the operation succeeded.
@@ -154,9 +154,9 @@ public:
      *
      * @pre Change should not be already present in the history.
      *
-     * @param[in] change The received change
-     * @param[in] unknown_missing_changes_up_to Number of missing changes before this one
-     * @param[out] rejection_reason In case of been rejected the sample, it will contain the reason of the rejection.
+     * @param [in] change The received change
+     * @param [in] unknown_missing_changes_up_to Number of missing changes before this one
+     * @param [out] rejection_reason In case of been rejected the sample, it will contain the reason of the rejection.
      *
      * @return Whether the operation succeeded.
      */
@@ -171,7 +171,7 @@ public:
      *
      * @pre Change should be already present in the history.
      *
-     * @param[in] change The received change
+     * @param [in] change The received change
      *
      * @return Whether the operation succeeded.
      */
@@ -184,9 +184,9 @@ public:
      *
      * @pre Change should be already present in the history.
      *
-     * @param[in] change The received change
-     * @param[in] unknown_missing_changes_up_to Number of missing changes before this one
-     * @param[out] rejection_reason In case of been rejected the sample, it will contain the reason of the rejection.
+     * @param [in] change The received change
+     * @param [in] unknown_missing_changes_up_to Number of missing changes before this one
+     * @param [out] rejection_reason In case of been rejected the sample, it will contain the reason of the rejection.
      *
      * @return Whether the operation succeeded.
      */
@@ -245,7 +245,7 @@ public:
      *
      * @param handle The handle to the instance
      * @param next_deadline_us The time point when the deadline will occur
-     * @param[in] deadline_missed true value when is called because the deadline was missed.
+     * @param [in] deadline_missed true value when is called because the deadline was missed.
      *
      * @return True if the deadline was set correctly
      */
@@ -343,7 +343,7 @@ public:
      * @brief Updates instance's information and also decides whether the sample is finally accepted or denied depending
      * on the Ownership strength.
      *
-     * @param[in] change Sample received by DataReader.
+     * @param [in] change Sample received by DataReader.
      * @return true is returned when the sample is accepted and false when the sample is denied.
      */
     bool update_instance_nts(
@@ -360,8 +360,8 @@ public:
     /*!
      * @brief This function should be called by reader if a writer updates its ownership strength.
      *
-     * @param[in] writer_guid Guid of the writer which changes its ownership strength.
-     * @param[out] ownership_strength New value of the writer's Ownership strength.
+     * @param [in] writer_guid Guid of the writer which changes its ownership strength.
+     * @param [out] ownership_strength New value of the writer's Ownership strength.
      */
     void writer_update_its_ownership_strength_nts(
             const GUID_t& writer_guid,
@@ -416,7 +416,7 @@ private:
     /**
      * @name Variants of incoming change processing.
      *       Will be called with the history mutex taken.
-     * @param[in] change The received change
+     * @param [in] change The received change
      * @param unknown_missing_changes_up_to Number of missing changes before this one
      * @return
      */

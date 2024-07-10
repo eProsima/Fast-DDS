@@ -124,9 +124,9 @@ public:
             StaticRTPSParticipantInfo* pdata);
     /**
      * Look for a reader in the previously loaded endpoints.
-     * @param[in] partname RTPSParticipant name
-     * @param[in] id Id of the reader
-     * @param[out] rdataptr Pointer to pointer to return the information.
+     * @param [in] partname RTPSParticipant name
+     * @param [in] id Id of the reader
+     * @param [out] rdataptr Pointer to pointer to return the information.
      * @return True if found.
      */
     XMLP_ret lookforReader(
@@ -135,9 +135,9 @@ public:
             rtps::ReaderProxyData** rdataptr);
     /**
      * Look for a writer in the previously loaded endpoints.
-     * @param[in] partname RTPSParticipant name
-     * @param[in] id Id of the writer
-     * @param[out] wdataptr Pointer to pointer to return the information.
+     * @param [in] partname RTPSParticipant name
+     * @param [in] id Id of the writer
+     * @param [out] wdataptr Pointer to pointer to return the information.
      * @return True if found
      */
     XMLP_ret lookforWriter(

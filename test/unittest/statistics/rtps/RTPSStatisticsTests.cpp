@@ -45,6 +45,7 @@
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/transport/test_UDPv4Transport.h>
+#include <rtps/writer/BaseWriter.hpp>
 #include <statistics/rtps/monitor-service/Interfaces.hpp>
 #include <statistics/types/monitorservice_types.hpp>
 #include <statistics/types/types.hpp>
@@ -312,8 +313,8 @@ public:
         writer_history_ = new WriterHistory(history_attributes);
 
         WriterAttributes w_att;
-        w_att.times.heartbeatPeriod.seconds = 0;
-        w_att.times.heartbeatPeriod.nanosec = 250 * 1000 * 1000; // reduce acknowledgement wait
+        w_att.times.heartbeat_period.seconds = 0;
+        w_att.times.heartbeat_period.nanosec = 250 * 1000 * 1000; // reduce acknowledgement wait
         w_att.endpoint.reliabilityKind = reliability_qos;
         w_att.endpoint.durabilityKind = durability_qos;
 
@@ -332,10 +333,10 @@ public:
         writer_history_ = new WriterHistory(history_attributes);
 
         WriterAttributes w_att;
-        w_att.times.heartbeatPeriod.seconds = 3;
-        w_att.times.heartbeatPeriod.nanosec = 0;
-        w_att.times.nackResponseDelay.seconds = 0;
-        w_att.times.nackResponseDelay.nanosec = 300 * 1000 * 1000; // increase ACKNACK response delay
+        w_att.times.heartbeat_period.seconds = 3;
+        w_att.times.heartbeat_period.nanosec = 0;
+        w_att.times.nack_response_delay.seconds = 0;
+        w_att.times.nack_response_delay.nanosec = 300 * 1000 * 1000; // increase ACKNACK response delay
         w_att.endpoint.reliabilityKind = reliability_qos;
         w_att.endpoint.durabilityKind = durability_qos;
 
@@ -1408,7 +1409,8 @@ TEST_F(RTPSStatisticsTests, iconnections_queryable_get_entity_connections)
     for (auto& locator : conns_reader[0].announced_locators())
     {
         bool found = false;
-        for (auto& writer_loc : writer_->get_general_locator_selector().locator_selector)
+        auto base_writer = static_cast<fastdds::rtps::BaseWriter*>(writer_);
+        for (auto& writer_loc : base_writer->get_general_locator_selector().locator_selector)
         {
             //! Checking the address can be confusing since the writer_loc could be translated to
             //! 127.0.0.1

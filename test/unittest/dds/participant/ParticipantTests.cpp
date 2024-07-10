@@ -495,8 +495,8 @@ TEST(ParticipantTests, CreateDomainParticipantWithExtendedQos)
  * 1. They have equal binary properties
  * 2. All the non-binary properties of @c qos_2 are present (by name) in @c qos_1
  *
- * @param[in] qos_1 LHS @ref DomainParticipantQos
- * @param[in] qos_2 RHS @ref DomainParticipantQos
+ * @param [in] qos_1 LHS @ref DomainParticipantQos
+ * @param [in] qos_2 RHS @ref DomainParticipantQos
  */
 void check_equivalent_qos(
         const DomainParticipantQos& qos_1,

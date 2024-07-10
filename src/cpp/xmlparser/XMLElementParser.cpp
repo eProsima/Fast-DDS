@@ -2925,10 +2925,10 @@ XMLP_ret XMLParser::getXMLWriterTimes(
     /*
         <xs:complexType name="writerTimesType">
             <xs:all minOccurs="0">
-                <xs:element name="initialHeartbeatDelay" type="durationType" minOccurs="0"/>
-                <xs:element name="heartbeatPeriod" type="durationType" minOccurs="0"/>
-                <xs:element name="nackResponseDelay" type="durationType" minOccurs="0"/>
-                <xs:element name="nackSupressionDuration" type="durationType" minOccurs="0"/>
+                <xs:element name="initial_heartbeat_delay" type="durationType" minOccurs="0"/>
+                <xs:element name="heartbeat_period" type="durationType" minOccurs="0"/>
+                <xs:element name="nack_response_delay" type="durationType" minOccurs="0"/>
+                <xs:element name="nack_supression_duration" type="durationType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
      */
@@ -2939,32 +2939,32 @@ XMLP_ret XMLParser::getXMLWriterTimes(
         name = p_aux0->Name();
         if (strcmp(name, INIT_HEARTB_DELAY) == 0)
         {
-            // initialHeartbeatDelay
-            if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, times.initialHeartbeatDelay, ident))
+            // initial_heartbeat_delay
+            if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, times.initial_heartbeat_delay, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
         }
         else if (strcmp(name, HEARTB_PERIOD) == 0)
         {
-            // heartbeatPeriod
-            if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, times.heartbeatPeriod, ident))
+            // heartbeat_period
+            if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, times.heartbeat_period, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
         }
         else if (strcmp(name, NACK_RESP_DELAY) == 0)
         {
-            // nackResponseDelay
-            if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, times.nackResponseDelay, ident))
+            // nack_response_delay
+            if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, times.nack_response_delay, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
         }
         else if (strcmp(name, NACK_SUPRESSION) == 0)
         {
-            // nackSupressionDuration
-            if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, times.nackSupressionDuration, ident))
+            // nack_supression_duration
+            if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, times.nack_supression_duration, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }

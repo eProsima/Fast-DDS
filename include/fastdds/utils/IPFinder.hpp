@@ -86,31 +86,31 @@ public:
 
     /**
      * Get the IP4Adresses in all interfaces.
-     * @param[out] locators List of locators to be populated with the IP4 addresses.
+     * @param [out] locators List of locators to be populated with the IP4 addresses.
      */
     FASTDDS_EXPORTED_API static bool getIP4Address(
             LocatorList_t* locators);
     /**
      * Get the IP6Adresses in all interfaces.
-     * @param[out] locators List of locators to be populated with the IP6 addresses.
+     * @param [out] locators List of locators to be populated with the IP6 addresses.
      */
     FASTDDS_EXPORTED_API static bool getIP6Address(
             LocatorList_t* locators);
     /**
      * Get all IP Adresses in all interfaces.
-     * @param[out] locators List of locators to be populated with the addresses.
+     * @param [out] locators List of locators to be populated with the addresses.
      */
     FASTDDS_EXPORTED_API static bool getAllIPAddress(
             LocatorList_t* locators);
     /**
      * Parses an IP4 string, populating a info_IP with its value.
-     * @param[out] info info_IP to populate.
+     * @param [out] info info_IP to populate.
      * */
     FASTDDS_EXPORTED_API static bool parseIP4(
             info_IP& info);
     /**
      * Parses an IP6 string, populating a info_IP with its value.
-     * @param[out] info info_IP to populate.
+     * @param [out] info info_IP to populate.
      * */
     FASTDDS_EXPORTED_API static bool parseIP6(
             info_IP& info);
@@ -123,7 +123,7 @@ public:
     /**
      * Get all MAC Adresses of all interfaces.
      * Will return all unique MAC addresses for eadh of the interfaces returned by getAllIPAddress
-     * @param[out] macs List of MAC addresses.
+     * @param [out] macs List of MAC addresses.
      */
     FASTDDS_EXPORTED_API static bool getAllMACAddress(
             std::vector<info_MAC>* macs);

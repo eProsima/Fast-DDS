@@ -63,9 +63,9 @@ bool MonitorServiceListener::on_local_entity_connections_change(
     return monitor_srv_->push_entity_update(guid.entityId, StatusKind::CONNECTION_LIST);
 }
 
-void MonitorServiceListener::onWriterMatched(
+void MonitorServiceListener::on_writer_matched(
         fastdds::rtps::RTPSWriter*,
-        fastdds::rtps::MatchingInfo& info)
+        const fastdds::rtps::MatchingInfo& info)
 {
     if (info.status == eprosima::fastdds::rtps::MATCHED_MATCHING)
     {
@@ -77,7 +77,7 @@ void MonitorServiceListener::onWriterMatched(
     }
 }
 
-void MonitorServiceListener::onWriterChangeReceivedByAll(
+void MonitorServiceListener::on_writer_change_received_by_all(
         fastdds::rtps::RTPSWriter* writer,
         fastdds::rtps::CacheChange_t* change)
 {

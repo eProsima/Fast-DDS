@@ -314,7 +314,7 @@ void TypeLookupReplyListener::on_new_cache_change_added(
     reader->get_history()->remove_change(change);
 }
 
-void TypeLookupReplyListener::onWriterChangeReceivedByAll(
+void TypeLookupReplyListener::on_writer_change_received_by_all(
         fastdds::rtps::RTPSWriter*,
         fastdds::rtps::CacheChange_t* change)
 {

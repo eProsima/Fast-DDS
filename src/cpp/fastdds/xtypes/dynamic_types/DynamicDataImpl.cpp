@@ -3252,7 +3252,7 @@ ReturnCode_t DynamicDataImpl::get_primitive_value(
 
 /*!
  * Specialization for TK_STRING8.
- * @param[in] member_id Indicates the position of the character to be returned. MEMBER_ID_INVALID can be used to
+ * @param [in] member_id Indicates the position of the character to be returned. MEMBER_ID_INVALID can be used to
  * return all the string instead of a single character.
  */
 template<>
@@ -3285,7 +3285,7 @@ ReturnCode_t DynamicDataImpl::get_primitive_value<TK_STRING8>(
 
 /*!
  * Specialization for TK_STRING16.
- * @param[in] member_id Indicates the position of the character to be returned. MEMBER_ID_INVALID can be used to
+ * @param [in] member_id Indicates the position of the character to be returned. MEMBER_ID_INVALID can be used to
  * return all the string instead of a single character.
  */
 template<>

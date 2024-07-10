@@ -48,6 +48,7 @@
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/history/PoolConfig.h>
 #include <rtps/messages/RTPSMessageGroup.hpp>
+#include <rtps/writer/BaseWriter.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -461,7 +462,7 @@ void WriterHistory::set_fragments(
     // Fragment if necessary
     if (high_mark_for_frag_ == 0)
     {
-        high_mark_for_frag_ = mp_writer->getMaxDataSize();
+        high_mark_for_frag_ = mp_writer->get_max_allowed_payload_size();
     }
 
     uint32_t final_high_mark_for_frag = high_mark_for_frag_;
@@ -472,7 +473,7 @@ void WriterHistory::set_fragments(
     {
         inline_qos_size += (2 * fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_SAMPLE_IDENTITY_SIZE);
     }
-    if (ChangeKind_t::ALIVE != change->kind && TopicKind_t::WITH_KEY == mp_writer->m_att.topicKind)
+    if (ChangeKind_t::ALIVE != change->kind && TopicKind_t::WITH_KEY == mp_writer->getAttributes().topicKind)
     {
         inline_qos_size += fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_KEY_SIZE;
         inline_qos_size += fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_STATUS_SIZE;

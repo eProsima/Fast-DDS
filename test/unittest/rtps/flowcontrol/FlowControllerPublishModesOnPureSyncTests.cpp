@@ -30,9 +30,9 @@ TYPED_TEST(FlowControllerPublishModes, pure_sync_publish_mode)
 
     // Initialize callback to get info.
     auto send_functor = [&](
-        eprosima::fastdds::rtps::CacheChange_t*,
-        eprosima::fastdds::rtps::RTPSMessageGroup&,
-        eprosima::fastdds::rtps::LocatorSelectorSender&,
+        CacheChange_t*,
+        RTPSMessageGroup&,
+        LocatorSelectorSender&,
         const std::chrono::time_point<std::chrono::steady_clock>&)
             {
                 this->last_thread_delivering_sample = std::this_thread::get_id();
@@ -40,22 +40,22 @@ TYPED_TEST(FlowControllerPublishModes, pure_sync_publish_mode)
 
 
     // Instantiate writers.
-    eprosima::fastdds::rtps::RTPSWriter writer1;
-    eprosima::fastdds::rtps::RTPSWriter writer2;
+    BaseWriter writer1;
+    BaseWriter writer2;
 
     // Register writers.
     pure_sync.register_writer(&writer1);
 
-    eprosima::fastdds::rtps::CacheChange_t change_writer1;
+    CacheChange_t change_writer1;
     INIT_CACHE_CHANGE(change_writer1, writer1, 1);
 
-    eprosima::fastdds::rtps::CacheChange_t change_writer2;
+    CacheChange_t change_writer2;
     INIT_CACHE_CHANGE(change_writer2, writer2, 1);
 
     // Testing add_new_sample. Writer will be able to deliver it.
     EXPECT_CALL(writer1,
             deliver_sample_nts(&change_writer1, _, Ref(writer1.general_locator_selector_), _)).
-            WillOnce(DoAll(send_functor, Return(eprosima::fastdds::rtps::DeliveryRetCode::DELIVERED)));
+            WillOnce(DoAll(send_functor, Return(DeliveryRetCode::DELIVERED)));
     writer1.getMutex().lock();
     ASSERT_TRUE(pure_sync.add_new_sample(&writer1, &change_writer1,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
@@ -64,7 +64,7 @@ TYPED_TEST(FlowControllerPublishModes, pure_sync_publish_mode)
 
     EXPECT_CALL(writer2,
             deliver_sample_nts(&change_writer2, _, Ref(writer2.general_locator_selector_), _)).
-            WillOnce(DoAll(send_functor, Return(eprosima::fastdds::rtps::DeliveryRetCode::DELIVERED)));
+            WillOnce(DoAll(send_functor, Return(DeliveryRetCode::DELIVERED)));
     writer2.getMutex().lock();
     ASSERT_TRUE(pure_sync.add_new_sample(&writer2, &change_writer2,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
@@ -74,7 +74,7 @@ TYPED_TEST(FlowControllerPublishModes, pure_sync_publish_mode)
     // Testing add_new_sample. Writer will not be able to deliver it.
     EXPECT_CALL(writer1,
             deliver_sample_nts(&change_writer1, _, Ref(writer1.general_locator_selector_), _)).
-            WillOnce(DoAll(send_functor, Return(eprosima::fastdds::rtps::DeliveryRetCode::NOT_DELIVERED)));
+            WillOnce(DoAll(send_functor, Return(DeliveryRetCode::NOT_DELIVERED)));
     writer1.getMutex().lock();
     ASSERT_FALSE(pure_sync.add_new_sample(&writer1, &change_writer1,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
@@ -83,7 +83,7 @@ TYPED_TEST(FlowControllerPublishModes, pure_sync_publish_mode)
 
     EXPECT_CALL(writer2,
             deliver_sample_nts(&change_writer2, _, Ref(writer2.general_locator_selector_), _)).
-            WillOnce(DoAll(send_functor, Return(eprosima::fastdds::rtps::DeliveryRetCode::NOT_DELIVERED)));
+            WillOnce(DoAll(send_functor, Return(DeliveryRetCode::NOT_DELIVERED)));
     writer2.getMutex().lock();
     ASSERT_FALSE(pure_sync.add_new_sample(&writer2, &change_writer2,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));

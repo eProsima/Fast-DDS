@@ -19,7 +19,6 @@
 #define FASTDDS_RTPS_WRITER__WRITERLISTENER_HPP
 
 #include <fastdds/dds/core/status/BaseStatus.hpp>
-#include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
@@ -50,22 +49,9 @@ public:
      * @param writer Pointer to the RTPSWriter.
      * @param info Matching Information.
      */
-    virtual void onWriterMatched(
+    virtual void on_writer_matched(
             RTPSWriter* writer,
-            MatchingInfo& info)
-    {
-        static_cast<void>(writer);
-        static_cast<void>(info);
-    }
-
-    /**
-     * This method is called when a new Reader is matched with this Writer by the builtin protocols
-     * @param writer Pointer to the RTPSWriter.
-     * @param info Publication matching information.
-     */
-    virtual void onWriterMatched(
-            RTPSWriter* writer,
-            const eprosima::fastdds::dds::PublicationMatchedStatus& info)
+            const MatchingInfo& info)
     {
         static_cast<void>(writer);
         static_cast<void>(info);
@@ -92,7 +78,7 @@ public:
      * @param writer Pointer to the RTPSWriter.
      * @param change Pointer to the affected CacheChange_t.
      */
-    virtual void onWriterChangeReceivedByAll(
+    virtual void on_writer_change_received_by_all(
             RTPSWriter* writer,
             CacheChange_t* change)
     {
