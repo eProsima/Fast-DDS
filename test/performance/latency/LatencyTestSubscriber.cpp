@@ -548,7 +548,7 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
             std::chrono::duration<uint32_t, std::nano> bounce_time(end_time - start_time);
             reinterpret_cast<LatencyType*>(echoed_loan)->bounce = bounce_time.count();
 
-            if (!sub->data_writer_->write(echoed_loan))
+            if (RETCODE_OK != sub->data_writer_->write(echoed_loan))
             {
                 EPROSIMA_LOG_ERROR(LatencyTest, "Problem echoing Publisher test data with loan");
                 sub->data_writer_->discard_loan(echoed_loan);
@@ -582,7 +582,7 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
                     reinterpret_cast<LatencyType*>(data)->bounce = 0;
                 }
 
-                if (!sub->data_writer_->write(data))
+                if (RETCODE_OK != sub->data_writer_->write(data))
                 {
                     EPROSIMA_LOG_INFO(LatencyTest, "Problem echoing Publisher test data");
                 }
@@ -707,7 +707,7 @@ bool LatencyTestSubscriber::test(
     received_ = 0;
     TestCommandType command;
     command.m_command = BEGIN;
-    if (!command_writer_->write(&command))
+    if (RETCODE_OK != command_writer_->write(&command))
     {
         EPROSIMA_LOG_ERROR(LatencyTest, "Subscriber fail to publish the BEGIN command");
         return false;
@@ -752,7 +752,7 @@ bool LatencyTestSubscriber::test(
     }
 
     command.m_command = END;
-    if (!command_writer_->write(&command))
+    if (RETCODE_OK != command_writer_->write(&command))
     {
         EPROSIMA_LOG_ERROR(LatencyTest, "Subscriber fail to publish the END command");
         return false;

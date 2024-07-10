@@ -1686,7 +1686,7 @@ void lookup_instance_test(
 {
     // Send sample with key value 0
     data.index(0);
-    EXPECT_TRUE(writer->write(&data));
+    EXPECT_EQ(RETCODE_OK, writer->write(&data));
     // Ensure it arrived to the DataReader
     EXPECT_TRUE(reader->wait_for_unread_message({ 1, 0 }));
 
@@ -2529,7 +2529,7 @@ TEST_F(DataReaderTests, check_key_history_wholesomeness_on_unmatch)
     sample.index(0);
     sample.message(msg);
 
-    ASSERT_TRUE(data_writer_->write(&sample));
+    ASSERT_EQ(RETCODE_OK, data_writer_->write(&sample));
 
     // wait till the DataReader receives the data
     ASSERT_TRUE(data_reader_->wait_for_unread_message(Duration_t(3, 0)));

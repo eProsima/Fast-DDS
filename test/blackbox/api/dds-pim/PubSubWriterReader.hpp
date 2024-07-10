@@ -547,7 +547,7 @@ public:
 
         while (it != msgs.end())
         {
-            if (datawriter_->write((void*)&(*it)))
+            if (eprosima::fastdds::dds::RETCODE_OK == datawriter_->write((void*)&(*it)))
             {
                 for (auto& tuple : entities_extra_)
                 {

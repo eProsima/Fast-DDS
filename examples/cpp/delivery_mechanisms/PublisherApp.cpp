@@ -289,7 +289,7 @@ bool PublisherApp::publish()
         DeliveryMechanisms* delivery_mechanisms_ = static_cast<DeliveryMechanisms*>(sample_);
         delivery_mechanisms_->index() = ++index_of_last_sample_sent_;
         memcpy(delivery_mechanisms_->message().data(), "Delivery mechanisms", sizeof("Delivery mechanisms"));
-        ret = writer_->write(sample_);
+        ret = (RETCODE_OK == writer_->write(sample_));
         std::cout << "Sample: '" << delivery_mechanisms_->message().data() << "' with index: '"
                   << delivery_mechanisms_->index() << "' SENT" << std::endl;
     }

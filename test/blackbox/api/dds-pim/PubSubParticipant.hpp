@@ -416,7 +416,7 @@ public:
             type& msg,
             unsigned int index = 0)
     {
-        return std::get<2>(publishers_[index])->write((void*)&msg);
+        return (eprosima::fastdds::dds::RETCODE_OK == std::get<2>(publishers_[index])->write((void*)&msg));
     }
 
     void assert_liveliness_participant()

@@ -154,7 +154,8 @@ public:
         request.x(x);
         request.y(y);
 
-        if (request_writer_->write(static_cast<void*>(&request), listener_.write_params))
+        if (eprosima::fastdds::dds::RETCODE_OK ==
+                request_writer_->write(static_cast<void*>(&request), listener_.write_params))
         {
             std::unique_lock<std::mutex> lock(listener_.reception_mutex);
             listener_.reception_cv.wait(lock, [&]()

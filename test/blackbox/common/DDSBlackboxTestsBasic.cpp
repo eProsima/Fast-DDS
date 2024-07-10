@@ -488,8 +488,8 @@ TEST(DDSBasic, PidRelatedSampleIdentity)
     write_params.related_sample_identity() = related_sample_identity_;
 
     // Publish the new value, deduce the instance handle
-    bool write_ret = native_writer.write((void*)&data, write_params);
-    ASSERT_EQ(true, write_ret);
+    ReturnCode_t write_ret = native_writer.write((void*)&data, write_params);
+    ASSERT_EQ(RETCODE_OK, write_ret);
 
     DataReader& native_reader = reliable_reader.get_native_reader();
 
