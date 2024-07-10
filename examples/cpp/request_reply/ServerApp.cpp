@@ -40,6 +40,7 @@
 #include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/common/WriteParams.hpp>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 
 #include "types/Calculator.hpp"
 #include "types/CalculatorPubSubTypes.hpp"
@@ -126,6 +127,30 @@ void ServerApp::stop()
     cv_.notify_all();
 }
 
+void ServerApp::on_participant_discovery(
+        DomainParticipant* /* participant */,
+        rtps::ParticipantDiscoveryInfo&& info,
+        bool& should_be_ignored)
+{
+    std::lock_guard<std::mutex> lock(mtx_);
+
+    should_be_ignored = false;
+
+    rtps::GuidPrefix_t remote_participant_guid_prefix = info.info.m_guid.guidPrefix;
+
+    if (info.status == rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+    {
+        request_reply_debug("ServerApp", "Participant discovered: " << remote_participant_guid_prefix);
+    }
+    else if (info.status == rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+    {
+        client_matched_status_.match_reply_reader(remote_participant_guid_prefix, false);
+        client_matched_status_.match_request_writer(remote_participant_guid_prefix, false);
+
+        request_reply_debug("ServerApp", "Participant removed: " << remote_participant_guid_prefix);
+    }
+}
+
 void ServerApp::on_publication_matched(
         DataWriter* /* writer */,
         const PublicationMatchedStatus& info)
@@ -170,7 +195,6 @@ void ServerApp::on_subscription_matched(
     {
         request_reply_debug("ServerApp", "Remote request writer matched with client " << client_guid_prefix);
         client_matched_status_.match_request_writer(client_guid_prefix, true);
-
     }
     else if (info.current_count_change == -1)
     {
@@ -229,7 +253,12 @@ void ServerApp::create_participant()
         throw std::runtime_error("Failed to get participant factory instance");
     }
 
-    participant_ = factory->create_participant_with_default_profile(nullptr, StatusMask::none());
+    StatusMask participant_mask = StatusMask::none();
+    participant_mask << StatusMask::publication_matched();
+    participant_mask << StatusMask::subscription_matched();
+    participant_mask << StatusMask::data_available();
+
+    participant_ = factory->create_participant_with_default_profile(this, participant_mask);
 
     if (nullptr == participant_)
     {
@@ -281,7 +310,7 @@ void ServerApp::create_request_entities(
         throw std::runtime_error("Failed to get default datareader qos");
     }
 
-    request_reader_ = subscriber_->create_datareader(request_topic_, reader_qos, this, StatusMask::all());
+    request_reader_ = subscriber_->create_datareader(request_topic_, reader_qos);
 
     if (nullptr == request_reader_)
     {
@@ -317,7 +346,7 @@ void ServerApp::create_reply_entities(
         throw std::runtime_error("Failed to get default datawriter qos");
     }
 
-    reply_writer_ = publisher_->create_datawriter(reply_topic_, writer_qos, this, StatusMask::all());
+    reply_writer_ = publisher_->create_datawriter(reply_topic_, writer_qos);
 
     if (nullptr == reply_writer_)
     {
