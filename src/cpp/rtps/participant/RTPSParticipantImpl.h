@@ -40,7 +40,6 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
-#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/history/IChangePool.hpp>
@@ -48,6 +47,7 @@
 #include <fastdds/rtps/transport/SenderResource.hpp>
 
 #include "../flowcontrol/FlowControllerFactory.hpp"
+#include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/messages/MessageReceiver.h>
 #include <rtps/messages/RTPSMessageGroup_t.hpp>
 #include <rtps/messages/SendBuffersManager.hpp>

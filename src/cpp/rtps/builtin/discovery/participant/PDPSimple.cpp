@@ -24,7 +24,6 @@
 #include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
-#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
@@ -33,6 +32,7 @@
 #include <fastdds/utils/IPLocator.hpp>
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/data/NetworkConfiguration.hpp>
+#include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include <rtps/builtin/discovery/endpoint/EDPStatic.h>
 #include <rtps/builtin/discovery/participant/DS/PDPSecurityInitiatorListener.hpp>

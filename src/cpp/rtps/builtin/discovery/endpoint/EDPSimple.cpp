@@ -31,12 +31,12 @@
 #include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
-#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 
 #include <rtps/builtin/BuiltinProtocols.h>
+#include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/builtin/discovery/endpoint/EDPSimpleListeners.h>
 #include <rtps/builtin/discovery/endpoint/EDPUtils.hpp>
 #include <rtps/builtin/discovery/participant/PDP.h>

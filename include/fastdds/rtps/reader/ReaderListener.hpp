@@ -23,10 +23,11 @@
 #include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
-#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/MatchingInfo.hpp>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.hpp>
+
+#include <rtps/builtin/data/WriterProxyData.hpp>
 
 namespace eprosima {
 namespace fastdds {
