@@ -648,6 +648,22 @@ TEST(ParticipantTests, CreateDomainParticipantWithExtendedQosFromProfile)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(new_participant) == RETCODE_OK);
 }
 
+/**
+ *  This test checks that get_participant_extended_qos_from_default_profile holds the correct domain ID.
+ */
+TEST(ParticipantTests, get_participant_extended_qos_from_default_profile)
+{
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");
+
+    uint32_t domain_id = 123u; // This is the domain ID set in the default profile above
+
+    DomainParticipantExtendedQos extended_qos;
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->get_participant_extended_qos_from_default_profile(
+                extended_qos) == RETCODE_OK);
+
+    ASSERT_EQ(extended_qos.domainId(), domain_id);
+}
+
 TEST(ParticipantTests, CreateDomainParticipantWithDefaultProfile)
 {
     uint32_t domain_id = 123u;          // This is the domain ID set in the default profile above

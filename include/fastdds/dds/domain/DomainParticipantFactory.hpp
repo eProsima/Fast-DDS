@@ -241,6 +241,15 @@ public:
             DomainParticipantExtendedQos& extended_qos) const;
 
     /**
+     * Fills the DomainParticipantExtendedQos with the values of the default XML profile.
+     *
+     * @param extended_qos DomainParticipantExtendedQos object where the domain and qos are returned.
+     * @return RETCODE_OK
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t get_participant_extended_qos_from_default_profile(
+            DomainParticipantExtendedQos& extended_qos) const;
+
+    /**
      * Remove a Participant and all associated publishers and subscribers.
      *
      * @param part Pointer to the participant.
