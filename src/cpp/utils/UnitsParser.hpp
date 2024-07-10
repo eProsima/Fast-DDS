@@ -32,7 +32,7 @@ namespace utils {
  *
  * @param [in] st String to convert
  */
-inline void to_uppercase(
+void to_uppercase(
         std::string& st) noexcept;
 
 /**

@@ -19,6 +19,8 @@
 
 #include <gtest/gtest.h>
 
+#include <utils/UnitsParser.hpp>
+
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
@@ -58,7 +60,7 @@ protected:
         std::string camel_case;
         bool to_upper = true;
 
-        for (char ch : snake_case)
+        for (const auto& ch : snake_case)
         {
             if (ch == '_')
             {
@@ -66,7 +68,9 @@ protected:
             }
             else if (to_upper)
             {
-                camel_case += std::toupper(ch);
+                std::string ch_str(1, ch);
+                utils::to_uppercase(ch_str);
+                camel_case += ch_str;
                 to_upper = false;
             }
             else
