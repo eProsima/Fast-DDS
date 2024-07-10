@@ -263,14 +263,15 @@ void ClientApp::on_data_available(
                 if (!request_status->second)
                 {
                     request_status->second = true;
-                    request_reply_info("ClientApp",
-                            "Reply received from server " << server_guid_prefix << " with result: " << reply.result());
+                    request_reply_info("ClientApp", "Reply received from server "
+                            << server_guid_prefix << " to request with ID '" << request_status->first.sequence_number()
+                            << "' with result: '" << reply.result() << "'");
                 }
                 else
                 {
-                    request_reply_debug("ClientApp",
-                            "Duplicate reply received from server " << server_guid_prefix << " with result: "
-                                                                    << reply.result());
+                    request_reply_debug("ClientApp", "Duplicate reply received from server "
+                            << server_guid_prefix << " to request with ID '" << request_status->first.sequence_number()
+                            << "' with result: '" << reply.result() << "'");
                     continue;
                 }
             }
