@@ -128,7 +128,7 @@ public:
      * Write data to the topic.
      *
      * @param data Pointer to the data
-     * @return RETCODE_OK if the data is correctly sent and RETCODE_ERROR otherwise.
+     * @return RETCODE_OK if the data is correctly sent or a ReturnCode related to the specific error otherwise.
      */
     FASTDDS_EXPORTED_API ReturnCode_t write(
             const void* const data);
@@ -138,7 +138,7 @@ public:
      *
      * @param data Pointer to the data
      * @param params Extra write parameters.
-     * @return RETCODE_OK if the data is correctly sent and RETCODE_ERROR otherwise.
+     * @return RETCODE_OK if the data is correctly sent or a ReturnCode related to the specific error otherwise.
      */
     FASTDDS_EXPORTED_API ReturnCode_t write(
             const void* const data,
