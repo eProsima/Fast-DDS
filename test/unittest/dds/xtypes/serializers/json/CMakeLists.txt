@@ -47,7 +47,8 @@ configure_file(
 
 set(SERIALIZE_JSON_SOURCE
     DynDataJSONTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/utils.cpp)
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/utils.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/serializers/json/dynamic_data_json.cpp)
 
 file(GLOB DATATYPE_IMPLEMENTATION_CPP "types/**/implementation/*.cpp")
 file(GLOB DATATYPE_SOURCES_CXX "types/**/gen/*.cxx")
