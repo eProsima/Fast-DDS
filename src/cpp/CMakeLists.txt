@@ -360,7 +360,7 @@ endif()
 # * Publisher::write() - Uses ReliabilityQosPolicy.max_blocking_time
 # * Subscriber::takeNextData() - Uses ReliabilityQosPolicy.max_blocking_time
 # * Subscriber::readNextData() - Uses ReliabilityQosPolicy.max_blocking_time
-option(STRICT_REALTIME "Enable a strict real-time behavour." OFF)
+option(STRICT_REALTIME "Enable a strict real-time behaviour." OFF)
 if(STRICT_REALTIME)
     set(HAVE_STRICT_REALTIME 1)
 else()
