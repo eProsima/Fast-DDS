@@ -21,8 +21,6 @@
 
 #include <condition_variable>
 #include <stdexcept>
-#include <csignal>
-#include <thread>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>

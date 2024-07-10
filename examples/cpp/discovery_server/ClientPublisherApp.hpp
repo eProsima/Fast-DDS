@@ -28,7 +28,7 @@
 
 #include "Application.hpp"
 #include "CLIParser.hpp"
-#include "HelloWorldPubSubTypes.hpp"
+#include "HelloWorld.hpp"
 
 using namespace eprosima::fastdds::dds;
 
