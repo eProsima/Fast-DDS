@@ -1598,6 +1598,9 @@ TEST_F(SHMTransportTests, buffer_recover)
                 std::this_thread::sleep_for(std::chrono::milliseconds(150));
             }
         }
+
+        buffer_pushed = false;
+
         {
             is_port_ok = false;
             while (!buffer_pushed)
