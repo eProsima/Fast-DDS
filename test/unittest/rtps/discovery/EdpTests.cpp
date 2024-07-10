@@ -501,6 +501,61 @@ TEST(MatchingFailureMask, matching_failure_mask_overflow)
     EXPECT_TRUE(mask.test(EDP::MatchingFailureMask::different_typeinfo));
 }
 
+TEST_F(EdpTests, CheckTypeIdentifierComparation)
+{
+    dds::xtypes::TypeIdentifier minimal;
+    minimal.equivalence_hash({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14});
+    minimal._d(dds::xtypes::EK_MINIMAL);
+    dds::xtypes::TypeIdentifier complete;
+    complete.equivalence_hash({2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
+    complete._d(dds::xtypes::EK_COMPLETE);
+
+    wdata->type_information().assigned(true);
+    rdata->type_information().assigned(true);
+
+    wdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
+    wdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
+    rdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
+    rdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
+    check_expectations(true);
+
+    wdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
+    wdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
+    rdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
+    rdata->type_information().type_information.minimal().typeid_with_size().type_id().no_value({});
+    check_expectations(true);
+
+    wdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
+    wdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
+    rdata->type_information().type_information.complete().typeid_with_size().type_id().no_value({});
+    rdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
+    check_expectations(true);
+
+    wdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
+    wdata->type_information().type_information.minimal().typeid_with_size().type_id().no_value({});
+    rdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
+    rdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
+    check_expectations(true);
+
+    wdata->type_information().type_information.complete().typeid_with_size().type_id().no_value({});
+    wdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
+    rdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
+    rdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
+    check_expectations(true);
+
+    wdata->type_information().type_information.complete().typeid_with_size().type_id().no_value({});
+    wdata->type_information().type_information.minimal().typeid_with_size().type_id().no_value({});
+    rdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
+    rdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
+    check_expectations(false);
+
+    wdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
+    wdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
+    rdata->type_information().type_information.complete().typeid_with_size().type_id().no_value({});
+    rdata->type_information().type_information.minimal().typeid_with_size().type_id().no_value({});
+    check_expectations(false);
+}
+
 
 } // namespace rtps
 } // namespace fastdds

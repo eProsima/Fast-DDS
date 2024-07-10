@@ -215,12 +215,13 @@ public:
 
     bool has_type_information () const
     {
-        return false;
+        return has_type_info_;
     }
 
     void type_information(
             const fastdds::dds::xtypes::TypeInformationParameter& other_type_info)
     {
+        has_type_info_ = true;
         type_info_ = other_type_info;
     }
 
@@ -231,6 +232,7 @@ public:
 
     fastdds::dds::xtypes::TypeInformationParameter& type_information()
     {
+        has_type_info_ = true;
         return type_info_;
     }
 
@@ -349,6 +351,7 @@ private:
     InstanceHandle_t m_RTPSParticipantKey;
     uint16_t m_userDefinedId;
     fastdds::rtps::ContentFilterProperty content_filter_;
+    bool has_type_info_ {false};
 
 };
 
