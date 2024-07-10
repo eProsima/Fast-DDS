@@ -34,16 +34,16 @@ Node<Info>::Node()
 
 template <typename Info>
 Node<Info>::Node(
-        const Info& info)
-    : info(info)
+        const Info& inner_info)
+    : info(inner_info)
 {
     // Do nothing
 }
 
 template <typename Info>
 Node<Info>::Node(
-        Info&& info)
-    : info(std::move(info))
+        Info&& inner_info)
+    : info(std::move(inner_info))
 {
     // Do nothing
 }
@@ -59,16 +59,16 @@ Node<Info>::Node(
 
 template <typename Info>
 void TreeNode<Info>::add_branch(
-        const Info& info)
+        const Info& inner_info)
 {
-    branches_.push_back(TreeNode(info));
+    branches_.push_back(TreeNode(inner_info));
 }
 
 template <typename Info>
 void TreeNode<Info>::add_branch(
-        Info&& info)
+        Info&& inner_info)
 {
-    branches_.push_back(TreeNode(std::move(info)));
+    branches_.push_back(TreeNode(std::move(inner_info)));
 }
 
 template <typename Info>

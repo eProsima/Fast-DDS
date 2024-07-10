@@ -35,9 +35,9 @@ public:
 
     Node();
     Node(
-            const Info& info);
+            const Info& inner_info);
     Node(
-            Info&& info);
+            Info&& inner_info);
 
     template<typename ... Args>
     Node(
@@ -57,9 +57,9 @@ public:
     using Node<Info>::Node;
 
     void add_branch(
-            const Info& info);
+            const Info& inner_info);
     void add_branch(
-            Info&& info);
+            Info&& inner_info);
     void add_branch(
             const TreeNode& node);
     void add_branch(
