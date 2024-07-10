@@ -66,8 +66,7 @@ configure_file(
     COPYONLY)
 
 set(RESOURCEDYNTYPETOIDLTESTS_SOURCE
-    DynTypeIDLTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/utils.cpp)
+    DynTypeIDLTests.cpp)
 
 file(GLOB DATATYPE_SOURCES "types/**/gen/*.cxx")
 
