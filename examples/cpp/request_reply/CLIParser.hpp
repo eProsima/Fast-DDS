@@ -58,7 +58,7 @@ public:
     /**
      * @brief Print usage help message and exit with the given return code
      *
-     * @param[in] return_code return code to exit with
+     * @param [in] return_code return code to exit with
      *
      * @warning This method finishes the execution of the program with the input return code
      */
@@ -91,8 +91,8 @@ public:
     /**
      * @brief Parse the command line options and return the config object
      *
-     * @param[in] argc number of arguments
-     * @param[in] argv array of arguments
+     * @param [in] argc number of arguments
+     * @param [in] argv array of arguments
      *
      * @return config object with the parsed options
      *
@@ -155,7 +155,7 @@ public:
     /**
      * @brief Parse the signal number into the signal name
      *
-     * @param[in] signum signal number
+     * @param [in] signum signal number
      *
      * @return std::string signal name
      */
@@ -182,7 +182,7 @@ public:
     /**
      * @brief Parse the entity kind into std::string
      *
-     * @param[in] entity entity kind
+     * @param [in] entity entity kind
      *
      * @return std::string entity kind
      */
@@ -208,8 +208,8 @@ private:
      *
      * @pre argc == 4
      *
-     * @param[in] argv array of arguments
-     * @param[in,out] config config object to store the arguments
+     * @param [in] argv array of arguments
+     * @param [in,out] config config object to store the arguments
      *
      * @warning This method finishes the execution of the program if the input arguments are invalid
      */
@@ -224,7 +224,7 @@ private:
     /**
      * @brief Consume an int16 argument and return it
      *
-     * @param[in] arg string argument to consume
+     * @param [in] arg string argument to consume
      *
      * @return std::int16_t int16 argument
      *
