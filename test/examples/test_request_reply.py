@@ -12,18 +12,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import re
 import subprocess
+
+def parse_response(client_responses: dict, response: str):
+    """."""
+    # Define the regex pattern with two capturing groups
+    pattern = r"ID '(\d+)' with result: '(-?\d+)'"
+
+    # Use re.search to find the first match
+    match = re.search(pattern, response)
+
+    if match:
+        id_str = match.group(1)           # First capturing group
+        result_int = int(match.group(2))  # Second capturing group, convert to int
+
+        client_responses[id_str] = result_int
+
+    return client_responses
+
 
 def test_request_reply():
     """."""
     expected_responses = {
-        'request_reply-server-client-1': 2,
-        'request_reply-client-1': 6
+        'request_reply-server-client-1': {
+            '1': 7,
+            '2': -3,
+            '3': 10,
+            '4': 0
+        },
+        'request_reply-client-1': {
+            '1': 91,
+            '2': 43,
+            '3': 1608,
+            '4': 2
+        },
     }
 
     responses = {
-        'request_reply-server-client-1': None,
-        'request_reply-client-1': None,
+        'request_reply-server-client-1': {},
+        'request_reply-client-1': {},
     }
 
     ret = True
@@ -40,7 +68,7 @@ def test_request_reply():
         for line in out:
             for client in expected_responses:
                 if client in line and 'Reply received from server' in line:
-                    responses[client] = int(line.rstrip().split(' ')[-1])
+                    responses[client] = parse_response(responses[client], line)
 
         for client in responses:
             if responses[client] != expected_responses[client]:
