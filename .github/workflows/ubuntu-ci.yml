@@ -11,6 +11,10 @@ on:
         description: 'Extra arguments for colcon cli'
         required: false
         type: string
+      colcon-test-args:
+        description: 'Extra arguments for colcon test cli'
+        required: false
+        type: string
       cmake-args:
         description: 'Extra arguments for cmake cli'
         required: false
@@ -65,6 +69,7 @@ jobs:
       os-image: 'ubuntu-22.04'
       label: ${{ inputs.label || 'ubuntu-ci' }}
       colcon-args: ${{ inputs.colcon-args }}
+      colcon-test-args: ${{ inputs.colcon-test-args }}
       cmake-args: ${{ inputs.cmake-args }}
       ctest-args: ${{ inputs.ctest-args || '-LE xfail' }}
       fastdds-branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
