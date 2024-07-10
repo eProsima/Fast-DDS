@@ -114,13 +114,16 @@ const std::list<TreeNode<Info>>& TreeNode<Info>::branches() const noexcept
 template <typename Info>
 std::list<TreeNode<Info>> TreeNode<Info>::all_nodes() const noexcept
 {
-    std::list<TreeNode<Info>> result(branches_);
-    for (const auto& b : branches_)
+    std::list<TreeNode<Info>> nodes;
+
+    for (const auto& child : branches_)
     {
-        auto b_branches = b.all_nodes();
-        result.splice(result.begin(), b_branches);
+        auto branch_nodes = child.all_nodes();
+        nodes.splice(nodes.end(), branch_nodes);
+        nodes.push_back(child);
     }
-    return result;
+
+    return nodes;
 }
 
 } /* namespace collections */

@@ -38,6 +38,56 @@
 
 using namespace eprosima::fastdds::dds::xtypes;
 
+void register_MyLong_type_identifier(
+        TypeIdentifierPair& type_ids_MyLong)
+{
+    ReturnCode_t return_code_MyLong {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_MyLong =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "MyLong", type_ids_MyLong);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_MyLong)
+    {
+        AliasTypeFlag alias_flags_MyLong = 0;
+        QualifiedTypeName type_name_MyLong = "MyLong";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_MyLong;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_MyLong;
+        CompleteTypeDetail detail_MyLong = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_MyLong, ann_custom_MyLong, type_name_MyLong.to_string());
+        CompleteAliasHeader header_MyLong = TypeObjectUtils::build_complete_alias_header(detail_MyLong);
+        AliasMemberFlag related_flags_MyLong = 0;
+        return_code_MyLong =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+            "_uint32_t", type_ids_MyLong);
+
+        if (eprosima::fastdds::dds::RETCODE_OK != return_code_MyLong)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "MyLong related TypeIdentifier unknown to TypeObjectRegistry.");
+            return;
+        }
+        bool common_MyLong_ec {false};
+        CommonAliasBody common_MyLong {TypeObjectUtils::build_common_alias_body(related_flags_MyLong,
+                TypeObjectUtils::retrieve_complete_type_identifier(type_ids_MyLong, common_MyLong_ec))};
+        if (!common_MyLong_ec)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "MyLong related TypeIdentifier inconsistent.");
+            return;
+        }
+        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_MyLong;
+        ann_custom_MyLong.reset();
+        CompleteAliasBody body_MyLong = TypeObjectUtils::build_complete_alias_body(common_MyLong,
+                member_ann_builtin_MyLong, ann_custom_MyLong);
+        CompleteAliasType alias_type_MyLong = TypeObjectUtils::build_complete_alias_type(alias_flags_MyLong,
+                header_MyLong, body_MyLong);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_alias_type_object(alias_type_MyLong,
+                    type_name_MyLong.to_string(), type_ids_MyLong))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                "MyLong already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
+
 void register_MyShort_type_identifier(
         TypeIdentifierPair& type_ids_MyShort)
 {
@@ -136,56 +186,6 @@ void register_MyRecursiveShort_type_identifier(
     }
 }
 
-void register_MyLong_type_identifier(
-        TypeIdentifierPair& type_ids_MyLong)
-{
-    ReturnCode_t return_code_MyLong {eprosima::fastdds::dds::RETCODE_OK};
-    return_code_MyLong =
-        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-        "MyLong", type_ids_MyLong);
-    if (eprosima::fastdds::dds::RETCODE_OK != return_code_MyLong)
-    {
-        AliasTypeFlag alias_flags_MyLong = 0;
-        QualifiedTypeName type_name_MyLong = "MyLong";
-        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_MyLong;
-        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_MyLong;
-        CompleteTypeDetail detail_MyLong = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_MyLong, ann_custom_MyLong, type_name_MyLong.to_string());
-        CompleteAliasHeader header_MyLong = TypeObjectUtils::build_complete_alias_header(detail_MyLong);
-        AliasMemberFlag related_flags_MyLong = 0;
-        return_code_MyLong =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "_uint32_t", type_ids_MyLong);
-
-        if (eprosima::fastdds::dds::RETCODE_OK != return_code_MyLong)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "MyLong related TypeIdentifier unknown to TypeObjectRegistry.");
-            return;
-        }
-        bool common_MyLong_ec {false};
-        CommonAliasBody common_MyLong {TypeObjectUtils::build_common_alias_body(related_flags_MyLong,
-                TypeObjectUtils::retrieve_complete_type_identifier(type_ids_MyLong, common_MyLong_ec))};
-        if (!common_MyLong_ec)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "MyLong related TypeIdentifier inconsistent.");
-            return;
-        }
-        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_MyLong;
-        ann_custom_MyLong.reset();
-        CompleteAliasBody body_MyLong = TypeObjectUtils::build_complete_alias_body(common_MyLong,
-                member_ann_builtin_MyLong, ann_custom_MyLong);
-        CompleteAliasType alias_type_MyLong = TypeObjectUtils::build_complete_alias_type(alias_flags_MyLong,
-                header_MyLong, body_MyLong);
-        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_alias_type_object(alias_type_MyLong,
-                    type_name_MyLong.to_string(), type_ids_MyLong))
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                "MyLong already registered in TypeObjectRegistry for a different type.");
-        }
-    }
-}
-
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_AliasStruct_type_identifier(
         TypeIdentifierPair& type_ids_AliasStruct)
@@ -207,34 +207,6 @@ void register_AliasStruct_type_identifier(
         header_AliasStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_AliasStruct);
         CompleteStructMemberSeq member_seq_AliasStruct;
         {
-            TypeIdentifierPair type_ids_my_recursive_short;
-            ReturnCode_t return_code_my_recursive_short {eprosima::fastdds::dds::RETCODE_OK};
-            return_code_my_recursive_short =
-                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "MyRecursiveShort", type_ids_my_recursive_short);
-
-            if (eprosima::fastdds::dds::RETCODE_OK != return_code_my_recursive_short)
-            {
-            ::register_MyRecursiveShort_type_identifier(type_ids_my_recursive_short);
-            }
-            StructMemberFlag member_flags_my_recursive_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
-                    false, false, false, false);
-            MemberId member_id_my_recursive_short = 0x00000000;
-            bool common_my_recursive_short_ec {false};
-            CommonStructMember common_my_recursive_short {TypeObjectUtils::build_common_struct_member(member_id_my_recursive_short, member_flags_my_recursive_short, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_my_recursive_short, common_my_recursive_short_ec))};
-            if (!common_my_recursive_short_ec)
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure my_recursive_short member TypeIdentifier inconsistent.");
-                return;
-            }
-            MemberName name_my_recursive_short = "my_recursive_short";
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_my_recursive_short;
-            ann_custom_AliasStruct.reset();
-            CompleteMemberDetail detail_my_recursive_short = TypeObjectUtils::build_complete_member_detail(name_my_recursive_short, member_ann_builtin_my_recursive_short, ann_custom_AliasStruct);
-            CompleteStructMember member_my_recursive_short = TypeObjectUtils::build_complete_struct_member(common_my_recursive_short, detail_my_recursive_short);
-            TypeObjectUtils::add_complete_struct_member(member_seq_AliasStruct, member_my_recursive_short);
-        }
-        {
             TypeIdentifierPair type_ids_my_long;
             ReturnCode_t return_code_my_long {eprosima::fastdds::dds::RETCODE_OK};
             return_code_my_long =
@@ -247,7 +219,7 @@ void register_AliasStruct_type_identifier(
             }
             StructMemberFlag member_flags_my_long = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_my_long = 0x00000001;
+            MemberId member_id_my_long = 0x00000000;
             bool common_my_long_ec {false};
             CommonStructMember common_my_long {TypeObjectUtils::build_common_struct_member(member_id_my_long, member_flags_my_long, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_my_long, common_my_long_ec))};
             if (!common_my_long_ec)
@@ -263,32 +235,32 @@ void register_AliasStruct_type_identifier(
             TypeObjectUtils::add_complete_struct_member(member_seq_AliasStruct, member_my_long);
         }
         {
-            TypeIdentifierPair type_ids_my_short;
-            ReturnCode_t return_code_my_short {eprosima::fastdds::dds::RETCODE_OK};
-            return_code_my_short =
+            TypeIdentifierPair type_ids_my_recursive_short;
+            ReturnCode_t return_code_my_recursive_short {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_my_recursive_short =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "MyShort", type_ids_my_short);
+                "MyRecursiveShort", type_ids_my_recursive_short);
 
-            if (eprosima::fastdds::dds::RETCODE_OK != return_code_my_short)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_my_recursive_short)
             {
-            ::register_MyShort_type_identifier(type_ids_my_short);
+            ::register_MyRecursiveShort_type_identifier(type_ids_my_recursive_short);
             }
-            StructMemberFlag member_flags_my_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+            StructMemberFlag member_flags_my_recursive_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_my_short = 0x00000002;
-            bool common_my_short_ec {false};
-            CommonStructMember common_my_short {TypeObjectUtils::build_common_struct_member(member_id_my_short, member_flags_my_short, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_my_short, common_my_short_ec))};
-            if (!common_my_short_ec)
+            MemberId member_id_my_recursive_short = 0x00000001;
+            bool common_my_recursive_short_ec {false};
+            CommonStructMember common_my_recursive_short {TypeObjectUtils::build_common_struct_member(member_id_my_recursive_short, member_flags_my_recursive_short, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_my_recursive_short, common_my_recursive_short_ec))};
+            if (!common_my_recursive_short_ec)
             {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure my_short member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure my_recursive_short member TypeIdentifier inconsistent.");
                 return;
             }
-            MemberName name_my_short = "my_short";
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_my_short;
+            MemberName name_my_recursive_short = "my_recursive_short";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_my_recursive_short;
             ann_custom_AliasStruct.reset();
-            CompleteMemberDetail detail_my_short = TypeObjectUtils::build_complete_member_detail(name_my_short, member_ann_builtin_my_short, ann_custom_AliasStruct);
-            CompleteStructMember member_my_short = TypeObjectUtils::build_complete_struct_member(common_my_short, detail_my_short);
-            TypeObjectUtils::add_complete_struct_member(member_seq_AliasStruct, member_my_short);
+            CompleteMemberDetail detail_my_recursive_short = TypeObjectUtils::build_complete_member_detail(name_my_recursive_short, member_ann_builtin_my_recursive_short, ann_custom_AliasStruct);
+            CompleteStructMember member_my_recursive_short = TypeObjectUtils::build_complete_struct_member(common_my_recursive_short, detail_my_recursive_short);
+            TypeObjectUtils::add_complete_struct_member(member_seq_AliasStruct, member_my_recursive_short);
         }
         CompleteStructType struct_type_AliasStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_AliasStruct, header_AliasStruct, member_seq_AliasStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==

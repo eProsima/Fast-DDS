@@ -37,9 +37,9 @@
     Generated alias_struct is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
 
+typedef uint32_t MyLong;
 typedef int16_t MyShort;
 typedef MyShort MyRecursiveShort;
-typedef uint32_t MyLong;
 
 /*!
  * @brief This class represents the TopicDataType of the type AliasStruct defined by the user in the IDL file.

@@ -24,7 +24,7 @@
 
 #include "alias_struct.hpp"
 
-constexpr uint32_t AliasStruct_max_cdr_typesize {14UL};
+constexpr uint32_t AliasStruct_max_cdr_typesize {10UL};
 constexpr uint32_t AliasStruct_max_key_cdr_typesize {0UL};
 
 
