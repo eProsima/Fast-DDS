@@ -202,7 +202,7 @@ public:
         return false;
     }
 
-    BaseReader* local_reader()
+    BaseReader* local_reader(bool /*force_update*/)
     {
         return nullptr;
     }

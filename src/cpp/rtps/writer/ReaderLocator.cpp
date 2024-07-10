@@ -206,9 +206,9 @@ bool ReaderLocator::send(
     return true;
 }
 
-BaseReader* ReaderLocator::local_reader()
+BaseReader* ReaderLocator::local_reader(bool force_update)
 {
-    if (!local_reader_)
+    if (!local_reader_ || force_update)
     {
         local_reader_ = RTPSDomainImpl::find_local_reader(general_locator_info_.remote_guid);
     }

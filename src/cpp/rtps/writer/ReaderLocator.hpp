@@ -67,7 +67,7 @@ public:
         return is_local_reader_;
     }
 
-    BaseReader* local_reader();
+    BaseReader* local_reader(bool force_upload = false);
 
     void local_reader(
             BaseReader* local_reader)

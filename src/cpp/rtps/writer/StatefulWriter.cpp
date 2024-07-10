@@ -401,7 +401,7 @@ bool StatefulWriter::intraprocess_delivery(
         CacheChange_t* change,
         ReaderProxy* reader_proxy)
 {
-    BaseReader* reader = reader_proxy->local_reader();
+    BaseReader* reader = reader_proxy->local_reader(true);
     if (reader)
     {
         if (change->write_params.related_sample_identity() != SampleIdentity::unknown())

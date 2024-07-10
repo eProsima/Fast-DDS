@@ -290,9 +290,9 @@ public:
      * Get the local reader on the same process (if any).
      * @return The local reader on the same process.
      */
-    inline BaseReader* local_reader()
+    inline BaseReader* local_reader(bool force_update = false)
     {
-        return locator_info_.local_reader();
+        return locator_info_.local_reader(force_update);
     }
 
     /**
