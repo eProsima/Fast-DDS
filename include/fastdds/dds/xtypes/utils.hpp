@@ -23,6 +23,7 @@
 
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -41,7 +42,7 @@ enum class DynamicDataJsonFormat
  * @param[in,out] output \c std::ostream reference where the JSON object is dumped.
  * @retval RETCODE_OK when serialization fully succeeds, and inner (member serialization) failing code otherwise.
  */
-ReturnCode_t json_serialize(
+FASTDDS_EXPORTED_API ReturnCode_t json_serialize(
         const DynamicData::_ref_type& data,
         DynamicDataJsonFormat format,
         std::ostream& output) noexcept;
