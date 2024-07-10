@@ -17,13 +17,14 @@
  *
  */
 
+#include "HelloWorldPublisher.h"
+
 #include <thread>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
 #include <fastdds/utils/IPLocator.hpp>
 
-#include "HelloWorldPublisher.h"
 #include "HelloWorldPubSubTypes.hpp"
 
 using namespace eprosima::fastdds::dds;

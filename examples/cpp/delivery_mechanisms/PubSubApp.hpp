@@ -115,4 +115,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* FASTDDS_EXAMPLES_CPP_DELIVERY_MECHANISMS__PUBSUBAPP_HPP */
+#endif // FASTDDS_EXAMPLES_CPP_DELIVERY_MECHANISMS__PUBSUBAPP_HPP

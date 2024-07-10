@@ -17,6 +17,8 @@
  *
  */
 
+#include "HelloWorldPublisher.h"
+
 #include <thread>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -25,7 +27,6 @@
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 
-#include "HelloWorldPublisher.h"
 #include "HelloWorldPubSubTypes.hpp"
 
 using namespace eprosima::fastdds::dds;

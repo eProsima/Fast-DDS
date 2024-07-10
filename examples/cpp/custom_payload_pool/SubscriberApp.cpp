@@ -17,6 +17,8 @@
  *
  */
 
+#include "SubscriberApp.hpp"
+
 #include <condition_variable>
 #include <csignal>
 
@@ -29,7 +31,6 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 
 #include "HelloWorldPubSubTypes.hpp"
-#include "SubscriberApp.hpp"
 
 using namespace eprosima::fastdds::dds;
 namespace eprosima {

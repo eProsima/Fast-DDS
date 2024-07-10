@@ -53,4 +53,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* FASTDDS_EXAMPLES_CPP_HELLO_WORLD__APPLICATION_HPP */
+#endif // FASTDDS_EXAMPLES_CPP_HELLO_WORLD__APPLICATION_HPP

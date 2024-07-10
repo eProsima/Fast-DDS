@@ -43,8 +43,8 @@
 #include "CLIParser.hpp"
 #include "DeliveryMechanismsPubSubTypes.hpp"
 
-using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastdds::rtps;
 
 namespace eprosima {
 namespace fastdds {
@@ -119,7 +119,7 @@ PubSubApp::PubSubApp(
         {
             // Large Data is a builtin transport
             pqos.transport().use_builtin_transports = true;
-            pqos.setup_transports(::BuiltinTransports::LARGE_DATA);
+            pqos.setup_transports(BuiltinTransports::LARGE_DATA);
             break;
         }
         case CLIParser::DeliveryMechanismKind::TCPv4:

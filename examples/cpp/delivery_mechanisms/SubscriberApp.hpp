@@ -94,4 +94,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* FASTDDS_EXAMPLES_CPP_DELIVERY_MECHANISMS__SUBSCRIBERAPP_HPP */
+#endif // FASTDDS_EXAMPLES_CPP_DELIVERY_MECHANISMS__SUBSCRIBERAPP_HPP

@@ -17,6 +17,7 @@
  *
  */
 
+#include "HelloWorldSubscriber.h"
 
 #include <chrono>
 #include <thread>
@@ -26,7 +27,6 @@
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
 #include <fastdds/utils/IPLocator.hpp>
 
-#include "HelloWorldSubscriber.h"
 #include "HelloWorldPubSubTypes.hpp"
 
 using namespace eprosima::fastdds::dds;

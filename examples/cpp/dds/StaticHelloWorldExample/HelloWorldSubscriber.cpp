@@ -17,6 +17,8 @@
  *
  */
 
+#include "HelloWorldSubscriber.h"
+
 #include <chrono>
 #include <thread>
 
@@ -25,7 +27,6 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 
 #include "HelloWorldPubSubTypes.hpp"
-#include "HelloWorldSubscriber.h"
 
 using namespace eprosima::fastdds::dds;
 

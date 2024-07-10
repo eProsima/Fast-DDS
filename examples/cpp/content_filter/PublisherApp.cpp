@@ -17,6 +17,8 @@
  *
  */
 
+#include "PublisherApp.hpp"
+
 #include <thread>
 
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
@@ -31,7 +33,6 @@
 
 #include "HelloWorldPubSubTypes.hpp"
 #include "HelloWorldTypeObjectSupport.hpp"
-#include "PublisherApp.hpp"
 
 namespace eprosima {
 namespace fastdds {

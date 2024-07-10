@@ -19,8 +19,8 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
-#ifndef FASTDDS_EXAMPLES_CPP_SECURITY__CLI_PARSER_HPP
-#define FASTDDS_EXAMPLES_CPP_SECURITY__CLI_PARSER_HPP
+#ifndef FASTDDS_EXAMPLES_CPP_SECURITY__CLIPARSER_HPP
+#define FASTDDS_EXAMPLES_CPP_SECURITY__CLIPARSER_HPP
 
 namespace eprosima {
 namespace fastdds {
@@ -292,4 +292,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_EXAMPLES_CPP_SECURITY__CLI_PARSER_HPP
+#endif // FASTDDS_EXAMPLES_CPP_SECURITY__CLIPARSER_HPP

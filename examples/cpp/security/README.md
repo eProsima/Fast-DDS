@@ -23,7 +23,7 @@ For simplicity, in this example, the subscriber class inherits from the listener
 ## Run the example
 
 To launch this example, two different terminals are required.
-One of them will run the publisher example application, and the other will run the subscriber application. Before running both applications, it is necessary to export the path of the folder where the certificates are located in the environment variable ``CERTS_PATH``:
+One of them will run the publisher example application, and the other will run the subscriber application. Before running the applications, it is necessary to export both the path of the folder where the certificates are located in the environment variable ``CERTS_PATH`` and the path to the corresponding xml profile with ``FASTDDS_DEFAULT_PROFILES_FILE`` (see [XML playground](#xml-profile-playground)):
 
 * Ubuntu ( / MacOS )
 

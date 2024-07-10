@@ -17,6 +17,8 @@
  *
  */
 
+#include "SubscriberApp.hpp"
+
 #include <condition_variable>
 #include <stdexcept>
 
@@ -34,7 +36,6 @@
 #include "Application.hpp"
 #include "CLIParser.hpp"
 #include "ConfigurationPubSubTypes.hpp"
-#include "SubscriberApp.hpp"
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;

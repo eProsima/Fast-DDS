@@ -17,6 +17,8 @@
  *
  */
 
+#include "PublisherApp.hpp"
+
 #include <algorithm>
 #include <condition_variable>
 #include <csignal>
@@ -35,7 +37,6 @@
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
 
-#include "PublisherApp.hpp"
 #include "DeliveryMechanismsPubSubTypes.hpp"
 
 using namespace eprosima::fastdds::rtps;

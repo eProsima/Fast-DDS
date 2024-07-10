@@ -17,6 +17,8 @@
  *
  */
 
+#include "SubscriberApp.hpp"
+
 #include <stdexcept>
 
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
@@ -31,7 +33,6 @@
 
 #include "HelloWorldPubSubTypes.hpp"
 #include "HelloWorldTypeObjectSupport.hpp"
-#include "SubscriberApp.hpp"
 
 namespace eprosima {
 namespace fastdds {

@@ -17,6 +17,8 @@
  *
  */
 
+#include "PublisherApp.hpp"
+
 #include <condition_variable>
 #include <stdexcept>
 
@@ -26,7 +28,6 @@
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 
-#include "PublisherApp.hpp"
 #include "HelloWorldPubSubTypes.hpp"
 
 using namespace eprosima::fastdds::dds;

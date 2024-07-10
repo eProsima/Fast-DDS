@@ -17,10 +17,9 @@
  *
  */
 
-#ifndef HELLOWORLDPUBLISHER_H_
-#define HELLOWORLDPUBLISHER_H_
+#ifndef FASTDDS_EXAMPLES_CPP_DDS_SECURE_HELLO_WORLD_EXAMPLE__HELLOWORLDPUBLISHER_H
+#define FASTDDS_EXAMPLES_CPP_DDS_SECURE_HELLO_WORLD_EXAMPLE__HELLOWORLDPUBLISHER_H
 
-#include "HelloWorldPubSubTypes.hpp"
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
@@ -90,4 +89,4 @@ private:
 
 
 
-#endif /* HELLOWORLDPUBLISHER_H_ */
+#endif // FASTDDS_EXAMPLES_CPP_DDS_SECURE_HELLO_WORLD_EXAMPLE__HELLOWORLDPUBLISHER_H
