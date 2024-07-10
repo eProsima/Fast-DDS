@@ -772,6 +772,17 @@ ReturnCode_t bitset_to_idl(
 
     idl << "bitset " << node.info.type_kind_name << TYPE_OPENING;
 
+    // Find the bits that each bitfield occupies
+    BoundSeq bounds;
+    ret = get_bounds(node.info.dynamic_type, bounds);
+
+    if (RETCODE_OK != ret)
+    {
+        EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
+                           "Error getting bounds of " << node.info.dynamic_type->get_name().to_string() << ".");
+        return ret;
+    }
+
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     ret = node.info.dynamic_type->get_descriptor(type_descriptor);
 
@@ -780,9 +791,6 @@ ReturnCode_t bitset_to_idl(
         EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Error getting type descriptor of " << node << ".");
         return ret;
     }
-
-    // Find the bits that each bitfield occupies
-    const auto bits = type_descriptor->bound();
 
     std::uint32_t bits_set = 0;
 
@@ -803,13 +811,13 @@ ReturnCode_t bitset_to_idl(
         if (id > bits_set)
         {
             // If the id is higher than the bits set, there must have been an empty bitfield (i.e. a gap)
-            const auto bits = id - bits_set;
-            bits_set += bits;
+            const auto gap = id - bits_set;
+            bits_set += gap;
 
-            idl << TAB_SEPARATOR << "bitfield<" << std::to_string(bits) << ">;\n";
+            idl << TAB_SEPARATOR << "bitfield<" << std::to_string(gap) << ">;\n";
         }
 
-        idl << TAB_SEPARATOR << "bitfield<" << std::to_string(bits[index]);
+        idl << TAB_SEPARATOR << "bitfield<" << std::to_string(bounds[index]);
 
         MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
         ret = member->get_descriptor(member_descriptor);
@@ -821,7 +829,7 @@ ReturnCode_t bitset_to_idl(
         }
 
         TypeKind default_type_kind;
-        ret = get_default_type_kind(bits[index], default_type_kind);
+        ret = get_default_type_kind(bounds[index], default_type_kind);
 
         if (RETCODE_OK != ret)
         {
@@ -841,7 +849,7 @@ ReturnCode_t bitset_to_idl(
 
         idl << "> " << member->get_name().to_string() << ";\n";
 
-        bits_set += bits[index];
+        bits_set += bounds[index];
     }
 
     // Close definition
