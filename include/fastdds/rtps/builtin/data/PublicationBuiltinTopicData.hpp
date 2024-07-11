@@ -117,6 +117,9 @@ struct PublicationBuiltinTopicData
     /// Persistence GUID
     GUID_t persistence_guid;
 
+    /// Participant GUID
+    GUID_t participant_guid;
+
     /// Remote locators
     RemoteLocatorList remote_locators;
 

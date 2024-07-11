@@ -28,6 +28,7 @@
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
 
 #include <rtps/builtin/data/WriterProxyData.hpp>
 
@@ -149,6 +150,7 @@ void from_proxy_to_builtin(
     builtin_data.data_sharing = proxy_data.m_qos.data_sharing;
     builtin_data.guid = proxy_data.guid();
     builtin_data.persistence_guid = proxy_data.persistence_guid();
+    builtin_data.participant_guid = iHandle2GUID(proxy_data.RTPSParticipantKey());
     builtin_data.remote_locators = proxy_data.remote_locators();
     builtin_data.max_serialized_size = proxy_data.typeMaxSerialized();
     builtin_data.loopback_transformation = proxy_data.networkConfiguration();
@@ -187,6 +189,7 @@ void from_builtin_to_proxy(
     proxy_data.m_qos.data_sharing = builtin_data.data_sharing;
     proxy_data.guid(builtin_data.guid);
     proxy_data.persistence_guid(builtin_data.persistence_guid);
+    proxy_data.RTPSParticipantKey(builtin_data.participant_guid);
     proxy_data.set_locators(builtin_data.remote_locators);
     proxy_data.typeMaxSerialized(builtin_data.max_serialized_size);
     proxy_data.networkConfiguration(builtin_data.loopback_transformation);
