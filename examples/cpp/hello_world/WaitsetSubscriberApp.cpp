@@ -115,7 +115,7 @@ void WaitsetSubscriberApp::run()
     while (!is_stopped())
     {
         ConditionSeq triggered_conditions;
-        ReturnCode_t ret_code = wait_set_.wait(triggered_conditions, eprosima::fastdds::c_TimeInfinite);
+        ReturnCode_t ret_code = wait_set_.wait(triggered_conditions, eprosima::fastdds::dds::c_TimeInfinite);
         if (RETCODE_OK != ret_code)
         {
             EPROSIMA_LOG_ERROR(SUBSCRIBER_WAITSET, "Error waiting for conditions");

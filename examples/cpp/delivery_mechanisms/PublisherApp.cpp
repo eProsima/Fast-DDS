@@ -109,8 +109,8 @@ PublisherApp::PublisherApp(
         case CLIParser::DeliveryMechanismKind::TCPv4:
         {
             std::shared_ptr<TCPv4TransportDescriptor> tcp_v4_transport_ = std::make_shared<TCPv4TransportDescriptor>();
-            pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;
-            pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(5, 0);
+            pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::dds::c_TimeInfinite;
+            pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = dds::Duration_t(5, 0);
             tcp_v4_transport_->sendBufferSize = 0;
             tcp_v4_transport_->receiveBufferSize = 0;
             std::string tcp_ip_address = "127.0.0.1";
@@ -133,8 +133,8 @@ PublisherApp::PublisherApp(
         case CLIParser::DeliveryMechanismKind::TCPv6:
         {
             std::shared_ptr<TCPv6TransportDescriptor> tcp_v6_transport_ = std::make_shared<TCPv6TransportDescriptor>();
-            pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;
-            pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(5, 0);
+            pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::dds::c_TimeInfinite;
+            pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = dds::Duration_t(5, 0);
             tcp_v6_transport_->sendBufferSize = 0;
             tcp_v6_transport_->receiveBufferSize = 0;
             std::string tcp_ip_address = "::1";

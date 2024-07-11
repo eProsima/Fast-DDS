@@ -118,8 +118,8 @@ SubscriberApp::SubscriberApp(
             }
             IPLocator::setIPv4(tcp_v4_initial_peers_locator_, tcp_ip_address);
             pqos.wire_protocol().builtin.initialPeersList.push_back(tcp_v4_initial_peers_locator_);
-            pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;
-            pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(5, 0);
+            pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::dds::c_TimeInfinite;
+            pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = dds::Duration_t(5, 0);
             pqos.transport().user_transports.push_back(std::make_shared<TCPv4TransportDescriptor>());
             break;
         }
@@ -135,8 +135,8 @@ SubscriberApp::SubscriberApp(
             }
             IPLocator::setIPv6(tcp_v6_initial_peers_locator_, tcp_ip_address);
             pqos.wire_protocol().builtin.initialPeersList.push_back(tcp_v6_initial_peers_locator_);
-            pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;
-            pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(5, 0);
+            pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::dds::c_TimeInfinite;
+            pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = dds::Duration_t(5, 0);
             pqos.transport().user_transports.push_back(std::make_shared<TCPv6TransportDescriptor>());
             break;
         }

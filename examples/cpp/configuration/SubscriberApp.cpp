@@ -127,21 +127,21 @@ SubscriberApp::SubscriberApp(
         reader_qos.ownership().kind = config.ownership;
         if (config.deadline > 0)
         {
-            reader_qos.deadline().period = eprosima::fastdds::Duration_t(config.deadline * 1e-3);
+            reader_qos.deadline().period = eprosima::fastdds::dds::Duration_t(config.deadline * 1e-3);
         }
         reader_qos.reliable_reader_qos().disable_positive_acks.enabled = config.disable_positive_ack;
         if (config.lifespan > 0)
         {
-            reader_qos.lifespan().duration = eprosima::fastdds::Duration_t(config.lifespan * 1e-3);
+            reader_qos.lifespan().duration = eprosima::fastdds::dds::Duration_t(config.lifespan * 1e-3);
         }
         reader_qos.liveliness().kind = config.liveliness;
         if (config.liveliness_lease > 0)
         {
-            reader_qos.liveliness().lease_duration = eprosima::fastdds::Duration_t(config.liveliness_lease * 1e-3);
+            reader_qos.liveliness().lease_duration = eprosima::fastdds::dds::Duration_t(config.liveliness_lease * 1e-3);
         }
         if (config.liveliness_assert > 0)
         {
-            reader_qos.liveliness().announcement_period = eprosima::fastdds::Duration_t(
+            reader_qos.liveliness().announcement_period = eprosima::fastdds::dds::Duration_t(
                 config.liveliness_assert * 1e-3);
         }
         reader_ = subscriber_->create_datareader(topic_, reader_qos, this, StatusMask::all());
