@@ -1,10 +1,10 @@
-name: Fast DDS MacOS CI
+name: Fast DDS Windows CI
 
 on:
   workflow_dispatch:
     inputs:
       label:
-        description: 'ID associated to the workflow'
+        description: 'ID associated to the workflow. Must univocally identify artifacts.'
         required: true
         type: string
       colcon-args:
@@ -23,11 +23,6 @@ on:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         type: string
         required: true
-      use-ccache:
-        description: 'Use CCache to speed up the build'
-        required: false
-        type: boolean
-        default: false
 
   pull_request:
     types:
@@ -42,16 +37,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  mac-ci:
+  windows-ci:
     if: ${{ (
               !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
               !contains(github.event.pull_request.labels.*.name, 'conflicts')
             ) }}
-    uses: ./.github/workflows/reusable-mac-ci.yml
+    uses: ./.github/workflows/reusable-windows-ci.yml
     with:
-      label: ${{ inputs.label || 'mac-ci' }}
+      label: ${{ inputs.label || 'windows-ci' }}
       colcon-args: ${{ inputs.colcon-args }}
       cmake-args: '-DSECURITY=ON ${{ inputs.cmake-args }}'
       ctest-args: ${{ inputs.ctest-args }}
-      fastdds-branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
-      use-ccache: ${{ ((inputs.use-ccache == true) && true) || false }}
+      fastdds_branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
