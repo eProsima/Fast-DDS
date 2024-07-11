@@ -77,9 +77,9 @@ public:
 
     typedef TypeSupport type_support;
     typedef typename type_support::type type;
-    typedef std::function<bool(
-        eprosima::fastdds::rtps::WRITER_DISCOVERY_STATUS reason,
-        const eprosima::fastdds::dds::PublicationBuiltinTopicData& info)> EndpointDiscoveryFunctor;
+    typedef std::function<bool (
+                        eprosima::fastdds::rtps::WRITER_DISCOVERY_STATUS reason,
+                        const eprosima::fastdds::dds::PublicationBuiltinTopicData& info)> EndpointDiscoveryFunctor;
 
 protected:
 

@@ -240,7 +240,7 @@ bool StatefulReader::matched_writer_add(
                     // call the listener without the lock taken
                     guard.unlock();
                     listener->on_writer_discovery(
-                            this, WRITER_DISCOVERY_STATUS::CHANGED_QOS_WRITER, wdata.guid(), &wdata);
+                        this, WRITER_DISCOVERY_STATUS::CHANGED_QOS_WRITER, wdata.guid(), &wdata);
                 }
 
 #ifdef FASTDDS_STATISTICS

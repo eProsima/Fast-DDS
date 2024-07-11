@@ -298,7 +298,7 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscoveryIncompatibleQoS)
                 iteration = Iterations::DISCOVERED_WRITER;
             }
             else if (Iterations::DISCOVERED_WRITER == iteration &&
-                WRITER_DISCOVERY_STATUS::REMOVED_WRITER == reason)
+            WRITER_DISCOVERY_STATUS::REMOVED_WRITER == reason)
             {
                 iteration = Iterations::REMOVED_WRITER;
             }

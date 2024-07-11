@@ -973,7 +973,8 @@ TEST_P(Discovery, PubSubAsReliableHelloworldEndpointUserData)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    reader.setOnEndpointDiscoveryFunction([&writer](WRITER_DISCOVERY_STATUS /*reason*/, const PublicationBuiltinTopicData& info) -> bool
+    reader.setOnEndpointDiscoveryFunction([&writer](WRITER_DISCOVERY_STATUS /*reason*/,
+            const PublicationBuiltinTopicData& info) -> bool
             {
                 if (info.guid == writer.datawriter_guid())
                 {
