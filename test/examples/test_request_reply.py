@@ -73,13 +73,15 @@ def test_request_reply():
         for client in responses:
             if responses[client] != expected_responses[client]:
                 ret = False
-                print('ERROR: ' + client + ' expected "' + expected_responses[client] + '" but received "' + responses[client] + '"')
+                print(f'ERROR: {client} expected "{expected_responses[client]}" but received "{responses[client]}"')
                 raise subprocess.CalledProcessError(1, '')
 
     except subprocess.CalledProcessError:
         for l in out:
+            ret = False
             print(l)
     except subprocess.TimeoutExpired:
+        ret = False
         print('TIMEOUT')
         print(out)
 
