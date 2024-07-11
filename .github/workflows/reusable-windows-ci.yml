@@ -11,10 +11,6 @@ on:
         description: 'Extra arguments for colcon cli'
         required: false
         type: string
-      colcon-test-args:
-        description: 'Extra arguments for colcon test cli'
-        required: false
-        type: string
       cmake-args:
         description: 'Extra arguments for cmake cli'
         required: false
@@ -181,7 +177,7 @@ jobs:
         uses: eProsima/eProsima-CI/windows/colcon_test@v0
         with:
           colcon_meta_file: ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_test.meta
-          colcon_test_args: ${{ inputs.colcon-test-args }}
+          colcon_test_args: ${{ inputs.colcon-args }}
           colcon_test_args_default: --event-handlers=console_direct+
           ctest_args: ${{ inputs.ctest-args }}
           packages_names: fastdds

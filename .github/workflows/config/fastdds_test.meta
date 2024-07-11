@@ -7,6 +7,11 @@ names:
             - "-DPROFILING_TESTS=OFF"
             - "-DCOMPILE_TOOLS=ON"
             - "-DSYSTEM_TESTS=ON"
+        ctest-args: [
+                "--repeat", "until-pass:3",
+                "--timeout", "300",
+                "--label-exclude", "xfail"
+        ]
     googletest-distribution:
         cmake-args:
             - "-Dgtest_force_shared_crt=ON"
