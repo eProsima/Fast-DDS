@@ -432,7 +432,7 @@ TEST_F(XMLParserTests, DurationCheck)
         }
     }
     ASSERT_TRUE(participant_profile);
-    EXPECT_EQ(participant_atts.rtps.builtin.discovery_config.leaseDuration, c_TimeInfinite);
+    EXPECT_EQ(participant_atts.rtps.builtin.discovery_config.leaseDuration, dds::c_TimeInfinite);
     EXPECT_EQ(participant_atts.rtps.builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
     EXPECT_EQ(participant_atts.rtps.builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);
 
@@ -440,12 +440,12 @@ TEST_F(XMLParserTests, DurationCheck)
     EXPECT_EQ(publisher_atts.qos.m_deadline.period.seconds, 15);
     EXPECT_EQ(publisher_atts.qos.m_liveliness.lease_duration.seconds, 1);
     EXPECT_EQ(publisher_atts.qos.m_liveliness.lease_duration.nanosec, 2u);
-    EXPECT_EQ(publisher_atts.qos.m_liveliness.announcement_period, c_TimeInfinite);
+    EXPECT_EQ(publisher_atts.qos.m_liveliness.announcement_period, dds::c_TimeInfinite);
     EXPECT_EQ(publisher_atts.qos.m_latencyBudget.duration.seconds, 10);
 
     ASSERT_TRUE(subscriber_profile);
-    EXPECT_EQ(subscriber_atts.qos.m_deadline.period, c_TimeInfinite);
-    EXPECT_EQ(subscriber_atts.qos.m_liveliness.lease_duration, c_TimeInfinite);
+    EXPECT_EQ(subscriber_atts.qos.m_deadline.period, dds::c_TimeInfinite);
+    EXPECT_EQ(subscriber_atts.qos.m_liveliness.lease_duration, dds::c_TimeInfinite);
     EXPECT_EQ(subscriber_atts.qos.m_liveliness.announcement_period.seconds, 0);
     EXPECT_EQ(subscriber_atts.qos.m_liveliness.announcement_period.nanosec, 0u);
     EXPECT_EQ(subscriber_atts.qos.m_latencyBudget.duration.seconds, 20);
@@ -503,7 +503,7 @@ TEST_F(XMLParserTests, Data)
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
-    EXPECT_EQ(builtin.discovery_config.leaseDuration, c_TimeInfinite);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration, dds::c_TimeInfinite);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);
     EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
@@ -597,7 +597,7 @@ TEST_F(XMLParserTests, DataDeprecated)
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
-    EXPECT_EQ(builtin.discovery_config.leaseDuration, c_TimeInfinite);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration, dds::c_TimeInfinite);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);
     EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
@@ -691,7 +691,7 @@ TEST_F(XMLParserTests, DataBuffer)
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
-    EXPECT_EQ(builtin.discovery_config.leaseDuration, c_TimeInfinite);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration, dds::c_TimeInfinite);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);
     EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
@@ -785,7 +785,7 @@ TEST_F(XMLParserTests, DataBufferDeprecated)
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
-    EXPECT_EQ(builtin.discovery_config.leaseDuration, c_TimeInfinite);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration, dds::c_TimeInfinite);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);
     EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
@@ -2848,7 +2848,8 @@ TEST_F(XMLParserTests, fillDataNodeRequesterNegativeClauses)
             ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
             titleElement = xml_doc.RootElement();
             requester_atts.reset(new xmlparser::RequesterAttributes);
-            requester_node.reset(new DataNode<xmlparser::RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts) });
+            requester_node.reset(new DataNode<xmlparser::RequesterAttributes>{ NodeType::REQUESTER,
+                                                                               std::move(requester_atts) });
             EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *requester_node));
         }
     }
@@ -2978,7 +2979,8 @@ TEST_F(XMLParserTests, fillDataNodeReplierNegativeClauses)
             ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
             titleElement = xml_doc.RootElement();
             replier_atts.reset(new xmlparser::ReplierAttributes);
-            replier_node.reset(new DataNode<xmlparser::ReplierAttributes>{ NodeType::REQUESTER, std::move(replier_atts) });
+            replier_node.reset(new DataNode<xmlparser::ReplierAttributes>{ NodeType::REQUESTER, std::move(
+                                                                               replier_atts) });
             EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *replier_node));
         }
     }

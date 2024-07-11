@@ -180,7 +180,7 @@ public:
     ReturnCode_t write_w_timestamp(
             const void* const,
             const InstanceHandle_t&,
-            const fastdds::Time_t& )
+            const fastdds::dds::Time_t& )
     {
         return RETCODE_OK;
     }
@@ -193,7 +193,7 @@ public:
 
     InstanceHandle_t register_instance_w_timestamp(
             const void* const,
-            const fastdds::Time_t& )
+            const fastdds::dds::Time_t& )
     {
         return InstanceHandle_t();
     }
@@ -209,7 +209,7 @@ public:
     ReturnCode_t unregister_instance_w_timestamp(
             const void* const,
             const InstanceHandle_t&,
-            const fastdds::Time_t&,
+            const fastdds::dds::Time_t&,
             bool  = false)
     {
         return RETCODE_OK;
@@ -240,7 +240,7 @@ public:
     }
 
     ReturnCode_t wait_for_acknowledgments(
-            const fastdds::Duration_t& )
+            const fastdds::dds::Duration_t& )
     {
         return RETCODE_OK;
     }
@@ -248,7 +248,7 @@ public:
     ReturnCode_t wait_for_acknowledgments(
             const void* const,
             const InstanceHandle_t&,
-            const fastdds::Duration_t& )
+            const fastdds::dds::Duration_t& )
     {
         return RETCODE_OK;
     }

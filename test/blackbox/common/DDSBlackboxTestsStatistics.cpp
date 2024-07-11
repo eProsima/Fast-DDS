@@ -304,7 +304,7 @@ void test_discovery_topic_physical_data(
     waitset.attach_condition(condition);
 
     ConditionSeq triggered_conditions;
-    waitset.wait(triggered_conditions, eprosima::fastdds::c_TimeInfinite);
+    waitset.wait(triggered_conditions, eprosima::fastdds::dds::c_TimeInfinite);
 
     auto to_guid_prefix = [](const statistics::detail::GuidPrefix_s& prefix)
             {

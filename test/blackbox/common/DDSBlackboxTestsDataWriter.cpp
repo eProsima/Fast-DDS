@@ -213,7 +213,7 @@ TEST_P(DDSDataWriter, WithTimestampOperations)
     using namespace eprosima::fastdds::dds;
 
     // Test variables
-    eprosima::fastdds::Time_t ts;
+    eprosima::fastdds::dds::Time_t ts;
 
     KeyedHelloWorld valid_data;
     valid_data.key(27);

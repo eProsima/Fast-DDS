@@ -162,7 +162,7 @@ public:
     bool wait_for_all_acked(
             const std::chrono::seconds& seconds)
     {
-        eprosima::fastdds::Duration_t max_time(int32_t(seconds.count()), 0);
+        eprosima::fastdds::dds::Duration_t max_time(int32_t(seconds.count()), 0);
         return writer_->wait_for_all_acked(max_time);
     }
 
@@ -303,7 +303,7 @@ public:
             int32_t sec)
     {
         writer_attr_.disable_positive_acks = disable;
-        writer_attr_.keep_duration = eprosima::fastdds::Duration_t(sec, 0);
+        writer_attr_.keep_duration = eprosima::fastdds::dds::Duration_t(sec, 0);
         return *this;
     }
 

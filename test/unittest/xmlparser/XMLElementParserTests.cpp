@@ -1138,7 +1138,7 @@ TEST_F(XMLParserTests, getXMLDuration_NegativeClauses)
 {
 
     uint8_t ident = 1;
-    Duration_t duration;
+    dds::Duration_t duration;
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
 
@@ -1178,7 +1178,7 @@ TEST_F(XMLParserTests, getXMLDuration_infinite)
 {
 
     uint8_t ident = 1;
-    Duration_t duration;
+    dds::Duration_t duration;
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
 
@@ -1199,7 +1199,7 @@ TEST_F(XMLParserTests, getXMLDuration_infinite)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLDuration_wrapper(titleElement, duration, ident));
-        EXPECT_EQ(duration, c_TimeInfinite);
+        EXPECT_EQ(duration, dds::c_TimeInfinite);
     }
 
 }

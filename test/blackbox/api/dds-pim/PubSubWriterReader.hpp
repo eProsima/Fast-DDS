@@ -822,28 +822,28 @@ public:
     }
 
     PubSubWriterReader& pub_liveliness_announcement_period(
-            const eprosima::fastdds::Duration_t announcement_period)
+            const eprosima::fastdds::dds::Duration_t announcement_period)
     {
         datawriter_qos_.liveliness().announcement_period = announcement_period;
         return *this;
     }
 
     PubSubWriterReader& sub_liveliness_announcement_period(
-            const eprosima::fastdds::Duration_t announcement_period)
+            const eprosima::fastdds::dds::Duration_t announcement_period)
     {
         datareader_qos_.liveliness().announcement_period = announcement_period;
         return *this;
     }
 
     PubSubWriterReader& pub_liveliness_lease_duration(
-            const eprosima::fastdds::Duration_t lease_duration)
+            const eprosima::fastdds::dds::Duration_t lease_duration)
     {
         datawriter_qos_.liveliness().lease_duration = lease_duration;
         return *this;
     }
 
     PubSubWriterReader& sub_liveliness_lease_duration(
-            const eprosima::fastdds::Duration_t lease_duration)
+            const eprosima::fastdds::dds::Duration_t lease_duration)
     {
         datareader_qos_.liveliness().lease_duration = lease_duration;
         return *this;

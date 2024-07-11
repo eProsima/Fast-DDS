@@ -167,7 +167,7 @@ public:
 
     static XMLP_ret getXMLDuration_wrapper(
             tinyxml2::XMLElement* elem,
-            Duration_t& duration,
+            dds::Duration_t& duration,
             uint8_t ident)
     {
         return getXMLDuration(elem, duration, ident);

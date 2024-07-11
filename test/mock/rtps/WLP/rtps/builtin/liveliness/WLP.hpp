@@ -63,7 +63,7 @@ public:
     MOCK_METHOD3(assert_liveliness, bool(
                 GUID_t writer,
                 dds::LivelinessQosPolicyKind kind,
-                Duration_t lease_duration));
+                dds::Duration_t lease_duration));
 };
 
 } /* namespace rtps */

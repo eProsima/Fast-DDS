@@ -22,8 +22,8 @@ TEST(LatencyBudgetQos, DurationCheck)
 {
     ReqRepHelloWorldRequester requester;
 
-    eprosima::fastdds::Duration_t latency_budget_pub(10);
-    eprosima::fastdds::Duration_t latency_budget_sub(20);
+    eprosima::fastdds::dds::Duration_t latency_budget_pub(10);
+    eprosima::fastdds::dds::Duration_t latency_budget_sub(20);
 
     requester.init_with_latency(latency_budget_pub, latency_budget_sub);
 

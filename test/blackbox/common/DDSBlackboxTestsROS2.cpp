@@ -83,8 +83,8 @@ TEST(DDS_ROS2, test_automatic_liveliness_changed)
         auto context = std::make_shared<ros2::Context>();
 
         auto topic_name = TEST_TOPIC_NAME;
-        const Duration_t liveliness_duration = { 1, 0 };
-        const Duration_t liveliness_announcement_period = { 0, 333333333 };
+        const dds::Duration_t liveliness_duration = { 1, 0 };
+        const dds::Duration_t liveliness_announcement_period = { 0, 333333333 };
         LivelinessQosPolicy liveliness;
         liveliness.kind = LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS;
         liveliness.lease_duration = liveliness_duration;

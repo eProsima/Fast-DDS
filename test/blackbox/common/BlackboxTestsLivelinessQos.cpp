@@ -1963,7 +1963,7 @@ TEST(LivelinessTests, Reader_Successfully_Asserts_Liveliness_on_a_Disconnected_W
 
     reader.init_participant();
     // Define the reader's lease duration in 1.6 secs
-    reader.sub_liveliness_lease_duration(eprosima::fastdds::Time_t(1, 600000000));
+    reader.sub_liveliness_lease_duration(eprosima::fastdds::dds::Time_t(1, 600000000));
 
     // Create Subscribers and readers, one for each writer
     reader.sub_topic_name(TEST_TOPIC_NAME);
@@ -1973,17 +1973,17 @@ TEST(LivelinessTests, Reader_Successfully_Asserts_Liveliness_on_a_Disconnected_W
 
     // Create writers
     writer_1.disable_builtin_transport()
-            .lease_duration(c_TimeInfinite, 1)
+            .lease_duration(eprosima::fastdds::dds::c_TimeInfinite, 1)
             .add_user_transport_to_pparams(test_transport)
-            .liveliness_lease_duration(eprosima::fastdds::Time_t(1, 0))
+            .liveliness_lease_duration(eprosima::fastdds::dds::Time_t(1, 0))
             .liveliness_kind(eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS)
-            .liveliness_announcement_period(eprosima::fastdds::Time_t(0, 500000000))
+            .liveliness_announcement_period(eprosima::fastdds::dds::Time_t(0, 500000000))
             .init();
 
-    writer_2.lease_duration(c_TimeInfinite, 1)
-            .liveliness_lease_duration(eprosima::fastdds::Time_t(1, 0))
+    writer_2.lease_duration(eprosima::fastdds::dds::c_TimeInfinite, 1)
+            .liveliness_lease_duration(eprosima::fastdds::dds::Time_t(1, 0))
             .liveliness_kind(eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS)
-            .liveliness_announcement_period(eprosima::fastdds::Time_t(0, 500000000))
+            .liveliness_announcement_period(eprosima::fastdds::dds::Time_t(0, 500000000))
             .init();
 
     // Wait for discovery to occur. Liveliness should be recovered twice,
@@ -2011,7 +2011,7 @@ TEST(LivelinessTests, correct_liveliness_state_one_writer_multiple_readers)
 
     reader.init_participant();
     // Define the reader's lease duration in 1.6 secs
-    reader.sub_liveliness_lease_duration(eprosima::fastdds::Time_t(1, 600000000));
+    reader.sub_liveliness_lease_duration(eprosima::fastdds::dds::Time_t(1, 600000000));
     // Both readers on the same topic
     reader.sub_topic_name(TEST_TOPIC_NAME);
 
@@ -2022,10 +2022,10 @@ TEST(LivelinessTests, correct_liveliness_state_one_writer_multiple_readers)
     }
 
     // Create writers
-    writer.lease_duration(c_TimeInfinite, 1)
-            .liveliness_lease_duration(eprosima::fastdds::Time_t(1, 0))
+    writer.lease_duration(eprosima::fastdds::dds::c_TimeInfinite, 1)
+            .liveliness_lease_duration(eprosima::fastdds::dds::Time_t(1, 0))
             .liveliness_kind(eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS)
-            .liveliness_announcement_period(eprosima::fastdds::Time_t(0, 500000000))
+            .liveliness_announcement_period(eprosima::fastdds::dds::Time_t(0, 500000000))
             .init();
 
     // Wait for discovery to occur. Liveliness should be recovered twice,
@@ -2054,8 +2054,8 @@ static void test_liveliness_qos_independent_topics(
         eprosima::fastdds::dds::ReliabilityQosPolicyKind reliability_kind)
 {
     const auto lease_dutation_time = std::chrono::seconds(1);
-    const eprosima::fastdds::Duration_t lease_duration(1, 0);
-    const eprosima::fastdds::Duration_t announcement_period(0, 250000000);
+    const eprosima::fastdds::dds::Duration_t lease_duration(1, 0);
+    const eprosima::fastdds::dds::Duration_t announcement_period(0, 250000000);
 
     PubSubReader<HelloWorldPubSubType> reader1(topic_name + "1");
     PubSubReader<HelloWorldPubSubType> reader2(topic_name + "2");

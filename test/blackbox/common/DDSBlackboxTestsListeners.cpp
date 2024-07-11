@@ -3313,14 +3313,14 @@ void reliable_disable_acks_on_unack_test_init(
             .asynchronously(eprosima::fastdds::dds::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
             .add_flow_controller_descriptor_to_pparams(
         eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 1, 1000)
-            .keep_duration(eprosima::fastdds::c_TimeInfinite)
+            .keep_duration(eprosima::fastdds::dds::c_TimeInfinite)
             .init();
     ASSERT_TRUE(writer_1.isInitialized());
 
     writer_2.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
             .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
-            .keep_duration(eprosima::fastdds::c_TimeInfinite)
+            .keep_duration(eprosima::fastdds::dds::c_TimeInfinite)
             .init();
     ASSERT_TRUE(writer_2.isInitialized());
 
@@ -3469,7 +3469,7 @@ TEST(DDSStatus, several_writers_on_unack_sample_removed)
             .asynchronously(eprosima::fastdds::dds::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
             .add_flow_controller_descriptor_to_pparams(
         eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 1, 1000)
-            .keep_duration(eprosima::fastdds::c_TimeInfinite)
+            .keep_duration(eprosima::fastdds::dds::c_TimeInfinite)
             .init();
     ASSERT_TRUE(ack_disabled_writer.isInitialized());
 

@@ -250,13 +250,13 @@ public:
         std::swap(*this, reset);
     }
 
-    fastdds::Duration_t period;
+    fastdds::dds::Duration_t period;
 };
 
 /**
  * Class LatencyBudgetQosPolicy, to indicate the LatencyBudget of the samples.
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
- * period: Default value c_TimeZero.
+ * period: Default value dds::c_TimeZero.
  */
 class LatencyBudgetQosPolicy : public Parameter_t, public QosPolicy
 {
@@ -281,7 +281,7 @@ public:
         std::swap(*this, reset);
     }
 
-    fastdds::Duration_t duration;
+    fastdds::dds::Duration_t duration;
 };
 
 /**
@@ -301,8 +301,8 @@ typedef enum LivelinessQosPolicyKind : fastdds::rtps::octet
  * in at least 30%. Values too close to each other may cause the failure of the writer liveliness assertion in networks
  * with high latency or with lots of communication errors.
  * kind: Default value AUTOMATIC_LIVELINESS_QOS
- * lease_duration: Default value c_TimeInfinite.
- * announcement_period: Default value c_TimeInfinite (must be < lease_duration).
+ * lease_duration: Default value dds::c_TimeInfinite.
+ * announcement_period: Default value dds::c_TimeInfinite (must be < lease_duration).
  */
 class LivelinessQosPolicy : public Parameter_t, public QosPolicy
 {
@@ -315,8 +315,8 @@ public:
         , QosPolicy(true)
         , kind(AUTOMATIC_LIVELINESS_QOS)
     {
-        lease_duration = fastdds::c_TimeInfinite;
-        announcement_period = fastdds::c_TimeInfinite;
+        lease_duration = fastdds::dds::c_TimeInfinite;
+        announcement_period = fastdds::dds::c_TimeInfinite;
     }
 
     virtual FASTDDS_EXPORTED_API ~LivelinessQosPolicy()
@@ -330,8 +330,8 @@ public:
     }
 
     LivelinessQosPolicyKind kind;
-    fastdds::Duration_t lease_duration;
-    fastdds::Duration_t announcement_period;
+    fastdds::dds::Duration_t lease_duration;
+    fastdds::dds::Duration_t announcement_period;
 };
 
 /**
@@ -375,7 +375,7 @@ public:
     }
 
     ReliabilityQosPolicyKind kind;
-    fastdds::Duration_t max_blocking_time;
+    fastdds::dds::Duration_t max_blocking_time;
 };
 
 
@@ -726,7 +726,7 @@ TEMPLATE_DATA_QOS_POLICY(GroupDataQosPolicy, PID_GROUP_DATA)
 /**
  * Class TimeBasedFilterQosPolicy, to indicate the Time Based Filter Qos.
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
- * minimum_separation: Default value c_TimeZero
+ * minimum_separation: Default value dds::c_TimeZero
  */
 class TimeBasedFilterQosPolicy : public Parameter_t, public QosPolicy
 {
@@ -751,7 +751,7 @@ public:
         std::swap(*this, reset);
     }
 
-    fastdds::Duration_t minimum_separation;
+    fastdds::dds::Duration_t minimum_separation;
 };
 
 /**
@@ -991,7 +991,7 @@ public:
 /**
  * Class DurabilityServiceQosPolicy, to indicate the Durability Service.
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
- * service_cleanup_delay: Default value c_TimeZero.
+ * service_cleanup_delay: Default value dds::c_TimeZero.
  * history_kind: Default value KEEP_LAST_HISTORY_QOS.
  * history_depth: Default value 1.
  * max_samples: Default value -1.
@@ -1004,7 +1004,7 @@ class DurabilityServiceQosPolicy : public Parameter_t, public QosPolicy
 
 public:
 
-    fastdds::Duration_t service_cleanup_delay;
+    fastdds::dds::Duration_t service_cleanup_delay;
     HistoryQosPolicyKind history_kind;
     int32_t history_depth;
     int32_t max_samples;
@@ -1036,7 +1036,7 @@ public:
 /**
  * Class LifespanQosPolicy, currently unimplemented.
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
- * duration: Default value c_TimeInfinite.
+ * duration: Default value dds::c_TimeInfinite.
  */
 class LifespanQosPolicy : public Parameter_t, public QosPolicy
 {
@@ -1047,7 +1047,7 @@ public:
     FASTDDS_EXPORTED_API LifespanQosPolicy()
         : Parameter_t(PID_LIFESPAN, PARAMETER_TIME_LENGTH)
         , QosPolicy(true)
-        , duration(fastdds::c_TimeInfinite)
+        , duration(fastdds::dds::c_TimeInfinite)
     {
     }
 
@@ -1061,7 +1061,7 @@ public:
         std::swap(*this, reset);
     }
 
-    fastdds::Duration_t duration;
+    fastdds::dds::Duration_t duration;
 };
 
 /**
@@ -1253,7 +1253,7 @@ public:
 
 /**
  * Class DisablePositiveACKsQosPolicy to disable sending of positive ACKs
- * period: Default value c_TimeInfinite.
+ * period: Default value dds::c_TimeInfinite.
  */
 class DisablePositiveACKsQosPolicy : public Parameter_t, public QosPolicy
 {

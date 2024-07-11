@@ -671,7 +671,7 @@ TEST(DataWriterTests, InvalidQos)
     EXPECT_EQ(inconsistent_code, datawriter->set_qos(qos));
 
     qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    qos.reliable_writer_qos().times.heartbeat_period = eprosima::fastdds::c_TimeInfinite;
+    qos.reliable_writer_qos().times.heartbeat_period = eprosima::fastdds::dds::c_TimeInfinite;
     EXPECT_EQ(inconsistent_code, datawriter->set_qos(qos));
 
     qos = DATAWRITER_QOS_DEFAULT;
@@ -783,7 +783,7 @@ TEST(DataWriterTests, WriteWithTimestamp)
     DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
     ASSERT_NE(datawriter, nullptr);
 
-    eprosima::fastdds::Time_t ts{ 0, 1 };
+    eprosima::fastdds::dds::Time_t ts{ 0, 1 };
 
     FooType data;
     data.message("HelloWorld");
@@ -792,9 +792,9 @@ TEST(DataWriterTests, WriteWithTimestamp)
     ASSERT_EQ(RETCODE_BAD_PARAMETER, datawriter->write_w_timestamp(nullptr, HANDLE_NIL, ts));
     // 2. Calling write with an invalid timestamps returns RETCODE_BAD_PARAMETER
     EXPECT_EQ(RETCODE_BAD_PARAMETER,
-            datawriter->write_w_timestamp(&data, HANDLE_NIL, fastdds::c_TimeInfinite));
+            datawriter->write_w_timestamp(&data, HANDLE_NIL, fastdds::dds::c_TimeInfinite));
     EXPECT_EQ(RETCODE_BAD_PARAMETER,
-            datawriter->write_w_timestamp(&data, HANDLE_NIL, fastdds::c_TimeInvalid));
+            datawriter->write_w_timestamp(&data, HANDLE_NIL, fastdds::dds::c_TimeInvalid));
     // 3. Calling write with a wrong instance handle returns RETCODE_PRECONDITION_NOT_MET
     ASSERT_EQ(RETCODE_PRECONDITION_NOT_MET,
             datawriter->write_w_timestamp(&data, participant->get_instance_handle(), ts));
@@ -981,7 +981,7 @@ TEST(DataWriterTests, RegisterInstanceWithTimestamp)
     DataWriter* instance_datawriter;
     create_writers_for_instance_test(datawriter, instance_datawriter);
 
-    eprosima::fastdds::Time_t ts{ 0, 1 };
+    eprosima::fastdds::dds::Time_t ts{ 0, 1 };
 
     // 1. Calling register_instance_w_timestamp in a disable writer returns HANDLE_NIL
     EXPECT_EQ(HANDLE_NIL, datawriter->register_instance_w_timestamp(&data, ts));
@@ -996,8 +996,8 @@ TEST(DataWriterTests, RegisterInstanceWithTimestamp)
     EXPECT_EQ(HANDLE_NIL, instance_datawriter->register_instance_w_timestamp(nullptr, ts));
 
     // 4. Calling register_instance with an invalid timestamps returns HANDLE_NIL
-    EXPECT_EQ(HANDLE_NIL, instance_datawriter->register_instance_w_timestamp(&data, fastdds::c_TimeInfinite));
-    EXPECT_EQ(HANDLE_NIL, instance_datawriter->register_instance_w_timestamp(&data, fastdds::c_TimeInvalid));
+    EXPECT_EQ(HANDLE_NIL, instance_datawriter->register_instance_w_timestamp(&data, fastdds::dds::c_TimeInfinite));
+    EXPECT_EQ(HANDLE_NIL, instance_datawriter->register_instance_w_timestamp(&data, fastdds::dds::c_TimeInvalid));
 
     // 5. Calling register_instance with a valid key returns a valid handle
     EXPECT_NE(HANDLE_NIL, instance_datawriter->register_instance_w_timestamp(&data, ts));
@@ -1069,7 +1069,7 @@ TEST(DataWriterTests, UnregisterInstanceWithTimestamp)
     DataWriter* instance_datawriter;
     create_writers_for_instance_test(datawriter, instance_datawriter, &instance_type);
 
-    eprosima::fastdds::Time_t ts{ 0, 1 };
+    eprosima::fastdds::dds::Time_t ts{ 0, 1 };
 
     // 1. Calling unregister_instance in a disable writer returns RETCODE_NOT_ENABLED
     EXPECT_EQ(RETCODE_NOT_ENABLED, datawriter->unregister_instance_w_timestamp(&data, handle, ts));
@@ -1106,10 +1106,10 @@ TEST(DataWriterTests, UnregisterInstanceWithTimestamp)
 
     // 8. Check invalid timestamps
     ASSERT_EQ(RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
-    ts = eprosima::fastdds::c_TimeInfinite;
+    ts = eprosima::fastdds::dds::c_TimeInfinite;
     EXPECT_EQ(RETCODE_BAD_PARAMETER,
             instance_datawriter->unregister_instance_w_timestamp(&data, handle, ts));
-    ts = eprosima::fastdds::c_TimeInvalid;
+    ts = eprosima::fastdds::dds::c_TimeInvalid;
     EXPECT_EQ(RETCODE_BAD_PARAMETER,
             instance_datawriter->unregister_instance_w_timestamp(&data, handle, ts));
 
@@ -1183,7 +1183,7 @@ TEST(DataWriterTests, DisposeWithTimestamp)
     DataWriter* instance_datawriter;
     create_writers_for_instance_test(datawriter, instance_datawriter, &instance_type);
 
-    eprosima::fastdds::Time_t ts{ 0, 1 };
+    eprosima::fastdds::dds::Time_t ts{ 0, 1 };
 
     // 1. Calling dispose in a disable writer returns RETCODE_NOT_ENABLED
     EXPECT_EQ(RETCODE_NOT_ENABLED, datawriter->dispose_w_timestamp(&data, handle, ts));
@@ -1217,9 +1217,9 @@ TEST(DataWriterTests, DisposeWithTimestamp)
 
     // 8. Check invalid timestamps
     ASSERT_EQ(RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
-    ts = eprosima::fastdds::c_TimeInfinite;
+    ts = eprosima::fastdds::dds::c_TimeInfinite;
     EXPECT_EQ(RETCODE_BAD_PARAMETER, instance_datawriter->dispose_w_timestamp(&data, handle, ts));
-    ts = eprosima::fastdds::c_TimeInvalid;
+    ts = eprosima::fastdds::dds::c_TimeInvalid;
     EXPECT_EQ(RETCODE_BAD_PARAMETER, instance_datawriter->dispose_w_timestamp(&data, handle, ts));
 
     // TODO(jlbueno) There are other possible errors sending the dispose message: RETCODE_OUT_OF_RESOURCES,
@@ -1568,7 +1568,7 @@ public:
 TEST(DataWriterTests, InstanceWaitForAcknowledgement)
 {
     // Test parameters
-    Duration_t max_wait(2, 0);
+    dds::Duration_t max_wait(2, 0);
     InstanceHandle_t handle;
     InstanceFooType data;
     data.message("HelloWorld");

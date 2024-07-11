@@ -954,14 +954,14 @@ public:
     }
 
     PubSubReader& deadline_period(
-            const eprosima::fastdds::Duration_t deadline_period)
+            const eprosima::fastdds::dds::Duration_t deadline_period)
     {
         datareader_qos_.deadline().period = deadline_period;
         return *this;
     }
 
     bool update_deadline_period(
-            const eprosima::fastdds::Duration_t& deadline_period)
+            const eprosima::fastdds::dds::Duration_t& deadline_period)
     {
         eprosima::fastdds::dds::DataReaderQos datareader_qos;
         datareader_->get_qos(datareader_qos);
@@ -978,33 +978,33 @@ public:
     }
 
     PubSubReader& liveliness_lease_duration(
-            const eprosima::fastdds::Duration_t lease_duration)
+            const eprosima::fastdds::dds::Duration_t lease_duration)
     {
         datareader_qos_.liveliness().lease_duration = lease_duration;
         return *this;
     }
 
     PubSubReader& latency_budget_duration(
-            const eprosima::fastdds::Duration_t& latency_duration)
+            const eprosima::fastdds::dds::Duration_t& latency_duration)
     {
         datareader_qos_.latency_budget().duration = latency_duration;
         return *this;
     }
 
-    eprosima::fastdds::Duration_t get_latency_budget_duration()
+    eprosima::fastdds::dds::Duration_t get_latency_budget_duration()
     {
         return datareader_qos_.latency_budget().duration;
     }
 
     PubSubReader& lifespan_period(
-            const eprosima::fastdds::Duration_t lifespan_period)
+            const eprosima::fastdds::dds::Duration_t lifespan_period)
     {
         datareader_qos_.lifespan().duration = lifespan_period;
         return *this;
     }
 
     PubSubReader& keep_duration(
-            const eprosima::fastdds::Duration_t duration)
+            const eprosima::fastdds::dds::Duration_t duration)
     {
         datareader_qos_.reliable_reader_qos().disable_positive_acks.enabled = true;
         datareader_qos_.reliable_reader_qos().disable_positive_acks.duration = duration;
@@ -1498,8 +1498,8 @@ public:
     }
 
     PubSubReader& lease_duration(
-            eprosima::fastdds::Duration_t lease_duration,
-            eprosima::fastdds::Duration_t announce_period)
+            eprosima::fastdds::dds::Duration_t lease_duration,
+            eprosima::fastdds::dds::Duration_t announce_period)
     {
         participant_qos_.wire_protocol().builtin.discovery_config.leaseDuration = lease_duration;
         participant_qos_.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = announce_period;
@@ -1508,7 +1508,7 @@ public:
 
     PubSubReader& initial_announcements(
             uint32_t count,
-            const eprosima::fastdds::Duration_t& period)
+            const eprosima::fastdds::dds::Duration_t& period)
     {
         participant_qos_.wire_protocol().builtin.discovery_config.initial_announcements.count = count;
         participant_qos_.wire_protocol().builtin.discovery_config.initial_announcements.period = period;
@@ -2211,7 +2211,7 @@ protected:
         }
 
         void start(
-                const eprosima::fastdds::Duration_t& timeout)
+                const eprosima::fastdds::dds::Duration_t& timeout)
         {
             waitset_.attach_condition(reader_.datareader_->get_statuscondition());
             waitset_.attach_condition(reader_.subscriber_->get_statuscondition());
@@ -2409,7 +2409,7 @@ protected:
         unsigned int times_deadline_missed_ = 0;
 
         //! The timeout for the wait operation
-        eprosima::fastdds::Duration_t timeout_;
+        eprosima::fastdds::dds::Duration_t timeout_;
 
     }
     waitset_thread_;
@@ -2424,7 +2424,7 @@ public:
             bool statistics = false)
         : PubSubReader<TypeSupport>(topic_name, take, statistics)
         , waitset_thread_(*this)
-        , timeout_(eprosima::fastdds::c_TimeInfinite)
+        , timeout_(eprosima::fastdds::dds::c_TimeInfinite)
         , times_waitset_timeout_(0)
     {
     }
@@ -2506,7 +2506,7 @@ public:
     }
 
     PubSubReaderWithWaitsets& waitset_timeout(
-            const eprosima::fastdds::Duration_t& timeout)
+            const eprosima::fastdds::dds::Duration_t& timeout)
     {
         timeout_ = timeout;
         return *this;
@@ -2522,7 +2522,7 @@ protected:
     }
 
     //! The timeout for the waitset
-    eprosima::fastdds::Duration_t timeout_;
+    eprosima::fastdds::dds::Duration_t timeout_;
 
     //! A mutex for waitset timeout
     std::mutex waitset_timeout_mutex_;

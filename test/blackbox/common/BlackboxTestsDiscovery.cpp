@@ -825,7 +825,7 @@ TEST(Discovery, LocalInitialPeersDiferrentLocators)
         writer.disable_builtin_transport().
                 add_user_transport_to_pparams(test_transport).
                 metatraffic_unicast_locator_list(writer_metatraffic_unicast).
-                lease_duration(c_TimeInfinite, { 3600, 0 }).
+                lease_duration(eprosima::fastdds::dds::c_TimeInfinite, { 3600, 0 }).
                 initial_announcements(0, {}).
                 reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
     }
@@ -851,7 +851,7 @@ TEST(Discovery, LocalInitialPeersDiferrentLocators)
 
         readers[i].disable_builtin_transport().
                 add_user_transport_to_pparams(udp_transport).
-                lease_duration(c_TimeInfinite, {3600, 0}).
+                lease_duration(eprosima::fastdds::dds::c_TimeInfinite, {3600, 0}).
                 initial_announcements(1, {0, 100 * 1000 * 1000}).
                 metatraffic_unicast_locator_list(reader_metatraffic_unicast).
                 initial_peers(reader_initial_peers).

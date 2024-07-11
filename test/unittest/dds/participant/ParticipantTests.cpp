@@ -2836,7 +2836,7 @@ TEST(ParticipantTests, GetCurrentTime)
             DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
 
-    eprosima::fastdds::Time_t now;
+    eprosima::fastdds::dds::Time_t now;
     ASSERT_EQ(participant->get_current_time(now), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
@@ -3334,7 +3334,7 @@ TEST(ParticipantTests, DeleteContainedEntities)
     // Reader with active loans. Fail and keep everything as is
 
     EXPECT_EQ(RETCODE_OK, data_writer_bar->write(&data, HANDLE_NIL));
-    Duration_t wait_time(1, 0);
+    dds::Duration_t wait_time(1, 0);
     EXPECT_TRUE(data_reader_bar->wait_for_unread_message(wait_time));
 
     ASSERT_EQ(data_reader_bar->take(mock_coll, mock_seq), RETCODE_OK);
