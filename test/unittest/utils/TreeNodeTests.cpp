@@ -44,13 +44,15 @@ struct TreeNodeTestType
  */
 TEST(TreeNodeTests, one_shallow_branch)
 {
-    constexpr auto NODE_COUNT = 2;
+    constexpr auto DEPTH = 1U;
+    constexpr auto NODE_COUNT = 2U;
+    constexpr auto BRANCH_COUNT = 1U;
 
     std::vector<TreeNodeTestType> nodes;
     std::vector<utilities::collections::TreeNode<TreeNodeTestType>> trees;
 
     // Create the nodes and the trees
-    for (int i = 0; i < NODE_COUNT; i++)
+    for (unsigned int i = 0; i < NODE_COUNT; i++)
     {
         nodes.emplace_back(std::to_string(i));
         trees.emplace_back(nodes[i]);
@@ -63,7 +65,7 @@ TEST(TreeNodeTests, one_shallow_branch)
 
     // Verify the depth
     const auto tree_depth = root.depth();
-    ASSERT_EQ(tree_depth, 1);
+    ASSERT_EQ(tree_depth, DEPTH);
 
     // Verify the nodes are correct
     const auto tree_nodes = root.all_nodes();
@@ -71,7 +73,7 @@ TEST(TreeNodeTests, one_shallow_branch)
 
     // Verify the branch count
     const auto tree_branches = root.branches();
-    ASSERT_EQ(tree_branches.size(), 1);
+    ASSERT_EQ(tree_branches.size(), BRANCH_COUNT);
 
     // Verify that the branch is a leaf
     ASSERT_TRUE(tree_branches.front().leaf());
@@ -99,13 +101,15 @@ TEST(TreeNodeTests, one_shallow_branch)
  */
 TEST(TreeNodeTests, one_deep_branch)
 {
-    constexpr auto NODE_COUNT = 6;
+    constexpr auto DEPTH = 5U;
+    constexpr auto NODE_COUNT = 6U;
+    constexpr auto BRANCH_COUNT = 1U;
 
     std::vector<TreeNodeTestType> nodes;
     std::vector<utilities::collections::TreeNode<TreeNodeTestType>> trees;
 
     // Create the nodes and the trees
-    for (int i = 0; i < NODE_COUNT; i++)
+    for (unsigned int i = 0; i < NODE_COUNT; i++)
     {
         nodes.emplace_back(std::to_string(i));
         trees.emplace_back(nodes[i]);
@@ -121,7 +125,7 @@ TEST(TreeNodeTests, one_deep_branch)
 
     // Verify the depth
     const auto tree_depth = root.depth();
-    ASSERT_EQ(tree_depth, NODE_COUNT - 1);
+    ASSERT_EQ(tree_depth, DEPTH);
 
     // Verify the nodes are correct
     const auto tree_nodes = root.all_nodes();
@@ -129,7 +133,7 @@ TEST(TreeNodeTests, one_deep_branch)
 
     // Verify the branch count
     const auto tree_branches = root.branches();
-    ASSERT_EQ(tree_branches.size(), 1);
+    ASSERT_EQ(tree_branches.size(), BRANCH_COUNT);
 
     // Verify that the branch is not a leaf
     ASSERT_FALSE(tree_branches.front().leaf());
@@ -145,13 +149,15 @@ TEST(TreeNodeTests, one_deep_branch)
  */
 TEST(TreeNodeTests, many_shallow_branches)
 {
-    constexpr auto NODE_COUNT = 6;
+    constexpr auto DEPTH = 1U;
+    constexpr auto NODE_COUNT = 6U;
+    constexpr auto BRANCH_COUNT = 5U;
 
     std::vector<TreeNodeTestType> nodes;
     std::vector<utilities::collections::TreeNode<TreeNodeTestType>> trees;
 
     // Create the nodes and the trees
-    for (int i = 0; i < NODE_COUNT; i++)
+    for (unsigned int i = 0; i < NODE_COUNT; i++)
     {
         nodes.emplace_back(std::to_string(i));
         trees.emplace_back(nodes[i]);
@@ -160,14 +166,14 @@ TEST(TreeNodeTests, many_shallow_branches)
     // Build the tree
     auto& root = trees[0];
 
-    for (int i = 1; i < NODE_COUNT; i++)
+    for (unsigned int i = 1; i < NODE_COUNT; i++)
     {
         root.add_branch(nodes[i]);
     }
 
     // Verify the depth
     const auto tree_depth = root.depth();
-    ASSERT_EQ(tree_depth, 1);
+    ASSERT_EQ(tree_depth, DEPTH);
 
     // Verify the node count
     const auto tree_nodes = root.all_nodes();
@@ -185,7 +191,7 @@ TEST(TreeNodeTests, many_shallow_branches)
 
     // Verify the branch count
     const auto tree_branches = root.branches();
-    ASSERT_EQ(tree_branches.size(), NODE_COUNT - 1);
+    ASSERT_EQ(tree_branches.size(), BRANCH_COUNT);
 
     // Verify the branch order
     i = 0;
@@ -216,13 +222,15 @@ TEST(TreeNodeTests, many_shallow_branches)
  */
 TEST(TreeNodeTests, binary_tree)
 {
-    constexpr auto NODE_COUNT = 7;
+    constexpr auto DEPTH = 2U;
+    constexpr auto NODE_COUNT = 7U;
+    constexpr auto BRANCH_COUNT = 2U;
 
     std::vector<TreeNodeTestType> nodes;
     std::vector<utilities::collections::TreeNode<TreeNodeTestType>> trees;
 
     // Create the nodes and the trees
-    for (int i = 0; i < NODE_COUNT; i++)
+    for (unsigned int i = 0; i < NODE_COUNT; i++)
     {
         nodes.emplace_back(std::to_string(i));
         trees.emplace_back(nodes[i]);
@@ -242,7 +250,7 @@ TEST(TreeNodeTests, binary_tree)
 
     // Verify the depth
     const auto tree_depth = root.depth();
-    ASSERT_EQ(tree_depth, 2);
+    ASSERT_EQ(tree_depth, DEPTH);
 
     // Verify the node count
     const auto tree_nodes = root.all_nodes();
@@ -260,7 +268,7 @@ TEST(TreeNodeTests, binary_tree)
 
     // Verify the branch count
     const auto tree_branches = root.branches();
-    ASSERT_EQ(tree_branches.size(), 2);
+    ASSERT_EQ(tree_branches.size(), BRANCH_COUNT);
 
     // Verify the branch order
     ASSERT_EQ(tree_branches.front().info.name, "1");
@@ -271,7 +279,7 @@ TEST(TreeNodeTests, binary_tree)
     {
         // Verify the branch count
         const auto branch_branches = branch.branches();
-        ASSERT_EQ(branch_branches.size(), 2);
+        ASSERT_EQ(branch_branches.size(), BRANCH_COUNT);
 
         // Verify that every branch is a leaf
         for (const auto& branch_branch : branch_branches)
