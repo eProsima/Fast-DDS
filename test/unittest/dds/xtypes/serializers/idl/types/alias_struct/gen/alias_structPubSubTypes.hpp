@@ -40,6 +40,8 @@
 typedef uint32_t MyLong;
 typedef int16_t MyShort;
 typedef MyShort MyRecursiveShort;
+typedef bool MyBoolean;
+typedef MyBoolean MyRecursiveBoolean;
 
 /*!
  * @brief This class represents the TopicDataType of the type AliasStruct defined by the user in the IDL file.

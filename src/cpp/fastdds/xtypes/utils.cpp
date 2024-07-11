@@ -39,22 +39,22 @@ ReturnCode_t idl_serialize(
     ReturnCode_t ret = RETCODE_OK;
 
     // Create a tree representation of the dynamic type
-    utilities::collections::TreeNode<TreeNodeType> parent_type;
-    ret = dyn_type_to_tree(dynamic_type, "PARENT", parent_type);
+    utilities::collections::TreeNode<TreeNodeType> root;
+    ret = dyn_type_to_tree(dynamic_type, "ROOT", root);
 
     if (ret != RETCODE_OK)
     {
-        EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                 "Failed to convert DynamicType to tree.");
         return ret;
     }
 
     // Serialize the tree to IDL
-    ret = dyn_type_tree_to_idl(parent_type, output);
+    ret = dyn_type_tree_to_idl(root, output);
 
     if (ret != RETCODE_OK)
     {
-        EPROSIMA_LOG_WARNING(XTYPES_UTILS,
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                 "Failed to convert DynamicType tree to IDL.");
         return ret;
     }

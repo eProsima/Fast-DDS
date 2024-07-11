@@ -4,8 +4,14 @@ typedef short MyShort;
 
 typedef MyShort MyRecursiveShort;
 
+typedef boolean MyBoolean;
+
+typedef MyBoolean MyRecursiveBoolean;
+
 struct AliasStruct
 {
     MyLong my_long;
     MyRecursiveShort my_recursive_short;
+    MyRecursiveBoolean my_recursive_boolean;
+    MyBoolean my_boolean;
 };

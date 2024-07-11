@@ -186,6 +186,104 @@ void register_MyRecursiveShort_type_identifier(
     }
 }
 
+void register_MyBoolean_type_identifier(
+        TypeIdentifierPair& type_ids_MyBoolean)
+{
+    ReturnCode_t return_code_MyBoolean {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_MyBoolean =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "MyBoolean", type_ids_MyBoolean);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_MyBoolean)
+    {
+        AliasTypeFlag alias_flags_MyBoolean = 0;
+        QualifiedTypeName type_name_MyBoolean = "MyBoolean";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_MyBoolean;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_MyBoolean;
+        CompleteTypeDetail detail_MyBoolean = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_MyBoolean, ann_custom_MyBoolean, type_name_MyBoolean.to_string());
+        CompleteAliasHeader header_MyBoolean = TypeObjectUtils::build_complete_alias_header(detail_MyBoolean);
+        AliasMemberFlag related_flags_MyBoolean = 0;
+        return_code_MyBoolean =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+            "_bool", type_ids_MyBoolean);
+
+        if (eprosima::fastdds::dds::RETCODE_OK != return_code_MyBoolean)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "MyBoolean related TypeIdentifier unknown to TypeObjectRegistry.");
+            return;
+        }
+        bool common_MyBoolean_ec {false};
+        CommonAliasBody common_MyBoolean {TypeObjectUtils::build_common_alias_body(related_flags_MyBoolean,
+                TypeObjectUtils::retrieve_complete_type_identifier(type_ids_MyBoolean, common_MyBoolean_ec))};
+        if (!common_MyBoolean_ec)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "MyBoolean related TypeIdentifier inconsistent.");
+            return;
+        }
+        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_MyBoolean;
+        ann_custom_MyBoolean.reset();
+        CompleteAliasBody body_MyBoolean = TypeObjectUtils::build_complete_alias_body(common_MyBoolean,
+                member_ann_builtin_MyBoolean, ann_custom_MyBoolean);
+        CompleteAliasType alias_type_MyBoolean = TypeObjectUtils::build_complete_alias_type(alias_flags_MyBoolean,
+                header_MyBoolean, body_MyBoolean);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_alias_type_object(alias_type_MyBoolean,
+                    type_name_MyBoolean.to_string(), type_ids_MyBoolean))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                "MyBoolean already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
+
+void register_MyRecursiveBoolean_type_identifier(
+        TypeIdentifierPair& type_ids_MyRecursiveBoolean)
+{
+    ReturnCode_t return_code_MyRecursiveBoolean {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_MyRecursiveBoolean =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "MyRecursiveBoolean", type_ids_MyRecursiveBoolean);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_MyRecursiveBoolean)
+    {
+        AliasTypeFlag alias_flags_MyRecursiveBoolean = 0;
+        QualifiedTypeName type_name_MyRecursiveBoolean = "MyRecursiveBoolean";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_MyRecursiveBoolean;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_MyRecursiveBoolean;
+        CompleteTypeDetail detail_MyRecursiveBoolean = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_MyRecursiveBoolean, ann_custom_MyRecursiveBoolean, type_name_MyRecursiveBoolean.to_string());
+        CompleteAliasHeader header_MyRecursiveBoolean = TypeObjectUtils::build_complete_alias_header(detail_MyRecursiveBoolean);
+        AliasMemberFlag related_flags_MyRecursiveBoolean = 0;
+        return_code_MyRecursiveBoolean =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+            "MyBoolean", type_ids_MyRecursiveBoolean);
+
+        if (eprosima::fastdds::dds::RETCODE_OK != return_code_MyRecursiveBoolean)
+        {
+        ::register_MyBoolean_type_identifier(type_ids_MyRecursiveBoolean);
+        }
+        bool common_MyRecursiveBoolean_ec {false};
+        CommonAliasBody common_MyRecursiveBoolean {TypeObjectUtils::build_common_alias_body(related_flags_MyRecursiveBoolean,
+                TypeObjectUtils::retrieve_complete_type_identifier(type_ids_MyRecursiveBoolean, common_MyRecursiveBoolean_ec))};
+        if (!common_MyRecursiveBoolean_ec)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "MyRecursiveBoolean related TypeIdentifier inconsistent.");
+            return;
+        }
+        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_MyRecursiveBoolean;
+        ann_custom_MyRecursiveBoolean.reset();
+        CompleteAliasBody body_MyRecursiveBoolean = TypeObjectUtils::build_complete_alias_body(common_MyRecursiveBoolean,
+                member_ann_builtin_MyRecursiveBoolean, ann_custom_MyRecursiveBoolean);
+        CompleteAliasType alias_type_MyRecursiveBoolean = TypeObjectUtils::build_complete_alias_type(alias_flags_MyRecursiveBoolean,
+                header_MyRecursiveBoolean, body_MyRecursiveBoolean);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_alias_type_object(alias_type_MyRecursiveBoolean,
+                    type_name_MyRecursiveBoolean.to_string(), type_ids_MyRecursiveBoolean))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                "MyRecursiveBoolean already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
+
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_AliasStruct_type_identifier(
         TypeIdentifierPair& type_ids_AliasStruct)
@@ -261,6 +359,62 @@ void register_AliasStruct_type_identifier(
             CompleteMemberDetail detail_my_recursive_short = TypeObjectUtils::build_complete_member_detail(name_my_recursive_short, member_ann_builtin_my_recursive_short, ann_custom_AliasStruct);
             CompleteStructMember member_my_recursive_short = TypeObjectUtils::build_complete_struct_member(common_my_recursive_short, detail_my_recursive_short);
             TypeObjectUtils::add_complete_struct_member(member_seq_AliasStruct, member_my_recursive_short);
+        }
+        {
+            TypeIdentifierPair type_ids_my_recursive_boolean;
+            ReturnCode_t return_code_my_recursive_boolean {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_my_recursive_boolean =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "MyRecursiveBoolean", type_ids_my_recursive_boolean);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_my_recursive_boolean)
+            {
+            ::register_MyRecursiveBoolean_type_identifier(type_ids_my_recursive_boolean);
+            }
+            StructMemberFlag member_flags_my_recursive_boolean = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_my_recursive_boolean = 0x00000002;
+            bool common_my_recursive_boolean_ec {false};
+            CommonStructMember common_my_recursive_boolean {TypeObjectUtils::build_common_struct_member(member_id_my_recursive_boolean, member_flags_my_recursive_boolean, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_my_recursive_boolean, common_my_recursive_boolean_ec))};
+            if (!common_my_recursive_boolean_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure my_recursive_boolean member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_my_recursive_boolean = "my_recursive_boolean";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_my_recursive_boolean;
+            ann_custom_AliasStruct.reset();
+            CompleteMemberDetail detail_my_recursive_boolean = TypeObjectUtils::build_complete_member_detail(name_my_recursive_boolean, member_ann_builtin_my_recursive_boolean, ann_custom_AliasStruct);
+            CompleteStructMember member_my_recursive_boolean = TypeObjectUtils::build_complete_struct_member(common_my_recursive_boolean, detail_my_recursive_boolean);
+            TypeObjectUtils::add_complete_struct_member(member_seq_AliasStruct, member_my_recursive_boolean);
+        }
+        {
+            TypeIdentifierPair type_ids_my_boolean;
+            ReturnCode_t return_code_my_boolean {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_my_boolean =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "MyBoolean", type_ids_my_boolean);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_my_boolean)
+            {
+            ::register_MyBoolean_type_identifier(type_ids_my_boolean);
+            }
+            StructMemberFlag member_flags_my_boolean = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_my_boolean = 0x00000003;
+            bool common_my_boolean_ec {false};
+            CommonStructMember common_my_boolean {TypeObjectUtils::build_common_struct_member(member_id_my_boolean, member_flags_my_boolean, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_my_boolean, common_my_boolean_ec))};
+            if (!common_my_boolean_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure my_boolean member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_my_boolean = "my_boolean";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_my_boolean;
+            ann_custom_AliasStruct.reset();
+            CompleteMemberDetail detail_my_boolean = TypeObjectUtils::build_complete_member_detail(name_my_boolean, member_ann_builtin_my_boolean, ann_custom_AliasStruct);
+            CompleteStructMember member_my_boolean = TypeObjectUtils::build_complete_struct_member(common_my_boolean, detail_my_boolean);
+            TypeObjectUtils::add_complete_struct_member(member_seq_AliasStruct, member_my_boolean);
         }
         CompleteStructType struct_type_AliasStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_AliasStruct, header_AliasStruct, member_seq_AliasStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==

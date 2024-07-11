@@ -55,6 +55,10 @@ typedef int16_t MyShort;
 
 typedef MyShort MyRecursiveShort;
 
+typedef bool MyBoolean;
+
+typedef MyBoolean MyRecursiveBoolean;
+
 /*!
  * @brief This class represents the structure AliasStruct defined by the user in the IDL file.
  * @ingroup alias_struct
@@ -88,6 +92,10 @@ public:
 
                     m_my_recursive_short = x.m_my_recursive_short;
 
+                    m_my_recursive_boolean = x.m_my_recursive_boolean;
+
+                    m_my_boolean = x.m_my_boolean;
+
     }
 
     /*!
@@ -99,6 +107,8 @@ public:
     {
         m_my_long = x.m_my_long;
         m_my_recursive_short = x.m_my_recursive_short;
+        m_my_recursive_boolean = x.m_my_recursive_boolean;
+        m_my_boolean = x.m_my_boolean;
     }
 
     /*!
@@ -113,6 +123,10 @@ public:
 
                     m_my_recursive_short = x.m_my_recursive_short;
 
+                    m_my_recursive_boolean = x.m_my_recursive_boolean;
+
+                    m_my_boolean = x.m_my_boolean;
+
         return *this;
     }
 
@@ -126,6 +140,8 @@ public:
 
         m_my_long = x.m_my_long;
         m_my_recursive_short = x.m_my_recursive_short;
+        m_my_recursive_boolean = x.m_my_recursive_boolean;
+        m_my_boolean = x.m_my_boolean;
         return *this;
     }
 
@@ -137,7 +153,9 @@ public:
             const AliasStruct& x) const
     {
         return (m_my_long == x.m_my_long &&
-           m_my_recursive_short == x.m_my_recursive_short);
+           m_my_recursive_short == x.m_my_recursive_short &&
+           m_my_recursive_boolean == x.m_my_recursive_boolean &&
+           m_my_boolean == x.m_my_boolean);
     }
 
     /*!
@@ -208,11 +226,71 @@ public:
     }
 
 
+    /*!
+     * @brief This function sets a value in member my_recursive_boolean
+     * @param _my_recursive_boolean New value for member my_recursive_boolean
+     */
+    eProsima_user_DllExport void my_recursive_boolean(
+            MyRecursiveBoolean _my_recursive_boolean)
+    {
+        m_my_recursive_boolean = _my_recursive_boolean;
+    }
+
+    /*!
+     * @brief This function returns the value of member my_recursive_boolean
+     * @return Value of member my_recursive_boolean
+     */
+    eProsima_user_DllExport MyRecursiveBoolean my_recursive_boolean() const
+    {
+        return m_my_recursive_boolean;
+    }
+
+    /*!
+     * @brief This function returns a reference to member my_recursive_boolean
+     * @return Reference to member my_recursive_boolean
+     */
+    eProsima_user_DllExport MyRecursiveBoolean& my_recursive_boolean()
+    {
+        return m_my_recursive_boolean;
+    }
+
+
+    /*!
+     * @brief This function sets a value in member my_boolean
+     * @param _my_boolean New value for member my_boolean
+     */
+    eProsima_user_DllExport void my_boolean(
+            MyBoolean _my_boolean)
+    {
+        m_my_boolean = _my_boolean;
+    }
+
+    /*!
+     * @brief This function returns the value of member my_boolean
+     * @return Value of member my_boolean
+     */
+    eProsima_user_DllExport MyBoolean my_boolean() const
+    {
+        return m_my_boolean;
+    }
+
+    /*!
+     * @brief This function returns a reference to member my_boolean
+     * @return Reference to member my_boolean
+     */
+    eProsima_user_DllExport MyBoolean& my_boolean()
+    {
+        return m_my_boolean;
+    }
+
+
 
 private:
 
     MyLong m_my_long{0};
     MyRecursiveShort m_my_recursive_short{0};
+    MyRecursiveBoolean m_my_recursive_boolean{false};
+    MyBoolean m_my_boolean{false};
 
 };
 

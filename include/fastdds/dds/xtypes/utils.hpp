@@ -41,7 +41,7 @@ enum class DynamicDataJsonFormat
  * @brief Serializes a @ref DynamicType into its IDL representation.
  *
  * @param [in] dynamic_type The @ref DynamicType to serialize.
- * @param [in,out] output The IDL representation.
+ * @param [in,out] output \c std::ostream reference containing the IDL representation.
  * @retval RETCODE_OK when serialization fully succeeds, and inner (member serialization) failing code otherwise.
  */
 FASTDDS_EXPORTED_API ReturnCode_t idl_serialize(

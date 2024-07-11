@@ -12,58 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/alias_struct/alias_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/alias_struct/alias_struct.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/array_struct/array_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/array_struct/array_struct.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/bitmask_struct/bitmask_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/bitmask_struct/bitmask_struct.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/bitset_struct/bitset_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/bitset_struct/bitset_struct.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/enum_struct/enum_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/enum_struct/enum_struct.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/extensibility_struct/extensibility_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/extensibility_struct/extensibility_struct.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/key_struct/key_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/key_struct/key_struct.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/map_struct/map_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/map_struct/map_struct.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/primitives_struct/primitives_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/primitives_struct/primitives_struct.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/sequence_struct/sequence_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/sequence_struct/sequence_struct.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/string_struct/string_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/string_struct/string_struct.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/struct_struct/struct_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/struct_struct/struct_struct.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/union_struct/union_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/union_struct/union_struct.idl
-    COPYONLY)
+# Recursively find all .idl files in the types directory
+file(GLOB_RECURSE IDL_FILES ${CMAKE_CURRENT_SOURCE_DIR}/types/*.idl)
+
+# Iterate over each .idl file found
+foreach(IDL_FILE ${IDL_FILES})
+    # Get the relative path of the .idl file
+    file(RELATIVE_PATH RELATIVE_PATH ${CMAKE_CURRENT_SOURCE_DIR} ${IDL_FILE})
+
+    # Determine the destination directory
+    set(DEST_DIR ${CMAKE_CURRENT_BINARY_DIR}/${RELATIVE_PATH})
+    get_filename_component(DEST_DIR ${DEST_DIR} DIRECTORY)
+
+    # Ensure the destination directory exists
+    file(MAKE_DIRECTORY ${DEST_DIR})
+
+    # Copy the .idl file to the destination directory
+    configure_file(${IDL_FILE} ${DEST_DIR} COPYONLY)
+endforeach()
 
 set(RESOURCEDYNTYPETOIDLTESTS_SOURCE
     DynTypeIDLTests.cpp
