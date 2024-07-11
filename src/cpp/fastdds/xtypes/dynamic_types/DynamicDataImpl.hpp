@@ -94,6 +94,8 @@ public:
     MemberId get_member_id_by_name(
             const ObjectName& name) noexcept override;
 
+    MemberId selected_union_member() noexcept;
+
     //{{{ Getters
 
     //{{{ Primitive getters
@@ -406,6 +408,16 @@ public:
 
 
     traits<DynamicType>::ref_type type() noexcept override;
+
+    traits<DynamicTypeImpl>::ref_type enclosing_type() noexcept;
+
+    /*!
+     * Auxiliary function to get a copy of the `key_to_id_` attribute.
+     * Only valid for TK_MAP.
+     * @note: This is a solution to allow the user to get the keys of a map, currently not supported by the public API.
+     */
+    ReturnCode_t get_keys(
+            std::map<std::string, MemberId>& key_to_id) noexcept;
 
     //{{{ Encoding/decoding functions
 

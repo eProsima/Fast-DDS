@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 
+set -e
+
 files_to_exclude=(
     )
 
 files_not_needing_typeobject=(
     './include/fastdds/dds/xtypes/type_representation/detail/dds-xtypes_typeobject.idl'
-    './src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.idl'
     './src/cpp/fastdds/builtin/type_lookup_service/detail/rpc_types.idl'
+    './src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.idl'
     './thirdparty/dds-types-test/IDL/declarations.idl'
     './thirdparty/dds-types-test/IDL/external.idl'
     )
@@ -15,9 +17,11 @@ files_needing_case_sensitive=(
     )
 
 files_needing_output_dir=(
-    './include/fastdds/statistics/types.idl|../../../src/cpp/statistics/types|../../../test/blackbox/types/statistics'
-    './include/fastdds/statistics/monitorservice_types.idl|../../../src/cpp/statistics/types|../../../test/blackbox/types/statistics'
     './include/fastdds/dds/xtypes/type_representation/dds-xtypes_typeobject.idl|./detail'
+    './include/fastdds/statistics/monitorservice_types.idl|../../../src/cpp/statistics/types|../../../test/blackbox/types/statistics'
+    './include/fastdds/statistics/types.idl|../../../src/cpp/statistics/types|../../../test/blackbox/types/statistics'
+    './test/blackbox/types/core/core_types.idl|.'
+    './test/unittest/dds/xtypes/serializers/json/types/comprehensive_type/ComprehensiveType.idl|./gen'
     './thirdparty/dds-types-test/IDL/aliases.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/annotations.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/appendable.idl|../../../test/dds-types-test'
@@ -41,7 +45,6 @@ files_needing_output_dir=(
     './thirdparty/dds-types-test/IDL/strings.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/structures.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/unions.idl|../../../test/dds-types-test'
-    './test/blackbox/types/core/core_types.idl|.'
     )
 
 files_needing_no_typesupport=(

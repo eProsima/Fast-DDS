@@ -583,6 +583,11 @@ MemberId DynamicDataImpl::get_member_id_by_name(
     return ret_value;
 }
 
+MemberId DynamicDataImpl::selected_union_member() noexcept
+{
+    return selected_union_member_;
+}
+
 //{{{ Getters
 
 //{{{ Primitive getters
@@ -1535,6 +1540,22 @@ ReturnCode_t DynamicDataImpl::set_wstring_values(
 traits<DynamicType>::ref_type DynamicDataImpl::type() noexcept
 {
     return type_;
+}
+
+traits<DynamicTypeImpl>::ref_type DynamicDataImpl::enclosing_type() noexcept
+{
+    return enclosing_type_;
+}
+
+ReturnCode_t DynamicDataImpl::get_keys(
+        std::map<std::string, MemberId>& key_to_id) noexcept
+{
+    if (TK_MAP == enclosing_type_->get_kind())
+    {
+        key_to_id = key_to_id_;
+        return RETCODE_OK;
+    }
+    return RETCODE_BAD_PARAMETER;
 }
 
 traits<DynamicData>::ref_type DynamicDataImpl::_this()

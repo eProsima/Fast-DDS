@@ -1,0 +1,124 @@
+struct PrimitivesStruct
+{
+    boolean my_bool;
+    octet my_octet;
+    char my_char;
+    wchar my_wchar;
+    long my_long;
+    unsigned long my_ulong;
+    int8 my_int8;
+    uint8 my_uint8;
+    short my_short;
+    unsigned short my_ushort;
+    long long my_longlong;
+    unsigned long long my_ulonglong;
+    float my_float;
+    double my_double;
+    long double my_longdouble;
+};
+
+enum MyEnum
+{
+    A,
+    B,
+    C
+};
+
+@bit_bound(28)
+bitmask MyBitMask
+{
+    @position(0) flag0,
+    flag1,
+    flag2,
+    @position(26) flag26
+};
+
+typedef PrimitivesStruct MyAliasedStruct;
+typedef MyEnum MyAliasedEnum;
+typedef string<100> MyAliasedBoundedString;
+typedef MyAliasedEnum MyRecursiveAlias;
+
+union InnerUnion switch (short)
+{
+    case 0:
+        @id(0x10) PrimitivesStruct first;
+    case 1:
+    default:
+        long long second;
+};
+
+union ComplexUnion switch (short)
+{
+    case 0:
+    case 1:
+        long third;
+    default:
+        InnerUnion fourth;
+};
+
+bitset MyBitSet
+{
+    bitfield<3> a;
+    bitfield<1> b;
+    bitfield<4>;
+    bitfield<10> c;
+    bitfield<12, short> d;
+};
+
+struct AllStruct : PrimitivesStruct
+{
+    // strings
+    string my_string;
+    wstring my_wstring;
+    string<41925> my_bounded_string;
+    wstring<20925> my_bounded_wstring;
+
+    // enum
+    MyEnum my_enum;
+
+    // bitmask
+    MyBitMask my_bitmask;
+
+    // alias
+    MyAliasedStruct my_aliased_struct;
+    MyAliasedEnum my_aliased_enum;
+    MyAliasedBoundedString my_aliased_bounded_string;
+    MyRecursiveAlias my_recursive_alias;
+
+    // sequence
+    sequence<MyBitMask> bitmask_sequence;
+    sequence<MyEnum> enum_sequence;
+    sequence<short, 5> short_sequence;
+
+    // array
+    long long_array[2][3][4];
+
+    // map
+    map<string, string> string_unbounded_map;
+    map<string, MyAliasedBoundedString> string_alias_unbounded_map;
+    map<short, long, 2> short_long_map;
+
+    // union
+    InnerUnion inner_union;
+    ComplexUnion complex_union;
+
+    // bitset
+    MyBitSet my_bitset;
+};
+
+struct ComprehensiveType
+{
+    unsigned long index;
+
+    // inner struct
+    AllStruct inner_struct;
+
+    // complex sequence
+    sequence<AllStruct> complex_sequence;
+
+    // complex array
+    AllStruct complex_array[2];
+
+    // complex map
+    map<short, AllStruct> complex_map;
+};
