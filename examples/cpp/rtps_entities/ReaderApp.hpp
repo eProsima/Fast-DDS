@@ -30,6 +30,7 @@
 
 #include "CLIParser.hpp"
 #include "Application.hpp"
+#include "HelloWorld.hpp"
 
 using namespace eprosima::fastdds::rtps;
 
@@ -64,37 +65,15 @@ public:
     //! Trigger the end of execution
     void stop() override;
 
-
-
-
-void on_requested_incompatible_qos(
-        RTPSReader* reader,
-        eprosima::fastdds::dds::PolicyMask qos);
-
-void on_sample_lost(
-        RTPSReader* reader,
-        int32_t sample_lost_since_last_update);
-
-void on_writer_discovery(
-        RTPSReader* reader,
-        WriterDiscoveryInfo::DISCOVERY_STATUS reason,
-        const GUID_t& writer_guid,
-        const WriterProxyData* writer_info);
-
-void on_sample_rejected(
-        RTPSReader* reader,
-        eprosima::fastdds::dds::SampleRejectedStatusKind reason,
-        const CacheChange_t* const change);
-
-void on_incompatible_type(
-        RTPSReader* reader);
-
 private:
 
     //! Register entity
     bool register_entity(std::string topic_name);
 
-
+    //! Method to deserialize the payload
+    bool deserialize_payload(
+            const SerializedPayload_t& payload,
+            HelloWorld* data);
 
     //! Return the current state of execution
     bool is_stopped();
@@ -116,6 +95,8 @@ private:
     mutable std::mutex terminate_cv_mtx_;
 
     std::condition_variable terminate_cv_;
+
+    HelloWorld* data_;
 };
 
 } // namespace rtps_entities

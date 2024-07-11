@@ -22,18 +22,49 @@
 #include <condition_variable>
 #include <stdexcept>
 
+#include <fastcdr/Cdr.h>
+#include <fastcdr/CdrSizeCalculator.hpp>
+
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/attributes/TopicAttributes.hpp>
-#include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/rtps/RTPSDomain.hpp>
 
 #include "HelloWorld.hpp"
+
+template<>
+void eprosima::fastcdr::deserialize(
+        eprosima::fastcdr::Cdr& cdr,
+        HelloWorld& data)
+{
+    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+            [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
+            {
+                bool ret_value = true;
+                switch (mid.id)
+                {
+                    case 0:
+                            dcdr >> data.index();
+                        break;
+
+                    case 1:
+                            dcdr >> data.message();
+                        break;
+
+                    default:
+                        ret_value = false;
+                        break;
+                }
+                return ret_value;
+            });
+}
 
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
@@ -51,8 +82,8 @@ ReaderApp::ReaderApp(
     , rtps_reader_(nullptr)
     , reader_history_(nullptr)
     , stop_(false)
+    , data_(new HelloWorld)
 {
-
     // Create RTPS Participant
     RTPSParticipantAttributes part_attr;
     part_attr.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SIMPLE;
@@ -94,10 +125,8 @@ bool ReaderApp::register_entity(std::string topic_name)
 {
     std::cout << "Registering RTPS Reader" << std::endl;
 
-
     TopicAttributes topic_att;
     topic_att.topicKind = NO_KEY;
-
     topic_att.topicDataType = "HelloWorld";
     topic_att.topicName = topic_name;
 
@@ -120,8 +149,6 @@ void ReaderApp::on_reader_matched(
     }
 }
 
-
-
 void ReaderApp::run()
 {
     std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
@@ -137,23 +164,13 @@ void ReaderApp::on_new_cache_change_added(
 {
     if (!is_stopped())
     {
-        unsigned long index;
-        std::string message;
-
-        index = static_cast<unsigned long>(change->serializedPayload.data[7]) << 24
-                | static_cast<unsigned long>(change->serializedPayload.data[6]) << 16
-                | static_cast<unsigned long>(change->serializedPayload.data[5]) << 8
-                | static_cast<unsigned long>(change->serializedPayload.data[4]);
-
-        std::cout << " Message:";
-        for (uint8_t i = 0; i < change->serializedPayload.length; ++i)
+        if (deserialize_payload(change->serializedPayload, data_))
         {
-            std::cout <<change->serializedPayload.data[i] << " ";
+            std::cout << "Message: " << data_->message() << " with index " <<  data_->index() << std::endl;
+            samples_received_++;
         }
-        std::cout << " with index " << index << " RECEIVED" << std::endl;
 
         reader->get_history()->remove_change((CacheChange_t*)change);
-        samples_received_++;
 
         if ((samples_ > 0) && (samples_received_ >= samples_))
         {
@@ -162,7 +179,38 @@ void ReaderApp::on_new_cache_change_added(
     }
 }
 
+bool ReaderApp::deserialize_payload(
+        const SerializedPayload_t& payload,
+        HelloWorld* data)
+{
+    try
+    {
+        HelloWorld* p_type = data;
 
+        // Object that manages the raw buffer.
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
+
+        // Object that deserializes the data.
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN
+#if FASTCDR_VERSION_MAJOR == 1
+                , eprosima::fastcdr::Cdr::CdrType::DDS_CDR
+#endif // FASTCDR_VERSION_MAJOR == 1
+                );
+
+        // Deserialize encapsulation.
+        deser.read_encapsulation();
+        //payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+        // Deserialize the object.
+        deser >> *p_type;
+    }
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+    {
+        return false;
+    }
+
+    return true;
+}
 
 bool ReaderApp::is_stopped()
 {
@@ -173,61 +221,6 @@ void ReaderApp::stop()
 {
     stop_.store(true);
     terminate_cv_.notify_all();
-}
-
-
-
-
-
-void ReaderApp::on_requested_incompatible_qos(
-        RTPSReader* reader,
-        eprosima::fastdds::dds::PolicyMask qos)
-{
-    static_cast<void>(reader);
-    static_cast<void>(qos);
-    std::cout << "on_requested_incompatible_qos " <<std::endl;
-
-}
-
-void ReaderApp::on_sample_lost(
-        RTPSReader* reader,
-        int32_t sample_lost_since_last_update)
-{
-    static_cast<void>(reader);
-    static_cast<void>(sample_lost_since_last_update);
-        std::cout << "on_sample_lost " <<std::endl;
-
-}
-
-void ReaderApp::on_writer_discovery(
-        RTPSReader* reader,
-        WriterDiscoveryInfo::DISCOVERY_STATUS reason,
-        const GUID_t& writer_guid,
-        const WriterProxyData* writer_info)
-{
-    static_cast<void>(reader);
-    static_cast<void>(reason);
-    static_cast<void>(writer_guid);
-    static_cast<void>(writer_info);
-    std::cout << "on_writer_discovery " <<std::endl;
-}
-
-void ReaderApp::on_sample_rejected(
-        RTPSReader* reader,
-        eprosima::fastdds::dds::SampleRejectedStatusKind reason,
-        const CacheChange_t* const change)
-{
-    static_cast<void>(reader);
-    static_cast<void>(reason);
-    static_cast<void>(change);
-    std::cout << "on_sample_rejected " <<std::endl;
-}
-
-void ReaderApp::on_incompatible_type(
-        RTPSReader* reader)
-{
-    static_cast<void>(reader);
-    std::cout << "on_incompatible_type " <<std::endl;
 }
 
 } // namespace rtps_entities
