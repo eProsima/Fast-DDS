@@ -17,7 +17,6 @@
  *
  */
 
-
 #include "Application.hpp"
 
 #include "CLIParser.hpp"
