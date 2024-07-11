@@ -1,8 +1,22 @@
 Forthcoming
 -----------
 
-* Added new `flow_controller_descriptor_list` XML configuration.
-* Setting vendor_id in the received CacheChange_t for Data and DataFrag.
+Version 2.14.3
+--------------
+
+* Setting `vendor_id` in the received `CacheChange_t` for Data and DataFrag.
+
+Version 2.14.2
+--------------
+
+* Set DataSharing Qos policy in transmitted `Writer`|`ReaderProxyData`
+* New `max_message_size` property to limit the output datagrams size
+* Add XML configuration for `FlowControllerDescriptor`
+
+Version 2.14.1
+--------------
+
+* Implement `copy_from_topic_qos`
 
 Version 2.14.0
 --------------
