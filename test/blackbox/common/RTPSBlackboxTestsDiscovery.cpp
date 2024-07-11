@@ -16,6 +16,7 @@
 
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/RTPSDomain.hpp>
+#include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
 #include <gtest/gtest.h>
 
 #include "RTPSWithRegistrationReader.hpp"
@@ -93,13 +94,13 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscovery)
         [&mutex, &cv, &iteration, &writer_guid, &user_data](
             WRITER_DISCOVERY_STATUS reason,
             const GUID_t& w_guid,
-            const WriterProxyData* w_data)
+            const PublicationBuiltinTopicData* w_data)
         {
             std::unique_lock<std::mutex> lock(mutex);
             writer_guid = w_guid;
             if (nullptr != w_data)
             {
-                user_data = w_data->m_qos.m_userData;
+                user_data = w_data->user_data;
             }
             if (Iterations::NONE == iteration && WRITER_DISCOVERY_STATUS::DISCOVERED_WRITER == reason)
             {
@@ -289,7 +290,7 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscoveryIncompatibleQoS)
         [&mutex, &cv, &iteration, &writer_guid](
             WRITER_DISCOVERY_STATUS reason,
             const GUID_t& w_guid,
-            const WriterProxyData*)
+            const PublicationBuiltinTopicData*)
         {
             std::unique_lock<std::mutex> lock(mutex);
             writer_guid = w_guid;

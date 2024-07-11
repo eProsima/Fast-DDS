@@ -59,7 +59,7 @@ public:
     using OnWriterDiscoveryFunctor = std::function<void (
                         eprosima::fastdds::rtps::WRITER_DISCOVERY_STATUS,
                         const eprosima::fastdds::rtps::GUID_t&,
-                        const eprosima::fastdds::rtps::WriterProxyData*
+                        const eprosima::fastdds::rtps::PublicationBuiltinTopicData*
                         )>;
 
 private:
@@ -106,7 +106,7 @@ private:
                 eprosima::fastdds::rtps::RTPSReader* reader,
                 eprosima::fastdds::rtps::WRITER_DISCOVERY_STATUS reason,
                 const eprosima::fastdds::rtps::GUID_t& writer_guid,
-                const eprosima::fastdds::rtps::WriterProxyData* writer_info) override
+                const eprosima::fastdds::rtps::PublicationBuiltinTopicData* writer_info) override
         {
             reader_.on_writer_discovery(reader, reason, writer_guid, writer_info);
         }
@@ -613,7 +613,7 @@ private:
             eprosima::fastdds::rtps::RTPSReader* reader,
             eprosima::fastdds::rtps::WRITER_DISCOVERY_STATUS reason,
             const eprosima::fastdds::rtps::GUID_t& writer_guid,
-            const eprosima::fastdds::rtps::WriterProxyData* writer_info)
+            const eprosima::fastdds::rtps::PublicationBuiltinTopicData* writer_info)
     {
         ASSERT_EQ(reader_, reader);
 

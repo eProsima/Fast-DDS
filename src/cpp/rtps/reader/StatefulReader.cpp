@@ -24,6 +24,7 @@
 #include <thread>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/reader/ReaderListener.hpp>
@@ -32,6 +33,7 @@
 #include "reader_utils.hpp"
 #include "rtps/RTPSDomainImpl.hpp"
 #include <rtps/builtin/BuiltinProtocols.h>
+#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/DataSharing/DataSharingListener.hpp>
 #include <rtps/DataSharing/ReaderPool.hpp>
@@ -239,8 +241,10 @@ bool StatefulReader::matched_writer_add_edp(
                 {
                     // call the listener without the lock taken
                     guard.unlock();
+                    PublicationBuiltinTopicData info;
+                    from_proxy_to_builtin(wdata, info);
                     listener->on_writer_discovery(
-                        this, WRITER_DISCOVERY_STATUS::CHANGED_QOS_WRITER, wdata.guid(), &wdata);
+                        this, WRITER_DISCOVERY_STATUS::CHANGED_QOS_WRITER, wdata.guid(), &info);
                 }
 
 #ifdef FASTDDS_STATISTICS
@@ -362,7 +366,9 @@ bool StatefulReader::matched_writer_add_edp(
 
     if (nullptr != listener)
     {
-        listener->on_writer_discovery(this, WRITER_DISCOVERY_STATUS::DISCOVERED_WRITER, wdata.guid(), &wdata);
+        PublicationBuiltinTopicData info;
+        from_proxy_to_builtin(wdata, info);
+        listener->on_writer_discovery(this, WRITER_DISCOVERY_STATUS::DISCOVERED_WRITER, wdata.guid(), &info);
     }
 
 #ifdef FASTDDS_STATISTICS
