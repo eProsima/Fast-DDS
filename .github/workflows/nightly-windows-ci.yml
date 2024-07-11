@@ -34,20 +34,6 @@ jobs:
         ctest-args: "-LE xfail"
         fastdds_branch: '2.14.x'
 
-  nightly-windows-ci-2_13_x:
-    strategy:
-      fail-fast: false
-      matrix:
-        security:
-          - 'ON'
-          - 'OFF'
-    uses: eProsima/Fast-DDS/.github/workflows/reusable-windows-ci.yml@2.13.x
-    with:
-      label: 'nightly-sec-${{ matrix.security }}-windows-ci-2.13.x'
-      cmake-args: "-DSECURITY=${{ matrix.security }}"
-      ctest-args: "-LE xfail"
-      fastdds_branch: '2.13.x'
-
   nightly-windows-ci-2_10_x:
     strategy:
       fail-fast: false
