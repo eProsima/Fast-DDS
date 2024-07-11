@@ -22,6 +22,9 @@
 #include <chrono>
 #include <condition_variable>
 
+#include <fastcdr/Cdr.h>
+#include <fastcdr/CdrSizeCalculator.hpp>
+
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
@@ -31,6 +34,26 @@
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/RTPSDomain.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
+
+#include "HelloWorld.hpp"
+
+template<>
+void eprosima::fastcdr::serialize<HelloWorld>(
+        eprosima::fastcdr::Cdr& scdr,
+        const HelloWorld& data)
+{
+    eprosima::fastcdr::Cdr::state current_state(scdr);
+    scdr.begin_serialize_type(current_state,
+            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+
+    scdr
+        << eprosima::fastcdr::MemberId(0) << data.index()
+        << eprosima::fastcdr::MemberId(1) << data.message();
+    scdr.end_serialize_type(current_state);
+}
+
 
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
@@ -50,6 +73,7 @@ WriterApp::WriterApp(
     , writer_history_(nullptr)
     , matched_(0)
     , stop_(false)
+    , data_(new HelloWorld)
 {
     // Create RTPS Participant
     RTPSParticipantAttributes part_attr;
@@ -136,6 +160,47 @@ void WriterApp::run()
     }
 }
 
+bool WriterApp::serialize_payload(
+        const HelloWorld* data,
+        SerializedPayload_t& payload)
+{
+    const HelloWorld* p_type = data;
+
+    // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
+
+    // Object that serializes the data.
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::CdrVersion::XCDRv1);
+
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+#if FASTCDR_VERSION_MAJOR > 1
+    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+#endif // FASTCDR_VERSION_MAJOR > 1
+
+    try
+    {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
+
+        // Serialize the object.
+        ser << *p_type;
+    }
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+    {
+        return false;
+    }
+
+    // Get the serialized length
+#if FASTCDR_VERSION_MAJOR == 1
+    payload.length = static_cast<uint32_t>(ser.getSerializedDataLength());
+#else
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
+#endif // FASTCDR_VERSION_MAJOR == 1
+    return true;
+}
+
+
 void WriterApp::add_change_to_history()
 {
     // Wait for the data endpoints discovery
@@ -156,17 +221,14 @@ void WriterApp::add_change_to_history()
         ch = writer_history_->create_change(255, ALIVE);
     }
 
-    ++samples_sent_;
+    data_->message("Hello World");
+    data_->index(data_->index()+1);
 
-#if defined(_WIN32)
-    ch->serializedPayload.length =
-            sprintf_s((char*)ch->serializedPayload.data, 255, "Hello World %d", samples_sent_) + 1;
-#else
-    ch->serializedPayload.length =
-            snprintf((char*)ch->serializedPayload.data, 255, "Hello World %d", samples_sent_) + 1;
-#endif // if defined(_WIN32)
-
-    std::cout << "Message " << (char*)ch->serializedPayload.data << " SENT" << std::endl;
+    if (serialize_payload(data_, ch->serializedPayload))
+    {
+        std::cout << "Message " << data_->message() << " with index " << data_->index() << " SENT" << std::endl;
+        ++samples_sent_;
+    }
 
     writer_history_->add_change(ch);
 }

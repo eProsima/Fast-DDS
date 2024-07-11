@@ -28,6 +28,8 @@
 
 #include "CLIParser.hpp"
 #include "Application.hpp"
+#include "HelloWorld.hpp"
+#include <fastcdr/FastCdr.h>
 
 using namespace eprosima::fastdds::rtps;
 
@@ -68,6 +70,11 @@ private:
     //! Return the current state of execution
     bool is_stopped();
 
+    //! Serialize payload
+    bool serialize_payload(
+                const HelloWorld* data,
+                eprosima::fastdds::rtps::SerializedPayload_t& payload);
+
     uint16_t samples_;
 
     uint16_t samples_sent_;
@@ -89,6 +96,8 @@ private:
     std::condition_variable terminate_cv_;
 
     const uint32_t period_ms_ = 100; // in ms
+
+    HelloWorld* data_;
 };
 
 } // namespace rtps_entities
