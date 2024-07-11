@@ -353,7 +353,7 @@ TEST_F(XMLProfileParserBasicTests, XMLoadProfiles)
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_ERROR,
             xmlparser::XMLProfileManager::loadXMLFile("missing_file.xml"));
 
-    ParticipantAttributes participant_atts;
+    xmlparser::ParticipantAttributes participant_atts;
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::fillParticipantAttributes("test_participant_profile", participant_atts));
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_ERROR,
@@ -476,7 +476,7 @@ TEST_P(XMLProfileParserTests, XMLParserLibrarySettings)
 TEST_P(XMLProfileParserTests, XMLParserParticipant)
 {
     std::string participant_profile = std::string("test_participant_profile");
-    ParticipantAttributes participant_atts;
+    xmlparser::ParticipantAttributes participant_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::loadXMLFile(xml_filename_));
@@ -579,7 +579,7 @@ TEST_P(XMLProfileParserTests, XMLParserParticipant)
 TEST_F(XMLProfileParserBasicTests, XMLParserParticipantDeprecated)
 {
     std::string participant_profile = std::string("test_participant_profile");
-    ParticipantAttributes participant_atts;
+    xmlparser::ParticipantAttributes participant_atts;
 
     ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::loadXMLFile("test_xml_deprecated.xml"));
@@ -677,7 +677,7 @@ TEST_F(XMLProfileParserBasicTests, XMLParserParticipantDeprecated)
  */
 TEST_P(XMLProfileParserTests, XMLParserDefaultParticipantProfile)
 {
-    ParticipantAttributes participant_atts;
+    xmlparser::ParticipantAttributes participant_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::loadXMLFile(xml_filename_));
@@ -760,7 +760,7 @@ TEST_P(XMLProfileParserTests, XMLParserDefaultParticipantProfile)
  */
 TEST_F(XMLProfileParserBasicTests, XMLParserDefaultParticipantProfileDeprecated)
 {
-    ParticipantAttributes participant_atts;
+    xmlparser::ParticipantAttributes participant_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::loadXMLFile("test_xml_deprecated.xml"));
@@ -844,7 +844,7 @@ TEST_F(XMLProfileParserBasicTests, XMLParserDefaultParticipantProfileDeprecated)
 TEST_P(XMLProfileParserTests, XMLParserPublisher)
 {
     std::string publisher_profile = std::string("test_publisher_profile");
-    PublisherAttributes publisher_atts;
+    xmlparser::PublisherAttributes publisher_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::loadXMLFile(xml_filename_));
@@ -918,7 +918,7 @@ TEST_P(XMLProfileParserTests, XMLParserPublisher)
 TEST_F(XMLProfileParserBasicTests, XMLParserPublisherDeprecated)
 {
     std::string publisher_profile = std::string("test_publisher_profile");
-    PublisherAttributes publisher_atts;
+    xmlparser::PublisherAttributes publisher_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::loadXMLFile("test_xml_deprecated.xml"));
@@ -991,7 +991,7 @@ TEST_F(XMLProfileParserBasicTests, XMLParserPublisherDeprecated)
  */
 TEST_P(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
 {
-    PublisherAttributes publisher_atts;
+    xmlparser::PublisherAttributes publisher_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::loadXMLFile(xml_filename_));
@@ -1063,7 +1063,7 @@ TEST_P(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
  */
 TEST_F(XMLProfileParserBasicTests, XMLParserDefaultPublisherProfileDeprecated)
 {
-    PublisherAttributes publisher_atts;
+    xmlparser::PublisherAttributes publisher_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::loadXMLFile("test_xml_deprecated.xml"));
@@ -1136,7 +1136,7 @@ TEST_F(XMLProfileParserBasicTests, XMLParserDefaultPublisherProfileDeprecated)
 TEST_P(XMLProfileParserTests, XMLParserSubscriber)
 {
     std::string subscriber_profile = std::string("test_subscriber_profile");
-    SubscriberAttributes subscriber_atts;
+    xmlparser::SubscriberAttributes subscriber_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::loadXMLFile(xml_filename_));
@@ -1208,7 +1208,7 @@ TEST_P(XMLProfileParserTests, XMLParserSubscriber)
 TEST_F(XMLProfileParserBasicTests, XMLParserSubscriberDeprecated)
 {
     std::string subscriber_profile = std::string("test_subscriber_profile");
-    SubscriberAttributes subscriber_atts;
+    xmlparser::SubscriberAttributes subscriber_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::loadXMLFile("test_xml_deprecated.xml"));
@@ -1279,7 +1279,7 @@ TEST_F(XMLProfileParserBasicTests, XMLParserSubscriberDeprecated)
  */
 TEST_P(XMLProfileParserTests, XMLParserDefaultSubscriberProfile)
 {
-    SubscriberAttributes subscriber_atts;
+    xmlparser::SubscriberAttributes subscriber_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::loadXMLFile(xml_filename_));
@@ -1349,7 +1349,7 @@ TEST_P(XMLProfileParserTests, XMLParserDefaultSubscriberProfile)
  */
 TEST_F(XMLProfileParserBasicTests, XMLParserDefaultSubscriberProfileDeprecated)
 {
-    SubscriberAttributes subscriber_atts;
+    xmlparser::SubscriberAttributes subscriber_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::loadXMLFile("test_xml_deprecated.xml"));
@@ -1422,7 +1422,7 @@ TEST_F(XMLProfileParserBasicTests, XMLParserDefaultSubscriberProfileDeprecated)
 TEST_F(XMLProfileParserBasicTests, XMLParserRequesterProfile)
 {
     std::string requester_profile = std::string("test_requester_profile");
-    RequesterAttributes requester_atts;
+    xmlparser::RequesterAttributes requester_atts;
 
     ASSERT_EQ(
         xmlparser::XMLP_ret::XML_OK,
@@ -1432,8 +1432,8 @@ TEST_F(XMLProfileParserBasicTests, XMLParserRequesterProfile)
         xmlparser::XMLP_ret::XML_OK,
         xmlparser::XMLProfileManager::fillRequesterAttributes(requester_profile, requester_atts));
 
-    PublisherAttributes& publisher_atts = requester_atts.publisher;
-    SubscriberAttributes& subscriber_atts = requester_atts.subscriber;
+    xmlparser::PublisherAttributes& publisher_atts = requester_atts.publisher;
+    xmlparser::SubscriberAttributes& subscriber_atts = requester_atts.subscriber;
 
     EXPECT_EQ(publisher_atts.topic.topicDataType, "request_type");
     EXPECT_EQ(publisher_atts.topic.topicName, "service_name_Request");
@@ -1459,7 +1459,7 @@ TEST_F(XMLProfileParserBasicTests, XMLParserRequesterProfile)
 TEST_F(XMLProfileParserBasicTests, XMLParserReplierProfile)
 {
     std::string replier_profile = std::string("test_replier_profile");
-    ReplierAttributes replier_atts;
+    xmlparser::ReplierAttributes replier_atts;
 
     ASSERT_EQ(
         xmlparser::XMLP_ret::XML_OK,
@@ -1469,8 +1469,8 @@ TEST_F(XMLProfileParserBasicTests, XMLParserReplierProfile)
         xmlparser::XMLP_ret::XML_OK,
         xmlparser::XMLProfileManager::fillReplierAttributes(replier_profile, replier_atts));
 
-    PublisherAttributes& publisher_atts = replier_atts.publisher;
-    SubscriberAttributes& subscriber_atts = replier_atts.subscriber;
+    xmlparser::PublisherAttributes& publisher_atts = replier_atts.publisher;
+    xmlparser::SubscriberAttributes& subscriber_atts = replier_atts.subscriber;
 
     EXPECT_EQ(publisher_atts.topic.topicDataType, "reply_type");
     EXPECT_EQ(publisher_atts.topic.topicName, "reply_topic_name");
@@ -1493,7 +1493,7 @@ TEST_F(XMLProfileParserBasicTests, XMLParserReplierProfile)
 TEST_F(XMLProfileParserBasicTests, XMLParserSecurity)
 {
     std::string participant_profile = std::string("test_participant_security_profile");
-    ParticipantAttributes participant_atts;
+    xmlparser::ParticipantAttributes participant_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::loadXMLFile("test_xml_security_profile.xml"));
@@ -1516,7 +1516,7 @@ TEST_F(XMLProfileParserBasicTests, XMLParserSecurity)
 
 
     std::string publisher_profile = std::string("test_publisher_security_profile");
-    PublisherAttributes publisher_atts;
+    xmlparser::PublisherAttributes publisher_atts;
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::fillPublisherAttributes(publisher_profile, publisher_atts));
 
@@ -1536,7 +1536,7 @@ TEST_F(XMLProfileParserBasicTests, XMLParserSecurity)
 
 
     std::string subscriber_profile = std::string("test_subscriber_security_profile");
-    SubscriberAttributes subscriber_atts;
+    xmlparser::SubscriberAttributes subscriber_atts;
 
     EXPECT_EQ(xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::fillSubscriberAttributes(subscriber_profile, subscriber_atts));
@@ -2087,7 +2087,7 @@ TEST_F(XMLProfileParserBasicTests, skip_default_xml)
 #else
     setenv("SKIP_DEFAULT_XML_FILE", "1", 1);
 #endif // ifdef _WIN32
-    ParticipantAttributes participant_atts_none;
+    xmlparser::ParticipantAttributes participant_atts_none;
     xmlparser::XMLProfileManager::loadDefaultXMLFile();
     xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts_none);
 
@@ -2096,7 +2096,7 @@ TEST_F(XMLProfileParserBasicTests, skip_default_xml)
 #else
     unsetenv("SKIP_DEFAULT_XML_FILE");
 #endif // ifdef _WIN32
-    ParticipantAttributes participant_atts_default;
+    xmlparser::ParticipantAttributes participant_atts_default;
     xmlparser::XMLProfileManager::loadDefaultXMLFile();
     xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts_default);
 
@@ -2125,7 +2125,7 @@ TEST_F(XMLProfileParserBasicTests, default_env_variable)
     xml_doc.Parse(xml);
     xml_doc.SaveFile("FASTDDS_PROFILES.xml");
 
-    ParticipantAttributes participant_atts_default;
+    xmlparser::ParticipantAttributes participant_atts_default;
     xmlparser::XMLProfileManager::loadDefaultXMLFile();
     xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts_default);
 
@@ -2134,7 +2134,7 @@ TEST_F(XMLProfileParserBasicTests, default_env_variable)
 #else
     setenv("FASTDDS_DEFAULT_PROFILES_FILE", "FASTDDS_PROFILES.xml", 1);
 #endif // ifdef _WIN32
-    ParticipantAttributes participant_atts_file;
+    xmlparser::ParticipantAttributes participant_atts_file;
     xmlparser::XMLProfileManager::loadDefaultXMLFile();
     xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts_file);
     remove("FASTDDS_PROFILES.xml");
@@ -3957,11 +3957,11 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
         {
             using namespace eprosima::fastdds::dds;
 
-            ParticipantAttributes profile_attr;
+            xmlparser::ParticipantAttributes profile_attr;
             ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
                     xmlparser::XMLProfileManager::fillParticipantAttributes("participant", profile_attr));
 
-            ParticipantAttributes default_attr;
+            xmlparser::ParticipantAttributes default_attr;
             xmlparser::XMLProfileManager::getDefaultParticipantAttributes(default_attr);
 
             ASSERT_EQ(profile_attr, default_attr);
@@ -4120,11 +4120,11 @@ TEST_F(XMLProfileParserBasicTests, datareader_thread_settings)
             " test_case = [" << test.title << "]";
         if (test.result == xmlparser::XMLP_ret::XML_OK)
         {
-            SubscriberAttributes profile_attr;
+            xmlparser::SubscriberAttributes profile_attr;
             ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
                     xmlparser::XMLProfileManager::fillSubscriberAttributes("datareader", profile_attr));
 
-            SubscriberAttributes default_attr;
+            xmlparser::SubscriberAttributes default_attr;
             xmlparser::XMLProfileManager::getDefaultSubscriberAttributes(default_attr);
 
             ASSERT_EQ(profile_attr, default_attr);

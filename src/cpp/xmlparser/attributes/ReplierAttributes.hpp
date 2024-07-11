@@ -16,14 +16,15 @@
  * @file ReplierAttributes.hpp
  */
 
-#ifndef _FASTDDS_REPLIERATTRIBUTES_HPP_
-#define _FASTDDS_REPLIERATTRIBUTES_HPP_
+#ifndef FASTDDS_XMLPARSER_ATTRIBUTES__REPLIERATTRIBUTES_HPP
+#define FASTDDS_XMLPARSER_ATTRIBUTES__REPLIERATTRIBUTES_HPP
 
 #include <xmlparser/attributes/PublisherAttributes.hpp>
 #include <xmlparser/attributes/SubscriberAttributes.hpp>
 
 namespace eprosima {
 namespace fastdds {
+namespace xmlparser {
 
 class ReplierAttributes
 {
@@ -50,7 +51,8 @@ public:
     SubscriberAttributes subscriber;
 };
 
+} // namespace xmlparser
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif /* _FASTDDS_REPLIERATTRIBUTES_HPP_ */
+#endif // FASTDDS_XMLPARSER_ATTRIBUTES__REPLIERATTRIBUTES_HPP

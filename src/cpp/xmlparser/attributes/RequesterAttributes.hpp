@@ -16,14 +16,15 @@
  * @file RequesterAttributes.hpp
  */
 
-#ifndef _FASTDDS_REQUESTERATTRIBUTES_HPP_
-#define _FASTDDS_REQUESTERATTRIBUTES_HPP_
+#ifndef FASTDDS_XMLPARSER_ATTRIBUTES__REQUESTERATTRIBUTES_HPP
+#define FASTDDS_XMLPARSER_ATTRIBUTES__REQUESTERATTRIBUTES_HPP
 
 #include <xmlparser/attributes/PublisherAttributes.hpp>
 #include <xmlparser/attributes/SubscriberAttributes.hpp>
 
 namespace eprosima {
 namespace fastdds {
+namespace xmlparser {
 
 class RequesterAttributes
 {
@@ -50,8 +51,8 @@ public:
     SubscriberAttributes subscriber;
 };
 
-
+} // namespace xmlparser
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif /* _FASTDDS_REQUESTERATTRIBUTES_HPP_ */
+#endif // FASTDDS_XMLPARSER_ATTRIBUTES__REQUESTERATTRIBUTES_HPP

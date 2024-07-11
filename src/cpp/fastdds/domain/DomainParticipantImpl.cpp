@@ -107,11 +107,11 @@ DomainParticipantImpl::DomainParticipantImpl(
 {
     participant_->impl_ = this;
 
-    PublisherAttributes pub_attr;
+    xmlparser::PublisherAttributes pub_attr;
     XMLProfileManager::getDefaultPublisherAttributes(pub_attr);
     utils::set_qos_from_attributes(default_pub_qos_, pub_attr);
 
-    SubscriberAttributes sub_attr;
+    xmlparser::SubscriberAttributes sub_attr;
     XMLProfileManager::getDefaultSubscriberAttributes(sub_attr);
     utils::set_qos_from_attributes(default_sub_qos_, sub_attr);
 
@@ -818,7 +818,7 @@ Publisher* DomainParticipantImpl::create_publisher_with_profile(
         const StatusMask& mask)
 {
     // TODO (ILG): Change when we have full XML support for DDS QoS profiles
-    PublisherAttributes attr;
+    xmlparser::PublisherAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(profile_name, attr))
     {
         PublisherQos qos = default_pub_qos_;
@@ -1010,7 +1010,7 @@ void DomainParticipantImpl::reset_default_publisher_qos()
 {
     // TODO (ILG): Change when we have full XML support for DDS QoS profiles
     PublisherImpl::set_qos(default_pub_qos_, PUBLISHER_QOS_DEFAULT, true);
-    PublisherAttributes attr;
+    xmlparser::PublisherAttributes attr;
     XMLProfileManager::getDefaultPublisherAttributes(attr);
     utils::set_qos_from_attributes(default_pub_qos_, attr);
 }
@@ -1024,7 +1024,7 @@ ReturnCode_t DomainParticipantImpl::get_publisher_qos_from_profile(
         const std::string& profile_name,
         PublisherQos& qos) const
 {
-    PublisherAttributes attr;
+    xmlparser::PublisherAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(profile_name, attr))
     {
         qos = default_pub_qos_;
@@ -1058,7 +1058,7 @@ void DomainParticipantImpl::reset_default_subscriber_qos()
 {
     // TODO (ILG): Change when we have full XML support for DDS QoS profiles
     SubscriberImpl::set_qos(default_sub_qos_, SUBSCRIBER_QOS_DEFAULT, true);
-    SubscriberAttributes attr;
+    xmlparser::SubscriberAttributes attr;
     XMLProfileManager::getDefaultSubscriberAttributes(attr);
     utils::set_qos_from_attributes(default_sub_qos_, attr);
 }
@@ -1072,7 +1072,7 @@ ReturnCode_t DomainParticipantImpl::get_subscriber_qos_from_profile(
         const std::string& profile_name,
         SubscriberQos& qos) const
 {
-    SubscriberAttributes attr;
+    xmlparser::SubscriberAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillSubscriberAttributes(profile_name, attr))
     {
         qos = default_sub_qos_;
@@ -1135,7 +1135,7 @@ ReturnCode_t DomainParticipantImpl::get_replier_qos_from_profile(
         const std::string& profile_name,
         ReplierQos& qos) const
 {
-    ReplierAttributes attr;
+    xmlparser::ReplierAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillReplierAttributes(profile_name, attr))
     {
         utils::set_qos_from_attributes(qos, attr);
@@ -1149,7 +1149,7 @@ ReturnCode_t DomainParticipantImpl::get_requester_qos_from_profile(
         const std::string& profile_name,
         RequesterQos& qos) const
 {
-    RequesterAttributes attr;
+    xmlparser::RequesterAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillRequesterAttributes(profile_name, attr))
     {
         utils::set_qos_from_attributes(qos, attr);
@@ -1313,7 +1313,7 @@ Subscriber* DomainParticipantImpl::create_subscriber_with_profile(
         const StatusMask& mask)
 {
     // TODO (ILG): Change when we have full XML support for DDS QoS profiles
-    SubscriberAttributes attr;
+    xmlparser::SubscriberAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillSubscriberAttributes(profile_name, attr))
     {
         SubscriberQos qos = default_sub_qos_;

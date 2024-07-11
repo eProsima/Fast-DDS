@@ -16,8 +16,8 @@
  * @file PublisherAttributes.hpp
  */
 
-#ifndef _FASTDDS_PUBLISHERATTRIBUTES_H_
-#define _FASTDDS_PUBLISHERATTRIBUTES_H_
+#ifndef FASTDDS_XMLPARSER_ATTRIBUTES__PUBLISHERATTRIBUTES_HPP
+#define FASTDDS_XMLPARSER_ATTRIBUTES__PUBLISHERATTRIBUTES_HPP
 
 
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
@@ -31,6 +31,7 @@
 
 namespace eprosima {
 namespace fastdds {
+namespace xmlparser {
 
 /**
  * Class PublisherAttributes, used by the user to define the attributes of a Publisher.
@@ -139,7 +140,8 @@ private:
     int16_t m_entityID = -1;
 };
 
+} // namespace xmlparser
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_PUBLISHERATTRIBUTES_H_ */
+#endif // FASTDDS_XMLPARSER_ATTRIBUTES__PUBLISHERATTRIBUTES_HPP

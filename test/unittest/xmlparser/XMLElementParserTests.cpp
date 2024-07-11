@@ -954,13 +954,13 @@ TEST_F(XMLParserTests, getXMLPortParameters_NegativeClauses)
 
 /*
  * This test checks the negative cases of a <subscriber> xml profile.
- * 1. Check an incorrect for each of the possible SubscriberAttributes.
+ * 1. Check an incorrect for each of the possible xmlparser::SubscriberAttributes.
  * 2. Check an non existant attribute.
  */
 TEST_F(XMLParserTests, getXMLSubscriberAttributes_NegativeClauses)
 {
     uint8_t ident = 1;
-    SubscriberAttributes attr;
+    xmlparser::SubscriberAttributes attr;
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
 
@@ -998,13 +998,13 @@ TEST_F(XMLParserTests, getXMLSubscriberAttributes_NegativeClauses)
 
 /*
  * This test checks the negative cases of a <publisher> xml profile.
- * 1. Check an incorrect for each of the possible PublisherAttributes.
+ * 1. Check an incorrect for each of the possible xmlparser::PublisherAttributes.
  * 2. Check an non existant attribute.
  */
 TEST_F(XMLParserTests, getXMLPublisherAttributes_NegativeClauses)
 {
     uint8_t ident = 1;
-    PublisherAttributes attr;
+    xmlparser::PublisherAttributes attr;
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
 

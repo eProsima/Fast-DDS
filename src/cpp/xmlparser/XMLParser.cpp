@@ -1588,7 +1588,7 @@ XMLP_ret XMLParser::parseXMLParticipantProf(
         BaseNode& rootNode)
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
-    up_participant_t participant_atts{new fastdds::ParticipantAttributes};
+    up_participant_t participant_atts{new fastdds::xmlparser::ParticipantAttributes};
     up_node_participant_t participant_node{new node_participant_t{NodeType::PARTICIPANT, std::move(participant_atts)}};
     if (XMLP_ret::XML_OK == fillDataNode(p_root, *participant_node))
     {
@@ -1608,7 +1608,7 @@ XMLP_ret XMLParser::parseXMLPublisherProf(
         BaseNode& rootNode)
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
-    up_publisher_t publisher_atts{new fastdds::PublisherAttributes};
+    up_publisher_t publisher_atts{new fastdds::xmlparser::PublisherAttributes};
     up_node_publisher_t publisher_node{new node_publisher_t{NodeType::PUBLISHER, std::move(publisher_atts)}};
     if (XMLP_ret::XML_OK == fillDataNode(p_root, *publisher_node))
     {
@@ -1627,7 +1627,7 @@ XMLP_ret XMLParser::parseXMLSubscriberProf(
         BaseNode& rootNode)
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
-    up_subscriber_t subscriber_atts{new fastdds::SubscriberAttributes};
+    up_subscriber_t subscriber_atts{new fastdds::xmlparser::SubscriberAttributes};
     up_node_subscriber_t subscriber_node{new node_subscriber_t{NodeType::SUBSCRIBER, std::move(subscriber_atts)}};
     if (XMLP_ret::XML_OK == fillDataNode(p_root, *subscriber_node))
     {
@@ -1665,7 +1665,7 @@ XMLP_ret XMLParser::parseXMLRequesterProf(
         BaseNode& rootNode)
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
-    up_requester_t requester_atts{new fastdds::RequesterAttributes};
+    up_requester_t requester_atts{new fastdds::xmlparser::RequesterAttributes};
     up_node_requester_t requester_node{new node_requester_t{NodeType::REQUESTER, std::move(requester_atts)}};
     if (XMLP_ret::XML_OK == fillDataNode(p_root, *requester_node))
     {
@@ -1684,7 +1684,7 @@ XMLP_ret XMLParser::parseXMLReplierProf(
         BaseNode& rootNode)
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
-    up_replier_t replier_atts{new fastdds::ReplierAttributes};
+    up_replier_t replier_atts{new fastdds::xmlparser::ReplierAttributes};
     up_node_replier_t replier_node{new node_replier_t{NodeType::REPLIER, std::move(replier_atts)}};
     if (XMLP_ret::XML_OK == fillDataNode(p_root, *replier_node))
     {
@@ -2227,7 +2227,7 @@ XMLP_ret XMLParser::fillDataNode(
 
 XMLP_ret XMLParser::fillDataNode(
         tinyxml2::XMLElement* p_profile,
-        DataNode<fastdds::ParticipantAttributes>& participant_node)
+        DataNode<fastdds::xmlparser::ParticipantAttributes>& participant_node)
 {
     /*
         <xs:complexType name="rtpsParticipantAttributesType">
@@ -2562,7 +2562,7 @@ XMLP_ret XMLParser::fillDataNode(
 
 XMLP_ret XMLParser::fillDataNode(
         tinyxml2::XMLElement* p_profile,
-        DataNode<fastdds::PublisherAttributes>& publisher_node)
+        DataNode<fastdds::xmlparser::PublisherAttributes>& publisher_node)
 {
     if (nullptr == p_profile)
     {
@@ -2583,7 +2583,7 @@ XMLP_ret XMLParser::fillDataNode(
 
 XMLP_ret XMLParser::fillDataNode(
         tinyxml2::XMLElement* p_profile,
-        DataNode<fastdds::SubscriberAttributes>& subscriber_node)
+        DataNode<fastdds::xmlparser::SubscriberAttributes>& subscriber_node)
 {
     if (nullptr == p_profile)
     {
@@ -2604,7 +2604,7 @@ XMLP_ret XMLParser::fillDataNode(
 
 XMLP_ret XMLParser::fillDataNode(
         tinyxml2::XMLElement* p_profile,
-        DataNode<fastdds::RequesterAttributes>& requester_node)
+        DataNode<fastdds::xmlparser::RequesterAttributes>& requester_node)
 {
     /*
         <xs:complexType name="replierRequesterProfileType">
@@ -2719,7 +2719,7 @@ XMLP_ret XMLParser::fillDataNode(
 
 XMLP_ret XMLParser::fillDataNode(
         tinyxml2::XMLElement* p_profile,
-        DataNode<fastdds::ReplierAttributes>& replier_node)
+        DataNode<fastdds::xmlparser::ReplierAttributes>& replier_node)
 {
     /*
         <xs:complexType name="replierRequesterProfileType">

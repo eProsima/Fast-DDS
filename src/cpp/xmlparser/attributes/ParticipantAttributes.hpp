@@ -17,13 +17,14 @@
  *
  */
 
-#ifndef _FASTDDS_PARTICIPANTATTRIBUTES_H_
-#define _FASTDDS_PARTICIPANTATTRIBUTES_H_
+#ifndef FASTDDS_XMLPARSER_ATTRIBUTES__PARTICIPANTATTRIBUTES_HPP
+#define FASTDDS_XMLPARSER_ATTRIBUTES__PARTICIPANTATTRIBUTES_HPP
 
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 
 namespace eprosima {
 namespace fastdds {
+namespace xmlparser {
 
 /**
  * Class ParticipantAttributes, used by the user to define the attributes of a Participant.
@@ -57,7 +58,8 @@ public:
 
 };
 
+} // namespace xmlparser
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_PARTICIPANTATTRIBUTES_H_ */
+#endif // FASTDDS_XMLPARSER_ATTRIBUTES__PARTICIPANTATTRIBUTES_HPP

@@ -49,7 +49,7 @@ namespace utils {
  */
 void set_qos_from_attributes(
         DataWriterQos& qos,
-        const PublisherAttributes& attr);
+        const xmlparser::PublisherAttributes& attr);
 
 /**
  * Obtains the DataReaderQos from the SubscriberAttributes provided.
@@ -59,7 +59,7 @@ void set_qos_from_attributes(
  */
 void set_qos_from_attributes(
         DataReaderQos& qos,
-        const SubscriberAttributes& attr);
+        const xmlparser::SubscriberAttributes& attr);
 
 /**
  * @brief Fill DomainParticipantQos from a given attributes RTPSParticipantAttributes object
@@ -95,7 +95,7 @@ void set_qos_from_attributes(
  */
 void set_extended_qos_from_attributes(
         DomainParticipantExtendedQos& extended_qos,
-        const eprosima::fastdds::ParticipantAttributes& attr);
+        const eprosima::fastdds::xmlparser::ParticipantAttributes& attr);
 
 /**
  * Obtains the RTPSParticipantAttributes from the DomainParticipantQos provided.
@@ -114,7 +114,7 @@ void set_attributes_from_qos(
  * @param [in] extended_qos Pointer to the QoS to write on
  */
 void set_attributes_from_extended_qos(
-        eprosima::fastdds::ParticipantAttributes& attr,
+        eprosima::fastdds::xmlparser::ParticipantAttributes& attr,
         const DomainParticipantExtendedQos& extended_qos);
 
 /**
@@ -135,7 +135,7 @@ void set_qos_from_attributes(
  */
 void set_qos_from_attributes(
         SubscriberQos& qos,
-        const SubscriberAttributes& attr);
+        const xmlparser::SubscriberAttributes& attr);
 
 /**
  * Obtains the PublisherQos from the PublisherAttributes provided.
@@ -145,7 +145,7 @@ void set_qos_from_attributes(
  */
 void set_qos_from_attributes(
         PublisherQos& qos,
-        const PublisherAttributes& attr);
+        const xmlparser::PublisherAttributes& attr);
 
 /**
  * Obtains the ReplierQos from the ReplierAttributes provided.
@@ -155,7 +155,7 @@ void set_qos_from_attributes(
  */
 void set_qos_from_attributes(
         ReplierQos& qos,
-        const ReplierAttributes& attr);
+        const xmlparser::ReplierAttributes& attr);
 
 /**
  * Obtains the RequesterQos from the RequesterAttributes provided.
@@ -165,7 +165,7 @@ void set_qos_from_attributes(
  */
 void set_qos_from_attributes(
         RequesterQos& qos,
-        const RequesterAttributes& attr);
+        const xmlparser::RequesterAttributes& attr);
 
 } /* namespace utils */
 } /* namespace dds */

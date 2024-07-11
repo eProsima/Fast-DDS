@@ -62,7 +62,7 @@ SubscriberImpl::SubscriberImpl(
     , rtps_participant_(p->get_rtps_participant())
     , default_datareader_qos_(DATAREADER_QOS_DEFAULT)
 {
-    SubscriberAttributes sub_attr;
+    xmlparser::SubscriberAttributes sub_attr;
     XMLProfileManager::getDefaultSubscriberAttributes(sub_attr);
     utils::set_qos_from_attributes(default_datareader_qos_, sub_attr);
 }
@@ -254,7 +254,7 @@ DataReader* SubscriberImpl::create_datareader_with_profile(
         std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool)
 {
     // TODO (ILG): Change when we have full XML support for DDS QoS profiles
-    SubscriberAttributes attr;
+    xmlparser::SubscriberAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillSubscriberAttributes(profile_name, attr))
     {
         DataReaderQos qos = default_datareader_qos_;
@@ -388,7 +388,7 @@ void SubscriberImpl::reset_default_datareader_qos()
 {
     // TODO (ILG): Change when we have full XML support for DDS QoS profiles
     DataReaderImpl::set_qos(default_datareader_qos_, DATAREADER_QOS_DEFAULT, true);
-    SubscriberAttributes attr;
+    xmlparser::SubscriberAttributes attr;
     XMLProfileManager::getDefaultSubscriberAttributes(attr);
     utils::set_qos_from_attributes(default_datareader_qos_, attr);
 }
@@ -425,7 +425,7 @@ ReturnCode_t SubscriberImpl::get_datareader_qos_from_profile(
         const std::string& profile_name,
         DataReaderQos& qos) const
 {
-    SubscriberAttributes attr;
+    xmlparser::SubscriberAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillSubscriberAttributes(profile_name, attr, false))
     {
         qos = default_datareader_qos_;
