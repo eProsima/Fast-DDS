@@ -146,6 +146,18 @@
                     <affinity>15</affinity>
                     <stack_size>1048576</stack_size>
                 </security_log_thread>
+                <flow_controller_descriptor_list>
+                    <flow_controller_descriptor>
+                        <name>test_flow_controller</name>
+                        <max_bytes_per_period>2048</max_bytes_per_period>
+                        <period_ms>45</period_ms>
+                        <scheduler>FIFO</scheduler>
+                        <sender_thread>
+                            <affinity>15</affinity>
+                            <stack_size>1048576</stack_size>
+                        </sender_thread>
+                    </flow_controller_descriptor>
+                </flow_controller_descriptor_list>
             </rtps>
         </participant>
 

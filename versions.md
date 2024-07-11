@@ -15,6 +15,7 @@ Version 2.13.0
 * Enable support for DataRepresentationQos to select the CDR encoding.
 * Added authentication handshake properties.
 * Added `max_message_size` property to limit output datagrams size
+* Added new `flow_controller_descriptor_list` XML configuration.
 
 Version 2.12.0
 --------------
