@@ -46,12 +46,12 @@ protected:
         // Find TypeObjects for the type
         xtypes::TypeObjectPair type_objs;
         ASSERT_EQ(DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(
-                        type_name, type_objs),
-                  fastdds::dds::RETCODE_OK);
+                    type_name, type_objs),
+                fastdds::dds::RETCODE_OK);
 
         // Create DynamicType from TypeObject
         dyn_type = DynamicTypeBuilderFactory::get_instance()->create_type_w_type_object(
-                        type_objs.complete_type_object)->build();
+            type_objs.complete_type_object)->build();
     }
 
     std::string snake_to_camel(
@@ -81,6 +81,7 @@ protected:
 
         return camel_case;
     }
+
 };
 
 /**
@@ -119,10 +120,10 @@ TEST_P(DynTypeIDLTests, to_idl)
 }
 
 INSTANTIATE_TEST_SUITE_P(
-        DynTypeIDLTests,
-        DynTypeIDLTests,
-        ::testing::ValuesIn(test::supported_types)
-);
+    DynTypeIDLTests,
+    DynTypeIDLTests,
+    ::testing::ValuesIn(test::supported_types)
+    );
 
 int main(
         int argc,

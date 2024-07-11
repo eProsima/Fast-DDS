@@ -114,7 +114,7 @@ TEST(TreeNodeTests, one_deep_branch)
     // Build the tree
     for (int i = NODE_COUNT - 1; i >= 1; i--)
     {
-        trees[i-1].add_branch(trees[i]);
+        trees[i - 1].add_branch(trees[i]);
     }
 
     const auto& root = trees[0];
