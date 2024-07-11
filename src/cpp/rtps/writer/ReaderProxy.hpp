@@ -351,7 +351,7 @@ public:
      * @param interval Time from data sending to acknack processing.
      */
     void update_nack_supression_interval(
-            const Duration_t& interval);
+            const dds::Duration_t& interval);
 
     LocatorSelectorEntry* general_locator_selector_entry()
     {

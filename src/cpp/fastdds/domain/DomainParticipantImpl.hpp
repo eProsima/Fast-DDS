@@ -248,7 +248,7 @@ public:
      */
     Topic* find_topic(
             const std::string& topic_name,
-            const fastdds::Duration_t& timeout);
+            const fastdds::dds::Duration_t& timeout);
 
     /**
      * Implementation of Topic::set_listener that propagates the listener and mask to all the TopicProxy
@@ -431,7 +431,7 @@ public:
             bool recursive = true) const;
 
     ReturnCode_t get_current_time(
-            fastdds::Time_t& current_time) const;
+            fastdds::dds::Time_t& current_time) const;
 
     const DomainParticipant* get_participant() const
     {

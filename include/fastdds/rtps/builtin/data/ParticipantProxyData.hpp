@@ -97,7 +97,7 @@ public:
     //!
     InstanceHandle_t m_key;
     //!
-    Duration_t m_leaseDuration;
+    dds::Duration_t m_leaseDuration;
 #if HAVE_SECURITY
     //!
     IdentityToken identity_token_;

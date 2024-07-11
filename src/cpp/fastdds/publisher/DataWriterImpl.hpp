@@ -207,7 +207,7 @@ public:
     ReturnCode_t write_w_timestamp(
             const void* const data,
             const InstanceHandle_t& handle,
-            const fastdds::Time_t& timestamp);
+            const fastdds::dds::Time_t& timestamp);
 
     /**
      * @brief Implementation of the DDS `register_instance` operation.
@@ -235,7 +235,7 @@ public:
      */
     InstanceHandle_t register_instance_w_timestamp(
             const void* const instance,
-            const fastdds::Time_t& timestamp);
+            const fastdds::dds::Time_t& timestamp);
 
     /**
      * @brief Implementation of the DDS `unregister_instance` and `dispose` operations.
@@ -276,7 +276,7 @@ public:
     ReturnCode_t unregister_instance_w_timestamp(
             const void* const instance,
             const InstanceHandle_t& handle,
-            const fastdds::Time_t& timestamp,
+            const fastdds::dds::Time_t& timestamp,
             bool dispose = false);
 
     /**
@@ -297,12 +297,12 @@ public:
     }
 
     ReturnCode_t wait_for_acknowledgments(
-            const fastdds::Duration_t& max_wait);
+            const fastdds::dds::Duration_t& max_wait);
 
     ReturnCode_t wait_for_acknowledgments(
             const void* const instance,
             const InstanceHandle_t& handle,
-            const fastdds::Duration_t& max_wait);
+            const fastdds::dds::Duration_t& max_wait);
 
     ReturnCode_t get_publication_matched_status(
             PublicationMatchedStatus& status);

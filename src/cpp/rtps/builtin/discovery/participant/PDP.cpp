@@ -65,10 +65,10 @@ namespace fastdds {
 namespace rtps {
 
 // Default configuration values for PDP reliable entities.
-const Duration_t pdp_heartbeat_period{ 0, 350 * 1000000  }; // 350 milliseconds
-const Duration_t pdp_nack_response_delay{ 0, 100 * 1000000  }; // 100 milliseconds
-const Duration_t pdp_nack_supression_duration{ 0, 11 * 1000000 }; // 11 milliseconds
-const Duration_t pdp_heartbeat_response_delay{ 0, 11 * 1000000 }; // 11 milliseconds
+const dds::Duration_t pdp_heartbeat_period{ 0, 350 * 1000000  }; // 350 milliseconds
+const dds::Duration_t pdp_nack_response_delay{ 0, 100 * 1000000  }; // 100 milliseconds
+const dds::Duration_t pdp_nack_supression_duration{ 0, 11 * 1000000 }; // 11 milliseconds
+const dds::Duration_t pdp_heartbeat_response_delay{ 0, 11 * 1000000 }; // 11 milliseconds
 
 const int32_t pdp_initial_reserved_caches = 20;
 
@@ -1482,7 +1482,7 @@ void PDP::set_next_announcement_interval()
 
 void PDP::set_initial_announcement_interval()
 {
-    if ((initial_announcements_.count > 0) && (initial_announcements_.period <= c_TimeZero))
+    if ((initial_announcements_.count > 0) && (initial_announcements_.period <= dds::c_TimeZero))
     {
         // Force a small interval (1ms) between initial announcements
         EPROSIMA_LOG_WARNING(RTPS_PDP, "Initial announcement period is not strictly positive. Changing to 1ms.");

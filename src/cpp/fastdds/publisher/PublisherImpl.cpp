@@ -495,10 +495,10 @@ ReturnCode_t PublisherImpl::copy_from_topic_qos(
 }
 
 ReturnCode_t PublisherImpl::wait_for_acknowledgments(
-        const Duration_t& max_wait)
+        const dds::Duration_t& max_wait)
 {
-    Duration_t current = max_wait;
-    Duration_t begin, end;
+    dds::Duration_t current = max_wait;
+    dds::Duration_t begin, end;
     std::lock_guard<std::mutex> lock(mtx_writers_);
     for (auto& vit : writers_)
     {
@@ -512,7 +512,7 @@ ReturnCode_t PublisherImpl::wait_for_acknowledgments(
             // Check ellapsed time and decrement
             participant_->get_current_time(end);
             current = current - (end - begin);
-            if (current < fastdds::c_TimeZero)
+            if (current < fastdds::dds::c_TimeZero)
             {
                 return RETCODE_TIMEOUT;
             }

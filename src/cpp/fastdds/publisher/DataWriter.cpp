@@ -101,7 +101,7 @@ ReturnCode_t DataWriter::write(
 ReturnCode_t DataWriter::write_w_timestamp(
         const void* const data,
         const InstanceHandle_t& handle,
-        const fastdds::Time_t& timestamp)
+        const fastdds::dds::Time_t& timestamp)
 {
     return impl_->write_w_timestamp(data, handle, timestamp);
 }
@@ -114,7 +114,7 @@ InstanceHandle_t DataWriter::register_instance(
 
 InstanceHandle_t DataWriter::register_instance_w_timestamp(
         const void* const instance,
-        const fastdds::Time_t& timestamp)
+        const fastdds::dds::Time_t& timestamp)
 {
     return impl_->register_instance_w_timestamp(instance, timestamp);
 }
@@ -129,7 +129,7 @@ ReturnCode_t DataWriter::unregister_instance(
 ReturnCode_t DataWriter::unregister_instance_w_timestamp(
         const void* const instance,
         const InstanceHandle_t& handle,
-        const fastdds::Time_t& timestamp)
+        const fastdds::dds::Time_t& timestamp)
 {
     return impl_->unregister_instance_w_timestamp(instance, handle, timestamp);
 }
@@ -159,7 +159,7 @@ ReturnCode_t DataWriter::dispose(
 ReturnCode_t DataWriter::dispose_w_timestamp(
         const void* const instance,
         const InstanceHandle_t& handle,
-        const fastdds::Time_t& timestamp)
+        const fastdds::dds::Time_t& timestamp)
 {
     return impl_->unregister_instance_w_timestamp(instance, handle, timestamp, true);
 }
@@ -232,7 +232,7 @@ const Publisher* DataWriter::get_publisher() const
 }
 
 ReturnCode_t DataWriter::wait_for_acknowledgments(
-        const fastdds::Duration_t& max_wait)
+        const fastdds::dds::Duration_t& max_wait)
 {
     return impl_->wait_for_acknowledgments(max_wait);
 }
@@ -303,7 +303,7 @@ ReturnCode_t DataWriter::get_sending_locators(
 ReturnCode_t DataWriter::wait_for_acknowledgments(
         const void* const instance,
         const InstanceHandle_t& handle,
-        const fastdds::Duration_t& max_wait)
+        const fastdds::dds::Duration_t& max_wait)
 {
     return impl_->wait_for_acknowledgments(instance, handle, max_wait);
 }

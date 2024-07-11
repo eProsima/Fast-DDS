@@ -52,7 +52,7 @@ struct LivelinessData
     LivelinessData(
             GUID_t guid_in,
             fastdds::dds::LivelinessQosPolicyKind kind_in,
-            Duration_t lease_duration_in)
+            dds::Duration_t lease_duration_in)
         : guid(guid_in)
         , kind(kind_in)
         , lease_duration(lease_duration_in)
@@ -103,7 +103,7 @@ struct LivelinessData
     fastdds::dds::LivelinessQosPolicyKind kind;
 
     //! The lease duration
-    Duration_t lease_duration;
+    dds::Duration_t lease_duration;
 
     //! The number of times the writer is being counted
     unsigned int count = 1;

@@ -252,7 +252,7 @@ ReturnCode_t DomainParticipant::unregister_content_filter_factory(
 
 Topic* DomainParticipant::find_topic(
         const std::string& topic_name,
-        const fastdds::Duration_t& timeout)
+        const fastdds::dds::Duration_t& timeout)
 {
     return impl_->find_topic(topic_name, timeout);
 }
@@ -440,7 +440,7 @@ bool DomainParticipant::contains_entity(
 }
 
 ReturnCode_t DomainParticipant::get_current_time(
-        fastdds::Time_t& current_time) const
+        fastdds::dds::Time_t& current_time) const
 {
     return impl_->get_current_time(current_time);
 }

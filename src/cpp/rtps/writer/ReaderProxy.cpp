@@ -188,7 +188,7 @@ void ReaderProxy::disable_timers()
 }
 
 void ReaderProxy::update_nack_supression_interval(
-        const Duration_t& interval)
+        const dds::Duration_t& interval)
 {
     if (nack_supression_event_)
     {

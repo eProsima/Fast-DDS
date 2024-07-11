@@ -456,7 +456,7 @@ ReturnCode_t DomainParticipantImpl::delete_subscriber(
 
 Topic* DomainParticipantImpl::find_topic(
         const std::string& topic_name,
-        const fastdds::Duration_t& timeout)
+        const fastdds::dds::Duration_t& timeout)
 {
     auto find_fn = [this, &topic_name]()
             {
@@ -1241,7 +1241,7 @@ bool DomainParticipantImpl::contains_entity(
 }
 
 ReturnCode_t DomainParticipantImpl::get_current_time(
-        fastdds::Time_t& current_time) const
+        fastdds::dds::Time_t& current_time) const
 {
     auto now = std::chrono::system_clock::now();
     auto duration = now.time_since_epoch();

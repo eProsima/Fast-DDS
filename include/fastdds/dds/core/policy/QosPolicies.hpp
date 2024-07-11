@@ -398,7 +398,7 @@ public:
      * minimum_separation. <br>
      * By default, c_TimeInifinite.
      */
-    fastdds::Duration_t period;
+    fastdds::dds::Duration_t period;
 };
 
 /**
@@ -445,8 +445,8 @@ public:
 
 public:
 
-    //!Maximum acceptable delay from the time data is written until it is received. <br> By default, c_TimeZero.
-    fastdds::Duration_t duration;
+    //!Maximum acceptable delay from the time data is written until it is received. <br> By default, dds::c_TimeZero.
+    fastdds::dds::Duration_t duration;
 };
 
 /**
@@ -527,16 +527,16 @@ public:
      *  On a DataWriter it represents the period it commits to signal its liveliness.
      *  On a DataReader it represents the period without assertion after which a DataWriter is considered
      *  inactive.
-     *  By default, c_TimeInfinite.
+     *  By default, dds::c_TimeInfinite.
      */
-    fastdds::Duration_t lease_duration;
+    fastdds::dds::Duration_t lease_duration;
     /*! The period for automatic assertion of liveliness.
      *  Only used for DataWriters with AUTOMATIC liveliness.
-     *  By default, c_TimeInfinite.
+     *  By default, dds::c_TimeInfinite.
      *
      * @warning When not infinite, must be < lease_duration, and it is advisable to be less than 0.7*lease_duration.
      */
-    fastdds::Duration_t announcement_period;
+    fastdds::dds::Duration_t announcement_period;
 };
 
 /**
@@ -617,7 +617,7 @@ public:
      * <br>
      * By default, 100 ms.
      */
-    fastdds::Duration_t max_blocking_time;
+    fastdds::dds::Duration_t max_blocking_time;
 };
 
 
@@ -1133,8 +1133,8 @@ public:
 
 public:
 
-    //! Minimum interval between samples. By default, c_TimeZero (the DataReader is interested in all values)
-    fastdds::Duration_t minimum_separation;
+    //! Minimum interval between samples. By default, dds::c_TimeZero (the DataReader is interested in all values)
+    fastdds::dds::Duration_t minimum_separation;
 };
 
 /**
@@ -1850,9 +1850,9 @@ public:
 
     /**
      * @brief Control when the service is able to remove all information regarding a data-instance. <br>
-     * By default, c_TimeZero.
+     * By default, dds::c_TimeZero.
      */
-    fastdds::Duration_t service_cleanup_delay;
+    fastdds::dds::Duration_t service_cleanup_delay;
     /**
      * @brief Controls the HistoryQosPolicy of the fictitious DataReader that stores the data within the durability service.
      * <br>
@@ -1928,8 +1928,8 @@ public:
 
 public:
 
-    //! Period of validity. <br> By default, c_TimeInfinite.
-    fastdds::Duration_t duration;
+    //! Period of validity. <br> By default, dds::c_TimeInfinite.
+    fastdds::dds::Duration_t duration;
 };
 
 /**
@@ -2279,8 +2279,8 @@ public:
 
     //! True if this QoS is enabled. <br> By default, false
     bool enabled;
-    //! The duration to keep samples for (not serialized as not needed by reader). <br> By default, c_TimeInfinite
-    fastdds::Duration_t duration;
+    //! The duration to keep samples for (not serialized as not needed by reader). <br> By default, dds::c_TimeInfinite
+    fastdds::dds::Duration_t duration;
 };
 
 /**

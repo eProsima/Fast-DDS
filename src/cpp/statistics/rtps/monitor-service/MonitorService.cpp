@@ -405,7 +405,7 @@ bool MonitorService::add_change(
 
         std::unique_lock<RecursiveTimedMutex> lock(status_writer_->getMutex());
         auto max_blocking_time = std::chrono::steady_clock::now() +
-                std::chrono::microseconds(fastdds::rtps::TimeConv::Time_t2MicroSecondsInt64(Duration_t()));
+                std::chrono::microseconds(fastdds::rtps::TimeConv::Time_t2MicroSecondsInt64(dds::Duration_t()));
         datawriter_history->add_pub_change(change, wp, lock, max_blocking_time);
     }
     else

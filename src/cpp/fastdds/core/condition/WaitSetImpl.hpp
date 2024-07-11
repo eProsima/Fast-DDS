@@ -83,7 +83,7 @@ struct WaitSetImpl
      */
     ReturnCode_t wait(
             ConditionSeq& active_conditions,
-            const fastdds::Duration_t& timeout);
+            const fastdds::dds::Duration_t& timeout);
 
     /**
      * @brief Retrieve the list of attached conditions

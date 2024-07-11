@@ -262,7 +262,7 @@ public:
      * Publisher receives the acknowledgments and RETCODE_ERROR otherwise.
      */
     FASTDDS_EXPORTED_API ReturnCode_t wait_for_acknowledgments(
-            const fastdds::Duration_t& max_wait);
+            const fastdds::dds::Duration_t& max_wait);
 
     /**
      * This operation returns the DomainParticipant to which the Publisher belongs.

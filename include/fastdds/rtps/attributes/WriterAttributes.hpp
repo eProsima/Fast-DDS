@@ -55,13 +55,13 @@ struct WriterTimes
     }
 
     /// Initial heartbeat delay. Default value 12ms.
-    Duration_t initial_heartbeat_delay {0, 12 * 1000 * 1000};
+    dds::Duration_t initial_heartbeat_delay {0, 12 * 1000 * 1000};
     /// Periodic HB period, default value 3s.
-    Duration_t heartbeat_period {3, 0};
+    dds::Duration_t heartbeat_period {3, 0};
     /// Delay to apply to the response of a ACKNACK message, default value 5ms.
-    Duration_t nack_response_delay {0, 5 * 1000 * 1000};
+    dds::Duration_t nack_response_delay {0, 5 * 1000 * 1000};
     /// This time allows the RTPSWriter to ignore nack messages too soon after the data as sent, default value 0s.
-    Duration_t nack_supression_duration {0, 0};
+    dds::Duration_t nack_supression_duration {0, 0};
 
 };
 
@@ -101,10 +101,10 @@ public:
     fastdds::dds::LivelinessQosPolicyKind liveliness_kind;
 
     //! Liveliness lease duration
-    Duration_t liveliness_lease_duration;
+    dds::Duration_t liveliness_lease_duration;
 
     //! Liveliness announcement period
-    Duration_t liveliness_announcement_period;
+    dds::Duration_t liveliness_announcement_period;
 
     //!Indicates if the Writer is synchronous or asynchronous
     RTPSWriterPublishMode mode;
@@ -119,7 +119,7 @@ public:
     bool disable_positive_acks;
 
     //! Keep duration to keep a sample before considering it has been acked
-    Duration_t keep_duration;
+    dds::Duration_t keep_duration;
 
     //! Flow controller name. Default: fastdds::rtps::FASTDDS_FLOW_CONTROLLER_DEFAULT.
     std::string flow_controller_name = fastdds::rtps::FASTDDS_FLOW_CONTROLLER_DEFAULT;

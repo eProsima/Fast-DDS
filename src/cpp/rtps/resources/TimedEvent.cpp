@@ -78,7 +78,7 @@ void TimedEvent::recreate_timer()
 }
 
 bool TimedEvent::update_interval(
-        const Duration_t& inter)
+        const dds::Duration_t& inter)
 {
     return impl_->update_interval(inter);
 }

@@ -174,7 +174,7 @@ ReturnCode_t Publisher::end_coherent_changes()
 }
 
 ReturnCode_t Publisher::wait_for_acknowledgments(
-        const fastdds::Duration_t& max_wait)
+        const fastdds::dds::Duration_t& max_wait)
 {
     return impl_->wait_for_acknowledgments(max_wait);
 }

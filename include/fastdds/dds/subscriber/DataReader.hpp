@@ -122,7 +122,7 @@ public:
      * @return true if there is new unread message, false if timeout
      */
     FASTDDS_EXPORTED_API bool wait_for_unread_message(
-            const fastdds::Duration_t& timeout);
+            const fastdds::dds::Duration_t& timeout);
 
     /**
      * NOT YET IMPLEMENTED
@@ -135,7 +135,7 @@ public:
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     FASTDDS_EXPORTED_API ReturnCode_t wait_for_historical_data(
-            const fastdds::Duration_t& max_wait) const;
+            const fastdds::dds::Duration_t& max_wait) const;
 
 
     /** @name Read or take data methods.

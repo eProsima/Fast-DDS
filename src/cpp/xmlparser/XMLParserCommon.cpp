@@ -212,7 +212,7 @@ const char* NANOSECONDS = "nanosec";
 const char* SHARED = "SHARED";
 const char* EXCLUSIVE = "EXCLUSIVE";
 
-// For backward compatibility we allow any DURATION_XXX in duration_t element and any subelement
+// For backward compatibility we allow any DURATION_XXX in dds::Duration_t element and any subelement
 // const char* DURATION_INFINITY = R"xsd(\s*DURATION_INFINITY\s*)xsd";
 // const char* DURATION_INFINITE_SEC = R"xsd(\s*(DURATION_INFINITY|DURATION_INFINITE_SEC)\s*)xsd";
 // const char* DURATION_INFINITE_NSEC = R"xsd(\s*(DURATION_INFINITY|DURATION_INFINITE_NSEC)\s*)xsd";

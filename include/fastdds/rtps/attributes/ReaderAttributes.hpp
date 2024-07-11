@@ -46,9 +46,9 @@ public:
     }
 
     //! Initial AckNack delay. Default value 70ms.
-    Duration_t initial_acknack_delay {0, 70 * 1000 * 1000};
+    dds::Duration_t initial_acknack_delay {0, 70 * 1000 * 1000};
     //! Delay to be applied when a HEARTBEAT message is received, default value 5ms.
-    Duration_t heartbeat_response_delay {0,  5 * 1000 * 1000};
+    dds::Duration_t heartbeat_response_delay {0,  5 * 1000 * 1000};
 };
 
 /**
@@ -77,7 +77,7 @@ public:
             fastdds::dds::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS;
 
     //! Liveliness lease duration
-    Duration_t liveliness_lease_duration {TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS};
+    dds::Duration_t liveliness_lease_duration {TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS};
 
     //! Indicates if the reader expects Inline qos, default value false.
     bool expects_inline_qos = false;

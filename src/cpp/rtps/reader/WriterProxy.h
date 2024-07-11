@@ -269,7 +269,7 @@ public:
      * @param interval New interval value.
      */
     void update_heartbeat_response_interval(
-            const Duration_t& interval);
+            const dds::Duration_t& interval);
 
     /**
      * Check if the destinations managed by this sender interface have changed.

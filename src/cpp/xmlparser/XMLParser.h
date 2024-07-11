@@ -430,7 +430,7 @@ protected:
 
     static XMLP_ret getXMLDuration(
             tinyxml2::XMLElement* elem,
-            Duration_t& duration,
+            dds::Duration_t& duration,
             uint8_t ident);
 
     static XMLP_ret getXMLWriterQosPolicies(

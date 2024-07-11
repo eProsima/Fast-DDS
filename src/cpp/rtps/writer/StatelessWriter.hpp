@@ -86,7 +86,7 @@ public:
             const SequenceNumber_t& seq_num) const final;
 
     bool wait_for_all_acked(
-            const Duration_t& max_wait) final;
+            const dds::Duration_t& max_wait) final;
 
     void update_attributes(
             const WriterAttributes& att) final

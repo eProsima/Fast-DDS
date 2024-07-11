@@ -58,7 +58,7 @@
 #endif //FASTDDS_STATISTICS
 
 using eprosima::fastdds::RecursiveTimedMutex;
-using eprosima::fastdds::c_TimeInfinite;
+using eprosima::fastdds::dds::c_TimeInfinite;
 
 using namespace eprosima::fastdds::rtps;
 using namespace std::chrono;
@@ -379,7 +379,7 @@ bool DataReaderImpl::can_be_deleted(
 }
 
 bool DataReaderImpl::wait_for_unread_message(
-        const Duration_t& timeout)
+        const dds::Duration_t& timeout)
 {
     return reader_ ? reader_->wait_for_unread_cache(timeout) : false;
 }
@@ -875,7 +875,7 @@ ReturnCode_t DataReaderImpl::set_qos(
         update_rtps_reader_qos();
 
         // Deadline
-        if (qos_.deadline().period != c_TimeInfinite)
+        if (qos_.deadline().period != dds::c_TimeInfinite)
         {
             deadline_duration_us_ = duration<double, std::ratio<1, 1000000>>(qos_.deadline().period.to_ns() * 1e-3);
             deadline_timer_->update_interval_millisec(qos_.deadline().period.to_ns() * 1e-6);
@@ -886,7 +886,7 @@ ReturnCode_t DataReaderImpl::set_qos(
         }
 
         // Lifespan
-        if (qos_.lifespan().duration != c_TimeInfinite)
+        if (qos_.lifespan().duration != dds::c_TimeInfinite)
         {
             lifespan_duration_us_ =
                     std::chrono::duration<double, std::ratio<1, 1000000>>(qos_.lifespan().duration.to_ns() * 1e-3);
@@ -1099,7 +1099,7 @@ bool DataReaderImpl::on_new_cache_change_added(
         return false;
     }
 
-    if (qos_.deadline().period != c_TimeInfinite)
+    if (qos_.deadline().period != dds::c_TimeInfinite)
     {
         if (!history_.set_next_deadline(
                     change->instanceHandle,
@@ -1117,7 +1117,7 @@ bool DataReaderImpl::on_new_cache_change_added(
         }
     }
 
-    if (qos_.lifespan().duration == c_TimeInfinite)
+    if (qos_.lifespan().duration == dds::c_TimeInfinite)
     {
         return true;
     }
@@ -1200,7 +1200,7 @@ ReturnCode_t DataReaderImpl::get_subscription_matched_status(
 
 bool DataReaderImpl::deadline_timer_reschedule()
 {
-    assert(qos_.deadline().period != c_TimeInfinite);
+    assert(qos_.deadline().period != dds::c_TimeInfinite);
 
     std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
@@ -1218,7 +1218,7 @@ bool DataReaderImpl::deadline_timer_reschedule()
 
 bool DataReaderImpl::deadline_missed()
 {
-    assert(qos_.deadline().period != c_TimeInfinite);
+    assert(qos_.deadline().period != dds::c_TimeInfinite);
 
     std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
@@ -1422,7 +1422,7 @@ const Subscriber* DataReaderImpl::get_subscriber() const
 
 /* TODO
    bool DataReaderImpl::wait_for_historical_data(
-        const Duration_t& max_wait) const
+        const dds::Duration_t& max_wait) const
    {
     (void)max_wait;
     // TODO Implement

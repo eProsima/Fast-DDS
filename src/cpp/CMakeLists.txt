@@ -54,6 +54,7 @@ set(${PROJECT_NAME}_source_files
     fastdds/core/Entity.cpp
     fastdds/core/policy/ParameterList.cpp
     fastdds/core/policy/QosPolicyUtils.cpp
+    fastdds/core/Time_t.cpp
     fastdds/domain/DomainParticipant.cpp
     fastdds/domain/DomainParticipantFactory.cpp
     fastdds/domain/DomainParticipantImpl.cpp

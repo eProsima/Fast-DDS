@@ -118,7 +118,7 @@ public:
      * Method to block the current thread until an unread message is available
      */
     bool wait_for_unread_message(
-            const fastdds::Duration_t& timeout);
+            const fastdds::dds::Duration_t& timeout);
 
 
     /** @name Read or take data methods.
@@ -284,7 +284,7 @@ public:
 
     /* TODO
        bool wait_for_historical_data(
-       const fastdds::Duration_t& max_wait) const;
+       const fastdds::dds::Duration_t& max_wait) const;
      */
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction

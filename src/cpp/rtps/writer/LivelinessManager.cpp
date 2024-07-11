@@ -56,7 +56,7 @@ LivelinessManager::~LivelinessManager()
 bool LivelinessManager::add_writer(
         GUID_t guid,
         fastdds::dds::LivelinessQosPolicyKind kind,
-        Duration_t lease_duration)
+        dds::Duration_t lease_duration)
 {
     if (!manage_automatic_ && kind == fastdds::dds::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
     {
@@ -107,7 +107,7 @@ bool LivelinessManager::add_writer(
 bool LivelinessManager::remove_writer(
         GUID_t guid,
         fastdds::dds::LivelinessQosPolicyKind kind,
-        Duration_t lease_duration,
+        dds::Duration_t lease_duration,
         LivelinessData::WriterStatus& writer_status)
 {
     bool removed = false;
@@ -163,7 +163,7 @@ bool LivelinessManager::remove_writer(
 bool LivelinessManager::assert_liveliness(
         GUID_t guid,
         fastdds::dds::LivelinessQosPolicyKind kind,
-        Duration_t lease_duration)
+        dds::Duration_t lease_duration)
 {
     bool found = false;
 
@@ -298,7 +298,7 @@ bool LivelinessManager::calculate_next()
     std::lock_guard<std::mutex> __(mutex_);
 
     bool any_alive = false;
-    steady_clock::time_point min_time = steady_clock::now() + nanoseconds(c_TimeInfinite.to_ns());
+    steady_clock::time_point min_time = steady_clock::now() + nanoseconds(dds::c_TimeInfinite.to_ns());
 
     timer_owner_ = nullptr;
 

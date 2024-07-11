@@ -347,7 +347,7 @@ bool StatefulReader::matched_writer_add_edp(
             EPROSIMA_LOG_INFO(RTPS_READER, "Writer Proxy " << wp->guid() << " added to " << m_guid.entityId);
         }
     }
-    if (liveliness_lease_duration_ < c_TimeInfinite)
+    if (liveliness_lease_duration_ < dds::c_TimeInfinite)
     {
         auto wlp = this->mp_RTPSParticipant->wlp();
         if ( wlp != nullptr)
@@ -454,7 +454,7 @@ bool StatefulReader::matched_writer_remove(
     }
 
     bool ret_val = (wproxy != nullptr);
-    if (ret_val && liveliness_lease_duration_ < c_TimeInfinite)
+    if (ret_val && liveliness_lease_duration_ < dds::c_TimeInfinite)
     {
         auto wlp = this->mp_RTPSParticipant->wlp();
         if ( wlp != nullptr)
@@ -552,7 +552,7 @@ bool StatefulReader::findWriterProxy(
 void StatefulReader::assert_writer_liveliness(
         const GUID_t& writer)
 {
-    if (liveliness_lease_duration_ < c_TimeInfinite)
+    if (liveliness_lease_duration_ < dds::c_TimeInfinite)
     {
         auto wlp = this->mp_RTPSParticipant->wlp();
         if (wlp != nullptr)
@@ -889,7 +889,7 @@ bool StatefulReader::process_heartbeat_msg(
             // Try to assert liveliness if requested by proxy's logic
             if (assert_liveliness)
             {
-                if (liveliness_lease_duration_ < c_TimeInfinite)
+                if (liveliness_lease_duration_ < dds::c_TimeInfinite)
                 {
                     if (liveliness_kind_ == dds::MANUAL_BY_TOPIC_LIVELINESS_QOS ||
                             writer->liveliness_kind() == dds::MANUAL_BY_TOPIC_LIVELINESS_QOS)

@@ -163,7 +163,7 @@ public:
      * @return true if there is an unread CacheChange_t in the history.
      */
     FASTDDS_EXPORTED_API virtual bool wait_for_unread_cache(
-            const eprosima::fastdds::Duration_t& timeout) = 0;
+            const eprosima::fastdds::dds::Duration_t& timeout) = 0;
 
     /**
      * Get the number of unread CacheChange_t in the history.

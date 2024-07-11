@@ -194,7 +194,7 @@ bool WLP::initWL(
     pub_liveliness_manager_ = new LivelinessManager(
         [&](const GUID_t& guid,
         const dds::LivelinessQosPolicyKind& kind,
-        const Duration_t& lease_duration,
+        const dds::Duration_t& lease_duration,
         int alive_count,
         int not_alive_count) -> void
         {
@@ -211,7 +211,7 @@ bool WLP::initWL(
     sub_liveliness_manager_ = new LivelinessManager(
         [&](const GUID_t& guid,
         const dds::LivelinessQosPolicyKind& kind,
-        const Duration_t& lease_duration,
+        const dds::Duration_t& lease_duration,
         int alive_count,
         int not_alive_count) -> void
         {
@@ -983,7 +983,7 @@ std::shared_ptr<IPayloadPool> WLP::builtin_writer_pool()
 bool WLP::assert_liveliness(
         GUID_t writer,
         dds::LivelinessQosPolicyKind kind,
-        Duration_t lease_duration)
+        dds::Duration_t lease_duration)
 {
     return pub_liveliness_manager_->assert_liveliness(
         writer,
@@ -1005,7 +1005,7 @@ bool WLP::assert_liveliness_manual_by_participant()
 void WLP::pub_liveliness_changed(
         const GUID_t& writer,
         const dds::LivelinessQosPolicyKind& kind,
-        const Duration_t& lease_duration,
+        const dds::Duration_t& lease_duration,
         int32_t alive_change,
         int32_t not_alive_change)
 {
@@ -1056,7 +1056,7 @@ void WLP::pub_liveliness_changed(
 void WLP::sub_liveliness_changed(
         const GUID_t& writer,
         const dds::LivelinessQosPolicyKind& kind,
-        const Duration_t& lease_duration,
+        const dds::Duration_t& lease_duration,
         int32_t alive_change,
         int32_t not_alive_change)
 {
