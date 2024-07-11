@@ -300,14 +300,9 @@ public:
             // Add remote writer (in this case a reader in the same machine)
             eprosima::fastdds::rtps::GUID_t guid = participant_->getGuid();
 
-            eprosima::fastdds::rtps::RemoteLocatorList locators;
             eprosima::fastdds::rtps::Locator_t loc;
             IPLocator::setIPv4(loc, ip_);
             loc.port = static_cast<uint16_t>(port_);
-            locators.add_multicast_locator(loc);
-
-            eprosima::fastdds::rtps::PublicationBuiltinTopicData wqos{};
-            wqos.reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
 
             eprosima::fastdds::rtps::GUID_t wguid;
             wguid.guidPrefix.value[0] = guid.guidPrefix.value[0];
@@ -326,7 +321,14 @@ public:
             wguid.entityId.value[1] = 0;
             wguid.entityId.value[2] = 2;
             wguid.entityId.value[3] = 3;
-            reader_->matched_writer_add(wguid, wguid, wqos, locators);
+
+            eprosima::fastdds::rtps::PublicationBuiltinTopicData pub_info{};
+            pub_info.reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+            pub_info.remote_locators.add_multicast_locator(loc);
+            pub_info.guid = wguid;
+            pub_info.persistence_guid = wguid;
+
+            reader_->matched_writer_add(pub_info);
         }
     }
 

@@ -56,20 +56,14 @@ class RTPSReader : public Endpoint
 public:
 
     /**
-     * @brief Add a matched writer represented by its attributes.
+     * @brief Add a matched writer represented by its publication info.
      *
-     * @param writer_guid              GUID of the writer being matched.
-     * @param writer_persistence_guid  Persistence GUID of the writer being matched.
-     * @param wqos                     QoS of the writer being matched.
-     * @param locators                 Locators where the writer being matched is listening.
+     * @param info  Publication info of the writer being matched.
      *
      * @return True if correctly added.
      */
     FASTDDS_EXPORTED_API virtual bool matched_writer_add(
-            const GUID_t& writer_guid,
-            const GUID_t& writer_persistence_guid,
-            const PublicationBuiltinTopicData& wqos,
-            const RemoteLocatorList& locators) = 0;
+            const PublicationBuiltinTopicData& info) = 0;
 
     /**
      * @brief Remove a writer from the matched writers.

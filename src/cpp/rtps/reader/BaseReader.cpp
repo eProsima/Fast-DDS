@@ -24,6 +24,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/Endpoint.hpp>
+#include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/common/EntityId_t.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
@@ -41,6 +42,7 @@
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/history/CacheChangePool.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/ReaderHistoryState.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
 
@@ -124,16 +126,15 @@ BaseReader::~BaseReader()
 }
 
 bool BaseReader::matched_writer_add(
-        const GUID_t& writer_guid,
-        const GUID_t& writer_persistence_guid,
-        const PublicationBuiltinTopicData& wqos,
-        const RemoteLocatorList& locators)
+        const PublicationBuiltinTopicData& info)
 {
-    WriterProxyData wdata(locators.unicast.size(), locators.multicast.size());
-    from_builtin_to_proxy(wqos, wdata);
-    wdata.guid(writer_guid);
-    wdata.persistence_guid(writer_persistence_guid);
-    wdata.set_locators(locators);
+    const auto& alloc = mp_RTPSParticipant->getRTPSParticipantAttributes().allocation;
+    WriterProxyData wdata(
+        alloc.locators.max_unicast_locators,
+        alloc.locators.max_multicast_locators,
+        alloc.data_limits);
+
+    from_builtin_to_proxy(info, wdata);
     return matched_writer_add(wdata);
 }
 

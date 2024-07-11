@@ -63,10 +63,7 @@ class BaseReader
 public:
 
     bool matched_writer_add(
-            const GUID_t& writer_guid,
-            const GUID_t& writer_persistence_guid,
-            const PublicationBuiltinTopicData& wqos,
-            const RemoteLocatorList& locators) override;
+            const PublicationBuiltinTopicData& info) final;
 
     /**
      * @brief Add a matched writer represented by its attributes.
