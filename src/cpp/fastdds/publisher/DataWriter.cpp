@@ -78,13 +78,13 @@ ReturnCode_t DataWriter::discard_loan(
     return impl_->discard_loan(sample);
 }
 
-bool DataWriter::write(
+ReturnCode_t DataWriter::write(
         const void* const data)
 {
     return impl_->write(data);
 }
 
-bool DataWriter::write(
+ReturnCode_t DataWriter::write(
         const void* const data,
         fastdds::rtps::WriteParams& params)
 {

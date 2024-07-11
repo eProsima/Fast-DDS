@@ -388,7 +388,7 @@ TEST(DDSDataReader, ConsistentReliabilityWhenIntraprocess)
     auto writer = publisher->create_datawriter( topic, writer_qos );
 
     auto data = HelloWorld{};
-    ASSERT_TRUE(writer->write( &data ));
+    ASSERT_EQ(writer->write( &data ), eprosima::fastdds::dds::RETCODE_OK);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
 

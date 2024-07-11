@@ -513,7 +513,7 @@ public:
 
         while (it != msgs.end())
         {
-            if (datawriter_->write((void*)&(*it)))
+            if (eprosima::fastdds::dds::RETCODE_OK == datawriter_->write((void*)&(*it)))
             {
                 default_send_print<type>(*it);
                 it = msgs.erase(it);
@@ -553,7 +553,7 @@ public:
             type& msg)
     {
         default_send_print(msg);
-        return datawriter_->write((void*)&msg);
+        return (eprosima::fastdds::dds::RETCODE_OK == datawriter_->write((void*)&msg));
     }
 
     eprosima::fastdds::dds::ReturnCode_t send_sample(

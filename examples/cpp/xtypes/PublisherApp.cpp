@@ -210,7 +210,7 @@ bool PublisherApp::publish()
         set_uint32_value(hello_, "index", index);
 
         // Publish the sample
-        ret = writer_->write(&hello_);
+        ret = (RETCODE_OK == writer_->write(&hello_));
     }
     return ret;
 }

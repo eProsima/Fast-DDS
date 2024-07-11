@@ -158,7 +158,7 @@ void ReqRepHelloWorldReplier::newNumber(
     hello.index(number);
     hello.message("GoodBye");
     wparams.related_sample_identity(sample_identity);
-    ASSERT_EQ(reply_datawriter_->write((void*)&hello, wparams), true);
+    ASSERT_EQ(reply_datawriter_->write((void*)&hello, wparams), eprosima::fastdds::dds::RETCODE_OK);
 }
 
 void ReqRepHelloWorldReplier::wait_discovery()

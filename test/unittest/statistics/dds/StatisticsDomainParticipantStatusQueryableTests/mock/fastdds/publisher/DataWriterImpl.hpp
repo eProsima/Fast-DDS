@@ -157,17 +157,17 @@ public:
         return RETCODE_OK;
     }
 
-    bool write(
+    ReturnCode_t write(
             const void* const )
     {
-        return true;
+        return RETCODE_OK;
     }
 
-    bool write(
+    ReturnCode_t write(
             const void* const,
             fastdds::rtps::WriteParams& )
     {
-        return true;
+        return RETCODE_OK;
     }
 
     ReturnCode_t write(

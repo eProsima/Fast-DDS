@@ -331,7 +331,7 @@ void TCPReqRepHelloWorldRequester::send(
         current_number_ = number;
     }
 
-    ASSERT_EQ(request_datawriter_->write((void*)&hello, wparams), true);
+    ASSERT_EQ(request_datawriter_->write((void*)&hello, wparams), RETCODE_OK);
     related_sample_identity_ = wparams.sample_identity();
     ASSERT_NE(related_sample_identity_.sequence_number(), SequenceNumber_t());
 }

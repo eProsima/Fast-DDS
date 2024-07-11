@@ -239,7 +239,7 @@ void ReqRepHelloWorldRequester::send(
         current_number_ = number;
     }
 
-    ASSERT_EQ(request_datawriter_->write((void*)&hello, wparams), true);
+    ASSERT_EQ(request_datawriter_->write((void*)&hello, wparams), eprosima::fastdds::dds::RETCODE_OK);
     related_sample_identity_ = wparams.sample_identity();
     ASSERT_NE(related_sample_identity_.sequence_number(), eprosima::fastdds::rtps::SequenceNumber_t());
 }

@@ -243,7 +243,7 @@ TEST_F(UserThreadNonBlockedTest, remove_previous_sample_on_history)
             std::thread([&]
                     {
                         auto now = std::chrono::steady_clock::now();
-                        bool returned_value = datawriter_->write(reinterpret_cast<void*>(&sample));
+                        bool returned_value = (RETCODE_OK == datawriter_->write(reinterpret_cast<void*>(&sample)));
                         auto end = std::chrono::steady_clock::now();
                         promise.set_value_at_thread_exit( std::pair<bool, std::chrono::microseconds>(returned_value,
                         std::chrono::duration_cast<std::chrono::microseconds>(end - now)));
@@ -301,7 +301,7 @@ TEST_F(UserThreadNonBlockedTest, write_sample_besteffort)
             std::thread([&]
                     {
                         auto now = std::chrono::steady_clock::now();
-                        bool returned_value = datawriter_->write(reinterpret_cast<void*>(&sample));
+                        bool returned_value = (RETCODE_OK == datawriter_->write(reinterpret_cast<void*>(&sample)));
                         auto end = std::chrono::steady_clock::now();
                         promise.set_value_at_thread_exit( std::pair<bool, std::chrono::microseconds>(returned_value,
                         std::chrono::duration_cast<std::chrono::microseconds>(end - now)));
@@ -359,7 +359,7 @@ TEST_F(UserThreadNonBlockedTest, write_sample_reliable)
             std::thread([&]
                     {
                         auto now = std::chrono::steady_clock::now();
-                        bool returned_value = datawriter_->write(reinterpret_cast<void*>(&sample));
+                        bool returned_value = (RETCODE_OK == datawriter_->write(reinterpret_cast<void*>(&sample)));
                         auto end = std::chrono::steady_clock::now();
                         promise.set_value_at_thread_exit( std::pair<bool, std::chrono::microseconds>(returned_value,
                         std::chrono::duration_cast<std::chrono::microseconds>(end - now)));
@@ -418,7 +418,7 @@ TEST_F(UserThreadNonBlockedTest, write_async_sample_besteffort)
             std::thread([&]
                     {
                         auto now = std::chrono::steady_clock::now();
-                        bool returned_value = datawriter_->write(reinterpret_cast<void*>(&sample));
+                        bool returned_value = (RETCODE_OK == datawriter_->write(reinterpret_cast<void*>(&sample)));
                         auto end = std::chrono::steady_clock::now();
                         promise.set_value_at_thread_exit( std::pair<bool, std::chrono::microseconds>(returned_value,
                         std::chrono::duration_cast<std::chrono::microseconds>(end - now)));
@@ -477,7 +477,7 @@ TEST_F(UserThreadNonBlockedTest, write_async_sample_reliable)
             std::thread([&]
                     {
                         auto now = std::chrono::steady_clock::now();
-                        bool returned_value = datawriter_->write(reinterpret_cast<void*>(&sample));
+                        bool returned_value = (RETCODE_OK == datawriter_->write(reinterpret_cast<void*>(&sample)));
                         auto end = std::chrono::steady_clock::now();
                         promise.set_value_at_thread_exit( std::pair<bool, std::chrono::microseconds>(returned_value,
                         std::chrono::duration_cast<std::chrono::microseconds>(end - now)));

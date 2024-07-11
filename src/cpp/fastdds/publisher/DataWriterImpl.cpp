@@ -634,29 +634,29 @@ ReturnCode_t DataWriterImpl::discard_loan(
     return RETCODE_OK;
 }
 
-bool DataWriterImpl::write(
+ReturnCode_t DataWriterImpl::write(
         const void* const data)
 {
     if (writer_ == nullptr)
     {
-        return false;
+        return RETCODE_NOT_ENABLED;
     }
 
     EPROSIMA_LOG_INFO(DATA_WRITER, "Writing new data");
-    return RETCODE_OK == create_new_change(ALIVE, data);
+    return create_new_change(ALIVE, data);
 }
 
-bool DataWriterImpl::write(
+ReturnCode_t DataWriterImpl::write(
         const void* const data,
         fastdds::rtps::WriteParams& params)
 {
     if (writer_ == nullptr)
     {
-        return false;
+        return RETCODE_NOT_ENABLED;
     }
 
     EPROSIMA_LOG_INFO(DATA_WRITER, "Writing new data with WriteParams");
-    return RETCODE_OK == create_new_change_with_params(ALIVE, data, params);
+    return create_new_change_with_params(ALIVE, data, params);
 }
 
 ReturnCode_t DataWriterImpl::check_write_preconditions(

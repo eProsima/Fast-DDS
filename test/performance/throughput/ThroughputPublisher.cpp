@@ -754,7 +754,7 @@ bool ThroughputPublisher::test(
                     // initialize and send the sample
                     static_cast<ThroughputType*>(data)->seqnum = ++seqnum;
 
-                    if (!data_writer_->write(data))
+                    if (RETCODE_OK != data_writer_->write(data))
                     {
                         data_writer_->discard_loan(data);
                     }

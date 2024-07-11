@@ -253,7 +253,7 @@ public:
         {
             for (auto& writer : writers_)
             {
-                if (writer->write((void*)&(*it)))
+                if (RETCODE_OK == writer->write((void*)&(*it)))
                 {
                     default_send_print<HelloWorld>(*it);
                     it = msgs.erase(it);
@@ -276,7 +276,7 @@ public:
     {
         if (!writers_.empty())
         {
-            return writers_.back()->write(&sample);
+            return (RETCODE_OK == writers_.back()->write(&sample));
         }
 
         return false;

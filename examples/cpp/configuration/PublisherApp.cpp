@@ -272,7 +272,7 @@ bool PublisherApp::publish()
     if (!is_stopped())
     {
         configuration_.index(configuration_.index() + 1);
-        ret = writer_->write(&configuration_);
+        ret = (RETCODE_OK == writer_->write(&configuration_));
     }
     return ret;
 }

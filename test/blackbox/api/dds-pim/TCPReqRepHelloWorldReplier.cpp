@@ -194,7 +194,7 @@ void TCPReqRepHelloWorldReplier::newNumber(
     hello.index(number);
     hello.message("GoodBye");
     wparams.related_sample_identity(sample_identity);
-    ASSERT_EQ(reply_datawriter_->write((void*)&hello, wparams), true);
+    ASSERT_EQ(reply_datawriter_->write((void*)&hello, wparams), RETCODE_OK);
 }
 
 void TCPReqRepHelloWorldReplier::wait_discovery(

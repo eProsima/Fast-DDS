@@ -766,7 +766,7 @@ bool LatencyTestPublisher::test(
     times_.clear();
     TestCommandType command;
     command.m_command = READY;
-    if (!command_writer_->write(&command))
+    if (RETCODE_OK != command_writer_->write(&command))
     {
         EPROSIMA_LOG_ERROR(LatencyTest, "Publisher cannot publish READY command");
         return false;
@@ -852,7 +852,7 @@ bool LatencyTestPublisher::test(
         start_time_ = std::chrono::steady_clock::now();
 
         // Data publishing
-        if (!data_writer_->write(data))
+        if (RETCODE_OK != data_writer_->write(data))
         {
             // return the loan
             if (data_loans_)

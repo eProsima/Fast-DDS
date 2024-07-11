@@ -591,7 +591,7 @@ GstFlowReturn VideoTestPublisher::new_sample(
 
                     if (rand() % 100 > sub->m_dropRate)
                     {
-                        if (!sub->mp_data_dw->write((void*)sub->mp_video_out))
+                        if (RETCODE_OK != sub->mp_data_dw->write((void*)sub->mp_video_out))
                         {
                             std::cout << "VideoPublication::run -> Cannot write video" << std::endl;
                         }

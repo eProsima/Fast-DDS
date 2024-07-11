@@ -220,7 +220,7 @@ bool AllocTestPublisher::publish()
     if (is_matched())
     {
         data_.index(data_.index() + 1);
-        ret = writer_->write(&data_);
+        ret = (RETCODE_OK == writer_->write(&data_));
     }
     return ret;
 }
