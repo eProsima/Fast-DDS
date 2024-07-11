@@ -19,6 +19,7 @@
 #include <cstdio>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <string>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
