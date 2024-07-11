@@ -1161,6 +1161,9 @@ ReturnCode_t get_default_type_kind(
     }
     else
     {
+        // Set to none to avoid `may be used uninitialized` error
+        default_type = TK_NONE;
+
         EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Size " << size << " is not supported.");
         return RETCODE_BAD_PARAMETER;
     }
