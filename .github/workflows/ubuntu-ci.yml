@@ -54,10 +54,7 @@ concurrency:
 jobs:
   ubuntu-ci:
 
-    if: ${{ (
-              !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
-              !contains(github.event.pull_request.labels.*.name, 'conflicts')
-            ) }}
+    if: ${{ !(github.event_name == 'pull_request') || !contains(github.event.pull_request.labels.*.name, 'conflicts') }}
     uses: ./.github/workflows/reusable-ubuntu-ci.yml
     with:
       # It would be desirable to have a matrix of ubuntu OS for this job, but due to the issue opened in this ticket:
@@ -69,5 +66,6 @@ jobs:
       ctest-args: ${{ inputs.ctest-args || '-LE xfail' }}
       fastdds-branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
       security: ${{ ((inputs.security == true) && true) || github.event_name == 'pull_request' }}
+      run-build: ${{ !(github.event_name == 'pull_request') || !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
       run-tests: ${{ ((inputs.run-tests == true) && true) || (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'no-test')) }}
       use-ccache: ${{ ((inputs.use-ccache == true) && true) || false }}

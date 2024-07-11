@@ -7,6 +7,28 @@ on:
 
 jobs:
 
+  weekly-ubuntu-ci-2_14_x:
+    strategy:
+      fail-fast: false
+      matrix:
+        fastcdr-branch:
+          - '1.1.x'
+          - '2.x'
+        security:
+          - true
+          - false
+    uses: eProsima/Fast-DDS/.github/workflows/reusable-ubuntu-ci.yml@2.14.x
+    with:
+      os-image: 'ubuntu-22.04'
+      label: 'weekly-sec-${{ matrix.security }}-fastcdr-${{ matrix.fastcdr-branch }}-ubuntu-ci-2.14.x'
+      ctest-args: "-LE xfail"
+      fastdds-branch: '2.14.x'
+      fastcdr-branch: ${{ matrix.fastcdr-branch }}
+      security: ${{ matrix.security }}
+      run-build: true
+      run-tests: true
+      use-ccache: false
+
   weekly-ubuntu-ci-2_6_x:
     strategy:
       fail-fast: false
@@ -21,5 +43,6 @@ jobs:
       ctest-args: "-LE xfail"
       fastdds-branch: '2.6.x'
       security: ${{ matrix.security }}
+      run-build: true
       run-tests: true
       use-ccache: false

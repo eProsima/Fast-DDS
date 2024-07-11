@@ -27,8 +27,18 @@ on:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         required: true
         type: string
+      fastcdr-branch:
+        description: 'Branch or tag of Fast CDR repository (https://github.com/eProsima/Fast-CDR)'
+        required: false
+        type: string
+        default: 'master'
       security:
         description: 'Enable security features'
+        required: false
+        type: boolean
+        default: true
+      run-build:
+        description: 'Build Fast DDS (CI skipped otherwise)'
         required: false
         type: boolean
         default: true
@@ -53,6 +63,7 @@ defaults:
 jobs:
   fastdds_build:
     runs-on: ${{ inputs.os-image }}
+    if: ${{ inputs.run-build == true }}
     strategy:
       fail-fast: false
       matrix:
@@ -104,6 +115,20 @@ jobs:
         if: ${{ inputs.use-ccache == true }}
         with:
           api_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get Fast CDR branch
+        id: get_fastcdr_branch
+        uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
+        with:
+          remote_repository: eProsima/Fast-CDR
+          fallback_branch: ${{ inputs.fastcdr-branch }}
+
+      - name: Download Fast CDR
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          repository: eProsima/Fast-CDR
+          path: ${{ github.workspace }}/src/fastcdr
+          ref: ${{ steps.get_fastcdr_branch.outputs.deduced_branch }}
 
       - name: Fetch Fast DDS dependencies
         uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
@@ -296,10 +321,11 @@ jobs:
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
-          colcon_build_args: ${{ inputs.colcon-args }}
+          colcon_build_args: ${{ inputs.colcon-args }} --packages-select fastdds_python
           cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
           cmake_args_default: ''
           cmake_build_type: ${{ matrix.cmake-build-type }}
+          workspace_dependencies: ${{ github.workspace }}/install
           workspace: ${{ github.workspace }}
 
       - name: Upload python build artifacts
