@@ -59,7 +59,7 @@ public:
     }
 
     // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
-    MOCK_METHOD1(matched_writer_add, bool(const WriterProxyData&));
+    MOCK_METHOD1(matched_writer_add_edp, bool(const WriterProxyData&));
 
     MOCK_METHOD2(matched_writer_remove, bool(const GUID_t&, bool));
 

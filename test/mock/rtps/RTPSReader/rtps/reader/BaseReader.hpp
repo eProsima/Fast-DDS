@@ -80,6 +80,16 @@ public:
         return static_cast<BaseReader*>(endpoint);
     }
 
+    bool matched_writer_add(
+            const PublicationBuiltinTopicData& wdata) final
+    {
+        static_cast<void>(wdata);
+        return false;
+    }
+
+    virtual bool matched_writer_add_edp(
+            const WriterProxyData& wdata) = 0;
+
     fastdds::rtps::ReaderListener* get_listener() const override
     {
         return listener_;

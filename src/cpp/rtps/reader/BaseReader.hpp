@@ -72,7 +72,7 @@ public:
      *
      * @return True if correctly added.
      */
-    virtual bool matched_writer_add(
+    virtual bool matched_writer_add_edp(
             const WriterProxyData& wdata) = 0;
 
     fastdds::rtps::ReaderListener* get_listener() const override;

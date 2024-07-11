@@ -685,7 +685,7 @@ void PDPSimple::match_pdp_remote_endpoints(
         else
 #endif // HAVE_SECURITY
         {
-            reader->matched_writer_add(*temp_writer_data);
+            reader->matched_writer_add_edp(*temp_writer_data);
         }
     }
 
@@ -749,7 +749,7 @@ bool PDPSimple::pairing_remote_writer_with_local_reader_after_security(
     auto endpoints = dynamic_cast<fastdds::rtps::SimplePDPEndpointsSecure*>(builtin_endpoints_.get());
     if ((nullptr != endpoints) && (local_reader == endpoints->secure_reader.reader_->getGuid()))
     {
-        endpoints->secure_reader.reader_->matched_writer_add(remote_writer_data);
+        endpoints->secure_reader.reader_->matched_writer_add_edp(remote_writer_data);
         return true;
     }
 

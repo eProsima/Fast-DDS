@@ -548,7 +548,7 @@ bool PDPClient::pairing_remote_writer_with_local_reader_after_security(
 
     if (local_reader == endpoints->reader.reader_->getGuid())
     {
-        endpoints->reader.reader_->matched_writer_add(remote_writer_data);
+        endpoints->reader.reader_->matched_writer_add_edp(remote_writer_data);
         return true;
     }
 
@@ -641,7 +641,7 @@ void PDPClient::removeRemoteEndpoints(
                 temp_writer_data->set_remote_locators(pdata->metatraffic_locators, network, true);
                 temp_writer_data->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
                 temp_writer_data->m_qos.m_durability.kind = dds::TRANSIENT_DURABILITY_QOS;
-                endpoints->reader.reader_->matched_writer_add(*temp_writer_data);
+                endpoints->reader.reader_->matched_writer_add_edp(*temp_writer_data);
             }
         }
 
@@ -894,7 +894,7 @@ void PDPClient::match_pdp_writer_nts_(
     else
 #endif // HAVE_SECURITY
     {
-        endpoints->reader.reader_->matched_writer_add(*temp_writer_data);
+        endpoints->reader.reader_->matched_writer_add_edp(*temp_writer_data);
     }
 }
 

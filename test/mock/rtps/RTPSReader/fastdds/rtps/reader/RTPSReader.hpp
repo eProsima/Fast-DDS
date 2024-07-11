@@ -21,6 +21,7 @@
 
 #include <gmock/gmock.h>
 
+#include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/Endpoint.hpp>
@@ -54,9 +55,8 @@ public:
 
     virtual ~RTPSReader() = default;
 
-
     virtual bool matched_writer_add(
-            const WriterProxyData& wdata) = 0;
+            const PublicationBuiltinTopicData& wdata) = 0;
 
     virtual bool matched_writer_remove(
             const GUID_t& wdata,

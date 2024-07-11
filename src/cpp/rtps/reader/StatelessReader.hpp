@@ -80,7 +80,7 @@ public:
      * @param wdata Pointer to the WPD object to add.
      * @return True if correctly added.
      */
-    bool matched_writer_add(
+    bool matched_writer_add_edp(
             const WriterProxyData& wdata) override;
 
     /**

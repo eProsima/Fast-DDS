@@ -83,7 +83,7 @@ public:
      * @param wdata Attributes of the writer to add.
      * @return True if correctly added.
      */
-    bool matched_writer_add(
+    bool matched_writer_add_edp(
             const WriterProxyData& wdata) override;
 
     /**

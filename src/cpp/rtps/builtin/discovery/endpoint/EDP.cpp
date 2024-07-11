@@ -796,7 +796,7 @@ bool EDP::pairingReader(
                     EPROSIMA_LOG_ERROR(RTPS_EDP, "Security manager returns an error for reader " << reader_guid);
                 }
 #else
-                if (R->matched_writer_add(*wdatait))
+                if (R->matched_writer_add_edp(*wdatait))
                 {
                     static_cast<void>(reader_guid);  // Void cast to force usage if we don't have LOG_INFOs
                     EPROSIMA_LOG_INFO(RTPS_EDP_MATCH,
@@ -1151,7 +1151,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
                             EPROSIMA_LOG_ERROR(RTPS_EDP, "Security manager returns an error for reader " << readerGUID);
                         }
 #else
-                        if (r.matched_writer_add(*wdata))
+                        if (r.matched_writer_add_edp(*wdata))
                         {
                             EPROSIMA_LOG_INFO(RTPS_EDP_MATCH,
                             "WP:" << wdata->guid() << " match R:" << r.getGuid() << ". WLoc:" <<
@@ -1285,7 +1285,7 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(
                 {
                     found = true;
 
-                    if (r.matched_writer_add(remote_writer_data))
+                    if (r.matched_writer_add_edp(remote_writer_data))
                     {
                         EPROSIMA_LOG_INFO(RTPS_EDP, "Valid Matching to local reader: " << readerGUID.entityId);
 

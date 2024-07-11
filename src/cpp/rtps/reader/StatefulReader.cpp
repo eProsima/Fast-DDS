@@ -196,7 +196,7 @@ void StatefulReader::init(
     }
 }
 
-bool StatefulReader::matched_writer_add(
+bool StatefulReader::matched_writer_add_edp(
         const WriterProxyData& wdata)
 {
     assert(wdata.guid() != c_Guid_Unknown);

@@ -135,7 +135,7 @@ bool BaseReader::matched_writer_add(
         alloc.data_limits);
 
     from_builtin_to_proxy(info, wdata);
-    return matched_writer_add(wdata);
+    return matched_writer_add_edp(wdata);
 }
 
 ReaderListener* BaseReader::get_listener() const

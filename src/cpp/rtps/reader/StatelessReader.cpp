@@ -96,7 +96,7 @@ StatelessReader::StatelessReader(
 {
 }
 
-bool StatelessReader::matched_writer_add(
+bool StatelessReader::matched_writer_add_edp(
         const WriterProxyData& wdata)
 {
     ReaderListener* listener = nullptr;
