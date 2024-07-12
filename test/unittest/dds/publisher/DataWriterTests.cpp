@@ -94,13 +94,6 @@ public:
     }
 
     bool serialize(
-            const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    bool serialize(
             const void* const /*data*/,
             fastdds::rtps::SerializedPayload_t* /*payload*/,
             DataRepresentationId_t /*data_representation*/) override
@@ -113,12 +106,6 @@ public:
             void* /*data*/) override
     {
         return true;
-    }
-
-    std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
     }
 
     std::function<uint32_t()> getSerializedSizeProvider(
@@ -200,13 +187,6 @@ public:
 
     bool serialize(
             const void* const /*data*/,
-            fastdds::rtps::SerializedPayload_t* /*payload*/) override
-    {
-        return true;
-    }
-
-    bool serialize(
-            const void* const /*data*/,
             fastdds::rtps::SerializedPayload_t* /*payload*/,
             DataRepresentationId_t /*data_representation*/) override
     {
@@ -218,15 +198,6 @@ public:
             void* /*data*/) override
     {
         return true;
-    }
-
-    std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const /*data*/) override
-    {
-        return []()->uint32_t
-               {
-                   return 0;
-               };
     }
 
     std::function<uint32_t()> getSerializedSizeProvider(
@@ -275,13 +246,6 @@ public:
 
     bool serialize(
             const void* const /*data*/,
-            fastdds::rtps::SerializedPayload_t* /*payload*/) override
-    {
-        return true;
-    }
-
-    bool serialize(
-            const void* const /*data*/,
             fastdds::rtps::SerializedPayload_t* /*payload*/,
             DataRepresentationId_t /*data_representation*/) override
     {
@@ -293,12 +257,6 @@ public:
             void* /*data*/) override
     {
         return true;
-    }
-
-    std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const /*data*/) override
-    {
-        return std::function<uint32_t()>();
     }
 
     std::function<uint32_t()> getSerializedSizeProvider(
@@ -1330,13 +1288,6 @@ public:
 
     bool serialize(
             const void* const /*data*/,
-            fastdds::rtps::SerializedPayload_t* /*payload*/) override
-    {
-        return true;
-    }
-
-    bool serialize(
-            const void* const /*data*/,
             fastdds::rtps::SerializedPayload_t* /*payload*/,
             DataRepresentationId_t /*data_representation*/) override
     {
@@ -1348,15 +1299,6 @@ public:
             void* /*data*/) override
     {
         return true;
-    }
-
-    std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const /*data*/) override
-    {
-        return [this]()
-               {
-                   return m_typeSize;
-               };
     }
 
     std::function<uint32_t()> getSerializedSizeProvider(
@@ -1388,11 +1330,6 @@ public:
     }
 
     bool is_bounded() const override
-    {
-        return true;
-    }
-
-    bool is_plain() const override
     {
         return true;
     }
@@ -1504,11 +1441,6 @@ public:
 
     bool is_plain_result = true;
     bool construct_sample_result = true;
-
-    bool is_plain() const override
-    {
-        return is_plain_result;
-    }
 
     bool is_plain(
             DataRepresentationId_t) const override
@@ -2181,13 +2113,6 @@ public:
         return custom_is_plain_with_rep(data_representation_id);
     }
 
-    MOCK_CONST_METHOD0(custom_is_plain, bool());
-
-    bool is_plain() const override
-    {
-        return custom_is_plain();
-    }
-
 };
 
 TEST(DataWriterTests, data_type_is_plain_data_representation)
@@ -2212,7 +2137,6 @@ TEST(DataWriterTests, data_type_is_plain_data_representation)
     qos_xcdr.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
     /* Expect the "is_plain" method called with default data representation (XCDR1) */
-    EXPECT_CALL(*type, custom_is_plain()).Times(0);
     EXPECT_CALL(*type, custom_is_plain_with_rep(DataRepresentationId_t::XCDR_DATA_REPRESENTATION)).Times(
         testing::AtLeast(1)).WillRepeatedly(testing::Return(true));
     EXPECT_CALL(*type, custom_is_plain_with_rep(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)).Times(0);
@@ -2230,7 +2154,6 @@ TEST(DataWriterTests, data_type_is_plain_data_representation)
     qos_xcdr2.representation().m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
 
     /* Expect the "is_plain" method called with XCDR2 data representation */
-    EXPECT_CALL(*type, custom_is_plain()).Times(0);
     EXPECT_CALL(*type, custom_is_plain_with_rep(DataRepresentationId_t::XCDR_DATA_REPRESENTATION)).Times(0);
     EXPECT_CALL(*type, custom_is_plain_with_rep(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)).Times(
         testing::AtLeast(1)).WillRepeatedly(testing::Return(true));

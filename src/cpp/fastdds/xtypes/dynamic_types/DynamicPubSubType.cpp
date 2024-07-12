@@ -149,12 +149,6 @@ bool DynamicPubSubType::getKey(
 }
 
 std::function<uint32_t()> DynamicPubSubType::getSerializedSizeProvider(
-        const void* const data)
-{
-    return getSerializedSizeProvider(data, DEFAULT_DATA_REPRESENTATION);
-}
-
-std::function<uint32_t()> DynamicPubSubType::getSerializedSizeProvider(
         const void* const data,
         DataRepresentationId_t data_representation)
 {

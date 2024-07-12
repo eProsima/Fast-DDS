@@ -836,9 +836,10 @@ InstanceHandle_t DataWriterImpl::do_register_instance(
             assert(nullptr != payload);
             if (0 == payload->length || nullptr == payload->data)
             {
-                uint32_t size = fixed_payload_size_ ? fixed_payload_size_ : type_->getSerializedSizeProvider(key)();
+                uint32_t size = fixed_payload_size_ ? fixed_payload_size_ : type_->getSerializedSizeProvider(key,
+                                data_representation_)();
                 payload->reserve(size);
-                if (!type_->serialize(key, payload))
+                if (!type_->serialize(key, payload, data_representation_))
                 {
                     EPROSIMA_LOG_WARNING(DATA_WRITER, "Key data serialization failed");
 
@@ -1015,7 +1016,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
     bool was_loaned = check_and_remove_loan(data, payload);
     if (!was_loaned)
     {
-        if (!get_free_payload_from_pool(type_->getSerializedSizeProvider(data), payload))
+        if (!get_free_payload_from_pool(type_->getSerializedSizeProvider(data, data_representation_), payload))
         {
             return RETCODE_OUT_OF_RESOURCES;
         }

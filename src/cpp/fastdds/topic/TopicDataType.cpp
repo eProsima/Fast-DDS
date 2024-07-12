@@ -42,28 +42,6 @@ TopicDataType::~TopicDataType()
 {
 }
 
-bool TopicDataType::serialize(
-        const void* const data,
-        fastdds::rtps::SerializedPayload_t* payload,
-        DataRepresentationId_t data_representation)
-{
-
-    static_cast<void>(data_representation);
-    return serialize(data, payload);
-}
-
-std::function<uint32_t()> TopicDataType::getSerializedSizeProvider(
-        const void* const data,
-        DataRepresentationId_t data_representation)
-{
-    static_cast<void>(data);
-    static_cast<void>(data_representation);
-    return []()
-           {
-               return 0;
-           };
-}
-
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */

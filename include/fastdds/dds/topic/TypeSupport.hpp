@@ -139,13 +139,6 @@ public:
      * @return true if it is serialized correctly, false if not
      */
 
-    FASTDDS_EXPORTED_API virtual bool serialize(
-            const void* const data,
-            fastdds::rtps::SerializedPayload_t* payload)
-    {
-        return serialize(data, payload, DEFAULT_DATA_REPRESENTATION);
-    }
-
     /**
      * @brief Serializes the data
      *
@@ -169,18 +162,6 @@ public:
     FASTDDS_EXPORTED_API virtual bool deserialize(
             fastdds::rtps::SerializedPayload_t* payload,
             void* data);
-
-    /*!
-     * @brief Returns a function which can be used to calculate the serialized size of the provided data.
-     *
-     * @param [in] data Pointer to data.
-     * @return Functor which calculates the serialized size of the data.
-     */
-    FASTDDS_EXPORTED_API virtual std::function<uint32_t()> get_serialized_size_provider(
-            const void* const data)
-    {
-        return get_serialized_size_provider(data, DEFAULT_DATA_REPRESENTATION);
-    }
 
     /*!
      * @brief Returns a function which can be used to calculate the serialized size of the provided data.
@@ -258,14 +239,6 @@ public:
     FASTDDS_EXPORTED_API virtual inline bool is_bounded() const
     {
         return get()->is_bounded();
-    }
-
-    /**
-     * Checks if the type is plain when using default encoding.
-     */
-    FASTDDS_EXPORTED_API virtual inline bool is_plain() const
-    {
-        return is_plain(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
     }
 
     /**

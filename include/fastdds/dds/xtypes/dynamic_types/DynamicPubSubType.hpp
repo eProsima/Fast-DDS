@@ -96,34 +96,19 @@ public:
 
     /*
      * Provide a functor that calculates a specified object serialized size
-     * @param data object whose payload footprint to calculate
+     * @param[in] data object whose payload footprint to calculate
+     * @param [in] data_representation Representation that should be used for calculating the serialized size.
      * @return functor that calculates the size
      */
-    // FASTDDS_TODO_BEFORE(3, 0, "Remove this overload")
-    FASTDDS_EXPORTED_API std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override;
-
     FASTDDS_EXPORTED_API std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
             DataRepresentationId_t data_representation) override;
 
     /*
      * Serialize an object into a given payload
-     * @param data object to serialize
-     * @param payload @ref eprosima::fastdds::rtps::SerializedPayload_t to fill in
-     * @return bool specifying success
-     */
-    FASTDDS_EXPORTED_API bool serialize(
-            const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    /*
-     * Serialize an object into a given payload
-     * @param data object to serialize
-     * @param payload @ref eprosima::fastdds::rtps::SerializedPayload_t to fill in
+     * @param[in] data object to serialize
+     * @param[out] payload @ref eprosima::fastdds::rtps::SerializedPayload_t to fill in
+     * @param [in] data_representation Representation that should be used to encode the data into the payload.
      * @return bool specifying success
      */
     FASTDDS_EXPORTED_API bool serialize(

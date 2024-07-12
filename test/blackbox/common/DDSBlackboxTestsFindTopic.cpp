@@ -59,7 +59,8 @@ class DDSFindTopicTest : public testing::Test
 
         bool serialize(
                 const void* const,
-                fastdds::rtps::SerializedPayload_t*) override
+                fastdds::rtps::SerializedPayload_t*,
+                fastdds::dds::DataRepresentationId_t) override
         {
             return true;
         }
@@ -72,7 +73,8 @@ class DDSFindTopicTest : public testing::Test
         }
 
         std::function<uint32_t()> getSerializedSizeProvider(
-                const void* const) override
+                const void* const,
+                fastdds::dds::DataRepresentationId_t) override
         {
             return {};
         }

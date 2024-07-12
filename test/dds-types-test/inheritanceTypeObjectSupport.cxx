@@ -796,7 +796,7 @@ void register_InnerBitsetHelperChild_type_identifier(
             uint16_t position_a = 0;
             BitsetMemberFlag flags_a = 0;
             uint8_t bitcount_a = 3;
-            TypeKind holder_type_a = TK_BYTE;
+            TypeKind holder_type_a = TK_UINT8;
             CommonBitfield common_a = TypeObjectUtils::build_common_bitfield(position_a, flags_a, bitcount_a, holder_type_a);
             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
             ann_custom_InnerBitsetHelperChild.reset();
@@ -886,7 +886,7 @@ void register_InnerBitsetHelperChild_type_identifier(
             uint16_t position_a = 0;
             BitsetMemberFlag flags_a = 0;
             uint8_t bitcount_a = 3;
-            TypeKind holder_type_a = TK_BYTE;
+            TypeKind holder_type_a = TK_UINT8;
             CommonBitfield common_a = TypeObjectUtils::build_common_bitfield(position_a, flags_a, bitcount_a, holder_type_a);
             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
             ann_custom_InnerBitsetHelperChildChild.reset();
@@ -989,7 +989,7 @@ void register_InnerBitsetHelperChild_type_identifier(
             uint16_t position_a = 0;
             BitsetMemberFlag flags_a = 0;
             uint8_t bitcount_a = 3;
-            TypeKind holder_type_a = TK_BYTE;
+            TypeKind holder_type_a = TK_UINT8;
             CommonBitfield common_a = TypeObjectUtils::build_common_bitfield(position_a, flags_a, bitcount_a, holder_type_a);
             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
             ann_custom_BitsetAliasInheritanceBitset.reset();

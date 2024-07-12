@@ -381,7 +381,7 @@ bool MonitorService::add_change(
         handle);
     if (nullptr != change)
     {
-        uint32_t cdr_size = type_.getSerializedSizeProvider(&status_data)();
+        uint32_t cdr_size = type_.getSerializedSizeProvider(&status_data, fastdds::dds::DEFAULT_DATA_REPRESENTATION)();
         if (!status_writer_payload_pool_->get_payload(cdr_size, change->serializedPayload))
         {
             status_writer_history_->release_change(change);
@@ -393,7 +393,7 @@ bool MonitorService::add_change(
     {
         CDRMessage_t aux_msg(change->serializedPayload);
 
-        if (!type_.serialize(&status_data, &change->serializedPayload))
+        if (!type_.serialize(&status_data, &change->serializedPayload, fastdds::dds::DEFAULT_DATA_REPRESENTATION))
         {
             EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Serialization failed");
             status_writer_history_->release_change(change);

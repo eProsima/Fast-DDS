@@ -43,7 +43,8 @@ public:
 
     bool serialize(
             const void* const /*data*/,
-            eprosima::fastdds::rtps::SerializedPayload_t* /*payload*/) override
+            eprosima::fastdds::rtps::SerializedPayload_t* /*payload*/,
+            eprosima::fastdds::dds::DataRepresentationId_t /*data_representation*/) override
     {
         return true;
     }
@@ -56,7 +57,8 @@ public:
     }
 
     std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const /*data*/) override
+            const void* const /*data*/,
+            eprosima::fastdds::dds::DataRepresentationId_t /*data_representation*/) override
     {
         return []()->uint32_t
                {

@@ -91,16 +91,11 @@ public:
 
     bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override;
-    bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
     bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-    std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override;
     std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
@@ -160,16 +155,11 @@ public:
 
     bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override;
-    bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
     bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-    std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override;
     std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;

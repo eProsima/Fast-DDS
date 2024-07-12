@@ -80,25 +80,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -126,10 +113,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
@@ -171,25 +154,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -217,10 +187,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
@@ -262,25 +228,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -308,10 +261,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
@@ -353,25 +302,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -399,10 +335,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
@@ -444,25 +376,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -490,10 +409,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
@@ -535,25 +450,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -581,10 +483,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
@@ -626,25 +524,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -672,10 +557,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
@@ -717,25 +598,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -763,10 +631,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
@@ -808,25 +672,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -854,10 +705,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
@@ -899,25 +746,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -945,10 +779,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
@@ -990,25 +820,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -1036,10 +853,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
@@ -1081,25 +894,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -1127,10 +927,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
@@ -1172,25 +968,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -1218,10 +1001,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
@@ -1263,25 +1042,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -1309,10 +1075,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
@@ -1354,25 +1116,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -1400,10 +1149,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
@@ -1445,25 +1190,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -1491,10 +1223,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
@@ -1536,25 +1264,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -1582,10 +1297,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
@@ -1627,25 +1338,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -1673,10 +1371,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
@@ -1718,25 +1412,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -1764,10 +1445,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
@@ -1809,25 +1486,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -1855,10 +1519,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
@@ -1900,25 +1560,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -1946,10 +1593,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
@@ -1991,25 +1634,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -2037,10 +1667,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
@@ -2082,25 +1708,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -2128,10 +1741,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
@@ -2173,25 +1782,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -2219,10 +1815,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
@@ -2264,25 +1856,12 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    eProsima_user_DllExport bool serialize(
-            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
 
     eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
@@ -2310,10 +1889,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
 
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override

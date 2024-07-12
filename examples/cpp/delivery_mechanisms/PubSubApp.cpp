@@ -68,7 +68,7 @@ PubSubApp::PubSubApp(
     , stop_(false)
 {
     // Check that the generated type fulfils example constraints: it is plain and bounded
-    if (!type_->is_plain() || !type_->is_bounded())
+    if (!type_->is_plain(eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION) || !type_->is_bounded())
     {
         throw std::runtime_error(
                   "Example generated type does not fulfil the example constraints: it is not plain and/or bounded");

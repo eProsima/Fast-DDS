@@ -72,20 +72,6 @@ public:
     FASTDDS_EXPORTED_API virtual ~TopicDataType();
 
     /**
-     * Serialize method, it should be implemented by the user, since it is abstract.
-     * It is VERY IMPORTANT that the user sets the SerializedPayload length correctly.
-     *
-     * @param [in] data Pointer to the data
-     * @param [out] payload Pointer to the payload
-     * @return True if correct.
-     */
-    // TODO(jlbueno) Remove when Fast DDS-Gen is updated
-    // FASTDDS_TODO_BEFORE(3, 0, "Remove this overload")
-    FASTDDS_EXPORTED_API virtual bool serialize(
-            const void* const data,
-            fastdds::rtps::SerializedPayload_t* payload) = 0;
-
-    /**
      * Serialize method, it should be implemented by the user, since it is abstract. If not implemented, this method
      * will call the serialize method in which the topic data representation is not considered.
      * It is VERY IMPORTANT that the user sets the SerializedPayload length correctly.
@@ -98,7 +84,7 @@ public:
     FASTDDS_EXPORTED_API virtual bool serialize(
             const void* const data,
             fastdds::rtps::SerializedPayload_t* payload,
-            DataRepresentationId_t data_representation);
+            DataRepresentationId_t data_representation) = 0;
 
     /**
      * Deserialize method, it should be implemented by the user, since it is abstract.
@@ -115,22 +101,12 @@ public:
      * @brief Returns a function which can be used to calculate the serialized size of the provided data.
      *
      * @param [in] data Pointer to data.
-     * @return Functor which calculates the serialized size of the data.
-     */
-    // FASTDDS_TODO_BEFORE(3, 0, "Remove this overload")
-    FASTDDS_EXPORTED_API virtual std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) = 0;
-
-    /*!
-     * @brief Returns a function which can be used to calculate the serialized size of the provided data.
-     *
-     * @param [in] data Pointer to data.
      * @param [in] data_representation Representation that should be used for calculating the serialized size.
      * @return Functor which calculates the serialized size of the data.
      */
     FASTDDS_EXPORTED_API virtual std::function<uint32_t()> getSerializedSizeProvider(
             const void* const data,
-            DataRepresentationId_t data_representation);
+            DataRepresentationId_t data_representation) = 0;
 
     /**
      * Create a Data Type.
@@ -215,14 +191,6 @@ public:
      * Checks if the type is bounded.
      */
     FASTDDS_EXPORTED_API virtual inline bool is_bounded() const
-    {
-        return false;
-    }
-
-    /**
-     * Checks if the type is plain when using default encoding.
-     */
-    FASTDDS_EXPORTED_API virtual inline bool is_plain() const
     {
         return false;
     }

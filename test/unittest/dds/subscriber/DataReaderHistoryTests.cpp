@@ -19,39 +19,30 @@ public:
 
     MOCK_METHOD(bool, serialize, (
                 const void* const data,
-                eprosima::fastdds::rtps::SerializedPayload_t* payload),
-                (override));
-
-    MOCK_METHOD(bool, serialize, (
-                const void* const data,
                 eprosima::fastdds::rtps::SerializedPayload_t* payload,
                 DataRepresentationId_t data_representation),
-                (override));
+            (override));
 
     MOCK_METHOD(bool, deserialize, (
                 eprosima::fastdds::rtps::SerializedPayload_t* payload,
                 void* data),
-                (override));
+            (override));
 
     MOCK_METHOD(std::function<uint32_t()>, getSerializedSizeProvider, (
                 const void* const data, DataRepresentationId_t data_representation),
-                (override));
-
-    MOCK_METHOD(std::function<uint32_t()>, getSerializedSizeProvider, (
-                const void* const data),
-                (override));
+            (override));
 
     MOCK_METHOD(void*, createData, (), (override));
 
     MOCK_METHOD(void, deleteData, (
                 void* data),
-                (override));
+            (override));
 
     MOCK_METHOD(bool, getKey, (
                 const void* const data,
                 eprosima::fastdds::dds::InstanceHandle_t* ihandle,
                 bool),
-                (override));
+            (override));
 };
 
 /*!

@@ -24,7 +24,8 @@ using namespace eprosima::fastdds::rtps;
 
 bool MemoryDataType::serialize(
         const void* const data,
-        SerializedPayload_t* payload)
+        SerializedPayload_t* payload,
+        eprosima::fastdds::dds::DataRepresentationId_t)
 {
     const MemoryType* lt = static_cast<const MemoryType*>(data);
 
@@ -35,14 +36,6 @@ bool MemoryDataType::serialize(
     memcpy(payload->data + 8, lt->data.data(), lt->data.size());
     payload->length = static_cast<uint32_t>(8 + lt->data.size());
     return true;
-}
-
-bool MemoryDataType::serialize(
-        const void* const data,
-        SerializedPayload_t* payload,
-        eprosima::fastdds::dds::DataRepresentationId_t)
-{
-    return serialize(data, payload);
 }
 
 bool MemoryDataType::deserialize(
@@ -57,7 +50,8 @@ bool MemoryDataType::deserialize(
 }
 
 std::function<uint32_t()> MemoryDataType::getSerializedSizeProvider(
-        const void* const data)
+        const void* const data,
+        eprosima::fastdds::dds::DataRepresentationId_t)
 {
     return [data]() -> uint32_t
            {
@@ -68,13 +62,6 @@ std::function<uint32_t()> MemoryDataType::getSerializedSizeProvider(
 
                return size;
            };
-}
-
-std::function<uint32_t()> MemoryDataType::getSerializedSizeProvider(
-        const void* const data,
-        eprosima::fastdds::dds::DataRepresentationId_t)
-{
-    return getSerializedSizeProvider(data);
 }
 
 void* MemoryDataType::createData()
@@ -92,20 +79,13 @@ void MemoryDataType::deleteData(
 
 bool TestCommandDataType::serialize(
         const void* const data,
-        SerializedPayload_t* payload)
+        SerializedPayload_t* payload,
+        eprosima::fastdds::dds::DataRepresentationId_t)
 {
     const TestCommandType* t = static_cast<const TestCommandType*>(data);
     *(TESTCOMMAND*)payload->data = t->m_command;
     payload->length = 4;
     return true;
-}
-
-bool TestCommandDataType::serialize(
-        const void* const data,
-        SerializedPayload_t* payload,
-        eprosima::fastdds::dds::DataRepresentationId_t)
-{
-    return serialize(data, payload);
 }
 
 bool TestCommandDataType::deserialize(
@@ -118,7 +98,8 @@ bool TestCommandDataType::deserialize(
 }
 
 std::function<uint32_t()> TestCommandDataType::getSerializedSizeProvider(
-        const void* const)
+        const void* const,
+        eprosima::fastdds::dds::DataRepresentationId_t)
 {
     return []() -> uint32_t
            {
@@ -128,13 +109,6 @@ std::function<uint32_t()> TestCommandDataType::getSerializedSizeProvider(
 
                return size;
            };
-}
-
-std::function<uint32_t()> TestCommandDataType::getSerializedSizeProvider(
-        const void* const data,
-        eprosima::fastdds::dds::DataRepresentationId_t)
-{
-    return getSerializedSizeProvider(data);
 }
 
 void* TestCommandDataType::createData()
