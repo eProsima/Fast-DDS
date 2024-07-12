@@ -1,0 +1,22 @@
+struct GrandparentStruct
+{
+    long my_long;
+};
+
+struct ParentStruct : GrandparentStruct
+{
+    short my_short;
+    string my_string;
+    GrandparentStruct my_grandparent;
+};
+
+struct NestedStructElement
+{
+    boolean my_boolean;
+};
+
+struct StructStruct : ParentStruct
+{
+    NestedStructElement my_nested_element;
+    char my_char;
+};

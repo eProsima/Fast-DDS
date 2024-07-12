@@ -104,6 +104,7 @@ set(${PROJECT_NAME}_source_files
     fastdds/xtypes/dynamic_types/TypeDescriptorImpl.cpp
     fastdds/xtypes/dynamic_types/VerbatimTextDescriptorImpl.cpp
     fastdds/xtypes/exception/Exception.cpp
+    fastdds/xtypes/serializers/idl/dynamic_type_idl.cpp
     fastdds/xtypes/serializers/json/dynamic_data_json.cpp
     fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
     fastdds/xtypes/type_representation/TypeObjectRegistry.cpp

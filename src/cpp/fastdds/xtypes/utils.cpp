@@ -16,18 +16,51 @@
 
 #include <nlohmann/json.hpp>
 
-#include <fastdds/dds/xtypes/utils.hpp>
-
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/utils.hpp>
 
 #include "dynamic_types/DynamicDataImpl.hpp"
-
+#include "serializers/idl/dynamic_type_idl.hpp"
 #include "serializers/json/dynamic_data_json.hpp"
+#include "utils/collections/TreeNode.hpp"
+
+#include <iostream>
+
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+
+ReturnCode_t idl_serialize(
+        const DynamicType::_ref_type& dynamic_type,
+        std::ostream& output) noexcept
+{
+    ReturnCode_t ret = RETCODE_OK;
+
+    // Create a tree representation of the dynamic type
+    utilities::collections::TreeNode<TreeNodeType> root;
+    ret = dyn_type_to_tree(dynamic_type, "ROOT", root);
+
+    if (ret != RETCODE_OK)
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                "Failed to convert DynamicType to tree.");
+        return ret;
+    }
+
+    // Serialize the tree to IDL
+    ret = dyn_type_tree_to_idl(root, output);
+
+    if (ret != RETCODE_OK)
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                "Failed to convert DynamicType tree to IDL.");
+        return ret;
+    }
+
+    return RETCODE_OK;
+}
 
 ReturnCode_t json_serialize(
         const DynamicData::_ref_type& data,

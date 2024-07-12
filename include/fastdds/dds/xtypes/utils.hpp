@@ -20,9 +20,11 @@
 #define FASTDDS_DDS_XTYPES__UTILS_HPP
 
 #include <iostream>
+#include <string>
 
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
@@ -34,6 +36,17 @@ enum class DynamicDataJsonFormat
     OMG,
     EPROSIMA,
 };
+
+/**
+ * @brief Serializes a @ref DynamicType into its IDL representation.
+ *
+ * @param [in] dynamic_type The @ref DynamicType to serialize.
+ * @param [in,out] output \c std::ostream reference containing the IDL representation.
+ * @retval RETCODE_OK when serialization fully succeeds, and inner (member serialization) failing code otherwise.
+ */
+FASTDDS_EXPORTED_API ReturnCode_t idl_serialize(
+        const DynamicType::_ref_type& dynamic_type,
+        std::ostream& output) noexcept;
 
 /*!
  * Serializes a @ref DynamicData into a JSON object, which is then dumped into an \c std::ostream.

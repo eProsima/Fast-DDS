@@ -83,6 +83,7 @@ Forthcoming
 * Refactor in XML Parser to return DynamicTypeBuilder instead of DynamicType
 * Setting vendor_id in the received CacheChange_t for Data and DataFrag.
 * Added new DynamicData to JSON serializer (`json_serialize`).
+* Added new DynamicType to IDL serializer (`idl_serialize`).
 
 Version 2.14.0
 --------------

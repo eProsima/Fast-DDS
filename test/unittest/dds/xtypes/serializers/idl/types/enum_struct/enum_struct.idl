@@ -1,0 +1,11 @@
+enum ColorEnum
+{
+    RED,
+    GREEN,
+    BLUE
+};
+
+struct EnumStruct
+{
+    ColorEnum enum_value;
+};
