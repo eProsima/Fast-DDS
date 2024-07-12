@@ -70,7 +70,7 @@ file(GLOB examples_python_tests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CUR
 
 # Add security test only if security is enabled
 if (NOT SECURITY)
-    list(FILTER examples_python_tests EXCLUDE REGEX "*security*")
+    list(FILTER examples_python_tests EXCLUDE REGEX "security")
 endif()
 
 # Configure the pytest files, and add a test for each one

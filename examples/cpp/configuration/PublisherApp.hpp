@@ -118,4 +118,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_EXAMPLES_CPP_CONFIGURATION__PUBLISHERAPP_HPP 
+#endif // FASTDDS_EXAMPLES_CPP_CONFIGURATION__PUBLISHERAPP_HPP

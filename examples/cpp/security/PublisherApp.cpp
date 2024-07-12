@@ -159,7 +159,7 @@ bool PublisherApp::publish()
     if (!is_stopped())
     {
         hello_.index(hello_.index() + 1);
-        ret = writer_->write(&hello_);
+        ret = (writer_->write(&hello_) == RETCODE_OK) ? true : false;
     }
     return ret;
 }
