@@ -32,10 +32,10 @@
 #include "FlowControl.hpp"
 
 
-#if !defined(GEN_API_VER) || (GEN_API_VER != 2)
+#if !defined(FASTDDS_GEN_API_VER) || (FASTDDS_GEN_API_VER != 3)
 #error \
-    Generated FlowControl is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
-#endif  // GEN_API_VER
+    Generated FlowControlExample is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
+#endif  // FASTDDS_GEN_API_VER
 
 
 /*!
@@ -89,7 +89,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
     eProsima_user_DllExport inline bool is_plain(
-        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
     {
         static_cast<void>(data_representation);
         return false;

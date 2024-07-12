@@ -33,10 +33,10 @@
 
 #include "helpers/basic_inner_typesPubSubTypes.hpp"
 
-#if !defined(GEN_API_VER) || (GEN_API_VER != 2)
+#if !defined(FASTDDS_GEN_API_VER) || (FASTDDS_GEN_API_VER != 3)
 #error \
     Generated sequences is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
-#endif  // GEN_API_VER
+#endif  // FASTDDS_GEN_API_VER
 
 
 /*!
