@@ -17,15 +17,15 @@
  *
  */
 
-#ifndef HELLOWORLDSUBSCRIBER_H_
-#define HELLOWORLDSUBSCRIBER_H_
+#ifndef FASTDDS_EXAMPLES_CPP_DDS_HELLO_WORLD_EXAMPLE_DATA_SHARING__HELLOWORLDSUBSCRIBER_H
+#define FASTDDS_EXAMPLES_CPP_DDS_HELLO_WORLD_EXAMPLE_DATA_SHARING__HELLOWORLDSUBSCRIBER_H
 
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 
-#include "HelloWorldPubSubTypes.hpp"
+#include "HelloWorld.hpp"
 
 class HelloWorldSubscriber
 {
@@ -87,4 +87,4 @@ private:
     listener_;
 };
 
-#endif /* HELLOWORLDSUBSCRIBER_H_ */
+#endif // FASTDDS_EXAMPLES_CPP_DDS_HELLO_WORLD_EXAMPLE_DATA_SHARING__HELLOWORLDSUBSCRIBER_H

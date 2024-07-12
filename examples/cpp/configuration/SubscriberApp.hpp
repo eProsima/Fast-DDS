@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_CONFIGURATION_SUBSCRIBER_APP_HPP_
-#define _FASTDDS_CONFIGURATION_SUBSCRIBER_APP_HPP_
+#ifndef FASTDDS_EXAMPLES_CPP_CONFIGURATION__SUBSCRIBERAPP_HPP
+#define FASTDDS_EXAMPLES_CPP_CONFIGURATION__SUBSCRIBERAPP_HPP
 
 #include <atomic>
 #include <condition_variable>
@@ -32,7 +32,7 @@
 
 #include "Application.hpp"
 #include "CLIParser.hpp"
-#include "ConfigurationPubSubTypes.hpp"
+#include "Configuration.hpp"
 
 using namespace eprosima::fastdds::dds;
 
@@ -123,4 +123,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_CONFIGURATION_SUBSCRIBER_APP_HPP_ */
+#endif // FASTDDS_EXAMPLES_CPP_CONFIGURATION__SUBSCRIBERAPP_HPP

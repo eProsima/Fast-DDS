@@ -22,7 +22,3 @@ add_subdirectory(RequestReplyExample)
 add_subdirectory(StaticHelloWorldExample)
 add_subdirectory(WriterLoansExample)
 add_subdirectory(ZeroCopyExample)
-
-if(SECURITY)
-    add_subdirectory(SecureHelloWorldExample)
-endif()

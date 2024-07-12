@@ -17,11 +17,10 @@
  *
  */
 
-#ifndef HELLOWORLDPUBLISHER_H_
-#define HELLOWORLDPUBLISHER_H_
+#ifndef FASTDDS_EXAMPLES_CPP_DDS_DYNAMIC_HELLO_WORLD_EXAMPLE__HELLOWORLDPUBLISHER_H
+#define FASTDDS_EXAMPLES_CPP_DDS_DYNAMIC_HELLO_WORLD_EXAMPLE__HELLOWORLDPUBLISHER_H
 
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
-
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 
@@ -90,4 +89,4 @@ private:
 
 
 
-#endif /* HELLOWORLDPUBLISHER_H_ */
+#endif // FASTDDS_EXAMPLES_CPP_DDS_DYNAMIC_HELLO_WORLD_EXAMPLE__HELLOWORLDPUBLISHER_H

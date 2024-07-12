@@ -23,3 +23,7 @@ add_subdirectory(cpp/discovery_server)
 add_subdirectory(cpp/hello_world)
 add_subdirectory(cpp/rtps)
 add_subdirectory(cpp/xtypes)
+
+if (SECURITY)
+    add_subdirectory(cpp/security)
+endif()

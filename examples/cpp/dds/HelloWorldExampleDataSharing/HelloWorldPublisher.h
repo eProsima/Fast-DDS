@@ -17,15 +17,14 @@
  *
  */
 
-#ifndef HELLOWORLDPUBLISHER_H_
-#define HELLOWORLDPUBLISHER_H_
-
-#include "HelloWorldPubSubTypes.hpp"
+#ifndef FASTDDS_EXAMPLES_CPP_DDS_HELLO_WORLD_EXAMPLE_DATA_SHARING__HELLOWORLDPUBLISHER_H
+#define FASTDDS_EXAMPLES_CPP_DDS_HELLO_WORLD_EXAMPLE_DATA_SHARING__HELLOWORLDPUBLISHER_H
 
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 
+#include "HelloWorld.hpp"
 class HelloWorldPublisher
 {
 public:
@@ -93,4 +92,4 @@ private:
 
 
 
-#endif /* HELLOWORLDPUBLISHER_H_ */
+#endif // FASTDDS_EXAMPLES_CPP_DDS_HELLO_WORLD_EXAMPLE_DATA_SHARING__HELLOWORLDPUBLISHER_H

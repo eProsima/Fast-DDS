@@ -37,9 +37,10 @@
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
 
-using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastdds::rtps;
+#include "DeliveryMechanismsPubSubTypes.hpp"
 
+using namespace eprosima::fastdds::rtps;
+using namespace eprosima::fastdds::dds;
 namespace eprosima {
 namespace fastdds {
 namespace examples {
@@ -102,7 +103,7 @@ PublisherApp::PublisherApp(
         {
             // Large Data is a builtin transport
             pqos.transport().use_builtin_transports = true;
-            pqos.setup_transports(eprosima::fastdds::rtps::BuiltinTransports::LARGE_DATA);
+            pqos.setup_transports(BuiltinTransports::LARGE_DATA);
             break;
         }
         case CLIParser::DeliveryMechanismKind::TCPv4:
@@ -118,10 +119,10 @@ PublisherApp::PublisherApp(
                 tcp_ip_address = config.tcp_ip_address;
             }
             // Set unicast locators
-            eprosima::fastdds::rtps::Locator_t tcp_v4_locator_;
+            Locator_t tcp_v4_locator_;
             tcp_v4_locator_.kind = LOCATOR_KIND_TCPv4;
-            eprosima::fastdds::rtps::IPLocator::setIPv4(tcp_v4_locator_, tcp_ip_address);
-            eprosima::fastdds::rtps::IPLocator::setPhysicalPort(tcp_v4_locator_, 5100);
+            IPLocator::setIPv4(tcp_v4_locator_, tcp_ip_address);
+            IPLocator::setPhysicalPort(tcp_v4_locator_, 5100);
             pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(tcp_v4_locator_);
             pqos.wire_protocol().default_unicast_locator_list.push_back(tcp_v4_locator_);
             tcp_v4_transport_->set_WAN_address(tcp_ip_address);
@@ -142,10 +143,10 @@ PublisherApp::PublisherApp(
                 tcp_ip_address = config.tcp_ip_address;
             }
             // Set unicast locators
-            eprosima::fastdds::rtps::Locator_t tcp_v6_locator_;
+            Locator_t tcp_v6_locator_;
             tcp_v6_locator_.kind = LOCATOR_KIND_TCPv6;
-            eprosima::fastdds::rtps::IPLocator::setIPv6(tcp_v6_locator_, tcp_ip_address);
-            eprosima::fastdds::rtps::IPLocator::setPhysicalPort(tcp_v6_locator_, 5100);
+            IPLocator::setIPv6(tcp_v6_locator_, tcp_ip_address);
+            IPLocator::setPhysicalPort(tcp_v6_locator_, 5100);
             pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(tcp_v6_locator_);
             pqos.wire_protocol().default_unicast_locator_list.push_back(tcp_v6_locator_);
             tcp_v6_transport_->add_listener_port(5100);
@@ -235,7 +236,7 @@ PublisherApp::~PublisherApp()
 }
 
 void PublisherApp::on_publication_matched(
-        eprosima::fastdds::dds::DataWriter* /*writer*/,
+        DataWriter* /*writer*/,
         const PublicationMatchedStatus& info)
 {
     if (info.current_count_change == 1)

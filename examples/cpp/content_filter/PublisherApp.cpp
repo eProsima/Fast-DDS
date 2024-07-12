@@ -31,6 +31,7 @@
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 
+#include "HelloWorldPubSubTypes.hpp"
 #include "HelloWorldTypeObjectSupport.hpp"
 
 namespace eprosima {

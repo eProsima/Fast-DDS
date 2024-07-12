@@ -119,7 +119,7 @@ PubSubApp::PubSubApp(
         {
             // Large Data is a builtin transport
             pqos.transport().use_builtin_transports = true;
-            pqos.setup_transports(eprosima::fastdds::rtps::BuiltinTransports::LARGE_DATA);
+            pqos.setup_transports(BuiltinTransports::LARGE_DATA);
             break;
         }
         case CLIParser::DeliveryMechanismKind::TCPv4:
@@ -135,10 +135,10 @@ PubSubApp::PubSubApp(
                 tcp_ip_address = config.tcp_ip_address;
             }
             // Set unicast locators
-            eprosima::fastdds::rtps::Locator_t tcp_v4_locator_;
+            Locator_t tcp_v4_locator_;
             tcp_v4_locator_.kind = LOCATOR_KIND_TCPv4;
-            eprosima::fastdds::rtps::IPLocator::setIPv4(tcp_v4_locator_, tcp_ip_address);
-            eprosima::fastdds::rtps::IPLocator::setPhysicalPort(tcp_v4_locator_, 5100);
+            IPLocator::setIPv4(tcp_v4_locator_, tcp_ip_address);
+            IPLocator::setPhysicalPort(tcp_v4_locator_, 5100);
             pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(tcp_v4_locator_);
             pqos.wire_protocol().default_unicast_locator_list.push_back(tcp_v4_locator_);
             tcp_v4_transport_->set_WAN_address(tcp_ip_address);
@@ -147,7 +147,7 @@ PubSubApp::PubSubApp(
             Locator tcp_v4_initial_peers_locator_;
             tcp_v4_initial_peers_locator_.kind = LOCATOR_KIND_TCPv4;
             tcp_v4_initial_peers_locator_.port = 5100;
-            eprosima::fastdds::rtps::IPLocator::setIPv4(tcp_v4_initial_peers_locator_, tcp_ip_address);
+            IPLocator::setIPv4(tcp_v4_initial_peers_locator_, tcp_ip_address);
             pqos.wire_protocol().builtin.initialPeersList.push_back(tcp_v4_initial_peers_locator_);
             break;
         }
@@ -164,10 +164,10 @@ PubSubApp::PubSubApp(
                 tcp_ip_address = config.tcp_ip_address;
             }
             // Set unicast locators
-            eprosima::fastdds::rtps::Locator_t tcp_v6_locator_;
+            Locator_t tcp_v6_locator_;
             tcp_v6_locator_.kind = LOCATOR_KIND_TCPv6;
-            eprosima::fastdds::rtps::IPLocator::setIPv6(tcp_v6_locator_, tcp_ip_address);
-            eprosima::fastdds::rtps::IPLocator::setPhysicalPort(tcp_v6_locator_, 5100);
+            IPLocator::setIPv6(tcp_v6_locator_, tcp_ip_address);
+            IPLocator::setPhysicalPort(tcp_v6_locator_, 5100);
             pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(tcp_v6_locator_);
             pqos.wire_protocol().default_unicast_locator_list.push_back(tcp_v6_locator_);
             tcp_v6_transport_->add_listener_port(5100);
@@ -175,7 +175,7 @@ PubSubApp::PubSubApp(
             Locator tcp_v6_initial_peers_locator_;
             tcp_v6_initial_peers_locator_.kind = LOCATOR_KIND_TCPv6;
             tcp_v6_initial_peers_locator_.port = 5100;
-            eprosima::fastdds::rtps::IPLocator::setIPv6(tcp_v6_initial_peers_locator_, tcp_ip_address);
+            IPLocator::setIPv6(tcp_v6_initial_peers_locator_, tcp_ip_address);
             pqos.wire_protocol().builtin.initialPeersList.push_back(tcp_v6_initial_peers_locator_);
             break;
         }
@@ -286,7 +286,7 @@ PubSubApp::~PubSubApp()
 }
 
 void PubSubApp::on_publication_matched(
-        eprosima::fastdds::dds::DataWriter* /*writer*/,
+        DataWriter* /*writer*/,
         const PublicationMatchedStatus& info)
 {
     if (info.current_count_change == 1)

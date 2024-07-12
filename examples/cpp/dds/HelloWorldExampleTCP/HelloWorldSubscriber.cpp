@@ -27,6 +27,8 @@
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
 #include <fastdds/utils/IPLocator.hpp>
 
+#include "HelloWorldPubSubTypes.hpp"
+
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
 

@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef TESTWRITERSOCKET_H_
-#define TESTWRITERSOCKET_H_
+#ifndef FASTDDS_EXAMPLES_CPP_RTPS_AS_SOCKET__TESTWRITERSOCKET_H
+#define FASTDDS_EXAMPLES_CPP_RTPS_AS_SOCKET__TESTWRITERSOCKET_H
 
 #include <cstdint>
 #include <cstdio>
@@ -57,4 +57,4 @@ public:
             uint16_t nmsgs);
 };
 
-#endif /* TESTWRITER_H_ */
+#endif // FASTDDS_EXAMPLES_CPP_RTPS_AS_SOCKET__TESTWRITERSOCKET_H

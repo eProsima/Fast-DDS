@@ -17,10 +17,8 @@
  *
  */
 
-#ifndef HELLOWORLDSUBSCRIBER_H_
-#define HELLOWORLDSUBSCRIBER_H_
-
-#include "HelloWorldPubSubTypes.hpp"
+#ifndef FASTDDS_EXAMPLES_CPP_DDS_STATIC_HELLO_WORLD_EXAMPLE__HELLOWORLDSUBSCRIBER_H
+#define FASTDDS_EXAMPLES_CPP_DDS_STATIC_HELLO_WORLD_EXAMPLE__HELLOWORLDSUBSCRIBER_H
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
@@ -92,4 +90,4 @@ public:
 
 };
 
-#endif /* HELLOWORLDSUBSCRIBER_H_ */
+#endif // FASTDDS_EXAMPLES_CPP_DDS_STATIC_HELLO_WORLD_EXAMPLE__HELLOWORLDSUBSCRIBER_H

@@ -24,8 +24,6 @@
 #include "SubscriberApp.hpp"
 #include "PubSubApp.hpp"
 
-using namespace eprosima::fastdds::dds;
-
 namespace eprosima {
 namespace fastdds {
 namespace examples {

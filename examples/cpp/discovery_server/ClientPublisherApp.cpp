@@ -33,6 +33,8 @@
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
 
+#include "HelloWorldPubSubTypes.hpp"
+
 using namespace eprosima::fastdds::dds;
 
 namespace eprosima {

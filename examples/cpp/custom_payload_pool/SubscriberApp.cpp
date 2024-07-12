@@ -30,6 +30,8 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 
+#include "HelloWorldPubSubTypes.hpp"
+
 using namespace eprosima::fastdds::dds;
 namespace eprosima {
 namespace fastdds {

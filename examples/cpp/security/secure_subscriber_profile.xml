@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<profiles xmlns="http://www.eprosima.com" >
+    <participant profile_name="secure_hello_world_participant_profile" is_default_profile="true">
+        <domainId>0</domainId>
+        <rtps>
+            <name>hello_world_participant</name>
+            <propertiesPolicy>
+                <!-- Set authentication for DDS Domain communication  -->
+                <properties>
+                    <!-- Activate DDS:Auth:PKI-DH plugin -->
+                    <property>
+                        <name>dds.sec.auth.plugin</name>
+                        <value>builtin.PKI-DH</value>
+                    </property>
+                    <!-- Configure DDS:Auth:PKI-DH plugin -->
+                    <property>
+                        <name>dds.sec.auth.builtin.PKI-DH.identity_ca</name>
+                        <value>file://${CERTS_PATH}/maincacert.pem</value>
+                    </property>
+                    <property>
+                        <name>dds.sec.auth.builtin.PKI-DH.identity_certificate</name>
+                        <value>file://${CERTS_PATH}/mainsubcert.pem</value>
+                    </property>
+                    <property>
+                        <name>dds.sec.auth.builtin.PKI-DH.private_key</name>
+                        <value>file://${CERTS_PATH}/mainsubkey.pem</value>
+                    </property>
+                    <!-- Activate DDS:Access:Permissions plugin -->
+                    <property>
+                        <name>dds.sec.access.plugin</name>
+                        <value>builtin.Access-Permissions</value>
+                    </property>
+                    <!-- Configure DDS:Access:Permissions plugin -->
+                    <property>
+                        <name>dds.sec.access.builtin.Access-Permissions.permissions_ca</name>
+                        <value>file://${CERTS_PATH}/maincacert.pem</value>
+                    </property>
+                    <property>
+                        <name>dds.sec.access.builtin.Access-Permissions.governance</name>
+                        <value>file://${CERTS_PATH}/governance.smime</value>
+                    </property>
+                    <property>
+                        <name>dds.sec.access.builtin.Access-Permissions.permissions</name>
+                        <value>file://${CERTS_PATH}/permissions.smime</value>
+                    </property>
+                    <!-- Activate Crypto:AES-GCM-GMAC plugin -->
+                    <property>
+                        <name>dds.sec.crypto.plugin</name>
+                        <value>builtin.AES-GCM-GMAC</value>
+                    </property>
+                </properties>
+            </propertiesPolicy>
+        </rtps>
+    </participant>
+
+    <data_reader profile_name="hello_world_datareader_profile" is_default_profile="true">
+        <qos>
+            <durability>
+                <kind>TRANSIENT_LOCAL</kind>
+            </durability>
+            <reliability>
+                <kind>RELIABLE</kind>
+            </reliability>
+        </qos>
+        <topic>
+            <historyQos>
+                <kind>KEEP_LAST</kind>
+                <depth>100</depth>
+            </historyQos>
+            <resourceLimitsQos>
+                <max_samples>100</max_samples>
+                <max_instances>1</max_instances>
+                <max_samples_per_instance>100</max_samples_per_instance>
+            </resourceLimitsQos>
+        </topic>
+    </data_reader>
+</profiles>

@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_CONTENT_FILTER_SUBSCRIBER_APP_HPP_
-#define _FASTDDS_CONTENT_FILTER_SUBSCRIBER_APP_HPP_
+#ifndef FASTDDS_EXAMPLES_CPP_CONTENT_FILTER__SUBSCRIBERAPP_HPP
+#define FASTDDS_EXAMPLES_CPP_CONTENT_FILTER__SUBSCRIBERAPP_HPP
 
 #include <atomic>
 #include <condition_variable>
@@ -35,8 +35,8 @@
 
 #include "Application.hpp"
 #include "CLIParser.hpp"
-#include "HelloWorldPubSubTypes.hpp"
 #include "CustomContentFilterFactory.hpp"
+#include "HelloWorld.hpp"
 
 using namespace eprosima::fastdds::dds;
 namespace eprosima {
@@ -107,4 +107,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_CONTENT_FILTER_SUBSCRIBER_APP_HPP_
+#endif // FASTDDS_EXAMPLES_CPP_CONTENT_FILTER__SUBSCRIBERAPP_HPP

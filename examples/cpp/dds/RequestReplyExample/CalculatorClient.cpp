@@ -16,8 +16,6 @@
 #include <mutex>
 #include <vector>
 
-#include "CalculatorPubSubTypes.hpp"
-
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
@@ -26,6 +24,8 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/rtps/common/WriteParams.hpp>
+
+#include "CalculatorPubSubTypes.hpp"
 
 class CalculatorClient
 {

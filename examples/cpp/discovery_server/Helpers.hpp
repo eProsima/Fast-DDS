@@ -78,4 +78,4 @@ inline std::string get_ip_from_dns(
     return domain_name;
 }
 
-#endif /* FASTDDS_EXAMPLES_CPP_DISCOVERY_SERVER__HELPERS_HPP */
+#endif // FASTDDS_EXAMPLES_CPP_DISCOVERY_SERVER__HELPERS_HPP

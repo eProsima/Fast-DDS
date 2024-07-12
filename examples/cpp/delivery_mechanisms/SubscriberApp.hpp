@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_DISCOVERY_MECHANISMS_SUBSCRIBER_APP_HPP_
-#define _FASTDDS_DISCOVERY_MECHANISMS_SUBSCRIBER_APP_HPP_
+#ifndef FASTDDS_EXAMPLES_CPP_DELIVERY_MECHANISMS__SUBSCRIBERAPP_HPP
+#define FASTDDS_EXAMPLES_CPP_DELIVERY_MECHANISMS__SUBSCRIBERAPP_HPP
 
 #include <atomic>
 #include <condition_variable>
@@ -32,16 +32,13 @@
 
 #include "Application.hpp"
 #include "CLIParser.hpp"
-#include "DeliveryMechanismsPubSubTypes.hpp"
-
-using namespace eprosima::fastdds::dds;
 
 namespace eprosima {
 namespace fastdds {
 namespace examples {
 namespace delivery_mechanisms {
 
-class SubscriberApp : public Application, public DataReaderListener
+class SubscriberApp : public Application, public dds::DataReaderListener
 {
 public:
 
@@ -53,12 +50,12 @@ public:
 
     //! Subscription callback
     void on_data_available(
-            DataReader* reader) override;
+            dds::DataReader* reader) override;
 
     //! Subscriber matched method
     void on_subscription_matched(
-            DataReader* reader,
-            const SubscriptionMatchedStatus& info) override;
+            dds::DataReader* reader,
+            const dds::SubscriptionMatchedStatus& info) override;
 
     //! Run the subscriber
     void run() override;
@@ -71,15 +68,15 @@ private:
     //! Return the current state of execution
     bool is_stopped();
 
-    DomainParticipant* participant_;
+    dds::DomainParticipant* participant_;
 
-    Subscriber* subscriber_;
+    dds::Subscriber* subscriber_;
 
-    Topic* topic_;
+    dds::Topic* topic_;
 
-    DataReader* reader_;
+    dds::DataReader* reader_;
 
-    TypeSupport type_;
+    dds::TypeSupport type_;
 
     std::condition_variable cv_;
 
@@ -97,4 +94,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_DISCOVERY_MECHANISMS_SUBSCRIBER_APP_HPP_ */
+#endif // FASTDDS_EXAMPLES_CPP_DELIVERY_MECHANISMS__SUBSCRIBERAPP_HPP

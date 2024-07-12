@@ -68,6 +68,11 @@ endif()
 # Find all pytest files for testing
 file(GLOB examples_python_tests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.py)
 
+# Add security test only if security is enabled
+if (NOT SECURITY)
+    list(FILTER examples_python_tests EXCLUDE REGEX "security")
+endif()
+
 # Configure the pytest files, and add a test for each one
 foreach(example_test ${examples_python_tests})
     get_filename_component(example_name ${example_test} NAME_WE)

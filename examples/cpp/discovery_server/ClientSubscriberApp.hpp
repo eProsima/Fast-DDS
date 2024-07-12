@@ -27,7 +27,7 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include "CLIParser.hpp"
-#include "HelloWorldPubSubTypes.hpp"
+#include "HelloWorld.hpp"
 #include "Application.hpp"
 
 using namespace eprosima::fastdds::dds;
@@ -94,4 +94,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* FASTDDS_EXAMPLES_CPP_DISCOVERY_SERVER__CLIENTSUBSCRIBERAPP_HPP */
+#endif // FASTDDS_EXAMPLES_CPP_DISCOVERY_SERVER__CLIENTSUBSCRIBERAPP_HPP

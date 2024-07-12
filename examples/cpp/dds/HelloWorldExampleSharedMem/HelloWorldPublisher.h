@@ -17,10 +17,8 @@
  *
  */
 
-#ifndef HELLOWORLDPUBLISHER_H_
-#define HELLOWORLDPUBLISHER_H_
-
-#include "HelloWorldPubSubTypes.hpp"
+#ifndef FASTDDS_EXAMPLES_CPP_DDS_HELLO_WORLD_EXAMPLE_SHARED_MEM__HELLOWORLDPUBLISHER_H
+#define FASTDDS_EXAMPLES_CPP_DDS_HELLO_WORLD_EXAMPLE_SHARED_MEM__HELLOWORLDPUBLISHER_H
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
@@ -97,4 +95,4 @@ private:
     eprosima::fastdds::dds::TypeSupport type_;
 };
 
-#endif /* HELLOWORLDPUBLISHER_H_ */
+#endif // FASTDDS_EXAMPLES_CPP_DDS_HELLO_WORLD_EXAMPLE_SHARED_MEM__HELLOWORLDPUBLISHER_H

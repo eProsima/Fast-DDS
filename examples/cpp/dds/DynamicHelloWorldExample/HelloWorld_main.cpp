@@ -17,10 +17,10 @@
  *
  */
 
+#include <fastdds/dds/log/Log.hpp>
+
 #include "HelloWorldPublisher.h"
 #include "HelloWorldSubscriber.h"
-
-#include <fastdds/dds/log/Log.hpp>
 
 using eprosima::fastdds::dds::Log;
 

@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef TESTREADERSOCKET_H_
-#define TESTREADERSOCKET_H_
+#ifndef FASTDDS_EXAMPLES_CPP_RTPS_AS_SOCKET__TESTREADERSOCKET_H
+#define FASTDDS_EXAMPLES_CPP_RTPS_AS_SOCKET__TESTREADERSOCKET_H
 
 #include <fastdds/rtps/reader/ReaderListener.hpp>
 
@@ -75,4 +75,4 @@ public:
 
 };
 
-#endif /* TESTREADER_H_ */
+#endif // FASTDDS_EXAMPLES_CPP_RTPS_AS_SOCKET__TESTREADERSOCKET_H

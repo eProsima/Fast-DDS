@@ -18,8 +18,8 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
-#ifndef _FASTDDS_HELLO_WORLD_CLI_PARSER_HPP_
-#define _FASTDDS_HELLO_WORLD_CLI_PARSER_HPP_
+#ifndef FASTDDS_EXAMPLES_CPP_HELLO_WORLD__CLIPARSER_HPP
+#define FASTDDS_EXAMPLES_CPP_HELLO_WORLD__CLIPARSER_HPP
 
 namespace eprosima {
 namespace fastdds {
@@ -258,4 +258,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_HELLO_WORLD_CLI_PARSER_HPP_
+#endif // FASTDDS_EXAMPLES_CPP_HELLO_WORLD__CLIPARSER_HPP

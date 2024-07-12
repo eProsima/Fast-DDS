@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_CUSTOM_PAYLOAD_POOL_SUBSCRIBER_HPP_
-#define _FASTDDS_CUSTOM_PAYLOAD_POOL_SUBSCRIBER_HPP_
+#ifndef FASTDDS_EXAMPLES_CPP_CUSTOM_PAYLOAD_POOL__SUBSCRIBERAPP_HPP
+#define FASTDDS_EXAMPLES_CPP_CUSTOM_PAYLOAD_POOL__SUBSCRIBERAPP_HPP
 
 #include <condition_variable>
 #include <mutex>
@@ -31,7 +31,7 @@
 #include "Application.hpp"
 #include "CLIParser.hpp"
 #include "CustomPayloadPool.hpp"
-#include "HelloWorldPubSubTypes.hpp"
+#include "HelloWorld.hpp"
 
 using namespace eprosima::fastdds::dds;
 namespace eprosima {
@@ -101,4 +101,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_CUSTOM_PAYLOAD_POOL_SUBSCRIBER_HPP_ */
+#endif // FASTDDS_EXAMPLES_CPP_CUSTOM_PAYLOAD_POOL__SUBSCRIBERAPP_HPP

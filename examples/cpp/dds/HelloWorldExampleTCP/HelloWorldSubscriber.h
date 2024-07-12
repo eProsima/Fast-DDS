@@ -17,10 +17,8 @@
  *
  */
 
-#ifndef HELLOWORLDSUBSCRIBER_H_
-#define HELLOWORLDSUBSCRIBER_H_
-
-#include "HelloWorldPubSubTypes.hpp"
+#ifndef FASTDDS_EXAMPLES_CPP_DDS_HELLO_WORLD_EXAMPLE_TCP__HELLOWORLDSUBSCRIBER_H
+#define FASTDDS_EXAMPLES_CPP_DDS_HELLO_WORLD_EXAMPLE_TCP__HELLOWORLDSUBSCRIBER_H
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
@@ -95,4 +93,4 @@ public:
             uint32_t number);
 };
 
-#endif /* HELLOWORLDSUBSCRIBER_H_ */
+#endif // FASTDDS_EXAMPLES_CPP_DDS_HELLO_WORLD_EXAMPLE_TCP__HELLOWORLDSUBSCRIBER_H

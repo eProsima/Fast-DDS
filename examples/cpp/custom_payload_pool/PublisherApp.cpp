@@ -28,6 +28,8 @@
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 
+#include "HelloWorldPubSubTypes.hpp"
+
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
 

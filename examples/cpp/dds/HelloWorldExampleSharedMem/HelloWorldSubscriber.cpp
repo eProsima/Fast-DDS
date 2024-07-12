@@ -27,6 +27,8 @@
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 
+#include "HelloWorldPubSubTypes.hpp"
+
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastdds::rtps;

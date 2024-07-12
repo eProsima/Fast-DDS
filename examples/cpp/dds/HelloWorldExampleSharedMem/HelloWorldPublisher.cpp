@@ -19,11 +19,13 @@
 
 #include "HelloWorldPublisher.h"
 
+#include <thread>
+
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 
-#include <thread>
+#include "HelloWorldPubSubTypes.hpp"
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
