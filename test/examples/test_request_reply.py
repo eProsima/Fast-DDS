@@ -35,13 +35,13 @@ def parse_response(client_responses: dict, response: str):
 def test_request_reply():
     """."""
     expected_responses = {
-        'request_reply-server-client-1': {
+        'server-client-1': {
             '1': 7,
             '2': -3,
             '3': 10,
             '4': 0
         },
-        'request_reply-client-1': {
+        'client-1': {
             '1': 91,
             '2': 43,
             '3': 1608,
@@ -50,8 +50,8 @@ def test_request_reply():
     }
 
     responses = {
-        'request_reply-server-client-1': {},
-        'request_reply-client-1': {},
+        'server-client-1': {},
+        'client-1': {},
     }
 
     ret = True

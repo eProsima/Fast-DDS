@@ -35,25 +35,25 @@ def parse_response(client_responses: dict, response: str):
 def test_request_reply_isolated():
     """."""
     expected_responses = {
-        'request_reply_isolated-client-1-1': {
+        'client-1-1': {
             '1': 7,
             '2': -3,
             '3': 10,
             '4': 0
         },
-        'request_reply_isolated-client-2-1': {
+        'client-2-1': {
             '1': 91,
             '2': 43,
             '3': 1608,
             '4': 2
         },
-        'request_reply_isolated-client-3-1': {
+        'client-3-1': {
             '1': 5,
             '2': 1,
             '3': 6,
             '4': 1
         },
-        'request_reply_isolated-client-4-1': {
+        'client-4-1': {
             '1': 25,
             '2': 15,
             '3': 100,
@@ -62,10 +62,10 @@ def test_request_reply_isolated():
     }
 
     responses = {
-        'request_reply_isolated-client-1-1': {},
-        'request_reply_isolated-client-2-1': {},
-        'request_reply_isolated-client-3-1': {},
-        'request_reply_isolated-client-4-1': {}
+        'client-1-1': {},
+        'client-2-1': {},
+        'client-3-1': {},
+        'client-4-1': {}
     }
 
     ret = True
