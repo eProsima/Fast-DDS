@@ -468,15 +468,18 @@ bool ClientApp::send_requests()
 bool ClientApp::send_request(
         const CalculatorRequestType& request)
 {
+    // Taking the mutex here to avoid taking a reply on the on_data_available callback
+    // coming from a very fast server who replied before the request_status_ entry was set
+    std::lock_guard<std::mutex> lock(mtx_);
+
     rtps::WriteParams wparams;
     ReturnCode_t ret = request_writer_->write(&request, wparams);
+
+    requests_status_[wparams.sample_identity()] = false;
 
     request_reply_info("ClientApp",
             "Request sent with ID '" << wparams.sample_identity().sequence_number() <<
             "': '" << TypeConverter::to_string(request) << "'");
-
-    std::lock_guard<std::mutex> lock(mtx_);
-    requests_status_[wparams.sample_identity()] = false;
 
     return (RETCODE_OK == ret);
 }
