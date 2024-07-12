@@ -21,7 +21,7 @@
 
 #include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
 #include <fastdds/rtps/builtin/data/SubscriptionBuiltinTopicData.hpp>
-#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/rtps/reader/ReaderDiscoveryStatus.hpp>
 #include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
 
