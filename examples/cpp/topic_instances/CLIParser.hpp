@@ -20,8 +20,8 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
-#ifndef FASTDDS_TOPIC_INSTANCES_CLI_PARSER_HPP
-#define FASTDDS_TOPIC_INSTANCES_CLI_PARSER_HPP
+#ifndef FASTDDS_EXAMPLES_CPP_TOPIC_INSTANCES__CLIPARSER_HPP
+#define FASTDDS_EXAMPLES_CPP_TOPIC_INSTANCES__CLIPARSER_HPP
 
 namespace eprosima {
 namespace fastdds {
@@ -138,12 +138,12 @@ public:
         std::cout << "                                   · ORANGE      · BLACK "                << std::endl;
         std::cout << "                                  (Default: first 4 colors: "             << std::endl;
         std::cout << "                                   RED, BLUE, GREEN, and YELLOW)"         << std::endl;
-        std::cout << "            --height <num>        Shape bounds height "                   << std::endl;
+        std::cout << "            --height <num>        Space bound height where shape moves "  << std::endl;
         std::cout << "                                  (Default: 265)"                         << std::endl;
         std::cout << "            --interval <num>      Time between samples in milliseconds "  << std::endl;
         std::cout << "                                  (Default: 100)"                         << std::endl;
         std::cout << "            --size <num>          Shape size "                            << std::endl;
-        std::cout << "                                  [10 <= <num> <= 100]"                   << std::endl;
+        std::cout << "                                  [5 <= <num> <= 100]"                    << std::endl;
         std::cout << "                                  (Default: 30)"                          << std::endl;
         std::cout << "            --step <num>          Shape step movement "                   << std::endl;
         std::cout << "                                  (Default: 3)"                           << std::endl;
@@ -151,7 +151,7 @@ public:
         std::cout << "                                  publisher execution once all samples "  << std::endl;
         std::cout << "                                  have been sent, in seconds "            << std::endl;
         std::cout << "                                  (Default: 10)"                          << std::endl;
-        std::cout << "  -w <num>, --width <num>         Shape bounds width "                    << std::endl;
+        std::cout << "  -w <num>, --width <num>         Space bound width where shape moves "   << std::endl;
         std::cout << "                                  (Default: 230)"                         << std::endl;
         std::exit(return_code);
     }
@@ -736,4 +736,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_TOPIC_INSTANCES_CLI_PARSER_HPP
+#endif // FASTDDS_EXAMPLES_CPP_TOPIC_INSTANCES__CLIPARSER_HPP

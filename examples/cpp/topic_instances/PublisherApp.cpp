@@ -99,7 +99,7 @@ PublisherApp::PublisherApp(
     writer_qos.durability().kind = DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS;
     writer_qos.history().kind = HistoryQosPolicyKind::KEEP_LAST_HISTORY_QOS;
     uint32_t sample_limit = samples_ + 1; // include dispose sample
-    if (sample_limit == 0)
+    if (samples_ == 0)
     {
         sample_limit = DATAWRITER_QOS_DEFAULT.resource_limits().max_samples_per_instance;
     }
@@ -107,11 +107,13 @@ PublisherApp::PublisherApp(
     writer_qos.history().depth = sample_limit;
     writer_qos.resource_limits().max_samples_per_instance = sample_limit;
     writer_qos.resource_limits().max_samples = sample_limit * instances_;
+
     // Check if ASYNCHRONOUS publish mode is required
     if (instances_ > 1)
     {
         writer_qos.publish_mode().kind = ASYNCHRONOUS_PUBLISH_MODE;
     }
+
     writer_ = publisher_->create_datawriter(topic_, writer_qos, this, StatusMask::all());
     if (writer_ == nullptr)
     {
@@ -158,6 +160,7 @@ void PublisherApp::run()
     while (!is_stopped() && ((samples_ == 0) || !instances_sent_all_samples()))
     {
         publish();
+
         // Wait for period or stop event
         std::unique_lock<std::mutex> terminate_lock(mutex_);
         cv_.wait_for(terminate_lock, std::chrono::milliseconds(period_ms_), [&]()
@@ -197,6 +200,7 @@ void PublisherApp::publish()
                 // at least one has been discovered
                 return ((matched_ > 0) || is_stopped());
             });
+
     if (!is_stopped())
     {
         // Register instance check
@@ -249,13 +253,13 @@ void PublisherApp::publish()
             // Send shape
             ret = writer_->write(&shape_, instance);
 
-
             // Successfully performed write call
             if (RETCODE_OK == ret)
             {
                 // Print sent shape data
                 std::cout << shape_.color() << " Shape with size " << shape_.shapesize()
                           << " at X:" << shape_.x() << ", Y:" << shape_.y() << " SENT" << std::endl;
+
                 // Add the sent sample to the corresponding instance counter
                 if (samples_per_instance_.count(instance) > 0)
                 {

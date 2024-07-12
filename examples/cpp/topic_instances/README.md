@@ -18,18 +18,17 @@ Each example application (publisher and subscriber) creates the required DDS ent
 Each application inherits from the corresponding listener(s) class(es), overriding the listener's method associated to each event.
 When an event occurs, the callback method is triggered.
 
-By default, the publisher will send four samples with the same shape size and coordinates, but with different _color_ values (key type).
-On the other hand, the subscriber is configured to handle the same amount of instances.
-In that way, each keyed _color_ is managed separately, having its own _History QoS depth_.
+By default, the publisher sends send four samples with the same shape size and coordinates, but with different _color_ values (key type).
+Meanwhile, the subscriber is configured to handle an equivalent number of instances, allowing each keyed _color_ to be managed independently with its own History QoS depth.
 Refer to the [Topic, keys and instances](https://fast-dds.docs.eprosima.com/en/stable/fastdds/dds_layer/topic/instances.html#topics-keys-and-instances) section in the _eProsima Fast DDS_ documentation section for more information.
 
-Publisher registers an instance for each key value, and disposes the instance when finished sending samples.
-Disposing the instance let other subscribers know that there will be no more samples coming from that writer related to that topic key, but allows late-join subscribers to receive the already sent samples.
+The publisher registers an instance for each key value, and sends a dispose message of each instance when all the instance's related samples have been sent.
+An instance disposal informs other subscribers that no additional samples will be sent from the writer related to that specific topic key, but allows late-joining subscribers to receive samples that were previously sent.
 
 Both publisher and subscriber are configured as `KEEP_LAST_HISTORY_QOS`, with a _depth_ depending of the amount of samples given my CLI command (if no _samples_ limit provided, the _max_samples_per_instance_ value is considered, which is `400` by default) **plus one** (so it has enough space to allocate the disposal message too).
 
-If an amount of _samples_ is provided, the publisher application has a timeout (by default is `10` seconds) to make it wait a short period of time after sending all expected samples.
-That allows to perform a late-join check scenario: when a new subscriber matches with the publisher that has already sent all its samples, the subscriber receives all samples for all instances, even though the total amount of samples received is higher than the _History QoS depth_ set, due to each _History QoS depth_ is independent per each instance.
+To simulate a late-join scenario when a specific number of samples is provided, the publisher application does not stop after sending all the expected samples but after a waiting period, which by default is 10 seconds.
+That allows to perform a late-join check scenario: During this time, if a new subscriber matches with the publisher after it has finished sending its samples, this subscriber will receive all the samples for each instance. This occurs even if the total number of samples received exceeds the set History QoS depth because the History QoS depth is configured independently for each instance.
 
 ## Run the example
 
@@ -72,7 +71,7 @@ All the example available flags can be queried running the executable with the `
 
 ### Expected output
 
-Regardless of which application is run first, since the publisher will not start sending data until a subscriber is discovered, the expected output both for publishers and subscribers is a first displayed message acknowledging the match, followed by the amount of samples sent or received until Ctrl+C is pressed.
+Regardless of which application is run first, since the publisher does not start sending data until a subscriber is discovered, the expected output for both publishers and subscribers is a first displayed message acknowledging the match, followed by the amount of samples sent or received until Ctrl+C is pressed.
 
 In this example, four different messages are sent per sample, each one associated to different keys (colors).
 
@@ -124,10 +123,10 @@ Publisher unmatched.
 
 ## Instances configuration
 
-Using argument **``-i``** ``<number>`` or **``--instances``** ``<number>`` will configure the amount of instances to be deployed.
+**``-i``** ``<number>`` or **``--instances``** ``<number>`` will configure the amount of instances to be deployed.
 This argument is available in both publisher and subscriber.
 
-There is the option of forcing a specific key (color) transmission on the publisher side, by using the argument **``-c``** ``<color>`` or **``--color``** ``<color>``, together with **``-i 1``** or **``--instances 1``**.
+The argument **``-c``** ``<color>`` or **``--color``** ``<color>`` allows to force a specific key (color) transmission on the publisher side,  in combination with **``-i 1``** or **``--instances 1``**.
 
 ### Topic instances publisher
 
@@ -157,10 +156,10 @@ MAGENTA Shape with size 30 at X:122, Y:113 RECEIVED
 
 ## Shape Configuration
 
-Using argument **``-n``** ``<topic_name>`` or **``--name``** ``<topic_name>`` will configure both publisher and subscriber with the topic name for the shapes communication.
+The arguments **``-n``** ``<topic_name>`` or **``--name``** ``<topic_name>`` configure both publisher and subscriber with the topic name for the shapes communication.
 This example restricts those names to be ``Square``, ``Triangle`` or ``Circle``.
 
-The arguments **``--size``**, **``--steps``**, **``--width``** and **``--height``** configures the publisher to set the shape size, the movement steps of the shape per send, and the space width and height bounds where the shape moves, respectively.
+The arguments **``--size``**, **``--steps``**, **``--width``** and **``--height``** configure the publisher to set the shape size, the movement steps of the shape per send, and the space width and height bounds where the shape moves, respectively.
 
 ### Topic instances publisher
 
@@ -179,5 +178,5 @@ GREY Shape with size 10 at X:50, Y:80 SENT
 
 This example is compatible with the _eProsima Shapes Demo_ application.
 
-Although the _topic instances_ example > _ShapesDemo_ app compatibility is direct, it is needed to configure the _ShapesDemo_ publisher with **``TRANSIENT_LOCAL``** Durability QoS to perform communication _ShapesDemo_ app > _topic instances_ example, because the default configuration is _``VOLATILE``_ and it is incompatible with the **``TRANSIENT_LOCAL``** subscriber from the example.
+The communication between _topic instances_ example publisher and _ShapesDemo_ app subscriber is directly compatible, while for a _ShapesDemo_ publisher and a _topic instances_ subscriber, it is mandatory to configure the _ShapesDemo_ publisher with **``TRANSIENT_LOCAL``** Durability QoS, because the default configuration is _``VOLATILE``_, and it is incompatible with the **``TRANSIENT_LOCAL``** _topic instances_ subscriber from the example.
 Refer to the [compatibility rule](https://fast-dds.docs.eprosima.com/en/stable/fastdds/dds_layer/core/policy/standardQosPolicies.html#durability-compatibilityrule) section for more information.

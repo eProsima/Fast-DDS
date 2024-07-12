@@ -17,9 +17,8 @@
  *
  */
 
-#ifndef FASTDDS_EXAMPLES_CPP_TOPIC_INSTANCES__PUBLISHER_APP_HPP
-#define FASTDDS_EXAMPLES_CPP_TOPIC_INSTANCES__PUBLISHER_APP_HPP
-
+#ifndef FASTDDS_EXAMPLES_CPP_TOPIC_INSTANCES__PUBLISHERAPP_HPP
+#define FASTDDS_EXAMPLES_CPP_TOPIC_INSTANCES__PUBLISHERAPP_HPP
 
 #include <condition_variable>
 
@@ -69,7 +68,7 @@ private:
     //! Check if all instances have sent the expected number of samples
     bool instances_sent_all_samples();
 
-    //! Move the shape around its bounds
+    //! Move the shape around the space limits
     void move(
             int& x,
             int& y,
@@ -115,4 +114,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_EXAMPLES_CPP_TOPIC_INSTANCES__PUBLISHER_APP_HPP
+#endif // FASTDDS_EXAMPLES_CPP_TOPIC_INSTANCES__PUBLISHERAPP_HPP

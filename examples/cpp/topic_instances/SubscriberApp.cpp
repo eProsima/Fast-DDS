@@ -54,6 +54,7 @@ SubscriberApp::SubscriberApp(
     // Create the participant
     DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
     pqos.name("Shape_sub_participant");
+
     // Set Shapes metadata
     pqos.properties().properties().emplace_back("fastdds.application.id", "SHAPES_DEMO", true);
     pqos.properties().properties().emplace_back("fastdds.application.metadata", "", true);
@@ -93,7 +94,7 @@ SubscriberApp::SubscriberApp(
     reader_qos.durability().kind = DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS;
     reader_qos.history().kind = HistoryQosPolicyKind::KEEP_LAST_HISTORY_QOS;
     uint32_t sample_limit = samples_;
-    if (sample_limit == 0)
+    if (samples_ == 0)
     {
         sample_limit = DATAREADER_QOS_DEFAULT.resource_limits().max_samples_per_instance;
     }
