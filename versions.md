@@ -96,6 +96,7 @@ Forthcoming
 * Setting vendor_id in the received CacheChange_t for Data and DataFrag.
 * Added new DynamicData to JSON serializer (`json_serialize`).
 * Added new DynamicType to IDL serializer (`idl_serialize`).
+* `eprosima::fastdds::Time_t` moved to `eprosima::fastdds::dds::Time_t`.
 
 Version 2.14.0
 --------------
