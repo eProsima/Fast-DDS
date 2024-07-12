@@ -1177,6 +1177,13 @@ const char* const parameter_policy_physical_data_process = "fastdds.physical_dat
 const char* const parameter_enable_monitor_service = "fastdds.enable_monitor_service";
 
 /**
+ * Parameter property value for configuring type propagation
+ *
+ * @ingroup PARAMETER_MODULE
+ */
+const char* const parameter_policy_type_propagation = "fastdds.type_propagation";
+
+/**
  * @ingroup PARAMETER_MODULE
  */
 class ParameterPropertyList_t : public Parameter_t

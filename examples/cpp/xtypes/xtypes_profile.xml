@@ -5,6 +5,15 @@
             <domainId>0</domainId>
             <rtps>
                 <name>xtypes_participant</name>
+                <propertiesPolicy>
+                    <properties>
+                        <!-- Explicitly activate type propagation -->
+                        <property>
+                            <name>fastdds.type_propagation</name>
+                            <value>enabled</value>
+                        </property>
+                    </properties>
+                </propertiesPolicy>
             </rtps>
         </participant>
         <data_writer profile_name="xtypes_datawriter_profile" is_default_profile="true">

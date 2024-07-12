@@ -46,6 +46,7 @@
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/topic/ContentFilteredTopicImpl.hpp>
 
+#include <fastdds/utils/TypePropagation.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/resources/TimedEvent.h>
@@ -1778,7 +1779,14 @@ fastdds::TopicAttributes DataReaderImpl::topic_attributes() const
     topic_att.topicDataType = topic_->get_type_name();
     topic_att.historyQos = qos_.history();
     topic_att.resourceLimitsQos = qos_.resource_limits();
-    if (type_->auto_fill_type_information() && xtypes::TK_NONE != type_->type_identifiers().type_identifier1()._d())
+
+    using utils::to_type_propagation;
+    using utils::TypePropagation;
+
+    auto properties = subscriber_->get_participant()->get_qos().properties();
+    auto type_propagation = to_type_propagation(properties);
+
+    if (TypePropagation::TYPEPROPAGATION_ENABLED == type_propagation && xtypes::TK_NONE != type_->type_identifiers().type_identifier1()._d())
     {
         if (RETCODE_OK ==
                 fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(

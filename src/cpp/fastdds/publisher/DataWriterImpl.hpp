@@ -585,7 +585,7 @@ protected:
             fastdds::rtps::WriteParams& wparams,
             const InstanceHandle_t& handle);
 
-    static fastdds::TopicAttributes get_topic_attributes(
+    fastdds::TopicAttributes get_topic_attributes(
             const DataWriterQos& qos,
             const Topic& topic,
             const TypeSupport& type);

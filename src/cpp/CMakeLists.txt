@@ -90,6 +90,7 @@ set(${PROJECT_NAME}_source_files
     fastdds/topic/TopicProxyFactory.cpp
     fastdds/topic/TypeSupport.cpp
     fastdds/utils/QosConverters.cpp
+    fastdds/utils/TypePropagation.cpp
     fastdds/xtypes/dynamic_types/AnnotationDescriptorImpl.cpp
     fastdds/xtypes/dynamic_types/DynamicDataFactory.cpp
     fastdds/xtypes/dynamic_types/DynamicDataImpl.cpp

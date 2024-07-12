@@ -20,6 +20,7 @@
 
 #include <thread>
 
+#include <fastdds/dds/core/policy/ParameterTypes.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -101,6 +102,7 @@ void test_big_message_corner_case(
     transport->interfaceWhiteList.push_back("127.0.0.1");
     qos.transport().use_builtin_transports = false;
     qos.transport().user_transports.push_back(transport);
+    qos.properties().properties().emplace_back(fastdds::parameter_policy_type_propagation, "disabled");
     auto participant = fastdds::DomainParticipantFactory::get_instance()->create_participant(0, qos);
     ASSERT_NE(nullptr, participant);
 
@@ -123,7 +125,6 @@ void test_big_message_corner_case(
 
 
     fastdds::TypeSupport type_support(new fastdds::DynamicPubSubType(array_type));
-    type_support.get()->auto_fill_type_information(false);
     EXPECT_EQ(fastdds::RETCODE_OK, participant->register_type(type_support));
 
     auto topic = participant->create_topic(name, name, fastdds::TOPIC_QOS_DEFAULT);

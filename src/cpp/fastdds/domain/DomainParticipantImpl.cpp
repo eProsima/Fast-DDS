@@ -59,6 +59,7 @@
 #include <fastdds/topic/TopicProxy.hpp>
 #include <fastdds/topic/TopicProxyFactory.hpp>
 #include <fastdds/utils/QosConverters.hpp>
+#include <fastdds/utils/TypePropagation.hpp>
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 #include <utils/SystemInfo.hpp>
@@ -253,6 +254,13 @@ ReturnCode_t DomainParticipantImpl::enable()
     assert(get_rtps_participant() == nullptr);
     // Should not have failed assigning the GUID
     assert (guid_ != fastdds::rtps::GUID_t::unknown());
+
+    auto qos_check = check_qos(qos_);
+
+    if (RETCODE_OK != qos_check)
+    {
+        return qos_check;
+    }
 
     fastdds::rtps::RTPSParticipantAttributes rtps_attr;
     utils::set_attributes_from_qos(rtps_attr, qos_);
@@ -1700,12 +1708,30 @@ bool DomainParticipantImpl::set_qos(
 ReturnCode_t DomainParticipantImpl::check_qos(
         const DomainParticipantQos& qos)
 {
-    if (qos.allocation().data_limits.max_user_data == 0 ||
-            qos.allocation().data_limits.max_user_data > qos.user_data().getValue().size())
+    ReturnCode_t ret_val = RETCODE_OK;
+
+    if (qos.allocation().data_limits.max_user_data != 0 &&
+            qos.allocation().data_limits.max_user_data <= qos.user_data().getValue().size())
     {
-        return RETCODE_OK;
+        ret_val = RETCODE_INCONSISTENT_POLICY;
     }
-    return RETCODE_INCONSISTENT_POLICY;
+
+    if (RETCODE_OK == ret_val)
+    {
+        // Check participant's type propagation policy
+        using utils::to_type_propagation;
+        using utils::TypePropagation;
+
+        auto type_propagation = to_type_propagation(qos.properties());
+
+        if (TypePropagation::TYPEPROPAGATION_UNKNOWN == type_propagation)
+        {
+            EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK, "Invalid value for fastdds.type_propagation property");
+            return RETCODE_INCONSISTENT_POLICY;
+        }
+    }
+
+    return ret_val;
 }
 
 bool DomainParticipantImpl::can_qos_be_updated(
