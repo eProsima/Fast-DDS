@@ -37,8 +37,8 @@ public:
     TopicDataTypeMock()
         : TopicDataType()
     {
-        m_typeSize = 4u;
-        setName("footype");
+        max_serialized_type_size = 4u;
+        set_name("footype");
     }
 
     bool serialize(
@@ -56,27 +56,24 @@ public:
         return true;
     }
 
-    std::function<uint32_t()> getSerializedSizeProvider(
+    uint32_t calculate_serialized_size(
             const void* const /*data*/,
             eprosima::fastdds::dds::DataRepresentationId_t /*data_representation*/) override
     {
-        return []()->uint32_t
-               {
-                   return 0;
-               };
+        return 0;
     }
 
-    void* createData() override
+    void* create_data() override
     {
         return nullptr;
     }
 
-    void deleteData(
+    void delete_data(
             void* /*data*/) override
     {
     }
 
-    bool getKey(
+    bool compute_key(
             const void* const /*data*/,
             eprosima::fastdds::rtps::InstanceHandle_t* /*ihandle*/,
             bool /*force_md5*/) override
@@ -86,12 +83,12 @@ public:
 
     void clearName()
     {
-        setName("");
+        set_name("");
     }
 
 private:
 
-    using eprosima::fastdds::dds::TopicDataType::getSerializedSizeProvider;
+    using eprosima::fastdds::dds::TopicDataType::calculate_serialized_size;
     using eprosima::fastdds::dds::TopicDataType::serialize;
 };
 

@@ -379,7 +379,7 @@ void TypeLookupRequestListener::answer_request(
         rpc::RemoteExceptionCode_t exception_code,
         TypeLookup_getTypeDependencies_Out& out)
 {
-    TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(typelookup_manager_->reply_type_.createData());
+    TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(typelookup_manager_->reply_type_.create_data());
     TypeLookup_getTypeDependencies_Result result;
     result.result(out);
     reply->return_value().getTypeDependencies(result);
@@ -387,7 +387,7 @@ void TypeLookupRequestListener::answer_request(
     reply->header().remoteEx(exception_code);
 
     typelookup_manager_->send(*reply);
-    typelookup_manager_->reply_type_.deleteData(reply);
+    typelookup_manager_->reply_type_.delete_data(reply);
 }
 
 void TypeLookupRequestListener::answer_request(
@@ -395,7 +395,7 @@ void TypeLookupRequestListener::answer_request(
         rpc::RemoteExceptionCode_t exception_code,
         TypeLookup_getTypes_Out& out)
 {
-    TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(typelookup_manager_->reply_type_.createData());
+    TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(typelookup_manager_->reply_type_.create_data());
     TypeLookup_getTypes_Result result;
     result.result(out);
     reply->return_value().getType(result);
@@ -403,19 +403,19 @@ void TypeLookupRequestListener::answer_request(
     reply->header().remoteEx(exception_code);
 
     typelookup_manager_->send(*reply);
-    typelookup_manager_->reply_type_.deleteData(reply);
+    typelookup_manager_->reply_type_.delete_data(reply);
 }
 
 void TypeLookupRequestListener::answer_request(
         SampleIdentity request_id,
         rpc::RemoteExceptionCode_t exception_code)
 {
-    TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(typelookup_manager_->reply_type_.createData());
+    TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(typelookup_manager_->reply_type_.create_data());
     reply->header().relatedRequestId(request_id);
     reply->header().remoteEx(exception_code);
 
     typelookup_manager_->send(*reply);
-    typelookup_manager_->reply_type_.deleteData(reply);
+    typelookup_manager_->reply_type_.delete_data(reply);
 }
 
 void TypeLookupRequestListener::on_new_cache_change_added(

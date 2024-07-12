@@ -28,17 +28,17 @@ public:
                 void* data),
             (override));
 
-    MOCK_METHOD(std::function<uint32_t()>, getSerializedSizeProvider, (
+    MOCK_METHOD(uint32_t, calculate_serialized_size, (
                 const void* const data, DataRepresentationId_t data_representation),
             (override));
 
-    MOCK_METHOD(void*, createData, (), (override));
+    MOCK_METHOD(void*, create_data, (), (override));
 
-    MOCK_METHOD(void, deleteData, (
+    MOCK_METHOD(void, delete_data, (
                 void* data),
             (override));
 
-    MOCK_METHOD(bool, getKey, (
+    MOCK_METHOD(bool, compute_key, (
                 const void* const data,
                 eprosima::fastdds::dds::InstanceHandle_t* ihandle,
                 bool),
@@ -127,11 +127,11 @@ TEST(DataReaderHistory, exclusive_ownership_keyed_sample_reception)
 {
     TestType* type_ = new TestType();
     // These functions was called due to the type is keyed.
-    EXPECT_CALL(*type_, createData()).Times(1);
-    EXPECT_CALL(*type_, deleteData(nullptr)).Times(1);
+    EXPECT_CALL(*type_, create_data()).Times(1);
+    EXPECT_CALL(*type_, delete_data(nullptr)).Times(1);
 
     const TypeSupport type(type_);
-    type->m_isGetKeyDefined = true;
+    type->is_compute_key_provided = true;
     const Topic topic("test", "test");
     DataReaderQos qos;
     qos.ownership().kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;

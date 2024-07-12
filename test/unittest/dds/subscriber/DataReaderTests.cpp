@@ -171,10 +171,10 @@ protected:
         FooType data;
 
         data.index(0);
-        type_.get_key(&data, &handle_ok_);
+        type_.compute_key(&data, &handle_ok_);
 
         data.index(2);
-        type_.get_key(&data, &handle_wrong_);
+        type_.compute_key(&data, &handle_wrong_);
     }
 
     void reset_lengths_if_ok(
@@ -412,7 +412,7 @@ protected:
 
         // Return code when requesting a correct instance
         ReturnCode_t instance_ok_code = instance_bad_code;
-        if (RETCODE_OK == code && type_->m_isGetKeyDefined)
+        if (RETCODE_OK == code && type_->is_compute_key_provided)
         {
             instance_ok_code = code;
         }
@@ -561,7 +561,7 @@ protected:
         basic_read_apis_check<DataType, DataSeq>(RETCODE_OK, data_reader_, true);
 
         // Check with disposed instance
-        if (type_->m_isGetKeyDefined)
+        if (type_->is_compute_key_provided)
         {
             EXPECT_EQ(RETCODE_OK, data_writer_->dispose(&data, handle_wrong_));
             basic_read_apis_check<DataType, DataSeq>(RETCODE_OK, data_reader_, true);
@@ -1798,8 +1798,8 @@ TEST_F(DataReaderTests, sample_info)
             data_[0].index(1);
             data_[1].index(2);
 
-            type.get_key(&data_[0], &handles_[0]);
-            type.get_key(&data_[1], &handles_[1]);
+            type.compute_key(&data_[0], &handles_[0]);
+            type.compute_key(&data_[1], &handles_[1]);
         }
 
         ~TestState()
@@ -2103,7 +2103,7 @@ TEST_F(DataReaderTests, check_read_take_iteration)
         {
             // calculate key
             data.index(i);
-            type_.get_key(&data, &handles[i]);
+            type_.compute_key(&data, &handles[i]);
 
             // write the index as message
             oarraystream out(data.message());
@@ -3281,7 +3281,7 @@ TEST_F(DataReaderTests, InstancePolicyAllocationConsistencyNotKeyed)
     type.register_type(participant);
 
     // This test pretends to use topic with no instances, so the following flag is set false.
-    type.get()->m_isGetKeyDefined = false;
+    type.get()->is_compute_key_provided = false;
 
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
@@ -3411,7 +3411,7 @@ TEST_F(DataReaderTests, InstancePolicyAllocationConsistencyKeyed)
     type.register_type(participant);
 
     // This test pretends to use topic with instances, so the following flag is set.
-    type.get()->m_isGetKeyDefined = true;
+    type.get()->is_compute_key_provided = true;
 
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
@@ -3764,8 +3764,8 @@ public:
     DataRepresentationTestsTypeSupport()
         : TopicDataType()
     {
-        m_typeSize = 4u + sizeof(LoanableType);
-        setName("LoanableType");
+        max_serialized_type_size = 4u + sizeof(LoanableType);
+        set_name("LoanableType");
     }
 
     bool serialize(
@@ -3783,27 +3783,24 @@ public:
         return true;
     }
 
-    std::function<uint32_t()> getSerializedSizeProvider(
+    uint32_t calculate_serialized_size(
             const void* const /*data*/,
             DataRepresentationId_t /*data_representation*/) override
     {
-        return [this]()
-               {
-                   return m_typeSize;
-               };
+        return max_serialized_type_size;
     }
 
-    void* createData() override
+    void* create_data() override
     {
         return nullptr;
     }
 
-    void deleteData(
+    void delete_data(
             void* /*data*/) override
     {
     }
 
-    bool getKey(
+    bool compute_key(
             const void* const /*data*/,
             eprosima::fastdds::rtps::InstanceHandle_t* /*ihandle*/,
             bool /*force_md5*/) override

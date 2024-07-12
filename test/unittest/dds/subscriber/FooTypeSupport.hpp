@@ -32,9 +32,9 @@ public:
     FooTypeSupport()
         : TopicDataType()
     {
-        setName("FooType");
-        m_typeSize = 4u + 4u + 256u; // encapsulation + index + message
-        m_isGetKeyDefined = true;
+        set_name("FooType");
+        max_serialized_type_size = 4u + 4u + 256u; // encapsulation + index + message
+        is_compute_key_provided = true;
     }
 
     bool serialize(
@@ -115,29 +115,26 @@ public:
         return true;
     }
 
-    std::function<uint32_t()> getSerializedSizeProvider(
+    uint32_t calculate_serialized_size(
             const void* const /*data*/,
             DataRepresentationId_t /*data_representation*/) override
     {
-        return [this]
-               {
-                   return m_typeSize;
-               };
+        return max_serialized_type_size;
     }
 
-    void* createData() override
+    void* create_data() override
     {
         return static_cast<void*>(new FooType());
     }
 
-    void deleteData(
+    void delete_data(
             void* data) override
     {
         FooType* p_type = static_cast<FooType*>(data);
         delete p_type;
     }
 
-    bool getKey(
+    bool compute_key(
             const void* const data,
             fastdds::rtps::InstanceHandle_t* handle,
             bool force_md5) override

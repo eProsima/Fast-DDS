@@ -662,9 +662,8 @@ protected:
             const fastdds::rtps::WriterAttributes& writer_attributes,
             bool& is_datasharing_compatible) const;
 
-    template<typename SizeFunctor>
     bool get_free_payload_from_pool(
-            const SizeFunctor& size_getter,
+            uint32_t size,
             SerializedPayload_t& payload)
     {
         if (!payload_pool_)
@@ -672,7 +671,6 @@ protected:
             return false;
         }
 
-        uint32_t size = fixed_payload_size_ ? fixed_payload_size_ : size_getter();
         if (!payload_pool_->get_payload(size, payload))
         {
             return false;

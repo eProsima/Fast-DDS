@@ -80,9 +80,9 @@ public:
 
     MemoryDataType()
     {
-        setName("MemoryType");
-        m_typeSize = 17000;
-        m_isGetKeyDefined = false;
+        set_name("MemoryType");
+        max_serialized_type_size = 17000;
+        is_compute_key_provided = false;
     }
 
     ~MemoryDataType()
@@ -96,13 +96,13 @@ public:
     bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-    std::function<uint32_t()> getSerializedSizeProvider(
+    uint32_t calculate_serialized_size(
             const void* const data,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
-    void* createData();
-    void deleteData(
-            void* data);
-    bool getKey(
+    void* create_data() override;
+    void delete_data(
+            void* data) override;
+    bool compute_key(
             const void* const /*data*/,
             eprosima::fastdds::rtps::InstanceHandle_t* /*ihandle*/,
             bool force_md5 = false) override
@@ -144,9 +144,9 @@ public:
 
     TestCommandDataType()
     {
-        setName("TestCommandType");
-        m_typeSize = 4;
-        m_isGetKeyDefined = false;
+        set_name("TestCommandType");
+        max_serialized_type_size = 4;
+        is_compute_key_provided = false;
     }
 
     ~TestCommandDataType()
@@ -160,13 +160,13 @@ public:
     bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
-    std::function<uint32_t()> getSerializedSizeProvider(
+    uint32_t calculate_serialized_size(
             const void* const data,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
-    void* createData();
-    void deleteData(
-            void* data);
-    bool getKey(
+    void* create_data() override;
+    void delete_data(
+            void* data) override;
+    bool compute_key(
             const void* const /*data*/,
             eprosima::fastdds::rtps::InstanceHandle_t* /*ihandle*/,
             bool force_md5 = false) override

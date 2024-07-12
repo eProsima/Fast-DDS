@@ -146,13 +146,13 @@ void TCPReqRepHelloWorldReplier::init(
 
     configDatareader("Request");
     request_topic_ = participant_->create_topic(datareader_topicname_,
-                    type_->getName(), TOPIC_QOS_DEFAULT);
+                    type_->get_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(request_topic_, nullptr);
     ASSERT_TRUE(request_topic_->is_enabled());
 
     configDatawriter("Reply");
     reply_topic_ = participant_->create_topic(datawriter_topicname_,
-                    type_->getName(), TOPIC_QOS_DEFAULT);
+                    type_->get_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(reply_topic_, nullptr);
     ASSERT_TRUE(reply_topic_->is_enabled());
 

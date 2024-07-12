@@ -56,14 +56,14 @@ public:
      * @return pointer to the new object
      * @remark Ownership is transferred. This object must be removed using @ref deleteData
      */
-    FASTDDS_EXPORTED_API void* createData() override;
+    FASTDDS_EXPORTED_API void* create_data() override;
 
     /*
      * Deletes an object previously allocated via @ref createData
      * @param data pointer to the object to be deleted
      * @remark Ownership is transferred. This object must be allocated using @ref createData
      */
-    FASTDDS_EXPORTED_API void deleteData (
+    FASTDDS_EXPORTED_API void delete_data (
             void* data) override;
 
     /*
@@ -89,7 +89,7 @@ public:
      * @param force_md5 use always md5 even if key payload footprint is smaller than the hash
      * @return bool specifying success
      */
-    FASTDDS_EXPORTED_API bool getKey(
+    FASTDDS_EXPORTED_API bool compute_key(
             const void* const data,
             eprosima::fastdds::rtps::InstanceHandle_t* ihandle,
             bool force_md5 = false) override;
@@ -100,7 +100,7 @@ public:
      * @param [in] data_representation Representation that should be used for calculating the serialized size.
      * @return functor that calculates the size
      */
-    FASTDDS_EXPORTED_API std::function<uint32_t()> getSerializedSizeProvider(
+    FASTDDS_EXPORTED_API uint32_t calculate_serialized_size(
             const void* const data,
             DataRepresentationId_t data_representation) override;
 

@@ -55,7 +55,7 @@ bool ThroughputDataType::serialize(
     memcpy(ser_data, &lt->seqnum, sizeof(lt->seqnum));
     ser_data += sizeof(lt->seqnum);
     memcpy(ser_data, lt->data, buffer_size_);
-    payload->length = m_typeSize;
+    payload->length = max_serialized_type_size;
     return true;
 }
 
@@ -75,24 +75,20 @@ bool ThroughputDataType::deserialize(
     return true;
 }
 
-std::function<uint32_t()> ThroughputDataType::getSerializedSizeProvider(
+uint32_t ThroughputDataType::calculate_serialized_size(
         const void* const,
         eprosima::fastdds::dds::DataRepresentationId_t)
 {
     // uint32_t seqnum + uint32_t buffer_size_ + actual data
-    uint32_t size = m_typeSize;
-    return [size]() -> uint32_t
-           {
-               return size;
-           };
+    return max_serialized_type_size;
 }
 
-void* ThroughputDataType::createData()
+void* ThroughputDataType::create_data()
 {
-    return (void*)new uint8_t[m_typeSize];
+    return (void*)new uint8_t[max_serialized_type_size];
 }
 
-void ThroughputDataType::deleteData(
+void ThroughputDataType::delete_data(
         void* data)
 {
     delete[] (uint8_t*)(data);
@@ -148,27 +144,24 @@ bool ThroughputCommandDataType::deserialize(
     return true;
 }
 
-std::function<uint32_t()> ThroughputCommandDataType::getSerializedSizeProvider(
+uint32_t ThroughputCommandDataType::calculate_serialized_size(
         const void* const,
         eprosima::fastdds::dds::DataRepresentationId_t)
 {
-    return []() -> uint32_t
-           {
-               uint32_t size = 0;
+    uint32_t size = 0;
 
-               size = (uint32_t)(sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t)  + sizeof(uint32_t) +
-                       sizeof(uint64_t) + sizeof(uint64_t) + sizeof(uint64_t));
+    size = (uint32_t)(sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t)  + sizeof(uint32_t) +
+            sizeof(uint64_t) + sizeof(uint64_t) + sizeof(uint64_t));
 
-               return size;
-           };
+    return size;
 }
 
-void* ThroughputCommandDataType::createData()
+void* ThroughputCommandDataType::create_data()
 {
     return (void*)new ThroughputCommandType();
 }
 
-void ThroughputCommandDataType::deleteData(
+void ThroughputCommandDataType::delete_data(
         void* data)
 {
     delete((ThroughputCommandType*)data);

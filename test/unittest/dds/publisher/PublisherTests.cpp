@@ -40,8 +40,8 @@ public:
     TopicDataTypeMock()
         : TopicDataType()
     {
-        m_typeSize = 4u;
-        setName("footype");
+        max_serialized_type_size = 4u;
+        set_name("footype");
     }
 
     bool serialize(
@@ -59,27 +59,24 @@ public:
         return true;
     }
 
-    std::function<uint32_t()> getSerializedSizeProvider(
+    uint32_t calculate_serialized_size(
             const void* const /*data*/,
             DataRepresentationId_t /*data_representation*/) override
     {
-        return []()->uint32_t
-               {
-                   return 0;
-               };
+        return 0;
     }
 
-    void* createData() override
+    void* create_data() override
     {
         return nullptr;
     }
 
-    void deleteData(
+    void delete_data(
             void* /*data*/) override
     {
     }
 
-    bool getKey(
+    bool compute_key(
             const void* const /*data*/,
             fastdds::rtps::InstanceHandle_t* /*ihandle*/,
             bool /*force_md5*/) override
@@ -96,8 +93,8 @@ public:
     LoanableTopicDataTypeMock()
         : TopicDataType()
     {
-        m_typeSize = 4u;
-        setName("loanablefootype");
+        max_serialized_type_size = 4u;
+        set_name("loanablefootype");
     }
 
     bool serialize(
@@ -115,19 +112,19 @@ public:
         return true;
     }
 
-    std::function<uint32_t()> getSerializedSizeProvider(
+    uint32_t calculate_serialized_size(
             const void* const /*data*/,
             DataRepresentationId_t /*data_representation*/) override
     {
-        return std::function<uint32_t()>();
+        return 0;
     }
 
-    void* createData() override
+    void* create_data() override
     {
         return nullptr;
     }
 
-    void deleteData(
+    void delete_data(
             void* /*data*/) override
     {
     }
@@ -143,7 +140,7 @@ public:
         return true;
     }
 
-    bool getKey(
+    bool compute_key(
             const void* const /*data*/,
             fastdds::rtps::InstanceHandle_t* /*ihandle*/,
             bool /*force_md5*/) override

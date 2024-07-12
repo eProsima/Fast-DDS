@@ -232,7 +232,7 @@ template <>
 traits<DynamicType>::ref_type create_dynamic_type<DataTypeKind::COMPREHENSIVE_TYPE>()
 {
     eprosima::fastdds::dds::TypeSupport type(new ComprehensiveTypePubSubType());
-    const auto type_name = type->getName();
+    const auto type_name = type->get_name();
 
     type->register_type_object_representation();
 

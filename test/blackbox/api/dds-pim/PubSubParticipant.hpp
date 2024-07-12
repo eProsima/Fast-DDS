@@ -345,7 +345,7 @@ public:
         if (topic == nullptr)
         {
             topic = participant_->create_topic(publisher_topicname_,
-                            type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+                            type_->get_name(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
         }
         if (topic)
         {
@@ -382,7 +382,7 @@ public:
         if (topic == nullptr)
         {
             topic = participant_->create_topic(subscriber_topicname_,
-                            type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+                            type_->get_name(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
         }
         if (topic)
         {

@@ -1746,7 +1746,7 @@ static void test_DDSDiscovery_WaitSetMatchedStatus(
     fastdds::dds::TypeSupport type(new HelloWorldPubSubType());
     EXPECT_EQ(type.register_type(participant), eprosima::fastdds::dds::RETCODE_OK);
 
-    auto topic = participant->create_topic(TEST_TOPIC_NAME, type->getName(), fastdds::dds::TOPIC_QOS_DEFAULT);
+    auto topic = participant->create_topic(TEST_TOPIC_NAME, type->get_name(), fastdds::dds::TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
 
     auto publisher = participant->create_publisher(fastdds::dds::PUBLISHER_QOS_DEFAULT);

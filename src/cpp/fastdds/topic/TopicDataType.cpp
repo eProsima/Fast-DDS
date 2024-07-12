@@ -31,13 +31,6 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-TopicDataType::TopicDataType()
-    : m_typeSize(0)
-    , m_isGetKeyDefined(false)
-    , auto_fill_type_information_(true)
-{
-}
-
 TopicDataType::~TopicDataType()
 {
 }

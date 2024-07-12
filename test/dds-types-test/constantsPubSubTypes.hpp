@@ -68,18 +68,18 @@ namespace const_module1
                 eprosima::fastdds::rtps::SerializedPayload_t* payload,
                 void* data) override;
 
-        eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
+        eProsima_user_DllExport uint32_t calculate_serialized_size(
                 const void* const data,
                 eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-        eProsima_user_DllExport bool getKey(
+        eProsima_user_DllExport bool compute_key(
                 const void* const data,
                 eprosima::fastdds::rtps::InstanceHandle_t* ihandle,
                 bool force_md5 = false) override;
 
-        eProsima_user_DllExport void* createData() override;
+        eProsima_user_DllExport void* create_data() override;
 
-        eProsima_user_DllExport void deleteData(
+        eProsima_user_DllExport void delete_data(
                 void* data) override;
 
         //Register TypeObject representation in Fast DDS TypeObjectRegistry
@@ -114,8 +114,8 @@ namespace const_module1
 
     #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
-        eprosima::fastdds::MD5 m_md5;
-        unsigned char* m_keyBuffer;
+        eprosima::fastdds::MD5 md5_;
+        unsigned char* key_buffer_;
 
     };
 } // namespace const_module1
@@ -145,18 +145,18 @@ namespace const_module2
                 eprosima::fastdds::rtps::SerializedPayload_t* payload,
                 void* data) override;
 
-        eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
+        eProsima_user_DllExport uint32_t calculate_serialized_size(
                 const void* const data,
                 eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-        eProsima_user_DllExport bool getKey(
+        eProsima_user_DllExport bool compute_key(
                 const void* const data,
                 eprosima::fastdds::rtps::InstanceHandle_t* ihandle,
                 bool force_md5 = false) override;
 
-        eProsima_user_DllExport void* createData() override;
+        eProsima_user_DllExport void* create_data() override;
 
-        eProsima_user_DllExport void deleteData(
+        eProsima_user_DllExport void delete_data(
                 void* data) override;
 
         //Register TypeObject representation in Fast DDS TypeObjectRegistry
@@ -191,8 +191,8 @@ namespace const_module2
 
     #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
-        eprosima::fastdds::MD5 m_md5;
-        unsigned char* m_keyBuffer;
+        eprosima::fastdds::MD5 md5_;
+        unsigned char* key_buffer_;
 
     };
 } // namespace const_module2
@@ -220,18 +220,18 @@ public:
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
 
-    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
+    eProsima_user_DllExport uint32_t calculate_serialized_size(
             const void* const data,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-    eProsima_user_DllExport bool getKey(
+    eProsima_user_DllExport bool compute_key(
             const void* const data,
             eprosima::fastdds::rtps::InstanceHandle_t* ihandle,
             bool force_md5 = false) override;
 
-    eProsima_user_DllExport void* createData() override;
+    eProsima_user_DllExport void* create_data() override;
 
-    eProsima_user_DllExport void deleteData(
+    eProsima_user_DllExport void delete_data(
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
@@ -266,8 +266,8 @@ public:
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
-    eprosima::fastdds::MD5 m_md5;
-    unsigned char* m_keyBuffer;
+    eprosima::fastdds::MD5 md5_;
+    unsigned char* key_buffer_;
 
 };
 

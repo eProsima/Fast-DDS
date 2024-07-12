@@ -49,7 +49,7 @@ DynamicPubSubType::~DynamicPubSubType()
     }
 }
 
-void* DynamicPubSubType::createData()
+void* DynamicPubSubType::create_data()
 {
     if (!dynamic_type_)
     {
@@ -66,7 +66,7 @@ void* DynamicPubSubType::createData()
     }
 }
 
-void DynamicPubSubType::deleteData(
+void DynamicPubSubType::delete_data(
         void* data)
 {
     traits<DynamicData>::ref_type* data_ptr = static_cast<traits<DynamicData>::ref_type*>(data);
@@ -102,12 +102,12 @@ traits<DynamicType>::ref_type DynamicPubSubType::get_dynamic_type() const noexce
     return dynamic_type_;
 }
 
-bool DynamicPubSubType::getKey(
+bool DynamicPubSubType::compute_key(
         const void* const data,
         eprosima::fastdds::rtps::InstanceHandle_t* handle,
         bool force_md5)
 {
-    if (!dynamic_type_ || !m_isGetKeyDefined)
+    if (!dynamic_type_ || !is_compute_key_provided)
     {
         return false;
     }
@@ -148,29 +148,26 @@ bool DynamicPubSubType::getKey(
     return true;
 }
 
-std::function<uint32_t()> DynamicPubSubType::getSerializedSizeProvider(
+uint32_t DynamicPubSubType::calculate_serialized_size(
         const void* const data,
         DataRepresentationId_t data_representation)
 {
     const traits<DynamicDataImpl>::ref_type* data_ptr = static_cast<const traits<DynamicDataImpl>::ref_type*>(data);
 
-    return [data_ptr, data_representation]() -> uint32_t
-           {
-               try
-               {
-                   eprosima::fastcdr::CdrSizeCalculator calculator(
-                       data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-                       eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-                   size_t current_alignment {0};
-                   return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                              *data_ptr, current_alignment)) + 4u /*encapsulation*/;
+    try
+    {
+        eprosima::fastcdr::CdrSizeCalculator calculator(
+            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+            eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        size_t current_alignment {0};
+        return static_cast<uint32_t>(calculator.calculate_serialized_size(
+                   *data_ptr, current_alignment)) + 4u /*encapsulation*/;
 
-               }
-               catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-               {
-                   return 0;
-               }
-           };
+    }
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+    {
+        return 0;
+    }
 }
 
 bool DynamicPubSubType::serialize(
@@ -249,15 +246,15 @@ void DynamicPubSubType::register_type_object_representation()
 
 void DynamicPubSubType::update_dynamic_type()
 {
-    m_isGetKeyDefined = false;
+    is_compute_key_provided = false;
 
     if (nullptr == dynamic_type_)
     {
         return;
     }
 
-    m_typeSize = static_cast<uint32_t>(DynamicDataImpl::calculate_max_serialized_size(dynamic_type_) + 4);
-    setName(dynamic_type_->get_name());
+    max_serialized_type_size = static_cast<uint32_t>(DynamicDataImpl::calculate_max_serialized_size(dynamic_type_) + 4);
+    set_name(dynamic_type_->get_name());
 
     if (TK_STRUCTURE == dynamic_type_->get_kind())
     {
@@ -267,7 +264,7 @@ void DynamicPubSubType::update_dynamic_type()
             auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
             if (member_impl->get_descriptor().is_key())
             {
-                m_isGetKeyDefined = true;
+                is_compute_key_provided = true;
                 break;
             }
         }

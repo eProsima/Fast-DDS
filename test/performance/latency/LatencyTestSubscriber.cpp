@@ -661,7 +661,7 @@ bool LatencyTestSubscriber::test(
     if (dynamic_types_)
     {
         // Create the data sample
-        dynamic_data_ = static_cast<DynamicData::_ref_type*>(dynamic_pub_sub_type_->createData());
+        dynamic_data_ = static_cast<DynamicData::_ref_type*>(dynamic_pub_sub_type_->create_data());
 
         if (nullptr == dynamic_data_)
         {
@@ -727,7 +727,7 @@ bool LatencyTestSubscriber::test(
 
     if (dynamic_types_)
     {
-        dynamic_pub_sub_type_->deleteData(dynamic_data_);
+        dynamic_pub_sub_type_->delete_data(dynamic_data_);
         //
         // Reset history for the new test
         size_t removed;
@@ -736,7 +736,7 @@ bool LatencyTestSubscriber::test(
     else
     {
         // release the buffer next iteration will require different size
-        latency_data_type_->deleteData(latency_data_);
+        latency_data_type_->delete_data(latency_data_);
 
         // Remove endpoints associated to the given payload size
         if (!destroy_data_endpoints())

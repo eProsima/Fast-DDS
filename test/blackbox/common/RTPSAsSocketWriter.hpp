@@ -110,7 +110,7 @@ public:
         ASSERT_NE(participant_, nullptr);
 
         //Create writerhistory
-        hattr_.payloadMaxSize = 255 + type_.m_typeSize;
+        hattr_.payloadMaxSize = 255 + type_.max_serialized_type_size;
         history_ = new eprosima::fastdds::rtps::WriterHistory(hattr_);
 
         //Create writer

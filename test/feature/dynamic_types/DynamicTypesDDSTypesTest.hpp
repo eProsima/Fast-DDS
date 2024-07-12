@@ -111,8 +111,8 @@ public:
     {
         TypeSupport dyn_pubsubType {new DynamicPubSubType(type)};
 
-        uint32_t dyn_payloadSize = static_cast<uint32_t>(dyn_pubsubType.get_serialized_size_provider(&data,
-                data_representation)());
+        uint32_t dyn_payloadSize = static_cast<uint32_t>(dyn_pubsubType.calculate_serialized_size(&data,
+                data_representation));
 
         // Dynamic Serialization <-> Dynamic Deserialization
         eprosima::fastdds::rtps::SerializedPayload_t dyn_payload(dyn_payloadSize);
@@ -125,8 +125,8 @@ public:
         ASSERT_TRUE(static_pubsubType.deserialize(&dyn_payload, &data_static));
 
         // Static Serialization <-> Dynamic Deserialization
-        uint32_t static_payloadSize = static_cast<uint32_t>(static_pubsubType.get_serialized_size_provider(&data_static,
-                data_representation)());
+        uint32_t static_payloadSize = static_pubsubType.calculate_serialized_size(&data_static,
+                        data_representation);
         EXPECT_EQ(static_payloadSize, dyn_payloadSize);
         eprosima::fastdds::rtps::SerializedPayload_t static_payload(static_payloadSize);
         ASSERT_TRUE(static_pubsubType.serialize(&data_static, &static_payload, data_representation));

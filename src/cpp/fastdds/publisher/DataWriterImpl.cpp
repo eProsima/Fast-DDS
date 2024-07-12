@@ -164,7 +164,7 @@ DataWriterImpl::DataWriterImpl(
 {
     EndpointAttributes endpoint_attributes;
     endpoint_attributes.endpointKind = WRITER;
-    endpoint_attributes.topicKind = type_->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
+    endpoint_attributes.topicKind = type_->is_compute_key_provided ? WITH_KEY : NO_KEY;
     endpoint_attributes.setEntityID(qos_.endpoint().entity_id);
     endpoint_attributes.setUserDefinedID(qos_.endpoint().user_defined_id);
     fastdds::rtps::RTPSParticipantImpl::preprocess_endpoint_attributes<WRITER, 0x03, 0x02>(
@@ -228,7 +228,7 @@ void DataWriterImpl::create_history(
     history_.reset(new DataWriterHistory(
                 payload_pool, change_pool,
                 get_topic_attributes(qos_, *topic_, type_),
-                type_->m_typeSize,
+                type_->max_serialized_type_size,
                 qos_.endpoint().history_memory_policy,
                 [this](
                     const InstanceHandle_t& handle) -> void
@@ -246,7 +246,7 @@ ReturnCode_t DataWriterImpl::enable()
 
     auto topic_att = get_topic_attributes(qos_, *topic_, type_);
     auto history_att = DataWriterHistory::to_history_attributes(
-        topic_att, type_->m_typeSize, qos_.endpoint().history_memory_policy);
+        topic_att, type_->max_serialized_type_size, qos_.endpoint().history_memory_policy);
     pool_config_ = PoolConfig::from_history_attributes(history_att);
 
     // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
@@ -261,7 +261,7 @@ ReturnCode_t DataWriterImpl::enable()
     w_att.endpoint.durabilityKind = qos_.durability().durabilityKind();
     w_att.endpoint.endpointKind = WRITER;
     w_att.endpoint.reliabilityKind = qos_.reliability().kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
-    w_att.endpoint.topicKind = type_->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
+    w_att.endpoint.topicKind = type_->is_compute_key_provided ? WITH_KEY : NO_KEY;
     w_att.endpoint.multicastLocatorList = qos_.endpoint().multicast_locator_list;
     w_att.endpoint.unicastLocatorList = qos_.endpoint().unicast_locator_list;
     w_att.endpoint.remoteLocatorList = qos_.endpoint().remote_locator_list;
@@ -500,7 +500,7 @@ DataWriterImpl::~DataWriterImpl()
 
     if (writer_ != nullptr)
     {
-        EPROSIMA_LOG_INFO(DATA_WRITER, guid().entityId << " in topic: " << type_->getName());
+        EPROSIMA_LOG_INFO(DATA_WRITER, guid().entityId << " in topic: " << type_->get_name());
         RTPSDomain::removeRTPSWriter(writer_);
         release_payload_pool();
     }
@@ -517,7 +517,8 @@ ReturnCode_t DataWriterImpl::loan_sample(
             microseconds(rtps::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
 
     // Type should be plain and have space for the representation header
-    if (!type_->is_plain(data_representation_) || SerializedPayload_t::representation_header_size > type_->m_typeSize)
+    if (!type_->is_plain(data_representation_) ||
+            SerializedPayload_t::representation_header_size > type_->max_serialized_type_size)
     {
         return RETCODE_ILLEGAL_OPERATION;
     }
@@ -541,11 +542,8 @@ ReturnCode_t DataWriterImpl::loan_sample(
 
     // Get one payload from the pool
     SerializedPayload_t payload;
-    uint32_t size = type_->m_typeSize;
-    if (!get_free_payload_from_pool([size]()
-            {
-                return size;
-            }, payload))
+    uint32_t size = type_->max_serialized_type_size;
+    if (!get_free_payload_from_pool(size, payload))
     {
         return RETCODE_OUT_OF_RESOURCES;
     }
@@ -607,7 +605,8 @@ ReturnCode_t DataWriterImpl::discard_loan(
         void*& sample)
 {
     // Type should be plain and have space for the representation header
-    if (!type_->is_plain(data_representation_) || SerializedPayload_t::representation_header_size > type_->m_typeSize)
+    if (!type_->is_plain(data_representation_) ||
+            SerializedPayload_t::representation_header_size > type_->max_serialized_type_size)
     {
         return RETCODE_ILLEGAL_OPERATION;
     }
@@ -669,13 +668,13 @@ ReturnCode_t DataWriterImpl::check_write_preconditions(
         return RETCODE_NOT_ENABLED;
     }
 
-    if (type_.get()->m_isGetKeyDefined)
+    if (type_.get()->is_compute_key_provided)
     {
         bool is_key_protected = false;
 #if HAVE_SECURITY
         is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
 #endif // if HAVE_SECURITY
-        type_.get()->getKey(data, &instance_handle, is_key_protected);
+        type_.get()->compute_key(data, &instance_handle, is_key_protected);
     }
 
     //Check if the Handle is different from the special value HANDLE_NIL and
@@ -748,7 +747,7 @@ ReturnCode_t DataWriterImpl::check_instance_preconditions(
         return RETCODE_BAD_PARAMETER;
     }
 
-    if (!type_->m_isGetKeyDefined)
+    if (!type_->is_compute_key_provided)
     {
         EPROSIMA_LOG_ERROR(DATA_WRITER, "Topic is NO_KEY, operation not permitted");
         return RETCODE_PRECONDITION_NOT_MET;
@@ -764,7 +763,7 @@ ReturnCode_t DataWriterImpl::check_instance_preconditions(
 #if HAVE_SECURITY
         is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
 #endif // if HAVE_SECURITY
-        type_->getKey(data, &instance_handle, is_key_protected);
+        type_->compute_key(data, &instance_handle, is_key_protected);
     }
 
 #if !defined(NDEBUG)
@@ -836,8 +835,8 @@ InstanceHandle_t DataWriterImpl::do_register_instance(
             assert(nullptr != payload);
             if (0 == payload->length || nullptr == payload->data)
             {
-                uint32_t size = fixed_payload_size_ ? fixed_payload_size_ : type_->getSerializedSizeProvider(key,
-                                data_representation_)();
+                uint32_t size = fixed_payload_size_ ? fixed_payload_size_ : type_->calculate_serialized_size(key,
+                                data_representation_);
                 payload->reserve(size);
                 if (!type_->serialize(key, payload, data_representation_))
                 {
@@ -925,7 +924,7 @@ ReturnCode_t DataWriterImpl::get_key_value(
         return RETCODE_BAD_PARAMETER;
     }
 
-    if (!type_->m_isGetKeyDefined)
+    if (!type_->is_compute_key_provided)
     {
         EPROSIMA_LOG_ERROR(DATA_WRITER, "Topic is NO_KEY, operation not permitted");
         return RETCODE_ILLEGAL_OPERATION;
@@ -982,7 +981,7 @@ ReturnCode_t DataWriterImpl::check_new_change_preconditions(
             || change_kind == NOT_ALIVE_DISPOSED
             || change_kind == NOT_ALIVE_DISPOSED_UNREGISTERED)
     {
-        if (!type_->m_isGetKeyDefined)
+        if (!type_->is_compute_key_provided)
         {
             EPROSIMA_LOG_ERROR(DATA_WRITER, "Topic is NO_KEY, operation not permitted");
             return RETCODE_ILLEGAL_OPERATION;
@@ -1016,7 +1015,8 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
     bool was_loaned = check_and_remove_loan(data, payload);
     if (!was_loaned)
     {
-        if (!get_free_payload_from_pool(type_->getSerializedSizeProvider(data, data_representation_), payload))
+        if (!get_free_payload_from_pool(fixed_payload_size_ ? fixed_payload_size_ : type_->calculate_serialized_size(
+                    data, data_representation_), payload))
         {
             return RETCODE_OUT_OF_RESOURCES;
         }
@@ -1108,13 +1108,13 @@ ReturnCode_t DataWriterImpl::create_new_change_with_params(
     }
 
     InstanceHandle_t handle;
-    if (type_->m_isGetKeyDefined)
+    if (type_->is_compute_key_provided)
     {
         bool is_key_protected = false;
 #if HAVE_SECURITY
         is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
 #endif // if HAVE_SECURITY
-        type_->getKey(data, &handle, is_key_protected);
+        type_->compute_key(data, &handle, is_key_protected);
     }
 
     return perform_create_new_change(changeKind, data, wparams, handle);
@@ -1329,7 +1329,7 @@ void DataWriterImpl::InnerDataWriterListener::on_writer_change_received_by_all(
         RTPSWriter* /*writer*/,
         CacheChange_t* ch)
 {
-    if (data_writer_->type_->m_isGetKeyDefined &&
+    if (data_writer_->type_->is_compute_key_provided &&
             (NOT_ALIVE_UNREGISTERED == ch->kind ||
             NOT_ALIVE_DISPOSED_UNREGISTERED == ch->kind))
     {
@@ -1685,7 +1685,7 @@ fastdds::TopicAttributes DataWriterImpl::get_topic_attributes(
     topic_att.resourceLimitsQos = qos.resource_limits();
     topic_att.topicName = topic.get_name();
     topic_att.topicDataType = topic.get_type_name();
-    topic_att.topicKind = type->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
+    topic_att.topicKind = type->is_compute_key_provided ? WITH_KEY : NO_KEY;
     if (type->auto_fill_type_information() && xtypes::TK_NONE != type->type_identifiers().type_identifier1()._d())
     {
         if (RETCODE_OK ==
@@ -1863,7 +1863,7 @@ ReturnCode_t DataWriterImpl::check_qos_including_resource_limits(
 {
     ReturnCode_t check_qos_return = check_qos(qos);
     if (RETCODE_OK == check_qos_return &&
-            type->m_isGetKeyDefined)
+            type->is_compute_key_provided)
     {
         check_qos_return = check_allocation_consistency(qos);
     }
@@ -2147,7 +2147,7 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
             qos_.endpoint().history_memory_policy == eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE) &&
             type_.is_bounded();
 
-    bool has_key = type_->m_isGetKeyDefined;
+    bool has_key = type_->is_compute_key_provided;
 
     is_datasharing_compatible = false;
     switch (qos_.data_sharing().kind())

@@ -69,7 +69,7 @@ bool LatencyDataType::serialize(
     memcpy(ser_data, &lt->bounce, sizeof(lt->bounce));
     ser_data += sizeof(lt->bounce);
     memcpy(ser_data, lt->data, buffer_size_);
-    payload->length = m_typeSize;
+    payload->length = max_serialized_type_size;
     return true;
 }
 
@@ -88,23 +88,19 @@ bool LatencyDataType::deserialize(
     return true;
 }
 
-std::function<uint32_t()> LatencyDataType::getSerializedSizeProvider(
+uint32_t LatencyDataType::calculate_serialized_size(
         const void* const,
         eprosima::fastdds::dds::DataRepresentationId_t)
 {
-    uint32_t size = m_typeSize;
-    return [size]() -> uint32_t
-           {
-               return size;
-           };
+    return max_serialized_type_size;
 }
 
-void* LatencyDataType::createData()
+void* LatencyDataType::create_data()
 {
-    return (void*)new uint8_t[m_typeSize];
+    return (void*)new uint8_t[max_serialized_type_size];
 }
 
-void LatencyDataType::deleteData(
+void LatencyDataType::delete_data(
         void* data)
 {
     delete[] (uint8_t*)(data);
@@ -133,27 +129,24 @@ bool TestCommandDataType::deserialize(
     return true;
 }
 
-std::function<uint32_t()> TestCommandDataType::getSerializedSizeProvider(
+uint32_t TestCommandDataType::calculate_serialized_size(
         const void* const,
         eprosima::fastdds::dds::DataRepresentationId_t)
 {
-    return []() -> uint32_t
-           {
-               uint32_t size = 0;
+    uint32_t size = 0;
 
-               size = (uint32_t)sizeof(uint32_t);
+    size = (uint32_t)sizeof(uint32_t);
 
-               return size;
-           };
+    return size;
 }
 
-void* TestCommandDataType::createData()
+void* TestCommandDataType::create_data()
 {
 
     return (void*)new TestCommandType();
 }
 
-void TestCommandDataType::deleteData(
+void TestCommandDataType::delete_data(
         void* data)
 {
 
