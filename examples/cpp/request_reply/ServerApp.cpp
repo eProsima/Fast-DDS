@@ -451,7 +451,7 @@ void ServerApp::reply_routine()
             write_params.related_sample_identity().sequence_number(request_id);
 
             // Send the reply
-            if (!reply_writer_->write(&reply, write_params))
+            if (RETCODE_OK != reply_writer_->write(&reply, write_params))
             {
                 // In case of failure, save the request for a later retry
                 request_reply_error("ServerApp",

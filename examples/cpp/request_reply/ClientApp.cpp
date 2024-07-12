@@ -469,7 +469,7 @@ bool ClientApp::send_request(
         const CalculatorRequestType& request)
 {
     rtps::WriteParams wparams;
-    bool ret = request_writer_->write(&request, wparams);
+    ReturnCode_t ret = request_writer_->write(&request, wparams);
 
     request_reply_info("ClientApp",
             "Request sent with ID '" << wparams.sample_identity().sequence_number() <<
@@ -478,7 +478,7 @@ bool ClientApp::send_request(
     std::lock_guard<std::mutex> lock(mtx_);
     requests_status_[wparams.sample_identity()] = false;
 
-    return ret;
+    return (RETCODE_OK == ret);
 }
 
 bool ClientApp::is_stopped()
