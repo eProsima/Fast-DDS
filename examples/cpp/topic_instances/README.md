@@ -41,6 +41,10 @@ One of them will run the publisher example application, and the other will run t
 
     ```shell
     user@machine:example_path$ ./topic_instances publisher
+    Registering instance for RED shape
+    Registering instance for BLUE shape
+    Registering instance for GREEN shape
+    Registering instance for YELLOW shape
     Publisher running. Please press Ctrl+C to stop the Publisher at any time.
     ```
 
@@ -48,6 +52,10 @@ One of them will run the publisher example application, and the other will run t
 
     ```powershell
     example_path> topic_instances.exe publisher
+    Registering instance for RED shape
+    Registering instance for BLUE shape
+    Registering instance for GREEN shape
+    Registering instance for YELLOW shape
     Publisher running. Please press Ctrl+C to stop the Publisher at any time.
     ```
 
@@ -126,31 +134,41 @@ Publisher unmatched.
 **``-i``** ``<number>`` or **``--instances``** ``<number>`` will configure the amount of instances to be deployed.
 This argument is available in both publisher and subscriber.
 
-The argument **``-c``** ``<color>`` or **``--color``** ``<color>`` allows to force a specific key (color) transmission on the publisher side,  in combination with **``-i 1``** or **``--instances 1``**.
+The argument **``-c``** ``<color>`` or **``--color``** ``<color>`` allows to force a specific keys (color) transmission on the publisher side,  in combination with **``-i``** or **``--instances``**.
 
 ### Topic instances publisher
 
 ```shell
-user@machine:example_path$ ./topic_instances publisher -c MAGENTA -i 1
+user@machine:example_path$ ./topic_instances publisher -c MAGENTA,PURPLE -i 2
+Registering instance for MAGENTA shape
+Registering instance for PURPLE shape
 Publisher running. Please press Ctrl+C to stop the Publisher at any time.
 Publisher matched.
 MAGENTA Shape with size 30 at X:113, Y:113 SENT
+PURPLE Shape with size 30 at X:113, Y:113 SENT
 MAGENTA Shape with size 30 at X:116, Y:113 SENT
+PURPLE Shape with size 30 at X:110, Y:113 SENT
 MAGENTA Shape with size 30 at X:119, Y:113 SENT
+PURPLE Shape with size 30 at X:107, Y:113 SENT
 MAGENTA Shape with size 30 at X:122, Y:113 SENT
+PURPLE Shape with size 30 at X:104, Y:113 SENT
 ...
 ```
 
 ### Topic instances subscriber
 
 ```shell
-user@machine:example_path$ ./topic_instances subscriber -i 1
+user@machine:example_path$ ./topic_instances subscriber -i 2
 Subscriber running. Please press Ctrl+C to stop the Subscriber at any time.
 Subscriber matched.
 MAGENTA Shape with size 30 at X:113, Y:113 RECEIVED
+PURPLE Shape with size 30 at X:113, Y:113 RECEIVED
 MAGENTA Shape with size 30 at X:116, Y:113 RECEIVED
+PURPLE Shape with size 30 at X:110, Y:113 RECEIVED
 MAGENTA Shape with size 30 at X:119, Y:113 RECEIVED
+PURPLE Shape with size 30 at X:107, Y:113 RECEIVED
 MAGENTA Shape with size 30 at X:122, Y:113 RECEIVED
+PURPLE Shape with size 30 at X:104, Y:113 RECEIVED
 ...
 ```
 
