@@ -106,7 +106,7 @@ public:
      */
     virtual void on_writer_discovery(
             RTPSParticipant* participant,
-            WRITER_DISCOVERY_STATUS reason,
+            WriterDiscoveryStatus reason,
             const PublicationBuiltinTopicData& info,
             bool& should_be_ignored)
     {

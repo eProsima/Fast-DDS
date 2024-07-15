@@ -244,7 +244,7 @@ bool StatefulReader::matched_writer_add_edp(
                     PublicationBuiltinTopicData info;
                     from_proxy_to_builtin(wdata, info);
                     listener->on_writer_discovery(
-                        this, WRITER_DISCOVERY_STATUS::CHANGED_QOS_WRITER, wdata.guid(), &info);
+                        this, WriterDiscoveryStatus::CHANGED_QOS_WRITER, wdata.guid(), &info);
                 }
 
 #ifdef FASTDDS_STATISTICS
@@ -368,7 +368,7 @@ bool StatefulReader::matched_writer_add_edp(
     {
         PublicationBuiltinTopicData info;
         from_proxy_to_builtin(wdata, info);
-        listener->on_writer_discovery(this, WRITER_DISCOVERY_STATUS::DISCOVERED_WRITER, wdata.guid(), &info);
+        listener->on_writer_discovery(this, WriterDiscoveryStatus::DISCOVERED_WRITER, wdata.guid(), &info);
     }
 
 #ifdef FASTDDS_STATISTICS
@@ -433,7 +433,7 @@ bool StatefulReader::matched_writer_remove(
                 // call the listener without the lock taken
                 ReaderListener* listener = listener_;
                 lock.unlock();
-                listener->on_writer_discovery(this, WRITER_DISCOVERY_STATUS::REMOVED_WRITER, writer_guid, nullptr);
+                listener->on_writer_discovery(this, WriterDiscoveryStatus::REMOVED_WRITER, writer_guid, nullptr);
             }
 
 #ifdef FASTDDS_STATISTICS

@@ -139,21 +139,21 @@ class PubSubWriter
 
         void on_data_writer_discovery(
                 eprosima::fastdds::dds::DomainParticipant*,
-                eprosima::fastdds::rtps::WRITER_DISCOVERY_STATUS reason,
+                eprosima::fastdds::rtps::WriterDiscoveryStatus reason,
                 const eprosima::fastdds::dds::PublicationBuiltinTopicData& info,
                 bool& /*should_be_ignored*/) override
         {
-            using eprosima::fastdds::rtps::WRITER_DISCOVERY_STATUS;
+            using eprosima::fastdds::rtps::WriterDiscoveryStatus;
 
-            if (reason == WRITER_DISCOVERY_STATUS::DISCOVERED_WRITER)
+            if (reason == WriterDiscoveryStatus::DISCOVERED_WRITER)
             {
                 writer_.add_writer_info(info);
             }
-            else if (reason == WRITER_DISCOVERY_STATUS::CHANGED_QOS_WRITER)
+            else if (reason == WriterDiscoveryStatus::CHANGED_QOS_WRITER)
             {
                 writer_.change_writer_info(info);
             }
-            else if (reason == WRITER_DISCOVERY_STATUS::REMOVED_WRITER)
+            else if (reason == WriterDiscoveryStatus::REMOVED_WRITER)
             {
                 writer_.remove_writer_info(info);
             }

@@ -60,7 +60,7 @@ public:
 
     void on_data_writer_discovery(
             DomainParticipant* participant,
-            eprosima::fastdds::rtps::WRITER_DISCOVERY_STATUS reason,
+            eprosima::fastdds::rtps::WriterDiscoveryStatus reason,
             const eprosima::fastdds::dds::PublicationBuiltinTopicData& info,
             bool& should_be_ignored) override;
 

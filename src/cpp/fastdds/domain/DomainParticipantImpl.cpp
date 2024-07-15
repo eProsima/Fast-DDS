@@ -86,7 +86,7 @@ using rtps::EndpointKind_t;
 using rtps::ReaderDiscoveryInfo;
 using rtps::ReaderProxyData;
 using rtps::ResourceEvent;
-using rtps::WRITER_DISCOVERY_STATUS;
+using rtps::WriterDiscoveryStatus;
 
 DomainParticipantImpl::DomainParticipantImpl(
         DomainParticipant* dp,
@@ -1580,7 +1580,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
 
 void DomainParticipantImpl::MyRTPSParticipantListener::on_writer_discovery(
         RTPSParticipant*,
-        WRITER_DISCOVERY_STATUS reason,
+        WriterDiscoveryStatus reason,
         const PublicationBuiltinTopicData& info,
         bool& should_be_ignored)
 {

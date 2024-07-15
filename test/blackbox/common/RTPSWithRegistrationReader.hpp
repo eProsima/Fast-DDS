@@ -57,7 +57,7 @@ public:
     typedef typename type_support::type type;
 
     using OnWriterDiscoveryFunctor = std::function<void (
-                        eprosima::fastdds::rtps::WRITER_DISCOVERY_STATUS,
+                        eprosima::fastdds::rtps::WriterDiscoveryStatus,
                         const eprosima::fastdds::rtps::GUID_t&,
                         const eprosima::fastdds::rtps::PublicationBuiltinTopicData*
                         )>;
@@ -104,7 +104,7 @@ private:
 
         void on_writer_discovery(
                 eprosima::fastdds::rtps::RTPSReader* reader,
-                eprosima::fastdds::rtps::WRITER_DISCOVERY_STATUS reason,
+                eprosima::fastdds::rtps::WriterDiscoveryStatus reason,
                 const eprosima::fastdds::rtps::GUID_t& writer_guid,
                 const eprosima::fastdds::rtps::PublicationBuiltinTopicData* writer_info) override
         {
@@ -611,7 +611,7 @@ private:
 
     void on_writer_discovery(
             eprosima::fastdds::rtps::RTPSReader* reader,
-            eprosima::fastdds::rtps::WRITER_DISCOVERY_STATUS reason,
+            eprosima::fastdds::rtps::WriterDiscoveryStatus reason,
             const eprosima::fastdds::rtps::GUID_t& writer_guid,
             const eprosima::fastdds::rtps::PublicationBuiltinTopicData* writer_info)
     {

@@ -652,7 +652,7 @@ protected:
 
         void on_writer_discovery(
                 fastdds::rtps::RTPSParticipant* participant,
-                fastdds::rtps::WRITER_DISCOVERY_STATUS reason,
+                fastdds::rtps::WriterDiscoveryStatus reason,
                 const fastdds::rtps::PublicationBuiltinTopicData& info,
                 bool& should_be_ignored) override;
 

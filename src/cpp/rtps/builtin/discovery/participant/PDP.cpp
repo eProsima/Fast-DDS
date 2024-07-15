@@ -828,7 +828,7 @@ bool PDP::removeWriterProxyData(
                 {
                     RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
                     bool should_be_ignored = false;
-                    auto status = WRITER_DISCOVERY_STATUS::REMOVED_WRITER;
+                    auto status = WriterDiscoveryStatus::REMOVED_WRITER;
                     PublicationBuiltinTopicData info;
                     from_proxy_to_builtin(*pW, info);
                     listener->on_writer_discovery(participant, status, info, should_be_ignored);
@@ -1017,7 +1017,7 @@ WriterProxyData* PDP::addWriterProxyData(
                 {
                     RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
                     bool should_be_ignored = false;
-                    auto status = WRITER_DISCOVERY_STATUS::CHANGED_QOS_WRITER;
+                    auto status = WriterDiscoveryStatus::CHANGED_QOS_WRITER;
                     PublicationBuiltinTopicData info;
                     from_proxy_to_builtin(*ret_val, info);
                     listener->on_writer_discovery(participant, status, info, should_be_ignored);
@@ -1069,7 +1069,7 @@ WriterProxyData* PDP::addWriterProxyData(
             {
                 RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
                 bool should_be_ignored = false;
-                auto status = WRITER_DISCOVERY_STATUS::DISCOVERED_WRITER;
+                auto status = WriterDiscoveryStatus::DISCOVERED_WRITER;
                 PublicationBuiltinTopicData info;
                 from_proxy_to_builtin(*ret_val, info);
                 listener->on_writer_discovery(participant, status, info, should_be_ignored);
@@ -1302,7 +1302,7 @@ void PDP::actions_on_remote_participant_removed(
                 {
                     RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
                     bool should_be_ignored = false;
-                    auto status = WRITER_DISCOVERY_STATUS::REMOVED_WRITER;
+                    auto status = WriterDiscoveryStatus::REMOVED_WRITER;
                     PublicationBuiltinTopicData info;
                     from_proxy_to_builtin(*wit, info);
                     listener->on_writer_discovery(participant, status, info, should_be_ignored);

@@ -92,7 +92,7 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscovery)
 
     reader.set_on_writer_discovery(
         [&mutex, &cv, &iteration, &writer_guid, &user_data](
-            WRITER_DISCOVERY_STATUS reason,
+            WriterDiscoveryStatus reason,
             const GUID_t& w_guid,
             const PublicationBuiltinTopicData* w_data)
         {
@@ -102,17 +102,17 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscovery)
             {
                 user_data = w_data->user_data;
             }
-            if (Iterations::NONE == iteration && WRITER_DISCOVERY_STATUS::DISCOVERED_WRITER == reason)
+            if (Iterations::NONE == iteration && WriterDiscoveryStatus::DISCOVERED_WRITER == reason)
             {
                 iteration = Iterations::DISCOVERED_WRITER;
             }
             else if (Iterations::DISCOVERED_WRITER == iteration &&
-            WRITER_DISCOVERY_STATUS::CHANGED_QOS_WRITER == reason)
+            WriterDiscoveryStatus::CHANGED_QOS_WRITER == reason)
             {
                 iteration = Iterations::CHANGED_QOS_WRITER;
             }
             else if (Iterations::CHANGED_QOS_WRITER == iteration &&
-            WRITER_DISCOVERY_STATUS::REMOVED_WRITER == reason)
+            WriterDiscoveryStatus::REMOVED_WRITER == reason)
             {
                 iteration = Iterations::REMOVED_WRITER;
             }
@@ -125,7 +125,7 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscovery)
         ).init();
     ASSERT_TRUE(reader.isInitialized());
 
-    // Test first iteration: expect WRITER_DISCOVERY_STATUS::DISCOVERED_WRITER.
+    // Test first iteration: expect WriterDiscoveryStatus::DISCOVERED_WRITER.
     writer.user_data({0, 1, 2, 3}).init();
     ASSERT_TRUE(writer.isInitialized());
     {
@@ -139,7 +139,7 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscovery)
         ASSERT_EQ(std::vector<octet>({0, 1, 2, 3}), user_data);
     }
 
-    // Test second iteration: expect WRITER_DISCOVERY_STATUS::CHANGED_QOS_WRITER.
+    // Test second iteration: expect WriterDiscoveryStatus::CHANGED_QOS_WRITER.
     writer.user_data({2, 3, 4, 5, 6}).update();
     {
         std::unique_lock<std::mutex> lock(mutex);
@@ -152,7 +152,7 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscovery)
         ASSERT_EQ(std::vector<octet>({2, 3, 4, 5, 6}), user_data);
     }
 
-    // Test second iteration: expect WRITER_DISCOVERY_STATUS::REMOVED_WRITER.
+    // Test second iteration: expect WriterDiscoveryStatus::REMOVED_WRITER.
     GUID_t w_guid = writer.guid();
     writer.destroy();
     {
@@ -288,18 +288,18 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscoveryIncompatibleQoS)
 
     reader.set_on_writer_discovery(
         [&mutex, &cv, &iteration, &writer_guid](
-            WRITER_DISCOVERY_STATUS reason,
+            WriterDiscoveryStatus reason,
             const GUID_t& w_guid,
             const PublicationBuiltinTopicData*)
         {
             std::unique_lock<std::mutex> lock(mutex);
             writer_guid = w_guid;
-            if (Iterations::NONE == iteration && WRITER_DISCOVERY_STATUS::DISCOVERED_WRITER == reason)
+            if (Iterations::NONE == iteration && WriterDiscoveryStatus::DISCOVERED_WRITER == reason)
             {
                 iteration = Iterations::DISCOVERED_WRITER;
             }
             else if (Iterations::DISCOVERED_WRITER == iteration &&
-            WRITER_DISCOVERY_STATUS::REMOVED_WRITER == reason)
+            WriterDiscoveryStatus::REMOVED_WRITER == reason)
             {
                 iteration = Iterations::REMOVED_WRITER;
             }
@@ -312,7 +312,7 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscoveryIncompatibleQoS)
         ).init();
     ASSERT_TRUE(reader.isInitialized());
 
-    // Test first iteration: expect WRITER_DISCOVERY_STATUS::DISCOVERED_WRITER.
+    // Test first iteration: expect WriterDiscoveryStatus::DISCOVERED_WRITER.
     writer.init();
     ASSERT_TRUE(writer.isInitialized());
     {
@@ -325,7 +325,7 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscoveryIncompatibleQoS)
         ASSERT_EQ(writer.guid(), writer_guid);
     }
 
-    // Test second iteration: expect WRITER_DISCOVERY_STATUS::CHANGED_QOS_WRITER.
+    // Test second iteration: expect WriterDiscoveryStatus::CHANGED_QOS_WRITER.
     std::vector<std::string> partitions({"A"});
     writer.partitions(partitions).update();
     {
@@ -338,7 +338,7 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscoveryIncompatibleQoS)
         ASSERT_EQ(writer.guid(), writer_guid);
     }
 
-    // Test second iteration: expect WRITER_DISCOVERY_STATUS::REMOVED_WRITER.
+    // Test second iteration: expect WriterDiscoveryStatus::REMOVED_WRITER.
     writer.destroy();
     {
         std::unique_lock<std::mutex> lock(mutex);

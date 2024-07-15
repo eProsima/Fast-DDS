@@ -131,7 +131,7 @@ public:
      */
     virtual void on_writer_discovery(
             RTPSReader* reader,
-            WRITER_DISCOVERY_STATUS reason,
+            WriterDiscoveryStatus reason,
             const GUID_t& writer_guid,
             const PublicationBuiltinTopicData* writer_info)
     {

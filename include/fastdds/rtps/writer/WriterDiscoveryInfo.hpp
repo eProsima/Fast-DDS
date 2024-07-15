@@ -24,13 +24,13 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-//! Enum WRITER_DISCOVERY_STATUS, four different status for discovered writers.
+//! Enum WriterDiscoveryStatus, four different status for discovered writers.
 // *INDENT-OFF* : Does not understand the #if correctly and ends up removing the ;
 //                at the end of the enum, which does not build.
 #if defined(_WIN32)
-enum class FASTDDS_EXPORTED_API WRITER_DISCOVERY_STATUS
+enum class FASTDDS_EXPORTED_API WriterDiscoveryStatus
 #else
-enum class WRITER_DISCOVERY_STATUS
+enum class WriterDiscoveryStatus
 #endif // if defined(_WIN32)
 {
     DISCOVERED_WRITER,
