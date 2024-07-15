@@ -26,6 +26,7 @@
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
+#include <fastdds/rtps/builtin/data/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
@@ -110,8 +111,25 @@ void from_proxy_to_builtin(
         const ReaderProxyData& proxy_data,
         SubscriptionBuiltinTopicData& builtin_data)
 {
-    static_cast<void>(proxy_data);
-    static_cast<void>(builtin_data);
+    from_proxy_to_builtin(proxy_data.guid().entityId, builtin_data.key.value);
+    from_proxy_to_builtin(proxy_data.guid().guidPrefix, builtin_data.participant_key.value);
+
+    builtin_data.topic_name = proxy_data.topicName();
+    builtin_data.type_name = proxy_data.typeName();
+    builtin_data.durability = proxy_data.m_qos.m_durability;
+    builtin_data.deadline = proxy_data.m_qos.m_deadline;
+    builtin_data.latency_budget = proxy_data.m_qos.m_latencyBudget;
+    builtin_data.liveliness = proxy_data.m_qos.m_liveliness;
+    builtin_data.reliability = proxy_data.m_qos.m_reliability;
+    builtin_data.ownership = proxy_data.m_qos.m_ownership;
+    builtin_data.destination_order = proxy_data.m_qos.m_destinationOrder;
+    builtin_data.user_data = proxy_data.m_qos.m_userData;
+    builtin_data.time_based_filter = proxy_data.m_qos.m_timeBasedFilter;
+
+    builtin_data.presentation = proxy_data.m_qos.m_presentation;
+    builtin_data.partition = proxy_data.m_qos.m_partition;
+    builtin_data.topic_data = proxy_data.m_qos.m_topicData;
+    builtin_data.group_data = proxy_data.m_qos.m_groupData;
 }
 
 void from_proxy_to_builtin(

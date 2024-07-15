@@ -70,7 +70,7 @@ struct SubscriptionBuiltinTopicData
     dds::UserDataQosPolicy user_data;
 
     //!Time Based Filter Qos, NOT implemented in the library.
-    dds::TimeBasedFilterQosPolicy m_timeBasedFilter;
+    dds::TimeBasedFilterQosPolicy time_based_filter;
 
     // Subscriber Qos
 
