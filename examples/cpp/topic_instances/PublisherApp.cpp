@@ -219,12 +219,11 @@ void PublisherApp::publish()
             {
                 int n_dirs = 5; // There are 5 directions: LEFT, RIGHT, UP, DOWN, DIAGONAL
                 CLIParser::ShapeDirection shape_dir = CLIParser::ShapeDirection(i % n_dirs);    // different directions
-                std::string color = instances_ == 1 ? shape_config_.color : CLIParser::shape_color(i);
 
                 // Create ShapeType and configuration associated to the instance
                 shape_configuration = CLIParser::shape_configuration(shape_config_);
                 shape_configuration.direction = shape_dir;
-                shape_.color(color);
+                shape_.color(shape_configuration.colors[i]);
 
                 // Register instance
                 std::cout << "Registering instance for " << shape_.color() << " shape" << std::endl;

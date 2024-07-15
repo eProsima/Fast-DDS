@@ -54,7 +54,7 @@ public:
         int size = 30;
         int width = 230;
         int height = 265;
-        std::string color = "RED";
+        std::vector<std::string> colors;
         // Non configurable variables
         int x = 0;
         int y = 0;
@@ -136,8 +136,11 @@ public:
         std::cout << "                                   · GREEN       · PURPLE "               << std::endl;
         std::cout << "                                   · YELLOW      · GREY "                 << std::endl;
         std::cout << "                                   · ORANGE      · BLACK "                << std::endl;
+        std::cout << "                                  Add N colors (N = --instances value)"   << std::endl;
+        std::cout << "                                  by separating them with commas (','),"  << std::endl;
+        std::cout << "                                  without spaces between colors."         << std::endl;
         std::cout << "                                  (Default: first 4 colors: "             << std::endl;
-        std::cout << "                                   RED, BLUE, GREEN, and YELLOW)"         << std::endl;
+        std::cout << "                                   'RED,BLUE,GREEN,YELLOW')"              << std::endl;
         std::cout << "            --height <num>        Space bound height where shape moves "  << std::endl;
         std::cout << "                                  (Default: 265)"                         << std::endl;
         std::cout << "            --interval <num>      Time between samples in milliseconds "  << std::endl;
@@ -614,20 +617,21 @@ public:
                     if (config.entity == CLIParser::EntityKind::PUBLISHER)
                     {
                         std::string input = argv[++i];
-                        if (input == "RED" || input == "CYAN" || input == "BLUE" || input == "MAGENTA" ||
-                                input == "GREEN" || input == "PURPLE" || input == "YELLOW" || input == "GREY" ||
-                                input == "ORANGE" || input == "BLACK" ||
-                                input == "red" || input == "cyan" || input == "blue" || input == "magenta" ||
-                                input == "green" || input == "purple" || input == "yellow" || input == "grey" ||
-                                input == "orange" || input == "black")
+                        std::istringstream iss(input);
+                        std::string c;
+                        while (std::getline(iss, c, ','))
                         {
-                            transform(input.begin(), input.end(), input.begin(), ::toupper);
-                            config.pub_config.shape_config.color = input;
-                        }
-                        else
-                        {
-                            EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid color argument for " + arg);
-                            print_help(EXIT_FAILURE);
+                            transform(c.begin(), c.end(), c.begin(), ::toupper);
+                            if (c == "RED" || c == "BLUE" || c == "GREEN" || c == "YELLOW" || c == "ORANGE" ||
+                                    c == "CYAN" || c == "MAGENTA" || c == "PURPLE" || c == "GREY" || c == "BLACK")
+                            {
+                                config.pub_config.shape_config.colors.push_back(c);
+                            }
+                            else
+                            {
+                                EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid color argument for " + arg);
+                                print_help(EXIT_FAILURE);
+                            }
                         }
                     }
                     else
@@ -649,9 +653,9 @@ public:
             }
         }
 
-        // Calculate shape bounds if applies
         if (config.entity == CLIParser::EntityKind::PUBLISHER)
         {
+            // Calculate shape bounds if applies
             config.pub_config.shape_config.x = static_cast<int>(config.pub_config.shape_config.width / 2);
             config.pub_config.shape_config.y = static_cast<int>(config.pub_config.shape_config.height / 2);
             config.pub_config.shape_config.lower_th = config.pub_config.shape_config.size - 5;
@@ -659,6 +663,21 @@ public:
                     config.pub_config.shape_config.width - config.pub_config.shape_config.lower_th;
             config.pub_config.shape_config.vertical_th =
                     config.pub_config.shape_config.height - config.pub_config.shape_config.lower_th;
+
+            // Check the number of instances and colors
+            if (config.pub_config.shape_config.colors.size() == 0)
+            {
+                // undefined colors, using default colors
+                for (int i = 0; i < config.pub_config.instances; ++i)
+                {
+                    config.pub_config.shape_config.colors.push_back(shape_color(i));
+                }
+            }
+            else if (config.pub_config.shape_config.colors.size() != config.pub_config.instances)
+            {
+                EPROSIMA_LOG_ERROR(CLI_PARSER, "number of input colors does not match the number of instances");
+                print_help(EXIT_FAILURE);
+            }
         }
 
         return config;
@@ -729,6 +748,7 @@ public:
         const auto& shape_colors = get_shape_colors();
         return shape_colors[index % max_colors];
     }
+
 };
 
 } // namespace topic_instances
