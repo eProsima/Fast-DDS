@@ -1772,7 +1772,7 @@ TEST_F(DataWriterUnsupportedTests, UnsupportedDataWriterMethods)
     DataWriter* data_writer = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
     ASSERT_NE(publisher, nullptr);
 
-    builtin::SubscriptionBuiltinTopicData subscription_data;
+    SubscriptionBuiltinTopicData subscription_data;
     fastdds::rtps::InstanceHandle_t subscription_handle;
     EXPECT_EQ(
         RETCODE_UNSUPPORTED,
