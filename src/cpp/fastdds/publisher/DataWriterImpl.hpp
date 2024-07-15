@@ -440,7 +440,7 @@ protected:
 
         void on_reader_discovery(
                 fastdds::rtps::RTPSWriter* writer,
-                fastdds::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS reason,
+                fastdds::rtps::ReaderDiscoveryStatus reason,
                 const fastdds::rtps::GUID_t& reader_guid,
                 const fastdds::rtps::ReaderProxyData* reader_info) override;
 

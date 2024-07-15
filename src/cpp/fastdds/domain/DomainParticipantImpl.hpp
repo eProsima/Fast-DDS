@@ -647,7 +647,8 @@ protected:
 
         void on_reader_discovery(
                 fastdds::rtps::RTPSParticipant* participant,
-                fastdds::rtps::ReaderDiscoveryInfo&& info,
+                fastdds::rtps::ReaderDiscoveryStatus reason,
+                const fastdds::rtps::ReaderProxyData& info,
                 bool& should_be_ignored) override;
 
         void on_writer_discovery(

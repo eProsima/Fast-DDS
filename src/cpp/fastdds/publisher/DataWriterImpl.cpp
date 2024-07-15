@@ -1365,7 +1365,7 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
 
 void DataWriterImpl::InnerDataWriterListener::on_reader_discovery(
         fastdds::rtps::RTPSWriter* writer,
-        fastdds::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS reason,
+        fastdds::rtps::ReaderDiscoveryStatus reason,
         const fastdds::rtps::GUID_t& reader_guid,
         const fastdds::rtps::ReaderProxyData* reader_info)
 {
@@ -1373,12 +1373,12 @@ void DataWriterImpl::InnerDataWriterListener::on_reader_discovery(
     {
         switch (reason)
         {
-            case fastdds::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::REMOVED_READER:
+            case fastdds::rtps::ReaderDiscoveryStatus::REMOVED_READER:
                 data_writer_->remove_reader_filter(reader_guid);
                 break;
 
-            case fastdds::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_READER:
-            case fastdds::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::CHANGED_QOS_READER:
+            case fastdds::rtps::ReaderDiscoveryStatus::DISCOVERED_READER:
+            case fastdds::rtps::ReaderDiscoveryStatus::CHANGED_QOS_READER:
                 data_writer_->process_reader_filter_info(reader_guid, *reader_info);
                 break;
             default:

@@ -274,7 +274,7 @@ public:
      */
     bool removeReaderProxyData(
             const GUID_t& reader_guid,
-            ReaderDiscoveryInfo::DISCOVERY_STATUS reason);
+            ReaderDiscoveryStatus reason);
 
     /**
      * This method removes and deletes a WriterProxyData object from its corresponding RTPSParticipant.

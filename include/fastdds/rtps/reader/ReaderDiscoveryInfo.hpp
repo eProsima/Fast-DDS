@@ -14,7 +14,6 @@
 
 /**
  * @file ReaderDiscoveryInfo.hpp
- *
  */
 
 #ifndef FASTDDS_RTPS_READER__READERDISCOVERYINFO_HPP
@@ -27,47 +26,21 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-/**
- * Class ReaderDiscoveryInfo with discovery information of the reader.
- * @ingroup RTPS_MODULE
- */
-struct ReaderDiscoveryInfo
-{
-public:
-
-    //!Enum DISCOVERY_STATUS, four different status for discovered readers.
-    //!@ingroup RTPS_MODULE
-    // *INDENT-OFF* : Does not understand the #if correctly and ends up removing the ;
-    //                at the end of the enum, which does not build.
+/// Enum DISCOVERY_STATUS, four different status for discovered readers.
+// *INDENT-OFF* : Does not understand the #if correctly and ends up removing the ;
+//                at the end of the enum, which does not build.
 #if defined(_WIN32)
-    enum FASTDDS_EXPORTED_API DISCOVERY_STATUS
+enum class FASTDDS_EXPORTED_API ReaderDiscoveryStatus
 #else
-    enum DISCOVERY_STATUS
+enum class ReaderDiscoveryStatus
 #endif // if defined(_WIN32)
-    {
-        DISCOVERED_READER,
-        CHANGED_QOS_READER,
-        REMOVED_READER,
-        IGNORED_READER
-    };
-    // *INDENT-ON*
-    ReaderDiscoveryInfo(
-            const ReaderProxyData& data)
-        : status(DISCOVERED_READER)
-        , info(data)
-    {
-    }
-
-    virtual ~ReaderDiscoveryInfo()
-    {
-    }
-
-    //! Status
-    DISCOVERY_STATUS status;
-
-    //! Participant discovery info
-    const ReaderProxyData& info;
+{
+    DISCOVERED_READER,
+    CHANGED_QOS_READER,
+    REMOVED_READER,
+    IGNORED_READER
 };
+// *INDENT-ON*
 
 } // namespace rtps
 } // namespace fastdds

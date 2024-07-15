@@ -119,21 +119,22 @@ class PubSubWriter
 
         void on_data_reader_discovery(
                 eprosima::fastdds::dds::DomainParticipant*,
-                eprosima::fastdds::rtps::ReaderDiscoveryInfo&& info,
+                eprosima::fastdds::rtps::ReaderDiscoveryStatus reason,
+                const eprosima::fastdds::rtps::ReaderProxyData& info,
                 bool& /*should_be_ignored*/) override
         {
-            if (info.status == eprosima::fastdds::rtps::ReaderDiscoveryInfo::DISCOVERED_READER)
+            if (reason == eprosima::fastdds::rtps::ReaderDiscoveryStatus::DISCOVERED_READER)
             {
-                writer_.add_reader_info(info.info);
+                writer_.add_reader_info(info);
 
             }
-            else if (info.status == eprosima::fastdds::rtps::ReaderDiscoveryInfo::CHANGED_QOS_READER)
+            else if (reason == eprosima::fastdds::rtps::ReaderDiscoveryStatus::CHANGED_QOS_READER)
             {
-                writer_.change_reader_info(info.info);
+                writer_.change_reader_info(info);
             }
-            else if (info.status == eprosima::fastdds::rtps::ReaderDiscoveryInfo::REMOVED_READER)
+            else if (reason == eprosima::fastdds::rtps::ReaderDiscoveryStatus::REMOVED_READER)
             {
-                writer_.remove_reader_info(info.info);
+                writer_.remove_reader_info(info);
             }
         }
 

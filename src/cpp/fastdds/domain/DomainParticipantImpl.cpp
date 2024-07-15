@@ -83,7 +83,7 @@ using xmlparser::XMLProfileManager;
 using rtps::ParticipantAuthenticationInfo;
 #endif // if HAVE_SECURITY
 using rtps::EndpointKind_t;
-using rtps::ReaderDiscoveryInfo;
+using rtps::ReaderDiscoveryStatus;
 using rtps::ReaderProxyData;
 using rtps::ResourceEvent;
 using rtps::WriterDiscoveryStatus;
@@ -1562,7 +1562,8 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantAuthenticati
 
 void DomainParticipantImpl::MyRTPSParticipantListener::on_reader_discovery(
         RTPSParticipant*,
-        ReaderDiscoveryInfo&& info,
+        ReaderDiscoveryStatus reason,
+        const ReaderProxyData& info,
         bool& should_be_ignored)
 {
     should_be_ignored = false;
@@ -1573,7 +1574,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_reader_discovery(
         DomainParticipantListener* listener = participant_->listener_;
         if (nullptr != listener)
         {
-            listener->on_data_reader_discovery(participant_->participant_, std::move(info), should_be_ignored);
+            listener->on_data_reader_discovery(participant_->participant_, reason, info, should_be_ignored);
         }
     }
 }

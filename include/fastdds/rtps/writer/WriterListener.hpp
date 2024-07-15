@@ -110,7 +110,7 @@ public:
      */
     virtual void on_reader_discovery(
             RTPSWriter* writer,
-            ReaderDiscoveryInfo::DISCOVERY_STATUS reason,
+            ReaderDiscoveryStatus reason,
             const GUID_t& reader_guid,
             const ReaderProxyData* reader_info)
     {

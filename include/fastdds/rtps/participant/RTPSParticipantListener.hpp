@@ -14,13 +14,13 @@
 
 /**
  * @file RTPSParticipantListener.hpp
- *
  */
 
 #ifndef FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANTLISTENER_HPP
 #define FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANTLISTENER_HPP
 
 #include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.hpp>
 #include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
@@ -81,16 +81,19 @@ public:
      * This method is called when a new Reader is discovered, or a previously discovered reader changes
      * its QOS or is removed.
      *
-     * @param [out] participant Pointer to the Participant which discovered the remote reader.
-     * @param [out] info Remote reader information. User can take ownership of the object.
-     * @param [out] should_be_ignored Flag to indicate the library to automatically ignore the discovered Reader.
+     * @param [in]  participant        Pointer to the Participant which discovered the remote reader.
+     * @param [in]  reason             The reason motivating this method to be called.
+     * @param [in]  info               Remote reader information.
+     * @param [out] should_be_ignored  Flag to indicate the library to automatically ignore the discovered reader.
      */
     virtual void on_reader_discovery(
             RTPSParticipant* participant,
-            ReaderDiscoveryInfo&& info,
+            ReaderDiscoveryStatus reason,
+            const ReaderProxyData& info,
             bool& should_be_ignored)
     {
         static_cast<void>(participant);
+        static_cast<void>(reason);
         static_cast<void>(info);
         should_be_ignored = false;
     }

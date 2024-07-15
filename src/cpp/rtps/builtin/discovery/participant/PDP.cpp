@@ -33,6 +33,7 @@
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
+#include <fastdds/rtps/reader/ReaderDiscoveryInfo.hpp>
 #include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
@@ -781,10 +782,9 @@ bool PDP::removeReaderProxyData(
                 if (listener)
                 {
                     RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
-                    ReaderDiscoveryInfo info(std::move(*pR));
                     bool should_be_ignored = false;
-                    info.status = ReaderDiscoveryInfo::REMOVED_READER;
-                    listener->on_reader_discovery(participant, std::move(info), should_be_ignored);
+                    auto reason = ReaderDiscoveryStatus::REMOVED_READER;
+                    listener->on_reader_discovery(participant, reason, *pR, should_be_ignored);
                 }
 
                 // Clear reader proxy data and move to pool in order to allow reuse
@@ -801,7 +801,7 @@ bool PDP::removeReaderProxyData(
 
 bool PDP::removeReaderProxyData(
         const GUID_t& /*reader_guid*/,
-        ReaderDiscoveryInfo::DISCOVERY_STATUS /*reason*/)
+        ReaderDiscoveryStatus /*reason*/)
 {
     return false;
 }
@@ -915,10 +915,9 @@ ReaderProxyData* PDP::addReaderProxyData(
                 if (listener)
                 {
                     RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
-                    ReaderDiscoveryInfo info(*ret_val);
                     bool should_be_ignored = false;
-                    info.status = ReaderDiscoveryInfo::CHANGED_QOS_READER;
-                    listener->on_reader_discovery(participant, std::move(info), should_be_ignored);
+                    auto reason = ReaderDiscoveryStatus::CHANGED_QOS_READER;
+                    listener->on_reader_discovery(participant, reason, *ret_val, should_be_ignored);
                 }
 
                 return ret_val;
@@ -967,10 +966,9 @@ ReaderProxyData* PDP::addReaderProxyData(
             if (listener)
             {
                 RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
-                ReaderDiscoveryInfo info(*ret_val);
                 bool should_be_ignored = false;
-                info.status = ReaderDiscoveryInfo::DISCOVERED_READER;
-                listener->on_reader_discovery(participant, std::move(info), should_be_ignored);
+                auto reason = ReaderDiscoveryStatus::DISCOVERED_READER;
+                listener->on_reader_discovery(participant, reason, *ret_val, should_be_ignored);
             }
 
             return ret_val;
@@ -1282,10 +1280,9 @@ void PDP::actions_on_remote_participant_removed(
                 if (listener)
                 {
                     RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
-                    ReaderDiscoveryInfo info(std::move(*rit));
                     bool should_be_ignored = false;
-                    info.status = ReaderDiscoveryInfo::REMOVED_READER;
-                    listener->on_reader_discovery(participant, std::move(info), should_be_ignored);
+                    auto status = ReaderDiscoveryStatus::REMOVED_READER;
+                    listener->on_reader_discovery(participant, status, *rit, should_be_ignored);
                 }
             }
         }

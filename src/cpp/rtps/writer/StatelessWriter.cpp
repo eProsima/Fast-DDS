@@ -26,6 +26,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
+#include <fastdds/rtps/reader/ReaderDiscoveryInfo.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/rtps/writer/WriterListener.hpp>
 
@@ -465,7 +466,7 @@ bool StatelessWriter::matched_reader_add(
             // call the listener without locks taken
             locator_selector_guard.unlock();
             guard.unlock();
-            listener_->on_reader_discovery(this, ReaderDiscoveryInfo::CHANGED_QOS_READER, data.guid(), &data);
+            listener_->on_reader_discovery(this, ReaderDiscoveryStatus::CHANGED_QOS_READER, data.guid(), &data);
         }
 
 #ifdef FASTDDS_STATISTICS
@@ -544,7 +545,7 @@ bool StatelessWriter::matched_reader_add(
         // call the listener without locks taken
         locator_selector_guard.unlock();
         guard.unlock();
-        listener_->on_reader_discovery(this, ReaderDiscoveryInfo::DISCOVERED_READER, data.guid(), &data);
+        listener_->on_reader_discovery(this, ReaderDiscoveryStatus::DISCOVERED_READER, data.guid(), &data);
     }
 
 #ifdef FASTDDS_STATISTICS
@@ -640,7 +641,7 @@ bool StatelessWriter::matched_reader_remove(
             locator_selector_guard.unlock();
             guard.unlock();
 
-            listener_->on_reader_discovery(this, ReaderDiscoveryInfo::REMOVED_READER, reader_guid, nullptr);
+            listener_->on_reader_discovery(this, ReaderDiscoveryStatus::REMOVED_READER, reader_guid, nullptr);
         }
 
 #ifdef FASTDDS_STATISTICS

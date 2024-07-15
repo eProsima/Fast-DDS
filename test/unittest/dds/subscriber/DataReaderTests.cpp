@@ -595,13 +595,14 @@ TEST_F(DataReaderTests, get_guid)
 
         void on_data_reader_discovery(
                 DomainParticipant*,
-                ReaderDiscoveryInfo&& info,
+                ReaderDiscoveryStatus reason,
+                const ReaderProxyData& info,
                 bool& /*should_be_ignored*/) override
         {
             std::unique_lock<std::mutex> lock(mutex);
-            if (ReaderDiscoveryInfo::DISCOVERED_READER == info.status)
+            if (ReaderDiscoveryStatus::DISCOVERED_READER == reason)
             {
-                guid = info.info.guid();
+                guid = info.guid();
                 cv.notify_one();
             }
         }
