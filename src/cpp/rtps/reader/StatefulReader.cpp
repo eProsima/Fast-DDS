@@ -28,7 +28,7 @@
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/reader/ReaderListener.hpp>
-#include <fastdds/rtps/writer/WriterDiscoveryInfo.hpp>
+#include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
 
 #include "reader_utils.hpp"
 #include "rtps/RTPSDomainImpl.hpp"

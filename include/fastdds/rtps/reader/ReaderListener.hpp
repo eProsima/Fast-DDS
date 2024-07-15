@@ -26,7 +26,7 @@
 #include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/MatchingInfo.hpp>
-#include <fastdds/rtps/writer/WriterDiscoveryInfo.hpp>
+#include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
 
 
 namespace eprosima {

@@ -33,7 +33,7 @@
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
-#include <fastdds/rtps/writer/WriterDiscoveryInfo.hpp>
+#include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <fastdds/utils/IPLocator.hpp>

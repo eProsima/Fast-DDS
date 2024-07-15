@@ -13,10 +13,10 @@
 // limitations under the License.
 
 /**
- * @file WriterDiscoveryInfo.hpp
+ * @file WriterDiscoveryStatus.hpp
  */
-#ifndef FASTDDS_RTPS_WRITER__WRITERDISCOVERYINFO_HPP
-#define FASTDDS_RTPS_WRITER__WRITERDISCOVERYINFO_HPP
+#ifndef FASTDDS_RTPS_WRITER__WRITERDISCOVERYSTATUS_HPP
+#define FASTDDS_RTPS_WRITER__WRITERDISCOVERYSTATUS_HPP
 
 #include <fastdds/fastdds_dll.hpp>
 
@@ -24,7 +24,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-//! Enum WriterDiscoveryStatus, four different status for discovered writers.
+/// Enum WriterDiscoveryStatus, four different status for discovered writers.
 // *INDENT-OFF* : Does not understand the #if correctly and ends up removing the ;
 //                at the end of the enum, which does not build.
 #if defined(_WIN32)
@@ -44,4 +44,4 @@ enum class WriterDiscoveryStatus
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_RTPS_WRITER__WRITERDISCOVERYINFO_HPP
+#endif // FASTDDS_RTPS_WRITER__WRITERDISCOVERYSTATUS_HPP

@@ -34,7 +34,7 @@
 #include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.hpp>
-#include <fastdds/rtps/writer/WriterDiscoveryInfo.hpp>
+#include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 #include <rtps/builtin/data/WriterProxyData.hpp>
