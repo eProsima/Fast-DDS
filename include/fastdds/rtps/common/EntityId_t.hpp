@@ -68,7 +68,7 @@ namespace rtps {
 #define ENTITYID_DS_SERVER_VIRTUAL_READER 0x00030074
 
 #ifdef FASTDDS_STATISTICS
-#define ENTITYID_MONITOR_SERVICE_WRITER 0x004000D2
+#define ENTITYID_MONITOR_SERVICE_WRITER 0x00400072
 #endif // ifdef FASTDDS_STATISTICS
 
 //!@brief Structure EntityId_t, entity id part of GUID_t.
