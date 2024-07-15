@@ -102,6 +102,7 @@ ReaderApp::ReaderApp(
 
     // Create RTPS Reader
     ReaderAttributes reader_att;
+ 
     rtps_reader_ = RTPSDomain::createRTPSReader(rtps_participant_, reader_att, reader_history_, this);
 
     if (rtps_reader_ == nullptr)
@@ -166,7 +167,7 @@ void ReaderApp::on_new_cache_change_added(
     {
         if (deserialize_payload(change->serializedPayload, data_))
         {
-            std::cout << "Message: " << data_->message() << " with index " <<  data_->index() << std::endl;
+            std::cout << "Message: " << data_->message() << " with index " <<  data_->index() << " RECEIVED" << std::endl;
             samples_received_++;
         }
 

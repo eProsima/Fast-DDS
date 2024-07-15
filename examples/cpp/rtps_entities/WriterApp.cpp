@@ -214,9 +214,8 @@ void WriterApp::add_change_to_history()
     CacheChange_t* ch = writer_history_->create_change(255, ALIVE);
 
     // In the case history is full, remove some old changes
-    if (!ch)
+    if (writer_history_->isFull())
     {
-        std::cout << "cleaning history...";
         writer_history_->remove_min_change();
         ch = writer_history_->create_change(255, ALIVE);
     }
@@ -226,11 +225,13 @@ void WriterApp::add_change_to_history()
 
     if (serialize_payload(data_, ch->serializedPayload))
     {
-        std::cout << "Message " << data_->message() << " with index " << data_->index() << " SENT" << std::endl;
         ++samples_sent_;
     }
 
-    writer_history_->add_change(ch);
+    if(writer_history_->add_change(ch))
+    {
+        std::cout << "Message " << data_->message() << " with index " << data_->index() << " SENT" << std::endl;
+    }
 }
 
 bool WriterApp::is_stopped()
