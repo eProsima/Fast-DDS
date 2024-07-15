@@ -138,7 +138,7 @@ public:
     }
 
     bool compute_key(
-            fastdds::rtps::SerializedPayload_t* payload,
+            fastdds::rtps::SerializedPayload_t* /*payload*/,
             fastdds::rtps::InstanceHandle_t* /*handle*/,
             bool /*force_md5*/) override
     {

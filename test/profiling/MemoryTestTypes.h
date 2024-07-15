@@ -177,7 +177,7 @@ public:
             void* data) override;
 
     bool compute_key(
-            eprosima::fastdds::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::rtps::SerializedPayload_t* /*payload*/,
             eprosima::fastdds::rtps::InstanceHandle_t* /*ihandle*/,
             bool force_md5 = false) override
     {
