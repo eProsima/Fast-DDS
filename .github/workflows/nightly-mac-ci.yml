@@ -36,21 +36,6 @@ jobs:
       fastdds-branch: '2.14.x'
       use-ccache: false
 
-  nightly-mac-ci-2_13_x:
-    strategy:
-      fail-fast: false
-      matrix:
-        security:
-          - 'ON'
-          - 'OFF'
-    uses: eProsima/Fast-DDS/.github/workflows/reusable-mac-ci.yml@2.13.x
-    with:
-      label: 'nightly-sec-${{ matrix.security }}-mac-ci-2.13.x'
-      cmake-args: "-DSECURITY=${{ matrix.security }}"
-      ctest-args: "-LE xfail"
-      fastdds-branch: '2.13.x'
-      use-ccache: false
-
   nightly-mac-ci-2_10_x:
     strategy:
       fail-fast: false

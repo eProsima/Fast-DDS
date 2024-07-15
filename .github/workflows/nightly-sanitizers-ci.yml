@@ -34,20 +34,6 @@ jobs:
       fastdds_ref: '2.14.x'
       discovery_server_ref: 'v1.2.2'
 
-  nightly-sanitizers-ci-2_13_x:
-      uses: eProsima/Fast-DDS/.github/workflows/reusable-sanitizers-ci.yml@2.13.x
-      with:
-        label: 'nightly-sec-sanitizers-ci-2.13.x'
-        run_asan_fastdds: true
-        run_asan_discovery_server: true
-        run_tsan_fastdds: true
-        colcon_build_args: ''
-        colcon_test_args: ''
-        cmake_args: ''
-        ctest_args: ''
-        fastdds_ref: '2.13.x'
-        discovery_server_ref: 'v1.2.2'
-
   nightly-sanitizers-ci-2_10_x:
     uses: eProsima/Fast-DDS/.github/workflows/reusable-sanitizers-ci.yml@2.10.x
     with:
@@ -60,18 +46,4 @@ jobs:
       cmake_args: ''
       ctest_args: ''
       fastdds_ref: '2.10.x'
-      discovery_server_ref: 'v1.2.1'
-
-  nightly-sanitizers-ci-2_6_x:
-    uses: eProsima/Fast-DDS/.github/workflows/reusable-sanitizers-ci.yml@2.6.x
-    with:
-      label: 'nightly-sec-sanitizers-ci-2.6.x'
-      run_asan_fastdds: true
-      run_asan_discovery_server: true
-      run_tsan_fastdds: true
-      colcon_build_args: ''
-      colcon_test_args: ''
-      cmake_args: ''
-      ctest_args: ''
-      fastdds_ref: '2.6.x'
       discovery_server_ref: 'v1.2.1'
