@@ -98,15 +98,22 @@ private:
 
     uint16_t instances_;
 
+    //! Shape location for movement
+    struct shape_location
+    {
+        int x = 0;
+        int y = 0;
+        CLIParser::ShapeDirection direction = CLIParser::ShapeDirection::DOWN;
+    };
+
     CLIParser::shape_configuration shape_config_;
 
     std::vector<InstanceHandle_t> instance_handles_;
 
-    std::map<InstanceHandle_t, std::pair<ShapeType, CLIParser::shape_configuration>> shapes_;
-
-    std::map<InstanceHandle_t, uint32_t> samples_per_instance_;
+    std::map<InstanceHandle_t, std::tuple<ShapeType, shape_location, uint32_t>> shapes_;
 
     std::atomic<bool> stop_;
+
 };
 
 } // namespace topic_instances

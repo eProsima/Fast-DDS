@@ -55,10 +55,6 @@ public:
         int width = 230;
         int height = 265;
         std::vector<std::string> colors;
-        // Non configurable variables
-        int x = 0;
-        int y = 0;
-        CLIParser::ShapeDirection direction = CLIParser::ShapeDirection::DOWN;
         // Dependant variables
         int lower_th = 0;           // size   - 5
         int horizontal_th = 0;      // width  - lower_th;
@@ -656,8 +652,6 @@ public:
         if (config.entity == CLIParser::EntityKind::PUBLISHER)
         {
             // Calculate shape bounds if applies
-            config.pub_config.shape_config.x = static_cast<int>(config.pub_config.shape_config.width / 2);
-            config.pub_config.shape_config.y = static_cast<int>(config.pub_config.shape_config.height / 2);
             config.pub_config.shape_config.lower_th = config.pub_config.shape_config.size - 5;
             config.pub_config.shape_config.horizontal_th =
                     config.pub_config.shape_config.width - config.pub_config.shape_config.lower_th;
