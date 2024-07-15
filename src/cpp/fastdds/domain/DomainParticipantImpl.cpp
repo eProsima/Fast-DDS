@@ -1560,7 +1560,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantAuthenticati
 
 #endif // if HAVE_SECURITY
 
-void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
+void DomainParticipantImpl::MyRTPSParticipantListener::on_reader_discovery(
         RTPSParticipant*,
         ReaderDiscoveryInfo&& info,
         bool& should_be_ignored)

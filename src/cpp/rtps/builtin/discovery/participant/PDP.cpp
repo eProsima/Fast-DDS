@@ -784,7 +784,7 @@ bool PDP::removeReaderProxyData(
                     ReaderDiscoveryInfo info(std::move(*pR));
                     bool should_be_ignored = false;
                     info.status = ReaderDiscoveryInfo::REMOVED_READER;
-                    listener->onReaderDiscovery(participant, std::move(info), should_be_ignored);
+                    listener->on_reader_discovery(participant, std::move(info), should_be_ignored);
                 }
 
                 // Clear reader proxy data and move to pool in order to allow reuse
@@ -918,7 +918,7 @@ ReaderProxyData* PDP::addReaderProxyData(
                     ReaderDiscoveryInfo info(*ret_val);
                     bool should_be_ignored = false;
                     info.status = ReaderDiscoveryInfo::CHANGED_QOS_READER;
-                    listener->onReaderDiscovery(participant, std::move(info), should_be_ignored);
+                    listener->on_reader_discovery(participant, std::move(info), should_be_ignored);
                 }
 
                 return ret_val;
@@ -970,7 +970,7 @@ ReaderProxyData* PDP::addReaderProxyData(
                 ReaderDiscoveryInfo info(*ret_val);
                 bool should_be_ignored = false;
                 info.status = ReaderDiscoveryInfo::DISCOVERED_READER;
-                listener->onReaderDiscovery(participant, std::move(info), should_be_ignored);
+                listener->on_reader_discovery(participant, std::move(info), should_be_ignored);
             }
 
             return ret_val;
@@ -1285,7 +1285,7 @@ void PDP::actions_on_remote_participant_removed(
                     ReaderDiscoveryInfo info(std::move(*rit));
                     bool should_be_ignored = false;
                     info.status = ReaderDiscoveryInfo::REMOVED_READER;
-                    listener->onReaderDiscovery(participant, std::move(info), should_be_ignored);
+                    listener->on_reader_discovery(participant, std::move(info), should_be_ignored);
                 }
             }
         }

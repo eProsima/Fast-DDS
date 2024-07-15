@@ -85,7 +85,7 @@ public:
      * @param [out] info Remote reader information. User can take ownership of the object.
      * @param [out] should_be_ignored Flag to indicate the library to automatically ignore the discovered Reader.
      */
-    virtual void onReaderDiscovery(
+    virtual void on_reader_discovery(
             RTPSParticipant* participant,
             ReaderDiscoveryInfo&& info,
             bool& should_be_ignored)
