@@ -175,7 +175,7 @@ void PublisherApp::run()
 
 bool PublisherApp::publish()
 {
-    bool ret = false;
+    ReturnCode_t ret = RETCODE_ERROR;
     // Wait for the data endpoints discovery
     std::unique_lock<std::mutex> matched_lock(mutex_);
     cv_.wait(matched_lock, [&]()
@@ -188,7 +188,7 @@ bool PublisherApp::publish()
         hello_.index(hello_.index() + 1);
         ret = writer_->write(&hello_);
     }
-    return ret;
+    return (ret == RETCODE_OK);
 }
 
 bool PublisherApp::is_stopped()
