@@ -799,13 +799,6 @@ bool PDP::removeReaderProxyData(
     return false;
 }
 
-bool PDP::removeReaderProxyData(
-        const GUID_t& /*reader_guid*/,
-        ReaderDiscoveryStatus /*reason*/)
-{
-    return false;
-}
-
 bool PDP::removeWriterProxyData(
         const GUID_t& writer_guid)
 {

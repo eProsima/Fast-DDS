@@ -266,17 +266,6 @@ public:
             const GUID_t& reader_guid);
 
     /**
-     * This method removes and deletes a ReaderProxyData object from its corresponding RTPSParticipant.
-     *
-     * @param [in] reader_guid GUID_t of the reader to remove.
-     * @param [in] reason Why the reader is being removed (dropped, removed, or ignored)
-     * @return true if found and deleted.
-     */
-    bool removeReaderProxyData(
-            const GUID_t& reader_guid,
-            ReaderDiscoveryStatus reason);
-
-    /**
      * This method removes and deletes a WriterProxyData object from its corresponding RTPSParticipant.
      *
      * @param [in] writer_guid GUID_t of the writer to remove.
