@@ -19,10 +19,14 @@
 #ifndef FASTDDS_RTPS_BUILTIN_DATA__SUBSCRIPTIONBUILTINTOPICDATA_HPP
 #define FASTDDS_RTPS_BUILTIN_DATA__SUBSCRIPTIONBUILTINTOPICDATA_HPP
 
-#include <string>
+#include <fastcdr/cdr/fixed_size_string.hpp>
 
-#include <fastdds/dds/builtin/topic/BuiltinTopicKey.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/builtin/data/BuiltinTopicKey.hpp>
+#include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
+#include <fastdds/rtps/common/Guid.hpp>
+#include <fastdds/rtps/common/RemoteLocators.hpp>
+#include <fastdds/rtps/common/Types.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -31,60 +35,100 @@ namespace rtps {
 /// Structure SubscriptionBuiltinTopicData, contains the information on a discovered subscription.
 struct SubscriptionBuiltinTopicData
 {
-    //! Builtin topic Key
+    /// Builtin topic Key
     BuiltinTopicKey_t key;
 
-    //! Builtin participant topic Key
+    /// Builtin participant topic Key
     BuiltinTopicKey_t participant_key;
 
-    //! Topic name
-    std::string topic_name;
+    /// Topic name
+    fastcdr::string_255 topic_name;
 
-    //! Type name
-    std::string type_name;
+    /// Type name
+    fastcdr::string_255 type_name;
 
     // DataReader Qos
 
-    //!Durability Qos, implemented in the library.
+    /// Durability Qos, implemented in the library.
     dds::DurabilityQosPolicy durability;
 
-    //!Deadline Qos, implemented in the library.
+    /// Deadline Qos, implemented in the library.
     dds::DeadlineQosPolicy deadline;
 
-    //!Latency Budget Qos, NOT implemented in the library.
+    /// Latency Budget Qos, NOT implemented in the library.
     dds::LatencyBudgetQosPolicy latency_budget;
 
-    //!Liveliness Qos, implemented in the library.
+    /// Lifespan Qos, implemented in the library.
+    dds::LifespanQosPolicy lifespan;
+
+    /// Liveliness Qos, implemented in the library.
     dds::LivelinessQosPolicy liveliness;
 
-    //!Reliability Qos, implemented in the library.
+    /// Reliability Qos, implemented in the library.
     dds::ReliabilityQosPolicy reliability;
 
-    //!Ownership Qos, implemented in the library.
+    /// Ownership Qos, implemented in the library.
     dds::OwnershipQosPolicy ownership;
 
-    //!Destination Order Qos, NOT implemented in the library.
+    /// Destination Order Qos, NOT implemented in the library.
     dds::DestinationOrderQosPolicy destination_order;
 
-    //!User Data Qos, implemented in the library.
+    /// User Data Qos, implemented in the library.
     dds::UserDataQosPolicy user_data;
 
-    //!Time Based Filter Qos, NOT implemented in the library.
+    /// Time Based Filter Qos, NOT implemented in the library.
     dds::TimeBasedFilterQosPolicy time_based_filter;
 
     // Subscriber Qos
 
-    //!Presentation Qos, NOT implemented in the library.
+    /// Presentation Qos, NOT implemented in the library.
     dds::PresentationQosPolicy presentation;
 
-    //!Partition Qos, implemented in the library.
+    /// Partition Qos, implemented in the library.
     dds::PartitionQosPolicy partition;
 
-    //!Topic Data Qos, NOT implemented in the library.
+    /// Topic Data Qos, NOT implemented in the library.
     dds::TopicDataQosPolicy topic_data;
 
-    //!Group Data Qos, implemented in the library.
+    /// Group Data Qos, implemented in the library.
     dds::GroupDataQosPolicy group_data;
+
+    // X-Types 1.3
+
+    /// Type information
+    dds::xtypes::TypeInformationParameter type_information;
+
+    /// Data representation
+    dds::DataRepresentationQosPolicy representation;
+
+    /// Type consistency enforcement Qos, NOT implemented in the library.
+    dds::TypeConsistencyEnforcementQosPolicy type_consistency;
+
+    // eProsima Extensions
+
+    /// Content filter configuration
+    ContentFilterProperty content_filter{ ContentFilterProperty::AllocationConfiguration{} };
+
+    /// Disable positive acks, implemented in the library.
+    dds::DisablePositiveACKsQosPolicy disable_positive_acks;
+
+    /// Information for data sharing compatibility check.
+    dds::DataSharingQosPolicy data_sharing;
+
+    /// GUID
+    GUID_t guid;
+
+    /// Participant GUID
+    GUID_t participant_guid;
+
+    /// Remote locators
+    RemoteLocatorList remote_locators;
+
+    /// Network configuration
+    NetworkConfigSet_t loopback_transformation;
+
+    /// Expects Inline Qos
+    bool expects_inline_qos = false;
 };
 
 }   // namespace rtps

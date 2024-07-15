@@ -119,6 +119,7 @@ void from_proxy_to_builtin(
     builtin_data.durability = proxy_data.m_qos.m_durability;
     builtin_data.deadline = proxy_data.m_qos.m_deadline;
     builtin_data.latency_budget = proxy_data.m_qos.m_latencyBudget;
+    builtin_data.lifespan = proxy_data.m_qos.m_lifespan;
     builtin_data.liveliness = proxy_data.m_qos.m_liveliness;
     builtin_data.reliability = proxy_data.m_qos.m_reliability;
     builtin_data.ownership = proxy_data.m_qos.m_ownership;
@@ -130,6 +131,22 @@ void from_proxy_to_builtin(
     builtin_data.partition = proxy_data.m_qos.m_partition;
     builtin_data.topic_data = proxy_data.m_qos.m_topicData;
     builtin_data.group_data = proxy_data.m_qos.m_groupData;
+
+    if (proxy_data.has_type_information())
+    {
+        builtin_data.type_information = proxy_data.type_information();
+    }
+    builtin_data.representation = proxy_data.m_qos.representation;
+    builtin_data.type_consistency = proxy_data.m_qos.type_consistency;
+
+    builtin_data.content_filter = proxy_data.content_filter();
+    builtin_data.disable_positive_acks = proxy_data.m_qos.m_disablePositiveACKs;
+    builtin_data.data_sharing = proxy_data.m_qos.data_sharing;
+    builtin_data.guid = proxy_data.guid();
+    builtin_data.participant_guid = iHandle2GUID(proxy_data.RTPSParticipantKey());
+    builtin_data.remote_locators = proxy_data.remote_locators();
+    builtin_data.loopback_transformation = proxy_data.networkConfiguration();
+    builtin_data.expects_inline_qos = proxy_data.m_expectsInlineQos;
 }
 
 void from_proxy_to_builtin(
@@ -225,6 +242,7 @@ void from_builtin_to_proxy(
     proxy_data.m_qos.m_durability = builtin_data.durability;
     proxy_data.m_qos.m_deadline = builtin_data.deadline;
     proxy_data.m_qos.m_latencyBudget = builtin_data.latency_budget;
+    proxy_data.m_qos.m_lifespan = builtin_data.lifespan;
     proxy_data.m_qos.m_liveliness = builtin_data.liveliness;
     proxy_data.m_qos.m_reliability = builtin_data.reliability;
     proxy_data.m_qos.m_ownership = builtin_data.ownership;
@@ -236,6 +254,19 @@ void from_builtin_to_proxy(
     proxy_data.m_qos.m_partition = builtin_data.partition;
     proxy_data.m_qos.m_topicData = builtin_data.topic_data;
     proxy_data.m_qos.m_groupData = builtin_data.group_data;
+
+    proxy_data.type_information(builtin_data.type_information);
+    proxy_data.m_qos.representation = builtin_data.representation;
+    proxy_data.m_qos.type_consistency = builtin_data.type_consistency;
+
+    proxy_data.content_filter(builtin_data.content_filter);
+    proxy_data.m_qos.m_disablePositiveACKs = builtin_data.disable_positive_acks;
+    proxy_data.m_qos.data_sharing = builtin_data.data_sharing;
+    proxy_data.guid(builtin_data.guid);
+    proxy_data.RTPSParticipantKey(builtin_data.participant_guid);
+    proxy_data.set_locators(builtin_data.remote_locators);
+    proxy_data.networkConfiguration(builtin_data.loopback_transformation);
+    proxy_data.m_expectsInlineQos = builtin_data.expects_inline_qos;
 }
 
 } // namespace rtps

@@ -22,7 +22,7 @@
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
+#include <fastdds/rtps/builtin/data/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/RTPSDomain.hpp>
@@ -75,15 +75,11 @@ bool TestWriterSocket::init(
 
     //ADD REMOTE READER (IN THIS CASE A READER IN THE SAME MACHINE)
     SubscriptionBuiltinTopicData rdata;
-
-    // TODO: Add these to rdata
-    // ReaderProxyData ratt(4u, 1u);
-    // ratt.guid({c_GuidPrefix_Unknown, 0x304});
-    // Locator_t loc;
-    // IPLocator::setIPv4(loc, ip);
-    // loc.port = static_cast<uint16_t>(port);
-    // ratt.add_unicast_locator(loc);
-
+    rdata.guid = GUID_t{c_GuidPrefix_Unknown, 0x304};
+    Locator_t loc;
+    IPLocator::setIPv4(loc, ip);
+    loc.port = static_cast<uint16_t>(port);
+    rdata.remote_locators.add_unicast_locator(loc);
     mp_writer->matched_reader_add(rdata);
     return true;
 }
