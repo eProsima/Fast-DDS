@@ -146,12 +146,12 @@ DataReaderHistory::DataReaderHistory(
                     if (type_ != nullptr)
                     {
                         EPROSIMA_LOG_INFO(SUBSCRIBER, "Getting Key of change with no Key transmitted");
-                        type_->deserialize(&a_change->serializedPayload, get_key_object_);
                         bool is_key_protected = false;
 #if HAVE_SECURITY
                         is_key_protected = mp_reader->getAttributes().security_attributes().is_key_protected;
 #endif // if HAVE_SECURITY
-                        return type_->compute_key(get_key_object_, &a_change->instanceHandle, is_key_protected);
+                        return type_->compute_key(&a_change->serializedPayload, &a_change->instanceHandle,
+                                       is_key_protected);
                     }
 
                     EPROSIMA_LOG_WARNING(SUBSCRIBER, "NO KEY in topic: " << topic_name_
