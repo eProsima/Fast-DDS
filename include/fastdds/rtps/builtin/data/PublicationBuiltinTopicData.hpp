@@ -22,6 +22,8 @@
 #include <cstdint>
 #include <string>
 
+#include <fastcdr/cdr/fixed_size_string.hpp>
+
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/builtin/data/BuiltinTopicKey.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
@@ -32,6 +34,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+/// Structure PublicationBuiltinTopicData, contains the information on a discovered publication.
 struct PublicationBuiltinTopicData
 {
     /// Builtin topic Key
@@ -41,10 +44,10 @@ struct PublicationBuiltinTopicData
     BuiltinTopicKey_t participant_key;
 
     /// Topic name
-    std::string topic_name;
+    fastcdr::string_255 topic_name;
 
     /// Type name
-    std::string type_name;
+    fastcdr::string_255 type_name;
 
     // DataWriter Qos
 

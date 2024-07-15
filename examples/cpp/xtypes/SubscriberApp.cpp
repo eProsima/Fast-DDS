@@ -198,7 +198,7 @@ void SubscriberApp::on_data_writer_discovery(
     should_be_ignored = false;
 
     // Check if the discovered topic is the one we are interested in
-    if (topic_name_ == info.topic_name)
+    if (topic_name_ == info.topic_name.to_string())
     {
         // Get remote type information and use it to retrieve the type object
         auto type_info = info.type_information.type_information;

@@ -1831,7 +1831,7 @@ protected:
         eprosima::fastdds::dds::PublicationBuiltinTopicData old_writer_data = ret.first->second;
         ret.first->second = writer_data;
 
-        ASSERT_GT(mapTopicCountList_.count(writer_data.topic_name), 0ul);
+        ASSERT_GT(mapTopicCountList_.count(writer_data.topic_name.to_string()), 0ul);
 
         // Remove previous partitions
         for (auto partition : old_writer_data.partition.names())
@@ -1939,9 +1939,9 @@ protected:
 
         mapWriterInfoList_.erase(writer_data.guid);
 
-        ASSERT_GT(mapTopicCountList_.count(writer_data.topic_name), 0ul);
+        ASSERT_GT(mapTopicCountList_.count(writer_data.topic_name.to_string()), 0ul);
 
-        --mapTopicCountList_[writer_data.topic_name];
+        --mapTopicCountList_[writer_data.topic_name.to_string()];
 
         for (auto partition : writer_data.partition.names())
         {
