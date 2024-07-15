@@ -149,6 +149,25 @@ void SequenceShortPubSubType::delete_data(
 }
 
 bool SequenceShortPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceShort data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool SequenceShortPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -307,6 +326,25 @@ void SequenceUShortPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<SequenceUShort*>(data));
+}
+
+bool SequenceUShortPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceUShort data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool SequenceUShortPubSubType::compute_key(
@@ -471,6 +509,25 @@ void SequenceLongPubSubType::delete_data(
 }
 
 bool SequenceLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool SequenceLongPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -629,6 +686,25 @@ void SequenceULongPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<SequenceULong*>(data));
+}
+
+bool SequenceULongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceULong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool SequenceULongPubSubType::compute_key(
@@ -793,6 +869,25 @@ void SequenceLongLongPubSubType::delete_data(
 }
 
 bool SequenceLongLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceLongLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool SequenceLongLongPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -951,6 +1046,25 @@ void SequenceULongLongPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<SequenceULongLong*>(data));
+}
+
+bool SequenceULongLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceULongLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool SequenceULongLongPubSubType::compute_key(
@@ -1115,6 +1229,25 @@ void SequenceFloatPubSubType::delete_data(
 }
 
 bool SequenceFloatPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceFloat data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool SequenceFloatPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -1273,6 +1406,25 @@ void SequenceDoublePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<SequenceDouble*>(data));
+}
+
+bool SequenceDoublePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceDouble data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool SequenceDoublePubSubType::compute_key(
@@ -1437,6 +1589,25 @@ void SequenceLongDoublePubSubType::delete_data(
 }
 
 bool SequenceLongDoublePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceLongDouble data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool SequenceLongDoublePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -1595,6 +1766,25 @@ void SequenceBooleanPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<SequenceBoolean*>(data));
+}
+
+bool SequenceBooleanPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceBoolean data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool SequenceBooleanPubSubType::compute_key(
@@ -1759,6 +1949,25 @@ void SequenceOctetPubSubType::delete_data(
 }
 
 bool SequenceOctetPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceOctet data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool SequenceOctetPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -1917,6 +2126,25 @@ void SequenceCharPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<SequenceChar*>(data));
+}
+
+bool SequenceCharPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceChar data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool SequenceCharPubSubType::compute_key(
@@ -2081,6 +2309,25 @@ void SequenceWCharPubSubType::delete_data(
 }
 
 bool SequenceWCharPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceWChar data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool SequenceWCharPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -2239,6 +2486,25 @@ void SequenceStringPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<SequenceString*>(data));
+}
+
+bool SequenceStringPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceString data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool SequenceStringPubSubType::compute_key(
@@ -2403,6 +2669,25 @@ void SequenceWStringPubSubType::delete_data(
 }
 
 bool SequenceWStringPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceWString data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool SequenceWStringPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -2561,6 +2846,25 @@ void SequenceStringBoundedPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<SequenceStringBounded*>(data));
+}
+
+bool SequenceStringBoundedPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceStringBounded data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool SequenceStringBoundedPubSubType::compute_key(
@@ -2725,6 +3029,25 @@ void SequenceWStringBoundedPubSubType::delete_data(
 }
 
 bool SequenceWStringBoundedPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceWStringBounded data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool SequenceWStringBoundedPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -2883,6 +3206,25 @@ void SequenceEnumPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<SequenceEnum*>(data));
+}
+
+bool SequenceEnumPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceEnum data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool SequenceEnumPubSubType::compute_key(
@@ -3047,6 +3389,25 @@ void SequenceBitMaskPubSubType::delete_data(
 }
 
 bool SequenceBitMaskPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceBitMask data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool SequenceBitMaskPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -3205,6 +3566,25 @@ void SequenceAliasPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<SequenceAlias*>(data));
+}
+
+bool SequenceAliasPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceAlias data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool SequenceAliasPubSubType::compute_key(
@@ -3369,6 +3749,25 @@ void SequenceShortArrayPubSubType::delete_data(
 }
 
 bool SequenceShortArrayPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceShortArray data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool SequenceShortArrayPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -3527,6 +3926,25 @@ void SequenceSequencePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<SequenceSequence*>(data));
+}
+
+bool SequenceSequencePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceSequence data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool SequenceSequencePubSubType::compute_key(
@@ -3691,6 +4109,25 @@ void SequenceMapPubSubType::delete_data(
 }
 
 bool SequenceMapPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceMap data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool SequenceMapPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -3849,6 +4286,25 @@ void SequenceUnionPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<SequenceUnion*>(data));
+}
+
+bool SequenceUnionPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceUnion data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool SequenceUnionPubSubType::compute_key(
@@ -4013,6 +4469,25 @@ void SequenceStructurePubSubType::delete_data(
 }
 
 bool SequenceStructurePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceStructure data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool SequenceStructurePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -4171,6 +4646,25 @@ void SequenceBitsetPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<SequenceBitset*>(data));
+}
+
+bool SequenceBitsetPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceBitset data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool SequenceBitsetPubSubType::compute_key(
@@ -4335,6 +4829,25 @@ void BoundedSmallSequencesPubSubType::delete_data(
 }
 
 bool BoundedSmallSequencesPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    BoundedSmallSequences data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool BoundedSmallSequencesPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -4493,6 +5006,25 @@ void BoundedBigSequencesPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<BoundedBigSequences*>(data));
+}
+
+bool BoundedBigSequencesPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    BoundedBigSequences data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool BoundedBigSequencesPubSubType::compute_key(

@@ -147,6 +147,25 @@ void ForwardDeclarationsRecursiveStructPubSubType::delete_data(
 }
 
 bool ForwardDeclarationsRecursiveStructPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    ForwardDeclarationsRecursiveStruct data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool ForwardDeclarationsRecursiveStructPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -310,6 +329,25 @@ void ForwardStructPubSubType::delete_data(
 }
 
 bool ForwardStructPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    ForwardStruct data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool ForwardStructPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -470,6 +508,25 @@ namespace declarations_module {
             void* data)
     {
         delete(reinterpret_cast<ForwardStruct*>(data));
+    }
+
+    bool ForwardStructPubSubType::compute_key(
+            SerializedPayload_t* payload,
+            InstanceHandle_t* handle,
+            bool force_md5)
+    {
+        if (!is_compute_key_provided)
+        {
+            return false;
+        }
+
+        ForwardStruct data;
+        if (deserialize(payload, static_cast<void*>(&data)))
+        {
+            return compute_key(static_cast<void*>(&data), handle, force_md5);
+        }
+
+        return false;
     }
 
     bool ForwardStructPubSubType::compute_key(
@@ -637,6 +694,25 @@ void ModuledForwardDeclarationsRecursiveStructPubSubType::delete_data(
 }
 
 bool ModuledForwardDeclarationsRecursiveStructPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    ModuledForwardDeclarationsRecursiveStruct data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool ModuledForwardDeclarationsRecursiveStructPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -797,6 +873,25 @@ namespace declarations_module {
             void* data)
     {
         delete(reinterpret_cast<ModuledForwardStruct*>(data));
+    }
+
+    bool ModuledForwardStructPubSubType::compute_key(
+            SerializedPayload_t* payload,
+            InstanceHandle_t* handle,
+            bool force_md5)
+    {
+        if (!is_compute_key_provided)
+        {
+            return false;
+        }
+
+        ModuledForwardStruct data;
+        if (deserialize(payload, static_cast<void*>(&data)))
+        {
+            return compute_key(static_cast<void*>(&data), handle, force_md5);
+        }
+
+        return false;
     }
 
     bool ModuledForwardStructPubSubType::compute_key(
@@ -963,6 +1058,25 @@ void ModuledCommonNameStructurePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<ModuledCommonNameStructure*>(data));
+}
+
+bool ModuledCommonNameStructurePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    ModuledCommonNameStructure data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool ModuledCommonNameStructurePubSubType::compute_key(

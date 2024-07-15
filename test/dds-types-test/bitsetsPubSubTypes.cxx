@@ -149,6 +149,25 @@ void BitsetStructPubSubType::delete_data(
 }
 
 bool BitsetStructPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    BitsetStruct data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool BitsetStructPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)

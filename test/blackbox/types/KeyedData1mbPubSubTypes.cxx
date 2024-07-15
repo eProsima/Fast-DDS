@@ -149,6 +149,25 @@ void KeyedData1mbPubSubType::delete_data(
 }
 
 bool KeyedData1mbPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    KeyedData1mb data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool KeyedData1mbPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)

@@ -149,6 +149,25 @@ void InnerStructureHelperChildPubSubType::delete_data(
 }
 
 bool InnerStructureHelperChildPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    InnerStructureHelperChild data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool InnerStructureHelperChildPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -307,6 +326,25 @@ void InnerStructureHelperChildChildPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<InnerStructureHelperChildChild*>(data));
+}
+
+bool InnerStructureHelperChildChildPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    InnerStructureHelperChildChild data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool InnerStructureHelperChildChildPubSubType::compute_key(
@@ -471,6 +509,25 @@ void InnerStructureHelperEmptyChildPubSubType::delete_data(
 }
 
 bool InnerStructureHelperEmptyChildPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    InnerStructureHelperEmptyChild data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool InnerStructureHelperEmptyChildPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -629,6 +686,25 @@ void InnerStructureHelperEmptyChildChildPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<InnerStructureHelperEmptyChildChild*>(data));
+}
+
+bool InnerStructureHelperEmptyChildChildPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    InnerStructureHelperEmptyChildChild data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool InnerStructureHelperEmptyChildChildPubSubType::compute_key(
@@ -793,6 +869,25 @@ void InnerEmptyStructureHelperChildPubSubType::delete_data(
 }
 
 bool InnerEmptyStructureHelperChildPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    InnerEmptyStructureHelperChild data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool InnerEmptyStructureHelperChildPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -951,6 +1046,25 @@ void StructAliasInheritanceStructPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<StructAliasInheritanceStruct*>(data));
+}
+
+bool StructAliasInheritanceStructPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    StructAliasInheritanceStruct data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool StructAliasInheritanceStructPubSubType::compute_key(
@@ -1115,6 +1229,25 @@ void StructuresInheritanceStructPubSubType::delete_data(
 }
 
 bool StructuresInheritanceStructPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    StructuresInheritanceStruct data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool StructuresInheritanceStructPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -1276,6 +1409,25 @@ void BitsetsChildInheritanceStructPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<BitsetsChildInheritanceStruct*>(data));
+}
+
+bool BitsetsChildInheritanceStructPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    BitsetsChildInheritanceStruct data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool BitsetsChildInheritanceStructPubSubType::compute_key(

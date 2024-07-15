@@ -128,7 +128,7 @@ public:
      */
     FASTDDS_EXPORTED_API virtual const std::string& get_type_name() const
     {
-        return get()->topic_data_typename_;
+        return get()->get_name();
     }
 
     /**
@@ -219,8 +219,8 @@ public:
     {
         return get()->max_serialized_type_size == type_support->max_serialized_type_size
                && get()->is_compute_key_provided == type_support->is_compute_key_provided
-               && get()->topic_data_typename_ == type_support->topic_data_typename_
-               && get()->type_identifiers_ == type_support->type_identifiers_;
+               && get()->get_name() == type_support->get_name()
+               && get()->type_identifiers() == type_support->type_identifiers();
     }
 
     /**

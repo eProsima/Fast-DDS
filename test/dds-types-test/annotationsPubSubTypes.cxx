@@ -149,6 +149,25 @@ void AnnotatedStructPubSubType::delete_data(
 }
 
 bool AnnotatedStructPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    AnnotatedStruct data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool AnnotatedStructPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -307,6 +326,25 @@ void EmptyAnnotatedStructPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<EmptyAnnotatedStruct*>(data));
+}
+
+bool EmptyAnnotatedStructPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    EmptyAnnotatedStruct data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool EmptyAnnotatedStructPubSubType::compute_key(
@@ -469,6 +507,25 @@ void BasicAnnotationsStructPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<BasicAnnotationsStruct*>(data));
+}
+
+bool BasicAnnotationsStructPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    BasicAnnotationsStruct data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool BasicAnnotationsStructPubSubType::compute_key(

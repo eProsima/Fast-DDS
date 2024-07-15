@@ -149,6 +149,25 @@ void TestRegression3361PubSubType::delete_data(
 }
 
 bool TestRegression3361PubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    TestRegression3361 data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool TestRegression3361PubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)

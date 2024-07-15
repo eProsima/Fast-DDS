@@ -154,6 +154,25 @@ namespace eprosima {
                     }
 
                     bool EntityId_tPubSubType::compute_key(
+                            SerializedPayload_t* payload,
+                            InstanceHandle_t* handle,
+                            bool force_md5)
+                    {
+                        if (!is_compute_key_provided)
+                        {
+                            return false;
+                        }
+
+                        EntityId_t data;
+                        if (deserialize(payload, static_cast<void*>(&data)))
+                        {
+                            return compute_key(static_cast<void*>(&data), handle, force_md5);
+                        }
+
+                        return false;
+                    }
+
+                    bool EntityId_tPubSubType::compute_key(
                             const void* const data,
                             InstanceHandle_t* handle,
                             bool force_md5)
@@ -312,6 +331,25 @@ namespace eprosima {
                             void* data)
                     {
                         delete(reinterpret_cast<ProtocolVersion_t*>(data));
+                    }
+
+                    bool ProtocolVersion_tPubSubType::compute_key(
+                            SerializedPayload_t* payload,
+                            InstanceHandle_t* handle,
+                            bool force_md5)
+                    {
+                        if (!is_compute_key_provided)
+                        {
+                            return false;
+                        }
+
+                        ProtocolVersion_t data;
+                        if (deserialize(payload, static_cast<void*>(&data)))
+                        {
+                            return compute_key(static_cast<void*>(&data), handle, force_md5);
+                        }
+
+                        return false;
                     }
 
                     bool ProtocolVersion_tPubSubType::compute_key(
@@ -476,6 +514,25 @@ namespace eprosima {
                     }
 
                     bool VendorId_tPubSubType::compute_key(
+                            SerializedPayload_t* payload,
+                            InstanceHandle_t* handle,
+                            bool force_md5)
+                    {
+                        if (!is_compute_key_provided)
+                        {
+                            return false;
+                        }
+
+                        VendorId_t data;
+                        if (deserialize(payload, static_cast<void*>(&data)))
+                        {
+                            return compute_key(static_cast<void*>(&data), handle, force_md5);
+                        }
+
+                        return false;
+                    }
+
+                    bool VendorId_tPubSubType::compute_key(
                             const void* const data,
                             InstanceHandle_t* handle,
                             bool force_md5)
@@ -634,6 +691,25 @@ namespace eprosima {
                             void* data)
                     {
                         delete(reinterpret_cast<GuidPrefix_t*>(data));
+                    }
+
+                    bool GuidPrefix_tPubSubType::compute_key(
+                            SerializedPayload_t* payload,
+                            InstanceHandle_t* handle,
+                            bool force_md5)
+                    {
+                        if (!is_compute_key_provided)
+                        {
+                            return false;
+                        }
+
+                        GuidPrefix_t data;
+                        if (deserialize(payload, static_cast<void*>(&data)))
+                        {
+                            return compute_key(static_cast<void*>(&data), handle, force_md5);
+                        }
+
+                        return false;
                     }
 
                     bool GuidPrefix_tPubSubType::compute_key(
@@ -798,6 +874,25 @@ namespace eprosima {
                     }
 
                     bool GUID_tPubSubType::compute_key(
+                            SerializedPayload_t* payload,
+                            InstanceHandle_t* handle,
+                            bool force_md5)
+                    {
+                        if (!is_compute_key_provided)
+                        {
+                            return false;
+                        }
+
+                        GUID_t data;
+                        if (deserialize(payload, static_cast<void*>(&data)))
+                        {
+                            return compute_key(static_cast<void*>(&data), handle, force_md5);
+                        }
+
+                        return false;
+                    }
+
+                    bool GUID_tPubSubType::compute_key(
                             const void* const data,
                             InstanceHandle_t* handle,
                             bool force_md5)
@@ -956,6 +1051,25 @@ namespace eprosima {
                             void* data)
                     {
                         delete(reinterpret_cast<SequenceNumber_t*>(data));
+                    }
+
+                    bool SequenceNumber_tPubSubType::compute_key(
+                            SerializedPayload_t* payload,
+                            InstanceHandle_t* handle,
+                            bool force_md5)
+                    {
+                        if (!is_compute_key_provided)
+                        {
+                            return false;
+                        }
+
+                        SequenceNumber_t data;
+                        if (deserialize(payload, static_cast<void*>(&data)))
+                        {
+                            return compute_key(static_cast<void*>(&data), handle, force_md5);
+                        }
+
+                        return false;
                     }
 
                     bool SequenceNumber_tPubSubType::compute_key(
@@ -1120,6 +1234,25 @@ namespace eprosima {
                     }
 
                     bool Count_tPubSubType::compute_key(
+                            SerializedPayload_t* payload,
+                            InstanceHandle_t* handle,
+                            bool force_md5)
+                    {
+                        if (!is_compute_key_provided)
+                        {
+                            return false;
+                        }
+
+                        Count_t data;
+                        if (deserialize(payload, static_cast<void*>(&data)))
+                        {
+                            return compute_key(static_cast<void*>(&data), handle, force_md5);
+                        }
+
+                        return false;
+                    }
+
+                    bool Count_tPubSubType::compute_key(
                             const void* const data,
                             InstanceHandle_t* handle,
                             bool force_md5)
@@ -1278,6 +1411,25 @@ namespace eprosima {
                             void* data)
                     {
                         delete(reinterpret_cast<Time_t*>(data));
+                    }
+
+                    bool Time_tPubSubType::compute_key(
+                            SerializedPayload_t* payload,
+                            InstanceHandle_t* handle,
+                            bool force_md5)
+                    {
+                        if (!is_compute_key_provided)
+                        {
+                            return false;
+                        }
+
+                        Time_t data;
+                        if (deserialize(payload, static_cast<void*>(&data)))
+                        {
+                            return compute_key(static_cast<void*>(&data), handle, force_md5);
+                        }
+
+                        return false;
                     }
 
                     bool Time_tPubSubType::compute_key(
@@ -1443,6 +1595,25 @@ namespace eprosima {
                     }
 
                     bool SequenceNumberSetPubSubType::compute_key(
+                            SerializedPayload_t* payload,
+                            InstanceHandle_t* handle,
+                            bool force_md5)
+                    {
+                        if (!is_compute_key_provided)
+                        {
+                            return false;
+                        }
+
+                        SequenceNumberSet data;
+                        if (deserialize(payload, static_cast<void*>(&data)))
+                        {
+                            return compute_key(static_cast<void*>(&data), handle, force_md5);
+                        }
+
+                        return false;
+                    }
+
+                    bool SequenceNumberSetPubSubType::compute_key(
                             const void* const data,
                             InstanceHandle_t* handle,
                             bool force_md5)
@@ -1604,6 +1775,25 @@ namespace eprosima {
                     }
 
                     bool Locator_tPubSubType::compute_key(
+                            SerializedPayload_t* payload,
+                            InstanceHandle_t* handle,
+                            bool force_md5)
+                    {
+                        if (!is_compute_key_provided)
+                        {
+                            return false;
+                        }
+
+                        Locator_t data;
+                        if (deserialize(payload, static_cast<void*>(&data)))
+                        {
+                            return compute_key(static_cast<void*>(&data), handle, force_md5);
+                        }
+
+                        return false;
+                    }
+
+                    bool Locator_tPubSubType::compute_key(
                             const void* const data,
                             InstanceHandle_t* handle,
                             bool force_md5)
@@ -1762,6 +1952,25 @@ namespace eprosima {
                             void* data)
                     {
                         delete(reinterpret_cast<Duration_t*>(data));
+                    }
+
+                    bool Duration_tPubSubType::compute_key(
+                            SerializedPayload_t* payload,
+                            InstanceHandle_t* handle,
+                            bool force_md5)
+                    {
+                        if (!is_compute_key_provided)
+                        {
+                            return false;
+                        }
+
+                        Duration_t data;
+                        if (deserialize(payload, static_cast<void*>(&data)))
+                        {
+                            return compute_key(static_cast<void*>(&data), handle, force_md5);
+                        }
+
+                        return false;
                     }
 
                     bool Duration_tPubSubType::compute_key(
@@ -1928,6 +2137,25 @@ namespace eprosima {
                     }
 
                     bool StatusInfo_tPubSubType::compute_key(
+                            SerializedPayload_t* payload,
+                            InstanceHandle_t* handle,
+                            bool force_md5)
+                    {
+                        if (!is_compute_key_provided)
+                        {
+                            return false;
+                        }
+
+                        StatusInfo_t data;
+                        if (deserialize(payload, static_cast<void*>(&data)))
+                        {
+                            return compute_key(static_cast<void*>(&data), handle, force_md5);
+                        }
+
+                        return false;
+                    }
+
+                    bool StatusInfo_tPubSubType::compute_key(
                             const void* const data,
                             InstanceHandle_t* handle,
                             bool force_md5)
@@ -2089,6 +2317,25 @@ namespace eprosima {
                     }
 
                     bool KeyHash_tPubSubType::compute_key(
+                            SerializedPayload_t* payload,
+                            InstanceHandle_t* handle,
+                            bool force_md5)
+                    {
+                        if (!is_compute_key_provided)
+                        {
+                            return false;
+                        }
+
+                        KeyHash_t data;
+                        if (deserialize(payload, static_cast<void*>(&data)))
+                        {
+                            return compute_key(static_cast<void*>(&data), handle, force_md5);
+                        }
+
+                        return false;
+                    }
+
+                    bool KeyHash_tPubSubType::compute_key(
                             const void* const data,
                             InstanceHandle_t* handle,
                             bool force_md5)
@@ -2247,6 +2494,25 @@ namespace eprosima {
                             void* data)
                     {
                         delete(reinterpret_cast<EntityName_t*>(data));
+                    }
+
+                    bool EntityName_tPubSubType::compute_key(
+                            SerializedPayload_t* payload,
+                            InstanceHandle_t* handle,
+                            bool force_md5)
+                    {
+                        if (!is_compute_key_provided)
+                        {
+                            return false;
+                        }
+
+                        EntityName_t data;
+                        if (deserialize(payload, static_cast<void*>(&data)))
+                        {
+                            return compute_key(static_cast<void*>(&data), handle, force_md5);
+                        }
+
+                        return false;
                     }
 
                     bool EntityName_tPubSubType::compute_key(
@@ -2413,6 +2679,25 @@ namespace eprosima {
                 }
 
                 bool HeaderPubSubType::compute_key(
+                        SerializedPayload_t* payload,
+                        InstanceHandle_t* handle,
+                        bool force_md5)
+                {
+                    if (!is_compute_key_provided)
+                    {
+                        return false;
+                    }
+
+                    Header data;
+                    if (deserialize(payload, static_cast<void*>(&data)))
+                    {
+                        return compute_key(static_cast<void*>(&data), handle, force_md5);
+                    }
+
+                    return false;
+                }
+
+                bool HeaderPubSubType::compute_key(
                         const void* const data,
                         InstanceHandle_t* handle,
                         bool force_md5)
@@ -2571,6 +2856,25 @@ namespace eprosima {
                         void* data)
                 {
                     delete(reinterpret_cast<SubmessageHeader*>(data));
+                }
+
+                bool SubmessageHeaderPubSubType::compute_key(
+                        SerializedPayload_t* payload,
+                        InstanceHandle_t* handle,
+                        bool force_md5)
+                {
+                    if (!is_compute_key_provided)
+                    {
+                        return false;
+                    }
+
+                    SubmessageHeader data;
+                    if (deserialize(payload, static_cast<void*>(&data)))
+                    {
+                        return compute_key(static_cast<void*>(&data), handle, force_md5);
+                    }
+
+                    return false;
                 }
 
                 bool SubmessageHeaderPubSubType::compute_key(
@@ -2738,6 +3042,25 @@ namespace eprosima {
                 }
 
                 bool AckNackSubmessagePubSubType::compute_key(
+                        SerializedPayload_t* payload,
+                        InstanceHandle_t* handle,
+                        bool force_md5)
+                {
+                    if (!is_compute_key_provided)
+                    {
+                        return false;
+                    }
+
+                    AckNackSubmessage data;
+                    if (deserialize(payload, static_cast<void*>(&data)))
+                    {
+                        return compute_key(static_cast<void*>(&data), handle, force_md5);
+                    }
+
+                    return false;
+                }
+
+                bool AckNackSubmessagePubSubType::compute_key(
                         const void* const data,
                         InstanceHandle_t* handle,
                         bool force_md5)
@@ -2896,6 +3219,25 @@ namespace eprosima {
                         void* data)
                 {
                     delete(reinterpret_cast<HeartBeatSubmessage*>(data));
+                }
+
+                bool HeartBeatSubmessagePubSubType::compute_key(
+                        SerializedPayload_t* payload,
+                        InstanceHandle_t* handle,
+                        bool force_md5)
+                {
+                    if (!is_compute_key_provided)
+                    {
+                        return false;
+                    }
+
+                    HeartBeatSubmessage data;
+                    if (deserialize(payload, static_cast<void*>(&data)))
+                    {
+                        return compute_key(static_cast<void*>(&data), handle, force_md5);
+                    }
+
+                    return false;
                 }
 
                 bool HeartBeatSubmessagePubSubType::compute_key(
@@ -3060,6 +3402,25 @@ namespace eprosima {
                 }
 
                 bool InfoDestinationSubmessagePubSubType::compute_key(
+                        SerializedPayload_t* payload,
+                        InstanceHandle_t* handle,
+                        bool force_md5)
+                {
+                    if (!is_compute_key_provided)
+                    {
+                        return false;
+                    }
+
+                    InfoDestinationSubmessage data;
+                    if (deserialize(payload, static_cast<void*>(&data)))
+                    {
+                        return compute_key(static_cast<void*>(&data), handle, force_md5);
+                    }
+
+                    return false;
+                }
+
+                bool InfoDestinationSubmessagePubSubType::compute_key(
                         const void* const data,
                         InstanceHandle_t* handle,
                         bool force_md5)
@@ -3218,6 +3579,25 @@ namespace eprosima {
                         void* data)
                 {
                     delete(reinterpret_cast<InfoSourceSubmessage*>(data));
+                }
+
+                bool InfoSourceSubmessagePubSubType::compute_key(
+                        SerializedPayload_t* payload,
+                        InstanceHandle_t* handle,
+                        bool force_md5)
+                {
+                    if (!is_compute_key_provided)
+                    {
+                        return false;
+                    }
+
+                    InfoSourceSubmessage data;
+                    if (deserialize(payload, static_cast<void*>(&data)))
+                    {
+                        return compute_key(static_cast<void*>(&data), handle, force_md5);
+                    }
+
+                    return false;
                 }
 
                 bool InfoSourceSubmessagePubSubType::compute_key(
@@ -3382,6 +3762,25 @@ namespace eprosima {
                 }
 
                 bool InfoTimestampSubmessagePubSubType::compute_key(
+                        SerializedPayload_t* payload,
+                        InstanceHandle_t* handle,
+                        bool force_md5)
+                {
+                    if (!is_compute_key_provided)
+                    {
+                        return false;
+                    }
+
+                    InfoTimestampSubmessage data;
+                    if (deserialize(payload, static_cast<void*>(&data)))
+                    {
+                        return compute_key(static_cast<void*>(&data), handle, force_md5);
+                    }
+
+                    return false;
+                }
+
+                bool InfoTimestampSubmessagePubSubType::compute_key(
                         const void* const data,
                         InstanceHandle_t* handle,
                         bool force_md5)
@@ -3541,6 +3940,25 @@ namespace eprosima {
                         void* data)
                 {
                     delete(reinterpret_cast<RTPSMessage*>(data));
+                }
+
+                bool RTPSMessagePubSubType::compute_key(
+                        SerializedPayload_t* payload,
+                        InstanceHandle_t* handle,
+                        bool force_md5)
+                {
+                    if (!is_compute_key_provided)
+                    {
+                        return false;
+                    }
+
+                    RTPSMessage data;
+                    if (deserialize(payload, static_cast<void*>(&data)))
+                    {
+                        return compute_key(static_cast<void*>(&data), handle, force_md5);
+                    }
+
+                    return false;
                 }
 
                 bool RTPSMessagePubSubType::compute_key(

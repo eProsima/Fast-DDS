@@ -155,6 +155,25 @@ namespace builtin {
     }
 
     bool TypeLookup_getTypes_InPubSubType::compute_key(
+            SerializedPayload_t* payload,
+            InstanceHandle_t* handle,
+            bool force_md5)
+    {
+        if (!is_compute_key_provided)
+        {
+            return false;
+        }
+
+        TypeLookup_getTypes_In data;
+        if (deserialize(payload, static_cast<void*>(&data)))
+        {
+            return compute_key(static_cast<void*>(&data), handle, force_md5);
+        }
+
+        return false;
+    }
+
+    bool TypeLookup_getTypes_InPubSubType::compute_key(
             const void* const data,
             InstanceHandle_t* handle,
             bool force_md5)
@@ -314,6 +333,25 @@ namespace builtin {
             void* data)
     {
         delete(reinterpret_cast<TypeLookup_getTypes_Out*>(data));
+    }
+
+    bool TypeLookup_getTypes_OutPubSubType::compute_key(
+            SerializedPayload_t* payload,
+            InstanceHandle_t* handle,
+            bool force_md5)
+    {
+        if (!is_compute_key_provided)
+        {
+            return false;
+        }
+
+        TypeLookup_getTypes_Out data;
+        if (deserialize(payload, static_cast<void*>(&data)))
+        {
+            return compute_key(static_cast<void*>(&data), handle, force_md5);
+        }
+
+        return false;
     }
 
     bool TypeLookup_getTypes_OutPubSubType::compute_key(
@@ -480,6 +518,25 @@ namespace builtin {
     }
 
     bool TypeLookup_getTypeDependencies_InPubSubType::compute_key(
+            SerializedPayload_t* payload,
+            InstanceHandle_t* handle,
+            bool force_md5)
+    {
+        if (!is_compute_key_provided)
+        {
+            return false;
+        }
+
+        TypeLookup_getTypeDependencies_In data;
+        if (deserialize(payload, static_cast<void*>(&data)))
+        {
+            return compute_key(static_cast<void*>(&data), handle, force_md5);
+        }
+
+        return false;
+    }
+
+    bool TypeLookup_getTypeDependencies_InPubSubType::compute_key(
             const void* const data,
             InstanceHandle_t* handle,
             bool force_md5)
@@ -639,6 +696,25 @@ namespace builtin {
             void* data)
     {
         delete(reinterpret_cast<TypeLookup_getTypeDependencies_Out*>(data));
+    }
+
+    bool TypeLookup_getTypeDependencies_OutPubSubType::compute_key(
+            SerializedPayload_t* payload,
+            InstanceHandle_t* handle,
+            bool force_md5)
+    {
+        if (!is_compute_key_provided)
+        {
+            return false;
+        }
+
+        TypeLookup_getTypeDependencies_Out data;
+        if (deserialize(payload, static_cast<void*>(&data)))
+        {
+            return compute_key(static_cast<void*>(&data), handle, force_md5);
+        }
+
+        return false;
     }
 
     bool TypeLookup_getTypeDependencies_OutPubSubType::compute_key(
@@ -806,6 +882,25 @@ namespace builtin {
     }
 
     bool TypeLookup_RequestPubSubType::compute_key(
+            SerializedPayload_t* payload,
+            InstanceHandle_t* handle,
+            bool force_md5)
+    {
+        if (!is_compute_key_provided)
+        {
+            return false;
+        }
+
+        TypeLookup_Request data;
+        if (deserialize(payload, static_cast<void*>(&data)))
+        {
+            return compute_key(static_cast<void*>(&data), handle, force_md5);
+        }
+
+        return false;
+    }
+
+    bool TypeLookup_RequestPubSubType::compute_key(
             const void* const data,
             InstanceHandle_t* handle,
             bool force_md5)
@@ -966,6 +1061,25 @@ namespace builtin {
             void* data)
     {
         delete(reinterpret_cast<TypeLookup_Reply*>(data));
+    }
+
+    bool TypeLookup_ReplyPubSubType::compute_key(
+            SerializedPayload_t* payload,
+            InstanceHandle_t* handle,
+            bool force_md5)
+    {
+        if (!is_compute_key_provided)
+        {
+            return false;
+        }
+
+        TypeLookup_Reply data;
+        if (deserialize(payload, static_cast<void*>(&data)))
+        {
+            return compute_key(static_cast<void*>(&data), handle, force_md5);
+        }
+
+        return false;
     }
 
     bool TypeLookup_ReplyPubSubType::compute_key(

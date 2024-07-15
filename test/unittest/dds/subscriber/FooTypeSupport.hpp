@@ -135,6 +135,20 @@ public:
     }
 
     bool compute_key(
+            fastdds::rtps::SerializedPayload_t* payload,
+            fastdds::rtps::InstanceHandle_t* handle,
+            bool force_md5) override
+    {
+        FooType data;
+        if (deserialize(payload, static_cast<void*>(&data)))
+        {
+            return compute_key(static_cast<void*>(&data), handle, force_md5);
+        }
+
+        return false;
+    }
+
+    bool compute_key(
             const void* const data,
             fastdds::rtps::InstanceHandle_t* handle,
             bool force_md5) override

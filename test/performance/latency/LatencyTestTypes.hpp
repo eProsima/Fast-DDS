@@ -118,6 +118,16 @@ public:
     void* create_data() override;
     void delete_data(
             void* data) override;
+
+    bool compute_key(
+            eprosima::fastdds::rtps::SerializedPayload_t* /*payload*/,
+            eprosima::fastdds::rtps::InstanceHandle_t* /*ihandle*/,
+            bool force_md5 = false) override
+    {
+        (void)force_md5;
+        return false;
+    }
+
     bool compute_key(
             const void* const /*data*/,
             eprosima::fastdds::rtps::InstanceHandle_t* /*ihandle*/,
@@ -210,6 +220,16 @@ public:
     void* create_data() override;
     void delete_data(
             void* data) override;
+
+    bool compute_key(
+            eprosima::fastdds::rtps::SerializedPayload_t* /*payload*/,
+            eprosima::fastdds::rtps::InstanceHandle_t* /*ihandle*/,
+            bool force_md5 = false) override
+    {
+        (void)force_md5;
+        return false;
+    }
+
     bool compute_key(
             const void* const /*data*/,
             eprosima::fastdds::rtps::InstanceHandle_t* /*ihandle*/,

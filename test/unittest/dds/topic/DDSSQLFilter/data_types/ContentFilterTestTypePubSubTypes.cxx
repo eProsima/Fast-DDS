@@ -149,6 +149,25 @@ void StructTypePubSubType::delete_data(
 }
 
 bool StructTypePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    StructType data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool StructTypePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -309,6 +328,25 @@ void ContentFilterTestTypePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<ContentFilterTestType*>(data));
+}
+
+bool ContentFilterTestTypePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    ContentFilterTestType data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool ContentFilterTestTypePubSubType::compute_key(

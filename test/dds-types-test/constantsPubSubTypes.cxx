@@ -150,6 +150,25 @@ namespace const_module1 {
     }
 
     bool ModuleConstsLiteralsStructPubSubType::compute_key(
+            SerializedPayload_t* payload,
+            InstanceHandle_t* handle,
+            bool force_md5)
+    {
+        if (!is_compute_key_provided)
+        {
+            return false;
+        }
+
+        ModuleConstsLiteralsStruct data;
+        if (deserialize(payload, static_cast<void*>(&data)))
+        {
+            return compute_key(static_cast<void*>(&data), handle, force_md5);
+        }
+
+        return false;
+    }
+
+    bool ModuleConstsLiteralsStructPubSubType::compute_key(
             const void* const data,
             InstanceHandle_t* handle,
             bool force_md5)
@@ -314,6 +333,25 @@ namespace const_module2 {
     }
 
     bool Module2ConstsLiteralsStructPubSubType::compute_key(
+            SerializedPayload_t* payload,
+            InstanceHandle_t* handle,
+            bool force_md5)
+    {
+        if (!is_compute_key_provided)
+        {
+            return false;
+        }
+
+        Module2ConstsLiteralsStruct data;
+        if (deserialize(payload, static_cast<void*>(&data)))
+        {
+            return compute_key(static_cast<void*>(&data), handle, force_md5);
+        }
+
+        return false;
+    }
+
+    bool Module2ConstsLiteralsStructPubSubType::compute_key(
             const void* const data,
             InstanceHandle_t* handle,
             bool force_md5)
@@ -474,6 +512,25 @@ void ConstsLiteralsStructPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<ConstsLiteralsStruct*>(data));
+}
+
+bool ConstsLiteralsStructPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    ConstsLiteralsStruct data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool ConstsLiteralsStructPubSubType::compute_key(

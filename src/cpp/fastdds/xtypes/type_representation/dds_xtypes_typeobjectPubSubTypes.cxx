@@ -157,6 +157,25 @@ void StringSTypeDefnPubSubType::delete_data(
 }
 
 bool StringSTypeDefnPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    StringSTypeDefn data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool StringSTypeDefnPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -316,6 +335,25 @@ void StringLTypeDefnPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<StringLTypeDefn*>(data));
+}
+
+bool StringLTypeDefnPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    StringLTypeDefn data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool StringLTypeDefnPubSubType::compute_key(
@@ -481,6 +519,25 @@ void PlainCollectionHeaderPubSubType::delete_data(
 }
 
 bool PlainCollectionHeaderPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    PlainCollectionHeader data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool PlainCollectionHeaderPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -640,6 +697,25 @@ void PlainSequenceSElemDefnPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<PlainSequenceSElemDefn*>(data));
+}
+
+bool PlainSequenceSElemDefnPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    PlainSequenceSElemDefn data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool PlainSequenceSElemDefnPubSubType::compute_key(
@@ -805,6 +881,25 @@ void PlainSequenceLElemDefnPubSubType::delete_data(
 }
 
 bool PlainSequenceLElemDefnPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    PlainSequenceLElemDefn data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool PlainSequenceLElemDefnPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -964,6 +1059,25 @@ void PlainArraySElemDefnPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<PlainArraySElemDefn*>(data));
+}
+
+bool PlainArraySElemDefnPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    PlainArraySElemDefn data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool PlainArraySElemDefnPubSubType::compute_key(
@@ -1129,6 +1243,25 @@ void PlainArrayLElemDefnPubSubType::delete_data(
 }
 
 bool PlainArrayLElemDefnPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    PlainArrayLElemDefn data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool PlainArrayLElemDefnPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -1288,6 +1421,25 @@ void PlainMapSTypeDefnPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<PlainMapSTypeDefn*>(data));
+}
+
+bool PlainMapSTypeDefnPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    PlainMapSTypeDefn data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool PlainMapSTypeDefnPubSubType::compute_key(
@@ -1453,6 +1605,25 @@ void PlainMapLTypeDefnPubSubType::delete_data(
 }
 
 bool PlainMapLTypeDefnPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    PlainMapLTypeDefn data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool PlainMapLTypeDefnPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -1612,6 +1783,25 @@ void StronglyConnectedComponentIdPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<StronglyConnectedComponentId*>(data));
+}
+
+bool StronglyConnectedComponentIdPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    StronglyConnectedComponentId data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool StronglyConnectedComponentIdPubSubType::compute_key(
@@ -1777,6 +1967,25 @@ void ExtendedTypeDefnPubSubType::delete_data(
 }
 
 bool ExtendedTypeDefnPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    ExtendedTypeDefn data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool ExtendedTypeDefnPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -1936,6 +2145,25 @@ void DummyPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<Dummy*>(data));
+}
+
+bool DummyPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    Dummy data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool DummyPubSubType::compute_key(
@@ -2106,6 +2334,25 @@ void ExtendedAnnotationParameterValuePubSubType::delete_data(
 }
 
 bool ExtendedAnnotationParameterValuePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    ExtendedAnnotationParameterValue data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool ExtendedAnnotationParameterValuePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -2266,6 +2513,25 @@ void AppliedAnnotationParameterPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<AppliedAnnotationParameter*>(data));
+}
+
+bool AppliedAnnotationParameterPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    AppliedAnnotationParameter data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool AppliedAnnotationParameterPubSubType::compute_key(
@@ -2432,6 +2698,25 @@ void AppliedAnnotationPubSubType::delete_data(
 }
 
 bool AppliedAnnotationPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    AppliedAnnotation data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool AppliedAnnotationPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -2592,6 +2877,25 @@ void AppliedVerbatimAnnotationPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<AppliedVerbatimAnnotation*>(data));
+}
+
+bool AppliedVerbatimAnnotationPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    AppliedVerbatimAnnotation data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool AppliedVerbatimAnnotationPubSubType::compute_key(
@@ -2757,6 +3061,25 @@ void AppliedBuiltinMemberAnnotationsPubSubType::delete_data(
 }
 
 bool AppliedBuiltinMemberAnnotationsPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    AppliedBuiltinMemberAnnotations data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool AppliedBuiltinMemberAnnotationsPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -2916,6 +3239,25 @@ void CommonStructMemberPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<CommonStructMember*>(data));
+}
+
+bool CommonStructMemberPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CommonStructMember data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool CommonStructMemberPubSubType::compute_key(
@@ -3081,6 +3423,25 @@ void CompleteMemberDetailPubSubType::delete_data(
 }
 
 bool CompleteMemberDetailPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteMemberDetail data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool CompleteMemberDetailPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -3243,6 +3604,25 @@ void MinimalMemberDetailPubSubType::delete_data(
 }
 
 bool MinimalMemberDetailPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalMemberDetail data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MinimalMemberDetailPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -3402,6 +3782,25 @@ void CompleteStructMemberPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<CompleteStructMember*>(data));
+}
+
+bool CompleteStructMemberPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteStructMember data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool CompleteStructMemberPubSubType::compute_key(
@@ -3568,6 +3967,25 @@ void MinimalStructMemberPubSubType::delete_data(
 }
 
 bool MinimalStructMemberPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalStructMember data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MinimalStructMemberPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -3728,6 +4146,25 @@ void AppliedBuiltinTypeAnnotationsPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<AppliedBuiltinTypeAnnotations*>(data));
+}
+
+bool AppliedBuiltinTypeAnnotationsPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    AppliedBuiltinTypeAnnotations data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool AppliedBuiltinTypeAnnotationsPubSubType::compute_key(
@@ -3893,6 +4330,25 @@ void MinimalTypeDetailPubSubType::delete_data(
 }
 
 bool MinimalTypeDetailPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalTypeDetail data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MinimalTypeDetailPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -4052,6 +4508,25 @@ void CompleteTypeDetailPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<CompleteTypeDetail*>(data));
+}
+
+bool CompleteTypeDetailPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteTypeDetail data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool CompleteTypeDetailPubSubType::compute_key(
@@ -4217,6 +4692,25 @@ void CompleteStructHeaderPubSubType::delete_data(
 }
 
 bool CompleteStructHeaderPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteStructHeader data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool CompleteStructHeaderPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -4376,6 +4870,25 @@ void MinimalStructHeaderPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MinimalStructHeader*>(data));
+}
+
+bool MinimalStructHeaderPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalStructHeader data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MinimalStructHeaderPubSubType::compute_key(
@@ -4541,6 +5054,25 @@ void CompleteStructTypePubSubType::delete_data(
 }
 
 bool CompleteStructTypePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteStructType data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool CompleteStructTypePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -4700,6 +5232,25 @@ void MinimalStructTypePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MinimalStructType*>(data));
+}
+
+bool MinimalStructTypePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalStructType data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MinimalStructTypePubSubType::compute_key(
@@ -4866,6 +5417,25 @@ void CommonUnionMemberPubSubType::delete_data(
 }
 
 bool CommonUnionMemberPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CommonUnionMember data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool CommonUnionMemberPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -5025,6 +5595,25 @@ void CompleteUnionMemberPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<CompleteUnionMember*>(data));
+}
+
+bool CompleteUnionMemberPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteUnionMember data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool CompleteUnionMemberPubSubType::compute_key(
@@ -5191,6 +5780,25 @@ void MinimalUnionMemberPubSubType::delete_data(
 }
 
 bool MinimalUnionMemberPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalUnionMember data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MinimalUnionMemberPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -5351,6 +5959,25 @@ void CommonDiscriminatorMemberPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<CommonDiscriminatorMember*>(data));
+}
+
+bool CommonDiscriminatorMemberPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CommonDiscriminatorMember data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool CommonDiscriminatorMemberPubSubType::compute_key(
@@ -5516,6 +6143,25 @@ void CompleteDiscriminatorMemberPubSubType::delete_data(
 }
 
 bool CompleteDiscriminatorMemberPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteDiscriminatorMember data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool CompleteDiscriminatorMemberPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -5675,6 +6321,25 @@ void MinimalDiscriminatorMemberPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MinimalDiscriminatorMember*>(data));
+}
+
+bool MinimalDiscriminatorMemberPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalDiscriminatorMember data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MinimalDiscriminatorMemberPubSubType::compute_key(
@@ -5840,6 +6505,25 @@ void CompleteUnionHeaderPubSubType::delete_data(
 }
 
 bool CompleteUnionHeaderPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteUnionHeader data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool CompleteUnionHeaderPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -5999,6 +6683,25 @@ void MinimalUnionHeaderPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MinimalUnionHeader*>(data));
+}
+
+bool MinimalUnionHeaderPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalUnionHeader data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MinimalUnionHeaderPubSubType::compute_key(
@@ -6164,6 +6867,25 @@ void CompleteUnionTypePubSubType::delete_data(
 }
 
 bool CompleteUnionTypePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteUnionType data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool CompleteUnionTypePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -6323,6 +7045,25 @@ void MinimalUnionTypePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MinimalUnionType*>(data));
+}
+
+bool MinimalUnionTypePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalUnionType data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MinimalUnionTypePubSubType::compute_key(
@@ -6488,6 +7229,25 @@ void CommonAnnotationParameterPubSubType::delete_data(
 }
 
 bool CommonAnnotationParameterPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CommonAnnotationParameter data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool CommonAnnotationParameterPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -6647,6 +7407,25 @@ void CompleteAnnotationParameterPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<CompleteAnnotationParameter*>(data));
+}
+
+bool CompleteAnnotationParameterPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteAnnotationParameter data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool CompleteAnnotationParameterPubSubType::compute_key(
@@ -6813,6 +7592,25 @@ void MinimalAnnotationParameterPubSubType::delete_data(
 }
 
 bool MinimalAnnotationParameterPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalAnnotationParameter data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MinimalAnnotationParameterPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -6973,6 +7771,25 @@ void CompleteAnnotationHeaderPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<CompleteAnnotationHeader*>(data));
+}
+
+bool CompleteAnnotationHeaderPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteAnnotationHeader data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool CompleteAnnotationHeaderPubSubType::compute_key(
@@ -7138,6 +7955,25 @@ void MinimalAnnotationHeaderPubSubType::delete_data(
 }
 
 bool MinimalAnnotationHeaderPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalAnnotationHeader data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MinimalAnnotationHeaderPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -7297,6 +8133,25 @@ void CompleteAnnotationTypePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<CompleteAnnotationType*>(data));
+}
+
+bool CompleteAnnotationTypePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteAnnotationType data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool CompleteAnnotationTypePubSubType::compute_key(
@@ -7462,6 +8317,25 @@ void MinimalAnnotationTypePubSubType::delete_data(
 }
 
 bool MinimalAnnotationTypePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalAnnotationType data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MinimalAnnotationTypePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -7621,6 +8495,25 @@ void CommonAliasBodyPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<CommonAliasBody*>(data));
+}
+
+bool CommonAliasBodyPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CommonAliasBody data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool CommonAliasBodyPubSubType::compute_key(
@@ -7786,6 +8679,25 @@ void CompleteAliasBodyPubSubType::delete_data(
 }
 
 bool CompleteAliasBodyPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteAliasBody data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool CompleteAliasBodyPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -7945,6 +8857,25 @@ void MinimalAliasBodyPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MinimalAliasBody*>(data));
+}
+
+bool MinimalAliasBodyPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalAliasBody data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MinimalAliasBodyPubSubType::compute_key(
@@ -8110,6 +9041,25 @@ void CompleteAliasHeaderPubSubType::delete_data(
 }
 
 bool CompleteAliasHeaderPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteAliasHeader data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool CompleteAliasHeaderPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -8269,6 +9219,25 @@ void MinimalAliasHeaderPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MinimalAliasHeader*>(data));
+}
+
+bool MinimalAliasHeaderPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalAliasHeader data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MinimalAliasHeaderPubSubType::compute_key(
@@ -8434,6 +9403,25 @@ void CompleteAliasTypePubSubType::delete_data(
 }
 
 bool CompleteAliasTypePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteAliasType data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool CompleteAliasTypePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -8593,6 +9581,25 @@ void MinimalAliasTypePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MinimalAliasType*>(data));
+}
+
+bool MinimalAliasTypePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalAliasType data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MinimalAliasTypePubSubType::compute_key(
@@ -8758,6 +9765,25 @@ void CompleteElementDetailPubSubType::delete_data(
 }
 
 bool CompleteElementDetailPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteElementDetail data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool CompleteElementDetailPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -8917,6 +9943,25 @@ void CommonCollectionElementPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<CommonCollectionElement*>(data));
+}
+
+bool CommonCollectionElementPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CommonCollectionElement data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool CommonCollectionElementPubSubType::compute_key(
@@ -9082,6 +10127,25 @@ void CompleteCollectionElementPubSubType::delete_data(
 }
 
 bool CompleteCollectionElementPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteCollectionElement data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool CompleteCollectionElementPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -9241,6 +10305,25 @@ void MinimalCollectionElementPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MinimalCollectionElement*>(data));
+}
+
+bool MinimalCollectionElementPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalCollectionElement data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MinimalCollectionElementPubSubType::compute_key(
@@ -9406,6 +10489,25 @@ void CommonCollectionHeaderPubSubType::delete_data(
 }
 
 bool CommonCollectionHeaderPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CommonCollectionHeader data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool CommonCollectionHeaderPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -9565,6 +10667,25 @@ void CompleteCollectionHeaderPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<CompleteCollectionHeader*>(data));
+}
+
+bool CompleteCollectionHeaderPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteCollectionHeader data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool CompleteCollectionHeaderPubSubType::compute_key(
@@ -9730,6 +10851,25 @@ void MinimalCollectionHeaderPubSubType::delete_data(
 }
 
 bool MinimalCollectionHeaderPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalCollectionHeader data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MinimalCollectionHeaderPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -9889,6 +11029,25 @@ void CompleteSequenceTypePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<CompleteSequenceType*>(data));
+}
+
+bool CompleteSequenceTypePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteSequenceType data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool CompleteSequenceTypePubSubType::compute_key(
@@ -10054,6 +11213,25 @@ void MinimalSequenceTypePubSubType::delete_data(
 }
 
 bool MinimalSequenceTypePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalSequenceType data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MinimalSequenceTypePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -10213,6 +11391,25 @@ void CommonArrayHeaderPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<CommonArrayHeader*>(data));
+}
+
+bool CommonArrayHeaderPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CommonArrayHeader data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool CommonArrayHeaderPubSubType::compute_key(
@@ -10378,6 +11575,25 @@ void CompleteArrayHeaderPubSubType::delete_data(
 }
 
 bool CompleteArrayHeaderPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteArrayHeader data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool CompleteArrayHeaderPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -10537,6 +11753,25 @@ void MinimalArrayHeaderPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MinimalArrayHeader*>(data));
+}
+
+bool MinimalArrayHeaderPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalArrayHeader data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MinimalArrayHeaderPubSubType::compute_key(
@@ -10702,6 +11937,25 @@ void CompleteArrayTypePubSubType::delete_data(
 }
 
 bool CompleteArrayTypePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteArrayType data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool CompleteArrayTypePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -10861,6 +12115,25 @@ void MinimalArrayTypePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MinimalArrayType*>(data));
+}
+
+bool MinimalArrayTypePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalArrayType data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MinimalArrayTypePubSubType::compute_key(
@@ -11026,6 +12299,25 @@ void CompleteMapTypePubSubType::delete_data(
 }
 
 bool CompleteMapTypePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteMapType data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool CompleteMapTypePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -11185,6 +12477,25 @@ void MinimalMapTypePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MinimalMapType*>(data));
+}
+
+bool MinimalMapTypePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalMapType data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MinimalMapTypePubSubType::compute_key(
@@ -11351,6 +12662,25 @@ void CommonEnumeratedLiteralPubSubType::delete_data(
 }
 
 bool CommonEnumeratedLiteralPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CommonEnumeratedLiteral data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool CommonEnumeratedLiteralPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -11510,6 +12840,25 @@ void CompleteEnumeratedLiteralPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<CompleteEnumeratedLiteral*>(data));
+}
+
+bool CompleteEnumeratedLiteralPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteEnumeratedLiteral data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool CompleteEnumeratedLiteralPubSubType::compute_key(
@@ -11676,6 +13025,25 @@ void MinimalEnumeratedLiteralPubSubType::delete_data(
 }
 
 bool MinimalEnumeratedLiteralPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalEnumeratedLiteral data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MinimalEnumeratedLiteralPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -11836,6 +13204,25 @@ void CommonEnumeratedHeaderPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<CommonEnumeratedHeader*>(data));
+}
+
+bool CommonEnumeratedHeaderPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CommonEnumeratedHeader data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool CommonEnumeratedHeaderPubSubType::compute_key(
@@ -12001,6 +13388,25 @@ void CompleteEnumeratedHeaderPubSubType::delete_data(
 }
 
 bool CompleteEnumeratedHeaderPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteEnumeratedHeader data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool CompleteEnumeratedHeaderPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -12160,6 +13566,25 @@ void MinimalEnumeratedHeaderPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MinimalEnumeratedHeader*>(data));
+}
+
+bool MinimalEnumeratedHeaderPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalEnumeratedHeader data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MinimalEnumeratedHeaderPubSubType::compute_key(
@@ -12325,6 +13750,25 @@ void CompleteEnumeratedTypePubSubType::delete_data(
 }
 
 bool CompleteEnumeratedTypePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteEnumeratedType data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool CompleteEnumeratedTypePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -12484,6 +13928,25 @@ void MinimalEnumeratedTypePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MinimalEnumeratedType*>(data));
+}
+
+bool MinimalEnumeratedTypePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalEnumeratedType data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MinimalEnumeratedTypePubSubType::compute_key(
@@ -12649,6 +14112,25 @@ void CommonBitflagPubSubType::delete_data(
 }
 
 bool CommonBitflagPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CommonBitflag data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool CommonBitflagPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -12808,6 +14290,25 @@ void CompleteBitflagPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<CompleteBitflag*>(data));
+}
+
+bool CompleteBitflagPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteBitflag data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool CompleteBitflagPubSubType::compute_key(
@@ -12974,6 +14475,25 @@ void MinimalBitflagPubSubType::delete_data(
 }
 
 bool MinimalBitflagPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalBitflag data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MinimalBitflagPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -13134,6 +14654,25 @@ void CommonBitmaskHeaderPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<CommonBitmaskHeader*>(data));
+}
+
+bool CommonBitmaskHeaderPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CommonBitmaskHeader data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool CommonBitmaskHeaderPubSubType::compute_key(
@@ -13301,6 +14840,25 @@ void CompleteBitmaskTypePubSubType::delete_data(
 }
 
 bool CompleteBitmaskTypePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteBitmaskType data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool CompleteBitmaskTypePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -13460,6 +15018,25 @@ void MinimalBitmaskTypePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MinimalBitmaskType*>(data));
+}
+
+bool MinimalBitmaskTypePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalBitmaskType data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MinimalBitmaskTypePubSubType::compute_key(
@@ -13625,6 +15202,25 @@ void CommonBitfieldPubSubType::delete_data(
 }
 
 bool CommonBitfieldPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CommonBitfield data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool CommonBitfieldPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -13784,6 +15380,25 @@ void CompleteBitfieldPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<CompleteBitfield*>(data));
+}
+
+bool CompleteBitfieldPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteBitfield data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool CompleteBitfieldPubSubType::compute_key(
@@ -13950,6 +15565,25 @@ void MinimalBitfieldPubSubType::delete_data(
 }
 
 bool MinimalBitfieldPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalBitfield data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MinimalBitfieldPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -14110,6 +15744,25 @@ void CompleteBitsetHeaderPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<CompleteBitsetHeader*>(data));
+}
+
+bool CompleteBitsetHeaderPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteBitsetHeader data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool CompleteBitsetHeaderPubSubType::compute_key(
@@ -14275,6 +15928,25 @@ void MinimalBitsetHeaderPubSubType::delete_data(
 }
 
 bool MinimalBitsetHeaderPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalBitsetHeader data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MinimalBitsetHeaderPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -14434,6 +16106,25 @@ void CompleteBitsetTypePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<CompleteBitsetType*>(data));
+}
+
+bool CompleteBitsetTypePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteBitsetType data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool CompleteBitsetTypePubSubType::compute_key(
@@ -14599,6 +16290,25 @@ void MinimalBitsetTypePubSubType::delete_data(
 }
 
 bool MinimalBitsetTypePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalBitsetType data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MinimalBitsetTypePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -14758,6 +16468,25 @@ void CompleteExtendedTypePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<CompleteExtendedType*>(data));
+}
+
+bool CompleteExtendedTypePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    CompleteExtendedType data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool CompleteExtendedTypePubSubType::compute_key(
@@ -14921,6 +16650,25 @@ void MinimalExtendedTypePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MinimalExtendedType*>(data));
+}
+
+bool MinimalExtendedTypePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MinimalExtendedType data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MinimalExtendedTypePubSubType::compute_key(
@@ -15090,6 +16838,25 @@ void TypeIdentifierTypeObjectPairPubSubType::delete_data(
 }
 
 bool TypeIdentifierTypeObjectPairPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    TypeIdentifierTypeObjectPair data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool TypeIdentifierTypeObjectPairPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -15250,6 +17017,25 @@ void TypeIdentifierPairPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<TypeIdentifierPair*>(data));
+}
+
+bool TypeIdentifierPairPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    TypeIdentifierPair data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool TypeIdentifierPairPubSubType::compute_key(
@@ -15416,6 +17202,25 @@ void TypeIdentfierWithSizePubSubType::delete_data(
 }
 
 bool TypeIdentfierWithSizePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    TypeIdentfierWithSize data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool TypeIdentfierWithSizePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -15579,6 +17384,25 @@ void TypeIdentifierWithDependenciesPubSubType::delete_data(
 }
 
 bool TypeIdentifierWithDependenciesPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    TypeIdentifierWithDependencies data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool TypeIdentifierWithDependenciesPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -15739,6 +17563,25 @@ void TypeInformationPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<TypeInformation*>(data));
+}
+
+bool TypeInformationPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    TypeInformation data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool TypeInformationPubSubType::compute_key(

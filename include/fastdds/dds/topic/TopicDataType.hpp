@@ -125,6 +125,19 @@ public:
     /**
      * Get the key associated with the data.
      *
+     * @param [in] data Pointer to the payload containing the data.
+     * @param [out] ihandle Pointer to the Handle.
+     * @param [in] force_md5 Force MD5 checking.
+     * @return True if correct.
+     */
+    FASTDDS_EXPORTED_API virtual bool compute_key(
+            fastdds::rtps::SerializedPayload_t* payload,
+            fastdds::rtps::InstanceHandle_t* ihandle,
+            bool force_md5 = false) = 0;
+
+    /**
+     * Get the key associated with the data.
+     *
      * @param [in] data Pointer to the data.
      * @param [out] ihandle Pointer to the Handle.
      * @param [in] force_md5 Force MD5 checking.
@@ -141,9 +154,20 @@ public:
      * @param nam Topic data type name
      */
     FASTDDS_EXPORTED_API inline void set_name(
-            const char* nam)
+            const std::string& nam)
     {
-        topic_data_typename_ = std::string(nam);
+        topic_data_typename_ = nam;
+    }
+
+    /**
+     * Set topic data type name
+     *
+     * @param nam Topic data type name
+     */
+    FASTDDS_EXPORTED_API inline void set_name(
+            std::string&& nam)
+    {
+        topic_data_typename_ = std::move(nam);
     }
 
     /**
@@ -151,9 +175,9 @@ public:
      *
      * @return Topic data type name
      */
-    FASTDDS_EXPORTED_API inline const char* get_name() const
+    FASTDDS_EXPORTED_API inline const std::string& get_name() const
     {
-        return topic_data_typename_.c_str();
+        return topic_data_typename_;
     }
 
     /**
@@ -242,8 +266,6 @@ private:
     std::string topic_data_typename_;
     //TODO(XTypes)
     bool auto_fill_type_information_ {true};
-
-    friend class fastdds::dds::TypeSupport;
 
 };
 

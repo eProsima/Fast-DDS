@@ -149,6 +149,25 @@ void FixIdPubSubType::delete_data(
 }
 
 bool FixIdPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    FixId data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool FixIdPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -307,6 +326,25 @@ void FixHexIdPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<FixHexId*>(data));
+}
+
+bool FixHexIdPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    FixHexId data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool FixHexIdPubSubType::compute_key(
@@ -471,6 +509,25 @@ void FixHashidDefaultPubSubType::delete_data(
 }
 
 bool FixHashidDefaultPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    FixHashidDefault data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool FixHashidDefaultPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -629,6 +686,25 @@ void FixHashidPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<FixHashid*>(data));
+}
+
+bool FixHashidPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    FixHashid data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool FixHashidPubSubType::compute_key(
@@ -793,6 +869,25 @@ void FixMixPubSubType::delete_data(
 }
 
 bool FixMixPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    FixMix data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool FixMixPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -951,6 +1046,25 @@ void AutoidDefaultPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<AutoidDefault*>(data));
+}
+
+bool AutoidDefaultPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    AutoidDefault data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool AutoidDefaultPubSubType::compute_key(
@@ -1115,6 +1229,25 @@ void AutoidSequentialPubSubType::delete_data(
 }
 
 bool AutoidSequentialPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    AutoidSequential data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool AutoidSequentialPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -1273,6 +1406,25 @@ void AutoidHashPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<AutoidHash*>(data));
+}
+
+bool AutoidHashPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    AutoidHash data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool AutoidHashPubSubType::compute_key(
@@ -1437,6 +1589,25 @@ void DerivedAutoidDefaultPubSubType::delete_data(
 }
 
 bool DerivedAutoidDefaultPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    DerivedAutoidDefault data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool DerivedAutoidDefaultPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -1595,6 +1766,25 @@ void DerivedEmptyAutoidSequentialPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<DerivedEmptyAutoidSequential*>(data));
+}
+
+bool DerivedEmptyAutoidSequentialPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    DerivedEmptyAutoidSequential data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool DerivedEmptyAutoidSequentialPubSubType::compute_key(
@@ -1759,6 +1949,25 @@ void DerivedAutoidSequentialPubSubType::delete_data(
 }
 
 bool DerivedAutoidSequentialPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    DerivedAutoidSequential data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool DerivedAutoidSequentialPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -1917,6 +2126,25 @@ void DerivedAutoidHashPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<DerivedAutoidHash*>(data));
+}
+
+bool DerivedAutoidHashPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    DerivedAutoidHash data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool DerivedAutoidHashPubSubType::compute_key(

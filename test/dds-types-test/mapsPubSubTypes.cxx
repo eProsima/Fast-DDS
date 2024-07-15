@@ -149,6 +149,25 @@ void MapShortShortPubSubType::delete_data(
 }
 
 bool MapShortShortPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortShort data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapShortShortPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -307,6 +326,25 @@ void MapShortUShortPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapShortUShort*>(data));
+}
+
+bool MapShortUShortPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortUShort data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapShortUShortPubSubType::compute_key(
@@ -471,6 +509,25 @@ void MapShortLongPubSubType::delete_data(
 }
 
 bool MapShortLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapShortLongPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -629,6 +686,25 @@ void MapShortULongPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapShortULong*>(data));
+}
+
+bool MapShortULongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortULong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapShortULongPubSubType::compute_key(
@@ -793,6 +869,25 @@ void MapShortLongLongPubSubType::delete_data(
 }
 
 bool MapShortLongLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortLongLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapShortLongLongPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -951,6 +1046,25 @@ void MapShortULongLongPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapShortULongLong*>(data));
+}
+
+bool MapShortULongLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortULongLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapShortULongLongPubSubType::compute_key(
@@ -1115,6 +1229,25 @@ void MapShortFloatPubSubType::delete_data(
 }
 
 bool MapShortFloatPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortFloat data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapShortFloatPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -1273,6 +1406,25 @@ void MapShortDoublePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapShortDouble*>(data));
+}
+
+bool MapShortDoublePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortDouble data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapShortDoublePubSubType::compute_key(
@@ -1437,6 +1589,25 @@ void MapShortLongDoublePubSubType::delete_data(
 }
 
 bool MapShortLongDoublePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortLongDouble data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapShortLongDoublePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -1595,6 +1766,25 @@ void MapShortBooleanPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapShortBoolean*>(data));
+}
+
+bool MapShortBooleanPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortBoolean data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapShortBooleanPubSubType::compute_key(
@@ -1759,6 +1949,25 @@ void MapShortOctetPubSubType::delete_data(
 }
 
 bool MapShortOctetPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortOctet data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapShortOctetPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -1917,6 +2126,25 @@ void MapShortCharPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapShortChar*>(data));
+}
+
+bool MapShortCharPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortChar data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapShortCharPubSubType::compute_key(
@@ -2081,6 +2309,25 @@ void MapShortWCharPubSubType::delete_data(
 }
 
 bool MapShortWCharPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortWChar data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapShortWCharPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -2239,6 +2486,25 @@ void MapShortStringPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapShortString*>(data));
+}
+
+bool MapShortStringPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortString data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapShortStringPubSubType::compute_key(
@@ -2403,6 +2669,25 @@ void MapShortWStringPubSubType::delete_data(
 }
 
 bool MapShortWStringPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortWString data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapShortWStringPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -2561,6 +2846,25 @@ void MapShortInnerAliasBoundedStringHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapShortInnerAliasBoundedStringHelper*>(data));
+}
+
+bool MapShortInnerAliasBoundedStringHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortInnerAliasBoundedStringHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapShortInnerAliasBoundedStringHelperPubSubType::compute_key(
@@ -2725,6 +3029,25 @@ void MapShortInnerAliasBoundedWStringHelperPubSubType::delete_data(
 }
 
 bool MapShortInnerAliasBoundedWStringHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortInnerAliasBoundedWStringHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapShortInnerAliasBoundedWStringHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -2883,6 +3206,25 @@ void MapShortInnerEnumHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapShortInnerEnumHelper*>(data));
+}
+
+bool MapShortInnerEnumHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortInnerEnumHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapShortInnerEnumHelperPubSubType::compute_key(
@@ -3047,6 +3389,25 @@ void MapShortInnerBitMaskHelperPubSubType::delete_data(
 }
 
 bool MapShortInnerBitMaskHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortInnerBitMaskHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapShortInnerBitMaskHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -3205,6 +3566,25 @@ void MapShortInnerAliasHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapShortInnerAliasHelper*>(data));
+}
+
+bool MapShortInnerAliasHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortInnerAliasHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapShortInnerAliasHelperPubSubType::compute_key(
@@ -3369,6 +3749,25 @@ void MapShortInnerAliasArrayHelperPubSubType::delete_data(
 }
 
 bool MapShortInnerAliasArrayHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortInnerAliasArrayHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapShortInnerAliasArrayHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -3527,6 +3926,25 @@ void MapShortInnerAliasSequenceHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapShortInnerAliasSequenceHelper*>(data));
+}
+
+bool MapShortInnerAliasSequenceHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortInnerAliasSequenceHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapShortInnerAliasSequenceHelperPubSubType::compute_key(
@@ -3691,6 +4109,25 @@ void MapShortInnerAliasMapHelperPubSubType::delete_data(
 }
 
 bool MapShortInnerAliasMapHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortInnerAliasMapHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapShortInnerAliasMapHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -3849,6 +4286,25 @@ void MapShortInnerUnionHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapShortInnerUnionHelper*>(data));
+}
+
+bool MapShortInnerUnionHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortInnerUnionHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapShortInnerUnionHelperPubSubType::compute_key(
@@ -4013,6 +4469,25 @@ void MapShortInnerStructureHelperPubSubType::delete_data(
 }
 
 bool MapShortInnerStructureHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortInnerStructureHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapShortInnerStructureHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -4171,6 +4646,25 @@ void MapShortInnerBitsetHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapShortInnerBitsetHelper*>(data));
+}
+
+bool MapShortInnerBitsetHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapShortInnerBitsetHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapShortInnerBitsetHelperPubSubType::compute_key(
@@ -4335,6 +4829,25 @@ void MapUShortShortPubSubType::delete_data(
 }
 
 bool MapUShortShortPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortShort data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapUShortShortPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -4493,6 +5006,25 @@ void MapUShortUShortPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapUShortUShort*>(data));
+}
+
+bool MapUShortUShortPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortUShort data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapUShortUShortPubSubType::compute_key(
@@ -4657,6 +5189,25 @@ void MapUShortLongPubSubType::delete_data(
 }
 
 bool MapUShortLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapUShortLongPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -4815,6 +5366,25 @@ void MapUShortULongPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapUShortULong*>(data));
+}
+
+bool MapUShortULongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortULong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapUShortULongPubSubType::compute_key(
@@ -4979,6 +5549,25 @@ void MapUShortLongLongPubSubType::delete_data(
 }
 
 bool MapUShortLongLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortLongLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapUShortLongLongPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -5137,6 +5726,25 @@ void MapUShortULongLongPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapUShortULongLong*>(data));
+}
+
+bool MapUShortULongLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortULongLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapUShortULongLongPubSubType::compute_key(
@@ -5301,6 +5909,25 @@ void MapUShortFloatPubSubType::delete_data(
 }
 
 bool MapUShortFloatPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortFloat data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapUShortFloatPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -5459,6 +6086,25 @@ void MapUShortDoublePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapUShortDouble*>(data));
+}
+
+bool MapUShortDoublePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortDouble data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapUShortDoublePubSubType::compute_key(
@@ -5623,6 +6269,25 @@ void MapUShortLongDoublePubSubType::delete_data(
 }
 
 bool MapUShortLongDoublePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortLongDouble data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapUShortLongDoublePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -5781,6 +6446,25 @@ void MapUShortBooleanPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapUShortBoolean*>(data));
+}
+
+bool MapUShortBooleanPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortBoolean data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapUShortBooleanPubSubType::compute_key(
@@ -5945,6 +6629,25 @@ void MapUShortOctetPubSubType::delete_data(
 }
 
 bool MapUShortOctetPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortOctet data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapUShortOctetPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -6103,6 +6806,25 @@ void MapUShortCharPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapUShortChar*>(data));
+}
+
+bool MapUShortCharPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortChar data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapUShortCharPubSubType::compute_key(
@@ -6267,6 +6989,25 @@ void MapUShortWCharPubSubType::delete_data(
 }
 
 bool MapUShortWCharPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortWChar data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapUShortWCharPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -6425,6 +7166,25 @@ void MapUShortStringPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapUShortString*>(data));
+}
+
+bool MapUShortStringPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortString data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapUShortStringPubSubType::compute_key(
@@ -6589,6 +7349,25 @@ void MapUShortWStringPubSubType::delete_data(
 }
 
 bool MapUShortWStringPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortWString data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapUShortWStringPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -6747,6 +7526,25 @@ void MapUShortInnerAliasBoundedStringHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapUShortInnerAliasBoundedStringHelper*>(data));
+}
+
+bool MapUShortInnerAliasBoundedStringHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortInnerAliasBoundedStringHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapUShortInnerAliasBoundedStringHelperPubSubType::compute_key(
@@ -6911,6 +7709,25 @@ void MapUShortInnerAliasBoundedWStringHelperPubSubType::delete_data(
 }
 
 bool MapUShortInnerAliasBoundedWStringHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortInnerAliasBoundedWStringHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapUShortInnerAliasBoundedWStringHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -7069,6 +7886,25 @@ void MapUShortInnerEnumHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapUShortInnerEnumHelper*>(data));
+}
+
+bool MapUShortInnerEnumHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortInnerEnumHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapUShortInnerEnumHelperPubSubType::compute_key(
@@ -7233,6 +8069,25 @@ void MapUShortInnerBitMaskHelperPubSubType::delete_data(
 }
 
 bool MapUShortInnerBitMaskHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortInnerBitMaskHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapUShortInnerBitMaskHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -7391,6 +8246,25 @@ void MapUShortInnerAliasHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapUShortInnerAliasHelper*>(data));
+}
+
+bool MapUShortInnerAliasHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortInnerAliasHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapUShortInnerAliasHelperPubSubType::compute_key(
@@ -7555,6 +8429,25 @@ void MapUShortInnerAliasArrayHelperPubSubType::delete_data(
 }
 
 bool MapUShortInnerAliasArrayHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortInnerAliasArrayHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapUShortInnerAliasArrayHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -7713,6 +8606,25 @@ void MapUShortInnerAliasSequenceHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapUShortInnerAliasSequenceHelper*>(data));
+}
+
+bool MapUShortInnerAliasSequenceHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortInnerAliasSequenceHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapUShortInnerAliasSequenceHelperPubSubType::compute_key(
@@ -7877,6 +8789,25 @@ void MapUShortInnerAliasMapHelperPubSubType::delete_data(
 }
 
 bool MapUShortInnerAliasMapHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortInnerAliasMapHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapUShortInnerAliasMapHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -8035,6 +8966,25 @@ void MapUShortInnerUnionHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapUShortInnerUnionHelper*>(data));
+}
+
+bool MapUShortInnerUnionHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortInnerUnionHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapUShortInnerUnionHelperPubSubType::compute_key(
@@ -8199,6 +9149,25 @@ void MapUShortInnerStructureHelperPubSubType::delete_data(
 }
 
 bool MapUShortInnerStructureHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortInnerStructureHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapUShortInnerStructureHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -8357,6 +9326,25 @@ void MapUShortInnerBitsetHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapUShortInnerBitsetHelper*>(data));
+}
+
+bool MapUShortInnerBitsetHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapUShortInnerBitsetHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapUShortInnerBitsetHelperPubSubType::compute_key(
@@ -8521,6 +9509,25 @@ void MapLongShortPubSubType::delete_data(
 }
 
 bool MapLongShortPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongShort data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongShortPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -8679,6 +9686,25 @@ void MapLongUShortPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongUShort*>(data));
+}
+
+bool MapLongUShortPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongUShort data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongUShortPubSubType::compute_key(
@@ -8843,6 +9869,25 @@ void MapLongLongPubSubType::delete_data(
 }
 
 bool MapLongLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongLongPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -9001,6 +10046,25 @@ void MapLongULongPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongULong*>(data));
+}
+
+bool MapLongULongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongULong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongULongPubSubType::compute_key(
@@ -9165,6 +10229,25 @@ void MapLongKeyLongLongValuePubSubType::delete_data(
 }
 
 bool MapLongKeyLongLongValuePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongKeyLongLongValue data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongKeyLongLongValuePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -9323,6 +10406,25 @@ void MapLongULongLongPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongULongLong*>(data));
+}
+
+bool MapLongULongLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongULongLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongULongLongPubSubType::compute_key(
@@ -9487,6 +10589,25 @@ void MapLongFloatPubSubType::delete_data(
 }
 
 bool MapLongFloatPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongFloat data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongFloatPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -9645,6 +10766,25 @@ void MapLongDoublePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongDouble*>(data));
+}
+
+bool MapLongDoublePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongDouble data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongDoublePubSubType::compute_key(
@@ -9809,6 +10949,25 @@ void MapLongKeyLongDoubleValuePubSubType::delete_data(
 }
 
 bool MapLongKeyLongDoubleValuePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongKeyLongDoubleValue data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongKeyLongDoubleValuePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -9967,6 +11126,25 @@ void MapLongBooleanPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongBoolean*>(data));
+}
+
+bool MapLongBooleanPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongBoolean data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongBooleanPubSubType::compute_key(
@@ -10131,6 +11309,25 @@ void MapLongOctetPubSubType::delete_data(
 }
 
 bool MapLongOctetPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongOctet data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongOctetPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -10289,6 +11486,25 @@ void MapLongCharPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongChar*>(data));
+}
+
+bool MapLongCharPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongChar data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongCharPubSubType::compute_key(
@@ -10453,6 +11669,25 @@ void MapLongWCharPubSubType::delete_data(
 }
 
 bool MapLongWCharPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongWChar data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongWCharPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -10611,6 +11846,25 @@ void MapLongStringPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongString*>(data));
+}
+
+bool MapLongStringPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongString data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongStringPubSubType::compute_key(
@@ -10775,6 +12029,25 @@ void MapLongWStringPubSubType::delete_data(
 }
 
 bool MapLongWStringPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongWString data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongWStringPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -10933,6 +12206,25 @@ void MapLongInnerAliasBoundedStringHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongInnerAliasBoundedStringHelper*>(data));
+}
+
+bool MapLongInnerAliasBoundedStringHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongInnerAliasBoundedStringHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongInnerAliasBoundedStringHelperPubSubType::compute_key(
@@ -11097,6 +12389,25 @@ void MapLongInnerAliasBoundedWStringHelperPubSubType::delete_data(
 }
 
 bool MapLongInnerAliasBoundedWStringHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongInnerAliasBoundedWStringHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongInnerAliasBoundedWStringHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -11255,6 +12566,25 @@ void MapLongInnerEnumHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongInnerEnumHelper*>(data));
+}
+
+bool MapLongInnerEnumHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongInnerEnumHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongInnerEnumHelperPubSubType::compute_key(
@@ -11419,6 +12749,25 @@ void MapLongInnerBitMaskHelperPubSubType::delete_data(
 }
 
 bool MapLongInnerBitMaskHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongInnerBitMaskHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongInnerBitMaskHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -11577,6 +12926,25 @@ void MapLongInnerAliasHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongInnerAliasHelper*>(data));
+}
+
+bool MapLongInnerAliasHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongInnerAliasHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongInnerAliasHelperPubSubType::compute_key(
@@ -11741,6 +13109,25 @@ void MapLongInnerAliasArrayHelperPubSubType::delete_data(
 }
 
 bool MapLongInnerAliasArrayHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongInnerAliasArrayHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongInnerAliasArrayHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -11899,6 +13286,25 @@ void MapLongInnerAliasSequenceHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongInnerAliasSequenceHelper*>(data));
+}
+
+bool MapLongInnerAliasSequenceHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongInnerAliasSequenceHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongInnerAliasSequenceHelperPubSubType::compute_key(
@@ -12063,6 +13469,25 @@ void MapLongInnerAliasMapHelperPubSubType::delete_data(
 }
 
 bool MapLongInnerAliasMapHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongInnerAliasMapHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongInnerAliasMapHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -12221,6 +13646,25 @@ void MapLongInnerUnionHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongInnerUnionHelper*>(data));
+}
+
+bool MapLongInnerUnionHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongInnerUnionHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongInnerUnionHelperPubSubType::compute_key(
@@ -12385,6 +13829,25 @@ void MapLongInnerStructureHelperPubSubType::delete_data(
 }
 
 bool MapLongInnerStructureHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongInnerStructureHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongInnerStructureHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -12543,6 +14006,25 @@ void MapLongInnerBitsetHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongInnerBitsetHelper*>(data));
+}
+
+bool MapLongInnerBitsetHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongInnerBitsetHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongInnerBitsetHelperPubSubType::compute_key(
@@ -12707,6 +14189,25 @@ void MapULongShortPubSubType::delete_data(
 }
 
 bool MapULongShortPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongShort data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapULongShortPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -12865,6 +14366,25 @@ void MapULongUShortPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongUShort*>(data));
+}
+
+bool MapULongUShortPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongUShort data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongUShortPubSubType::compute_key(
@@ -13029,6 +14549,25 @@ void MapULongLongPubSubType::delete_data(
 }
 
 bool MapULongLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapULongLongPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -13187,6 +14726,25 @@ void MapULongULongPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongULong*>(data));
+}
+
+bool MapULongULongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongULong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongULongPubSubType::compute_key(
@@ -13351,6 +14909,25 @@ void MapKeyULongValueLongLongPubSubType::delete_data(
 }
 
 bool MapKeyULongValueLongLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapKeyULongValueLongLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapKeyULongValueLongLongPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -13509,6 +15086,25 @@ void MapULongULongLongPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongULongLong*>(data));
+}
+
+bool MapULongULongLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongULongLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongULongLongPubSubType::compute_key(
@@ -13673,6 +15269,25 @@ void MapULongFloatPubSubType::delete_data(
 }
 
 bool MapULongFloatPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongFloat data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapULongFloatPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -13831,6 +15446,25 @@ void MapULongDoublePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongDouble*>(data));
+}
+
+bool MapULongDoublePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongDouble data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongDoublePubSubType::compute_key(
@@ -13995,6 +15629,25 @@ void MapKeyULongValueLongDoublePubSubType::delete_data(
 }
 
 bool MapKeyULongValueLongDoublePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapKeyULongValueLongDouble data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapKeyULongValueLongDoublePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -14153,6 +15806,25 @@ void MapULongBooleanPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongBoolean*>(data));
+}
+
+bool MapULongBooleanPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongBoolean data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongBooleanPubSubType::compute_key(
@@ -14317,6 +15989,25 @@ void MapULongOctetPubSubType::delete_data(
 }
 
 bool MapULongOctetPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongOctet data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapULongOctetPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -14475,6 +16166,25 @@ void MapULongCharPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongChar*>(data));
+}
+
+bool MapULongCharPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongChar data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongCharPubSubType::compute_key(
@@ -14639,6 +16349,25 @@ void MapULongWCharPubSubType::delete_data(
 }
 
 bool MapULongWCharPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongWChar data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapULongWCharPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -14797,6 +16526,25 @@ void MapULongStringPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongString*>(data));
+}
+
+bool MapULongStringPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongString data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongStringPubSubType::compute_key(
@@ -14961,6 +16709,25 @@ void MapULongWStringPubSubType::delete_data(
 }
 
 bool MapULongWStringPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongWString data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapULongWStringPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -15119,6 +16886,25 @@ void MapULongInnerAliasBoundedStringHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongInnerAliasBoundedStringHelper*>(data));
+}
+
+bool MapULongInnerAliasBoundedStringHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongInnerAliasBoundedStringHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongInnerAliasBoundedStringHelperPubSubType::compute_key(
@@ -15283,6 +17069,25 @@ void MapULongInnerAliasBoundedWStringHelperPubSubType::delete_data(
 }
 
 bool MapULongInnerAliasBoundedWStringHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongInnerAliasBoundedWStringHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapULongInnerAliasBoundedWStringHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -15441,6 +17246,25 @@ void MapULongInnerEnumHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongInnerEnumHelper*>(data));
+}
+
+bool MapULongInnerEnumHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongInnerEnumHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongInnerEnumHelperPubSubType::compute_key(
@@ -15605,6 +17429,25 @@ void MapULongInnerBitMaskHelperPubSubType::delete_data(
 }
 
 bool MapULongInnerBitMaskHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongInnerBitMaskHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapULongInnerBitMaskHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -15763,6 +17606,25 @@ void MapULongInnerAliasHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongInnerAliasHelper*>(data));
+}
+
+bool MapULongInnerAliasHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongInnerAliasHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongInnerAliasHelperPubSubType::compute_key(
@@ -15927,6 +17789,25 @@ void MapULongInnerAliasArrayHelperPubSubType::delete_data(
 }
 
 bool MapULongInnerAliasArrayHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongInnerAliasArrayHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapULongInnerAliasArrayHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -16085,6 +17966,25 @@ void MapULongInnerAliasSequenceHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongInnerAliasSequenceHelper*>(data));
+}
+
+bool MapULongInnerAliasSequenceHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongInnerAliasSequenceHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongInnerAliasSequenceHelperPubSubType::compute_key(
@@ -16249,6 +18149,25 @@ void MapULongInnerAliasMapHelperPubSubType::delete_data(
 }
 
 bool MapULongInnerAliasMapHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongInnerAliasMapHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapULongInnerAliasMapHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -16407,6 +18326,25 @@ void MapULongInnerUnionHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongInnerUnionHelper*>(data));
+}
+
+bool MapULongInnerUnionHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongInnerUnionHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongInnerUnionHelperPubSubType::compute_key(
@@ -16571,6 +18509,25 @@ void MapULongInnerStructureHelperPubSubType::delete_data(
 }
 
 bool MapULongInnerStructureHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongInnerStructureHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapULongInnerStructureHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -16729,6 +18686,25 @@ void MapULongInnerBitsetHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongInnerBitsetHelper*>(data));
+}
+
+bool MapULongInnerBitsetHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongInnerBitsetHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongInnerBitsetHelperPubSubType::compute_key(
@@ -16893,6 +18869,25 @@ void MapLongLongShortPubSubType::delete_data(
 }
 
 bool MapLongLongShortPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongShort data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongLongShortPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -17051,6 +19046,25 @@ void MapLongLongUShortPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongLongUShort*>(data));
+}
+
+bool MapLongLongUShortPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongUShort data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongLongUShortPubSubType::compute_key(
@@ -17215,6 +19229,25 @@ void MapLongLongKeyLongValuePubSubType::delete_data(
 }
 
 bool MapLongLongKeyLongValuePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongKeyLongValue data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongLongKeyLongValuePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -17373,6 +19406,25 @@ void MapLongLongULongPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongLongULong*>(data));
+}
+
+bool MapLongLongULongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongULong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongLongULongPubSubType::compute_key(
@@ -17537,6 +19589,25 @@ void MapLongLongLongLongPubSubType::delete_data(
 }
 
 bool MapLongLongLongLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongLongLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongLongLongLongPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -17695,6 +19766,25 @@ void MapLongLongULongLongPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongLongULongLong*>(data));
+}
+
+bool MapLongLongULongLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongULongLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongLongULongLongPubSubType::compute_key(
@@ -17859,6 +19949,25 @@ void MapLongLongFloatPubSubType::delete_data(
 }
 
 bool MapLongLongFloatPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongFloat data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongLongFloatPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -18017,6 +20126,25 @@ void MapLongLongKeyDoubleValuePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongLongKeyDoubleValue*>(data));
+}
+
+bool MapLongLongKeyDoubleValuePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongKeyDoubleValue data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongLongKeyDoubleValuePubSubType::compute_key(
@@ -18181,6 +20309,25 @@ void MapLongLongLongDoublePubSubType::delete_data(
 }
 
 bool MapLongLongLongDoublePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongLongDouble data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongLongLongDoublePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -18339,6 +20486,25 @@ void MapLongLongBooleanPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongLongBoolean*>(data));
+}
+
+bool MapLongLongBooleanPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongBoolean data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongLongBooleanPubSubType::compute_key(
@@ -18503,6 +20669,25 @@ void MapLongLongOctetPubSubType::delete_data(
 }
 
 bool MapLongLongOctetPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongOctet data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongLongOctetPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -18661,6 +20846,25 @@ void MapLongLongCharPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongLongChar*>(data));
+}
+
+bool MapLongLongCharPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongChar data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongLongCharPubSubType::compute_key(
@@ -18825,6 +21029,25 @@ void MapLongLongWCharPubSubType::delete_data(
 }
 
 bool MapLongLongWCharPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongWChar data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongLongWCharPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -18983,6 +21206,25 @@ void MapLongLongStringPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongLongString*>(data));
+}
+
+bool MapLongLongStringPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongString data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongLongStringPubSubType::compute_key(
@@ -19147,6 +21389,25 @@ void MapLongLongWStringPubSubType::delete_data(
 }
 
 bool MapLongLongWStringPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongWString data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongLongWStringPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -19305,6 +21566,25 @@ void MapLongLongInnerAliasBoundedStringHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongLongInnerAliasBoundedStringHelper*>(data));
+}
+
+bool MapLongLongInnerAliasBoundedStringHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongInnerAliasBoundedStringHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongLongInnerAliasBoundedStringHelperPubSubType::compute_key(
@@ -19469,6 +21749,25 @@ void MapLongLongInnerAliasBoundedWStringHelperPubSubType::delete_data(
 }
 
 bool MapLongLongInnerAliasBoundedWStringHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongInnerAliasBoundedWStringHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongLongInnerAliasBoundedWStringHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -19627,6 +21926,25 @@ void MapLongLongInnerEnumHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongLongInnerEnumHelper*>(data));
+}
+
+bool MapLongLongInnerEnumHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongInnerEnumHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongLongInnerEnumHelperPubSubType::compute_key(
@@ -19791,6 +22109,25 @@ void MapLongLongInnerBitMaskHelperPubSubType::delete_data(
 }
 
 bool MapLongLongInnerBitMaskHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongInnerBitMaskHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongLongInnerBitMaskHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -19949,6 +22286,25 @@ void MapLongLongInnerAliasHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongLongInnerAliasHelper*>(data));
+}
+
+bool MapLongLongInnerAliasHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongInnerAliasHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongLongInnerAliasHelperPubSubType::compute_key(
@@ -20113,6 +22469,25 @@ void MapLongLongInnerAliasArrayHelperPubSubType::delete_data(
 }
 
 bool MapLongLongInnerAliasArrayHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongInnerAliasArrayHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongLongInnerAliasArrayHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -20271,6 +22646,25 @@ void MapLongLongInnerAliasSequenceHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongLongInnerAliasSequenceHelper*>(data));
+}
+
+bool MapLongLongInnerAliasSequenceHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongInnerAliasSequenceHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongLongInnerAliasSequenceHelperPubSubType::compute_key(
@@ -20435,6 +22829,25 @@ void MapLongLongInnerAliasMapHelperPubSubType::delete_data(
 }
 
 bool MapLongLongInnerAliasMapHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongInnerAliasMapHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongLongInnerAliasMapHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -20593,6 +23006,25 @@ void MapLongLongInnerUnionHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongLongInnerUnionHelper*>(data));
+}
+
+bool MapLongLongInnerUnionHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongInnerUnionHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongLongInnerUnionHelperPubSubType::compute_key(
@@ -20757,6 +23189,25 @@ void MapLongLongInnerStructureHelperPubSubType::delete_data(
 }
 
 bool MapLongLongInnerStructureHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongInnerStructureHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapLongLongInnerStructureHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -20915,6 +23366,25 @@ void MapLongLongInnerBitsetHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapLongLongInnerBitsetHelper*>(data));
+}
+
+bool MapLongLongInnerBitsetHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapLongLongInnerBitsetHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapLongLongInnerBitsetHelperPubSubType::compute_key(
@@ -21079,6 +23549,25 @@ void MapULongLongShortPubSubType::delete_data(
 }
 
 bool MapULongLongShortPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongShort data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapULongLongShortPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -21237,6 +23726,25 @@ void MapULongLongUShortPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongLongUShort*>(data));
+}
+
+bool MapULongLongUShortPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongUShort data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongLongUShortPubSubType::compute_key(
@@ -21401,6 +23909,25 @@ void MapULongLongLongPubSubType::delete_data(
 }
 
 bool MapULongLongLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapULongLongLongPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -21559,6 +24086,25 @@ void MapULongLongULongPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongLongULong*>(data));
+}
+
+bool MapULongLongULongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongULong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongLongULongPubSubType::compute_key(
@@ -21723,6 +24269,25 @@ void MapULongLongLongLongPubSubType::delete_data(
 }
 
 bool MapULongLongLongLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongLongLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapULongLongLongLongPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -21881,6 +24446,25 @@ void MapULongLongULongLongPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongLongULongLong*>(data));
+}
+
+bool MapULongLongULongLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongULongLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongLongULongLongPubSubType::compute_key(
@@ -22045,6 +24629,25 @@ void MapULongLongFloatPubSubType::delete_data(
 }
 
 bool MapULongLongFloatPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongFloat data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapULongLongFloatPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -22203,6 +24806,25 @@ void MapKeyULongLongValueDoublePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapKeyULongLongValueDouble*>(data));
+}
+
+bool MapKeyULongLongValueDoublePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapKeyULongLongValueDouble data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapKeyULongLongValueDoublePubSubType::compute_key(
@@ -22367,6 +24989,25 @@ void MapULongLongLongDoublePubSubType::delete_data(
 }
 
 bool MapULongLongLongDoublePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongLongDouble data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapULongLongLongDoublePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -22525,6 +25166,25 @@ void MapULongLongBooleanPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongLongBoolean*>(data));
+}
+
+bool MapULongLongBooleanPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongBoolean data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongLongBooleanPubSubType::compute_key(
@@ -22689,6 +25349,25 @@ void MapULongLongOctetPubSubType::delete_data(
 }
 
 bool MapULongLongOctetPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongOctet data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapULongLongOctetPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -22847,6 +25526,25 @@ void MapULongLongCharPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongLongChar*>(data));
+}
+
+bool MapULongLongCharPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongChar data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongLongCharPubSubType::compute_key(
@@ -23011,6 +25709,25 @@ void MapULongLongWCharPubSubType::delete_data(
 }
 
 bool MapULongLongWCharPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongWChar data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapULongLongWCharPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -23169,6 +25886,25 @@ void MapULongLongStringPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongLongString*>(data));
+}
+
+bool MapULongLongStringPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongString data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongLongStringPubSubType::compute_key(
@@ -23333,6 +26069,25 @@ void MapULongLongWStringPubSubType::delete_data(
 }
 
 bool MapULongLongWStringPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongWString data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapULongLongWStringPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -23491,6 +26246,25 @@ void MapULongLongInnerAliasBoundedStringHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongLongInnerAliasBoundedStringHelper*>(data));
+}
+
+bool MapULongLongInnerAliasBoundedStringHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongInnerAliasBoundedStringHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongLongInnerAliasBoundedStringHelperPubSubType::compute_key(
@@ -23655,6 +26429,25 @@ void MapULongLongInnerAliasBoundedWStringHelperPubSubType::delete_data(
 }
 
 bool MapULongLongInnerAliasBoundedWStringHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongInnerAliasBoundedWStringHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapULongLongInnerAliasBoundedWStringHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -23813,6 +26606,25 @@ void MapULongLongInnerEnumHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongLongInnerEnumHelper*>(data));
+}
+
+bool MapULongLongInnerEnumHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongInnerEnumHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongLongInnerEnumHelperPubSubType::compute_key(
@@ -23977,6 +26789,25 @@ void MapULongLongInnerBitMaskHelperPubSubType::delete_data(
 }
 
 bool MapULongLongInnerBitMaskHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongInnerBitMaskHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapULongLongInnerBitMaskHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -24135,6 +26966,25 @@ void MapULongLongInnerAliasHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongLongInnerAliasHelper*>(data));
+}
+
+bool MapULongLongInnerAliasHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongInnerAliasHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongLongInnerAliasHelperPubSubType::compute_key(
@@ -24299,6 +27149,25 @@ void MapULongLongInnerAliasArrayHelperPubSubType::delete_data(
 }
 
 bool MapULongLongInnerAliasArrayHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongInnerAliasArrayHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapULongLongInnerAliasArrayHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -24457,6 +27326,25 @@ void MapULongLongInnerAliasSequenceHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongLongInnerAliasSequenceHelper*>(data));
+}
+
+bool MapULongLongInnerAliasSequenceHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongInnerAliasSequenceHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongLongInnerAliasSequenceHelperPubSubType::compute_key(
@@ -24621,6 +27509,25 @@ void MapULongLongInnerAliasMapHelperPubSubType::delete_data(
 }
 
 bool MapULongLongInnerAliasMapHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongInnerAliasMapHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapULongLongInnerAliasMapHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -24779,6 +27686,25 @@ void MapULongLongInnerUnionHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongLongInnerUnionHelper*>(data));
+}
+
+bool MapULongLongInnerUnionHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongInnerUnionHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongLongInnerUnionHelperPubSubType::compute_key(
@@ -24943,6 +27869,25 @@ void MapULongLongInnerStructureHelperPubSubType::delete_data(
 }
 
 bool MapULongLongInnerStructureHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongInnerStructureHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapULongLongInnerStructureHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -25101,6 +28046,25 @@ void MapULongLongInnerBitsetHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapULongLongInnerBitsetHelper*>(data));
+}
+
+bool MapULongLongInnerBitsetHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapULongLongInnerBitsetHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapULongLongInnerBitsetHelperPubSubType::compute_key(
@@ -25265,6 +28229,25 @@ void MapStringShortPubSubType::delete_data(
 }
 
 bool MapStringShortPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringShort data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapStringShortPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -25423,6 +28406,25 @@ void MapStringUShortPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapStringUShort*>(data));
+}
+
+bool MapStringUShortPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringUShort data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapStringUShortPubSubType::compute_key(
@@ -25587,6 +28589,25 @@ void MapStringLongPubSubType::delete_data(
 }
 
 bool MapStringLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapStringLongPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -25745,6 +28766,25 @@ void MapStringULongPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapStringULong*>(data));
+}
+
+bool MapStringULongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringULong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapStringULongPubSubType::compute_key(
@@ -25909,6 +28949,25 @@ void MapStringLongLongPubSubType::delete_data(
 }
 
 bool MapStringLongLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringLongLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapStringLongLongPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -26067,6 +29126,25 @@ void MapStringULongLongPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapStringULongLong*>(data));
+}
+
+bool MapStringULongLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringULongLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapStringULongLongPubSubType::compute_key(
@@ -26231,6 +29309,25 @@ void MapStringFloatPubSubType::delete_data(
 }
 
 bool MapStringFloatPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringFloat data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapStringFloatPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -26389,6 +29486,25 @@ void MapStringDoublePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapStringDouble*>(data));
+}
+
+bool MapStringDoublePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringDouble data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapStringDoublePubSubType::compute_key(
@@ -26553,6 +29669,25 @@ void MapStringLongDoublePubSubType::delete_data(
 }
 
 bool MapStringLongDoublePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringLongDouble data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapStringLongDoublePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -26711,6 +29846,25 @@ void MapStringBooleanPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapStringBoolean*>(data));
+}
+
+bool MapStringBooleanPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringBoolean data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapStringBooleanPubSubType::compute_key(
@@ -26875,6 +30029,25 @@ void MapStringOctetPubSubType::delete_data(
 }
 
 bool MapStringOctetPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringOctet data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapStringOctetPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -27033,6 +30206,25 @@ void MapStringCharPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapStringChar*>(data));
+}
+
+bool MapStringCharPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringChar data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapStringCharPubSubType::compute_key(
@@ -27197,6 +30389,25 @@ void MapStringWCharPubSubType::delete_data(
 }
 
 bool MapStringWCharPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringWChar data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapStringWCharPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -27355,6 +30566,25 @@ void MapStringStringPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapStringString*>(data));
+}
+
+bool MapStringStringPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringString data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapStringStringPubSubType::compute_key(
@@ -27519,6 +30749,25 @@ void MapStringWStringPubSubType::delete_data(
 }
 
 bool MapStringWStringPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringWString data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapStringWStringPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -27677,6 +30926,25 @@ void MapStringInnerAliasBoundedStringHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapStringInnerAliasBoundedStringHelper*>(data));
+}
+
+bool MapStringInnerAliasBoundedStringHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringInnerAliasBoundedStringHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapStringInnerAliasBoundedStringHelperPubSubType::compute_key(
@@ -27841,6 +31109,25 @@ void MapStringInnerAliasBoundedWStringHelperPubSubType::delete_data(
 }
 
 bool MapStringInnerAliasBoundedWStringHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringInnerAliasBoundedWStringHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapStringInnerAliasBoundedWStringHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -27999,6 +31286,25 @@ void MapStringInnerEnumHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapStringInnerEnumHelper*>(data));
+}
+
+bool MapStringInnerEnumHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringInnerEnumHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapStringInnerEnumHelperPubSubType::compute_key(
@@ -28163,6 +31469,25 @@ void MapStringInnerBitMaskHelperPubSubType::delete_data(
 }
 
 bool MapStringInnerBitMaskHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringInnerBitMaskHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapStringInnerBitMaskHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -28321,6 +31646,25 @@ void MapStringInnerAliasHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapStringInnerAliasHelper*>(data));
+}
+
+bool MapStringInnerAliasHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringInnerAliasHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapStringInnerAliasHelperPubSubType::compute_key(
@@ -28485,6 +31829,25 @@ void MapStringInnerAliasArrayHelperPubSubType::delete_data(
 }
 
 bool MapStringInnerAliasArrayHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringInnerAliasArrayHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapStringInnerAliasArrayHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -28643,6 +32006,25 @@ void MapStringInnerAliasSequenceHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapStringInnerAliasSequenceHelper*>(data));
+}
+
+bool MapStringInnerAliasSequenceHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringInnerAliasSequenceHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapStringInnerAliasSequenceHelperPubSubType::compute_key(
@@ -28807,6 +32189,25 @@ void MapStringInnerAliasMapHelperPubSubType::delete_data(
 }
 
 bool MapStringInnerAliasMapHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringInnerAliasMapHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapStringInnerAliasMapHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -28965,6 +32366,25 @@ void MapStringInnerUnionHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapStringInnerUnionHelper*>(data));
+}
+
+bool MapStringInnerUnionHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringInnerUnionHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapStringInnerUnionHelperPubSubType::compute_key(
@@ -29129,6 +32549,25 @@ void MapStringInnerStructureHelperPubSubType::delete_data(
 }
 
 bool MapStringInnerStructureHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringInnerStructureHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapStringInnerStructureHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -29287,6 +32726,25 @@ void MapStringInnerBitsetHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapStringInnerBitsetHelper*>(data));
+}
+
+bool MapStringInnerBitsetHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapStringInnerBitsetHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapStringInnerBitsetHelperPubSubType::compute_key(
@@ -29451,6 +32909,25 @@ void MapWStringShortPubSubType::delete_data(
 }
 
 bool MapWStringShortPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringShort data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapWStringShortPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -29609,6 +33086,25 @@ void MapWStringUShortPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapWStringUShort*>(data));
+}
+
+bool MapWStringUShortPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringUShort data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapWStringUShortPubSubType::compute_key(
@@ -29773,6 +33269,25 @@ void MapWStringLongPubSubType::delete_data(
 }
 
 bool MapWStringLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapWStringLongPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -29931,6 +33446,25 @@ void MapWStringULongPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapWStringULong*>(data));
+}
+
+bool MapWStringULongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringULong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapWStringULongPubSubType::compute_key(
@@ -30095,6 +33629,25 @@ void MapWStringLongLongPubSubType::delete_data(
 }
 
 bool MapWStringLongLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringLongLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapWStringLongLongPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -30253,6 +33806,25 @@ void MapWStringULongLongPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapWStringULongLong*>(data));
+}
+
+bool MapWStringULongLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringULongLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapWStringULongLongPubSubType::compute_key(
@@ -30417,6 +33989,25 @@ void MapWStringFloatPubSubType::delete_data(
 }
 
 bool MapWStringFloatPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringFloat data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapWStringFloatPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -30575,6 +34166,25 @@ void MapWStringDoublePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapWStringDouble*>(data));
+}
+
+bool MapWStringDoublePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringDouble data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapWStringDoublePubSubType::compute_key(
@@ -30739,6 +34349,25 @@ void MapWStringLongDoublePubSubType::delete_data(
 }
 
 bool MapWStringLongDoublePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringLongDouble data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapWStringLongDoublePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -30897,6 +34526,25 @@ void MapWStringBooleanPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapWStringBoolean*>(data));
+}
+
+bool MapWStringBooleanPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringBoolean data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapWStringBooleanPubSubType::compute_key(
@@ -31061,6 +34709,25 @@ void MapWStringOctetPubSubType::delete_data(
 }
 
 bool MapWStringOctetPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringOctet data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapWStringOctetPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -31219,6 +34886,25 @@ void MapWStringCharPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapWStringChar*>(data));
+}
+
+bool MapWStringCharPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringChar data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapWStringCharPubSubType::compute_key(
@@ -31383,6 +35069,25 @@ void MapWStringWCharPubSubType::delete_data(
 }
 
 bool MapWStringWCharPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringWChar data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapWStringWCharPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -31541,6 +35246,25 @@ void MapWStringStringPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapWStringString*>(data));
+}
+
+bool MapWStringStringPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringString data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapWStringStringPubSubType::compute_key(
@@ -31705,6 +35429,25 @@ void MapWStringWStringPubSubType::delete_data(
 }
 
 bool MapWStringWStringPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringWString data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapWStringWStringPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -31863,6 +35606,25 @@ void MapWStringInnerAliasBoundedStringHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapWStringInnerAliasBoundedStringHelper*>(data));
+}
+
+bool MapWStringInnerAliasBoundedStringHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringInnerAliasBoundedStringHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapWStringInnerAliasBoundedStringHelperPubSubType::compute_key(
@@ -32027,6 +35789,25 @@ void MapWStringInnerAliasBoundedWStringHelperPubSubType::delete_data(
 }
 
 bool MapWStringInnerAliasBoundedWStringHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringInnerAliasBoundedWStringHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapWStringInnerAliasBoundedWStringHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -32185,6 +35966,25 @@ void MapWStringInnerEnumHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapWStringInnerEnumHelper*>(data));
+}
+
+bool MapWStringInnerEnumHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringInnerEnumHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapWStringInnerEnumHelperPubSubType::compute_key(
@@ -32349,6 +36149,25 @@ void MapWStringInnerBitMaskHelperPubSubType::delete_data(
 }
 
 bool MapWStringInnerBitMaskHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringInnerBitMaskHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapWStringInnerBitMaskHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -32507,6 +36326,25 @@ void MapWStringInnerAliasHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapWStringInnerAliasHelper*>(data));
+}
+
+bool MapWStringInnerAliasHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringInnerAliasHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapWStringInnerAliasHelperPubSubType::compute_key(
@@ -32671,6 +36509,25 @@ void MapWStringInnerAliasArrayHelperPubSubType::delete_data(
 }
 
 bool MapWStringInnerAliasArrayHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringInnerAliasArrayHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapWStringInnerAliasArrayHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -32829,6 +36686,25 @@ void MapWStringInnerAliasSequenceHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapWStringInnerAliasSequenceHelper*>(data));
+}
+
+bool MapWStringInnerAliasSequenceHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringInnerAliasSequenceHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapWStringInnerAliasSequenceHelperPubSubType::compute_key(
@@ -32993,6 +36869,25 @@ void MapWStringInnerAliasMapHelperPubSubType::delete_data(
 }
 
 bool MapWStringInnerAliasMapHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringInnerAliasMapHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapWStringInnerAliasMapHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -33151,6 +37046,25 @@ void MapWStringInnerUnionHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapWStringInnerUnionHelper*>(data));
+}
+
+bool MapWStringInnerUnionHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringInnerUnionHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapWStringInnerUnionHelperPubSubType::compute_key(
@@ -33315,6 +37229,25 @@ void MapWStringInnerStructureHelperPubSubType::delete_data(
 }
 
 bool MapWStringInnerStructureHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringInnerStructureHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapWStringInnerStructureHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -33473,6 +37406,25 @@ void MapWStringInnerBitsetHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapWStringInnerBitsetHelper*>(data));
+}
+
+bool MapWStringInnerBitsetHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapWStringInnerBitsetHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapWStringInnerBitsetHelperPubSubType::compute_key(
@@ -33637,6 +37589,25 @@ void MapInnerAliasBoundedStringHelperShortPubSubType::delete_data(
 }
 
 bool MapInnerAliasBoundedStringHelperShortPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperShort data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedStringHelperShortPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -33795,6 +37766,25 @@ void MapInnerAliasBoundedStringHelperUShortPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedStringHelperUShort*>(data));
+}
+
+bool MapInnerAliasBoundedStringHelperUShortPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperUShort data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedStringHelperUShortPubSubType::compute_key(
@@ -33959,6 +37949,25 @@ void MapInnerAliasBoundedStringHelperLongPubSubType::delete_data(
 }
 
 bool MapInnerAliasBoundedStringHelperLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedStringHelperLongPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -34117,6 +38126,25 @@ void MapInnerAliasBoundedStringHelperULongPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedStringHelperULong*>(data));
+}
+
+bool MapInnerAliasBoundedStringHelperULongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperULong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedStringHelperULongPubSubType::compute_key(
@@ -34281,6 +38309,25 @@ void MapInnerAliasBoundedStringHelperLongLongPubSubType::delete_data(
 }
 
 bool MapInnerAliasBoundedStringHelperLongLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperLongLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedStringHelperLongLongPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -34439,6 +38486,25 @@ void MapInnerAliasBoundedStringHelperULongLongPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedStringHelperULongLong*>(data));
+}
+
+bool MapInnerAliasBoundedStringHelperULongLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperULongLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedStringHelperULongLongPubSubType::compute_key(
@@ -34603,6 +38669,25 @@ void MapInnerAliasBoundedStringHelperFloatPubSubType::delete_data(
 }
 
 bool MapInnerAliasBoundedStringHelperFloatPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperFloat data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedStringHelperFloatPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -34761,6 +38846,25 @@ void MapInnerAliasBoundedStringHelperDoublePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedStringHelperDouble*>(data));
+}
+
+bool MapInnerAliasBoundedStringHelperDoublePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperDouble data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedStringHelperDoublePubSubType::compute_key(
@@ -34925,6 +39029,25 @@ void MapInnerAliasBoundedStringHelperLongDoublePubSubType::delete_data(
 }
 
 bool MapInnerAliasBoundedStringHelperLongDoublePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperLongDouble data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedStringHelperLongDoublePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -35083,6 +39206,25 @@ void MapInnerAliasBoundedStringHelperBooleanPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedStringHelperBoolean*>(data));
+}
+
+bool MapInnerAliasBoundedStringHelperBooleanPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperBoolean data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedStringHelperBooleanPubSubType::compute_key(
@@ -35247,6 +39389,25 @@ void MapInnerAliasBoundedStringHelperOctetPubSubType::delete_data(
 }
 
 bool MapInnerAliasBoundedStringHelperOctetPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperOctet data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedStringHelperOctetPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -35405,6 +39566,25 @@ void MapInnerAliasBoundedStringHelperCharPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedStringHelperChar*>(data));
+}
+
+bool MapInnerAliasBoundedStringHelperCharPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperChar data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedStringHelperCharPubSubType::compute_key(
@@ -35569,6 +39749,25 @@ void MapInnerAliasBoundedStringHelperWCharPubSubType::delete_data(
 }
 
 bool MapInnerAliasBoundedStringHelperWCharPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperWChar data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedStringHelperWCharPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -35727,6 +39926,25 @@ void MapInnerAliasBoundedStringHelperStringPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedStringHelperString*>(data));
+}
+
+bool MapInnerAliasBoundedStringHelperStringPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperString data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedStringHelperStringPubSubType::compute_key(
@@ -35891,6 +40109,25 @@ void MapInnerAliasBoundedStringHelperWStringPubSubType::delete_data(
 }
 
 bool MapInnerAliasBoundedStringHelperWStringPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperWString data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedStringHelperWStringPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -36049,6 +40286,25 @@ void MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType::de
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper*>(data));
+}
+
+bool MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType::compute_key(
@@ -36213,6 +40469,25 @@ void MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType::d
 }
 
 bool MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -36371,6 +40646,25 @@ void MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedStringHelperInnerEnumHelper*>(data));
+}
+
+bool MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperInnerEnumHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType::compute_key(
@@ -36535,6 +40829,25 @@ void MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType::delete_data(
 }
 
 bool MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperInnerBitMaskHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -36693,6 +41006,25 @@ void MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedStringHelperInnerAliasHelper*>(data));
+}
+
+bool MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperInnerAliasHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType::compute_key(
@@ -36857,6 +41189,25 @@ void MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType::delete_dat
 }
 
 bool MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperInnerAliasArrayHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -37015,6 +41366,25 @@ void MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType::delete_
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper*>(data));
+}
+
+bool MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType::compute_key(
@@ -37179,6 +41549,25 @@ void MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType::delete_data(
 }
 
 bool MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperInnerAliasMapHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -37337,6 +41726,25 @@ void MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedStringHelperInnerUnionHelper*>(data));
+}
+
+bool MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperInnerUnionHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType::compute_key(
@@ -37501,6 +41909,25 @@ void MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType::delete_data
 }
 
 bool MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperInnerStructureHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -37659,6 +42086,25 @@ void MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedStringHelperInnerBitsetHelper*>(data));
+}
+
+bool MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedStringHelperInnerBitsetHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType::compute_key(
@@ -37823,6 +42269,25 @@ void MapInnerAliasBoundedWStringHelperShortPubSubType::delete_data(
 }
 
 bool MapInnerAliasBoundedWStringHelperShortPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperShort data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedWStringHelperShortPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -37981,6 +42446,25 @@ void MapInnerAliasBoundedWStringHelperUShortPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedWStringHelperUShort*>(data));
+}
+
+bool MapInnerAliasBoundedWStringHelperUShortPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperUShort data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedWStringHelperUShortPubSubType::compute_key(
@@ -38145,6 +42629,25 @@ void MapInnerAliasBoundedWStringHelperLongPubSubType::delete_data(
 }
 
 bool MapInnerAliasBoundedWStringHelperLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedWStringHelperLongPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -38303,6 +42806,25 @@ void MapInnerAliasBoundedWStringHelperULongPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedWStringHelperULong*>(data));
+}
+
+bool MapInnerAliasBoundedWStringHelperULongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperULong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedWStringHelperULongPubSubType::compute_key(
@@ -38467,6 +42989,25 @@ void MapInnerAliasBoundedWStringHelperLongLongPubSubType::delete_data(
 }
 
 bool MapInnerAliasBoundedWStringHelperLongLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperLongLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedWStringHelperLongLongPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -38625,6 +43166,25 @@ void MapInnerAliasBoundedWStringHelperULongLongPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedWStringHelperULongLong*>(data));
+}
+
+bool MapInnerAliasBoundedWStringHelperULongLongPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperULongLong data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedWStringHelperULongLongPubSubType::compute_key(
@@ -38789,6 +43349,25 @@ void MapInnerAliasBoundedWStringHelperFloatPubSubType::delete_data(
 }
 
 bool MapInnerAliasBoundedWStringHelperFloatPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperFloat data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedWStringHelperFloatPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -38947,6 +43526,25 @@ void MapInnerAliasBoundedWStringHelperDoublePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedWStringHelperDouble*>(data));
+}
+
+bool MapInnerAliasBoundedWStringHelperDoublePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperDouble data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedWStringHelperDoublePubSubType::compute_key(
@@ -39111,6 +43709,25 @@ void MapInnerAliasBoundedWStringHelperLongDoublePubSubType::delete_data(
 }
 
 bool MapInnerAliasBoundedWStringHelperLongDoublePubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperLongDouble data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedWStringHelperLongDoublePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -39269,6 +43886,25 @@ void MapInnerAliasBoundedWStringHelperBooleanPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedWStringHelperBoolean*>(data));
+}
+
+bool MapInnerAliasBoundedWStringHelperBooleanPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperBoolean data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedWStringHelperBooleanPubSubType::compute_key(
@@ -39433,6 +44069,25 @@ void MapInnerAliasBoundedWStringHelperOctetPubSubType::delete_data(
 }
 
 bool MapInnerAliasBoundedWStringHelperOctetPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperOctet data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedWStringHelperOctetPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -39591,6 +44246,25 @@ void MapInnerAliasBoundedWStringHelperCharPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedWStringHelperChar*>(data));
+}
+
+bool MapInnerAliasBoundedWStringHelperCharPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperChar data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedWStringHelperCharPubSubType::compute_key(
@@ -39755,6 +44429,25 @@ void MapInnerAliasBoundedWStringHelperWCharPubSubType::delete_data(
 }
 
 bool MapInnerAliasBoundedWStringHelperWCharPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperWChar data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedWStringHelperWCharPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -39913,6 +44606,25 @@ void MapInnerAliasBoundedWStringHelperStringPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedWStringHelperString*>(data));
+}
+
+bool MapInnerAliasBoundedWStringHelperStringPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperString data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedWStringHelperStringPubSubType::compute_key(
@@ -40077,6 +44789,25 @@ void MapInnerAliasBoundedWStringHelperWStringPubSubType::delete_data(
 }
 
 bool MapInnerAliasBoundedWStringHelperWStringPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperWString data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedWStringHelperWStringPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -40235,6 +44966,25 @@ void MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelperPubSubType::d
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelper*>(data));
+}
+
+bool MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelperPubSubType::compute_key(
@@ -40399,6 +45149,25 @@ void MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelperPubSubType::
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -40557,6 +45326,25 @@ void MapInnerAliasBoundedWStringHelperInnerEnumHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedWStringHelperInnerEnumHelper*>(data));
+}
+
+bool MapInnerAliasBoundedWStringHelperInnerEnumHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperInnerEnumHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerEnumHelperPubSubType::compute_key(
@@ -40721,6 +45509,25 @@ void MapInnerAliasBoundedWStringHelperInnerBitMaskHelperPubSubType::delete_data(
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerBitMaskHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperInnerBitMaskHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedWStringHelperInnerBitMaskHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -40879,6 +45686,25 @@ void MapInnerAliasBoundedWStringHelperInnerAliasHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedWStringHelperInnerAliasHelper*>(data));
+}
+
+bool MapInnerAliasBoundedWStringHelperInnerAliasHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperInnerAliasHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerAliasHelperPubSubType::compute_key(
@@ -41043,6 +45869,25 @@ void MapInnerAliasBoundedWStringHelperInnerAliasArrayHelperPubSubType::delete_da
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerAliasArrayHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperInnerAliasArrayHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedWStringHelperInnerAliasArrayHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -41201,6 +46046,25 @@ void MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelperPubSubType::delete
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelper*>(data));
+}
+
+bool MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelperPubSubType::compute_key(
@@ -41365,6 +46229,25 @@ void MapInnerAliasBoundedWStringHelperInnerAliasMapHelperPubSubType::delete_data
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerAliasMapHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperInnerAliasMapHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedWStringHelperInnerAliasMapHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -41523,6 +46406,25 @@ void MapInnerAliasBoundedWStringHelperInnerUnionHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedWStringHelperInnerUnionHelper*>(data));
+}
+
+bool MapInnerAliasBoundedWStringHelperInnerUnionHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperInnerUnionHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerUnionHelperPubSubType::compute_key(
@@ -41687,6 +46589,25 @@ void MapInnerAliasBoundedWStringHelperInnerStructureHelperPubSubType::delete_dat
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerStructureHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperInnerStructureHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool MapInnerAliasBoundedWStringHelperInnerStructureHelperPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -41845,6 +46766,25 @@ void MapInnerAliasBoundedWStringHelperInnerBitsetHelperPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<MapInnerAliasBoundedWStringHelperInnerBitsetHelper*>(data));
+}
+
+bool MapInnerAliasBoundedWStringHelperInnerBitsetHelperPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    MapInnerAliasBoundedWStringHelperInnerBitsetHelper data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerBitsetHelperPubSubType::compute_key(
@@ -42009,6 +46949,25 @@ void BoundedSmallMapPubSubType::delete_data(
 }
 
 bool BoundedSmallMapPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    BoundedSmallMap data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool BoundedSmallMapPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -42167,6 +47126,25 @@ void BoundedLargeMapPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<BoundedLargeMap*>(data));
+}
+
+bool BoundedLargeMapPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    BoundedLargeMap data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool BoundedLargeMapPubSubType::compute_key(

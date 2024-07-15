@@ -90,6 +90,14 @@ class DDSFindTopicTest : public testing::Test
         }
 
         bool compute_key(
+                fastdds::rtps::SerializedPayload_t*,
+                fastdds::rtps::InstanceHandle_t*,
+                bool) override
+        {
+            return true;
+        }
+
+        bool compute_key(
                 const void* const,
                 fastdds::rtps::InstanceHandle_t*,
                 bool) override

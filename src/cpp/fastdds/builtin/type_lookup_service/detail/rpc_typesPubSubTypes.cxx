@@ -154,6 +154,25 @@ void EntityId_tPubSubType::delete_data(
 }
 
 bool EntityId_tPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    EntityId_t data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool EntityId_tPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -313,6 +332,25 @@ void GUID_tPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<GUID_t*>(data));
+}
+
+bool GUID_tPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    GUID_t data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool GUID_tPubSubType::compute_key(
@@ -478,6 +516,25 @@ void SequenceNumber_tPubSubType::delete_data(
 }
 
 bool SequenceNumber_tPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SequenceNumber_t data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool SequenceNumber_tPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
@@ -637,6 +694,25 @@ void SampleIdentityPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<SampleIdentity*>(data));
+}
+
+bool SampleIdentityPubSubType::compute_key(
+        SerializedPayload_t* payload,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    SampleIdentity data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
 }
 
 bool SampleIdentityPubSubType::compute_key(
@@ -803,6 +879,25 @@ namespace rpc {
     }
 
     bool RequestHeaderPubSubType::compute_key(
+            SerializedPayload_t* payload,
+            InstanceHandle_t* handle,
+            bool force_md5)
+    {
+        if (!is_compute_key_provided)
+        {
+            return false;
+        }
+
+        RequestHeader data;
+        if (deserialize(payload, static_cast<void*>(&data)))
+        {
+            return compute_key(static_cast<void*>(&data), handle, force_md5);
+        }
+
+        return false;
+    }
+
+    bool RequestHeaderPubSubType::compute_key(
             const void* const data,
             InstanceHandle_t* handle,
             bool force_md5)
@@ -962,6 +1057,25 @@ namespace rpc {
             void* data)
     {
         delete(reinterpret_cast<ReplyHeader*>(data));
+    }
+
+    bool ReplyHeaderPubSubType::compute_key(
+            SerializedPayload_t* payload,
+            InstanceHandle_t* handle,
+            bool force_md5)
+    {
+        if (!is_compute_key_provided)
+        {
+            return false;
+        }
+
+        ReplyHeader data;
+        if (deserialize(payload, static_cast<void*>(&data)))
+        {
+            return compute_key(static_cast<void*>(&data), handle, force_md5);
+        }
+
+        return false;
     }
 
     bool ReplyHeaderPubSubType::compute_key(

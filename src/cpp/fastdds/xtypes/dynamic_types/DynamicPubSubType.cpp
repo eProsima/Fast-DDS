@@ -103,6 +103,27 @@ traits<DynamicType>::ref_type DynamicPubSubType::get_dynamic_type() const noexce
 }
 
 bool DynamicPubSubType::compute_key(
+        eprosima::fastdds::rtps::SerializedPayload_t* payload,
+        eprosima::fastdds::rtps::InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!dynamic_type_ || !is_compute_key_provided)
+    {
+        return false;
+    }
+
+    traits<DynamicDataImpl>::ref_type ret_val {traits<DynamicData>::narrow<DynamicDataImpl>(
+                                                   DynamicDataFactory::get_instance()->create_data(
+                                                       dynamic_type_))};
+    if (deserialize(payload, static_cast<void*>(&ret_val)))
+    {
+        return compute_key(static_cast<void*>(&ret_val), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool DynamicPubSubType::compute_key(
         const void* const data,
         eprosima::fastdds::rtps::InstanceHandle_t* handle,
         bool force_md5)
@@ -254,7 +275,7 @@ void DynamicPubSubType::update_dynamic_type()
     }
 
     max_serialized_type_size = static_cast<uint32_t>(DynamicDataImpl::calculate_max_serialized_size(dynamic_type_) + 4);
-    set_name(dynamic_type_->get_name());
+    set_name(dynamic_type_->get_name().to_string());
 
     if (TK_STRUCTURE == dynamic_type_->get_kind())
     {

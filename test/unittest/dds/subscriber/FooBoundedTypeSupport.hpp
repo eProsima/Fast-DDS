@@ -138,6 +138,14 @@ public:
     }
 
     bool compute_key(
+            fastdds::rtps::SerializedPayload_t* payload,
+            fastdds::rtps::InstanceHandle_t* /*handle*/,
+            bool /*force_md5*/) override
+    {
+        return false;
+    }
+
+    bool compute_key(
             const void* const /*data*/,
             fastdds::rtps::InstanceHandle_t* /*handle*/,
             bool /*force_md5*/) override

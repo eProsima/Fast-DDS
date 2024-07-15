@@ -39,6 +39,12 @@ public:
             (override));
 
     MOCK_METHOD(bool, compute_key, (
+                eprosima::fastdds::rtps::SerializedPayload_t* payload,
+                eprosima::fastdds::dds::InstanceHandle_t* ihandle,
+                bool),
+            (override));
+
+    MOCK_METHOD(bool, compute_key, (
                 const void* const data,
                 eprosima::fastdds::dds::InstanceHandle_t* ihandle,
                 bool),
