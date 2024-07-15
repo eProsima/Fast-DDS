@@ -87,7 +87,7 @@ def test_request_reply_isolated():
         for client in responses:
             if responses[client] != expected_responses[client]:
                 ret = False
-                print('ERROR: ' + client + ' expected "' + expected_responses[client] + '" but received "' + responses[client] + '"')
+                print(f'ERROR: {client} expected "{expected_responses[client]} but received "{responses[client]}')
                 raise subprocess.CalledProcessError(1, '')
 
     except subprocess.CalledProcessError:

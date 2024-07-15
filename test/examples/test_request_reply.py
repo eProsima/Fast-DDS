@@ -41,7 +41,7 @@ def test_request_reply():
             '3': 10,
             '4': 0
         },
-        'client-1': {
+        'alone-client-1': {
             '1': 91,
             '2': 43,
             '3': 1608,
@@ -51,7 +51,7 @@ def test_request_reply():
 
     responses = {
         'server-client-1': {},
-        'client-1': {},
+        'alone-client-1': {},
     }
 
     ret = True

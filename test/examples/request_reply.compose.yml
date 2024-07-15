@@ -27,7 +27,7 @@ services:
       FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/request_reply/request_reply_profile.xml
     command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/request_reply@FILE_EXTENSION@ client 2 5 & timeout --preserve-status 3 $${EXAMPLE_DIR}/request_reply@FILE_EXTENSION@ server"
 
-  client:
+  alone-client:
     image: @DOCKER_IMAGE_NAME@
     volumes:
       - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
