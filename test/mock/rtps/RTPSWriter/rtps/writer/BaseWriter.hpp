@@ -44,6 +44,20 @@ public:
 
     virtual ~BaseWriter() = default;
 
+    bool matched_reader_add(
+            const SubscriptionBuiltinTopicData& wdata) final
+    {
+        static_cast<void>(wdata);
+        return false;
+    }
+
+    virtual bool matched_reader_add_edp(
+            const ReaderProxyData& wdata)
+    {
+        static_cast<void>(wdata);
+        return false;
+    }
+
     virtual WriterHistory* get_history() const
     {
         return history_;

@@ -187,7 +187,7 @@ bool TypeLookupManager::assign_remote_endpoints(
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Adding remote reader to the local Builtin Request Writer");
         temp_reader_proxy_data_->guid().entityId = fastdds::rtps::c_EntityId_TypeLookup_request_reader;
-        builtin_request_writer_->matched_reader_add(*temp_reader_proxy_data_);
+        builtin_request_writer_->matched_reader_add_edp(*temp_reader_proxy_data_);
     }
 
     auxendp = endp;
@@ -197,7 +197,7 @@ bool TypeLookupManager::assign_remote_endpoints(
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Adding remote reader to the local Builtin Reply Writer");
         temp_reader_proxy_data_->guid().entityId = fastdds::rtps::c_EntityId_TypeLookup_reply_reader;
-        builtin_reply_writer_->matched_reader_add(*temp_reader_proxy_data_);
+        builtin_reply_writer_->matched_reader_add_edp(*temp_reader_proxy_data_);
     }
 
     return true;

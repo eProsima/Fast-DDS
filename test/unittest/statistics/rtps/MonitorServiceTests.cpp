@@ -146,7 +146,7 @@ protected:
     int n_local_entities;
     std::vector<fastdds::rtps::GUID_t> mock_guids;
     fastdds::rtps::ResourceEvent mock_event_resource_;
-    testing::NiceMock<fastdds::rtps::RTPSWriter> writer;
+    testing::NiceMock<fastdds::rtps::BaseWriter> writer;
     MonitorService monitor_srv_;
 };
 

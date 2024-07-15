@@ -456,7 +456,7 @@ bool WLP::pairing_remote_reader_with_local_writer_after_security(
 {
     if (local_writer.entityId == c_EntityId_WriterLivelinessSecure)
     {
-        mp_builtinWriterSecure->matched_reader_add(remote_reader_data);
+        mp_builtinWriterSecure->matched_reader_add_edp(remote_reader_data);
         return true;
     }
 
@@ -519,7 +519,7 @@ bool WLP::assignRemoteEndpoints(
     {
         EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Adding remote reader to my local Builtin Writer");
         temp_reader_proxy_data_.guid().entityId = c_EntityId_ReaderLiveliness;
-        mp_builtinWriter->matched_reader_add(temp_reader_proxy_data_);
+        mp_builtinWriter->matched_reader_add_edp(temp_reader_proxy_data_);
     }
 
 #if HAVE_SECURITY

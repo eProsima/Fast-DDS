@@ -949,7 +949,7 @@ void StatefulWriter::select_all_readers_nts(
     }
 }
 
-bool StatefulWriter::matched_reader_add(
+bool StatefulWriter::matched_reader_add_edp(
         const ReaderProxyData& rdata)
 {
     using network::external_locators::filter_remote_locators;

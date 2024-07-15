@@ -74,13 +74,17 @@ bool TestWriterSocket::init(
     }
 
     //ADD REMOTE READER (IN THIS CASE A READER IN THE SAME MACHINE)
-    ReaderProxyData ratt(4u, 1u);
-    ratt.guid({c_GuidPrefix_Unknown, 0x304});
-    Locator_t loc;
-    IPLocator::setIPv4(loc, ip);
-    loc.port = static_cast<uint16_t>(port);
-    ratt.add_unicast_locator(loc);
-    mp_writer->matched_reader_add(ratt);
+    SubscriptionBuiltinTopicData rdata;
+
+    // TODO: Add these to rdata
+    // ReaderProxyData ratt(4u, 1u);
+    // ratt.guid({c_GuidPrefix_Unknown, 0x304});
+    // Locator_t loc;
+    // IPLocator::setIPv4(loc, ip);
+    // loc.port = static_cast<uint16_t>(port);
+    // ratt.add_unicast_locator(loc);
+
+    mp_writer->matched_reader_add(rdata);
     return true;
 }
 

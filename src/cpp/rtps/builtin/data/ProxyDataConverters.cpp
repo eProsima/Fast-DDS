@@ -213,6 +213,31 @@ void from_builtin_to_proxy(
     proxy_data.networkConfiguration(builtin_data.loopback_transformation);
 }
 
+void from_builtin_to_proxy(
+        const SubscriptionBuiltinTopicData& builtin_data,
+        ReaderProxyData& proxy_data)
+{
+    from_builtin_to_proxy(builtin_data.participant_key.value, proxy_data.guid().guidPrefix);
+    from_builtin_to_proxy(builtin_data.key.value, proxy_data.guid().entityId);
+
+    proxy_data.topicName(builtin_data.topic_name);
+    proxy_data.typeName(builtin_data.type_name);
+    proxy_data.m_qos.m_durability = builtin_data.durability;
+    proxy_data.m_qos.m_deadline = builtin_data.deadline;
+    proxy_data.m_qos.m_latencyBudget = builtin_data.latency_budget;
+    proxy_data.m_qos.m_liveliness = builtin_data.liveliness;
+    proxy_data.m_qos.m_reliability = builtin_data.reliability;
+    proxy_data.m_qos.m_ownership = builtin_data.ownership;
+    proxy_data.m_qos.m_destinationOrder = builtin_data.destination_order;
+    proxy_data.m_qos.m_userData = builtin_data.user_data;
+    proxy_data.m_qos.m_timeBasedFilter = builtin_data.time_based_filter;
+
+    proxy_data.m_qos.m_presentation = builtin_data.presentation;
+    proxy_data.m_qos.m_partition = builtin_data.partition;
+    proxy_data.m_qos.m_topicData = builtin_data.topic_data;
+    proxy_data.m_qos.m_groupData = builtin_data.group_data;
+}
+
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima

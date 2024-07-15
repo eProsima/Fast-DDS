@@ -120,7 +120,7 @@ public:
     virtual ~RTPSWriterMock() = default;
 
     virtual bool matched_reader_add(
-            const eprosima::fastdds::rtps::ReaderProxyData&)
+            const eprosima::fastdds::rtps::SubscriptionBuiltinTopicData&)
     {
         return true;
     }

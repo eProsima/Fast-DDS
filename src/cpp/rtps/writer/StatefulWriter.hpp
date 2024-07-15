@@ -59,7 +59,7 @@ public:
 
     //vvvvvvvvvvvvvvvvvvvvv [Exported API] vvvvvvvvvvvvvvvvvvvvv
 
-    bool matched_reader_add(
+    bool matched_reader_add_edp(
             const ReaderProxyData& data) final;
 
     bool matched_reader_remove(

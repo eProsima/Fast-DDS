@@ -431,7 +431,7 @@ bool StatelessWriter::wait_for_acknowledgement(
 /*
  *	MATCHED_READER-RELATED METHODS
  */
-bool StatelessWriter::matched_reader_add(
+bool StatelessWriter::matched_reader_add_edp(
         const ReaderProxyData& data)
 {
     using network::external_locators::filter_remote_locators;
