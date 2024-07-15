@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <algorithm>
+#include <array>
 #include <cctype>
 #include <csignal>
 #include <cstdlib>
