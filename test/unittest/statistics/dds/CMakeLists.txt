@@ -80,7 +80,6 @@ if (FASTDDS_STATISTICS)
         DomainParticipantStatisticsListenerTests.cpp)
 
     add_executable(DomainParticipantStatisticsListenerTests
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicDataType.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/domain/DomainParticipantStatisticsListener.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesPubSubTypes.cxx
@@ -172,7 +171,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/ContentFilteredTopicImpl.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/qos/TopicQos.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/Topic.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicDataType.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicImpl.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicProxyFactory.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TypeSupport.cpp
@@ -353,7 +351,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/ContentFilteredTopicImpl.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/qos/TopicQos.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/Topic.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicDataType.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicImpl.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicProxyFactory.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TypeSupport.cpp

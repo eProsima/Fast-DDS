@@ -69,7 +69,7 @@ public:
     /**
      * @brief Destructor
      */
-    FASTDDS_EXPORTED_API virtual ~TopicDataType();
+    FASTDDS_EXPORTED_API virtual ~TopicDataType() = default;
 
     /**
      * Serialize method, it should be implemented by the user, since it is abstract. If not implemented, this method

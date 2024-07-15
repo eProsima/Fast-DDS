@@ -664,20 +664,7 @@ protected:
 
     bool get_free_payload_from_pool(
             uint32_t size,
-            SerializedPayload_t& payload)
-    {
-        if (!payload_pool_)
-        {
-            return false;
-        }
-
-        if (!payload_pool_->get_payload(size, payload))
-        {
-            return false;
-        }
-
-        return true;
-    }
+            SerializedPayload_t& payload);
 
     bool add_loan(
             const void* const data,

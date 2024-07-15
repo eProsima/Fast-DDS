@@ -1015,8 +1015,9 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
     bool was_loaned = check_and_remove_loan(data, payload);
     if (!was_loaned)
     {
-        if (!get_free_payload_from_pool(fixed_payload_size_ ? fixed_payload_size_ : type_->calculate_serialized_size(
-                    data, data_representation_), payload))
+        uint32_t payload_size = fixed_payload_size_ ? fixed_payload_size_ : type_->calculate_serialized_size(
+            data, data_representation_);
+        if (!get_free_payload_from_pool(payload_size, payload))
         {
             return RETCODE_OUT_OF_RESOURCES;
         }
@@ -2115,6 +2116,23 @@ bool DataWriterImpl::release_payload_pool()
     payload_pool_.reset();
 
     return result;
+}
+
+bool DataWriterImpl::get_free_payload_from_pool(
+        uint32_t size,
+        SerializedPayload_t& payload)
+{
+    if (!payload_pool_)
+    {
+        return false;
+    }
+
+    if (!payload_pool_->get_payload(size, payload))
+    {
+        return false;
+    }
+
+    return true;
 }
 
 bool DataWriterImpl::add_loan(
