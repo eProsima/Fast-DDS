@@ -21,7 +21,7 @@
 
 #include <fastdds/config.hpp>
 
- //Description of doxygen modules, not used in actual code.
+//Description of doxygen modules, not used in actual code.
 
 /*!
  * @defgroup FASTDDS_GENERAL_API eProsima Fast DDS API Reference
@@ -143,9 +143,9 @@
 
 #ifdef FASTDDS_STATISTICS
 /** @defgroup STATISTICS_MODULE Statistics Module
-* @ingroup MANAGEMENT_MODULE
-* This module contains the classes associated with the Statistics Protocols.
-*/
+ * @ingroup MANAGEMENT_MODULE
+ * This module contains the classes associated with the Statistics Protocols.
+ */
 #endif // ifdef FASTDDS_STATISTICS
 
 /** @defgroup UTILITIES_MODULE Shared Utilities
