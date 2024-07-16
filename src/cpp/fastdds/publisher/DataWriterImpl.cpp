@@ -2225,6 +2225,8 @@ void DataWriterImpl::remove_reader_filter(
 {
     if (reader_filters_)
     {
+        assert(writer_);
+        std::lock_guard<RecursiveTimedMutex> guard(writer_->getMutex());
         reader_filters_->remove_reader(reader_guid);
     }
 }

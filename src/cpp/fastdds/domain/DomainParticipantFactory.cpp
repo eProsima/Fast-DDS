@@ -356,6 +356,15 @@ ReturnCode_t DomainParticipantFactory::get_participant_extended_qos_from_profile
     return RETCODE_BAD_PARAMETER;
 }
 
+ReturnCode_t DomainParticipantFactory::get_participant_extended_qos_from_default_profile(
+        DomainParticipantExtendedQos& extended_qos) const
+{
+    ParticipantAttributes attr;
+    XMLProfileManager::getDefaultParticipantAttributes(attr);
+    utils::set_extended_qos_from_attributes(extended_qos, attr);
+    return RETCODE_OK;
+}
+
 ReturnCode_t DomainParticipantFactory::load_profiles()
 {
     // NOTE: This could be done with a bool atomic to avoid taking the mutex in most cases, however the use of

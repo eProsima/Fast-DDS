@@ -1,0 +1,105 @@
+# Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+version: "3"
+
+services:
+  server-1:
+    image: @DOCKER_IMAGE_NAME@
+    volumes:
+      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
+      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+    environment:
+      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
+      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
+      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/request_reply@FILE_EXTENSION@
+      FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/request_reply/request_reply_profile.xml
+    command: @SHELL_EXECUTABLE@ -c "timeout --preserve-status 3 $${EXAMPLE_DIR}/request_reply@FILE_EXTENSION@ server"
+
+  server-2:
+    image: @DOCKER_IMAGE_NAME@
+    volumes:
+      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
+      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+    environment:
+      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
+      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
+      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/request_reply@FILE_EXTENSION@
+      FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/request_reply/request_reply_profile.xml
+    command: @SHELL_EXECUTABLE@ -c "timeout --preserve-status 3 $${EXAMPLE_DIR}/request_reply@FILE_EXTENSION@ server"
+
+  client-1:
+    image: @DOCKER_IMAGE_NAME@
+    volumes:
+      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
+      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+    environment:
+      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
+      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
+      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/request_reply@FILE_EXTENSION@
+      FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/request_reply/request_reply_profile.xml
+    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/request_reply@FILE_EXTENSION@ client 2 5"
+    depends_on:
+      - server-1
+      - server-2
+
+  client-2:
+    image: @DOCKER_IMAGE_NAME@
+    volumes:
+      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
+      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+    environment:
+      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
+      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
+      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/request_reply@FILE_EXTENSION@
+      FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/request_reply/request_reply_profile.xml
+    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/request_reply@FILE_EXTENSION@ client 67 24"
+    depends_on:
+      - server-1
+      - server-2
+
+  client-3:
+    image: @DOCKER_IMAGE_NAME@
+    volumes:
+      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
+      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+    environment:
+      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
+      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
+      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/request_reply@FILE_EXTENSION@
+      FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/request_reply/request_reply_profile.xml
+    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/request_reply@FILE_EXTENSION@ client 3 2"
+    depends_on:
+      - server-1
+      - server-2
+
+  client-4:
+    image: @DOCKER_IMAGE_NAME@
+    volumes:
+      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
+      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+    environment:
+      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
+      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
+      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/request_reply@FILE_EXTENSION@
+      FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/request_reply/request_reply_profile.xml
+    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/request_reply@FILE_EXTENSION@ client 20 5"
+    depends_on:
+      - server-1
+      - server-2

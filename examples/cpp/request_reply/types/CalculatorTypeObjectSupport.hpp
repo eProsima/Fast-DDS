@@ -38,7 +38,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 /**
- * @brief Register OperationType related TypeIdentifier.
+ * @brief Register CalculatorOperationType related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
@@ -47,10 +47,10 @@
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_OperationType_type_identifier(
+eProsima_user_DllExport void register_CalculatorOperationType_type_identifier(
         eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
- * @brief Register RequestType related TypeIdentifier.
+ * @brief Register CalculatorRequestType related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
@@ -59,10 +59,10 @@ eProsima_user_DllExport void register_OperationType_type_identifier(
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_RequestType_type_identifier(
+eProsima_user_DllExport void register_CalculatorRequestType_type_identifier(
         eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
- * @brief Register ReplyType related TypeIdentifier.
+ * @brief Register CalculatorReplyType related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
@@ -71,7 +71,7 @@ eProsima_user_DllExport void register_RequestType_type_identifier(
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_ReplyType_type_identifier(
+eProsima_user_DllExport void register_CalculatorReplyType_type_identifier(
         eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 
