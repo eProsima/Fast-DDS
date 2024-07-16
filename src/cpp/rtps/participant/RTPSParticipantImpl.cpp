@@ -2931,7 +2931,7 @@ bool RTPSParticipantImpl::disable_monitor_service() const
 }
 
 bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
-        ParticipantProxyData& data,
+        fastdds::rtps::ParticipantBuiltinTopicData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
     bool ret = true;
@@ -2941,7 +2941,10 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
     serialized_msg.buffer = msg.value().entity_proxy().data();
     serialized_msg.length = static_cast<uint32_t>(msg.value().entity_proxy().size());
 
-    ret = data.readFromCDRMessage(
+    ParticipantProxyData part_prox_data(m_att.allocation);
+
+
+    ret = part_prox_data.readFromCDRMessage(
         &serialized_msg,
         true,
         network_factory(),
@@ -2949,7 +2952,12 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
         false,
         c_VendorId_eProsima);
 
-    return ret && (data.m_guid.entityId == c_EntityId_RTPSParticipant);
+    if (ret)
+    {
+        from_proxy_to_builtin(part_prox_data, data);
+    }
+
+    return ret && (data.guid.entityId == c_EntityId_RTPSParticipant);
 }
 
 bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(

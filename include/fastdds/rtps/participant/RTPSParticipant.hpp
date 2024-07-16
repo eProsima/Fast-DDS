@@ -27,6 +27,7 @@
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/fastdds_dll.hpp>
@@ -396,7 +397,7 @@ public:
     bool disable_monitor_service() const;
 
     /**
-     * fills in the ParticipantProxyData from a MonitorService Message
+     * fills in the ParticipantBuiltinTopicData from a MonitorService Message
      *
      * @param [out] data Proxy to fill
      * @param [in] msg MonitorService Message to get the proxy information from.
@@ -404,7 +405,7 @@ public:
      * @return true if the operation succeeds.
      */
     bool fill_discovery_data_from_cdr_message(
-            ParticipantProxyData& data,
+            ParticipantBuiltinTopicData& data,
             fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**

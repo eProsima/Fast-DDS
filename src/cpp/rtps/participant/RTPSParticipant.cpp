@@ -261,7 +261,7 @@ bool RTPSParticipant::disable_monitor_service() const
 }
 
 bool RTPSParticipant::fill_discovery_data_from_cdr_message(
-        ParticipantProxyData& data,
+        ParticipantBuiltinTopicData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
     return mp_impl->fill_discovery_data_from_cdr_message(data, msg);

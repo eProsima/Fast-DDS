@@ -113,7 +113,7 @@ fastdds::dds::ReturnCode_t DomainParticipant::disable_monitor_service()
 }
 
 fastdds::dds::ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_message(
-        fastdds::rtps::ParticipantProxyData& data,
+        fastdds::rtps::ParticipantBuiltinTopicData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
 #ifdef FASTDDS_STATISTICS

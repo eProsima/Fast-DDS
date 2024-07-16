@@ -132,7 +132,7 @@ public:
     FASTDDS_EXPORTED_API eprosima::fastdds::dds::ReturnCode_t disable_monitor_service();
 
     /**
-     * fills in the ParticipantProxyData from a MonitorService Message
+     * fills in the ParticipantBuiltinTopicData from a MonitorService Message
      *
      * @param [out] data Proxy to fill
      * @param [in] msg MonitorService Message to get the proxy information from.
@@ -141,7 +141,7 @@ public:
      * @return RETCODE_ERROR if the  operation fails.
      */
     FASTDDS_EXPORTED_API eprosima::fastdds::dds::ReturnCode_t fill_discovery_data_from_cdr_message(
-            fastdds::rtps::ParticipantProxyData& data,
+            fastdds::rtps::ParticipantBuiltinTopicData& data,
             statistics::MonitorServiceStatusData& msg);
 
     /**
@@ -154,7 +154,7 @@ public:
      * @return RETCODE_ERROR if the  operation fails.
      */
     FASTDDS_EXPORTED_API eprosima::fastdds::dds::ReturnCode_t fill_discovery_data_from_cdr_message(
-            fastdds::rtps::ParticipantProxyData& data,
+            fastdds::rtps::ParticipantBuiltinTopicData& data,
             const statistics::MonitorServiceStatusData& msg);
 
     /**

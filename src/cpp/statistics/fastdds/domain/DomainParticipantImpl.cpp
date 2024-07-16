@@ -323,7 +323,7 @@ ReturnCode_t DomainParticipantImpl::disable_monitor_service()
 }
 
 ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
-        fastdds::rtps::ParticipantProxyData& data,
+        fastdds::rtps::ParticipantBuiltinTopicData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
     ReturnCode_t ret{efd::RETCODE_OK};
