@@ -69,6 +69,11 @@ jobs:
           path: src/fastdds
           ref: ${{ inputs.fastdds_ref }}
 
+      - name: Install Fix Python version
+        uses: eProsima/eProsima-CI/external/setup-python@v0
+        with:
+          python-version: '3.11'
+
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
@@ -139,6 +144,11 @@ jobs:
         with:
           name: build_artifacts_fastdds_asan_${{ inputs.label }}
           path: ${{ github.workspace }}
+
+      - name: Install Fix Python version
+        uses: eProsima/eProsima-CI/external/setup-python@v0
+        with:
+          python-version: '3.11'
 
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
@@ -232,6 +242,11 @@ jobs:
         with:
           name: build_artifacts_fastdds_asan_${{ inputs.label }}
           path: ${{ github.workspace }}
+
+      - name: Install Fix Python version
+        uses: eProsima/eProsima-CI/external/setup-python@v0
+        with:
+          python-version: '3.11'
 
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
@@ -340,6 +355,11 @@ jobs:
         with:
           path: src/fastdds
           ref: ${{ inputs.fastdds_ref }}
+
+      - name: Install Fix Python version
+        uses: eProsima/eProsima-CI/external/setup-python@v0
+        with:
+          python-version: '3.11'
 
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
