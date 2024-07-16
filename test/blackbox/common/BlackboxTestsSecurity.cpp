@@ -5032,7 +5032,7 @@ TEST(Security, security_with_initial_peers_over_tcpv4_correctly_behaves)
     Locator_t wan_locator;
     IPFinder::getIP4Address(&all_locators);
 
-    for (auto &locator : all_locators)
+    for (auto& locator : all_locators)
     {
         if (!IPLocator::isLocal(locator))
         {
@@ -5049,8 +5049,8 @@ TEST(Security, security_with_initial_peers_over_tcpv4_correctly_behaves)
     LocatorList_t initial_peers;
     initial_peers.push_back(wan_locator);
     tcp_client.disable_builtin_transport()
-              .add_user_transport_to_pparams(tcp_client_transport_descriptor)
-              .initial_peers(initial_peers);
+            .add_user_transport_to_pparams(tcp_client_transport_descriptor)
+            .initial_peers(initial_peers);
 
     auto tcp_server_transport_descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
     tcp_server_transport_descriptor->listening_ports.push_back(server_listening_port);
@@ -5059,7 +5059,7 @@ TEST(Security, security_with_initial_peers_over_tcpv4_correctly_behaves)
     std::cout << "SETTING WAN address to " <<  wan_locator << std::endl;
 
     tcp_server.disable_builtin_transport()
-              .add_user_transport_to_pparams(tcp_server_transport_descriptor);
+            .add_user_transport_to_pparams(tcp_server_transport_descriptor);
 
     // Configure security
     const std::string governance_file("governance_helloworld_all_enable.smime");
