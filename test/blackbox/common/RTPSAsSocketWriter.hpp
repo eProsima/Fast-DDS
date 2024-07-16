@@ -229,19 +229,19 @@ public:
         IPLocator::setIPv4(loc, ip_);
         loc.port = static_cast<uint16_t>(port_);
         rdata.remote_locators.add_unicast_locator(loc);
-        
+
         if (writer_attr_.endpoint.reliabilityKind == eprosima::fastdds::rtps::RELIABLE)
         {
             rdata.reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
         }
-        
+
         // Check disable_positive_acks_ attribute
         if (writer_attr_.disable_positive_acks)
         {
             rdata.disable_positive_acks.enabled = writer_attr_.disable_positive_acks;
             rdata.disable_positive_acks.duration = writer_attr_.keep_duration;
         }
-        
+
         rdata.guid.guidPrefix.value[0] = guid.guidPrefix.value[0];
         rdata.guid.guidPrefix.value[1] = guid.guidPrefix.value[1];
         rdata.guid.guidPrefix.value[2] = guid.guidPrefix.value[2];
