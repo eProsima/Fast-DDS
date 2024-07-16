@@ -41,9 +41,11 @@ public:
 
     FASTDDS_EXPORTED_API DynamicPubSubType() = default;
 
-    /*
-     * Constructs a @ref DynamicPubSubType from a @ref DynamicType
+    /**
+     * @brief Constructs a @ref DynamicPubSubType from a @ref DynamicType
+     *
      * @param type @ref DynamicType object associated to the data
+     *
      * @remark Ownership is not transferred.
      */
     FASTDDS_EXPORTED_API DynamicPubSubType(
@@ -51,42 +53,51 @@ public:
 
     FASTDDS_EXPORTED_API virtual ~DynamicPubSubType();
 
-    /*
-     * Create a new data object of the specified type
+    /**
+     * @brief Create a new data object of the specified type
+     *
      * @return pointer to the new object
+     *
      * @remark Ownership is transferred. This object must be removed using @ref deleteData
      */
     FASTDDS_EXPORTED_API void* create_data() override;
 
-    /*
-     * Deletes an object previously allocated via @ref createData
+    /**
+     * @brief Deletes an object previously allocated via @ref createData
+     *
      * @param data pointer to the object to be deleted
+     *
      * @remark Ownership is transferred. This object must be allocated using @ref createData
      */
     FASTDDS_EXPORTED_API void delete_data (
             void* data) override;
 
-    /*
-     * Deserialize an object from the given payload
+    /**
+     * @brief Deserialize an object from the given payload
+     *
      * @param payload @ref eprosima::fastdds::rtps::SerializedPayload_t to parse
      * @param data object to fill in with payload data
+     *
      * @return bool specifying success
      */
     FASTDDS_EXPORTED_API bool deserialize (
             eprosima::fastdds::rtps::SerializedPayload_t& payload,
             void* data) override;
 
-    /*
-     * Returns a copy of the internal  @ref DynamicType object
+    /**
+     * @brief Returns a copy of the internal  @ref DynamicType object
+     *
      * @return pointer to the new object
      */
     FASTDDS_EXPORTED_API traits<DynamicType>::ref_type get_dynamic_type() const noexcept;
 
     /*
-     * Calculate the key associated to a given object
+     * @brief Calculate the key associated to a given object
+     *
      * @param data payload containing the serialized object whose key is calculated
      * @param ihandle @ref eprosima::fastdds::rtps::InstanceHandle_t to fill in
      * @param force_md5 use always md5 even if key payload footprint is smaller than the hash
+     *
      * @return bool specifying success
      */
     FASTDDS_EXPORTED_API bool compute_key(
@@ -95,10 +106,12 @@ public:
             bool force_md5 = false) override;
 
     /*
-     * Calculate the key associated to a given object
+     * @brief Calculate the key associated to a given object
+     *
      * @param data object whose key is calculated
      * @param ihandle @ref eprosima::fastdds::rtps::InstanceHandle_t to fill in
      * @param force_md5 use always md5 even if key payload footprint is smaller than the hash
+     *
      * @return bool specifying success
      */
     FASTDDS_EXPORTED_API bool compute_key(
@@ -107,9 +120,11 @@ public:
             bool force_md5 = false) override;
 
     /*
-     * Provide a functor that calculates a specified object serialized size
-     * @param[in] data object whose payload footprint to calculate
+     * @brief Provide a functor that calculates a specified object serialized size
+     *
+     * @param [in] data object whose payload footprint to calculate
      * @param [in] data_representation Representation that should be used for calculating the serialized size.
+     *
      * @return functor that calculates the size
      */
     FASTDDS_EXPORTED_API uint32_t calculate_serialized_size(
@@ -117,10 +132,12 @@ public:
             DataRepresentationId_t data_representation) override;
 
     /*
-     * Serialize an object into a given payload
-     * @param[in] data object to serialize
-     * @param[out] payload @ref eprosima::fastdds::rtps::SerializedPayload_t to fill in
+     * @brief Serialize an object into a given payload
+     *
+     * @param [in] data object to serialize
+     * @param [out] payload @ref eprosima::fastdds::rtps::SerializedPayload_t to fill in
      * @param [in] data_representation Representation that should be used to encode the data into the payload.
+     *
      * @return bool specifying success
      */
     FASTDDS_EXPORTED_API bool serialize(
@@ -128,16 +145,19 @@ public:
             eprosima::fastdds::rtps::SerializedPayload_t& payload,
             fastdds::dds::DataRepresentationId_t data_representation) override;
 
-    /*
-     * Sets up the internal @ref DynamicType object
-     * @param @ref DynamicType to copy
+    /**
+     * @brief Sets up the internal @ref DynamicType object
+     *
+     * @param type @ref DynamicType to copy
+     *
      * @return @ref ReturnCode_t with operation status
+     *
      * @remark Ownership is not transferred.
      */
     FASTDDS_EXPORTED_API ReturnCode_t set_dynamic_type(
             traits<DynamicType>::ref_type type);
 
-    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    //! Register TypeObject representation in Fast DDS TypeObjectRegistry
     FASTDDS_EXPORTED_API void register_type_object_representation() override;
 
     //}}}
