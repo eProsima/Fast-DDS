@@ -50,7 +50,7 @@ namespace rtps {
 
 struct PublicationBuiltinTopicData;
 class RTPSParticipant;
-class ReaderProxyData;
+struct SubscriptionBuiltinTopicData;
 
 } // namespace rtps
 
@@ -648,7 +648,7 @@ protected:
         void on_reader_discovery(
                 fastdds::rtps::RTPSParticipant* participant,
                 fastdds::rtps::ReaderDiscoveryStatus reason,
-                const fastdds::rtps::ReaderProxyData& info,
+                const fastdds::rtps::SubscriptionBuiltinTopicData& info,
                 bool& should_be_ignored) override;
 
         void on_writer_discovery(

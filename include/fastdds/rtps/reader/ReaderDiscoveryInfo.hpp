@@ -20,7 +20,6 @@
 #define FASTDDS_RTPS_READER__READERDISCOVERYINFO_HPP
 
 #include <fastdds/fastdds_dll.hpp>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 
 namespace eprosima {
 namespace fastdds {

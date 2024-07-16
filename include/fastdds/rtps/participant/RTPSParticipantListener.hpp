@@ -20,7 +20,7 @@
 #define FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANTLISTENER_HPP
 
 #include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
+#include <fastdds/rtps/builtin/data/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.hpp>
 #include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
@@ -89,7 +89,7 @@ public:
     virtual void on_reader_discovery(
             RTPSParticipant* participant,
             ReaderDiscoveryStatus reason,
-            const ReaderProxyData& info,
+            const SubscriptionBuiltinTopicData& info,
             bool& should_be_ignored)
     {
         static_cast<void>(participant);

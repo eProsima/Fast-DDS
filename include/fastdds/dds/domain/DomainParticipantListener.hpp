@@ -21,10 +21,10 @@
 #define FASTDDS_DDS_DOMAIN__DOMAINPARTICIPANTLISTENER_HPP
 
 #include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
+#include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.hpp>
 #include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
@@ -108,7 +108,7 @@ public:
     virtual void on_data_reader_discovery(
             DomainParticipant* participant,
             rtps::ReaderDiscoveryStatus reason,
-            const rtps::ReaderProxyData& info,
+            const SubscriptionBuiltinTopicData& info,
             bool& should_be_ignored)
     {
         static_cast<void>(participant);

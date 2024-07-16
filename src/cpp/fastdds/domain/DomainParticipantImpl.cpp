@@ -84,7 +84,6 @@ using rtps::ParticipantAuthenticationInfo;
 #endif // if HAVE_SECURITY
 using rtps::EndpointKind_t;
 using rtps::ReaderDiscoveryStatus;
-using rtps::ReaderProxyData;
 using rtps::ResourceEvent;
 using rtps::WriterDiscoveryStatus;
 
@@ -1563,7 +1562,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantAuthenticati
 void DomainParticipantImpl::MyRTPSParticipantListener::on_reader_discovery(
         RTPSParticipant*,
         ReaderDiscoveryStatus reason,
-        const ReaderProxyData& info,
+        const SubscriptionBuiltinTopicData& info,
         bool& should_be_ignored)
 {
     should_be_ignored = false;

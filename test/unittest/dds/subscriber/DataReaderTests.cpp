@@ -596,13 +596,13 @@ TEST_F(DataReaderTests, get_guid)
         void on_data_reader_discovery(
                 DomainParticipant*,
                 ReaderDiscoveryStatus reason,
-                const ReaderProxyData& info,
+                const SubscriptionBuiltinTopicData& info,
                 bool& /*should_be_ignored*/) override
         {
             std::unique_lock<std::mutex> lock(mutex);
             if (ReaderDiscoveryStatus::DISCOVERED_READER == reason)
             {
-                guid = info.guid();
+                guid = info.guid;
                 cv.notify_one();
             }
         }
@@ -610,10 +610,6 @@ TEST_F(DataReaderTests, get_guid)
         GUID_t guid;
         std::mutex mutex;
         std::condition_variable cv;
-
-    private:
-
-        using DomainParticipantListener::on_data_reader_discovery;
     }
     discovery_listener;
 
