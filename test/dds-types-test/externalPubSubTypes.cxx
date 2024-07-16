@@ -51,18 +51,18 @@ short_externalPubSubType::~short_externalPubSubType()
 
 bool short_externalPubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const short_external* p_type = static_cast<const short_external*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -81,12 +81,12 @@ bool short_externalPubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool short_externalPubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -95,14 +95,14 @@ bool short_externalPubSubType::deserialize(
         short_external* p_type = static_cast<short_external*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -147,8 +147,8 @@ void short_externalPubSubType::delete_data(
 }
 
 bool short_externalPubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -167,7 +167,7 @@ bool short_externalPubSubType::compute_key(
 
 bool short_externalPubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -191,14 +191,14 @@ bool short_externalPubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -232,18 +232,18 @@ ushort_externalPubSubType::~ushort_externalPubSubType()
 
 bool ushort_externalPubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const ushort_external* p_type = static_cast<const ushort_external*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -262,12 +262,12 @@ bool ushort_externalPubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool ushort_externalPubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -276,14 +276,14 @@ bool ushort_externalPubSubType::deserialize(
         ushort_external* p_type = static_cast<ushort_external*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -328,8 +328,8 @@ void ushort_externalPubSubType::delete_data(
 }
 
 bool ushort_externalPubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -348,7 +348,7 @@ bool ushort_externalPubSubType::compute_key(
 
 bool ushort_externalPubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -372,14 +372,14 @@ bool ushort_externalPubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -413,18 +413,18 @@ long_externalPubSubType::~long_externalPubSubType()
 
 bool long_externalPubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const long_external* p_type = static_cast<const long_external*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -443,12 +443,12 @@ bool long_externalPubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool long_externalPubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -457,14 +457,14 @@ bool long_externalPubSubType::deserialize(
         long_external* p_type = static_cast<long_external*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -509,8 +509,8 @@ void long_externalPubSubType::delete_data(
 }
 
 bool long_externalPubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -529,7 +529,7 @@ bool long_externalPubSubType::compute_key(
 
 bool long_externalPubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -553,14 +553,14 @@ bool long_externalPubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -594,18 +594,18 @@ ulong_externalPubSubType::~ulong_externalPubSubType()
 
 bool ulong_externalPubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const ulong_external* p_type = static_cast<const ulong_external*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -624,12 +624,12 @@ bool ulong_externalPubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool ulong_externalPubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -638,14 +638,14 @@ bool ulong_externalPubSubType::deserialize(
         ulong_external* p_type = static_cast<ulong_external*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -690,8 +690,8 @@ void ulong_externalPubSubType::delete_data(
 }
 
 bool ulong_externalPubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -710,7 +710,7 @@ bool ulong_externalPubSubType::compute_key(
 
 bool ulong_externalPubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -734,14 +734,14 @@ bool ulong_externalPubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -775,18 +775,18 @@ longlong_externalPubSubType::~longlong_externalPubSubType()
 
 bool longlong_externalPubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const longlong_external* p_type = static_cast<const longlong_external*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -805,12 +805,12 @@ bool longlong_externalPubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool longlong_externalPubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -819,14 +819,14 @@ bool longlong_externalPubSubType::deserialize(
         longlong_external* p_type = static_cast<longlong_external*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -871,8 +871,8 @@ void longlong_externalPubSubType::delete_data(
 }
 
 bool longlong_externalPubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -891,7 +891,7 @@ bool longlong_externalPubSubType::compute_key(
 
 bool longlong_externalPubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -915,14 +915,14 @@ bool longlong_externalPubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -956,18 +956,18 @@ ulonglong_externalPubSubType::~ulonglong_externalPubSubType()
 
 bool ulonglong_externalPubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const ulonglong_external* p_type = static_cast<const ulonglong_external*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -986,12 +986,12 @@ bool ulonglong_externalPubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool ulonglong_externalPubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -1000,14 +1000,14 @@ bool ulonglong_externalPubSubType::deserialize(
         ulonglong_external* p_type = static_cast<ulonglong_external*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -1052,8 +1052,8 @@ void ulonglong_externalPubSubType::delete_data(
 }
 
 bool ulonglong_externalPubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -1072,7 +1072,7 @@ bool ulonglong_externalPubSubType::compute_key(
 
 bool ulonglong_externalPubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -1096,14 +1096,14 @@ bool ulonglong_externalPubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -1137,18 +1137,18 @@ float_externalPubSubType::~float_externalPubSubType()
 
 bool float_externalPubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const float_external* p_type = static_cast<const float_external*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -1167,12 +1167,12 @@ bool float_externalPubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool float_externalPubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -1181,14 +1181,14 @@ bool float_externalPubSubType::deserialize(
         float_external* p_type = static_cast<float_external*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -1233,8 +1233,8 @@ void float_externalPubSubType::delete_data(
 }
 
 bool float_externalPubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -1253,7 +1253,7 @@ bool float_externalPubSubType::compute_key(
 
 bool float_externalPubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -1277,14 +1277,14 @@ bool float_externalPubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -1318,18 +1318,18 @@ double_externalPubSubType::~double_externalPubSubType()
 
 bool double_externalPubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const double_external* p_type = static_cast<const double_external*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -1348,12 +1348,12 @@ bool double_externalPubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool double_externalPubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -1362,14 +1362,14 @@ bool double_externalPubSubType::deserialize(
         double_external* p_type = static_cast<double_external*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -1414,8 +1414,8 @@ void double_externalPubSubType::delete_data(
 }
 
 bool double_externalPubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -1434,7 +1434,7 @@ bool double_externalPubSubType::compute_key(
 
 bool double_externalPubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -1458,14 +1458,14 @@ bool double_externalPubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -1499,18 +1499,18 @@ longdouble_externalPubSubType::~longdouble_externalPubSubType()
 
 bool longdouble_externalPubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const longdouble_external* p_type = static_cast<const longdouble_external*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -1529,12 +1529,12 @@ bool longdouble_externalPubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool longdouble_externalPubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -1543,14 +1543,14 @@ bool longdouble_externalPubSubType::deserialize(
         longdouble_external* p_type = static_cast<longdouble_external*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -1595,8 +1595,8 @@ void longdouble_externalPubSubType::delete_data(
 }
 
 bool longdouble_externalPubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -1615,7 +1615,7 @@ bool longdouble_externalPubSubType::compute_key(
 
 bool longdouble_externalPubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -1639,14 +1639,14 @@ bool longdouble_externalPubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -1680,18 +1680,18 @@ boolean_externalPubSubType::~boolean_externalPubSubType()
 
 bool boolean_externalPubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const boolean_external* p_type = static_cast<const boolean_external*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -1710,12 +1710,12 @@ bool boolean_externalPubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool boolean_externalPubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -1724,14 +1724,14 @@ bool boolean_externalPubSubType::deserialize(
         boolean_external* p_type = static_cast<boolean_external*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -1776,8 +1776,8 @@ void boolean_externalPubSubType::delete_data(
 }
 
 bool boolean_externalPubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -1796,7 +1796,7 @@ bool boolean_externalPubSubType::compute_key(
 
 bool boolean_externalPubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -1820,14 +1820,14 @@ bool boolean_externalPubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -1861,18 +1861,18 @@ octet_externalPubSubType::~octet_externalPubSubType()
 
 bool octet_externalPubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const octet_external* p_type = static_cast<const octet_external*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -1891,12 +1891,12 @@ bool octet_externalPubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool octet_externalPubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -1905,14 +1905,14 @@ bool octet_externalPubSubType::deserialize(
         octet_external* p_type = static_cast<octet_external*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -1957,8 +1957,8 @@ void octet_externalPubSubType::delete_data(
 }
 
 bool octet_externalPubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -1977,7 +1977,7 @@ bool octet_externalPubSubType::compute_key(
 
 bool octet_externalPubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -2001,14 +2001,14 @@ bool octet_externalPubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -2042,18 +2042,18 @@ char_externalPubSubType::~char_externalPubSubType()
 
 bool char_externalPubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const char_external* p_type = static_cast<const char_external*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -2072,12 +2072,12 @@ bool char_externalPubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool char_externalPubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -2086,14 +2086,14 @@ bool char_externalPubSubType::deserialize(
         char_external* p_type = static_cast<char_external*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -2138,8 +2138,8 @@ void char_externalPubSubType::delete_data(
 }
 
 bool char_externalPubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -2158,7 +2158,7 @@ bool char_externalPubSubType::compute_key(
 
 bool char_externalPubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -2182,14 +2182,14 @@ bool char_externalPubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -2223,18 +2223,18 @@ wchar_externalPubSubType::~wchar_externalPubSubType()
 
 bool wchar_externalPubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const wchar_external* p_type = static_cast<const wchar_external*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -2253,12 +2253,12 @@ bool wchar_externalPubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool wchar_externalPubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -2267,14 +2267,14 @@ bool wchar_externalPubSubType::deserialize(
         wchar_external* p_type = static_cast<wchar_external*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -2319,8 +2319,8 @@ void wchar_externalPubSubType::delete_data(
 }
 
 bool wchar_externalPubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -2339,7 +2339,7 @@ bool wchar_externalPubSubType::compute_key(
 
 bool wchar_externalPubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -2363,14 +2363,14 @@ bool wchar_externalPubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -2404,18 +2404,18 @@ sequence_short_externalPubSubType::~sequence_short_externalPubSubType()
 
 bool sequence_short_externalPubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const sequence_short_external* p_type = static_cast<const sequence_short_external*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -2434,12 +2434,12 @@ bool sequence_short_externalPubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool sequence_short_externalPubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -2448,14 +2448,14 @@ bool sequence_short_externalPubSubType::deserialize(
         sequence_short_external* p_type = static_cast<sequence_short_external*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -2500,8 +2500,8 @@ void sequence_short_externalPubSubType::delete_data(
 }
 
 bool sequence_short_externalPubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -2520,7 +2520,7 @@ bool sequence_short_externalPubSubType::compute_key(
 
 bool sequence_short_externalPubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -2544,14 +2544,14 @@ bool sequence_short_externalPubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -2585,18 +2585,18 @@ string_unbounded_externalPubSubType::~string_unbounded_externalPubSubType()
 
 bool string_unbounded_externalPubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const string_unbounded_external* p_type = static_cast<const string_unbounded_external*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -2615,12 +2615,12 @@ bool string_unbounded_externalPubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool string_unbounded_externalPubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -2629,14 +2629,14 @@ bool string_unbounded_externalPubSubType::deserialize(
         string_unbounded_external* p_type = static_cast<string_unbounded_external*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -2681,8 +2681,8 @@ void string_unbounded_externalPubSubType::delete_data(
 }
 
 bool string_unbounded_externalPubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -2701,7 +2701,7 @@ bool string_unbounded_externalPubSubType::compute_key(
 
 bool string_unbounded_externalPubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -2725,14 +2725,14 @@ bool string_unbounded_externalPubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -2766,18 +2766,18 @@ string_bounded_externalPubSubType::~string_bounded_externalPubSubType()
 
 bool string_bounded_externalPubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const string_bounded_external* p_type = static_cast<const string_bounded_external*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -2796,12 +2796,12 @@ bool string_bounded_externalPubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool string_bounded_externalPubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -2810,14 +2810,14 @@ bool string_bounded_externalPubSubType::deserialize(
         string_bounded_external* p_type = static_cast<string_bounded_external*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -2862,8 +2862,8 @@ void string_bounded_externalPubSubType::delete_data(
 }
 
 bool string_bounded_externalPubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -2882,7 +2882,7 @@ bool string_bounded_externalPubSubType::compute_key(
 
 bool string_bounded_externalPubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -2906,14 +2906,14 @@ bool string_bounded_externalPubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -2947,18 +2947,18 @@ map_short_externalPubSubType::~map_short_externalPubSubType()
 
 bool map_short_externalPubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const map_short_external* p_type = static_cast<const map_short_external*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -2977,12 +2977,12 @@ bool map_short_externalPubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool map_short_externalPubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -2991,14 +2991,14 @@ bool map_short_externalPubSubType::deserialize(
         map_short_external* p_type = static_cast<map_short_external*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -3043,8 +3043,8 @@ void map_short_externalPubSubType::delete_data(
 }
 
 bool map_short_externalPubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -3063,7 +3063,7 @@ bool map_short_externalPubSubType::compute_key(
 
 bool map_short_externalPubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -3087,14 +3087,14 @@ bool map_short_externalPubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -3128,18 +3128,18 @@ array_short_externalPubSubType::~array_short_externalPubSubType()
 
 bool array_short_externalPubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const array_short_external* p_type = static_cast<const array_short_external*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -3158,12 +3158,12 @@ bool array_short_externalPubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool array_short_externalPubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -3172,14 +3172,14 @@ bool array_short_externalPubSubType::deserialize(
         array_short_external* p_type = static_cast<array_short_external*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -3224,8 +3224,8 @@ void array_short_externalPubSubType::delete_data(
 }
 
 bool array_short_externalPubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -3244,7 +3244,7 @@ bool array_short_externalPubSubType::compute_key(
 
 bool array_short_externalPubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -3268,14 +3268,14 @@ bool array_short_externalPubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -3309,18 +3309,18 @@ struct_externalPubSubType::~struct_externalPubSubType()
 
 bool struct_externalPubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const struct_external* p_type = static_cast<const struct_external*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -3339,12 +3339,12 @@ bool struct_externalPubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool struct_externalPubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -3353,14 +3353,14 @@ bool struct_externalPubSubType::deserialize(
         struct_external* p_type = static_cast<struct_external*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -3405,8 +3405,8 @@ void struct_externalPubSubType::delete_data(
 }
 
 bool struct_externalPubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -3425,7 +3425,7 @@ bool struct_externalPubSubType::compute_key(
 
 bool struct_externalPubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -3449,14 +3449,14 @@ bool struct_externalPubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -3490,18 +3490,18 @@ InnerStructExternalPubSubType::~InnerStructExternalPubSubType()
 
 bool InnerStructExternalPubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const InnerStructExternal* p_type = static_cast<const InnerStructExternal*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -3520,12 +3520,12 @@ bool InnerStructExternalPubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool InnerStructExternalPubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -3534,14 +3534,14 @@ bool InnerStructExternalPubSubType::deserialize(
         InnerStructExternal* p_type = static_cast<InnerStructExternal*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -3586,8 +3586,8 @@ void InnerStructExternalPubSubType::delete_data(
 }
 
 bool InnerStructExternalPubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -3606,7 +3606,7 @@ bool InnerStructExternalPubSubType::compute_key(
 
 bool InnerStructExternalPubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -3630,14 +3630,14 @@ bool InnerStructExternalPubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -3671,18 +3671,18 @@ ext_struct_externalPubSubType::~ext_struct_externalPubSubType()
 
 bool ext_struct_externalPubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const ext_struct_external* p_type = static_cast<const ext_struct_external*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -3701,12 +3701,12 @@ bool ext_struct_externalPubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool ext_struct_externalPubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -3715,14 +3715,14 @@ bool ext_struct_externalPubSubType::deserialize(
         ext_struct_external* p_type = static_cast<ext_struct_external*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -3767,8 +3767,8 @@ void ext_struct_externalPubSubType::delete_data(
 }
 
 bool ext_struct_externalPubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -3787,7 +3787,7 @@ bool ext_struct_externalPubSubType::compute_key(
 
 bool ext_struct_externalPubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -3811,14 +3811,14 @@ bool ext_struct_externalPubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -3852,18 +3852,18 @@ ext_and_inner_struct_externalPubSubType::~ext_and_inner_struct_externalPubSubTyp
 
 bool ext_and_inner_struct_externalPubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const ext_and_inner_struct_external* p_type = static_cast<const ext_and_inner_struct_external*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -3882,12 +3882,12 @@ bool ext_and_inner_struct_externalPubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool ext_and_inner_struct_externalPubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -3896,14 +3896,14 @@ bool ext_and_inner_struct_externalPubSubType::deserialize(
         ext_and_inner_struct_external* p_type = static_cast<ext_and_inner_struct_external*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -3948,8 +3948,8 @@ void ext_and_inner_struct_externalPubSubType::delete_data(
 }
 
 bool ext_and_inner_struct_externalPubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -3968,7 +3968,7 @@ bool ext_and_inner_struct_externalPubSubType::compute_key(
 
 bool ext_and_inner_struct_externalPubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -3992,14 +3992,14 @@ bool ext_and_inner_struct_externalPubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -4033,18 +4033,18 @@ struct_external_optionalPubSubType::~struct_external_optionalPubSubType()
 
 bool struct_external_optionalPubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const struct_external_optional* p_type = static_cast<const struct_external_optional*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -4063,12 +4063,12 @@ bool struct_external_optionalPubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool struct_external_optionalPubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -4077,14 +4077,14 @@ bool struct_external_optionalPubSubType::deserialize(
         struct_external_optional* p_type = static_cast<struct_external_optional*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -4129,8 +4129,8 @@ void struct_external_optionalPubSubType::delete_data(
 }
 
 bool struct_external_optionalPubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -4149,7 +4149,7 @@ bool struct_external_optionalPubSubType::compute_key(
 
 bool struct_external_optionalPubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -4173,14 +4173,14 @@ bool struct_external_optionalPubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -4215,18 +4215,18 @@ recursive_union_containerPubSubType::~recursive_union_containerPubSubType()
 
 bool recursive_union_containerPubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const recursive_union_container* p_type = static_cast<const recursive_union_container*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -4245,12 +4245,12 @@ bool recursive_union_containerPubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool recursive_union_containerPubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -4259,14 +4259,14 @@ bool recursive_union_containerPubSubType::deserialize(
         recursive_union_container* p_type = static_cast<recursive_union_container*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -4311,8 +4311,8 @@ void recursive_union_containerPubSubType::delete_data(
 }
 
 bool recursive_union_containerPubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -4331,7 +4331,7 @@ bool recursive_union_containerPubSubType::compute_key(
 
 bool recursive_union_containerPubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -4355,14 +4355,14 @@ bool recursive_union_containerPubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -4397,18 +4397,18 @@ recursive_test_1PubSubType::~recursive_test_1PubSubType()
 
 bool recursive_test_1PubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const recursive_test_1* p_type = static_cast<const recursive_test_1*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -4427,12 +4427,12 @@ bool recursive_test_1PubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool recursive_test_1PubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -4441,14 +4441,14 @@ bool recursive_test_1PubSubType::deserialize(
         recursive_test_1* p_type = static_cast<recursive_test_1*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -4493,8 +4493,8 @@ void recursive_test_1PubSubType::delete_data(
 }
 
 bool recursive_test_1PubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -4513,7 +4513,7 @@ bool recursive_test_1PubSubType::compute_key(
 
 bool recursive_test_1PubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -4537,14 +4537,14 @@ bool recursive_test_1PubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -4580,18 +4580,18 @@ recursive_structurePubSubType::~recursive_structurePubSubType()
 
 bool recursive_structurePubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const recursive_structure* p_type = static_cast<const recursive_structure*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -4610,12 +4610,12 @@ bool recursive_structurePubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool recursive_structurePubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -4624,14 +4624,14 @@ bool recursive_structurePubSubType::deserialize(
         recursive_structure* p_type = static_cast<recursive_structure*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -4676,8 +4676,8 @@ void recursive_structurePubSubType::delete_data(
 }
 
 bool recursive_structurePubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -4696,7 +4696,7 @@ bool recursive_structurePubSubType::compute_key(
 
 bool recursive_structurePubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -4720,14 +4720,14 @@ bool recursive_structurePubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -4761,18 +4761,18 @@ recursive_test_2PubSubType::~recursive_test_2PubSubType()
 
 bool recursive_test_2PubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const recursive_test_2* p_type = static_cast<const recursive_test_2*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -4791,12 +4791,12 @@ bool recursive_test_2PubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool recursive_test_2PubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -4805,14 +4805,14 @@ bool recursive_test_2PubSubType::deserialize(
         recursive_test_2* p_type = static_cast<recursive_test_2*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -4857,8 +4857,8 @@ void recursive_test_2PubSubType::delete_data(
 }
 
 bool recursive_test_2PubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -4877,7 +4877,7 @@ bool recursive_test_2PubSubType::compute_key(
 
 bool recursive_test_2PubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -4901,14 +4901,14 @@ bool recursive_test_2PubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;

@@ -24,28 +24,28 @@ using namespace eprosima::fastdds::rtps;
 
 bool MemoryDataType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         eprosima::fastdds::dds::DataRepresentationId_t)
 {
     const MemoryType* lt = static_cast<const MemoryType*>(data);
 
 
-    *(uint32_t*)payload->data = lt->seqnum;
-    *(uint32_t*)(payload->data + 4) = (uint32_t)lt->data.size();
+    *(uint32_t*)payload.data = lt->seqnum;
+    *(uint32_t*)(payload.data + 4) = (uint32_t)lt->data.size();
 
-    memcpy(payload->data + 8, lt->data.data(), lt->data.size());
-    payload->length = static_cast<uint32_t>(8 + lt->data.size());
+    memcpy(payload.data + 8, lt->data.data(), lt->data.size());
+    payload.length = static_cast<uint32_t>(8 + lt->data.size());
     return true;
 }
 
 bool MemoryDataType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     MemoryType* lt = static_cast<MemoryType*>(data);
-    lt->seqnum = static_cast<uint32_t>(*(payload->data));
-    uint32_t siz = static_cast<uint32_t>(*(payload->data + 4));
-    std::copy(payload->data + 8, payload->data + 8 + siz, lt->data.begin());
+    lt->seqnum = static_cast<uint32_t>(*(payload.data));
+    uint32_t siz = static_cast<uint32_t>(*(payload.data + 4));
+    std::copy(payload.data + 8, payload.data + 8 + siz, lt->data.begin());
     return true;
 }
 
@@ -76,21 +76,21 @@ void MemoryDataType::delete_data(
 
 bool TestCommandDataType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         eprosima::fastdds::dds::DataRepresentationId_t)
 {
     const TestCommandType* t = static_cast<const TestCommandType*>(data);
-    *(TESTCOMMAND*)payload->data = t->m_command;
-    payload->length = 4;
+    *(TESTCOMMAND*)payload.data = t->m_command;
+    payload.length = 4;
     return true;
 }
 
 bool TestCommandDataType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     TestCommandType* t = static_cast<TestCommandType*>(data);
-    t->m_command = static_cast<TESTCOMMAND>(*(payload->data));
+    t->m_command = static_cast<TESTCOMMAND>(*(payload.data));
     return true;
 }
 

@@ -69,7 +69,6 @@ DataReaderHistory::DataReaderHistory(
     , type_name_(topic.get_type_name())
     , has_keys_(type->is_compute_key_provided)
     , type_(type.get())
-    , get_key_object_(nullptr)
 {
     if (resource_limited_qos_.max_samples <= 0)
     {
@@ -88,8 +87,6 @@ DataReaderHistory::DataReaderHistory(
 
     if (type_->is_compute_key_provided)
     {
-        get_key_object_ = type_->create_data();
-
         if (resource_limited_qos_.max_samples_per_instance < std::numeric_limits<int32_t>::max())
         {
             key_changes_allocation_.maximum = resource_limited_qos_.max_samples_per_instance;
@@ -150,7 +147,7 @@ DataReaderHistory::DataReaderHistory(
 #if HAVE_SECURITY
                         is_key_protected = mp_reader->getAttributes().security_attributes().is_key_protected;
 #endif // if HAVE_SECURITY
-                        return type_->compute_key(&a_change->serializedPayload, &a_change->instanceHandle,
+                        return type_->compute_key(a_change->serializedPayload, a_change->instanceHandle,
                                        is_key_protected);
                     }
 
@@ -163,10 +160,6 @@ DataReaderHistory::DataReaderHistory(
 
 DataReaderHistory::~DataReaderHistory()
 {
-    if (type_->is_compute_key_provided)
-    {
-        type_->delete_data(get_key_object_);
-    }
 }
 
 bool DataReaderHistory::can_change_be_added_nts(

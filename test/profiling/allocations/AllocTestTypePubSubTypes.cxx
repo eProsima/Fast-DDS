@@ -53,18 +53,18 @@ AllocTestTypePubSubType::~AllocTestTypePubSubType()
 
 bool AllocTestTypePubSubType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
     const AllocTestType* p_type = static_cast<const AllocTestType*>(data);
 
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
@@ -83,12 +83,12 @@ bool AllocTestTypePubSubType::serialize(
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
 bool AllocTestTypePubSubType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     try
@@ -97,14 +97,14 @@ bool AllocTestTypePubSubType::deserialize(
         AllocTestType* p_type = static_cast<AllocTestType*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
         deser >> *p_type;
@@ -149,8 +149,8 @@ void AllocTestTypePubSubType::delete_data(
 }
 
 bool AllocTestTypePubSubType::compute_key(
-        SerializedPayload_t* payload,
-        InstanceHandle_t* handle,
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -169,7 +169,7 @@ bool AllocTestTypePubSubType::compute_key(
 
 bool AllocTestTypePubSubType::compute_key(
         const void* const data,
-        InstanceHandle_t* handle,
+        InstanceHandle_t& handle,
         bool force_md5)
 {
     if (!is_compute_key_provided)
@@ -193,14 +193,14 @@ bool AllocTestTypePubSubType::compute_key(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;

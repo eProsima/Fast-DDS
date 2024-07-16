@@ -155,14 +155,14 @@ public:
 
     bool serialize(
             const void* const /*data*/,
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
             DataRepresentationId_t /*data_representation*/) override
     {
         return true;
     }
 
     bool deserialize(
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
             void* /*data*/) override
     {
         return true;
@@ -186,8 +186,8 @@ public:
     }
 
     bool compute_key(
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
-            fastdds::rtps::InstanceHandle_t* /*ihandle*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
+            fastdds::rtps::InstanceHandle_t& /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -195,7 +195,7 @@ public:
 
     bool compute_key(
             const void* const /*data*/,
-            fastdds::rtps::InstanceHandle_t* /*ihandle*/,
+            fastdds::rtps::InstanceHandle_t& /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -818,7 +818,7 @@ TEST(SubscriberTests, DeleteContainedEntities)
     InstanceHandle_t handle_nil = HANDLE_NIL;
     BarType data;
     data.index(1);
-    type.compute_key(&data, &handle_nil);
+    type.compute_key(&data, handle_nil);
     EXPECT_EQ(RETCODE_OK, data_writer_foo->write(&data, HANDLE_NIL));
 
     // Wait for data to arrive and check OK should be returned

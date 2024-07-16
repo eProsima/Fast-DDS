@@ -106,10 +106,10 @@ public:
 
     bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
     bool deserialize(
-            eprosima::fastdds::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
             void* data) override;
 
     uint32_t calculate_serialized_size(
@@ -120,8 +120,8 @@ public:
             void* data) override;
 
     bool compute_key(
-            eprosima::fastdds::rtps::SerializedPayload_t* /*payload*/,
-            eprosima::fastdds::rtps::InstanceHandle_t* /*ihandle*/,
+            eprosima::fastdds::rtps::SerializedPayload_t& /*payload*/,
+            eprosima::fastdds::rtps::InstanceHandle_t& /*ihandle*/,
             bool force_md5 = false) override
     {
         (void)force_md5;
@@ -130,7 +130,7 @@ public:
 
     bool compute_key(
             const void* const /*data*/,
-            eprosima::fastdds::rtps::InstanceHandle_t* /*ihandle*/,
+            eprosima::fastdds::rtps::InstanceHandle_t& /*ihandle*/,
             bool force_md5 = false) override
     {
         (void)force_md5;
@@ -208,10 +208,10 @@ public:
 
     bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
     bool deserialize(
-            eprosima::fastdds::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
             void* data) override;
 
     uint32_t calculate_serialized_size(
@@ -222,8 +222,8 @@ public:
             void* data) override;
 
     bool compute_key(
-            eprosima::fastdds::rtps::SerializedPayload_t* /*payload*/,
-            eprosima::fastdds::rtps::InstanceHandle_t* /*ihandle*/,
+            eprosima::fastdds::rtps::SerializedPayload_t& /*payload*/,
+            eprosima::fastdds::rtps::InstanceHandle_t& /*ihandle*/,
             bool force_md5 = false) override
     {
         (void)force_md5;
@@ -232,7 +232,7 @@ public:
 
     bool compute_key(
             const void* const /*data*/,
-            eprosima::fastdds::rtps::InstanceHandle_t* /*ihandle*/,
+            eprosima::fastdds::rtps::InstanceHandle_t& /*ihandle*/,
             bool force_md5 = false) override
     {
         (void)force_md5;

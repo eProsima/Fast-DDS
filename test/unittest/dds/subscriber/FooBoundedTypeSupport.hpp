@@ -41,18 +41,18 @@ public:
 
     bool serialize(
             const void* const data,
-            fastdds::rtps::SerializedPayload_t* payload,
+            fastdds::rtps::SerializedPayload_t& payload,
             DataRepresentationId_t data_representation) override
     {
         const type* p_type = static_cast<const type*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fb(reinterpret_cast<char*>(payload->data), payload->max_size);
+        eprosima::fastcdr::FastBuffer fb(reinterpret_cast<char*>(payload.data), payload.max_size);
         // Object that serializes the data.
         eprosima::fastcdr::Cdr ser(fb, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
                 data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
                 eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-        payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 #if FASTCDR_VERSION_MAJOR > 1
         ser.set_encoding_flag(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
@@ -74,23 +74,19 @@ public:
         }
 
         // Get the serialized length
-#if FASTCDR_VERSION_MAJOR == 1
-        payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
-#else
-        payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
-#endif // FASTCDR_VERSION_MAJOR == 1
+        payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
         return true;
     }
 
     bool deserialize(
-            fastdds::rtps::SerializedPayload_t* payload,
+            fastdds::rtps::SerializedPayload_t& payload,
             void* data) override
     {
         //Convert DATA to pointer of your type
         type* p_type = static_cast<type*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fb(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fb(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fb
@@ -102,7 +98,7 @@ public:
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         try
         {
@@ -138,8 +134,8 @@ public:
     }
 
     bool compute_key(
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
-            fastdds::rtps::InstanceHandle_t* /*handle*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
+            fastdds::rtps::InstanceHandle_t& /*handle*/,
             bool /*force_md5*/) override
     {
         return false;
@@ -147,7 +143,7 @@ public:
 
     bool compute_key(
             const void* const /*data*/,
-            fastdds::rtps::InstanceHandle_t* /*handle*/,
+            fastdds::rtps::InstanceHandle_t& /*handle*/,
             bool /*force_md5*/) override
     {
         return false;

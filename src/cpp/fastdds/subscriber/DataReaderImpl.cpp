@@ -1987,7 +1987,7 @@ InstanceHandle_t DataReaderImpl::lookup_instance(
 
     if (instance && type_->is_compute_key_provided)
     {
-        if (type_->compute_key(const_cast<void*>(instance), &handle, false))
+        if (type_->compute_key(const_cast<void*>(instance), handle, false))
         {
             if (!history_.is_instance_present(handle))
             {

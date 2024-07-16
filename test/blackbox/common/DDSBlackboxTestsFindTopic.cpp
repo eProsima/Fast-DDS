@@ -59,14 +59,14 @@ class DDSFindTopicTest : public testing::Test
 
         bool serialize(
                 const void* const,
-                fastdds::rtps::SerializedPayload_t*,
+                fastdds::rtps::SerializedPayload_t&,
                 fastdds::dds::DataRepresentationId_t) override
         {
             return true;
         }
 
         bool deserialize(
-                fastdds::rtps::SerializedPayload_t*,
+                fastdds::rtps::SerializedPayload_t&,
                 void*) override
         {
             return true;
@@ -90,8 +90,8 @@ class DDSFindTopicTest : public testing::Test
         }
 
         bool compute_key(
-                fastdds::rtps::SerializedPayload_t*,
-                fastdds::rtps::InstanceHandle_t*,
+                fastdds::rtps::SerializedPayload_t&,
+                fastdds::rtps::InstanceHandle_t&,
                 bool) override
         {
             return true;
@@ -99,7 +99,7 @@ class DDSFindTopicTest : public testing::Test
 
         bool compute_key(
                 const void* const,
-                fastdds::rtps::InstanceHandle_t*,
+                fastdds::rtps::InstanceHandle_t&,
                 bool) override
         {
             return false;

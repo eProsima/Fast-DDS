@@ -171,10 +171,10 @@ protected:
         FooType data;
 
         data.index(0);
-        type_.compute_key(&data, &handle_ok_);
+        type_.compute_key(&data, handle_ok_);
 
         data.index(2);
-        type_.compute_key(&data, &handle_wrong_);
+        type_.compute_key(&data, handle_wrong_);
     }
 
     void reset_lengths_if_ok(
@@ -1798,8 +1798,8 @@ TEST_F(DataReaderTests, sample_info)
             data_[0].index(1);
             data_[1].index(2);
 
-            type.compute_key(&data_[0], &handles_[0]);
-            type.compute_key(&data_[1], &handles_[1]);
+            type.compute_key(&data_[0], handles_[0]);
+            type.compute_key(&data_[1], handles_[1]);
         }
 
         ~TestState()
@@ -2103,7 +2103,7 @@ TEST_F(DataReaderTests, check_read_take_iteration)
         {
             // calculate key
             data.index(i);
-            type_.compute_key(&data, &handles[i]);
+            type_.compute_key(&data, handles[i]);
 
             // write the index as message
             oarraystream out(data.message());
@@ -2229,7 +2229,7 @@ public:
     }
 
     bool deserialize(
-            SerializedPayload_t* payload,
+            SerializedPayload_t& payload,
             void* data) override
     {
         //Convert DATA to pointer of your type
@@ -3770,14 +3770,14 @@ public:
 
     bool serialize(
             const void* const /*data*/,
-            eprosima::fastdds::rtps::SerializedPayload_t* /*payload*/,
+            eprosima::fastdds::rtps::SerializedPayload_t& /*payload*/,
             DataRepresentationId_t /*data_representation*/) override
     {
         return true;
     }
 
     bool deserialize(
-            eprosima::fastdds::rtps::SerializedPayload_t* /*payload*/,
+            eprosima::fastdds::rtps::SerializedPayload_t& /*payload*/,
             void* /*data*/) override
     {
         return true;
@@ -3801,8 +3801,8 @@ public:
     }
 
     bool compute_key(
-            eprosima::fastdds::rtps::SerializedPayload_t* /*payload*/,
-            eprosima::fastdds::rtps::InstanceHandle_t* /*ihandle*/,
+            eprosima::fastdds::rtps::SerializedPayload_t& /*payload*/,
+            eprosima::fastdds::rtps::InstanceHandle_t& /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -3810,7 +3810,7 @@ public:
 
     bool compute_key(
             const void* const /*data*/,
-            eprosima::fastdds::rtps::InstanceHandle_t* /*ihandle*/,
+            eprosima::fastdds::rtps::InstanceHandle_t& /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;

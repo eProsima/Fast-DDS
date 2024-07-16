@@ -149,7 +149,7 @@ public:
      */
     FASTDDS_EXPORTED_API virtual bool serialize(
             const void* const data,
-            fastdds::rtps::SerializedPayload_t* payload,
+            fastdds::rtps::SerializedPayload_t& payload,
             DataRepresentationId_t data_representation);
 
     /**
@@ -160,7 +160,7 @@ public:
      * @return true if it is deserialized correctly, false if not
      */
     FASTDDS_EXPORTED_API virtual bool deserialize(
-            fastdds::rtps::SerializedPayload_t* payload,
+            fastdds::rtps::SerializedPayload_t& payload,
             void* data);
 
     /*!
@@ -201,17 +201,33 @@ public:
     /**
      * @brief Getter for the data key
      *
-     * @param data Pointer to data
+     * @param data Pointer to serialized payload containing the data.
      * @param i_handle InstanceHandle pointer to store the key
      * @param force_md5 boolean to force md5 (default: false)
      * @return true if the key is returned, false if not
      */
     FASTDDS_EXPORTED_API virtual bool compute_key(
             void* data,
-            InstanceHandle_t* i_handle,
+            InstanceHandle_t& i_handle,
             bool force_md5 = false)
     {
         return get()->compute_key(data, i_handle, force_md5);
+    }
+
+    /**
+     * @brief Getter for the data key
+     *
+     * @param payload Pointer to data
+     * @param i_handle InstanceHandle pointer to store the key
+     * @param force_md5 boolean to force md5 (default: false)
+     * @return true if the key is returned, false if not
+     */
+    FASTDDS_EXPORTED_API virtual bool compute_key(
+            fastdds::rtps::SerializedPayload_t& payload,
+            InstanceHandle_t& i_handle,
+            bool force_md5 = false)
+    {
+        return get()->compute_key(payload, i_handle, force_md5);
     }
 
     FASTDDS_EXPORTED_API virtual bool operator ==(

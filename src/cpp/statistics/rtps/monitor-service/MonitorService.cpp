@@ -374,7 +374,7 @@ bool MonitorService::add_change(
         const bool& disposed)
 {
     InstanceHandle_t handle;
-    type_.compute_key(&status_data, &handle, false);
+    type_.compute_key(&status_data, handle, false);
 
     CacheChange_t* change = status_writer_history_->create_change(
         (disposed ? fastdds::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED : fastdds::rtps::ALIVE),
@@ -393,7 +393,7 @@ bool MonitorService::add_change(
     {
         CDRMessage_t aux_msg(change->serializedPayload);
 
-        if (!type_.serialize(&status_data, &change->serializedPayload, fastdds::dds::DEFAULT_DATA_REPRESENTATION))
+        if (!type_.serialize(&status_data, change->serializedPayload, fastdds::dds::DEFAULT_DATA_REPRESENTATION))
         {
             EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Serialization failed");
             status_writer_history_->release_change(change);

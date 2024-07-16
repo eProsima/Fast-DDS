@@ -95,14 +95,14 @@ public:
 
     bool serialize(
             const void* const /*data*/,
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
             DataRepresentationId_t /*data_representation*/) override
     {
         return true;
     }
 
     bool deserialize(
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
             void* /*data*/) override
     {
         return true;
@@ -126,8 +126,8 @@ public:
     }
 
     bool compute_key(
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
-            fastdds::rtps::InstanceHandle_t* /*ihandle*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
+            fastdds::rtps::InstanceHandle_t& /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -135,7 +135,7 @@ public:
 
     bool compute_key(
             const void* const /*data*/,
-            fastdds::rtps::InstanceHandle_t* /*ihandle*/,
+            fastdds::rtps::InstanceHandle_t& /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -192,14 +192,14 @@ public:
 
     bool serialize(
             const void* const /*data*/,
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
             DataRepresentationId_t /*data_representation*/) override
     {
         return true;
     }
 
     bool deserialize(
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
             void* /*data*/) override
     {
         return true;
@@ -223,8 +223,8 @@ public:
     }
 
     bool compute_key(
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
-            fastdds::rtps::InstanceHandle_t* /*ihandle*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
+            fastdds::rtps::InstanceHandle_t& /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -232,10 +232,10 @@ public:
 
     bool compute_key(
             const void* const /*data*/,
-            fastdds::rtps::InstanceHandle_t* ihandle,
+            fastdds::rtps::InstanceHandle_t& ihandle,
             bool /*force_md5*/) override
     {
-        ihandle->value[0] = 1;
+        ihandle.value[0] = 1;
         return true;
     }
 
@@ -256,14 +256,14 @@ public:
 
     bool serialize(
             const void* const /*data*/,
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
             DataRepresentationId_t /*data_representation*/) override
     {
         return true;
     }
 
     bool deserialize(
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
             void* /*data*/) override
     {
         return true;
@@ -287,8 +287,8 @@ public:
     }
 
     bool compute_key(
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
-            fastdds::rtps::InstanceHandle_t* /*ihandle*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
+            fastdds::rtps::InstanceHandle_t& /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -296,7 +296,7 @@ public:
 
     bool compute_key(
             const void* const /*data*/,
-            fastdds::rtps::InstanceHandle_t* /*ihandle*/,
+            fastdds::rtps::InstanceHandle_t& /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -1046,7 +1046,7 @@ TEST(DataWriterTests, UnregisterInstance)
     // 7. Calling unregister_instance with a valid InstanceHandle also returns RETCODE_OK
     data.message("HelloWorld_1");
     ASSERT_EQ(RETCODE_OK, instance_datawriter->write(&data, HANDLE_NIL));
-    instance_type->compute_key(&data, &handle);
+    instance_type->compute_key(&data, handle);
     EXPECT_EQ(RETCODE_OK, instance_datawriter->unregister_instance(&data, handle));
 
     // TODO(jlbueno) There are other possible errors sending the unregister message: RETCODE_OUT_OF_RESOURCES,
@@ -1101,7 +1101,7 @@ TEST(DataWriterTests, UnregisterInstanceWithTimestamp)
     // 7. Calling unregister_instance with a valid InstanceHandle also returns RETCODE_OK
     data.message("HelloWorld_1");
     ASSERT_EQ(RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
-    instance_type.compute_key(&data, &handle);
+    instance_type.compute_key(&data, handle);
     EXPECT_EQ(RETCODE_OK, instance_datawriter->unregister_instance_w_timestamp(&data, handle, ts));
 
     // 8. Check invalid timestamps
@@ -1160,7 +1160,7 @@ TEST(DataWriterTests, Dispose)
     // 7. Calling dispose with a valid InstanceHandle also returns RETCODE_OK
     data.message("HelloWorld_1");
     ASSERT_EQ(RETCODE_OK, instance_datawriter->write(&data, HANDLE_NIL));
-    instance_type.compute_key(&data, &handle);
+    instance_type.compute_key(&data, handle);
     EXPECT_EQ(RETCODE_OK, instance_datawriter->dispose(&data, handle));
 
     // TODO(jlbueno) There are other possible errors sending the dispose message: RETCODE_OUT_OF_RESOURCES,
@@ -1212,7 +1212,7 @@ TEST(DataWriterTests, DisposeWithTimestamp)
     // 7. Calling dispose with a valid InstanceHandle also returns RETCODE_OK
     data.message("HelloWorld_1");
     ASSERT_EQ(RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
-    instance_type.compute_key(&data, &handle);
+    instance_type.compute_key(&data, handle);
     EXPECT_EQ(RETCODE_OK, instance_datawriter->dispose_w_timestamp(&data, handle, ts));
 
     // 8. Check invalid timestamps
@@ -1306,14 +1306,14 @@ public:
 
     bool serialize(
             const void* const /*data*/,
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
             DataRepresentationId_t /*data_representation*/) override
     {
         return true;
     }
 
     bool deserialize(
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
             void* /*data*/) override
     {
         return true;
@@ -1337,8 +1337,8 @@ public:
     }
 
     bool compute_key(
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
-            fastdds::rtps::InstanceHandle_t* /*ihandle*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
+            fastdds::rtps::InstanceHandle_t& /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -1346,7 +1346,7 @@ public:
 
     bool compute_key(
             const void* const /*data*/,
-            fastdds::rtps::InstanceHandle_t* /*ihandle*/,
+            fastdds::rtps::InstanceHandle_t& /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -1641,7 +1641,7 @@ TEST(DataWriterTests, InstanceWaitForAcknowledgement)
     // Expectations
     EXPECT_CALL(*history, wait_for_acknowledgement_last_change(_, _, _)).WillOnce(testing::Return(true));
 
-    instance_type.compute_key(&data, &handle);
+    instance_type.compute_key(&data, handle);
     EXPECT_EQ(RETCODE_OK, instance_datawriter->wait_for_acknowledgments(&data, handle, max_wait));
 
     // 7. Calling wait_for_acknowledgments in a keyed topic with a known handle timeouts if some reader has not

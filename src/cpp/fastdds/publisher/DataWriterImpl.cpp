@@ -674,7 +674,7 @@ ReturnCode_t DataWriterImpl::check_write_preconditions(
 #if HAVE_SECURITY
         is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
 #endif // if HAVE_SECURITY
-        type_.get()->compute_key(data, &instance_handle, is_key_protected);
+        type_.get()->compute_key(data, instance_handle, is_key_protected);
     }
 
     //Check if the Handle is different from the special value HANDLE_NIL and
@@ -763,7 +763,7 @@ ReturnCode_t DataWriterImpl::check_instance_preconditions(
 #if HAVE_SECURITY
         is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
 #endif // if HAVE_SECURITY
-        type_->compute_key(data, &instance_handle, is_key_protected);
+        type_->compute_key(data, instance_handle, is_key_protected);
     }
 
 #if !defined(NDEBUG)
@@ -838,7 +838,7 @@ InstanceHandle_t DataWriterImpl::do_register_instance(
                 uint32_t size = fixed_payload_size_ ? fixed_payload_size_ : type_->calculate_serialized_size(key,
                                 data_representation_);
                 payload->reserve(size);
-                if (!type_->serialize(key, payload, data_representation_))
+                if (!type_->serialize(key, *payload, data_representation_))
                 {
                     EPROSIMA_LOG_WARNING(DATA_WRITER, "Key data serialization failed");
 
@@ -954,7 +954,7 @@ ReturnCode_t DataWriterImpl::get_key_value(
         return RETCODE_BAD_PARAMETER;
     }
 
-    type_->deserialize(payload, key_holder);
+    type_->deserialize(*payload, key_holder);
     return RETCODE_OK;
 }
 
@@ -1022,7 +1022,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
             return RETCODE_OUT_OF_RESOURCES;
         }
 
-        if ((ALIVE == change_kind) && !type_->serialize(data, &payload, data_representation_))
+        if ((ALIVE == change_kind) && !type_->serialize(data, payload, data_representation_))
         {
             EPROSIMA_LOG_WARNING(DATA_WRITER, "Data serialization returned false");
             payload_pool_->release_payload(payload);
@@ -1115,7 +1115,7 @@ ReturnCode_t DataWriterImpl::create_new_change_with_params(
 #if HAVE_SECURITY
         is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
 #endif // if HAVE_SECURITY
-        type_->compute_key(data, &handle, is_key_protected);
+        type_->compute_key(data, handle, is_key_protected);
     }
 
     return perform_create_new_change(changeKind, data, wparams, handle);

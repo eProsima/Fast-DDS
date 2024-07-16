@@ -73,7 +73,7 @@ public:
      * @return bool specifying success
      */
     FASTDDS_EXPORTED_API bool deserialize (
-            eprosima::fastdds::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
             void* data) override;
 
     /*
@@ -90,8 +90,8 @@ public:
      * @return bool specifying success
      */
     FASTDDS_EXPORTED_API bool compute_key(
-            eprosima::fastdds::rtps::SerializedPayload_t* payload,
-            eprosima::fastdds::rtps::InstanceHandle_t* ihandle,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
+            eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
             bool force_md5 = false) override;
 
     /*
@@ -103,7 +103,7 @@ public:
      */
     FASTDDS_EXPORTED_API bool compute_key(
             const void* const data,
-            eprosima::fastdds::rtps::InstanceHandle_t* ihandle,
+            eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
             bool force_md5 = false) override;
 
     /*
@@ -125,7 +125,7 @@ public:
      */
     FASTDDS_EXPORTED_API bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
             fastdds::dds::DataRepresentationId_t data_representation) override;
 
     /*

@@ -83,7 +83,7 @@ public:
      */
     FASTDDS_EXPORTED_API virtual bool serialize(
             const void* const data,
-            fastdds::rtps::SerializedPayload_t* payload,
+            fastdds::rtps::SerializedPayload_t& payload,
             DataRepresentationId_t data_representation) = 0;
 
     /**
@@ -94,7 +94,7 @@ public:
      * @return True if correct.
      */
     FASTDDS_EXPORTED_API virtual bool deserialize(
-            fastdds::rtps::SerializedPayload_t* payload,
+            fastdds::rtps::SerializedPayload_t& payload,
             void* data) = 0;
 
     /*!
@@ -131,8 +131,8 @@ public:
      * @return True if correct.
      */
     FASTDDS_EXPORTED_API virtual bool compute_key(
-            fastdds::rtps::SerializedPayload_t* payload,
-            fastdds::rtps::InstanceHandle_t* ihandle,
+            fastdds::rtps::SerializedPayload_t& payload,
+            fastdds::rtps::InstanceHandle_t& ihandle,
             bool force_md5 = false) = 0;
 
     /**
@@ -145,7 +145,7 @@ public:
      */
     FASTDDS_EXPORTED_API virtual bool compute_key(
             const void* const data,
-            fastdds::rtps::InstanceHandle_t* ihandle,
+            fastdds::rtps::InstanceHandle_t& ihandle,
             bool force_md5 = false) = 0;
 
     /**

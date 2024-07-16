@@ -140,7 +140,7 @@ struct SampleLoanManager
         }
         else
         {
-            type_->deserialize(&item->payload, item->sample);
+            type_->deserialize(item->payload, item->sample);
         }
 
         // Increment reference counter and return sample

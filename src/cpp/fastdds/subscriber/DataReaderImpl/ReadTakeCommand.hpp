@@ -370,7 +370,7 @@ private:
         if (data_values_.has_ownership())
         {
             // perform deserialization
-            return type_->deserialize(payload, data_values_.buffer()[current_slot_]);
+            return type_->deserialize(*payload, data_values_.buffer()[current_slot_]);
         }
         else
         {

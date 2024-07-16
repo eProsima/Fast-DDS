@@ -58,11 +58,11 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
-            eprosima::fastdds::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
             void* data) override;
 
     eProsima_user_DllExport uint32_t calculate_serialized_size(
@@ -70,13 +70,13 @@ public:
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool compute_key(
-            eprosima::fastdds::rtps::SerializedPayload_t* payload,
-            eprosima::fastdds::rtps::InstanceHandle_t* ihandle,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
+            eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
             bool force_md5 = false) override;
 
     eProsima_user_DllExport bool compute_key(
             const void* const data,
-            eprosima::fastdds::rtps::InstanceHandle_t* ihandle,
+            eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
             bool force_md5 = false) override;
 
     eProsima_user_DllExport void* create_data() override;
@@ -137,11 +137,11 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
-            eprosima::fastdds::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
             void* data) override;
 
     eProsima_user_DllExport uint32_t calculate_serialized_size(
@@ -149,13 +149,13 @@ public:
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool compute_key(
-            eprosima::fastdds::rtps::SerializedPayload_t* payload,
-            eprosima::fastdds::rtps::InstanceHandle_t* ihandle,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
+            eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
             bool force_md5 = false) override;
 
     eProsima_user_DllExport bool compute_key(
             const void* const data,
-            eprosima::fastdds::rtps::InstanceHandle_t* ihandle,
+            eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
             bool force_md5 = false) override;
 
     eProsima_user_DllExport void* create_data() override;
@@ -216,11 +216,11 @@ public:
 
     eProsima_user_DllExport bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool deserialize(
-            eprosima::fastdds::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
             void* data) override;
 
     eProsima_user_DllExport uint32_t calculate_serialized_size(
@@ -228,13 +228,13 @@ public:
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport bool compute_key(
-            eprosima::fastdds::rtps::SerializedPayload_t* payload,
-            eprosima::fastdds::rtps::InstanceHandle_t* ihandle,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
+            eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
             bool force_md5 = false) override;
 
     eProsima_user_DllExport bool compute_key(
             const void* const data,
-            eprosima::fastdds::rtps::InstanceHandle_t* ihandle,
+            eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
             bool force_md5 = false) override;
 
     eProsima_user_DllExport void* create_data() override;

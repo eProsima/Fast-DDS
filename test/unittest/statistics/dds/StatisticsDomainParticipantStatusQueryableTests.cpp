@@ -43,14 +43,14 @@ public:
 
     bool serialize(
             const void* const /*data*/,
-            eprosima::fastdds::rtps::SerializedPayload_t* /*payload*/,
+            eprosima::fastdds::rtps::SerializedPayload_t& /*payload*/,
             eprosima::fastdds::dds::DataRepresentationId_t /*data_representation*/) override
     {
         return true;
     }
 
     bool deserialize(
-            eprosima::fastdds::rtps::SerializedPayload_t* /*payload*/,
+            eprosima::fastdds::rtps::SerializedPayload_t& /*payload*/,
             void* /*data*/) override
     {
         return true;
@@ -74,8 +74,8 @@ public:
     }
 
     bool compute_key(
-            eprosima::fastdds::rtps::SerializedPayload_t* /*payload*/,
-            eprosima::fastdds::rtps::InstanceHandle_t* /*ihandle*/,
+            eprosima::fastdds::rtps::SerializedPayload_t& /*payload*/,
+            eprosima::fastdds::rtps::InstanceHandle_t& /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -83,7 +83,7 @@ public:
 
     bool compute_key(
             const void* const /*data*/,
-            eprosima::fastdds::rtps::InstanceHandle_t* /*ihandle*/,
+            eprosima::fastdds::rtps::InstanceHandle_t& /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;

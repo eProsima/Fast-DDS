@@ -55,13 +55,13 @@ void LatencyDataType::copy_data(
 
 bool LatencyDataType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         eprosima::fastdds::dds::DataRepresentationId_t)
 {
     static uint8_t encapsulation[4] = { 0x0, 0x1, 0x0, 0x0 };
     LatencyType* lt = (LatencyType*)data;
 
-    auto ser_data = payload->data;
+    auto ser_data = payload.data;
     memcpy(ser_data, encapsulation, SerializedPayload_t::representation_header_size);
     ser_data += SerializedPayload_t::representation_header_size;
     memcpy(ser_data, &lt->seqnum, sizeof(lt->seqnum));
@@ -69,17 +69,17 @@ bool LatencyDataType::serialize(
     memcpy(ser_data, &lt->bounce, sizeof(lt->bounce));
     ser_data += sizeof(lt->bounce);
     memcpy(ser_data, lt->data, buffer_size_);
-    payload->length = max_serialized_type_size;
+    payload.length = max_serialized_type_size;
     return true;
 }
 
 bool LatencyDataType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     // Payload members endianness matches local machine
     LatencyType* lt = (LatencyType*)data;
-    auto ser_data = payload->data + SerializedPayload_t::representation_header_size;
+    auto ser_data = payload.data + SerializedPayload_t::representation_header_size;
     lt->seqnum = *reinterpret_cast<uint32_t*>(ser_data);
     ser_data += sizeof(lt->seqnum);
     lt->bounce = *reinterpret_cast<uint32_t*>(ser_data);
@@ -108,23 +108,23 @@ void LatencyDataType::delete_data(
 
 bool TestCommandDataType::serialize(
         const void* const data,
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         eprosima::fastdds::dds::DataRepresentationId_t)
 {
     TestCommandType* t = (TestCommandType*)data;
-    memcpy(payload->data, &t->m_command, sizeof(t->m_command));
-    payload->length = 4;
+    memcpy(payload.data, &t->m_command, sizeof(t->m_command));
+    payload.length = 4;
     return true;
 }
 
 bool TestCommandDataType::deserialize(
-        SerializedPayload_t* payload,
+        SerializedPayload_t& payload,
         void* data)
 {
     TestCommandType* t = (TestCommandType*)data;
     //	cout << "PAYLOAD LENGTH: "<<payload->length << endl;
     //	cout << "PAYLOAD FIRST BYTE: "<< (int)payload->data[0] << endl;
-    memcpy(&t->m_command, payload->data, sizeof(payload->length));
+    memcpy(&t->m_command, payload.data, sizeof(payload.length));
     //	cout << "COMMAND: "<<t->m_command<< endl;
     return true;
 }

@@ -720,7 +720,7 @@ bool TypeLookupManager::send_impl(
     }
 
     // Serialize the message using the provided PubSubType
-    bool result = pubsubtype->serialize(&msg, &change->serializedPayload,
+    bool result = pubsubtype->serialize(&msg, change->serializedPayload,
                     DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
     // If serialization was successful, update the change and add it to the WriterHistory
     if (result)
@@ -798,7 +798,7 @@ bool TypeLookupManager::receive_impl(
         return false;
     }
 
-    bool result = pubsubtype->deserialize(&payload, &msg);
+    bool result = pubsubtype->deserialize(payload, &msg);
     payload.data = nullptr;
 
     return result;
