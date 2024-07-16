@@ -14,12 +14,10 @@
 
 /**
  * @file ReaderProxyData.hpp
- *
  */
 
-#ifndef FASTDDS_RTPS_BUILTIN_DATA__READERPROXYDATA_HPP
-#define FASTDDS_RTPS_BUILTIN_DATA__READERPROXYDATA_HPP
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#ifndef RTPS_BUILTIN_DATA__READERPROXYDATA_HPP
+#define RTPS_BUILTIN_DATA__READERPROXYDATA_HPP
 
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #if HAVE_SECURITY
@@ -517,5 +515,4 @@ private:
 } // namespace rtps
 } // namespace eprosima
 
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif // FASTDDS_RTPS_BUILTIN_DATA__READERPROXYDATA_HPP
+#endif // RTPS_BUILTIN_DATA__READERPROXYDATA_HPP

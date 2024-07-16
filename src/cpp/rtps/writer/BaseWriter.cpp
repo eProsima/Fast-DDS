@@ -33,7 +33,6 @@
 #include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <fastdds/rtps/attributes/ResourceManagement.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/builtin/data/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
@@ -52,6 +51,7 @@
 #include <fastdds/utils/TimedMutex.hpp>
 
 #include <rtps/builtin/data/ProxyDataConverters.hpp>
+#include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/DataSharing/WriterPool.hpp>
 #include <rtps/flowcontrol/FlowController.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>

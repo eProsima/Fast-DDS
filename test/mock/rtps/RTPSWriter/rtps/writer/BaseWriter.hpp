@@ -23,8 +23,7 @@
 
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
-#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
-
+#include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/messages/RTPSMessageGroup.hpp>
 #include <rtps/writer/DeliveryRetCode.hpp>
 #include <rtps/writer/LocatorSelectorSender.hpp>

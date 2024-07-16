@@ -29,7 +29,6 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/TopicAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/reader/ReaderListener.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
@@ -37,6 +36,7 @@
 #include <fastdds/rtps/writer/WriterListener.hpp>
 
 #include <rtps/builtin/data/ProxyHashTables.hpp>
+#include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/network/utils/external_locators.hpp>
