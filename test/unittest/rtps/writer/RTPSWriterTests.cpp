@@ -85,15 +85,6 @@ public:
 
     constexpr static size_t data_size = 250;
 
-#if FASTCDR_VERSION_MAJOR == 1
-    static size_t getCdrSerializedSize(
-            const TestDataType&)
-    {
-        return TestDataType::data_size;
-    }
-
-#endif // if FASTCDR_VERSION_MAJOR == 1
-
 };
 
 void pool_initialization_test (

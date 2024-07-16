@@ -906,13 +906,8 @@ inline bool QosPoliciesSerializer<TypeIdV1>::add_to_cdr_message(
     ser.serialize_encapsulation();
 
     ser << qos_policy.m_type_identifier;
-#if FASTCDR_VERSION_MAJOR == 1
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    size = (ser.getSerializedDataLength() + 3) & ~3;
-#else
     payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     size = (ser.get_serialized_data_length() + 3) & ~3;
-#endif // FASTCDR_VERSION_MAJOR == 1
 
     bool valid = rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
     valid &= rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(size));
@@ -938,9 +933,6 @@ inline bool QosPoliciesSerializer<TypeIdV1>::read_content_from_cdr_message(
     rtps::CDRMessage::readData(cdr_message, payload.data, parameter_length); // Object that manages the raw buffer.
 
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN
-#if FASTCDR_VERSION_MAJOR == 1
-            , eprosima::fastcdr::Cdr::CdrType::DDS_CDR
-#endif // FASTCDR_VERSION_MAJOR == 1
             );
 
     try
@@ -988,13 +980,8 @@ inline bool QosPoliciesSerializer<TypeObjectV1>::add_to_cdr_message(
     ser.serialize_encapsulation();
 
     ser << qos_policy.m_type_object;
-#if FASTCDR_VERSION_MAJOR == 1
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    size = (ser.getSerializedDataLength() + 3) & ~3;
-#else
     payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     size = (ser.get_serialized_data_length() + 3) & ~3;
-#endif // FASTCDR_VERSION_MAJOR == 1
 
     bool valid = rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
     valid &= rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(size));
@@ -1020,9 +1007,6 @@ inline bool QosPoliciesSerializer<TypeObjectV1>::read_content_from_cdr_message(
     rtps::CDRMessage::readData(cdr_message, payload.data, parameter_length); // Object that manages the raw buffer.
 
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN
-#if FASTCDR_VERSION_MAJOR == 1
-            , eprosima::fastcdr::Cdr::CdrType::DDS_CDR
-#endif // FASTCDR_VERSION_MAJOR == 1
             );
 
     try
@@ -1071,13 +1055,8 @@ inline bool QosPoliciesSerializer<xtypes::TypeInformationParameter>::add_to_cdr_
     ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
 
     ser << qos_policy.type_information;
-#if FASTCDR_VERSION_MAJOR == 1
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    size = (ser.getSerializedDataLength() + 3) & ~3;
-#else
     payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     size = (ser.get_serialized_data_length() + 3) & ~3;
-#endif // FASTCDR_VERSION_MAJOR == 1
 
     bool valid = rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
     valid &= rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(size));
