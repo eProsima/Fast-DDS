@@ -241,11 +241,11 @@ void PDPServerListener::on_new_cache_change_added(
             }
 
             // Store whether the participant is new or updated
-            auto status = (pdata == nullptr) ? DISCOVERED_PARTICIPANT :
-                    PARTICIPANT_DISCOVERY_STATUS::CHANGED_QOS_PARTICIPANT;
+            auto status = (pdata == nullptr) ? ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT :
+                    ParticipantDiscoveryStatus::CHANGED_QOS_PARTICIPANT;
 
             // New participant case
-            if (status == PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
+            if (status == ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT)
             {
                 // TODO: pending avoid builtin connections on client info relayed by other server
 
@@ -341,7 +341,7 @@ void PDPServerListener::on_new_cache_change_added(
 
         // Remove participant from proxies
         reader->getMutex().unlock();
-        pdp_server()->remove_remote_participant(guid, PARTICIPANT_DISCOVERY_STATUS::REMOVED_PARTICIPANT);
+        pdp_server()->remove_remote_participant(guid, ParticipantDiscoveryStatus::REMOVED_PARTICIPANT);
         reader->getMutex().lock();
     }
 

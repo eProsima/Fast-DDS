@@ -210,18 +210,18 @@ ServerApp::~ServerApp()
 
 void ServerApp::on_participant_discovery(
         DomainParticipant*,
-        fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS status,
+        fastdds::rtps::ParticipantDiscoveryStatus status,
         const ParticipantBuiltinTopicData& info,
         bool& should_be_ignored)
 {
     static_cast<void>(should_be_ignored);
-    if (status == eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
+    if (status == eprosima::fastdds::rtps::ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT)
     {
         std::cout << "Discovered Participant with GUID " << info.guid << std::endl;
         ++matched_;
     }
-    else if (status == eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::DROPPED_PARTICIPANT ||
-            status == eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::REMOVED_PARTICIPANT)
+    else if (status == eprosima::fastdds::rtps::ParticipantDiscoveryStatus::DROPPED_PARTICIPANT ||
+            status == eprosima::fastdds::rtps::ParticipantDiscoveryStatus::REMOVED_PARTICIPANT)
     {
         std::cout << "Dropped Participant with GUID " << info.guid << std::endl;
         --matched_;

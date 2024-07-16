@@ -210,7 +210,7 @@ public:
 
     bool remove_remote_participant(
             const GUID_t& /*participant_guid*/,
-            PARTICIPANT_DISCOVERY_STATUS /*reason*/) override
+            ParticipantDiscoveryStatus /*reason*/) override
     {
         return true;
     }
@@ -259,7 +259,7 @@ public:
 
     void on_participant_discovery(
             fastdds::dds::DomainParticipant* participant,
-            fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS /*status*/,
+            fastdds::rtps::ParticipantDiscoveryStatus /*status*/,
             const fastdds::rtps::ParticipantBuiltinTopicData& /*info*/,
             bool& /*should_be_ignored*/) override
     {

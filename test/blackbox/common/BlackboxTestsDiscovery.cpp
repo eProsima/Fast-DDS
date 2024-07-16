@@ -892,17 +892,17 @@ TEST_P(Discovery, PubSubAsReliableHelloworldParticipantDiscovery)
 
     int count = 0;
     reader.setOnDiscoveryFunction([&writer, &count](const ParticipantBuiltinTopicData& info,
-            PARTICIPANT_DISCOVERY_STATUS status) -> bool
+            ParticipantDiscoveryStatus status) -> bool
             {
                 if (info.guid == writer.participant_guid())
                 {
-                    if (status == PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
+                    if (status == ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT)
                     {
                         std::cout << "Discovered participant " << info.guid << std::endl;
                         ++count;
                     }
-                    else if (status == PARTICIPANT_DISCOVERY_STATUS::REMOVED_PARTICIPANT ||
-                    status == PARTICIPANT_DISCOVERY_STATUS::DROPPED_PARTICIPANT)
+                    else if (status == ParticipantDiscoveryStatus::REMOVED_PARTICIPANT ||
+                    status == ParticipantDiscoveryStatus::DROPPED_PARTICIPANT)
                     {
                         std::cout << "Removed participant " << info.guid << std::endl;
                         return ++count == 2;
@@ -938,7 +938,7 @@ TEST_P(Discovery, PubSubAsReliableHelloworldUserData)
     ASSERT_TRUE(writer.isInitialized());
 
     reader.setOnDiscoveryFunction([&writer](const ParticipantBuiltinTopicData& info,
-            PARTICIPANT_DISCOVERY_STATUS /*status*/) -> bool
+            ParticipantDiscoveryStatus /*status*/) -> bool
             {
                 if (info.guid == writer.participant_guid())
                 {
@@ -1603,16 +1603,16 @@ TEST(Discovery, discovery_cyclone_participant_with_custom_pid)
 
         void on_participant_discovery(
                 DomainParticipant*,
-                PARTICIPANT_DISCOVERY_STATUS status,
+                ParticipantDiscoveryStatus status,
                 const ParticipantBuiltinTopicData& /*info*/,
                 bool& should_be_ignored) override
         {
             should_be_ignored = false;
-            if (PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT == status)
+            if (ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT == status)
             {
                 discovered_participants_++;
             }
-            else if (PARTICIPANT_DISCOVERY_STATUS::REMOVED_PARTICIPANT == status)
+            else if (ParticipantDiscoveryStatus::REMOVED_PARTICIPANT == status)
             {
                 discovered_participants_--;
             }

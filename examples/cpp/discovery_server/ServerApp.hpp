@@ -50,7 +50,7 @@ public:
     //! Publisher matched method
     void on_participant_discovery(
             DomainParticipant* participant,
-            fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS status,
+            fastdds::rtps::ParticipantDiscoveryStatus status,
             const fastdds::rtps::ParticipantBuiltinTopicData& info,
             bool& should_be_ignored) override;
 

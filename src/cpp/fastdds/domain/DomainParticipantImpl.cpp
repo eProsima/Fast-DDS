@@ -1534,7 +1534,7 @@ ReturnCode_t DomainParticipantImpl::unregister_type(
 
 void DomainParticipantImpl::MyRTPSParticipantListener::on_participant_discovery(
         RTPSParticipant*,
-        eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS reason,
+        eprosima::fastdds::rtps::ParticipantDiscoveryStatus reason,
         const ParticipantBuiltinTopicData& info,
         bool& should_be_ignored)
 {

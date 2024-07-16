@@ -61,7 +61,7 @@ public:
 
     void on_participant_discovery(
             DomainParticipant* /*participant*/,
-            fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS status,
+            fastdds::rtps::ParticipantDiscoveryStatus status,
             const ParticipantBuiltinTopicData& info,
             bool& should_be_ignored) override;
 

@@ -100,7 +100,7 @@ protected:
 
         void on_participant_discovery(
                 eprosima::fastdds::dds::DomainParticipant*,
-                eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS status,
+                eprosima::fastdds::rtps::ParticipantDiscoveryStatus status,
                 const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& info,
                 bool& should_be_ignored) override
         {
@@ -112,13 +112,13 @@ protected:
                 reader_.cvDiscovery_.notify_one();
             }
 
-            if (status == eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
+            if (status == eprosima::fastdds::rtps::ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT)
             {
                 reader_.participant_matched();
 
             }
-            else if (status == eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::REMOVED_PARTICIPANT ||
-                    status == eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::DROPPED_PARTICIPANT)
+            else if (status == eprosima::fastdds::rtps::ParticipantDiscoveryStatus::REMOVED_PARTICIPANT ||
+                    status == eprosima::fastdds::rtps::ParticipantDiscoveryStatus::DROPPED_PARTICIPANT)
             {
                 reader_.participant_unmatched();
             }
@@ -1691,7 +1691,7 @@ public:
 
     void setOnDiscoveryFunction(
             std::function<bool(const eprosima::fastdds::rtps::ParticipantBuiltinTopicData&,
-            eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS)> f)
+            eprosima::fastdds::rtps::ParticipantDiscoveryStatus)> f)
     {
         onDiscovery_ = f;
     }
@@ -2132,7 +2132,7 @@ protected:
     std::string datareader_profile_ = "";
 
     std::function<bool(const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& info,
-            eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS status)> onDiscovery_;
+            eprosima::fastdds::rtps::ParticipantDiscoveryStatus status)> onDiscovery_;
     EndpointDiscoveryFunctor onEndpointDiscovery_;
 
     //! True to take data from history. On False, read_ is checked.

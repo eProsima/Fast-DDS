@@ -73,7 +73,7 @@ public:
 
     void on_participant_discovery(
             RTPSParticipant* participant,
-            PARTICIPANT_DISCOVERY_STATUS status,
+            ParticipantDiscoveryStatus status,
             const ParticipantBuiltinTopicData& info,
             bool& should_be_ignored) override
     {
@@ -81,7 +81,7 @@ public:
     }
 
     MOCK_METHOD4(on_participant_discovery_mock,
-            void (RTPSParticipant*, PARTICIPANT_DISCOVERY_STATUS, const ParticipantBuiltinTopicData&,
+            void (RTPSParticipant*, ParticipantDiscoveryStatus, const ParticipantBuiltinTopicData&,
             bool&));
 
 #if HAVE_SECURITY

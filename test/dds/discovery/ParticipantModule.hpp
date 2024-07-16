@@ -47,7 +47,7 @@ public:
 
     void on_participant_discovery(
             DomainParticipant* participant,
-            PARTICIPANT_DISCOVERY_STATUS status,
+            ParticipantDiscoveryStatus status,
             const ParticipantBuiltinTopicData& info,
             bool& should_be_ignored) override;
 

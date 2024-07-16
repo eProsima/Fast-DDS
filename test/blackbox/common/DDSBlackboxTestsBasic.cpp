@@ -531,12 +531,12 @@ TEST(DDSBasic, IgnoreParticipant)
 
         void on_participant_discovery(
                 DomainParticipant* /*participant*/,
-                eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS status,
+                eprosima::fastdds::rtps::ParticipantDiscoveryStatus status,
                 const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& info,
                 bool& should_be_ignored) override
         {
             std::cout << "Using custom listener" << std::endl;
-            if (status == eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
+            if (status == eprosima::fastdds::rtps::ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT)
             {
                 std::cout << "Discovered participant" << std::endl;
                 if (info.user_data == std::vector<eprosima::fastdds::rtps::octet>({ 'i', 'g', 'n' }))

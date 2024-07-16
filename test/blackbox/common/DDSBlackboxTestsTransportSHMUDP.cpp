@@ -209,7 +209,7 @@ static void shm_metatraffic_test(
 
     auto discovery_checker =
             [unicast, multicast](const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& info,
-                    eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS /*status*/)
+                    eprosima::fastdds::rtps::ParticipantDiscoveryStatus /*status*/)
             {
                 check_shm_locators(info, unicast, multicast);
                 return true;

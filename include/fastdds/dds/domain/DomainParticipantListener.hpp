@@ -74,7 +74,7 @@ public:
      */
     virtual void on_participant_discovery(
             DomainParticipant* participant,
-            fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS reason,
+            fastdds::rtps::ParticipantDiscoveryStatus reason,
             const ParticipantBuiltinTopicData& info,
             bool& should_be_ignored)
     {

@@ -2535,7 +2535,7 @@ public:
 
     void on_participant_discovery(
             eprosima::fastdds::dds::DomainParticipant*,
-            eprosima::fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS status,
+            eprosima::fastdds::rtps::ParticipantDiscoveryStatus status,
             const ParticipantBuiltinTopicData&,
             bool& should_be_ignored) override
     {

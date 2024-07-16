@@ -58,7 +58,7 @@ public:
      */
     virtual void on_participant_discovery(
             RTPSParticipant* participant,
-            PARTICIPANT_DISCOVERY_STATUS reason,
+            ParticipantDiscoveryStatus reason,
             const ParticipantBuiltinTopicData& info,
             bool& should_be_ignored)
     {

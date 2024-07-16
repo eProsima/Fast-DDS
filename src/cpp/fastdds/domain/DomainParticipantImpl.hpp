@@ -638,7 +638,7 @@ protected:
 
         void on_participant_discovery(
                 fastdds::rtps::RTPSParticipant* participant,
-                fastdds::rtps::PARTICIPANT_DISCOVERY_STATUS reason,
+                fastdds::rtps::ParticipantDiscoveryStatus reason,
                 const ParticipantBuiltinTopicData& info,
                 bool& should_be_ignored) override;
 
