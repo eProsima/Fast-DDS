@@ -442,7 +442,7 @@ protected:
                 fastdds::rtps::RTPSWriter* writer,
                 fastdds::rtps::ReaderDiscoveryStatus reason,
                 const fastdds::rtps::GUID_t& reader_guid,
-                const fastdds::rtps::ReaderProxyData* reader_info) override;
+                const fastdds::rtps::SubscriptionBuiltinTopicData* reader_info) override;
 
 #ifdef FASTDDS_STATISTICS
         void notify_status_observer(
@@ -707,7 +707,7 @@ protected:
      */
     void process_reader_filter_info(
             const fastdds::rtps::GUID_t& reader_guid,
-            const fastdds::rtps::ReaderProxyData& reader_info);
+            const fastdds::rtps::SubscriptionBuiltinTopicData& reader_info);
 
     bool is_relevant(
             const fastdds::rtps::CacheChange_t& change,

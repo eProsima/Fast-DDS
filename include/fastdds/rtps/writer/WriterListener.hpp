@@ -20,7 +20,7 @@
 
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
+#include <fastdds/rtps/builtin/data/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/MatchingInfo.hpp>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.hpp>
@@ -112,7 +112,7 @@ public:
             RTPSWriter* writer,
             ReaderDiscoveryStatus reason,
             const GUID_t& reader_guid,
-            const ReaderProxyData* reader_info)
+            const SubscriptionBuiltinTopicData* reader_info)
     {
         static_cast<void>(writer);
         static_cast<void>(reason);

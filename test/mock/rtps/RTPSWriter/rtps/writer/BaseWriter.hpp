@@ -23,6 +23,8 @@
 
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
+#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
+
 #include <rtps/messages/RTPSMessageGroup.hpp>
 #include <rtps/writer/DeliveryRetCode.hpp>
 #include <rtps/writer/LocatorSelectorSender.hpp>
@@ -99,7 +101,7 @@ public:
     MOCK_CONST_METHOD0(is_datasharing_compatible, bool());
 
     MOCK_CONST_METHOD1(is_datasharing_compatible_with, bool(
-            const ReaderProxyData& rdata));
+            const dds::DataSharingQosPolicy& rdata));
 
     // *INDENT-ON*
 

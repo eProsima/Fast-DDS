@@ -193,13 +193,13 @@ TEST_P(RTPSDiscovery, WriterListenerOnReaderDiscovery)
         [&mutex, &cv, &iteration, &reader_guid, &user_data](
             ReaderDiscoveryStatus reason,
             const GUID_t& r_guid,
-            const ReaderProxyData* r_data)
+            const SubscriptionBuiltinTopicData* r_data)
         {
             std::unique_lock<std::mutex> lock(mutex);
             reader_guid = r_guid;
             if (nullptr != r_data)
             {
-                user_data = r_data->m_qos.m_userData;
+                user_data = r_data->user_data;
             }
             if (Iterations::NONE == iteration && ReaderDiscoveryStatus::DISCOVERED_READER == reason)
             {
@@ -373,7 +373,7 @@ TEST_P(RTPSDiscovery, WriterListenerOnReaderDiscoveryIncompatibleQoS)
         [&mutex, &cv, &iteration, &reader_guid](
             ReaderDiscoveryStatus reason,
             const GUID_t& w_guid,
-            const ReaderProxyData*)
+            const SubscriptionBuiltinTopicData*)
         {
             std::unique_lock<std::mutex> lock(mutex);
             reader_guid = w_guid;
@@ -458,12 +458,12 @@ TEST_P(RTPSDiscovery, ContentFilterRegistration)
         [&mutex, &cv, &iteration, &content_filter_property](
             ReaderDiscoveryStatus reason,
             const GUID_t&,
-            const ReaderProxyData* r_data)
+            const SubscriptionBuiltinTopicData* r_data)
         {
             std::unique_lock<std::mutex> lock(mutex);
             if (nullptr != r_data)
             {
-                content_filter_property = r_data->content_filter();
+                content_filter_property = r_data->content_filter;
             }
             if (Iterations::NONE == iteration && ReaderDiscoveryStatus::DISCOVERED_READER == reason)
             {
@@ -548,7 +548,7 @@ TEST_P(RTPSDiscovery, ContentFilterWrongRegistration)
         [&mutex, &cv, &iteration](
             ReaderDiscoveryStatus,
             const GUID_t&,
-            const ReaderProxyData*)
+            const SubscriptionBuiltinTopicData*)
         {
             std::unique_lock<std::mutex> lock(mutex);
             iteration = Iterations::WITH_ERROR;
@@ -651,7 +651,7 @@ TEST_P(RTPSDiscovery, ContentFilterWrongUpdate)
         [&mutex, &cv, &iteration](
             ReaderDiscoveryStatus reason,
             const GUID_t&,
-            const ReaderProxyData*)
+            const SubscriptionBuiltinTopicData*)
         {
             std::unique_lock<std::mutex> lock(mutex);
             if (Iterations::NONE == iteration && ReaderDiscoveryStatus::DISCOVERED_READER == reason)
@@ -772,12 +772,12 @@ TEST_P(RTPSDiscovery, ContentFilterRegistrationWithoutCFP)
         [&mutex, &cv, &iteration, &content_filter_property](
             ReaderDiscoveryStatus reason,
             const GUID_t&,
-            const ReaderProxyData* r_data)
+            const SubscriptionBuiltinTopicData* r_data)
         {
             std::unique_lock<std::mutex> lock(mutex);
             if (nullptr != r_data)
             {
-                content_filter_property = r_data->content_filter();
+                content_filter_property = r_data->content_filter;
             }
             if (Iterations::NONE == iteration && ReaderDiscoveryStatus::DISCOVERED_READER == reason)
             {
@@ -855,12 +855,12 @@ TEST_P(RTPSDiscovery, ContentFilterRegistrationWithoutCFPButUpdate)
         [&mutex, &cv, &iteration, &content_filter_property](
             ReaderDiscoveryStatus reason,
             const GUID_t&,
-            const ReaderProxyData* r_data)
+            const SubscriptionBuiltinTopicData* r_data)
         {
             std::unique_lock<std::mutex> lock(mutex);
             if (nullptr != r_data)
             {
-                content_filter_property = r_data->content_filter();
+                content_filter_property = r_data->content_filter;
             }
             if (Iterations::NONE == iteration && ReaderDiscoveryStatus::DISCOVERED_READER == reason)
             {

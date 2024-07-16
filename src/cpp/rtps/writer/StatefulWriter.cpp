@@ -24,6 +24,7 @@
 #include <vector>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/builtin/data/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
@@ -35,6 +36,7 @@
 #include <fastdds/rtps/writer/WriterListener.hpp>
 
 #include <rtps/builtin/BuiltinProtocols.h>
+#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/DataSharing/DataSharingNotifier.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
@@ -992,7 +994,9 @@ bool StatefulWriter::matched_reader_add_edp(
             guard_locator_selector_general.unlock();
             guard.unlock();
 
-            listener_->on_reader_discovery(this, ReaderDiscoveryStatus::CHANGED_QOS_READER, rdata.guid(), &rdata);
+            SubscriptionBuiltinTopicData info;
+            from_proxy_to_builtin(rdata, info);
+            listener_->on_reader_discovery(this, ReaderDiscoveryStatus::CHANGED_QOS_READER, rdata.guid(), &info);
         }
 
 #ifdef FASTDDS_STATISTICS
@@ -1031,7 +1035,7 @@ bool StatefulWriter::matched_reader_add_edp(
     }
 
     // Add info of new datareader.
-    rp->start(rdata, is_datasharing_compatible_with(rdata));
+    rp->start(rdata, is_datasharing_compatible_with(rdata.m_qos.data_sharing));
     filter_remote_locators(*rp->general_locator_selector_entry(),
             m_att.external_unicast_locators, m_att.ignore_non_matching_locators);
     filter_remote_locators(*rp->async_locator_selector_entry(),
@@ -1073,7 +1077,9 @@ bool StatefulWriter::matched_reader_add_edp(
             guard_locator_selector_general.unlock();
             guard.unlock();
 
-            listener_->on_reader_discovery(this, ReaderDiscoveryStatus::DISCOVERED_READER, rdata.guid(), &rdata);
+            SubscriptionBuiltinTopicData info;
+            from_proxy_to_builtin(rdata, info);
+            listener_->on_reader_discovery(this, ReaderDiscoveryStatus::DISCOVERED_READER, rdata.guid(), &info);
         }
 
 #ifdef FASTDDS_STATISTICS
@@ -1181,7 +1187,9 @@ bool StatefulWriter::matched_reader_add_edp(
         guard_locator_selector_general.unlock();
         guard.unlock();
 
-        listener_->on_reader_discovery(this, ReaderDiscoveryStatus::DISCOVERED_READER, rdata.guid(), &rdata);
+        SubscriptionBuiltinTopicData info;
+        from_proxy_to_builtin(rdata, info);
+        listener_->on_reader_discovery(this, ReaderDiscoveryStatus::DISCOVERED_READER, rdata.guid(), &info);
     }
 
 #ifdef FASTDDS_STATISTICS

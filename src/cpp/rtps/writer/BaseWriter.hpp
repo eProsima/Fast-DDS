@@ -305,7 +305,7 @@ public:
     bool is_datasharing_compatible() const;
 
     bool is_datasharing_compatible_with(
-            const ReaderProxyData& rdata) const;
+            const dds::DataSharingQosPolicy& qos) const;
 
     /**
      * Get Min Seq Num in History.

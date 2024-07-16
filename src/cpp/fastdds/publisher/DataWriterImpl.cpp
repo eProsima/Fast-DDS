@@ -1367,7 +1367,7 @@ void DataWriterImpl::InnerDataWriterListener::on_reader_discovery(
         fastdds::rtps::RTPSWriter* writer,
         fastdds::rtps::ReaderDiscoveryStatus reason,
         const fastdds::rtps::GUID_t& reader_guid,
-        const fastdds::rtps::ReaderProxyData* reader_info)
+        const fastdds::rtps::SubscriptionBuiltinTopicData* reader_info)
 {
     if (!fastdds::rtps::RTPSDomainImpl::should_intraprocess_between(writer->getGuid(), reader_guid))
     {
@@ -2233,13 +2233,13 @@ void DataWriterImpl::remove_reader_filter(
 
 void DataWriterImpl::process_reader_filter_info(
         const fastdds::rtps::GUID_t& reader_guid,
-        const fastdds::rtps::ReaderProxyData& reader_info)
+        const fastdds::rtps::SubscriptionBuiltinTopicData& reader_info)
 {
     if (reader_filters_ &&
-            !writer_->is_datasharing_compatible_with(reader_info) &&
-            reader_info.remote_locators().multicast.empty())
+            !writer_->is_datasharing_compatible_with(reader_info.data_sharing) &&
+            reader_info.remote_locators.multicast.empty())
     {
-        reader_filters_->process_reader_filter_info(reader_guid, reader_info.content_filter(),
+        reader_filters_->process_reader_filter_info(reader_guid, reader_info.content_filter,
                 publisher_->get_participant_impl(), topic_);
     }
 }
