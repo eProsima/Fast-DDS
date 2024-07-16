@@ -6,7 +6,7 @@ on:
     - cron: '0 1 * * *'
 
 jobs:
-  nightly-ubuntu-ci-hotfix-setup-python-venv:
+  nightly-ubuntu-ci-test-ci-ubuntu24:
     strategy:
       fail-fast: false
       matrix:
@@ -15,12 +15,12 @@ jobs:
         security:
           - true
           - false
-    uses: eProsima/Fast-DDS/.github/workflows/reusable-ubuntu-ci.yml@hotfix/setup-python-venv
+    uses: eProsima/Fast-DDS/.github/workflows/reusable-ubuntu-ci.yml@test/ci/ubuntu24
     with:
       os-image: ${{ matrix.os-image }}
       label: '${{ matrix.os-image }}-nightly-sec-${{ matrix.security }}-ubuntu-ci-master'
       ctest-args: "-LE xfail"
-      fastdds-branch: 'hotfix/setup-python-venv'
+      fastdds-branch: 'test/ci/ubuntu24'
       security: ${{ matrix.security }}
       run-build: true
       run-tests: true
