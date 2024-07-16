@@ -57,51 +57,51 @@ jobs:
     steps:
       - name: Add ci-pending label if PR
         if: ${{ github.event_name == 'pull_request' }}
-        uses: eProsima/eProsima-CI/external/add_labels@v0
+        uses: eProsima/eProsima-CI/external/add_labels@hotfix/setup-python-venv
         with:
           labels: ci-pending
           number: ${{ github.event.number }}
           repo: eProsima/Fast-DDS
 
       - name: Sync eProsima/Fast-DDS repository
-        uses: eProsima/eProsima-CI/external/checkout@v0
+        uses: eProsima/eProsima-CI/external/checkout@hotfix/setup-python-venv
         with:
           path: src/fastdds
           ref: ${{ inputs.fastdds_ref }}
 
       - name: Get minimum supported version of CMake
-        uses: eProsima/eProsima-CI/external/get-cmake@v0
+        uses: eProsima/eProsima-CI/external/get-cmake@hotfix/setup-python-venv
         with:
           cmakeVersion: '3.22.6'
 
       - name: Install apt packages
-        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@hotfix/setup-python-venv
         with:
           packages: curl grep libasio-dev libtinyxml2-dev python3 python3-pip software-properties-common wget
 
       - name: Install colcon
-        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@hotfix/setup-python-venv
 
       - name: Install Python dependencies
-        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@hotfix/setup-python-venv
         with:
           packages: vcstool xmlschema
 
       - name: Setup CCache
-        uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+        uses: eProsima/eProsima-CI/external/setup-ccache-action@hotfix/setup-python-venv
         if: ${{ !always() }}
         with:
           api_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Fetch Fast DDS dependencies
-        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@hotfix/setup-python-venv
         with:
           vcs_repos_file: ${{ github.workspace }}/src/fastdds/fastdds.repos
           destination_workspace: src
           skip_existing: 'true'
 
       - name: Fetch Fast DDS CI dependencies
-        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@hotfix/setup-python-venv
         with:
           vcs_repos_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/asan.repos
           destination_workspace: src
@@ -114,7 +114,7 @@ jobs:
 
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        uses: eProsima/eProsima-CI/multiplatform/colcon_build@hotfix/setup-python-venv
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/asan.meta
           colcon_build_args: ${{ inputs.colcon_build_args }}
@@ -125,7 +125,7 @@ jobs:
           workspace_dependencies: ''
 
       - name: Upload build artifacts
-        uses: eProsima/eProsima-CI/external/upload-artifact@v0
+        uses: eProsima/eProsima-CI/external/upload-artifact@hotfix/setup-python-venv
         with:
           name: build_artifacts_fastdds_asan_${{ inputs.label }}
           path: ${{ github.workspace }}
@@ -135,26 +135,26 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Download build artifacts
-        uses: eProsima/eProsima-CI/external/download-artifact@v0
+        uses: eProsima/eProsima-CI/external/download-artifact@hotfix/setup-python-venv
         with:
           name: build_artifacts_fastdds_asan_${{ inputs.label }}
           path: ${{ github.workspace }}
 
       - name: Get minimum supported version of CMake
-        uses: eProsima/eProsima-CI/external/get-cmake@v0
+        uses: eProsima/eProsima-CI/external/get-cmake@hotfix/setup-python-venv
         with:
           cmakeVersion: '3.22.6'
 
       - name: Install apt packages
-        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@hotfix/setup-python-venv
         with:
           packages: curl grep libasio-dev libtinyxml2-dev python3 python3-pip software-properties-common wget
 
       - name: Install colcon
-        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@hotfix/setup-python-venv
 
       - name: Install Python dependencies
-        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@hotfix/setup-python-venv
         with:
           packages: vcstool setuptools gcovr tomark xmltodict jsondiff pandas
 
@@ -171,7 +171,7 @@ jobs:
           sudo echo "ff1e::ffff:efff:1 acme.org.test" | sudo tee -a /etc/hosts
 
       - name: Setup CCache
-        uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+        uses: eProsima/eProsima-CI/external/setup-ccache-action@hotfix/setup-python-venv
         if: ${{ !always() }}
         with:
           api_token: ${{ secrets.GITHUB_TOKEN }}
@@ -183,7 +183,7 @@ jobs:
 
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        uses: eProsima/eProsima-CI/multiplatform/colcon_build@hotfix/setup-python-venv
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/asan.meta
           colcon_build_args: ${{ inputs.colcon_build_args }}
@@ -197,7 +197,7 @@ jobs:
         if: ${{ inputs.run_asan_fastdds == true }}
         id: test
         continue-on-error: true
-        uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
+        uses: eProsima/eProsima-CI/multiplatform/colcon_test@hotfix/setup-python-venv
         with:
           colcon_test_args: ${{ inputs.colcon_test_args }}
           colcon_test_args_default: '--event-handlers=console_direct+ --return-code-on-test-failure'
@@ -228,44 +228,44 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Download build artifacts
-        uses: eProsima/eProsima-CI/external/download-artifact@v0
+        uses: eProsima/eProsima-CI/external/download-artifact@hotfix/setup-python-venv
         with:
           name: build_artifacts_fastdds_asan_${{ inputs.label }}
           path: ${{ github.workspace }}
 
       - name: Get minimum supported version of CMake
-        uses: eProsima/eProsima-CI/external/get-cmake@v0
+        uses: eProsima/eProsima-CI/external/get-cmake@hotfix/setup-python-venv
         with:
           cmakeVersion: '3.22.6'
 
       - name: Install apt packages
-        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@hotfix/setup-python-venv
         with:
           packages: curl grep libasio-dev libtinyxml2-dev python3 python3-pip software-properties-common wget
 
       - name: Install colcon
-        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@hotfix/setup-python-venv
 
       - name: Install Python dependencies
-        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@hotfix/setup-python-venv
         with:
           packages: vcstool setuptools gcovr tomark xmltodict jsondiff pandas
 
       - name: Setup CCache
-        uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+        uses: eProsima/eProsima-CI/external/setup-ccache-action@hotfix/setup-python-venv
         if: ${{ !always() }}
         with:
           api_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Get Discovery Server branch
         id: get_discovery_server_branch
-        uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
+        uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@hotfix/setup-python-venv
         with:
           remote_repository: eProsima/Discovery-Server
           fallback_branch: ${{ inputs.discovery_server_ref }}
 
       - name: Download Discovery Server repo
-        uses: eProsima/eProsima-CI/external/checkout@v0
+        uses: eProsima/eProsima-CI/external/checkout@hotfix/setup-python-venv
         with:
           repository: eProsima/Discovery-Server
           path: src/discovery-server
@@ -278,7 +278,7 @@ jobs:
 
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        uses: eProsima/eProsima-CI/multiplatform/colcon_build@hotfix/setup-python-venv
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/asan.meta
           colcon_build_args: ${{ inputs.colcon_build_args }}
@@ -292,7 +292,7 @@ jobs:
         if: ${{ inputs.run_asan_fastdds == true }}
         id: test
         continue-on-error: true
-        uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
+        uses: eProsima/eProsima-CI/multiplatform/colcon_test@hotfix/setup-python-venv
         with:
           colcon_test_args: ${{ inputs.colcon_test_args }}
           colcon_test_args_default: '--event-handlers=console_direct+ --return-code-on-test-failure'
@@ -329,44 +329,44 @@ jobs:
     steps:
       - name: Add ci-pending label if PR
         if: ${{ github.event_name == 'pull_request' }}
-        uses: eProsima/eProsima-CI/external/add_labels@v0
+        uses: eProsima/eProsima-CI/external/add_labels@hotfix/setup-python-venv
         with:
           labels: ci-pending
           number: ${{ github.event.number }}
           repo: eProsima/Fast-DDS
 
       - name: Sync eProsima/Fast-DDS repository
-        uses: eProsima/eProsima-CI/external/checkout@v0
+        uses: eProsima/eProsima-CI/external/checkout@hotfix/setup-python-venv
         with:
           path: src/fastdds
           ref: ${{ inputs.fastdds_ref }}
 
       - name: Get minimum supported version of CMake
-        uses: eProsima/eProsima-CI/external/get-cmake@v0
+        uses: eProsima/eProsima-CI/external/get-cmake@hotfix/setup-python-venv
         with:
           cmakeVersion: '3.22.6'
 
       - name: Install apt packages
-        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@hotfix/setup-python-venv
         with:
           packages: curl grep libasio-dev libtinyxml2-dev python3 python3-pip software-properties-common wget
 
       - name: Install colcon
-        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@hotfix/setup-python-venv
 
       - name: Install Python dependencies
-        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@hotfix/setup-python-venv
         with:
           packages: vcstool setuptools gcovr tomark xmltodict jsondiff pandas
 
       - name: Setup CCache
-        uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+        uses: eProsima/eProsima-CI/external/setup-ccache-action@hotfix/setup-python-venv
         if: ${{ !always() }}
         with:
           api_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Fetch Fast DDS dependencies
-        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@hotfix/setup-python-venv
         with:
           vcs_repos_file: ${{ github.workspace }}/src/fastdds/fastdds.repos
           destination_workspace: src
@@ -385,7 +385,7 @@ jobs:
           sudo echo "ff1e::ffff:efff:1 acme.org.test" | sudo tee -a /etc/hosts
 
       - name: Fetch Fast DDS CI dependencies
-        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@hotfix/setup-python-venv
         with:
           vcs_repos_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.repos
           destination_workspace: src
@@ -398,7 +398,7 @@ jobs:
 
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        uses: eProsima/eProsima-CI/multiplatform/colcon_build@hotfix/setup-python-venv
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/tsan.meta
           colcon_build_args: ${{ inputs.colcon_build_args }}
@@ -412,7 +412,7 @@ jobs:
         if: ${{ inputs.run_asan_fastdds == true }}
         id: test
         continue-on-error: true
-        uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
+        uses: eProsima/eProsima-CI/multiplatform/colcon_test@hotfix/setup-python-venv
         with:
           colcon_test_args: ${{ inputs.colcon_test_args }}
           colcon_test_args_default: '--event-handlers=console_direct+ --return-code-on-test-failure'

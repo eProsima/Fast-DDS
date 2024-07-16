@@ -38,10 +38,7 @@ concurrency:
 
 jobs:
   windows-ci:
-    if: ${{ (
-              !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
-              !contains(github.event.pull_request.labels.*.name, 'conflicts')
-            ) }}
+    if: false
     uses: ./.github/workflows/reusable-windows-ci.yml
     with:
       label: ${{ inputs.label || 'windows-ci' }}

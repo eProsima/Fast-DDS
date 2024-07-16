@@ -18,7 +18,7 @@ jobs:
     steps:
     - name: Mirror action step
       id: mirror
-      uses: eProsima/eProsima-CI/external/mirror-branch-action@v0
+      uses: eProsima/eProsima-CI/external/mirror-branch-action@hotfix/setup-python-venv
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         source: 'master'
