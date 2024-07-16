@@ -1630,8 +1630,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerBitsetHelper)
     DynamicData::_ref_type union_data = data->loan_value(data->get_member_id_by_name(var_union_bitset_name));
     ASSERT_TRUE(union_data);
 
-    eprosima::fastdds::rtps::octet octet_value = 5;
-    eprosima::fastdds::rtps::octet test_octet_value = 0;
+    uint8_t uint8_value = 5;
+    uint8_t test_uint8_value = 0;
     bool bool_value = true;
     bool test_bool_value = false;
     uint16_t ushort_value = 1000;
@@ -1640,10 +1640,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerBitsetHelper)
     int16_t test_short_value = 0;
     DynamicData::_ref_type bitset_data = union_data->loan_value(union_data->get_member_id_by_name(var_union_member_x));
     ASSERT_TRUE(bitset_data);
-    EXPECT_EQ(bitset_data->set_byte_value(bitset_data->get_member_id_by_name(bitfield_a), octet_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_byte_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
+    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(bitfield_a), uint8_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_uint8_value(test_uint8_value, bitset_data->get_member_id_by_name(bitfield_a)),
             RETCODE_OK);
-    EXPECT_EQ(octet_value, test_octet_value);
+    EXPECT_EQ(uint8_value, test_uint8_value);
     EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(bitfield_b), bool_value), RETCODE_OK);
     EXPECT_EQ(bitset_data->get_boolean_value(test_bool_value, bitset_data->get_member_id_by_name(
                 bitfield_b)), RETCODE_OK);
@@ -1665,7 +1665,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerBitsetHelper)
         TypeSupport static_pubsubType {new UnionInnerBitsetHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_my_bitset().x().a, test_octet_value);
+        EXPECT_EQ(struct_data.var_union_my_bitset().x().a, test_uint8_value);
         EXPECT_EQ(struct_data.var_union_my_bitset().x().b, test_bool_value);
         EXPECT_EQ(struct_data.var_union_my_bitset().x().c, test_ushort_value);
         EXPECT_EQ(struct_data.var_union_my_bitset().x().d, test_short_value);

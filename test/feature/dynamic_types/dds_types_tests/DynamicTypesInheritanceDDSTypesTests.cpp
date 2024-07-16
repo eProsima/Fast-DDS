@@ -861,12 +861,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetsChildInheritanceStruct)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    eprosima::fastdds::rtps::octet octet_value {5};
+    uint8_t uint8_value {5};
     bool bool_value {true};
     uint16_t ushort_value {1000};
     int16_t short_value {2000};
     uint32_t long_value {111};
-    eprosima::fastdds::rtps::octet test_octet_value;
+    uint8_t test_uint8_value;
     bool test_bool_value;
     uint16_t test_ushort_value;
     int16_t test_short_value;
@@ -875,14 +875,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetsChildInheritanceStruct)
     // Set values.
     DynamicData::_ref_type bitset_data {data->loan_value(data->get_member_id_by_name(var_InnerBitsetHelperChild))};
     ASSERT_TRUE(bitset_data);
-    EXPECT_EQ(bitset_data->set_byte_value(bitset_data->get_member_id_by_name(bitfield_a), octet_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(bitfield_a), uint8_value), RETCODE_OK);
     EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(bitfield_b), bool_value), RETCODE_OK);
     EXPECT_EQ(bitset_data->set_uint16_value(bitset_data->get_member_id_by_name(bitfield_c), ushort_value), RETCODE_OK);
     EXPECT_EQ(bitset_data->set_int16_value(bitset_data->get_member_id_by_name(bitfield_d), short_value), RETCODE_OK);
     EXPECT_EQ(bitset_data->set_uint32_value(bitset_data->get_member_id_by_name(child_w), long_value), RETCODE_OK);
     EXPECT_EQ(data->return_loaned_value(bitset_data), RETCODE_OK);
     bitset_data = data->loan_value(data->get_member_id_by_name(var_InnerBitsetHelperChildChild));
-    EXPECT_EQ(bitset_data->set_byte_value(bitset_data->get_member_id_by_name(bitfield_a), octet_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(bitfield_a), uint8_value), RETCODE_OK);
     EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(bitfield_b), bool_value), RETCODE_OK);
     EXPECT_EQ(bitset_data->set_uint16_value(bitset_data->get_member_id_by_name(bitfield_c), ushort_value), RETCODE_OK);
     EXPECT_EQ(bitset_data->set_int16_value(bitset_data->get_member_id_by_name(bitfield_d), short_value), RETCODE_OK);
@@ -891,7 +891,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetsChildInheritanceStruct)
             RETCODE_OK);
     EXPECT_EQ(data->return_loaned_value(bitset_data), RETCODE_OK);
     bitset_data = data->loan_value(data->get_member_id_by_name(var_BitsetAliasInheritanceBitset));
-    EXPECT_EQ(bitset_data->set_byte_value(bitset_data->get_member_id_by_name(bitfield_a), octet_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(bitfield_a), uint8_value), RETCODE_OK);
     EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(bitfield_b), bool_value), RETCODE_OK);
     EXPECT_EQ(bitset_data->set_uint16_value(bitset_data->get_member_id_by_name(bitfield_c), ushort_value), RETCODE_OK);
     EXPECT_EQ(bitset_data->set_int16_value(bitset_data->get_member_id_by_name(bitfield_d), short_value), RETCODE_OK);
@@ -902,9 +902,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetsChildInheritanceStruct)
     // Check values
     bitset_data = data->loan_value(data->get_member_id_by_name(var_InnerBitsetHelperChild));
     ASSERT_TRUE(bitset_data);
-    EXPECT_EQ(bitset_data->get_byte_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
+    EXPECT_EQ(bitset_data->get_uint8_value(test_uint8_value, bitset_data->get_member_id_by_name(bitfield_a)),
             RETCODE_OK);
-    EXPECT_EQ(octet_value, test_octet_value);
+    EXPECT_EQ(uint8_value, test_uint8_value);
     EXPECT_EQ(bitset_data->get_boolean_value(test_bool_value, bitset_data->get_member_id_by_name(
                 bitfield_b)), RETCODE_OK);
     EXPECT_EQ(bool_value, test_bool_value);
@@ -920,9 +920,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetsChildInheritanceStruct)
     EXPECT_EQ(data->return_loaned_value(bitset_data), RETCODE_OK);
     bitset_data = data->loan_value(data->get_member_id_by_name(var_InnerBitsetHelperChildChild));
     ASSERT_TRUE(bitset_data);
-    EXPECT_EQ(bitset_data->get_byte_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
+    EXPECT_EQ(bitset_data->get_uint8_value(test_uint8_value, bitset_data->get_member_id_by_name(bitfield_a)),
             RETCODE_OK);
-    EXPECT_EQ(octet_value, test_octet_value);
+    EXPECT_EQ(uint8_value, test_uint8_value);
     EXPECT_EQ(bitset_data->get_boolean_value(test_bool_value, bitset_data->get_member_id_by_name(
                 bitfield_b)), RETCODE_OK);
     EXPECT_EQ(bool_value, test_bool_value);
@@ -941,9 +941,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetsChildInheritanceStruct)
     EXPECT_EQ(data->return_loaned_value(bitset_data), RETCODE_OK);
     bitset_data = data->loan_value(data->get_member_id_by_name(var_BitsetAliasInheritanceBitset));
     ASSERT_TRUE(bitset_data);
-    EXPECT_EQ(bitset_data->get_byte_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
+    EXPECT_EQ(bitset_data->get_uint8_value(test_uint8_value, bitset_data->get_member_id_by_name(bitfield_a)),
             RETCODE_OK);
-    EXPECT_EQ(octet_value, test_octet_value);
+    EXPECT_EQ(uint8_value, test_uint8_value);
     EXPECT_EQ(bitset_data->get_boolean_value(test_bool_value, bitset_data->get_member_id_by_name(
                 bitfield_b)), RETCODE_OK);
     EXPECT_EQ(bool_value, test_bool_value);
@@ -964,18 +964,18 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetsChildInheritanceStruct)
         TypeSupport static_pubsubType {new BitsetsChildInheritanceStructPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
-        EXPECT_EQ(octet_value, struct_data.var_InnerBitsetHelperChild().a);
+        EXPECT_EQ(uint8_value, struct_data.var_InnerBitsetHelperChild().a);
         EXPECT_EQ(bool_value, struct_data.var_InnerBitsetHelperChild().b);
         EXPECT_EQ(ushort_value, struct_data.var_InnerBitsetHelperChild().c);
         EXPECT_EQ(short_value, struct_data.var_InnerBitsetHelperChild().d);
         EXPECT_EQ(long_value, struct_data.var_InnerBitsetHelperChild().child_w);
-        EXPECT_EQ(octet_value, struct_data.var_InnerBitsetHelperChildChild().a);
+        EXPECT_EQ(uint8_value, struct_data.var_InnerBitsetHelperChildChild().a);
         EXPECT_EQ(bool_value, struct_data.var_InnerBitsetHelperChildChild().b);
         EXPECT_EQ(ushort_value, struct_data.var_InnerBitsetHelperChildChild().c);
         EXPECT_EQ(short_value, struct_data.var_InnerBitsetHelperChildChild().d);
         EXPECT_EQ(long_value, struct_data.var_InnerBitsetHelperChildChild().child_w);
         EXPECT_EQ(ushort_value, struct_data.var_InnerBitsetHelperChildChild().childchild_z);
-        EXPECT_EQ(octet_value, struct_data.var_BitsetAliasInheritanceBitset().a);
+        EXPECT_EQ(uint8_value, struct_data.var_BitsetAliasInheritanceBitset().a);
         EXPECT_EQ(bool_value, struct_data.var_BitsetAliasInheritanceBitset().b);
         EXPECT_EQ(ushort_value, struct_data.var_BitsetAliasInheritanceBitset().c);
         EXPECT_EQ(short_value, struct_data.var_BitsetAliasInheritanceBitset().d);

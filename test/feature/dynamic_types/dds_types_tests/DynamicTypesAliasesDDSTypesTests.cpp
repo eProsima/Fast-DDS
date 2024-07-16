@@ -1234,8 +1234,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasBitset)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    eprosima::fastdds::rtps::octet octet_value = 5;
-    eprosima::fastdds::rtps::octet test_octet_value = 0;
+    uint8_t uint8_value = 5;
+    uint8_t test_uint8_value = 0;
     bool bool_value = true;
     bool test_bool_value = false;
     uint16_t ushort_value = 1000;
@@ -1244,10 +1244,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasBitset)
     int16_t test_short_value = 0;
     DynamicData::_ref_type bitset_data = data->loan_value(data->get_member_id_by_name(struct_member_name));
     ASSERT_TRUE(bitset_data);
-    EXPECT_EQ(bitset_data->set_byte_value(bitset_data->get_member_id_by_name(bitfield_a), octet_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_byte_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
+    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(bitfield_a), uint8_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_uint8_value(test_uint8_value, bitset_data->get_member_id_by_name(bitfield_a)),
             RETCODE_OK);
-    EXPECT_EQ(octet_value, test_octet_value);
+    EXPECT_EQ(uint8_value, test_uint8_value);
     EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(bitfield_b), bool_value), RETCODE_OK);
     EXPECT_EQ(bitset_data->get_boolean_value(test_bool_value, bitset_data->get_member_id_by_name(
                 bitfield_b)), RETCODE_OK);
@@ -1267,7 +1267,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasBitset)
         AliasBitset alias_data;
         TypeSupport static_pubsubType {new AliasBitsetPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
-        EXPECT_EQ(alias_data.value().a, test_octet_value);
+        EXPECT_EQ(alias_data.value().a, test_uint8_value);
         EXPECT_EQ(alias_data.value().b, test_bool_value);
         EXPECT_EQ(alias_data.value().c, test_ushort_value);
         EXPECT_EQ(alias_data.value().d, test_short_value);

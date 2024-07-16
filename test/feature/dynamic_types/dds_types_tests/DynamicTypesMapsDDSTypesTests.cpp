@@ -2349,12 +2349,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitsetHelper)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<int16_t, std::tuple<eprosima::fastdds::rtps::octet, bool, uint16_t, int16_t>> value {
-        {std::int16_t(-100), {eprosima::fastdds::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
-        {std::int16_t(50), {eprosima::fastdds::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
-        {std::int16_t(600), {eprosima::fastdds::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
+    const std::unordered_map<int16_t, std::tuple<uint8_t, bool, uint16_t, int16_t>> value {
+        {std::int16_t(-100), {std::uint8_t(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {std::int16_t(50), {std::uint8_t(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {std::int16_t(600), {std::uint8_t(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
-    eprosima::fastdds::rtps::octet test_value1;
+    uint8_t test_value1;
     bool test_value2;
     uint16_t test_value3;
     int16_t test_value4;
@@ -2366,7 +2366,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(std::to_string(map_element.first)));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->set_byte_value(inner_bitset->get_member_id_by_name(bitfield_a),
+                inner_bitset->set_uint8_value(inner_bitset->get_member_id_by_name(bitfield_a),
                 std::get<0>(map_element.second)));
         EXPECT_EQ(RETCODE_OK,
                 inner_bitset->set_boolean_value(inner_bitset->get_member_id_by_name(bitfield_b),
@@ -2386,7 +2386,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(std::to_string(map_element.first)));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->get_byte_value(test_value1,
+                inner_bitset->get_uint8_value(test_value1,
                 inner_bitset->get_member_id_by_name(bitfield_a)));
         EXPECT_EQ(std::get<0>(map_element.second), test_value1);
         EXPECT_EQ(RETCODE_OK,
@@ -4244,12 +4244,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitsetHelper)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<uint16_t, std::tuple<eprosima::fastdds::rtps::octet, bool, uint16_t, int16_t>> value {
-        {std::uint16_t(100), {eprosima::fastdds::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
-        {std::uint16_t(50), {eprosima::fastdds::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
-        {std::uint16_t(600), {eprosima::fastdds::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
+    const std::unordered_map<uint16_t, std::tuple<uint8_t, bool, uint16_t, int16_t>> value {
+        {std::uint16_t(100), {std::uint8_t(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {std::uint16_t(50), {std::uint8_t(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {std::uint16_t(600), {std::uint8_t(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
-    eprosima::fastdds::rtps::octet test_value1;
+    uint8_t test_value1;
     bool test_value2;
     uint16_t test_value3;
     int16_t test_value4;
@@ -4261,7 +4261,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(std::to_string(map_element.first)));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->set_byte_value(inner_bitset->get_member_id_by_name(bitfield_a),
+                inner_bitset->set_uint8_value(inner_bitset->get_member_id_by_name(bitfield_a),
                 std::get<0>(map_element.second)));
         EXPECT_EQ(RETCODE_OK,
                 inner_bitset->set_boolean_value(inner_bitset->get_member_id_by_name(bitfield_b),
@@ -4281,7 +4281,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(std::to_string(map_element.first)));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->get_byte_value(test_value1,
+                inner_bitset->get_uint8_value(test_value1,
                 inner_bitset->get_member_id_by_name(bitfield_a)));
         EXPECT_EQ(std::get<0>(map_element.second), test_value1);
         EXPECT_EQ(RETCODE_OK,
@@ -6138,12 +6138,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitsetHelper)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<int32_t, std::tuple<eprosima::fastdds::rtps::octet, bool, uint16_t, int16_t>> value {
-        {-100, {eprosima::fastdds::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
-        {50, {eprosima::fastdds::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
-        {600, {eprosima::fastdds::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
+    const std::unordered_map<int32_t, std::tuple<uint8_t, bool, uint16_t, int16_t>> value {
+        {-100, {std::uint8_t(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {50, {std::uint8_t(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {600, {std::uint8_t(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
-    eprosima::fastdds::rtps::octet test_value1;
+    uint8_t test_value1;
     bool test_value2;
     uint16_t test_value3;
     int16_t test_value4;
@@ -6155,7 +6155,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(std::to_string(map_element.first)));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->set_byte_value(inner_bitset->get_member_id_by_name(bitfield_a),
+                inner_bitset->set_uint8_value(inner_bitset->get_member_id_by_name(bitfield_a),
                 std::get<0>(map_element.second)));
         EXPECT_EQ(RETCODE_OK,
                 inner_bitset->set_boolean_value(inner_bitset->get_member_id_by_name(bitfield_b),
@@ -6175,7 +6175,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(std::to_string(map_element.first)));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->get_byte_value(test_value1,
+                inner_bitset->get_uint8_value(test_value1,
                 inner_bitset->get_member_id_by_name(bitfield_a)));
         EXPECT_EQ(std::get<0>(map_element.second), test_value1);
         EXPECT_EQ(RETCODE_OK,
@@ -8032,12 +8032,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitsetHelper)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<uint32_t, std::tuple<eprosima::fastdds::rtps::octet, bool, uint16_t, int16_t>> value {
-        {100u, {eprosima::fastdds::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
-        {50u, {eprosima::fastdds::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
-        {600u, {eprosima::fastdds::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
+    const std::unordered_map<uint32_t, std::tuple<uint8_t, bool, uint16_t, int16_t>> value {
+        {100u, {std::uint8_t(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {50u, {std::uint8_t(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {600u, {std::uint8_t(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
-    eprosima::fastdds::rtps::octet test_value1;
+    uint8_t test_value1;
     bool test_value2;
     uint16_t test_value3;
     int16_t test_value4;
@@ -8049,7 +8049,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(std::to_string(map_element.first)));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->set_byte_value(inner_bitset->get_member_id_by_name(bitfield_a),
+                inner_bitset->set_uint8_value(inner_bitset->get_member_id_by_name(bitfield_a),
                 std::get<0>(map_element.second)));
         EXPECT_EQ(RETCODE_OK,
                 inner_bitset->set_boolean_value(inner_bitset->get_member_id_by_name(bitfield_b),
@@ -8069,7 +8069,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(std::to_string(map_element.first)));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->get_byte_value(test_value1,
+                inner_bitset->get_uint8_value(test_value1,
                 inner_bitset->get_member_id_by_name(bitfield_a)));
         EXPECT_EQ(std::get<0>(map_element.second), test_value1);
         EXPECT_EQ(RETCODE_OK,
@@ -9926,12 +9926,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitsetHelper)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<int64_t, std::tuple<eprosima::fastdds::rtps::octet, bool, uint16_t, int16_t>> value {
-        {-100, {eprosima::fastdds::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
-        {50, {eprosima::fastdds::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
-        {600, {eprosima::fastdds::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
+    const std::unordered_map<int64_t, std::tuple<uint8_t, bool, uint16_t, int16_t>> value {
+        {-100, {std::uint8_t(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {50, {std::uint8_t(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {600, {std::uint8_t(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
-    eprosima::fastdds::rtps::octet test_value1;
+    uint8_t test_value1;
     bool test_value2;
     uint16_t test_value3;
     int16_t test_value4;
@@ -9943,7 +9943,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(std::to_string(map_element.first)));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->set_byte_value(inner_bitset->get_member_id_by_name(bitfield_a),
+                inner_bitset->set_uint8_value(inner_bitset->get_member_id_by_name(bitfield_a),
                 std::get<0>(map_element.second)));
         EXPECT_EQ(RETCODE_OK,
                 inner_bitset->set_boolean_value(inner_bitset->get_member_id_by_name(bitfield_b),
@@ -9963,7 +9963,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(std::to_string(map_element.first)));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->get_byte_value(test_value1,
+                inner_bitset->get_uint8_value(test_value1,
                 inner_bitset->get_member_id_by_name(bitfield_a)));
         EXPECT_EQ(std::get<0>(map_element.second), test_value1);
         EXPECT_EQ(RETCODE_OK,
@@ -11820,12 +11820,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitsetHelper)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<uint64_t, std::tuple<eprosima::fastdds::rtps::octet, bool, uint16_t, int16_t>> value {
-        {100u, {eprosima::fastdds::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
-        {50u, {eprosima::fastdds::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
-        {600u, {eprosima::fastdds::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
+    const std::unordered_map<uint64_t, std::tuple<uint8_t, bool, uint16_t, int16_t>> value {
+        {100u, {std::uint8_t(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {50u, {std::uint8_t(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {600u, {std::uint8_t(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
-    eprosima::fastdds::rtps::octet test_value1;
+    uint8_t test_value1;
     bool test_value2;
     uint16_t test_value3;
     int16_t test_value4;
@@ -11837,7 +11837,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(std::to_string(map_element.first)));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->set_byte_value(inner_bitset->get_member_id_by_name(bitfield_a),
+                inner_bitset->set_uint8_value(inner_bitset->get_member_id_by_name(bitfield_a),
                 std::get<0>(map_element.second)));
         EXPECT_EQ(RETCODE_OK,
                 inner_bitset->set_boolean_value(inner_bitset->get_member_id_by_name(bitfield_b),
@@ -11857,7 +11857,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(std::to_string(map_element.first)));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->get_byte_value(test_value1,
+                inner_bitset->get_uint8_value(test_value1,
                 inner_bitset->get_member_id_by_name(bitfield_a)));
         EXPECT_EQ(std::get<0>(map_element.second), test_value1);
         EXPECT_EQ(RETCODE_OK,
@@ -13718,12 +13718,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitsetHelper)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<std::string, std::tuple<eprosima::fastdds::rtps::octet, bool, uint16_t, int16_t>> value {
-        {"we", {eprosima::fastdds::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
-        {"are", {eprosima::fastdds::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
-        {"testing", {eprosima::fastdds::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
+    const std::unordered_map<std::string, std::tuple<uint8_t, bool, uint16_t, int16_t>> value {
+        {"we", {std::uint8_t(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {"are", {std::uint8_t(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {"testing", {std::uint8_t(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
-    eprosima::fastdds::rtps::octet test_value1;
+    uint8_t test_value1;
     bool test_value2;
     uint16_t test_value3;
     int16_t test_value4;
@@ -13735,7 +13735,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(map_element.first));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->set_byte_value(inner_bitset->get_member_id_by_name(bitfield_a),
+                inner_bitset->set_uint8_value(inner_bitset->get_member_id_by_name(bitfield_a),
                 std::get<0>(map_element.second)));
         EXPECT_EQ(RETCODE_OK,
                 inner_bitset->set_boolean_value(inner_bitset->get_member_id_by_name(bitfield_b),
@@ -13755,7 +13755,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(map_element.first));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->get_byte_value(test_value1,
+                inner_bitset->get_uint8_value(test_value1,
                 inner_bitset->get_member_id_by_name(bitfield_a)));
         EXPECT_EQ(std::get<0>(map_element.second), test_value1);
         EXPECT_EQ(RETCODE_OK,
@@ -15614,12 +15614,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<std::string, std::tuple<eprosima::fastdds::rtps::octet, bool, uint16_t, int16_t>> value {
-        {"we", {eprosima::fastdds::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
-        {"are", {eprosima::fastdds::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
-        {"testing", {eprosima::fastdds::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
+    const std::unordered_map<std::string, std::tuple<uint8_t, bool, uint16_t, int16_t>> value {
+        {"we", {std::uint8_t(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {"are", {std::uint8_t(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {"testing", {std::uint8_t(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
-    eprosima::fastdds::rtps::octet test_value1;
+    uint8_t test_value1;
     bool test_value2;
     uint16_t test_value3;
     int16_t test_value4;
@@ -15632,7 +15632,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(map_element.first));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->set_byte_value(inner_bitset->get_member_id_by_name(bitfield_a),
+                inner_bitset->set_uint8_value(inner_bitset->get_member_id_by_name(bitfield_a),
                 std::get<0>(map_element.second)));
         EXPECT_EQ(RETCODE_OK,
                 inner_bitset->set_boolean_value(inner_bitset->get_member_id_by_name(bitfield_b),
@@ -15652,7 +15652,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(map_element.first));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->get_byte_value(test_value1,
+                inner_bitset->get_uint8_value(test_value1,
                 inner_bitset->get_member_id_by_name(bitfield_a)));
         EXPECT_EQ(std::get<0>(map_element.second), test_value1);
         EXPECT_EQ(RETCODE_OK,

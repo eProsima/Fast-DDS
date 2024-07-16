@@ -1237,9 +1237,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceBitset)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    eprosima::fastdds::rtps::octet first_octet_value = 5;
-    eprosima::fastdds::rtps::octet second_octet_value = 7;
-    eprosima::fastdds::rtps::octet test_octet_value = 0;
+    uint8_t first_uint8_value = 5;
+    uint8_t second_uint8_value = 7;
+    uint8_t test_uint8_value = 0;
     bool first_bool_value = true;
     bool second_bool_value = false;
     bool test_bool_value = false;
@@ -1253,11 +1253,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceBitset)
     ASSERT_TRUE(seq_data);
     DynamicData::_ref_type bitset_data = seq_data->loan_value(0);
     ASSERT_TRUE(bitset_data);
-    EXPECT_EQ(bitset_data->set_byte_value(bitset_data->get_member_id_by_name(bitfield_a), first_octet_value),
+    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(bitfield_a), first_uint8_value),
             RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_byte_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
+    EXPECT_EQ(bitset_data->get_uint8_value(test_uint8_value, bitset_data->get_member_id_by_name(bitfield_a)),
             RETCODE_OK);
-    EXPECT_EQ(first_octet_value, test_octet_value);
+    EXPECT_EQ(first_uint8_value, test_uint8_value);
     EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(
                 bitfield_b), first_bool_value), RETCODE_OK);
     EXPECT_EQ(bitset_data->get_boolean_value(test_bool_value, bitset_data->get_member_id_by_name(
@@ -1276,11 +1276,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceBitset)
     EXPECT_EQ(seq_data->return_loaned_value(bitset_data), RETCODE_OK);
     bitset_data = seq_data->loan_value(1);
     ASSERT_TRUE(bitset_data);
-    EXPECT_EQ(bitset_data->set_byte_value(bitset_data->get_member_id_by_name(
-                bitfield_a), second_octet_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_byte_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
+    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(
+                bitfield_a), second_uint8_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_uint8_value(test_uint8_value, bitset_data->get_member_id_by_name(bitfield_a)),
             RETCODE_OK);
-    EXPECT_EQ(second_octet_value, test_octet_value);
+    EXPECT_EQ(second_uint8_value, test_uint8_value);
     EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(
                 bitfield_b), second_bool_value), RETCODE_OK);
     EXPECT_EQ(bitset_data->get_boolean_value(test_bool_value, bitset_data->get_member_id_by_name(
@@ -1307,11 +1307,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceBitset)
         seq_data = data->loan_value(data->get_member_id_by_name(var_bitset_seq));
         ASSERT_TRUE(seq_data);
         EXPECT_EQ(struct_data.var_sequence_bitset().size(), seq_data->get_item_count());
-        EXPECT_EQ(struct_data.var_sequence_bitset()[0].a, first_octet_value);
+        EXPECT_EQ(struct_data.var_sequence_bitset()[0].a, first_uint8_value);
         EXPECT_EQ(struct_data.var_sequence_bitset()[0].b, first_bool_value);
         EXPECT_EQ(struct_data.var_sequence_bitset()[0].c, first_ushort_value);
         EXPECT_EQ(struct_data.var_sequence_bitset()[0].d, first_short_value);
-        EXPECT_EQ(struct_data.var_sequence_bitset()[1].a, second_octet_value);
+        EXPECT_EQ(struct_data.var_sequence_bitset()[1].a, second_uint8_value);
         EXPECT_EQ(struct_data.var_sequence_bitset()[1].b, second_bool_value);
         EXPECT_EQ(struct_data.var_sequence_bitset()[1].c, second_ushort_value);
         EXPECT_EQ(struct_data.var_sequence_bitset()[1].d, second_short_value);

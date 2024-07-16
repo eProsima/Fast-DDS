@@ -238,7 +238,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_bitset_helper()
 
     MemberDescriptor::_ref_type bitset_member {traits<MemberDescriptor>::make_shared()};
     bitset_member->name(bitfield_a);
-    bitset_member->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BYTE));
+    bitset_member->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT8));
     bitset_member->id(0);
     bitset_builder->add_member(bitset_member);
     bitset_member = traits<MemberDescriptor>::make_shared();
