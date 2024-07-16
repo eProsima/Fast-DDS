@@ -45,7 +45,7 @@
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
-#include <fastdds/rtps/reader/ReaderDiscoveryInfo.hpp>
+#include <fastdds/rtps/reader/ReaderDiscoveryStatus.hpp>
 #include <fastdds/rtps/RTPSDomain.hpp>
 #include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
 

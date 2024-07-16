@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file ReaderDiscoveryInfo.hpp
+ * @file ReaderDiscoveryStatus.hpp
  */
 
-#ifndef FASTDDS_RTPS_READER__READERDISCOVERYINFO_HPP
-#define FASTDDS_RTPS_READER__READERDISCOVERYINFO_HPP
+#ifndef FASTDDS_RTPS_READER__READERDISCOVERYSTATUS_HPP
+#define FASTDDS_RTPS_READER__READERDISCOVERYSTATUS_HPP
 
 #include <fastdds/fastdds_dll.hpp>
 
@@ -45,4 +45,4 @@ enum class ReaderDiscoveryStatus
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_RTPS_READER__READERDISCOVERYINFO_HPP
+#endif // FASTDDS_RTPS_READER__READERDISCOVERYSTATUS_HPP

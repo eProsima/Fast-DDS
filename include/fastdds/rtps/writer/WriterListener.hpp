@@ -23,7 +23,7 @@
 #include <fastdds/rtps/builtin/data/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/MatchingInfo.hpp>
-#include <fastdds/rtps/reader/ReaderDiscoveryInfo.hpp>
+#include <fastdds/rtps/reader/ReaderDiscoveryStatus.hpp>
 
 namespace eprosima {
 namespace fastdds {

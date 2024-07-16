@@ -26,7 +26,7 @@
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
-#include <fastdds/rtps/reader/ReaderDiscoveryInfo.hpp>
+#include <fastdds/rtps/reader/ReaderDiscoveryStatus.hpp>
 #include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
 
 namespace eprosima {

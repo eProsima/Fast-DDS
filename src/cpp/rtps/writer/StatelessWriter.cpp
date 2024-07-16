@@ -27,7 +27,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/data/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
-#include <fastdds/rtps/reader/ReaderDiscoveryInfo.hpp>
+#include <fastdds/rtps/reader/ReaderDiscoveryStatus.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/rtps/writer/WriterListener.hpp>
 

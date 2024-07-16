@@ -31,7 +31,7 @@
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <rtps/messages/RTPSMessageCreator.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
-#include <fastdds/rtps/reader/ReaderDiscoveryInfo.hpp>
+#include <fastdds/rtps/reader/ReaderDiscoveryStatus.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/rtps/writer/WriterListener.hpp>
 

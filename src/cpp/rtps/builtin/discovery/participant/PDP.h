@@ -32,7 +32,7 @@
 #include <fastdds/rtps/common/WriteParams.hpp>
 #include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
-#include <fastdds/rtps/reader/ReaderDiscoveryInfo.hpp>
+#include <fastdds/rtps/reader/ReaderDiscoveryStatus.hpp>
 #include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
