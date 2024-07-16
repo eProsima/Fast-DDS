@@ -127,7 +127,7 @@ static void set_builtin_transports_from_env_var(
             std::regex non_blocking_regex(R"((non_blocking)=(true|false))");
             std::regex tcp_timeout_regex(R"((tcp_negotiation_timeout)=(\d+))");
 
-            fastdds::rtps::BuiltinTransportsOptions options;
+            BuiltinTransportsOptions options;
 
             try
             {
@@ -464,13 +464,13 @@ bool RTPSParticipantImpl::setup_transports()
         transportDescriptor->lock();
 
         auto socket_descriptor =
-                std::dynamic_pointer_cast<fastdds::rtps::SocketTransportDescriptor>(transportDescriptor);
-        fastdds::rtps::NetmaskFilterKind socket_descriptor_netmask_filter{};
+                std::dynamic_pointer_cast<SocketTransportDescriptor>(transportDescriptor);
+        NetmaskFilterKind socket_descriptor_netmask_filter{};
         if (socket_descriptor != nullptr)
         {
             // Copy original netmask filter value to restore it after registration
             socket_descriptor_netmask_filter = socket_descriptor->netmask_filter;
-            if (!fastdds::rtps::network::netmask_filter::validate_and_transform(socket_descriptor->netmask_filter,
+            if (!network::netmask_filter::validate_and_transform(socket_descriptor->netmask_filter,
                     m_att.netmaskFilter))
             {
                 EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
@@ -495,12 +495,12 @@ bool RTPSParticipantImpl::setup_transports()
         if (transport_registered)
         {
             has_shm_transport_ |=
-                    (dynamic_cast<fastdds::rtps::SharedMemTransportDescriptor*>(transportDescriptor.get()) != nullptr);
+                    (dynamic_cast<SharedMemTransportDescriptor*>(transportDescriptor.get()) != nullptr);
         }
         else
         {
             // SHM transport could be disabled
-            if ((dynamic_cast<fastdds::rtps::SharedMemTransportDescriptor*>(transportDescriptor.get()) != nullptr))
+            if ((dynamic_cast<SharedMemTransportDescriptor*>(transportDescriptor.get()) != nullptr))
             {
                 EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
                         "Unable to Register SHM Transport. SHM Transport is not supported in"
@@ -521,16 +521,16 @@ bool RTPSParticipantImpl::setup_transports()
     }
 
     // Check netmask filtering preconditions
-    std::vector<fastdds::rtps::TransportNetmaskFilterInfo> netmask_filter_info =
+    std::vector<TransportNetmaskFilterInfo> netmask_filter_info =
             m_network_Factory.netmask_filter_info();
     std::string error_msg;
-    if (!fastdds::rtps::network::netmask_filter::check_preconditions(netmask_filter_info,
+    if (!network::netmask_filter::check_preconditions(netmask_filter_info,
             m_att.ignore_non_matching_locators,
             error_msg) ||
-            !fastdds::rtps::network::netmask_filter::check_preconditions(netmask_filter_info,
+            !network::netmask_filter::check_preconditions(netmask_filter_info,
             m_att.builtin.metatraffic_external_unicast_locators,
             error_msg) ||
-            !fastdds::rtps::network::netmask_filter::check_preconditions(netmask_filter_info,
+            !network::netmask_filter::check_preconditions(netmask_filter_info,
             m_att.default_external_unicast_locators, error_msg))
     {
         EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, error_msg);
@@ -547,7 +547,7 @@ bool RTPSParticipantImpl::setup_transports()
 void RTPSParticipantImpl::setup_timed_events()
 {
     uint32_t id_for_thread = static_cast<uint32_t>(m_att.participantID);
-    const fastdds::rtps::ThreadSettings& thr_config = m_att.timed_events_thread;
+    const ThreadSettings& thr_config = m_att.timed_events_thread;
     mp_event_thr.init_thread(thr_config, "dds.ev.%u", id_for_thread);
 }
 
@@ -606,7 +606,7 @@ void RTPSParticipantImpl::setup_meta_traffic()
                 " It may is opened by another application. Discovery may fail.");
     }
 
-    namespace external_locators = fastdds::rtps::network::external_locators;
+    namespace external_locators = network::external_locators;
     external_locators::set_listening_locators(m_att.builtin.metatraffic_external_unicast_locators,
             m_att.builtin.metatrafficUnicastLocatorList);
 }
@@ -660,7 +660,7 @@ void RTPSParticipantImpl::setup_user_traffic()
     createReceiverResources(m_att.defaultUnicastLocatorList, true, false, true);
     createReceiverResources(m_att.defaultMulticastLocatorList, false, false, true);
 
-    namespace external_locators = fastdds::rtps::network::external_locators;
+    namespace external_locators = network::external_locators;
     external_locators::set_listening_locators(m_att.default_external_unicast_locators,
             m_att.defaultUnicastLocatorList);
 }
@@ -904,11 +904,11 @@ bool RTPSParticipantImpl::create_writer(
     }
 
     GUID_t guid(m_guid.guidPrefix, entId);
-    fastdds::rtps::FlowController* flow_controller = nullptr;
+    FlowController* flow_controller = nullptr;
 
     // Retrieve flow controller.
     // If not default flow controller, publish_mode must be asynchronously.
-    if (fastdds::rtps::FASTDDS_FLOW_CONTROLLER_DEFAULT != param.flow_controller_name &&
+    if (FASTDDS_FLOW_CONTROLLER_DEFAULT != param.flow_controller_name &&
             SYNCHRONOUS_WRITER == param.mode)
     {
         EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Cannot use a flow controller in synchronously publication mode.");
@@ -1231,7 +1231,7 @@ bool RTPSParticipantImpl::create_writer(
     }
 
     auto callback = [hist, listen, this]
-                (const GUID_t& guid, WriterAttributes& watt, fastdds::rtps::FlowController* flow_controller,
+                (const GUID_t& guid, WriterAttributes& watt, FlowController* flow_controller,
                     IPersistenceService* persistence, bool is_reliable) -> BaseWriter*
             {
                 BaseWriter* writer = nullptr;
@@ -1418,7 +1418,7 @@ bool RTPSParticipantImpl::registerReader(
         RTPSReader* reader,
         const TopicAttributes& topicAtt,
         const fastdds::dds::ReaderQos& rqos,
-        const fastdds::rtps::ContentFilterProperty* content_filter)
+        const ContentFilterProperty* content_filter)
 {
     return this->mp_builtinProtocols->addLocalReader(reader, topicAtt, rqos, content_filter);
 }
@@ -1469,7 +1469,7 @@ void RTPSParticipantImpl::update_attributes(
     bool update_pdp = false;
 
     // Check if discovery servers need to be updated
-    eprosima::fastdds::rtps::LocatorList_t converted_discovery_servers =
+    LocatorList_t converted_discovery_servers =
             patt.builtin.discovery_config.m_DiscoveryServers;
     if (converted_discovery_servers != m_att.builtin.discovery_config.m_DiscoveryServers)
     {
@@ -1509,7 +1509,7 @@ void RTPSParticipantImpl::update_attributes(
 
         // Update listening locators on external locators
         {
-            using namespace fastdds::rtps::network::external_locators;
+            using namespace network::external_locators;
             if (local_interfaces_changed && internal_metatraffic_locators_)
             {
                 set_listening_locators(m_att.builtin.metatraffic_external_unicast_locators,
@@ -1574,14 +1574,14 @@ void RTPSParticipantImpl::update_attributes(
                 if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||
                         m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
                 {
-                    fastdds::rtps::PDPServer* pdp_server = static_cast<fastdds::rtps::PDPServer*>(pdp);
+                    PDPServer* pdp_server = static_cast<PDPServer*>(pdp);
                     pdp_server->update_remote_servers_list();
                 }
                 // Notify PDPClient
                 else if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::CLIENT ||
                         m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SUPER_CLIENT)
                 {
-                    fastdds::rtps::PDPClient* pdp_client = static_cast<fastdds::rtps::PDPClient*>(pdp);
+                    PDPClient* pdp_client = static_cast<PDPClient*>(pdp);
                     pdp_client->update_remote_servers_list();
                 }
             }
@@ -1607,7 +1607,7 @@ bool RTPSParticipantImpl::updateLocalReader(
         RTPSReader* reader,
         const TopicAttributes& topicAtt,
         const fastdds::dds::ReaderQos& rqos,
-        const fastdds::rtps::ContentFilterProperty* content_filter)
+        const ContentFilterProperty* content_filter)
 {
     return this->mp_builtinProtocols->updateLocalReader(reader, topicAtt, rqos, content_filter);
 }
@@ -1729,7 +1729,7 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
         createReceiverResources(attributes.multicastLocatorList, false, true, true);
     }
 
-    fastdds::rtps::network::external_locators::set_listening_locators(attributes.external_unicast_locators,
+    network::external_locators::set_listening_locators(attributes.external_unicast_locators,
             attributes.unicastLocatorList);
 
     // Associate the Endpoint with ReceiverControlBlock
@@ -2084,7 +2084,7 @@ void RTPSParticipantImpl::deleteAllUserEndpoints()
             };
 
 #if HAVE_SECURITY
-    bool (eprosima::fastdds::rtps::security::SecurityManager::* unregister_endpoint[2])(
+    bool (security::SecurityManager::* unregister_endpoint[2])(
             const GUID_t& writer_guid);
     unregister_endpoint[WRITER] = &security::SecurityManager::unregister_local_writer;
     unregister_endpoint[READER] = &security::SecurityManager::unregister_local_reader;
@@ -2735,7 +2735,7 @@ bool RTPSParticipantImpl::ignore_reader(
     return false;
 }
 
-std::vector<fastdds::rtps::TransportNetmaskFilterInfo> RTPSParticipantImpl::get_netmask_filter_info() const
+std::vector<TransportNetmaskFilterInfo> RTPSParticipantImpl::get_netmask_filter_info() const
 {
     return m_network_Factory.netmask_filter_info();
 }
@@ -2931,7 +2931,7 @@ bool RTPSParticipantImpl::disable_monitor_service() const
 }
 
 bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
-        fastdds::rtps::ParticipantProxyData& data,
+        ParticipantProxyData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
     bool ret = true;
@@ -2953,7 +2953,7 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
 }
 
 bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
-        fastdds::rtps::PublicationBuiltinTopicData& data,
+        PublicationBuiltinTopicData& data,
         const fastdds::statistics::MonitorServiceStatusData& msg)
 {
     bool ret = true;
@@ -2990,24 +2990,39 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
 }
 
 bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
-        fastdds::rtps::ReaderProxyData& data,
-        fastdds::statistics::MonitorServiceStatusData& msg)
+        SubscriptionBuiltinTopicData& data,
+        const fastdds::statistics::MonitorServiceStatusData& msg)
 {
     bool ret = true;
     CDRMessage_t serialized_msg{0};
     serialized_msg.wraps = true;
 
-    serialized_msg.buffer = msg.value().entity_proxy().data();
+    serialized_msg.buffer = const_cast<octet*>(msg.value().entity_proxy().data());
     serialized_msg.length = static_cast<uint32_t>(msg.value().entity_proxy().size());
 
-    ret = data.readFromCDRMessage(
+    const auto& alloc_limits = m_att.allocation;
+    ReaderProxyData reader_data(
+        alloc_limits.locators.max_unicast_locators,
+        alloc_limits.locators.max_multicast_locators,
+        alloc_limits.data_limits);
+    ret = reader_data.readFromCDRMessage(
         &serialized_msg,
         network_factory(),
         has_shm_transport(),
         false,
         c_VendorId_eProsima);
 
-    return ret && (data.guid().entityId.is_reader());
+    if (ret)
+    {
+        ret = reader_data.guid().entityId.is_reader();
+    }
+
+    if (ret)
+    {
+        from_proxy_to_builtin(reader_data, data);
+    }
+
+    return ret;
 }
 
 bool

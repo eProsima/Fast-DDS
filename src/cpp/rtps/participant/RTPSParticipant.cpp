@@ -275,8 +275,8 @@ bool RTPSParticipant::fill_discovery_data_from_cdr_message(
 }
 
 bool RTPSParticipant::fill_discovery_data_from_cdr_message(
-        ReaderProxyData& data,
-        fastdds::statistics::MonitorServiceStatusData& msg)
+        SubscriptionBuiltinTopicData& data,
+        const fastdds::statistics::MonitorServiceStatusData& msg)
 {
     return mp_impl->fill_discovery_data_from_cdr_message(data, msg);
 }

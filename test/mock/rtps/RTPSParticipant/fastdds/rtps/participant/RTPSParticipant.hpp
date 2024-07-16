@@ -67,7 +67,7 @@ class RTPSParticipantImpl;
 class RTPSParticipantListener;
 class RTPSWriter;
 class RTPSReader;
-class ReaderProxyData;
+struct SubscriptionBuiltinTopicData;
 class ResourceEvent;
 class WLP;
 
@@ -140,8 +140,8 @@ public:
     }
 
     bool fill_discovery_data_from_cdr_message(
-            fastdds::rtps::ReaderProxyData& /*data*/,
-            fastdds::statistics::MonitorServiceStatusData& /*msg*/)
+            fastdds::rtps::SubscriptionBuiltinTopicData& /*data*/,
+            const fastdds::statistics::MonitorServiceStatusData& /*msg*/)
     {
         return true;
     }

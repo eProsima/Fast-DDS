@@ -40,6 +40,7 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
+#include <fastdds/rtps/builtin/data/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/history/IChangePool.hpp>
@@ -1242,7 +1243,7 @@ public:
             const fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
-     * fills in the ReaderProxyData from a MonitorService Message
+     * fills in the SubscriptionBuiltinTopicData from a MonitorService Message
      *
      * @param [out] data Proxy to fill.
      * @param [in] msg MonitorService Message to get the proxy information from.
@@ -1250,8 +1251,8 @@ public:
      * @return true if the operation succeeds.
      */
     bool fill_discovery_data_from_cdr_message(
-            ReaderProxyData& data,
-            fastdds::statistics::MonitorServiceStatusData& msg);
+            SubscriptionBuiltinTopicData& data,
+            const fastdds::statistics::MonitorServiceStatusData& msg);
 
     bool get_entity_connections(
             const GUID_t&,
