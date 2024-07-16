@@ -51,13 +51,14 @@ PublisherApp::PublisherApp(
     , samples_(config.samples)
     , stop_(false)
     , period_ms_(config.interval)
+    , i(0)
 {
     // Initialize internal variables
     matched_ = 0;
 
     // Initialize data sample
-    hello_.index(0);
-    hello_.message("HelloWorld");
+    hello_.site("CDG");
+    hello_.device("CAM1");
 
     // Set DomainParticipant name
     DomainParticipantQos pqos;
@@ -146,11 +147,11 @@ void PublisherApp::on_publication_matched(
 
 void PublisherApp::run()
 {
-    while (!is_stopped() && ((samples_ == 0) || (hello_.index() < samples_)))
+    while (!is_stopped() && ((samples_ == 0) || (i < samples_)))
     {
         if (publish())
         {
-            std::cout << "Message: '" << hello_.message() << "' with index: '" << hello_.index()
+            std::cout << "Message: '" << hello_.site() << "' with index: '" << hello_.device()
                       << "' SENT" << std::endl;
         }
         // Wait for period or stop event
@@ -173,10 +174,14 @@ bool PublisherApp::publish()
                 return ((matched_ > 0) || is_stopped());
             });
 
+    std::vector<std::string> site_ = {"CDG","SB8","HON","ABC","DEF","GHI","CDG","SB8","HON"};
+    std::vector<std::string> device_ = {"CAM1","CAM2","CAM3","CAM1","CAM2","CAM3","CAM4","CAM5","CAM6"};
+    i++;
     if (!is_stopped())
     {
-        hello_.index(hello_.index() + 1);
-        ret = (RETCODE_OK == writer_->write(&hello_));
+        hello_.site(site_[(i)%9]);
+        hello_.device(device_[(i)%9]);
+        ret = writer_->write(&hello_);
     }
     return ret;
 }

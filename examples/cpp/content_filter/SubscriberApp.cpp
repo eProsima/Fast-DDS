@@ -117,9 +117,13 @@ SubscriberApp::SubscriberApp(
     else if (config.filter_kind == CLIParser::FilterKind::DEFAULT)
     {
         // Default filter: accept samples meeting the given expression: index between the two given parameters
-        expression = config.filter_expression;
-        parameters.push_back(config.lower_bound);
-        parameters.push_back(config.upper_bound);
+        expression = "(site match %0 or site match %1 or site match %2) AND (device match %3 or device match %4 or device match %5)";
+        parameters.push_back("'CDG'");
+        parameters.push_back("'SB8'");
+        parameters.push_back("'HON'");
+        parameters.push_back("'CAM1'");
+        parameters.push_back("'CAM2'");
+        parameters.push_back("'CAM3'");
         filter_topic_ =
                 participant_->create_contentfilteredtopic("HelloWorldFilteredTopic1", topic_, expression, parameters);
     }
@@ -201,7 +205,7 @@ void SubscriberApp::on_data_available(
         {
             samples_++;
             // Print structure data
-            std::cout << "Message: '" << hello_.message() << "' with index: '" << hello_.index()
+            std::cout << "Message: '" << hello_.site() << "' with index: '" << hello_.device()
                       << "' RECEIVED" << std::endl;
         }
     }
