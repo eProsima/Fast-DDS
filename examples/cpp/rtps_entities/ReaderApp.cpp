@@ -102,7 +102,9 @@ ReaderApp::ReaderApp(
 
     // Create RTPS Reader
     ReaderAttributes reader_att;
- 
+    reader_att.endpoint.reliabilityKind = RELIABLE;
+    reader_att.endpoint.durabilityKind = TRANSIENT_LOCAL;
+
     rtps_reader_ = RTPSDomain::createRTPSReader(rtps_participant_, reader_att, reader_history_, this);
 
     if (rtps_reader_ == nullptr)
@@ -132,6 +134,9 @@ bool ReaderApp::register_entity(std::string topic_name)
     topic_att.topicName = topic_name;
 
     eprosima::fastdds::dds::ReaderQos reader_qos;
+    reader_qos.m_durability.kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    reader_qos.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+
     return rtps_participant_->registerReader(rtps_reader_, topic_att, reader_qos);
 }
 
@@ -169,6 +174,10 @@ void ReaderApp::on_new_cache_change_added(
         {
             std::cout << "Message: " << data_->message() << " with index " <<  data_->index() << " RECEIVED" << std::endl;
             samples_received_++;
+        }
+        else
+        {
+            std::cout << "Message: not deserialized" << std::endl;
         }
 
         reader->get_history()->remove_change((CacheChange_t*)change);

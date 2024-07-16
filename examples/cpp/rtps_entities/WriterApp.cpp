@@ -94,7 +94,9 @@ WriterApp::WriterApp(
 
     // Create RTPS Writer
     WriterAttributes writer_att;
-    writer_att.endpoint.reliabilityKind = BEST_EFFORT;
+    writer_att.endpoint.reliabilityKind = RELIABLE;
+    writer_att.endpoint.durabilityKind = TRANSIENT_LOCAL;
+
     rtps_writer_ = RTPSDomain::createRTPSWriter(rtps_participant_, writer_att, writer_history_, this);
 
     if (rtps_writer_ == nullptr)
@@ -124,6 +126,9 @@ bool WriterApp::register_entity(std::string topic_name)
     topic_att.topicName = topic_name;
 
     eprosima::fastdds::dds::WriterQos writer_qos;
+    writer_qos.m_durability.kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    writer_qos.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+
     return rtps_participant_->registerWriter(rtps_writer_, topic_att, writer_qos);
 }
 
