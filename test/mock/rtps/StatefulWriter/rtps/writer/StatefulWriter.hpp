@@ -54,7 +54,7 @@ public:
         delete mp_history;
     }
 
-    MOCK_METHOD1(matched_reader_add, bool(const ReaderProxyData&));
+    MOCK_METHOD1(matched_reader_add_edp, bool(const ReaderProxyData&));
 
     MOCK_METHOD1(matched_reader_remove, bool(const GUID_t&));
 
