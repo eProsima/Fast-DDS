@@ -126,7 +126,7 @@ public:
     /**
      * Get the key associated with the data.
      *
-     * @param [in] data Pointer to the payload containing the data.
+     * @param [in] payload Pointer to the payload containing the data.
      * @param [out] ihandle Pointer to the Handle.
      * @param [in] force_md5 Force MD5 checking.
      * @return True if correct.

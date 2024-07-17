@@ -136,14 +136,6 @@ public:
      *
      * @param data Pointer to data
      * @param payload Pointer to payload
-     * @return true if it is serialized correctly, false if not
-     */
-
-    /**
-     * @brief Serializes the data
-     *
-     * @param data Pointer to data
-     * @param payload Pointer to payload
      * @param [in] data_representation Representation that should be used to encode the data into the payload.
      * @return true if it is serialized correctly, false if not
      */
@@ -207,7 +199,7 @@ public:
      * @return true if the key is returned, false if not
      */
     FASTDDS_EXPORTED_API virtual bool compute_key(
-            void* data,
+            const void* const data,
             InstanceHandle_t& i_handle,
             bool force_md5 = false)
     {
