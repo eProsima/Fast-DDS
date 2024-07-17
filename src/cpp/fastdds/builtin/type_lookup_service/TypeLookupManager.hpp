@@ -30,6 +30,7 @@
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.hpp>
 #include <fastdds/builtin/type_lookup_service/TypeLookupReplyListener.hpp>
 #include <fastdds/builtin/type_lookup_service/TypeLookupRequestListener.hpp>
+#include <fastdds/utils/TypePropagation.hpp>
 #include <fastdds/xtypes/type_representation/TypeIdentifierWithSizeHashSpecialization.h>
 
 #include <rtps/builtin/data/ReaderProxyData.hpp>
@@ -190,6 +191,11 @@ public:
     ReturnCode_t async_get_type(
             eprosima::ProxyPool<eprosima::fastdds::rtps::ReaderProxyData>::smart_ptr& temp_proxy_data,
             const AsyncGetTypeReaderCallback& callback);
+
+    /**
+     * @brief Get the TypeKind (EK_MINIMAL, EK_COMPLETE) that should be propagated.
+     */
+    TypeKind get_type_kind_to_propagate() const;
 
 protected:
 
@@ -438,6 +444,9 @@ protected:
 
     //! Max size of TypeLookup messages.
     static constexpr uint32_t typelookup_data_max_size = 5000;
+
+    //! TypePropagation policy
+    utils::TypePropagation type_propagation_;
 };
 
 } // namespace builtin

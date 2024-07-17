@@ -44,6 +44,10 @@ TypePropagation to_type_propagation(
     {
         type_propagation = TypePropagation::TYPEPROPAGATION_ENABLED;
     }
+    else if (*property_value == "minimal_bandwidth")
+    {
+        type_propagation = TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH;
+    }
     else
     {
         type_propagation = TypePropagation::TYPEPROPAGATION_UNKNOWN;
@@ -66,6 +70,9 @@ std::ostream& operator <<(
             break;
         case TypePropagation::TYPEPROPAGATION_ENABLED:
             output << "TYPEPROPAGATION_ENABLED";
+            break;
+        case TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH:
+            output << "TYPEPROPAGATION_MINIMAL_BANDWIDTH";
             break;
     }
 

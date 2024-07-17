@@ -55,6 +55,7 @@ TEST(TypePropagationTests, to_type_propagation)
     // Define correct values for the property
     const std::string enabled_property_value = "enabled";
     const std::string disabled_property_value = "disabled";
+    const std::string minimal_bandwidth_property_value = "minimal_bandwidth";
 
     using TestCase = std::pair<std::pair<std::string, std::string>, TypePropagation>;
 
@@ -63,9 +64,12 @@ TEST(TypePropagationTests, to_type_propagation)
         {{random_property_name, random_property_value}, TypePropagation::TYPEPROPAGATION_ENABLED},
         {{random_property_name, disabled_property_value}, TypePropagation::TYPEPROPAGATION_ENABLED},
         {{random_property_name, enabled_property_value}, TypePropagation::TYPEPROPAGATION_ENABLED},
+        {{random_property_name, minimal_bandwidth_property_value}, TypePropagation::TYPEPROPAGATION_ENABLED},
         {{parameter_policy_type_propagation, random_property_value}, TypePropagation::TYPEPROPAGATION_UNKNOWN},
         {{parameter_policy_type_propagation, disabled_property_value}, TypePropagation::TYPEPROPAGATION_DISABLED},
-        {{parameter_policy_type_propagation, enabled_property_value}, TypePropagation::TYPEPROPAGATION_ENABLED}
+        {{parameter_policy_type_propagation, enabled_property_value}, TypePropagation::TYPEPROPAGATION_ENABLED},
+        {{parameter_policy_type_propagation, minimal_bandwidth_property_value},
+            TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH}
     };
 
     /* Test lambda */
@@ -87,7 +91,8 @@ TEST(TypePropagationTests, to_type_propagation)
         const std::string& property_value = test_case.first.second;
         const TypePropagation type_propagation = test_case.second;
 
-        std::cout << "Checking test_case: ('" << property_name << "', '" << property_value << "') -> '" << type_propagation << "'" << std::endl;
+        std::cout << "Checking test_case: ('" << property_name << "', '" << property_value << "') -> '" <<
+            type_propagation << "'" << std::endl;
         to_type_propagation_test(property_name, property_value, type_propagation);
     }
 }

@@ -7,7 +7,7 @@
                 <name>xtypes_participant</name>
                 <propertiesPolicy>
                     <properties>
-                        <!-- Explicitly activate type propagation -->
+                        <!-- Explicitly activate complete type propagation -->
                         <property>
                             <name>fastdds.type_propagation</name>
                             <value>enabled</value>

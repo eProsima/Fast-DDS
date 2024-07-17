@@ -1694,14 +1694,38 @@ fastdds::TopicAttributes DataWriterImpl::get_topic_attributes(
 
     auto properties = publisher_->get_participant()->get_qos().properties();
     auto type_propagation = to_type_propagation(properties);
+    bool should_assign_type_information =
+            (TypePropagation::TYPEPROPAGATION_ENABLED == type_propagation) ||
+            (TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH == type_propagation);
 
-    if (TypePropagation::TYPEPROPAGATION_ENABLED == type_propagation &&
-            xtypes::TK_NONE != type->type_identifiers().type_identifier1()._d())
+    if (should_assign_type_information && (xtypes::TK_NONE != type->type_identifiers().type_identifier1()._d()))
     {
+        xtypes::TypeInformation type_info;
+
         if (RETCODE_OK ==
                 fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
-                    type->type_identifiers(), topic_att.type_information.type_information))
+                    type->type_identifiers(), type_info))
         {
+            switch (type_propagation)
+            {
+                case TypePropagation::TYPEPROPAGATION_ENABLED:
+                {
+                    // Use both complete and minimal type information
+                    topic_att.type_information.type_information = type_info;
+                    break;
+                }
+                case TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH:
+                {
+                    // Use minimal type information only
+                    topic_att.type_information.type_information.minimal() = type_info.minimal();
+                    break;
+                }
+                default:
+                    // This should never happen
+                    assert(false);
+                    break;
+            }
+
             topic_att.type_information.assigned(true);
         }
     }

@@ -18,6 +18,7 @@
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastdds/utils/md5.hpp>
 
 namespace eprosima {
@@ -50,6 +51,26 @@ public:
      */
     FASTDDS_EXPORTED_API DynamicPubSubType(
             traits<DynamicType>::ref_type type);
+
+    /**
+     * @brief Constructs a @ref DynamicPubSubType from a @ref DynamicType and a @ref xtypes::TypeInformation
+     *
+     * This constructor is only meant to be used when the registration of the corresponding @ref TypeSupport
+     * in the participant is meant to avoid registering the @ref xtypes::TypeObject in the
+     * xtypes::TypeObjectRegistry; that is, when the @ref xtypes::TypeObject registration has already been
+     * performed.
+     * This is for instance the case when the @ref DynamicType is created from a @ref xtypes::TypeObject obtained
+     * from a remote @ref xtypes::TypeInformation that only has the minimal type identifiers but not the complete
+     * ones.
+     *
+     * @param type @ref DynamicType object associated to the data
+     * @param type_information @ref xtypes::TypeInformation object associated to the data
+     *
+     * @remark Ownership is not transferred.
+     */
+    FASTDDS_EXPORTED_API DynamicPubSubType(
+            traits<DynamicType>::ref_type type,
+            const xtypes::TypeInformation& type_information);
 
     FASTDDS_EXPORTED_API virtual ~DynamicPubSubType();
 

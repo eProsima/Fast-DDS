@@ -20,6 +20,7 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeMember.hpp>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/common/SerializedPayload.hpp>
 
@@ -39,6 +40,29 @@ DynamicPubSubType::DynamicPubSubType(
     : dynamic_type_(type)
 {
     update_dynamic_type();
+}
+
+DynamicPubSubType::DynamicPubSubType(
+        traits<DynamicType>::ref_type type,
+        const xtypes::TypeInformation& type_information)
+    : DynamicPubSubType(type)
+{
+    xtypes::TypeIdentifierPair pair;
+
+    if (xtypes::TK_NONE == type_information.complete().typeid_with_size().type_id()._d())
+    {
+        // If the complete type is not set, we use the minimal type as type_identifier1, leaving
+        // type_identifier2 empty.
+        pair.type_identifier1(type_information.minimal().typeid_with_size().type_id());
+        pair.type_identifier2().no_value({});
+    }
+    else
+    {
+        pair.type_identifier1(type_information.complete().typeid_with_size().type_id());
+        pair.type_identifier2(type_information.minimal().typeid_with_size().type_id());
+    }
+
+    type_identifiers_ = pair;
 }
 
 DynamicPubSubType::~DynamicPubSubType()
@@ -250,10 +274,20 @@ void DynamicPubSubType::register_type_object_representation()
 {
     if (dynamic_type_)
     {
-        if (RETCODE_OK != fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
-                        register_typeobject_w_dynamic_type(dynamic_type_, type_identifiers_))
+        // Only register the type object representation if the type identifiers are not previously set.
+        // If they are set, it means that the type object representation is already registered via remote
+        // type discovery.
+        bool type_identifiers_are_set =
+                (TK_NONE != type_identifiers_.type_identifier1()._d()) ||
+                (TK_NONE != type_identifiers_.type_identifier2()._d());
+
+        if (!type_identifiers_are_set)
         {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error registering DynamicType TypeObject representation.");
+            if (RETCODE_OK != fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+                            register_typeobject_w_dynamic_type(dynamic_type_, type_identifiers_))
+            {
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error registering DynamicType TypeObject representation.");
+            }
         }
     }
     else
