@@ -33,12 +33,12 @@ using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
 CalculatorRequestTypePubSubType::CalculatorRequestTypePubSubType()
 {
-    set_name("RequestType");
-    uint32_t type_size = RequestType_max_cdr_typesize;
+    set_name("CalculatorRequestType");
+    uint32_t type_size = CalculatorRequestType_max_cdr_typesize;
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
-    is_compute_key_provided = false;
-    uint32_t key_length = RequestType_max_key_cdr_typesize > 16 ? RequestType_max_key_cdr_typesize : 16;
+    is_compute_key_provided = true;
+    uint32_t key_length = CalculatorRequestType_max_key_cdr_typesize > 16 ? CalculatorRequestType_max_key_cdr_typesize : 16;
     key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
     memset(key_buffer_, 0, key_length);
 }
@@ -87,7 +87,7 @@ bool CalculatorRequestTypePubSubType::serialize(
     return true;
 }
 
-bool RequestTypePubSubType::deserialize(
+bool CalculatorRequestTypePubSubType::deserialize(
         SerializedPayload_t& payload,
         void* data)
 {
@@ -117,7 +117,7 @@ bool RequestTypePubSubType::deserialize(
     return true;
 }
 
-uint32_t RequestTypePubSubType::calculate_serialized_size(
+uint32_t CalculatorRequestTypePubSubType::calculate_serialized_size(
         const void* const data,
         DataRepresentationId_t data_representation)
 {
@@ -128,8 +128,8 @@ uint32_t RequestTypePubSubType::calculate_serialized_size(
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
         return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                   *static_cast<const RequestType*>(data), current_alignment)) +
-               4u /*encapsulation*/;
+                    *static_cast<const CalculatorRequestType*>(data), current_alignment)) +
+                4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -137,18 +137,18 @@ uint32_t RequestTypePubSubType::calculate_serialized_size(
     }
 }
 
-void* RequestTypePubSubType::create_data()
+void* CalculatorRequestTypePubSubType::create_data()
 {
     return reinterpret_cast<void*>(new CalculatorRequestType());
 }
 
-void RequestTypePubSubType::delete_data(
+void CalculatorRequestTypePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<CalculatorRequestType*>(data));
 }
 
-bool RequestTypePubSubType::compute_key(
+bool CalculatorRequestTypePubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
         bool force_md5)
@@ -158,7 +158,7 @@ bool RequestTypePubSubType::compute_key(
         return false;
     }
 
-    RequestType data;
+    CalculatorRequestType data;
     if (deserialize(payload, static_cast<void*>(&data)))
     {
         return compute_key(static_cast<void*>(&data), handle, force_md5);
@@ -167,7 +167,7 @@ bool RequestTypePubSubType::compute_key(
     return false;
 }
 
-bool RequestTypePubSubType::compute_key(
+bool CalculatorRequestTypePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t& handle,
         bool force_md5)
@@ -181,13 +181,12 @@ bool RequestTypePubSubType::compute_key(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            RequestType_max_key_cdr_typesize);
+            CalculatorRequestType_max_key_cdr_typesize);
 
     // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS,
-            eprosima::fastcdr::CdrVersion::XCDRv1);
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv1);
     eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || RequestType_max_key_cdr_typesize > 16)
+    if (force_md5 || CalculatorRequestType_max_key_cdr_typesize > 16)
     {
         md5_.init();
         md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
@@ -214,12 +213,12 @@ void CalculatorRequestTypePubSubType::register_type_object_representation()
 
 CalculatorReplyTypePubSubType::CalculatorReplyTypePubSubType()
 {
-    set_name("ReplyType");
-    uint32_t type_size = ReplyType_max_cdr_typesize;
+    set_name("CalculatorReplyType");
+    uint32_t type_size = CalculatorReplyType_max_cdr_typesize;
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
-    is_compute_key_provided = false;
-    uint32_t key_length = ReplyType_max_key_cdr_typesize > 16 ? ReplyType_max_key_cdr_typesize : 16;
+    is_compute_key_provided = true;
+    uint32_t key_length = CalculatorReplyType_max_key_cdr_typesize > 16 ? CalculatorReplyType_max_key_cdr_typesize : 16;
     key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
     memset(key_buffer_, 0, key_length);
 }
@@ -268,7 +267,7 @@ bool CalculatorReplyTypePubSubType::serialize(
     return true;
 }
 
-bool ReplyTypePubSubType::deserialize(
+bool CalculatorReplyTypePubSubType::deserialize(
         SerializedPayload_t& payload,
         void* data)
 {
@@ -298,7 +297,7 @@ bool ReplyTypePubSubType::deserialize(
     return true;
 }
 
-uint32_t ReplyTypePubSubType::calculate_serialized_size(
+uint32_t CalculatorReplyTypePubSubType::calculate_serialized_size(
         const void* const data,
         DataRepresentationId_t data_representation)
 {
@@ -309,8 +308,8 @@ uint32_t ReplyTypePubSubType::calculate_serialized_size(
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
         return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                   *static_cast<const ReplyType*>(data), current_alignment)) +
-               4u /*encapsulation*/;
+                    *static_cast<const CalculatorReplyType*>(data), current_alignment)) +
+                4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -318,18 +317,18 @@ uint32_t ReplyTypePubSubType::calculate_serialized_size(
     }
 }
 
-void* ReplyTypePubSubType::create_data()
+void* CalculatorReplyTypePubSubType::create_data()
 {
     return reinterpret_cast<void*>(new CalculatorReplyType());
 }
 
-void ReplyTypePubSubType::delete_data(
+void CalculatorReplyTypePubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<CalculatorReplyType*>(data));
 }
 
-bool ReplyTypePubSubType::compute_key(
+bool CalculatorReplyTypePubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
         bool force_md5)
@@ -339,7 +338,7 @@ bool ReplyTypePubSubType::compute_key(
         return false;
     }
 
-    ReplyType data;
+    CalculatorReplyType data;
     if (deserialize(payload, static_cast<void*>(&data)))
     {
         return compute_key(static_cast<void*>(&data), handle, force_md5);
@@ -348,7 +347,7 @@ bool ReplyTypePubSubType::compute_key(
     return false;
 }
 
-bool ReplyTypePubSubType::compute_key(
+bool CalculatorReplyTypePubSubType::compute_key(
         const void* const data,
         InstanceHandle_t& handle,
         bool force_md5)
@@ -362,13 +361,12 @@ bool ReplyTypePubSubType::compute_key(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ReplyType_max_key_cdr_typesize);
+            CalculatorReplyType_max_key_cdr_typesize);
 
     // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS,
-            eprosima::fastcdr::CdrVersion::XCDRv1);
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv1);
     eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ReplyType_max_key_cdr_typesize > 16)
+    if (force_md5 || CalculatorReplyType_max_key_cdr_typesize > 16)
     {
         md5_.init();
         md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
@@ -392,6 +390,7 @@ void CalculatorReplyTypePubSubType::register_type_object_representation()
 {
     register_CalculatorReplyType_type_identifier(type_identifiers_);
 }
+
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "CalculatorCdrAux.ipp"
