@@ -165,51 +165,52 @@ void SubscriberApp::on_data_available(
 
 void SubscriberApp::on_data_writer_discovery(
         DomainParticipant* /*participant*/,
-        eprosima::fastdds::rtps::WriterDiscoveryInfo&& info,
+        eprosima::fastdds::rtps::WriterDiscoveryStatus status,
+        const eprosima::fastdds::dds::PublicationBuiltinTopicData& info,
         bool& /*should_be_ignored*/)
 {
     std::vector<eprosima::fastdds::rtps::octet> slow_writer_id = {0};
     std::vector<eprosima::fastdds::rtps::octet> fast_writer_id = {1};
 
-    if (info.info.m_qos.m_userData.data_vec() == fast_writer_id)
+    if (info.user_data.data_vec() == fast_writer_id)
     {
-        if (info.status ==
-                eprosima::fastdds::rtps::WriterDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_WRITER)
+        if (status ==
+                eprosima::fastdds::rtps::WriterDiscoveryStatus::DISCOVERED_WRITER)
         {
-            fast_writer_guid.push_back(info.info.guid());
+            fast_writer_guid.push_back(info.guid);
 
-            std::cout << "Fast writer with id " << info.info.guid() << " matched" << std::endl;
+            std::cout << "Fast writer with id " << info.guid << " matched" << std::endl;
         }
-        else if (info.status ==
-                eprosima::fastdds::rtps::WriterDiscoveryInfo::DISCOVERY_STATUS::REMOVED_WRITER)
+        else if (status ==
+                eprosima::fastdds::rtps::WriterDiscoveryStatus::REMOVED_WRITER)
         {
-            auto it = std::find(fast_writer_guid.begin(), fast_writer_guid.end(), info.info.guid());
+            auto it = std::find(fast_writer_guid.begin(), fast_writer_guid.end(), info.guid);
 
             if (it != fast_writer_guid.end())
             {
                 fast_writer_guid.erase(it);
-                std::cout << "Fast writer with id " << info.info.guid() << " removed" << std::endl;
+                std::cout << "Fast writer with id " << info.guid << " removed" << std::endl;
             }
         }
     }
-    else if (info.info.m_qos.m_userData.data_vec() == slow_writer_id)
+    else if (info.user_data.data_vec() == slow_writer_id)
     {
-        if (info.status ==
-                eprosima::fastdds::rtps::WriterDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_WRITER)
+        if (status ==
+                eprosima::fastdds::rtps::WriterDiscoveryStatus::DISCOVERED_WRITER)
         {
-            slow_writer_guid.push_back(info.info.guid());
+            slow_writer_guid.push_back(info.guid);
 
-            std::cout << "Slow writer with id " << info.info.guid() << " matched" << std::endl;
+            std::cout << "Slow writer with id " << info.guid << " matched" << std::endl;
         }
-        else if (info.status ==
-                eprosima::fastdds::rtps::WriterDiscoveryInfo::DISCOVERY_STATUS::REMOVED_WRITER)
+        else if (status ==
+                eprosima::fastdds::rtps::WriterDiscoveryStatus::REMOVED_WRITER)
         {
-            auto it = std::find(slow_writer_guid.begin(), slow_writer_guid.end(), info.info.guid());
+            auto it = std::find(slow_writer_guid.begin(), slow_writer_guid.end(), info.guid);
 
             if (it != slow_writer_guid.end())
             {
                 slow_writer_guid.erase(it);
-                std::cout << "Slow writer with id " << info.info.guid() << " removed" << std::endl;
+                std::cout << "Slow writer with id " << info.guid << " removed" << std::endl;
             }
         }
     }
