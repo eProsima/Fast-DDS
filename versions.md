@@ -101,6 +101,7 @@ Forthcoming
 * Added new DynamicData to JSON serializer (`json_serialize`).
 * Added new DynamicType to IDL serializer (`idl_serialize`).
 * DDS implementation of `eprosima::fastdds::Time_t` moved to `eprosima::fastdds::dds::Time_t`.
+* `TopicDataType::auto_fill_type_information` has been removed in favor of `fastdds.type_propagation` participant property.
 
 Version 2.14.0
 --------------
