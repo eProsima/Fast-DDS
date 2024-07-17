@@ -77,6 +77,9 @@ public:
 
     typedef TypeSupport type_support;
     typedef typename type_support::type type;
+    typedef std::function<bool (
+                        eprosima::fastdds::rtps::WriterDiscoveryStatus reason,
+                        const eprosima::fastdds::dds::PublicationBuiltinTopicData& info)> EndpointDiscoveryFunctor;
 
 protected:
 
@@ -121,13 +124,14 @@ protected:
 
         void on_data_writer_discovery(
                 eprosima::fastdds::dds::DomainParticipant*,
-                eprosima::fastdds::rtps::WriterDiscoveryInfo&& info,
+                eprosima::fastdds::rtps::WriterDiscoveryStatus reason,
+                const eprosima::fastdds::dds::PublicationBuiltinTopicData& info,
                 bool& /*should_be_ignored*/) override
         {
             if (reader_.onEndpointDiscovery_ != nullptr)
             {
                 std::unique_lock<std::mutex> lock(reader_.mutexDiscovery_);
-                reader_.discovery_result_ |= reader_.onEndpointDiscovery_(info);
+                reader_.discovery_result_ |= reader_.onEndpointDiscovery_(reason, info);
                 reader_.cvDiscovery_.notify_one();
             }
         }
@@ -1690,7 +1694,7 @@ public:
     }
 
     void setOnEndpointDiscoveryFunction(
-            std::function<bool(const eprosima::fastdds::rtps::WriterDiscoveryInfo&)> f)
+            EndpointDiscoveryFunctor f)
     {
         onEndpointDiscovery_ = f;
     }
@@ -2125,7 +2129,7 @@ protected:
     std::string datareader_profile_ = "";
 
     std::function<bool(const eprosima::fastdds::rtps::ParticipantDiscoveryInfo& info)> onDiscovery_;
-    std::function<bool(const eprosima::fastdds::rtps::WriterDiscoveryInfo& info)> onEndpointDiscovery_;
+    EndpointDiscoveryFunctor onEndpointDiscovery_;
 
     //! True to take data from history. On False, read_ is checked.
     bool take_;

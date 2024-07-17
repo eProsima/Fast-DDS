@@ -34,7 +34,6 @@ namespace rtps {
  * An entry for the @ref LocatorSelector.
  *
  * This class holds the locators of a remote endpoint along with data required for the locator selection algorithm.
- * Can be easily integrated inside other classes, such as @ref ReaderProxyData and @ref WriterProxyData.
  */
 struct LocatorSelectorEntry
 {

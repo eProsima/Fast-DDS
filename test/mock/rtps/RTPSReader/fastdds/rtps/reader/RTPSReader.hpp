@@ -21,13 +21,15 @@
 
 #include <gmock/gmock.h>
 
+#include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
-#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/Endpoint.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/reader/ReaderListener.hpp>
+
+#include <rtps/builtin/data/WriterProxyData.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -53,9 +55,8 @@ public:
 
     virtual ~RTPSReader() = default;
 
-
     virtual bool matched_writer_add(
-            const WriterProxyData& wdata) = 0;
+            const PublicationBuiltinTopicData& wdata) = 0;
 
     virtual bool matched_writer_remove(
             const GUID_t& wdata,

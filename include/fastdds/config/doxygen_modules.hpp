@@ -19,6 +19,8 @@
 #ifndef FASTDDS_CONFIG__DOXYGEN_MODULES_HPP
 #define FASTDDS_CONFIG__DOXYGEN_MODULES_HPP
 
+#include <fastdds/config.hpp>
+
 //Description of doxygen modules, not used in actual code.
 
 /*!
@@ -40,14 +42,33 @@
  * This Module contains the DDS Layer defined by the OMG.
  */
 
+/*!
+ * @defgroup dds_xtypes_typeobject DDS TypeObject API
+ * @ingroup FASTDDS_MODULE
+ */
+
+/*!
+ * @defgroup dynamic_language_binding DDS Dynamic Types API
+ * @ingroup FASTDDS_MODULE
+ */
+
 /** @defgroup FASTDDS_QOS_MODULE Fast DDS Quality of Service (QoS) Module.
  * @ingroup FASTDDS_MODULE
  * @brief QOS class used to define the public entities that the user should use to control this library.
  */
 
+/** @defgroup DEADLINE_MODULE Deadline Module
+ * @ingroup FASTDDS_QOS_MODULE
+ * This module contains the classes associated with the DEADLINE QoS.
+ */
+
 /** @defgroup RTPS_ATTRIBUTES_MODULE RTPS Attributes Module.
  * @ingroup RTPS_MODULE
  * @brief Attributes class used to define the public entities that the user should use to control this library.
+ */
+
+/** @defgroup FASTDDS_ATTRIBUTES_MODULE High-level Attributes Module.
+ * @ingroup FASTDDS_MODULE
  */
 
 /** @defgroup COMMON_MODULE Common Module.
@@ -119,6 +140,13 @@
  */
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+#ifdef FASTDDS_STATISTICS
+/** @defgroup STATISTICS_MODULE Statistics Module
+ * @ingroup MANAGEMENT_MODULE
+ * This module contains the classes associated with the Statistics Protocols.
+ */
+#endif // ifdef FASTDDS_STATISTICS
 
 /** @defgroup UTILITIES_MODULE Shared Utilities
  * @ingroup FASTDDS_GENERAL_API

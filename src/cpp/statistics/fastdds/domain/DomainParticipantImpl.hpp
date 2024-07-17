@@ -168,8 +168,8 @@ public:
      * @return RETCODE_ERROR if the  operation fails.
      */
     efd::ReturnCode_t fill_discovery_data_from_cdr_message(
-            fastdds::rtps::WriterProxyData& data,
-            fastdds::statistics::MonitorServiceStatusData& msg);
+            fastdds::dds::PublicationBuiltinTopicData& data,
+            const fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
      * fills in the ReaderProxyData from a MonitorService Message

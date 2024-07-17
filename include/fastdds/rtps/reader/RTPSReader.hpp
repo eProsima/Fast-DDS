@@ -24,7 +24,9 @@
 
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
+#include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
+#include <fastdds/rtps/common/RemoteLocators.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/Endpoint.hpp>
@@ -42,7 +44,6 @@ namespace rtps {
 struct CacheChange_t;
 class ReaderListener;
 class RTPSParticipantImpl;
-class WriterProxyData;
 
 /**
  * Class RTPSReader, manages the reception of data from its matched writers.
@@ -55,14 +56,14 @@ class RTPSReader : public Endpoint
 public:
 
     /**
-     * @brief Add a matched writer represented by its attributes.
+     * @brief Add a matched writer represented by its publication info.
      *
-     * @param wdata  Discovery information regarding the writer to add.
+     * @param info  Publication info of the writer being matched.
      *
      * @return True if correctly added.
      */
     FASTDDS_EXPORTED_API virtual bool matched_writer_add(
-            const WriterProxyData& wdata) = 0;
+            const PublicationBuiltinTopicData& info) = 0;
 
     /**
      * @brief Remove a writer from the matched writers.

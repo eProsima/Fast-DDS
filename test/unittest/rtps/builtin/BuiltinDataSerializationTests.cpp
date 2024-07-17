@@ -23,13 +23,13 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
-#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 
+#include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/messages/CDRMessage.hpp>
 #include <rtps/network/NetworkFactory.h>
 

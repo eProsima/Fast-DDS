@@ -14,7 +14,6 @@
 
 /**
  * @file WriterProxyData.hpp
- *
  */
 
 #ifndef FASTDDS_RTPS_BUILTIN_DATA__WRITERPROXYDATA_HPP

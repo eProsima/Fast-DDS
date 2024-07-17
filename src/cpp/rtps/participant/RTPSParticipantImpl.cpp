@@ -45,6 +45,7 @@
 
 #include <rtps/attributes/ServerAttributes.hpp>
 #include <rtps/builtin/BuiltinProtocols.h>
+#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/builtin/discovery/participant/PDPClient.h>
@@ -2952,24 +2953,40 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
 }
 
 bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
-        fastdds::rtps::WriterProxyData& data,
-        fastdds::statistics::MonitorServiceStatusData& msg)
+        fastdds::rtps::PublicationBuiltinTopicData& data,
+        const fastdds::statistics::MonitorServiceStatusData& msg)
 {
     bool ret = true;
     CDRMessage_t serialized_msg{0};
     serialized_msg.wraps = true;
 
-    serialized_msg.buffer = msg.value().entity_proxy().data();
+    serialized_msg.buffer = const_cast<octet*>(msg.value().entity_proxy().data());
     serialized_msg.length = static_cast<uint32_t>(msg.value().entity_proxy().size());
 
-    ret = data.readFromCDRMessage(
+    const auto& alloc_limits = m_att.allocation;
+    WriterProxyData writer_data(
+        alloc_limits.locators.max_unicast_locators,
+        alloc_limits.locators.max_multicast_locators,
+        alloc_limits.data_limits);
+
+    ret = writer_data.readFromCDRMessage(
         &serialized_msg,
         network_factory(),
         has_shm_transport(),
         false,
         c_VendorId_eProsima);
 
-    return ret && (data.guid().entityId.is_writer());
+    if (ret)
+    {
+        ret = writer_data.guid().entityId.is_writer();
+    }
+
+    if (ret)
+    {
+        from_proxy_to_builtin(writer_data, data);
+    }
+
+    return ret;
 }
 
 bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(

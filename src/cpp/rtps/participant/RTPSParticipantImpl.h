@@ -40,7 +40,6 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
-#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/history/IChangePool.hpp>
@@ -48,6 +47,7 @@
 #include <fastdds/rtps/transport/SenderResource.hpp>
 
 #include "../flowcontrol/FlowControllerFactory.hpp"
+#include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/messages/MessageReceiver.h>
 #include <rtps/messages/RTPSMessageGroup_t.hpp>
 #include <rtps/messages/SendBuffersManager.hpp>
@@ -111,6 +111,7 @@ class MessageReceiver;
 
 namespace rtps {
 
+struct PublicationBuiltinTopicData;
 class RTPSParticipant;
 class RTPSParticipantListener;
 class BuiltinProtocols;
@@ -142,8 +143,6 @@ class RTPSParticipantImpl
     , private security::SecurityPluginFactory
 #endif // if HAVE_SECURITY
 {
-
-    using BaseReader = fastdds::rtps::BaseReader;
 
     /*
        Receiver Control block is a struct we use to encapsulate the resources that take part in message reception.
@@ -296,7 +295,7 @@ public:
      */
     template<class LocatorIteratorT>
     bool sendSync(
-            const std::vector<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
+            const std::vector<NetworkBuffer>& buffers,
             const uint32_t& total_bytes,
             const GUID_t& sender_guid,
             const LocatorIteratorT& destination_locators_begin,
@@ -612,7 +611,7 @@ private:
 
     //!SenderResource List
     std::timed_mutex m_send_resources_mutex_;
-    fastdds::rtps::SendResourceList send_resource_list_;
+    SendResourceList send_resource_list_;
 
     //!Participant Listener
     RTPSParticipantListener* mp_participantListener;
@@ -727,7 +726,7 @@ private:
     /*
      * Flow controller factory.
      */
-    fastdds::rtps::FlowControllerFactory flow_controller_factory_;
+    FlowControllerFactory flow_controller_factory_;
 
 #if HAVE_SECURITY
     security::ParticipantSecurityAttributes security_attributes_;
@@ -916,7 +915,7 @@ public:
             RTPSReader* Reader,
             const TopicAttributes& topicAtt,
             const fastdds::dds::ReaderQos& rqos,
-            const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
+            const ContentFilterProperty* content_filter = nullptr);
 
     /**
      * Update participant attributes.
@@ -949,7 +948,7 @@ public:
             RTPSReader* Reader,
             const TopicAttributes& topicAtt,
             const fastdds::dds::ReaderQos& rqos,
-            const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
+            const ContentFilterProperty* content_filter = nullptr);
 
     /**
      * Get the participant attributes
@@ -1110,7 +1109,7 @@ public:
      *
      * @return A vector with all registered transports' netmask filter information.
      */
-    std::vector<fastdds::rtps::TransportNetmaskFilterInfo> get_netmask_filter_info() const;
+    std::vector<TransportNetmaskFilterInfo> get_netmask_filter_info() const;
 
     template <EndpointKind_t kind, octet no_key, octet with_key>
     static bool preprocess_endpoint_attributes(
@@ -1227,11 +1226,11 @@ public:
      * @return true if the operation succeeds.
      */
     bool fill_discovery_data_from_cdr_message(
-            fastdds::rtps::ParticipantProxyData& data,
+            ParticipantProxyData& data,
             fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
-     * fills in the WriterProxyData from a MonitorService Message
+     * fills in the PublicationBuiltinTopicData from a MonitorService Message
      *
      * @param [out] data Proxy to fill.
      * @param [in] msg MonitorService Message to get the proxy information from.
@@ -1239,8 +1238,8 @@ public:
      * @return true if the operation succeeds.
      */
     bool fill_discovery_data_from_cdr_message(
-            fastdds::rtps::WriterProxyData& data,
-            fastdds::statistics::MonitorServiceStatusData& msg);
+            PublicationBuiltinTopicData& data,
+            const fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
      * fills in the ReaderProxyData from a MonitorService Message
@@ -1251,7 +1250,7 @@ public:
      * @return true if the operation succeeds.
      */
     bool fill_discovery_data_from_cdr_message(
-            fastdds::rtps::ReaderProxyData& data,
+            ReaderProxyData& data,
             fastdds::statistics::MonitorServiceStatusData& msg);
 
     bool get_entity_connections(

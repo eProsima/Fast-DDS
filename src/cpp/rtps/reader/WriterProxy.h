@@ -20,6 +20,12 @@
 #define FASTDDS_RTPS_READER_WRITERPROXY_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include <set>
+#include <vector>
+
+#include <foonathan/memory/container.hpp>
+#include <foonathan/memory/memory_pool.hpp>
+
 #include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/common/CacheChange.hpp>
@@ -27,14 +33,9 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
-#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
 
-#include <foonathan/memory/container.hpp>
-#include <foonathan/memory/memory_pool.hpp>
-
-#include <set>
-#include <vector>
+#include <rtps/builtin/data/WriterProxyData.hpp>
 
 // Testing purpose
 #ifndef TEST_FRIENDS

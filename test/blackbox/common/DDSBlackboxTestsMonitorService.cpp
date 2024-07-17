@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
 #include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
 #include <fastdds/statistics/topic_names.hpp>
@@ -725,7 +726,7 @@ struct ProxySampleValidator : public SampleValidator
                 }
                 else if (guid.entityId.is_writer())
                 {
-                    WriterProxyData wdata(4, 4);
+                    PublicationBuiltinTopicData wdata;
 
                     ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(wdata,
                             data),

@@ -1,4 +1,4 @@
-// Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,22 +13,26 @@
 // limitations under the License.
 
 /**
- * @file PublicationBuiltinTopicData.hpp
+ * @file BuiltinTopicKey.hpp
+ *
  */
 
-#ifndef FASTDDS_DDS_BUILTIN_TOPIC__PUBLICATIONBUILTINTOPICDATA_HPP
-#define FASTDDS_DDS_BUILTIN_TOPIC__PUBLICATIONBUILTINTOPICDATA_HPP
+#ifndef FASTDDS_RTPS_BUILTIN_DATA__BUILTINTOPICKEY_HPP
+#define FASTDDS_RTPS_BUILTIN_DATA__BUILTINTOPICKEY_HPP
 
-#include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
+#include <cstdint>
 
 namespace eprosima {
 namespace fastdds {
-namespace dds {
+namespace rtps {
 
-using PublicationBuiltinTopicData = rtps::PublicationBuiltinTopicData;
+struct BuiltinTopicKey_t
+{
+    uint32_t value[3];
+};
 
-}  // namespace dds
-}  // namespace fastdds
-}  // namespace eprosima
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
-#endif // FASTDDS_DDS_BUILTIN_TOPIC__PUBLICATIONBUILTINTOPICDATA_HPP
+#endif // FASTDDS_RTPS_BUILTIN_DATA__BUILTINTOPICKEY_HPP

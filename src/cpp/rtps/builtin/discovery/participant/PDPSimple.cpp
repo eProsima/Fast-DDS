@@ -24,7 +24,6 @@
 #include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
-#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
@@ -33,6 +32,7 @@
 #include <fastdds/utils/IPLocator.hpp>
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/data/NetworkConfiguration.hpp>
+#include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include <rtps/builtin/discovery/endpoint/EDPStatic.h>
 #include <rtps/builtin/discovery/participant/DS/PDPSecurityInitiatorListener.hpp>
@@ -42,6 +42,7 @@
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/BaseReader.hpp>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/reader/StatelessReader.hpp>
 #include <rtps/resources/TimedEvent.h>
@@ -640,7 +641,7 @@ void PDPSimple::match_pdp_remote_endpoints(
     uint32_t pdp_writer_mask = fastdds::rtps::DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
     EntityId_t reader_entity_id = c_EntityId_SPDPReader;
     EntityId_t writer_entity_id = c_EntityId_SPDPWriter;
-    RTPSReader* reader = endpoints->reader.reader_;
+    BaseReader* reader = endpoints->reader.reader_;
     RTPSWriter* writer = endpoints->writer.writer_;
 
 #if HAVE_SECURITY
@@ -684,7 +685,7 @@ void PDPSimple::match_pdp_remote_endpoints(
         else
 #endif // HAVE_SECURITY
         {
-            reader->matched_writer_add(*temp_writer_data);
+            reader->matched_writer_add_edp(*temp_writer_data);
         }
     }
 
@@ -748,7 +749,7 @@ bool PDPSimple::pairing_remote_writer_with_local_reader_after_security(
     auto endpoints = dynamic_cast<fastdds::rtps::SimplePDPEndpointsSecure*>(builtin_endpoints_.get());
     if ((nullptr != endpoints) && (local_reader == endpoints->secure_reader.reader_->getGuid()))
     {
-        endpoints->secure_reader.reader_->matched_writer_add(remote_writer_data);
+        endpoints->secure_reader.reader_->matched_writer_add_edp(remote_writer_data);
         return true;
     }
 

@@ -28,12 +28,12 @@
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
-#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/common/SerializedPayload.hpp>
 #include <fastdds/rtps/reader/ReaderListener.hpp>
 #include <fastdds/rtps/writer/WriterListener.hpp>
 
+#include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/resources/TimedEvent.h>
 #include <rtps/security/authentication/Handshake.h>
 #include <rtps/security/common/ParticipantGenericMessage.h>

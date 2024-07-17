@@ -973,16 +973,17 @@ TEST_P(Discovery, PubSubAsReliableHelloworldEndpointUserData)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    reader.setOnEndpointDiscoveryFunction([&writer](const WriterDiscoveryInfo& info) -> bool
+    reader.setOnEndpointDiscoveryFunction([&writer](WriterDiscoveryStatus /*reason*/,
+            const PublicationBuiltinTopicData& info) -> bool
             {
-                if (info.info.guid() == writer.datawriter_guid())
+                if (info.guid == writer.datawriter_guid())
                 {
                     std::cout << "Received USER_DATA from the writer: ";
-                    for (auto i: info.info.m_qos.m_userData)
+                    for (auto i: info.user_data)
                     {
                         std::cout << i << ' ';
                     }
-                    return info.info.m_qos.m_userData == std::vector<octet>({'a', 'b', 'c', 'd'});
+                    return info.user_data == std::vector<octet>({'a', 'b', 'c', 'd'});
                 }
 
                 return false;

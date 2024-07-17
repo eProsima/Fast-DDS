@@ -23,10 +23,11 @@
 #include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
-#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
+#include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/MatchingInfo.hpp>
-#include <fastdds/rtps/writer/WriterDiscoveryInfo.hpp>
+#include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
+
 
 namespace eprosima {
 namespace fastdds {
@@ -130,9 +131,9 @@ public:
      */
     virtual void on_writer_discovery(
             RTPSReader* reader,
-            WriterDiscoveryInfo::DISCOVERY_STATUS reason,
+            WriterDiscoveryStatus reason,
             const GUID_t& writer_guid,
-            const WriterProxyData* writer_info)
+            const PublicationBuiltinTopicData* writer_info)
     {
         static_cast<void>(reader);
         static_cast<void>(reason);

@@ -87,7 +87,7 @@ bool RTPSParticipant::registerReader(
         RTPSReader* Reader,
         const TopicAttributes& topicAtt,
         const fastdds::dds::ReaderQos& rqos,
-        const fastdds::rtps::ContentFilterProperty* content_filter)
+        const ContentFilterProperty* content_filter)
 {
     return mp_impl->registerReader(Reader, topicAtt, rqos, content_filter);
 }
@@ -110,7 +110,7 @@ bool RTPSParticipant::updateReader(
         RTPSReader* Reader,
         const TopicAttributes& topicAtt,
         const fastdds::dds::ReaderQos& rqos,
-        const fastdds::rtps::ContentFilterProperty* content_filter)
+        const ContentFilterProperty* content_filter)
 {
     return mp_impl->updateLocalReader(Reader, topicAtt, rqos, content_filter);
 }
@@ -191,7 +191,7 @@ bool RTPSParticipant::ignore_reader(
     return false;
 }
 
-std::vector<fastdds::rtps::TransportNetmaskFilterInfo> RTPSParticipant::get_netmask_filter_info() const
+std::vector<TransportNetmaskFilterInfo> RTPSParticipant::get_netmask_filter_info() const
 {
     return mp_impl->get_netmask_filter_info();
 }
@@ -261,21 +261,21 @@ bool RTPSParticipant::disable_monitor_service() const
 }
 
 bool RTPSParticipant::fill_discovery_data_from_cdr_message(
-        fastdds::rtps::ParticipantProxyData& data,
+        ParticipantProxyData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
     return mp_impl->fill_discovery_data_from_cdr_message(data, msg);
 }
 
 bool RTPSParticipant::fill_discovery_data_from_cdr_message(
-        fastdds::rtps::WriterProxyData& data,
-        fastdds::statistics::MonitorServiceStatusData& msg)
+        PublicationBuiltinTopicData& data,
+        const fastdds::statistics::MonitorServiceStatusData& msg)
 {
     return mp_impl->fill_discovery_data_from_cdr_message(data, msg);
 }
 
 bool RTPSParticipant::fill_discovery_data_from_cdr_message(
-        fastdds::rtps::ReaderProxyData& data,
+        ReaderProxyData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
     return mp_impl->fill_discovery_data_from_cdr_message(data, msg);

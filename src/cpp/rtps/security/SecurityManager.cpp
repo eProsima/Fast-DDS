@@ -28,11 +28,11 @@
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
-#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
 
+#include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/messages/CDRMessage.hpp>
@@ -2111,7 +2111,7 @@ void SecurityManager::match_builtin_endpoints(
         temp_stateless_writer_proxy_data_->m_qos.m_reliability.kind =
                 eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
         temp_stateless_writer_proxy_data_->m_qos.m_durability.kind = eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS;
-        participant_stateless_message_reader_->matched_writer_add(*temp_stateless_writer_proxy_data_);
+        participant_stateless_message_reader_->matched_writer_add_edp(*temp_stateless_writer_proxy_data_);
     }
 
     if (participant_stateless_message_writer_ != nullptr &&
@@ -2151,7 +2151,7 @@ void SecurityManager::match_builtin_key_exchange_endpoints(
         temp_volatile_writer_proxy_data_->topicKind(NO_KEY);
         temp_volatile_writer_proxy_data_->m_qos.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
         temp_volatile_writer_proxy_data_->m_qos.m_durability.kind = eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS;
-        participant_volatile_message_secure_reader_->matched_writer_add(*temp_volatile_writer_proxy_data_);
+        participant_volatile_message_secure_reader_->matched_writer_add_edp(*temp_volatile_writer_proxy_data_);
     }
 
     if (participant_volatile_message_secure_writer_ != nullptr &&

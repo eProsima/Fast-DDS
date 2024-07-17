@@ -78,7 +78,7 @@ public:
 
     virtual ~RTPSReaderMock() = default;
 
-    bool matched_writer_add(
+    bool matched_writer_add_edp(
             const eprosima::fastdds::rtps::WriterProxyData&) override
     {
         return true;

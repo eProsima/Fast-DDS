@@ -24,13 +24,16 @@
 #include <thread>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/reader/ReaderListener.hpp>
+#include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
 
 #include "reader_utils.hpp"
 #include "rtps/RTPSDomainImpl.hpp"
 #include <rtps/builtin/BuiltinProtocols.h>
+#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/DataSharing/DataSharingListener.hpp>
 #include <rtps/DataSharing/ReaderPool.hpp>
@@ -195,7 +198,7 @@ void StatefulReader::init(
     }
 }
 
-bool StatefulReader::matched_writer_add(
+bool StatefulReader::matched_writer_add_edp(
         const WriterProxyData& wdata)
 {
     assert(wdata.guid() != c_Guid_Unknown);
@@ -238,7 +241,10 @@ bool StatefulReader::matched_writer_add(
                 {
                     // call the listener without the lock taken
                     guard.unlock();
-                    listener->on_writer_discovery(this, WriterDiscoveryInfo::CHANGED_QOS_WRITER, wdata.guid(), &wdata);
+                    PublicationBuiltinTopicData info;
+                    from_proxy_to_builtin(wdata, info);
+                    listener->on_writer_discovery(
+                        this, WriterDiscoveryStatus::CHANGED_QOS_WRITER, wdata.guid(), &info);
                 }
 
 #ifdef FASTDDS_STATISTICS
@@ -360,7 +366,9 @@ bool StatefulReader::matched_writer_add(
 
     if (nullptr != listener)
     {
-        listener->on_writer_discovery(this, WriterDiscoveryInfo::DISCOVERED_WRITER, wdata.guid(), &wdata);
+        PublicationBuiltinTopicData info;
+        from_proxy_to_builtin(wdata, info);
+        listener->on_writer_discovery(this, WriterDiscoveryStatus::DISCOVERED_WRITER, wdata.guid(), &info);
     }
 
 #ifdef FASTDDS_STATISTICS
@@ -425,7 +433,7 @@ bool StatefulReader::matched_writer_remove(
                 // call the listener without the lock taken
                 ReaderListener* listener = listener_;
                 lock.unlock();
-                listener->on_writer_discovery(this, WriterDiscoveryInfo::REMOVED_WRITER, writer_guid, nullptr);
+                listener->on_writer_discovery(this, WriterDiscoveryStatus::REMOVED_WRITER, writer_guid, nullptr);
             }
 
 #ifdef FASTDDS_STATISTICS

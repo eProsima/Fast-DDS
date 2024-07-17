@@ -24,11 +24,12 @@
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
-#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/Endpoint.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/reader/ReaderListener.hpp>
+
+#include <rtps/builtin/data/WriterProxyData.hpp>
 
 namespace eprosima {
 
@@ -78,6 +79,16 @@ public:
     {
         return static_cast<BaseReader*>(endpoint);
     }
+
+    bool matched_writer_add(
+            const PublicationBuiltinTopicData& wdata) final
+    {
+        static_cast<void>(wdata);
+        return false;
+    }
+
+    virtual bool matched_writer_add_edp(
+            const WriterProxyData& wdata) = 0;
 
     fastdds::rtps::ReaderListener* get_listener() const override
     {
