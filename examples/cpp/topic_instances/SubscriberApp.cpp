@@ -50,6 +50,8 @@ SubscriberApp::SubscriberApp(
     , reader_(nullptr)
     , type_(new ShapeTypePubSubType())
     , samples_(config.samples)
+    , stop_(false)
+    , stop_receiving_samples_(false)
 {
     // Create the participant
     DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
@@ -146,7 +148,7 @@ void SubscriberApp::on_data_available(
     SampleInfo info;
     while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(&shape_, &info)))
     {
-        if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
+        if (!stop_receiving_samples_.load() && (info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
         {
             // Add the received sample to the corresponding instance handle counter
             if (samples_per_instance_.count(info.instance_handle) > 0)
@@ -177,26 +179,34 @@ void SubscriberApp::on_data_available(
         {
             std::cout << shape_.color() << " Shape has been disposed by all publishers" << std::endl;
         }
-        else
-        {
-            std::cout << "Received instance state: " << info.instance_state << std::endl;
-        }
 
         // Check if the execution should be stopped
-        if ((samples_ > 0) && instances_received_all_samples() && instances_disposed())
+        if ((samples_ > 0) && instances_received_all_samples())
         {
-            stop();
+            stop_receiving_samples_.store(true);
+            cv_.notify_all();
         }
     }
 }
 
 void SubscriberApp::run()
 {
-    std::unique_lock<std::mutex> lock_(mutex_);
-    cv_.wait(lock_, [&]
-            {
-                return is_stopped();
-            });
+    {
+        std::unique_lock<std::mutex> lock_(mutex_);
+        cv_.wait(lock_, [&]
+                {
+                    return stop_receiving_samples_.load();
+                });
+    }
+    // Wait for period or stop event
+    {
+        std::unique_lock<std::mutex> timeout_lock(mutex_);
+        cv_.wait_for(timeout_lock, std::chrono::milliseconds(50u), [&]()
+                {
+                    return instances_disposed();
+                });
+    }
+    stop();
 }
 
 bool SubscriberApp::is_stopped()
@@ -249,7 +259,7 @@ bool SubscriberApp::instances_disposed()
     }
     else
     {
-        ret = true;
+        ret = false;
     }
     return ret;
 }

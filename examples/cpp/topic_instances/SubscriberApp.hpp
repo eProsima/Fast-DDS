@@ -96,6 +96,8 @@ private:
 
     std::atomic<bool> stop_;
 
+    std::atomic<bool> stop_receiving_samples_;
+
     std::map<InstanceHandle_t, uint32_t> samples_per_instance_;
 
     std::vector<InstanceHandle_t> disposed_instances_;
