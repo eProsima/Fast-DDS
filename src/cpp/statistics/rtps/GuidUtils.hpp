@@ -41,7 +41,6 @@ inline bool is_monitor_service_builtin(
     return ENTITYID_MONITOR_SERVICE_WRITER == entity_id.to_uint32();
 }
 
-
 /**
  * Checks whether an entity id corresponds to a builtin statistics writer.
  * @param [in] entity_id The entity id to check.
