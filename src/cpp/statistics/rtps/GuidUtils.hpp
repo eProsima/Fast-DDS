@@ -23,7 +23,6 @@
 
 #include <fastdds/rtps/common/EntityId_t.hpp>
 
-#include <statistics/rtps/GuidUtils.hpp>
 #include <statistics/types/types.hpp>
 
 namespace eprosima {
