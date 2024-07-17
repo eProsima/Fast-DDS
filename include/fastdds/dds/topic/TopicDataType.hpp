@@ -83,8 +83,8 @@ public:
      */
     FASTDDS_EXPORTED_API virtual bool serialize(
             const void* const data,
-            fastdds::rtps::SerializedPayload_t& payload,
-            DataRepresentationId_t data_representation) = 0;
+            rtps::SerializedPayload_t& payload,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) = 0;
 
     /**
      * Deserialize method, it should be implemented by the user, since it is abstract.
@@ -94,7 +94,7 @@ public:
      * @return True if correct.
      */
     FASTDDS_EXPORTED_API virtual bool deserialize(
-            fastdds::rtps::SerializedPayload_t& payload,
+            rtps::SerializedPayload_t& payload,
             void* data) = 0;
 
     /*!
@@ -106,7 +106,7 @@ public:
      */
     FASTDDS_EXPORTED_API virtual uint32_t calculate_serialized_size(
             const void* const data,
-            DataRepresentationId_t data_representation) = 0;
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) = 0;
 
     /**
      * Create a Data Type.
@@ -114,6 +114,7 @@ public:
      * @return Void pointer to the created object.
      */
     FASTDDS_EXPORTED_API virtual void* create_data() = 0;
+
     /**
      * Remove a previously created object.
      *
@@ -131,8 +132,8 @@ public:
      * @return True if correct.
      */
     FASTDDS_EXPORTED_API virtual bool compute_key(
-            fastdds::rtps::SerializedPayload_t& payload,
-            fastdds::rtps::InstanceHandle_t& ihandle,
+            rtps::SerializedPayload_t& payload,
+            rtps::InstanceHandle_t& ihandle,
             bool force_md5 = false) = 0;
 
     /**
@@ -145,7 +146,7 @@ public:
      */
     FASTDDS_EXPORTED_API virtual bool compute_key(
             const void* const data,
-            fastdds::rtps::InstanceHandle_t& ihandle,
+            rtps::InstanceHandle_t& ihandle,
             bool force_md5 = false) = 0;
 
     /**

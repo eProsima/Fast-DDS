@@ -151,10 +151,11 @@ public:
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
+private:
+
     eprosima::fastdds::MD5 md5_;
     unsigned char* key_buffer_;
 
-private:
 
     static constexpr bool is_plain_xcdrv1_impl()
     {
