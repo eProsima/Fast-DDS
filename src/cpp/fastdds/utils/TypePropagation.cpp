@@ -48,6 +48,10 @@ TypePropagation to_type_propagation(
     {
         type_propagation = TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH;
     }
+    else if (*property_value == "registration_only")
+    {
+        type_propagation = TypePropagation::TYPEPROPAGATION_REGISTRATION_ONLY;
+    }
     else
     {
         type_propagation = TypePropagation::TYPEPROPAGATION_UNKNOWN;
@@ -73,6 +77,9 @@ std::ostream& operator <<(
             break;
         case TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH:
             output << "TYPEPROPAGATION_MINIMAL_BANDWIDTH";
+            break;
+        case TypePropagation::TYPEPROPAGATION_REGISTRATION_ONLY:
+            output << "TYPEPROPAGATION_REGISTRATION_ONLY";
             break;
     }
 

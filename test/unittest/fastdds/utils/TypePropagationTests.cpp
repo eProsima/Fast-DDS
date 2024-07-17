@@ -56,6 +56,7 @@ TEST(TypePropagationTests, to_type_propagation)
     const std::string enabled_property_value = "enabled";
     const std::string disabled_property_value = "disabled";
     const std::string minimal_bandwidth_property_value = "minimal_bandwidth";
+    const std::string registration_only_property_value = "registration_only";
 
     using TestCase = std::pair<std::pair<std::string, std::string>, TypePropagation>;
 
@@ -65,11 +66,14 @@ TEST(TypePropagationTests, to_type_propagation)
         {{random_property_name, disabled_property_value}, TypePropagation::TYPEPROPAGATION_ENABLED},
         {{random_property_name, enabled_property_value}, TypePropagation::TYPEPROPAGATION_ENABLED},
         {{random_property_name, minimal_bandwidth_property_value}, TypePropagation::TYPEPROPAGATION_ENABLED},
+        {{random_property_name, registration_only_property_value}, TypePropagation::TYPEPROPAGATION_ENABLED},
         {{parameter_policy_type_propagation, random_property_value}, TypePropagation::TYPEPROPAGATION_UNKNOWN},
         {{parameter_policy_type_propagation, disabled_property_value}, TypePropagation::TYPEPROPAGATION_DISABLED},
         {{parameter_policy_type_propagation, enabled_property_value}, TypePropagation::TYPEPROPAGATION_ENABLED},
         {{parameter_policy_type_propagation, minimal_bandwidth_property_value},
-            TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH}
+            TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH},
+        {{parameter_policy_type_propagation, registration_only_property_value},
+            TypePropagation::TYPEPROPAGATION_REGISTRATION_ONLY}
     };
 
     /* Test lambda */

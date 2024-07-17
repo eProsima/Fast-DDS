@@ -163,10 +163,13 @@ bool EDP::newLocalReaderProxyData(
                             rpd->type_information(minimal);
                             break;
                         }
+                        case TypePropagation::TYPEPROPAGATION_REGISTRATION_ONLY:
                         default:
                         {
-                            // This should never happen
-                            assert(false);
+                            if (rpd->has_type_information())
+                            {
+                                rpd->type_information().assigned(false);
+                            }
                             break;
                         }
                     }
@@ -299,10 +302,13 @@ bool EDP::newLocalWriterProxyData(
                             wpd->type_information(minimal);
                             break;
                         }
+                        case TypePropagation::TYPEPROPAGATION_REGISTRATION_ONLY:
                         default:
                         {
-                            // This should never happen
-                            assert(false);
+                            if (wpd->has_type_information())
+                            {
+                                wpd->type_information().assigned(false);
+                            }
                             break;
                         }
                     }

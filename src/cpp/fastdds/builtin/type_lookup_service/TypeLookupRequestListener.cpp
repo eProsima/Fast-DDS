@@ -220,7 +220,7 @@ void TypeLookupRequestListener::check_get_types_request(
             complete_id = fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
                             get_complementary_type_identifier(minimal_id);
 
-            if (xtypes::EK_COMPLETE == typelookup_manager_->get_type_kind_to_propagate())
+            if (xtypes::EK_COMPLETE == type_to_propagate)
             {
                 reply_typeid = complete_id;
 

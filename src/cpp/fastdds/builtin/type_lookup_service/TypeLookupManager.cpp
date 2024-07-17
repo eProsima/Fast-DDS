@@ -329,10 +329,14 @@ TypeKind TypeLookupManager::get_type_kind_to_propagate() const
 {
     switch (type_propagation_)
     {
+        case utils::TypePropagation::TYPEPROPAGATION_DISABLED:
+            return xtypes::TK_NONE;
         case utils::TypePropagation::TYPEPROPAGATION_ENABLED:
             return xtypes::EK_COMPLETE;
         case utils::TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH:
             return xtypes::EK_MINIMAL;
+        case utils::TypePropagation::TYPEPROPAGATION_REGISTRATION_ONLY:
+            return xtypes::TK_NONE;
         default:
             return xtypes::EK_COMPLETE;
     }
