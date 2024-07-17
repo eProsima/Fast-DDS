@@ -983,7 +983,6 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(
     if (baseType != nullptr)
     {
         DynamicTypeBuilder::_ref_type parent_type_builder = nullptr;
-        
         XMLProfileManager::getDynamicTypeBuilderByName(parent_type_builder, baseType);
 
         DynamicType::_ref_type parent_type = nullptr;
