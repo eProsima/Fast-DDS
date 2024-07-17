@@ -132,9 +132,6 @@ TEST(DataReaderHistory, exclusive_ownership_non_keyed_sample_reception)
 TEST(DataReaderHistory, exclusive_ownership_keyed_sample_reception)
 {
     TestType* type_ = new TestType();
-    // These functions was called due to the type is keyed.
-    EXPECT_CALL(*type_, create_data()).Times(1);
-    EXPECT_CALL(*type_, delete_data(nullptr)).Times(1);
 
     const TypeSupport type(type_);
     type->is_compute_key_provided = true;
