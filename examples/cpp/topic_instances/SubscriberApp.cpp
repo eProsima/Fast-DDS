@@ -152,7 +152,7 @@ void SubscriberApp::on_data_available(
             if (samples_per_instance_.count(info.instance_handle) > 0)
             {
                 // Instance handle exists in the map, increase the counter
-                samples_per_instance_[info.instance_handle]++;
+                samples_per_instance_[info.instance_handle] += 1;
             }
             else
             {
@@ -235,13 +235,12 @@ bool SubscriberApp::instances_received_all_samples()
 bool SubscriberApp::instances_disposed()
 {
     bool ret = true;
-    if (samples_per_instance_.size() > 0)
+    if (disposed_instances_.size() > 0)
     {
-        for (std::map<InstanceHandle_t, uint32_t>::iterator it = samples_per_instance_.begin();
-                it != samples_per_instance_.end(); ++it)
+        for (const auto& instance : samples_per_instance_)
         {
             if (std::find(disposed_instances_.begin(), disposed_instances_.end(),
-                    it->first) == disposed_instances_.end())
+                    instance.first) == disposed_instances_.end())
             {
                 ret = false;
                 break;
@@ -250,7 +249,7 @@ bool SubscriberApp::instances_disposed()
     }
     else
     {
-        ret = false;
+        ret = true;
     }
     return ret;
 }
