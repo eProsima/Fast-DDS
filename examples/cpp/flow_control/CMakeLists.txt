@@ -50,3 +50,18 @@ target_compile_definitions(flow_control PRIVATE
 target_link_libraries(flow_control fastdds fastcdr foonathan_memory)
 install(TARGETS flow_control
     RUNTIME DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples/cpp/flow_control/${BIN_INSTALL_DIR})
+
+# Copy the XML files over to the build directory
+file(GLOB_RECURSE XML_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.xml)
+# for each xml file detected
+foreach(XML_FILE_COMPLETE_PATH ${XML_FILES})
+    # obtain the file name
+    get_filename_component(XML_FILE ${XML_FILE_COMPLETE_PATH} NAME_WE)
+    # copy the file from src to build folders
+    configure_file(
+        ${XML_FILE_COMPLETE_PATH}                   # from full src path
+        ${CMAKE_CURRENT_BINARY_DIR}/${XML_FILE}.xml # to relative build path
+        COPYONLY)
+    install(FILES ${XML_FILE_COMPLETE_PATH}
+        DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples/cpp/flow_control/${BIN_INSTALL_DIR})
+endforeach()
