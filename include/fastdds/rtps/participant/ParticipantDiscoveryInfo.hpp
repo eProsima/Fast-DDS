@@ -21,7 +21,7 @@
 #define FASTDDS_RTPS_PARTICIPANT__PARTICIPANTDISCOVERYINFO_HPP
 
 #include <fastdds/fastdds_dll.hpp>
-
+#include <fastdds/rtps/common/Guid.hpp>
 namespace eprosima {
 namespace fastdds {
 namespace rtps {

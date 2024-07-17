@@ -130,17 +130,18 @@ void ServerApp::stop()
 
 void ServerApp::on_participant_discovery(
         DomainParticipant* /* participant */,
-        rtps::ParticipantDiscoveryInfo&& info,
+        rtps::ParticipantDiscoveryStatus status,
+        const ParticipantBuiltinTopicData& info,
         bool& should_be_ignored)
 {
     std::lock_guard<std::mutex> lock(mtx_);
 
     should_be_ignored = false;
 
-    rtps::GuidPrefix_t remote_participant_guid_prefix = info.info.m_guid.guidPrefix;
-    std::string status_str = TypeConverter::to_string(info.status);
+    rtps::GuidPrefix_t remote_participant_guid_prefix = info.guid.guidPrefix;
+    std::string status_str = TypeConverter::to_string(status);
 
-    if (info.info.m_userData.data_vec().size() != 1)
+    if (info.user_data.data_vec().size() != 1)
     {
         should_be_ignored = true;
         request_reply_debug("ServerApp", "Ignoring participant with invalid user data: "
@@ -149,7 +150,7 @@ void ServerApp::on_participant_discovery(
 
     if (!should_be_ignored)
     {
-        CLIParser::EntityKind entity_kind = static_cast<CLIParser::EntityKind>(info.info.m_userData.data_vec()[0]);
+        CLIParser::EntityKind entity_kind = static_cast<CLIParser::EntityKind>(info.user_data.data_vec()[0]);
         if (CLIParser::EntityKind::CLIENT != entity_kind)
         {
             should_be_ignored = true;
@@ -163,12 +164,12 @@ void ServerApp::on_participant_discovery(
     {
         std::string client_str = CLIParser::parse_entity_kind(CLIParser::EntityKind::CLIENT);
 
-        if (info.status == rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
+        if (status == rtps::ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT)
         {
             request_reply_debug("ServerApp", client_str << " " << status_str << ": " << remote_participant_guid_prefix);
         }
-        else if (info.status == rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::REMOVED_PARTICIPANT ||
-                info.status == rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::DROPPED_PARTICIPANT)
+        else if (status == rtps::ParticipantDiscoveryStatus::REMOVED_PARTICIPANT ||
+                status == rtps::ParticipantDiscoveryStatus::DROPPED_PARTICIPANT)
         {
             client_matched_status_.match_reply_reader(remote_participant_guid_prefix, false);
             client_matched_status_.match_request_writer(remote_participant_guid_prefix, false);

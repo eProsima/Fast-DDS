@@ -71,7 +71,8 @@ public:
     //! Participant discovery method
     void on_participant_discovery(
             DomainParticipant* participant,
-            rtps::ParticipantDiscoveryInfo&& info,
+            rtps::ParticipantDiscoveryStatus status,
+            const ParticipantBuiltinTopicData& info,
             bool& should_be_ignored) override;
 
     //! Publication matched method

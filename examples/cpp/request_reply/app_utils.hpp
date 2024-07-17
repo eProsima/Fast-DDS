@@ -225,25 +225,25 @@ struct TypeConverter
     }
 
     static std::string to_string(
-            const rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS& info)
+            const rtps::ParticipantDiscoveryStatus& info)
     {
         std::string info_str = "Unknown";
 
         switch (info)
         {
-            case rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_PARTICIPANT:
+            case rtps::ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT:
                 info_str = "discovered";
                 break;
-            case rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::CHANGED_QOS_PARTICIPANT:
+            case rtps::ParticipantDiscoveryStatus::CHANGED_QOS_PARTICIPANT:
                 info_str = "changed QoS";
                 break;
-            case rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::REMOVED_PARTICIPANT:
+            case rtps::ParticipantDiscoveryStatus::REMOVED_PARTICIPANT:
                 info_str = "removed";
                 break;
-            case rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::DROPPED_PARTICIPANT:
+            case rtps::ParticipantDiscoveryStatus::DROPPED_PARTICIPANT:
                 info_str = "dropped";
                 break;
-            case rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::IGNORED_PARTICIPANT:
+            case rtps::ParticipantDiscoveryStatus::IGNORED_PARTICIPANT:
                 info_str = "ignored";
                 break;
             default:
