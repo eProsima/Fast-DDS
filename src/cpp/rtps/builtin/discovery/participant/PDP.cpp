@@ -37,6 +37,7 @@
 #include <fastdds/utils/IPLocator.hpp>
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
+#include <fastdds/utils/TypePropagation.hpp>
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/ProxyDataConverters.hpp>
@@ -53,8 +54,8 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/reader/StatelessReader.hpp>
-#include <rtps/writer/StatelessWriter.hpp>
 #include <rtps/resources/TimedEvent.h>
+#include <rtps/writer/StatelessWriter.hpp>
 #if HAVE_SECURITY
 #include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #endif // if HAVE_SECURITY
@@ -327,15 +328,26 @@ void PDP::initializeParticipantProxyData(
         }
 #endif // if HAVE_SECURITY
     }
-    participant_data->m_availableBuiltinEndpoints |=
-            fastdds::rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_READER;
-    participant_data->m_availableBuiltinEndpoints |=
-            fastdds::rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_WRITER;
 
-    participant_data->m_availableBuiltinEndpoints |=
-            fastdds::rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_WRITER;
-    participant_data->m_availableBuiltinEndpoints |=
-            fastdds::rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_READER;
+    // TypeLookupManager
+    auto properties = mp_RTPSParticipant->getAttributes().properties;
+    auto type_propagation = dds::utils::to_type_propagation(properties);
+    bool should_announce_typelookup =
+            (dds::utils::TypePropagation::TYPEPROPAGATION_ENABLED == type_propagation) ||
+            (dds::utils::TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH == type_propagation);
+
+    if (should_announce_typelookup)
+    {
+        participant_data->m_availableBuiltinEndpoints |=
+                fastdds::rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_READER;
+        participant_data->m_availableBuiltinEndpoints |=
+                fastdds::rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_WRITER;
+
+        participant_data->m_availableBuiltinEndpoints |=
+                fastdds::rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_WRITER;
+        participant_data->m_availableBuiltinEndpoints |=
+                fastdds::rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_READER;
+    }
 
 #if HAVE_SECURITY
     if (mp_RTPSParticipant->is_secure())
@@ -1316,7 +1328,10 @@ void PDP::actions_on_remote_participant_removed(
         mp_builtin->mp_WLP->removeRemoteEndpoints(pdata);
     }
 
-    mp_builtin->typelookup_manager_->remove_remote_endpoints(pdata);
+    if (nullptr != mp_builtin->typelookup_manager_)
+    {
+        mp_builtin->typelookup_manager_->remove_remote_endpoints(pdata);
+    }
 
     mp_EDP->removeRemoteEndpoints(pdata);
     removeRemoteEndpoints(pdata);

@@ -581,7 +581,10 @@ void PDPClient::perform_builtin_endpoints_matching(
         mp_builtin->mp_WLP->assignRemoteEndpoints(pdata, true);
     }
 
-    mp_builtin->typelookup_manager_->assign_remote_endpoints(pdata);
+    if (nullptr != mp_builtin->typelookup_manager_)
+    {
+        mp_builtin->typelookup_manager_->assign_remote_endpoints(pdata);
+    }
 }
 
 void PDPClient::removeRemoteEndpoints(

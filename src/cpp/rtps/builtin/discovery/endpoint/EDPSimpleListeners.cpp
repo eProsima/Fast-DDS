@@ -134,17 +134,20 @@ void EDPBasePUBListener::add_writer_from_change(
         // At this point, we can release the reader lock because the change is not used
         reader->getMutex().unlock();
 
+        auto typelookup_manager = edp->mp_RTPSParticipant->typelookup_manager();
+
         // Check if TypeInformation exists to start the typelookup service
-        if (temp_writer_data->type_information().assigned())
+        if (nullptr != typelookup_manager && temp_writer_data->type_information().assigned())
         {
-            edp->mp_RTPSParticipant->typelookup_manager()->async_get_type(
+            typelookup_manager->async_get_type(
                 temp_writer_data,
                 after_typelookup_callback);
         }
         // If TypeInformation does not exist, try fallback mechanism
         else
         {
-            EPROSIMA_LOG_INFO(RTPS_EDP, "EDPBasePUBListener: No TypeInformation. Trying fallback mechanism");
+            EPROSIMA_LOG_INFO(
+                RTPS_EDP, "EDPSimpleListener: No TypeLookupManager or TypeInformation. Trying fallback mechanism");
             after_typelookup_callback(temp_writer_data.get());
         }
         // Release temporary proxy
@@ -275,17 +278,20 @@ void EDPBaseSUBListener::add_reader_from_change(
         // At this point, we can release the reader lock because the change is not used
         reader->getMutex().unlock();
 
+        auto typelookup_manager = edp->mp_RTPSParticipant->typelookup_manager();
+
         // Check if TypeInformation exists to start the typelookup service
-        if (temp_reader_data->type_information().assigned())
+        if (nullptr != typelookup_manager && temp_reader_data->type_information().assigned())
         {
-            edp->mp_RTPSParticipant->typelookup_manager()->async_get_type(
+            typelookup_manager->async_get_type(
                 temp_reader_data,
                 after_typelookup_callback);
         }
         // If TypeInformation does not exist, try fallback mechanism
         else
         {
-            EPROSIMA_LOG_INFO(RTPS_EDP, "EDPBasePUBListener: No TypeInformation. Trying fallback mechanism");
+            EPROSIMA_LOG_INFO(
+                RTPS_EDP, "EDPSimpleListener: No TypeLookupManager or TypeInformation. Trying fallback mechanism");
             after_typelookup_callback(temp_reader_data.get());
         }
         // Release the temporary proxy
