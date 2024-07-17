@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef FASTDDS_EXAMPLE_CPP_STATIC_EDP_DISCOVERY__SUBSCRIBER_APP_HPP
-#define FASTDDS_EXAMPLE_CPP_STATIC_EDP_DISCOVERY__SUBSCRIBER_APP_HPP
+#ifndef FASTDDS_EXAMPLE_CPP_STATIC_EDP_DISCOVERY__SUBSCRIBERAPP_HPP
+#define FASTDDS_EXAMPLE_CPP_STATIC_EDP_DISCOVERY__SUBSCRIBERAPP_HPP
 
 #include <condition_variable>
 
@@ -27,7 +27,7 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include "CLIParser.hpp"
-#include "HelloWorldPubSubTypes.hpp"
+#include "HelloWorld.hpp"
 #include "Application.hpp"
 
 using namespace eprosima::fastdds::dds;
@@ -97,4 +97,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_EXAMPLE_CPP_STATIC_EDP_DISCOVERY__SUBSCRIBER_APP_HPP
+#endif // FASTDDS_EXAMPLE_CPP_STATIC_EDP_DISCOVERY__SUBSCRIBERAPP_HPP

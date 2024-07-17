@@ -27,8 +27,8 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
-#ifndef FASTDDS_STATIC_EDP_DISCOVERY_CLI_PARSER_HPP
-#define FASTDDS_STATIC_EDP_DISCOVERY_CLI_PARSER_HPP
+#ifndef FASTDDS_STATIC_EDP_DISCOVERY__CLIPARSER_HPP
+#define FASTDDS_STATIC_EDP_DISCOVERY__CLIPARSER_HPP
 
 namespace eprosima {
 namespace fastdds {
@@ -71,7 +71,7 @@ public:
     static void print_help(
             uint8_t return_code)
     {
-        std::cout << "Usage: static_edp_discovery <entity> [options]"                                    << std::endl;
+        std::cout << "Usage: static_edp_discovery <entity> [options]"                                   << std::endl;
         std::cout << ""                                                                                 << std::endl;
         std::cout << "Entities:"                                                                        << std::endl;
         std::cout << "  publisher                           Run a publisher entity"                     << std::endl;
@@ -336,4 +336,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_STATIC_EDP_DISCOVERY_CLI_PARSER_HPP
+#endif // FASTDDS_STATIC_EDP_DISCOVERY__CLIPARSER_HPP
