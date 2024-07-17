@@ -23,7 +23,7 @@
 
 #include <atomic>
 #include <condition_variable>
-#include <cstdlib>
+#include <cstdint>
 #include <mutex>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>

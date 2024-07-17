@@ -181,8 +181,6 @@ void PublisherApp::run()
     // Publication code
     FlowControl msg;
 
-    /* Initialize your structure here */
-
     while (!is_stopped() && ((samples_ == 0) || (msg.index() < samples_)))
     {
         msg.index(msg.index() + 1);
@@ -229,7 +227,7 @@ bool PublisherApp::publish(
 
     if (!is_stopped())
     {
-        ret = writer_->write(&msg);
+        ret = (RETCODE_OK == writer_->write(&msg));
     }
     return ret;
 }
