@@ -70,7 +70,7 @@ jobs:
           ref: ${{ inputs.fastdds_ref }}
 
       - name: Install Fix Python version
-        uses: eProsima/eProsima-CI/external/setup-python@hotfix/setup-python-venv
+        uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
           python-version: '3.11'
 
@@ -146,7 +146,7 @@ jobs:
           path: ${{ github.workspace }}
 
       - name: Install Fix Python version
-        uses: eProsima/eProsima-CI/external/setup-python@hotfix/setup-python-venv
+        uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
           python-version: '3.11'
 
@@ -244,7 +244,7 @@ jobs:
           path: ${{ github.workspace }}
 
       - name: Install Fix Python version
-        uses: eProsima/eProsima-CI/external/setup-python@hotfix/setup-python-venv
+        uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
           python-version: '3.11'
 
@@ -357,7 +357,7 @@ jobs:
           ref: ${{ inputs.fastdds_ref }}
 
       - name: Install Fix Python version
-        uses: eProsima/eProsima-CI/external/setup-python@hotfix/setup-python-venv
+        uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
           python-version: '3.11'
 
