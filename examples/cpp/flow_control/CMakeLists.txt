@@ -14,7 +14,7 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-project(FlowControlExample VERSION 1 LANGUAGES CXX)
+project(fastdds_flow_control_example VERSION 1 LANGUAGES CXX)
 
 # Find requirements
 if(NOT fastcdr_FOUND)
@@ -42,11 +42,26 @@ message(STATUS "Configuring DDS Flow Control example...")
 file(GLOB DDS_FLOWCONTROL_EXAMPLE_SOURCES_CXX "*.cxx")
 file(GLOB DDS_FLOWCONTROL_EXAMPLE_SOURCES_CPP "*.cpp")
 
-add_executable(DDSFlowControlExample ${DDS_FLOWCONTROL_EXAMPLE_SOURCES_CXX} ${DDS_FLOWCONTROL_EXAMPLE_SOURCES_CPP})
-target_compile_definitions(DDSFlowControlExample PRIVATE
+add_executable(flow_control ${DDS_FLOWCONTROL_EXAMPLE_SOURCES_CXX} ${DDS_FLOWCONTROL_EXAMPLE_SOURCES_CPP})
+target_compile_definitions(flow_control PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
-target_link_libraries(DDSFlowControlExample fastdds fastcdr foonathan_memory)
-install(TARGETS DDSFlowControlExample
-    RUNTIME DESTINATION examples/cpp/dds/FlowControlExample/${BIN_INSTALL_DIR})
+target_link_libraries(flow_control fastdds fastcdr foonathan_memory)
+install(TARGETS flow_control
+    RUNTIME DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples/cpp/flow_control/${BIN_INSTALL_DIR})
+
+# Copy the XML files over to the build directory
+file(GLOB_RECURSE XML_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.xml)
+# for each xml file detected
+foreach(XML_FILE_COMPLETE_PATH ${XML_FILES})
+    # obtain the file name
+    get_filename_component(XML_FILE ${XML_FILE_COMPLETE_PATH} NAME_WE)
+    # copy the file from src to build folders
+    configure_file(
+        ${XML_FILE_COMPLETE_PATH}                   # from full src path
+        ${CMAKE_CURRENT_BINARY_DIR}/${XML_FILE}.xml # to relative build path
+        COPYONLY)
+    install(FILES ${XML_FILE_COMPLETE_PATH}
+        DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples/cpp/flow_control/${BIN_INSTALL_DIR})
+endforeach()
