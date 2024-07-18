@@ -1680,17 +1680,49 @@ ReturnCode_t DataWriterImpl::assert_liveliness()
     return RETCODE_OK;
 }
 
-fastdds::TopicAttributes DataWriterImpl::get_topic_attributes(
-        const DataWriterQos& qos,
-        const Topic& topic,
-        const TypeSupport& type)
+PublicationBuiltinTopicData DataWriterImpl::get_publication_builtin_topic_data() const
 {
-    fastdds::TopicAttributes topic_att;
-    topic_att.historyQos = qos.history();
-    topic_att.resourceLimitsQos = qos.resource_limits();
-    topic_att.topicName = topic.get_name();
-    topic_att.topicDataType = topic.get_type_name();
-    topic_att.topicKind = type->is_compute_key_provided ? WITH_KEY : NO_KEY;
+    PublicationBuiltinTopicData pub_builtin_data;
+
+    // sanity checks
+    bool writer_is_valid = (nullptr != writer_);
+    bool publisher_is_valid = (nullptr != publisher_);
+    bool topic_is_valid = (nullptr != topic_);
+    bool participant_is_valid = publisher_is_valid ? (nullptr != publisher_->get_participant()) : false;
+    bool rtps_participant_impl_is_valid = writer_is_valid ? (nullptr != writer_->get_participant_impl()) : false;
+
+    from_proxy_to_builtin(guid_.entityId, pub_builtin_data.key.value);
+    if (participant_is_valid)
+    {
+        from_proxy_to_builtin(publisher_->get_participant()->guid().guidPrefix, pub_builtin_data.participant_key.value);
+    }
+
+    if (topic_is_valid)
+    {
+        pub_builtin_data.topic_name = topic_->get_name();
+        pub_builtin_data.type_name = topic_->get_type_name();
+    }
+
+    // DataWriter qos
+    pub_builtin_data.durability = qos_.durability();
+    pub_builtin_data.durability_service = qos_.durability_service();
+    pub_builtin_data.deadline = qos_.deadline();
+    pub_builtin_data.latency_budget = qos_.latency_budget();
+    pub_builtin_data.liveliness = qos_.liveliness();
+    pub_builtin_data.reliability = qos_.reliability();
+    pub_builtin_data.lifespan = qos_.lifespan();
+    pub_builtin_data.user_data = qos_.user_data();
+    pub_builtin_data.ownership = qos_.ownership();
+    pub_builtin_data.ownership_strength = qos_.ownership_strength();
+    pub_builtin_data.destination_order = qos_.destination_order();
+
+    // Publisher qos
+    if (publisher_is_valid)
+    {
+        pub_builtin_data.presentation = publisher_->qos_.presentation();
+        pub_builtin_data.partition = publisher_->qos_.partition();
+        pub_builtin_data.group_data = publisher_->qos_.group_data();
+    }
 
     using utils::to_type_propagation;
     using utils::TypePropagation;
@@ -1701,26 +1733,26 @@ fastdds::TopicAttributes DataWriterImpl::get_topic_attributes(
             (TypePropagation::TYPEPROPAGATION_ENABLED == type_propagation) ||
             (TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH == type_propagation);
 
-    if (should_assign_type_information && (xtypes::TK_NONE != type->type_identifiers().type_identifier1()._d()))
+    if (should_assign_type_information && (xtypes::TK_NONE != type_->type_identifiers().type_identifier1()._d()))
     {
         xtypes::TypeInformation type_info;
 
         if (RETCODE_OK ==
                 fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
-                    type->type_identifiers(), type_info))
+                    type_->type_identifiers(), type_info))
         {
             switch (type_propagation)
             {
                 case TypePropagation::TYPEPROPAGATION_ENABLED:
                 {
                     // Use both complete and minimal type information
-                    topic_att.type_information.type_information = type_info;
+                    pub_builtin_data.type_information.type_information = type_info;
                     break;
                 }
                 case TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH:
                 {
                     // Use minimal type information only
-                    topic_att.type_information.type_information.minimal() = type_info.minimal();
+                    pub_builtin_data.type_information.type_information.minimal() = type_info.minimal();
                     break;
                 }
                 default:
@@ -1729,10 +1761,32 @@ fastdds::TopicAttributes DataWriterImpl::get_topic_attributes(
                     break;
             }
 
-            topic_att.type_information.assigned(true);
+            pub_builtin_data.type_information.assigned(true);
         }
     }
-    return topic_att;
+    pub_builtin_data.representation = qos_.representation();
+
+    pub_builtin_data.guid = guid();
+    if (publisher_is_valid)
+    {
+        pub_builtin_data.participant_guid = publisher_->get_participant()->guid();
+    }
+
+    if (rtps_participant_impl_is_valid)
+    {
+        pub_builtin_data.persistence_guid.guidPrefix = writer_->get_participant_impl()->get_persistence_guid_prefix();
+    }
+    pub_builtin_data.persistence_guid.entityId = c_EntityId_RTPSParticipant;
+    qos_.endpoint().unicast_locator_list.copy_to(pub_builtin_data.remote_locators.unicast);
+    qos_.endpoint().multicast_locator_list.copy_to(pub_builtin_data.remote_locators.multicast);
+    pub_builtin_data.max_serialized_size = type_->max_serialized_type_size;
+    if (rtps_participant_impl_is_valid)
+    {
+        pub_builtin_data.loopback_transformation =
+            writer_->get_participant_impl()->network_factory().network_configuration();
+    }
+
+    return pub_builtin_data;
 }
 
 OfferedIncompatibleQosStatus& DataWriterImpl::update_offered_incompatible_qos(

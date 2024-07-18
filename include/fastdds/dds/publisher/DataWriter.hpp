@@ -19,6 +19,7 @@
 #ifndef FASTDDS_DDS_PUBLISHER__DATAWRITER_HPP
 #define FASTDDS_DDS_PUBLISHER__DATAWRITER_HPP
 
+#include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
 #include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
@@ -28,9 +29,9 @@
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
-#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -583,6 +584,11 @@ public:
             const void* const instance,
             const InstanceHandle_t& handle,
             const fastdds::dds::Duration_t& max_wait);
+
+    /**
+     * @brief A method to retrieve the publication data discovery information of this writer.
+     */
+    FASTDDS_EXPORTED_API PublicationBuiltinTopicData get_publication_builtin_topic_data() const;
 
 protected:
 
