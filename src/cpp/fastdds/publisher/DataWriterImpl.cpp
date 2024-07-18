@@ -35,7 +35,6 @@
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/publisher/filtering/DataWriterFilteredChangePool.hpp>
 #include <fastdds/publisher/PublisherImpl.hpp>
-#include <fastdds/rtps/attributes/TopicAttributes.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/RTPSDomain.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
@@ -53,6 +52,7 @@
 #include <rtps/writer/BaseWriter.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
 #include <utils/TimeConversion.hpp>
+#include <utils/BuiltinTopicKeyConversions.hpp>
 #ifdef FASTDDS_STATISTICS
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/types/monitorservice_types.hpp>
@@ -473,7 +473,7 @@ ReturnCode_t DataWriterImpl::enable()
             wqos.m_partition.push_back(partition_name.c_str());
         }
     }
-    publisher_->rtps_participant()->registerWriter(writer_, get_topic_attributes(qos_, *topic_, type_), wqos);
+    publisher_->rtps_participant()->register_writer(writer_, get_publication_builtin_topic_data(), wqos);
 
     return RETCODE_OK;
 }
@@ -1179,7 +1179,7 @@ void DataWriterImpl::publisher_qos_updated()
     {
         //NOTIFY THE BUILTIN PROTOCOLS THAT THE WRITER HAS CHANGED
         WriterQos wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
-        publisher_->rtps_participant()->updateWriter(writer_, get_topic_attributes(qos_, *topic_, type_), wqos);
+        publisher_->rtps_participant()->update_writer(writer_, wqos);
     }
 }
 
@@ -1228,9 +1228,8 @@ ReturnCode_t DataWriterImpl::set_qos(
         }
 
         //Notify the participant that a Writer has changed its QOS
-        fastdds::TopicAttributes topic_att = get_topic_attributes(qos_, *topic_, type_);
         WriterQos wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
-        publisher_->rtps_participant()->updateWriter(writer_, topic_att, wqos);
+        publisher_->rtps_participant()->update_writer(writer_, wqos);
 
         // Deadline
         if (qos_.deadline().period != dds::c_TimeInfinite)
