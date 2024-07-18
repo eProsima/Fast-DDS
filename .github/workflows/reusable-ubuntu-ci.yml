@@ -31,7 +31,7 @@ on:
         description: 'Branch or tag of Fast CDR repository (https://github.com/eProsima/Fast-CDR)'
         required: false
         type: string
-        default: '2.2.x'
+        default: '1.0.x'
       security:
         description: 'Enable security features'
         required: false

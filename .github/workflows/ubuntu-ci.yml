@@ -23,6 +23,11 @@ on:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         type: string
         required: true
+      fastcdr_branch:
+        description: 'Branch or tag of Fast CDR repository (https://github.com/eProsima/Fast-CDR)'
+        type: string
+        required: false
+        default: '1.0.x'
       security:
         description: 'Enable security features'
         required: false
@@ -65,6 +70,7 @@ jobs:
       cmake-args: ${{ inputs.cmake-args }}
       ctest-args: ${{ inputs.ctest-args || '-LE xfail' }}
       fastdds-branch: ${{ inputs.fastdds_branch || github.ref || '2.6.x' }}
+      fastcdr-branch: ${{ inputs.fastcdr_branch || '1.0.x' }}
       security: ${{ ((inputs.security == true) && true) || github.event_name == 'pull_request' }}
       run-build: ${{ !(github.event_name == 'pull_request') || !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
       run-tests: ${{ ((inputs.run-tests == true) && true) || (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'no-test')) }}
