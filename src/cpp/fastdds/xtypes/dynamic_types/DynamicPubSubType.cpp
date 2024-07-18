@@ -49,7 +49,7 @@ DynamicPubSubType::~DynamicPubSubType()
     }
 }
 
-void* DynamicPubSubType::createData()
+void* DynamicPubSubType::create_data()
 {
     if (!dynamic_type_)
     {
@@ -66,7 +66,7 @@ void* DynamicPubSubType::createData()
     }
 }
 
-void DynamicPubSubType::deleteData(
+void DynamicPubSubType::delete_data(
         void* data)
 {
     traits<DynamicData>::ref_type* data_ptr = static_cast<traits<DynamicData>::ref_type*>(data);
@@ -75,18 +75,18 @@ void DynamicPubSubType::deleteData(
 }
 
 bool DynamicPubSubType::deserialize(
-        eprosima::fastdds::rtps::SerializedPayload_t* payload,
+        eprosima::fastdds::rtps::SerializedPayload_t& payload,
         void* data)
 {
     traits<DynamicDataImpl>::ref_type* data_ptr = static_cast<traits<DynamicDataImpl>::ref_type*>(data);
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length); // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN); // Object that deserializes the data.
 
     try
     {
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         deser >> *data_ptr;
     }
@@ -102,12 +102,33 @@ traits<DynamicType>::ref_type DynamicPubSubType::get_dynamic_type() const noexce
     return dynamic_type_;
 }
 
-bool DynamicPubSubType::getKey(
-        const void* const data,
-        eprosima::fastdds::rtps::InstanceHandle_t* handle,
+bool DynamicPubSubType::compute_key(
+        eprosima::fastdds::rtps::SerializedPayload_t& payload,
+        eprosima::fastdds::rtps::InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!dynamic_type_ || !m_isGetKeyDefined)
+    if (!dynamic_type_ || !is_compute_key_provided)
+    {
+        return false;
+    }
+
+    traits<DynamicDataImpl>::ref_type temp_val {traits<DynamicData>::narrow<DynamicDataImpl>(
+                                                    DynamicDataFactory::get_instance()->create_data(
+                                                        dynamic_type_))};
+    if (deserialize(payload, static_cast<void*>(&temp_val)))
+    {
+        return compute_key(static_cast<void*>(&temp_val), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool DynamicPubSubType::compute_key(
+        const void* const data,
+        eprosima::fastdds::rtps::InstanceHandle_t& handle,
+        bool force_md5)
+{
+    if (!dynamic_type_ || !is_compute_key_provided)
     {
         return false;
     }
@@ -135,65 +156,56 @@ bool DynamicPubSubType::getKey(
         md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = md5_.digest[i];
+            handle.value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = key_buffer_[i];
+            handle.value[i] = key_buffer_[i];
         }
     }
     return true;
 }
 
-std::function<uint32_t()> DynamicPubSubType::getSerializedSizeProvider(
-        const void* const data)
-{
-    return getSerializedSizeProvider(data, DEFAULT_DATA_REPRESENTATION);
-}
-
-std::function<uint32_t()> DynamicPubSubType::getSerializedSizeProvider(
+uint32_t DynamicPubSubType::calculate_serialized_size(
         const void* const data,
         DataRepresentationId_t data_representation)
 {
     const traits<DynamicDataImpl>::ref_type* data_ptr = static_cast<const traits<DynamicDataImpl>::ref_type*>(data);
 
-    return [data_ptr, data_representation]() -> uint32_t
-           {
-               try
-               {
-                   eprosima::fastcdr::CdrSizeCalculator calculator(
-                       data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-                       eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-                   size_t current_alignment {0};
-                   return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                              *data_ptr, current_alignment)) + 4u /*encapsulation*/;
+    try
+    {
+        eprosima::fastcdr::CdrSizeCalculator calculator(
+            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+            eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        size_t current_alignment {0};
+        return static_cast<uint32_t>(calculator.calculate_serialized_size(
+                   *data_ptr, current_alignment)) + 4u /*encapsulation*/;
 
-               }
-               catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-               {
-                   return 0;
-               }
-           };
+    }
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+    {
+        return 0;
+    }
 }
 
 bool DynamicPubSubType::serialize(
         const void* const data,
-        eprosima::fastdds::rtps::SerializedPayload_t* payload,
+        eprosima::fastdds::rtps::SerializedPayload_t& payload,
         fastdds::dds::DataRepresentationId_t data_representation)
 {
     const traits<DynamicDataImpl>::ref_type* data_ptr = static_cast<const traits<DynamicDataImpl>::ref_type*>(data);
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation ==
             fastdds::dds::DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::
                     XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     auto type_impl = traits<DynamicType>::narrow<DynamicTypeImpl>(dynamic_type_);
     ser.set_encoding_flag(get_fastcdr_encoding_flag(type_impl->get_descriptor().extensibility_kind(),
@@ -213,7 +225,7 @@ bool DynamicPubSubType::serialize(
         return false;
     }
 
-    payload->length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     return true;
 }
 
@@ -255,15 +267,15 @@ void DynamicPubSubType::register_type_object_representation()
 
 void DynamicPubSubType::update_dynamic_type()
 {
-    m_isGetKeyDefined = false;
+    is_compute_key_provided = false;
 
     if (nullptr == dynamic_type_)
     {
         return;
     }
 
-    m_typeSize = static_cast<uint32_t>(DynamicDataImpl::calculate_max_serialized_size(dynamic_type_) + 4);
-    setName(dynamic_type_->get_name());
+    max_serialized_type_size = static_cast<uint32_t>(DynamicDataImpl::calculate_max_serialized_size(dynamic_type_) + 4);
+    set_name(dynamic_type_->get_name().to_string());
 
     if (TK_STRUCTURE == dynamic_type_->get_kind())
     {
@@ -273,7 +285,7 @@ void DynamicPubSubType::update_dynamic_type()
             auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
             if (member_impl->get_descriptor().is_key())
             {
-                m_isGetKeyDefined = true;
+                is_compute_key_provided = true;
                 break;
             }
         }

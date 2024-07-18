@@ -56,7 +56,7 @@ ReturnCode_t TopicImpl::check_qos_including_resource_limits(
 {
     ReturnCode_t check_qos_return = check_qos(qos);
     if (RETCODE_OK == check_qos_return &&
-            type->m_isGetKeyDefined)
+            type->is_compute_key_provided)
     {
         check_qos_return = check_allocation_consistency(qos);
     }

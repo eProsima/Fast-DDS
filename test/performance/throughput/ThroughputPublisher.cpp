@@ -549,7 +549,7 @@ void ThroughputPublisher::run(
         {
             assert(nullptr == dynamic_data_);
             // Create the data sample
-            dynamic_data_ = static_cast<DynamicData::_ref_type*>(dynamic_pub_sub_type_->createData());
+            dynamic_data_ = static_cast<DynamicData::_ref_type*>(dynamic_pub_sub_type_->create_data());
 
             if (nullptr == dynamic_data_)
             {

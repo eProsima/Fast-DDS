@@ -128,22 +128,7 @@ public:
      */
     FASTDDS_EXPORTED_API virtual const std::string& get_type_name() const
     {
-        return get()->m_topicDataTypeName;
-    }
-
-    /**
-     * @brief Serializes the data
-     *
-     * @param data Pointer to data
-     * @param payload Pointer to payload
-     * @return true if it is serialized correctly, false if not
-     */
-
-    FASTDDS_EXPORTED_API virtual bool serialize(
-            const void* const data,
-            fastdds::rtps::SerializedPayload_t* payload)
-    {
-        return serialize(data, payload, DEFAULT_DATA_REPRESENTATION);
+        return get()->get_name();
     }
 
     /**
@@ -156,7 +141,7 @@ public:
      */
     FASTDDS_EXPORTED_API virtual bool serialize(
             const void* const data,
-            fastdds::rtps::SerializedPayload_t* payload,
+            fastdds::rtps::SerializedPayload_t& payload,
             DataRepresentationId_t data_representation);
 
     /**
@@ -167,20 +152,8 @@ public:
      * @return true if it is deserialized correctly, false if not
      */
     FASTDDS_EXPORTED_API virtual bool deserialize(
-            fastdds::rtps::SerializedPayload_t* payload,
+            fastdds::rtps::SerializedPayload_t& payload,
             void* data);
-
-    /*!
-     * @brief Returns a function which can be used to calculate the serialized size of the provided data.
-     *
-     * @param [in] data Pointer to data.
-     * @return Functor which calculates the serialized size of the data.
-     */
-    FASTDDS_EXPORTED_API virtual std::function<uint32_t()> get_serialized_size_provider(
-            const void* const data)
-    {
-        return get_serialized_size_provider(data, DEFAULT_DATA_REPRESENTATION);
-    }
 
     /*!
      * @brief Returns a function which can be used to calculate the serialized size of the provided data.
@@ -189,11 +162,11 @@ public:
      * @param [in] data_representation Representation that should be used for calculating the serialized size.
      * @return Functor which calculates the serialized size of the data.
      */
-    FASTDDS_EXPORTED_API virtual std::function<uint32_t()> get_serialized_size_provider(
+    FASTDDS_EXPORTED_API virtual uint32_t calculate_serialized_size(
             const void* const data,
             DataRepresentationId_t data_representation)
     {
-        return get()->getSerializedSizeProvider(data, data_representation);
+        return get()->calculate_serialized_size(data, data_representation);
     }
 
     /**
@@ -203,7 +176,7 @@ public:
      */
     FASTDDS_EXPORTED_API virtual void* create_data()
     {
-        return get()->createData();
+        return get()->create_data();
     }
 
     /**
@@ -214,32 +187,48 @@ public:
     FASTDDS_EXPORTED_API virtual void delete_data(
             void* data)
     {
-        return get()->deleteData(data);
+        return get()->delete_data(data);
     }
 
     /**
      * @brief Getter for the data key
      *
-     * @param data Pointer to data
+     * @param data Pointer to serialized payload containing the data.
      * @param i_handle InstanceHandle pointer to store the key
      * @param force_md5 boolean to force md5 (default: false)
      * @return true if the key is returned, false if not
      */
-    FASTDDS_EXPORTED_API virtual bool get_key(
-            void* data,
-            InstanceHandle_t* i_handle,
+    FASTDDS_EXPORTED_API virtual bool compute_key(
+            const void* const data,
+            InstanceHandle_t& i_handle,
             bool force_md5 = false)
     {
-        return get()->getKey(data, i_handle, force_md5);
+        return get()->compute_key(data, i_handle, force_md5);
+    }
+
+    /**
+     * @brief Getter for the data key
+     *
+     * @param payload Pointer to data
+     * @param i_handle InstanceHandle pointer to store the key
+     * @param force_md5 boolean to force md5 (default: false)
+     * @return true if the key is returned, false if not
+     */
+    FASTDDS_EXPORTED_API virtual bool compute_key(
+            fastdds::rtps::SerializedPayload_t& payload,
+            InstanceHandle_t& i_handle,
+            bool force_md5 = false)
+    {
+        return get()->compute_key(payload, i_handle, force_md5);
     }
 
     FASTDDS_EXPORTED_API virtual bool operator ==(
             const TypeSupport& type_support)
     {
-        return get()->m_typeSize == type_support->m_typeSize
-               && get()->m_isGetKeyDefined == type_support->m_isGetKeyDefined
-               && get()->m_topicDataTypeName == type_support->m_topicDataTypeName
-               && get()->type_identifiers_ == type_support->type_identifiers_;
+        return get()->max_serialized_type_size == type_support->max_serialized_type_size
+               && get()->is_compute_key_provided == type_support->is_compute_key_provided
+               && get()->get_name() == type_support->get_name()
+               && get()->type_identifiers() == type_support->type_identifiers();
     }
 
     /**
@@ -258,14 +247,6 @@ public:
     FASTDDS_EXPORTED_API virtual inline bool is_bounded() const
     {
         return get()->is_bounded();
-    }
-
-    /**
-     * Checks if the type is plain when using default encoding.
-     */
-    FASTDDS_EXPORTED_API virtual inline bool is_plain() const
-    {
-        return is_plain(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
     }
 
     /**

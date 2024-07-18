@@ -85,7 +85,6 @@ set(${PROJECT_NAME}_source_files
     fastdds/topic/ContentFilteredTopicImpl.cpp
     fastdds/topic/qos/TopicQos.cpp
     fastdds/topic/Topic.cpp
-    fastdds/topic/TopicDataType.cpp
     fastdds/topic/TopicImpl.cpp
     fastdds/topic/TopicProxyFactory.cpp
     fastdds/topic/TypeSupport.cpp

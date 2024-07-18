@@ -608,7 +608,7 @@ TEST(DDSContentFilter, CorrectlyHandleAliasOtherHeader)
         throw std::runtime_error("Failed to create subscriber");
     }
 
-    auto topic = participant->create_topic("TestTopic", type->getName(), TOPIC_QOS_DEFAULT);
+    auto topic = participant->create_topic("TestTopic", type->get_name(), TOPIC_QOS_DEFAULT);
     if (topic == nullptr)
     {
         throw std::runtime_error("Failed to create topic");

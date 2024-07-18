@@ -413,7 +413,7 @@ public:
 
         // Create topic
         topic_ =
-                participant_->create_topic(topic_name_, type_->getName(),
+                participant_->create_topic(topic_name_, type_->get_name(),
                         eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
         ASSERT_NE(topic_, nullptr);
         ASSERT_TRUE(topic_->is_enabled());
@@ -449,7 +449,7 @@ public:
             {
                 topic_name += suffix;
                 eprosima::fastdds::dds::Topic* topic = participant_->create_topic(topic_name,
-                                type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+                                type_->get_name(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
                 ret_val &= (nullptr != topic);
                 if (!ret_val)
                 {

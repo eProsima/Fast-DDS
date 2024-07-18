@@ -56,14 +56,14 @@ public:
      * @return pointer to the new object
      * @remark Ownership is transferred. This object must be removed using @ref deleteData
      */
-    FASTDDS_EXPORTED_API void* createData() override;
+    FASTDDS_EXPORTED_API void* create_data() override;
 
     /*
      * Deletes an object previously allocated via @ref createData
      * @param data pointer to the object to be deleted
      * @remark Ownership is transferred. This object must be allocated using @ref createData
      */
-    FASTDDS_EXPORTED_API void deleteData (
+    FASTDDS_EXPORTED_API void delete_data (
             void* data) override;
 
     /*
@@ -73,7 +73,7 @@ public:
      * @return bool specifying success
      */
     FASTDDS_EXPORTED_API bool deserialize (
-            eprosima::fastdds::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
             void* data) override;
 
     /*
@@ -84,51 +84,48 @@ public:
 
     /*
      * Calculate the key associated to a given object
+     * @param data payload containing the serialized object whose key is calculated
+     * @param ihandle @ref eprosima::fastdds::rtps::InstanceHandle_t to fill in
+     * @param force_md5 use always md5 even if key payload footprint is smaller than the hash
+     * @return bool specifying success
+     */
+    FASTDDS_EXPORTED_API bool compute_key(
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
+            eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+            bool force_md5 = false) override;
+
+    /*
+     * Calculate the key associated to a given object
      * @param data object whose key is calculated
      * @param ihandle @ref eprosima::fastdds::rtps::InstanceHandle_t to fill in
      * @param force_md5 use always md5 even if key payload footprint is smaller than the hash
      * @return bool specifying success
      */
-    FASTDDS_EXPORTED_API bool getKey(
+    FASTDDS_EXPORTED_API bool compute_key(
             const void* const data,
-            eprosima::fastdds::rtps::InstanceHandle_t* ihandle,
+            eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
             bool force_md5 = false) override;
 
     /*
      * Provide a functor that calculates a specified object serialized size
-     * @param data object whose payload footprint to calculate
+     * @param[in] data object whose payload footprint to calculate
+     * @param [in] data_representation Representation that should be used for calculating the serialized size.
      * @return functor that calculates the size
      */
-    // FASTDDS_TODO_BEFORE(3, 0, "Remove this overload")
-    FASTDDS_EXPORTED_API std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override;
-
-    FASTDDS_EXPORTED_API std::function<uint32_t()> getSerializedSizeProvider(
+    FASTDDS_EXPORTED_API uint32_t calculate_serialized_size(
             const void* const data,
             DataRepresentationId_t data_representation) override;
 
     /*
      * Serialize an object into a given payload
-     * @param data object to serialize
-     * @param payload @ref eprosima::fastdds::rtps::SerializedPayload_t to fill in
+     * @param[in] data object to serialize
+     * @param[out] payload @ref eprosima::fastdds::rtps::SerializedPayload_t to fill in
+     * @param [in] data_representation Representation that should be used to encode the data into the payload.
      * @return bool specifying success
      */
     FASTDDS_EXPORTED_API bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    /*
-     * Serialize an object into a given payload
-     * @param data object to serialize
-     * @param payload @ref eprosima::fastdds::rtps::SerializedPayload_t to fill in
-     * @return bool specifying success
-     */
-    FASTDDS_EXPORTED_API bool serialize(
-            const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
             fastdds::dds::DataRepresentationId_t data_representation) override;
 
     /*

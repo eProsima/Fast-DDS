@@ -82,46 +82,53 @@ public:
     TopicDataTypeMock()
         : eprosima::fastdds::dds::TopicDataType()
     {
-        m_typeSize = 4u;
-        setName("footype");
+        max_serialized_type_size = 4u;
+        set_name("footype");
     }
 
     bool serialize(
             const void* const /*data*/,
-            fastdds::rtps::SerializedPayload_t* /*payload*/) override
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
+            fastdds::dds::DataRepresentationId_t /*data_representation*/) override
     {
         return true;
     }
 
     bool deserialize(
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
             void* /*data*/) override
     {
         return true;
     }
 
-    std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const /*data*/) override
+    uint32_t calculate_serialized_size(
+            const void* const /*data*/,
+            fastdds::dds::DataRepresentationId_t /*data_representation*/) override
     {
-        return []()->uint32_t
-               {
-                   return 0;
-               };
+        return 0;
     }
 
-    void* createData() override
+    void* create_data() override
     {
         return nullptr;
     }
 
-    void deleteData(
+    void delete_data(
             void* /*data*/) override
     {
     }
 
-    bool getKey(
+    bool compute_key(
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
+            fastdds::rtps::InstanceHandle_t& /*ihandle*/,
+            bool /*force_md5*/) override
+    {
+        return true;
+    }
+
+    bool compute_key(
             const void* const /*data*/,
-            fastdds::rtps::InstanceHandle_t* /*ihandle*/,
+            fastdds::rtps::InstanceHandle_t& /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -129,7 +136,7 @@ public:
 
 private:
 
-    using eprosima::fastdds::dds::TopicDataType::getSerializedSizeProvider;
+    using eprosima::fastdds::dds::TopicDataType::calculate_serialized_size;
     using eprosima::fastdds::dds::TopicDataType::serialize;
 };
 
@@ -608,7 +615,7 @@ TEST_F(StatisticsDomainParticipantTests, EnableStatisticsDataWriterFailureIncomp
     eprosima::fastdds::dds::TypeSupport count_type(new EntityCountPubSubType);
     eprosima::fastdds::dds::TypeSupport null_type(nullptr);
     eprosima::fastdds::dds::TypeSupport invalid_type(new TopicDataTypeMock);
-    invalid_type->setName(reserved_statistics_type_name);
+    invalid_type->set_name(reserved_statistics_type_name);
     participant->register_type(invalid_type);
     participant->register_type(physical_data_type);
 
@@ -682,9 +689,9 @@ TEST_F(StatisticsDomainParticipantTests, EnableStatisticsDataWriterFailureIncomp
 
     // Create topic
     eprosima::fastdds::dds::Topic* invalid_topic = participant->create_topic(HISTORY_LATENCY_TOPIC,
-                    count_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
-    participant->create_topic(HEARTBEAT_COUNT_TOPIC, count_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
-    participant->create_topic(PHYSICAL_DATA_TOPIC, physical_data_type->getName(),
+                    count_type->get_name(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+    participant->create_topic(HEARTBEAT_COUNT_TOPIC, count_type->get_name(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+    participant->create_topic(PHYSICAL_DATA_TOPIC, physical_data_type->get_name(),
             eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
 
     // 2. Check call to enable_statistics_datawriter
@@ -744,7 +751,7 @@ TEST_F(StatisticsDomainParticipantTests, DeleteParticipantAfterDeleteContainedEn
 
     // 2. Create a sample topic
     participant->create_topic(HEARTBEAT_COUNT_TOPIC,
-            count_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+            count_type->get_name(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
 
     DomainParticipant* statistics_participant = DomainParticipant::narrow(participant);
     ASSERT_NE(statistics_participant, nullptr);

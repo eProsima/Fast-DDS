@@ -89,61 +89,53 @@ public:
     TopicDataTypeMock()
         : TopicDataType()
     {
-        m_typeSize = 4u;
-        setName("footype");
-    }
-
-    bool serialize(
-            const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+        max_serialized_type_size = 4u;
+        set_name("footype");
     }
 
     bool serialize(
             const void* const /*data*/,
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
             DataRepresentationId_t /*data_representation*/) override
     {
         return true;
     }
 
     bool deserialize(
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
             void* /*data*/) override
     {
         return true;
     }
 
-    std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    std::function<uint32_t()> getSerializedSizeProvider(
+    uint32_t calculate_serialized_size(
             const void* const /*data*/,
             DataRepresentationId_t /*data_representation*/) override
     {
-        return []()->uint32_t
-               {
-                   return 0;
-               };
+        return 0;
     }
 
-    void* createData() override
+    void* create_data() override
     {
         return nullptr;
     }
 
-    void deleteData(
+    void delete_data(
             void* /*data*/) override
     {
     }
 
-    bool getKey(
+    bool compute_key(
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
+            fastdds::rtps::InstanceHandle_t& /*ihandle*/,
+            bool /*force_md5*/) override
+    {
+        return true;
+    }
+
+    bool compute_key(
             const void* const /*data*/,
-            fastdds::rtps::InstanceHandle_t* /*ihandle*/,
+            fastdds::rtps::InstanceHandle_t& /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -193,68 +185,57 @@ public:
     InstanceTopicDataTypeMock()
         : TopicDataType()
     {
-        m_typeSize = 4u;
-        m_isGetKeyDefined = true;
-        setName("instancefootype");
+        max_serialized_type_size = 4u;
+        is_compute_key_provided = true;
+        set_name("instancefootype");
     }
 
     bool serialize(
             const void* const /*data*/,
-            fastdds::rtps::SerializedPayload_t* /*payload*/) override
-    {
-        return true;
-    }
-
-    bool serialize(
-            const void* const /*data*/,
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
             DataRepresentationId_t /*data_representation*/) override
     {
         return true;
     }
 
     bool deserialize(
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
             void* /*data*/) override
     {
         return true;
     }
 
-    std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const /*data*/) override
-    {
-        return []()->uint32_t
-               {
-                   return 0;
-               };
-    }
-
-    std::function<uint32_t()> getSerializedSizeProvider(
+    uint32_t calculate_serialized_size(
             const void* const /*data*/,
             DataRepresentationId_t /*data_representation*/) override
     {
-        return []()->uint32_t
-               {
-                   return 0;
-               };
+        return 0;
     }
 
-    void* createData() override
+    void* create_data() override
     {
         return nullptr;
     }
 
-    void deleteData(
+    void delete_data(
             void* /*data*/) override
     {
     }
 
-    bool getKey(
-            const void* const /*data*/,
-            fastdds::rtps::InstanceHandle_t* ihandle,
+    bool compute_key(
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
+            fastdds::rtps::InstanceHandle_t& /*ihandle*/,
             bool /*force_md5*/) override
     {
-        ihandle->value[0] = 1;
+        return true;
+    }
+
+    bool compute_key(
+            const void* const /*data*/,
+            fastdds::rtps::InstanceHandle_t& ihandle,
+            bool /*force_md5*/) override
+    {
+        ihandle.value[0] = 1;
         return true;
     }
 
@@ -269,58 +250,53 @@ public:
     BoundedTopicDataTypeMock()
         : TopicDataType()
     {
-        m_typeSize = 4u;
-        setName("bounded_footype");
+        max_serialized_type_size = 4u;
+        set_name("bounded_footype");
     }
 
     bool serialize(
             const void* const /*data*/,
-            fastdds::rtps::SerializedPayload_t* /*payload*/) override
-    {
-        return true;
-    }
-
-    bool serialize(
-            const void* const /*data*/,
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
             DataRepresentationId_t /*data_representation*/) override
     {
         return true;
     }
 
     bool deserialize(
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
             void* /*data*/) override
     {
         return true;
     }
 
-    std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const /*data*/) override
-    {
-        return std::function<uint32_t()>();
-    }
-
-    std::function<uint32_t()> getSerializedSizeProvider(
+    uint32_t calculate_serialized_size(
             const void* const /*data*/,
             DataRepresentationId_t /*data_representation*/) override
     {
-        return std::function<uint32_t()>();
+        return 0;
     }
 
-    void* createData() override
+    void* create_data() override
     {
         return nullptr;
     }
 
-    void deleteData(
+    void delete_data(
             void* /*data*/) override
     {
     }
 
-    bool getKey(
+    bool compute_key(
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
+            fastdds::rtps::InstanceHandle_t& /*ihandle*/,
+            bool /*force_md5*/) override
+    {
+        return true;
+    }
+
+    bool compute_key(
             const void* const /*data*/,
-            fastdds::rtps::InstanceHandle_t* /*ihandle*/,
+            fastdds::rtps::InstanceHandle_t& /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -1070,7 +1046,7 @@ TEST(DataWriterTests, UnregisterInstance)
     // 7. Calling unregister_instance with a valid InstanceHandle also returns RETCODE_OK
     data.message("HelloWorld_1");
     ASSERT_EQ(RETCODE_OK, instance_datawriter->write(&data, HANDLE_NIL));
-    instance_type.get_key(&data, &handle);
+    instance_type->compute_key(&data, handle);
     EXPECT_EQ(RETCODE_OK, instance_datawriter->unregister_instance(&data, handle));
 
     // TODO(jlbueno) There are other possible errors sending the unregister message: RETCODE_OUT_OF_RESOURCES,
@@ -1125,7 +1101,7 @@ TEST(DataWriterTests, UnregisterInstanceWithTimestamp)
     // 7. Calling unregister_instance with a valid InstanceHandle also returns RETCODE_OK
     data.message("HelloWorld_1");
     ASSERT_EQ(RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
-    instance_type.get_key(&data, &handle);
+    instance_type.compute_key(&data, handle);
     EXPECT_EQ(RETCODE_OK, instance_datawriter->unregister_instance_w_timestamp(&data, handle, ts));
 
     // 8. Check invalid timestamps
@@ -1184,7 +1160,7 @@ TEST(DataWriterTests, Dispose)
     // 7. Calling dispose with a valid InstanceHandle also returns RETCODE_OK
     data.message("HelloWorld_1");
     ASSERT_EQ(RETCODE_OK, instance_datawriter->write(&data, HANDLE_NIL));
-    instance_type.get_key(&data, &handle);
+    instance_type.compute_key(&data, handle);
     EXPECT_EQ(RETCODE_OK, instance_datawriter->dispose(&data, handle));
 
     // TODO(jlbueno) There are other possible errors sending the dispose message: RETCODE_OUT_OF_RESOURCES,
@@ -1236,7 +1212,7 @@ TEST(DataWriterTests, DisposeWithTimestamp)
     // 7. Calling dispose with a valid InstanceHandle also returns RETCODE_OK
     data.message("HelloWorld_1");
     ASSERT_EQ(RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
-    instance_type.get_key(&data, &handle);
+    instance_type.compute_key(&data, handle);
     EXPECT_EQ(RETCODE_OK, instance_datawriter->dispose_w_timestamp(&data, handle, ts));
 
     // 8. Check invalid timestamps
@@ -1324,75 +1300,59 @@ public:
     LoanableTypeSupport()
         : TopicDataType()
     {
-        m_typeSize = 4u + sizeof(LoanableType);
-        setName("LoanableType");
+        max_serialized_type_size = 4u + sizeof(LoanableType);
+        set_name("LoanableType");
     }
 
     bool serialize(
             const void* const /*data*/,
-            fastdds::rtps::SerializedPayload_t* /*payload*/) override
-    {
-        return true;
-    }
-
-    bool serialize(
-            const void* const /*data*/,
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
             DataRepresentationId_t /*data_representation*/) override
     {
         return true;
     }
 
     bool deserialize(
-            fastdds::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
             void* /*data*/) override
     {
         return true;
     }
 
-    std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const /*data*/) override
-    {
-        return [this]()
-               {
-                   return m_typeSize;
-               };
-    }
-
-    std::function<uint32_t()> getSerializedSizeProvider(
+    uint32_t calculate_serialized_size(
             const void* const /*data*/,
             DataRepresentationId_t /*data_representation*/) override
     {
-        return [this]()
-               {
-                   return m_typeSize;
-               };
+        return max_serialized_type_size;
     }
 
-    void* createData() override
+    void* create_data() override
     {
         return nullptr;
     }
 
-    void deleteData(
+    void delete_data(
             void* /*data*/) override
     {
     }
 
-    bool getKey(
+    bool compute_key(
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
+            fastdds::rtps::InstanceHandle_t& /*ihandle*/,
+            bool /*force_md5*/) override
+    {
+        return true;
+    }
+
+    bool compute_key(
             const void* const /*data*/,
-            fastdds::rtps::InstanceHandle_t* /*ihandle*/,
+            fastdds::rtps::InstanceHandle_t& /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
     }
 
     bool is_bounded() const override
-    {
-        return true;
-    }
-
-    bool is_plain() const override
     {
         return true;
     }
@@ -1505,11 +1465,6 @@ public:
     bool is_plain_result = true;
     bool construct_sample_result = true;
 
-    bool is_plain() const override
-    {
-        return is_plain_result;
-    }
-
     bool is_plain(
             DataRepresentationId_t) const override
     {
@@ -1553,15 +1508,15 @@ TEST(DataWriterTests, LoanNegativeTests)
     ASSERT_EQ(datawriter->get_status_mask(), StatusMask::all());
 
     void* sample = nullptr;
-    auto original_type_size = type_support->m_typeSize;
+    auto original_type_size = type_support->max_serialized_type_size;
 
     // Check for illegal operation
     type_support->is_plain_result = false;
     EXPECT_EQ(RETCODE_ILLEGAL_OPERATION, datawriter->loan_sample(sample));
     type_support->is_plain_result = true;
-    type_support->m_typeSize = 0;
+    type_support->max_serialized_type_size = 0;
     EXPECT_EQ(RETCODE_ILLEGAL_OPERATION, datawriter->loan_sample(sample));
-    type_support->m_typeSize = original_type_size;
+    type_support->max_serialized_type_size = original_type_size;
 
     // Check for not enabled
     EXPECT_EQ(RETCODE_NOT_ENABLED, datawriter->loan_sample(sample));
@@ -1686,7 +1641,7 @@ TEST(DataWriterTests, InstanceWaitForAcknowledgement)
     // Expectations
     EXPECT_CALL(*history, wait_for_acknowledgement_last_change(_, _, _)).WillOnce(testing::Return(true));
 
-    instance_type.get_key(&data, &handle);
+    instance_type.compute_key(&data, handle);
     EXPECT_EQ(RETCODE_OK, instance_datawriter->wait_for_acknowledgments(&data, handle, max_wait));
 
     // 7. Calling wait_for_acknowledgments in a keyed topic with a known handle timeouts if some reader has not
@@ -1937,7 +1892,7 @@ TEST(DataWriterTests, InstancePolicyAllocationConsistencyKeyed)
     type.register_type(participant);
 
     // This test pretends to use topic with instances, so the following flag is set.
-    type.get()->m_isGetKeyDefined = true;
+    type.get()->is_compute_key_provided = true;
 
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
@@ -2181,13 +2136,6 @@ public:
         return custom_is_plain_with_rep(data_representation_id);
     }
 
-    MOCK_CONST_METHOD0(custom_is_plain, bool());
-
-    bool is_plain() const override
-    {
-        return custom_is_plain();
-    }
-
 };
 
 TEST(DataWriterTests, data_type_is_plain_data_representation)
@@ -2212,7 +2160,6 @@ TEST(DataWriterTests, data_type_is_plain_data_representation)
     qos_xcdr.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
     /* Expect the "is_plain" method called with default data representation (XCDR1) */
-    EXPECT_CALL(*type, custom_is_plain()).Times(0);
     EXPECT_CALL(*type, custom_is_plain_with_rep(DataRepresentationId_t::XCDR_DATA_REPRESENTATION)).Times(
         testing::AtLeast(1)).WillRepeatedly(testing::Return(true));
     EXPECT_CALL(*type, custom_is_plain_with_rep(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)).Times(0);
@@ -2230,7 +2177,6 @@ TEST(DataWriterTests, data_type_is_plain_data_representation)
     qos_xcdr2.representation().m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
 
     /* Expect the "is_plain" method called with XCDR2 data representation */
-    EXPECT_CALL(*type, custom_is_plain()).Times(0);
     EXPECT_CALL(*type, custom_is_plain_with_rep(DataRepresentationId_t::XCDR_DATA_REPRESENTATION)).Times(0);
     EXPECT_CALL(*type, custom_is_plain_with_rep(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)).Times(
         testing::AtLeast(1)).WillRepeatedly(testing::Return(true));

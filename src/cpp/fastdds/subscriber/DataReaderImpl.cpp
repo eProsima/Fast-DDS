@@ -113,7 +113,7 @@ DataReaderImpl::DataReaderImpl(
 {
     EndpointAttributes endpoint_attributes;
     endpoint_attributes.endpointKind = READER;
-    endpoint_attributes.topicKind = type_->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
+    endpoint_attributes.topicKind = type_->is_compute_key_provided ? WITH_KEY : NO_KEY;
     endpoint_attributes.setEntityID(qos_.endpoint().entity_id);
     endpoint_attributes.setUserDefinedID(qos_.endpoint().user_defined_id);
     RTPSParticipantImpl::preprocess_endpoint_attributes<READER, 0x04, 0x07>(
@@ -166,7 +166,7 @@ ReturnCode_t DataReaderImpl::enable()
     att.endpoint.durabilityKind = qos_.durability().durabilityKind();
     att.endpoint.endpointKind = READER;
     att.endpoint.reliabilityKind = qos_.reliability().kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
-    att.endpoint.topicKind = type_->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
+    att.endpoint.topicKind = type_->is_compute_key_provided ? WITH_KEY : NO_KEY;
     att.endpoint.multicastLocatorList = qos_.endpoint().multicast_locator_list;
     att.endpoint.unicastLocatorList = qos_.endpoint().unicast_locator_list;
     att.endpoint.remoteLocatorList = qos_.endpoint().remote_locator_list;
@@ -1489,7 +1489,7 @@ ReturnCode_t DataReaderImpl::check_qos_including_resource_limits(
 {
     ReturnCode_t check_qos_return = check_qos(qos);
     if (RETCODE_OK == check_qos_return &&
-            type->m_isGetKeyDefined)
+            type->is_compute_key_provided)
     {
         check_qos_return = check_allocation_consistency(qos);
     }
@@ -1773,7 +1773,7 @@ void DataReaderImpl::set_qos(
 fastdds::TopicAttributes DataReaderImpl::topic_attributes() const
 {
     fastdds::TopicAttributes topic_att;
-    topic_att.topicKind = type_->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
+    topic_att.topicKind = type_->is_compute_key_provided ? WITH_KEY : NO_KEY;
     topic_att.topicName = topic_->get_impl()->get_rtps_topic_name();
     topic_att.topicDataType = topic_->get_type_name();
     topic_att.historyQos = qos_.history();
@@ -1874,7 +1874,7 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
     (void) reader_attributes;
 #endif // HAVE_SECURITY
 
-    bool has_key = type_->m_isGetKeyDefined;
+    bool has_key = type_->is_compute_key_provided;
 
     is_datasharing_compatible = false;
     switch (qos_.data_sharing().kind())
@@ -1985,9 +1985,9 @@ InstanceHandle_t DataReaderImpl::lookup_instance(
 {
     InstanceHandle_t handle = HANDLE_NIL;
 
-    if (instance && type_->m_isGetKeyDefined)
+    if (instance && type_->is_compute_key_provided)
     {
-        if (type_->getKey(const_cast<void*>(instance), &handle, false))
+        if (type_->compute_key(const_cast<void*>(instance), handle, false))
         {
             if (!history_.is_instance_present(handle))
             {

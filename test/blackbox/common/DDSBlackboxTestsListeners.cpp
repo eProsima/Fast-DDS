@@ -3087,8 +3087,8 @@ TEST(DDSStatus, keyed_best_effort_on_unack_sample_removed)
     auto dummy_data = new KeyedHelloWorldPubSubType();
     eprosima::fastdds::dds::InstanceHandle_t handle_odd;
     eprosima::fastdds::dds::InstanceHandle_t handle_even;
-    dummy_data->getKey(&data.front(), &handle_even);
-    dummy_data->getKey(&data.back(), &handle_odd);
+    dummy_data->compute_key(&data.front(), handle_even);
+    dummy_data->compute_key(&data.back(), handle_odd);
 
     reader.startReception(data);
     writer.send(data);
@@ -3218,7 +3218,7 @@ TEST(DDSStatus, keyed_reliable_on_unack_sample_removed)
 
     auto dummy_data = new KeyedHelloWorldPubSubType();
     eprosima::fastdds::dds::InstanceHandle_t handle;
-    dummy_data->getKey(&data.back(), &handle);
+    dummy_data->compute_key(&data.back(), handle);
 
     reader.startReception(data);
     // To avoid race condition receiving ACK, wait some time between samples
@@ -3401,8 +3401,8 @@ TEST(DDSStatus, keyed_reliable_positive_acks_disabled_on_unack_sample_removed)
     auto dummy_data = new KeyedHelloWorldPubSubType();
     eprosima::fastdds::dds::InstanceHandle_t handle_odd;
     eprosima::fastdds::dds::InstanceHandle_t handle_even;
-    dummy_data->getKey(&data.front(), &handle_even);
-    dummy_data->getKey(&data.back(), &handle_odd);
+    dummy_data->compute_key(&data.front(), handle_even);
+    dummy_data->compute_key(&data.back(), handle_odd);
 
     reader.startReception(data);
 

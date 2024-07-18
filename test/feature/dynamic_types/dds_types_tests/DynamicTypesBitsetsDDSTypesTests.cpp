@@ -214,11 +214,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetStruct)
     DynamicData::_ref_type var_innerbitsethelper_data =
             data->loan_value(data->get_member_id_by_name(var_innerbitsethelper_name));
     ASSERT_TRUE(var_innerbitsethelper_data);
-    EXPECT_EQ(var_innerbitsethelper_data->set_byte_value(
-                var_innerbitsethelper_data->get_member_id_by_name(bitfield_a), octet_value), RETCODE_OK);
-    EXPECT_EQ(var_innerbitsethelper_data->get_byte_value(
-                test_octet_value, var_innerbitsethelper_data->get_member_id_by_name(bitfield_a)), RETCODE_OK);
-    EXPECT_EQ(octet_value, test_octet_value);
+    EXPECT_EQ(var_innerbitsethelper_data->set_uint8_value(
+                var_innerbitsethelper_data->get_member_id_by_name(bitfield_a), uint8_value), RETCODE_OK);
+    EXPECT_EQ(var_innerbitsethelper_data->get_uint8_value(
+                test_uint8_value, var_innerbitsethelper_data->get_member_id_by_name(bitfield_a)), RETCODE_OK);
+    EXPECT_EQ(uint8_value, uint8_value);
     EXPECT_EQ(var_innerbitsethelper_data->set_boolean_value(
                 var_innerbitsethelper_data->get_member_id_by_name(bitfield_b), bool_value), RETCODE_OK);
     EXPECT_EQ(var_innerbitsethelper_data->get_boolean_value(

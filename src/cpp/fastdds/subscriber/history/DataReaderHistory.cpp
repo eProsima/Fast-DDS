@@ -52,7 +52,7 @@ static HistoryAttributes to_history_attributes(
     auto max_samples = qos.resource_limits().max_samples;
 
     auto mempolicy = qos.endpoint().history_memory_policy;
-    auto payloadMaxSize = type->m_typeSize + 3; // possible alignment
+    auto payloadMaxSize = type->max_serialized_type_size + 3; // possible alignment
 
     return HistoryAttributes(mempolicy, payloadMaxSize, initial_samples, max_samples);
 }
@@ -67,9 +67,8 @@ DataReaderHistory::DataReaderHistory(
     , resource_limited_qos_(qos.resource_limits())
     , topic_name_(topic.get_name())
     , type_name_(topic.get_type_name())
-    , has_keys_(type->m_isGetKeyDefined)
+    , has_keys_(type->is_compute_key_provided)
     , type_(type.get())
-    , get_key_object_(nullptr)
 {
     if (resource_limited_qos_.max_samples <= 0)
     {
@@ -86,10 +85,8 @@ DataReaderHistory::DataReaderHistory(
         resource_limited_qos_.max_samples_per_instance = std::numeric_limits<int32_t>::max();
     }
 
-    if (type_->m_isGetKeyDefined)
+    if (type_->is_compute_key_provided)
     {
-        get_key_object_ = type_->createData();
-
         if (resource_limited_qos_.max_samples_per_instance < std::numeric_limits<int32_t>::max())
         {
             key_changes_allocation_.maximum = resource_limited_qos_.max_samples_per_instance;
@@ -146,12 +143,12 @@ DataReaderHistory::DataReaderHistory(
                     if (type_ != nullptr)
                     {
                         EPROSIMA_LOG_INFO(SUBSCRIBER, "Getting Key of change with no Key transmitted");
-                        type_->deserialize(&a_change->serializedPayload, get_key_object_);
                         bool is_key_protected = false;
 #if HAVE_SECURITY
                         is_key_protected = mp_reader->getAttributes().security_attributes().is_key_protected;
 #endif // if HAVE_SECURITY
-                        return type_->getKey(get_key_object_, &a_change->instanceHandle, is_key_protected);
+                        return type_->compute_key(a_change->serializedPayload, a_change->instanceHandle,
+                                       is_key_protected);
                     }
 
                     EPROSIMA_LOG_WARNING(SUBSCRIBER, "NO KEY in topic: " << topic_name_
@@ -163,10 +160,6 @@ DataReaderHistory::DataReaderHistory(
 
 DataReaderHistory::~DataReaderHistory()
 {
-    if (type_->m_isGetKeyDefined)
-    {
-        type_->deleteData(get_key_object_);
-    }
 }
 
 bool DataReaderHistory::can_change_be_added_nts(

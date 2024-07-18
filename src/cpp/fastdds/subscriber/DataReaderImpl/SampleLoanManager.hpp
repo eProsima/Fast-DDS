@@ -64,7 +64,7 @@ struct SampleLoanManager
             OutstandingLoanItem item;
             if (!is_plain_)
             {
-                item.sample = type_->createData();
+                item.sample = type_->create_data();
             }
             free_loans_.push_back(std::move(item));
         }
@@ -76,7 +76,7 @@ struct SampleLoanManager
         {
             for (const OutstandingLoanItem& item : free_loans_)
             {
-                type_->deleteData(item.sample);
+                type_->delete_data(item.sample);
             }
         }
     }
@@ -110,7 +110,7 @@ struct SampleLoanManager
                 // Create sample if necessary
                 if (!is_plain_)
                 {
-                    item->sample = type_->createData();
+                    item->sample = type_->create_data();
                 }
             }
         }
@@ -140,7 +140,7 @@ struct SampleLoanManager
         }
         else
         {
-            type_->deserialize(&item->payload, item->sample);
+            type_->deserialize(item->payload, item->sample);
         }
 
         // Increment reference counter and return sample

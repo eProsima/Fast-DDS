@@ -32,32 +32,25 @@ public:
     FooTypeSupport()
         : TopicDataType()
     {
-        setName("FooType");
-        m_typeSize = 4u + 4u + 256u; // encapsulation + index + message
-        m_isGetKeyDefined = true;
+        set_name("FooType");
+        max_serialized_type_size = 4u + 4u + 256u; // encapsulation + index + message
+        is_compute_key_provided = true;
     }
 
     bool serialize(
             const void* const data,
-            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
-    {
-        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    bool serialize(
-            const void* const data,
-            fastdds::rtps::SerializedPayload_t* payload,
+            fastdds::rtps::SerializedPayload_t& payload,
             DataRepresentationId_t data_representation) override
     {
         const FooType* p_type = static_cast<const FooType*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fb(reinterpret_cast<char*>(payload->data), payload->max_size);
+        eprosima::fastcdr::FastBuffer fb(reinterpret_cast<char*>(payload.data), payload.max_size);
         // Object that serializes the data.
         eprosima::fastcdr::Cdr ser(fb, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
                 data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
                 eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-        payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 #if FASTCDR_VERSION_MAJOR > 1
         ser.set_encoding_flag(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
@@ -79,23 +72,19 @@ public:
         }
 
         // Get the serialized length
-#if FASTCDR_VERSION_MAJOR == 1
-        payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
-#else
-        payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
-#endif // FASTCDR_VERSION_MAJOR == 1
+        payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
         return true;
     }
 
     bool deserialize(
-            fastdds::rtps::SerializedPayload_t* payload,
+            fastdds::rtps::SerializedPayload_t& payload,
             void* data) override
     {
         //Convert DATA to pointer of your type
         FooType* p_type = static_cast<FooType*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fb(reinterpret_cast<char*>(payload->data), payload->length);
+        eprosima::fastcdr::FastBuffer fb(reinterpret_cast<char*>(payload.data), payload.length);
 
         // Object that deserializes the data.
         eprosima::fastcdr::Cdr deser(fb
@@ -107,7 +96,7 @@ public:
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
-        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         try
         {
@@ -122,37 +111,42 @@ public:
         return true;
     }
 
-    std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) override
-    {
-        return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
-    }
-
-    std::function<uint32_t()> getSerializedSizeProvider(
+    uint32_t calculate_serialized_size(
             const void* const /*data*/,
             DataRepresentationId_t /*data_representation*/) override
     {
-        return [this]
-               {
-                   return m_typeSize;
-               };
+        return max_serialized_type_size;
     }
 
-    void* createData() override
+    void* create_data() override
     {
         return static_cast<void*>(new FooType());
     }
 
-    void deleteData(
+    void delete_data(
             void* data) override
     {
         FooType* p_type = static_cast<FooType*>(data);
         delete p_type;
     }
 
-    bool getKey(
+    bool compute_key(
+            fastdds::rtps::SerializedPayload_t& payload,
+            fastdds::rtps::InstanceHandle_t& handle,
+            bool force_md5) override
+    {
+        FooType data;
+        if (deserialize(payload, static_cast<void*>(&data)))
+        {
+            return compute_key(static_cast<void*>(&data), handle, force_md5);
+        }
+
+        return false;
+    }
+
+    bool compute_key(
             const void* const data,
-            fastdds::rtps::InstanceHandle_t* handle,
+            fastdds::rtps::InstanceHandle_t& handle,
             bool force_md5) override
     {
         const FooType* p_type = static_cast<const FooType*>(data);
@@ -176,14 +170,14 @@ public:
             md5.finalize();
             for (uint8_t i = 0; i < 16; ++i)
             {
-                handle->value[i] = md5.digest[i];
+                handle.value[i] = md5.digest[i];
             }
         }
         else
         {
             for (uint8_t i = 0; i < 16; ++i)
             {
-                handle->value[i] = key_buf[i];
+                handle.value[i] = key_buf[i];
             }
         }
         return true;
@@ -194,7 +188,8 @@ public:
         return true;
     }
 
-    inline bool is_plain() const override
+    inline bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t) const override
     {
         return true;
     }

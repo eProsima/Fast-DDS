@@ -558,7 +558,7 @@ int ThroughputSubscriber::process_message()
 
                         // Create the data sample
                         dynamic_data_ =
-                                static_cast<DynamicData::_ref_type*>(dynamic_pub_sub_type_->createData());
+                                static_cast<DynamicData::_ref_type*>(dynamic_pub_sub_type_->create_data());
 
                         if (nullptr == dynamic_data_)
                         {

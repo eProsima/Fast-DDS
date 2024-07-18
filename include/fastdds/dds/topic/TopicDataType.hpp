@@ -64,26 +64,12 @@ public:
     /**
      * @brief Constructor
      */
-    FASTDDS_EXPORTED_API TopicDataType();
+    FASTDDS_EXPORTED_API TopicDataType() = default;
 
     /**
      * @brief Destructor
      */
-    FASTDDS_EXPORTED_API virtual ~TopicDataType();
-
-    /**
-     * Serialize method, it should be implemented by the user, since it is abstract.
-     * It is VERY IMPORTANT that the user sets the SerializedPayload length correctly.
-     *
-     * @param [in] data Pointer to the data
-     * @param [out] payload Pointer to the payload
-     * @return True if correct.
-     */
-    // TODO(jlbueno) Remove when Fast DDS-Gen is updated
-    // FASTDDS_TODO_BEFORE(3, 0, "Remove this overload")
-    FASTDDS_EXPORTED_API virtual bool serialize(
-            const void* const data,
-            fastdds::rtps::SerializedPayload_t* payload) = 0;
+    FASTDDS_EXPORTED_API virtual ~TopicDataType() = default;
 
     /**
      * Serialize method, it should be implemented by the user, since it is abstract. If not implemented, this method
@@ -97,8 +83,8 @@ public:
      */
     FASTDDS_EXPORTED_API virtual bool serialize(
             const void* const data,
-            fastdds::rtps::SerializedPayload_t* payload,
-            DataRepresentationId_t data_representation);
+            rtps::SerializedPayload_t& payload,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) = 0;
 
     /**
      * Deserialize method, it should be implemented by the user, since it is abstract.
@@ -108,43 +94,47 @@ public:
      * @return True if correct.
      */
     FASTDDS_EXPORTED_API virtual bool deserialize(
-            fastdds::rtps::SerializedPayload_t* payload,
+            rtps::SerializedPayload_t& payload,
             void* data) = 0;
 
     /*!
-     * @brief Returns a function which can be used to calculate the serialized size of the provided data.
-     *
-     * @param [in] data Pointer to data.
-     * @return Functor which calculates the serialized size of the data.
-     */
-    // FASTDDS_TODO_BEFORE(3, 0, "Remove this overload")
-    FASTDDS_EXPORTED_API virtual std::function<uint32_t()> getSerializedSizeProvider(
-            const void* const data) = 0;
-
-    /*!
-     * @brief Returns a function which can be used to calculate the serialized size of the provided data.
+     * @brief Calculates the serialized size of the provided data.
      *
      * @param [in] data Pointer to data.
      * @param [in] data_representation Representation that should be used for calculating the serialized size.
-     * @return Functor which calculates the serialized size of the data.
+     * @return Serialized size of the data.
      */
-    FASTDDS_EXPORTED_API virtual std::function<uint32_t()> getSerializedSizeProvider(
+    FASTDDS_EXPORTED_API virtual uint32_t calculate_serialized_size(
             const void* const data,
-            DataRepresentationId_t data_representation);
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) = 0;
 
     /**
      * Create a Data Type.
      *
      * @return Void pointer to the created object.
      */
-    FASTDDS_EXPORTED_API virtual void* createData() = 0;
+    FASTDDS_EXPORTED_API virtual void* create_data() = 0;
+
     /**
      * Remove a previously created object.
      *
      * @param data Pointer to the created Data.
      */
-    FASTDDS_EXPORTED_API virtual void deleteData(
+    FASTDDS_EXPORTED_API virtual void delete_data(
             void* data) = 0;
+
+    /**
+     * Get the key associated with the data.
+     *
+     * @param [in] payload Pointer to the payload containing the data.
+     * @param [out] ihandle Pointer to the Handle.
+     * @param [in] force_md5 Force MD5 checking.
+     * @return True if correct.
+     */
+    FASTDDS_EXPORTED_API virtual bool compute_key(
+            rtps::SerializedPayload_t& payload,
+            rtps::InstanceHandle_t& ihandle,
+            bool force_md5 = false) = 0;
 
     /**
      * Get the key associated with the data.
@@ -154,9 +144,9 @@ public:
      * @param [in] force_md5 Force MD5 checking.
      * @return True if correct.
      */
-    FASTDDS_EXPORTED_API virtual bool getKey(
+    FASTDDS_EXPORTED_API virtual bool compute_key(
             const void* const data,
-            fastdds::rtps::InstanceHandle_t* ihandle,
+            rtps::InstanceHandle_t& ihandle,
             bool force_md5 = false) = 0;
 
     /**
@@ -164,10 +154,21 @@ public:
      *
      * @param nam Topic data type name
      */
-    FASTDDS_EXPORTED_API inline void setName(
-            const char* nam)
+    FASTDDS_EXPORTED_API inline void set_name(
+            const std::string& nam)
     {
-        m_topicDataTypeName = std::string(nam);
+        topic_data_typename_ = nam;
+    }
+
+    /**
+     * Set topic data type name
+     *
+     * @param nam Topic data type name
+     */
+    FASTDDS_EXPORTED_API inline void set_name(
+            std::string&& nam)
+    {
+        topic_data_typename_ = std::move(nam);
     }
 
     /**
@@ -175,9 +176,9 @@ public:
      *
      * @return Topic data type name
      */
-    FASTDDS_EXPORTED_API inline const char* getName() const
+    FASTDDS_EXPORTED_API inline const std::string& get_name() const
     {
-        return m_topicDataTypeName.c_str();
+        return topic_data_typename_;
     }
 
     /**
@@ -220,14 +221,6 @@ public:
     }
 
     /**
-     * Checks if the type is plain when using default encoding.
-     */
-    FASTDDS_EXPORTED_API virtual inline bool is_plain() const
-    {
-        return false;
-    }
-
-    /**
      * Checks if the type is plain when using a specific encoding.
      */
     FASTDDS_EXPORTED_API virtual inline bool is_plain(
@@ -259,10 +252,10 @@ public:
 
     //! Maximum serialized size of the type in bytes.
     //! If the type has unbounded fields, and therefore cannot have a maximum size, use 0.
-    uint32_t m_typeSize;
+    uint32_t max_serialized_type_size {0};
 
     //! Indicates whether the method to obtain the key has been implemented.
-    bool m_isGetKeyDefined;
+    bool is_compute_key_provided {false};
 
 protected:
 
@@ -271,11 +264,9 @@ protected:
 private:
 
     //! Data Type Name.
-    std::string m_topicDataTypeName;
+    std::string topic_data_typename_;
     //TODO(XTypes)
-    bool auto_fill_type_information_;
-
-    friend class fastdds::dds::TypeSupport;
+    bool auto_fill_type_information_ {true};
 
 };
 

@@ -711,8 +711,8 @@ bool LatencyTestPublisher::test(
 
     if (dynamic_types_)
     {
-        dynamic_data_in_ = static_cast<DynamicData::_ref_type*>(dynamic_pub_sub_type_->createData());
-        dynamic_data_out_ = static_cast<DynamicData::_ref_type*>(dynamic_pub_sub_type_->createData());
+        dynamic_data_in_ = static_cast<DynamicData::_ref_type*>(dynamic_pub_sub_type_->create_data());
+        dynamic_data_out_ = static_cast<DynamicData::_ref_type*>(dynamic_pub_sub_type_->create_data());
 
         if (nullptr == dynamic_data_in_)
         {
@@ -750,11 +750,11 @@ bool LatencyTestPublisher::test(
         if (!data_loans_)
         {
             // Create the reception data sample
-            latency_data_in_ = static_cast<LatencyType*>(latency_data_type_->createData());
+            latency_data_in_ = static_cast<LatencyType*>(latency_data_type_->create_data());
         }
         // On loans scenario this object will be kept only to check the echoed sample is correct
         // On the ordinary case it keeps the object to send
-        latency_data_out_ = static_cast<LatencyType*>(latency_data_type_->createData());
+        latency_data_out_ = static_cast<LatencyType*>(latency_data_type_->create_data());
     }
     else
     {
@@ -898,8 +898,8 @@ bool LatencyTestPublisher::test(
     // Delete Data Sample
     if (dynamic_types_)
     {
-        dynamic_pub_sub_type_->deleteData(dynamic_data_in_);
-        dynamic_pub_sub_type_->deleteData(dynamic_data_out_);
+        dynamic_pub_sub_type_->delete_data(dynamic_data_in_);
+        dynamic_pub_sub_type_->delete_data(dynamic_data_out_);
     }
     else
     {

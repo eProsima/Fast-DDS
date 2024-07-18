@@ -53,43 +53,53 @@ class DDSFindTopicTest : public testing::Test
         TestType()
             : TopicDataType()
         {
-            m_isGetKeyDefined = false;
-            m_typeSize = 16;
+            is_compute_key_provided = false;
+            max_serialized_type_size = 16;
         }
 
         bool serialize(
                 const void* const,
-                fastdds::rtps::SerializedPayload_t*) override
+                fastdds::rtps::SerializedPayload_t&,
+                fastdds::dds::DataRepresentationId_t) override
         {
             return true;
         }
 
         bool deserialize(
-                fastdds::rtps::SerializedPayload_t*,
+                fastdds::rtps::SerializedPayload_t&,
                 void*) override
         {
             return true;
         }
 
-        std::function<uint32_t()> getSerializedSizeProvider(
-                const void* const) override
+        uint32_t calculate_serialized_size(
+                const void* const,
+                fastdds::dds::DataRepresentationId_t) override
         {
-            return {};
+            return 0u;
         }
 
-        void* createData() override
+        void* create_data() override
         {
             return nullptr;
         }
 
-        void deleteData(
+        void delete_data(
                 void*) override
         {
         }
 
-        bool getKey(
+        bool compute_key(
+                fastdds::rtps::SerializedPayload_t&,
+                fastdds::rtps::InstanceHandle_t&,
+                bool) override
+        {
+            return true;
+        }
+
+        bool compute_key(
                 const void* const,
-                fastdds::rtps::InstanceHandle_t*,
+                fastdds::rtps::InstanceHandle_t&,
                 bool) override
         {
             return false;
@@ -97,7 +107,7 @@ class DDSFindTopicTest : public testing::Test
 
     private:
 
-        using TopicDataType::getSerializedSizeProvider;
+        using TopicDataType::calculate_serialized_size;
         using TopicDataType::serialize;
     };
 
@@ -112,7 +122,7 @@ public:
         ASSERT_NE(nullptr, participant_);
 
         type_.reset(new TestType);
-        type_->setName(c_type_name);
+        type_->set_name(c_type_name);
         participant_->register_type(type_);
     }
 

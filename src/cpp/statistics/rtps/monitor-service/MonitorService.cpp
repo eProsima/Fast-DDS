@@ -374,14 +374,14 @@ bool MonitorService::add_change(
         const bool& disposed)
 {
     InstanceHandle_t handle;
-    type_.getKey(&status_data, &handle, false);
+    type_.compute_key(&status_data, handle, false);
 
     CacheChange_t* change = status_writer_history_->create_change(
         (disposed ? fastdds::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED : fastdds::rtps::ALIVE),
         handle);
     if (nullptr != change)
     {
-        uint32_t cdr_size = type_.getSerializedSizeProvider(&status_data)();
+        uint32_t cdr_size = type_.calculate_serialized_size(&status_data, fastdds::dds::DEFAULT_DATA_REPRESENTATION);
         if (!status_writer_payload_pool_->get_payload(cdr_size, change->serializedPayload))
         {
             status_writer_history_->release_change(change);
@@ -393,7 +393,7 @@ bool MonitorService::add_change(
     {
         CDRMessage_t aux_msg(change->serializedPayload);
 
-        if (!type_.serialize(&status_data, &change->serializedPayload))
+        if (!type_.serialize(&status_data, change->serializedPayload, fastdds::dds::DEFAULT_DATA_REPRESENTATION))
         {
             EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Serialization failed");
             status_writer_history_->release_change(change);
@@ -440,7 +440,7 @@ bool MonitorService::create_endpoint()
     watts.endpoint.properties.properties().push_back(std::move(property));
 
     HistoryAttributes hatt;
-    hatt.payloadMaxSize = type_.m_typeSize;
+    hatt.payloadMaxSize = type_.max_serialized_type_size;
     hatt.memoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     hatt.initialReservedCaches = 25;
     hatt.maximumReservedCaches = 0;
@@ -460,7 +460,7 @@ bool MonitorService::create_endpoint()
     status_writer_history_.reset(new eprosima::fastdds::dds::DataWriterHistory(
                 status_writer_payload_pool_,
                 std::make_shared<fastdds::rtps::CacheChangePool>(writer_pool_cfg),
-                tatt, type_.m_typeSize,
+                tatt, type_.max_serialized_type_size,
                 MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
                 [](
                     const InstanceHandle_t& ) -> void
@@ -488,7 +488,7 @@ bool MonitorService::create_endpoint()
 
         TopicAttributes tatts;
         tatts.topicName = MONITOR_SERVICE_TOPIC;
-        tatts.topicDataType = type_.getName();
+        tatts.topicDataType = type_.get_name();
         tatts.topicKind = WITH_KEY;
 
         endpoint_registrator_(status_writer_, tatts, wqos);

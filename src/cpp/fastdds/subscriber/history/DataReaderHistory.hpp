@@ -390,9 +390,6 @@ private:
     //!TopicDataType
     fastdds::dds::TopicDataType* type_;
 
-    //!Type object to deserialize Key
-    void* get_key_object_;
-
     /// Function to compute the instance handle of a received change
     std::function<bool(CacheChange_t*)> compute_key_for_change_fn_;
     /// Function processing a received change

@@ -45,12 +45,12 @@ void encoding_decoding_test(
 {
     TypeSupport pubsubType {new DynamicPubSubType(created_type)};
     uint32_t payloadSize =
-            static_cast<uint32_t>(pubsubType.get_serialized_size_provider(&encoding_data, encoding)());
+            static_cast<uint32_t>(pubsubType.calculate_serialized_size(&encoding_data, encoding));
     SerializedPayload_t payload(payloadSize);
-    EXPECT_TRUE(pubsubType.serialize(&encoding_data, &payload, encoding));
+    EXPECT_TRUE(pubsubType.serialize(&encoding_data, payload, encoding));
     EXPECT_EQ(payload.length, payloadSize);
-    EXPECT_LE(payload.length, pubsubType->m_typeSize);
-    EXPECT_TRUE(pubsubType.deserialize(&payload, &decoding_data));
+    EXPECT_LE(payload.length, pubsubType->max_serialized_type_size);
+    EXPECT_TRUE(pubsubType.deserialize(payload, &decoding_data));
     EXPECT_TRUE(decoding_data->equals(encoding_data));
 
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
@@ -12733,7 +12733,7 @@ TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_1)
 
     TypeSupport pubsubType {new DynamicPubSubType(struct_type)};
     eprosima::fastdds::rtps::InstanceHandle_t instance_handle;
-    ASSERT_TRUE(pubsubType.get_key(&data, &instance_handle));
+    ASSERT_TRUE(pubsubType.compute_key(&data, instance_handle));
 
     const uint8_t expected_key_hash[] {
         0x12, 0x34, 0x56, 0x78,
@@ -12803,7 +12803,7 @@ TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_2)
 
     TypeSupport pubsubType {new DynamicPubSubType(struct_type)};
     eprosima::fastdds::rtps::InstanceHandle_t instance_handle;
-    ASSERT_TRUE(pubsubType.get_key(&data, &instance_handle));
+    ASSERT_TRUE(pubsubType.compute_key(&data, instance_handle));
 
     const uint8_t expected_key_hash[] {
         0xf9, 0x1a, 0x59, 0xe3,
@@ -12910,7 +12910,7 @@ TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_3)
 
     TypeSupport pubsubType {new DynamicPubSubType(struct_type)};
     eprosima::fastdds::rtps::InstanceHandle_t instance_handle;
-    ASSERT_TRUE(pubsubType.get_key(&data, &instance_handle));
+    ASSERT_TRUE(pubsubType.compute_key(&data, instance_handle));
 
     const uint8_t expected_key_hash[] {
         0x37, 0x4b, 0x96, 0xe2,

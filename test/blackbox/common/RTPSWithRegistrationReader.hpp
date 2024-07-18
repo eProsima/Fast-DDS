@@ -140,7 +140,7 @@ public:
         , receiving_(false)
         , matched_(0)
     {
-        topic_attr_.topicDataType = type_.getName();
+        topic_attr_.topicDataType = type_.get_name();
         // Generate topic name
         std::ostringstream t;
         t << topic_name << "_" << asio::ip::host_name() << "_" << GET_PID();
@@ -172,7 +172,7 @@ public:
         }
 
         //Create readerhistory
-        hattr_.payloadMaxSize = type_.m_typeSize;
+        hattr_.payloadMaxSize = type_.max_serialized_type_size;
         history_ = new eprosima::fastdds::rtps::ReaderHistory(hattr_);
         ASSERT_NE(history_, nullptr);
 

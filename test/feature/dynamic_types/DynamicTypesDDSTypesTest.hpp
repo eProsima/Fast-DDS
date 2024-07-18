@@ -111,28 +111,28 @@ public:
     {
         TypeSupport dyn_pubsubType {new DynamicPubSubType(type)};
 
-        uint32_t dyn_payloadSize = static_cast<uint32_t>(dyn_pubsubType.get_serialized_size_provider(&data,
-                data_representation)());
+        uint32_t dyn_payloadSize = static_cast<uint32_t>(dyn_pubsubType.calculate_serialized_size(&data,
+                data_representation));
 
         // Dynamic Serialization <-> Dynamic Deserialization
         eprosima::fastdds::rtps::SerializedPayload_t dyn_payload(dyn_payloadSize);
-        ASSERT_TRUE(dyn_pubsubType.serialize(&data, &dyn_payload, data_representation));
+        ASSERT_TRUE(dyn_pubsubType.serialize(&data, dyn_payload, data_representation));
         DynamicData::_ref_type data1 {DynamicDataFactory::get_instance()->create_data(type)};
-        ASSERT_TRUE(dyn_pubsubType.deserialize(&dyn_payload, &data1));
+        ASSERT_TRUE(dyn_pubsubType.deserialize(dyn_payload, &data1));
         EXPECT_TRUE(data1->equals(data));
 
         // Dynamic Serialization <-> Static Deserialization
-        ASSERT_TRUE(static_pubsubType.deserialize(&dyn_payload, &data_static));
+        ASSERT_TRUE(static_pubsubType.deserialize(dyn_payload, &data_static));
 
         // Static Serialization <-> Dynamic Deserialization
-        uint32_t static_payloadSize = static_cast<uint32_t>(static_pubsubType.get_serialized_size_provider(&data_static,
-                data_representation)());
+        uint32_t static_payloadSize = static_pubsubType.calculate_serialized_size(&data_static,
+                        data_representation);
         EXPECT_EQ(static_payloadSize, dyn_payloadSize);
         eprosima::fastdds::rtps::SerializedPayload_t static_payload(static_payloadSize);
-        ASSERT_TRUE(static_pubsubType.serialize(&data_static, &static_payload, data_representation));
+        ASSERT_TRUE(static_pubsubType.serialize(&data_static, static_payload, data_representation));
         EXPECT_EQ(static_payload.length, static_payloadSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(type)};
-        ASSERT_TRUE(dyn_pubsubType.deserialize(&static_payload, &data2));
+        ASSERT_TRUE(dyn_pubsubType.deserialize(static_payload, &data2));
         EXPECT_TRUE(data2->equals(data));
 
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data1), RETCODE_OK);

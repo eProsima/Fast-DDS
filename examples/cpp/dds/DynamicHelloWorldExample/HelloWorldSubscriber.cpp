@@ -149,7 +149,7 @@ void HelloWorldSubscriber::initialize_entities()
     //CREATE THE TOPIC
     Topic* topic = mp_participant->create_topic(
         "DDSDynHelloWorldTopic",
-        m_type->getName(),
+        m_type->get_name(),
         TOPIC_QOS_DEFAULT);
 
     if (topic == nullptr)

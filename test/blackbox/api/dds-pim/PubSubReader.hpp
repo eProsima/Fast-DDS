@@ -445,7 +445,7 @@ public:
 
             // Create topic
             topic_ =
-                    participant_->create_topic(topic_name_, type_->getName(),
+                    participant_->create_topic(topic_name_, type_->get_name(),
                             eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
             ASSERT_NE(topic_, nullptr);
             ASSERT_TRUE(topic_->is_enabled());

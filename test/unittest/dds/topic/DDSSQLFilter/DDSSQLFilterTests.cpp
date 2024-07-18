@@ -679,10 +679,10 @@ private:
     {
         static ContentFilterTestTypePubSubType type_support;
         auto data_ptr = const_cast<ContentFilterTestType*>(&data);
-        auto data_size = type_support.getSerializedSizeProvider(data_ptr)();
+        auto data_size = type_support.calculate_serialized_size(data_ptr, fastdds::dds::DEFAULT_DATA_REPRESENTATION);
         auto payload = new IContentFilter::SerializedPayload(data_size);
         values_.emplace_back(payload);
-        type_support.serialize(data_ptr, payload);
+        type_support.serialize(data_ptr, *payload, fastdds::dds::DEFAULT_DATA_REPRESENTATION);
     }
 
     void add_char_values(
