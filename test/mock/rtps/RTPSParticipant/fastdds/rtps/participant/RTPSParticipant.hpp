@@ -58,8 +58,6 @@ class TypeLookupManager;
 } // namespace builtin
 } // namespace dds
 
-class TopicAttributes;
-
 namespace rtps {
 
 struct PublicationBuiltinTopicData;
