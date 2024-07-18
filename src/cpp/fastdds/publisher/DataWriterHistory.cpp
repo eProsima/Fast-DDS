@@ -69,7 +69,8 @@ DataWriterHistory::DataWriterHistory(
         uint32_t payloadMaxSize,
         MemoryManagementPolicy_t mempolicy,
         std::function<void (const fastdds::rtps::InstanceHandle_t&)> unack_sample_remove_functor)
-    : WriterHistory(to_history_attributes(history_qos, resource_limits_qos, topic_kind, payloadMaxSize, mempolicy), payload_pool, change_pool)
+    : WriterHistory(to_history_attributes(history_qos, resource_limits_qos, topic_kind, payloadMaxSize,
+            mempolicy), payload_pool, change_pool)
     , history_qos_(history_qos)
     , resource_limited_qos_(resource_limits_qos)
     , topic_kind_(topic_kind)
@@ -278,7 +279,7 @@ bool DataWriterHistory::add_pub_change(
         {
             EPROSIMA_LOG_INFO(RTPS_HISTORY,
                     " Change " << change->sequenceNumber << " added with key: " << change->instanceHandle
-                    << " and " << change->serializedPayload.length << " bytes");
+                               << " and " << change->serializedPayload.length << " bytes");
             returnedValue = true;
         }
     }

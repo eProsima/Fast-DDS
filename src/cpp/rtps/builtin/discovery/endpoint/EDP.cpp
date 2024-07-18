@@ -99,7 +99,9 @@ bool EDP::new_reader_proxy_data(
         const fastdds::dds::ReaderQos& rqos,
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
-    EPROSIMA_LOG_INFO(RTPS_EDP, "Adding " << rtps_reader->getGuid().entityId << " in topic " << sub_builtin_data.topic_name.to_string());
+    EPROSIMA_LOG_INFO(RTPS_EDP,
+            "Adding " << rtps_reader->getGuid().entityId << " in topic " <<
+            sub_builtin_data.topic_name.to_string());
 
     auto init_fun = [this, rtps_reader, &sub_builtin_data, &rqos, content_filter](
         ReaderProxyData* rpd,
@@ -239,7 +241,9 @@ bool EDP::new_writer_proxy_data(
         const PublicationBuiltinTopicData& pub_builtin_data,
         const fastdds::dds::WriterQos& wqos)
 {
-    EPROSIMA_LOG_INFO(RTPS_EDP, "Adding " << rtps_writer->getGuid().entityId << " in topic " << pub_builtin_data.topic_name.to_string());
+    EPROSIMA_LOG_INFO(RTPS_EDP,
+            "Adding " << rtps_writer->getGuid().entityId << " in topic " <<
+            pub_builtin_data.topic_name.to_string());
 
     auto init_fun = [this, rtps_writer, &pub_builtin_data, &wqos](
         WriterProxyData* wpd,

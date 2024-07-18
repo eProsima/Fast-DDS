@@ -381,7 +381,7 @@ public:
     FASTDDS_EXPORTED_API void copy_to(
             eprosima::fastdds::ResourceLimitedVector<Locator>& locator_list) const
     {
-        for(auto& locator : m_locators)
+        for (auto& locator : m_locators)
         {
             locator_list.emplace_back(locator);
         }

@@ -156,7 +156,7 @@ public:
             {
                 EPROSIMA_LOG_INFO(RTPS_HISTORY,
                         " Change " << change->sequenceNumber << " added with key: " << change->instanceHandle
-                        << " and " << change->serializedPayload.length << " bytes");
+                                   << " and " << change->serializedPayload.length << " bytes");
                 returnedValue = true;
             }
         }

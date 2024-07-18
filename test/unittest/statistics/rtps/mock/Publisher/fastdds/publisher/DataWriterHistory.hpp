@@ -60,16 +60,17 @@ class DataWriterHistory : public fastdds::rtps::WriterHistory
 {
 public:
 
-DataWriterHistory(
-        const std::shared_ptr<rtps::IPayloadPool>& payload_pool,
-        const std::shared_ptr<rtps::IChangePool>& change_pool,
-        const HistoryQosPolicy& history_qos,
-        const ResourceLimitsQosPolicy& resource_limits_qos,
-        const rtps::TopicKind_t& topic_kind,
-        uint32_t payloadMaxSize,
-        rtps::MemoryManagementPolicy_t mempolicy,
-        std::function<void (const fastdds::rtps::InstanceHandle_t&)>)
-    : WriterHistory(to_history_attributes(history_qos, resource_limits_qos, topic_kind, payloadMaxSize, mempolicy), payload_pool, change_pool)
+    DataWriterHistory(
+            const std::shared_ptr<rtps::IPayloadPool>& payload_pool,
+            const std::shared_ptr<rtps::IChangePool>& change_pool,
+            const HistoryQosPolicy& history_qos,
+            const ResourceLimitsQosPolicy& resource_limits_qos,
+            const rtps::TopicKind_t& topic_kind,
+            uint32_t payloadMaxSize,
+            rtps::MemoryManagementPolicy_t mempolicy,
+            std::function<void (const fastdds::rtps::InstanceHandle_t&)>)
+        : WriterHistory(to_history_attributes(history_qos, resource_limits_qos, topic_kind, payloadMaxSize,
+                mempolicy), payload_pool, change_pool)
     {
     }
 
