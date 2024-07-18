@@ -44,7 +44,6 @@ class TypeIdentifier;
 } // namespace xtypes
 } // namespace dds
 
-class TopicAttributes;
 
 namespace rtps {
 
