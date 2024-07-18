@@ -42,13 +42,13 @@ struct ParticipantBuiltinTopicData
     /// Properties
     dds::ParameterPropertyList_t properties;
 
-    ///Participant name
+    /// Participant name
     fastcdr::string_255 participant_name;
 
-    ///Metatraffic locators
+    /// Metatraffic locators
     RemoteLocatorList metatraffic_locators;
 
-    ///Default locators
+    /// Default locators
     RemoteLocatorList default_locators;
 
     /// Lease Duration

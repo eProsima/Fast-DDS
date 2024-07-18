@@ -140,7 +140,7 @@ public:
      * @return RETCODE_ERROR if the  operation fails.
      */
     FASTDDS_EXPORTED_API eprosima::fastdds::dds::ReturnCode_t fill_discovery_data_from_cdr_message(
-            fastdds::rtps::ParticipantBuiltinTopicData& data,
+            fastdds::dds::ParticipantBuiltinTopicData& data,
             const statistics::MonitorServiceStatusData& msg);
 
     /**
