@@ -231,7 +231,7 @@ void set_attributes_from_extended_qos(
 
 void set_qos_from_attributes(
         TopicQos& qos,
-        const TopicAttributes& attr)
+        const xmlparser::TopicAttributes& attr)
 {
     qos.history() = attr.historyQos;
     qos.resource_limits() = attr.resourceLimitsQos;

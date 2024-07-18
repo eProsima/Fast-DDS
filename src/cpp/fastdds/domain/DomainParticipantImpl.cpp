@@ -67,6 +67,7 @@
 #include <xmlparser/attributes/ReplierAttributes.hpp>
 #include <xmlparser/attributes/RequesterAttributes.hpp>
 #include <xmlparser/attributes/SubscriberAttributes.hpp>
+#include <xmlparser/attributes/TopicAttributes.hpp>
 #include <xmlparser/XMLProfileManager.h>
 
 namespace eprosima {
@@ -116,7 +117,7 @@ DomainParticipantImpl::DomainParticipantImpl(
     XMLProfileManager::getDefaultSubscriberAttributes(sub_attr);
     utils::set_qos_from_attributes(default_sub_qos_, sub_attr);
 
-    TopicAttributes top_attr;
+    xmlparser::TopicAttributes top_attr;
     XMLProfileManager::getDefaultTopicAttributes(top_attr);
     utils::set_qos_from_attributes(default_topic_qos_, top_attr);
 
@@ -1114,7 +1115,7 @@ void DomainParticipantImpl::reset_default_topic_qos()
 {
     // TODO (ILG): Change when we have full XML support for DDS QoS profiles
     TopicImpl::set_qos(default_topic_qos_, TOPIC_QOS_DEFAULT, true);
-    TopicAttributes attr;
+    xmlparser::TopicAttributes attr;
     XMLProfileManager::getDefaultTopicAttributes(attr);
     utils::set_qos_from_attributes(default_topic_qos_, attr);
 }
@@ -1128,7 +1129,7 @@ ReturnCode_t DomainParticipantImpl::get_topic_qos_from_profile(
         const std::string& profile_name,
         TopicQos& qos) const
 {
-    TopicAttributes attr;
+    xmlparser::TopicAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillTopicAttributes(profile_name, attr))
     {
         qos = default_topic_qos_;
@@ -1405,7 +1406,7 @@ Topic* DomainParticipantImpl::create_topic_with_profile(
         const StatusMask& mask)
 {
     // TODO (ILG): Change when we have full XML support for DDS QoS profiles
-    TopicAttributes attr;
+    xmlparser::TopicAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillTopicAttributes(profile_name, attr))
     {
         TopicQos qos = default_topic_qos_;

@@ -851,7 +851,7 @@ TEST_P(XMLProfileParserTests, XMLParserPublisher)
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::fillPublisherAttributes(publisher_profile, publisher_atts));
 
-    TopicAttributes& pub_topic = publisher_atts.topic;
+    xmlparser::TopicAttributes& pub_topic = publisher_atts.topic;
     dds::WriterQos& pub_qos = publisher_atts.qos;
     Locator_t locator;
     LocatorListIterator loc_list_it;
@@ -925,7 +925,7 @@ TEST_F(XMLProfileParserBasicTests, XMLParserPublisherDeprecated)
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::fillPublisherAttributes(publisher_profile, publisher_atts));
 
-    TopicAttributes& pub_topic = publisher_atts.topic;
+    xmlparser::TopicAttributes& pub_topic = publisher_atts.topic;
     dds::WriterQos& pub_qos = publisher_atts.qos;
     Locator_t locator;
     LocatorListIterator loc_list_it;
@@ -997,7 +997,7 @@ TEST_P(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
             xmlparser::XMLProfileManager::loadXMLFile(xml_filename_));
     xmlparser::XMLProfileManager::getDefaultPublisherAttributes(publisher_atts);
 
-    TopicAttributes& pub_topic = publisher_atts.topic;
+    xmlparser::TopicAttributes& pub_topic = publisher_atts.topic;
     dds::WriterQos& pub_qos = publisher_atts.qos;
     Locator_t locator;
     LocatorListIterator loc_list_it;
@@ -1069,7 +1069,7 @@ TEST_F(XMLProfileParserBasicTests, XMLParserDefaultPublisherProfileDeprecated)
             xmlparser::XMLProfileManager::loadXMLFile("test_xml_deprecated.xml"));
     xmlparser::XMLProfileManager::getDefaultPublisherAttributes(publisher_atts);
 
-    TopicAttributes& pub_topic = publisher_atts.topic;
+    xmlparser::TopicAttributes& pub_topic = publisher_atts.topic;
     dds::WriterQos& pub_qos = publisher_atts.qos;
     Locator_t locator;
     LocatorListIterator loc_list_it;
@@ -1143,7 +1143,7 @@ TEST_P(XMLProfileParserTests, XMLParserSubscriber)
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::fillSubscriberAttributes(subscriber_profile, subscriber_atts));
 
-    TopicAttributes& sub_topic = subscriber_atts.topic;
+    xmlparser::TopicAttributes& sub_topic = subscriber_atts.topic;
     dds::ReaderQos& sub_qos = subscriber_atts.qos;
     Locator_t locator;
     LocatorListIterator loc_list_it;
@@ -1215,7 +1215,7 @@ TEST_F(XMLProfileParserBasicTests, XMLParserSubscriberDeprecated)
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::fillSubscriberAttributes(subscriber_profile, subscriber_atts));
 
-    TopicAttributes& sub_topic = subscriber_atts.topic;
+    xmlparser::TopicAttributes& sub_topic = subscriber_atts.topic;
     dds::ReaderQos& sub_qos = subscriber_atts.qos;
     Locator_t locator;
     LocatorListIterator loc_list_it;
@@ -1285,7 +1285,7 @@ TEST_P(XMLProfileParserTests, XMLParserDefaultSubscriberProfile)
             xmlparser::XMLProfileManager::loadXMLFile(xml_filename_));
     xmlparser::XMLProfileManager::getDefaultSubscriberAttributes(subscriber_atts);
 
-    TopicAttributes& sub_topic = subscriber_atts.topic;
+    xmlparser::TopicAttributes& sub_topic = subscriber_atts.topic;
     dds::ReaderQos& sub_qos = subscriber_atts.qos;
     Locator_t locator;
     LocatorListIterator loc_list_it;
@@ -1355,7 +1355,7 @@ TEST_F(XMLProfileParserBasicTests, XMLParserDefaultSubscriberProfileDeprecated)
             xmlparser::XMLProfileManager::loadXMLFile("test_xml_deprecated.xml"));
     xmlparser::XMLProfileManager::getDefaultSubscriberAttributes(subscriber_atts);
 
-    TopicAttributes& sub_topic = subscriber_atts.topic;
+    xmlparser::TopicAttributes& sub_topic = subscriber_atts.topic;
     dds::ReaderQos& sub_qos = subscriber_atts.qos;
     Locator_t locator;
     LocatorListIterator loc_list_it;

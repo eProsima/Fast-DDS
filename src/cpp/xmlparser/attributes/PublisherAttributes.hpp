@@ -24,10 +24,11 @@
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <fastdds/rtps/attributes/ResourceManagement.hpp>
-#include <fastdds/rtps/attributes/TopicAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
+
+#include <xmlparser/attributes/TopicAttributes.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -61,7 +62,7 @@ public:
     }
 
     //! Topic Attributes for the Publisher
-    fastdds::TopicAttributes topic;
+    fastdds::xmlparser::TopicAttributes topic;
 
     //! QOS for the Publisher
     dds::WriterQos qos;
