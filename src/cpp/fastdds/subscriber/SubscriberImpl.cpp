@@ -564,7 +564,7 @@ bool SubscriberImpl::type_in_use(
     {
         for (DataReaderImpl* reader : it.second)
         {
-            if (reader->topic_attributes().getTopicDataType() == type_name)
+            if (reader->get_topicdescription()->get_type_name() == type_name)
             {
                 return true; // Is in use
             }

@@ -1771,59 +1771,6 @@ void DataReaderImpl::set_qos(
     }
 }
 
-fastdds::TopicAttributes DataReaderImpl::topic_attributes() const
-{
-    fastdds::TopicAttributes topic_att;
-    topic_att.topicKind = type_->is_compute_key_provided ? WITH_KEY : NO_KEY;
-    topic_att.topicName = topic_->get_impl()->get_rtps_topic_name();
-    topic_att.topicDataType = topic_->get_type_name();
-    topic_att.historyQos = qos_.history();
-    topic_att.resourceLimitsQos = qos_.resource_limits();
-
-    using utils::to_type_propagation;
-    using utils::TypePropagation;
-
-    auto properties = subscriber_->get_participant()->get_qos().properties();
-    auto type_propagation = to_type_propagation(properties);
-    bool should_assign_type_information =
-            (TypePropagation::TYPEPROPAGATION_ENABLED == type_propagation) ||
-            (TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH == type_propagation);
-
-    if (should_assign_type_information && (xtypes::TK_NONE != type_->type_identifiers().type_identifier1()._d()))
-    {
-        xtypes::TypeInformation type_info;
-
-        if (RETCODE_OK ==
-                fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
-                    type_->type_identifiers(), type_info))
-        {
-            switch (type_propagation)
-            {
-                case TypePropagation::TYPEPROPAGATION_ENABLED:
-                {
-                    // Use both complete and minimal type information
-                    topic_att.type_information.type_information = type_info;
-                    break;
-                }
-                case TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH:
-                {
-                    // Use minimal type information only
-                    topic_att.type_information.type_information.minimal() = type_info.minimal();
-                    break;
-                }
-                default:
-                    // This should never happen as other cases are protected by should_assign_type_information
-                    assert(false);
-                    break;
-            }
-
-            topic_att.type_information.assigned(true);
-        }
-    }
-
-    return topic_att;
-}
-
 DataReaderListener* DataReaderImpl::get_listener_for(
         const StatusMask& status)
 {
@@ -2231,6 +2178,103 @@ void DataReaderImpl::try_notify_read_conditions() noexcept
             impl->notify();
         }
     }
+}
+
+SubscriptionBuiltinTopicData DataReaderImpl::get_subscription_builtin_topic_data() const
+{
+    SubscriptionBuiltinTopicData sub_builtin_data;
+
+    // sanity checks
+    bool subscriber_is_valid = (nullptr != subscriber_);
+    bool topic_is_valid = (nullptr != topic_);
+    bool participant_is_valid = subscriber_is_valid ? (nullptr != subscriber_->get_participant()) : false;
+
+    from_proxy_to_builtin(guid_.entityId, sub_builtin_data.key.value);
+
+    if (participant_is_valid)
+    {
+        from_proxy_to_builtin(subscriber_->get_participant()->guid().guidPrefix, sub_builtin_data.participant_key.value);
+    }
+
+    if (topic_is_valid)
+    {
+        sub_builtin_data.topic_name = topic_->get_impl()->get_rtps_topic_name();
+        sub_builtin_data.type_name = topic_->get_type_name();
+    }
+
+    // DataReader qos
+    sub_builtin_data.durability = qos_.durability();
+    sub_builtin_data.deadline = qos_.deadline();
+    sub_builtin_data.latency_budget = qos_.latency_budget();
+    sub_builtin_data.lifespan = qos_.lifespan();
+    sub_builtin_data.liveliness = qos_.liveliness();
+    sub_builtin_data.reliability = qos_.reliability();
+    sub_builtin_data.ownership = qos_.ownership();
+    sub_builtin_data.destination_order = qos_.destination_order();
+    sub_builtin_data.user_data = qos_.user_data();
+    sub_builtin_data.time_based_filter = qos_.time_based_filter();
+
+    // Subscriber qos
+    if (subscriber_is_valid)
+    {
+        sub_builtin_data.presentation = subscriber_->qos_.presentation();
+        sub_builtin_data.partition = subscriber_->qos_.partition();
+        sub_builtin_data.group_data = subscriber_->qos_.group_data();
+    }
+
+    // X-Types 1.3
+    using utils::to_type_propagation;
+    using utils::TypePropagation;
+
+    auto properties = subscriber_->get_participant()->get_qos().properties();
+    auto type_propagation = to_type_propagation(properties);
+    bool should_assign_type_information =
+        (TypePropagation::TYPEPROPAGATION_ENABLED == type_propagation) ||
+        (TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH == type_propagation);
+
+    if (should_assign_type_information && (xtypes::TK_NONE != type_->type_identifiers().type_identifier1()._d()))
+    {
+        xtypes::TypeInformation type_info;
+
+        if (RETCODE_OK ==
+            fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
+                type_->type_identifiers(), type_info))
+        {
+            switch (type_propagation)
+            {
+                case TypePropagation::TYPEPROPAGATION_ENABLED:
+                {
+                    // Use both complete and minimal type information
+                    sub_builtin_data.type_information.type_information = type_info;
+                    break;
+                }
+                case TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH:
+                {
+                    // Use minimal type information only
+                    sub_builtin_data.type_information.type_information.minimal() = type_info.minimal();
+                    break;
+                }
+                default:
+                    // This should never happen as other cases are protected by should_assign_type_information
+                    assert(false);
+                    break;
+            }
+
+            sub_builtin_data.type_information.assigned(true);
+        }
+    }
+    sub_builtin_data.representation = qos_.representation();
+
+    sub_builtin_data.guid = guid();
+    if (subscriber_is_valid)
+    {
+        sub_builtin_data.participant_guid = subscriber_->get_participant()->guid();
+    }
+    qos_.endpoint().unicast_locator_list.copy_to(sub_builtin_data.remote_locators.unicast);
+    qos_.endpoint().multicast_locator_list.copy_to(sub_builtin_data.remote_locators.multicast);
+    sub_builtin_data.expects_inline_qos = qos_.expects_inline_qos();
+
+    return sub_builtin_data;
 }
 
 }  // namespace dds

@@ -17,9 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_DATAREADERIMPL_HPP_
-#define _FASTDDS_DATAREADERIMPL_HPP_
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#ifndef FASTDDS_SUBSCRIBER__DATAREADERIMPL_HPP
+#define FASTDDS_SUBSCRIBER__DATAREADERIMPL_HPP
 
 #include <mutex>
 
@@ -34,7 +33,6 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
-#include <fastdds/rtps/attributes/TopicAttributes.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/history/IPayloadPool.hpp>
@@ -46,6 +44,7 @@
 #include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
 #include <fastdds/subscriber/history/DataReaderHistory.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
+#include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
 #include <rtps/history/ITopicPayloadPool.h>
 
 namespace eprosima {
@@ -375,6 +374,11 @@ public:
 
     std::recursive_mutex& get_conditions_mutex() const noexcept;
 
+    /**
+     * @brief A method to retrieve the subscription data discovery information.
+     */
+    SubscriptionBuiltinTopicData get_subscription_builtin_topic_data() const;
+
 protected:
 
     //!Subscriber
@@ -652,5 +656,4 @@ private:
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_DATAREADERIMPL_HPP_*/
+#endif /* FASTDDS_SUBSCRIBER__DATAREADERIMPL_HPP*/
