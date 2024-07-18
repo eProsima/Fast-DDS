@@ -16,8 +16,8 @@
  * @file TopicAttributes.hpp
  */
 
-#ifndef FASTDDS_RTPS_ATTRIBUTES__TOPICATTRIBUTES_HPP
-#define FASTDDS_RTPS_ATTRIBUTES__TOPICATTRIBUTES_HPP
+#ifndef FASTDDS_XMLPARSER_ATTRIBUTES__TOPICATTRIBUTES_HPP
+#define FASTDDS_XMLPARSER_ATTRIBUTES__TOPICATTRIBUTES_HPP
 
 #include <string>
 
@@ -26,9 +26,10 @@
 
 namespace eprosima {
 namespace fastdds {
+namespace xmlparser {
 
 /**
- * Class TopicAttributes, used by the user to define the attributes of the topic associated with a Publisher or Subscriber.
+ * Class TopicAttributes, used to define the attributes of the topic associated with a Publisher or Subscriber.
  * @ingroup FASTDDS_ATTRIBUTES_MODULE
  */
 class TopicAttributes
@@ -120,8 +121,6 @@ public:
     bool checkQos() const;
 };
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
 /**
  * Check if two topic attributes are not equal
  * @param t1 First instance of TopicAttributes to compare
@@ -143,9 +142,8 @@ bool inline operator !=(
     return false;
 }
 
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
+} // namespace xmlparser
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_RTPS_ATTRIBUTES__TOPICATTRIBUTES_HPP
+#endif // FASTDDS_XMLPARSER_ATTRIBUTES__TOPICATTRIBUTES_HPP
