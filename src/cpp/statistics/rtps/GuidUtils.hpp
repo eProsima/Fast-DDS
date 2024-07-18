@@ -37,11 +37,12 @@ namespace statistics {
 inline bool is_monitor_service_builtin(
         const fastdds::rtps::EntityId_t& entity_id)
 {
+    bool ret = false;
 #ifdef FASTDDS_STATISTICS
-    return ENTITYID_MONITOR_SERVICE_WRITER == entity_id.to_uint32();
+    ret = ENTITYID_MONITOR_SERVICE_WRITER == entity_id.to_uint32();
 #endif // ifdef FASTDDS_STATISTICS
     static_cast<void>(entity_id);
-    return false;
+    return ret;
 }
 
 /**
