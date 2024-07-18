@@ -29,7 +29,6 @@
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/rtps/Endpoint.hpp>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/common/FragmentNumber.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
@@ -41,6 +40,7 @@
 #include <fastdds/statistics/rtps/monitor_service/connections_fwd.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
 
+#include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/writer/DeliveryRetCode.hpp>
 #include <rtps/writer/LocatorSelectorSender.hpp>
 
@@ -69,6 +69,9 @@ public:
 
     //vvvvvvvvvvvvvvvvvvvvv [Exported API] vvvvvvvvvvvvvvvvvvvvv
 
+    bool matched_reader_add(
+            const SubscriptionBuiltinTopicData& rqos) final;
+
     WriterListener* get_listener() const final;
 
     bool set_listener(
@@ -92,6 +95,14 @@ public:
     //^^^^^^^^^^^^^^^^^^^^^^^ [Exported API] ^^^^^^^^^^^^^^^^^^^^^^^
 
     //vvvvvvvvvvvvvvvvvvvv [Implementation API] vvvvvvvvvvvvvvvvvvvv
+
+    /**
+     * Add a matched reader.
+     * @param data Pointer to the ReaderProxyData object added.
+     * @return True if added.
+     */
+    virtual bool matched_reader_add_edp(
+            const ReaderProxyData& data) = 0;
 
     /**
      * Add a change to the unsent list.
@@ -294,7 +305,7 @@ public:
     bool is_datasharing_compatible() const;
 
     bool is_datasharing_compatible_with(
-            const ReaderProxyData& rdata) const;
+            const dds::DataSharingQosPolicy& qos) const;
 
     /**
      * Get Min Seq Num in History.

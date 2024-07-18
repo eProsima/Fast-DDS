@@ -21,11 +21,12 @@
 #define FASTDDS_DDS_DOMAIN__DOMAINPARTICIPANTLISTENER_HPP
 
 #include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
+#include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
-#include <fastdds/rtps/reader/ReaderDiscoveryInfo.hpp>
+#include <fastdds/rtps/reader/ReaderDiscoveryStatus.hpp>
 #include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
 
 namespace eprosima {
@@ -99,16 +100,19 @@ public:
      * This method is called when a new DataReader is discovered, or a previously discovered DataReader changes
      * its QOS or is removed.
      *
-     * @param [out] participant Pointer to the Participant which discovered the remote DataReader.
-     * @param [out] info Remote DataReader information. User can take ownership of the object.
-     * @param [out] should_be_ignored Flag to indicate the library to automatically ignore the discovered DataReader.
+     * @param [in]  participant        Pointer to the Participant which discovered the remote reader.
+     * @param [in]  reason             The reason motivating this method to be called.
+     * @param [in]  info               Remote reader information.
+     * @param [out] should_be_ignored  Flag to indicate the library to automatically ignore the discovered reader.
      */
     virtual void on_data_reader_discovery(
             DomainParticipant* participant,
-            rtps::ReaderDiscoveryInfo&& info,
+            rtps::ReaderDiscoveryStatus reason,
+            const SubscriptionBuiltinTopicData& info,
             bool& should_be_ignored)
     {
         static_cast<void>(participant);
+        static_cast<void>(reason);
         static_cast<void>(info);
         static_cast<void>(should_be_ignored);
     }

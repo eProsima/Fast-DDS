@@ -267,7 +267,7 @@ ReturnCode_t DataWriter::assert_liveliness()
 }
 
 ReturnCode_t DataWriter::get_matched_subscription_data(
-        builtin::SubscriptionBuiltinTopicData& subscription_data,
+        SubscriptionBuiltinTopicData& subscription_data,
         const InstanceHandle_t& subscription_handle) const
 {
     static_cast<void> (subscription_data);

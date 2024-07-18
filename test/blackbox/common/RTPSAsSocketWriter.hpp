@@ -33,7 +33,6 @@
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/RTPSDomain.hpp>
@@ -224,42 +223,43 @@ public:
         //Add remote reader (in this case a reader in the same machine)
         eprosima::fastdds::rtps::GUID_t guid = participant_->getGuid();
 
-        eprosima::fastdds::rtps::ReaderProxyData rattr(4u, 1u);
+        eprosima::fastdds::rtps::SubscriptionBuiltinTopicData rdata;
+
         eprosima::fastdds::rtps::Locator_t loc;
         IPLocator::setIPv4(loc, ip_);
         loc.port = static_cast<uint16_t>(port_);
-        rattr.add_unicast_locator(loc);
+        rdata.remote_locators.add_unicast_locator(loc);
 
         if (writer_attr_.endpoint.reliabilityKind == eprosima::fastdds::rtps::RELIABLE)
         {
-            rattr.m_qos.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+            rdata.reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
         }
 
         // Check disable_positive_acks_ attribute
         if (writer_attr_.disable_positive_acks)
         {
-            rattr.m_qos.m_disablePositiveACKs.enabled = writer_attr_.disable_positive_acks;
-            rattr.m_qos.m_disablePositiveACKs.duration = writer_attr_.keep_duration;
+            rdata.disable_positive_acks.enabled = writer_attr_.disable_positive_acks;
+            rdata.disable_positive_acks.duration = writer_attr_.keep_duration;
         }
 
-        rattr.guid().guidPrefix.value[0] = guid.guidPrefix.value[0];
-        rattr.guid().guidPrefix.value[1] = guid.guidPrefix.value[1];
-        rattr.guid().guidPrefix.value[2] = guid.guidPrefix.value[2];
-        rattr.guid().guidPrefix.value[3] = guid.guidPrefix.value[3];
-        rattr.guid().guidPrefix.value[4] = guid.guidPrefix.value[4];
-        rattr.guid().guidPrefix.value[5] = guid.guidPrefix.value[5];
-        rattr.guid().guidPrefix.value[6] = guid.guidPrefix.value[6];
-        rattr.guid().guidPrefix.value[7] = guid.guidPrefix.value[7];
-        rattr.guid().guidPrefix.value[8] = 1;
-        rattr.guid().guidPrefix.value[9] = 0;
-        rattr.guid().guidPrefix.value[10] = 0;
-        rattr.guid().guidPrefix.value[11] = 0;
-        rattr.guid().entityId.value[0] = 0;
-        rattr.guid().entityId.value[1] = 0;
-        rattr.guid().entityId.value[2] = 1;
-        rattr.guid().entityId.value[3] = 4;
+        rdata.guid.guidPrefix.value[0] = guid.guidPrefix.value[0];
+        rdata.guid.guidPrefix.value[1] = guid.guidPrefix.value[1];
+        rdata.guid.guidPrefix.value[2] = guid.guidPrefix.value[2];
+        rdata.guid.guidPrefix.value[3] = guid.guidPrefix.value[3];
+        rdata.guid.guidPrefix.value[4] = guid.guidPrefix.value[4];
+        rdata.guid.guidPrefix.value[5] = guid.guidPrefix.value[5];
+        rdata.guid.guidPrefix.value[6] = guid.guidPrefix.value[6];
+        rdata.guid.guidPrefix.value[7] = guid.guidPrefix.value[7];
+        rdata.guid.guidPrefix.value[8] = 1;
+        rdata.guid.guidPrefix.value[9] = 0;
+        rdata.guid.guidPrefix.value[10] = 0;
+        rdata.guid.guidPrefix.value[11] = 0;
+        rdata.guid.entityId.value[0] = 0;
+        rdata.guid.entityId.value[1] = 0;
+        rdata.guid.entityId.value[2] = 1;
+        rdata.guid.entityId.value[3] = 4;
 
-        writer_->matched_reader_add(rattr);
+        writer_->matched_reader_add(rdata);
     }
 
     RTPSAsSocketWriter& asynchronously(

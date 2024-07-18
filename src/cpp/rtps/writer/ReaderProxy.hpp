@@ -25,7 +25,6 @@
 
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/common/FragmentNumber.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
@@ -33,6 +32,7 @@
 #include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
+#include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/writer/ChangeForReader.hpp>
 #include <rtps/writer/ReaderLocator.hpp>
 

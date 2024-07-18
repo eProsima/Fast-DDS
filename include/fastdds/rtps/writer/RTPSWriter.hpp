@@ -32,9 +32,10 @@
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
+#include <fastdds/rtps/builtin/data/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
+#include <fastdds/rtps/common/RemoteLocators.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/Endpoint.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
@@ -71,12 +72,14 @@ protected:
 public:
 
     /**
-     * Add a matched reader.
-     * @param data Pointer to the ReaderProxyData object added.
+     * @brief Add a matched reader represented by its attributes.
+     *
+     * @param info  Subscription info of the reader being matched.
+     *
      * @return True if added.
      */
     FASTDDS_EXPORTED_API virtual bool matched_reader_add(
-            const ReaderProxyData& data) = 0;
+            const SubscriptionBuiltinTopicData& info) = 0;
 
     /**
      * Remove a matched reader.

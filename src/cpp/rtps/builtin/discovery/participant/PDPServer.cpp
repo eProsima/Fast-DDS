@@ -611,7 +611,7 @@ void PDPServer::match_reliable_pdp_endpoints(
         else
 #endif // HAVE_SECURITY
         {
-            endpoints->writer.writer_->matched_reader_add(*temp_reader_data);
+            endpoints->writer.writer_->matched_reader_add_edp(*temp_reader_data);
         }
     }
     else
@@ -697,7 +697,7 @@ bool PDPServer::pairing_remote_reader_with_local_writer_after_security(
 
     if (local_writer == endpoints->writer.writer_->getGuid())
     {
-        endpoints->writer.writer_->matched_reader_add(remote_reader_data);
+        endpoints->writer.writer_->matched_reader_add_edp(remote_reader_data);
         return true;
     }
 
@@ -2021,7 +2021,7 @@ void PDPServer::match_pdp_reader_nts_(
     else
 #endif // HAVE_SECURITY
     {
-        endpoints->writer.writer_->matched_reader_add(*temp_reader_data);
+        endpoints->writer.writer_->matched_reader_add_edp(*temp_reader_data);
     }
 }
 

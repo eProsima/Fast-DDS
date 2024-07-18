@@ -45,7 +45,7 @@
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
-#include <fastdds/rtps/reader/ReaderDiscoveryInfo.hpp>
+#include <fastdds/rtps/reader/ReaderDiscoveryStatus.hpp>
 #include <fastdds/rtps/RTPSDomain.hpp>
 #include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
 
@@ -83,8 +83,7 @@ using xmlparser::XMLProfileManager;
 using rtps::ParticipantAuthenticationInfo;
 #endif // if HAVE_SECURITY
 using rtps::EndpointKind_t;
-using rtps::ReaderDiscoveryInfo;
-using rtps::ReaderProxyData;
+using rtps::ReaderDiscoveryStatus;
 using rtps::ResourceEvent;
 using rtps::WriterDiscoveryStatus;
 
@@ -1560,9 +1559,10 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantAuthenticati
 
 #endif // if HAVE_SECURITY
 
-void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
+void DomainParticipantImpl::MyRTPSParticipantListener::on_reader_discovery(
         RTPSParticipant*,
-        ReaderDiscoveryInfo&& info,
+        ReaderDiscoveryStatus reason,
+        const SubscriptionBuiltinTopicData& info,
         bool& should_be_ignored)
 {
     should_be_ignored = false;
@@ -1573,7 +1573,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
         DomainParticipantListener* listener = participant_->listener_;
         if (nullptr != listener)
         {
-            listener->on_data_reader_discovery(participant_->participant_, std::move(info), should_be_ignored);
+            listener->on_data_reader_discovery(participant_->participant_, reason, info, should_be_ignored);
         }
     }
 }

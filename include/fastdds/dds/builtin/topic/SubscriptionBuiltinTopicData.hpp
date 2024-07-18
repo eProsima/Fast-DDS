@@ -14,79 +14,19 @@
 
 /**
  * @file SubscriptionBuiltinTopicData.hpp
- *
  */
 
 #ifndef FASTDDS_DDS_BUILTIN_TOPIC__SUBSCRIPTIONBUILTINTOPICDATA_HPP
 #define FASTDDS_DDS_BUILTIN_TOPIC__SUBSCRIPTIONBUILTINTOPICDATA_HPP
 
-#include <fastdds/dds/builtin/topic/BuiltinTopicKey.hpp>
-#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/builtin/data/SubscriptionBuiltinTopicData.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-namespace builtin {
 
-struct SubscriptionBuiltinTopicData
-{
-    //! Builtin topic Key
-    BuiltinTopicKey_t key;
+using SubscriptionBuiltinTopicData = rtps::SubscriptionBuiltinTopicData;
 
-    //! Builtin participant topic Key
-    BuiltinTopicKey_t participant_key;
-
-    //! Topic name
-    std::string topic_name;
-
-    //! Type name
-    std::string type_name;
-
-    // DataReader Qos
-
-    //!Durability Qos, implemented in the library.
-    DurabilityQosPolicy durability;
-
-    //!Deadline Qos, implemented in the library.
-    DeadlineQosPolicy deadline;
-
-    //!Latency Budget Qos, NOT implemented in the library.
-    LatencyBudgetQosPolicy latency_budget;
-
-    //!Liveliness Qos, implemented in the library.
-    LivelinessQosPolicy liveliness;
-
-    //!Reliability Qos, implemented in the library.
-    ReliabilityQosPolicy reliability;
-
-    //!Ownership Qos, implemented in the library.
-    OwnershipQosPolicy ownership;
-
-    //!Destination Order Qos, NOT implemented in the library.
-    DestinationOrderQosPolicy destination_order;
-
-    //!User Data Qos, implemented in the library.
-    UserDataQosPolicy user_data;
-
-    //!Time Based Filter Qos, NOT implemented in the library.
-    TimeBasedFilterQosPolicy m_timeBasedFilter;
-
-    // Subscriber Qos
-
-    //!Presentation Qos, NOT implemented in the library.
-    PresentationQosPolicy presentation;
-
-    //!Partition Qos, implemented in the library.
-    PartitionQosPolicy partition;
-
-    //!Topic Data Qos, NOT implemented in the library.
-    TopicDataQosPolicy topic_data;
-
-    //!Group Data Qos, implemented in the library.
-    GroupDataQosPolicy group_data;
-};
-
-} // builtin
 } // dds
 } // fastdds
 } // eprosima

@@ -28,11 +28,11 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
+#include <fastdds/rtps/reader/ReaderDiscoveryStatus.hpp>
 #include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
@@ -40,6 +40,7 @@
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/data/ProxyHashTables.hpp>
+#include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include <rtps/builtin/discovery/endpoint/EDPStatic.h>
@@ -781,10 +782,11 @@ bool PDP::removeReaderProxyData(
                 if (listener)
                 {
                     RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
-                    ReaderDiscoveryInfo info(std::move(*pR));
                     bool should_be_ignored = false;
-                    info.status = ReaderDiscoveryInfo::REMOVED_READER;
-                    listener->onReaderDiscovery(participant, std::move(info), should_be_ignored);
+                    auto reason = ReaderDiscoveryStatus::REMOVED_READER;
+                    SubscriptionBuiltinTopicData info;
+                    from_proxy_to_builtin(*pR, info);
+                    listener->on_reader_discovery(participant, reason, info, should_be_ignored);
                 }
 
                 // Clear reader proxy data and move to pool in order to allow reuse
@@ -796,13 +798,6 @@ bool PDP::removeReaderProxyData(
         }
     }
 
-    return false;
-}
-
-bool PDP::removeReaderProxyData(
-        const GUID_t& /*reader_guid*/,
-        ReaderDiscoveryInfo::DISCOVERY_STATUS /*reason*/)
-{
     return false;
 }
 
@@ -915,10 +910,11 @@ ReaderProxyData* PDP::addReaderProxyData(
                 if (listener)
                 {
                     RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
-                    ReaderDiscoveryInfo info(*ret_val);
                     bool should_be_ignored = false;
-                    info.status = ReaderDiscoveryInfo::CHANGED_QOS_READER;
-                    listener->onReaderDiscovery(participant, std::move(info), should_be_ignored);
+                    auto reason = ReaderDiscoveryStatus::CHANGED_QOS_READER;
+                    SubscriptionBuiltinTopicData info;
+                    from_proxy_to_builtin(*ret_val, info);
+                    listener->on_reader_discovery(participant, reason, info, should_be_ignored);
                 }
 
                 return ret_val;
@@ -967,10 +963,11 @@ ReaderProxyData* PDP::addReaderProxyData(
             if (listener)
             {
                 RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
-                ReaderDiscoveryInfo info(*ret_val);
                 bool should_be_ignored = false;
-                info.status = ReaderDiscoveryInfo::DISCOVERED_READER;
-                listener->onReaderDiscovery(participant, std::move(info), should_be_ignored);
+                auto reason = ReaderDiscoveryStatus::DISCOVERED_READER;
+                SubscriptionBuiltinTopicData info;
+                from_proxy_to_builtin(*ret_val, info);
+                listener->on_reader_discovery(participant, reason, info, should_be_ignored);
             }
 
             return ret_val;
@@ -1282,10 +1279,11 @@ void PDP::actions_on_remote_participant_removed(
                 if (listener)
                 {
                     RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
-                    ReaderDiscoveryInfo info(std::move(*rit));
                     bool should_be_ignored = false;
-                    info.status = ReaderDiscoveryInfo::REMOVED_READER;
-                    listener->onReaderDiscovery(participant, std::move(info), should_be_ignored);
+                    auto status = ReaderDiscoveryStatus::REMOVED_READER;
+                    SubscriptionBuiltinTopicData info;
+                    from_proxy_to_builtin(*rit, info);
+                    listener->on_reader_discovery(participant, status, info, should_be_ignored);
                 }
             }
         }

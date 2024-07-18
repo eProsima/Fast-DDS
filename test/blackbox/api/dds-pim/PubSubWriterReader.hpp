@@ -110,19 +110,20 @@ class PubSubWriterReader
 
         void on_data_reader_discovery(
                 eprosima::fastdds::dds::DomainParticipant* participant,
-                eprosima::fastdds::rtps::ReaderDiscoveryInfo&& info,
+                eprosima::fastdds::rtps::ReaderDiscoveryStatus reason,
+                const eprosima::fastdds::dds::SubscriptionBuiltinTopicData& info,
                 bool& /*should_be_ignored*/) override
         {
             (void)participant;
 
-            switch (info.status)
+            switch (reason)
             {
-                case eprosima::fastdds::rtps::ReaderDiscoveryInfo::DISCOVERED_READER:
-                    info_add(discovered_subscribers_, info.info.guid());
+                case eprosima::fastdds::rtps::ReaderDiscoveryStatus::DISCOVERED_READER:
+                    info_add(discovered_subscribers_, info.guid);
                     break;
 
-                case eprosima::fastdds::rtps::ReaderDiscoveryInfo::REMOVED_READER:
-                    info_remove(discovered_subscribers_, info.info.guid());
+                case eprosima::fastdds::rtps::ReaderDiscoveryStatus::REMOVED_READER:
+                    info_remove(discovered_subscribers_, info.guid);
                     break;
 
                 default:
@@ -175,8 +176,6 @@ class PubSubWriterReader
     private:
 
         using eprosima::fastdds::dds::DomainParticipantListener::on_participant_discovery;
-        using eprosima::fastdds::dds::DomainParticipantListener::on_data_writer_discovery;
-        using eprosima::fastdds::dds::DomainParticipantListener::on_data_reader_discovery;
 
         //! Mutex guarding all info collections
         mutable std::mutex info_mutex_;

@@ -485,7 +485,7 @@ public:
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_matched_subscription_data(
-            builtin::SubscriptionBuiltinTopicData& subscription_data,
+            SubscriptionBuiltinTopicData& subscription_data,
             const InstanceHandle_t& subscription_handle) const;
 
     /**

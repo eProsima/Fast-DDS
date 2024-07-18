@@ -18,7 +18,6 @@
 
 #ifndef FASTDDS_RTPS_BUILTIN_DATA__WRITERPROXYDATA_HPP
 #define FASTDDS_RTPS_BUILTIN_DATA__WRITERPROXYDATA_HPP
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
@@ -48,106 +47,106 @@ class WriterProxyData
 {
 public:
 
-    FASTDDS_EXPORTED_API WriterProxyData(
+    WriterProxyData(
             const size_t max_unicast_locators,
             const size_t max_multicast_locators);
 
-    FASTDDS_EXPORTED_API WriterProxyData(
+    WriterProxyData(
             const size_t max_unicast_locators,
             const size_t max_multicast_locators,
             const VariableLengthDataLimits& data_limits);
 
-    virtual FASTDDS_EXPORTED_API ~WriterProxyData();
+    virtual ~WriterProxyData();
 
-    FASTDDS_EXPORTED_API WriterProxyData(
+    WriterProxyData(
             const WriterProxyData& writerInfo);
 
-    FASTDDS_EXPORTED_API WriterProxyData& operator =(
+    WriterProxyData& operator =(
             const WriterProxyData& writerInfo);
 
-    FASTDDS_EXPORTED_API void guid(
+    void guid(
             const GUID_t& guid)
     {
         m_guid = guid;
     }
 
-    FASTDDS_EXPORTED_API void guid(
+    void guid(
             GUID_t&& guid)
     {
         m_guid = std::move(guid);
     }
 
-    FASTDDS_EXPORTED_API const GUID_t& guid() const
+    const GUID_t& guid() const
     {
         return m_guid;
     }
 
-    FASTDDS_EXPORTED_API GUID_t& guid()
+    GUID_t& guid()
     {
         return m_guid;
     }
 
-    FASTDDS_EXPORTED_API void networkConfiguration(
+    void networkConfiguration(
             const NetworkConfigSet_t& networkConfiguration)
     {
         m_networkConfiguration = networkConfiguration;
     }
 
-    FASTDDS_EXPORTED_API void networkConfiguration(
+    void networkConfiguration(
             NetworkConfigSet_t&& networkConfiguration)
     {
         m_networkConfiguration = std::move(networkConfiguration);
     }
 
-    FASTDDS_EXPORTED_API const NetworkConfigSet_t& networkConfiguration() const
+    const NetworkConfigSet_t& networkConfiguration() const
     {
         return m_networkConfiguration;
     }
 
-    FASTDDS_EXPORTED_API NetworkConfigSet_t& networkConfiguration()
+    NetworkConfigSet_t& networkConfiguration()
     {
         return m_networkConfiguration;
     }
 
-    FASTDDS_EXPORTED_API void persistence_guid(
+    void persistence_guid(
             const GUID_t& guid)
     {
         persistence_guid_ = guid;
     }
 
-    FASTDDS_EXPORTED_API void persistence_guid(
+    void persistence_guid(
             GUID_t&& guid)
     {
         persistence_guid_ = std::move(guid);
     }
 
-    FASTDDS_EXPORTED_API GUID_t persistence_guid() const
+    GUID_t persistence_guid() const
     {
         return persistence_guid_;
     }
 
-    FASTDDS_EXPORTED_API GUID_t& persistence_guid()
+    GUID_t& persistence_guid()
     {
         return persistence_guid_;
     }
 
-    FASTDDS_EXPORTED_API void set_persistence_entity_id(
+    void set_persistence_entity_id(
             const EntityId_t& nid)
     {
         persistence_guid_.entityId = persistence_guid_.guidPrefix != c_GuidPrefix_Unknown ? nid : c_EntityId_Unknown;
     }
 
-    FASTDDS_EXPORTED_API bool has_locators() const
+    bool has_locators() const
     {
         return !remote_locators_.unicast.empty() || !remote_locators_.multicast.empty();
     }
 
-    FASTDDS_EXPORTED_API const RemoteLocatorList& remote_locators() const
+    const RemoteLocatorList& remote_locators() const
     {
         return remote_locators_;
     }
 
-    FASTDDS_EXPORTED_API void add_unicast_locator(
+    void add_unicast_locator(
             const Locator_t& locator);
 
     void set_announced_unicast_locators(
@@ -157,7 +156,7 @@ public:
             const LocatorList_t& locators,
             const NetworkFactory& network);
 
-    FASTDDS_EXPORTED_API void add_multicast_locator(
+    void add_multicast_locator(
             const Locator_t& locator);
 
     void set_multicast_locators(
@@ -172,155 +171,155 @@ public:
             const NetworkFactory& network,
             bool use_multicast_locators);
 
-    FASTDDS_EXPORTED_API void key(
+    void key(
             const InstanceHandle_t& key)
     {
         m_key = key;
     }
 
-    FASTDDS_EXPORTED_API void key(
+    void key(
             InstanceHandle_t&& key)
     {
         m_key = std::move(key);
     }
 
-    FASTDDS_EXPORTED_API InstanceHandle_t key() const
+    InstanceHandle_t key() const
     {
         return m_key;
     }
 
-    FASTDDS_EXPORTED_API InstanceHandle_t& key()
+    InstanceHandle_t& key()
     {
         return m_key;
     }
 
-    FASTDDS_EXPORTED_API void RTPSParticipantKey(
+    void RTPSParticipantKey(
             const InstanceHandle_t& RTPSParticipantKey)
     {
         m_RTPSParticipantKey = RTPSParticipantKey;
     }
 
-    FASTDDS_EXPORTED_API void RTPSParticipantKey(
+    void RTPSParticipantKey(
             InstanceHandle_t&& RTPSParticipantKey)
     {
         m_RTPSParticipantKey = std::move(RTPSParticipantKey);
     }
 
-    FASTDDS_EXPORTED_API InstanceHandle_t RTPSParticipantKey() const
+    InstanceHandle_t RTPSParticipantKey() const
     {
         return m_RTPSParticipantKey;
     }
 
-    FASTDDS_EXPORTED_API InstanceHandle_t& RTPSParticipantKey()
+    InstanceHandle_t& RTPSParticipantKey()
     {
         return m_RTPSParticipantKey;
     }
 
-    FASTDDS_EXPORTED_API void typeName(
+    void typeName(
             const fastcdr::string_255& typeName)
     {
         m_typeName = typeName;
     }
 
-    FASTDDS_EXPORTED_API void typeName(
+    void typeName(
             fastcdr::string_255&& typeName)
     {
         m_typeName = std::move(typeName);
     }
 
-    FASTDDS_EXPORTED_API const fastcdr::string_255& typeName() const
+    const fastcdr::string_255& typeName() const
     {
         return m_typeName;
     }
 
-    FASTDDS_EXPORTED_API fastcdr::string_255& typeName()
+    fastcdr::string_255& typeName()
     {
         return m_typeName;
     }
 
-    FASTDDS_EXPORTED_API void topicName(
+    void topicName(
             const fastcdr::string_255& topicName)
     {
         m_topicName = topicName;
     }
 
-    FASTDDS_EXPORTED_API void topicName(
+    void topicName(
             fastcdr::string_255&& topicName)
     {
         m_topicName = std::move(topicName);
     }
 
-    FASTDDS_EXPORTED_API const fastcdr::string_255& topicName() const
+    const fastcdr::string_255& topicName() const
     {
         return m_topicName;
     }
 
-    FASTDDS_EXPORTED_API fastcdr::string_255& topicName()
+    fastcdr::string_255& topicName()
     {
         return m_topicName;
     }
 
-    FASTDDS_EXPORTED_API void userDefinedId(
+    void userDefinedId(
             uint16_t userDefinedId)
     {
         m_userDefinedId = userDefinedId;
     }
 
-    FASTDDS_EXPORTED_API uint16_t userDefinedId() const
+    uint16_t userDefinedId() const
     {
         return m_userDefinedId;
     }
 
-    FASTDDS_EXPORTED_API uint16_t& userDefinedId()
+    uint16_t& userDefinedId()
     {
         return m_userDefinedId;
     }
 
-    FASTDDS_EXPORTED_API void typeMaxSerialized(
+    void typeMaxSerialized(
             uint32_t typeMaxSerialized)
     {
         m_typeMaxSerialized = typeMaxSerialized;
     }
 
-    FASTDDS_EXPORTED_API uint32_t typeMaxSerialized() const
+    uint32_t typeMaxSerialized() const
     {
         return m_typeMaxSerialized;
     }
 
-    FASTDDS_EXPORTED_API uint32_t& typeMaxSerialized()
+    uint32_t& typeMaxSerialized()
     {
         return m_typeMaxSerialized;
     }
 
-    FASTDDS_EXPORTED_API void topicKind(
+    void topicKind(
             TopicKind_t topicKind)
     {
         m_topicKind = topicKind;
     }
 
-    FASTDDS_EXPORTED_API TopicKind_t topicKind() const
+    TopicKind_t topicKind() const
     {
         return m_topicKind;
     }
 
-    FASTDDS_EXPORTED_API TopicKind_t& topicKind()
+    TopicKind_t& topicKind()
     {
         return m_topicKind;
     }
 
-    FASTDDS_EXPORTED_API void type_id(
+    void type_id(
             const dds::TypeIdV1& other_type_id)
     {
         type_id() = other_type_id;
     }
 
-    FASTDDS_EXPORTED_API const dds::TypeIdV1& type_id() const
+    const dds::TypeIdV1& type_id() const
     {
         assert(m_type_id != nullptr);
         return *m_type_id;
     }
 
-    FASTDDS_EXPORTED_API dds::TypeIdV1& type_id()
+    dds::TypeIdV1& type_id()
     {
         if (m_type_id == nullptr)
         {
@@ -329,24 +328,24 @@ public:
         return *m_type_id;
     }
 
-    FASTDDS_EXPORTED_API bool has_type_id() const
+    bool has_type_id() const
     {
         return m_type_id != nullptr;
     }
 
-    FASTDDS_EXPORTED_API void type(
+    void type(
             const dds::TypeObjectV1& other_type)
     {
         type() = other_type;
     }
 
-    FASTDDS_EXPORTED_API const dds::TypeObjectV1& type() const
+    const dds::TypeObjectV1& type() const
     {
         assert(m_type != nullptr);
         return *m_type;
     }
 
-    FASTDDS_EXPORTED_API dds::TypeObjectV1& type()
+    dds::TypeObjectV1& type()
     {
         if (m_type == nullptr)
         {
@@ -355,24 +354,24 @@ public:
         return *m_type;
     }
 
-    FASTDDS_EXPORTED_API bool has_type() const
+    bool has_type() const
     {
         return m_type != nullptr;
     }
 
-    FASTDDS_EXPORTED_API void type_information(
+    void type_information(
             const dds::xtypes::TypeInformationParameter& other_type_information)
     {
         type_information() = other_type_information;
     }
 
-    FASTDDS_EXPORTED_API const dds::xtypes::TypeInformationParameter& type_information() const
+    const dds::xtypes::TypeInformationParameter& type_information() const
     {
         assert(m_type_information != nullptr);
         return *m_type_information;
     }
 
-    FASTDDS_EXPORTED_API dds::xtypes::TypeInformationParameter& type_information()
+    dds::xtypes::TypeInformationParameter& type_information()
     {
         if (m_type_information == nullptr)
         {
@@ -381,7 +380,7 @@ public:
         return *m_type_information;
     }
 
-    FASTDDS_EXPORTED_API bool has_type_information() const
+    bool has_type_information() const
     {
         return m_type_information != nullptr;
     }
@@ -511,5 +510,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif // FASTDDS_RTPS_BUILTIN_DATA__WRITERPROXYDATA_HPP

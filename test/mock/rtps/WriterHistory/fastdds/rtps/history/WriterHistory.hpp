@@ -24,7 +24,6 @@
 #include <gmock/gmock.h>
 
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
 

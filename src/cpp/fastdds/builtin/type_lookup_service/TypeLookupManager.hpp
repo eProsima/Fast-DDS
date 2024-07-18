@@ -25,7 +25,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.hpp>
@@ -33,6 +32,7 @@
 #include <fastdds/builtin/type_lookup_service/TypeLookupRequestListener.hpp>
 #include <fastdds/xtypes/type_representation/TypeIdentifierWithSizeHashSpecialization.h>
 
+#include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <utils/ProxyPool.hpp>
 

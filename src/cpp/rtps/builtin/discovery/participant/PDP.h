@@ -28,15 +28,15 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/WriteParams.hpp>
 #include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
-#include <fastdds/rtps/reader/ReaderDiscoveryInfo.hpp>
+#include <fastdds/rtps/reader/ReaderDiscoveryStatus.hpp>
 #include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
+#include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <statistics/rtps/monitor-service/interfaces/IProxyObserver.hpp>
 #include <statistics/rtps/monitor-service/interfaces/IProxyQueryable.hpp>
@@ -264,17 +264,6 @@ public:
      */
     bool removeReaderProxyData(
             const GUID_t& reader_guid);
-
-    /**
-     * This method removes and deletes a ReaderProxyData object from its corresponding RTPSParticipant.
-     *
-     * @param [in] reader_guid GUID_t of the reader to remove.
-     * @param [in] reason Why the reader is being removed (dropped, removed, or ignored)
-     * @return true if found and deleted.
-     */
-    bool removeReaderProxyData(
-            const GUID_t& reader_guid,
-            ReaderDiscoveryInfo::DISCOVERY_STATUS reason);
 
     /**
      * This method removes and deletes a WriterProxyData object from its corresponding RTPSParticipant.

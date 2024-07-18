@@ -26,6 +26,7 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
+#include <fastdds/rtps/builtin/data/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/Endpoint.hpp>
@@ -53,10 +54,7 @@ public:
     virtual ~RTPSWriter() = default;
 
     virtual bool matched_reader_add(
-            const ReaderProxyData&)
-    {
-        return false;
-    }
+            const SubscriptionBuiltinTopicData&) = 0;
 
     virtual bool matched_reader_remove(
             const GUID_t&)

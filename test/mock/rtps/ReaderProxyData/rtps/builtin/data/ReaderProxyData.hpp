@@ -16,8 +16,8 @@
  * @file ReaderProxyData.hpp
  */
 
-#ifndef FASTDDS_RTPS_BUILTIN_DATA__READERPROXYDATA_HPP
-#define FASTDDS_RTPS_BUILTIN_DATA__READERPROXYDATA_HPP
+#ifndef RTPS_BUILTIN_DATA__READERPROXYDATA_HPP
+#define RTPS_BUILTIN_DATA__READERPROXYDATA_HPP
 
 #include <gmock/gmock.h>
 
@@ -359,4 +359,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_RTPS_BUILTIN_DATA__READERPROXYDATA_HPP
+#endif // RTPS_BUILTIN_DATA__READERPROXYDATA_HPP

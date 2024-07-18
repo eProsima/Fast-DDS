@@ -63,7 +63,7 @@ class RTPSParticipantImpl;
 class RTPSParticipantListener;
 class RTPSWriter;
 class RTPSReader;
-class ReaderProxyData;
+struct SubscriptionBuiltinTopicData;
 class EndpointAttributes;
 class WriterAttributes;
 class ReaderAttributes;
@@ -420,7 +420,7 @@ public:
             const fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
-     * fills in the ReaderProxyData from a MonitorService Message
+     * fills in the SubscriptionBuiltinTopicData from a MonitorService Message
      *
      * @param [out] data Proxy to fill.
      * @param [in] msg MonitorService Message to get the proxy information from.
@@ -428,8 +428,8 @@ public:
      * @return true if the operation succeeds.
      */
     bool fill_discovery_data_from_cdr_message(
-            ReaderProxyData& data,
-            fastdds::statistics::MonitorServiceStatusData& msg);
+            SubscriptionBuiltinTopicData& data,
+            const fastdds::statistics::MonitorServiceStatusData& msg);
 
 #endif // FASTDDS_STATISTICS
 

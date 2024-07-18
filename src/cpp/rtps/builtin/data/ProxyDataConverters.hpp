@@ -66,6 +66,16 @@ void from_builtin_to_proxy(
         const PublicationBuiltinTopicData& proxy_data,
         WriterProxyData& builtin_data);
 
+/**
+ * Convert a SubscriptionBuiltinTopicData to a ReaderProxyData.
+ *
+ * @param [in]   builtin_data  SubscriptionBuiltinTopicData to convert.
+ * @param [out]  proxy_data    ReaderProxyData to fill.
+ */
+void from_builtin_to_proxy(
+        const SubscriptionBuiltinTopicData& builtin_data,
+        ReaderProxyData& proxy_data);
+
 }  // namespace rtps
 }  // namespace fastdds
 }  // namespace eprosima

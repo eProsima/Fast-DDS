@@ -23,6 +23,7 @@
 
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
+#include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/messages/RTPSMessageGroup.hpp>
 #include <rtps/writer/DeliveryRetCode.hpp>
 #include <rtps/writer/LocatorSelectorSender.hpp>
@@ -43,6 +44,20 @@ public:
     }
 
     virtual ~BaseWriter() = default;
+
+    bool matched_reader_add(
+            const SubscriptionBuiltinTopicData& wdata) final
+    {
+        static_cast<void>(wdata);
+        return false;
+    }
+
+    virtual bool matched_reader_add_edp(
+            const ReaderProxyData& wdata)
+    {
+        static_cast<void>(wdata);
+        return false;
+    }
 
     virtual WriterHistory* get_history() const
     {
@@ -85,7 +100,7 @@ public:
     MOCK_CONST_METHOD0(is_datasharing_compatible, bool());
 
     MOCK_CONST_METHOD1(is_datasharing_compatible_with, bool(
-            const ReaderProxyData& rdata));
+            const dds::DataSharingQosPolicy& rdata));
 
     // *INDENT-ON*
 

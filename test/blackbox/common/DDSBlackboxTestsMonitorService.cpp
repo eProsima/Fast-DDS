@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
+#include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
 #include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
 #include <fastdds/statistics/topic_names.hpp>
@@ -717,7 +718,7 @@ struct ProxySampleValidator : public SampleValidator
                 }
                 else if (guid.entityId.is_reader())
                 {
-                    ReaderProxyData rdata(4, 4);
+                    SubscriptionBuiltinTopicData rdata;
 
                     ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(rdata,
                             data),

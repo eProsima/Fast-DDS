@@ -25,12 +25,15 @@
 #include <vector>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/builtin/data/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
+#include <fastdds/rtps/reader/ReaderDiscoveryStatus.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/rtps/writer/WriterListener.hpp>
 
 #include "../flowcontrol/FlowController.hpp"
 #include <rtps/builtin/BuiltinProtocols.h>
+#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/DataSharing/DataSharingNotifier.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
@@ -430,7 +433,7 @@ bool StatelessWriter::wait_for_acknowledgement(
 /*
  *	MATCHED_READER-RELATED METHODS
  */
-bool StatelessWriter::matched_reader_add(
+bool StatelessWriter::matched_reader_add_edp(
         const ReaderProxyData& data)
 {
     using network::external_locators::filter_remote_locators;
@@ -465,7 +468,9 @@ bool StatelessWriter::matched_reader_add(
             // call the listener without locks taken
             locator_selector_guard.unlock();
             guard.unlock();
-            listener_->on_reader_discovery(this, ReaderDiscoveryInfo::CHANGED_QOS_READER, data.guid(), &data);
+            SubscriptionBuiltinTopicData info;
+            from_proxy_to_builtin(data, info);
+            listener_->on_reader_discovery(this, ReaderDiscoveryStatus::CHANGED_QOS_READER, data.guid(), &info);
         }
 
 #ifdef FASTDDS_STATISTICS
@@ -512,7 +517,7 @@ bool StatelessWriter::matched_reader_add(
             data.remote_locators().unicast,
             data.remote_locators().multicast,
             data.m_expectsInlineQos,
-            is_datasharing_compatible_with(data));
+            is_datasharing_compatible_with(data.m_qos.data_sharing));
     filter_remote_locators(*new_reader->general_locator_selector_entry(),
             m_att.external_unicast_locators, m_att.ignore_non_matching_locators);
 
@@ -544,7 +549,9 @@ bool StatelessWriter::matched_reader_add(
         // call the listener without locks taken
         locator_selector_guard.unlock();
         guard.unlock();
-        listener_->on_reader_discovery(this, ReaderDiscoveryInfo::DISCOVERED_READER, data.guid(), &data);
+        SubscriptionBuiltinTopicData info;
+        from_proxy_to_builtin(data, info);
+        listener_->on_reader_discovery(this, ReaderDiscoveryStatus::DISCOVERED_READER, data.guid(), &info);
     }
 
 #ifdef FASTDDS_STATISTICS
@@ -640,7 +647,7 @@ bool StatelessWriter::matched_reader_remove(
             locator_selector_guard.unlock();
             guard.unlock();
 
-            listener_->on_reader_discovery(this, ReaderDiscoveryInfo::REMOVED_READER, reader_guid, nullptr);
+            listener_->on_reader_discovery(this, ReaderDiscoveryStatus::REMOVED_READER, reader_guid, nullptr);
         }
 
 #ifdef FASTDDS_STATISTICS

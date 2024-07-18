@@ -33,11 +33,12 @@
 #include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <fastdds/rtps/attributes/ResourceManagement.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
+#include <fastdds/rtps/builtin/data/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
+#include <fastdds/rtps/common/RemoteLocators.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/history/IChangePool.hpp>
@@ -49,6 +50,8 @@
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
 
+#include <rtps/builtin/data/ProxyDataConverters.hpp>
+#include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/DataSharing/WriterPool.hpp>
 #include <rtps/flowcontrol/FlowController.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
@@ -109,6 +112,19 @@ BaseWriter::~BaseWriter()
 
     history_->mp_writer = nullptr;
     history_->mp_mutex = nullptr;
+}
+
+bool BaseWriter::matched_reader_add(
+        const SubscriptionBuiltinTopicData& rqos)
+{
+    const auto& alloc = mp_RTPSParticipant->getRTPSParticipantAttributes().allocation;
+    ReaderProxyData rdata(
+        alloc.locators.max_unicast_locators,
+        alloc.locators.max_multicast_locators,
+        alloc.data_limits);
+
+    from_builtin_to_proxy(rqos, rdata);
+    return matched_reader_add_edp(rdata);
 }
 
 WriterListener* BaseWriter::get_listener() const
@@ -260,15 +276,14 @@ bool BaseWriter::is_datasharing_compatible() const
 }
 
 bool BaseWriter::is_datasharing_compatible_with(
-        const ReaderProxyData& rdata) const
+        const dds::DataSharingQosPolicy& qos) const
 {
-    if (!is_datasharing_compatible() ||
-            rdata.m_qos.data_sharing.kind() == fastdds::dds::OFF)
+    if (!is_datasharing_compatible() || qos.kind() == fastdds::dds::OFF)
     {
         return false;
     }
 
-    for (auto id : rdata.m_qos.data_sharing.domain_ids())
+    for (auto id : qos.domain_ids())
     {
         if (std::find(m_att.data_sharing_configuration().domain_ids().begin(),
                 m_att.data_sharing_configuration().domain_ids().end(), id)

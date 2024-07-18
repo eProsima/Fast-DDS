@@ -14,12 +14,10 @@
 
 /**
  * @file ReaderProxyData.hpp
- *
  */
 
-#ifndef FASTDDS_RTPS_BUILTIN_DATA__READERPROXYDATA_HPP
-#define FASTDDS_RTPS_BUILTIN_DATA__READERPROXYDATA_HPP
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#ifndef RTPS_BUILTIN_DATA__READERPROXYDATA_HPP
+#define RTPS_BUILTIN_DATA__READERPROXYDATA_HPP
 
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #if HAVE_SECURITY
@@ -48,80 +46,80 @@ class ReaderProxyData
 {
 public:
 
-    FASTDDS_EXPORTED_API ReaderProxyData(
+    ReaderProxyData(
             const size_t max_unicast_locators,
             const size_t max_multicast_locators,
             const fastdds::rtps::ContentFilterProperty::AllocationConfiguration& content_filter_limits = {});
 
-    FASTDDS_EXPORTED_API ReaderProxyData(
+    ReaderProxyData(
             const size_t max_unicast_locators,
             const size_t max_multicast_locators,
             const VariableLengthDataLimits& data_limits,
             const fastdds::rtps::ContentFilterProperty::AllocationConfiguration& content_filter_limits = {});
 
-    FASTDDS_EXPORTED_API virtual ~ReaderProxyData();
+    virtual ~ReaderProxyData();
 
-    FASTDDS_EXPORTED_API ReaderProxyData(
+    ReaderProxyData(
             const ReaderProxyData& readerInfo);
 
-    FASTDDS_EXPORTED_API ReaderProxyData& operator =(
+    ReaderProxyData& operator =(
             const ReaderProxyData& readerInfo);
 
-    FASTDDS_EXPORTED_API void guid(
+    void guid(
             const GUID_t& guid)
     {
         m_guid = guid;
     }
 
-    FASTDDS_EXPORTED_API void guid(
+    void guid(
             GUID_t&& guid)
     {
         m_guid = std::move(guid);
     }
 
-    FASTDDS_EXPORTED_API const GUID_t& guid() const
+    const GUID_t& guid() const
     {
         return m_guid;
     }
 
-    FASTDDS_EXPORTED_API GUID_t& guid()
+    GUID_t& guid()
     {
         return m_guid;
     }
 
-    FASTDDS_EXPORTED_API void networkConfiguration(
+    void networkConfiguration(
             const NetworkConfigSet_t& networkConfiguration)
     {
         m_networkConfiguration = networkConfiguration;
     }
 
-    FASTDDS_EXPORTED_API void networkConfiguration(
+    void networkConfiguration(
             NetworkConfigSet_t&& networkConfiguration)
     {
         m_networkConfiguration = std::move(networkConfiguration);
     }
 
-    FASTDDS_EXPORTED_API const NetworkConfigSet_t& networkConfiguration() const
+    const NetworkConfigSet_t& networkConfiguration() const
     {
         return m_networkConfiguration;
     }
 
-    FASTDDS_EXPORTED_API NetworkConfigSet_t& networkConfiguration()
+    NetworkConfigSet_t& networkConfiguration()
     {
         return m_networkConfiguration;
     }
 
-    FASTDDS_EXPORTED_API bool has_locators() const
+    bool has_locators() const
     {
         return !remote_locators_.unicast.empty() || !remote_locators_.multicast.empty();
     }
 
-    FASTDDS_EXPORTED_API const RemoteLocatorList& remote_locators() const
+    const RemoteLocatorList& remote_locators() const
     {
         return remote_locators_;
     }
 
-    FASTDDS_EXPORTED_API void add_unicast_locator(
+    void add_unicast_locator(
             const Locator_t& locator);
 
     void set_announced_unicast_locators(
@@ -131,7 +129,7 @@ public:
             const LocatorList_t& locators,
             const NetworkFactory& network);
 
-    FASTDDS_EXPORTED_API void add_multicast_locator(
+    void add_multicast_locator(
             const Locator_t& locator);
 
     void set_multicast_locators(
@@ -146,177 +144,177 @@ public:
             const NetworkFactory& network,
             bool use_multicast_locators);
 
-    FASTDDS_EXPORTED_API void key(
+    void key(
             const InstanceHandle_t& key)
     {
         m_key = key;
     }
 
-    FASTDDS_EXPORTED_API void key(
+    void key(
             InstanceHandle_t&& key)
     {
         m_key = std::move(key);
     }
 
-    FASTDDS_EXPORTED_API InstanceHandle_t key() const
+    InstanceHandle_t key() const
     {
         return m_key;
     }
 
-    FASTDDS_EXPORTED_API InstanceHandle_t& key()
+    InstanceHandle_t& key()
     {
         return m_key;
     }
 
-    FASTDDS_EXPORTED_API void RTPSParticipantKey(
+    void RTPSParticipantKey(
             const InstanceHandle_t& RTPSParticipantKey)
     {
         m_RTPSParticipantKey = RTPSParticipantKey;
     }
 
-    FASTDDS_EXPORTED_API void RTPSParticipantKey(
+    void RTPSParticipantKey(
             InstanceHandle_t&& RTPSParticipantKey)
     {
         m_RTPSParticipantKey = std::move(RTPSParticipantKey);
     }
 
-    FASTDDS_EXPORTED_API InstanceHandle_t RTPSParticipantKey() const
+    InstanceHandle_t RTPSParticipantKey() const
     {
         return m_RTPSParticipantKey;
     }
 
-    FASTDDS_EXPORTED_API InstanceHandle_t& RTPSParticipantKey()
+    InstanceHandle_t& RTPSParticipantKey()
     {
         return m_RTPSParticipantKey;
     }
 
-    FASTDDS_EXPORTED_API void typeName(
+    void typeName(
             const fastcdr::string_255& typeName)
     {
         m_typeName = typeName;
     }
 
-    FASTDDS_EXPORTED_API void typeName(
+    void typeName(
             fastcdr::string_255&& typeName)
     {
         m_typeName = std::move(typeName);
     }
 
-    FASTDDS_EXPORTED_API const fastcdr::string_255& typeName() const
+    const fastcdr::string_255& typeName() const
     {
         return m_typeName;
     }
 
-    FASTDDS_EXPORTED_API fastcdr::string_255& typeName()
+    fastcdr::string_255& typeName()
     {
         return m_typeName;
     }
 
-    FASTDDS_EXPORTED_API void topicName(
+    void topicName(
             const fastcdr::string_255& topicName)
     {
         m_topicName = topicName;
     }
 
-    FASTDDS_EXPORTED_API void topicName(
+    void topicName(
             fastcdr::string_255&& topicName)
     {
         m_topicName = std::move(topicName);
     }
 
-    FASTDDS_EXPORTED_API const fastcdr::string_255& topicName() const
+    const fastcdr::string_255& topicName() const
     {
         return m_topicName;
     }
 
-    FASTDDS_EXPORTED_API fastcdr::string_255& topicName()
+    fastcdr::string_255& topicName()
     {
         return m_topicName;
     }
 
-    FASTDDS_EXPORTED_API void userDefinedId(
+    void userDefinedId(
             uint16_t userDefinedId)
     {
         m_userDefinedId = userDefinedId;
     }
 
-    FASTDDS_EXPORTED_API uint16_t userDefinedId() const
+    uint16_t userDefinedId() const
     {
         return m_userDefinedId;
     }
 
-    FASTDDS_EXPORTED_API uint16_t& userDefinedId()
+    uint16_t& userDefinedId()
     {
         return m_userDefinedId;
     }
 
-    FASTDDS_EXPORTED_API void content_filter(
+    void content_filter(
             const fastdds::rtps::ContentFilterProperty& filter)
     {
         content_filter_ = filter;
     }
 
-    FASTDDS_EXPORTED_API void content_filter(
+    void content_filter(
             fastdds::rtps::ContentFilterProperty&& filter)
     {
         content_filter_ = std::move(filter);
     }
 
-    FASTDDS_EXPORTED_API const fastdds::rtps::ContentFilterProperty& content_filter() const
+    const fastdds::rtps::ContentFilterProperty& content_filter() const
     {
         return content_filter_;
     }
 
-    FASTDDS_EXPORTED_API fastdds::rtps::ContentFilterProperty& content_filter()
+    fastdds::rtps::ContentFilterProperty& content_filter()
     {
         return content_filter_;
     }
 
-    FASTDDS_EXPORTED_API void isAlive(
+    void isAlive(
             bool isAlive)
     {
         m_isAlive = isAlive;
     }
 
-    FASTDDS_EXPORTED_API bool isAlive() const
+    bool isAlive() const
     {
         return m_isAlive;
     }
 
-    FASTDDS_EXPORTED_API bool& isAlive()
+    bool& isAlive()
     {
         return m_isAlive;
     }
 
-    FASTDDS_EXPORTED_API void topicKind(
+    void topicKind(
             TopicKind_t topicKind)
     {
         m_topicKind = topicKind;
     }
 
-    FASTDDS_EXPORTED_API TopicKind_t topicKind() const
+    TopicKind_t topicKind() const
     {
         return m_topicKind;
     }
 
-    FASTDDS_EXPORTED_API TopicKind_t& topicKind()
+    TopicKind_t& topicKind()
     {
         return m_topicKind;
     }
 
-    FASTDDS_EXPORTED_API void type_id(
+    void type_id(
             const dds::TypeIdV1& other_type_id)
     {
         type_id() = other_type_id;
     }
 
-    FASTDDS_EXPORTED_API const dds::TypeIdV1& type_id() const
+    const dds::TypeIdV1& type_id() const
     {
         assert(m_type_id != nullptr);
         return *m_type_id;
     }
 
-    FASTDDS_EXPORTED_API dds::TypeIdV1& type_id()
+    dds::TypeIdV1& type_id()
     {
         if (m_type_id == nullptr)
         {
@@ -325,24 +323,24 @@ public:
         return *m_type_id;
     }
 
-    FASTDDS_EXPORTED_API bool has_type_id() const
+    bool has_type_id() const
     {
         return m_type_id != nullptr;
     }
 
-    FASTDDS_EXPORTED_API void type(
+    void type(
             const dds::TypeObjectV1& other_type)
     {
         type() = other_type;
     }
 
-    FASTDDS_EXPORTED_API const dds::TypeObjectV1& type() const
+    const dds::TypeObjectV1& type() const
     {
         assert(m_type != nullptr);
         return *m_type;
     }
 
-    FASTDDS_EXPORTED_API dds::TypeObjectV1& type()
+    dds::TypeObjectV1& type()
     {
         if (m_type == nullptr)
         {
@@ -351,24 +349,24 @@ public:
         return *m_type;
     }
 
-    FASTDDS_EXPORTED_API bool has_type() const
+    bool has_type() const
     {
         return m_type != nullptr;
     }
 
-    FASTDDS_EXPORTED_API void type_information(
+    void type_information(
             const dds::xtypes::TypeInformationParameter& other_type_information)
     {
         type_information() = other_type_information;
     }
 
-    FASTDDS_EXPORTED_API const dds::xtypes::TypeInformationParameter& type_information() const
+    const dds::xtypes::TypeInformationParameter& type_information() const
     {
         assert(m_type_information != nullptr);
         return *m_type_information;
     }
 
-    FASTDDS_EXPORTED_API dds::xtypes::TypeInformationParameter& type_information()
+    dds::xtypes::TypeInformationParameter& type_information()
     {
         if (m_type_information == nullptr)
         {
@@ -377,7 +375,7 @@ public:
         return *m_type_information;
     }
 
-    FASTDDS_EXPORTED_API bool has_type_information() const
+    bool has_type_information() const
     {
         return m_type_information != nullptr;
     }
@@ -517,5 +515,4 @@ private:
 } // namespace rtps
 } // namespace eprosima
 
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif // FASTDDS_RTPS_BUILTIN_DATA__READERPROXYDATA_HPP
+#endif // RTPS_BUILTIN_DATA__READERPROXYDATA_HPP

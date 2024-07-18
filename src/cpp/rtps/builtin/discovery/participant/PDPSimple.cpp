@@ -23,7 +23,6 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
@@ -32,6 +31,7 @@
 #include <fastdds/utils/IPLocator.hpp>
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/data/NetworkConfiguration.hpp>
+#include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include <rtps/builtin/discovery/endpoint/EDPStatic.h>
@@ -46,6 +46,7 @@
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/reader/StatelessReader.hpp>
 #include <rtps/resources/TimedEvent.h>
+#include <rtps/writer/BaseWriter.hpp>
 #include <rtps/writer/StatelessWriter.hpp>
 
 namespace eprosima {
@@ -642,7 +643,7 @@ void PDPSimple::match_pdp_remote_endpoints(
     EntityId_t reader_entity_id = c_EntityId_SPDPReader;
     EntityId_t writer_entity_id = c_EntityId_SPDPWriter;
     BaseReader* reader = endpoints->reader.reader_;
-    RTPSWriter* writer = endpoints->writer.writer_;
+    BaseWriter* writer = endpoints->writer.writer_;
 
 #if HAVE_SECURITY
     // If the other participant has been authenticated, use values for secure endpoints
@@ -714,7 +715,7 @@ void PDPSimple::match_pdp_remote_endpoints(
         else
 #endif // HAVE_SECURITY
         {
-            writer->matched_reader_add(*temp_reader_data);
+            writer->matched_reader_add_edp(*temp_reader_data);
         }
 
         if (dds::BEST_EFFORT_RELIABILITY_QOS == reliability_kind)
@@ -763,7 +764,7 @@ bool PDPSimple::pairing_remote_reader_with_local_writer_after_security(
     auto endpoints = dynamic_cast<fastdds::rtps::SimplePDPEndpointsSecure*>(builtin_endpoints_.get());
     if ((nullptr != endpoints) && (local_writer == endpoints->secure_writer.writer_->getGuid()))
     {
-        endpoints->secure_writer.writer_->matched_reader_add(remote_reader_data);
+        endpoints->secure_writer.writer_->matched_reader_add_edp(remote_reader_data);
         return true;
     }
 
