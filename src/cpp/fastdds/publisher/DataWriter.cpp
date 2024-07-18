@@ -308,6 +308,11 @@ ReturnCode_t DataWriter::wait_for_acknowledgments(
     return impl_->wait_for_acknowledgments(instance, handle, max_wait);
 }
 
+PublicationBuiltinTopicData DataWriter::get_publication_builtin_topic_data() const
+{
+    return impl_->get_publication_builtin_topic_data();
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima

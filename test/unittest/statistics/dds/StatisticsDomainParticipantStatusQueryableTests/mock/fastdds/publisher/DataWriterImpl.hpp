@@ -395,6 +395,11 @@ public:
         }
     }
 
+    inline PublicationBuiltinTopicData get_publication_builtin_topic_data() const
+    {
+        return PublicationBuiltinTopicData();
+    }
+
     static ReturnCode_t check_qos(
             const ::eprosima::fastdds::dds::DataWriterQos&)
     {

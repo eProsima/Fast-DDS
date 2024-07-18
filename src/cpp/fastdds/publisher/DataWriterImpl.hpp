@@ -21,6 +21,7 @@
 
 #include <memory>
 
+#include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
@@ -33,8 +34,8 @@
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
-#include <fastdds/rtps/common/WriteParams.hpp>
 #include <fastdds/rtps/common/SerializedPayload.hpp>
+#include <fastdds/rtps/common/WriteParams.hpp>
 #include <fastdds/rtps/history/IChangePool.hpp>
 #include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
@@ -379,6 +380,11 @@ public:
      */
     void filter_is_being_removed(
             const char* filter_class_name);
+
+    /**
+     * @brief A method to retrieve the publication data discovery information.
+     */
+    PublicationBuiltinTopicData get_publication_builtin_topic_data() const;
 
 protected:
 
