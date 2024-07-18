@@ -198,6 +198,11 @@ ClientPublisherApp::ClientPublisherApp(
         wqos.durability().kind = VOLATILE_DURABILITY_QOS;
     }
 
+    // So as not to overwriter the first sample
+    // if we publish inmediately after the discovery
+    // and the suscription is not prepared yet
+    wqos.history().depth = 5;
+
     writer_ = publisher_->create_datawriter(topic_, wqos, this);
 
     if (writer_ == nullptr)
