@@ -205,7 +205,6 @@ bool WriterApp::serialize_payload(
     return true;
 }
 
-
 void WriterApp::add_change_to_history()
 {
     // Wait for the data endpoints discovery
