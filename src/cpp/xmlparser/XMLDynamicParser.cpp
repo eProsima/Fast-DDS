@@ -982,9 +982,16 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(
     const char* baseType = p_root->Attribute(BASE_TYPE);
     if (baseType != nullptr)
     {
-        DynamicTypeBuilder::_ref_type parent_type_builder;
+        DynamicTypeBuilder::_ref_type parent_type_builder = nullptr;
         XMLProfileManager::getDynamicTypeBuilderByName(parent_type_builder, baseType);
-        DynamicType::_ref_type parent_type = parent_type_builder->build();
+
+        DynamicType::_ref_type parent_type = nullptr;
+
+        if (nullptr != parent_type_builder)
+        {
+            parent_type = parent_type_builder->build();
+        }
+
         if (parent_type && (TK_STRUCTURE == parent_type->get_kind() ||
                 TK_STRUCTURE ==
                 traits<DynamicType>::narrow<DynamicTypeImpl>(parent_type)->resolve_alias_enclosed_type()->get_kind()))
