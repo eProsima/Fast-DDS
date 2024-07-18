@@ -2198,7 +2198,8 @@ SubscriptionBuiltinTopicData DataReaderImpl::get_subscription_builtin_topic_data
 
     if (participant_is_valid)
     {
-        from_proxy_to_builtin(subscriber_->get_participant()->guid().guidPrefix, sub_builtin_data.participant_key.value);
+        from_proxy_to_builtin(subscriber_->get_participant()->guid().guidPrefix,
+                sub_builtin_data.participant_key.value);
     }
 
     if (topic_is_valid)

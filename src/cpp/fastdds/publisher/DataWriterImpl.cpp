@@ -1782,7 +1782,7 @@ PublicationBuiltinTopicData DataWriterImpl::get_publication_builtin_topic_data()
     if (rtps_participant_impl_is_valid)
     {
         pub_builtin_data.loopback_transformation =
-            writer_->get_participant_impl()->network_factory().network_configuration();
+                writer_->get_participant_impl()->network_factory().network_configuration();
     }
 
     return pub_builtin_data;
