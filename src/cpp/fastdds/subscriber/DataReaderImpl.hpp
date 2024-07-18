@@ -600,8 +600,6 @@ protected:
      */
     bool lifespan_expired();
 
-    fastdds::TopicAttributes topic_attributes() const;
-
     void subscriber_qos_updated();
 
     RequestedIncompatibleQosStatus& update_requested_incompatible_qos(
