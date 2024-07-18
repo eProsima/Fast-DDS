@@ -53,6 +53,7 @@ class RTPSParticipantImpl;
 class RTPSWriter;
 class RTPSReader;
 class NetworkFactory;
+struct PublicationBuiltinTopicData;
 
 /**
  * Class BuiltinProtocols that contains builtin endpoints implementing the discovery and liveliness protocols.
@@ -126,15 +127,15 @@ public:
     LocatorList_t m_DiscoveryServers;
 
     /**
-     * Add a local Writer to the BuiltinProtocols.
-     * @param w Pointer to the RTPSWriter
+     * Add a local writer to the BuiltinProtocols.
+     * @param writer   Pointer to the RTPSWriter
      * @param topicAtt Attributes of the associated topic
-     * @param wqos QoS policies dictated by the publisher
+     * @param wqos     QoS policies dictated by the publisher
      * @return True if correct.
      */
-    bool addLocalWriter(
-            RTPSWriter* w,
-            const TopicAttributes& topicAtt,
+    bool add_writer(
+            RTPSWriter* rtps_writer,
+            const PublicationBuiltinTopicData& pub_builtin_data,
             const fastdds::dds::WriterQos& wqos);
     /**
      * Add a local Reader to the BuiltinProtocols.
@@ -152,21 +153,18 @@ public:
 
     /**
      * Update a local Writer QOS
-     * @param W Writer to update
-     * @param topicAtt Attributes of the associated topic
-     * @param wqos New Writer QoS
+     * @param rtps_writer      Writer to update
+     * @param wqos             New Writer QoS
      * @return
      */
-    bool updateLocalWriter(
-            RTPSWriter* W,
-            const TopicAttributes& topicAtt,
+    bool update_writer(
+            RTPSWriter* rtps_writer,
             const fastdds::dds::WriterQos& wqos);
     /**
      * Update a local Reader QOS
-     * @param R               Reader to update
-     * @param topicAtt        Attributes of the associated topic
-     * @param qos             New Reader QoS
-     * @param content_filter  Optional content filtering information.
+     * @param rtps_reader      Reader to update
+     * @param rqos             New Reader QoS
+     * @param content_filter   Optional content filtering information.
      * @return
      */
     bool updateLocalReader(
@@ -179,8 +177,8 @@ public:
      * @param W Pointer to the writer.
      * @return True if correctly removed.
      */
-    bool removeLocalWriter(
-            RTPSWriter* W);
+    bool remove_writer(
+            RTPSWriter* rtps_writer);
     /**
      * Remove a local Reader from the builtinProtocols.
      * @param R Pointer to the reader.

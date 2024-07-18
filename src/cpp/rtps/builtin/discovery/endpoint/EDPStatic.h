@@ -17,9 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_RTPS_EDPSTATIC_H_
-#define _FASTDDS_RTPS_EDPSTATIC_H_
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#ifndef FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT__EDPSTATIC_H
+#define FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT__EDPSTATIC_H
 
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 
@@ -80,11 +79,11 @@ public:
             RTPSReader* R) override;
     /**
      * Abstract method that removes a local Writer from the discovery method
-     * @param W Pointer to the Writer to remove.
+     * @param rtps_writer Pointer to the writer to remove.
      * @return True if correctly removed.
      */
-    bool removeLocalWriter(
-            RTPSWriter* W) override;
+    bool remove_writer(
+            RTPSWriter* rtps_writer) override;
 
     /**
      * After a new local ReaderProxyData has been created some processing is needed (depends on the implementation).
@@ -97,12 +96,12 @@ public:
             ReaderProxyData* rdata) override;
     /**
      * After a new local WriterProxyData has been created some processing is needed (depends on the implementation).
-     * @param writer Pointer to the RTPSWriter object.
-     * @param wdata Pointer to the Writer ProxyData object.
+     * @param rtps_writer Pointer to the RTPSWriter object.
+     * @param wdata       Pointer to the Writer ProxyData object.
      * @return True if correct.
      */
-    bool processLocalWriterProxyData(
-            RTPSWriter* writer,
+    bool process_writer_proxy_data(
+            RTPSWriter* rtps_writer,
             WriterProxyData* wdata) override;
 
     /**
@@ -162,5 +161,4 @@ private:
 } /* namespace rtps */
 } /* namespace eprosima */
 
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_RTPS_EDPSTATIC_H_ */
+#endif /* FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT__EDPSTATIC_H */

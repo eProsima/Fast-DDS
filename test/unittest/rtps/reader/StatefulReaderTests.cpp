@@ -90,12 +90,10 @@ TEST(StatefulReaderTests, RTPSCorrectGAPProcessing)
     ASSERT_NE(writer, nullptr);
 
     // Register both endpoints
-    TopicAttributes topic_att;
-    topic_att.topicKind = NO_KEY;
-    topic_att.topicDataType = "string";
-    topic_att.topicName = "topic";
-    part->registerReader(reader, topic_att, {});
-    part->registerWriter(writer, topic_att, {});
+    PublicationBuiltinTopicData pub_builtin_data;
+    pub_builtin_data.type_name = "string";
+    pub_builtin_data.topic_name = "topic";
+    part->register_writer(writer, pub_builtin_data, {});
 
     // After registration, the writer should be matched
     auto writer_guid = writer->getGuid();

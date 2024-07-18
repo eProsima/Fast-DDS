@@ -66,7 +66,7 @@ public:
         return true;
     }
 
-    bool removeLocalWriter(
+    bool remove_writer(
             RTPSWriter* /*W*/) override
     {
         return true;
@@ -79,7 +79,7 @@ public:
         return true;
     }
 
-    bool processLocalWriterProxyData(
+    bool process_writer_proxy_data(
             RTPSWriter* /*writer*/,
             WriterProxyData* /*wdata*/) override
     {

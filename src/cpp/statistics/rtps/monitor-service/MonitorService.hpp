@@ -28,6 +28,7 @@
 #include <vector>
 
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
+#include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 
@@ -81,7 +82,7 @@ public:
 
     using endpoint_registrator_t = std::function<bool (
                         fastdds::rtps::RTPSWriter*,
-                        const fastdds::TopicAttributes&,
+                        const eprosima::fastdds::rtps::PublicationBuiltinTopicData&,
                         const fastdds::dds::WriterQos&)>;
 
     MonitorService(

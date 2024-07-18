@@ -32,8 +32,8 @@
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
-#include <fastdds/rtps/attributes/TopicAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
+#include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
@@ -124,11 +124,11 @@ public:
         , initialized_(false)
         , matched_(0)
     {
-        topic_attr_.topicDataType = type_.get_name();
+        pub_builtin_data_.type_name = type_.get_name();
         // Generate topic name
         std::ostringstream t;
         t << topic_name << "_" << asio::ip::host_name() << "_" << GET_PID();
-        topic_attr_.topicName = t.str();
+        pub_builtin_data_.topic_name = t.str();
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.
         writer_attr_.times.heartbeat_period.seconds = 0;
@@ -178,7 +178,7 @@ public:
             return;
         }
 
-        ASSERT_EQ(participant_->registerWriter(writer_, topic_attr_, writer_qos_), true);
+        ASSERT_EQ(participant_->register_writer(writer_, pub_builtin_data_, writer_qos_), true);
 
         initialized_ = true;
     }
@@ -190,7 +190,7 @@ public:
             return;
         }
 
-        ASSERT_TRUE(participant_->updateWriter(writer_, topic_attr_, writer_qos_));
+        ASSERT_TRUE(participant_->update_writer(writer_, writer_qos_));
     }
 
     void destroy()
@@ -466,7 +466,8 @@ public:
     RTPSWithRegistrationWriter& history_depth(
             const int32_t depth)
     {
-        topic_attr_.historyQos.depth = depth;
+        hattr_.maximumReservedCaches = depth;
+        hattr_.initialReservedCaches = std::min(hattr_.initialReservedCaches, depth);
         return *this;
     }
 
@@ -586,7 +587,7 @@ private:
     eprosima::fastdds::rtps::RTPSWriter* writer_;
     eprosima::fastdds::rtps::WriterAttributes writer_attr_;
     eprosima::fastdds::dds::WriterQos writer_qos_;
-    eprosima::fastdds::TopicAttributes topic_attr_;
+    eprosima::fastdds::rtps::PublicationBuiltinTopicData pub_builtin_data_;
     eprosima::fastdds::rtps::WriterHistory* history_;
     eprosima::fastdds::rtps::HistoryAttributes hattr_;
     bool initialized_;

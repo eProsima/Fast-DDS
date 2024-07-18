@@ -139,15 +139,15 @@ public:
     uint32_t getRTPSParticipantID() const;
 
     /**
-     * Register a RTPSWriter in the builtin Protocols.
-     * @param Writer Pointer to the RTPSWriter.
-     * @param topicAtt Topic Attributes where you want to register it.
+     * Register a Writer in the BuiltinProtocols.
+     * @param rtps_writer Pointer to the RTPSWriter.
+     * @param pub_builtin_data Contains the discovery information of the writer.
      * @param wqos WriterQos.
      * @return True if correctly registered.
      */
-    bool registerWriter(
-            RTPSWriter* Writer,
-            const TopicAttributes& topicAtt,
+    bool register_writer(
+            RTPSWriter* rtps_writer,
+            const PublicationBuiltinTopicData& pub_builtin_data,
             const fastdds::dds::WriterQos& wqos);
 
     /**
@@ -172,15 +172,13 @@ public:
             const RTPSParticipantAttributes& patt);
 
     /**
-     * Update writer QOS
-     * @param Writer to update
-     * @param topicAtt Topic Attributes where you want to register it.
-     * @param wqos New writer QoS
-     * @return true on success
+     * Update local writer QoS
+     * @param rtps_writer      Writer to update.
+     * @param wqos             New QoS for the writer.
+     * @return True on success
      */
-    bool updateWriter(
-            RTPSWriter* Writer,
-            const TopicAttributes& topicAtt,
+    bool update_writer(
+            RTPSWriter* rtps_writer,
             const fastdds::dds::WriterQos& wqos);
 
     /**

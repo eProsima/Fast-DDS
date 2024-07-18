@@ -75,12 +75,12 @@ uint32_t RTPSParticipant::getRTPSParticipantID() const
     return mp_impl->getRTPSParticipantID();
 }
 
-bool RTPSParticipant::registerWriter(
-        RTPSWriter* Writer,
-        const TopicAttributes& topicAtt,
+bool RTPSParticipant::register_writer(
+        RTPSWriter* writer,
+        const PublicationBuiltinTopicData& pub_builtin_data,
         const fastdds::dds::WriterQos& wqos)
 {
-    return mp_impl->registerWriter(Writer, topicAtt, wqos);
+    return mp_impl->register_writer(writer, pub_builtin_data, wqos);
 }
 
 bool RTPSParticipant::registerReader(
@@ -98,12 +98,11 @@ void RTPSParticipant::update_attributes(
     mp_impl->update_attributes(patt);
 }
 
-bool RTPSParticipant::updateWriter(
-        RTPSWriter* Writer,
-        const TopicAttributes& topicAtt,
+bool RTPSParticipant::update_writer(
+        RTPSWriter* writer,
         const fastdds::dds::WriterQos& wqos)
 {
-    return mp_impl->updateLocalWriter(Writer, topicAtt, wqos);
+    return mp_impl->update_writer(writer, wqos);
 }
 
 bool RTPSParticipant::updateReader(

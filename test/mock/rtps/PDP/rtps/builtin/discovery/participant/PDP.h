@@ -60,7 +60,7 @@ public:
 
     MOCK_METHOD0(createPDPEndpoints, bool());
 
-    MOCK_METHOD0(getEDP, EDP*());
+    MOCK_METHOD0(get_edp, EDP*());
 
 #ifdef FASTDDS_STATISTICS
     MOCK_METHOD0(get_proxy_observer, const fastdds::statistics::rtps::IProxyObserver*());

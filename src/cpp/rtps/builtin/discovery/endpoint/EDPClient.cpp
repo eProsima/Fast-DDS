@@ -71,17 +71,17 @@ bool EDPClient::processLocalReaderProxyData(
     return ret_val;
 }
 
-bool EDPClient::processLocalWriterProxyData(
-        RTPSWriter* local_writer,
+bool EDPClient::process_writer_proxy_data(
+        RTPSWriter* rtps_writer,
         WriterProxyData* wdata)
 {
     EPROSIMA_LOG_INFO(RTPS_EDP, wdata->guid().entityId);
-    (void)local_writer;
+    (void)rtps_writer;
 
     auto* writer = &publications_writer_;
 
 #if HAVE_SECURITY
-    if (local_writer->getAttributes().security_attributes().is_discovery_protected)
+    if (rtps_writer->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &publications_secure_writer_;
     }
@@ -104,15 +104,15 @@ bool EDPClient::processLocalWriterProxyData(
     return ret_val;
 }
 
-bool EDPClient::removeLocalWriter(
-        RTPSWriter* W)
+bool EDPClient::remove_writer(
+        RTPSWriter* rtps_writer)
 {
-    EPROSIMA_LOG_INFO(RTPS_EDP, W->getGuid().entityId);
+    EPROSIMA_LOG_INFO(RTPS_EDP, rtps_writer->getGuid().entityId);
 
     auto* writer = &publications_writer_;
 
 #if HAVE_SECURITY
-    if (W->getAttributes().security_attributes().is_discovery_protected)
+    if (rtps_writer->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &publications_secure_writer_;
     }
@@ -121,7 +121,7 @@ bool EDPClient::removeLocalWriter(
     if (writer->first != nullptr)
     {
         InstanceHandle_t iH;
-        iH = W->getGuid();
+        iH = rtps_writer->getGuid();
         CacheChange_t* change = EDPUtils::create_change(*writer, NOT_ALIVE_DISPOSED_UNREGISTERED, iH,
                         mp_PDP->builtin_attributes().writerPayloadSize);
         if (change != nullptr)
@@ -150,7 +150,7 @@ bool EDPClient::removeLocalWriter(
             writer->second->add_change(change, wp);
         }
     }
-    return mp_PDP->removeWriterProxyData(W->getGuid());
+    return mp_PDP->removeWriterProxyData(rtps_writer->getGuid());
 }
 
 bool EDPClient::removeLocalReader(
