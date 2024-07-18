@@ -36,7 +36,6 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/publisher/PublisherImpl.hpp>
-#include <fastdds/rtps/attributes/TopicAttributes.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/common/Types.hpp>
@@ -87,7 +86,7 @@ protected:
         participant_->impl_ = this;
 
         guid_.guidPrefix.value[11] = 1;
-        eprosima::fastdds::TopicAttributes top_attr;
+        eprosima::fastdds::xmlparser::TopicAttributes top_attr;
         eprosima::fastdds::xmlparser::XMLProfileManager::getDefaultTopicAttributes(top_attr);
         default_topic_qos_.history() = top_attr.historyQos;
         default_topic_qos_.resource_limits() = top_attr.resourceLimitsQos;

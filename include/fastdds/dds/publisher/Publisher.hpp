@@ -37,9 +37,6 @@ class Publisher;
 
 namespace eprosima {
 namespace fastdds {
-
-class TopicAttributes;
-
 namespace rtps {
 
 class IPayloadPool;

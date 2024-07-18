@@ -585,11 +585,6 @@ protected:
             fastdds::rtps::WriteParams& wparams,
             const InstanceHandle_t& handle);
 
-    fastdds::TopicAttributes get_topic_attributes(
-            const DataWriterQos& qos,
-            const Topic& topic,
-            const TypeSupport& type);
-
     static void set_qos(
             DataWriterQos& to,
             const DataWriterQos& from,

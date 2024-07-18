@@ -25,14 +25,11 @@
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
-#include <fastdds/rtps/attributes/TopicAttributes.hpp>
 #include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-
-using TopicAttributesQos = fastdds::TopicAttributes;
 
 //! Qos Policy to configure the DisablePositiveACKsQos and the reader attributes
 class RTPSReliableReaderQos

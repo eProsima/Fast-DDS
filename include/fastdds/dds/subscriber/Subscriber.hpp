@@ -40,9 +40,6 @@ class Subscriber;
 
 namespace eprosima {
 namespace fastdds {
-
-class TopicAttributes;
-
 namespace rtps {
 
 class IPayloadPool;
