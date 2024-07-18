@@ -17,9 +17,12 @@ Forthcoming
     * All public methods now have `snake_case` names
     * All public attributes now have `snake_case` names
 * Discovery callbacks refactor:
+  * on_data_reader_discovery now receives a `ReaderDiscoveryStatus` and a `SubscriptionBuiltinTopicData` instead of a `ReaderDiscoveryInfo`
   * on_data_writer_discovery now receives a `WriterDiscoveryStatus` and a `PublicationBuiltinTopicData` instead of a `WriterDiscoveryInfo`
 * Public API that is no longer public:
   * XML Parser API no longer public.
+  * ReaderProxyData
+  * ReaderDiscoveryInfo
   * WriterProxyData
   * WriterDiscoveryInfo
   * ParticipantAttributes
