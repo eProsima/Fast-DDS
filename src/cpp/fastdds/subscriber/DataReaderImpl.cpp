@@ -53,6 +53,7 @@
 #include <rtps/resources/ResourceEvent.h>
 #include <rtps/RTPSDomainImpl.hpp>
 #include <utils/TimeConversion.hpp>
+#include <utils/BuiltinTopicKeyConversions.hpp>
 #ifdef FASTDDS_STATISTICS
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/types/monitorservice_types.hpp>
@@ -297,7 +298,11 @@ ReturnCode_t DataReaderImpl::enable()
     {
         filter_property = &content_topic->filter_property;
     }
-    if (!subscriber_->rtps_participant()->registerReader(reader_, topic_attributes(), rqos, filter_property))
+    if (!subscriber_->rtps_participant()->register_reader(
+                reader_,
+                get_subscription_builtin_topic_data(),
+                rqos,
+                filter_property))
     {
         EPROSIMA_LOG_ERROR(DATA_READER, "Could not register reader on discovery protocols");
 
@@ -834,7 +839,7 @@ void DataReaderImpl::update_rtps_reader_qos()
             filter_property = &content_topic->filter_property;
         }
         ReaderQos rqos = qos_.get_readerqos(get_subscriber()->get_qos());
-        subscriber_->rtps_participant()->updateReader(reader_, topic_attributes(), rqos, filter_property);
+        subscriber_->rtps_participant()->update_reader(reader_, rqos, filter_property);
         // TODO(eduponz): RTPSReader attributes must be updated here
     }
 }
