@@ -32,72 +32,11 @@
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
+#include <utils/BuiltinTopicKeyConversions.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
-
-typedef uint32_t BuiltinTopicKeyValue[3];
-
-static void from_proxy_to_builtin(
-        const EntityId_t& entity_id,
-        BuiltinTopicKeyValue& builtin_key_value)
-{
-    builtin_key_value[0] = 0;
-    builtin_key_value[1] = 0;
-    builtin_key_value[2] = static_cast<uint32_t>(entity_id.value[0]) << 24
-            | static_cast<uint32_t>(entity_id.value[1]) << 16
-            | static_cast<uint32_t>(entity_id.value[2]) << 8
-            | static_cast<uint32_t>(entity_id.value[3]);
-}
-
-static void from_proxy_to_builtin(
-        const GuidPrefix_t& guid_prefix,
-        BuiltinTopicKeyValue& dds_key)
-{
-    dds_key[0] = static_cast<uint32_t>(guid_prefix.value[0]) << 24
-            | static_cast<uint32_t>(guid_prefix.value[1]) << 16
-            | static_cast<uint32_t>(guid_prefix.value[2]) << 8
-            | static_cast<uint32_t>(guid_prefix.value[3]);
-    dds_key[1] = static_cast<uint32_t>(guid_prefix.value[4]) << 24
-            | static_cast<uint32_t>(guid_prefix.value[5]) << 16
-            | static_cast<uint32_t>(guid_prefix.value[6]) << 8
-            | static_cast<uint32_t>(guid_prefix.value[7]);
-    dds_key[2] = static_cast<uint32_t>(guid_prefix.value[8]) << 24
-            | static_cast<uint32_t>(guid_prefix.value[9]) << 16
-            | static_cast<uint32_t>(guid_prefix.value[10]) << 8
-            | static_cast<uint32_t>(guid_prefix.value[11]);
-}
-
-static void from_builtin_to_proxy(
-        const BuiltinTopicKeyValue& dds_key,
-        EntityId_t& entity_id)
-{
-    entity_id.value[0] = static_cast<uint8_t>((dds_key[2] >> 24) & 0xFF);
-    entity_id.value[1] = static_cast<uint8_t>((dds_key[2] >> 16) & 0xFF);
-    entity_id.value[2] = static_cast<uint8_t>((dds_key[2] >> 8) & 0xFF);
-    entity_id.value[3] = static_cast<uint8_t>(dds_key[2] & 0xFF);
-}
-
-static void from_builtin_to_proxy(
-        const BuiltinTopicKeyValue& dds_key,
-        GuidPrefix_t& guid_prefix)
-{
-    guid_prefix.value[0] = static_cast<uint8_t>((dds_key[0] >> 24) & 0xFF);
-    guid_prefix.value[1] = static_cast<uint8_t>((dds_key[0] >> 16) & 0xFF);
-    guid_prefix.value[2] = static_cast<uint8_t>((dds_key[0] >> 8) & 0xFF);
-    guid_prefix.value[3] = static_cast<uint8_t>(dds_key[0] & 0xFF);
-
-    guid_prefix.value[4] = static_cast<uint8_t>((dds_key[1] >> 24) & 0xFF);
-    guid_prefix.value[5] = static_cast<uint8_t>((dds_key[1] >> 16) & 0xFF);
-    guid_prefix.value[6] = static_cast<uint8_t>((dds_key[1] >> 8) & 0xFF);
-    guid_prefix.value[7] = static_cast<uint8_t>(dds_key[1] & 0xFF);
-
-    guid_prefix.value[8] = static_cast<uint8_t>((dds_key[2] >> 24) & 0xFF);
-    guid_prefix.value[9] = static_cast<uint8_t>((dds_key[2] >> 16) & 0xFF);
-    guid_prefix.value[10] = static_cast<uint8_t>((dds_key[2] >> 8) & 0xFF);
-    guid_prefix.value[11] = static_cast<uint8_t>(dds_key[2] & 0xFF);
-}
 
 void from_proxy_to_builtin(
         const ParticipantProxyData& proxy_data,
