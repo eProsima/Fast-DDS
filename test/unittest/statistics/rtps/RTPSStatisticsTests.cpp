@@ -352,17 +352,16 @@ public:
     }
 
     void match_endpoints(
-            bool key,
+            bool /* key */,
             fastcdr::string_255 data_type,
             fastcdr::string_255 topic_name)
     {
         using namespace fastdds;
         using namespace fastdds::rtps;
 
-        TopicAttributes Tatt;
-        Tatt.topicKind = key ? TopicKind_t::WITH_KEY : TopicKind_t::NO_KEY;
-        Tatt.topicDataType = data_type;
-        Tatt.topicName = topic_name;
+        PublicationBuiltinTopicData pub_builtin_data;
+        pub_builtin_data.type_name = data_type;
+        pub_builtin_data.topic_name = topic_name;
 
         dds::WriterQos Wqos;
         auto& watt = writer_->getAttributes();
@@ -378,7 +377,7 @@ public:
                 RELIABLE ==
                 ratt.reliabilityKind ? dds::RELIABLE_RELIABILITY_QOS : dds::BEST_EFFORT_RELIABILITY_QOS;
 
-        participant_->registerWriter(writer_, Tatt, Wqos);
+        participant_->register_writer(writer_, pub_builtin_data, Wqos);
         participant_->registerReader(reader_, Tatt, Rqos);
     }
 

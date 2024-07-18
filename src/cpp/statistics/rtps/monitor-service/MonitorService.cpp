@@ -445,13 +445,15 @@ bool MonitorService::create_endpoint()
     hatt.initialReservedCaches = 25;
     hatt.maximumReservedCaches = 0;
 
-    TopicAttributes tatt;
-    tatt.historyQos.kind = dds::KEEP_LAST_HISTORY_QOS;
-    tatt.historyQos.depth = 1;
-    tatt.topicKind = WITH_KEY;
-    tatt.topicName = MONITOR_SERVICE_TOPIC;
-    tatt.resourceLimitsQos.max_instances = 0;
-    tatt.resourceLimitsQos.max_samples_per_instance = 1;
+    dds::HistoryQosPolicy hqos;
+    hqos.kind = dds::KEEP_LAST_HISTORY_QOS;
+    hqos.depth = 1;
+
+    TopicKind_t topic_kind = WITH_KEY;
+
+    dds::ResourceLimitsQosPolicy rl_qos;
+    rl_qos.max_instances = 0;
+    rl_qos.max_samples_per_instance = 1;
 
     PoolConfig writer_pool_cfg = PoolConfig::from_history_attributes(hatt);
     status_writer_payload_pool_ = TopicPayloadPoolRegistry::get(MONITOR_SERVICE_TOPIC, writer_pool_cfg);
@@ -460,7 +462,7 @@ bool MonitorService::create_endpoint()
     status_writer_history_.reset(new eprosima::fastdds::dds::DataWriterHistory(
                 status_writer_payload_pool_,
                 std::make_shared<fastdds::rtps::CacheChangePool>(writer_pool_cfg),
-                tatt, type_.max_serialized_type_size,
+                hqos, rl_qos, topic_kind, type_.max_serialized_type_size,
                 MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
                 [](
                     const InstanceHandle_t& ) -> void
@@ -486,12 +488,11 @@ bool MonitorService::create_endpoint()
         wqos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
         wqos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
 
-        TopicAttributes tatts;
-        tatts.topicName = MONITOR_SERVICE_TOPIC;
-        tatts.topicDataType = type_.get_name();
-        tatts.topicKind = WITH_KEY;
+        PublicationBuiltinTopicData pub_builtin_data;
+        pub_builtin_data.topic_name = MONITOR_SERVICE_TOPIC;
+        pub_builtin_data.type_name = type_.get_name();
 
-        endpoint_registrator_(status_writer_, tatts, wqos);
+        endpoint_registrator_(status_writer_, pub_builtin_data, wqos);
     }
     else
     {

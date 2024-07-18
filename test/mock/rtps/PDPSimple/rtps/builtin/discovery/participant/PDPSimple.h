@@ -38,7 +38,7 @@ public:
 
     MOCK_METHOD1(get_participant_proxy_data_serialized, CDRMessage_t(Endianness_t));
 
-    EDP* getEDP()
+    EDP* get_edp()
     {
         return &edp_;
     }

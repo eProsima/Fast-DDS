@@ -4069,13 +4069,13 @@ bool SecurityManager::participant_authorized(
 
         for (auto& remote_reader : temp_readers)
         {
-            participant_->pdp()->getEDP()->pairing_reader_proxy_with_local_writer(remote_reader.second,
+            participant_->pdp()->get_edp()->pairing_reader_proxy_with_local_writer(remote_reader.second,
                     participant_data.m_guid, remote_reader.first);
         }
 
         for (auto& remote_writer : temp_writers)
         {
-            participant_->pdp()->getEDP()->pairing_writer_proxy_with_local_reader(remote_writer.second,
+            participant_->pdp()->get_edp()->pairing_writer_proxy_with_local_reader(remote_writer.second,
                     participant_data.m_guid, remote_writer.first);
         }
 

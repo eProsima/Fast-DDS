@@ -87,7 +87,7 @@ public:
      * @param wdata Pointer to the WriterProxyData object.
      * @return true if correct.
      */
-    bool processLocalWriterProxyData(
+    bool process_writer_proxy_data(
             RTPSWriter* writer,
             WriterProxyData* wdata) override;
     /**
@@ -102,7 +102,7 @@ public:
      * @param W Pointer to the RTPSWriter object.
      * @return True if correct.
      */
-    bool removeLocalWriter(
+    bool remove_writer(
             RTPSWriter* W) override;
 
     /**

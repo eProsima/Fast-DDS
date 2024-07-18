@@ -194,16 +194,16 @@ void BuiltinProtocols::filter_server_remote_locators(
     m_DiscoveryServers.swap(allowed_locators);
 }
 
-bool BuiltinProtocols::addLocalWriter(
-        RTPSWriter* w,
-        const fastdds::TopicAttributes& topicAtt,
+bool BuiltinProtocols::add_writer(
+        RTPSWriter* rtps_writer,
+        const PublicationBuiltinTopicData& pub_builtin_data,
         const fastdds::dds::WriterQos& wqos)
 {
     bool ok = true;
 
     if (nullptr != mp_PDP)
     {
-        ok = mp_PDP->getEDP()->newLocalWriterProxyData(w, topicAtt, wqos);
+        ok = mp_PDP->get_edp()->new_writer_proxy_data(rtps_writer, pub_builtin_data, wqos);
 
         if (!ok)
         {
@@ -218,7 +218,7 @@ bool BuiltinProtocols::addLocalWriter(
 
     if (nullptr != mp_WLP)
     {
-        ok &= mp_WLP->add_local_writer(w, wqos);
+        ok &= mp_WLP->add_local_writer(rtps_writer, wqos);
     }
     else
     {
@@ -259,15 +259,14 @@ bool BuiltinProtocols::addLocalReader(
     return ok;
 }
 
-bool BuiltinProtocols::updateLocalWriter(
-        RTPSWriter* W,
-        const TopicAttributes& topicAtt,
+bool BuiltinProtocols::update_writer(
+        RTPSWriter* rtps_writer,
         const fastdds::dds::WriterQos& wqos)
 {
     bool ok = false;
-    if ((nullptr != mp_PDP) && (nullptr != mp_PDP->getEDP()))
+    if ((nullptr != mp_PDP) && (nullptr != mp_PDP->get_edp()))
     {
-        ok = mp_PDP->getEDP()->updatedLocalWriter(W, topicAtt, wqos);
+        ok = mp_PDP->get_edp()->update_writer(rtps_writer, wqos);
     }
     return ok;
 }
@@ -286,17 +285,17 @@ bool BuiltinProtocols::updateLocalReader(
     return ok;
 }
 
-bool BuiltinProtocols::removeLocalWriter(
-        RTPSWriter* W)
+bool BuiltinProtocols::remove_writer(
+        RTPSWriter* rtps_writer)
 {
     bool ok = false;
     if (nullptr != mp_WLP)
     {
-        ok |= mp_WLP->remove_local_writer(W);
+        ok |= mp_WLP->remove_local_writer(rtps_writer);
     }
-    if ((nullptr != mp_PDP) && (nullptr != mp_PDP->getEDP()))
+    if ((nullptr != mp_PDP) && (nullptr != mp_PDP->get_edp()))
     {
-        ok |= mp_PDP->getEDP()->removeLocalWriter(W);
+        ok |= mp_PDP->get_edp()->remove_writer(rtps_writer);
     }
     return ok;
 }

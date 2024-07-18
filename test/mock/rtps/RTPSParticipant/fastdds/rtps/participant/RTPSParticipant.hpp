@@ -185,14 +185,13 @@ public:
 
     MOCK_CONST_METHOD0(typelookup_manager, fastdds::dds::builtin::TypeLookupManager* ());
 
-    MOCK_METHOD3(registerWriter, bool(
+    MOCK_METHOD3(register_writer, bool(
                 RTPSWriter * Writer,
-                const TopicAttributes& topicAtt,
+                const PublicationBuiltinTopicData& pub_builtin_data,
                 const fastdds::dds::WriterQos& wqos));
 
-    MOCK_METHOD3(updateWriter, bool(
+    MOCK_METHOD2(update_writer, bool(
                 RTPSWriter * Writer,
-                const TopicAttributes& topicAtt,
                 const fastdds::dds::WriterQos& wqos));
 
     MOCK_METHOD3(registerReader, bool(

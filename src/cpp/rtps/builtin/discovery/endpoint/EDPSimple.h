@@ -17,9 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_RTPS_EDPSIMPLE_H_
-#define _FASTDDS_RTPS_EDPSIMPLE_H_
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#ifndef FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT__EDPSIMPLE_H
+#define FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT__EDPSIMPLE_H
 
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
@@ -132,12 +131,12 @@ public:
             ReaderProxyData* rdata) override;
     /**
      * This method generates the corresponding change in the publciations writer and send it to all known remote endpoints.
-     * @param writer Pointer to the Writer object.
-     * @param wdata Pointer to the WriterProxyData object.
+     * @param rtps_writer Pointer to the Writer object.
+     * @param wdata       Pointer to the WriterProxyData object.
      * @return true if correct.
      */
-    bool processLocalWriterProxyData(
-            RTPSWriter* writer,
+    bool process_writer_proxy_data(
+            RTPSWriter* rtps_writer,
             WriterProxyData* wdata) override;
     /**
      * This methods generates the change disposing of the local Reader and calls the unpairing and removal methods of the base class.
@@ -148,11 +147,11 @@ public:
             RTPSReader* R) override;
     /**
      * This methods generates the change disposing of the local Writer and calls the unpairing and removal methods of the base class.
-     * @param W Pointer to the RTPSWriter object.
+     * @param rtps_writer Pointer to the RTPSWriter object.
      * @return True if correct.
      */
-    bool removeLocalWriter(
-            RTPSWriter* W) override;
+    bool remove_writer(
+            RTPSWriter* rtps_writer) override;
 
 protected:
 
@@ -287,5 +286,4 @@ private:
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_RTPS_EDPSIMPLE_H_ */
+#endif /* FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT__EDPSIMPLE_H */

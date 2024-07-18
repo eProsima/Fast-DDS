@@ -269,14 +269,14 @@ bool EDPServer::removeLocalReader(
     return false;
 }
 
-bool EDPServer::removeLocalWriter(
-        RTPSWriter* W)
+bool EDPServer::remove_writer(
+        RTPSWriter* rtps_writer)
 {
-    EPROSIMA_LOG_INFO(RTPS_EDP, "Removing local writer: " << W->getGuid().entityId);
+    EPROSIMA_LOG_INFO(RTPS_EDP, "Removing local writer: " << rtps_writer->getGuid().entityId);
 
     // Get publications writer and writer guid
     auto* writer = &publications_writer_;
-    GUID_t guid = W->getGuid();
+    GUID_t guid = rtps_writer->getGuid();
 
     // Recover writer information
     std::string topic_name;
@@ -325,7 +325,7 @@ bool EDPServer::removeLocalWriter(
     return false;
 }
 
-bool EDPServer::processLocalWriterProxyData(
+bool EDPServer::process_writer_proxy_data(
         RTPSWriter* local_writer,
         WriterProxyData* wdata)
 {

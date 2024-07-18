@@ -27,7 +27,6 @@
 
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/attributes/TopicAttributes.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/reader/ReaderListener.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
@@ -234,14 +233,14 @@ bool EDP::newLocalReaderProxyData(
     return true;
 }
 
-bool EDP::newLocalWriterProxyData(
-        RTPSWriter* writer,
-        const TopicAttributes& att,
+bool EDP::new_writer_proxy_data(
+        RTPSWriter* rtps_writer,
+        const PublicationBuiltinTopicData& pub_builtin_data,
         const fastdds::dds::WriterQos& wqos)
 {
-    EPROSIMA_LOG_INFO(RTPS_EDP, "Adding " << writer->getGuid().entityId << " in topic " << att.topicName);
+    EPROSIMA_LOG_INFO(RTPS_EDP, "Adding " << rtps_writer->getGuid().entityId << " in topic " << pub_builtin_data.topic_name.to_string());
 
-    auto init_fun = [this, writer, &att, &wqos](
+    auto init_fun = [this, rtps_writer, &pub_builtin_data, &wqos](
         WriterProxyData* wpd,
         bool updating,
         const ParticipantProxyData& participant_data)
@@ -249,15 +248,15 @@ bool EDP::newLocalWriterProxyData(
                 if (updating)
                 {
                     EPROSIMA_LOG_ERROR(RTPS_EDP,
-                            "Adding already existent writer " << writer->getGuid().entityId << " in topic "
-                                                              << att.topicName);
+                            "Adding already existent writer " << rtps_writer->getGuid().entityId << " in topic "
+                                                              << pub_builtin_data.topic_name.to_string());
                     return false;
                 }
 
                 const NetworkFactory& network = mp_RTPSParticipant->network_factory();
-                const auto& watt = writer->getAttributes();
+                const auto& watt = rtps_writer->getAttributes();
 
-                wpd->guid(writer->getGuid());
+                wpd->guid(rtps_writer->getGuid());
                 wpd->key() = wpd->guid();
                 if (watt.multicastLocatorList.empty() && watt.unicastLocatorList.empty())
                 {
@@ -271,9 +270,9 @@ bool EDP::newLocalWriterProxyData(
                             watt.external_unicast_locators);
                 }
                 wpd->RTPSParticipantKey() = mp_RTPSParticipant->getGuid();
-                wpd->topicName(att.getTopicName());
-                wpd->typeName(att.getTopicDataType());
-                wpd->topicKind(att.getTopicKind());
+                wpd->topicName(pub_builtin_data.topic_name);
+                wpd->typeName(pub_builtin_data.type_name);
+                wpd->topicKind((wpd->guid().entityId.value[3] & 0x0F) == 0x02 ? WITH_KEY : NO_KEY);
 
                 using dds::utils::TypePropagation;
                 using dds::xtypes::TypeInformationParameter;
@@ -281,19 +280,20 @@ bool EDP::newLocalWriterProxyData(
                 auto type_propagation = mp_RTPSParticipant->type_propagation();
                 assert(TypePropagation::TYPEPROPAGATION_UNKNOWN != type_propagation);
 
-                if (att.type_information.assigned())
+                const auto& type_info = pub_builtin_data.type_information;
+                if (type_info.assigned())
                 {
                     switch (type_propagation)
                     {
                         case TypePropagation::TYPEPROPAGATION_ENABLED:
                         {
-                            wpd->type_information(att.type_information);
+                            wpd->type_information(type_info);
                             break;
                         }
                         case TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH:
                         {
                             TypeInformationParameter minimal;
-                            minimal.type_information.minimal(att.type_information.type_information.minimal());
+                            minimal.type_information.minimal(type_info.type_information.minimal());
                             minimal.assigned(true);
                             wpd->type_information(minimal);
                             break;
@@ -310,7 +310,7 @@ bool EDP::newLocalWriterProxyData(
                     }
                 }
 
-                BaseWriter* base_writer = BaseWriter::downcast(writer);
+                BaseWriter* base_writer = BaseWriter::downcast(rtps_writer);
                 assert(base_writer->get_history() != nullptr);
                 wpd->typeMaxSerialized(base_writer->get_history()->getTypeMaxSerialized());
                 wpd->m_qos.setQos(wqos, true);
@@ -334,7 +334,7 @@ bool EDP::newLocalWriterProxyData(
 
     //ADD IT TO THE LIST OF READERPROXYDATA
     GUID_t participant_guid;
-    WriterProxyData* writer_data = this->mp_PDP->addWriterProxyData(writer->getGuid(), participant_guid, init_fun);
+    WriterProxyData* writer_data = this->mp_PDP->addWriterProxyData(rtps_writer->getGuid(), participant_guid, init_fun);
     if (writer_data == nullptr)
     {
         return false;
@@ -353,9 +353,9 @@ bool EDP::newLocalWriterProxyData(
     {
         pairing_writer_proxy_with_any_local_reader(participant_guid, writer_data);
     }
-    pairingWriter(writer, participant_guid, *writer_data);
+    pairingWriter(rtps_writer, participant_guid, *writer_data);
     //DO SOME PROCESSING DEPENDING ON THE IMPLEMENTATION (SIMPLE OR STATIC)
-    processLocalWriterProxyData(writer, writer_data);
+    process_writer_proxy_data(rtps_writer, writer_data);
     return true;
 }
 
@@ -433,9 +433,8 @@ bool EDP::updatedLocalReader(
     return false;
 }
 
-bool EDP::updatedLocalWriter(
+bool EDP::update_writer(
         RTPSWriter* writer,
-        const TopicAttributes&,
         const fastdds::dds::WriterQos& wqos)
 {
     auto init_fun = [this, writer, &wqos](
@@ -467,7 +466,7 @@ bool EDP::updatedLocalWriter(
     WriterProxyData* writer_data = this->mp_PDP->addWriterProxyData(writer->getGuid(), participant_guid, init_fun);
     if (writer_data != nullptr)
     {
-        processLocalWriterProxyData(writer, writer_data);
+        process_writer_proxy_data(writer, writer_data);
 
 #ifdef FASTDDS_STATISTICS
         // notify monitor service about the new local entity proxy update
