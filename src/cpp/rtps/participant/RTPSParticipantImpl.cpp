@@ -1412,13 +1412,13 @@ bool RTPSParticipantImpl::register_writer(
     return this->mp_builtinProtocols->add_writer(rtps_writer, pub_builtin_data, wqos);
 }
 
-bool RTPSParticipantImpl::registerReader(
-        RTPSReader* reader,
-        const TopicAttributes& topicAtt,
+bool RTPSParticipantImpl::register_reader(
+        RTPSReader* rtps_reader,
+        const SubscriptionBuiltinTopicData& sub_builtin_data,
         const fastdds::dds::ReaderQos& rqos,
         const ContentFilterProperty* content_filter)
 {
-    return this->mp_builtinProtocols->addLocalReader(reader, topicAtt, rqos, content_filter);
+    return this->mp_builtinProtocols->add_reader(rtps_reader, sub_builtin_data, rqos, content_filter);
 }
 
 void RTPSParticipantImpl::update_attributes(
@@ -1613,13 +1613,12 @@ bool RTPSParticipantImpl::update_writer(
     return this->mp_builtinProtocols->update_writer(rtps_writer, wqos);
 }
 
-bool RTPSParticipantImpl::updateLocalReader(
-        RTPSReader* reader,
-        const TopicAttributes& topicAtt,
+bool RTPSParticipantImpl::update_reader(
+        RTPSReader* rtps_reader,
         const fastdds::dds::ReaderQos& rqos,
         const ContentFilterProperty* content_filter)
 {
-    return this->mp_builtinProtocols->updateLocalReader(reader, topicAtt, rqos, content_filter);
+    return this->mp_builtinProtocols->update_reader(rtps_reader, rqos, content_filter);
 }
 
 /*
@@ -2014,7 +2013,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
     {
         if (found_in_users)
         {
-            mp_builtinProtocols->removeLocalReader(static_cast<RTPSReader*>(p_endpoint));
+            mp_builtinProtocols->remove_reader(static_cast<RTPSReader*>(p_endpoint));
         }
 
 #if HAVE_SECURITY
@@ -2090,7 +2089,7 @@ void RTPSParticipantImpl::deleteAllUserEndpoints()
             {
                 return kind == WRITER
                        ? mp_builtinProtocols->remove_writer((RTPSWriter*)p)
-                       : mp_builtinProtocols->removeLocalReader((RTPSReader*)p);
+                       : mp_builtinProtocols->remove_reader((RTPSReader*)p);
             };
 
 #if HAVE_SECURITY

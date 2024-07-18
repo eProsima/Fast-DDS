@@ -228,9 +228,9 @@ bool BuiltinProtocols::add_writer(
     return ok;
 }
 
-bool BuiltinProtocols::addLocalReader(
-        RTPSReader* R,
-        const fastdds::TopicAttributes& topicAtt,
+bool BuiltinProtocols::add_reader(
+        RTPSReader* rtps_reader,
+        const SubscriptionBuiltinTopicData& sub_builtin_data,
         const fastdds::dds::ReaderQos& rqos,
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
@@ -238,7 +238,7 @@ bool BuiltinProtocols::addLocalReader(
 
     if (nullptr != mp_PDP)
     {
-        ok = mp_PDP->getEDP()->newLocalReaderProxyData(R, topicAtt, rqos, content_filter);
+        ok = mp_PDP->get_edp()->new_reader_proxy_data(rtps_reader, sub_builtin_data, rqos, content_filter);
 
         if (!ok)
         {
@@ -253,7 +253,7 @@ bool BuiltinProtocols::addLocalReader(
 
     if (nullptr != mp_WLP)
     {
-        ok &= mp_WLP->add_local_reader(R, rqos);
+        ok &= mp_WLP->add_local_reader(rtps_reader, rqos);
     }
 
     return ok;
@@ -271,16 +271,15 @@ bool BuiltinProtocols::update_writer(
     return ok;
 }
 
-bool BuiltinProtocols::updateLocalReader(
-        RTPSReader* R,
-        const TopicAttributes& topicAtt,
+bool BuiltinProtocols::update_reader(
+        RTPSReader* rtps_reader,
         const fastdds::dds::ReaderQos& rqos,
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
     bool ok = false;
-    if ((nullptr != mp_PDP) && (nullptr != mp_PDP->getEDP()))
+    if ((nullptr != mp_PDP) && (nullptr != mp_PDP->get_edp()))
     {
-        ok = mp_PDP->getEDP()->updatedLocalReader(R, topicAtt, rqos, content_filter);
+        ok = mp_PDP->get_edp()->update_reader(rtps_reader, rqos, content_filter);
     }
     return ok;
 }
@@ -300,17 +299,17 @@ bool BuiltinProtocols::remove_writer(
     return ok;
 }
 
-bool BuiltinProtocols::removeLocalReader(
-        RTPSReader* R)
+bool BuiltinProtocols::remove_reader(
+        RTPSReader* rtps_reader)
 {
     bool ok = false;
     if (nullptr != mp_WLP)
     {
-        ok |= mp_WLP->remove_local_reader(R);
+        ok |= mp_WLP->remove_local_reader(rtps_reader);
     }
-    if ((nullptr != mp_PDP) && (nullptr != mp_PDP->getEDP()))
+    if ((nullptr != mp_PDP) && (nullptr != mp_PDP->get_edp()))
     {
-        ok |= mp_PDP->getEDP()->removeLocalReader(R);
+        ok |= mp_PDP->get_edp()->remove_reader(rtps_reader);
     }
     return ok;
 }

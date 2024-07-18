@@ -83,13 +83,13 @@ bool RTPSParticipant::register_writer(
     return mp_impl->register_writer(writer, pub_builtin_data, wqos);
 }
 
-bool RTPSParticipant::registerReader(
-        RTPSReader* Reader,
-        const TopicAttributes& topicAtt,
+bool RTPSParticipant::register_reader(
+        RTPSReader* reader,
+        const SubscriptionBuiltinTopicData& sub_builtin_data,
         const fastdds::dds::ReaderQos& rqos,
         const ContentFilterProperty* content_filter)
 {
-    return mp_impl->registerReader(Reader, topicAtt, rqos, content_filter);
+    return mp_impl->register_reader(reader, sub_builtin_data, rqos, content_filter);
 }
 
 void RTPSParticipant::update_attributes(
@@ -105,13 +105,12 @@ bool RTPSParticipant::update_writer(
     return mp_impl->update_writer(writer, wqos);
 }
 
-bool RTPSParticipant::updateReader(
-        RTPSReader* Reader,
-        const TopicAttributes& topicAtt,
+bool RTPSParticipant::update_reader(
+        RTPSReader* reader,
         const fastdds::dds::ReaderQos& rqos,
         const ContentFilterProperty* content_filter)
 {
-    return mp_impl->updateLocalReader(Reader, topicAtt, rqos, content_filter);
+    return mp_impl->update_reader(reader, rqos, content_filter);
 }
 
 std::vector<std::string> RTPSParticipant::getParticipantNames() const

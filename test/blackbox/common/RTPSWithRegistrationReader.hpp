@@ -34,7 +34,7 @@
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
-#include <fastdds/rtps/attributes/TopicAttributes.hpp>
+#include <fastdds/rtps/builtin/data/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/reader/ReaderListener.hpp>
@@ -140,11 +140,11 @@ public:
         , receiving_(false)
         , matched_(0)
     {
-        topic_attr_.topicDataType = type_.get_name();
+        sub_builtin_data_.type_name = type_.get_name();
         // Generate topic name
         std::ostringstream t;
         t << topic_name << "_" << asio::ip::host_name() << "_" << GET_PID();
-        topic_attr_.topicName = t.str();
+        sub_builtin_data_.topic_name = t.str();
 
         // By default, heartbeat period delay is 100 milliseconds.
         reader_attr_.times.heartbeat_response_delay.seconds = 0;
@@ -193,7 +193,7 @@ public:
             return;
         }
 
-        initialized_ = participant_->registerReader(reader_, topic_attr_, reader_qos_, content_filter_property_);
+        initialized_ = participant_->register_reader(reader_, sub_builtin_data_, reader_qos_, content_filter_property_);
     }
 
     void update()
@@ -203,7 +203,7 @@ public:
             return;
         }
 
-        initialized_ = participant_->updateReader(reader_, topic_attr_, reader_qos_, content_filter_property_);
+        initialized_ = participant_->update_reader(reader_, reader_qos_, content_filter_property_);
     }
 
     bool isInitialized() const
@@ -430,7 +430,8 @@ public:
     RTPSWithRegistrationReader& history_depth(
             const int32_t depth)
     {
-        topic_attr_.historyQos.depth = depth;
+        hattr_.maximumReservedCaches = depth;
+        hattr_.initialReservedCaches = std::min(hattr_.initialReservedCaches, depth);
         return *this;
     }
 
@@ -627,7 +628,7 @@ private:
     bool destroy_participant_{false};
     eprosima::fastdds::rtps::RTPSReader* reader_;
     eprosima::fastdds::rtps::ReaderAttributes reader_attr_;
-    eprosima::fastdds::TopicAttributes topic_attr_;
+    eprosima::fastdds::rtps::SubscriptionBuiltinTopicData sub_builtin_data_;
     eprosima::fastdds::dds::ReaderQos reader_qos_;
     eprosima::fastdds::rtps::ReaderHistory* history_;
     eprosima::fastdds::rtps::HistoryAttributes hattr_;

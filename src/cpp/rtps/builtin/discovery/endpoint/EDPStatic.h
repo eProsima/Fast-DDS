@@ -71,12 +71,12 @@ public:
             const ParticipantProxyData& pdata,
             bool assign_secure_endpoints) override;
     /**
-     * Abstract method that removes a local Reader from the discovery method
-     * @param R Pointer to the Reader to remove.
+     * Abstract method that removes a local reader from the discovery method
+     * @param rtps_reader Pointer to the Reader to remove.
      * @return True if correctly removed.
      */
-    bool removeLocalReader(
-            RTPSReader* R) override;
+    bool remove_reader(
+            RTPSReader* rtps_reader) override;
     /**
      * Abstract method that removes a local Writer from the discovery method
      * @param rtps_writer Pointer to the writer to remove.
@@ -87,12 +87,12 @@ public:
 
     /**
      * After a new local ReaderProxyData has been created some processing is needed (depends on the implementation).
-     * @param reader Pointer to the RTPSReader object.
-     * @param rdata Pointer to the ReaderProxyData object.
+     * @param rtps_reader Pointer to the RTPSReader object.
+     * @param rdata       Pointer to the ReaderProxyData object.
      * @return True if correct.
      */
-    bool processLocalReaderProxyData(
-            RTPSReader* reader,
+    bool process_reader_proxy_data(
+            RTPSReader* rtps_reader,
             ReaderProxyData* rdata) override;
     /**
      * After a new local WriterProxyData has been created some processing is needed (depends on the implementation).

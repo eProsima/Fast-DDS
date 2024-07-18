@@ -585,7 +585,7 @@ protected:
         ASSERT_NE(subscriber_, nullptr);
 
         EXPECT_CALL(participant_mock_,
-                registerReader(&reader_mock_, ::testing::_, ::testing::_, nullptr)).WillRepeatedly(
+                register_reader(&reader_mock_, ::testing::_, ::testing::_, nullptr)).WillRepeatedly(
             ::testing::Return(true));
 
         datareader_ =

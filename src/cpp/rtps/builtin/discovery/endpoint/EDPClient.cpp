@@ -38,7 +38,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-bool EDPClient::processLocalReaderProxyData(
+bool EDPClient::process_reader_proxy_data(
         RTPSReader* local_reader,
         ReaderProxyData* rdata)
 {
@@ -153,15 +153,15 @@ bool EDPClient::remove_writer(
     return mp_PDP->removeWriterProxyData(rtps_writer->getGuid());
 }
 
-bool EDPClient::removeLocalReader(
-        RTPSReader* R)
+bool EDPClient::remove_reader(
+        RTPSReader* rtps_reader)
 {
-    EPROSIMA_LOG_INFO(RTPS_EDP, R->getGuid().entityId);
+    EPROSIMA_LOG_INFO(RTPS_EDP, rtps_reader->getGuid().entityId);
 
     auto* writer = &subscriptions_writer_;
 
 #if HAVE_SECURITY
-    if (R->getAttributes().security_attributes().is_discovery_protected)
+    if (rtps_reader->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &subscriptions_secure_writer_;
     }
@@ -170,7 +170,7 @@ bool EDPClient::removeLocalReader(
     if (writer->first != nullptr)
     {
         InstanceHandle_t iH;
-        iH = (R->getGuid());
+        iH = (rtps_reader->getGuid());
         CacheChange_t* change = EDPUtils::create_change(*writer, NOT_ALIVE_DISPOSED_UNREGISTERED, iH,
                         mp_PDP->builtin_attributes().writerPayloadSize);
         if (change != nullptr)
@@ -198,7 +198,7 @@ bool EDPClient::removeLocalReader(
             writer->second->add_change(change, wp);
         }
     }
-    return mp_PDP->removeReaderProxyData(R->getGuid());
+    return mp_PDP->removeReaderProxyData(rtps_reader->getGuid());
 }
 
 } /* namespace rtps */

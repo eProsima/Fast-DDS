@@ -214,14 +214,14 @@ bool EDPServer::createSEDPEndpoints()
     return created;
 }
 
-bool EDPServer::removeLocalReader(
-        RTPSReader* R)
+bool EDPServer::remove_reader(
+        RTPSReader* rtps_reader)
 {
-    EPROSIMA_LOG_INFO(RTPS_EDP, "Removing local reader: " << R->getGuid().entityId);
+    EPROSIMA_LOG_INFO(RTPS_EDP, "Removing local reader: " << rtps_reader->getGuid().entityId);
 
     // Get subscriptions writer and reader guid
     auto* writer = &subscriptions_writer_;
-    GUID_t guid = R->getGuid();
+    GUID_t guid = rtps_reader->getGuid();
 
     // Recover reader information
     std::string topic_name;
@@ -375,7 +375,7 @@ bool EDPServer::process_writer_proxy_data(
     return false;
 }
 
-bool EDPServer::processLocalReaderProxyData(
+bool EDPServer::process_reader_proxy_data(
         RTPSReader* local_reader,
         ReaderProxyData* rdata)
 {

@@ -54,6 +54,7 @@ class RTPSWriter;
 class RTPSReader;
 class NetworkFactory;
 struct PublicationBuiltinTopicData;
+struct SubscriptionBuiltinTopicData;
 
 /**
  * Class BuiltinProtocols that contains builtin endpoints implementing the discovery and liveliness protocols.
@@ -138,16 +139,16 @@ public:
             const PublicationBuiltinTopicData& pub_builtin_data,
             const fastdds::dds::WriterQos& wqos);
     /**
-     * Add a local Reader to the BuiltinProtocols.
-     * @param R               Pointer to the RTPSReader.
+     * Add a local reader to the BuiltinProtocols.
+     * @param rtps_reader     Pointer to the RTPSReader.
      * @param topicAtt        Attributes of the associated topic
      * @param rqos            QoS policies dictated by the subscriber
      * @param content_filter  Optional content filtering information.
      * @return True if correct.
      */
-    bool addLocalReader(
-            RTPSReader* R,
-            const TopicAttributes& topicAtt,
+    bool add_reader(
+            RTPSReader* rtps_reader,
+            const SubscriptionBuiltinTopicData& sub_builtin_data,
             const fastdds::dds::ReaderQos& rqos,
             const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
 
@@ -167,10 +168,9 @@ public:
      * @param content_filter   Optional content filtering information.
      * @return
      */
-    bool updateLocalReader(
-            RTPSReader* R,
-            const TopicAttributes& topicAtt,
-            const fastdds::dds::ReaderQos& qos,
+    bool update_reader(
+            RTPSReader* rtps_reader,
+            const fastdds::dds::ReaderQos& rqos,
             const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
     /**
      * Remove a local Writer from the builtinProtocols.
@@ -184,8 +184,8 @@ public:
      * @param R Pointer to the reader.
      * @return True if correctly removed.
      */
-    bool removeLocalReader(
-            RTPSReader* R);
+    bool remove_reader(
+            RTPSReader* rtps_reader);
 
     //! Announce RTPSParticipantState (force the sending of a DPD message.)
     void announceRTPSParticipantState();

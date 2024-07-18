@@ -31,7 +31,6 @@
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
-#include <fastdds/rtps/attributes/TopicAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
@@ -363,6 +362,10 @@ public:
         pub_builtin_data.type_name = data_type;
         pub_builtin_data.topic_name = topic_name;
 
+        SubscriptionBuiltinTopicData sub_builtin_data;
+        sub_builtin_data.type_name = data_type;
+        sub_builtin_data.topic_name = topic_name;
+
         dds::WriterQos Wqos;
         auto& watt = writer_->getAttributes();
         Wqos.m_durability.durabilityKind(watt.durabilityKind);
@@ -378,7 +381,7 @@ public:
                 ratt.reliabilityKind ? dds::RELIABLE_RELIABILITY_QOS : dds::BEST_EFFORT_RELIABILITY_QOS;
 
         participant_->register_writer(writer_, pub_builtin_data, Wqos);
-        participant_->registerReader(reader_, Tatt, Rqos);
+        participant_->register_reader(reader_, sub_builtin_data, Rqos);
     }
 
     void destroy_endpoints()
