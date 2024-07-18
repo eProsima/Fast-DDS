@@ -16,11 +16,13 @@
  * @file TopicAttributes.cpp
  */
 
-#include <fastdds/rtps/attributes/TopicAttributes.hpp>
 #include <fastdds/dds/log/Log.hpp>
+
+#include <xmlparser/attributes/TopicAttributes.hpp>
 
 namespace eprosima {
 namespace fastdds {
+namespace xmlparser {
 
 bool TopicAttributes::checkQos() const
 {
@@ -72,5 +74,6 @@ bool TopicAttributes::checkQos() const
     return true;
 }
 
+}  // namespave xmlparser
 }  // namespace fastdds
 }  // namespace eprosima
