@@ -165,6 +165,13 @@ void SubscriberApp::on_data_available(
             // Print the shape
             std::cout << shape_.color() << " Shape with size " << shape_.shapesize()
                       << " at X:" << shape_.x() << ", Y:" << shape_.y() << " RECEIVED" << std::endl;
+
+            // Check if the execution should be stopped
+            if ((samples_ > 0) && instances_received_all_samples())
+            {
+                stop_receiving_samples_.store(true);
+                cv_.notify_all();
+            }
         }
         else if (info.instance_state == NOT_ALIVE_DISPOSED_INSTANCE_STATE)
         {
@@ -179,13 +186,6 @@ void SubscriberApp::on_data_available(
         {
             std::cout << shape_.color() << " Shape has been disposed by all publishers" << std::endl;
         }
-
-        // Check if the execution should be stopped
-        if ((samples_ > 0) && instances_received_all_samples())
-        {
-            stop_receiving_samples_.store(true);
-            cv_.notify_all();
-        }
     }
 }
 
@@ -195,7 +195,7 @@ void SubscriberApp::run()
         std::unique_lock<std::mutex> lock_(mutex_);
         cv_.wait(lock_, [&]
                 {
-                    return stop_receiving_samples_.load();
+                    return stop_receiving_samples_.load() || is_stopped();
                 });
     }
     // Wait for period or stop event
@@ -203,7 +203,7 @@ void SubscriberApp::run()
         std::unique_lock<std::mutex> timeout_lock(mutex_);
         cv_.wait_for(timeout_lock, std::chrono::milliseconds(50u), [&]()
                 {
-                    return instances_disposed();
+                    return instances_disposed() || is_stopped();
                 });
     }
     stop();
