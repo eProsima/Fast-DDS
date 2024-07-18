@@ -33,12 +33,12 @@ using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
 FlowControlPubSubType::FlowControlPubSubType()
 {
-    set_name("FlowControlExample");
-    uint32_t type_size = FlowControlExample_max_cdr_typesize;
+    set_name("FlowControl");
+    uint32_t type_size = FlowControl_max_cdr_typesize;
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = FlowControlExample_max_key_cdr_typesize > 16 ? FlowControlExample_max_key_cdr_typesize : 16;
+    uint32_t key_length = FlowControl_max_key_cdr_typesize > 16 ? FlowControl_max_key_cdr_typesize : 16;
     key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
     memset(key_buffer_, 0, key_length);
 }
@@ -87,7 +87,7 @@ bool FlowControlPubSubType::serialize(
     return true;
 }
 
-bool FlowControlExamplePubSubType::deserialize(
+bool FlowControlPubSubType::deserialize(
         SerializedPayload_t& payload,
         void* data)
 {
@@ -117,7 +117,7 @@ bool FlowControlExamplePubSubType::deserialize(
     return true;
 }
 
-uint32_t FlowControlExamplePubSubType::calculate_serialized_size(
+uint32_t FlowControlPubSubType::calculate_serialized_size(
         const void* const data,
         DataRepresentationId_t data_representation)
 {
@@ -128,8 +128,8 @@ uint32_t FlowControlExamplePubSubType::calculate_serialized_size(
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
         return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                   *static_cast<const FlowControlExample*>(data), current_alignment)) +
-               4u /*encapsulation*/;
+                    *static_cast<const FlowControl*>(data), current_alignment)) +
+                4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -137,18 +137,18 @@ uint32_t FlowControlExamplePubSubType::calculate_serialized_size(
     }
 }
 
-void* FlowControlExamplePubSubType::create_data()
+void* FlowControlPubSubType::create_data()
 {
     return reinterpret_cast<void*>(new FlowControl());
 }
 
-void FlowControlExamplePubSubType::delete_data(
+void FlowControlPubSubType::delete_data(
         void* data)
 {
     delete(reinterpret_cast<FlowControl*>(data));
 }
 
-bool FlowControlExamplePubSubType::compute_key(
+bool FlowControlPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
         bool force_md5)
@@ -158,7 +158,7 @@ bool FlowControlExamplePubSubType::compute_key(
         return false;
     }
 
-    FlowControlExample data;
+    FlowControl data;
     if (deserialize(payload, static_cast<void*>(&data)))
     {
         return compute_key(static_cast<void*>(&data), handle, force_md5);
@@ -167,7 +167,7 @@ bool FlowControlExamplePubSubType::compute_key(
     return false;
 }
 
-bool FlowControlExamplePubSubType::compute_key(
+bool FlowControlPubSubType::compute_key(
         const void* const data,
         InstanceHandle_t& handle,
         bool force_md5)
@@ -181,13 +181,12 @@ bool FlowControlExamplePubSubType::compute_key(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            FlowControlExample_max_key_cdr_typesize);
+            FlowControl_max_key_cdr_typesize);
 
     // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS,
-            eprosima::fastcdr::CdrVersion::XCDRv1);
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv1);
     eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || FlowControlExample_max_key_cdr_typesize > 16)
+    if (force_md5 || FlowControl_max_key_cdr_typesize > 16)
     {
         md5_.init();
         md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
@@ -211,6 +210,7 @@ void FlowControlPubSubType::register_type_object_representation()
 {
     register_FlowControl_type_identifier(type_identifiers_);
 }
+
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "FlowControlCdrAux.ipp"

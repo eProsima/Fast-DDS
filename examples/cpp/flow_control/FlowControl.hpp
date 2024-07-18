@@ -221,4 +221,6 @@ private:
 
 };
 
-#endif // FAST_DDS_GENERATED__FLOWCONTROL_HPP
+#endif // _FAST_DDS_GENERATED_FLOWCONTROL_HPP_
+
+
