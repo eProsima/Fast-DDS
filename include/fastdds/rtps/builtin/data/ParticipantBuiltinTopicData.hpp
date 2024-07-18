@@ -20,8 +20,8 @@
 #ifndef FASTDDS_RTPS_BUILTIN_DATA__PARTICIPANTBUILTINTOPICDATA_HPP
 #define FASTDDS_RTPS_BUILTIN_DATA__PARTICIPANTBUILTINTOPICDATA_HPP
 
-#include <fastdds/dds/builtin/topic/BuiltinTopicKey.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/builtin/data/BuiltinTopicKey.hpp>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
 
 namespace eprosima {
@@ -30,55 +30,34 @@ namespace rtps {
 
 struct ParticipantBuiltinTopicData
 {
-    //! Constructor from ParticipantBuiltinTopicData
-    ParticipantBuiltinTopicData(
-            const ParticipantBuiltinTopicData& pdata)
-        : key(pdata.key)
-        , user_data(pdata.user_data)
-        , guid(pdata.guid)
-        , properties(pdata.properties)
-        , participant_name(pdata.participant_name)
-        , metatraffic_locators(pdata.metatraffic_locators)
-        , default_locators(pdata.default_locators)
-        , lease_duration(pdata.lease_duration)
-        , vendor_id(pdata.vendor_id)
-        , domain_id(pdata.domain_id)
-    {
-    }
-
-    //! Default constructor
-    ParticipantBuiltinTopicData()
-    {
-    }
-
-    //! Builtin topic Key
+    /// Builtin topic Key
     BuiltinTopicKey_t key;
 
-    //! UserData QoS
+    /// UserData QoS
     dds::UserDataQosPolicy user_data;
 
-    //! Participant GUID
+    /// Participant GUID
     GUID_t guid;
 
-    //! Properties
+    /// Properties
     dds::ParameterPropertyList_t properties;
 
-    //!Participant name
+    ///Participant name
     fastcdr::string_255 participant_name;
 
-    //!Metatraffic locators
+    ///Metatraffic locators
     RemoteLocatorList metatraffic_locators;
 
-    //!Default locators
+    ///Default locators
     RemoteLocatorList default_locators;
 
-    //! Lease Duration
+    /// Lease Duration
     Duration_t lease_duration;
 
-    // Vendor id
+    /// Vendor id
     VendorId_t vendor_id;
 
-    // Participant domain id
+    /// Participant domain id
     dds::DomainId_t domain_id;
 };
 

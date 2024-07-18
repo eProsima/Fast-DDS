@@ -19,12 +19,15 @@ Forthcoming
 * Discovery callbacks refactor:
   * on_data_reader_discovery now receives a `ReaderDiscoveryStatus` and a `SubscriptionBuiltinTopicData` instead of a `ReaderDiscoveryInfo`
   * on_data_writer_discovery now receives a `WriterDiscoveryStatus` and a `PublicationBuiltinTopicData` instead of a `WriterDiscoveryInfo`
+  * on_participant_discovery now receives a `ParticipantDiscoveryStatus` and a `ParticipantBuiltinTopicData` instead of a `ParticipantDiscoveryInfo`
 * Public API that is no longer public:
   * XML Parser API no longer public.
   * ReaderProxyData
   * ReaderDiscoveryInfo
   * WriterProxyData
   * WriterDiscoveryInfo
+  * ParticiantProxyData
+  * ParticiantDiscoveryInfo
   * ParticipantAttributes
   * ReplierAttributes
   * RequesterAttributes

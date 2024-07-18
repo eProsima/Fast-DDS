@@ -20,8 +20,6 @@
 #ifndef RTPS_BUILTIN_DATA__PARTICIPANTPROXYDATA_HPP
 #define RTPS_BUILTIN_DATA__PARTICIPANTPROXYDATA_HPP
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
 #include <chrono>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
@@ -234,7 +232,5 @@ private:
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
-
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #endif // RTPS_BUILTIN_DATA__PARTICIPANTPROXYDATA_HPP

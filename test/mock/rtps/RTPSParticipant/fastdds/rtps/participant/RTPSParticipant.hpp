@@ -32,7 +32,6 @@
 #include <fastdds/rtps/builtin/data/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 
-#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/resources/ResourceEvent.h>
 #include <statistics/rtps/monitor-service/Interfaces.hpp>
@@ -128,7 +127,7 @@ public:
 
     bool fill_discovery_data_from_cdr_message(
             fastdds::rtps::ParticipantBuiltinTopicData& /*data*/,
-            fastdds::statistics::MonitorServiceStatusData& /*msg*/)
+            const fastdds::statistics::MonitorServiceStatusData& /*msg*/)
     {
         return true;
     }

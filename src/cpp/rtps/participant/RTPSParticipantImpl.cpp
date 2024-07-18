@@ -2932,17 +2932,16 @@ bool RTPSParticipantImpl::disable_monitor_service() const
 
 bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
         fastdds::rtps::ParticipantBuiltinTopicData& data,
-        fastdds::statistics::MonitorServiceStatusData& msg)
+        const fastdds::statistics::MonitorServiceStatusData& msg)
 {
     bool ret = true;
     CDRMessage_t serialized_msg{0};
     serialized_msg.wraps = true;
 
-    serialized_msg.buffer = msg.value().entity_proxy().data();
+    serialized_msg.buffer = const_cast<octet*>(msg.value().entity_proxy().data());
     serialized_msg.length = static_cast<uint32_t>(msg.value().entity_proxy().size());
 
     ParticipantProxyData part_prox_data(m_att.allocation);
-
 
     ret = part_prox_data.readFromCDRMessage(
         &serialized_msg,

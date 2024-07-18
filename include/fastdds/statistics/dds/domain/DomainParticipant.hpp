@@ -35,7 +35,6 @@ namespace statistics {
 
 class MonitorServiceStatusData;
 
-
 namespace dds {
 
 /**
@@ -133,19 +132,6 @@ public:
 
     /**
      * fills in the ParticipantBuiltinTopicData from a MonitorService Message
-     *
-     * @param [out] data Proxy to fill
-     * @param [in] msg MonitorService Message to get the proxy information from.
-     *
-     * @return RETCODE_OK if the operation succeeds.
-     * @return RETCODE_ERROR if the  operation fails.
-     */
-    FASTDDS_EXPORTED_API eprosima::fastdds::dds::ReturnCode_t fill_discovery_data_from_cdr_message(
-            fastdds::rtps::ParticipantBuiltinTopicData& data,
-            statistics::MonitorServiceStatusData& msg);
-
-    /**
-     * fills in the ParticipantProxyData from a MonitorService Message
      *
      * @param [out] data Proxy to fill
      * @param [in] msg MonitorService Message to get the proxy information from.

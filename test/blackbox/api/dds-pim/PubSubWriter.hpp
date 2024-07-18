@@ -82,7 +82,7 @@ class PubSubWriter
         void on_participant_discovery(
                 eprosima::fastdds::dds::DomainParticipant*,
                 eprosima::fastdds::rtps::ParticipantDiscoveryStatus status,
-                const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& info,
+                const eprosima::fastdds::dds::ParticipantBuiltinTopicData& info,
                 bool& should_be_ignored) override
         {
             static_cast<void>(should_be_ignored);
@@ -2020,7 +2020,7 @@ protected:
     std::string participant_profile_ = "";
     std::string datawriter_profile_ = "";
 
-    std::function<bool(const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& info)> onDiscovery_;
+    std::function<bool(const eprosima::fastdds::dds::ParticipantBuiltinTopicData& info)> onDiscovery_;
 
     //! A mutex for liveliness
     std::mutex liveliness_mutex_;

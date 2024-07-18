@@ -1229,7 +1229,7 @@ public:
      */
     bool fill_discovery_data_from_cdr_message(
             ParticipantBuiltinTopicData& data,
-            fastdds::statistics::MonitorServiceStatusData& msg);
+            const fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
      * fills in the PublicationBuiltinTopicData from a MonitorService Message

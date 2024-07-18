@@ -20,7 +20,7 @@
 #include <gtest/gtest.h>
 
 // TODO(jlbueno): remove private header
-#include <rtps/builtin/data/ParticipantProxyData.hpp>
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
 #include "../types/statistics/monitorservice_typesPubSubTypes.hpp"
 #include "BlackboxTests.hpp"

@@ -24,6 +24,7 @@
 #include <mutex>
 
 #include <fastdds/rtps/reader/ReaderListener.hpp>
+
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
 
 namespace eprosima {

@@ -59,7 +59,6 @@
 #include <fastdds/topic/TopicProxy.hpp>
 #include <fastdds/topic/TopicProxyFactory.hpp>
 #include <fastdds/utils/QosConverters.hpp>
-#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 #include <utils/SystemInfo.hpp>

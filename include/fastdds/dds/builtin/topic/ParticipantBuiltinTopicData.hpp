@@ -20,10 +20,7 @@
 #ifndef FASTDDS_DDS_BUILTIN_TOPIC__PARTICIPANTBUILTINTOPICDATA_HPP
 #define FASTDDS_DDS_BUILTIN_TOPIC__PARTICIPANTBUILTINTOPICDATA_HPP
 
-#include <fastdds/dds/builtin/topic/BuiltinTopicKey.hpp>
-#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantBuiltinTopicData.hpp>
-#include <fastdds/rtps/common/RemoteLocators.hpp>
 
 namespace eprosima {
 namespace fastdds {

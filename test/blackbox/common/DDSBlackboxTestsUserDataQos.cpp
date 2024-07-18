@@ -17,7 +17,7 @@
 #include <fastdds/rtps/common/Types.hpp>
 #include <gtest/gtest.h>
 
-#include <rtps/builtin/data/ParticipantProxyData.hpp>
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include "BlackboxTests.hpp"
 #include "PubSubParticipant.hpp"
 

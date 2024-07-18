@@ -37,7 +37,6 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
 
-#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include "BlackboxTests.hpp"
 #include "../api/dds-pim/CustomPayloadPool.hpp"
 #include "../api/dds-pim/PubSubReader.hpp"

@@ -42,7 +42,6 @@
 #include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
 #include "fastdds/topic/DDSSQLFilter/DDSFilterFactory.hpp"
 #include <fastdds/topic/TopicProxyFactory.hpp>
-#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/reader/StatefulReader.hpp>
 
 namespace eprosima {

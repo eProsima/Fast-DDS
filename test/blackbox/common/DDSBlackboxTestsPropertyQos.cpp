@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/common/Types.hpp>
 #include <gtest/gtest.h>
 
-#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include "BlackboxTests.hpp"
 #include "PubSubParticipant.hpp"
 
@@ -113,7 +113,7 @@ TEST_P(PropertyQos, send_property_qos)
 
     PubSubParticipant<HelloWorldPubSubType> participant_2(0u, 0u, 0u, 0u);
 
-    participant_2.set_on_discovery_function([&](const rtps::ParticipantBuiltinTopicData& info) -> bool
+    participant_2.set_on_discovery_function([&](const eprosima::fastdds::dds::ParticipantBuiltinTopicData& info) -> bool
             {
                 std::cout << "Received Property Qos: ";
 

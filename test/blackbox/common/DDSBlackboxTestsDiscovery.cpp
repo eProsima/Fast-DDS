@@ -594,7 +594,7 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
         void on_participant_discovery(
                 DomainParticipant* participant,
                 eprosima::fastdds::rtps::ParticipantDiscoveryStatus status,
-                const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& info,
+                const eprosima::fastdds::dds::ParticipantBuiltinTopicData& info,
                 bool& should_be_ignored)
         {
             static_cast<void>(should_be_ignored);
@@ -613,7 +613,7 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
             }
         }
 
-        eprosima::fastdds::rtps::ParticipantBuiltinTopicData* remote_participant_info;
+        eprosima::fastdds::dds::ParticipantBuiltinTopicData* remote_participant_info;
 
     private:
 

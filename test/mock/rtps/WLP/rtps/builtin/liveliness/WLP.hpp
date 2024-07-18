@@ -28,6 +28,8 @@
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {

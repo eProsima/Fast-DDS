@@ -23,9 +23,9 @@
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
 
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
-#include <rtps/builtin/data/ParticipantProxyData.hpp>
 
 namespace eprosima {
 namespace fastdds {

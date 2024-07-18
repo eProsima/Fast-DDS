@@ -69,7 +69,6 @@ class WriterAttributes;
 class ReaderAttributes;
 class ResourceEvent;
 class WLP;
-class ParticipantProxyData;
 
 /**
  * @brief Class RTPSParticipant, contains the public API for a RTPSParticipant.
@@ -406,7 +405,7 @@ public:
      */
     bool fill_discovery_data_from_cdr_message(
             ParticipantBuiltinTopicData& data,
-            fastdds::statistics::MonitorServiceStatusData& msg);
+            const fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
      * fills in the PublicationBuiltinTopicData from a MonitorService Message
