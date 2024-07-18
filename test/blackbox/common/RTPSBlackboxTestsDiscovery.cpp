@@ -433,7 +433,7 @@ TEST_P(RTPSDiscovery, WriterListenerOnReaderDiscoveryIncompatibleQoS)
 }
 
 /*!
- * \test RTPS-CFT-RRR-01 Tests a good `ContentFilterProperty` passed to `registerReader()` and `updateReader()` is
+ * \test RTPS-CFT-RRR-01 Tests a good `ContentFilterProperty` passed to `register_reader()` and `update_reader()` is
  * propagated successfully through discovery.
  */
 TEST_P(RTPSDiscovery, ContentFilterRegistration)
@@ -528,7 +528,7 @@ TEST_P(RTPSDiscovery, ContentFilterRegistration)
 }
 
 /*!
- * \test RTPS-CFT-RRR-02 Tests a wrong `ContentFilterProperty` passed to `registerReader()` makes the function fail.
+ * \test RTPS-CFT-RRR-02 Tests a wrong `ContentFilterProperty` passed to `register_reader()` makes the function fail.
  */
 TEST_P(RTPSDiscovery, ContentFilterWrongRegistration)
 {
@@ -630,7 +630,7 @@ TEST_P(RTPSDiscovery, ContentFilterWrongRegistration)
 }
 
 /*!
- * \test RTPS-CFT-RRR-03 Tests a wrong `ContentFilterProperty` passed to `updateReader()` makes the function fail.
+ * \test RTPS-CFT-RRR-03 Tests a wrong `ContentFilterProperty` passed to `update_reader()` makes the function fail.
  */
 TEST_P(RTPSDiscovery, ContentFilterWrongUpdate)
 {
@@ -747,7 +747,7 @@ TEST_P(RTPSDiscovery, ContentFilterWrongUpdate)
 }
 
 /*!
- * \test RTPS-CFT-RRR-04 Tests `registerReader()` and `updateReader()` works successfully when the pointer to
+ * \test RTPS-CFT-RRR-04 Tests `register_reader()` and `update_reader()` works successfully when the pointer to
  * `ContentFilterProperty` is `nullptr`.
  */
 TEST_P(RTPSDiscovery, ContentFilterRegistrationWithoutCFP)
@@ -830,8 +830,8 @@ TEST_P(RTPSDiscovery, ContentFilterRegistrationWithoutCFP)
 }
 
 /*!
- * \test RTPS-CFT-RRR_05 Tests ``updateReader()` works successfully when a `ContentFilterProperty` is added for first
- * time, because `registerReader()` passed a `nullptr`.
+ * \test RTPS-CFT-RRR_05 Tests ``update_reader()` works successfully when a `ContentFilterProperty` is added for first
+ * time, because `register_reader()` passed a `nullptr`.
  */
 TEST_P(RTPSDiscovery, ContentFilterRegistrationWithoutCFPButUpdate)
 {

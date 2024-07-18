@@ -521,17 +521,17 @@ bool EDPSimple::create_sedp_secure_endpoints()
 
 #endif // if HAVE_SECURITY
 
-bool EDPSimple::processLocalReaderProxyData(
-        RTPSReader* local_reader,
+bool EDPSimple::process_reader_proxy_data(
+        RTPSReader* rtps_reader,
         ReaderProxyData* rdata)
 {
     EPROSIMA_LOG_INFO(RTPS_EDP, rdata->guid().entityId);
-    (void)local_reader;
+    (void)rtps_reader;
 
     auto* writer = &subscriptions_writer_;
 
 #if HAVE_SECURITY
-    if (local_reader->getAttributes().security_attributes().is_discovery_protected)
+    if (rtps_reader->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &subscriptions_secure_writer_;
     }
@@ -687,15 +687,15 @@ bool EDPSimple::remove_writer(
     return mp_PDP->removeWriterProxyData(rtps_writer->getGuid());
 }
 
-bool EDPSimple::removeLocalReader(
-        RTPSReader* R)
+bool EDPSimple::remove_reader(
+        RTPSReader* rtps_reader)
 {
-    EPROSIMA_LOG_INFO(RTPS_EDP, R->getGuid().entityId);
+    EPROSIMA_LOG_INFO(RTPS_EDP, rtps_reader->getGuid().entityId);
 
     auto* writer = &subscriptions_writer_;
 
 #if HAVE_SECURITY
-    if (R->getAttributes().security_attributes().is_discovery_protected)
+    if (rtps_reader->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &subscriptions_secure_writer_;
     }
@@ -704,7 +704,7 @@ bool EDPSimple::removeLocalReader(
     if (writer->first != nullptr)
     {
         InstanceHandle_t iH;
-        iH = (R->getGuid());
+        iH = (rtps_reader->getGuid());
         CacheChange_t* change = EDPUtils::create_change(*writer, NOT_ALIVE_DISPOSED_UNREGISTERED, iH,
                         mp_PDP->builtin_attributes().writerPayloadSize);
         if (change != nullptr)
@@ -729,11 +729,11 @@ bool EDPSimple::removeLocalReader(
     // notify monitor service about the new local entity proxy update
     if (nullptr != this->mp_PDP->get_proxy_observer())
     {
-        this->mp_PDP->get_proxy_observer()->on_local_entity_change(R->getGuid(), false);
+        this->mp_PDP->get_proxy_observer()->on_local_entity_change(rtps_reader->getGuid(), false);
     }
 #endif //FASTDDS_STATISTICS
 
-    return mp_PDP->removeReaderProxyData(R->getGuid());
+    return mp_PDP->removeReaderProxyData(rtps_reader->getGuid());
 }
 
 void EDPSimple::assignRemoteEndpoints(

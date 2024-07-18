@@ -57,7 +57,7 @@ public:
         return true;
     }
 
-    virtual bool removeLocalReader(
+    virtual bool remove_reader(
             eprosima::fastdds::rtps::RTPSReader*)
     {
         return true;
@@ -76,7 +76,7 @@ public:
 
     }
 
-    virtual bool processLocalReaderProxyData(
+    virtual bool process_reader_proxy_data(
             eprosima::fastdds::rtps::RTPSReader*,
             eprosima::fastdds::rtps::ReaderProxyData*)
     {

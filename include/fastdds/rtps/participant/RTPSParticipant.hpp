@@ -151,16 +151,16 @@ public:
             const fastdds::dds::WriterQos& wqos);
 
     /**
-     * Register a RTPSReader in the builtin Protocols.
-     * @param Reader          Pointer to the RTPSReader.
-     * @param topicAtt        Topic Attributes where you want to register it.
-     * @param rqos            ReaderQos.
-     * @param content_filter  Optional content filtering information.
+     * Register a Reader in the BuiltinProtocols.
+     * @param rtps_reader      Pointer to the RTPSReader.
+     * @param sub_builtin_data Contains the discovery information of the reader.
+     * @param rqos             ReaderQos.
+     * @param content_filter   Optional content filtering information.
      * @return True if correctly registered.
      */
-    bool registerReader(
-            RTPSReader* Reader,
-            const TopicAttributes& topicAtt,
+    bool register_reader(
+            RTPSReader* rtps_reader,
+            const SubscriptionBuiltinTopicData& sub_builtin_data,
             const fastdds::dds::ReaderQos& rqos,
             const ContentFilterProperty* content_filter = nullptr);
 
@@ -182,16 +182,14 @@ public:
             const fastdds::dds::WriterQos& wqos);
 
     /**
-     * Update reader QOS
-     * @param Reader          Pointer to the RTPSReader to update
-     * @param topicAtt        Topic Attributes where you want to register it.
-     * @param rqos            New reader QoS
-     * @param content_filter  Optional content filtering information.
-     * @return true on success
+     * Update local reader QoS
+     * @param rtps_reader      Reader to update.
+     * @param rqos             New QoS for the reader.
+     * @param content_filter   Optional content filtering information.
+     * @return True on success
      */
-    bool updateReader(
-            RTPSReader* Reader,
-            const TopicAttributes& topicAtt,
+    bool update_reader(
+            RTPSReader* rtps_reader,
             const fastdds::dds::ReaderQos& rqos,
             const ContentFilterProperty* content_filter = nullptr);
 

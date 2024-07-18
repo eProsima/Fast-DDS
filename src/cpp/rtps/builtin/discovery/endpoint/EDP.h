@@ -17,9 +17,8 @@
  *
  */
 
-#ifndef FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT_EDP_H
-#define FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT_EDP_H
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#ifndef FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT__EDP_H
+#define FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT__EDP_H
 
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
@@ -53,6 +52,8 @@ class RTPSWriter;
 class RTPSReader;
 class WriterProxyData;
 class RTPSParticipantImpl;
+struct PublicationBuiltinTopicData;
+struct SubscriptionBuiltinTopicData;
 
 /**
  * Class EDP, base class for Endpoint Discovery Protocols. It contains generic methods used by the two EDP implemented (EDPSimple and EDPStatic), as well as abstract methods
@@ -130,18 +131,18 @@ public:
 
     /**
      * Abstract method that removes a local Reader from the discovery method
-     * @param R Pointer to the Reader to remove.
+     * @param rtps_reader Pointer to the Reader to remove.
      * @return True if correctly removed.
      */
-    virtual bool removeLocalReader(
-            RTPSReader* R) = 0;
+    virtual bool remove_reader(
+            RTPSReader* rtps_reader) = 0;
     /**
      * Abstract method that removes a local Writer from the discovery method
-     * @param W Pointer to the Writer to remove.
+     * @param rtps_writer Pointer to the Writer to remove.
      * @return True if correctly removed.
      */
-    virtual bool removeLocalWriter(
-            RTPSWriter* W) = 0;
+    virtual bool remove_writer(
+            RTPSWriter* rtps_writer) = 0;
 
     /**
      * After a new local ReaderProxyData has been created some processing is needed (depends on the implementation).
@@ -149,7 +150,7 @@ public:
      * @param rdata Pointer to the ReaderProxyData object.
      * @return True if correct.
      */
-    virtual bool processLocalReaderProxyData(
+    virtual bool process_reader_proxy_data(
             RTPSReader* reader,
             ReaderProxyData* rdata) = 0;
 
@@ -159,57 +160,53 @@ public:
      * @param wdata Pointer to the Writer ProxyData object.
      * @return True if correct.
      */
-    virtual bool processLocalWriterProxyData(
+    virtual bool process_writer_proxy_data(
             RTPSWriter* writer,
             WriterProxyData* wdata) = 0;
 
     /**
      * Create a new ReaderPD for a local Reader.
-     * @param R               Pointer to the RTPSReader.
-     * @param att             Attributes of the associated topic
-     * @param qos             QoS policies dictated by the subscriber
-     * @param content_filter  Optional content filtering information.
+     * @param rtps_reader      Pointer to the RTPSReader.
+     * @param sub_builtin_data Subscription data for the reader.
+     * @param qos              QoS policies dictated by the subscriber.
+     * @param content_filter   Optional content filtering information.
      * @return True if correct.
      */
-    bool newLocalReaderProxyData(
-            RTPSReader* R,
-            const TopicAttributes& att,
+    bool new_reader_proxy_data(
+            RTPSReader* rtps_reader,
+            const SubscriptionBuiltinTopicData& sub_builtin_data,
             const fastdds::dds::ReaderQos& qos,
             const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
     /**
      * Create a new ReaderPD for a local Writer.
-     * @param W Pointer to the RTPSWriter.
-     * @param att Attributes of the associated topic
-     * @param qos QoS policies dictated by the publisher
+     * @param rtps_writer      Pointer to the RTPSWriter.
+     * @param pub_builtin_data Publication data for the writer.
+     * @param qos              QoS policies dictated by the publisher.
      * @return True if correct.
      */
-    bool newLocalWriterProxyData(
-            RTPSWriter* W,
-            const TopicAttributes& att,
+    bool new_writer_proxy_data(
+            RTPSWriter* rtps_writer,
+            const PublicationBuiltinTopicData& pub_builtin_data,
             const fastdds::dds::WriterQos& qos);
     /**
      * A previously created Reader has been updated
-     * @param R               Pointer to the reader
-     * @param att             Attributes of the associated topic
-     * @param qos             QoS policies dictated by the subscriber
-     * @param content_filter  Optional content filtering information.
+     * @param rtps_reader      Pointer to the RTPSReader.
+     * @param qos              QoS policies dictated by the subscriber.
+     * @param content_filter   Optional content filtering information.
      * @return True if correctly updated
      */
-    bool updatedLocalReader(
-            RTPSReader* R,
-            const TopicAttributes& att,
+    bool update_reader(
+            RTPSReader* rtps_reader,
             const fastdds::dds::ReaderQos& qos,
             const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
     /**
      * A previously created Writer has been updated
-     * @param W Pointer to the Writer
-     * @param att Attributes of the associated topic
-     * @param qos QoS policies dictated by the publisher
+     * @param rtps_writer      Pointer to the RTPSWriter.
+     * @param qos              QoS policies dictated by the publisher.
      * @return True if correctly updated
      */
-    bool updatedLocalWriter(
-            RTPSWriter* W,
-            const TopicAttributes& att,
+    bool update_writer(
+            RTPSWriter* rtps_writer,
             const fastdds::dds::WriterQos& qos);
 
     /**
@@ -391,5 +388,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif // FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT_EDP_H
+#endif // FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT__EDP_H

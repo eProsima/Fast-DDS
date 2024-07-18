@@ -60,7 +60,7 @@ public:
     {
     }
 
-    bool removeLocalReader(
+    bool remove_reader(
             RTPSReader* /*R*/) override
     {
         return true;
@@ -72,7 +72,7 @@ public:
         return true;
     }
 
-    bool processLocalReaderProxyData(
+    bool process_reader_proxy_data(
             RTPSReader* /*reader*/,
             ReaderProxyData* /*rdata*/) override
     {

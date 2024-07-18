@@ -93,15 +93,15 @@ EDP::~EDP()
     // TODO Auto-generated destructor stub
 }
 
-bool EDP::newLocalReaderProxyData(
-        RTPSReader* reader,
-        const TopicAttributes& att,
+bool EDP::new_reader_proxy_data(
+        RTPSReader* rtps_reader,
+        const SubscriptionBuiltinTopicData& sub_builtin_data,
         const fastdds::dds::ReaderQos& rqos,
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
-    EPROSIMA_LOG_INFO(RTPS_EDP, "Adding " << reader->getGuid().entityId << " in topic " << att.topicName);
+    EPROSIMA_LOG_INFO(RTPS_EDP, "Adding " << rtps_reader->getGuid().entityId << " in topic " << sub_builtin_data.topic_name.to_string());
 
-    auto init_fun = [this, reader, &att, &rqos, content_filter](
+    auto init_fun = [this, rtps_reader, &sub_builtin_data, &rqos, content_filter](
         ReaderProxyData* rpd,
         bool updating,
         const ParticipantProxyData& participant_data)
@@ -109,17 +109,17 @@ bool EDP::newLocalReaderProxyData(
                 if (updating)
                 {
                     EPROSIMA_LOG_ERROR(RTPS_EDP,
-                            "Adding already existent reader " << reader->getGuid().entityId << " in topic "
-                                                              << att.topicName);
+                            "Adding already existent reader " << rtps_reader->getGuid().entityId << " in topic "
+                                                              << sub_builtin_data.topic_name.to_string());
                     return false;
                 }
 
                 const NetworkFactory& network = mp_RTPSParticipant->network_factory();
-                const auto& ratt = reader->getAttributes();
+                const auto& ratt = rtps_reader->getAttributes();
 
                 rpd->isAlive(true);
-                rpd->m_expectsInlineQos = reader->expects_inline_qos();
-                rpd->guid(reader->getGuid());
+                rpd->m_expectsInlineQos = rtps_reader->expects_inline_qos();
+                rpd->guid(rtps_reader->getGuid());
                 rpd->key() = rpd->guid();
                 if (ratt.multicastLocatorList.empty() && ratt.unicastLocatorList.empty())
                 {
@@ -133,9 +133,9 @@ bool EDP::newLocalReaderProxyData(
                             ratt.external_unicast_locators);
                 }
                 rpd->RTPSParticipantKey() = mp_RTPSParticipant->getGuid();
-                rpd->topicName(att.getTopicName());
-                rpd->typeName(att.getTopicDataType());
-                rpd->topicKind(att.getTopicKind());
+                rpd->topicName(sub_builtin_data.topic_name);
+                rpd->typeName(sub_builtin_data.type_name);
+                rpd->topicKind((rpd->guid().entityId.value[3] & 0x0F) == 0x07 ? WITH_KEY : NO_KEY);
 
                 using dds::utils::TypePropagation;
                 using dds::xtypes::TypeInformationParameter;
@@ -143,19 +143,20 @@ bool EDP::newLocalReaderProxyData(
                 auto type_propagation = mp_RTPSParticipant->type_propagation();
                 assert(TypePropagation::TYPEPROPAGATION_UNKNOWN != type_propagation);
 
-                if (att.type_information.assigned())
+                const auto& type_info = sub_builtin_data.type_information;
+                if (type_info.assigned())
                 {
                     switch (type_propagation)
                     {
                         case TypePropagation::TYPEPROPAGATION_ENABLED:
                         {
-                            rpd->type_information(att.type_information);
+                            rpd->type_information(type_info);
                             break;
                         }
                         case TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH:
                         {
                             TypeInformationParameter minimal;
-                            minimal.type_information.minimal(att.type_information.type_information.minimal());
+                            minimal.type_information.minimal(type_info.type_information.minimal());
                             minimal.assigned(true);
                             rpd->type_information(minimal);
                             break;
@@ -208,7 +209,7 @@ bool EDP::newLocalReaderProxyData(
     //ADD IT TO THE LIST OF READERPROXYDATA
     GUID_t participant_guid;
     ReaderProxyData* reader_data = this->mp_PDP->addReaderProxyData(
-        reader->getGuid(), participant_guid, init_fun);
+        rtps_reader->getGuid(), participant_guid, init_fun);
     if (reader_data == nullptr)
     {
         return false;
@@ -227,9 +228,9 @@ bool EDP::newLocalReaderProxyData(
     {
         pairing_reader_proxy_with_any_local_writer(participant_guid, reader_data);
     }
-    pairingReader(reader, participant_guid, *reader_data);
+    pairingReader(rtps_reader, participant_guid, *reader_data);
     //DO SOME PROCESSING DEPENDING ON THE IMPLEMENTATION (SIMPLE OR STATIC)
-    processLocalReaderProxyData(reader, reader_data);
+    process_reader_proxy_data(rtps_reader, reader_data);
     return true;
 }
 
@@ -359,13 +360,12 @@ bool EDP::new_writer_proxy_data(
     return true;
 }
 
-bool EDP::updatedLocalReader(
-        RTPSReader* reader,
-        const TopicAttributes&,
+bool EDP::update_reader(
+        RTPSReader* rtps_reader,
         const fastdds::dds::ReaderQos& rqos,
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
-    auto init_fun = [this, reader, &rqos, content_filter](
+    auto init_fun = [this, rtps_reader, &rqos, content_filter](
         ReaderProxyData* rdata,
         bool updating,
         const ParticipantProxyData& participant_data)
@@ -375,15 +375,15 @@ bool EDP::updatedLocalReader(
                 assert(updating);
 
                 const NetworkFactory& network = mp_RTPSParticipant->network_factory();
-                if (reader->getAttributes().multicastLocatorList.empty() &&
-                        reader->getAttributes().unicastLocatorList.empty())
+                if (rtps_reader->getAttributes().multicastLocatorList.empty() &&
+                        rtps_reader->getAttributes().unicastLocatorList.empty())
                 {
                     rdata->set_locators(participant_data.default_locators);
                 }
                 else
                 {
-                    rdata->set_multicast_locators(reader->getAttributes().multicastLocatorList, network);
-                    rdata->set_announced_unicast_locators(reader->getAttributes().unicastLocatorList);
+                    rdata->set_multicast_locators(rtps_reader->getAttributes().multicastLocatorList, network);
+                    rdata->set_announced_unicast_locators(rtps_reader->getAttributes().unicastLocatorList);
                 }
                 rdata->m_qos.setQos(rqos, false);
                 if (nullptr != content_filter)
@@ -406,16 +406,16 @@ bool EDP::updatedLocalReader(
                     rdata->content_filter().filter_expression = "";
                 }
                 rdata->isAlive(true);
-                rdata->m_expectsInlineQos = reader->expects_inline_qos();
+                rdata->m_expectsInlineQos = rtps_reader->expects_inline_qos();
 
                 return true;
             };
 
     GUID_t participant_guid;
-    ReaderProxyData* reader_data = this->mp_PDP->addReaderProxyData(reader->getGuid(), participant_guid, init_fun);
+    ReaderProxyData* reader_data = this->mp_PDP->addReaderProxyData(rtps_reader->getGuid(), participant_guid, init_fun);
     if (reader_data != nullptr)
     {
-        processLocalReaderProxyData(reader, reader_data);
+        process_reader_proxy_data(rtps_reader, reader_data);
 #ifdef FASTDDS_STATISTICS
         // notify monitor service about the new local entity proxy update
         if (nullptr != this->mp_PDP->get_proxy_observer())
@@ -427,7 +427,7 @@ bool EDP::updatedLocalReader(
         {
             pairing_reader_proxy_with_any_local_writer(participant_guid, reader_data);
         }
-        pairingReader(reader, participant_guid, *reader_data);
+        pairingReader(rtps_reader, participant_guid, *reader_data);
         return true;
     }
     return false;
