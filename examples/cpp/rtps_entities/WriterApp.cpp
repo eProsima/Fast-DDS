@@ -132,9 +132,9 @@ bool WriterApp::register_entity(std::string topic_name)
     return rtps_participant_->registerWriter(rtps_writer_, topic_att, writer_qos);
 }
 
-void WriterApp::onWriterMatched(
+void WriterApp::on_writer_matched(
         RTPSWriter*,
-        MatchingInfo& info)
+        const MatchingInfo& info)
 {
     if (info.status == MATCHED_MATCHING)
     {

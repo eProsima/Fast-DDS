@@ -55,9 +55,9 @@ public:
     void add_change_to_history();
 
     //! Writer matched method
-    void onWriterMatched(
+    void on_writer_matched(
             RTPSWriter*,
-            MatchingInfo& info) override;
+            const MatchingInfo& info) override;
 
     //! Trigger the end of execution
     void stop() override;
