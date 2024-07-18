@@ -73,8 +73,8 @@ void from_builtin_to_proxy(
  * @param [out]  proxy_data    ReaderProxyData to fill.
  */
 void from_builtin_to_proxy(
-        const SubscriptionBuiltinTopicData& proxy_data,
-        ReaderProxyData& builtin_data);
+        const SubscriptionBuiltinTopicData& builtin_data,
+        ReaderProxyData& proxy_data);
 
 }  // namespace rtps
 }  // namespace fastdds
