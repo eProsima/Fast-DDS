@@ -228,7 +228,9 @@ void DataWriterImpl::create_history(
 {
     history_.reset(new DataWriterHistory(
                 payload_pool, change_pool,
-                get_topic_attributes(qos_, *topic_, type_),
+                qos_.history(),
+                qos_.resource_limits(),
+                (type_->is_compute_key_provided ? WITH_KEY : NO_KEY),
                 type_->max_serialized_type_size,
                 qos_.endpoint().history_memory_policy,
                 [this](
@@ -245,9 +247,10 @@ ReturnCode_t DataWriterImpl::enable()
 {
     assert(writer_ == nullptr);
 
-    auto topic_att = get_topic_attributes(qos_, *topic_, type_);
     auto history_att = DataWriterHistory::to_history_attributes(
-        topic_att, type_->max_serialized_type_size, qos_.endpoint().history_memory_policy);
+        qos_.history(),
+        qos_.resource_limits(), (type_->is_compute_key_provided ? WITH_KEY : NO_KEY), type_->max_serialized_type_size,
+        qos_.endpoint().history_memory_policy);
     pool_config_ = PoolConfig::from_history_attributes(history_att);
 
     // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
