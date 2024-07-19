@@ -174,7 +174,7 @@ ParticipantProxyData* PDP::add_participant_proxy_data(
         {
             // Pool is empty but limit has not been reached, so we create a new entry.
             ++participant_proxies_number_;
-            ret_val = new ParticipantProxyData(mp_RTPSParticipant->getRTPSParticipantAttributes().allocation);
+            ret_val = new ParticipantProxyData(mp_RTPSParticipant->get_attributes().allocation);
             if (participant_guid != mp_RTPSParticipant->getGuid())
             {
                 ret_val->lease_duration_event = new TimedEvent(mp_RTPSParticipant->getEventResource(),
@@ -299,7 +299,7 @@ std::string PDP::check_participant_type(
 void PDP::initializeParticipantProxyData(
         ParticipantProxyData* participant_data)
 {
-    RTPSParticipantAttributes& attributes = mp_RTPSParticipant->getAttributes();
+    RTPSParticipantAttributes attributes = mp_RTPSParticipant->get_attributes();
     bool announce_locators = !mp_RTPSParticipant->is_intraprocess_only();
 
     participant_data->m_domain_id = mp_RTPSParticipant->get_domain_id();
@@ -461,7 +461,7 @@ bool PDP::initPDP(
 {
     EPROSIMA_LOG_INFO(RTPS_PDP, "Beginning");
     mp_RTPSParticipant = part;
-    m_discovery = mp_RTPSParticipant->getAttributes().builtin;
+    m_discovery = mp_RTPSParticipant->get_attributes().builtin;
     initial_announcements_ = m_discovery.discovery_config.initial_announcements;
     //CREATE ENDPOINTS
     if (!createPDPEndpoints())
@@ -941,11 +941,14 @@ ReaderProxyData* PDP::addReaderProxyData(
                 {
                     // Pool is empty but limit has not been reached, so we create a new entry.
                     ++reader_proxies_number_;
+
+                    auto allocations = mp_RTPSParticipant->get_attributes().allocation;
+
                     ret_val = new ReaderProxyData(
-                        mp_RTPSParticipant->getAttributes().allocation.locators.max_unicast_locators,
-                        mp_RTPSParticipant->getAttributes().allocation.locators.max_multicast_locators,
-                        mp_RTPSParticipant->getAttributes().allocation.data_limits,
-                        mp_RTPSParticipant->getAttributes().allocation.content_filter);
+                        allocations.locators.max_unicast_locators,
+                        allocations.locators.max_multicast_locators,
+                        allocations.data_limits,
+                        allocations.content_filter);
                 }
                 else
                 {
@@ -1044,10 +1047,13 @@ WriterProxyData* PDP::addWriterProxyData(
                 {
                     // Pool is empty but limit has not been reached, so we create a new entry.
                     ++writer_proxies_number_;
+
+                    auto allocations = mp_RTPSParticipant->get_attributes().allocation;
+
                     ret_val = new WriterProxyData(
-                        mp_RTPSParticipant->getAttributes().allocation.locators.max_unicast_locators,
-                        mp_RTPSParticipant->getAttributes().allocation.locators.max_multicast_locators,
-                        mp_RTPSParticipant->getAttributes().allocation.data_limits);
+                        allocations.locators.max_unicast_locators,
+                        allocations.locators.max_multicast_locators,
+                        allocations.data_limits);
                 }
                 else
                 {
@@ -1525,8 +1531,10 @@ void PDP::resend_ininitial_announcements()
 void PDP::set_external_participant_properties_(
         ParticipantProxyData* participant_data)
 {
+    auto part_attributes = mp_RTPSParticipant->get_attributes();
+
     // For each property add it if it should be sent (it is propagated)
-    for (auto const& property : mp_RTPSParticipant->getAttributes().properties.properties())
+    for (auto const& property : part_attributes.properties.properties())
     {
         if (property.propagate())
         {
@@ -1537,7 +1545,7 @@ void PDP::set_external_participant_properties_(
     // Set participant type property
     // TODO: This could be done somewhere else that makes more sense.
     std::stringstream participant_type;
-    participant_type << mp_RTPSParticipant->getAttributes().builtin.discovery_config.discoveryProtocol;
+    participant_type << part_attributes.builtin.discovery_config.discoveryProtocol;
     auto ptype = participant_type.str();
     participant_data->m_properties.push_back(fastdds::dds::parameter_property_participant_type, ptype);
 
@@ -1550,8 +1558,10 @@ void PDP::set_external_participant_properties_(
     };
     for (auto physical_property_name : physical_property_names)
     {
+        auto properties = part_attributes.properties;
         std::string* physical_property = PropertyPolicyHelper::find_property(
-            mp_RTPSParticipant->getAttributes().properties, physical_property_name);
+            properties, physical_property_name);
+
         if (nullptr != physical_property)
         {
             participant_data->m_properties.push_back(physical_property_name, *physical_property);
@@ -1583,7 +1593,7 @@ static void set_builtin_endpoint_locators(
         const PDP* pdp,
         const BuiltinProtocols* builtin)
 {
-    const RTPSParticipantAttributes& pattr = pdp->getRTPSParticipant()->getRTPSParticipantAttributes();
+    const RTPSParticipantAttributes& pattr = pdp->getRTPSParticipant()->get_attributes();
 
     auto part_data = pdp->getLocalParticipantProxyData();
     if (nullptr == part_data)
@@ -1617,7 +1627,7 @@ ReaderAttributes PDP::create_builtin_reader_attributes() const
 {
     ReaderAttributes attributes;
 
-    const RTPSParticipantAttributes& pattr = getRTPSParticipant()->getRTPSParticipantAttributes();
+    const RTPSParticipantAttributes& pattr = getRTPSParticipant()->get_attributes();
     set_builtin_matched_allocation(attributes.matched_writers_allocation, pattr);
     set_builtin_endpoint_locators(attributes.endpoint, this, mp_builtin);
 
@@ -1636,7 +1646,7 @@ WriterAttributes PDP::create_builtin_writer_attributes() const
 {
     WriterAttributes attributes;
 
-    const RTPSParticipantAttributes& pattr = getRTPSParticipant()->getRTPSParticipantAttributes();
+    const RTPSParticipantAttributes& pattr = getRTPSParticipant()->get_attributes();
     set_builtin_matched_allocation(attributes.matched_readers_allocation, pattr);
     set_builtin_endpoint_locators(attributes.endpoint, this, mp_builtin);
 

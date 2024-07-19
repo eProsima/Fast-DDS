@@ -108,14 +108,14 @@ WLP::WLP(
     , mp_builtinReaderSecureHistory(nullptr)
 #endif // if HAVE_SECURITY
     , temp_reader_proxy_data_(
-        p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-        p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-        p->mp_participantImpl->getRTPSParticipantAttributes().allocation.data_limits,
-        p->mp_participantImpl->getRTPSParticipantAttributes().allocation.content_filter)
+        p->mp_participantImpl->get_attributes().allocation.locators.max_unicast_locators,
+        p->mp_participantImpl->get_attributes().allocation.locators.max_multicast_locators,
+        p->mp_participantImpl->get_attributes().allocation.data_limits,
+        p->mp_participantImpl->get_attributes().allocation.content_filter)
     , temp_writer_proxy_data_(
-        p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-        p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-        p->mp_participantImpl->getRTPSParticipantAttributes().allocation.data_limits)
+        p->mp_participantImpl->get_attributes().allocation.locators.max_unicast_locators,
+        p->mp_participantImpl->get_attributes().allocation.locators.max_multicast_locators,
+        p->mp_participantImpl->get_attributes().allocation.data_limits)
 {
     GUID_t tmp_guid = p->mp_participantImpl->getGuid();
     tmp_guid.entityId = 0;
@@ -236,7 +236,7 @@ bool WLP::initWL(
 
 bool WLP::createEndpoints()
 {
-    const RTPSParticipantAttributes& pattr = mp_participant->getRTPSParticipantAttributes();
+    const RTPSParticipantAttributes& pattr = mp_participant->get_attributes();
     const ResourceLimitedContainerConfig& participants_allocation = pattr.allocation.participants;
 
     // Built-in writer history
@@ -335,7 +335,7 @@ bool WLP::createEndpoints()
 
 bool WLP::createSecureEndpoints()
 {
-    const RTPSParticipantAttributes& pattr = mp_participant->getRTPSParticipantAttributes();
+    const RTPSParticipantAttributes& pattr = mp_participant->get_attributes();
     const ResourceLimitedContainerConfig& participants_allocation = pattr.allocation.participants;
 
     //CREATE WRITER
@@ -485,7 +485,7 @@ bool WLP::assignRemoteEndpoints(
     const NetworkFactory& network = mp_participant->network_factory();
     uint32_t endp = pdata.m_availableBuiltinEndpoints;
     uint32_t auxendp = endp;
-    bool use_multicast_locators = !mp_participant->getAttributes().builtin.avoid_builtin_multicast ||
+    bool use_multicast_locators = !mp_participant->get_attributes().builtin.avoid_builtin_multicast ||
             pdata.metatraffic_locators.unicast.empty();
 
     std::lock_guard<std::mutex> data_guard(temp_data_lock_);

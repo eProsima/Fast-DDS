@@ -128,7 +128,7 @@ BaseReader::~BaseReader()
 bool BaseReader::matched_writer_add(
         const PublicationBuiltinTopicData& info)
 {
-    const auto& alloc = mp_RTPSParticipant->getRTPSParticipantAttributes().allocation;
+    const auto& alloc = mp_RTPSParticipant->get_attributes().allocation;
     WriterProxyData wdata(
         alloc.locators.max_unicast_locators,
         alloc.locators.max_multicast_locators,

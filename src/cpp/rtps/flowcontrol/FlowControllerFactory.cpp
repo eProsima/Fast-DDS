@@ -15,7 +15,7 @@ void FlowControllerFactory::init(
 
     const ThreadSettings& sender_thread_settings =
             (nullptr == participant_) ? ThreadSettings{}
-            : participant_->getAttributes().builtin_controllers_sender_thread;
+            : participant_->get_attributes().builtin_controllers_sender_thread;
 
     // PureSyncFlowController -> used by volatile besteffort writers.
     flow_controllers_.insert(decltype(flow_controllers_)::value_type(

@@ -172,7 +172,7 @@ void StatelessWriter::init(
     get_builtin_guid();
 
     const RemoteLocatorsAllocationAttributes& loc_alloc =
-            participant->getRTPSParticipantAttributes().allocation.locators;
+            participant->get_attributes().allocation.locators;
 
     for (size_t i = 0; i < attributes.matched_readers_allocation.initial; ++i)
     {
@@ -493,7 +493,7 @@ bool StatelessWriter::matched_reader_add_edp(
         if (get_matched_readers_size() + matched_readers_pool_.size() < max_readers)
         {
             const RemoteLocatorsAllocationAttributes& loc_alloc =
-                    mp_RTPSParticipant->getRTPSParticipantAttributes().allocation.locators;
+                    mp_RTPSParticipant->get_attributes().allocation.locators;
 
             new_reader.reset(new ReaderLocator(
                         this,

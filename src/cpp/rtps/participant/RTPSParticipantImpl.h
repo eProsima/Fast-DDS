@@ -707,7 +707,7 @@ private:
     void normalize_endpoint_locators(
             EndpointAttributes& endpoint_att);
 
-    //!Participant Mutex
+    //! Participant Mutex
     mutable std::mutex mutex_;
 
     //!Will this participant use intraprocess only?
@@ -796,10 +796,7 @@ private:
 
 public:
 
-    const RTPSParticipantAttributes& getRTPSParticipantAttributes() const
-    {
-        return this->m_att;
-    }
+    RTPSParticipantAttributes get_attributes() const;
 
     /**
      * Create a Writer in this RTPSParticipant.
@@ -945,15 +942,6 @@ public:
             const TopicAttributes& topicAtt,
             const fastdds::dds::ReaderQos& rqos,
             const ContentFilterProperty* content_filter = nullptr);
-
-    /**
-     * Get the participant attributes
-     * @return Participant attributes
-     */
-    inline RTPSParticipantAttributes& getAttributes()
-    {
-        return m_att;
-    }
 
     /**
      * Delete a user endpoint

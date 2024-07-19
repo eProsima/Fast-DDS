@@ -108,18 +108,17 @@ void PDPSimple::initializeParticipantProxyData(
 {
     PDP::initializeParticipantProxyData(participant_data);
 
-    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.
-                    use_SIMPLE_EndpointDiscoveryProtocol)
+    auto discovery_config = getRTPSParticipant()->get_attributes().builtin.discovery_config;
+
+    if (discovery_config.use_SIMPLE_EndpointDiscoveryProtocol)
     {
-        if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
-                        use_PublicationWriterANDSubscriptionReader)
+        if (discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
         {
             participant_data->m_availableBuiltinEndpoints |= fastdds::rtps::DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
             participant_data->m_availableBuiltinEndpoints |= fastdds::rtps::DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
         }
 
-        if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
-                        use_PublicationReaderANDSubscriptionWriter)
+        if (discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
         {
             participant_data->m_availableBuiltinEndpoints |= fastdds::rtps::DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
             participant_data->m_availableBuiltinEndpoints |=
@@ -127,8 +126,7 @@ void PDPSimple::initializeParticipantProxyData(
         }
 
 #if HAVE_SECURITY
-        if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
-                        enable_builtin_secure_publications_writer_and_subscriptions_reader)
+        if (discovery_config.m_simpleEDP.enable_builtin_secure_publications_writer_and_subscriptions_reader)
         {
             participant_data->m_availableBuiltinEndpoints |=
                     fastdds::rtps::DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_ANNOUNCER;
@@ -136,8 +134,7 @@ void PDPSimple::initializeParticipantProxyData(
                     fastdds::rtps::DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR;
         }
 
-        if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
-                        enable_builtin_secure_subscriptions_writer_and_publications_reader)
+        if (discovery_config.m_simpleEDP.enable_builtin_secure_subscriptions_writer_and_publications_reader)
         {
             participant_data->m_availableBuiltinEndpoints |=
                     fastdds::rtps::DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER;
@@ -146,8 +143,7 @@ void PDPSimple::initializeParticipantProxyData(
         }
 #endif // if HAVE_SECURITY
     }
-    else if (!getRTPSParticipant()->getAttributes().builtin.discovery_config.
-                    use_STATIC_EndpointDiscoveryProtocol)
+    else if (!discovery_config.use_STATIC_EndpointDiscoveryProtocol)
     {
         EPROSIMA_LOG_ERROR(RTPS_PDP, "Neither EDP simple nor EDP static enabled. Endpoints will not be discovered.");
     }
@@ -333,7 +329,7 @@ bool PDPSimple::createPDPEndpoints()
 
 bool PDPSimple::create_dcps_participant_endpoints()
 {
-    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
+    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->get_attributes();
     const RTPSParticipantAllocationAttributes& allocation = pattr.allocation;
     const BuiltinAttributes& builtin_att = mp_builtin->m_att;
     auto endpoints = dynamic_cast<fastdds::rtps::SimplePDPEndpoints*>(builtin_endpoints_.get());
@@ -469,7 +465,7 @@ bool PDPSimple::create_dcps_participant_endpoints()
 #if HAVE_SECURITY
 bool PDPSimple::create_dcps_participant_secure_endpoints()
 {
-    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
+    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->get_attributes();
     const RTPSParticipantAllocationAttributes& allocation = pattr.allocation;
     const BuiltinAttributes& builtin_att = mp_builtin->m_att;
     auto endpoints = dynamic_cast<fastdds::rtps::SimplePDPEndpointsSecure*>(builtin_endpoints_.get());
@@ -633,7 +629,7 @@ void PDPSimple::match_pdp_remote_endpoints(
     auto endpoints = static_cast<fastdds::rtps::SimplePDPEndpoints*>(builtin_endpoints_.get());
 
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
-    bool use_multicast_locators = !mp_RTPSParticipant->getAttributes().builtin.avoid_builtin_multicast ||
+    bool use_multicast_locators = !mp_RTPSParticipant->get_attributes().builtin.avoid_builtin_multicast ||
             pdata.metatraffic_locators.unicast.empty();
     const uint32_t endp = pdata.m_availableBuiltinEndpoints;
 

@@ -170,8 +170,6 @@ public:
             const EntityId_t& entityId, bool isBuiltin, bool enable));
     // *INDENT-ON*
 
-    MOCK_CONST_METHOD0(getParticipantMutex, std::recursive_mutex* ());
-
     bool createWriter(
             RTPSWriter** writer,
             WriterAttributes& param,
@@ -183,10 +181,7 @@ public:
         bool ret = createWriter_mock(writer, param, hist, listen, entityId, isBuiltin);
         if (*writer != nullptr)
         {
-            (*writer)->history_ = hist;
-
             auto guid = generate_endpoint_guid();
-            (*writer)->m_guid = guid;
             endpoints_.emplace(guid, *writer);
         }
         return ret;
@@ -204,10 +199,7 @@ public:
         bool ret = createWriter_mock(writer, param, hist, listen, entityId, isBuiltin);
         if (*writer != nullptr)
         {
-            (*writer)->history_ = hist;
-
             auto guid = generate_endpoint_guid();
-            (*writer)->m_guid = guid;
             endpoints_.emplace(guid, *writer);
         }
         return ret;
@@ -225,11 +217,7 @@ public:
         bool ret = createReader_mock(reader, param, hist, listen, entityId, isBuiltin, enable);
         if (*reader != nullptr)
         {
-            (*reader)->history_ = hist;
-            fastdds::rtps::BaseReader::downcast(*reader)->listener_ = listen;
-
             auto guid = generate_endpoint_guid();
-            (*reader)->m_guid = guid;
             endpoints_.emplace(guid, *reader);
         }
         return ret;
@@ -248,11 +236,7 @@ public:
         bool ret = createReader_mock(reader, param, hist, listen, entityId, isBuiltin, enable);
         if (*reader != nullptr)
         {
-            (*reader)->history_ = hist;
-            fastdds::rtps::BaseReader::downcast(*reader)->listener_ = listen;
-
             auto guid = generate_endpoint_guid();
-            (*reader)->m_guid = guid;
             endpoints_.emplace(guid, *reader);
         }
         return ret;
@@ -310,12 +294,7 @@ public:
         return 65536;
     }
 
-    const RTPSParticipantAttributes& getRTPSParticipantAttributes() const
-    {
-        return attr_;
-    }
-
-    RTPSParticipantAttributes& getAttributes()
+    RTPSParticipantAttributes get_attributes() const
     {
         return attr_;
     }

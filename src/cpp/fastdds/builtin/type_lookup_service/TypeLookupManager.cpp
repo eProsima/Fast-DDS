@@ -108,15 +108,17 @@ bool TypeLookupManager::init(
 {
     participant_ = protocols->mp_participantImpl;
     builtin_protocols_ = protocols;
+    auto locators_allocations = participant_->get_attributes().allocation.locators;
 
     local_instance_name_ = get_instance_name(participant_->getGuid());
 
     temp_reader_proxy_data_ = new fastdds::rtps::ReaderProxyData(
-        protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-        protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators);
+        locators_allocations.max_unicast_locators,
+        locators_allocations.max_multicast_locators);
+
     temp_writer_proxy_data_ = new fastdds::rtps::WriterProxyData(
-        protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-        protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators);
+        locators_allocations.max_unicast_locators,
+        locators_allocations.max_multicast_locators);
 
     type_propagation_ = participant_->type_propagation();
 
@@ -526,7 +528,7 @@ bool TypeLookupManager::create_endpoints()
 {
     bool ret = true;
 
-    const RTPSParticipantAttributes& pattr = participant_->getRTPSParticipantAttributes();
+    const RTPSParticipantAttributes& pattr = participant_->get_attributes();
 
     // Built-in history attributes.
     HistoryAttributes hatt;

@@ -120,9 +120,9 @@ std::vector<std::string> RTPSParticipant::getParticipantNames() const
     return mp_impl->getParticipantNames();
 }
 
-const RTPSParticipantAttributes& RTPSParticipant::getRTPSParticipantAttributes() const
+RTPSParticipantAttributes RTPSParticipant::get_attributes() const
 {
-    return mp_impl->getRTPSParticipantAttributes();
+    return mp_impl->get_attributes();
 }
 
 uint32_t RTPSParticipant::getMaxMessageSize() const

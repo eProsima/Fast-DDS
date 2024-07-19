@@ -50,7 +50,7 @@ namespace rtps {
 PDPListener::PDPListener(
         PDP* parent)
     : parent_pdp_(parent)
-    , temp_participant_data_(parent->getRTPSParticipant()->getRTPSParticipantAttributes().allocation)
+    , temp_participant_data_(parent->getRTPSParticipant()->get_attributes().allocation)
 {
 }
 
@@ -123,7 +123,7 @@ void PDPListener::on_new_cache_change_added(
             }
 
             // Filter locators
-            const auto& pattr = parent_pdp_->getRTPSParticipant()->getAttributes();
+            const auto& pattr = parent_pdp_->getRTPSParticipant()->get_attributes();
             fastdds::rtps::network::external_locators::filter_remote_locators(temp_participant_data_,
                     pattr.builtin.metatraffic_external_unicast_locators, pattr.default_external_unicast_locators,
                     pattr.ignore_non_matching_locators);

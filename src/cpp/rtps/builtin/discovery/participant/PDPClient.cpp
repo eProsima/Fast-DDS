@@ -106,25 +106,21 @@ void PDPClient::initializeParticipantProxyData(
 {
     PDP::initializeParticipantProxyData(participant_data); // TODO: Remember that the PDP version USES security
 
-    if (
-        getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol
-        != DiscoveryProtocol::CLIENT
-        &&
-        getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol
-        != DiscoveryProtocol::SUPER_CLIENT    )
+    auto discovery_config = getRTPSParticipant()->get_attributes().builtin.discovery_config;
+
+    if ((DiscoveryProtocol::CLIENT != discovery_config.discoveryProtocol) &&
+            (DiscoveryProtocol::SUPER_CLIENT != discovery_config.discoveryProtocol))
     {
         EPROSIMA_LOG_ERROR(RTPS_PDP, "Using a PDP client object with another user's settings");
     }
 
-    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
-                    use_PublicationWriterANDSubscriptionReader)
+    if (discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
     {
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
     }
 
-    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
-                    use_PublicationReaderANDSubscriptionWriter)
+    if (discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
     {
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
@@ -136,15 +132,13 @@ void PDPClient::initializeParticipantProxyData(
                           fastdds::dds::parameter_property_current_ds_version}));
 
 #if HAVE_SECURITY
-    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP
-                    .enable_builtin_secure_publications_writer_and_subscriptions_reader)
+    if (discovery_config.m_simpleEDP.enable_builtin_secure_publications_writer_and_subscriptions_reader)
     {
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_ANNOUNCER;
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR;
     }
 
-    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP
-                    .enable_builtin_secure_subscriptions_writer_and_publications_reader)
+    if (discovery_config.m_simpleEDP.enable_builtin_secure_subscriptions_writer_and_publications_reader)
     {
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER;
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR;
@@ -251,7 +245,7 @@ bool PDPClient::create_secure_ds_pdp_endpoints()
 bool PDPClient::create_ds_pdp_best_effort_reader(
         DiscoveryServerPDPEndpointsSecure& endpoints)
 {
-    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
+    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->get_attributes();
 
     HistoryAttributes hatt;
     hatt.payloadMaxSize = mp_builtin->m_att.readerPayloadSize;
@@ -316,7 +310,7 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
 
     EPROSIMA_LOG_INFO(RTPS_PDP, "Beginning PDPClient Endpoints creation");
 
-    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
+    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->get_attributes();
 
     /***********************************
     * PDP READER
