@@ -1811,14 +1811,8 @@ fastdds::TopicAttributes DataReaderImpl::topic_attributes() const
                     topic_att.type_information.type_information.minimal() = type_info.minimal();
                     break;
                 }
-                case TypePropagation::TYPEPROPAGATION_REGISTRATION_ONLY:
-                {
-                    // Use both complete and minimal type information
-                    topic_att.type_information.type_information = type_info;
-                    break;
-                }
                 default:
-                    // This should never happen
+                    // This should never happen as other cases are protected by should_assign_type_information
                     assert(false);
                     break;
             }
