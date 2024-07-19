@@ -228,6 +228,12 @@ public:
     {
         configuration_config config;
 
+        if (argc < 2)
+        {
+            EPROSIMA_LOG_ERROR(CLI_PARSER, "missing entity argument");
+            print_help(EXIT_FAILURE);
+        }
+
         std::string first_argument = argv[1];
 
         if (first_argument == "publisher" )
