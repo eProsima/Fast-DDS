@@ -33,8 +33,8 @@
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
-#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/discovery/endpoint/EDPClient.h>
 #include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>

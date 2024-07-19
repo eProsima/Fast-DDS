@@ -16,9 +16,9 @@
 
 #include <gtest/gtest.h>
 
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
-#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/messages/CDRMessage.hpp>
 #include <security/accesscontrol/AccessPermissionsHandle.h>
 #include <security/accesscontrol/Permissions.h>

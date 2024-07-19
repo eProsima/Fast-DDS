@@ -34,9 +34,9 @@
 
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
-#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/security/exceptions/SecurityException.h>
 #include <security/accesscontrol/AccessPermissionsHandle.h>
 #include <security/accesscontrol/DistinguishedName.h>

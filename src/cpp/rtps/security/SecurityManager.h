@@ -31,9 +31,9 @@
 #include <fastdds/rtps/reader/ReaderListener.hpp>
 #include <fastdds/rtps/writer/WriterListener.hpp>
 
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
-#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/resources/TimedEvent.h>
 #include <rtps/security/authentication/Handshake.h>
 #include <rtps/security/common/ParticipantGenericMessage.h>

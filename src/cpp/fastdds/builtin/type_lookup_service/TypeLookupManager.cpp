@@ -34,9 +34,9 @@
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
 #include <rtps/builtin/BuiltinProtocols.h>
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
-#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/RTPSDomainImpl.hpp>

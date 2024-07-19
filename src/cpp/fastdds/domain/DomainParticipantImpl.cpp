@@ -25,7 +25,6 @@
 #include <asio.hpp>
 
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
-#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -50,6 +49,7 @@
 #include <fastdds/rtps/RTPSDomain.hpp>
 #include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
 
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
 #include <fastdds/publisher/DataWriterImpl.hpp>
 #include <fastdds/publisher/PublisherImpl.hpp>

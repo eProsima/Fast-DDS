@@ -44,8 +44,8 @@
 
 #include <rtps/attributes/ServerAttributes.hpp>
 #include <rtps/builtin/BuiltinProtocols.h>
-#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
+#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/builtin/discovery/participant/PDPClient.h>

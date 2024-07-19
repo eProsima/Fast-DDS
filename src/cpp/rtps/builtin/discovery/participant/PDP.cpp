@@ -34,10 +34,9 @@
 #include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
 #include <fastdds/rtps/reader/ReaderDiscoveryStatus.hpp>
 #include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
-
-#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <fastdds/utils/IPLocator.hpp>
 
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/ProxyDataConverters.hpp>
