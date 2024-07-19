@@ -35,7 +35,7 @@ namespace statistics {
  * @return true when the entity id corresponds to a builtin monitor service writer.
  */
 inline bool is_monitor_service_builtin(
-        const fastdds::rtps::EntityId_t& entity_id)
+        const fastrtps::rtps::EntityId_t& entity_id)
 {
     bool ret = false;
 #ifdef FASTDDS_STATISTICS
