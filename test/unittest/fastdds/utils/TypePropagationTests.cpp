@@ -37,7 +37,7 @@ TEST(TypePropagationTests, to_type_propagation)
     // Generate random string for testing the case where the property is not found
     std::string random_property_name = generate_random_string(generate_random_number(0, 254));
 
-    // Just in case the generated string is "enabled" or "disabled"
+    // Just in case the generated string equals the property name
     if (parameter_policy_type_propagation == random_property_name)
     {
         random_property_name += "a";
@@ -46,8 +46,11 @@ TEST(TypePropagationTests, to_type_propagation)
     // Generate random string for testing the TYPEPROPAGATION_UNKNOWN case
     std::string random_property_value = generate_random_string(generate_random_number(0, 254));
 
-    // Just in case the generated string is "enabled" or "disabled"
-    if (("enabled" == random_property_value) || ("disabled" == random_property_value))
+    // Just in case the generated string is a valid value for the property
+    if (("enabled" == random_property_value) ||
+        ("disabled" == random_property_value) ||
+        ("minimal_bandwidth" == random_property_value) ||
+        ("registration_only" == random_property_value))
     {
         random_property_value += "a";
     }
