@@ -24,6 +24,7 @@
 #include <vector>
 
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
+#include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
@@ -1538,6 +1539,8 @@ public:
     }
 
 };
+
+using PropertyPolicyQos = fastdds::rtps::PropertyPolicy;
 
 namespace xtypes {
 class TypeInformation;

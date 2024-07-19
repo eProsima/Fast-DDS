@@ -142,8 +142,7 @@ bool BuiltinProtocols::initBuiltinProtocols(
     }
 
     // TypeLookupManager
-    auto properties = p_part->getAttributes().properties;
-    auto type_propagation = dds::utils::to_type_propagation(properties);
+    auto type_propagation = p_part->type_propagation();
     bool should_create_typelookup =
             (dds::utils::TypePropagation::TYPEPROPAGATION_ENABLED == type_propagation) ||
             (dds::utils::TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH == type_propagation);

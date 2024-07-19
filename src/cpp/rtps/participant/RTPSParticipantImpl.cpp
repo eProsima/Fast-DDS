@@ -42,6 +42,7 @@
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 #include <fastdds/utils/IPFinder.hpp>
 
+#include <fastdds/utils/TypePropagation.hpp>
 #include <rtps/attributes/ServerAttributes.hpp>
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
@@ -265,7 +266,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 #endif // if HAVE_SECURITY
     , mp_participantListener(plisten)
     , mp_userParticipant(par)
-    , mp_mutex(new std::recursive_mutex())
     , is_intraprocess_only_(should_be_intraprocess_only(PParam))
 #ifdef FASTDDS_STATISTICS
     , monitor_server_(nullptr)
@@ -795,8 +795,6 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
     delete mp_userParticipant;
     mp_userParticipant = nullptr;
     send_resource_list_.clear();
-
-    delete mp_mutex;
 }
 
 template <EndpointKind_t kind, octet no_key, octet with_key>
@@ -1426,6 +1424,8 @@ bool RTPSParticipantImpl::registerReader(
 void RTPSParticipantImpl::update_attributes(
         const RTPSParticipantAttributes& patt)
 {
+    std::lock_guard<std::mutex> _(mutex_);
+
     bool local_interfaces_changed = false;
 
     // Update cached network interfaces
@@ -3160,6 +3160,12 @@ void RTPSParticipantImpl::update_removed_participant(
             remote_participant_locators,
             initial_peers_and_ds);
     }
+}
+
+dds::utils::TypePropagation RTPSParticipantImpl::type_propagation() const
+{
+    std::lock_guard<std::mutex> _(mutex_);
+    return dds::utils::to_type_propagation(m_att.properties);
 }
 
 } /* namespace rtps */

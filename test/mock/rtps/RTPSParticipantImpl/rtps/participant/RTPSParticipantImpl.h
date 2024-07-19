@@ -34,6 +34,7 @@
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
+#include <fastdds/utils/TypePropagation.hpp>
 #include <rtps/network/NetworkFactory.h>
 #include <rtps/reader/BaseReader.hpp>
 #include <rtps/resources/ResourceEvent.h>
@@ -415,6 +416,8 @@ public:
     {
         return nullptr;
     }
+
+    MOCK_METHOD(dds::utils::TypePropagation, type_propagation, (), (const));
 
 private:
 

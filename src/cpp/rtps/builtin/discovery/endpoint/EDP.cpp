@@ -138,12 +138,10 @@ bool EDP::newLocalReaderProxyData(
                 rpd->typeName(att.getTopicDataType());
                 rpd->topicKind(att.getTopicKind());
 
-                using dds::utils::to_type_propagation;
                 using dds::utils::TypePropagation;
                 using dds::xtypes::TypeInformationParameter;
 
-                auto properties = mp_RTPSParticipant->getAttributes().properties;
-                auto type_propagation = to_type_propagation(properties);
+                auto type_propagation = mp_RTPSParticipant->type_propagation();
                 assert(TypePropagation::TYPEPROPAGATION_UNKNOWN != type_propagation);
 
                 if (att.type_information.assigned())
@@ -277,12 +275,10 @@ bool EDP::newLocalWriterProxyData(
                 wpd->typeName(att.getTopicDataType());
                 wpd->topicKind(att.getTopicKind());
 
-                using dds::utils::to_type_propagation;
                 using dds::utils::TypePropagation;
                 using dds::xtypes::TypeInformationParameter;
 
-                auto properties = mp_RTPSParticipant->getAttributes().properties;
-                auto type_propagation = to_type_propagation(properties);
+                auto type_propagation = mp_RTPSParticipant->type_propagation();
                 assert(TypePropagation::TYPEPROPAGATION_UNKNOWN != type_propagation);
 
                 if (att.type_information.assigned())

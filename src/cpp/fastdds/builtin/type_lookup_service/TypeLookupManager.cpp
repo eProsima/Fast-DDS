@@ -118,8 +118,7 @@ bool TypeLookupManager::init(
         protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
         protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators);
 
-    auto properties = participant_->getAttributes().properties;
-    type_propagation_ = utils::to_type_propagation(properties);
+    type_propagation_ = participant_->type_propagation();
 
     // Check if ReaderProxyData and WriterProxyData objects were created successfully
     if (temp_reader_proxy_data_ && temp_writer_proxy_data_)
