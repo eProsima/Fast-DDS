@@ -105,8 +105,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ValueStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -205,8 +208,17 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.my_basic_map();
+
+                        scdr << data.my_complex_map();
+
+                        scdr << data.my_basic_bounded_map();
+
+                        scdr << data.my_complex_bounded_map();
+
 }
 
 

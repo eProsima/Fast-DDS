@@ -105,8 +105,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_short();
+
 }
 
 
@@ -181,8 +184,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortUShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_ushort();
+
 }
 
 
@@ -257,8 +263,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_long();
+
 }
 
 
@@ -333,8 +342,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortULong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_ulong();
+
 }
 
 
@@ -409,8 +421,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortLongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_longlong();
+
 }
 
 
@@ -485,8 +500,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortULongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_ulonglong();
+
 }
 
 
@@ -561,8 +579,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortFloat& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_float();
+
 }
 
 
@@ -637,8 +658,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_double();
+
 }
 
 
@@ -713,8 +737,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortLongDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_longdouble();
+
 }
 
 
@@ -789,8 +816,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortBoolean& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_boolean();
+
 }
 
 
@@ -865,8 +895,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortOctet& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_octet();
+
 }
 
 
@@ -941,8 +974,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_char();
+
 }
 
 
@@ -1017,8 +1053,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortWChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_wchar();
+
 }
 
 
@@ -1093,8 +1132,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_string();
+
 }
 
 
@@ -1169,8 +1211,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortWString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_wstring();
+
 }
 
 
@@ -1245,8 +1290,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortInnerAliasBoundedStringHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_inneraliasboundedstringhelper();
+
 }
 
 
@@ -1321,8 +1369,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortInnerAliasBoundedWStringHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_inneraliasboundedwstringhelper();
+
 }
 
 
@@ -1397,8 +1448,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortInnerEnumHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_innerenumhelper();
+
 }
 
 
@@ -1473,8 +1527,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortInnerBitMaskHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_innerbitmaskhelper();
+
 }
 
 
@@ -1549,8 +1606,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortInnerAliasHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_inneraliashelper();
+
 }
 
 
@@ -1625,8 +1685,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortInnerAliasArrayHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_inneraliasarrayhelper();
+
 }
 
 
@@ -1701,8 +1764,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortInnerAliasSequenceHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_inneraliassequencehelper();
+
 }
 
 
@@ -1777,8 +1843,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortInnerAliasMapHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_inneraliasmaphelper();
+
 }
 
 
@@ -1853,8 +1922,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortInnerUnionHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_innerunionhelper();
+
 }
 
 
@@ -1929,8 +2001,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortInnerStructureHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_innerstructurehelper();
+
 }
 
 
@@ -2005,8 +2080,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapShortInnerBitsetHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_short_innerbitsethelper();
+
 }
 
 
@@ -2081,8 +2159,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_short();
+
 }
 
 
@@ -2157,8 +2238,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortUShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_ushort();
+
 }
 
 
@@ -2233,8 +2317,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_long();
+
 }
 
 
@@ -2309,8 +2396,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortULong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_ulong();
+
 }
 
 
@@ -2385,8 +2475,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortLongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_longlong();
+
 }
 
 
@@ -2461,8 +2554,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortULongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_ulonglong();
+
 }
 
 
@@ -2537,8 +2633,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortFloat& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_float();
+
 }
 
 
@@ -2613,8 +2712,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_double();
+
 }
 
 
@@ -2689,8 +2791,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortLongDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_longdouble();
+
 }
 
 
@@ -2765,8 +2870,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortBoolean& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_boolean();
+
 }
 
 
@@ -2841,8 +2949,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortOctet& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_octet();
+
 }
 
 
@@ -2917,8 +3028,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_char();
+
 }
 
 
@@ -2993,8 +3107,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortWChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_wchar();
+
 }
 
 
@@ -3069,8 +3186,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_string();
+
 }
 
 
@@ -3145,8 +3265,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortWString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_wstring();
+
 }
 
 
@@ -3221,8 +3344,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortInnerAliasBoundedStringHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_inneraliasboundedstringhelper();
+
 }
 
 
@@ -3297,8 +3423,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortInnerAliasBoundedWStringHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_inneraliasboundedwstringhelper();
+
 }
 
 
@@ -3373,8 +3502,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortInnerEnumHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_innerenumhelper();
+
 }
 
 
@@ -3449,8 +3581,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortInnerBitMaskHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_innerbitmaskhelper();
+
 }
 
 
@@ -3525,8 +3660,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortInnerAliasHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_inneraliashelper();
+
 }
 
 
@@ -3601,8 +3739,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortInnerAliasArrayHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_inneraliasarrayhelper();
+
 }
 
 
@@ -3677,8 +3818,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortInnerAliasSequenceHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_inneraliassequencehelper();
+
 }
 
 
@@ -3753,8 +3897,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortInnerAliasMapHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_inneraliasmaphelper();
+
 }
 
 
@@ -3829,8 +3976,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortInnerUnionHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_innerunionhelper();
+
 }
 
 
@@ -3905,8 +4055,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortInnerStructureHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_innerstructurehelper();
+
 }
 
 
@@ -3981,8 +4134,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapUShortInnerBitsetHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ushort_innerbitsethelper();
+
 }
 
 
@@ -4057,8 +4213,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_short();
+
 }
 
 
@@ -4133,8 +4292,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongUShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_ushort();
+
 }
 
 
@@ -4209,8 +4371,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_long();
+
 }
 
 
@@ -4285,8 +4450,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongULong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_ulong();
+
 }
 
 
@@ -4361,8 +4529,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongKeyLongLongValue& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_longlong();
+
 }
 
 
@@ -4437,8 +4608,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongULongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_ulonglong();
+
 }
 
 
@@ -4513,8 +4687,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongFloat& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_float();
+
 }
 
 
@@ -4589,8 +4766,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_double();
+
 }
 
 
@@ -4665,8 +4845,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongKeyLongDoubleValue& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_longdouble();
+
 }
 
 
@@ -4741,8 +4924,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongBoolean& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_boolean();
+
 }
 
 
@@ -4817,8 +5003,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongOctet& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_octet();
+
 }
 
 
@@ -4893,8 +5082,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_char();
+
 }
 
 
@@ -4969,8 +5161,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongWChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_wchar();
+
 }
 
 
@@ -5045,8 +5240,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_string();
+
 }
 
 
@@ -5121,8 +5319,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongWString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_wstring();
+
 }
 
 
@@ -5197,8 +5398,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongInnerAliasBoundedStringHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_inneraliasboundedstringhelper();
+
 }
 
 
@@ -5273,8 +5477,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongInnerAliasBoundedWStringHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_inneraliasboundedwstringhelper();
+
 }
 
 
@@ -5349,8 +5556,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongInnerEnumHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_innerenumhelper();
+
 }
 
 
@@ -5425,8 +5635,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongInnerBitMaskHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_innerbitmaskhelper();
+
 }
 
 
@@ -5501,8 +5714,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongInnerAliasHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_inneraliashelper();
+
 }
 
 
@@ -5577,8 +5793,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongInnerAliasArrayHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_inneraliasarrayhelper();
+
 }
 
 
@@ -5653,8 +5872,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongInnerAliasSequenceHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_inneraliassequencehelper();
+
 }
 
 
@@ -5729,8 +5951,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongInnerAliasMapHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_inneraliasmaphelper();
+
 }
 
 
@@ -5805,8 +6030,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongInnerUnionHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_innerunionhelper();
+
 }
 
 
@@ -5881,8 +6109,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongInnerStructureHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_innerstructurehelper();
+
 }
 
 
@@ -5957,8 +6188,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongInnerBitsetHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_long_innerbitsethelper();
+
 }
 
 
@@ -6033,8 +6267,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_short();
+
 }
 
 
@@ -6109,8 +6346,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongUShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_ushort();
+
 }
 
 
@@ -6185,8 +6425,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_long();
+
 }
 
 
@@ -6261,8 +6504,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongULong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_ulong();
+
 }
 
 
@@ -6337,8 +6583,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapKeyULongValueLongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_longlong();
+
 }
 
 
@@ -6413,8 +6662,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongULongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_ulonglong();
+
 }
 
 
@@ -6489,8 +6741,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongFloat& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_float();
+
 }
 
 
@@ -6565,8 +6820,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_double();
+
 }
 
 
@@ -6641,8 +6899,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapKeyULongValueLongDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_longdouble();
+
 }
 
 
@@ -6717,8 +6978,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongBoolean& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_boolean();
+
 }
 
 
@@ -6793,8 +7057,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongOctet& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_octet();
+
 }
 
 
@@ -6869,8 +7136,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_char();
+
 }
 
 
@@ -6945,8 +7215,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongWChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_wchar();
+
 }
 
 
@@ -7021,8 +7294,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_string();
+
 }
 
 
@@ -7097,8 +7373,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongWString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_wstring();
+
 }
 
 
@@ -7173,8 +7452,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongInnerAliasBoundedStringHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_inneraliasboundedstringhelper();
+
 }
 
 
@@ -7249,8 +7531,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongInnerAliasBoundedWStringHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_inneraliasboundedwstringhelper();
+
 }
 
 
@@ -7325,8 +7610,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongInnerEnumHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_innerenumhelper();
+
 }
 
 
@@ -7401,8 +7689,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongInnerBitMaskHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_innerbitmaskhelper();
+
 }
 
 
@@ -7477,8 +7768,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongInnerAliasHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_inneraliashelper();
+
 }
 
 
@@ -7553,8 +7847,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongInnerAliasArrayHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_inneraliasarrayhelper();
+
 }
 
 
@@ -7629,8 +7926,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongInnerAliasSequenceHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_inneraliassequencehelper();
+
 }
 
 
@@ -7705,8 +8005,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongInnerAliasMapHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_inneraliasmaphelper();
+
 }
 
 
@@ -7781,8 +8084,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongInnerUnionHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_innerunionhelper();
+
 }
 
 
@@ -7857,8 +8163,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongInnerStructureHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_innerstructurehelper();
+
 }
 
 
@@ -7933,8 +8242,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongInnerBitsetHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_ulong_innerbitsethelper();
+
 }
 
 
@@ -8009,8 +8321,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_short();
+
 }
 
 
@@ -8085,8 +8400,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongUShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_ushort();
+
 }
 
 
@@ -8161,8 +8479,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongKeyLongValue& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_long();
+
 }
 
 
@@ -8237,8 +8558,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongULong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_ulong();
+
 }
 
 
@@ -8313,8 +8637,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongLongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_longlong();
+
 }
 
 
@@ -8389,8 +8716,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongULongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_ulonglong();
+
 }
 
 
@@ -8465,8 +8795,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongFloat& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_float();
+
 }
 
 
@@ -8541,8 +8874,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongKeyDoubleValue& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_double();
+
 }
 
 
@@ -8617,8 +8953,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongLongDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_longdouble();
+
 }
 
 
@@ -8693,8 +9032,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongBoolean& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_boolean();
+
 }
 
 
@@ -8769,8 +9111,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongOctet& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_octet();
+
 }
 
 
@@ -8845,8 +9190,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_char();
+
 }
 
 
@@ -8921,8 +9269,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongWChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_wchar();
+
 }
 
 
@@ -8997,8 +9348,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_string();
+
 }
 
 
@@ -9073,8 +9427,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongWString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_wstring();
+
 }
 
 
@@ -9149,8 +9506,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongInnerAliasBoundedStringHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_inneraliasboundedstringhelper();
+
 }
 
 
@@ -9225,8 +9585,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongInnerAliasBoundedWStringHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_inneraliasboundedwstringhelper();
+
 }
 
 
@@ -9301,8 +9664,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongInnerEnumHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_innerenumhelper();
+
 }
 
 
@@ -9377,8 +9743,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongInnerBitMaskHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_innerbitmaskhelper();
+
 }
 
 
@@ -9453,8 +9822,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongInnerAliasHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_inneraliashelper();
+
 }
 
 
@@ -9529,8 +9901,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongInnerAliasArrayHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_inneraliasarrayhelper();
+
 }
 
 
@@ -9605,8 +9980,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongInnerAliasSequenceHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_inneraliassequencehelper();
+
 }
 
 
@@ -9681,8 +10059,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongInnerAliasMapHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_inneraliasmaphelper();
+
 }
 
 
@@ -9757,8 +10138,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongInnerUnionHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_innerunionhelper();
+
 }
 
 
@@ -9833,8 +10217,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongInnerStructureHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_innerstructurehelper();
+
 }
 
 
@@ -9909,8 +10296,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapLongLongInnerBitsetHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_longlong_innerbitsethelper();
+
 }
 
 
@@ -9985,8 +10375,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_short();
+
 }
 
 
@@ -10061,8 +10454,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongUShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_u_short();
+
 }
 
 
@@ -10137,8 +10533,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_long();
+
 }
 
 
@@ -10213,8 +10612,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongULong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_u_long();
+
 }
 
 
@@ -10289,8 +10691,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongLongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_long_long();
+
 }
 
 
@@ -10365,8 +10770,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongULongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_u_long_long();
+
 }
 
 
@@ -10441,8 +10849,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongFloat& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_float();
+
 }
 
 
@@ -10517,8 +10928,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapKeyULongLongValueDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_double();
+
 }
 
 
@@ -10593,8 +11007,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongLongDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_long_double();
+
 }
 
 
@@ -10669,8 +11086,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongBoolean& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_boolean();
+
 }
 
 
@@ -10745,8 +11165,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongOctet& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_octet();
+
 }
 
 
@@ -10821,8 +11244,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_char();
+
 }
 
 
@@ -10897,8 +11323,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongWChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_wchar();
+
 }
 
 
@@ -10973,8 +11402,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_string();
+
 }
 
 
@@ -11049,8 +11481,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongWString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_wstring();
+
 }
 
 
@@ -11125,8 +11560,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongInnerAliasBoundedStringHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_inner_alias_bounded_string_helper();
+
 }
 
 
@@ -11201,8 +11639,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongInnerAliasBoundedWStringHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_inner_alias_bounded_wstring_helper();
+
 }
 
 
@@ -11277,8 +11718,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongInnerEnumHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_inner_enum_helper();
+
 }
 
 
@@ -11353,8 +11797,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongInnerBitMaskHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_inner_bit_mask_helper();
+
 }
 
 
@@ -11429,8 +11876,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongInnerAliasHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_inner_alias_helper();
+
 }
 
 
@@ -11505,8 +11955,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongInnerAliasArrayHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_inner_alias_array_helper();
+
 }
 
 
@@ -11581,8 +12034,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongInnerAliasSequenceHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_inner_alias_sequence_helper();
+
 }
 
 
@@ -11657,8 +12113,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongInnerAliasMapHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_inner_alias_map_helper();
+
 }
 
 
@@ -11733,8 +12192,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongInnerUnionHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_inner_union_helper();
+
 }
 
 
@@ -11809,8 +12271,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongInnerStructureHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_inner_structure_helper();
+
 }
 
 
@@ -11885,8 +12350,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapULongLongInnerBitsetHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_u_long_long_inner_bitset_helper();
+
 }
 
 
@@ -11961,8 +12429,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_short();
+
 }
 
 
@@ -12037,8 +12508,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringUShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_ushort();
+
 }
 
 
@@ -12113,8 +12587,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_long();
+
 }
 
 
@@ -12189,8 +12666,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringULong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_ulong();
+
 }
 
 
@@ -12265,8 +12745,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringLongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_longlong();
+
 }
 
 
@@ -12341,8 +12824,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringULongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_ulonglong();
+
 }
 
 
@@ -12417,8 +12903,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringFloat& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_float();
+
 }
 
 
@@ -12493,8 +12982,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_double();
+
 }
 
 
@@ -12569,8 +13061,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringLongDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_longdouble();
+
 }
 
 
@@ -12645,8 +13140,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringBoolean& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_boolean();
+
 }
 
 
@@ -12721,8 +13219,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringOctet& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_octet();
+
 }
 
 
@@ -12797,8 +13298,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_char();
+
 }
 
 
@@ -12873,8 +13377,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringWChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_wchar();
+
 }
 
 
@@ -12949,8 +13456,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_string();
+
 }
 
 
@@ -13025,8 +13535,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringWString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_wstring();
+
 }
 
 
@@ -13101,8 +13614,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringInnerAliasBoundedStringHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_inneraliasboundedstringhelper();
+
 }
 
 
@@ -13177,8 +13693,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringInnerAliasBoundedWStringHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_inneraliasboundedwstringhelper();
+
 }
 
 
@@ -13253,8 +13772,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringInnerEnumHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_innerenumhelper();
+
 }
 
 
@@ -13329,8 +13851,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringInnerBitMaskHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_innerbitmaskhelper();
+
 }
 
 
@@ -13405,8 +13930,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringInnerAliasHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_inneraliashelper();
+
 }
 
 
@@ -13481,8 +14009,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringInnerAliasArrayHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_inneraliasarrayhelper();
+
 }
 
 
@@ -13557,8 +14088,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringInnerAliasSequenceHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_inneraliassequencehelper();
+
 }
 
 
@@ -13633,8 +14167,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringInnerAliasMapHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_inneraliasmaphelper();
+
 }
 
 
@@ -13709,8 +14246,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringInnerUnionHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_innerunionhelper();
+
 }
 
 
@@ -13785,8 +14325,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringInnerStructureHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_innerstructurehelper();
+
 }
 
 
@@ -13861,8 +14404,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStringInnerBitsetHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_string_innerbitsethelper();
+
 }
 
 
@@ -13937,8 +14483,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_short();
+
 }
 
 
@@ -14013,8 +14562,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringUShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_ushort();
+
 }
 
 
@@ -14089,8 +14641,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_long();
+
 }
 
 
@@ -14165,8 +14720,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringULong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_ulong();
+
 }
 
 
@@ -14241,8 +14799,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringLongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_longlong();
+
 }
 
 
@@ -14317,8 +14878,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringULongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_ulonglong();
+
 }
 
 
@@ -14393,8 +14957,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringFloat& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_float();
+
 }
 
 
@@ -14469,8 +15036,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_double();
+
 }
 
 
@@ -14545,8 +15115,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringLongDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_longdouble();
+
 }
 
 
@@ -14621,8 +15194,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringBoolean& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_boolean();
+
 }
 
 
@@ -14697,8 +15273,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringOctet& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_octet();
+
 }
 
 
@@ -14773,8 +15352,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_char();
+
 }
 
 
@@ -14849,8 +15431,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringWChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_wchar();
+
 }
 
 
@@ -14925,8 +15510,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_string();
+
 }
 
 
@@ -15001,8 +15589,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringWString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_wstring();
+
 }
 
 
@@ -15077,8 +15668,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringInnerAliasBoundedStringHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_inneraliasboundedstringhelper();
+
 }
 
 
@@ -15153,8 +15747,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringInnerAliasBoundedWStringHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_inneraliasboundedwstringhelper();
+
 }
 
 
@@ -15229,8 +15826,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringInnerEnumHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_innerenumhelper();
+
 }
 
 
@@ -15305,8 +15905,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringInnerBitMaskHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_innerbitmaskhelper();
+
 }
 
 
@@ -15381,8 +15984,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringInnerAliasHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_inneraliashelper();
+
 }
 
 
@@ -15457,8 +16063,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringInnerAliasArrayHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_inneraliasarrayhelper();
+
 }
 
 
@@ -15533,8 +16142,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringInnerAliasSequenceHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_inneraliassequencehelper();
+
 }
 
 
@@ -15609,8 +16221,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringInnerAliasMapHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_inneraliasmaphelper();
+
 }
 
 
@@ -15685,8 +16300,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringInnerUnionHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_innerunionhelper();
+
 }
 
 
@@ -15761,8 +16379,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringInnerStructureHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_innerstructurehelper();
+
 }
 
 
@@ -15837,8 +16458,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapWStringInnerBitsetHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_wstring_innerbitsethelper();
+
 }
 
 
@@ -15913,8 +16537,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_short();
+
 }
 
 
@@ -15989,8 +16616,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperUShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_ushort();
+
 }
 
 
@@ -16065,8 +16695,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_long();
+
 }
 
 
@@ -16141,8 +16774,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperULong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_ulong();
+
 }
 
 
@@ -16217,8 +16853,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperLongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_longlong();
+
 }
 
 
@@ -16293,8 +16932,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperULongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_ulonglong();
+
 }
 
 
@@ -16369,8 +17011,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperFloat& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_float();
+
 }
 
 
@@ -16445,8 +17090,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_double();
+
 }
 
 
@@ -16521,8 +17169,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperLongDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_longdouble();
+
 }
 
 
@@ -16597,8 +17248,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperBoolean& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_boolean();
+
 }
 
 
@@ -16673,8 +17327,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperOctet& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_octet();
+
 }
 
 
@@ -16749,8 +17406,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_char();
+
 }
 
 
@@ -16825,8 +17485,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperWChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_wchar();
+
 }
 
 
@@ -16901,8 +17564,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_string();
+
 }
 
 
@@ -16977,8 +17643,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperWString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_wstring();
+
 }
 
 
@@ -17053,8 +17722,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_inneraliasboundedstringhelper();
+
 }
 
 
@@ -17129,8 +17801,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_inneraliasboundedwstringhelper();
+
 }
 
 
@@ -17205,8 +17880,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperInnerEnumHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_innerenumhelper();
+
 }
 
 
@@ -17281,8 +17959,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperInnerBitMaskHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_innerbitmaskhelper();
+
 }
 
 
@@ -17357,8 +18038,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperInnerAliasHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_inneraliashelper();
+
 }
 
 
@@ -17433,8 +18117,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperInnerAliasArrayHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_inneraliasarrayhelper();
+
 }
 
 
@@ -17509,8 +18196,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_inneraliassequencehelper();
+
 }
 
 
@@ -17585,8 +18275,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperInnerAliasMapHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_inneraliasmaphelper();
+
 }
 
 
@@ -17661,8 +18354,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperInnerUnionHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_innerunionhelper();
+
 }
 
 
@@ -17737,8 +18433,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperInnerStructureHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_innerstructurehelper();
+
 }
 
 
@@ -17813,8 +18512,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedStringHelperInnerBitsetHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedstringhelper_innerbitsethelper();
+
 }
 
 
@@ -17889,8 +18591,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_short();
+
 }
 
 
@@ -17965,8 +18670,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperUShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_ushort();
+
 }
 
 
@@ -18041,8 +18749,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_long();
+
 }
 
 
@@ -18117,8 +18828,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperULong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_ulong();
+
 }
 
 
@@ -18193,8 +18907,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperLongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_longlong();
+
 }
 
 
@@ -18269,8 +18986,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperULongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_ulonglong();
+
 }
 
 
@@ -18345,8 +19065,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperFloat& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_float();
+
 }
 
 
@@ -18421,8 +19144,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_double();
+
 }
 
 
@@ -18497,8 +19223,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperLongDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_longdouble();
+
 }
 
 
@@ -18573,8 +19302,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperBoolean& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_boolean();
+
 }
 
 
@@ -18649,8 +19381,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperOctet& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_octet();
+
 }
 
 
@@ -18725,8 +19460,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_char();
+
 }
 
 
@@ -18801,8 +19539,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperWChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_wchar();
+
 }
 
 
@@ -18877,8 +19618,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_string();
+
 }
 
 
@@ -18953,8 +19697,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperWString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_wstring();
+
 }
 
 
@@ -19029,8 +19776,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_inneraliasboundedstringhelper();
+
 }
 
 
@@ -19105,8 +19855,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_inneraliasboundedwstringhelper();
+
 }
 
 
@@ -19181,8 +19934,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperInnerEnumHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_innerenumhelper();
+
 }
 
 
@@ -19257,8 +20013,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperInnerBitMaskHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_innerbitmaskhelper();
+
 }
 
 
@@ -19333,8 +20092,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperInnerAliasHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_inneraliashelper();
+
 }
 
 
@@ -19409,8 +20171,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperInnerAliasArrayHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_inneraliasarrayhelper();
+
 }
 
 
@@ -19485,8 +20250,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_inneraliassequencehelper();
+
 }
 
 
@@ -19561,8 +20329,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperInnerAliasMapHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_inneraliasmaphelper();
+
 }
 
 
@@ -19637,8 +20408,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperInnerUnionHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_innerunionhelper();
+
 }
 
 
@@ -19713,8 +20487,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperInnerStructureHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_innerstructurehelper();
+
 }
 
 
@@ -19789,8 +20566,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapInnerAliasBoundedWStringHelperInnerBitsetHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_map_inneraliasboundedwstringhelper_innerbitsethelper();
+
 }
 
 
@@ -19881,8 +20661,15 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const BoundedSmallMap& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_small_map();
+
+                        scdr << data.var_unbounded_string_long_bounded_small_map();
+
+                        scdr << data.var_long_unbounded_string_bounded_small_map();
+
 }
 
 
@@ -19973,8 +20760,15 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const BoundedLargeMap& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_large_map();
+
+                        scdr << data.var_unbounded_string_long_bounded_large_map();
+
+                        scdr << data.var_long_unbounded_string_bounded_large_map();
+
 }
 
 

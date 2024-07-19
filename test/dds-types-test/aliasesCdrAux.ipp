@@ -105,8 +105,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasInt16& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -181,8 +184,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasUint16& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -257,8 +263,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasInt32& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -333,8 +342,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasUInt32& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -409,8 +421,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasInt64& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -485,8 +500,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasUInt64& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -561,8 +579,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasFloat32& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -637,8 +658,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasFloat64& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -713,8 +737,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasFloat128& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -789,8 +816,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasBool& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -865,8 +895,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasOctet& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -941,8 +974,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasChar8& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -1017,8 +1053,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasChar16& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -1093,8 +1132,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasString8& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -1169,8 +1211,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasString16& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -1245,8 +1290,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasEnum& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -1321,8 +1369,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasBitmask& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -1397,8 +1448,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasAlias& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -1473,8 +1527,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasArray& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -1549,8 +1606,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasMultiArray& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -1625,8 +1685,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasSequence& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -1701,8 +1764,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasMap& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -1777,8 +1843,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasUnion& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -1853,8 +1922,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -1929,8 +2001,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasBitset& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 

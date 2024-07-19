@@ -217,8 +217,39 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const PrimitivesStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.my_bool();
+
+                        scdr << data.my_octet();
+
+                        scdr << data.my_char();
+
+                        scdr << data.my_wchar();
+
+                        scdr << data.my_long();
+
+                        scdr << data.my_ulong();
+
+                        scdr << data.my_int8();
+
+                        scdr << data.my_uint8();
+
+                        scdr << data.my_short();
+
+                        scdr << data.my_ushort();
+
+                        scdr << data.my_longlong();
+
+                        scdr << data.my_ulonglong();
+
+                        scdr << data.my_float();
+
+                        scdr << data.my_double();
+
+                        scdr << data.my_longdouble();
+
 }
 
 
@@ -879,8 +910,49 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AllStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.my_string();
+
+                        scdr << data.my_wstring();
+
+                        scdr << data.my_bounded_string();
+
+                        scdr << data.my_bounded_wstring();
+
+                        scdr << data.my_enum();
+
+                        scdr << data.my_bitmask();
+
+                        scdr << data.my_aliased_struct();
+
+                        scdr << data.my_aliased_enum();
+
+                        scdr << data.my_aliased_bounded_string();
+
+                        scdr << data.my_recursive_alias();
+
+                        scdr << data.bitmask_sequence();
+
+                        scdr << data.enum_sequence();
+
+                        scdr << data.short_sequence();
+
+                        scdr << data.long_array();
+
+                        scdr << data.string_unbounded_map();
+
+                        scdr << data.string_alias_unbounded_map();
+
+                        scdr << data.short_long_map();
+
+                        scdr << data.inner_union();
+
+                        scdr << data.complex_union();
+
+                        scdr << data.my_bitset();
+
 }
 
 
@@ -987,8 +1059,26 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ComprehensiveType& data)
 {
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const AllStruct& data);
+
+
+
+
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.index();
+
+                        serialize_key(scdr, data.inner_struct());
+
+                        scdr << data.complex_sequence();
+
+                        scdr << data.complex_array();
+
+                        scdr << data.complex_map();
+
 }
 
 

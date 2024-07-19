@@ -105,8 +105,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const NestedSequenceElement& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.my_string();
+
 }
 
 
@@ -197,8 +200,19 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ComplexSequenceElement& data)
 {
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const NestedSequenceElement& data);
+
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.my_short();
+
+                        scdr << data.my_long();
+
+                        serialize_key(scdr, data.my_complex_element());
+
 }
 
 
@@ -297,8 +311,17 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.my_basic_sequence();
+
+                        scdr << data.my_bounded_sequence();
+
+                        scdr << data.my_complex_sequence();
+
+                        scdr << data.my_complex_bounded_sequence();
+
 }
 
 

@@ -105,8 +105,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_short();
+
 }
 
 
@@ -181,8 +184,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayUShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_ushort();
+
 }
 
 
@@ -257,8 +263,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_long();
+
 }
 
 
@@ -333,8 +342,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayULong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_ulong();
+
 }
 
 
@@ -409,8 +421,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayLongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_longlong();
+
 }
 
 
@@ -485,8 +500,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayULongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_ulonglong();
+
 }
 
 
@@ -561,8 +579,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayFloat& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_float();
+
 }
 
 
@@ -637,8 +658,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_double();
+
 }
 
 
@@ -713,8 +737,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayLongDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_longdouble();
+
 }
 
 
@@ -789,8 +816,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayBoolean& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_boolean();
+
 }
 
 
@@ -865,8 +895,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayOctet& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_octet();
+
 }
 
 
@@ -941,8 +974,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_char();
+
 }
 
 
@@ -1017,8 +1053,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayWChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_wchar();
+
 }
 
 
@@ -1093,8 +1132,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_string();
+
 }
 
 
@@ -1169,8 +1211,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayWString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_wstring();
+
 }
 
 
@@ -1245,8 +1290,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayBoundedString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_bounded_string();
+
 }
 
 
@@ -1321,8 +1369,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayBoundedWString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_bounded_wstring();
+
 }
 
 
@@ -1397,8 +1448,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayEnum& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_enum();
+
 }
 
 
@@ -1473,8 +1527,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayBitMask& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_bitmask();
+
 }
 
 
@@ -1549,8 +1606,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayAlias& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_alias();
+
 }
 
 
@@ -1625,8 +1685,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayShortArray& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_short_array();
+
 }
 
 
@@ -1701,8 +1764,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySequence& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_sequence();
+
 }
 
 
@@ -1777,8 +1843,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMap& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_map();
+
 }
 
 
@@ -1853,8 +1922,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayUnion& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_union();
+
 }
 
 
@@ -1929,8 +2001,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayStructure& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_structure();
+
 }
 
 
@@ -2005,8 +2080,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayBitset& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_bitset();
+
 }
 
 
@@ -2081,8 +2159,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_short();
+
 }
 
 
@@ -2157,8 +2238,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionUShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_ushort();
+
 }
 
 
@@ -2233,8 +2317,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_long();
+
 }
 
 
@@ -2309,8 +2396,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionULong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_ulong();
+
 }
 
 
@@ -2385,8 +2475,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_longlong();
+
 }
 
 
@@ -2461,8 +2554,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionULongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_ulonglong();
+
 }
 
 
@@ -2537,8 +2633,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionFloat& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_float();
+
 }
 
 
@@ -2613,8 +2712,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_double();
+
 }
 
 
@@ -2689,8 +2791,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLongDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_longdouble();
+
 }
 
 
@@ -2765,8 +2870,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionBoolean& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_boolean();
+
 }
 
 
@@ -2841,8 +2949,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionOctet& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_octet();
+
 }
 
 
@@ -2917,8 +3028,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_char();
+
 }
 
 
@@ -2993,8 +3107,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionWChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_wchar();
+
 }
 
 
@@ -3069,8 +3186,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_string();
+
 }
 
 
@@ -3145,8 +3265,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionWString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_wstring();
+
 }
 
 
@@ -3221,8 +3344,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionBoundedString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_bounded_string();
+
 }
 
 
@@ -3297,8 +3423,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionBoundedWString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_bounded_wstring();
+
 }
 
 
@@ -3373,8 +3502,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionEnum& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_enum();
+
 }
 
 
@@ -3449,8 +3581,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionBitMask& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_bitmask();
+
 }
 
 
@@ -3525,8 +3660,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionAlias& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_alias();
+
 }
 
 
@@ -3601,8 +3739,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionSequence& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_sequence();
+
 }
 
 
@@ -3677,8 +3818,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionMap& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_map();
+
 }
 
 
@@ -3753,8 +3897,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionUnion& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_union();
+
 }
 
 
@@ -3829,8 +3976,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionStructure& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_structure();
+
 }
 
 
@@ -3905,8 +4055,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionBitset& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_bitset();
+
 }
 
 
@@ -3983,8 +4136,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_short();
+
 }
 
 
@@ -4059,8 +4215,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsUnsignedShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_ushort();
+
 }
 
 
@@ -4135,8 +4294,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_long();
+
 }
 
 
@@ -4211,8 +4373,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsUnsignedLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_ulong();
+
 }
 
 
@@ -4287,8 +4452,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsLongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_longlong();
+
 }
 
 
@@ -4363,8 +4531,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsUnsignedLongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_ulonglong();
+
 }
 
 
@@ -4439,8 +4610,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsFloat& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_float();
+
 }
 
 
@@ -4515,8 +4689,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_double();
+
 }
 
 
@@ -4591,8 +4768,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsLongDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_longdouble();
+
 }
 
 
@@ -4667,8 +4847,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsBoolean& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_boolean();
+
 }
 
 
@@ -4743,8 +4926,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsOctet& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_octet();
+
 }
 
 
@@ -4819,8 +5005,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_char();
+
 }
 
 
@@ -4895,8 +5084,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsWChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_wchar();
+
 }
 
 
@@ -4971,8 +5163,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_string();
+
 }
 
 
@@ -5047,8 +5242,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsWString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_wstring();
+
 }
 
 
@@ -5123,8 +5321,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsBoundedString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_bounded_string();
+
 }
 
 
@@ -5199,8 +5400,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsBoundedWString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_bounded_wstring();
+
 }
 
 
@@ -5275,8 +5479,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsEnum& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_enum();
+
 }
 
 
@@ -5351,8 +5558,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsBitMask& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_bitmask();
+
 }
 
 
@@ -5427,8 +5637,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsAlias& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_alias();
+
 }
 
 
@@ -5503,8 +5716,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsShortArray& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_short_array();
+
 }
 
 
@@ -5579,8 +5795,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsSequence& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_sequence();
+
 }
 
 
@@ -5655,8 +5874,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsMap& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_map();
+
 }
 
 
@@ -5731,8 +5953,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsUnion& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_union();
+
 }
 
 
@@ -5807,8 +6032,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsStructure& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_structure();
+
 }
 
 
@@ -5883,8 +6111,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsBitset& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_bitset();
+
 }
 
 
@@ -5959,8 +6190,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_short();
+
 }
 
 
@@ -6035,8 +6269,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsUShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_ushort();
+
 }
 
 
@@ -6111,8 +6348,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_long();
+
 }
 
 
@@ -6187,8 +6427,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsULong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_ulong();
+
 }
 
 
@@ -6263,8 +6506,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsLongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_longlong();
+
 }
 
 
@@ -6339,8 +6585,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsULongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_ulonglong();
+
 }
 
 
@@ -6415,8 +6664,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsFloat& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_float();
+
 }
 
 
@@ -6491,8 +6743,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_double();
+
 }
 
 
@@ -6567,8 +6822,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsLongDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_longdouble();
+
 }
 
 
@@ -6643,8 +6901,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsBoolean& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_boolean();
+
 }
 
 
@@ -6719,8 +6980,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsOctet& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_octet();
+
 }
 
 
@@ -6795,8 +7059,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_char();
+
 }
 
 
@@ -6871,8 +7138,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsWChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_wchar();
+
 }
 
 
@@ -6947,8 +7217,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_string();
+
 }
 
 
@@ -7023,8 +7296,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsWString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_wstring();
+
 }
 
 
@@ -7099,8 +7375,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsBoundedString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_bounded_string();
+
 }
 
 
@@ -7175,8 +7454,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsBoundedWString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_bounded_wstring();
+
 }
 
 
@@ -7251,8 +7533,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsEnum& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_enum();
+
 }
 
 
@@ -7327,8 +7612,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsBitMask& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_bitmask();
+
 }
 
 
@@ -7403,8 +7691,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsAlias& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_alias();
+
 }
 
 
@@ -7479,8 +7770,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsSequence& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_sequence();
+
 }
 
 
@@ -7555,8 +7849,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsMap& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_map();
+
 }
 
 
@@ -7631,8 +7928,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsUnion& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_union();
+
 }
 
 
@@ -7707,8 +8007,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsStructure& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_structure();
+
 }
 
 
@@ -7783,8 +8086,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsBitSet& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_bitset();
+
 }
 
 
@@ -7859,8 +8165,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const BoundedSmallArrays& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_small();
+
 }
 
 
@@ -7935,8 +8244,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const BoundedBigArrays& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_array_big();
+
 }
 
 

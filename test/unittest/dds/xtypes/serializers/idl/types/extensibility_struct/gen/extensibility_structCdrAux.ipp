@@ -105,8 +105,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FinalStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.my_value();
+
 }
 
 
@@ -181,8 +184,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MutableStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.my_value();
+
 }
 
 
@@ -257,8 +263,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.my_value();
+
 }
 
 
@@ -349,8 +358,27 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ExtensibilityStruct& data)
 {
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const FinalStruct& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const MutableStruct& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const AppendableStruct& data);
+
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.my_final_struct());
+
+                        serialize_key(scdr, data.my_mutable_struct());
+
+                        serialize_key(scdr, data.my_appendable_struct());
+
 }
 
 

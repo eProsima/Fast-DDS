@@ -129,8 +129,17 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.my_long();
+
+                        scdr << data.my_recursive_short();
+
+                        scdr << data.my_recursive_boolean();
+
+                        scdr << data.my_boolean();
+
 }
 
 

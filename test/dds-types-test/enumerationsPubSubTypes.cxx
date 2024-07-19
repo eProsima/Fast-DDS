@@ -187,7 +187,8 @@ bool EnumStructurePubSubType::compute_key(
             EnumStructure_max_key_cdr_typesize);
 
     // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv1);
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
+    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
     eprosima::fastcdr::serialize_key(ser, *p_type);
     if (force_md5 || EnumStructure_max_key_cdr_typesize > 16)
     {
@@ -367,7 +368,8 @@ bool BitMaskStructurePubSubType::compute_key(
             BitMaskStructure_max_key_cdr_typesize);
 
     // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv1);
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
+    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
     eprosima::fastcdr::serialize_key(ser, *p_type);
     if (force_md5 || BitMaskStructure_max_key_cdr_typesize > 16)
     {
@@ -547,7 +549,8 @@ bool BoundedBitMaskStructurePubSubType::compute_key(
             BoundedBitMaskStructure_max_key_cdr_typesize);
 
     // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv1);
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
+    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
     eprosima::fastcdr::serialize_key(ser, *p_type);
     if (force_md5 || BoundedBitMaskStructure_max_key_cdr_typesize > 16)
     {

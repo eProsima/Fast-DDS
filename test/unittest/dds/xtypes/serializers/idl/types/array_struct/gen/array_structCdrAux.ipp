@@ -105,8 +105,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const NestedArrayElement& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.my_string();
+
 }
 
 
@@ -197,8 +200,19 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ComplexArrayElement& data)
 {
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const NestedArrayElement& data);
+
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.my_number();
+
+                        scdr << data.my_boolean();
+
+                        serialize_key(scdr, data.my_nested_element());
+
 }
 
 
@@ -297,8 +311,17 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.my_basic_array();
+
+                        scdr << data.my_multidimensional_array();
+
+                        scdr << data.my_complex_array();
+
+                        scdr << data.my_multidimensional_complex_array();
+
 }
 
 

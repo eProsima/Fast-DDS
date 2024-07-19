@@ -1738,4 +1738,523 @@ void register_InheritanceKeyedEmptyStruct_type_identifier(
         }
     }
 }
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_KeyedFinal_type_identifier(
+        TypeIdentifierPair& type_ids_KeyedFinal)
+{
+
+    ReturnCode_t return_code_KeyedFinal {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_KeyedFinal =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "KeyedFinal", type_ids_KeyedFinal);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_KeyedFinal)
+    {
+        StructTypeFlag struct_flags_KeyedFinal = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
+                false, false);
+        QualifiedTypeName type_name_KeyedFinal = "KeyedFinal";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_KeyedFinal;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_KeyedFinal;
+        AppliedAnnotationSeq tmp_ann_custom_KeyedFinal;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_KeyedFinal;
+        if (!tmp_ann_custom_KeyedFinal.empty())
+        {
+            ann_custom_KeyedFinal = tmp_ann_custom_KeyedFinal;
+        }
+
+        CompleteTypeDetail detail_KeyedFinal = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_KeyedFinal, ann_custom_KeyedFinal, type_name_KeyedFinal.to_string());
+        CompleteStructHeader header_KeyedFinal;
+        header_KeyedFinal = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_KeyedFinal);
+        CompleteStructMemberSeq member_seq_KeyedFinal;
+        {
+            TypeIdentifierPair type_ids_key_long;
+            ReturnCode_t return_code_key_long {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_key_long =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int32_t", type_ids_key_long);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_key_long)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "key_long Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_key_long = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, true, false);
+            MemberId member_id_key_long = 0x00000002;
+            bool common_key_long_ec {false};
+            CommonStructMember common_key_long {TypeObjectUtils::build_common_struct_member(member_id_key_long, member_flags_key_long, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_key_long, common_key_long_ec))};
+            if (!common_key_long_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure key_long member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_key_long = "key_long";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_key_long;
+            ann_custom_KeyedFinal.reset();
+            AppliedAnnotationSeq tmp_ann_custom_key_long;
+            eprosima::fastcdr::optional<std::string> unit_key_long;
+            eprosima::fastcdr::optional<AnnotationParameterValue> min_key_long;
+            eprosima::fastcdr::optional<AnnotationParameterValue> max_key_long;
+            eprosima::fastcdr::optional<std::string> hash_id_key_long;
+            if (unit_key_long.has_value() || min_key_long.has_value() || max_key_long.has_value() || hash_id_key_long.has_value())
+            {
+                member_ann_builtin_key_long = TypeObjectUtils::build_applied_builtin_member_annotations(unit_key_long, min_key_long, max_key_long, hash_id_key_long);
+            }
+            if (!tmp_ann_custom_key_long.empty())
+            {
+                ann_custom_KeyedFinal = tmp_ann_custom_key_long;
+            }
+            CompleteMemberDetail detail_key_long = TypeObjectUtils::build_complete_member_detail(name_key_long, member_ann_builtin_key_long, ann_custom_KeyedFinal);
+            CompleteStructMember member_key_long = TypeObjectUtils::build_complete_struct_member(common_key_long, detail_key_long);
+            TypeObjectUtils::add_complete_struct_member(member_seq_KeyedFinal, member_key_long);
+        }
+        {
+            TypeIdentifierPair type_ids_key_short;
+            ReturnCode_t return_code_key_short {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_key_short =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int16_t", type_ids_key_short);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_key_short)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "key_short Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_key_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, true, false);
+            MemberId member_id_key_short = 0x00000001;
+            bool common_key_short_ec {false};
+            CommonStructMember common_key_short {TypeObjectUtils::build_common_struct_member(member_id_key_short, member_flags_key_short, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_key_short, common_key_short_ec))};
+            if (!common_key_short_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure key_short member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_key_short = "key_short";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_key_short;
+            ann_custom_KeyedFinal.reset();
+            AppliedAnnotationSeq tmp_ann_custom_key_short;
+            eprosima::fastcdr::optional<std::string> unit_key_short;
+            eprosima::fastcdr::optional<AnnotationParameterValue> min_key_short;
+            eprosima::fastcdr::optional<AnnotationParameterValue> max_key_short;
+            eprosima::fastcdr::optional<std::string> hash_id_key_short;
+            if (unit_key_short.has_value() || min_key_short.has_value() || max_key_short.has_value() || hash_id_key_short.has_value())
+            {
+                member_ann_builtin_key_short = TypeObjectUtils::build_applied_builtin_member_annotations(unit_key_short, min_key_short, max_key_short, hash_id_key_short);
+            }
+            if (!tmp_ann_custom_key_short.empty())
+            {
+                ann_custom_KeyedFinal = tmp_ann_custom_key_short;
+            }
+            CompleteMemberDetail detail_key_short = TypeObjectUtils::build_complete_member_detail(name_key_short, member_ann_builtin_key_short, ann_custom_KeyedFinal);
+            CompleteStructMember member_key_short = TypeObjectUtils::build_complete_struct_member(common_key_short, detail_key_short);
+            TypeObjectUtils::add_complete_struct_member(member_seq_KeyedFinal, member_key_short);
+        }
+        {
+            TypeIdentifierPair type_ids_key_string;
+            ReturnCode_t return_code_key_string {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_key_string =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "anonymous_string_unbounded", type_ids_key_string);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_key_string)
+            {
+                {
+                    SBound bound = 0;
+                    StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
+                            "anonymous_string_unbounded", type_ids_key_string))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
+                    }
+                }
+            }
+            StructMemberFlag member_flags_key_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, true, false);
+            MemberId member_id_key_string = 0x00000000;
+            bool common_key_string_ec {false};
+            CommonStructMember common_key_string {TypeObjectUtils::build_common_struct_member(member_id_key_string, member_flags_key_string, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_key_string, common_key_string_ec))};
+            if (!common_key_string_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure key_string member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_key_string = "key_string";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_key_string;
+            ann_custom_KeyedFinal.reset();
+            AppliedAnnotationSeq tmp_ann_custom_key_string;
+            eprosima::fastcdr::optional<std::string> unit_key_string;
+            eprosima::fastcdr::optional<AnnotationParameterValue> min_key_string;
+            eprosima::fastcdr::optional<AnnotationParameterValue> max_key_string;
+            eprosima::fastcdr::optional<std::string> hash_id_key_string;
+            if (unit_key_string.has_value() || min_key_string.has_value() || max_key_string.has_value() || hash_id_key_string.has_value())
+            {
+                member_ann_builtin_key_string = TypeObjectUtils::build_applied_builtin_member_annotations(unit_key_string, min_key_string, max_key_string, hash_id_key_string);
+            }
+            if (!tmp_ann_custom_key_string.empty())
+            {
+                ann_custom_KeyedFinal = tmp_ann_custom_key_string;
+            }
+            CompleteMemberDetail detail_key_string = TypeObjectUtils::build_complete_member_detail(name_key_string, member_ann_builtin_key_string, ann_custom_KeyedFinal);
+            CompleteStructMember member_key_string = TypeObjectUtils::build_complete_struct_member(common_key_string, detail_key_string);
+            TypeObjectUtils::add_complete_struct_member(member_seq_KeyedFinal, member_key_string);
+        }
+        CompleteStructType struct_type_KeyedFinal = TypeObjectUtils::build_complete_struct_type(struct_flags_KeyedFinal, header_KeyedFinal, member_seq_KeyedFinal);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_KeyedFinal, type_name_KeyedFinal.to_string(), type_ids_KeyedFinal))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "KeyedFinal already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_KeyedAppendable_type_identifier(
+        TypeIdentifierPair& type_ids_KeyedAppendable)
+{
+
+    ReturnCode_t return_code_KeyedAppendable {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_KeyedAppendable =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "KeyedAppendable", type_ids_KeyedAppendable);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_KeyedAppendable)
+    {
+        StructTypeFlag struct_flags_KeyedAppendable = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
+                false, false);
+        QualifiedTypeName type_name_KeyedAppendable = "KeyedAppendable";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_KeyedAppendable;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_KeyedAppendable;
+        AppliedAnnotationSeq tmp_ann_custom_KeyedAppendable;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_KeyedAppendable;
+        if (!tmp_ann_custom_KeyedAppendable.empty())
+        {
+            ann_custom_KeyedAppendable = tmp_ann_custom_KeyedAppendable;
+        }
+
+        CompleteTypeDetail detail_KeyedAppendable = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_KeyedAppendable, ann_custom_KeyedAppendable, type_name_KeyedAppendable.to_string());
+        CompleteStructHeader header_KeyedAppendable;
+        header_KeyedAppendable = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_KeyedAppendable);
+        CompleteStructMemberSeq member_seq_KeyedAppendable;
+        {
+            TypeIdentifierPair type_ids_key_long;
+            ReturnCode_t return_code_key_long {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_key_long =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int32_t", type_ids_key_long);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_key_long)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "key_long Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_key_long = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, true, false);
+            MemberId member_id_key_long = 0x00000002;
+            bool common_key_long_ec {false};
+            CommonStructMember common_key_long {TypeObjectUtils::build_common_struct_member(member_id_key_long, member_flags_key_long, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_key_long, common_key_long_ec))};
+            if (!common_key_long_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure key_long member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_key_long = "key_long";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_key_long;
+            ann_custom_KeyedAppendable.reset();
+            AppliedAnnotationSeq tmp_ann_custom_key_long;
+            eprosima::fastcdr::optional<std::string> unit_key_long;
+            eprosima::fastcdr::optional<AnnotationParameterValue> min_key_long;
+            eprosima::fastcdr::optional<AnnotationParameterValue> max_key_long;
+            eprosima::fastcdr::optional<std::string> hash_id_key_long;
+            if (unit_key_long.has_value() || min_key_long.has_value() || max_key_long.has_value() || hash_id_key_long.has_value())
+            {
+                member_ann_builtin_key_long = TypeObjectUtils::build_applied_builtin_member_annotations(unit_key_long, min_key_long, max_key_long, hash_id_key_long);
+            }
+            if (!tmp_ann_custom_key_long.empty())
+            {
+                ann_custom_KeyedAppendable = tmp_ann_custom_key_long;
+            }
+            CompleteMemberDetail detail_key_long = TypeObjectUtils::build_complete_member_detail(name_key_long, member_ann_builtin_key_long, ann_custom_KeyedAppendable);
+            CompleteStructMember member_key_long = TypeObjectUtils::build_complete_struct_member(common_key_long, detail_key_long);
+            TypeObjectUtils::add_complete_struct_member(member_seq_KeyedAppendable, member_key_long);
+        }
+        {
+            TypeIdentifierPair type_ids_key_short;
+            ReturnCode_t return_code_key_short {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_key_short =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int16_t", type_ids_key_short);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_key_short)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "key_short Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_key_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, true, false);
+            MemberId member_id_key_short = 0x00000001;
+            bool common_key_short_ec {false};
+            CommonStructMember common_key_short {TypeObjectUtils::build_common_struct_member(member_id_key_short, member_flags_key_short, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_key_short, common_key_short_ec))};
+            if (!common_key_short_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure key_short member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_key_short = "key_short";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_key_short;
+            ann_custom_KeyedAppendable.reset();
+            AppliedAnnotationSeq tmp_ann_custom_key_short;
+            eprosima::fastcdr::optional<std::string> unit_key_short;
+            eprosima::fastcdr::optional<AnnotationParameterValue> min_key_short;
+            eprosima::fastcdr::optional<AnnotationParameterValue> max_key_short;
+            eprosima::fastcdr::optional<std::string> hash_id_key_short;
+            if (unit_key_short.has_value() || min_key_short.has_value() || max_key_short.has_value() || hash_id_key_short.has_value())
+            {
+                member_ann_builtin_key_short = TypeObjectUtils::build_applied_builtin_member_annotations(unit_key_short, min_key_short, max_key_short, hash_id_key_short);
+            }
+            if (!tmp_ann_custom_key_short.empty())
+            {
+                ann_custom_KeyedAppendable = tmp_ann_custom_key_short;
+            }
+            CompleteMemberDetail detail_key_short = TypeObjectUtils::build_complete_member_detail(name_key_short, member_ann_builtin_key_short, ann_custom_KeyedAppendable);
+            CompleteStructMember member_key_short = TypeObjectUtils::build_complete_struct_member(common_key_short, detail_key_short);
+            TypeObjectUtils::add_complete_struct_member(member_seq_KeyedAppendable, member_key_short);
+        }
+        {
+            TypeIdentifierPair type_ids_key_string;
+            ReturnCode_t return_code_key_string {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_key_string =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "anonymous_string_unbounded", type_ids_key_string);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_key_string)
+            {
+                {
+                    SBound bound = 0;
+                    StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
+                            "anonymous_string_unbounded", type_ids_key_string))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
+                    }
+                }
+            }
+            StructMemberFlag member_flags_key_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, true, false);
+            MemberId member_id_key_string = 0x00000000;
+            bool common_key_string_ec {false};
+            CommonStructMember common_key_string {TypeObjectUtils::build_common_struct_member(member_id_key_string, member_flags_key_string, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_key_string, common_key_string_ec))};
+            if (!common_key_string_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure key_string member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_key_string = "key_string";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_key_string;
+            ann_custom_KeyedAppendable.reset();
+            AppliedAnnotationSeq tmp_ann_custom_key_string;
+            eprosima::fastcdr::optional<std::string> unit_key_string;
+            eprosima::fastcdr::optional<AnnotationParameterValue> min_key_string;
+            eprosima::fastcdr::optional<AnnotationParameterValue> max_key_string;
+            eprosima::fastcdr::optional<std::string> hash_id_key_string;
+            if (unit_key_string.has_value() || min_key_string.has_value() || max_key_string.has_value() || hash_id_key_string.has_value())
+            {
+                member_ann_builtin_key_string = TypeObjectUtils::build_applied_builtin_member_annotations(unit_key_string, min_key_string, max_key_string, hash_id_key_string);
+            }
+            if (!tmp_ann_custom_key_string.empty())
+            {
+                ann_custom_KeyedAppendable = tmp_ann_custom_key_string;
+            }
+            CompleteMemberDetail detail_key_string = TypeObjectUtils::build_complete_member_detail(name_key_string, member_ann_builtin_key_string, ann_custom_KeyedAppendable);
+            CompleteStructMember member_key_string = TypeObjectUtils::build_complete_struct_member(common_key_string, detail_key_string);
+            TypeObjectUtils::add_complete_struct_member(member_seq_KeyedAppendable, member_key_string);
+        }
+        CompleteStructType struct_type_KeyedAppendable = TypeObjectUtils::build_complete_struct_type(struct_flags_KeyedAppendable, header_KeyedAppendable, member_seq_KeyedAppendable);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_KeyedAppendable, type_name_KeyedAppendable.to_string(), type_ids_KeyedAppendable))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "KeyedAppendable already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_KeyedMutable_type_identifier(
+        TypeIdentifierPair& type_ids_KeyedMutable)
+{
+
+    ReturnCode_t return_code_KeyedMutable {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_KeyedMutable =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "KeyedMutable", type_ids_KeyedMutable);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_KeyedMutable)
+    {
+        StructTypeFlag struct_flags_KeyedMutable = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::MUTABLE,
+                false, false);
+        QualifiedTypeName type_name_KeyedMutable = "KeyedMutable";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_KeyedMutable;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_KeyedMutable;
+        AppliedAnnotationSeq tmp_ann_custom_KeyedMutable;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_KeyedMutable;
+        if (!tmp_ann_custom_KeyedMutable.empty())
+        {
+            ann_custom_KeyedMutable = tmp_ann_custom_KeyedMutable;
+        }
+
+        CompleteTypeDetail detail_KeyedMutable = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_KeyedMutable, ann_custom_KeyedMutable, type_name_KeyedMutable.to_string());
+        CompleteStructHeader header_KeyedMutable;
+        header_KeyedMutable = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_KeyedMutable);
+        CompleteStructMemberSeq member_seq_KeyedMutable;
+        {
+            TypeIdentifierPair type_ids_key_long;
+            ReturnCode_t return_code_key_long {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_key_long =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int32_t", type_ids_key_long);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_key_long)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "key_long Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_key_long = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, true, false);
+            MemberId member_id_key_long = 0x00000002;
+            bool common_key_long_ec {false};
+            CommonStructMember common_key_long {TypeObjectUtils::build_common_struct_member(member_id_key_long, member_flags_key_long, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_key_long, common_key_long_ec))};
+            if (!common_key_long_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure key_long member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_key_long = "key_long";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_key_long;
+            ann_custom_KeyedMutable.reset();
+            AppliedAnnotationSeq tmp_ann_custom_key_long;
+            eprosima::fastcdr::optional<std::string> unit_key_long;
+            eprosima::fastcdr::optional<AnnotationParameterValue> min_key_long;
+            eprosima::fastcdr::optional<AnnotationParameterValue> max_key_long;
+            eprosima::fastcdr::optional<std::string> hash_id_key_long;
+            if (unit_key_long.has_value() || min_key_long.has_value() || max_key_long.has_value() || hash_id_key_long.has_value())
+            {
+                member_ann_builtin_key_long = TypeObjectUtils::build_applied_builtin_member_annotations(unit_key_long, min_key_long, max_key_long, hash_id_key_long);
+            }
+            if (!tmp_ann_custom_key_long.empty())
+            {
+                ann_custom_KeyedMutable = tmp_ann_custom_key_long;
+            }
+            CompleteMemberDetail detail_key_long = TypeObjectUtils::build_complete_member_detail(name_key_long, member_ann_builtin_key_long, ann_custom_KeyedMutable);
+            CompleteStructMember member_key_long = TypeObjectUtils::build_complete_struct_member(common_key_long, detail_key_long);
+            TypeObjectUtils::add_complete_struct_member(member_seq_KeyedMutable, member_key_long);
+        }
+        {
+            TypeIdentifierPair type_ids_key_short;
+            ReturnCode_t return_code_key_short {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_key_short =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int16_t", type_ids_key_short);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_key_short)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "key_short Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_key_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, true, false);
+            MemberId member_id_key_short = 0x00000001;
+            bool common_key_short_ec {false};
+            CommonStructMember common_key_short {TypeObjectUtils::build_common_struct_member(member_id_key_short, member_flags_key_short, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_key_short, common_key_short_ec))};
+            if (!common_key_short_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure key_short member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_key_short = "key_short";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_key_short;
+            ann_custom_KeyedMutable.reset();
+            AppliedAnnotationSeq tmp_ann_custom_key_short;
+            eprosima::fastcdr::optional<std::string> unit_key_short;
+            eprosima::fastcdr::optional<AnnotationParameterValue> min_key_short;
+            eprosima::fastcdr::optional<AnnotationParameterValue> max_key_short;
+            eprosima::fastcdr::optional<std::string> hash_id_key_short;
+            if (unit_key_short.has_value() || min_key_short.has_value() || max_key_short.has_value() || hash_id_key_short.has_value())
+            {
+                member_ann_builtin_key_short = TypeObjectUtils::build_applied_builtin_member_annotations(unit_key_short, min_key_short, max_key_short, hash_id_key_short);
+            }
+            if (!tmp_ann_custom_key_short.empty())
+            {
+                ann_custom_KeyedMutable = tmp_ann_custom_key_short;
+            }
+            CompleteMemberDetail detail_key_short = TypeObjectUtils::build_complete_member_detail(name_key_short, member_ann_builtin_key_short, ann_custom_KeyedMutable);
+            CompleteStructMember member_key_short = TypeObjectUtils::build_complete_struct_member(common_key_short, detail_key_short);
+            TypeObjectUtils::add_complete_struct_member(member_seq_KeyedMutable, member_key_short);
+        }
+        {
+            TypeIdentifierPair type_ids_key_string;
+            ReturnCode_t return_code_key_string {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_key_string =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "anonymous_string_unbounded", type_ids_key_string);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_key_string)
+            {
+                {
+                    SBound bound = 0;
+                    StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
+                            "anonymous_string_unbounded", type_ids_key_string))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
+                    }
+                }
+            }
+            StructMemberFlag member_flags_key_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, true, false);
+            MemberId member_id_key_string = 0x00000000;
+            bool common_key_string_ec {false};
+            CommonStructMember common_key_string {TypeObjectUtils::build_common_struct_member(member_id_key_string, member_flags_key_string, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_key_string, common_key_string_ec))};
+            if (!common_key_string_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure key_string member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_key_string = "key_string";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_key_string;
+            ann_custom_KeyedMutable.reset();
+            AppliedAnnotationSeq tmp_ann_custom_key_string;
+            eprosima::fastcdr::optional<std::string> unit_key_string;
+            eprosima::fastcdr::optional<AnnotationParameterValue> min_key_string;
+            eprosima::fastcdr::optional<AnnotationParameterValue> max_key_string;
+            eprosima::fastcdr::optional<std::string> hash_id_key_string;
+            if (unit_key_string.has_value() || min_key_string.has_value() || max_key_string.has_value() || hash_id_key_string.has_value())
+            {
+                member_ann_builtin_key_string = TypeObjectUtils::build_applied_builtin_member_annotations(unit_key_string, min_key_string, max_key_string, hash_id_key_string);
+            }
+            if (!tmp_ann_custom_key_string.empty())
+            {
+                ann_custom_KeyedMutable = tmp_ann_custom_key_string;
+            }
+            CompleteMemberDetail detail_key_string = TypeObjectUtils::build_complete_member_detail(name_key_string, member_ann_builtin_key_string, ann_custom_KeyedMutable);
+            CompleteStructMember member_key_string = TypeObjectUtils::build_complete_struct_member(common_key_string, detail_key_string);
+            TypeObjectUtils::add_complete_struct_member(member_seq_KeyedMutable, member_key_string);
+        }
+        CompleteStructType struct_type_KeyedMutable = TypeObjectUtils::build_complete_struct_type(struct_flags_KeyedMutable, header_KeyedMutable, member_seq_KeyedMutable);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_KeyedMutable, type_name_KeyedMutable.to_string(), type_ids_KeyedMutable))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "KeyedMutable already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
 

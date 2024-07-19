@@ -2739,6 +2739,627 @@ private:
 
 
 };
+/*!
+ * @brief This class represents the structure KeyedFinal defined by the user in the IDL file.
+ * @ingroup key
+ */
+class KeyedFinal
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport KeyedFinal()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~KeyedFinal()
+    {
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object KeyedFinal that will be copied.
+     */
+    eProsima_user_DllExport KeyedFinal(
+            const KeyedFinal& x)
+    {
+                    m_key_long = x.m_key_long;
+
+                    m_key_short = x.m_key_short;
+
+                    m_key_string = x.m_key_string;
+
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object KeyedFinal that will be copied.
+     */
+    eProsima_user_DllExport KeyedFinal(
+            KeyedFinal&& x) noexcept
+    {
+        m_key_long = x.m_key_long;
+        m_key_short = x.m_key_short;
+        m_key_string = std::move(x.m_key_string);
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object KeyedFinal that will be copied.
+     */
+    eProsima_user_DllExport KeyedFinal& operator =(
+            const KeyedFinal& x)
+    {
+
+                    m_key_long = x.m_key_long;
+
+                    m_key_short = x.m_key_short;
+
+                    m_key_string = x.m_key_string;
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object KeyedFinal that will be copied.
+     */
+    eProsima_user_DllExport KeyedFinal& operator =(
+            KeyedFinal&& x) noexcept
+    {
+
+        m_key_long = x.m_key_long;
+        m_key_short = x.m_key_short;
+        m_key_string = std::move(x.m_key_string);
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x KeyedFinal object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const KeyedFinal& x) const
+    {
+        return (m_key_long == x.m_key_long &&
+           m_key_short == x.m_key_short &&
+           m_key_string == x.m_key_string);
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x KeyedFinal object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const KeyedFinal& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function sets a value in member key_long
+     * @param _key_long New value for member key_long
+     */
+    eProsima_user_DllExport void key_long(
+            int32_t _key_long)
+    {
+        m_key_long = _key_long;
+    }
+
+    /*!
+     * @brief This function returns the value of member key_long
+     * @return Value of member key_long
+     */
+    eProsima_user_DllExport int32_t key_long() const
+    {
+        return m_key_long;
+    }
+
+    /*!
+     * @brief This function returns a reference to member key_long
+     * @return Reference to member key_long
+     */
+    eProsima_user_DllExport int32_t& key_long()
+    {
+        return m_key_long;
+    }
+
+
+    /*!
+     * @brief This function sets a value in member key_short
+     * @param _key_short New value for member key_short
+     */
+    eProsima_user_DllExport void key_short(
+            int16_t _key_short)
+    {
+        m_key_short = _key_short;
+    }
+
+    /*!
+     * @brief This function returns the value of member key_short
+     * @return Value of member key_short
+     */
+    eProsima_user_DllExport int16_t key_short() const
+    {
+        return m_key_short;
+    }
+
+    /*!
+     * @brief This function returns a reference to member key_short
+     * @return Reference to member key_short
+     */
+    eProsima_user_DllExport int16_t& key_short()
+    {
+        return m_key_short;
+    }
+
+
+    /*!
+     * @brief This function copies the value in member key_string
+     * @param _key_string New value to be copied in member key_string
+     */
+    eProsima_user_DllExport void key_string(
+            const std::string& _key_string)
+    {
+        m_key_string = _key_string;
+    }
+
+    /*!
+     * @brief This function moves the value in member key_string
+     * @param _key_string New value to be moved in member key_string
+     */
+    eProsima_user_DllExport void key_string(
+            std::string&& _key_string)
+    {
+        m_key_string = std::move(_key_string);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member key_string
+     * @return Constant reference to member key_string
+     */
+    eProsima_user_DllExport const std::string& key_string() const
+    {
+        return m_key_string;
+    }
+
+    /*!
+     * @brief This function returns a reference to member key_string
+     * @return Reference to member key_string
+     */
+    eProsima_user_DllExport std::string& key_string()
+    {
+        return m_key_string;
+    }
+
+
+
+private:
+
+    int32_t m_key_long{0};
+    int16_t m_key_short{0};
+    std::string m_key_string;
+
+};
+/*!
+ * @brief This class represents the structure KeyedAppendable defined by the user in the IDL file.
+ * @ingroup key
+ */
+class KeyedAppendable
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport KeyedAppendable()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~KeyedAppendable()
+    {
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object KeyedAppendable that will be copied.
+     */
+    eProsima_user_DllExport KeyedAppendable(
+            const KeyedAppendable& x)
+    {
+                    m_key_long = x.m_key_long;
+
+                    m_key_short = x.m_key_short;
+
+                    m_key_string = x.m_key_string;
+
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object KeyedAppendable that will be copied.
+     */
+    eProsima_user_DllExport KeyedAppendable(
+            KeyedAppendable&& x) noexcept
+    {
+        m_key_long = x.m_key_long;
+        m_key_short = x.m_key_short;
+        m_key_string = std::move(x.m_key_string);
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object KeyedAppendable that will be copied.
+     */
+    eProsima_user_DllExport KeyedAppendable& operator =(
+            const KeyedAppendable& x)
+    {
+
+                    m_key_long = x.m_key_long;
+
+                    m_key_short = x.m_key_short;
+
+                    m_key_string = x.m_key_string;
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object KeyedAppendable that will be copied.
+     */
+    eProsima_user_DllExport KeyedAppendable& operator =(
+            KeyedAppendable&& x) noexcept
+    {
+
+        m_key_long = x.m_key_long;
+        m_key_short = x.m_key_short;
+        m_key_string = std::move(x.m_key_string);
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x KeyedAppendable object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const KeyedAppendable& x) const
+    {
+        return (m_key_long == x.m_key_long &&
+           m_key_short == x.m_key_short &&
+           m_key_string == x.m_key_string);
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x KeyedAppendable object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const KeyedAppendable& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function sets a value in member key_long
+     * @param _key_long New value for member key_long
+     */
+    eProsima_user_DllExport void key_long(
+            int32_t _key_long)
+    {
+        m_key_long = _key_long;
+    }
+
+    /*!
+     * @brief This function returns the value of member key_long
+     * @return Value of member key_long
+     */
+    eProsima_user_DllExport int32_t key_long() const
+    {
+        return m_key_long;
+    }
+
+    /*!
+     * @brief This function returns a reference to member key_long
+     * @return Reference to member key_long
+     */
+    eProsima_user_DllExport int32_t& key_long()
+    {
+        return m_key_long;
+    }
+
+
+    /*!
+     * @brief This function sets a value in member key_short
+     * @param _key_short New value for member key_short
+     */
+    eProsima_user_DllExport void key_short(
+            int16_t _key_short)
+    {
+        m_key_short = _key_short;
+    }
+
+    /*!
+     * @brief This function returns the value of member key_short
+     * @return Value of member key_short
+     */
+    eProsima_user_DllExport int16_t key_short() const
+    {
+        return m_key_short;
+    }
+
+    /*!
+     * @brief This function returns a reference to member key_short
+     * @return Reference to member key_short
+     */
+    eProsima_user_DllExport int16_t& key_short()
+    {
+        return m_key_short;
+    }
+
+
+    /*!
+     * @brief This function copies the value in member key_string
+     * @param _key_string New value to be copied in member key_string
+     */
+    eProsima_user_DllExport void key_string(
+            const std::string& _key_string)
+    {
+        m_key_string = _key_string;
+    }
+
+    /*!
+     * @brief This function moves the value in member key_string
+     * @param _key_string New value to be moved in member key_string
+     */
+    eProsima_user_DllExport void key_string(
+            std::string&& _key_string)
+    {
+        m_key_string = std::move(_key_string);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member key_string
+     * @return Constant reference to member key_string
+     */
+    eProsima_user_DllExport const std::string& key_string() const
+    {
+        return m_key_string;
+    }
+
+    /*!
+     * @brief This function returns a reference to member key_string
+     * @return Reference to member key_string
+     */
+    eProsima_user_DllExport std::string& key_string()
+    {
+        return m_key_string;
+    }
+
+
+
+private:
+
+    int32_t m_key_long{0};
+    int16_t m_key_short{0};
+    std::string m_key_string;
+
+};
+/*!
+ * @brief This class represents the structure KeyedMutable defined by the user in the IDL file.
+ * @ingroup key
+ */
+class KeyedMutable
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport KeyedMutable()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~KeyedMutable()
+    {
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object KeyedMutable that will be copied.
+     */
+    eProsima_user_DllExport KeyedMutable(
+            const KeyedMutable& x)
+    {
+                    m_key_long = x.m_key_long;
+
+                    m_key_short = x.m_key_short;
+
+                    m_key_string = x.m_key_string;
+
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object KeyedMutable that will be copied.
+     */
+    eProsima_user_DllExport KeyedMutable(
+            KeyedMutable&& x) noexcept
+    {
+        m_key_long = x.m_key_long;
+        m_key_short = x.m_key_short;
+        m_key_string = std::move(x.m_key_string);
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object KeyedMutable that will be copied.
+     */
+    eProsima_user_DllExport KeyedMutable& operator =(
+            const KeyedMutable& x)
+    {
+
+                    m_key_long = x.m_key_long;
+
+                    m_key_short = x.m_key_short;
+
+                    m_key_string = x.m_key_string;
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object KeyedMutable that will be copied.
+     */
+    eProsima_user_DllExport KeyedMutable& operator =(
+            KeyedMutable&& x) noexcept
+    {
+
+        m_key_long = x.m_key_long;
+        m_key_short = x.m_key_short;
+        m_key_string = std::move(x.m_key_string);
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x KeyedMutable object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const KeyedMutable& x) const
+    {
+        return (m_key_long == x.m_key_long &&
+           m_key_short == x.m_key_short &&
+           m_key_string == x.m_key_string);
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x KeyedMutable object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const KeyedMutable& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function sets a value in member key_long
+     * @param _key_long New value for member key_long
+     */
+    eProsima_user_DllExport void key_long(
+            int32_t _key_long)
+    {
+        m_key_long = _key_long;
+    }
+
+    /*!
+     * @brief This function returns the value of member key_long
+     * @return Value of member key_long
+     */
+    eProsima_user_DllExport int32_t key_long() const
+    {
+        return m_key_long;
+    }
+
+    /*!
+     * @brief This function returns a reference to member key_long
+     * @return Reference to member key_long
+     */
+    eProsima_user_DllExport int32_t& key_long()
+    {
+        return m_key_long;
+    }
+
+
+    /*!
+     * @brief This function sets a value in member key_short
+     * @param _key_short New value for member key_short
+     */
+    eProsima_user_DllExport void key_short(
+            int16_t _key_short)
+    {
+        m_key_short = _key_short;
+    }
+
+    /*!
+     * @brief This function returns the value of member key_short
+     * @return Value of member key_short
+     */
+    eProsima_user_DllExport int16_t key_short() const
+    {
+        return m_key_short;
+    }
+
+    /*!
+     * @brief This function returns a reference to member key_short
+     * @return Reference to member key_short
+     */
+    eProsima_user_DllExport int16_t& key_short()
+    {
+        return m_key_short;
+    }
+
+
+    /*!
+     * @brief This function copies the value in member key_string
+     * @param _key_string New value to be copied in member key_string
+     */
+    eProsima_user_DllExport void key_string(
+            const std::string& _key_string)
+    {
+        m_key_string = _key_string;
+    }
+
+    /*!
+     * @brief This function moves the value in member key_string
+     * @param _key_string New value to be moved in member key_string
+     */
+    eProsima_user_DllExport void key_string(
+            std::string&& _key_string)
+    {
+        m_key_string = std::move(_key_string);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member key_string
+     * @return Constant reference to member key_string
+     */
+    eProsima_user_DllExport const std::string& key_string() const
+    {
+        return m_key_string;
+    }
+
+    /*!
+     * @brief This function returns a reference to member key_string
+     * @return Reference to member key_string
+     */
+    eProsima_user_DllExport std::string& key_string()
+    {
+        return m_key_string;
+    }
+
+
+
+private:
+
+    int32_t m_key_long{0};
+    int16_t m_key_short{0};
+    std::string m_key_string;
+
+};
 
 #endif // _FAST_DDS_GENERATED_KEY_HPP_
 

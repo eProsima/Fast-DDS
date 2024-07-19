@@ -115,6 +115,8 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.type_ids();
+
 }
 
 
@@ -207,6 +209,10 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.types();
+
+                        scdr << data.complete_to_minimal();
+
 }
 
 
@@ -414,6 +420,10 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.continuation_point();
+
+                        scdr << data.type_ids();
+
 }
 
 
@@ -506,6 +516,10 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.continuation_point();
+
+                        scdr << data.dependent_typeids();
+
 }
 
 
@@ -846,9 +860,18 @@ void serialize_key(
         const eprosima::fastdds::dds::builtin::TypeLookup_Request& data)
 {
     using namespace eprosima::fastdds::dds::builtin;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::rpc::RequestHeader& data);
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.header());
+
+                        scdr << data.data();
+
 }
 
 
@@ -1074,9 +1097,18 @@ void serialize_key(
         const eprosima::fastdds::dds::builtin::TypeLookup_Reply& data)
 {
     using namespace eprosima::fastdds::dds::builtin;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::rpc::ReplyHeader& data);
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.header());
+
+                        scdr << data.return_value();
+
 }
 
 

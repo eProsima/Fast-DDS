@@ -355,8 +355,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.my_complex_union();
+
 }
 
 

@@ -256,6 +256,8 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.bound();
+
 }
 
 
@@ -340,6 +342,8 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.bound();
+
 }
 
 
@@ -432,6 +436,10 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.equiv_kind();
+
+                        scdr << data.element_flags();
+
 }
 
 
@@ -529,9 +537,21 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& data);
+
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.header());
+
+                        scdr << data.bound();
+
+                        scdr << data.element_identifier();
+
 }
 
 
@@ -629,9 +649,21 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& data);
+
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.header());
+
+                        scdr << data.bound();
+
+                        scdr << data.element_identifier();
+
 }
 
 
@@ -729,9 +761,21 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::PlainArraySElemDefn& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& data);
+
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.header());
+
+                        scdr << data.array_bound_seq();
+
+                        scdr << data.element_identifier();
+
 }
 
 
@@ -829,9 +873,21 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& data);
+
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.header());
+
+                        scdr << data.array_bound_seq();
+
+                        scdr << data.element_identifier();
+
 }
 
 
@@ -945,9 +1001,27 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& data);
+
+
+
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.header());
+
+                        scdr << data.bound();
+
+                        scdr << data.element_identifier();
+
+                        scdr << data.key_flags();
+
+                        scdr << data.key_identifier();
+
 }
 
 
@@ -1061,9 +1135,27 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& data);
+
+
+
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.header());
+
+                        scdr << data.bound();
+
+                        scdr << data.element_identifier();
+
+                        scdr << data.key_flags();
+
+                        scdr << data.key_identifier();
+
 }
 
 
@@ -1164,6 +1256,12 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.sc_component_id();
+
+                        scdr << data.scc_length();
+
+                        scdr << data.scc_index();
+
 }
 
 
@@ -2369,6 +2467,10 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.paramname_hash();
+
+                        scdr << data.value();
+
 }
 
 
@@ -2462,6 +2564,13 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.annotation_typeid();
+
+                        if (data.param_seq().has_value())
+                        {
+                            scdr << data.param_seq().value();
+                        }
+
 }
 
 
@@ -2563,6 +2672,12 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.placement();
+
+                        scdr << data.language();
+
+                        scdr << data.text();
+
 }
 
 
@@ -2671,6 +2786,26 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        if (data.unit().has_value())
+                        {
+                            scdr << data.unit().value();
+                        }
+
+                        if (data.min().has_value())
+                        {
+                            scdr << data.min().value();
+                        }
+
+                        if (data.max().has_value())
+                        {
+                            scdr << data.max().value();
+                        }
+
+                        if (data.hash_id().has_value())
+                        {
+                            scdr << data.hash_id().value();
+                        }
+
 }
 
 
@@ -2771,6 +2906,12 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.member_id();
+
+                        scdr << data.member_flags();
+
+                        scdr << data.member_type_id();
+
 }
 
 
@@ -2868,9 +3009,26 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteMemberDetail& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations& data);
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.name();
+
+                        if (data.ann_builtin().has_value())
+                        {
+                            serialize_key(scdr, data.ann_builtin().value());
+                        }
+
+                        if (data.ann_custom().has_value())
+                        {
+                            scdr << data.ann_custom().value();
+                        }
+
 }
 
 
@@ -2955,6 +3113,8 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.name_hash();
+
 }
 
 
@@ -3044,9 +3204,21 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteStructMember& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CommonStructMember& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteMemberDetail& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.common());
+
+                        serialize_key(scdr, data.detail());
+
 }
 
 
@@ -3137,9 +3309,21 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalStructMember& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CommonStructMember& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::MinimalMemberDetail& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.common());
+
+                        serialize_key(scdr, data.detail());
+
 }
 
 
@@ -3222,9 +3406,18 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        if (data.verbatim().has_value())
+                        {
+                            serialize_key(scdr, data.verbatim().value());
+                        }
+
 }
 
 
@@ -3394,9 +3587,27 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations& data);
+
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        if (data.ann_builtin().has_value())
+                        {
+                            serialize_key(scdr, data.ann_builtin().value());
+                        }
+
+                        if (data.ann_custom().has_value())
+                        {
+                            scdr << data.ann_custom().value();
+                        }
+
+                        scdr << data.type_name();
+
 }
 
 
@@ -3486,9 +3697,17 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteStructHeader& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.base_type();
+
+                        serialize_key(scdr, data.detail());
+
 }
 
 
@@ -3578,9 +3797,17 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalStructHeader& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::MinimalTypeDetail& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.base_type();
+
+                        serialize_key(scdr, data.detail());
+
 }
 
 
@@ -3678,9 +3905,20 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteStructType& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteStructHeader& data);
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.struct_flags();
+
+                        serialize_key(scdr, data.header());
+
+                        scdr << data.member_seq();
+
 }
 
 
@@ -3778,9 +4016,20 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalStructType& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::MinimalStructHeader& data);
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.struct_flags();
+
+                        serialize_key(scdr, data.header());
+
+                        scdr << data.member_seq();
+
 }
 
 
@@ -3890,6 +4139,14 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.member_id();
+
+                        scdr << data.member_flags();
+
+                        scdr << data.type_id();
+
+                        scdr << data.label_seq();
+
 }
 
 
@@ -3979,9 +4236,21 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteUnionMember& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CommonUnionMember& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteMemberDetail& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.common());
+
+                        serialize_key(scdr, data.detail());
+
 }
 
 
@@ -4072,9 +4341,21 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalUnionMember& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CommonUnionMember& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::MinimalMemberDetail& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.common());
+
+                        serialize_key(scdr, data.detail());
+
 }
 
 
@@ -4168,6 +4449,10 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.member_flags();
+
+                        scdr << data.type_id();
+
 }
 
 
@@ -4265,9 +4550,30 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations& data);
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.common());
+
+                        if (data.ann_builtin().has_value())
+                        {
+                            serialize_key(scdr, data.ann_builtin().value());
+                        }
+
+                        if (data.ann_custom().has_value())
+                        {
+                            scdr << data.ann_custom().value();
+                        }
+
 }
 
 
@@ -4349,9 +4655,15 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.common());
+
 }
 
 
@@ -4433,9 +4745,15 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteUnionHeader& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.detail());
+
 }
 
 
@@ -4517,9 +4835,15 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalUnionHeader& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::MinimalTypeDetail& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.detail());
+
 }
 
 
@@ -4625,9 +4949,26 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteUnionType& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteUnionHeader& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember& data);
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.union_flags();
+
+                        serialize_key(scdr, data.header());
+
+                        serialize_key(scdr, data.discriminator());
+
+                        scdr << data.member_seq();
+
 }
 
 
@@ -4733,9 +5074,26 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalUnionType& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::MinimalUnionHeader& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember& data);
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.union_flags();
+
+                        serialize_key(scdr, data.header());
+
+                        serialize_key(scdr, data.discriminator());
+
+                        scdr << data.member_seq();
+
 }
 
 
@@ -4828,6 +5186,10 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.member_flags();
+
+                        scdr << data.member_type_id();
+
 }
 
 
@@ -4925,9 +5287,21 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CommonAnnotationParameter& data);
+
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.common());
+
+                        scdr << data.name();
+
+                        scdr << data.default_value();
+
 }
 
 
@@ -5026,9 +5400,21 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CommonAnnotationParameter& data);
+
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.common());
+
+                        scdr << data.name_hash();
+
+                        scdr << data.default_value();
+
 }
 
 
@@ -5114,6 +5500,8 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.annotation_name();
+
 }
 
 
@@ -5283,9 +5671,20 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteAnnotationType& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader& data);
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.annotation_flag();
+
+                        serialize_key(scdr, data.header());
+
+                        scdr << data.member_seq();
+
 }
 
 
@@ -5383,9 +5782,20 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalAnnotationType& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader& data);
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.annotation_flag();
+
+                        serialize_key(scdr, data.header());
+
+                        scdr << data.member_seq();
+
 }
 
 
@@ -5478,6 +5888,10 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.related_flags();
+
+                        scdr << data.related_type();
+
 }
 
 
@@ -5575,9 +5989,30 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteAliasBody& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CommonAliasBody& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations& data);
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.common());
+
+                        if (data.ann_builtin().has_value())
+                        {
+                            serialize_key(scdr, data.ann_builtin().value());
+                        }
+
+                        if (data.ann_custom().has_value())
+                        {
+                            scdr << data.ann_custom().value();
+                        }
+
 }
 
 
@@ -5659,9 +6094,15 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalAliasBody& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CommonAliasBody& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.common());
+
 }
 
 
@@ -5743,9 +6184,15 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteAliasHeader& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.detail());
+
 }
 
 
@@ -5915,9 +6362,23 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteAliasType& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteAliasHeader& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteAliasBody& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.alias_flags();
+
+                        serialize_key(scdr, data.header());
+
+                        serialize_key(scdr, data.body());
+
 }
 
 
@@ -6015,9 +6476,23 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalAliasType& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::MinimalAliasHeader& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::MinimalAliasBody& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.alias_flags();
+
+                        serialize_key(scdr, data.header());
+
+                        serialize_key(scdr, data.body());
+
 }
 
 
@@ -6107,9 +6582,24 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteElementDetail& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations& data);
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        if (data.ann_builtin().has_value())
+                        {
+                            serialize_key(scdr, data.ann_builtin().value());
+                        }
+
+                        if (data.ann_custom().has_value())
+                        {
+                            scdr << data.ann_custom().value();
+                        }
+
 }
 
 
@@ -6202,6 +6692,10 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.element_flags();
+
+                        scdr << data.type();
+
 }
 
 
@@ -6291,9 +6785,21 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteCollectionElement& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CommonCollectionElement& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteElementDetail& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.common());
+
+                        serialize_key(scdr, data.detail());
+
 }
 
 
@@ -6375,9 +6881,15 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalCollectionElement& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CommonCollectionElement& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.common());
+
 }
 
 
@@ -6462,6 +6974,8 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.bound();
+
 }
 
 
@@ -6551,9 +7065,24 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteCollectionHeader& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CommonCollectionHeader& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.common());
+
+                        if (data.detail().has_value())
+                        {
+                            serialize_key(scdr, data.detail().value());
+                        }
+
 }
 
 
@@ -6635,9 +7164,15 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalCollectionHeader& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CommonCollectionHeader& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.common());
+
 }
 
 
@@ -6735,9 +7270,23 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteSequenceType& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteCollectionHeader& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteCollectionElement& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.collection_flag();
+
+                        serialize_key(scdr, data.header());
+
+                        serialize_key(scdr, data.element());
+
 }
 
 
@@ -6835,9 +7384,23 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalSequenceType& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::MinimalCollectionHeader& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::MinimalCollectionElement& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.collection_flag();
+
+                        serialize_key(scdr, data.header());
+
+                        serialize_key(scdr, data.element());
+
 }
 
 
@@ -6922,6 +7485,8 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.bound_seq();
+
 }
 
 
@@ -7011,9 +7576,21 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteArrayHeader& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CommonArrayHeader& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.common());
+
+                        serialize_key(scdr, data.detail());
+
 }
 
 
@@ -7095,9 +7672,15 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalArrayHeader& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CommonArrayHeader& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.common());
+
 }
 
 
@@ -7195,9 +7778,23 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteArrayType& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteArrayHeader& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteCollectionElement& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.collection_flag();
+
+                        serialize_key(scdr, data.header());
+
+                        serialize_key(scdr, data.element());
+
 }
 
 
@@ -7295,9 +7892,23 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalArrayType& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::MinimalArrayHeader& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::MinimalCollectionElement& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.collection_flag();
+
+                        serialize_key(scdr, data.header());
+
+                        serialize_key(scdr, data.element());
+
 }
 
 
@@ -7403,9 +8014,29 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteMapType& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteCollectionHeader& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteCollectionElement& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteCollectionElement& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.collection_flag();
+
+                        serialize_key(scdr, data.header());
+
+                        serialize_key(scdr, data.key());
+
+                        serialize_key(scdr, data.element());
+
 }
 
 
@@ -7511,9 +8142,29 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalMapType& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::MinimalCollectionHeader& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::MinimalCollectionElement& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::MinimalCollectionElement& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.collection_flag();
+
+                        serialize_key(scdr, data.header());
+
+                        serialize_key(scdr, data.key());
+
+                        serialize_key(scdr, data.element());
+
 }
 
 
@@ -7607,6 +8258,10 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
+                        scdr << data.flags();
+
 }
 
 
@@ -7696,9 +8351,21 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteMemberDetail& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.common());
+
+                        serialize_key(scdr, data.detail());
+
 }
 
 
@@ -7789,9 +8456,21 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::MinimalMemberDetail& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.common());
+
+                        serialize_key(scdr, data.detail());
+
 }
 
 
@@ -7877,6 +8556,8 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.bit_bound();
+
 }
 
 
@@ -7966,9 +8647,21 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.common());
+
+                        serialize_key(scdr, data.detail());
+
 }
 
 
@@ -8050,9 +8743,15 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.common());
+
 }
 
 
@@ -8150,9 +8849,20 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteEnumeratedType& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader& data);
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.enum_flags();
+
+                        serialize_key(scdr, data.header());
+
+                        scdr << data.literal_seq();
+
 }
 
 
@@ -8250,9 +8960,20 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalEnumeratedType& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader& data);
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.enum_flags();
+
+                        serialize_key(scdr, data.header());
+
+                        scdr << data.literal_seq();
+
 }
 
 
@@ -8345,6 +9066,10 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.position();
+
+                        scdr << data.flags();
+
 }
 
 
@@ -8434,9 +9159,21 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteBitflag& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CommonBitflag& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteMemberDetail& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.common());
+
+                        serialize_key(scdr, data.detail());
+
 }
 
 
@@ -8527,9 +9264,21 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalBitflag& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CommonBitflag& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::MinimalMemberDetail& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.common());
+
+                        serialize_key(scdr, data.detail());
+
 }
 
 
@@ -8615,6 +9364,8 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.bit_bound();
+
 }
 
 
@@ -8717,6 +9468,12 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.bitmask_flags();
+
+                        scdr << data.header();
+
+                        scdr << data.flag_seq();
+
 }
 
 
@@ -8817,6 +9574,12 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.bitmask_flags();
+
+                        scdr << data.header();
+
+                        scdr << data.flag_seq();
+
 }
 
 
@@ -8925,6 +9688,14 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.position();
+
+                        scdr << data.flags();
+
+                        scdr << data.bitcount();
+
+                        scdr << data.holder_type();
+
 }
 
 
@@ -9014,9 +9785,21 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteBitfield& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CommonBitfield& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteMemberDetail& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.common());
+
+                        serialize_key(scdr, data.detail());
+
 }
 
 
@@ -9107,9 +9890,18 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalBitfield& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CommonBitfield& data);
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.common());
+
+                        scdr << data.name_hash();
+
 }
 
 
@@ -9192,9 +9984,15 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteBitsetHeader& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.detail());
+
 }
 
 
@@ -9364,9 +10162,20 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteBitsetType& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::CompleteBitsetHeader& data);
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.bitset_flags();
+
+                        serialize_key(scdr, data.header());
+
+                        scdr << data.field_seq();
+
 }
 
 
@@ -9464,9 +10273,20 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalBitsetType& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::MinimalBitsetHeader& data);
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.bitset_flags();
+
+                        serialize_key(scdr, data.header());
+
+                        scdr << data.field_seq();
+
 }
 
 
@@ -10473,6 +11293,10 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.type_identifier();
+
+                        scdr << data.type_object();
+
 }
 
 
@@ -10566,6 +11390,10 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.type_identifier1();
+
+                        scdr << data.type_identifier2();
+
 }
 
 
@@ -10659,6 +11487,10 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.type_id();
+
+                        scdr << data.typeobject_serialized_size();
+
 }
 
 
@@ -10757,9 +11589,21 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize& data);
+
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.typeid_with_size());
+
+                        scdr << data.dependent_typeid_count();
+
+                        scdr << data.dependent_typeids();
+
 }
 
 
@@ -10850,9 +11694,21 @@ void serialize_key(
         const eprosima::fastdds::dds::xtypes::TypeInformation& data)
 {
     using namespace eprosima::fastdds::dds::xtypes;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.minimal());
+
+                        serialize_key(scdr, data.complete());
+
 }
 
 

@@ -217,8 +217,39 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const StructType& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.char_field();
+
+                        scdr << data.uint8_field();
+
+                        scdr << data.int16_field();
+
+                        scdr << data.uint16_field();
+
+                        scdr << data.int32_field();
+
+                        scdr << data.uint32_field();
+
+                        scdr << data.int64_field();
+
+                        scdr << data.uint64_field();
+
+                        scdr << data.float_field();
+
+                        scdr << data.double_field();
+
+                        scdr << data.long_double_field();
+
+                        scdr << data.bool_field();
+
+                        scdr << data.string_field();
+
+                        scdr << data.enum_field();
+
+                        scdr << data.enum2_field();
+
 }
 
 
@@ -799,8 +830,189 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ContentFilterTestType& data)
 {
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const StructType& data);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.char_field();
+
+                        scdr << data.uint8_field();
+
+                        scdr << data.int16_field();
+
+                        scdr << data.uint16_field();
+
+                        scdr << data.int32_field();
+
+                        scdr << data.uint32_field();
+
+                        scdr << data.int64_field();
+
+                        scdr << data.uint64_field();
+
+                        scdr << data.float_field();
+
+                        scdr << data.double_field();
+
+                        scdr << data.long_double_field();
+
+                        scdr << data.bool_field();
+
+                        scdr << data.string_field();
+
+                        scdr << data.enum_field();
+
+                        scdr << data.enum2_field();
+
+                        serialize_key(scdr, data.struct_field());
+
+                        scdr << data.array_char_field();
+
+                        scdr << data.array_uint8_field();
+
+                        scdr << data.array_int16_field();
+
+                        scdr << data.array_uint16_field();
+
+                        scdr << data.array_int32_field();
+
+                        scdr << data.array_uint32_field();
+
+                        scdr << data.array_int64_field();
+
+                        scdr << data.array_uint64_field();
+
+                        scdr << data.array_float_field();
+
+                        scdr << data.array_double_field();
+
+                        scdr << data.array_long_double_field();
+
+                        scdr << data.array_bool_field();
+
+                        scdr << data.array_string_field();
+
+                        scdr << data.array_enum_field();
+
+                        scdr << data.array_enum2_field();
+
+                        scdr << data.array_struct_field();
+
+                        scdr << data.bounded_sequence_char_field();
+
+                        scdr << data.bounded_sequence_uint8_field();
+
+                        scdr << data.bounded_sequence_int16_field();
+
+                        scdr << data.bounded_sequence_uint16_field();
+
+                        scdr << data.bounded_sequence_int32_field();
+
+                        scdr << data.bounded_sequence_uint32_field();
+
+                        scdr << data.bounded_sequence_int64_field();
+
+                        scdr << data.bounded_sequence_uint64_field();
+
+                        scdr << data.bounded_sequence_float_field();
+
+                        scdr << data.bounded_sequence_double_field();
+
+                        scdr << data.bounded_sequence_long_double_field();
+
+                        scdr << data.bounded_sequence_bool_field();
+
+                        scdr << data.bounded_sequence_string_field();
+
+                        scdr << data.bounded_sequence_enum_field();
+
+                        scdr << data.bounded_sequence_enum2_field();
+
+                        scdr << data.bounded_sequence_struct_field();
+
+                        scdr << data.unbounded_sequence_char_field();
+
+                        scdr << data.unbounded_sequence_uint8_field();
+
+                        scdr << data.unbounded_sequence_int16_field();
+
+                        scdr << data.unbounded_sequence_uint16_field();
+
+                        scdr << data.unbounded_sequence_int32_field();
+
+                        scdr << data.unbounded_sequence_uint32_field();
+
+                        scdr << data.unbounded_sequence_int64_field();
+
+                        scdr << data.unbounded_sequence_uint64_field();
+
+                        scdr << data.unbounded_sequence_float_field();
+
+                        scdr << data.unbounded_sequence_double_field();
+
+                        scdr << data.unbounded_sequence_long_double_field();
+
+                        scdr << data.unbounded_sequence_bool_field();
+
+                        scdr << data.unbounded_sequence_string_field();
+
+                        scdr << data.unbounded_sequence_enum_field();
+
+                        scdr << data.unbounded_sequence_enum2_field();
+
+                        scdr << data.unbounded_sequence_struct_field();
+
 }
 
 

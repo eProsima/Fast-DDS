@@ -113,8 +113,13 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const EnumStructure& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_InnerEnumHelper();
+
+                        scdr << data.var_scoped_InnerEnumHelper();
+
 }
 
 
@@ -189,8 +194,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const BitMaskStructure& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_InnerBitMaskHelper();
+
 }
 
 
@@ -265,8 +273,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const BoundedBitMaskStructure& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_InnerBoundedBitMaskHelper();
+
 }
 
 

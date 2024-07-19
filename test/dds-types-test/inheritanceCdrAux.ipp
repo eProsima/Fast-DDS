@@ -129,8 +129,13 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InnerStructureHelperChild& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_child_longlong();
+
+                        scdr << data.var_child_ulonglong();
+
 }
 
 
@@ -245,8 +250,13 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InnerStructureHelperChildChild& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_child_childlonglong2();
+
+                        scdr << data.var_childchild_ulonglong2();
+
 }
 
 
@@ -329,6 +339,7 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InnerStructureHelperEmptyChild& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
 }
@@ -421,8 +432,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InnerStructureHelperEmptyChildChild& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_char();
+
 }
 
 
@@ -505,8 +519,13 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InnerEmptyStructureHelperChild& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_child_longlong();
+
+                        scdr << data.var_child_ulonglong();
+
 }
 
 
@@ -597,8 +616,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const StructAliasInheritanceStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.new_member();
+
 }
 
 
@@ -713,8 +735,45 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const StructuresInheritanceStruct& data)
 {
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const InnerStructureHelperChild& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const InnerStructureHelperChildChild& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const InnerStructureHelperEmptyChild& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const InnerStructureHelperEmptyChildChild& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const InnerEmptyStructureHelperChild& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const StructAliasInheritanceStruct& data);
+
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.var_InnerStructureHelperChild());
+
+                        serialize_key(scdr, data.var_InnerStructureHelperChildChild());
+
+                        serialize_key(scdr, data.var_InnerStructureHelperEmptyChild());
+
+                        serialize_key(scdr, data.var_InnerStructureHelperEmptyChildChild());
+
+                        serialize_key(scdr, data.var_InnerEmptyStructureHelperChild());
+
+                        serialize_key(scdr, data.var_StructAliasInheritanceStruct());
+
 }
 
 
@@ -1015,8 +1074,15 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const BitsetsChildInheritanceStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_InnerBitsetHelperChild();
+
+                        scdr << data.var_InnerBitsetHelperChildChild();
+
+                        scdr << data.var_BitsetAliasInheritanceBitset();
+
 }
 
 

@@ -190,7 +190,8 @@ namespace builtin {
                 eprosima_fastdds_dds_builtin_TypeLookup_getTypes_In_max_key_cdr_typesize);
 
         // Object that serializes the data.
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv1);
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
+        ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
         eprosima::fastcdr::serialize_key(ser, *p_type);
         if (force_md5 || eprosima_fastdds_dds_builtin_TypeLookup_getTypes_In_max_key_cdr_typesize > 16)
         {
@@ -371,7 +372,8 @@ namespace builtin {
                 eprosima_fastdds_dds_builtin_TypeLookup_getTypes_Out_max_key_cdr_typesize);
 
         // Object that serializes the data.
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv1);
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
+        ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
         eprosima::fastcdr::serialize_key(ser, *p_type);
         if (force_md5 || eprosima_fastdds_dds_builtin_TypeLookup_getTypes_Out_max_key_cdr_typesize > 16)
         {
@@ -553,7 +555,8 @@ namespace builtin {
                 eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_In_max_key_cdr_typesize);
 
         // Object that serializes the data.
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv1);
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
+        ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
         eprosima::fastcdr::serialize_key(ser, *p_type);
         if (force_md5 || eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_In_max_key_cdr_typesize > 16)
         {
@@ -734,7 +737,8 @@ namespace builtin {
                 eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_Out_max_key_cdr_typesize);
 
         // Object that serializes the data.
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv1);
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
+        ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
         eprosima::fastcdr::serialize_key(ser, *p_type);
         if (force_md5 || eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_Out_max_key_cdr_typesize > 16)
         {
@@ -917,7 +921,8 @@ namespace builtin {
                 eprosima_fastdds_dds_builtin_TypeLookup_Request_max_key_cdr_typesize);
 
         // Object that serializes the data.
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv1);
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
+        ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
         eprosima::fastcdr::serialize_key(ser, *p_type);
         if (force_md5 || eprosima_fastdds_dds_builtin_TypeLookup_Request_max_key_cdr_typesize > 16)
         {
@@ -1099,7 +1104,8 @@ namespace builtin {
                 eprosima_fastdds_dds_builtin_TypeLookup_Reply_max_key_cdr_typesize);
 
         // Object that serializes the data.
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv1);
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
+        ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
         eprosima::fastcdr::serialize_key(ser, *p_type);
         if (force_md5 || eprosima_fastdds_dds_builtin_TypeLookup_Reply_max_key_cdr_typesize > 16)
         {

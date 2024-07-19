@@ -129,8 +129,17 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FixId& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.o();
+
+                        scdr << data.s();
+
+                        scdr << data.l();
+
+                        scdr << data.ll();
+
 }
 
 
@@ -229,8 +238,17 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FixHexId& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.ho();
+
+                        scdr << data.hs();
+
+                        scdr << data.hl();
+
+                        scdr << data.ll();
+
 }
 
 
@@ -329,8 +347,17 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FixHashidDefault& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.o();
+
+                        scdr << data.s();
+
+                        scdr << data.l();
+
+                        scdr << data.ll();
+
 }
 
 
@@ -429,8 +456,17 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FixHashid& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.o();
+
+                        scdr << data.l();
+
+                        scdr << data.ll();
+
+                        scdr << data.s();
+
 }
 
 
@@ -537,8 +573,19 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FixMix& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.o();
+
+                        scdr << data.ho();
+
+                        scdr << data.l();
+
+                        scdr << data.ll();
+
+                        scdr << data.s();
+
 }
 
 
@@ -645,8 +692,19 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AutoidDefault& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.o();
+
+                        scdr << data.c();
+
+                        scdr << data.ll();
+
+                        scdr << data.l();
+
+                        scdr << data.s();
+
 }
 
 
@@ -753,8 +811,19 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AutoidSequential& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.c();
+
+                        scdr << data.o();
+
+                        scdr << data.l();
+
+                        scdr << data.ll();
+
+                        scdr << data.s();
+
 }
 
 
@@ -861,8 +930,19 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AutoidHash& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.o();
+
+                        scdr << data.c();
+
+                        scdr << data.ll();
+
+                        scdr << data.l();
+
+                        scdr << data.s();
+
 }
 
 
@@ -1009,8 +1089,19 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const DerivedAutoidDefault& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.od();
+
+                        scdr << data.lld();
+
+                        scdr << data.cd();
+
+                        scdr << data.ld();
+
+                        scdr << data.sd();
+
 }
 
 
@@ -1117,6 +1208,7 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const DerivedEmptyAutoidSequential& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
 }
@@ -1265,8 +1357,19 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const DerivedAutoidSequential& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.od();
+
+                        scdr << data.cd();
+
+                        scdr << data.ld();
+
+                        scdr << data.lld();
+
+                        scdr << data.sd();
+
 }
 
 
@@ -1413,8 +1516,19 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const DerivedAutoidHash& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.od();
+
+                        scdr << data.lld();
+
+                        scdr << data.cd();
+
+                        scdr << data.ld();
+
+                        scdr << data.sd();
+
 }
 
 

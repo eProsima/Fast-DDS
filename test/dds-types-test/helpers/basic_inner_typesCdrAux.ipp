@@ -113,8 +113,13 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InnerStructureHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.field1();
+
+                        scdr << data.field2();
+
 }
 
 
@@ -177,6 +182,7 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InnerEmptyStructureHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
 }

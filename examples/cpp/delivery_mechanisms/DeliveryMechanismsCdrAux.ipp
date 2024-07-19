@@ -113,8 +113,13 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const DeliveryMechanisms& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.index();
+
+                        scdr << data.message();
+
 }
 
 
