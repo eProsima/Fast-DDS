@@ -28,9 +28,7 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
-#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 
-#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include "types/FixedSizedPubSubTypes.hpp"
 #include "types/HelloWorldPubSubTypes.hpp"
 
