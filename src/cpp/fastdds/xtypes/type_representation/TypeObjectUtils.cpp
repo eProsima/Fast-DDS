@@ -829,22 +829,15 @@ void TypeObjectUtils::add_complete_struct_member(
         {
             throw InvalidArgumentError("Sequence has another member with same name");
         }
-    }
-#endif // !defined(NDEBUG)
-    auto it = member_seq.begin();
-    for (; it != member_seq.end(); ++it)
-    {
-        // Ordered by the member_index
-        if (it->common().member_id() > member.common().member_id())
-        {
-            break;
-        }
-        else if (it->common().member_id() == member.common().member_id())
+
+        if (struct_member.common().member_id() == member.common().member_id())
         {
             throw InvalidArgumentError("Sequence has another member with same ID");
         }
     }
-    member_seq.emplace(it, member);
+#endif // !defined(NDEBUG)
+    // Ordered by the member_index
+    member_seq.emplace_back(member);
 }
 
 const AppliedBuiltinTypeAnnotations TypeObjectUtils::build_applied_builtin_type_annotations(
@@ -999,6 +992,10 @@ void TypeObjectUtils::add_complete_union_member(
         {
             throw InvalidArgumentError("Sequence has another member with same name");
         }
+        if (union_member.common().member_id() == member.common().member_id())
+        {
+            throw InvalidArgumentError("Sequence has another member with same ID");
+        }
         if (member.common().member_flags() & MemberFlagBits::IS_DEFAULT &&
                 union_member.common().member_flags() & MemberFlagBits::IS_DEFAULT)
         {
@@ -1013,20 +1010,8 @@ void TypeObjectUtils::add_complete_union_member(
         }
     }
 #endif // !defined(NDEBUG)
-    auto it = complete_union_member_seq.begin();
-    for (; it != complete_union_member_seq.end(); ++it)
-    {
-        // Ordered by member_index
-        if (it->common().member_id() > member.common().member_id())
-        {
-            break;
-        }
-        else if (it->common().member_id() == member.common().member_id())
-        {
-            throw InvalidArgumentError("Sequence has another member with same ID");
-        }
-    }
-    complete_union_member_seq.emplace(it, member);
+    // Ordered by the member_index
+    complete_union_member_seq.emplace_back(member);
 }
 
 const CommonDiscriminatorMember TypeObjectUtils::build_common_discriminator_member(

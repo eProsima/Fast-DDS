@@ -135,6 +135,17 @@ public:
         ASSERT_TRUE(dyn_pubsubType.deserialize(static_payload, &data2));
         EXPECT_TRUE(data2->equals(data));
 
+        // Check key hash calculation
+        if (static_pubsubType.get()->is_compute_key_provided)
+        {
+            eprosima::fastdds::rtps::InstanceHandle_t static_ih;
+            eprosima::fastdds::rtps::InstanceHandle_t dyn_ih;
+            ASSERT_TRUE(static_pubsubType.compute_key(&data_static, static_ih));
+            ASSERT_TRUE(dyn_pubsubType.compute_key(&data, dyn_ih));
+            EXPECT_NE(static_ih, eprosima::fastdds::dds::InstanceHandle_t());
+            EXPECT_EQ(static_ih, dyn_ih);
+        }
+
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data1), RETCODE_OK);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }

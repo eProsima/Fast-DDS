@@ -1344,9 +1344,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const KeyedEmptyInheritanceStruct& data)
 {
-
-    static_cast<void>(scdr);
-    static_cast<void>(data);
+    extern void serialize_key(
+            Cdr& scdr,
+            const KeyedEmptyStruct& data);
+    serialize_key(scdr, static_cast<const KeyedEmptyStruct&>(data));
 }
 
 
@@ -1445,9 +1446,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const KeyedInheritanceStruct& data)
 {
-
-    static_cast<void>(scdr);
-    static_cast<void>(data);
+    extern void serialize_key(
+            Cdr& scdr,
+            const KeyedShortStruct& data);
+    serialize_key(scdr, static_cast<const KeyedShortStruct&>(data));
 }
 
 
@@ -1530,9 +1532,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InheritanceKeyedEmptyStruct& data)
 {
-
-    static_cast<void>(scdr);
-    static_cast<void>(data);
+    extern void serialize_key(
+            Cdr& scdr,
+            const KeyedShortStruct& data);
+    serialize_key(scdr, static_cast<const KeyedShortStruct&>(data));
 }
 
 

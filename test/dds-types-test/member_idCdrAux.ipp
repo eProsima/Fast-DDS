@@ -1089,19 +1089,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const DerivedAutoidDefault& data)
 {
-
-    static_cast<void>(scdr);
-    static_cast<void>(data);
-                        scdr << data.od();
-
-                        scdr << data.lld();
-
-                        scdr << data.cd();
-
-                        scdr << data.ld();
-
-                        scdr << data.sd();
-
+    extern void serialize_key(
+            Cdr& scdr,
+            const AutoidDefault& data);
+    serialize_key(scdr, static_cast<const AutoidDefault&>(data));
 }
 
 
@@ -1208,9 +1199,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const DerivedEmptyAutoidSequential& data)
 {
-
-    static_cast<void>(scdr);
-    static_cast<void>(data);
+    extern void serialize_key(
+            Cdr& scdr,
+            const AutoidSequential& data);
+    serialize_key(scdr, static_cast<const AutoidSequential&>(data));
 }
 
 
@@ -1357,19 +1349,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const DerivedAutoidSequential& data)
 {
-
-    static_cast<void>(scdr);
-    static_cast<void>(data);
-                        scdr << data.od();
-
-                        scdr << data.cd();
-
-                        scdr << data.ld();
-
-                        scdr << data.lld();
-
-                        scdr << data.sd();
-
+    extern void serialize_key(
+            Cdr& scdr,
+            const DerivedEmptyAutoidSequential& data);
+    serialize_key(scdr, static_cast<const DerivedEmptyAutoidSequential&>(data));
 }
 
 
@@ -1516,19 +1499,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const DerivedAutoidHash& data)
 {
-
-    static_cast<void>(scdr);
-    static_cast<void>(data);
-                        scdr << data.od();
-
-                        scdr << data.lld();
-
-                        scdr << data.cd();
-
-                        scdr << data.ld();
-
-                        scdr << data.sd();
-
+    extern void serialize_key(
+            Cdr& scdr,
+            const AutoidHash& data);
+    serialize_key(scdr, static_cast<const AutoidHash&>(data));
 }
 
 

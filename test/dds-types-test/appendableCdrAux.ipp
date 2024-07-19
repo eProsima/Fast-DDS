@@ -1276,11 +1276,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableEmptyInheritanceStruct& data)
 {
-
-    static_cast<void>(scdr);
-    static_cast<void>(data);
-                        scdr << data.var_str();
-
+    extern void serialize_key(
+            Cdr& scdr,
+            const AppendableEmptyStruct& data);
+    serialize_key(scdr, static_cast<const AppendableEmptyStruct&>(data));
 }
 
 
@@ -1363,11 +1362,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableInheritanceStruct& data)
 {
-
-    static_cast<void>(scdr);
-    static_cast<void>(data);
-                        scdr << data.var_str();
-
+    extern void serialize_key(
+            Cdr& scdr,
+            const AppendableShortStruct& data);
+    serialize_key(scdr, static_cast<const AppendableShortStruct&>(data));
 }
 
 
@@ -1442,9 +1440,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableInheritanceEmptyStruct& data)
 {
-
-    static_cast<void>(scdr);
-    static_cast<void>(data);
+    extern void serialize_key(
+            Cdr& scdr,
+            const AppendableShortStruct& data);
+    serialize_key(scdr, static_cast<const AppendableShortStruct&>(data));
 }
 
 
@@ -1527,11 +1526,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableExtensibilityInheritance& data)
 {
-
-    static_cast<void>(scdr);
-    static_cast<void>(data);
-                        scdr << data.var_long();
-
+    extern void serialize_key(
+            Cdr& scdr,
+            const AppendableShortStruct& data);
+    serialize_key(scdr, static_cast<const AppendableShortStruct&>(data));
 }
 
 

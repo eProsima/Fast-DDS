@@ -208,19 +208,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ParentStruct& data)
 {
-            extern void serialize_key(
-                    Cdr& scdr,
-                    const GrandparentStruct& data);
-
-
-    static_cast<void>(scdr);
-    static_cast<void>(data);
-                        scdr << data.my_short();
-
-                        scdr << data.my_string();
-
-                        serialize_key(scdr, data.my_grandparent());
-
+    extern void serialize_key(
+            Cdr& scdr,
+            const GrandparentStruct& data);
+    serialize_key(scdr, static_cast<const GrandparentStruct&>(data));
 }
 
 
@@ -414,18 +405,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const StructStruct& data)
 {
-            extern void serialize_key(
-                    Cdr& scdr,
-                    const NestedStructElement& data);
-
-
-
-    static_cast<void>(scdr);
-    static_cast<void>(data);
-                        serialize_key(scdr, data.my_nested_element());
-
-                        scdr << data.my_char();
-
+    extern void serialize_key(
+            Cdr& scdr,
+            const ParentStruct& data);
+    serialize_key(scdr, static_cast<const ParentStruct&>(data));
 }
 
 
