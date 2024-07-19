@@ -30,6 +30,22 @@ namespace fastdds {
 namespace statistics {
 
 /**
+ * Checks whether an entity id corresponds to a builtin monitor service writer.
+ * @param [in] entity_id The entity id to check.
+ * @return true when the entity id corresponds to a builtin monitor service writer.
+ */
+inline bool is_monitor_service_builtin(
+        const fastdds::rtps::EntityId_t& entity_id)
+{
+    bool ret = false;
+#ifdef FASTDDS_STATISTICS
+    ret = ENTITYID_MONITOR_SERVICE_WRITER == entity_id.to_uint32();
+#endif // ifdef FASTDDS_STATISTICS
+    static_cast<void>(entity_id);
+    return ret;
+}
+
+/**
  * Checks whether an entity id corresponds to a builtin statistics writer.
  * @param [in] entity_id The entity id to check.
  * @return true when the entity id corresponds to a builtin statistics writer.
@@ -37,7 +53,7 @@ namespace statistics {
 inline bool is_statistics_builtin(
         const fastdds::rtps::EntityId_t& entity_id)
 {
-    return 0x60 == (0xE0 & entity_id.value[3]);
+    return 0x60 == (0xE0 & entity_id.value[3]) || is_monitor_service_builtin(entity_id);
 }
 
 /**
