@@ -79,18 +79,18 @@ public:
      *
      * @return pointer to the new object
      *
-     * @remark Ownership is transferred. This object must be removed using @ref deleteData
+     * @remark Ownership is transferred. This object must be removed using @ref delete_data
      */
     FASTDDS_EXPORTED_API void* create_data() override;
 
     /**
-     * @brief Deletes an object previously allocated via @ref createData
+     * @brief Deletes an object previously allocated via @ref create_data
      *
      * @param data pointer to the object to be deleted
      *
-     * @remark Ownership is transferred. This object must be allocated using @ref createData
+     * @remark Ownership is transferred. This object must be allocated using @ref create_data
      */
-    FASTDDS_EXPORTED_API void delete_data (
+    FASTDDS_EXPORTED_API void delete_data(
             void* data) override;
 
     /**
