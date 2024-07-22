@@ -50,7 +50,7 @@ public:
     virtual ~ReaderApp();
 
     //! Run RTPS Reader
-    void run();
+    void run() override;
 
     //! New CacheChange_t added to the history callback
     void on_new_cache_change_added(
