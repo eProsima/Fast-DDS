@@ -4,6 +4,8 @@ names:
             - "-DCOMPILE_TOOLS=ON"
             - "-DINSTALL_TOOLS=ON"
     discovery-server:
+        cmake-args:
+            - "-DCOMPILE_EXAMPLES=ON"
         ctest-args: [
                 "--repeat", "until-pass:3",
                 "--timeout", "300",
