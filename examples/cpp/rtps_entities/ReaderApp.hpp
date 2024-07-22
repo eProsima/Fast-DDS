@@ -44,8 +44,8 @@ class ReaderApp : public Application, public ReaderListener
 public:
 
     ReaderApp(
-        const CLIParser::rtps_entities_config& config,
-        const std::string& topic_name);
+            const CLIParser::rtps_entities_config& config,
+            const std::string& topic_name);
 
     virtual ~ReaderApp();
 

@@ -51,11 +51,11 @@ void eprosima::fastcdr::deserialize(
                 switch (mid.id)
                 {
                     case 0:
-                            dcdr >> data.index();
+                        dcdr >> data.index();
                         break;
 
                     case 1:
-                            dcdr >> data.message();
+                        dcdr >> data.message();
                         break;
 
                     default:
@@ -123,7 +123,7 @@ ReaderApp::ReaderApp(
     reader_qos.m_durability.kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
     reader_qos.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
 
-    // Register entity 
+    // Register entity
     if (!rtps_participant_->registerReader(rtps_reader_, topic_att, reader_qos))
     {
         throw std::runtime_error("Entity registration failed");
@@ -168,7 +168,8 @@ void ReaderApp::on_new_cache_change_added(
     {
         if (deserialize_payload(change->serializedPayload, data_))
         {
-            std::cout << "Message: " << data_->message() << " with index " <<  data_->index() << " RECEIVED" << std::endl;
+            std::cout << "Message: " << data_->message() << " with index " <<  data_->index() << " RECEIVED" <<
+                std::endl;
             samples_received_++;
         }
         else

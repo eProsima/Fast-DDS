@@ -43,8 +43,8 @@ class WriterApp : public Application, public WriterListener
 public:
 
     WriterApp(
-        const CLIParser::rtps_entities_config& config,
-        const std::string& topic_name);
+            const CLIParser::rtps_entities_config& config,
+            const std::string& topic_name);
 
     virtual ~WriterApp();
 
@@ -69,8 +69,8 @@ private:
 
     //! Serialize payload
     bool serialize_payload(
-                const HelloWorld* data,
-                eprosima::fastdds::rtps::SerializedPayload_t& payload);
+            const HelloWorld* data,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload);
 
     uint16_t samples_;
 

@@ -54,7 +54,6 @@ void eprosima::fastcdr::serialize<HelloWorld>(
     scdr.end_serialize_type(current_state);
 }
 
-
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
 
@@ -150,7 +149,7 @@ void WriterApp::run()
 {
     while (!is_stopped() && ((samples_ == 0) || (samples_sent_ < samples_)))
     {
-        if(add_change_to_history())
+        if (add_change_to_history())
         {
             std::cout << "Message " << data_->message() << " with index " << data_->index() << " SENT" << std::endl;
         }
@@ -174,7 +173,8 @@ bool WriterApp::serialize_payload(
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
 
     // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::CdrVersion::XCDRv1);
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            eprosima::fastcdr::CdrVersion::XCDRv1);
 
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
@@ -226,13 +226,13 @@ bool WriterApp::add_change_to_history()
     }
 
     data_->message("Hello World");
-    data_->index(data_->index()+1);
+    data_->index(data_->index() + 1);
 
     if (serialize_payload(data_, ch->serializedPayload))
     {
         ++samples_sent_;
 
-        if(writer_history_->add_change(ch))
+        if (writer_history_->add_change(ch))
         {
             ret = true;
         }
