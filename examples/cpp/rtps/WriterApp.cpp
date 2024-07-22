@@ -60,10 +60,10 @@ using namespace eprosima::fastdds::rtps;
 namespace eprosima {
 namespace fastdds {
 namespace examples {
-namespace rtps_entities {
+namespace rtps {
 
 WriterApp::WriterApp(
-        const CLIParser::rtps_entities_config& config,
+        const CLIParser::rtps_config& config,
         const std::string& topic_name)
     : samples_(config.samples)
     , samples_sent_(0)
@@ -259,7 +259,7 @@ void WriterApp::stop()
     terminate_cv_.notify_all();
 }
 
-} // namespace rtps_entities
+} // namespace rtps
 } // namespace examples
 } // namespace fastdds
 } // namespace eprosima

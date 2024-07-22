@@ -1,10 +1,10 @@
-# RTPS entities example
+# RTPS example
 
-The *eProsima Fast DDS RTPS entities* example is a simple application intended to demonstrate a basic RTPS deployment.
+The *eProsima Fast DDS RTPS* example is a simple application intended to demonstrate a basic RTPS deployment.
 
 This example is part of the suite of examples designed by eProsima that aims to illustrate the features and possible configurations of DDS and RTPS deployments through *eProsima Fast DDS*.
 
-In this case, the *RTPS entities* example describes the simplest deployment of a Fast DDS reader and writer.
+In this case, the *RTPS* example describes the simplest deployment of a Fast DDS reader and writer.
 
 * [Description of the example](#description-of-the-example)
 * [Run the example](#run-the-example)
@@ -26,28 +26,28 @@ This is typically used in applications where data is transmitted in a compact fo
 To launch this example, two different terminals are required.
 One of them will run the reader example application, and the other will run the writer application.
 
-### RTPS entities writer
+### RTPS writer
 
 * Ubuntu ( / MacOS )
 
     ```shell
-    user@machine:example_path$ ./rtps_entities writer
+    user@machine:example_path$ ./rtps writer
     RTPS Writer running. Please press Ctrl+C to stop the RTPS Writer at any time.
     ```
 
 * Windows
 
     ```powershell
-    example_path> rtps_entities.exe writer
+    example_path> rtps.exe writer
     RTPS Writer running. Please press Ctrl+C to stop the RTPS Writer at any time.
     ```
 
-### RTPS entities reader
+### RTPS reader
 
 * Ubuntu ( / MacOS )
 
     ```shell
-    user@machine:example_path$ ./rtps_entities reader
+    user@machine:example_path$ ./rtps reader
     Registering RTPS Reader
     RTPS Reader running. Please press Ctrl+C to stop the RTPS Reader at any time.
     ```
@@ -55,7 +55,7 @@ One of them will run the reader example application, and the other will run the 
 * Windows
 
     ```powershell
-    example_path> rtps_entities.exe reader
+    example_path> rtps.exe reader
     Registering RTPS Reader
     RTPS Reader running. Please press Ctrl+C to stop the RTPS Reader at any time.
     ```
@@ -66,7 +66,7 @@ All the example available flags can be queried running the executable with the `
 
 Regardless of which application is run first, since the publisher will not start sending data until a subscriber is discovered, the expected output both for publishers and subscribers is a first displayed message acknowledging the match, followed by the amount of samples sent or received until Ctrl+C is pressed.
 
-### RTPS entities writer
+### RTPS writer
 
 ```shell
 Remote endpoint with GUID 01.0f.da.70.2b.e0.c8.b2.00.00.00.00|0.0.1.4 matched.
@@ -76,7 +76,7 @@ Message Hello World with index 3 SENT
 ...
 ```
 
-### RTPS entities reader
+### RTPS reader
 
 ```shell
 Remote endpoint with GUID 01.0f.da.70.f5.ea.d7.9b.00.00.00.00|0.0.1.3 matched.

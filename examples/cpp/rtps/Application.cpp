@@ -26,11 +26,11 @@
 namespace eprosima {
 namespace fastdds {
 namespace examples {
-namespace rtps_entities {
+namespace rtps {
 
 //! Factory method to create a publisher or subscriber
 std::shared_ptr<Application> Application::make_app(
-        const CLIParser::rtps_entities_config& config,
+        const CLIParser::rtps_config& config,
         const std::string& topic_name)
 {
     std::shared_ptr<Application> entity;
@@ -50,7 +50,7 @@ std::shared_ptr<Application> Application::make_app(
     return entity;
 }
 
-} // namespace rtps_entities
+} // namespace rtps
 } // namespace examples
 } // namespace fastdds
 } // namespace eprosima

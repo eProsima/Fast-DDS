@@ -14,13 +14,13 @@
 
 import subprocess
 
-def test_rtps_entities():
+def test_rtps():
     """."""
     ret = False
     out = ''
     try:
         out = subprocess.check_output(
-            '@DOCKER_EXECUTABLE@ compose -f rtps_entities.compose.yml up',
+            '@DOCKER_EXECUTABLE@ compose -f rtps.compose.yml up',
             stderr=subprocess.STDOUT,
             shell=True,
             timeout=20

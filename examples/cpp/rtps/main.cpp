@@ -30,7 +30,7 @@
 
 using eprosima::fastdds::dds::Log;
 
-using namespace eprosima::fastdds::examples::rtps_entities;
+using namespace eprosima::fastdds::examples::rtps;
 
 std::function<void(int)> stop_app_handler;
 void signal_handler(
@@ -45,7 +45,7 @@ int main(
 {
     auto ret = EXIT_SUCCESS;
     const std::string topic_name = "hello_world_topic";
-    CLIParser::rtps_entities_config config = CLIParser::parse_cli_options(argc, argv);
+    CLIParser::rtps_config config = CLIParser::parse_cli_options(argc, argv);
 
     std::string app_name = CLIParser::parse_entity_kind(config.entity);
     std::shared_ptr<Application> app;

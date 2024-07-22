@@ -17,15 +17,15 @@
  *
  */
 
-#ifndef FASTDDS_EXAMPLES_CPP_RTPS_ENTITIES__APPLICATION_HPP
-#define FASTDDS_EXAMPLES_CPP_RTPS_ENTITIES__APPLICATION_HPP
+#ifndef FASTDDS_EXAMPLES_CPP_RTPS__APPLICATION_HPP
+#define FASTDDS_EXAMPLES_CPP_RTPS__APPLICATION_HPP
 
 #include "CLIParser.hpp"
 
 namespace eprosima {
 namespace fastdds {
 namespace examples {
-namespace rtps_entities {
+namespace rtps {
 
 class Application
 {
@@ -42,13 +42,13 @@ public:
 
     //! Factory method to create applications based on configuration
     static std::shared_ptr<Application> make_app(
-            const CLIParser::rtps_entities_config& config,
+            const CLIParser::rtps_config& config,
             const std::string& topic_name);
 };
 
-} // namespace rtps_entities
+} // namespace rtps
 } // namespace examples
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_EXAMPLES_CPP_RTPS_ENTITIES__APPLICATION_HPP
+#endif // FASTDDS_EXAMPLES_CPP_RTPS__APPLICATION_HPP

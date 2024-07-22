@@ -18,13 +18,13 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
-#ifndef FASTDDS_EXAMPLES_CPP_RTPS_ENTITIES__CLIPARSER_HPP
-#define FASTDDS_EXAMPLES_CPP_RTPS_ENTITIES__CLIPARSER_HPP
+#ifndef FASTDDS_EXAMPLES_CPP_RTPS__CLIPARSER_HPP
+#define FASTDDS_EXAMPLES_CPP_RTPS__CLIPARSER_HPP
 
 namespace eprosima {
 namespace fastdds {
 namespace examples {
-namespace rtps_entities {
+namespace rtps {
 
 using dds::Log;
 
@@ -43,7 +43,7 @@ public:
     };
 
     //! Configuration structure for the application
-    struct rtps_entities_config
+    struct rtps_config
     {
         CLIParser::EntityKind entity = CLIParser::EntityKind::UNDEFINED;
         uint16_t samples = 0;
@@ -59,7 +59,7 @@ public:
     static void print_help(
             uint8_t return_code)
     {
-        std::cout << "Usage: rtps_entities <entity> [options]"                                  << std::endl;
+        std::cout << "Usage: rtps <entity> [options]"                                  << std::endl;
         std::cout << ""                                                                         << std::endl;
         std::cout << "Entities:"                                                                << std::endl;
         std::cout << "  writer                          Run a RTPS Writer entity"               << std::endl;
@@ -74,19 +74,19 @@ public:
     }
 
     /**
-     * @brief Parse the command line options and return the rtps_entities_config object
+     * @brief Parse the command line options and return the rtps_config object
      *
      * @param argc number of arguments
      * @param argv array of arguments
-     * @return rtps_entities_config object with the parsed options
+     * @return rtps_config object with the parsed options
      *
      * @warning This method finishes the execution of the program if the input arguments are invalid
      */
-    static rtps_entities_config parse_cli_options(
+    static rtps_config parse_cli_options(
             int argc,
             char* argv[])
     {
-        rtps_entities_config config;
+        rtps_config config;
 
         if (argc < 2)
         {
@@ -212,9 +212,9 @@ public:
 
 };
 
-} // namespace rtps_entities
+} // namespace rtps
 } // namespace examples
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_EXAMPLES_CPP_RTPS_ENTITIES__CLIPARSER_HPP
+#endif // FASTDDS_EXAMPLES_CPP_RTPS__CLIPARSER_HPP

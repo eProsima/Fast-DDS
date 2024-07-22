@@ -13,53 +13,47 @@
 // limitations under the License.
 
 /**
- * @file ReaderApp.hpp
+ * @file WriterApp.hpp
  *
  */
 
-#ifndef FASTDDS_EXAMPLES_CPP_RTPS_ENTITIES__READERAPP_HPP
-#define FASTDDS_EXAMPLES_CPP_RTPS_ENTITIES__READERAPP_HPP
+#ifndef FASTDDS_EXAMPLES_CPP_RTPS__WRITERAPP_HPP
+#define FASTDDS_EXAMPLES_CPP_RTPS__WRITERAPP_HPP
 
 #include <condition_variable>
-#include <string>
 
-#include <fastdds/rtps/history/ReaderHistory.hpp>
+#include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
-#include <fastdds/rtps/reader/ReaderListener.hpp>
-#include <fastdds/rtps/reader/RTPSReader.hpp>
+#include <fastdds/rtps/writer/WriterListener.hpp>
 
 #include "CLIParser.hpp"
 #include "Application.hpp"
 #include "HelloWorld.hpp"
+#include <fastcdr/FastCdr.h>
 
 using namespace eprosima::fastdds::rtps;
 
 namespace eprosima {
 namespace fastdds {
 namespace examples {
-namespace rtps_entities {
+namespace rtps {
 
-class ReaderApp : public Application, public ReaderListener
+class WriterApp : public Application, public WriterListener
 {
 public:
 
-    ReaderApp(
-            const CLIParser::rtps_entities_config& config,
+    WriterApp(
+            const CLIParser::rtps_config& config,
             const std::string& topic_name);
 
-    virtual ~ReaderApp();
+    virtual ~WriterApp();
 
-    //! Run RTPS Reader
-    void run() override;
+    //! Run RTPS Writer
+    void run();
 
-    //! New CacheChange_t added to the history callback
-    void on_new_cache_change_added(
-            RTPSReader* reader,
-            const CacheChange_t* const change) override;
-
-    //! Reader matched method
-    void on_reader_matched(
-            RTPSReader*,
+    //! Writer matched method
+    void on_writer_matched(
+            RTPSWriter*,
             const MatchingInfo& info) override;
 
     //! Trigger the end of execution
@@ -67,25 +61,30 @@ public:
 
 private:
 
-    //! Method to deserialize the payload
-    bool deserialize_payload(
-            const SerializedPayload_t& payload,
-            HelloWorld* data);
+    //! Add a new change to Writer History
+    bool add_change_to_history();
 
     //! Return the current state of execution
     bool is_stopped();
 
+    //! Serialize payload
+    bool serialize_payload(
+            const HelloWorld* data,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload);
+
     uint16_t samples_;
 
-    uint16_t samples_received_;
+    uint16_t samples_sent_;
 
-    uint16_t matched_;
+    std::vector<GUID_t> remote_endpoints_guid;
 
     RTPSParticipant* rtps_participant_;
 
-    RTPSReader* rtps_reader_;
+    RTPSWriter* rtps_writer_;
 
-    ReaderHistory* reader_history_;
+    WriterHistory* writer_history_;
+
+    int16_t matched_;
 
     std::atomic<bool> stop_;
 
@@ -93,12 +92,14 @@ private:
 
     std::condition_variable terminate_cv_;
 
+    const uint32_t period_ms_ = 100; // in ms
+
     HelloWorld* data_;
 };
 
-} // namespace rtps_entities
+} // namespace rtps
 } // namespace examples
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_EXAMPLES_CPP_RTPS_ENTITIES__READERAPP_HPP
+#endif // FASTDDS_EXAMPLES_CPP_RTPS__WRITERAPP_HPP
