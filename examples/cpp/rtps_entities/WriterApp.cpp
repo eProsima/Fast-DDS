@@ -230,10 +230,9 @@ bool WriterApp::add_change_to_history()
 
     if (serialize_payload(data_, ch->serializedPayload))
     {
-        ++samples_sent_;
-
         if (writer_history_->add_change(ch))
         {
+            ++samples_sent_;
             ret = true;
         }
         else
