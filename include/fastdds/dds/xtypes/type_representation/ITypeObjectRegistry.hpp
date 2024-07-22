@@ -23,6 +23,7 @@
 #include <string>
 
 #include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastdds/fastdds_dll.hpp>
 
