@@ -856,6 +856,7 @@ bool EDP::pairingWriter(
 
     BaseWriter* writer = BaseWriter::downcast(W);
     const GUID_t& writer_guid = writer->getGuid();
+    static_cast<void>(writer_guid); // Void cast to force usage if LOG_INFO and SECURITY are disabled
 
     EPROSIMA_LOG_INFO(RTPS_EDP, writer_guid << " in topic: \"" << wdata.topicName() << "\"");
     std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
