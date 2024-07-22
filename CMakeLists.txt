@@ -63,16 +63,11 @@ if(MSVC OR MSVC_IDE)
     # C5038 data member 'member1' will be initialized after data member 'member2'
     # C4100 'identifier' : unreferenced formal parameter (matches clang -Wunused-lambda-capture)
     add_compile_options(/w34101 /w34189 /w34555 /w34715 /w35038 /w44100)
-    # Treat warnings as errors
-    add_compile_options(/WX)
 
     if(EPROSIMA_BUILD)
         string(REPLACE "/DNDEBUG" "" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
     endif()
 else()
-    # Treat warnings as errors
-    set(CMAKE_CXX_FLAGS
-        "${CMAKE_CXX_FLAGS} -Werror")
     # Add some generic warnings common to all compilers
     set(CMAKE_CXX_FLAGS
         "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -Wno-unknown-pragmas -Wno-error=deprecated-declarations -Wno-switch-bool")
@@ -181,6 +176,20 @@ if (SANITIZER)
     else()
         message(WARNING "Sanitizer option not supported. Continuing without any code instrumentation... ")
 
+    endif()
+endif()
+
+###############################################################################
+# Set warnings as errors if the thread sanitizer is not being used
+###############################################################################
+string(FIND ${CMAKE_CXX_FLAGS} "-fsanitize=thread" SANITIZER_THREAD)
+if (${SANITIZER_THREAD} EQUAL -1)
+    message(STATUS "Setting warnings as errors...")
+    if(MSVC OR MSVC_IDE)
+        add_compile_options(/WX)
+    else()
+        set(CMAKE_CXX_FLAGS
+            "${CMAKE_CXX_FLAGS} -Werror")
     endif()
 endif()
 
