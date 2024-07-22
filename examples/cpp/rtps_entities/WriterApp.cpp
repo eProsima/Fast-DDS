@@ -104,20 +104,6 @@ WriterApp::WriterApp(
         throw std::runtime_error("RTPS Writer creation failed");
     }
 
-    if (!register_entity(topic_name))
-    {
-        throw std::runtime_error("Entity registration failed");
-    }
-}
-
-WriterApp::~WriterApp()
-{
-    RTPSDomain::removeRTPSParticipant(rtps_participant_);
-    delete(writer_history_);
-}
-
-bool WriterApp::register_entity(std::string topic_name)
-{
     std::cout << "Registering RTPS Writer" << std::endl;
 
     TopicAttributes topic_att;
@@ -129,7 +115,17 @@ bool WriterApp::register_entity(std::string topic_name)
     writer_qos.m_durability.kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
     writer_qos.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
 
-    return rtps_participant_->registerWriter(rtps_writer_, topic_att, writer_qos);
+    // Register entity
+    if (!rtps_participant_->registerWriter(rtps_writer_, topic_att, writer_qos))
+    {
+        throw std::runtime_error("Entity registration failed");
+    }
+}
+
+WriterApp::~WriterApp()
+{
+    RTPSDomain::removeRTPSParticipant(rtps_participant_);
+    delete(writer_history_);
 }
 
 void WriterApp::on_writer_matched(
@@ -154,7 +150,10 @@ void WriterApp::run()
 {
     while (!is_stopped() && ((samples_ == 0) || (samples_sent_ < samples_)))
     {
-        add_change_to_history();
+        if(add_change_to_history())
+        {
+            std::cout << "Message " << data_->message() << " with index " << data_->index() << " SENT" << std::endl;
+        }
 
         // Wait for period or stop event
         std::unique_lock<std::mutex> period_lock(terminate_cv_mtx_);
@@ -205,7 +204,7 @@ bool WriterApp::serialize_payload(
     return true;
 }
 
-void WriterApp::add_change_to_history()
+bool WriterApp::add_change_to_history()
 {
     // Wait for the data endpoints discovery
     std::unique_lock<std::mutex> matched_lock(terminate_cv_mtx_);
@@ -214,6 +213,8 @@ void WriterApp::add_change_to_history()
                 // at least one has been discovered
                 return ((matched_ > 0) || is_stopped());
             });
+
+    bool ret =  false;
 
     CacheChange_t* ch = writer_history_->create_change(255, ALIVE);
 
@@ -230,12 +231,22 @@ void WriterApp::add_change_to_history()
     if (serialize_payload(data_, ch->serializedPayload))
     {
         ++samples_sent_;
+
+        if(writer_history_->add_change(ch))
+        {
+            ret = true;
+        }
+        else
+        {
+            std::cout << "Fail to add the change to the history!" << std::endl;
+        }
+    }
+    else
+    {
+        std::cout << "Fail to serialize the payload!" << std::endl;
     }
 
-    if(writer_history_->add_change(ch))
-    {
-        std::cout << "Message " << data_->message() << " with index " << data_->index() << " SENT" << std::endl;
-    }
+    return ret;
 }
 
 bool WriterApp::is_stopped()

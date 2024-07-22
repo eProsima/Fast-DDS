@@ -112,20 +112,6 @@ ReaderApp::ReaderApp(
         throw std::runtime_error("RTPS Reader creation failed");
     }
 
-    if (!register_entity(topic_name))
-    {
-        throw std::runtime_error("Entity registration failed");
-    }
-}
-
-ReaderApp::~ReaderApp()
-{
-    RTPSDomain::removeRTPSParticipant(rtps_participant_);
-    delete(reader_history_);
-}
-
-bool ReaderApp::register_entity(std::string topic_name)
-{
     std::cout << "Registering RTPS Reader" << std::endl;
 
     TopicAttributes topic_att;
@@ -137,7 +123,17 @@ bool ReaderApp::register_entity(std::string topic_name)
     reader_qos.m_durability.kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
     reader_qos.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
 
-    return rtps_participant_->registerReader(rtps_reader_, topic_att, reader_qos);
+    // Register entity 
+    if (!rtps_participant_->registerReader(rtps_reader_, topic_att, reader_qos))
+    {
+        throw std::runtime_error("Entity registration failed");
+    }
+}
+
+ReaderApp::~ReaderApp()
+{
+    RTPSDomain::removeRTPSParticipant(rtps_participant_);
+    delete(reader_history_);
 }
 
 void ReaderApp::on_reader_matched(

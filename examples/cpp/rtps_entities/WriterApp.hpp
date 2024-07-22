@@ -51,9 +51,6 @@ public:
     //! Run RTPS Writer
     void run();
 
-    //! Add a new change to Writer History
-    void add_change_to_history();
-
     //! Writer matched method
     void on_writer_matched(
             RTPSWriter*,
@@ -64,8 +61,8 @@ public:
 
 private:
 
-    //! Register entity
-    bool register_entity(std::string topic_name);
+    //! Add a new change to Writer History
+    bool add_change_to_history();
 
     //! Return the current state of execution
     bool is_stopped();
@@ -105,4 +102,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* FASTDDS_EXAMPLES_CPP_RTPS_ENTITIES__WRITERAPP_HPP */
+#endif // FASTDDS_EXAMPLES_CPP_RTPS_ENTITIES__WRITERAPP_HPP

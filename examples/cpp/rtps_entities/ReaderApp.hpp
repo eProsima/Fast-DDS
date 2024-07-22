@@ -67,9 +67,6 @@ public:
 
 private:
 
-    //! Register entity
-    bool register_entity(std::string topic_name);
-
     //! Method to deserialize the payload
     bool deserialize_payload(
             const SerializedPayload_t& payload,
@@ -104,4 +101,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* FASTDDS_EXAMPLES_CPP_RTPS_ENTITIES__READERAPP_HPP */
+#endif // FASTDDS_EXAMPLES_CPP_RTPS_ENTITIES__READERAPP_HPP
