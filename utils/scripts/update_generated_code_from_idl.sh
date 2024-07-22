@@ -26,8 +26,10 @@ files_needing_output_dir=(
 yellow='\E[1;33m'
 textreset='\E[1;0m'
 
-if [[ $(ls update_generated_code_from_idl.sh 2>/dev/null | wc -l) != 1 ]]; then
-    echo "Please, execute this script from its directory"
+current_dir=$(git rev-parse --show-toplevel)
+
+if [[ ! "$(pwd -P)" -ef "$current_dir" ]]; then
+    echo -e "${red}This script must be executed in the repository root directory.${textreset}"
     exit -1
 fi
 
@@ -35,8 +37,6 @@ if [[ -z "$(which fastddsgen)" ]]; then
     echo "Cannot find fastddsgen. Please, include it in PATH environment variable"
     exit -1
 fi
-
-cd ../..
 
 readarray -d '' idl_files < <(find . -iname \*.idl -print0)
 
