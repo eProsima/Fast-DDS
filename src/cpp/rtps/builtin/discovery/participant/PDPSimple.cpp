@@ -16,19 +16,20 @@
  * @file PDPSimple.cpp
  *
  */
+
 #include <rtps/builtin/discovery/participant/PDPSimple.h>
 
 #include <mutex>
 
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
-
-#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <fastdds/utils/IPLocator.hpp>
+
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/data/NetworkConfiguration.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
@@ -48,6 +49,7 @@
 #include <rtps/resources/TimedEvent.h>
 #include <rtps/writer/BaseWriter.hpp>
 #include <rtps/writer/StatelessWriter.hpp>
+#include <utils/DirectSend.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -309,7 +311,34 @@ bool PDPSimple::createPDPEndpoints()
         secure_endpoints->secure_reader.listener_.reset(new PDPListener(this));
 
         endpoints = secure_endpoints;
-        endpoints->reader.listener_.reset(new PDPSecurityInitiatorListener(this));
+        endpoints->reader.listener_.reset(new PDPSecurityInitiatorListener(this,
+                [this](const ParticipantProxyData& participant_data)
+                {
+                    auto secure_pdp_endpoints =
+                    static_cast<fastdds::rtps::SimplePDPEndpointsSecure*>(builtin_endpoints_.get());
+                    std::lock_guard<fastdds::RecursiveTimedMutex> wlock(secure_pdp_endpoints->writer.writer_->getMutex());
+
+                    CacheChange_t* change = nullptr;
+                    secure_pdp_endpoints->writer.history_->get_earliest_change(&change);
+
+                    if (change != nullptr)
+                    {
+                        std::vector<GUID_t> remote_readers;
+                        LocatorList_t locators;
+
+                        // Send discovery information through the non-secure PDP writer
+                        remote_readers.emplace_back(participant_data.m_guid.guidPrefix, c_EntityId_SPDPReader);
+
+                        fastdds::rtps::FakeWriter writer(getRTPSParticipant(), c_EntityId_SPDPWriter);
+
+                        for (auto& locator : participant_data.metatraffic_locators.unicast)
+                        {
+                            locators.push_back(locator);
+                        }
+
+                        direct_send(getRTPSParticipant(), locators, remote_readers, *change, writer);
+                    }
+                }));
     }
     else
 #endif  // HAVE_SECURITY

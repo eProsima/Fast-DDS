@@ -16,8 +16,8 @@
  * @file FakeWriter.hpp
  */
 
-#ifndef FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_DS__FAKEWRITER_HPP_
-#define FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_DS__FAKEWRITER_HPP_
+#ifndef FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT__FAKEWRITER_HPP
+#define FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT__FAKEWRITER_HPP
 
 #include <fastdds/rtps/Endpoint.hpp>
 
@@ -30,16 +30,16 @@ namespace rtps {
 /**
  * An RTPS writer simulator used to send messages with a \ref DirectMessageSender.
  */
-class FakeWriter : public Endpoint
+class FakeWriter : public fastdds::rtps::Endpoint
 {
 public:
 
     FakeWriter(
-            RTPSParticipantImpl* participant,
-            const EntityId_t& entity_id)
-        : Endpoint(participant, { participant->getGuid().guidPrefix, entity_id }, {})
+            fastdds::rtps::RTPSParticipantImpl* participant,
+            const fastdds::rtps::EntityId_t& entity_id)
+        : fastdds::rtps::Endpoint(participant, { participant->getGuid().guidPrefix, entity_id }, {})
     {
-        m_att.endpointKind = EndpointKind_t::WRITER;
+        m_att.endpointKind = fastdds::rtps::EndpointKind_t::WRITER;
 #if HAVE_SECURITY
         participant->set_endpoint_rtps_protection_supports(this, false);
 #endif // HAVE_SECURITY
@@ -52,4 +52,4 @@ public:
 }  // namespace fastdds
 }  // namespace eprosima
 
-#endif /* FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_DS__FAKEWRITER_HPP_ */
+#endif /* FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT__FAKEWRITER_HPP */
