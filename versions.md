@@ -66,6 +66,7 @@ Forthcoming
   * Security example with environment XML profiles.
   * Static EDP discovery example to avoid EDP meta-traffic.
   * Topic instances example, compatible with _ShapesDemo_ app.
+  * RTPS example to show the creation of entities in the RTPS layer.
 * Removed `TypeConsistencyQos` from DataReader, and included `TypeConsistencyEnforcementQosPolicy` and `DataRepresentationQosPolicy`
 * Added new `flow_controller_descriptor_list` XML configuration, remove `ThroughtputController`.
 * Migrate `#define`s within `BuiltinEndpoints.hpp` to namespaced `constexpr` variables.

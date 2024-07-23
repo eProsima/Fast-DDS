@@ -148,4 +148,8 @@ sed -i 's+"../../../../../../include/fastdds/dds/core/detail/DDSReturnCode.hpp"+
 sed -i 's+"../../../../../../include/fastdds/dds/xtypes/type_representation/detail/dds-xtypes_typeobjectPubSubTypes.hpp"+<fastdds/dds/xtypes/type_representation/TypeObject.hpp>+' ./src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.hpp
 sed -i 's+"../../../../../../include/fastdds/dds/core/detail/DDSReturnCodePubSubTypes.hpp"+<fastdds/dds/core/ReturnCode.hpp>+' ./src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.hpp
 
+rm ./examples/cpp/rtps/HelloWorld*.cxx
+rm ./examples/cpp/rtps/HelloWorld*.ipp
+find ./examples/cpp/rtps/ -name 'HelloWorld*.hpp' ! -name 'HelloWorld.hpp' -exec rm {} +
+
 exit $ret_value
