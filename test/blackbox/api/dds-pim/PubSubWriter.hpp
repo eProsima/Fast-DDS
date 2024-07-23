@@ -1483,7 +1483,7 @@ public:
                 if (profile->getType() == eprosima::fastdds::xmlparser::NodeType::PUBLISHER)
                 {
                     datawriter_qos_ =
-         *(dynamic_cast<eprosima::fastdds::xmlparser::DataNode<eprosima::fastdds::xmlparser::xmlparser::PublisherAttributes>
+         *(dynamic_cast<eprosima::fastdds::xmlparser::DataNode<eprosima::fastdds::xmlparser::PublisherAttributes>
          *>(
                                 profile.get())->get());
                 }

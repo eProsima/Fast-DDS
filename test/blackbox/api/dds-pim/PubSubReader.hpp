@@ -1534,7 +1534,7 @@ public:
                 if (profile->getType() == eprosima::fastdds::xmlparser::NodeType::PARTICIPANT)
                 {
                     participant_attr_ =
-         *(dynamic_cast<eprosima::fastdds::xmlparser::DataNode<eprosima::fastdds::xmlparser::xmlparser::ParticipantAttributes>
+         *(dynamic_cast<eprosima::fastdds::xmlparser::DataNode<eprosima::fastdds::xmlparser::ParticipantAttributes>
          *>(
                                 profile.get())->get());
                 }
@@ -1557,7 +1557,7 @@ public:
                 if (profile->getType() == eprosima::fastdds::xmlparser::NodeType::SUBSCRIBER)
                 {
                     subscriber_attr_ =
-         *(dynamic_cast<eprosima::fastdds::xmlparser::DataNode<eprosima::fastdds::xmlparser::xmlparser::SubscriberAttributes>
+         *(dynamic_cast<eprosima::fastdds::xmlparser::DataNode<eprosima::fastdds::xmlparser::SubscriberAttributes>
          *>(
                                 profile.get())->get());
                 }
