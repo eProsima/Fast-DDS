@@ -79,8 +79,6 @@ private:
 
     uint16_t samples_received_;
 
-    uint16_t matched_;
-
     RTPSParticipant* rtps_participant_;
 
     RTPSReader* rtps_reader_;
