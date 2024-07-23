@@ -106,6 +106,7 @@ void from_proxy_to_builtin(
     from_proxy_to_builtin(proxy_data.m_guid.guidPrefix, builtin_data.key.value);
 
     builtin_data.user_data = proxy_data.m_userData;
+    builtin_data.guid = proxy_data.m_guid;
     builtin_data.metatraffic_locators = proxy_data.metatraffic_locators;
     builtin_data.default_locators = proxy_data.default_locators;
     builtin_data.participant_name = proxy_data.m_participantName;
