@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef UTILS__TIMETHELPERS_HPP
-#define UTILS__TIMETHELPERS_HPP
+#ifndef FASTDDS_UTILS__TIMETHELPERS_HPP
+#define FASTDDS_UTILS__TIMETHELPERS_HPP
 
-#include <cstdlib>
 #include <chrono>
+#include <cstdlib>
 // unnamed namespace for inline functions in compilation unit. Better practice than static inline.
 
 constexpr uint64_t C_FRACTIONS_PER_SEC = 4294967296ULL;
@@ -52,4 +52,4 @@ static void current_time_since_unix_epoch(
     nanosecs = static_cast<uint32_t>(duration_cast<nanoseconds>(t_since_epoch).count());
 }
 
-#endif // UTILS__TIMETHELPERS_HPP
+#endif // FASTDDS_UTILS__TIMETHELPERS_HPP

@@ -16,8 +16,8 @@
  * @file RTPSParticipantAttributes.hpp
  */
 
-#ifndef FASTDDS_RTPS_ATTRIBUTES__RTPSParticipantAttributes_HPP
-#define FASTDDS_RTPS_ATTRIBUTES__RTPSParticipantAttributes_HPP
+#ifndef FASTDDS_RTPS_ATTRIBUTES__RTPSPARTICIPANTATTRIBUTES_HPP
+#define FASTDDS_RTPS_ATTRIBUTES__RTPSPARTICIPANTATTRIBUTES_HPP
 
 #include <memory>
 #include <sstream>
@@ -638,4 +638,4 @@ private:
 }  // namespace fastdds
 }  // namespace eprosima
 
-#endif  // FASTDDS_RTPS_ATTRIBUTES__RTPSParticipantAttributes_HPP
+#endif  // FASTDDS_RTPS_ATTRIBUTES__RTPSPARTICIPANTATTRIBUTES_HPP
