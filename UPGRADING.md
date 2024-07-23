@@ -132,15 +132,34 @@
 
 ## API changes
 
-* **mlparser::XMLProfileManager::library_settings(LibrarySettingsAttributes)** ->  **DomainParticipantFactory::get_instance()->set_library_settings(LibrarySettings)**
-* Remove the discovery callback overloads on **onParticipantDiscovery()** not getting `should_be_ignored`.
-* DataWriter::write methods return only `ReturnCode_t`.
-* **fill_discovery_data_from_cdr_message(`SubscriptionBuiltinTopicData`, `MonitorServiceStatusData`)**, **fill_discovery_data_from_cdr_message(`PublicationBuiltinTopicData`,`MonitorServiceStatusData`)**, **fill_discovery_data_from_cdr_message(`ParticipantBuiltinTopicData`,`MonitorServiceStatusData`)**.
-* **on_participant_discover(`DomainParticipant`, `ParticipantDiscoveryStatus`, `ParticipantBuiltinTopicData`, `should_be_ignored`)**.
-* **on_data_reader_discovery(`DomainParticipant`, `ReaderDiscoveryStatus`, `SubscriptionBuiltinTopicData`, `should_be_ignored`)**.
-* **on_data_writer_discovery(`DomainParticipant`, `WriterDiscoveryStatus`, `PublicationBuiltinTopicData`, `should_be_ignored`)**.
-* **xmlparser::XMLProfileManager::loadXMLFile(string)** → **DomainParticipantFactory::get_instance()->load_XML_profiles_file(string)**.
-*
+* **xmlparser::XMLProfileManager::library_settings(LibrarySettingsAttributes)** ->  **DomainParticipantFactory::get_instance()->set_library_settings(LibrarySettings)**
+
+* Remove the discovery callback overloads on **onParticipantDiscovery()** not getting `should_be_ignored`
+
+* DataWriter::write methods return only `ReturnCode_t`
+
+* **fill_discovery_data_from_cdr_message(`SubscriptionBuiltinTopicData`, `MonitorServiceStatusData`)**, **fill_discovery_data_from_cdr_message(`PublicationBuiltinTopicData`,`MonitorServiceStatusData`)**, **fill_discovery_data_from_cdr_message(`ParticipantBuiltinTopicData`,`MonitorServiceStatusData`)**
+
+* **on_participant_discover(`DomainParticipant`, `ParticipantDiscoveryStatus`, `ParticipantBuiltinTopicData`, `should_be_ignored`)**
+
+* **on_data_reader_discovery(`DomainParticipant`, `ReaderDiscoveryStatus`, `SubscriptionBuiltinTopicData`, `should_be_ignored`)**
+
+* **on_data_writer_discovery(`DomainParticipant`, `WriterDiscoveryStatus`, `PublicationBuiltinTopicData`, `should_be_ignored`)**
+
+* **xmlparser::XMLProfileManager::loadXMLFile(string)** → **DomainParticipantFactory::get_instance()->load_XML_profiles_file(string)**
+
+* **xmlparser::XMLProfileManager::loadDefaultXMLFile()** → **load_profiles()**
+
+* **xmlparser::XMLProfileManager::loadXMLFile(string)** → **load_XML_profiles_file(string)**
+
+* **xmlparser::XMLProfileManager::loadXMLString(const char, size_t)** → **load_XML_profiles_string(const char, size_t)**
+
+* **xmlparser::XMLProfileManager::fillParticipantAttributes(string, `ParticipantAttributes`, bool)** → **get_participant_qos_from_profile(string, `DomainParticipantQos`)**
+
+* **xmlparser::XMLProfileManager::getDynamicTypeBuilderByName(`DynamicTypeBuilder::_ref_type`, string)** → **get_dynamic_type_builder_from_xml_by_name(`DynamicTypeBuilder::_ref_type`, string)**
+
+* **xmlparser::XMLProfileManager::fillRequesterAttributes(profile_name, attr)** → **get_requester_qos_from_profile(string, RequesterQos)**
+
 
 
 ## Struct, Enum, Variable
