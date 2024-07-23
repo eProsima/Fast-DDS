@@ -29,6 +29,22 @@ namespace fastdds {
 namespace examples {
 namespace topic_instances {
 
+// The code here has been taken from the notes in https://en.cppreference.com/w/cpp/string/byte/toupper
+// Note how the argument passed is cast into an unsigned char to avoid undefined behavior
+static char my_toupper(
+        char c)
+{
+    return static_cast<char>(std::toupper(static_cast<unsigned char>(c)));
+}
+
+// The code here has been taken from the notes in https://en.cppreference.com/w/cpp/string/byte/tolower
+// Note how the argument passed is cast into an unsigned char to avoid undefined behavior
+static char my_tolower (
+        char c)
+{
+    return static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+}
+
 using dds::Log;
 
 class CLIParser
@@ -349,8 +365,8 @@ public:
                             input == "Circle" || input == "Square" || input == "Triangle" ||
                             input == "circle" || input == "square" || input == "triangle")
                     {
-                        transform(input.begin(), input.begin() + 1, input.begin(), ::toupper);
-                        transform(input.begin() + 1, input.end(), input.begin() + 1, ::tolower);
+                        transform(input.begin(), input.begin() + 1, input.begin(), my_toupper);
+                        transform(input.begin() + 1, input.end(), input.begin() + 1, my_tolower);
                         if (config.entity == CLIParser::EntityKind::PUBLISHER)
                         {
                             config.pub_config.topic_name = input;
@@ -618,7 +634,7 @@ public:
                         std::string c;
                         while (std::getline(iss, c, ','))
                         {
-                            transform(c.begin(), c.end(), c.begin(), ::toupper);
+                            transform(c.begin(), c.end(), c.begin(), my_toupper);
                             if (c == "RED" || c == "BLUE" || c == "GREEN" || c == "YELLOW" || c == "ORANGE" ||
                                     c == "CYAN" || c == "MAGENTA" || c == "PURPLE" || c == "GREY" || c == "BLACK")
                             {
