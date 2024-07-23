@@ -49,7 +49,7 @@ public:
     virtual ~WriterApp();
 
     //! Run RTPS Writer
-    void run();
+    void run() override;
 
     //! Writer matched method
     void on_writer_matched(
