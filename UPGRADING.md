@@ -1,19 +1,33 @@
 # Migration Guide to Fast DDS 3.0.x
 
-## Migration from Fast RTPS to Fast DDS
+This document aims to help during the migration process from *eProsima Fast DDS* version 2.x to *Fast DDS v3.0.0*.
+The new release includes more changes than the included in this document, so refer to the [release notes](https://fast-dds.docs.eprosima.com/en/latest/notes/notes.html) for further information.
 
-* The package has been renamed to fastdds.
+As announced in previous minor releases, it is always *recommended* to regenerate the types (if applies) with the latest *eProsima Fast DDS Gen* release.
+In this case, the type regeneration is **required** (if applies), using *Fast DDS Gen* v4.0.0.
 
+The following sections describe in detail the possible changes that your project would require to migrate to *Fast DDS v3.0.0*.
+
+- [Library management](#library-management)
+- [Namespace migrations and changes](#namespace-migrations-and-changes)
+- [Fast RTPS public headers migration to Fast DDS](#fast-rtps-public-headers-migration-to-fast-dds)
+- [Headers migrated to private](#headers-migrated-to-private)
+- [API changes](#api-changes)
+- [Removed API and tests](#removed-api-and-tests)
+- [Struct, Enum, Variable](#struct-enum-variable)
+- [Examples](#examples)
+- [Compatibility with Fast CDR](#compatibility-with-fast-cdr)
+
+## Library management
+
+The below list of changes expose the changes related to the library name, library environment variables and other library usages.
+
+* The package has been renamed to `fastdds`.
 * Deprecated APIs marked with `FASTDDS_DEPRECATED` and `FASTDDS_TODO_BEFORE` macros have been removed.
-
 * XML profiles loading environment variables have been renamed to: `FASTDDS_DEFAULT_PROFILES_FILE`.
-
-* The configuration file has been renamed to DEFAULT_FASTDDS_PROFILES.xml.
-
+* The configuration file has been renamed to `DEFAULT_FASTDDS_PROFILES.xml`.
 * XML Schema namespace in fastdds_profiles.xsd has been updated to http://www.eprosima.com.
-
 * The API exporting macro has been renamed to `FASTDDS_EXPORTED_API`.
-
 * CMake Windows file names have been changed:
 
     * fastdds.manifest.in
@@ -21,71 +35,48 @@
 
 * The fastrtps.rc file has been renamed as fastdds.rc.
 
+## Namespace migrations and changes
 
+The following list contains the namespace changes and migrations:
 
-## Namespace
+* All `eprosima::fastrtps` namespace references were migrated to `eprosima::fastdds::rtps`.
+* `SubscriptionBuiltinTopicData`, `PublicationBuiltinTopicData` and `ParticipantBuiltinTopicData` were migrated from `fastdds::dds::builtin` to `fastdds::dds`.
+* `EventKindBits` references changed to`EventKind`.
+* `EventKindEntityId` references changed to`EntityId`.
+* `StatisticsEventKind` references changed to `statistics::EventKind`.
+* `Duration_t` reference moved to `fastdds::dds`
 
-* The fastrtps namespace references were migrated to fastdds.
+## Fast RTPS public headers migration to Fast DDS
 
-* `SubscriptionBuiltinTopicData`, `PublicationBuiltinTopicData` and `ParticipantBuiltinTopicData` were migrated from fastdds::dds:builtin to fastdds::dds.
+All public header extensions have been changed to `.hpp`.
+Also, the `fixed_size_string.hpp` feature has been migrated from Fast DDS package to Fast CDR.
+The remain changes that belong to this section entails the migration from `include/fastrtps` to `include/fastdds`:
 
-* EventKindBits references changed to EventKind.
+| Fast DDS 2.x file *include* path | Fast DDS v3.0.0 file *include* path |
+|----------------------------------|-------------------------------------|
+| fastdds/rtps/resources/ResourceManagement.hpp | fastdds/rtps/attributes/ResourceManagement.hpp |
+| fastrtps/eProsima_auto_link.h | fastdds/fastdds_auto_link.hpp |
+| fastrtps/attributes/ParticipantAttributes.h | fastdds/rtps/DomainParticipantQos.hpp |
+| fastrtps/Domain.h | fastdds/dds/domain/DomainParticipantFactory.hpp |
+| fastrtps/log/Log.h | fastdds/dds/log/Log.hpp |
+| fastrtps/qos/DeadlineMissedStatus.h	| fastdds/dds/core/status/DeadlineMissedStatus.hpp |
+| fastrtps/qos/IncompatibleQosStatus.hpp | fastdds/dds/core/status/IncompatibleQosStatus.hpp |
+| fastrtps/qos/LivelinessChangedStatus.h | fastdds/dds/core/status/LivelinessChangedStatus.hpp |
+| fastrtps/qos/QosPolicies.h | fastdds/dds/core/policy/QosPolicies.hpp |
+| fastrtps/qos/ReaderQos.h | fastdds/dds/subscriber/qos/ReaderQos.hpp |
+| fastrtps/qos/WriterQos.h | fastdds/dds/publisher/qos/WriterQos.hpp |
+| fastrtps/qos/SampleRejectedStatus.hpp | fastdds/dds/core/status/SampleRejectedStatus.hpp |
+| fastrtps/participant/Participant.h | fastdds/rtps/participant/RTPSParticipant.hpp |
+| fastrtps/transport/TCPv4TransportDescriptor.h | fastdds/rtps/transport/TCPv4TransportDescriptor.hpp |
+| fastrtps/transport/TCPv6TransportDescriptor.h| 	fastdds/rtps/transport/ TCPv6TransportDescriptor.hpp |
+| fastrtps/transport/UDPv4TransportDescriptor.h | fastdds/rtps/transport/ UDPv4TransportDescriptor.hpp |
+| fastrtps/transport/UDPv6TransportDescriptor.h | fastdds/rtps/transport/ UDPv6TransportDescriptor.hpp |
+| fastrtps/transport/UDPTransportDescritpor.h | fastdds/rtps/transport/UDPTransportDescritpor.hpp |
+| fastrtps/transport/TCPTransportDescritpor.h | fastdds/rtps/transport/TCPTransportDescritpor.hpp |
 
-* EventKindEntityId references changed to EntityId.
+## Public headers migrated to private
 
-* StatisticsEventKind references changed to statistics::EventKind.
-
-* Duration_t to ::dds
-
-
-
-## Public headers
-
-* All public header extensions are .hpp.
-* All the headers from /fastrtps were migrated to /fastdds.
-* fixed_size_string.hpp was migrated from Fast DDS to Fast CDR.
-* Headers migrated:
-
-    fastdds/rtps/resources/ResourceManagement.hpp → fastdds/rtps/attributes/ResourceManagement.hpp
-
-    fastrtps/eProsima_auto_link.h → fastdds/fastdds_auto_link.hpp
-
-    fastrtps/attributes/ParticipantAttributes.h → fastdds/rtps/DomainParticipantQos.hpp
-
-    fastrtps/Domain.h → fastdds/dds/domain/DomainParticipantFactory.hpp
-
-    fastrtps/log/Log.h → fastdds/dds/log/Log.hpp
-
-    fastrtps/qos/DeadlineMissedStatus.h	→ fastdds/dds/core/status/DeadlineMissedStatus.hpp
-
-    fastrtps/qos/IncompatibleQosStatus.hpp → fastdds/dds/core/status/IncompatibleQosStatus.hpp
-
-    fastrtps/qos/LivelinessChangedStatus.h → fastdds/dds/core/status/LivelinessChangedStatus.hpp
-
-    fastrtps/qos/QosPolicies.h → fastdds/dds/core/policy/QosPolicies.hpp
-
-    fastrtps/qos/ReaderQos.h → fastdds/dds/subscriber/qos/ReaderQos.hpp
-
-    fastrtps/qos/WriterQos.h → fastdds/dds/publisher/qos/WriterQos.hpp
-
-    fastrtps/qos/SampleRejectedStatus.hpp → fastdds/dds/core/status/SampleRejectedStatus.hpp
-
-    fastrtps/participant/Participant.h → fastdds/rtps/participant/RTPSParticipant.hpp
-
-    fastrtps/transport/TCPv4TransportDescriptor.h → fastdds/rtps/transport/TCPv4TransportDescriptor.hpp
-
-    fastrtps/transport/TCPv6TransportDescriptor.h→ 	fastdds/rtps/transport/ TCPv6TransportDescriptor.hpp
-
-    fastrtps/transport/UDPv4TransportDescriptor.h → fastdds/rtps/transport/ UDPv4TransportDescriptor.hpp
-
-    fastrtps/transport/UDPv6TransportDescriptor.h → fastdds/rtps/transport/ UDPv6TransportDescriptor.hpp
-
-    fastrtps/transport/UDPTransportDescritpor.h → fastdds/rtps/transport/UDPTransportDescritpor.hpp
-
-    fastrtps/transport/TCPTransportDescritpor.h → fastdds/rtps/transport/TCPTransportDescritpor.hpp
-
-
-## Headers migrated to private
+The following list contains the files that were in the `include` folder that have been migrated to `src/cpp` folder:
 
 * ParticipantAttributes.hpp
 * ReplierAttributes.hpp
