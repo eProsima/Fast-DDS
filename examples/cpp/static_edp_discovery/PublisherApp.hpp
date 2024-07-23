@@ -78,7 +78,7 @@ private:
 
     TypeSupport type_;
 
-    int16_t matched_;
+    int32_t matched_;
 
     uint16_t samples_;
 

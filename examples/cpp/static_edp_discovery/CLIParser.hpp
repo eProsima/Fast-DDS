@@ -18,7 +18,17 @@
 #include <fstream>
 
 #ifdef _WIN32
+
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif // ifndef NOMINMAX
+
 #include <windows.h>
+
+#ifndef PATH_MAX
+#define PATH_MAX MAX_PATH
+#endif // ifndef PATH_MAX
+
 #else
 #include <unistd.h>
 #include <libgen.h>

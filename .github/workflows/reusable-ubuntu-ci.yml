@@ -844,3 +844,14 @@ jobs:
           cmake_args_default: ${{ env.colcon-build-default-cmake-args }}
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
+
+      - name: Clean workspace - No shared libs
+        run: |
+          cd ${{ github.workspace }}
+          rm -rf build install log
+
+      - name: Vanilla colcon build
+        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        with:
+          cmake_build_type: ${{ matrix.cmake-build-type }}
+          workspace: ${{ github.workspace }}

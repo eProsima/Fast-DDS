@@ -140,18 +140,12 @@ jobs:
           destination_workspace: src
           skip_existing: 'true'
 
-      - name: Prepare build meta file
-        uses: eProsima/eProsima-CI/windows/merge_yaml_metas@v0
-        with:
-          metas: "@('${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta', '${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.meta')"
-          path: '${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build_test.meta'
-
       - name: Build
         id: build
         continue-on-error: false
         uses: eProsima/eProsima-CI/windows/colcon_build@v0
         with:
-          colcon_meta_file: ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_build_test.meta
+          colcon_meta_file: ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_build.meta ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_test.meta
           colcon_build_args: ${{ inputs.colcon-args }}
           # The following Fast DDS CMake options need to be specified here instead of in the meta files
           # because they vary from platform to platform
