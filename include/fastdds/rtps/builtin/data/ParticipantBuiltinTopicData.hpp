@@ -52,7 +52,7 @@ struct ParticipantBuiltinTopicData
     RemoteLocatorList default_locators;
 
     /// Lease Duration
-    Duration_t lease_duration;
+    dds::Duration_t lease_duration;
 
     /// Vendor id
     VendorId_t vendor_id;
