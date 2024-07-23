@@ -146,7 +146,7 @@ public:
      * @return true on success
      */
     bool update_interval(
-            const Duration_t& inter);
+            const dds::Duration_t& inter);
 
     /**
      * Update event interval.

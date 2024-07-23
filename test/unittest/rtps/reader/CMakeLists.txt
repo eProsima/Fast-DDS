@@ -21,6 +21,7 @@ endif()
 # WriterProxyTests
 ###########################################################################
 set(WRITERPROXYTESTS_SOURCE WriterProxyTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
@@ -70,6 +71,7 @@ gtest_discover_tests(WriterProxyTests)
 # WriterProxyStopTest
 ###########################################################################
 set(WRITERPROXYSTOPTEST_SOURCE WriterProxyStopTest.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
@@ -121,6 +123,7 @@ gtest_discover_tests(WriterProxyStopTest)
 # WriterProxyAcknackTests
 ###########################################################################
 set(WRITERPROXYACKNACKTESTS_SOURCE WriterProxyAcknackTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
@@ -171,6 +174,7 @@ gtest_discover_tests(WriterProxyAcknackTests)
 # StatefulReaderTests
 ###########################################################################
 set(STATEFUL_READER_TESTS_SOURCE StatefulReaderTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/EndpointSecurityAttributes.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/RTPSParticipantAttributes.cpp

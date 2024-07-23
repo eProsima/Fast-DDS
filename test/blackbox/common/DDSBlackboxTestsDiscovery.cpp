@@ -1767,7 +1767,7 @@ static void test_DDSDiscovery_WaitSetMatchedStatus(
                 fastdds::dds::PublicationMatchedStatus matched_status{};
                 while (1 > matched_status.current_count)
                 {
-                    ReturnCode_t ret_code = wait_set.wait(triggered_conditions, fastdds::c_TimeInfinite);
+                    ReturnCode_t ret_code = wait_set.wait(triggered_conditions, fastdds::dds::c_TimeInfinite);
                     if (eprosima::fastdds::dds::RETCODE_OK != ret_code)
                     {
                         continue;

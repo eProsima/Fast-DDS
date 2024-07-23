@@ -52,6 +52,7 @@ set(SERVER_ATTRIBUTES_TESTS_EXEC ServerAttributesTests)
 
 set(SERVER_ATTRIBUTES_TESTS_SOURCE
     ServerAttributesTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ServerAttributes.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/GuidPrefix_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp

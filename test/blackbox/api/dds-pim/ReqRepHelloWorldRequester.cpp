@@ -147,8 +147,8 @@ void ReqRepHelloWorldRequester::init()
 }
 
 void ReqRepHelloWorldRequester::init_with_latency(
-        const eprosima::fastdds::Duration_t& latency_budget_duration_pub,
-        const eprosima::fastdds::Duration_t& latency_budget_duration_sub)
+        const eprosima::fastdds::dds::Duration_t& latency_budget_duration_pub,
+        const eprosima::fastdds::dds::Duration_t& latency_budget_duration_sub)
 {
     datareader_qos_.latency_budget().duration = latency_budget_duration_sub;
     datawriter_qos_.latency_budget().duration = latency_budget_duration_pub;

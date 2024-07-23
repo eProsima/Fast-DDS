@@ -14,6 +14,7 @@
 
 #EDP TESTS
 set(EDPTESTS_SOURCE EdpTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/qos/ReaderQos.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
@@ -111,6 +112,7 @@ endif()
 
 set(PDPTESTS_SOURCE PDPTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterList.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/qos/ReaderQos.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx

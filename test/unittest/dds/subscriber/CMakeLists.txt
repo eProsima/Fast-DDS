@@ -21,9 +21,11 @@ set(DATAREADERTESTS_SOURCE
     DataReaderTests.cpp
     )
 set(DATAREADERINSTANCETESTS_SOURCE DataReaderInstanceTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     )
 set(DATAREADERHISTORYTESTS_SOURCE DataReaderHistoryTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/history/DataReaderHistory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp

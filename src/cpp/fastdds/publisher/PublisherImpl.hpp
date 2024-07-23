@@ -146,7 +146,7 @@ public:
      */
 
     ReturnCode_t wait_for_acknowledgments(
-            const fastdds::Duration_t& max_wait);
+            const fastdds::dds::Duration_t& max_wait);
 
     const DomainParticipant* get_participant() const;
 

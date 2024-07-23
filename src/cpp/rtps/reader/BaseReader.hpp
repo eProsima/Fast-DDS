@@ -95,7 +95,7 @@ public:
             bool mark_as_read) override;
 
     bool wait_for_unread_cache(
-            const fastdds::Duration_t& timeout) override;
+            const fastdds::dds::Duration_t& timeout) override;
 
     bool is_sample_valid(
             const void* data,
@@ -150,7 +150,7 @@ public:
     /**
      * @return The liveliness lease duration of this reader
      */
-    fastdds::Duration_t liveliness_lease_duration() const
+    fastdds::dds::Duration_t liveliness_lease_duration() const
     {
         return liveliness_lease_duration_;
     }
@@ -442,7 +442,7 @@ protected:
     /// The liveliness kind of this reader.
     fastdds::dds::LivelinessQosPolicyKind liveliness_kind_;
     /// The liveliness lease duration of this reader.
-    fastdds::Duration_t liveliness_lease_duration_;
+    fastdds::dds::Duration_t liveliness_lease_duration_;
 
     /// Whether the reader is datasharing compatible.
     bool is_datasharing_compatible_ = false;

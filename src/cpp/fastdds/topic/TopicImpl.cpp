@@ -79,7 +79,7 @@ ReturnCode_t TopicImpl::check_qos(
     if (AUTOMATIC_LIVELINESS_QOS == qos.liveliness().kind ||
             MANUAL_BY_PARTICIPANT_LIVELINESS_QOS == qos.liveliness().kind)
     {
-        if (qos.liveliness().lease_duration < eprosima::fastdds::c_TimeInfinite &&
+        if (qos.liveliness().lease_duration < eprosima::fastdds::dds::c_TimeInfinite &&
                 qos.liveliness().lease_duration <= qos.liveliness().announcement_period)
         {
             EPROSIMA_LOG_ERROR(DDS_QOS_CHECK, "lease_duration <= announcement period.");

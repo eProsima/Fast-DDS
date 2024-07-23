@@ -348,10 +348,10 @@ public:
     bool waitForAllAcked(
             const std::chrono::duration<_Rep, _Period>& max_wait)
     {
-        eprosima::fastdds::Duration_t timeout;
+        eprosima::fastdds::dds::Duration_t timeout;
         if (max_wait == std::chrono::seconds::zero())
         {
-            timeout = eprosima::fastdds::c_TimeInfinite;
+            timeout = eprosima::fastdds::dds::c_TimeInfinite;
         }
         else
         {

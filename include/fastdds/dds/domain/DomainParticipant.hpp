@@ -386,7 +386,7 @@ public:
      */
     FASTDDS_EXPORTED_API Topic* find_topic(
             const std::string& topic_name,
-            const fastdds::Duration_t& timeout);
+            const fastdds::dds::Duration_t& timeout);
 
     /**
      * Looks up an existing, locally created @ref TopicDescription, based on its name.
@@ -747,7 +747,7 @@ public:
      * @return RETCODE_OK
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_current_time(
-            fastdds::Time_t& current_time) const;
+            fastdds::dds::Time_t& current_time) const;
 
     // DomainParticipant methods specific from Fast DDS
 

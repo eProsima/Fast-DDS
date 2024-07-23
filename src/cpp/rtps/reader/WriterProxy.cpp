@@ -615,7 +615,7 @@ bool WriterProxy::process_heartbeat(
 }
 
 void WriterProxy::update_heartbeat_response_interval(
-        const Duration_t& interval)
+        const dds::Duration_t& interval)
 {
     heartbeat_response_->update_interval(interval);
 }

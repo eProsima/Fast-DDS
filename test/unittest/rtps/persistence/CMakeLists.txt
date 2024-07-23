@@ -18,6 +18,7 @@ if(SQLITE3_SUPPORT)
 
     set(PERSISTENCETESTS_SOURCE
         PersistenceTests.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp

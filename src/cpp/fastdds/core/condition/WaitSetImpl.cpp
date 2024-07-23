@@ -106,7 +106,7 @@ ReturnCode_t WaitSetImpl::detach_condition(
 
 ReturnCode_t WaitSetImpl::wait(
         ConditionSeq& active_conditions,
-        const fastdds::Duration_t& timeout)
+        const fastdds::dds::Duration_t& timeout)
 {
     std::unique_lock<std::mutex> lock(mutex_);
 
@@ -132,7 +132,7 @@ ReturnCode_t WaitSetImpl::wait(
 
     bool condition_value = false;
     is_waiting_ = true;
-    if (fastdds::c_TimeInfinite == timeout)
+    if (fastdds::dds::c_TimeInfinite == timeout)
     {
         cond_.wait(lock, fill_active_conditions);
         condition_value = true;

@@ -153,7 +153,7 @@ RTPSParticipant* RTPSDomainImpl::createParticipant(
 
     RTPSParticipantAttributes PParam = attrs;
 
-    if (PParam.builtin.discovery_config.leaseDuration < c_TimeInfinite &&
+    if (PParam.builtin.discovery_config.leaseDuration < dds::c_TimeInfinite &&
             PParam.builtin.discovery_config.leaseDuration <=
             PParam.builtin.discovery_config.leaseDuration_announcementperiod)
     {

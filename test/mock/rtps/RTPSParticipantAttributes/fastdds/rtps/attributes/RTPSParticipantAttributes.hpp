@@ -219,7 +219,7 @@ struct InitialAnnouncementConfig
     uint32_t count = 5u;
 
     /// Specific period for initial announcements (default 100ms)
-    Duration_t period = { 0, 100000000u };
+    dds::Duration_t period = { 0, 100000000u };
 
     bool operator ==(
             const InitialAnnouncementConfig& b) const
@@ -256,13 +256,13 @@ public:
      * Lease Duration of the RTPSParticipant,
      * indicating how much time remote RTPSParticipants should consider this RTPSParticipant alive.
      */
-    Duration_t leaseDuration = { 20, 0 };
+    dds::Duration_t leaseDuration = { 20, 0 };
 
     /**
      * The period for the RTPSParticipant to send its Discovery Message to all other discovered RTPSParticipants
      * as well as to all Multicast ports.
      */
-    Duration_t leaseDuration_announcementperiod = { 3, 0 };
+    dds::Duration_t leaseDuration_announcementperiod = { 3, 0 };
 
     //!Initial announcements configuration
     InitialAnnouncementConfig initial_announcements;
@@ -277,7 +277,7 @@ public:
      *  send its Discovery Message to its servers
      *  check for EDP endpoints matching
      */
-    Duration_t discoveryServer_client_syncperiod = { 0, 450 * 1000000}; // 450 milliseconds
+    dds::Duration_t discoveryServer_client_syncperiod = { 0, 450 * 1000000}; // 450 milliseconds
 
     //! Discovery Server initial connections, needed if `discoveryProtocol` = CLIENT | SUPER_CLIENT | SERVER | BACKUP
     eprosima::fastdds::rtps::LocatorList m_DiscoveryServers;

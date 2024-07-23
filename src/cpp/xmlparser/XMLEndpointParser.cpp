@@ -443,7 +443,7 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
             auxstring = std::string(leaseDuration_ms ? leaseDuration_ms : _INF);
             if (auxstring == _INF)
             {
-                rdata->m_qos.m_liveliness.lease_duration = c_TimeInfinite;
+                rdata->m_qos.m_liveliness.lease_duration = dds::c_TimeInfinite;
             }
             else
             {
@@ -735,7 +735,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
             auxstring = std::string(leaseDuration_ms ? leaseDuration_ms : _INF);
             if (auxstring == _INF)
             {
-                wdata->m_qos.m_liveliness.lease_duration = c_TimeInfinite;
+                wdata->m_qos.m_liveliness.lease_duration = dds::c_TimeInfinite;
             }
             else
             {

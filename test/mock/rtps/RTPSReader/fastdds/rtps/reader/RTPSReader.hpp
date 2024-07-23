@@ -138,7 +138,7 @@ public:
 
     MOCK_METHOD1(set_content_filter, void (eprosima::fastdds::rtps::IReaderDataFilter* filter));
 
-    MOCK_METHOD1(wait_for_unread_cache, bool (const eprosima::fastdds::Duration_t& timeout));
+    MOCK_METHOD1(wait_for_unread_cache, bool (const eprosima::fastdds::dds::Duration_t& timeout));
 
     MOCK_CONST_METHOD0(get_unread_count, uint64_t());
 

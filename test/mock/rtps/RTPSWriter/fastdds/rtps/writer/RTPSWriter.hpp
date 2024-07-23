@@ -141,7 +141,7 @@ public:
     }
 
     virtual bool wait_for_all_acked(
-            const Duration_t& /*max_wait*/)
+            const dds::Duration_t& /*max_wait*/)
     {
         return true;
     }

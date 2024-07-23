@@ -285,14 +285,14 @@ public:
      *
      * @return Lease duration
      */
-    const Duration_t& get_liveliness_lease_duration() const;
+    const dds::Duration_t& get_liveliness_lease_duration() const;
 
     /**
      * @brief A method to return the liveliness announcement period
      *
      * @return The announcement period
      */
-    const Duration_t& get_liveliness_announcement_period() const;
+    const dds::Duration_t& get_liveliness_announcement_period() const;
 
     /**
      * @brief Notify the writer that it has lost liveliness
@@ -392,9 +392,9 @@ protected:
     /// The liveliness kind of this writer
     dds::LivelinessQosPolicyKind liveliness_kind_;
     /// The liveliness lease duration of this writer
-    Duration_t liveliness_lease_duration_;
+    dds::Duration_t liveliness_lease_duration_;
     /// The liveliness announcement period
-    Duration_t liveliness_announcement_period_;
+    dds::Duration_t liveliness_announcement_period_;
 
 private:
 

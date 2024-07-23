@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file <xmlparser/attributes/SubscriberAttributes.hpp>
+ * @file SubscriberAttributes.hpp
  */
 
-#ifndef _FASTDDS_SUBSCRIBERATTRIBUTES_H_
-#define _FASTDDS_SUBSCRIBERATTRIBUTES_H_
+#ifndef FASTDDS_XMLPARSER_ATTRIBUTES__SUBSCRIBERATTRIBUTES_HPP
+#define FASTDDS_XMLPARSER_ATTRIBUTES__SUBSCRIBERATTRIBUTES_HPP
 
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
@@ -30,6 +30,7 @@
 
 namespace eprosima {
 namespace fastdds {
+namespace xmlparser {
 
 /**
  * Class SubscriberAttributes, used by the user to define the attributes of a Subscriber.
@@ -146,7 +147,8 @@ private:
     int16_t m_entityID = -1;
 };
 
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace xmlparser
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* SUBSCRIBERPARAMS_H_ */
+#endif // FASTDDS_XMLPARSER_ATTRIBUTES__SUBSCRIBERATTRIBUTES_HPP

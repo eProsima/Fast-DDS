@@ -2777,7 +2777,7 @@ XMLP_ret XMLParser::getXMLPublishModeQos(
 
 XMLP_ret XMLParser::getXMLDuration(
         tinyxml2::XMLElement* elem,
-        Duration_t& duration,
+        dds::Duration_t& duration,
         uint8_t ident)
 {
     /*
@@ -2813,11 +2813,11 @@ XMLP_ret XMLParser::getXMLDuration(
     if (!text.empty() && std::regex_match(text, infinite))
     {
         empty = false;
-        duration = c_TimeInfinite;
+        duration = dds::c_TimeInfinite;
 
         if (elem->FirstChildElement() != nullptr)
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "If a Duration_t type element is defined as DURATION_INFINITY it cannot have <sec> or"
+            EPROSIMA_LOG_ERROR(XMLPARSER, "If a dds::Duration_t type element is defined as DURATION_INFINITY it cannot have <sec> or"
                     " <nanosec> subelements.");
             return XMLP_ret::XML_ERROR;
         }
@@ -2856,7 +2856,7 @@ XMLP_ret XMLParser::getXMLDuration(
             else if (std::regex_match(text, infinite_sec))
             {
                 // if either SECONDS or NANOSECONDS is set to infinity then all of it is
-                duration = c_TimeInfinite;
+                duration = dds::c_TimeInfinite;
                 return XMLP_ret::XML_OK;
             }
             else if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &duration.seconds, ident))
@@ -2890,7 +2890,7 @@ XMLP_ret XMLParser::getXMLDuration(
             else if (std::regex_match(text, infinite_nsec))
             {
                 // if either SECONDS or NANOSECONDS is set to infinity then all of it is
-                duration = c_TimeInfinite;
+                duration = dds::c_TimeInfinite;
                 return XMLP_ret::XML_OK;
             }
             else if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &duration.nanosec, ident))
@@ -2906,7 +2906,7 @@ XMLP_ret XMLParser::getXMLDuration(
         }
     }
 
-    // An empty Duration_t xml is forbidden
+    // An empty dds::Duration_t xml is forbidden
     if (empty)
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "'durationType' elements cannot be empty."
@@ -4135,7 +4135,7 @@ XMLP_ret XMLParser::getXMLDomainParticipantFactoryQos(
 
 XMLP_ret XMLParser::getXMLPublisherAttributes(
         tinyxml2::XMLElement* elem,
-        fastdds::PublisherAttributes& publisher,
+        fastdds::xmlparser::PublisherAttributes& publisher,
         uint8_t ident)
 {
     /*
@@ -4292,7 +4292,7 @@ XMLP_ret XMLParser::getXMLPublisherAttributes(
 
 XMLP_ret XMLParser::getXMLSubscriberAttributes(
         tinyxml2::XMLElement* elem,
-        fastdds::SubscriberAttributes& subscriber,
+        fastdds::xmlparser::SubscriberAttributes& subscriber,
         uint8_t ident)
 {
     /*

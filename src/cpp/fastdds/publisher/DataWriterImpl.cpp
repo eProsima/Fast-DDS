@@ -310,7 +310,7 @@ ReturnCode_t DataWriterImpl::enable()
     }
 
     if (qos_.reliable_writer_qos().disable_positive_acks.enabled &&
-            qos_.reliable_writer_qos().disable_positive_acks.duration != c_TimeInfinite)
+            qos_.reliable_writer_qos().disable_positive_acks.duration != dds::c_TimeInfinite)
     {
         w_att.disable_positive_acks = true;
         w_att.keep_duration = qos_.reliable_writer_qos().disable_positive_acks.duration;
@@ -444,7 +444,7 @@ ReturnCode_t DataWriterImpl::enable()
                     qos_.lifespan().duration.to_ns() * 1e-6);
 
     // In case it has been loaded from the persistence DB, expire old samples.
-    if (qos_.lifespan().duration != c_TimeInfinite)
+    if (qos_.lifespan().duration != dds::c_TimeInfinite)
     {
         if (lifespan_expired())
         {
@@ -706,7 +706,7 @@ ReturnCode_t DataWriterImpl::write(
 ReturnCode_t DataWriterImpl::write_w_timestamp(
         const void* const data,
         const InstanceHandle_t& handle,
-        const fastdds::Time_t& timestamp)
+        const fastdds::dds::Time_t& timestamp)
 {
     InstanceHandle_t instance_handle;
     ReturnCode_t ret = RETCODE_OK;
@@ -793,7 +793,7 @@ InstanceHandle_t DataWriterImpl::register_instance(
 
 InstanceHandle_t DataWriterImpl::register_instance_w_timestamp(
         const void* const key,
-        const fastdds::Time_t& timestamp)
+        const fastdds::dds::Time_t& timestamp)
 {
     /// Preconditions
     InstanceHandle_t instance_handle;
@@ -882,7 +882,7 @@ ReturnCode_t DataWriterImpl::unregister_instance(
 ReturnCode_t DataWriterImpl::unregister_instance_w_timestamp(
         const void* const instance,
         const InstanceHandle_t& handle,
-        const fastdds::Time_t& timestamp,
+        const fastdds::dds::Time_t& timestamp,
         bool dispose)
 {
     // Preconditions
@@ -1062,7 +1062,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
             return RETCODE_TIMEOUT;
         }
 
-        if (qos_.deadline().period != c_TimeInfinite)
+        if (qos_.deadline().period != dds::c_TimeInfinite)
         {
             if (!history_->set_next_deadline(
                         handle,
@@ -1083,7 +1083,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
             }
         }
 
-        if (qos_.lifespan().duration != c_TimeInfinite)
+        if (qos_.lifespan().duration != dds::c_TimeInfinite)
         {
             lifespan_duration_us_ = duration<double, std::ratio<1, 1000000>>(
                 qos_.lifespan().duration.to_ns() * 1e-3);
@@ -1229,7 +1229,7 @@ ReturnCode_t DataWriterImpl::set_qos(
         publisher_->rtps_participant()->updateWriter(writer_, topic_att, wqos);
 
         // Deadline
-        if (qos_.deadline().period != c_TimeInfinite)
+        if (qos_.deadline().period != dds::c_TimeInfinite)
         {
             deadline_duration_us_ =
                     duration<double, std::ratio<1, 1000000>>(qos_.deadline().period.to_ns() * 1e-3);
@@ -1241,7 +1241,7 @@ ReturnCode_t DataWriterImpl::set_qos(
         }
 
         // Lifespan
-        if (qos_.lifespan().duration != c_TimeInfinite)
+        if (qos_.lifespan().duration != dds::c_TimeInfinite)
         {
             lifespan_duration_us_ =
                     duration<double, std::ratio<1, 1000000>>(qos_.lifespan().duration.to_ns() * 1e-3);
@@ -1407,7 +1407,7 @@ void DataWriterImpl::InnerDataWriterListener::notify_status_observer(
 #endif //FASTDDS_STATISTICS
 
 ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
-        const Duration_t& max_wait)
+        const dds::Duration_t& max_wait)
 {
     if (writer_ == nullptr)
     {
@@ -1424,7 +1424,7 @@ ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
 ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
         const void* const instance,
         const InstanceHandle_t& handle,
-        const Duration_t& max_wait)
+        const dds::Duration_t& max_wait)
 {
     // Preconditions
     InstanceHandle_t ih;
@@ -1497,7 +1497,7 @@ ReturnCode_t DataWriterImpl::get_publication_matched_status(
 
 bool DataWriterImpl::deadline_timer_reschedule()
 {
-    assert(qos_.deadline().period != c_TimeInfinite);
+    assert(qos_.deadline().period != dds::c_TimeInfinite);
 
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
@@ -1515,7 +1515,7 @@ bool DataWriterImpl::deadline_timer_reschedule()
 
 bool DataWriterImpl::deadline_missed()
 {
-    assert(qos_.deadline().period != c_TimeInfinite);
+    assert(qos_.deadline().period != dds::c_TimeInfinite);
 
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
@@ -1897,7 +1897,7 @@ ReturnCode_t DataWriterImpl::check_qos(
             EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK, "BEST_EFFORT incompatible with pull mode");
             return RETCODE_INCONSISTENT_POLICY;
         }
-        if (c_TimeInfinite == qos.reliable_writer_qos().times.heartbeat_period)
+        if (dds::c_TimeInfinite == qos.reliable_writer_qos().times.heartbeat_period)
         {
             EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK, "Infinite heartbeat period incompatible with pull mode");
             return RETCODE_INCONSISTENT_POLICY;
@@ -1906,7 +1906,7 @@ ReturnCode_t DataWriterImpl::check_qos(
     if (qos.liveliness().kind == AUTOMATIC_LIVELINESS_QOS ||
             qos.liveliness().kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     {
-        if (qos.liveliness().lease_duration < eprosima::fastdds::c_TimeInfinite &&
+        if (qos.liveliness().lease_duration < eprosima::fastdds::dds::c_TimeInfinite &&
                 qos.liveliness().lease_duration <= qos.liveliness().announcement_period)
         {
             EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK, "WRITERQOS: LeaseDuration <= announcement period.");

@@ -97,7 +97,7 @@ TEST(WaitSetImplTests, condition_management)
 
 TEST(WaitSetImplTests, wait)
 {
-    const eprosima::fastdds::Duration_t timeout{ 1, 0 };
+    const eprosima::fastdds::dds::Duration_t timeout{ 1, 0 };
 
     TestCondition condition;
 
@@ -186,7 +186,7 @@ TEST(WaitSetImplTests, wait)
                         wait_set.attach_condition(triggered_condition);
                     });
 
-            EXPECT_EQ(RETCODE_OK, wait_set.wait(conditions, eprosima::fastdds::c_TimeInfinite));
+            EXPECT_EQ(RETCODE_OK, wait_set.wait(conditions, eprosima::fastdds::dds::c_TimeInfinite));
             EXPECT_EQ(1u, conditions.size());
             EXPECT_EQ(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &condition));
             EXPECT_NE(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &triggered_condition));
@@ -242,7 +242,7 @@ TEST(WaitSetImplTests, fix_wait_notification_lost)
                 {
                     // Not to use `WaitSetImpl::wait` with a timeout value, because the
                     // `condition_variable::wait_for` could call _Predicate function again.
-                    ret = wait_set.wait(conditions, eprosima::fastdds::c_TimeInfinite);
+                    ret = wait_set.wait(conditions, eprosima::fastdds::dds::c_TimeInfinite);
                     promise.set_value();
                 });
 

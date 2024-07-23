@@ -65,18 +65,18 @@ typedef DataNode<fastdds::dds::DomainParticipantFactoryQos>        node_particip
 typedef node_participantfactory_t*                                 p_node_participantfactory_t;
 typedef std::unique_ptr<node_participantfactory_t>                 up_node_participantfactory_t;
 
-typedef std::unique_ptr<fastdds::ParticipantAttributes> up_participant_t;
-typedef DataNode<fastdds::ParticipantAttributes>        node_participant_t;
+typedef std::unique_ptr<fastdds::xmlparser::ParticipantAttributes> up_participant_t;
+typedef DataNode<fastdds::xmlparser::ParticipantAttributes>        node_participant_t;
 typedef node_participant_t*                    p_node_participant_t;
 typedef std::unique_ptr<node_participant_t>    up_node_participant_t;
 
-typedef std::unique_ptr<fastdds::PublisherAttributes>   up_publisher_t;
-typedef DataNode<fastdds::PublisherAttributes>          node_publisher_t;
+typedef std::unique_ptr<fastdds::xmlparser::PublisherAttributes>   up_publisher_t;
+typedef DataNode<fastdds::xmlparser::PublisherAttributes>          node_publisher_t;
 typedef node_publisher_t*                      p_node_publisher_t;
 typedef std::unique_ptr<node_publisher_t>      up_node_publisher_t;
 
-typedef std::unique_ptr<fastdds::SubscriberAttributes>  up_subscriber_t;
-typedef DataNode<fastdds::SubscriberAttributes>         node_subscriber_t;
+typedef std::unique_ptr<fastdds::xmlparser::SubscriberAttributes>  up_subscriber_t;
+typedef DataNode<fastdds::xmlparser::SubscriberAttributes>         node_subscriber_t;
 typedef node_subscriber_t*                     p_node_subscriber_t;
 typedef std::unique_ptr<node_subscriber_t>     up_node_subscriber_t;
 
@@ -85,13 +85,13 @@ typedef DataNode<TopicAttributes>              node_topic_t;
 typedef node_topic_t*                          p_node_topic_t;
 typedef std::unique_ptr<node_topic_t>          up_node_topic_t;
 
-typedef std::unique_ptr<fastdds::RequesterAttributes>   up_requester_t;
-typedef DataNode<fastdds::RequesterAttributes>          node_requester_t;
+typedef std::unique_ptr<fastdds::xmlparser::RequesterAttributes>   up_requester_t;
+typedef DataNode<fastdds::xmlparser::RequesterAttributes>          node_requester_t;
 typedef node_requester_t*                      p_node_requester_t;
 typedef std::unique_ptr<node_requester_t>      up_node_requester_t;
 
-typedef std::unique_ptr<fastdds::ReplierAttributes>     up_replier_t;
-typedef DataNode<fastdds::ReplierAttributes>            node_replier_t;
+typedef std::unique_ptr<fastdds::xmlparser::ReplierAttributes>     up_replier_t;
+typedef DataNode<fastdds::xmlparser::ReplierAttributes>            node_replier_t;
 typedef node_replier_t*                        p_node_replier_t;
 typedef std::unique_ptr<node_replier_t>        up_node_replier_t;
 
@@ -346,15 +346,15 @@ protected:
 
     static XMLP_ret fillDataNode(
             tinyxml2::XMLElement* p_profile,
-            DataNode<fastdds::ParticipantAttributes>& participant_node);
+            DataNode<fastdds::xmlparser::ParticipantAttributes>& participant_node);
 
     static XMLP_ret fillDataNode(
             tinyxml2::XMLElement* p_profile,
-            DataNode<fastdds::PublisherAttributes>& publisher_node);
+            DataNode<fastdds::xmlparser::PublisherAttributes>& publisher_node);
 
     static XMLP_ret fillDataNode(
             tinyxml2::XMLElement* p_profile,
-            DataNode<fastdds::SubscriberAttributes>& subscriber_node);
+            DataNode<fastdds::xmlparser::SubscriberAttributes>& subscriber_node);
 
     static XMLP_ret fillDataNode(
             tinyxml2::XMLElement* node,
@@ -362,11 +362,11 @@ protected:
 
     static XMLP_ret fillDataNode(
             tinyxml2::XMLElement* node,
-            DataNode<fastdds::RequesterAttributes>& requester_node);
+            DataNode<fastdds::xmlparser::RequesterAttributes>& requester_node);
 
     static XMLP_ret fillDataNode(
             tinyxml2::XMLElement* node,
-            DataNode<fastdds::ReplierAttributes>& replier_node);
+            DataNode<fastdds::xmlparser::ReplierAttributes>& replier_node);
 
     template <typename T>
     static void addAllAttributes(
@@ -430,7 +430,7 @@ protected:
 
     static XMLP_ret getXMLDuration(
             tinyxml2::XMLElement* elem,
-            Duration_t& duration,
+            dds::Duration_t& duration,
             uint8_t ident);
 
     static XMLP_ret getXMLWriterQosPolicies(
@@ -659,12 +659,12 @@ protected:
 
     static XMLP_ret getXMLPublisherAttributes(
             tinyxml2::XMLElement* elem,
-            fastdds::PublisherAttributes& publisher,
+            fastdds::xmlparser::PublisherAttributes& publisher,
             uint8_t ident);
 
     static XMLP_ret getXMLSubscriberAttributes(
             tinyxml2::XMLElement* elem,
-            fastdds::SubscriberAttributes& subscriber,
+            fastdds::xmlparser::SubscriberAttributes& subscriber,
             uint8_t ident);
 
     static XMLP_ret getXMLThreadSettings(

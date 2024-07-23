@@ -68,7 +68,7 @@ public:
      * @return true on success
      */
     bool update_interval(
-            const Duration_t& interval);
+            const dds::Duration_t& interval);
 
     /*!
      * @brief Updates the expiration time of the event.

@@ -133,8 +133,8 @@ public:
     virtual ~ReqRepHelloWorldRequester();
     void init();
     void init_with_latency(
-            const eprosima::fastdds::Duration_t& latency_budget_duration_pub,
-            const eprosima::fastdds::Duration_t& latency_budget_duration_sub);
+            const eprosima::fastdds::dds::Duration_t& latency_budget_duration_pub,
+            const eprosima::fastdds::dds::Duration_t& latency_budget_duration_sub);
     bool isInitialized() const
     {
         return initialized_;
@@ -149,12 +149,12 @@ public:
     void matched();
     void send(
             const uint16_t number);
-    const eprosima::fastdds::Duration_t datawriter_latency_budget_duration() const
+    const eprosima::fastdds::dds::Duration_t datawriter_latency_budget_duration() const
     {
         return request_datawriter_->get_qos().latency_budget().duration;
     }
 
-    const eprosima::fastdds::Duration_t datareader_latency_budget_duration() const
+    const eprosima::fastdds::dds::Duration_t datareader_latency_budget_duration() const
     {
         return reply_datareader_->get_qos().latency_budget().duration;
     }

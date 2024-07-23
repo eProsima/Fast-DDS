@@ -197,7 +197,7 @@ bool StatelessReader::matched_writer_add_edp(
         }
     }
 
-    if (liveliness_lease_duration_ < c_TimeInfinite)
+    if (liveliness_lease_duration_ < dds::c_TimeInfinite)
     {
         auto wlp = mp_RTPSParticipant->wlp();
         if ( wlp != nullptr)
@@ -283,7 +283,7 @@ bool StatelessReader::matched_writer_remove(
         }
     }
 
-    if (ret_val && liveliness_lease_duration_ < c_TimeInfinite)
+    if (ret_val && liveliness_lease_duration_ < dds::c_TimeInfinite)
     {
         auto wlp = mp_RTPSParticipant->wlp();
         if ( wlp != nullptr)
@@ -895,7 +895,7 @@ bool StatelessReader::thereIsUpperRecordOf(
 void StatelessReader::assert_writer_liveliness(
         const GUID_t& guid)
 {
-    if (liveliness_lease_duration_ < c_TimeInfinite)
+    if (liveliness_lease_duration_ < dds::c_TimeInfinite)
     {
         auto wlp = mp_RTPSParticipant->wlp();
         if (wlp != nullptr)

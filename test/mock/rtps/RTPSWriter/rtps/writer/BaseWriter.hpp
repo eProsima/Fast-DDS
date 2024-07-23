@@ -95,7 +95,7 @@ public:
 
     MOCK_CONST_METHOD0(get_liveliness_kind, const fastdds::dds::LivelinessQosPolicyKind& ());
 
-    MOCK_CONST_METHOD0(get_liveliness_lease_duration, const Duration_t& ());
+    MOCK_CONST_METHOD0(get_liveliness_lease_duration, const dds::Duration_t& ());
 
     MOCK_CONST_METHOD0(is_datasharing_compatible, bool());
 

@@ -495,7 +495,7 @@ TEST(DDSBasic, PidRelatedSampleIdentity)
 
     HelloWorld read_data;
     eprosima::fastdds::dds::SampleInfo info;
-    eprosima::fastdds::Duration_t timeout;
+    eprosima::fastdds::dds::Duration_t timeout;
     timeout.seconds = 2;
     while (!native_reader.wait_for_unread_message(timeout))
     {

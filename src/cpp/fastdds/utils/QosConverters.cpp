@@ -32,7 +32,7 @@ using std::string;
 
 void set_qos_from_attributes(
         DataWriterQos& qos,
-        const PublisherAttributes& attr)
+        const xmlparser::PublisherAttributes& attr)
 {
     qos.writer_resource_limits().matched_subscriber_allocation = attr.matched_subscriber_allocation;
     qos.properties() = attr.properties;
@@ -84,7 +84,7 @@ void set_qos_from_attributes(
 
 void set_qos_from_attributes(
         DataReaderQos& qos,
-        const SubscriberAttributes& attr)
+        const xmlparser::SubscriberAttributes& attr)
 {
     qos.reader_resource_limits().matched_publisher_allocation = attr.matched_publisher_allocation;
     qos.properties() = attr.properties;
@@ -183,7 +183,7 @@ void set_qos_from_attributes(
 
 void set_extended_qos_from_attributes(
         DomainParticipantExtendedQos& extended_qos,
-        const eprosima::fastdds::ParticipantAttributes& attr)
+        const eprosima::fastdds::xmlparser::ParticipantAttributes& attr)
 {
     extended_qos.domainId() = attr.domainId;
     set_qos_from_attributes(extended_qos, attr.rtps);
@@ -222,7 +222,7 @@ void set_attributes_from_qos(
 }
 
 void set_attributes_from_extended_qos(
-        eprosima::fastdds::ParticipantAttributes& attr,
+        eprosima::fastdds::xmlparser::ParticipantAttributes& attr,
         const DomainParticipantExtendedQos& extended_qos)
 {
     attr.domainId = extended_qos.domainId();
@@ -239,7 +239,7 @@ void set_qos_from_attributes(
 
 void set_qos_from_attributes(
         SubscriberQos& qos,
-        const SubscriberAttributes& attr)
+        const xmlparser::SubscriberAttributes& attr)
 {
     qos.group_data().setValue(attr.qos.m_groupData);
     qos.partition() = attr.qos.m_partition;
@@ -248,7 +248,7 @@ void set_qos_from_attributes(
 
 void set_qos_from_attributes(
         PublisherQos& qos,
-        const PublisherAttributes& attr)
+        const xmlparser::PublisherAttributes& attr)
 {
     qos.group_data().setValue(attr.qos.m_groupData);
     qos.partition() = attr.qos.m_partition;
@@ -257,7 +257,7 @@ void set_qos_from_attributes(
 
 void set_qos_from_attributes(
         ReplierQos& qos,
-        const ReplierAttributes& attr)
+        const xmlparser::ReplierAttributes& attr)
 {
     qos.service_name = attr.service_name;
     qos.request_type = attr.request_type;
@@ -270,7 +270,7 @@ void set_qos_from_attributes(
 
 void set_qos_from_attributes(
         RequesterQos& qos,
-        const RequesterAttributes& attr)
+        const xmlparser::RequesterAttributes& attr)
 {
     qos.service_name = attr.service_name;
     qos.request_type = attr.request_type;

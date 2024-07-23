@@ -768,14 +768,14 @@ TEST_P(TransportTCP, large_data_topology)
         writers[i]->reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
                 .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
                 .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
-                .lease_duration(eprosima::fastdds::c_TimeInfinite, eprosima::fastdds::Duration_t(3, 0))
+                .lease_duration(eprosima::fastdds::dds::c_TimeInfinite, eprosima::fastdds::dds::Duration_t(3, 0))
                 .resource_limits_max_instances(1)
                 .resource_limits_max_samples_per_instance(samples_per_participant);
 
         readers[i]->reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
                 .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
                 .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
-                .lease_duration(eprosima::fastdds::c_TimeInfinite, eprosima::fastdds::Duration_t(3, 0))
+                .lease_duration(eprosima::fastdds::dds::c_TimeInfinite, eprosima::fastdds::dds::Duration_t(3, 0))
                 .resource_limits_max_instances(n_participants)
                 .resource_limits_max_samples_per_instance(samples_per_participant);
 

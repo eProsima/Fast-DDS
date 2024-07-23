@@ -61,7 +61,7 @@ PublisherImpl::PublisherImpl(
     , rtps_participant_(p->get_rtps_participant())
     , default_datawriter_qos_(DATAWRITER_QOS_DEFAULT)
 {
-    PublisherAttributes pub_attr;
+    xmlparser::PublisherAttributes pub_attr;
     XMLProfileManager::getDefaultPublisherAttributes(pub_attr);
     utils::set_qos_from_attributes(default_datawriter_qos_, pub_attr);
 }
@@ -292,7 +292,7 @@ DataWriter* PublisherImpl::create_datawriter_with_profile(
         std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool)
 {
     // TODO (ILG): Change when we have full XML support for DDS QoS profiles
-    PublisherAttributes attr;
+    xmlparser::PublisherAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(profile_name, attr))
     {
         DataWriterQos qos = default_datawriter_qos_;
@@ -449,7 +449,7 @@ void PublisherImpl::reset_default_datawriter_qos()
 {
     // TODO (ILG): Change when we have full XML support for DDS QoS profiles
     DataWriterImpl::set_qos(default_datawriter_qos_, DATAWRITER_QOS_DEFAULT, true);
-    PublisherAttributes attr;
+    xmlparser::PublisherAttributes attr;
     XMLProfileManager::getDefaultPublisherAttributes(attr);
     utils::set_qos_from_attributes(default_datawriter_qos_, attr);
 }
@@ -463,7 +463,7 @@ ReturnCode_t PublisherImpl::get_datawriter_qos_from_profile(
         const std::string& profile_name,
         DataWriterQos& qos) const
 {
-    PublisherAttributes attr;
+    xmlparser::PublisherAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(profile_name, attr, false))
     {
         qos = default_datawriter_qos_;
@@ -495,10 +495,10 @@ ReturnCode_t PublisherImpl::copy_from_topic_qos(
 }
 
 ReturnCode_t PublisherImpl::wait_for_acknowledgments(
-        const Duration_t& max_wait)
+        const dds::Duration_t& max_wait)
 {
-    Duration_t current = max_wait;
-    Duration_t begin, end;
+    dds::Duration_t current = max_wait;
+    dds::Duration_t begin, end;
     std::lock_guard<std::mutex> lock(mtx_writers_);
     for (auto& vit : writers_)
     {
@@ -512,7 +512,7 @@ ReturnCode_t PublisherImpl::wait_for_acknowledgments(
             // Check ellapsed time and decrement
             participant_->get_current_time(end);
             current = current - (end - begin);
-            if (current < fastdds::c_TimeZero)
+            if (current < fastdds::dds::c_TimeZero)
             {
                 return RETCODE_TIMEOUT;
             }

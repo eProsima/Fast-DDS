@@ -277,8 +277,8 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     // .ownership
     qos.ownership().kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
     // .time_based_filter
-    qos.time_based_filter().minimum_separation.seconds = eprosima::fastdds::Time_t::INFINITE_SECONDS;
-    qos.time_based_filter().minimum_separation.nanosec = eprosima::fastdds::Time_t::INFINITE_NANOSECONDS;
+    qos.time_based_filter().minimum_separation.seconds = eprosima::fastdds::dds::Time_t::INFINITE_SECONDS;
+    qos.time_based_filter().minimum_separation.nanosec = eprosima::fastdds::dds::Time_t::INFINITE_NANOSECONDS;
     // .reader_data_lifecycle
     qos.reader_data_lifecycle().autopurge_disposed_samples_delay.seconds = 100;
     qos.reader_data_lifecycle().autopurge_disposed_samples_delay.nanosec = 30000u;
@@ -399,8 +399,9 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     // .ownership
     EXPECT_EQ(eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS, rqos.ownership().kind);
     // .time_based_filter
-    EXPECT_EQ(eprosima::fastdds::Time_t::INFINITE_SECONDS, rqos.time_based_filter().minimum_separation.seconds);
-    EXPECT_EQ(eprosima::fastdds::Time_t::INFINITE_NANOSECONDS, rqos.time_based_filter().minimum_separation.nanosec);
+    EXPECT_EQ(eprosima::fastdds::dds::Time_t::INFINITE_SECONDS, rqos.time_based_filter().minimum_separation.seconds);
+    EXPECT_EQ(eprosima::fastdds::dds::Time_t::INFINITE_NANOSECONDS,
+            rqos.time_based_filter().minimum_separation.nanosec);
     // .reader_data_lifecycle
     EXPECT_EQ(100, rqos.reader_data_lifecycle().autopurge_disposed_samples_delay.seconds);
     EXPECT_EQ(30000u, rqos.reader_data_lifecycle().autopurge_disposed_samples_delay.nanosec);
@@ -822,7 +823,7 @@ TEST(SubscriberTests, DeleteContainedEntities)
     EXPECT_EQ(RETCODE_OK, data_writer_foo->write(&data, HANDLE_NIL));
 
     // Wait for data to arrive and check OK should be returned
-    Duration_t wait_time(1, 0);
+    dds::Duration_t wait_time(1, 0);
     EXPECT_TRUE(data_reader_foo->wait_for_unread_message(wait_time));
 
     LoanableSequence<BarType> mock_coll;

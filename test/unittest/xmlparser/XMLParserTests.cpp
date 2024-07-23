@@ -114,7 +114,7 @@ TEST_F(XMLParserTests, WrongName)
 {
     std::unique_ptr<BaseNode> root;
     ASSERT_EQ(XMLParser::loadXML("test_xml_profile.xml", root), XMLP_ret::XML_OK);
-    ParticipantAttributes participant_atts;
+    xmlparser::ParticipantAttributes participant_atts;
     ASSERT_FALSE(get_participant_attributes(root, participant_atts));
 }
 
@@ -126,7 +126,7 @@ TEST_F(XMLParserTests, WrongNameBuffer)
     strStream << inFile.rdbuf();
     std::unique_ptr<BaseNode> root;
     ASSERT_EQ(XMLParser::loadXML(strStream.str().data(), strStream.str().size(), root), XMLP_ret::XML_OK);
-    ParticipantAttributes participant_atts;
+    xmlparser::ParticipantAttributes participant_atts;
     ASSERT_FALSE(get_participant_attributes(root, participant_atts));
 }
 
@@ -138,7 +138,7 @@ TEST_F(XMLParserTests, TypesRooted)
     std::unique_ptr<BaseNode> root;
     ASSERT_EQ(XMLParser::loadXML("test_xml_rooted_profile.xml", root), XMLP_ret::XML_OK);
 
-    ParticipantAttributes participant_atts;
+    xmlparser::ParticipantAttributes participant_atts;
     bool participant_profile = false;
     bool publisher_profile   = false;
     bool subscriber_profile  = false;
@@ -182,7 +182,7 @@ TEST_F(XMLParserTests, TypesRootedDeprecated)
     std::unique_ptr<BaseNode> root;
     ASSERT_EQ(XMLParser::loadXML("test_xml_rooted_deprecated.xml", root), XMLP_ret::XML_OK);
 
-    ParticipantAttributes participant_atts;
+    xmlparser::ParticipantAttributes participant_atts;
     bool participant_profile = false;
     bool publisher_profile   = false;
     bool subscriber_profile  = false;
@@ -229,7 +229,7 @@ TEST_F(XMLParserTests, TypesRootedBuffer)
     strStream << inFile.rdbuf();
     std::unique_ptr<BaseNode> root;
     ASSERT_EQ(XMLParser::loadXML(strStream.str().data(), strStream.str().size(), root), XMLP_ret::XML_OK);
-    ParticipantAttributes participant_atts;
+    xmlparser::ParticipantAttributes participant_atts;
     bool participant_profile = false;
     bool publisher_profile   = false;
     bool subscriber_profile  = false;
@@ -276,7 +276,7 @@ TEST_F(XMLParserTests, TypesRootedBufferDeprecated)
     strStream << inFile.rdbuf();
     std::unique_ptr<BaseNode> root;
     ASSERT_EQ(XMLParser::loadXML(strStream.str().data(), strStream.str().size(), root), XMLP_ret::XML_OK);
-    ParticipantAttributes participant_atts;
+    xmlparser::ParticipantAttributes participant_atts;
     bool participant_profile = false;
     bool publisher_profile   = false;
     bool subscriber_profile  = false;
@@ -321,7 +321,7 @@ TEST_F(XMLParserTests, Types)
     ASSERT_TRUE(profiles);
     ASSERT_EQ(profiles->getType(), xmlparser::NodeType::PROFILES);
 
-    ParticipantAttributes participant_atts;
+    xmlparser::ParticipantAttributes participant_atts;
     bool participant_profile = false;
     bool publisher_profile   = false;
     bool subscriber_profile  = false;
@@ -358,7 +358,7 @@ TEST_F(XMLParserTests, TypesBuffer)
     ASSERT_TRUE(profiles);
     ASSERT_EQ(profiles->getType(), xmlparser::NodeType::PROFILES);
 
-    ParticipantAttributes participant_atts;
+    xmlparser::ParticipantAttributes participant_atts;
     bool participant_profile = false;
     bool publisher_profile   = false;
     bool subscriber_profile  = false;
@@ -392,17 +392,17 @@ TEST_F(XMLParserTests, DurationCheck)
 
     ASSERT_EQ(XMLParser::loadXML("test_xml_duration_profile.xml", root), XMLP_ret::XML_OK);
 
-    ParticipantAttributes participant_atts;
+    xmlparser::ParticipantAttributes participant_atts;
     bool participant_profile = false;
-    PublisherAttributes publisher_atts;
+    xmlparser::PublisherAttributes publisher_atts;
     bool publisher_profile = false;
-    SubscriberAttributes subscriber_atts;
+    xmlparser::SubscriberAttributes subscriber_atts;
     bool subscriber_profile = false;
     for (const auto& profile : root->getChildren())
     {
         if (profile->getType() == NodeType::PARTICIPANT)
         {
-            auto data_node = dynamic_cast<DataNode<ParticipantAttributes>*>(profile.get());
+            auto data_node = dynamic_cast<DataNode<xmlparser::ParticipantAttributes>*>(profile.get());
             auto search    = data_node->getAttributes().find(name_attribute);
             if ((search != data_node->getAttributes().end()) && (search->second == profile_name))
             {
@@ -412,7 +412,7 @@ TEST_F(XMLParserTests, DurationCheck)
         }
         else if (profile->getType() == NodeType::PUBLISHER)
         {
-            auto data_node = dynamic_cast<DataNode<PublisherAttributes>*>(profile.get());
+            auto data_node = dynamic_cast<DataNode<xmlparser::PublisherAttributes>*>(profile.get());
             auto search    = data_node->getAttributes().find(name_attribute);
             if ((search != data_node->getAttributes().end()) && (search->second == profile_name2))
             {
@@ -422,7 +422,7 @@ TEST_F(XMLParserTests, DurationCheck)
         }
         else if (profile->getType() == NodeType::SUBSCRIBER)
         {
-            auto data_node = dynamic_cast<DataNode<SubscriberAttributes>*>(profile.get());
+            auto data_node = dynamic_cast<DataNode<xmlparser::SubscriberAttributes>*>(profile.get());
             auto search    = data_node->getAttributes().find(name_attribute);
             if ((search != data_node->getAttributes().end()) && (search->second == profile_name3))
             {
@@ -432,7 +432,7 @@ TEST_F(XMLParserTests, DurationCheck)
         }
     }
     ASSERT_TRUE(participant_profile);
-    EXPECT_EQ(participant_atts.rtps.builtin.discovery_config.leaseDuration, c_TimeInfinite);
+    EXPECT_EQ(participant_atts.rtps.builtin.discovery_config.leaseDuration, dds::c_TimeInfinite);
     EXPECT_EQ(participant_atts.rtps.builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
     EXPECT_EQ(participant_atts.rtps.builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);
 
@@ -440,12 +440,12 @@ TEST_F(XMLParserTests, DurationCheck)
     EXPECT_EQ(publisher_atts.qos.m_deadline.period.seconds, 15);
     EXPECT_EQ(publisher_atts.qos.m_liveliness.lease_duration.seconds, 1);
     EXPECT_EQ(publisher_atts.qos.m_liveliness.lease_duration.nanosec, 2u);
-    EXPECT_EQ(publisher_atts.qos.m_liveliness.announcement_period, c_TimeInfinite);
+    EXPECT_EQ(publisher_atts.qos.m_liveliness.announcement_period, dds::c_TimeInfinite);
     EXPECT_EQ(publisher_atts.qos.m_latencyBudget.duration.seconds, 10);
 
     ASSERT_TRUE(subscriber_profile);
-    EXPECT_EQ(subscriber_atts.qos.m_deadline.period, c_TimeInfinite);
-    EXPECT_EQ(subscriber_atts.qos.m_liveliness.lease_duration, c_TimeInfinite);
+    EXPECT_EQ(subscriber_atts.qos.m_deadline.period, dds::c_TimeInfinite);
+    EXPECT_EQ(subscriber_atts.qos.m_liveliness.lease_duration, dds::c_TimeInfinite);
     EXPECT_EQ(subscriber_atts.qos.m_liveliness.announcement_period.seconds, 0);
     EXPECT_EQ(subscriber_atts.qos.m_liveliness.announcement_period.nanosec, 0u);
     EXPECT_EQ(subscriber_atts.qos.m_latencyBudget.duration.seconds, 20);
@@ -466,13 +466,13 @@ TEST_F(XMLParserTests, Data)
     ASSERT_TRUE(profiles);
     ASSERT_EQ(profiles->getType(), xmlparser::NodeType::PROFILES);
 
-    ParticipantAttributes participant_atts;
+    xmlparser::ParticipantAttributes participant_atts;
     bool participant_profile = false;
     for (const auto& profile : profiles->getChildren())
     {
         if (profile->getType() == NodeType::PARTICIPANT)
         {
-            auto data_node = dynamic_cast<DataNode<ParticipantAttributes>*>(profile.get());
+            auto data_node = dynamic_cast<DataNode<xmlparser::ParticipantAttributes>*>(profile.get());
             auto search    = data_node->getAttributes().find(name_attribute);
             if ((search != data_node->getAttributes().end()) && (search->second == profile_name))
             {
@@ -503,7 +503,7 @@ TEST_F(XMLParserTests, Data)
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
-    EXPECT_EQ(builtin.discovery_config.leaseDuration, c_TimeInfinite);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration, dds::c_TimeInfinite);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);
     EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
@@ -560,13 +560,13 @@ TEST_F(XMLParserTests, DataDeprecated)
     ASSERT_TRUE(profiles);
     ASSERT_EQ(profiles->getType(), xmlparser::NodeType::PROFILES);
 
-    ParticipantAttributes participant_atts;
+    xmlparser::ParticipantAttributes participant_atts;
     bool participant_profile = false;
     for (const auto& profile : profiles->getChildren())
     {
         if (profile->getType() == NodeType::PARTICIPANT)
         {
-            auto data_node = dynamic_cast<DataNode<ParticipantAttributes>*>(profile.get());
+            auto data_node = dynamic_cast<DataNode<xmlparser::ParticipantAttributes>*>(profile.get());
             auto search    = data_node->getAttributes().find(name_attribute);
             if ((search != data_node->getAttributes().end()) && (search->second == profile_name))
             {
@@ -597,7 +597,7 @@ TEST_F(XMLParserTests, DataDeprecated)
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
-    EXPECT_EQ(builtin.discovery_config.leaseDuration, c_TimeInfinite);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration, dds::c_TimeInfinite);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);
     EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
@@ -654,13 +654,13 @@ TEST_F(XMLParserTests, DataBuffer)
     ASSERT_TRUE(profiles);
     ASSERT_EQ(profiles->getType(), xmlparser::NodeType::PROFILES);
 
-    ParticipantAttributes participant_atts;
+    xmlparser::ParticipantAttributes participant_atts;
     bool participant_profile = false;
     for (const auto& profile : profiles->getChildren())
     {
         if (profile->getType() == NodeType::PARTICIPANT)
         {
-            auto data_node = dynamic_cast<DataNode<ParticipantAttributes>*>(profile.get());
+            auto data_node = dynamic_cast<DataNode<xmlparser::ParticipantAttributes>*>(profile.get());
             auto search    = data_node->getAttributes().find(name_attribute);
             if ((search != data_node->getAttributes().end()) && (search->second == profile_name))
             {
@@ -691,7 +691,7 @@ TEST_F(XMLParserTests, DataBuffer)
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
-    EXPECT_EQ(builtin.discovery_config.leaseDuration, c_TimeInfinite);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration, dds::c_TimeInfinite);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);
     EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
@@ -748,13 +748,13 @@ TEST_F(XMLParserTests, DataBufferDeprecated)
     ASSERT_TRUE(profiles);
     ASSERT_EQ(profiles->getType(), xmlparser::NodeType::PROFILES);
 
-    ParticipantAttributes participant_atts;
+    xmlparser::ParticipantAttributes participant_atts;
     bool participant_profile = false;
     for (const auto& profile : profiles->getChildren())
     {
         if (profile->getType() == NodeType::PARTICIPANT)
         {
-            auto data_node = dynamic_cast<DataNode<ParticipantAttributes>*>(profile.get());
+            auto data_node = dynamic_cast<DataNode<xmlparser::ParticipantAttributes>*>(profile.get());
             auto search    = data_node->getAttributes().find(name_attribute);
             if ((search != data_node->getAttributes().end()) && (search->second == profile_name))
             {
@@ -785,7 +785,7 @@ TEST_F(XMLParserTests, DataBufferDeprecated)
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
-    EXPECT_EQ(builtin.discovery_config.leaseDuration, c_TimeInfinite);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration, dds::c_TimeInfinite);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);
     EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
@@ -1796,7 +1796,7 @@ TEST_F(XMLParserTests, parseLogConfig)
 }
 
 /*
- * This test checks the return of the negative cases of the fillDataNode given a ParticipantAttributes DataNode
+ * This test checks the return of the negative cases of the fillDataNode given a xmlparser::ParticipantAttributes DataNode
  * 1. Check passing a nullptr as if the XMLElement was wrongly parsed above
  * 2. Check missing DomainId value in tag
  * 3. Check bad values for all attributes
@@ -1807,7 +1807,7 @@ TEST_F(XMLParserTests, fillDataNodeParticipantNegativeClauses)
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
 
-    up_participant_t participant_atts{new ParticipantAttributes};
+    up_participant_t participant_atts{new xmlparser::ParticipantAttributes};
     up_node_participant_t participant_node{new node_participant_t{NodeType::PARTICIPANT, std::move(participant_atts)}};
 
     // missing profile XMLElement
@@ -2635,9 +2635,9 @@ TEST_F(XMLParserTests, loadXMLEmptyFileName)
  */
 TEST_F(XMLParserTests, fillDataNodePublisherNegativeClauses)
 {
-    std::unique_ptr<PublisherAttributes> publisher_atts{new PublisherAttributes};
-    std::unique_ptr<DataNode<PublisherAttributes>> publisher_node{
-        new DataNode<PublisherAttributes>{ NodeType::PUBLISHER, std::move(publisher_atts) }};
+    std::unique_ptr<xmlparser::PublisherAttributes> publisher_atts{new xmlparser::PublisherAttributes};
+    std::unique_ptr<DataNode<xmlparser::PublisherAttributes>> publisher_node{
+        new DataNode<xmlparser::PublisherAttributes>{ NodeType::PUBLISHER, std::move(publisher_atts) }};
 
     // Check that an XML_ERROR is triggered when the xml element is nullptr.
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(nullptr, *publisher_node));
@@ -2667,9 +2667,9 @@ TEST_F(XMLParserTests, fillDataNodePublisherNegativeClauses)
  */
 TEST_F(XMLParserTests, fillDataNodeSubscriberNegativeClauses)
 {
-    std::unique_ptr<SubscriberAttributes> subscriber_atts{new SubscriberAttributes};
-    std::unique_ptr<DataNode<SubscriberAttributes>> subscriber_node{
-        new DataNode<SubscriberAttributes>{ NodeType::SUBSCRIBER, std::move(subscriber_atts) }};
+    std::unique_ptr<xmlparser::SubscriberAttributes> subscriber_atts{new xmlparser::SubscriberAttributes};
+    std::unique_ptr<DataNode<xmlparser::SubscriberAttributes>> subscriber_node{
+        new DataNode<xmlparser::SubscriberAttributes>{ NodeType::SUBSCRIBER, std::move(subscriber_atts) }};
 
     // Check that an XML_ERROR is triggered when the xml element is nullptr.
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(nullptr, *subscriber_node));
@@ -2737,9 +2737,9 @@ TEST_F(XMLParserTests, fillDataNodeTopicNegativeClauses)
  */
 TEST_F(XMLParserTests, fillDataNodeRequesterNegativeClauses)
 {
-    std::unique_ptr<RequesterAttributes> requester_atts_error{new RequesterAttributes};
-    std::unique_ptr<DataNode<RequesterAttributes>> requester_node_error{
-        new DataNode<RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts_error) }};
+    std::unique_ptr<xmlparser::RequesterAttributes> requester_atts_error{new xmlparser::RequesterAttributes};
+    std::unique_ptr<DataNode<xmlparser::RequesterAttributes>> requester_node_error{
+        new DataNode<xmlparser::RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts_error) }};
 
     // Check that an XML_ERROR is triggered when the xml element is nullptr.
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(nullptr, *requester_node_error));
@@ -2757,9 +2757,9 @@ TEST_F(XMLParserTests, fillDataNodeRequesterNegativeClauses)
 
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
-        std::unique_ptr<RequesterAttributes> requester_atts{new RequesterAttributes};
-        std::unique_ptr<DataNode<RequesterAttributes>> requester_node{
-            new DataNode<RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts) }};
+        std::unique_ptr<xmlparser::RequesterAttributes> requester_atts{new xmlparser::RequesterAttributes};
+        std::unique_ptr<DataNode<xmlparser::RequesterAttributes>> requester_node{
+            new DataNode<xmlparser::RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts) }};
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *requester_node));
     }
 
@@ -2773,9 +2773,9 @@ TEST_F(XMLParserTests, fillDataNodeRequesterNegativeClauses)
 
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
-        std::unique_ptr<RequesterAttributes> requester_atts{new RequesterAttributes};
-        std::unique_ptr<DataNode<RequesterAttributes>> requester_node{
-            new DataNode<RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts) }};
+        std::unique_ptr<xmlparser::RequesterAttributes> requester_atts{new xmlparser::RequesterAttributes};
+        std::unique_ptr<DataNode<xmlparser::RequesterAttributes>> requester_node{
+            new DataNode<xmlparser::RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts) }};
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *requester_node));
     }
 
@@ -2790,9 +2790,9 @@ TEST_F(XMLParserTests, fillDataNodeRequesterNegativeClauses)
 
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
-        std::unique_ptr<RequesterAttributes> requester_atts{new RequesterAttributes};
-        std::unique_ptr<DataNode<RequesterAttributes>> requester_node{
-            new DataNode<RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts) }};
+        std::unique_ptr<xmlparser::RequesterAttributes> requester_atts{new xmlparser::RequesterAttributes};
+        std::unique_ptr<DataNode<xmlparser::RequesterAttributes>> requester_node{
+            new DataNode<xmlparser::RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts) }};
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *requester_node));
     }
 
@@ -2808,9 +2808,9 @@ TEST_F(XMLParserTests, fillDataNodeRequesterNegativeClauses)
 
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
-        std::unique_ptr<RequesterAttributes> requester_atts{new RequesterAttributes};
-        std::unique_ptr<DataNode<RequesterAttributes>> requester_node{
-            new DataNode<RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts) }};
+        std::unique_ptr<xmlparser::RequesterAttributes> requester_atts{new xmlparser::RequesterAttributes};
+        std::unique_ptr<DataNode<xmlparser::RequesterAttributes>> requester_node{
+            new DataNode<xmlparser::RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts) }};
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *requester_node));
     }
 
@@ -2818,8 +2818,8 @@ TEST_F(XMLParserTests, fillDataNodeRequesterNegativeClauses)
     // and <subscriber> does not contains a valid xml element.
     // Check that fillDataNode() returns an XML_ERROR when child xml element of <requester> is not valid.
     {
-        std::unique_ptr<RequesterAttributes> requester_atts;
-        std::unique_ptr<DataNode<RequesterAttributes>> requester_node;
+        std::unique_ptr<xmlparser::RequesterAttributes> requester_atts;
+        std::unique_ptr<DataNode<xmlparser::RequesterAttributes>> requester_node;
 
         const char* xml_p =
                 "\
@@ -2847,8 +2847,9 @@ TEST_F(XMLParserTests, fillDataNodeRequesterNegativeClauses)
             snprintf(xml, xml_len, xml_p, e.c_str(), e.c_str());
             ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
             titleElement = xml_doc.RootElement();
-            requester_atts.reset(new RequesterAttributes);
-            requester_node.reset(new DataNode<RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts) });
+            requester_atts.reset(new xmlparser::RequesterAttributes);
+            requester_node.reset(new DataNode<xmlparser::RequesterAttributes>{ NodeType::REQUESTER,
+                                                                               std::move(requester_atts) });
             EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *requester_node));
         }
     }
@@ -2867,9 +2868,9 @@ TEST_F(XMLParserTests, fillDataNodeRequesterNegativeClauses)
  */
 TEST_F(XMLParserTests, fillDataNodeReplierNegativeClauses)
 {
-    std::unique_ptr<ReplierAttributes> replier_atts_error{new ReplierAttributes};
-    std::unique_ptr<DataNode<ReplierAttributes>> replier_node_error{
-        new DataNode<ReplierAttributes>{ NodeType::REQUESTER, std::move(replier_atts_error) }};
+    std::unique_ptr<xmlparser::ReplierAttributes> replier_atts_error{new xmlparser::ReplierAttributes};
+    std::unique_ptr<DataNode<xmlparser::ReplierAttributes>> replier_node_error{
+        new DataNode<xmlparser::ReplierAttributes>{ NodeType::REQUESTER, std::move(replier_atts_error) }};
 
     // Check that an XML_ERROR is triggered when the xml element is nullptr.
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(nullptr, *replier_node_error));
@@ -2887,9 +2888,9 @@ TEST_F(XMLParserTests, fillDataNodeReplierNegativeClauses)
 
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
-        std::unique_ptr<ReplierAttributes> replier_atts{new ReplierAttributes};
-        std::unique_ptr<DataNode<ReplierAttributes>> replier_node{
-            new DataNode<ReplierAttributes>{ NodeType::REQUESTER, std::move(replier_atts) }};
+        std::unique_ptr<xmlparser::ReplierAttributes> replier_atts{new xmlparser::ReplierAttributes};
+        std::unique_ptr<DataNode<xmlparser::ReplierAttributes>> replier_node{
+            new DataNode<xmlparser::ReplierAttributes>{ NodeType::REQUESTER, std::move(replier_atts) }};
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *replier_node));
     }
 
@@ -2903,9 +2904,9 @@ TEST_F(XMLParserTests, fillDataNodeReplierNegativeClauses)
 
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
-        std::unique_ptr<ReplierAttributes> replier_atts{new ReplierAttributes};
-        std::unique_ptr<DataNode<ReplierAttributes>> replier_node{
-            new DataNode<ReplierAttributes>{ NodeType::REQUESTER, std::move(replier_atts) }};
+        std::unique_ptr<xmlparser::ReplierAttributes> replier_atts{new xmlparser::ReplierAttributes};
+        std::unique_ptr<DataNode<xmlparser::ReplierAttributes>> replier_node{
+            new DataNode<xmlparser::ReplierAttributes>{ NodeType::REQUESTER, std::move(replier_atts) }};
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *replier_node));
     }
 
@@ -2920,9 +2921,9 @@ TEST_F(XMLParserTests, fillDataNodeReplierNegativeClauses)
 
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
-        std::unique_ptr<ReplierAttributes> replier_atts{new ReplierAttributes};
-        std::unique_ptr<DataNode<ReplierAttributes>> replier_node{
-            new DataNode<ReplierAttributes>{ NodeType::REQUESTER, std::move(replier_atts) }};
+        std::unique_ptr<xmlparser::ReplierAttributes> replier_atts{new xmlparser::ReplierAttributes};
+        std::unique_ptr<DataNode<xmlparser::ReplierAttributes>> replier_node{
+            new DataNode<xmlparser::ReplierAttributes>{ NodeType::REQUESTER, std::move(replier_atts) }};
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *replier_node));
     }
 
@@ -2938,9 +2939,9 @@ TEST_F(XMLParserTests, fillDataNodeReplierNegativeClauses)
 
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
-        std::unique_ptr<ReplierAttributes> replier_atts{new ReplierAttributes};
-        std::unique_ptr<DataNode<ReplierAttributes>> replier_node{
-            new DataNode<ReplierAttributes>{ NodeType::REQUESTER, std::move(replier_atts) }};
+        std::unique_ptr<xmlparser::ReplierAttributes> replier_atts{new xmlparser::ReplierAttributes};
+        std::unique_ptr<DataNode<xmlparser::ReplierAttributes>> replier_node{
+            new DataNode<xmlparser::ReplierAttributes>{ NodeType::REQUESTER, std::move(replier_atts) }};
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *replier_node));
     }
 
@@ -2948,8 +2949,8 @@ TEST_F(XMLParserTests, fillDataNodeReplierNegativeClauses)
     // and <subscriber> does not contains a valid xml element.
     // Check that fillDataNode() returns an XML_ERROR when child xml element of <replier> is not valid.
     {
-        std::unique_ptr<ReplierAttributes> replier_atts;
-        std::unique_ptr<DataNode<ReplierAttributes>> replier_node;
+        std::unique_ptr<xmlparser::ReplierAttributes> replier_atts;
+        std::unique_ptr<DataNode<xmlparser::ReplierAttributes>> replier_node;
 
         const char* xml_p =
                 "\
@@ -2977,8 +2978,9 @@ TEST_F(XMLParserTests, fillDataNodeReplierNegativeClauses)
             snprintf(xml, xml_len, xml_p, e.c_str(), e.c_str());
             ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
             titleElement = xml_doc.RootElement();
-            replier_atts.reset(new ReplierAttributes);
-            replier_node.reset(new DataNode<ReplierAttributes>{ NodeType::REQUESTER, std::move(replier_atts) });
+            replier_atts.reset(new xmlparser::ReplierAttributes);
+            replier_node.reset(new DataNode<xmlparser::ReplierAttributes>{ NodeType::REQUESTER, std::move(
+                                                                               replier_atts) });
             EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *replier_node));
         }
     }
@@ -2990,9 +2992,9 @@ TEST_F(XMLParserTests, fillDataNodeReplierNegativeClauses)
  */
 TEST_F(XMLParserTests, parseXMLParticipantProfNegativeClauses)
 {
-    std::unique_ptr<ParticipantAttributes> participant_atts{new ParticipantAttributes};
-    std::unique_ptr<DataNode<ParticipantAttributes>> participant_node{
-        new DataNode<ParticipantAttributes>{ NodeType::PARTICIPANT, std::move(participant_atts) }};
+    std::unique_ptr<xmlparser::ParticipantAttributes> participant_atts{new xmlparser::ParticipantAttributes};
+    std::unique_ptr<DataNode<xmlparser::ParticipantAttributes>> participant_node{
+        new DataNode<xmlparser::ParticipantAttributes>{ NodeType::PARTICIPANT, std::move(participant_atts) }};
 
     // Check that an XML_ERROR is triggered when the xml element is nullptr.
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLParticipantProf_wrapper(nullptr, *participant_node));
@@ -3004,9 +3006,9 @@ TEST_F(XMLParserTests, parseXMLParticipantProfNegativeClauses)
  */
 TEST_F(XMLParserTests, parseXMLPublisherProfNegativeClauses)
 {
-    std::unique_ptr<PublisherAttributes> publisher_atts{new PublisherAttributes};
-    std::unique_ptr<DataNode<PublisherAttributes>> publisher_node{
-        new DataNode<PublisherAttributes>{ NodeType::PUBLISHER, std::move(publisher_atts) }};
+    std::unique_ptr<xmlparser::PublisherAttributes> publisher_atts{new xmlparser::PublisherAttributes};
+    std::unique_ptr<DataNode<xmlparser::PublisherAttributes>> publisher_node{
+        new DataNode<xmlparser::PublisherAttributes>{ NodeType::PUBLISHER, std::move(publisher_atts) }};
 
     // Check that an XML_ERROR is triggered when the xml element is nullptr.
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLPublisherProf_wrapper(nullptr, *publisher_node));
@@ -3018,9 +3020,9 @@ TEST_F(XMLParserTests, parseXMLPublisherProfNegativeClauses)
  */
 TEST_F(XMLParserTests, parseXMLSubscriberProfNegativeClauses)
 {
-    std::unique_ptr<SubscriberAttributes> subscriber_atts{new SubscriberAttributes};
-    std::unique_ptr<DataNode<SubscriberAttributes>> subscriber_node{
-        new DataNode<SubscriberAttributes>{ NodeType::SUBSCRIBER, std::move(subscriber_atts) }};
+    std::unique_ptr<xmlparser::SubscriberAttributes> subscriber_atts{new xmlparser::SubscriberAttributes};
+    std::unique_ptr<DataNode<xmlparser::SubscriberAttributes>> subscriber_node{
+        new DataNode<xmlparser::SubscriberAttributes>{ NodeType::SUBSCRIBER, std::move(subscriber_atts) }};
 
     // Check that an XML_ERROR is triggered when the xml element is nullptr.
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLSubscriberProf_wrapper(nullptr, *subscriber_node));
@@ -3032,9 +3034,9 @@ TEST_F(XMLParserTests, parseXMLSubscriberProfNegativeClauses)
  */
 TEST_F(XMLParserTests, parseXMLRequesterProfNegativeClauses)
 {
-    std::unique_ptr<RequesterAttributes> requester_atts{new RequesterAttributes};
-    std::unique_ptr<DataNode<RequesterAttributes>> requester_node{
-        new DataNode<RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts) }};
+    std::unique_ptr<xmlparser::RequesterAttributes> requester_atts{new xmlparser::RequesterAttributes};
+    std::unique_ptr<DataNode<xmlparser::RequesterAttributes>> requester_node{
+        new DataNode<xmlparser::RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts) }};
 
     // Check that an XML_ERROR is triggered when the xml element is nullptr.
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLRequesterProf_wrapper(nullptr, *requester_node));
@@ -3046,9 +3048,9 @@ TEST_F(XMLParserTests, parseXMLRequesterProfNegativeClauses)
  */
 TEST_F(XMLParserTests, parseXMLReplierProfNegativeClauses)
 {
-    std::unique_ptr<ReplierAttributes> replier_atts{new ReplierAttributes};
-    std::unique_ptr<DataNode<ReplierAttributes>> replier_node{
-        new DataNode<ReplierAttributes>{ NodeType::REPLIER, std::move(replier_atts) }};
+    std::unique_ptr<xmlparser::ReplierAttributes> replier_atts{new xmlparser::ReplierAttributes};
+    std::unique_ptr<DataNode<xmlparser::ReplierAttributes>> replier_node{
+        new DataNode<xmlparser::ReplierAttributes>{ NodeType::REPLIER, std::move(replier_atts) }};
 
     // Check that an XML_ERROR is triggered when the xml element is nullptr.
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLReplierProf_wrapper(nullptr, *replier_node));

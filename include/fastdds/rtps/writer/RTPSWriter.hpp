@@ -145,7 +145,7 @@ public:
      * @return True if all were acknowledged.
      */
     FASTDDS_EXPORTED_API virtual bool wait_for_all_acked(
-            const Duration_t& max_wait) = 0;
+            const dds::Duration_t& max_wait) = 0;
 
     /**
      * Update the Attributes of the Writer.

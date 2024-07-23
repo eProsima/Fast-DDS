@@ -56,7 +56,7 @@ MessageReceiver::MessageReceiver(
     , source_guid_prefix_(c_GuidPrefix_Unknown)
     , dest_guid_prefix_(c_GuidPrefix_Unknown)
     , have_timestamp_(false)
-    , timestamp_(c_TimeInvalid)
+    , timestamp_(dds::c_TimeInvalid)
 #if HAVE_SECURITY
     , crypto_msg_(participant->is_secure() ? rec_buffer_size : 0)
     , crypto_submsg_(participant->is_secure() ? rec_buffer_size : 0)
@@ -333,7 +333,7 @@ void MessageReceiver::reset()
     source_guid_prefix_ = c_GuidPrefix_Unknown;
     dest_guid_prefix_ = c_GuidPrefix_Unknown;
     have_timestamp_ = false;
-    timestamp_ = c_TimeInvalid;
+    timestamp_ = dds::c_TimeInvalid;
 }
 
 void MessageReceiver::processCDRMsg(

@@ -775,7 +775,7 @@ void ParticipantProxyData::clear()
     default_locators.multicast.clear();
     m_participantName = "";
     m_key = InstanceHandle_t();
-    m_leaseDuration = Duration_t();
+    m_leaseDuration = dds::Duration_t();
     lease_duration_ = std::chrono::microseconds::zero();
     isAlive = true;
 #if HAVE_SECURITY

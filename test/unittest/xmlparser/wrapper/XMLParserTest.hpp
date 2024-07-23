@@ -63,7 +63,7 @@ public:
 
     static XMLP_ret fillDataNode_wrapper(
             tinyxml2::XMLElement* p_profile,
-            DataNode<ParticipantAttributes>& participant_node)
+            DataNode<xmlparser::ParticipantAttributes>& participant_node)
     {
         return fillDataNode(p_profile, participant_node);
     }
@@ -86,7 +86,7 @@ public:
 
     static XMLP_ret getXMLSubscriberAttributes_wrapper(
             tinyxml2::XMLElement* elem,
-            SubscriberAttributes& subscriber,
+            xmlparser::SubscriberAttributes& subscriber,
             uint8_t ident)
     {
         return getXMLSubscriberAttributes(elem, subscriber, ident);
@@ -167,7 +167,7 @@ public:
 
     static XMLP_ret getXMLDuration_wrapper(
             tinyxml2::XMLElement* elem,
-            Duration_t& duration,
+            dds::Duration_t& duration,
             uint8_t ident)
     {
         return getXMLDuration(elem, duration, ident);
@@ -335,7 +335,7 @@ public:
 
     static XMLP_ret getXMLPublisherAttributes_wrapper(
             tinyxml2::XMLElement* elem,
-            PublisherAttributes& publisher,
+            xmlparser::PublisherAttributes& publisher,
             uint8_t ident)
     {
         return getXMLPublisherAttributes(elem, publisher, ident);
@@ -508,14 +508,14 @@ public:
 
     static XMLP_ret fillDataNode_wrapper(
             tinyxml2::XMLElement* p_profile,
-            DataNode<PublisherAttributes>& publisher_node)
+            DataNode<xmlparser::PublisherAttributes>& publisher_node)
     {
         return fillDataNode(p_profile, publisher_node);
     }
 
     static XMLP_ret fillDataNode_wrapper(
             tinyxml2::XMLElement* p_profile,
-            DataNode<SubscriberAttributes>& subscriber_node)
+            DataNode<xmlparser::SubscriberAttributes>& subscriber_node)
     {
         return fillDataNode(p_profile, subscriber_node);
     }
@@ -529,14 +529,14 @@ public:
 
     static XMLP_ret fillDataNode_wrapper(
             tinyxml2::XMLElement* p_profile,
-            DataNode<RequesterAttributes>& requester_node)
+            DataNode<xmlparser::RequesterAttributes>& requester_node)
     {
         return fillDataNode(p_profile, requester_node);
     }
 
     static XMLP_ret fillDataNode_wrapper(
             tinyxml2::XMLElement* p_profile,
-            DataNode<ReplierAttributes>& replier_node)
+            DataNode<xmlparser::ReplierAttributes>& replier_node)
     {
         return fillDataNode(p_profile, replier_node);
     }

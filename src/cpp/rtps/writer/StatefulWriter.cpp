@@ -329,7 +329,7 @@ void StatefulWriter::unsent_change_added_to_history(
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     auto payload_length = change->serializedPayload.length;
 
-    if (liveliness_lease_duration_ < c_TimeInfinite)
+    if (liveliness_lease_duration_ < dds::c_TimeInfinite)
     {
         mp_RTPSParticipant->wlp()->assert_liveliness(
             getGuid(),
@@ -1381,7 +1381,7 @@ bool StatefulWriter::all_readers_updated()
 }
 
 bool StatefulWriter::wait_for_all_acked(
-        const Duration_t& max_wait)
+        const dds::Duration_t& max_wait)
 {
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     std::unique_lock<std::mutex> all_acked_lock(all_acked_mutex_);

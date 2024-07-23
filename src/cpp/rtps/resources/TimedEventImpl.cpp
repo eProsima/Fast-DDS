@@ -111,7 +111,7 @@ void TimedEventImpl::trigger(
 }
 
 bool TimedEventImpl::update_interval(
-        const eprosima::fastdds::Duration_t& interval)
+        const eprosima::fastdds::dds::Duration_t& interval)
 {
     interval_microsec_ = std::chrono::microseconds(fastdds::rtps::TimeConv::Duration_t2MicroSecondsInt64(interval));
     return true;

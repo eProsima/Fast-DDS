@@ -207,7 +207,7 @@ uint64_t BaseReader::get_unread_count(
 }
 
 bool BaseReader::wait_for_unread_cache(
-        const eprosima::fastdds::Duration_t& timeout)
+        const eprosima::fastdds::dds::Duration_t& timeout)
 {
     auto time_out = std::chrono::steady_clock::now() + std::chrono::seconds(timeout.seconds) +
             std::chrono::nanoseconds(timeout.nanosec);

@@ -23,7 +23,7 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 
-using eprosima::fastdds::Duration_t;
+using eprosima::fastdds::dds::Duration_t;
 
 namespace eprosima {
 namespace fastdds {
@@ -70,15 +70,15 @@ public:
     /**
      * @brief Indicates the duration the DataReader must retain information regarding instances that have the
      * instance_state NOT_ALIVE_NO_WRITERS. <br>
-     * By default, c_TimeInfinite.
+     * By default, dds::c_TimeInfinite.
      */
-    Duration_t autopurge_no_writer_samples_delay;
+    dds::Duration_t autopurge_no_writer_samples_delay;
     /**
      * @brief Indicates the duration the DataReader must retain information regarding instances that have the
      * instance_state NOT_ALIVE_DISPOSED. <br>
-     * By default, c_TimeInfinite.
+     * By default, dds::c_TimeInfinite.
      */
-    Duration_t autopurge_disposed_samples_delay;
+    dds::Duration_t autopurge_disposed_samples_delay;
 };
 
 } //namespace dds

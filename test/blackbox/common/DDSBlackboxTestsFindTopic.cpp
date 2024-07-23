@@ -180,7 +180,7 @@ TEST_F(DDSFindTopicTest, find_topic_timeout)
 
     // Procedure:
     // 1. Call DomainParticipant::find_topic with a valid topic name and certain, non-infinite, timeout.
-    eprosima::fastdds::Duration_t timeout{ 0, 50 * 1000 * 1000 };
+    eprosima::fastdds::dds::Duration_t timeout{ 0, 50 * 1000 * 1000 };
     auto max_tp = std::chrono::steady_clock::now() + std::chrono::milliseconds(50);
     auto topic = participant_->find_topic(TEST_TOPIC_NAME, timeout);
 
@@ -206,7 +206,7 @@ TEST_F(DDSFindTopicTest, find_topic_no_timeout)
 
     // Procedure:
     // 1. Call DomainParticipant::find_topic with the same topic name as the input Topic, and infinite timeout.
-    auto topic = participant_->find_topic(TEST_TOPIC_NAME, fastdds::c_TimeInfinite);
+    auto topic = participant_->find_topic(TEST_TOPIC_NAME, fastdds::dds::c_TimeInfinite);
 
     // Output:
     // - The call returns something different from nullptr.
@@ -233,7 +233,7 @@ TEST_F(DDSFindTopicTest, find_topic_unblock)
     //    and infinite timeout.
     auto exec_fn = [this]()
             {
-                return participant_->find_topic(TEST_TOPIC_NAME, fastdds::c_TimeInfinite);
+                return participant_->find_topic(TEST_TOPIC_NAME, fastdds::dds::c_TimeInfinite);
             };
     std::vector<std::future<Topic*>> threads;
     for (size_t i = 0; i < num_threads; ++i)
@@ -287,7 +287,7 @@ TEST_F(DDSFindTopicTest, find_topic_is_proxy)
     // - A Topic object topic_2 obtained by calling DomainParticipant::find_topic with the same topic name.
     Topic* topic_1 = create_test_topic();
     ASSERT_NE(nullptr, topic_1);
-    Topic* topic_2 = participant_->find_topic(TEST_TOPIC_NAME, fastdds::c_TimeInfinite);
+    Topic* topic_2 = participant_->find_topic(TEST_TOPIC_NAME, fastdds::dds::c_TimeInfinite);
     ASSERT_NE(nullptr, topic_2);
     check_topics(topic_1, topic_2);
 
@@ -344,9 +344,9 @@ TEST_F(DDSFindTopicTest, find_topic_delete_topic)
     // - A DataReader created on topic_2.
     Topic* topic_1 = create_test_topic();
     ASSERT_NE(nullptr, topic_1);
-    Topic* topic_2 = participant_->find_topic(TEST_TOPIC_NAME, fastdds::c_TimeInfinite);
+    Topic* topic_2 = participant_->find_topic(TEST_TOPIC_NAME, fastdds::dds::c_TimeInfinite);
     ASSERT_NE(nullptr, topic_2);
-    Topic* topic_3 = participant_->find_topic(TEST_TOPIC_NAME, fastdds::c_TimeInfinite);
+    Topic* topic_3 = participant_->find_topic(TEST_TOPIC_NAME, fastdds::dds::c_TimeInfinite);
     ASSERT_NE(nullptr, topic_3);
     auto publisher = participant_->create_publisher(PUBLISHER_QOS_DEFAULT);
     auto data_writer = publisher->create_datawriter(topic_1, DATAWRITER_QOS_DEFAULT);

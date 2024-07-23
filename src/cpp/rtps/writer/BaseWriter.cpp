@@ -247,12 +247,12 @@ const dds::LivelinessQosPolicyKind& BaseWriter::get_liveliness_kind() const
     return liveliness_kind_;
 }
 
-const Duration_t& BaseWriter::get_liveliness_lease_duration() const
+const dds::Duration_t& BaseWriter::get_liveliness_lease_duration() const
 {
     return liveliness_lease_duration_;
 }
 
-const Duration_t& BaseWriter::get_liveliness_announcement_period() const
+const dds::Duration_t& BaseWriter::get_liveliness_announcement_period() const
 {
     return liveliness_announcement_period_;
 }

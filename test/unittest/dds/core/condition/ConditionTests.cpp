@@ -142,7 +142,7 @@ TEST_F(ConditionTests, waitset_wait)
     GuardCondition condition;
     ConditionSeq conditions;
     WaitSet wait_set;
-    const eprosima::fastdds::Duration_t timeout{ 1, 0 };
+    const eprosima::fastdds::dds::Duration_t timeout{ 1, 0 };
 
     // Waiting on empty wait set should timeout
     EXPECT_EQ(RETCODE_TIMEOUT, wait_set.wait(conditions, timeout));
@@ -217,7 +217,7 @@ TEST_F(ConditionTests, waitset_wait)
                     wait_set.attach_condition(triggered_condition);
                 });
 
-        EXPECT_EQ(RETCODE_OK, wait_set.wait(conditions, eprosima::fastdds::c_TimeInfinite));
+        EXPECT_EQ(RETCODE_OK, wait_set.wait(conditions, eprosima::fastdds::dds::c_TimeInfinite));
         EXPECT_EQ(1u, conditions.size());
         EXPECT_EQ(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &condition));
         EXPECT_NE(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &triggered_condition));
@@ -262,7 +262,7 @@ TEST_F(ConditionTests, status_condition_trigger)
 {
     WaitSet wait_set;
     ConditionSeq conditions;
-    const eprosima::fastdds::Duration_t timeout{ 1, 0 };
+    const eprosima::fastdds::dds::Duration_t timeout{ 1, 0 };
 
     Entity entity;
     StatusCondition& cond = entity.get_statuscondition();
@@ -273,7 +273,7 @@ TEST_F(ConditionTests, status_condition_trigger)
 
     auto wait_for_trigger = [&]()
             {
-                EXPECT_EQ(RETCODE_OK, wait_set.wait(conditions, eprosima::fastdds::c_TimeInfinite));
+                EXPECT_EQ(RETCODE_OK, wait_set.wait(conditions, eprosima::fastdds::dds::c_TimeInfinite));
                 EXPECT_EQ(1u, conditions.size());
                 EXPECT_EQ(&cond, conditions[0]);
                 EXPECT_TRUE(cond.get_trigger_value());

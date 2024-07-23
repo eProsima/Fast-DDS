@@ -70,7 +70,7 @@ TEST(RTPSAck, EnableUpdatabilityOfPositiveAcksPeriodRTPSLayer)
     // Update attributes at RTPS layer
     WriterAttributes w_att;
     w_att.disable_positive_acks = true;
-    w_att.keep_duration = eprosima::fastdds::Duration_t(2, 0);
+    w_att.keep_duration = eprosima::fastdds::dds::Duration_t(2, 0);
 
     writer.update_attributes(w_att);
 
