@@ -796,7 +796,7 @@ private:
 
 public:
 
-    RTPSParticipantAttributes get_attributes() const;
+    const RTPSParticipantAttributes& get_attributes() const;
 
     /**
      * Create a Writer in this RTPSParticipant.

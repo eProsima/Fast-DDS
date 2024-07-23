@@ -3168,7 +3168,7 @@ dds::utils::TypePropagation RTPSParticipantImpl::type_propagation() const
     return dds::utils::to_type_propagation(m_att.properties);
 }
 
-RTPSParticipantAttributes RTPSParticipantImpl::get_attributes() const
+const RTPSParticipantAttributes& RTPSParticipantImpl::get_attributes() const
 {
     return m_att;
 }
