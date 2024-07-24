@@ -26,8 +26,8 @@
 
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/security/logging/Logging.h>
 #include <rtps/messages/CDRMessage.hpp>
 #include <security/authentication/PKIIdentityHandle.h>

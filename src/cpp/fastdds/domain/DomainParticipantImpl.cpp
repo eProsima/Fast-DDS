@@ -25,7 +25,7 @@
 #include <asio.hpp>
 
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
-#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -49,6 +49,7 @@
 #include <fastdds/rtps/RTPSDomain.hpp>
 #include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
 
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
 #include <fastdds/publisher/DataWriterImpl.hpp>
 #include <fastdds/publisher/PublisherImpl.hpp>
@@ -73,7 +74,6 @@ namespace dds {
 
 using xmlparser::XMLProfileManager;
 using xmlparser::XMLP_ret;
-using rtps::ParticipantDiscoveryInfo;
 using rtps::RTPSDomain;
 using rtps::RTPSDomainImpl;
 using rtps::RTPSParticipant;
@@ -1531,16 +1531,17 @@ ReturnCode_t DomainParticipantImpl::unregister_type(
     return RETCODE_OK;
 }
 
-void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(
+void DomainParticipantImpl::MyRTPSParticipantListener::on_participant_discovery(
         RTPSParticipant*,
-        ParticipantDiscoveryInfo&& info,
+        eprosima::fastdds::rtps::ParticipantDiscoveryStatus reason,
+        const ParticipantBuiltinTopicData& info,
         bool& should_be_ignored)
 {
     should_be_ignored = false;
     Sentry sentinel(this);
     if (sentinel)
     {
-        participant_->listener_->on_participant_discovery(participant_->participant_, std::move(info),
+        participant_->listener_->on_participant_discovery(participant_->participant_, reason, std::move(info),
                 should_be_ignored);
     }
 }

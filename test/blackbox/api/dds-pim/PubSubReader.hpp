@@ -34,6 +34,7 @@
 #if _MSC_VER
 #include <Windows.h>
 #endif // _MSC_VER
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/core/condition/GuardCondition.hpp>
 #include <fastdds/dds/core/condition/StatusCondition.hpp>
 #include <fastdds/dds/core/condition/WaitSet.hpp>
@@ -99,24 +100,25 @@ protected:
 
         void on_participant_discovery(
                 eprosima::fastdds::dds::DomainParticipant*,
-                eprosima::fastdds::rtps::ParticipantDiscoveryInfo&& info,
+                eprosima::fastdds::rtps::ParticipantDiscoveryStatus status,
+                const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& info,
                 bool& should_be_ignored) override
         {
             static_cast<void>(should_be_ignored);
             if (reader_.onDiscovery_ != nullptr)
             {
                 std::unique_lock<std::mutex> lock(reader_.mutexDiscovery_);
-                reader_.discovery_result_ |= reader_.onDiscovery_(info);
+                reader_.discovery_result_ |= reader_.onDiscovery_(info, status);
                 reader_.cvDiscovery_.notify_one();
             }
 
-            if (info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+            if (status == eprosima::fastdds::rtps::ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT)
             {
                 reader_.participant_matched();
 
             }
-            else if (info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
-                    info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+            else if (status == eprosima::fastdds::rtps::ParticipantDiscoveryStatus::REMOVED_PARTICIPANT ||
+                    status == eprosima::fastdds::rtps::ParticipantDiscoveryStatus::DROPPED_PARTICIPANT)
             {
                 reader_.participant_unmatched();
             }
@@ -1688,7 +1690,8 @@ public:
     }
 
     void setOnDiscoveryFunction(
-            std::function<bool(const eprosima::fastdds::rtps::ParticipantDiscoveryInfo&)> f)
+            std::function<bool(const eprosima::fastdds::rtps::ParticipantBuiltinTopicData&,
+            eprosima::fastdds::rtps::ParticipantDiscoveryStatus)> f)
     {
         onDiscovery_ = f;
     }
@@ -2128,7 +2131,8 @@ protected:
     std::string participant_profile_ = "";
     std::string datareader_profile_ = "";
 
-    std::function<bool(const eprosima::fastdds::rtps::ParticipantDiscoveryInfo& info)> onDiscovery_;
+    std::function<bool(const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& info,
+            eprosima::fastdds::rtps::ParticipantDiscoveryStatus status)> onDiscovery_;
     EndpointDiscoveryFunctor onEndpointDiscovery_;
 
     //! True to take data from history. On False, read_ is checked.

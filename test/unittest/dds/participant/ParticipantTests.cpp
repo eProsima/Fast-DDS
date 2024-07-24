@@ -2535,10 +2535,12 @@ public:
 
     void on_participant_discovery(
             eprosima::fastdds::dds::DomainParticipant*,
-            eprosima::fastdds::rtps::ParticipantDiscoveryInfo&&,
+            eprosima::fastdds::rtps::ParticipantDiscoveryStatus status,
+            const ParticipantBuiltinTopicData&,
             bool& should_be_ignored) override
     {
         static_cast<void>(should_be_ignored);
+        static_cast<void>(status);
         try
         {
             promise_.set_value();
@@ -3658,7 +3660,7 @@ TEST(ParticipantTests, UnsupportedMethods)
 
     // Discovery methods
     std::vector<InstanceHandle_t> handle_vector({InstanceHandle_t()});
-    builtin::ParticipantBuiltinTopicData pbtd;
+    ParticipantBuiltinTopicData pbtd;
     builtin::TopicBuiltinTopicData tbtd;
 
     ASSERT_EQ(participant->get_discovered_participants(handle_vector), RETCODE_UNSUPPORTED);

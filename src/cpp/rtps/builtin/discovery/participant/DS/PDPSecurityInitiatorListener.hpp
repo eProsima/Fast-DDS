@@ -23,8 +23,7 @@
 
 #include <mutex>
 
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
-
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/discovery/participant/PDPListener.h>
 
 namespace eprosima {

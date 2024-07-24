@@ -20,8 +20,7 @@
 #define FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT_EDP_H
 #include <gmock/gmock.h>
 
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
-
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/messages/CDRMessage.hpp>

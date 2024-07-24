@@ -109,7 +109,7 @@ public:
      */
     bool remove_remote_participant(
             const fastdds::rtps::GUID_t& participant_guid,
-            fastdds::rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS reason) override;
+            fastdds::rtps::ParticipantDiscoveryStatus reason) override;
 
     /**
      * Force the sending of our local PDP to all servers

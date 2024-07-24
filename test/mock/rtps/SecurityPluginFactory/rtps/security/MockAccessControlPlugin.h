@@ -19,8 +19,7 @@
 #ifndef FASTDDS_RTPS_SECURITY__MOCKACCESSCONTROLPLUGIN_H
 #define FASTDDS_RTPS_SECURITY__MOCKACCESSCONTROLPLUGIN_H
 
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
-
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/security/accesscontrol/AccessControl.h>

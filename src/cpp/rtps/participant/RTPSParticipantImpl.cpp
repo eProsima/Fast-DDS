@@ -30,7 +30,6 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/BuiltinTransports.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/common/EntityId_t.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
@@ -45,6 +44,7 @@
 
 #include <rtps/attributes/ServerAttributes.hpp>
 #include <rtps/builtin/BuiltinProtocols.h>
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/builtin/discovery/participant/PDP.h>
@@ -2717,7 +2717,7 @@ bool RTPSParticipantImpl::ignore_participant(
         ignored_participants_.insert(participant_guid);
     }
     pdp()->remove_remote_participant(GUID_t(participant_guid, c_EntityId_RTPSParticipant),
-            ParticipantDiscoveryInfo::DISCOVERY_STATUS::IGNORED_PARTICIPANT);
+            ParticipantDiscoveryStatus::IGNORED_PARTICIPANT);
 
     return true;
 
@@ -2931,17 +2931,19 @@ bool RTPSParticipantImpl::disable_monitor_service() const
 }
 
 bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
-        ParticipantProxyData& data,
-        fastdds::statistics::MonitorServiceStatusData& msg)
+        fastdds::rtps::ParticipantBuiltinTopicData& data,
+        const fastdds::statistics::MonitorServiceStatusData& msg)
 {
     bool ret = true;
     CDRMessage_t serialized_msg{0};
     serialized_msg.wraps = true;
 
-    serialized_msg.buffer = msg.value().entity_proxy().data();
+    serialized_msg.buffer = const_cast<octet*>(msg.value().entity_proxy().data());
     serialized_msg.length = static_cast<uint32_t>(msg.value().entity_proxy().size());
 
-    ret = data.readFromCDRMessage(
+    ParticipantProxyData part_prox_data(m_att.allocation);
+
+    ret = part_prox_data.readFromCDRMessage(
         &serialized_msg,
         true,
         network_factory(),
@@ -2949,7 +2951,12 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
         false,
         c_VendorId_eProsima);
 
-    return ret && (data.m_guid.entityId == c_EntityId_RTPSParticipant);
+    if (ret)
+    {
+        from_proxy_to_builtin(part_prox_data, data);
+    }
+
+    return ret && (data.guid.entityId == c_EntityId_RTPSParticipant);
 }
 
 bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(

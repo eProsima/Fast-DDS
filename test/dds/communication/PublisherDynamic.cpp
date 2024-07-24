@@ -64,28 +64,29 @@ public:
      */
     void on_participant_discovery(
             DomainParticipant* /*participant*/,
-            rtps::ParticipantDiscoveryInfo&& info,
+            rtps::ParticipantDiscoveryStatus status,
+            const ParticipantBuiltinTopicData& info,
             bool& /*should_be_ignored*/) override
     {
-        if (info.status == rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+        if (status == rtps::ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT)
         {
             std::cout << "Publisher participant " << //participant->getGuid() <<
-                " discovered participant " << info.info.m_guid << std::endl;
+                " discovered participant " << info.guid << std::endl;
         }
-        else if (info.status == rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
+        else if (status == rtps::ParticipantDiscoveryStatus::CHANGED_QOS_PARTICIPANT)
         {
             std::cout << "Publisher participant " << //participant->getGuid() <<
-                " detected changes on participant " << info.info.m_guid << std::endl;
+                " detected changes on participant " << info.guid << std::endl;
         }
-        else if (info.status == rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+        else if (status == rtps::ParticipantDiscoveryStatus::REMOVED_PARTICIPANT)
         {
             std::cout << "Publisher participant " << //participant->getGuid() <<
-                " removed participant " << info.info.m_guid << std::endl;
+                " removed participant " << info.guid << std::endl;
         }
-        else if (info.status == rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+        else if (status == rtps::ParticipantDiscoveryStatus::DROPPED_PARTICIPANT)
         {
             std::cout << "Publisher participant " << //participant->getGuid() <<
-                " dropped participant " << info.info.m_guid << std::endl;
+                " dropped participant " << info.guid << std::endl;
             if (exit_on_lost_liveliness_)
             {
                 run = false;

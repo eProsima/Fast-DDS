@@ -27,7 +27,6 @@
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
@@ -35,6 +34,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
 #include <rtps/builtin/BuiltinProtocols.h>
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>

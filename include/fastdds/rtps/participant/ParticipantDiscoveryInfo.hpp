@@ -21,58 +21,28 @@
 #define FASTDDS_RTPS_PARTICIPANT__PARTICIPANTDISCOVERYINFO_HPP
 
 #include <fastdds/fastdds_dll.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
-
+#include <fastdds/rtps/common/Guid.hpp>
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-/**
- * Class ParticipantDiscoveryInfo with discovery information of the Participant.
- * @ingroup RTPS_MODULE
- */
-struct ParticipantDiscoveryInfo
-{
-    //!Enum DISCOVERY_STATUS, four different status for discovered participants.
-    //!@ingroup RTPS_MODULE
-    // *INDENT-OFF* eduponz: Does not understand the #if correctly and ends up removing the ;
-    //                       at the end of the enum, which does not build.
+//!Enum ParticipantDiscoveryStatus, four different status for discovered participants.
+//!@ingroup RTPS_MODULE
+// *INDENT-OFF* eduponz: Does not understand the #if correctly and ends up removing the ;
+//                       at the end of the enum, which does not build.
 #if defined(_WIN32)
-    enum FASTDDS_EXPORTED_API DISCOVERY_STATUS
+enum class FASTDDS_EXPORTED_API ParticipantDiscoveryStatus
 #else
-    enum DISCOVERY_STATUS
+enum class ParticipantDiscoveryStatus
 #endif // if defined(_WIN32)
-    {
-        DISCOVERED_PARTICIPANT,
-        CHANGED_QOS_PARTICIPANT,
-        REMOVED_PARTICIPANT,
-        DROPPED_PARTICIPANT,
-        IGNORED_PARTICIPANT
-    };
-    // *INDENT-ON*
-
-    ParticipantDiscoveryInfo(
-            const ParticipantProxyData& data)
-        : status(DISCOVERED_PARTICIPANT)
-        , info(data)
-    {
-    }
-
-    virtual ~ParticipantDiscoveryInfo()
-    {
-    }
-
-    //! Status
-    DISCOVERY_STATUS status;
-
-    /**
-     * @brief Participant discovery info
-     *
-     * @todo This is a reference to an object that could be deleted, thus it should not be a reference
-     * (intraprocess case -> BlackboxTests_DDS_PIM.DDSDiscovery.ParticipantProxyPhysicalData).
-     */
-    const ParticipantProxyData& info;
+{
+    DISCOVERED_PARTICIPANT,
+    CHANGED_QOS_PARTICIPANT,
+    REMOVED_PARTICIPANT,
+    DROPPED_PARTICIPANT,
+    IGNORED_PARTICIPANT
 };
+// *INDENT-ON*
 
 #if HAVE_SECURITY
 struct ParticipantAuthenticationInfo

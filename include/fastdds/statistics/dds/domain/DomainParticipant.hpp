@@ -28,7 +28,6 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/fastdds_dll.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -132,7 +131,7 @@ public:
     FASTDDS_EXPORTED_API eprosima::fastdds::dds::ReturnCode_t disable_monitor_service();
 
     /**
-     * fills in the ParticipantProxyData from a MonitorService Message
+     * fills in the ParticipantBuiltinTopicData from a MonitorService Message
      *
      * @param [out] data Proxy to fill
      * @param [in] msg MonitorService Message to get the proxy information from.
@@ -141,20 +140,7 @@ public:
      * @return RETCODE_ERROR if the  operation fails.
      */
     FASTDDS_EXPORTED_API eprosima::fastdds::dds::ReturnCode_t fill_discovery_data_from_cdr_message(
-            fastdds::rtps::ParticipantProxyData& data,
-            statistics::MonitorServiceStatusData& msg);
-
-    /**
-     * fills in the ParticipantProxyData from a MonitorService Message
-     *
-     * @param [out] data Proxy to fill
-     * @param [in] msg MonitorService Message to get the proxy information from.
-     *
-     * @return RETCODE_OK if the operation succeeds.
-     * @return RETCODE_ERROR if the  operation fails.
-     */
-    FASTDDS_EXPORTED_API eprosima::fastdds::dds::ReturnCode_t fill_discovery_data_from_cdr_message(
-            fastdds::rtps::ParticipantProxyData& data,
+            fastdds::dds::ParticipantBuiltinTopicData& data,
             const statistics::MonitorServiceStatusData& msg);
 
     /**

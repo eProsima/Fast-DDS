@@ -24,6 +24,7 @@
 #include <fastcdr/Cdr.h>
 #include <fastcdr/FastBuffer.h>
 
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
@@ -890,19 +891,20 @@ TEST_P(Discovery, PubSubAsReliableHelloworldParticipantDiscovery)
     ASSERT_TRUE(writer.isInitialized());
 
     int count = 0;
-    reader.setOnDiscoveryFunction([&writer, &count](const ParticipantDiscoveryInfo& info) -> bool
+    reader.setOnDiscoveryFunction([&writer, &count](const ParticipantBuiltinTopicData& info,
+            ParticipantDiscoveryStatus status) -> bool
             {
-                if (info.info.m_guid == writer.participant_guid())
+                if (info.guid == writer.participant_guid())
                 {
-                    if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+                    if (status == ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT)
                     {
-                        std::cout << "Discovered participant " << info.info.m_guid << std::endl;
+                        std::cout << "Discovered participant " << info.guid << std::endl;
                         ++count;
                     }
-                    else if (info.status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
-                    info.status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+                    else if (status == ParticipantDiscoveryStatus::REMOVED_PARTICIPANT ||
+                    status == ParticipantDiscoveryStatus::DROPPED_PARTICIPANT)
                     {
-                        std::cout << "Removed participant " << info.info.m_guid << std::endl;
+                        std::cout << "Removed participant " << info.guid << std::endl;
                         return ++count == 2;
                     }
                 }
@@ -935,16 +937,17 @@ TEST_P(Discovery, PubSubAsReliableHelloworldUserData)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    reader.setOnDiscoveryFunction([&writer](const ParticipantDiscoveryInfo& info) -> bool
+    reader.setOnDiscoveryFunction([&writer](const ParticipantBuiltinTopicData& info,
+            ParticipantDiscoveryStatus /*status*/) -> bool
             {
-                if (info.info.m_guid == writer.participant_guid())
+                if (info.guid == writer.participant_guid())
                 {
                     std::cout << "Received USER_DATA from the writer: ";
-                    for (auto i: info.info.m_userData)
+                    for (auto i: info.user_data)
                     {
                         std::cout << i << ' ';
                     }
-                    return info.info.m_userData == std::vector<octet>({'a', 'b', 'c', 'd'});
+                    return info.user_data == std::vector<octet>({'a', 'b', 'c', 'd'});
                 }
 
                 return false;
@@ -1600,15 +1603,16 @@ TEST(Discovery, discovery_cyclone_participant_with_custom_pid)
 
         void on_participant_discovery(
                 DomainParticipant*,
-                ParticipantDiscoveryInfo&& info,
+                ParticipantDiscoveryStatus status,
+                const ParticipantBuiltinTopicData& /*info*/,
                 bool& should_be_ignored) override
         {
             should_be_ignored = false;
-            if (ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT == info.status)
+            if (ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT == status)
             {
                 discovered_participants_++;
             }
-            else if (ParticipantDiscoveryInfo::REMOVED_PARTICIPANT == info.status)
+            else if (ParticipantDiscoveryStatus::REMOVED_PARTICIPANT == status)
             {
                 discovered_participants_--;
             }

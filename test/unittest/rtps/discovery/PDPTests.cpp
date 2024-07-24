@@ -210,7 +210,7 @@ public:
 
     bool remove_remote_participant(
             const GUID_t& /*participant_guid*/,
-            ParticipantDiscoveryInfo::DISCOVERY_STATUS /*reason*/) override
+            ParticipantDiscoveryStatus /*reason*/) override
     {
         return true;
     }
@@ -259,7 +259,8 @@ public:
 
     void on_participant_discovery(
             fastdds::dds::DomainParticipant* participant,
-            fastdds::rtps::ParticipantDiscoveryInfo&& /*info*/,
+            fastdds::rtps::ParticipantDiscoveryStatus /*status*/,
+            const fastdds::rtps::ParticipantBuiltinTopicData& /*info*/,
             bool& /*should_be_ignored*/) override
     {
         if (std::find(p_matched_.begin(), p_matched_.end(), participant->guid()) == p_matched_.end())

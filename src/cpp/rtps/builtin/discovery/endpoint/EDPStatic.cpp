@@ -25,10 +25,10 @@
 #include <tinyxml2.h>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/builtin/discovery/participant/PDPSimple.h>

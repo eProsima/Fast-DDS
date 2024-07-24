@@ -40,6 +40,7 @@
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 
 /**
@@ -162,12 +163,13 @@ private:
 
         void on_participant_discovery(
                 eprosima::fastdds::dds::DomainParticipant*,
-                eprosima::fastdds::rtps::ParticipantDiscoveryInfo&& info,
+                eprosima::fastdds::rtps::ParticipantDiscoveryStatus status,
+                const eprosima::fastdds::dds::ParticipantBuiltinTopicData& info,
                 bool& should_be_ignored)
         {
             static_cast<void>(should_be_ignored);
             bool expected = false;
-            if (info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+            if (status == eprosima::fastdds::rtps::ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT)
             {
                 ++participant_->matched_;
                 if (nullptr !=  participant_->on_discovery_)
@@ -178,14 +180,14 @@ private:
                 participant_->cv_discovery_.notify_one();
             }
             else if (participant_->on_participant_qos_update_ != nullptr &&
-                    info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
+                    status == eprosima::fastdds::rtps::ParticipantDiscoveryStatus::CHANGED_QOS_PARTICIPANT)
             {
                 participant_->participant_qos_updated_.compare_exchange_strong(expected,
                         participant_->on_participant_qos_update_(info));
                 participant_->cv_discovery_.notify_one();
             }
-            else if (info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
-                    info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+            else if (status == eprosima::fastdds::rtps::ParticipantDiscoveryStatus::REMOVED_PARTICIPANT ||
+                    status == eprosima::fastdds::rtps::ParticipantDiscoveryStatus::DROPPED_PARTICIPANT)
             {
                 --participant_->matched_;
                 participant_->cv_discovery_.notify_one();
@@ -873,13 +875,13 @@ public:
     }
 
     void set_on_discovery_function(
-            std::function<bool(const eprosima::fastdds::rtps::ParticipantDiscoveryInfo&)> f)
+            std::function<bool(const eprosima::fastdds::dds::ParticipantBuiltinTopicData&)> f)
     {
         on_discovery_ = f;
     }
 
     void set_on_participant_qos_update_function(
-            std::function<bool(const eprosima::fastdds::rtps::ParticipantDiscoveryInfo&)> f)
+            std::function<bool(const eprosima::fastdds::dds::ParticipantBuiltinTopicData&)> f)
     {
         on_participant_qos_update_ = f;
     }
@@ -973,8 +975,8 @@ private:
     std::mutex mutex_discovery_;
     std::condition_variable cv_discovery_;
     std::atomic<unsigned int> matched_;
-    std::function<bool(const eprosima::fastdds::rtps::ParticipantDiscoveryInfo& info)> on_discovery_;
-    std::function<bool(const eprosima::fastdds::rtps::ParticipantDiscoveryInfo& info)> on_participant_qos_update_;
+    std::function<bool(const eprosima::fastdds::dds::ParticipantBuiltinTopicData& info)> on_discovery_;
+    std::function<bool(const eprosima::fastdds::dds::ParticipantBuiltinTopicData& info)> on_participant_qos_update_;
     std::atomic_bool discovery_result_;
     std::atomic_bool participant_qos_updated_;
 

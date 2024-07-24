@@ -23,15 +23,15 @@
 
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
-#include <rtps/builtin/discovery/endpoint/EDPSimple.h>
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
+#include <rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include <rtps/builtin/discovery/participant/PDPSimple.h>
 #include <rtps/network/NetworkFactory.h>
 #include <rtps/reader/StatefulReader.hpp>

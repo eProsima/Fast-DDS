@@ -14,6 +14,8 @@
 
 #include "SecurityTests.hpp"
 
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
+
 TEST_F(SecurityTest, discovered_participant_begin_handshake_request_fail_and_then_ok)
 {
     initialization_ok();

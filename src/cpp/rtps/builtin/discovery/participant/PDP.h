@@ -36,6 +36,7 @@
 #include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <statistics/rtps/monitor-service/interfaces/IProxyObserver.hpp>
@@ -320,7 +321,7 @@ public:
      */
     virtual bool remove_remote_participant(
             const GUID_t& participant_guid,
-            ParticipantDiscoveryInfo::DISCOVERY_STATUS reason);
+            ParticipantDiscoveryStatus reason);
 
     /**
      * This method returns the BuiltinAttributes of the local participant.
@@ -644,7 +645,7 @@ private:
     void actions_on_remote_participant_removed(
             ParticipantProxyData* pdata,
             const GUID_t& partGUID,
-            ParticipantDiscoveryInfo::DISCOVERY_STATUS reason,
+            ParticipantDiscoveryStatus reason,
             RTPSParticipantListener* listener);
 
 };

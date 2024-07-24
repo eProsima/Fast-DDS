@@ -190,12 +190,12 @@ static bool has_shm_locators(
 }
 
 static void check_shm_locators(
-        const eprosima::fastdds::rtps::ParticipantDiscoveryInfo& info,
+        const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& info,
         bool unicast,
         bool multicast)
 {
-    EXPECT_EQ(multicast, has_shm_locators(info.info.metatraffic_locators.multicast));
-    EXPECT_EQ(unicast, has_shm_locators(info.info.metatraffic_locators.unicast));
+    EXPECT_EQ(multicast, has_shm_locators(info.metatraffic_locators.multicast));
+    EXPECT_EQ(unicast, has_shm_locators(info.metatraffic_locators.unicast));
 }
 
 static void shm_metatraffic_test(
@@ -207,7 +207,9 @@ static void shm_metatraffic_test(
     PubSubWriter<HelloWorldPubSubType> writer(topic_name + "/" + value);
     PubSubReader<HelloWorldPubSubType> reader(topic_name + "/" + value);
 
-    auto discovery_checker = [unicast, multicast](const eprosima::fastdds::rtps::ParticipantDiscoveryInfo& info)
+    auto discovery_checker =
+            [unicast, multicast](const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& info,
+                    eprosima::fastdds::rtps::ParticipantDiscoveryStatus /*status*/)
             {
                 check_shm_locators(info, unicast, multicast);
                 return true;

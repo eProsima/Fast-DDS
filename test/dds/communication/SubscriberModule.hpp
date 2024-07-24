@@ -19,6 +19,12 @@
 #ifndef TEST_COMMUNICATION_SUBSCRIBER_HPP
 #define TEST_COMMUNICATION_SUBSCRIBER_HPP
 
+#include <mutex>
+#include <condition_variable>
+#include <map>
+#include <chrono>
+
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
@@ -26,11 +32,6 @@
 
 #include "types/FixedSizedPubSubTypes.hpp"
 #include "types/HelloWorldPubSubTypes.hpp"
-
-#include <mutex>
-#include <condition_variable>
-#include <map>
-#include <chrono>
 
 namespace eprosima {
 namespace fastdds {
@@ -61,7 +62,8 @@ public:
 
     void on_participant_discovery(
             DomainParticipant* /*participant*/,
-            fastdds::rtps::ParticipantDiscoveryInfo&& info,
+            eprosima::fastdds::rtps::ParticipantDiscoveryStatus status,
+            const ParticipantBuiltinTopicData& info,
             bool& should_be_ignored) override;
 
 #if HAVE_SECURITY

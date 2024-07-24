@@ -189,28 +189,29 @@ bool SubscriberModule::run_for(
 
 void SubscriberModule::on_participant_discovery(
         DomainParticipant* /*participant*/,
-        ParticipantDiscoveryInfo&& info,
+        ParticipantDiscoveryStatus status,
+        const ParticipantBuiltinTopicData& info,
         bool& /*should_be_ignored*/)
 {
-    if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+    if (status == ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT)
     {
         std::cout << "Subscriber participant " <<         //participant->getGuid() <<
-            " discovered participant " << info.info.m_guid << std::endl;
+            " discovered participant " << info.guid << std::endl;
     }
-    else if (info.status == ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
+    else if (status == ParticipantDiscoveryStatus::CHANGED_QOS_PARTICIPANT)
     {
         std::cout << "Subscriber participant " <<         //participant->getGuid() <<
-            " detected changes on participant " << info.info.m_guid << std::endl;
+            " detected changes on participant " << info.guid << std::endl;
     }
-    else if (info.status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+    else if (status == ParticipantDiscoveryStatus::REMOVED_PARTICIPANT)
     {
         std::cout << "Subscriber participant " <<         //participant->getGuid() <<
-            " removed participant " << info.info.m_guid << std::endl;
+            " removed participant " << info.guid << std::endl;
     }
-    else if (info.status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+    else if (status == ParticipantDiscoveryStatus::DROPPED_PARTICIPANT)
     {
         std::cout << "Subscriber participant " <<         //participant->getGuid() <<
-            " dropped participant " << info.info.m_guid << std::endl;
+            " dropped participant " << info.guid << std::endl;
     }
 }
 

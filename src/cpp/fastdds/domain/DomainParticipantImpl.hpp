@@ -25,6 +25,7 @@
 #include <condition_variable>
 #include <mutex>
 
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
@@ -634,9 +635,10 @@ protected:
             assert(!(callback_counter_ > 0));
         }
 
-        void onParticipantDiscovery(
+        void on_participant_discovery(
                 fastdds::rtps::RTPSParticipant* participant,
-                fastdds::rtps::ParticipantDiscoveryInfo&& info,
+                fastdds::rtps::ParticipantDiscoveryStatus reason,
+                const ParticipantBuiltinTopicData& info,
                 bool& should_be_ignored) override;
 
 #if HAVE_SECURITY

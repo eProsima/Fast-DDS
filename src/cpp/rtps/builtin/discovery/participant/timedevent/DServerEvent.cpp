@@ -17,14 +17,13 @@
  *
  */
 
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
-
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/builtin/discovery/participant/timedevent/DServerEvent.hpp>
 
 #include <fastdds/dds/log/Log.hpp>
 
-#include <rtps/builtin/discovery/participant/timedevent/DServerEvent.hpp>
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/discovery/participant/PDPServer.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/resources/ResourceEvent.h>
 
 namespace eprosima {

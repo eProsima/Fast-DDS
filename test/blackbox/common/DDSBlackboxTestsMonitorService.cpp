@@ -20,8 +20,8 @@
 #include <gtest/gtest.h>
 
 // TODO(jlbueno): remove private header
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
-
 #include "../types/statistics/monitorservice_typesPubSubTypes.hpp"
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
@@ -704,8 +704,7 @@ struct ProxySampleValidator : public SampleValidator
 
                 if (guid.entityId == c_EntityId_RTPSParticipant)
                 {
-                    RTPSParticipantAllocationAttributes att;
-                    ParticipantProxyData pdata(att);
+                    eprosima::fastdds::rtps::ParticipantBuiltinTopicData pdata;
 
                     ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(pdata,
                             data),
@@ -713,7 +712,7 @@ struct ProxySampleValidator : public SampleValidator
 
                     auto part_names = participant->get_participant_names();
                     auto it_names =
-                            std::find(part_names.begin(), part_names.end(), pdata.m_participantName.to_string());
+                            std::find(part_names.begin(), part_names.end(), pdata.participant_name.to_string());
                     ASSERT_TRUE(it_names != part_names.end());
                 }
                 else if (guid.entityId.is_reader())

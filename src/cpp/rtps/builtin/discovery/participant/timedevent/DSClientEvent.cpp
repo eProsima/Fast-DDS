@@ -17,16 +17,15 @@
  *
  */
 
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
-
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
 
 #include <fastdds/dds/log/Log.hpp>
 
 #include <rtps/builtin/BuiltinProtocols.h>
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/discovery/endpoint/EDPClient.h>
 #include <rtps/builtin/discovery/participant/PDPClient.h>
-#include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/resources/ResourceEvent.h>
 #include <utils/shared_mutex.hpp>
 

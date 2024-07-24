@@ -29,7 +29,7 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
@@ -593,26 +593,27 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
 
         void on_participant_discovery(
                 DomainParticipant* participant,
-                ParticipantDiscoveryInfo&& info,
+                eprosima::fastdds::rtps::ParticipantDiscoveryStatus status,
+                const eprosima::fastdds::dds::ParticipantBuiltinTopicData& info,
                 bool& should_be_ignored)
         {
             static_cast<void>(should_be_ignored);
             std::unique_lock<std::mutex> lck(*mtx_);
-            if (info.status ==
-                    eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
+            if (status ==
+                    eprosima::fastdds::rtps::ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT)
             {
                 static_cast<void>(participant);
                 if (nullptr != remote_participant_info)
                 {
                     delete remote_participant_info;
                 }
-                remote_participant_info = new ParticipantProxyData(info.info);
+                remote_participant_info = new ParticipantBuiltinTopicData(info);
                 found_->store(true);
                 cv_->notify_one();
             }
         }
 
-        ParticipantProxyData* remote_participant_info;
+        eprosima::fastdds::dds::ParticipantBuiltinTopicData* remote_participant_info;
 
     private:
 
@@ -665,7 +666,7 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
         participant_found.store(false);
 
         // Prevent assertion on spurious discovery of a participant from elsewhere
-        if (part_1->guid() == listener.remote_participant_info->m_guid)
+        if (part_1->guid() == listener.remote_participant_info->guid)
         {
             // Check that all three properties are present in the ParticipantProxyData, and that their value
             // is that of the property in part_1 (the original property value)
@@ -673,13 +674,13 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
             {
                 // Find property in ParticipantProxyData
                 auto received_property = std::find_if(
-                    listener.remote_participant_info->m_properties.begin(),
-                    listener.remote_participant_info->m_properties.end(),
+                    listener.remote_participant_info->properties.begin(),
+                    listener.remote_participant_info->properties.end(),
                     [&](const ParameterProperty_t& property)
                     {
                         return property.first() == physical_property_name;
                     });
-                ASSERT_NE(received_property, listener.remote_participant_info->m_properties.end());
+                ASSERT_NE(received_property, listener.remote_participant_info->properties.end());
 
                 // Find property in first participant
                 auto part_1_property = PropertyPolicyHelper::find_property(
@@ -725,20 +726,20 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
         participant_found.store(false);
 
         // Prevent assertion on spurious discovery of a participant from elsewhere
-        if (part_1->guid() == listener.remote_participant_info->m_guid)
+        if (part_1->guid() == listener.remote_participant_info->guid)
         {
             // Check that none of the three properties are present in the ParticipantProxyData.
             for (auto physical_property_name : physical_property_names)
             {
                 // Look for property in ParticipantProxyData
                 auto received_property = std::find_if(
-                    listener.remote_participant_info->m_properties.begin(),
-                    listener.remote_participant_info->m_properties.end(),
+                    listener.remote_participant_info->properties.begin(),
+                    listener.remote_participant_info->properties.end(),
                     [&](const ParameterProperty_t& property)
                     {
                         return property.first() == physical_property_name;
                     });
-                ASSERT_EQ(received_property, listener.remote_participant_info->m_properties.end());
+                ASSERT_EQ(received_property, listener.remote_participant_info->properties.end());
             }
             break;
         }
@@ -773,15 +774,16 @@ TEST(DDSDiscovery, DDSDiscoveryDoesNotDropUDPLocator)
 
         void on_participant_discovery(
                 DomainParticipant* /*participant*/,
-                ParticipantDiscoveryInfo&& info,
+                ParticipantDiscoveryStatus status,
+                const ParticipantBuiltinTopicData& info,
                 bool& should_be_ignored) override
         {
             static_cast<void>(should_be_ignored);
-            if (info.status == info.DISCOVERED_PARTICIPANT)
+            if (status == ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT)
             {
                 std::lock_guard<std::mutex> guard(mtx);
-                guid = info.info.m_guid;
-                metatraffic = info.info.metatraffic_locators;
+                guid = info.guid;
+                metatraffic = info.metatraffic_locators;
                 cv.notify_all();
             }
         }
@@ -1836,10 +1838,11 @@ TEST(DDSDiscovery, DataracePDP)
 
         void on_participant_discovery(
                 DomainParticipant* /*participant*/,
-                eprosima::fastdds::rtps::ParticipantDiscoveryInfo&& info,
+                ParticipantDiscoveryStatus status,
+                const ParticipantBuiltinTopicData& /*info*/,
                 bool& /*should_be_ignored*/) override
         {
-            if (info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+            if (status == eprosima::fastdds::rtps::ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT)
             {
                 try
                 {
@@ -1851,8 +1854,8 @@ TEST(DDSDiscovery, DataracePDP)
                 }
                 destruction_future.wait();
             }
-            else if (info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
-                    info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+            else if (status == eprosima::fastdds::rtps::ParticipantDiscoveryStatus::REMOVED_PARTICIPANT ||
+                    status == eprosima::fastdds::rtps::ParticipantDiscoveryStatus::DROPPED_PARTICIPANT)
             {
                 try
                 {

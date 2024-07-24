@@ -29,7 +29,7 @@
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 
 #include <rtps/reader/StatefulReader.hpp>
@@ -126,8 +126,8 @@ public:
     }
 
     bool fill_discovery_data_from_cdr_message(
-            fastdds::rtps::ParticipantProxyData& /*data*/,
-            fastdds::statistics::MonitorServiceStatusData& /*msg*/)
+            fastdds::rtps::ParticipantBuiltinTopicData& /*data*/,
+            const fastdds::statistics::MonitorServiceStatusData& /*msg*/)
     {
         return true;
     }

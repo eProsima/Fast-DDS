@@ -86,24 +86,25 @@ bool ParticipantModule::init()
 
 void ParticipantModule::on_participant_discovery(
         DomainParticipant* participant,
-        ParticipantDiscoveryInfo&& info,
+        ParticipantDiscoveryStatus status,
+        const ParticipantBuiltinTopicData& info,
         bool& should_be_ignored)
 {
     static_cast<void>(should_be_ignored);
-    if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+    if (status == ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT)
     {
-        std::cout << "Participant " << participant->guid() << " discovered participant " << info.info.m_guid << ": "
+        std::cout << "Participant " << participant->guid() << " discovered participant " << info.guid << ": "
                   << ++matched_ << std::endl;
     }
-    else if (info.status == ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
+    else if (status == ParticipantDiscoveryStatus::CHANGED_QOS_PARTICIPANT)
     {
-        std::cout << "Participant " << participant->guid() << " detected changes on participant " << info.info.m_guid
+        std::cout << "Participant " << participant->guid() << " detected changes on participant " << info.guid
                   << std::endl;
     }
-    else if (info.status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
-            info.status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+    else if (status == ParticipantDiscoveryStatus::REMOVED_PARTICIPANT ||
+            status == ParticipantDiscoveryStatus::DROPPED_PARTICIPANT)
     {
-        std::cout << "Participant " << participant->guid() << " undiscovered participant " << info.info.m_guid << ": "
+        std::cout << "Participant " << participant->guid() << " undiscovered participant " << info.guid << ": "
                   << --matched_ << std::endl;
     }
 }

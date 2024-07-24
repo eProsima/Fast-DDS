@@ -408,7 +408,7 @@ ReturnCode_t DomainParticipant::get_discovered_participants(
 }
 
 ReturnCode_t DomainParticipant::get_discovered_participant_data(
-        builtin::ParticipantBuiltinTopicData& participant_data,
+        ParticipantBuiltinTopicData& participant_data,
         const InstanceHandle_t& participant_handle) const
 {
     static_cast<void> (participant_data);

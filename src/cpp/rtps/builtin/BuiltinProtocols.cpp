@@ -22,11 +22,11 @@
 #include <algorithm>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/utils/IPFinder.hpp>
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/builtin/discovery/endpoint/EDPStatic.h>
 #include <rtps/builtin/discovery/participant/PDPClient.h>

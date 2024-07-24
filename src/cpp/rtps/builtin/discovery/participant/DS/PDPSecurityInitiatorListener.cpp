@@ -24,10 +24,10 @@
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
-#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/builtin/discovery/participant/PDPEndpoints.hpp>

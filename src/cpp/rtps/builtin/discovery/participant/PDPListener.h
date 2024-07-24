@@ -21,10 +21,11 @@
 #define _FASTDDS_RTPS_PDPLISTENER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/reader/ReaderListener.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
-
 #include <mutex>
+
+#include <fastdds/rtps/reader/ReaderListener.hpp>
+
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 
 namespace eprosima {
 namespace fastdds {

@@ -17,10 +17,8 @@
  *
  */
 
-#ifndef FASTDDS_RTPS_BUILTIN_DATA__PARTICIPANTPROXYDATA_HPP
-#define FASTDDS_RTPS_BUILTIN_DATA__PARTICIPANTPROXYDATA_HPP
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#ifndef RTPS_BUILTIN_DATA__PARTICIPANTPROXYDATA_HPP
+#define RTPS_BUILTIN_DATA__PARTICIPANTPROXYDATA_HPP
 
 #include <chrono>
 
@@ -64,13 +62,13 @@ class ParticipantProxyData
 {
 public:
 
-    FASTDDS_EXPORTED_API ParticipantProxyData(
+    ParticipantProxyData(
             const RTPSParticipantAllocationAttributes& allocation);
 
-    FASTDDS_EXPORTED_API ParticipantProxyData(
+    ParticipantProxyData(
             const ParticipantProxyData& pdata);
 
-    FASTDDS_EXPORTED_API virtual ~ParticipantProxyData();
+    virtual ~ParticipantProxyData();
 
     //!Protocol version
     ProtocolVersion_t m_protocolVersion;
@@ -130,7 +128,7 @@ public:
      * @param pdata Object to copy the data from
      * @return True on success
      */
-    FASTDDS_EXPORTED_API bool updateData(
+    bool updateData(
             ParticipantProxyData& pdata);
 
     /**
@@ -138,14 +136,14 @@ public:
      * @param include_encapsulation Whether to include the size of the encapsulation info.
      * @return size in bytes of the CDR serialization.
      */
-    FASTDDS_EXPORTED_API uint32_t get_serialized_size(
+    uint32_t get_serialized_size(
             bool include_encapsulation) const;
 
     /**
      * Write as a parameter list on a CDRMessage_t
      * @return True on success
      */
-    FASTDDS_EXPORTED_API bool writeToCDRMessage(
+    bool writeToCDRMessage(
             CDRMessage_t* msg,
             bool write_encapsulation);
 
@@ -153,7 +151,7 @@ public:
      * Read the parameter list from a received CDRMessage_t
      * @return True on success
      */
-    FASTDDS_EXPORTED_API bool readFromCDRMessage(
+    bool readFromCDRMessage(
             CDRMessage_t* msg,
             bool use_encapsulation,
             const NetworkFactory& network,
@@ -162,62 +160,62 @@ public:
             fastdds::rtps::VendorId_t source_vendor_id = c_VendorId_eProsima);
 
     //! Clear the data (restore to default state).
-    FASTDDS_EXPORTED_API void clear();
+    void clear();
 
     /**
      * Copy the data from another object.
      * @param pdata Object to copy the data from
      */
-    FASTDDS_EXPORTED_API void copy(
+    void copy(
             const ParticipantProxyData& pdata);
 
     /**
      * Set participant persistent GUID_t
      * @param guid valid GUID_t
      */
-    FASTDDS_EXPORTED_API void set_persistence_guid(
+    void set_persistence_guid(
             const GUID_t& guid);
 
     /**
      * Retrieve participant persistent GUID_t
      * @return guid persistent GUID_t or c_Guid_Unknown
      */
-    FASTDDS_EXPORTED_API GUID_t get_persistence_guid() const;
+    GUID_t get_persistence_guid() const;
 
     /**
      * Set participant client server sample identity
      * @param sid valid SampleIdentity
      */
-    FASTDDS_EXPORTED_API void set_sample_identity(
+    void set_sample_identity(
             const SampleIdentity& sid);
 
     /**
      * Retrieve participant SampleIdentity
      * @return SampleIdentity
      */
-    FASTDDS_EXPORTED_API SampleIdentity get_sample_identity() const;
+    SampleIdentity get_sample_identity() const;
 
     /**
      * Identifies the participant as client of the given server
      * @param guid valid backup server GUID
      */
-    FASTDDS_EXPORTED_API void set_backup_stamp(
+    void set_backup_stamp(
             const GUID_t& guid);
 
     /**
      * Retrieves BACKUP server stamp. On deserialization hints if lease duration must be enforced
      * @return GUID
      */
-    FASTDDS_EXPORTED_API GUID_t get_backup_stamp() const;
+    GUID_t get_backup_stamp() const;
 
-    FASTDDS_EXPORTED_API void assert_liveliness();
+    void assert_liveliness();
 
-    FASTDDS_EXPORTED_API const std::chrono::steady_clock::time_point& last_received_message_tm() const
+    const std::chrono::steady_clock::time_point& last_received_message_tm() const
     {
         return last_received_message_tm_;
     }
 
-    FASTDDS_EXPORTED_API const std::chrono::microseconds& lease_duration() const
+    const std::chrono::microseconds& lease_duration() const
     {
         return lease_duration_;
     }
@@ -235,6 +233,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-#endif // FASTDDS_RTPS_BUILTIN_DATA__PARTICIPANTPROXYDATA_HPP
+#endif // RTPS_BUILTIN_DATA__PARTICIPANTPROXYDATA_HPP

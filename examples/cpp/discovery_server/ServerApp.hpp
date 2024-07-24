@@ -22,6 +22,7 @@
 
 #include <condition_variable>
 
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
@@ -49,7 +50,8 @@ public:
     //! Publisher matched method
     void on_participant_discovery(
             DomainParticipant* participant,
-            fastdds::rtps::ParticipantDiscoveryInfo&& info,
+            fastdds::rtps::ParticipantDiscoveryStatus status,
+            const fastdds::rtps::ParticipantBuiltinTopicData& info,
             bool& should_be_ignored) override;
 
     //! Run publisher

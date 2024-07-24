@@ -20,10 +20,10 @@
 #define FASTDDS_RTPS_NETWORK_UTILS_EXTERNAL_LOCATORS_HPP
 
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
 
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
 
