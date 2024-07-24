@@ -358,9 +358,14 @@ public:
         using namespace fastdds;
         using namespace fastdds::rtps;
 
+        auto& watt = writer_->getAttributes();
         PublicationBuiltinTopicData pub_builtin_data;
         pub_builtin_data.type_name = data_type;
         pub_builtin_data.topic_name = topic_name;
+        pub_builtin_data.durability.durabilityKind(watt.durabilityKind);
+        pub_builtin_data.reliability.kind =
+                RELIABLE ==
+                watt.reliabilityKind ? dds::RELIABLE_RELIABILITY_QOS : dds::BEST_EFFORT_RELIABILITY_QOS;
 
         auto& ratt = writer_->getAttributes();
         SubscriptionBuiltinTopicData sub_builtin_data;
@@ -371,15 +376,7 @@ public:
                 RELIABLE ==
                 ratt.reliabilityKind ? dds::RELIABLE_RELIABILITY_QOS : dds::BEST_EFFORT_RELIABILITY_QOS;
 
-
-        dds::WriterQos Wqos;
-        auto& watt = writer_->getAttributes();
-        Wqos.m_durability.durabilityKind(watt.durabilityKind);
-        Wqos.m_reliability.kind =
-                RELIABLE ==
-                watt.reliabilityKind ? dds::RELIABLE_RELIABILITY_QOS : dds::BEST_EFFORT_RELIABILITY_QOS;
-
-        participant_->register_writer(writer_, pub_builtin_data, Wqos);
+        participant_->register_writer(writer_, pub_builtin_data);
         participant_->register_reader(reader_, sub_builtin_data);
     }
 

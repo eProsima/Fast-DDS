@@ -457,23 +457,8 @@ ReturnCode_t DataWriterImpl::enable()
     }
 
     // REGISTER THE WRITER
-    WriterQos wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
-    if (!is_data_sharing_compatible_)
-    {
-        wqos.data_sharing.off();
-    }
-    if (endpoint_partitions)
-    {
-        std::istringstream partition_string(*endpoint_partitions);
-        std::string partition_name;
-        wqos.m_partition.clear();
-
-        while (std::getline(partition_string, partition_name, ';'))
-        {
-            wqos.m_partition.push_back(partition_name.c_str());
-        }
-    }
-    publisher_->rtps_participant()->register_writer(writer_, get_publication_builtin_topic_data(), wqos);
+    auto builtin_topic_data = get_publication_builtin_topic_data();
+    publisher_->rtps_participant()->register_writer(writer_, builtin_topic_data);
 
     return RETCODE_OK;
 }
@@ -1700,6 +1685,7 @@ PublicationBuiltinTopicData DataWriterImpl::get_publication_builtin_topic_data()
     {
         pub_builtin_data.topic_name = topic_->get_name();
         pub_builtin_data.type_name = topic_->get_type_name();
+        pub_builtin_data.topic_data = topic_->get_qos().topic_data();
     }
 
     // DataWriter qos
@@ -1765,6 +1751,17 @@ PublicationBuiltinTopicData DataWriterImpl::get_publication_builtin_topic_data()
     }
     pub_builtin_data.representation = qos_.representation();
 
+    // eProsima extensions
+
+    pub_builtin_data.disable_positive_acks = qos_.reliable_writer_qos().disable_positive_acks;
+    pub_builtin_data.data_sharing = qos_.data_sharing();
+
+    if (pub_builtin_data.data_sharing.kind() != OFF &&
+        pub_builtin_data.data_sharing.domain_ids().empty())
+    {
+        pub_builtin_data.data_sharing.add_domain_id(utils::default_domain_id());
+    }
+
     pub_builtin_data.guid = guid();
     if (publisher_is_valid)
     {
@@ -1785,6 +1782,23 @@ PublicationBuiltinTopicData DataWriterImpl::get_publication_builtin_topic_data()
                 writer_->get_participant_impl()->network_factory().network_configuration();
     }
 
+    if (!is_data_sharing_compatible_)
+    {
+        pub_builtin_data.data_sharing.off();
+    }
+
+    const std::string* endpoint_partitions = PropertyPolicyHelper::find_property(qos_.properties(), "partitions");
+    if (endpoint_partitions)
+    {
+        std::istringstream partition_string(*endpoint_partitions);
+        std::string partition_name;
+        pub_builtin_data.partition.clear();
+
+        while (std::getline(partition_string, partition_name, ';'))
+        {
+            pub_builtin_data.partition.push_back(partition_name.c_str());
+        }
+    }
     return pub_builtin_data;
 }
 

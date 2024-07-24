@@ -819,8 +819,7 @@ TEST(RTPS, MultithreadedWriterCreation)
                 pub_builtin_data.type_name = "string";
                 pub_builtin_data.topic_name = "test_topic";
                 /* Register writer in participant */
-                eprosima::fastdds::dds::WriterQos writer_qos;
-                ASSERT_EQ(rtps_participant->register_writer(writer, pub_builtin_data, writer_qos), true);
+                ASSERT_EQ(rtps_participant->register_writer(writer, pub_builtin_data), true);
 
                 {
                     /* Wait for test completion request */

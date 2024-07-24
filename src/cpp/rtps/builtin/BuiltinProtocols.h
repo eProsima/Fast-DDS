@@ -129,15 +129,13 @@ public:
 
     /**
      * Add a local writer to the BuiltinProtocols.
-     * @param writer   Pointer to the RTPSWriter
-     * @param topicAtt Attributes of the associated topic
-     * @param wqos     QoS policies dictated by the publisher
+     * @param writer            Pointer to the RTPSWriter
+     * @param pub_builtin_data  QoS policies dictated by the publisher
      * @return True if correct.
      */
     bool add_writer(
             RTPSWriter* rtps_writer,
-            const PublicationBuiltinTopicData& pub_builtin_data,
-            const fastdds::dds::WriterQos& wqos);
+            const PublicationBuiltinTopicData& pub_builtin_data);
     /**
      * Add a local reader to the BuiltinProtocols.
      * @param rtps_reader       Pointer to the RTPSReader.
