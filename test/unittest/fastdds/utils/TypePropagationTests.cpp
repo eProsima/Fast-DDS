@@ -48,9 +48,9 @@ TEST(TypePropagationTests, to_type_propagation)
 
     // Just in case the generated string is a valid value for the property
     if (("enabled" == random_property_value) ||
-        ("disabled" == random_property_value) ||
-        ("minimal_bandwidth" == random_property_value) ||
-        ("registration_only" == random_property_value))
+            ("disabled" == random_property_value) ||
+            ("minimal_bandwidth" == random_property_value) ||
+            ("registration_only" == random_property_value))
     {
         random_property_value += "a";
     }

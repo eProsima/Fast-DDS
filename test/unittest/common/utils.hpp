@@ -27,13 +27,15 @@
  * @param max_num Maximum number.
  * @return Random number.
  */
-size_t generate_random_number(size_t min_num, size_t max_num)
+size_t generate_random_number(
+        size_t min_num,
+        size_t max_num)
 {
     std::random_device device;
     std::mt19937 generator(device());
     std::uniform_int_distribution<size_t> distribution(min_num, max_num);
     return distribution(generator);
-};
+}
 
 /**
  * @brief Generates a random string of length str_length.
@@ -41,7 +43,8 @@ size_t generate_random_number(size_t min_num, size_t max_num)
  * @param str_length Length of the string.
  * @return Random string.
  */
-std::string generate_random_string(size_t str_length)
+std::string generate_random_string(
+        size_t str_length)
 {
     static const std::string chars =
             "0123456789"
@@ -57,6 +60,6 @@ std::string generate_random_string(size_t str_length)
     }
 
     return str;
-};
+}
 
 #endif // FASTDDS_TEST_UNITTEST_COMMON__UTILS_HPP
