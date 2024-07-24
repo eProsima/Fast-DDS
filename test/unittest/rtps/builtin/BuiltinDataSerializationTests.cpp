@@ -17,7 +17,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <fastdds/config.h>
+#include <fastdds/config.hpp>
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/core/policy/ParameterSerializer.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>

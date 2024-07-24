@@ -22,7 +22,7 @@
 #include <mutex>
 #include <chrono>
 
-#include <fastdds/config.h>
+#include <fastdds/config.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>

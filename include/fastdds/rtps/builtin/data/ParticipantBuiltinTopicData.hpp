@@ -22,6 +22,7 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/builtin/data/BuiltinTopicKey.hpp>
+#include <fastdds/rtps/common/ProductVersion_t.hpp>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
 
 namespace eprosima {
@@ -56,6 +57,9 @@ struct ParticipantBuiltinTopicData
 
     /// Vendor id
     VendorId_t vendor_id;
+
+    /// Product version
+    ProductVersion_t product_version;
 
     /// Participant domain id
     dds::DomainId_t domain_id;
