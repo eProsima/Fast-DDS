@@ -164,11 +164,7 @@ bool ConnectionRequest_t::serialize(
         return false;
     }
 
-#if FASTCDR_VERSION_MAJOR == 1
-    payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-#else
     payload->length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
-#endif // FASTCDR_VERSION_MAJOR == 1
 
     return true;
 }
@@ -256,11 +252,7 @@ bool OpenLogicalPortRequest_t::serialize(
         return false;
     }
 
-#if FASTCDR_VERSION_MAJOR == 1
-    payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-#else
     payload->length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
-#endif // FASTCDR_VERSION_MAJOR == 1
 
     return true;
 }
@@ -349,11 +341,7 @@ bool CheckLogicalPortsRequest_t::serialize(
         return false;
     }
 
-#if FASTCDR_VERSION_MAJOR == 1
-    payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-#else
     payload->length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
-#endif // FASTCDR_VERSION_MAJOR == 1
 
     return true;
 }
@@ -441,11 +429,7 @@ bool KeepAliveRequest_t::serialize(
         return false;
     }
 
-#if FASTCDR_VERSION_MAJOR == 1
-    payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-#else
     payload->length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
-#endif // FASTCDR_VERSION_MAJOR == 1
 
     return true;
 }
@@ -533,11 +517,7 @@ bool LogicalPortIsClosedRequest_t::serialize(
         return false;
     }
 
-#if FASTCDR_VERSION_MAJOR == 1
-    payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-#else
     payload->length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
-#endif // FASTCDR_VERSION_MAJOR == 1
 
     return true;
 }
@@ -625,11 +605,7 @@ bool BindConnectionResponse_t::serialize(
         return false;
     }
 
-#if FASTCDR_VERSION_MAJOR == 1
-    payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-#else
     payload->length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
-#endif // FASTCDR_VERSION_MAJOR == 1
 
     return true;
 }
@@ -718,11 +694,7 @@ bool CheckLogicalPortsResponse_t::serialize(
         return false;
     }
 
-#if FASTCDR_VERSION_MAJOR == 1
-    payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-#else
     payload->length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
-#endif // FASTCDR_VERSION_MAJOR == 1
 
     return true;
 }

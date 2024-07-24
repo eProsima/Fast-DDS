@@ -38,15 +38,6 @@
 #undef max
 #endif // ifdef WIN32
 
-#if FASTCDR_VERSION_MAJOR == 1
-#define change_endianness changeEndianness
-#define get_serialized_data_length getSerializedDataLength
-#define get_state getState
-#define get_current_position getCurrentPosition
-#define get_buffer_pointer getBufferPointer
-#define set_state setState
-#endif // FASTCDR_VERSION_MAJOR == 1
-
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
