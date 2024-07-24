@@ -125,13 +125,13 @@ public:
 
     /**
      * @brief Adds a local reader to the liveliness protocol
-     * @param reader Pointer to the RTPS reader
-     * @param rqos Quality of service policies for the reader
+     * @param reader  Pointer to the RTPS reader
+     * @param qos     Quality of service policies for the reader
      * @return True if added successfully
      */
     bool add_local_reader(
             RTPSReader* reader,
-            const fastdds::dds::ReaderQos& rqos);
+            const fastdds::dds::LivelinessQosPolicy& qos);
 
     /**
      * @brief Removes a local reader from the livliness protocol

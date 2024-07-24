@@ -86,10 +86,9 @@ bool RTPSParticipant::register_writer(
 bool RTPSParticipant::register_reader(
         RTPSReader* reader,
         const SubscriptionBuiltinTopicData& sub_builtin_data,
-        const fastdds::dds::ReaderQos& rqos,
         const ContentFilterProperty* content_filter)
 {
-    return mp_impl->register_reader(reader, sub_builtin_data, rqos, content_filter);
+    return mp_impl->register_reader(reader, sub_builtin_data, content_filter);
 }
 
 void RTPSParticipant::update_attributes(

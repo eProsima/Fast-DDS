@@ -215,13 +215,13 @@ ReturnCode_t DataReaderImpl::enable()
         att.endpoint.properties.properties().push_back(std::move(property));
     }
 
-    bool is_datasharing_compatible = false;
-    ReturnCode_t ret_code = check_datasharing_compatible(att, is_datasharing_compatible);
+    is_data_sharing_compatible_ = false;
+    ReturnCode_t ret_code = check_datasharing_compatible(att, is_data_sharing_compatible_);
     if (ret_code != RETCODE_OK)
     {
         return ret_code;
     }
-    if (is_datasharing_compatible)
+    if (is_data_sharing_compatible_)
     {
         DataSharingQosPolicy datasharing(qos_.data_sharing());
         if (datasharing.domain_ids().empty())
@@ -276,22 +276,7 @@ ReturnCode_t DataReaderImpl::enable()
                     qos_.lifespan().duration.to_ns() * 1e-6);
 
     // Register the reader
-    ReaderQos rqos = qos_.get_readerqos(subscriber_->get_qos());
-    if (!is_datasharing_compatible)
-    {
-        rqos.data_sharing.off();
-    }
-    if (endpoint_partitions)
-    {
-        std::istringstream partition_string(*endpoint_partitions);
-        std::string partition_name;
-        rqos.m_partition.clear();
-
-        while (std::getline(partition_string, partition_name, ';'))
-        {
-            rqos.m_partition.push_back(partition_name.c_str());
-        }
-    }
+    auto builtin_topic_data = get_subscription_builtin_topic_data();
 
     rtps::ContentFilterProperty* filter_property = nullptr;
     if (nullptr != content_topic && !content_topic->filter_property.filter_expression.empty())
@@ -300,8 +285,7 @@ ReturnCode_t DataReaderImpl::enable()
     }
     if (!subscriber_->rtps_participant()->register_reader(
                 reader_,
-                get_subscription_builtin_topic_data(),
-                rqos,
+                builtin_topic_data,
                 filter_property))
     {
         EPROSIMA_LOG_ERROR(DATA_READER, "Could not register reader on discovery protocols");
@@ -1851,7 +1835,7 @@ void DataReaderImpl::release_payload_pool()
 
 ReturnCode_t DataReaderImpl::check_datasharing_compatible(
         const ReaderAttributes& reader_attributes,
-        bool& is_datasharing_compatible) const
+        bool& is_data_sharing_compatible) const
 {
 #if HAVE_SECURITY
     bool has_security_enabled = subscriber_->rtps_participant()->is_security_enabled_for_reader(reader_attributes);
@@ -1861,7 +1845,7 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
 
     bool has_key = type_->is_compute_key_provided;
 
-    is_datasharing_compatible = false;
+    is_data_sharing_compatible = false;
     switch (qos_.data_sharing().kind())
     {
         case DataSharingKind::OFF:
@@ -1887,7 +1871,7 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
                 return RETCODE_BAD_PARAMETER;
             }
 
-            is_datasharing_compatible = true;
+            is_data_sharing_compatible = true;
             return RETCODE_OK;
             break;
         case DataSharingKind::AUTO:
@@ -1911,7 +1895,7 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
                 return RETCODE_OK;
             }
 
-            is_datasharing_compatible = true;
+            is_data_sharing_compatible = true;
             return RETCODE_OK;
             break;
         default:
@@ -2267,9 +2251,21 @@ SubscriptionBuiltinTopicData DataReaderImpl::get_subscription_builtin_topic_data
             }
 
             sub_builtin_data.type_information.assigned(true);
+            sub_builtin_data.type_consistency = qos_.type_consistency();
         }
     }
     sub_builtin_data.representation = qos_.representation();
+
+    // eProsima Extensions
+
+    sub_builtin_data.disable_positive_acks = qos_.reliable_reader_qos().disable_positive_acks;
+    sub_builtin_data.data_sharing = qos_.data_sharing();
+
+    if (sub_builtin_data.data_sharing.kind() != OFF &&
+        sub_builtin_data.data_sharing.domain_ids().empty())
+    {
+        sub_builtin_data.data_sharing.add_domain_id(utils::default_domain_id());
+    }
 
     sub_builtin_data.guid = guid();
     if (subscriber_is_valid)
@@ -2279,6 +2275,23 @@ SubscriptionBuiltinTopicData DataReaderImpl::get_subscription_builtin_topic_data
     qos_.endpoint().unicast_locator_list.copy_to(sub_builtin_data.remote_locators.unicast);
     qos_.endpoint().multicast_locator_list.copy_to(sub_builtin_data.remote_locators.multicast);
     sub_builtin_data.expects_inline_qos = qos_.expects_inline_qos();
+
+    if (!is_data_sharing_compatible_)
+    {
+        sub_builtin_data.data_sharing.off();
+    }
+    const std::string* endpoint_partitions = PropertyPolicyHelper::find_property(qos_.properties(), "partitions");
+    if (endpoint_partitions)
+    {
+        std::istringstream partition_string(*endpoint_partitions);
+        std::string partition_name;
+        sub_builtin_data.partition.clear();
+
+        while (std::getline(partition_string, partition_name, ';'))
+        {
+            sub_builtin_data.partition.push_back(partition_name.c_str());
+        }
+    }
 
     return sub_builtin_data;
 }

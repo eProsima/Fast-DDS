@@ -140,16 +140,14 @@ public:
             const fastdds::dds::WriterQos& wqos);
     /**
      * Add a local reader to the BuiltinProtocols.
-     * @param rtps_reader     Pointer to the RTPSReader.
-     * @param topicAtt        Attributes of the associated topic
-     * @param rqos            QoS policies dictated by the subscriber
-     * @param content_filter  Optional content filtering information.
+     * @param rtps_reader       Pointer to the RTPSReader.
+     * @param sub_builtin_data  QoS policies dictated by the subscriber
+     * @param content_filter    Optional content filtering information.
      * @return True if correct.
      */
     bool add_reader(
             RTPSReader* rtps_reader,
             const SubscriptionBuiltinTopicData& sub_builtin_data,
-            const fastdds::dds::ReaderQos& rqos,
             const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
 
     /**

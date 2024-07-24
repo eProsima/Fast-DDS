@@ -96,7 +96,7 @@ TEST(StatefulReaderTests, RTPSCorrectGAPProcessing)
     PublicationBuiltinTopicData pub_builtin_data;
     pub_builtin_data.type_name = "string";
     pub_builtin_data.topic_name = "topic";
-    part->register_reader(reader, sub_builtin_data, {});
+    part->register_reader(reader, sub_builtin_data);
     part->register_writer(writer, pub_builtin_data, {});
 
     // After registration, the writer should be matched
