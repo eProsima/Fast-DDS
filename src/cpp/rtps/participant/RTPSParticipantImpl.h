@@ -897,13 +897,11 @@ public:
      * Register a Writer in the BuiltinProtocols.
      * @param Writer Pointer to the RTPSWriter.
      * @param pub_builtin_data Contains the discovery information of the writer.
-     * @param wqos WriterQos.
      * @return True if correctly registered.
      */
     bool register_writer(
             RTPSWriter* Writer,
-            const PublicationBuiltinTopicData& pub_builtin_data,
-            const fastdds::dds::WriterQos& wqos);
+            const PublicationBuiltinTopicData& pub_builtin_data);
 
     /**
      * Register a Reader in the BuiltinProtocols.

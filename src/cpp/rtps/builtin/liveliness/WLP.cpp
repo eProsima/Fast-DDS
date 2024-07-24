@@ -618,7 +618,7 @@ void WLP::removeRemoteEndpoints(
 
 bool WLP::add_local_writer(
         RTPSWriter* writer,
-        const fastdds::dds::WriterQos& wqos)
+        const fastdds::dds::LivelinessQosPolicy& qos)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 
@@ -626,10 +626,9 @@ bool WLP::add_local_writer(
 
     BaseWriter* base_writer = BaseWriter::downcast(writer);
 
-    double wAnnouncementPeriodMilliSec(fastdds::rtps::TimeConv::Duration_t2MilliSecondsDouble(wqos.m_liveliness.
-                    announcement_period));
+    double wAnnouncementPeriodMilliSec(TimeConv::Duration_t2MilliSecondsDouble(qos.announcement_period));
 
-    if (wqos.m_liveliness.kind == dds::AUTOMATIC_LIVELINESS_QOS )
+    if (qos.kind == dds::AUTOMATIC_LIVELINESS_QOS )
     {
         if (automatic_liveliness_assertion_ == nullptr)
         {
@@ -656,7 +655,7 @@ bool WLP::add_local_writer(
         }
         automatic_writers_.push_back(base_writer);
     }
-    else if (wqos.m_liveliness.kind == dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+    else if (qos.kind == dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     {
         if (manual_liveliness_assertion_ == nullptr)
         {
@@ -685,21 +684,21 @@ bool WLP::add_local_writer(
 
         if (!pub_liveliness_manager_->add_writer(
                     writer->getGuid(),
-                    wqos.m_liveliness.kind,
-                    wqos.m_liveliness.lease_duration))
+                    qos.kind,
+                    qos.lease_duration))
         {
             EPROSIMA_LOG_ERROR(RTPS_LIVELINESS,
                     "Could not add writer " << writer->getGuid() << " to liveliness manager");
         }
     }
-    else if (wqos.m_liveliness.kind == dds::MANUAL_BY_TOPIC_LIVELINESS_QOS)
+    else if (qos.kind == dds::MANUAL_BY_TOPIC_LIVELINESS_QOS)
     {
         manual_by_topic_writers_.push_back(base_writer);
 
         if (!pub_liveliness_manager_->add_writer(
                     writer->getGuid(),
-                    wqos.m_liveliness.kind,
-                    wqos.m_liveliness.lease_duration))
+                    qos.kind,
+                    qos.lease_duration))
         {
             EPROSIMA_LOG_ERROR(RTPS_LIVELINESS,
                     "Could not add writer " << writer->getGuid() << " to liveliness manager");

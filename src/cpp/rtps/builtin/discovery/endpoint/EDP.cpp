@@ -240,14 +240,13 @@ bool EDP::new_reader_proxy_data(
 
 bool EDP::new_writer_proxy_data(
         RTPSWriter* rtps_writer,
-        const PublicationBuiltinTopicData& pub_builtin_data,
-        const fastdds::dds::WriterQos& wqos)
+        const PublicationBuiltinTopicData& pub_builtin_data)
 {
     EPROSIMA_LOG_INFO(RTPS_EDP,
             "Adding " << rtps_writer->getGuid().entityId << " in topic " <<
             pub_builtin_data.topic_name.to_string());
 
-    auto init_fun = [this, rtps_writer, &pub_builtin_data, &wqos](
+    auto init_fun = [this, rtps_writer, &pub_builtin_data](
         WriterProxyData* wpd,
         bool updating,
         const ParticipantProxyData& participant_data)
@@ -259,6 +258,8 @@ bool EDP::new_writer_proxy_data(
                                                               << pub_builtin_data.topic_name.to_string());
                     return false;
                 }
+
+                from_builtin_to_proxy(pub_builtin_data, *wpd);
 
                 const NetworkFactory& network = mp_RTPSParticipant->network_factory();
                 const auto& watt = rtps_writer->getAttributes();
@@ -320,7 +321,7 @@ bool EDP::new_writer_proxy_data(
                 BaseWriter* base_writer = BaseWriter::downcast(rtps_writer);
                 assert(base_writer->get_history() != nullptr);
                 wpd->typeMaxSerialized(base_writer->get_history()->getTypeMaxSerialized());
-                wpd->m_qos.setQos(wqos, true);
+                wpd->m_qos.setQos(wpd->m_qos, true);
                 wpd->userDefinedId(watt.getUserDefinedID());
                 wpd->persistence_guid(watt.persistence_guid);
 #if HAVE_SECURITY

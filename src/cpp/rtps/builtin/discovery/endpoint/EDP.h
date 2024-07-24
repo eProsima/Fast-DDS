@@ -179,15 +179,13 @@ public:
             const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
     /**
      * Create a new ReaderPD for a local Writer.
-     * @param rtps_writer      Pointer to the RTPSWriter.
-     * @param pub_builtin_data Publication data for the writer.
-     * @param qos              QoS policies dictated by the publisher.
+     * @param rtps_writer       Pointer to the RTPSWriter.
+     * @param pub_builtin_data  QoS policies dictated by the publisher.
      * @return True if correct.
      */
     bool new_writer_proxy_data(
             RTPSWriter* rtps_writer,
-            const PublicationBuiltinTopicData& pub_builtin_data,
-            const fastdds::dds::WriterQos& qos);
+            const PublicationBuiltinTopicData& pub_builtin_data);
     /**
      * A previously created Reader has been updated
      * @param rtps_reader      Pointer to the RTPSReader.

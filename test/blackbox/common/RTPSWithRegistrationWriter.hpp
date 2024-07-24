@@ -178,7 +178,7 @@ public:
             return;
         }
 
-        ASSERT_EQ(participant_->register_writer(writer_, pub_builtin_data_, writer_qos_), true);
+        ASSERT_EQ(participant_->register_writer(writer_, pub_builtin_data_), true);
 
         initialized_ = true;
     }
