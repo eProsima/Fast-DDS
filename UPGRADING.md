@@ -13,10 +13,10 @@ The following sections describe in detail the possible changes that your project
 - [Fast RTPS public headers migration to Fast DDS](#fast-rtps-public-headers-migration-to-fast-dds)
 - [Headers migrated to private](#headers-migrated-to-private)
 - [API changes](#api-changes)
-- [Removed API and tests](#removed-api-and-tests)
 - [Struct, Enum, Variable](#struct-enum-variable)
 - [Examples](#examples)
 - [Compatibility with Fast CDR](#compatibility-with-fast-cdr)
+
 
 ## Library management
 
@@ -35,6 +35,7 @@ The below list of changes expose the changes related to the library name, librar
 
 * The fastrtps.rc file has been renamed as fastdds.rc.
 
+
 ## Namespace migrations and changes
 
 The following list contains the namespace changes and migrations:
@@ -46,11 +47,13 @@ The following list contains the namespace changes and migrations:
 * `StatisticsEventKind` references changed to `statistics::EventKind`.
 * `Duration_t` reference moved to `fastdds::dds`
 
+
 ## Fast RTPS public headers migration to Fast DDS
 
 All public header extensions have been changed to `.hpp`.
 Also, the `fixed_size_string.hpp` feature has been migrated from Fast DDS package to Fast CDR.
-The remain changes that belong to this section entails the migration from `include/fastrtps` to `include/fastdds`:
+All the headers in `include/fastrtps` were migrated to `include/fastdds`.
+In particular, he following list includes headers that have been relocated to different paths or whose implementations have been incorporated into other headers.
 
 | Fast DDS 2.x file *include* path | Fast DDS v3.0.0 file *include* path |
 |----------------------------------|-------------------------------------|
@@ -73,6 +76,7 @@ The remain changes that belong to this section entails the migration from `inclu
 | fastrtps/transport/UDPv6TransportDescriptor.h | fastdds/rtps/transport/ UDPv6TransportDescriptor.hpp |
 | fastrtps/transport/UDPTransportDescritpor.h | fastdds/rtps/transport/UDPTransportDescritpor.hpp |
 | fastrtps/transport/TCPTransportDescritpor.h | fastdds/rtps/transport/TCPTransportDescritpor.hpp |
+
 
 ## Public headers migrated to private
 
@@ -119,48 +123,45 @@ The following list contains the files that were in the `include` folder that hav
 * ChangeForReader.hpp
 * ReaderLocator.hpp
 * ReaderProxy.hpp
+* ServerAttributes.hpp
 
 
 ## API changes
 
-* **xmlparser::XMLProfileManager::library_settings(LibrarySettingsAttributes)** ->  **DomainParticipantFactory::get_instance()->set_library_settings(LibrarySettings)**
+|        Deprecated APIs           |             New APIs                |
+|----------------------------------|-------------------------------------|
+| **xmlparser::XMLProfileManager::library_settings(LibrarySettingsAttributes)** | **DomainParticipantFactory::get_instance()->set_library_settings(LibrarySettings)** |
+| **fill_discovery_data_from_cdr_message(`ReaderProxyData`, `MonitorServiceStatusData`)** |**fill_discovery_data_from_cdr_message(`SubscriptionBuiltinTopicData`, `MonitorServiceStatusData`)** |
+| **fill_discovery_data_from_cdr_message(`WriterProxyData`, `MonitorServiceStatusData`)** | **fill_discovery_data_from_cdr_message(`PublicationBuiltinTopicData`,`MonitorServiceStatusData`)** |
+| **fill_discovery_data_from_cdr_message(`ParticipantProxyData`, `MonitorServiceStatusData`)** | **fill_discovery_data_from_cdr_message(`ParticipantBuiltinTopicData`,`MonitorServiceStatusData`)** |
+| **on_participant_discovery(`DomainParticipant`, `ParticipantDiscoveryInfo`, bool)** |**on_participant_discovery(`DomainParticipant`, `ParticipantDiscoveryStatus`, `ParticipantBuiltinTopicData`, `should_be_ignored`)** |
+| **on_subscriber_discovery(`DomainParticipant`, `ReaderDiscoveryInfo`, bool)** | **on_data_reader_discovery(`DomainParticipant`, `ReaderDiscoveryStatus`, `SubscriptionBuiltinTopicData`, `should_be_ignored`)** |
+| **on_publisher_discovery(`DomainParticipant`, `WriterDiscoveryInfo`, bool)** | **on_data_writer_discovery(`DomainParticipant`, `WriterDiscoveryStatus`, `PublicationBuiltinTopicData`, `should_be_ignored`)** |
+| **onReaderDiscovery(`RTPSParticipant`, `ReaderDiscoveryInfo`, bool)** | **on_reader_discovery(`RTPSParticipant`,  `ReaderDiscoveryStatus`, `SubscriptionBuiltinTopicData`, bool)** |
+| **onWriterDiscovery(`RTPSParticipant`, `WriterDiscoveryInfo`, bool)** | **on_writer_discovery(`RTPSParticipant`, `WriterDiscoveryStatus`, `PublicationBuiltinTopicData`, bool)** |
+| **onParticipantDiscovery(`RTPSParticipant`, `ParticipantDiscoveryInfo`, bool)** | **on_participant_discovery(`RTPSParticipant`, `ParticipantDiscoveryStatus`, `ParticipantBuiltinTopicData`, bool)** |
+| **xmlparser::XMLProfileManager::loadXMLFile(string)** | **DomainParticipantFactory::get_instance()->load_XML_profiles_file(string)** |
+| **xmlparser::XMLProfileManager::loadDefaultXMLFile()** | **load_profiles()** |
+| **xmlparser::XMLProfileManager::loadXMLFile(string)** | **load_XML_profiles_file(string)** |
+| **xmlparser::XMLProfileManager::loadXMLString(const char, size_t)** | **load_XML_profiles_string(const char, size_t)** |
+| **xmlparser::XMLProfileManager::fillParticipantAttributes(string, `ParticipantAttributes`, bool)** | **get_participant_qos_from_profile(string, `DomainParticipantQos`)** |
+|**xmlparser::XMLProfileManager::getDynamicTypeBuilderByName(`DynamicTypeBuilder::_ref_type`, string)** | **get_dynamic_type_builder_from_xml_by_name(`DynamicTypeBuilder::_ref_type`, string)** |
+| **xmlparser::XMLProfileManager::fillRequesterAttributes(string, RequesterAttributes)** | **get_requester_qos_from_profile(string, RequesterQos)** |
+| **XMLParser::getXMLThroughputController(`tinyxml2::XMLElement`, `ThroughputControllerDescriptor`, uint8_t)** | **XMLParser::getXMLFlowControllerDescriptorList(`tinyxml2::XMLElement`, `FlowControllerDescriptorList`, uint8_t)** |
+| **add_throughput_controller_descriptor_to_pparams(`FlowControllerSchedulerPolicy`, uint32_t, uint32_t)** | **add_flow_controller_descriptor_to_pparams(`FlowControllerSchedulerPolicy`, uint32_t, uint32_t)** |
+| **get_payload(uint32_t, `CacheChange_t`)** | **get_payload(uint32_t, `SerializedPayload_t`)** |
+| **release_payload(`CacheChange_t`)** | **release_payload(`SerializedPayload_t`)** |
 
-* Remove the discovery callback overloads on **onParticipantDiscovery()** not getting `should_be_ignored`
-
-* DataWriter::write methods return only `ReturnCode_t`
-
-* **fill_discovery_data_from_cdr_message(`SubscriptionBuiltinTopicData`, `MonitorServiceStatusData`)**, **fill_discovery_data_from_cdr_message(`PublicationBuiltinTopicData`,`MonitorServiceStatusData`)**, **fill_discovery_data_from_cdr_message(`ParticipantBuiltinTopicData`,`MonitorServiceStatusData`)**
-
-* **on_participant_discover(`DomainParticipant`, `ParticipantDiscoveryStatus`, `ParticipantBuiltinTopicData`, `should_be_ignored`)**
-
-* **on_data_reader_discovery(`DomainParticipant`, `ReaderDiscoveryStatus`, `SubscriptionBuiltinTopicData`, `should_be_ignored`)**
-
-* **on_data_writer_discovery(`DomainParticipant`, `WriterDiscoveryStatus`, `PublicationBuiltinTopicData`, `should_be_ignored`)**
-
-* **xmlparser::XMLProfileManager::loadXMLFile(string)** → **DomainParticipantFactory::get_instance()->load_XML_profiles_file(string)**
-
-* **xmlparser::XMLProfileManager::loadDefaultXMLFile()** → **load_profiles()**
-
-* **xmlparser::XMLProfileManager::loadXMLFile(string)** → **load_XML_profiles_file(string)**
-
-* **xmlparser::XMLProfileManager::loadXMLString(const char, size_t)** → **load_XML_profiles_string(const char, size_t)**
-
-* **xmlparser::XMLProfileManager::fillParticipantAttributes(string, `ParticipantAttributes`, bool)** → **get_participant_qos_from_profile(string, `DomainParticipantQos`)**
-
-* **xmlparser::XMLProfileManager::getDynamicTypeBuilderByName(`DynamicTypeBuilder::_ref_type`, string)** → **get_dynamic_type_builder_from_xml_by_name(`DynamicTypeBuilder::_ref_type`, string)**
-
-* **xmlparser::XMLProfileManager::fillRequesterAttributes(profile_name, attr)** → **get_requester_qos_from_profile(string, RequesterQos)**
-
+Moreover, `DataWriter::write()` methods return only `ReturnCode_t`.
 
 
 ## Struct, Enum, Variable
-
 
 * Extend SubscriptionBuiltinTopicData with additional fields to mimic those of ReaderProxyData.
 * Extend PublicationBuiltinTopicData with additional fields to mimic those of WriterProxyData.
 * Extend  ParticipantBuiltinTopicData 	with additional fields to mimic those of ParticipantProxyData.
 * DiscoveryProtocol_t	is DiscoveryProtocol.
-
+* Extend SendBuffersAllocationAttributes with a new attribute defining the allocation configuration of the NetworkBuffers.
 
 
 ## Examples
