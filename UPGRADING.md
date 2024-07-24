@@ -9,22 +9,22 @@ In this case, the type regeneration is **required** (if applies), using *Fast DD
 The following sections describe in detail the possible changes that your project would require to migrate to *Fast DDS v3.0.0*.
 
 - [Library management](#library-management)
+- [Compatibility with Fast CDR](#compatibility-with-fast-cdr)
 - [Namespace migrations and changes](#namespace-migrations-and-changes)
-- [Fast RTPS public headers migration to Fast DDS](#fast-rtps-public-headers-migration-to-fast-dds)
+- [Public headers migration](#fast-rtps-public-headers-migration-to-fast-dds)
 - [Headers migrated to private](#headers-migrated-to-private)
 - [API changes](#api-changes)
 - [Struct, Enum, Variable](#struct-enum-variable)
 - [Examples](#examples)
-- [Compatibility with Fast CDR](#compatibility-with-fast-cdr)
+
 
 
 ## Library management
 
-The below list of changes expose the changes related to the library name, library environment variables and other library usages.
+The below list expose the changes related to the package name, environment variables and other library usages.
 
-* The package has been renamed to `fastdds`.
-* Deprecated APIs marked with `FASTDDS_DEPRECATED` and `FASTDDS_TODO_BEFORE` macros have been removed.
-* XML profiles loading environment variables have been renamed to: `FASTDDS_DEFAULT_PROFILES_FILE`.
+* The package has been renamed from `fastrtps` to `fastdds`.
+* XML profiles loading environment variable has been renamed to: `FASTDDS_DEFAULT_PROFILES_FILE`.
 * The configuration file has been renamed to `DEFAULT_FASTDDS_PROFILES.xml`.
 * XML Schema namespace in fastdds_profiles.xsd has been updated to http://www.eprosima.com.
 * The API exporting macro has been renamed to `FASTDDS_EXPORTED_API`.
@@ -34,26 +34,32 @@ The below list of changes expose the changes related to the library name, librar
     * fastdds-config.cmake
 
 * The fastrtps.rc file has been renamed as fastdds.rc.
+* Deprecated APIs marked with `FASTDDS_DEPRECATED` and `FASTDDS_TODO_BEFORE` macros have been removed.
 
+## Compatibility with Fast CDR
+
+Fast DDS v3.x is only compatible with Fast CDR v2.x.
 
 ## Namespace migrations and changes
 
 The following list contains the namespace changes and migrations:
 
-* All `eprosima::fastrtps` namespace references were migrated to `eprosima::fastdds::rtps`.
-* `SubscriptionBuiltinTopicData`, `PublicationBuiltinTopicData` and `ParticipantBuiltinTopicData` were migrated from `fastdds::dds::builtin` to `fastdds::dds`.
-* `EventKindBits` references changed to`EventKind`.
-* `EventKindEntityId` references changed to`EntityId`.
-* `StatisticsEventKind` references changed to `statistics::EventKind`.
-* `Duration_t` reference moved to `fastdds::dds`
+* All `eprosima::fastrtps::` namespace references were moved to `eprosima::fastdds::`.
+* `SubscriptionBuiltinTopicData`, `PublicationBuiltinTopicData` and `ParticipantBuiltinTopicData` were moved from `fastdds::dds::builtin::` to `fastdds::dds::`.
+* `EventKindBits::` references changed to`EventKind::`.
+* `EventKindEntityId::` references changed to`EntityId::`.
+* `StatisticsEventKind::` references changed to `statistics::EventKind::`.
+* `Duration_t` and `c_TimeInfinite` reference were moved to `dds::`.
+* `ParticipantAttributes`, `PublisherAttributes`, `SubscriberAttributes`, `ReplierAttributes`, `RequesterAttributes` were moved to `xmlparser::`.
+* `Time_hpp` references were divided into `dds::Time_t::` and `rtps::Time_t::`.
 
 
-## Fast RTPS public headers migration to Fast DDS
+## Public headers migrated to *fastdds*
 
 All public header extensions have been changed to `.hpp`.
 Also, the `fixed_size_string.hpp` feature has been migrated from Fast DDS package to Fast CDR.
 All the headers in `include/fastrtps` were migrated to `include/fastdds`.
-In particular, he following list includes headers that have been relocated to different paths or whose implementations have been incorporated into other headers.
+In particular, the following list includes headers that have been relocated to different paths or whose implementations have been incorporated into other headers.
 
 | Fast DDS 2.x file *include* path | Fast DDS v3.0.0 file *include* path |
 |----------------------------------|-------------------------------------|
@@ -78,9 +84,9 @@ In particular, he following list includes headers that have been relocated to di
 | fastrtps/transport/TCPTransportDescritpor.h | fastdds/rtps/transport/TCPTransportDescritpor.hpp |
 
 
-## Public headers migrated to private
+## Public headers moved to private
 
-The following list contains the files that were in the `include` folder that have been migrated to `src/cpp` folder:
+The following list contains files that were previously in the `include` folder and have been relocated to the `src/cpp` folder:
 
 * ParticipantAttributes.hpp
 * ReplierAttributes.hpp
@@ -124,13 +130,14 @@ The following list contains the files that were in the `include` folder that hav
 * ReaderLocator.hpp
 * ReaderProxy.hpp
 * ServerAttributes.hpp
-
+* TopicAttributes.hpp
+* TypeLookupService.hpp
 
 ## API changes
 
 |        Deprecated APIs           |             New APIs                |
 |----------------------------------|-------------------------------------|
-| **xmlparser::XMLProfileManager::library_settings(LibrarySettingsAttributes)** | **DomainParticipantFactory::get_instance()->set_library_settings(LibrarySettings)** |
+| **xmlparser::XMLProfileManager::library_settings(`LibrarySettingsAttributes`)** | **DomainParticipantFactory::get_instance()->set_library_settings(`LibrarySettings`)** |
 | **fill_discovery_data_from_cdr_message(`ReaderProxyData`, `MonitorServiceStatusData`)** |**fill_discovery_data_from_cdr_message(`SubscriptionBuiltinTopicData`, `MonitorServiceStatusData`)** |
 | **fill_discovery_data_from_cdr_message(`WriterProxyData`, `MonitorServiceStatusData`)** | **fill_discovery_data_from_cdr_message(`PublicationBuiltinTopicData`,`MonitorServiceStatusData`)** |
 | **fill_discovery_data_from_cdr_message(`ParticipantProxyData`, `MonitorServiceStatusData`)** | **fill_discovery_data_from_cdr_message(`ParticipantBuiltinTopicData`,`MonitorServiceStatusData`)** |
@@ -140,28 +147,64 @@ The following list contains the files that were in the `include` folder that hav
 | **onReaderDiscovery(`RTPSParticipant`, `ReaderDiscoveryInfo`, bool)** | **on_reader_discovery(`RTPSParticipant`,  `ReaderDiscoveryStatus`, `SubscriptionBuiltinTopicData`, bool)** |
 | **onWriterDiscovery(`RTPSParticipant`, `WriterDiscoveryInfo`, bool)** | **on_writer_discovery(`RTPSParticipant`, `WriterDiscoveryStatus`, `PublicationBuiltinTopicData`, bool)** |
 | **onParticipantDiscovery(`RTPSParticipant`, `ParticipantDiscoveryInfo`, bool)** | **on_participant_discovery(`RTPSParticipant`, `ParticipantDiscoveryStatus`, `ParticipantBuiltinTopicData`, bool)** |
-| **xmlparser::XMLProfileManager::loadXMLFile(string)** | **DomainParticipantFactory::get_instance()->load_XML_profiles_file(string)** |
-| **xmlparser::XMLProfileManager::loadDefaultXMLFile()** | **load_profiles()** |
-| **xmlparser::XMLProfileManager::loadXMLFile(string)** | **load_XML_profiles_file(string)** |
-| **xmlparser::XMLProfileManager::loadXMLString(const char, size_t)** | **load_XML_profiles_string(const char, size_t)** |
-| **xmlparser::XMLProfileManager::fillParticipantAttributes(string, `ParticipantAttributes`, bool)** | **get_participant_qos_from_profile(string, `DomainParticipantQos`)** |
-|**xmlparser::XMLProfileManager::getDynamicTypeBuilderByName(`DynamicTypeBuilder::_ref_type`, string)** | **get_dynamic_type_builder_from_xml_by_name(`DynamicTypeBuilder::_ref_type`, string)** |
-| **xmlparser::XMLProfileManager::fillRequesterAttributes(string, RequesterAttributes)** | **get_requester_qos_from_profile(string, RequesterQos)** |
+| **XMLProfileManager::loadXMLFile(string)** | **DomainParticipantFactory::get_instance()->load_XML_profiles_file(string)** |
+| **XMLProfileManager::loadDefaultXMLFile()** | **load_profiles()** |
+| **XMLProfileManager::loadXMLFile(string)** | **load_XML_profiles_file(string)** |
+| **XMLProfileManager::loadXMLString(const char, size_t)** | **load_XML_profiles_string(const char, size_t)** |
+| **XMLProfileManager::fillParticipantAttributes(string, `ParticipantAttributes`, bool)** | **get_participant_qos_from_profile(string, `DomainParticipantQos`)** |
+|**XMLProfileManager::getDynamicTypeBuilderByName(`DynamicTypeBuilder::_ref_type`, string)** | **get_dynamic_type_builder_from_xml_by_name(`DynamicTypeBuilder::_ref_type`, string)** |
+| **XMLProfileManager::fillRequesterAttributes(string, RequesterAttributes)** | **get_requester_qos_from_profile(string, RequesterQos)** |
 | **XMLParser::getXMLThroughputController(`tinyxml2::XMLElement`, `ThroughputControllerDescriptor`, uint8_t)** | **XMLParser::getXMLFlowControllerDescriptorList(`tinyxml2::XMLElement`, `FlowControllerDescriptorList`, uint8_t)** |
 | **add_throughput_controller_descriptor_to_pparams(`FlowControllerSchedulerPolicy`, uint32_t, uint32_t)** | **add_flow_controller_descriptor_to_pparams(`FlowControllerSchedulerPolicy`, uint32_t, uint32_t)** |
 | **get_payload(uint32_t, `CacheChange_t`)** | **get_payload(uint32_t, `SerializedPayload_t`)** |
 | **release_payload(`CacheChange_t`)** | **release_payload(`SerializedPayload_t`)** |
-
-Moreover, `DataWriter::write()` methods return only `ReturnCode_t`.
+| **registerWriter(RTPSWriter, TopicAttributes, WriterQos)** |  **register_writer(`RTPSWriter`, `PublicationBuiltinTopicData`, `WriterQos`)** |
+| **registerReader(RTPSReader, TopicAttributes, ReaderQos)** |  **register_reader(`RTPSReader`, `SubscriptionBuiltinTopicData`, `ReaderQos`)** |
+| **updateWriter(`RTPSWriter`, `TopicAttributes`, `WriterQos`)** | **update_writer(`RTPSWriter`, `WriterQos`)** |
+| **updateReader(`RTPSReader`, `TopicAttributes`, `ReaderQos`)** | **update_reader(`RTPSReader`, `ReaderQos`)** |
+| **getRTPSParticipantAttributes()** | **get_attributes()** |
+| **bool write(void)** | **ReturnCode_t write(void)** |
+| **bool write(void, `WriteParams`)** | **ReturnCode_t write(void, `WriteParams`)** |
+| **SenderResource::send(octet, uint32_t, `LocatorsIterator`, `LocatorsIterator`, chrono::steady_clock::time_point)** | **SenderResource::send(`vector<NetworkBuffer>`, uint32_t, `LocatorsIterator`, `LocatorsIterator`, chrono::steady_clock::time_point)** |
+| **RTPSMessageSenderInterface::send(`CDRMessage_t`, chrono::steady_clock::time_point)** | **RTPSMessageSenderInterface::send(`vector<NetworkBuffer>`, uint32_t, chrono::steady_clock::time_point)** |
+| **createRTPSWriter(`RTPSParticipant`, `EntityId_t`, `WriterAttributes`, `shared_ptr<IPayloadPool>`, `shared_ptr<IChangePool>`, `WriterHistory`, `WriterListener`)** | **createRTPSWriter(`RTPSParticipant`, `WriterAttributes`, `WriterHistory`, `WriterListener`)** |
+| **RTPSWriter::new_change(`function<uint32_t()>& dataCdrSerializedSize`, `ChangeKind_t`, `InstanceHandle_t`)** | **WriterHistory::create_change(uint32_t, `ChangeKind_t`, `InstanceHandle_t`)** |
+| **RTPSWriter::new_change(`ChangeKind_t`, `InstanceHandle_t`)** | **WriterHistory::create_change(`ChangeKind_t`, `InstanceHandle_t`)** |
+| **RTPSWriter::release_change(`CacheChange_t`)** | **WriterHistory::release_change(`CacheChange_t`)** |
+| **remove_older_changes(unsigned int)** | **remove_min_change()** |
+| **RTPSWriter::is_acked_by_all(`CacheChange_t`)** | **RTPSWriter::is_acked_by_all(`SequenceNumber_t`)** |
+| **RTPSWriter::updateAttributes(`WriterAttributes`)** | **RTPSWriter::update_attributes(`WriterAttributes`)**|
+| **RTPSWriter::getListener()** | **RTPSWriter::get_listener()** |
+| **RTPSWriter::isAsync()** | **RTPSWriter::is_async()** |
+| **WriterListener::onWriterMatched(`RTPSWriter`, `MatchingInfo`)** | **WriterListener::on_writer_matched(`RTPSWriter`, `MatchingInfo`)** |
+| **WriterListener::onWriterChangeReceivedByAll(`RTPSWriter`,  `CacheChange_t`)** | **WriterListener::on_writer_change_received_by_all(`RTPSWriter`,`CacheChange_t`)** |
+| **TypeLookupReplyListener::onWriterChangeReceivedByAll(`RTPSWriter`, `CacheChange_t`)** | **TypeLookupReplyListener::on_writer_change_received_by_all(`RTPSWriter`, `CacheChange_t`)** |
+| **RTPSReader::getListener()** | **RTPSReader::get_listener()** |
+| **RTPSReader::setListener()** | **RTPSReader::set_listener()** |
+| **RTPSReader::expectsInlineQos()** | **RTPSReader::expects_inline_qos()** |
+| **RTPSReader::isInCleanState()** | **RTPSReader::is_in_clean_state()** |
+| **RTPSReader::getHistory()** | **RTPSReader::get_history()** |
+| **RTPSReader::nextUnreadCache(`CacheChange_t`, `WriterProxy`)** | **RTPSReader::next_unread_cache()** |
+| **RTPSReader::nextUntakenCache(`CacheChange_t`, `WriterProxy`)** | **RTPSReader::next_untaken_cache()** |
+| **ReaderListener::onReaderMatched(`RTPSReader`, `MatchingInfo`)** | **ReaderListener::on_reader_matched(`RTPSReader`, `MatchingInfo`)** |
+| **ReaderListener::onNewCacheChangeAdded(`RTPSReader`, `CacheChange_t`)** | **ReaderListener::on_new_cache_change_added(`RTPSReader`, `CacheChange_t`)** |
 
 
 ## Struct, Enum, Variable
 
-* Extend SubscriptionBuiltinTopicData with additional fields to mimic those of ReaderProxyData.
-* Extend PublicationBuiltinTopicData with additional fields to mimic those of WriterProxyData.
-* Extend  ParticipantBuiltinTopicData 	with additional fields to mimic those of ParticipantProxyData.
-* DiscoveryProtocol_t	is DiscoveryProtocol.
-* Extend SendBuffersAllocationAttributes with a new attribute defining the allocation configuration of the NetworkBuffers.
+* Extend `SubscriptionBuiltinTopicData` with additional fields to mimic those of `ReaderProxyData`.
+* Extend `PublicationBuiltinTopicData` with additional fields to mimic those of `WriterProxyData`.
+* Extend `ParticipantBuiltinTopicData` adding the the Product version and additional fields to mimic those of `ParticipantProxyData`.
+* `DiscoveryProtocol_t` is `DiscoveryProtocol`.
+* Extend `SendBuffersAllocationAttributes` with a new attribute defining the allocation configuration of the `NetworkBuffers`.
+* `TypeConsistencyQos` was removed from DataReader, and `TypeConsistencyEnforcementQosPolicy` and `DataRepresentationQosPolicy` were included.
+* `initialHeartbeatDelay` is `initial_heartbeat_delay`.
+* `heartbeatPeriod` is `heartbeat_period`.
+* `nackResponseDelay` is `nack_response_delay`.
+* `nackSupressionDuration` is `nack_supression_duration`.
+* `heartbeatResponseDelay` is `heartbeat_response_delay`.
+* `initialAcknackDelay` is `initial_acknack_delay`.
+* `expectsInlineQos` is `expects_inline_qos`.
 
 
 ## Examples
@@ -232,7 +275,3 @@ A security folder created in examples with a modified version of hello world, su
 ### RTPS Entities
 Refactor the rtps/Registered example with the current new example format.
 This RTPS example demonstrates a basic RTPS deployment. The main change is that serialization and deserialization are done with overload methods from fastcdr.
-
-## Compatibility with Fast CDR
-
-Fast DDS v3.x.x is only compatible with Fast CDR v2.x.x.
