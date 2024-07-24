@@ -19,6 +19,8 @@
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
+#include <fastdds/rtps/common/SerializedPayload.hpp>
 #include <fastdds/utils/md5.hpp>
 
 namespace eprosima {
@@ -96,12 +98,12 @@ public:
     /**
      * @brief Deserialize an object from the given payload
      *
-     * @param payload @ref eprosima::fastdds::rtps::SerializedPayload_t to parse
+     * @param payload @ref rtps::SerializedPayload_t to parse
      * @param data object to fill in with payload data
      *
      * @return bool specifying success
      */
-    FASTDDS_EXPORTED_API bool deserialize (
+    FASTDDS_EXPORTED_API bool deserialize(
             eprosima::fastdds::rtps::SerializedPayload_t& payload,
             void* data) override;
 
@@ -112,11 +114,11 @@ public:
      */
     FASTDDS_EXPORTED_API traits<DynamicType>::ref_type get_dynamic_type() const noexcept;
 
-    /*
+    /**
      * @brief Calculate the key associated to a given object
      *
-     * @param data payload containing the serialized object whose key is calculated
-     * @param ihandle @ref eprosima::fastdds::rtps::InstanceHandle_t to fill in
+     * @param payload @ref rtps::SerializedPayload_t containing the serialized object which key is calculated
+     * @param ihandle @ref rtps::InstanceHandle_t to fill in
      * @param force_md5 use always md5 even if key payload footprint is smaller than the hash
      *
      * @return bool specifying success
@@ -126,11 +128,11 @@ public:
             eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
             bool force_md5 = false) override;
 
-    /*
+    /**
      * @brief Calculate the key associated to a given object
      *
-     * @param data object whose key is calculated
-     * @param ihandle @ref eprosima::fastdds::rtps::InstanceHandle_t to fill in
+     * @param data object which key is calculated
+     * @param ihandle @ref rtps::InstanceHandle_t to fill in
      * @param force_md5 use always md5 even if key payload footprint is smaller than the hash
      *
      * @return bool specifying success
@@ -140,7 +142,7 @@ public:
             eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
             bool force_md5 = false) override;
 
-    /*
+    /**
      * @brief Provide a functor that calculates a specified object serialized size
      *
      * @param [in] data object whose payload footprint to calculate
@@ -152,11 +154,11 @@ public:
             const void* const data,
             DataRepresentationId_t data_representation) override;
 
-    /*
+    /**
      * @brief Serialize an object into a given payload
      *
      * @param [in] data object to serialize
-     * @param [out] payload @ref eprosima::fastdds::rtps::SerializedPayload_t to fill in
+     * @param [out] payload @ref rtps::SerializedPayload_t to fill in
      * @param [in] data_representation Representation that should be used to encode the data into the payload.
      *
      * @return bool specifying success
