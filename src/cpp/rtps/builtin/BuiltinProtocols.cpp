@@ -231,14 +231,13 @@ bool BuiltinProtocols::add_writer(
 bool BuiltinProtocols::add_reader(
         RTPSReader* rtps_reader,
         const SubscriptionBuiltinTopicData& sub_builtin_data,
-        const fastdds::dds::ReaderQos& rqos,
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
     bool ok = true;
 
     if (nullptr != mp_PDP)
     {
-        ok = mp_PDP->get_edp()->new_reader_proxy_data(rtps_reader, sub_builtin_data, rqos, content_filter);
+        ok = mp_PDP->get_edp()->new_reader_proxy_data(rtps_reader, sub_builtin_data, content_filter);
 
         if (!ok)
         {
@@ -253,7 +252,7 @@ bool BuiltinProtocols::add_reader(
 
     if (nullptr != mp_WLP)
     {
-        ok &= mp_WLP->add_local_reader(rtps_reader, rqos);
+        ok &= mp_WLP->add_local_reader(rtps_reader, sub_builtin_data.liveliness);
     }
 
     return ok;

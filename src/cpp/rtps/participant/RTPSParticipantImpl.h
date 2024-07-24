@@ -909,14 +909,12 @@ public:
      * Register a Reader in the BuiltinProtocols.
      * @param Reader           Pointer to the RTPSReader.
      * @param sub_builtin_data Contains the discovery information of the reader.
-     * @param rqos             ReaderQos.
      * @param content_filter   Optional content filtering information.
      * @return True if correctly registered.
      */
     bool register_reader(
             RTPSReader* Reader,
             const SubscriptionBuiltinTopicData& sub_builtin_data,
-            const fastdds::dds::ReaderQos& rqos,
             const ContentFilterProperty* content_filter = nullptr);
 
     /**

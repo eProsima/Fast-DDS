@@ -194,10 +194,9 @@ public:
                 RTPSWriter * Writer,
                 const fastdds::dds::WriterQos& wqos));
 
-    MOCK_METHOD4(register_reader, bool(
+    MOCK_METHOD3(register_reader, bool(
                 RTPSReader * Reader,
                 const SubscriptionBuiltinTopicData& sub_builtin_data,
-                const fastdds::dds::ReaderQos& rqos,
                 const fastdds::rtps::ContentFilterProperty* content_filter));
 
     MOCK_METHOD3(update_reader, bool(

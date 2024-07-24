@@ -832,13 +832,13 @@ bool WLP::remove_local_writer(
 
 bool WLP::add_local_reader(
         RTPSReader* reader,
-        const fastdds::dds::ReaderQos& rqos)
+        const fastdds::dds::LivelinessQosPolicy& qos)
 {
     auto base_reader = BaseReader::downcast(reader);
 
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 
-    if (rqos.m_liveliness.kind == dds::AUTOMATIC_LIVELINESS_QOS)
+    if (qos.kind == dds::AUTOMATIC_LIVELINESS_QOS)
     {
         automatic_readers_ = true;
     }

@@ -193,7 +193,7 @@ public:
             return;
         }
 
-        initialized_ = participant_->register_reader(reader_, sub_builtin_data_, reader_qos_, content_filter_property_);
+        initialized_ = participant_->register_reader(reader_, sub_builtin_data_, content_filter_property_);
     }
 
     void update()

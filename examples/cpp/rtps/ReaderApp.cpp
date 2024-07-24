@@ -117,13 +117,11 @@ ReaderApp::ReaderApp(
     SubscriptionBuiltinTopicData sub_builtin_data;
     sub_builtin_data.topic_name = topic_name;
     sub_builtin_data.type_name = "HelloWorld";
-
-    eprosima::fastdds::dds::ReaderQos reader_qos;
-    reader_qos.m_durability.kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
-    reader_qos.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    sub_builtin_data.durability.kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    sub_builtin_data.reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
 
     // Register entity
-    if (!rtps_participant_->register_reader(rtps_reader_, sub_builtin_data, reader_qos))
+    if (!rtps_participant_->register_reader(rtps_reader_, sub_builtin_data))
     {
         throw std::runtime_error("Entity registration failed");
     }

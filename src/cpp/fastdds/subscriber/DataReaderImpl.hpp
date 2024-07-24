@@ -649,6 +649,7 @@ private:
     DataReaderQos get_datareader_qos_from_settings(
             const DataReaderQos& qos);
 
+    bool is_data_sharing_compatible_ = false;
 
 };
 
