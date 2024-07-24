@@ -294,7 +294,7 @@ public:
         return 65536;
     }
 
-    RTPSParticipantAttributes get_attributes() const
+    const RTPSParticipantAttributes& get_attributes() const
     {
         return attr_;
     }

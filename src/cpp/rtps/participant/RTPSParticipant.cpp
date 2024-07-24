@@ -120,7 +120,7 @@ std::vector<std::string> RTPSParticipant::getParticipantNames() const
     return mp_impl->getParticipantNames();
 }
 
-RTPSParticipantAttributes RTPSParticipant::get_attributes() const
+const RTPSParticipantAttributes& RTPSParticipant::get_attributes() const
 {
     return mp_impl->get_attributes();
 }

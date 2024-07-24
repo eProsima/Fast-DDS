@@ -505,11 +505,8 @@ void PDPServer::initializeParticipantProxyData(
 
     auto discovery_config = getRTPSParticipant()->get_attributes().builtin.discovery_config;
 
-    if (discovery_config.discoveryProtocol !=
-            DiscoveryProtocol::SERVER
-            &&
-            discovery_config.discoveryProtocol !=
-            DiscoveryProtocol::BACKUP)
+    if (discovery_config.discoveryProtocol != DiscoveryProtocol::SERVER &&
+            discovery_config.discoveryProtocol != DiscoveryProtocol::BACKUP)
     {
         EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Using a PDP Server object with another user's settings");
     }

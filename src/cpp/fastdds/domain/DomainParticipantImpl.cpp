@@ -1726,7 +1726,7 @@ ReturnCode_t DomainParticipantImpl::check_qos(
 
         if (TypePropagation::TYPEPROPAGATION_UNKNOWN == type_propagation)
         {
-            EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK, "Invalid value for fastdds.type_propagation property");
+            EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK, "Invalid value for property " << parameter_policy_type_propagation);
             return RETCODE_INCONSISTENT_POLICY;
         }
     }

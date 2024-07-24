@@ -34,11 +34,20 @@ namespace utils {
  */
 enum class TypePropagation : std::uint8_t
 {
-    TYPEPROPAGATION_UNKNOWN,            //! Invalid value.
-    TYPEPROPAGATION_DISABLED,           //! Disable the propagation and registration of Type Information.
-    TYPEPROPAGATION_ENABLED,            //! Enable the propagation and registration of Type Information (EK_COMPLETE & EK_MINIMAL).
-    TYPEPROPAGATION_MINIMAL_BANDWIDTH,  //! Only propagation of EK_MINIMAL.
-    TYPEPROPAGATION_REGISTRATION_ONLY   //! Only registration of Type Inforamtion.
+    //! Invalid value.
+    TYPEPROPAGATION_UNKNOWN,
+
+    //! Disable the propagation and registration of Type Information.
+    TYPEPROPAGATION_DISABLED,
+
+    //! Enable the propagation and registration of Type Information (EK_COMPLETE & EK_MINIMAL).
+    TYPEPROPAGATION_ENABLED,
+
+    //! Only propagation of EK_MINIMAL.
+    TYPEPROPAGATION_MINIMAL_BANDWIDTH,
+
+    //! Only registration of Type Information.
+    TYPEPROPAGATION_REGISTRATION_ONLY
 };
 
 std::ostream& operator <<(

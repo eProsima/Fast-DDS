@@ -227,7 +227,7 @@ public:
         return {};
     }
 
-    RTPSParticipantAttributes get_attributes() const
+    const RTPSParticipantAttributes& get_attributes() const
     {
         return attributes_;
     }
