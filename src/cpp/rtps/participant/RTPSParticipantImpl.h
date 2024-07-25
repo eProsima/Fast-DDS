@@ -780,14 +780,24 @@ private:
             const Functor& callback);
 
     /**
-     * Get default metatraffic locators when not provided by the user.
+     * @brief Fill the default metatraffic locators.
+     *
+     * @param [in] att @ref RTPSParticipantAttributes in which the locators are filled.
+     *
+     * @note This function in meant to be used iff the locators are not provided by the user.
      */
-    void get_default_metatraffic_locators();
+    void get_default_metatraffic_locators(
+            RTPSParticipantAttributes& att);
 
     /**
-     * Get default unicast locators when not provided by the user.
+     * @brief Fill the default unicast locators.
+     *
+     * @param [in] att @ref RTPSParticipantAttributes in which the locators are filled.
+     *
+     * @note This function in meant to be used iff the locators are not provided by the user.
      */
-    void get_default_unicast_locators();
+    void get_default_unicast_locators(
+            RTPSParticipantAttributes& att);
 
     bool match_local_endpoints_ = true;
 
