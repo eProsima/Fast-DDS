@@ -16,8 +16,8 @@
  * @file ProductVersion_t.hpp
  */
 
-#ifndef _FASTDDS_RTPS_COMMON_PRODUCTVERSIONT_HPP_
-#define _FASTDDS_RTPS_COMMON_PRODUCTVERSIONT_HPP_
+#ifndef FASTDDS_RTPS_COMMON__PRODUCTVERSION_T_HPP
+#define FASTDDS_RTPS_COMMON__PRODUCTVERSION_T_HPP
 
 #include <cstdint>
 #include <iomanip>
@@ -40,10 +40,10 @@ struct ProductVersion_t
 } // namespace eprosima
 
 /**
- * @brief ostream operator<< for VendorId_t
+ * @brief ostream operator<< for ProductVersion_t
  *
  * @param output: the output stream
- * @param vendor_id: the vendor id to append to the output stream
+ * @param product_version: the product version to append to the output stream
  */
 inline std::ostream& operator <<(
         std::ostream& output,
@@ -56,4 +56,4 @@ inline std::ostream& operator <<(
     return output;
 }
 
-#endif /* _FASTDDS_RTPS_COMMON_PRODUCTVERSIONT_HPP_ */
+#endif /* FASTDDS_RTPS_COMMON__PRODUCTVERSION_T_HPP */

@@ -223,6 +223,9 @@ public:
         return lease_duration_;
     }
 
+    VendorId_t select_vendor_id(
+            const VendorId_t source_vendor_id);
+
 private:
 
     //! Store the last timestamp it was received a RTPS message from the remote participant.

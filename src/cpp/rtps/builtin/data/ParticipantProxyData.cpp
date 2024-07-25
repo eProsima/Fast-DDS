@@ -25,6 +25,7 @@
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/core/policy/QosPoliciesSerializer.hpp>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/common/ProductVersion_t.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 
 #include <rtps/builtin/BuiltinProtocols.h>
@@ -472,11 +473,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_PRODUCT_VERSION:
                     {
-                        VendorId_t local_vendor_id = source_vendor_id;
-                        if (c_VendorId_Unknown == local_vendor_id)
-                        {
-                            local_vendor_id = ((c_VendorId_Unknown == m_VendorId) ? c_VendorId_eProsima : m_VendorId);
-                        }
+                        VendorId_t local_vendor_id {select_vendor_id(source_vendor_id)};
 
                         // Ignore custom PID when coming from other vendors
                         if (c_VendorId_eProsima != local_vendor_id)
@@ -533,11 +530,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_NETWORK_CONFIGURATION_SET:
                     {
-                        VendorId_t local_vendor_id = source_vendor_id;
-                        if (c_VendorId_Unknown == local_vendor_id)
-                        {
-                            local_vendor_id = ((c_VendorId_Unknown == m_VendorId) ? c_VendorId_eProsima : m_VendorId);
-                        }
+                        VendorId_t local_vendor_id {select_vendor_id(source_vendor_id)};
 
                         // Ignore custom PID when coming from other vendors
                         if (c_VendorId_eProsima != local_vendor_id)
@@ -990,6 +983,17 @@ GUID_t ParticipantProxyData::get_backup_stamp() const
 void ParticipantProxyData::assert_liveliness()
 {
     last_received_message_tm_ = std::chrono::steady_clock::now();
+}
+
+VendorId_t ParticipantProxyData::select_vendor_id(
+        const VendorId_t source_vendor_id)
+{
+    VendorId_t ret_vendor_id {source_vendor_id};
+    if (c_VendorId_Unknown == ret_vendor_id)
+    {
+        ret_vendor_id = ((c_VendorId_Unknown == m_VendorId) ? c_VendorId_eProsima : m_VendorId);
+    }
+    return ret_vendor_id;
 }
 
 } /* namespace rtps */
