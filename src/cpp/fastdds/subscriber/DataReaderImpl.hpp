@@ -375,9 +375,15 @@ public:
     std::recursive_mutex& get_conditions_mutex() const noexcept;
 
     /**
-     * @brief A method to retrieve the subscription data discovery information.
+     * Retrieve the subscription data discovery information.
+     *
+     * @param [out] subscription_data The subscription data discovery information.
+     *
+     * @return NOT_ENABLED if the reader has not been enabled.
+     * @return OK if the subscription data is returned.
      */
-    SubscriptionBuiltinTopicData get_subscription_builtin_topic_data() const;
+    ReturnCode_t get_subscription_builtin_topic_data(
+             SubscriptionBuiltinTopicData& subscription_data) const;
 
 protected:
 

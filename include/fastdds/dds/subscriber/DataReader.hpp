@@ -1078,11 +1078,15 @@ public:
             rtps::LocatorList& locators) const;
 
     /**
-     * @brief A method to retrieve the subscription data discovery information.
+     * Retrieve the subscription data discovery information.
      *
-     * @return The discovery information of the subscription.
+     * @param [out] subscription_data The subscription data discovery information.
+     *
+     * @return NOT_ENABLED if the reader has not been enabled.
+     * @return OK if the subscription data is returned.
      */
-    FASTDDS_EXPORTED_API SubscriptionBuiltinTopicData get_subscription_builtin_topic_data() const;
+    FASTDDS_EXPORTED_API ReturnCode_t get_subscription_builtin_topic_data(
+            SubscriptionBuiltinTopicData& subscription_data) const;
 
 protected:
 
