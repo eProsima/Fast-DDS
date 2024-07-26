@@ -4,7 +4,7 @@ This document aims to help during the migration process from *eProsima Fast DDS*
 The new release includes more changes than the included in this document, so refer to the [release notes](https://fast-dds.docs.eprosima.com/en/latest/notes/notes.html) for further information.
 
 As announced in previous minor releases, it is always *recommended* to regenerate the types (if applies) with the latest *eProsima Fast DDS Gen* release.
-In this case, the type regeneration is **required** (if applies), using *Fast DDS Gen* v4.0.0.
+In this case, the type regeneration is required (if applies), using *Fast DDS Gen* v4.0.0.
 
 The following sections describe in detail the possible changes that your project would require to migrate to *Fast DDS v3.0.0*.
 
@@ -25,9 +25,8 @@ The below list expose the changes related to the package name, environment varia
 
 * The package has been renamed from `fastrtps` to `fastdds`.
 * XML profiles loading environment variable has been renamed to: `FASTDDS_DEFAULT_PROFILES_FILE`.
-* The configuration file has been renamed to `DEFAULT_FASTDDS_PROFILES.xml`.
+* The XML configuration file that Fast DDS searches by default to load the profiles has been renamed to `DEFAULT_FASTDDS_PROFILES.xml`.
 * XML Schema namespace in fastdds_profiles.xsd has been updated to http://www.eprosima.com.
-* The API exporting macro has been renamed to `FASTDDS_EXPORTED_API`.
 * CMake Windows file names have been changed:
 
     * fastdds.manifest.in
@@ -86,7 +85,8 @@ In particular, the following list includes headers that have been relocated to d
 
 ## Public headers moved to private
 
-The following list contains files that were previously in the `include` folder and have been relocated to the `src/cpp` folder:
+The following list contains headers that were previously in the `include` folder and have been relocated to the `src/cpp` folder.
+Since they are no longer public, it is not possible to include them in external projects:
 
 * ParticipantAttributes.hpp
 * ReplierAttributes.hpp
@@ -137,57 +137,71 @@ The following list contains files that were previously in the `include` folder a
 
 |        Deprecated APIs           |             New APIs                |
 |----------------------------------|-------------------------------------|
-| **xmlparser::XMLProfileManager::library_settings(`LibrarySettingsAttributes`)** | **DomainParticipantFactory::get_instance()->set_library_settings(`LibrarySettings`)** |
-| **fill_discovery_data_from_cdr_message(`ReaderProxyData`, `MonitorServiceStatusData`)** |**fill_discovery_data_from_cdr_message(`SubscriptionBuiltinTopicData`, `MonitorServiceStatusData`)** |
-| **fill_discovery_data_from_cdr_message(`WriterProxyData`, `MonitorServiceStatusData`)** | **fill_discovery_data_from_cdr_message(`PublicationBuiltinTopicData`,`MonitorServiceStatusData`)** |
-| **fill_discovery_data_from_cdr_message(`ParticipantProxyData`, `MonitorServiceStatusData`)** | **fill_discovery_data_from_cdr_message(`ParticipantBuiltinTopicData`,`MonitorServiceStatusData`)** |
-| **on_participant_discovery(`DomainParticipant`, `ParticipantDiscoveryInfo`, bool)** |**on_participant_discovery(`DomainParticipant`, `ParticipantDiscoveryStatus`, `ParticipantBuiltinTopicData`, `should_be_ignored`)** |
-| **on_subscriber_discovery(`DomainParticipant`, `ReaderDiscoveryInfo`, bool)** | **on_data_reader_discovery(`DomainParticipant`, `ReaderDiscoveryStatus`, `SubscriptionBuiltinTopicData`, `should_be_ignored`)** |
-| **on_publisher_discovery(`DomainParticipant`, `WriterDiscoveryInfo`, bool)** | **on_data_writer_discovery(`DomainParticipant`, `WriterDiscoveryStatus`, `PublicationBuiltinTopicData`, `should_be_ignored`)** |
-| **onReaderDiscovery(`RTPSParticipant`, `ReaderDiscoveryInfo`, bool)** | **on_reader_discovery(`RTPSParticipant`,  `ReaderDiscoveryStatus`, `SubscriptionBuiltinTopicData`, bool)** |
-| **onWriterDiscovery(`RTPSParticipant`, `WriterDiscoveryInfo`, bool)** | **on_writer_discovery(`RTPSParticipant`, `WriterDiscoveryStatus`, `PublicationBuiltinTopicData`, bool)** |
-| **onParticipantDiscovery(`RTPSParticipant`, `ParticipantDiscoveryInfo`, bool)** | **on_participant_discovery(`RTPSParticipant`, `ParticipantDiscoveryStatus`, `ParticipantBuiltinTopicData`, bool)** |
-| **XMLProfileManager::loadXMLFile(string)** | **DomainParticipantFactory::get_instance()->load_XML_profiles_file(string)** |
-| **XMLProfileManager::loadDefaultXMLFile()** | **load_profiles()** |
-| **XMLProfileManager::loadXMLFile(string)** | **load_XML_profiles_file(string)** |
-| **XMLProfileManager::loadXMLString(const char, size_t)** | **load_XML_profiles_string(const char, size_t)** |
-| **XMLProfileManager::fillParticipantAttributes(string, `ParticipantAttributes`, bool)** | **get_participant_qos_from_profile(string, `DomainParticipantQos`)** |
-|**XMLProfileManager::getDynamicTypeBuilderByName(`DynamicTypeBuilder::_ref_type`, string)** | **get_dynamic_type_builder_from_xml_by_name(`DynamicTypeBuilder::_ref_type`, string)** |
-| **XMLProfileManager::fillRequesterAttributes(string, RequesterAttributes)** | **get_requester_qos_from_profile(string, RequesterQos)** |
-| **XMLParser::getXMLThroughputController(`tinyxml2::XMLElement`, `ThroughputControllerDescriptor`, uint8_t)** | **XMLParser::getXMLFlowControllerDescriptorList(`tinyxml2::XMLElement`, `FlowControllerDescriptorList`, uint8_t)** |
-| **add_throughput_controller_descriptor_to_pparams(`FlowControllerSchedulerPolicy`, uint32_t, uint32_t)** | **add_flow_controller_descriptor_to_pparams(`FlowControllerSchedulerPolicy`, uint32_t, uint32_t)** |
-| **get_payload(uint32_t, `CacheChange_t`)** | **get_payload(uint32_t, `SerializedPayload_t`)** |
-| **release_payload(`CacheChange_t`)** | **release_payload(`SerializedPayload_t`)** |
-| **registerWriter(RTPSWriter, TopicAttributes, WriterQos)** |  **register_writer(`RTPSWriter`, `PublicationBuiltinTopicData`, `WriterQos`)** |
-| **registerReader(RTPSReader, TopicAttributes, ReaderQos)** |  **register_reader(`RTPSReader`, `SubscriptionBuiltinTopicData`, `ReaderQos`)** |
-| **updateWriter(`RTPSWriter`, `TopicAttributes`, `WriterQos`)** | **update_writer(`RTPSWriter`, `WriterQos`)** |
-| **updateReader(`RTPSReader`, `TopicAttributes`, `ReaderQos`)** | **update_reader(`RTPSReader`, `ReaderQos`)** |
-| **getRTPSParticipantAttributes()** | **get_attributes()** |
-| **bool write(void)** | **ReturnCode_t write(void)** |
-| **bool write(void, `WriteParams`)** | **ReturnCode_t write(void, `WriteParams`)** |
-| **SenderResource::send(octet, uint32_t, `LocatorsIterator`, `LocatorsIterator`, chrono::steady_clock::time_point)** | **SenderResource::send(`vector<NetworkBuffer>`, uint32_t, `LocatorsIterator`, `LocatorsIterator`, chrono::steady_clock::time_point)** |
-| **RTPSMessageSenderInterface::send(`CDRMessage_t`, chrono::steady_clock::time_point)** | **RTPSMessageSenderInterface::send(`vector<NetworkBuffer>`, uint32_t, chrono::steady_clock::time_point)** |
-| **createRTPSWriter(`RTPSParticipant`, `EntityId_t`, `WriterAttributes`, `shared_ptr<IPayloadPool>`, `shared_ptr<IChangePool>`, `WriterHistory`, `WriterListener`)** | **createRTPSWriter(`RTPSParticipant`, `WriterAttributes`, `WriterHistory`, `WriterListener`)** |
-| **RTPSWriter::new_change(`function<uint32_t()>& dataCdrSerializedSize`, `ChangeKind_t`, `InstanceHandle_t`)** | **WriterHistory::create_change(uint32_t, `ChangeKind_t`, `InstanceHandle_t`)** |
-| **RTPSWriter::new_change(`ChangeKind_t`, `InstanceHandle_t`)** | **WriterHistory::create_change(`ChangeKind_t`, `InstanceHandle_t`)** |
-| **RTPSWriter::release_change(`CacheChange_t`)** | **WriterHistory::release_change(`CacheChange_t`)** |
-| **remove_older_changes(unsigned int)** | **remove_min_change()** |
-| **RTPSWriter::is_acked_by_all(`CacheChange_t`)** | **RTPSWriter::is_acked_by_all(`SequenceNumber_t`)** |
-| **RTPSWriter::updateAttributes(`WriterAttributes`)** | **RTPSWriter::update_attributes(`WriterAttributes`)**|
-| **RTPSWriter::getListener()** | **RTPSWriter::get_listener()** |
-| **RTPSWriter::isAsync()** | **RTPSWriter::is_async()** |
-| **WriterListener::onWriterMatched(`RTPSWriter`, `MatchingInfo`)** | **WriterListener::on_writer_matched(`RTPSWriter`, `MatchingInfo`)** |
-| **WriterListener::onWriterChangeReceivedByAll(`RTPSWriter`,  `CacheChange_t`)** | **WriterListener::on_writer_change_received_by_all(`RTPSWriter`,`CacheChange_t`)** |
-| **TypeLookupReplyListener::onWriterChangeReceivedByAll(`RTPSWriter`, `CacheChange_t`)** | **TypeLookupReplyListener::on_writer_change_received_by_all(`RTPSWriter`, `CacheChange_t`)** |
-| **RTPSReader::getListener()** | **RTPSReader::get_listener()** |
-| **RTPSReader::setListener()** | **RTPSReader::set_listener()** |
-| **RTPSReader::expectsInlineQos()** | **RTPSReader::expects_inline_qos()** |
-| **RTPSReader::isInCleanState()** | **RTPSReader::is_in_clean_state()** |
-| **RTPSReader::getHistory()** | **RTPSReader::get_history()** |
-| **RTPSReader::nextUnreadCache(`CacheChange_t`, `WriterProxy`)** | **RTPSReader::next_unread_cache()** |
-| **RTPSReader::nextUntakenCache(`CacheChange_t`, `WriterProxy`)** | **RTPSReader::next_untaken_cache()** |
-| **ReaderListener::onReaderMatched(`RTPSReader`, `MatchingInfo`)** | **ReaderListener::on_reader_matched(`RTPSReader`, `MatchingInfo`)** |
-| **ReaderListener::onNewCacheChangeAdded(`RTPSReader`, `CacheChange_t`)** | **ReaderListener::on_new_cache_change_added(`RTPSReader`, `CacheChange_t`)** |
+| xmlparser::XMLProfileManager::library_settings(`LibrarySettingsAttributes`&) | DomainParticipantFactory::get_instance()->set_library_settings(const `LibrarySettings`&) |
+| fill_discovery_data_from_cdr_message(`ReaderProxyData`&, `MonitorServiceStatusData`&) |fill_discovery_data_from_cdr_message(`SubscriptionBuiltinTopicData`&, `MonitorServiceStatusData`&) |
+| fill_discovery_data_from_cdr_message(`WriterProxyData`&, `MonitorServiceStatusData`&) | fill_discovery_data_from_cdr_message(`PublicationBuiltinTopicData`&,`MonitorServiceStatusData`&) |
+| fill_discovery_data_from_cdr_message(`ParticipantProxyData`&, `MonitorServiceStatusData`&) | fill_discovery_data_from_cdr_message(`ParticipantBuiltinTopicData`&,`MonitorServiceStatusData`&) |
+| on_participant_discovery(`DomainParticipant`*, `ParticipantDiscoveryInfo`&&, bool) |on_participant_discovery(`DomainParticipant`*, `ParticipantDiscoveryStatus`, `ParticipantBuiltinTopicData`&, `should_be_ignored`) |
+| on_subscriber_discovery(`DomainParticipant`*, `ReaderDiscoveryInfo`&&, bool) | on_data_reader_discovery(`DomainParticipant`*, `ReaderDiscoveryStatus`, `SubscriptionBuiltinTopicData`&, `should_be_ignored`) |
+| on_publisher_discovery(`DomainParticipant`*, `WriterDiscoveryInfo`&&, bool) | on_data_writer_discovery(`DomainParticipant`*, `WriterDiscoveryStatus`, `PublicationBuiltinTopicData`&, `should_be_ignored`) |
+| onReaderDiscovery(`RTPSParticipant`*, `ReaderDiscoveryInfo`&&, bool) | on_reader_discovery(`RTPSParticipant`*,  `ReaderDiscoveryStatus`, `SubscriptionBuiltinTopicData`&, bool&) |
+| onWriterDiscovery(`RTPSParticipant`*, `WriterDiscoveryInfo`&&, bool) | on_writer_discovery(`RTPSParticipant`*, `WriterDiscoveryStatus`, `PublicationBuiltinTopicData`&, bool&) |
+| onParticipantDiscovery(`RTPSParticipant`*, `ParticipantDiscoveryInfo`&&, bool) | on_participant_discovery(`RTPSParticipant`*, `ParticipantDiscoveryStatus`, `ParticipantBuiltinTopicData`&, bool&) |
+| XMLProfileManager::loadXMLFile(string&) | DomainParticipantFactory::get_instance()->load_XML_profiles_file(string) |
+| XMLProfileManager::loadDefaultXMLFile() | load_profiles() |
+| XMLProfileManager::loadXMLFile(string) | load_XML_profiles_file(string&) |
+| XMLProfileManager::loadXMLString(const char*, size_t) | load_XML_profiles_string(const char*, size_t) |
+| XMLProfileManager::fillParticipantAttributes(const string&, `ParticipantAttributes`&, bool) | get_participant_qos_from_profile(string&, `DomainParticipantQos`&) |
+getDynamicTypeByName
+|DynamicTypeBuilder XMLProfileManager::getDynamicTypeByName(string&) | get_dynamic_type_builder_from_xml_by_name(string&, `DynamicTypeBuilder::_ref_type`&) |
+| XMLProfileManager::fillRequesterAttributes(string&, RequesterAttributes&) | get_requester_qos_from_profile(string&, RequesterQos&) |
+| XMLParser::getXMLThroughputController(`tinyxml2::XMLElement`*, `ThroughputControllerDescriptor`&, uint8_t) | XMLParser::getXMLFlowControllerDescriptorList(`tinyxml2::XMLElement`*, `FlowControllerDescriptorList`&, uint8_t) |
+| add_throughput_controller_descriptor_to_pparams(`FlowControllerSchedulerPolicy`, uint32_t, uint32_t) | add_flow_controller_descriptor_to_pparams(`FlowControllerSchedulerPolicy`, uint32_t, uint32_t) |
+| get_payload(uint32_t, `CacheChange_t`&) | get_payload(uint32_t, `SerializedPayload_t`&) |
+| release_payload(`CacheChange_t`&) | release_payload(`SerializedPayload_t`&) |
+| registerWriter(`RTPSWriter`*, const `TopicAttributes`&, const `WriterQos`&) |  register_writer(`RTPSWriter`*, cosnt `PublicationBuiltinTopicData`&) |
+| registerReader(`RTPSReader`*, `TopicAttributes`&, `ReaderQos`&) |  register_reader(`RTPSReader`*, const `SubscriptionBuiltinTopicData`&, const `ContentFilterProperty`*) |
+| updateWriter(`RTPSWriter`*, const `TopicAttributes`&, const `WriterQos`&) | update_writer(`RTPSWriter`*, const `WriterQos`&) |
+| updateReader(`RTPSReader`*, const `TopicAttributes`&, const `ReaderQos`&, const `ContentFilterProperty`*) | update_reader(`RTPSReader`*, const `ReaderQos`, const ContentFilterProperty*) |
+| getRTPSParticipantAttributes() | get_attributes() |
+| bool write(void*) | ReturnCode_t write(void*) |
+| bool write(void*, `WriteParams`&) | ReturnCode_t write(void*, `WriteParams`&) |
+| SenderResource::send(const octet*, uint32_t, `LocatorsIterator`*, `LocatorsIterator`*, const chrono::steady_clock::time_point&) | SenderResource::send(`vector<NetworkBuffer>`, uint32_t, `LocatorsIterator`*, `LocatorsIterator`*, const chrono::steady_clock::time_point&) |
+| RTPSMessageSenderInterface::send(`CDRMessage_t`*, chrono::steady_clock::time_point) | RTPSMessageSenderInterface::send(`vector<NetworkBuffer>`&, uint32_t&, chrono::steady_clock::time_point) |
+| createRTPSWriter(`RTPSParticipant`*, `EntityId_t`&, `WriterAttributes`&, `shared_ptr<IPayloadPool>`&, `shared_ptr<IChangePool>`&, `WriterHistory`*, `WriterListener`*) | createRTPSWriter(`RTPSParticipant`*, `WriterAttributes`&, `WriterHistory`*, `WriterListener`*) |
+| RTPSWriter::new_change(const `function<uint32_t()>& dataCdrSerializedSize`, `ChangeKind_t`, `InstanceHandle_t`) | WriterHistory::create_change(uint32_t, `ChangeKind_t`, `InstanceHandle_t`) |
+| RTPSWriter::new_change(`ChangeKind_t`, `InstanceHandle_t`) | WriterHistory::create_change(`ChangeKind_t`, `InstanceHandle_t`) |
+| RTPSWriter::release_change(`CacheChange_t`*) | WriterHistory::release_change(`CacheChange_t`*) |
+| RTPSWriter::remove_older_changes(unsigned int) | WriterHistory::remove_min_change() |
+| RTPSWriter::is_acked_by_all(const `CacheChange_t`*) | RTPSWriter::is_acked_by_all(const `SequenceNumber_t`&) |
+| RTPSWriter::updateAttributes(const `WriterAttributes`&) | RTPSWriter::update_attributes(const `WriterAttributes`&)|
+| RTPSWriter::getListener() | RTPSWriter::get_listener() |
+| RTPSWriter::isAsync() | RTPSWriter::is_async() |
+| WriterListener::onWriterMatched(`RTPSWriter`*,  `MatchingInfo`&) | WriterListener::on_writer_matched(`RTPSWriter`*, const `MatchingInfo`&) |
+| WriterListener::onWriterChangeReceivedByAll(`RTPSWriter`*,  `CacheChange_t`*) | WriterListener::on_writer_change_received_by_all(`RTPSWriter`*,`CacheChange_t`*) |
+| TypeLookupReplyListener::onWriterChangeReceivedByAll(`RTPSWriter`*, `CacheChange_t`*) | TypeLookupReplyListener::on_writer_change_received_by_all(`RTPSWriter`*, `CacheChange_t`*) |
+| RTPSReader::getListener() | RTPSReader::get_listener() |
+| RTPSReader::setListener() | RTPSReader::set_listener() |
+| RTPSReader::expectsInlineQos() | RTPSReader::expects_inline_qos() |
+| RTPSReader::isInCleanState() | RTPSReader::is_in_clean_state() |
+| RTPSReader::getHistory() | RTPSReader::get_history() |
+| RTPSReader::nextUnreadCache(`CacheChange_t`**, `WriterProxy` **) | RTPSReader::next_unread_cache() |
+| RTPSReader::nextUntakenCache(`CacheChange_t`**, `WriterProxy` **) | RTPSReader::next_untaken_cache() |
+| ReaderListener::onReaderMatched(`RTPSReader`*, `MatchingInfo`&) | ReaderListener::on_reader_matched(`RTPSReader`*, `MatchingInfo`&) |
+| ReaderListener::onNewCacheChangeAdded(`RTPSReader`*, const `CacheChange_t`* const) | ReaderListener::on_new_cache_change_added(`RTPSReader`*, cont `CacheChange_t`* const) |
+| TopicDataType::getSerializedSizeProvider(const void* const, `DataRepresentationId_t`) | TopicDataType::calculate_serialized_size(const void* const, `DataRepresentationId_t`) |
+| TopicDataType::createData() | TopicDataType::create_data() |
+| TopicDataType::deleteData(void*) | TopicDataType::delete_data(void*) |
+| TopicDataType::getKey(const void* const, `InstanceHand`*, bool) | TopicDataType::compute_key(const void* const, `InstanceHand`&, bool) |
+| TopicDataType::setName(const char*) | TopicDataType::set_name(const string&) |
+| char* TopicDataType::getName() | string& TopicDataType::get_name() |
+| TypeSupport::calculate_serialized_size_provider(const void* const, `DataRepresentationId_t`) | TypeSupport::calculate_serialized_size(const void* const, `DataRepresentationId_t`) |
+|   get_key(void, `InstanceHandle_t`*, bool) | compute_key(`SerializedPayload_t`&, `InstanceHandle_t`&, bool) |
+| DynamicPubSubType::createData() | DynamicPubSubType::create_data() |
+| DynamicPubSubType::deleteData(void*) | DynamicPubSubType::delete_data(void*) |
+| DynamicPubSubType::getKey(const void* const, `InstanceHand`*, bool) | DynamicPubSubType::compute_key(const void* const, `InstanceHand`&, bool) |
+| DynamicPubSubType::getSerializedSizeProvider(const void* const, `DataRepresentationId_t`) | DynamicPubSubType::calculate_serialized_size(const void* const, `DataRepresentationId_t`) |
+
 
 
 ## Struct, Enum, Variable
@@ -205,6 +219,9 @@ The following list contains files that were previously in the `include` folder a
 * `heartbeatResponseDelay` is `heartbeat_response_delay`.
 * `initialAcknackDelay` is `initial_acknack_delay`.
 * `expectsInlineQos` is `expects_inline_qos`.
+* `m_typeSize` is `max_serialized_type_size`
+* `m_isGetKeyDefined` is `is_compute_key_provided`
+* `m_topicDataTypeName` is `topic_data_typename_`
 
 
 ## Examples
