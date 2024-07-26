@@ -28,13 +28,20 @@ namespace rtps {
 /**
  * Enumerates the different types of CacheChange_t.
  */
+// *INDENT-OFF* : Does not understand the #if correctly and ends up removing the ;
+//                at the end of the enum, which does not build.
+#if defined(_WIN32)  // Doxygen does not understand exported enums
 enum FASTDDS_EXPORTED_API ChangeKind_t
+#else
+enum ChangeKind_t
+#endif // if defined(_WIN32)
 {
     ALIVE,                          //!< ALIVE
     NOT_ALIVE_DISPOSED,             //!< NOT_ALIVE_DISPOSED
     NOT_ALIVE_UNREGISTERED,         //!< NOT_ALIVE_UNREGISTERED
     NOT_ALIVE_DISPOSED_UNREGISTERED //!< NOT_ALIVE_DISPOSED_UNREGISTERED
 };
+// *INDENT-ON*
 
 } // namespace rtps
 } // namespace fastdds

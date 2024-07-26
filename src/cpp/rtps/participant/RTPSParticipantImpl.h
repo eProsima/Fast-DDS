@@ -48,6 +48,7 @@
 #include <fastdds/rtps/transport/SenderResource.hpp>
 
 #include "../flowcontrol/FlowControllerFactory.hpp"
+#include <fastdds/utils/TypePropagation.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/messages/MessageReceiver.h>
@@ -61,7 +62,6 @@
 #include <statistics/rtps/StatisticsBase.hpp>
 #include <statistics/types/monitorservice_types.hpp>
 #include <utils/shared_mutex.hpp>
-#include <utils/Semaphore.hpp>
 
 #if HAVE_SECURITY
 #include <fastdds/rtps/Endpoint.hpp>
@@ -341,19 +341,13 @@ public:
         return ret_code;
     }
 
-    //!Get the participant Mutex
-    std::recursive_mutex* getParticipantMutex() const
-    {
-        return mp_mutex;
-    }
-
     /**
      * Get the participant listener
      * @return participant listener
      */
     inline RTPSParticipantListener* getListener()
     {
-        std::lock_guard<std::recursive_mutex> _(*getParticipantMutex());
+        std::lock_guard<std::mutex> _(mutex_);
         return mp_participantListener;
     }
 
@@ -364,7 +358,7 @@ public:
     void set_listener(
             RTPSParticipantListener* listener)
     {
-        std::lock_guard<std::recursive_mutex> _(*getParticipantMutex());
+        std::lock_guard<std::mutex> _(mutex_);
         mp_participantListener = listener;
     }
 
@@ -713,8 +707,8 @@ private:
     void normalize_endpoint_locators(
             EndpointAttributes& endpoint_att);
 
-    //!Participant Mutex
-    std::recursive_mutex* mp_mutex;
+    //! Participant Mutex
+    mutable std::mutex mutex_;
 
     //!Will this participant use intraprocess only?
     bool is_intraprocess_only_;
@@ -786,14 +780,24 @@ private:
             const Functor& callback);
 
     /**
-     * Get default metatraffic locators when not provided by the user.
+     * @brief Fill the default metatraffic locators.
+     *
+     * @param [in] att @ref RTPSParticipantAttributes in which the locators are filled.
+     *
+     * @note This function in meant to be used iff the locators are not provided by the user.
      */
-    void get_default_metatraffic_locators();
+    void get_default_metatraffic_locators(
+            RTPSParticipantAttributes& att);
 
     /**
-     * Get default unicast locators when not provided by the user.
+     * @brief Fill the default unicast locators.
+     *
+     * @param [in] att @ref RTPSParticipantAttributes in which the locators are filled.
+     *
+     * @note This function in meant to be used iff the locators are not provided by the user.
      */
-    void get_default_unicast_locators();
+    void get_default_unicast_locators(
+            RTPSParticipantAttributes& att);
 
     bool match_local_endpoints_ = true;
 
@@ -802,10 +806,7 @@ private:
 
 public:
 
-    const RTPSParticipantAttributes& getRTPSParticipantAttributes() const
-    {
-        return this->m_att;
-    }
+    const RTPSParticipantAttributes& get_attributes() const;
 
     /**
      * Create a Writer in this RTPSParticipant.
@@ -951,15 +952,6 @@ public:
             const TopicAttributes& topicAtt,
             const fastdds::dds::ReaderQos& rqos,
             const ContentFilterProperty* content_filter = nullptr);
-
-    /**
-     * Get the participant attributes
-     * @return Participant attributes
-     */
-    inline RTPSParticipantAttributes& getAttributes()
-    {
-        return m_att;
-    }
 
     /**
      * Delete a user endpoint
@@ -1286,6 +1278,13 @@ public:
      */
     void update_removed_participant(
             const LocatorList_t& remote_participant_locators);
+
+    /**
+     * @brief Get participant's @ref dds::utils::TypePropagation
+     *
+     * @return This participant's @ref dds::utils::TypePropagation
+     */
+    dds::utils::TypePropagation type_propagation() const;
 
 };
 } // namespace rtps

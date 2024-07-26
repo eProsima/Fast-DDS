@@ -190,6 +190,9 @@ void PublisherApp::run()
                     return is_stopped();
                 });
     }
+
+    // Wait for acknowledgments with 500 ms timeout
+    writer_->wait_for_acknowledgments({0, 500000000});
 }
 
 bool PublisherApp::publish()

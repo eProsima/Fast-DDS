@@ -21,9 +21,6 @@
 #define FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT_EDP_H
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <foonathan/memory/container.hpp>
-#include <foonathan/memory/memory_pool.hpp>
-
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>

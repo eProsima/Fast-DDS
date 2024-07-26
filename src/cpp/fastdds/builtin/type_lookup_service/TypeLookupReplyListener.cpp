@@ -60,7 +60,7 @@ void TypeLookupReplyListener::start_reply_processor_thread()
                 };
         // Create and start the processing thread
         replies_processor_thread = eprosima::create_thread(thread_func,
-                        typelookup_manager_->participant_->getAttributes().typelookup_service_thread,
+                        typelookup_manager_->participant_->get_attributes().typelookup_service_thread,
                         "dds.tls.replies.%u");
     }
 }

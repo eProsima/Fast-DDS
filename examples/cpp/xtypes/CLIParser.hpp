@@ -172,7 +172,7 @@ public:
                 }
                 else if (config.entity == CLIParser::EntityKind::SUBSCRIBER)
                 {
-                    EPROSIMA_LOG_ERROR(CLI_PARSER, "--xml-type flag available only for subscriber entity");
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "--xml-type flag available only for publisher entity");
                     print_help(EXIT_FAILURE);
                 }
                 else

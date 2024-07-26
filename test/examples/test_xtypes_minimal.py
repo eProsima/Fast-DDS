@@ -20,7 +20,7 @@ def test_xtypes():
     out = ''
     try:
         out = subprocess.check_output(
-            '@DOCKER_EXECUTABLE@ compose -f xtypes.compose.yml up',
+            '@DOCKER_EXECUTABLE@ compose -f xtypes_minimal.compose.yml up',
             stderr=subprocess.STDOUT,
             shell=True,
             timeout=30
@@ -34,7 +34,7 @@ def test_xtypes():
 
             if 'received' in line or 'RECEIVED' in line:
                 received += 1
-                
+
         if sent != 0 and received != 0 and sent * 3 == received:
             ret = True
         else:

@@ -112,7 +112,7 @@ void TypeLookupRequestListener::start_request_processor_thread()
                 };
         // Create and start the processing thread
         request_processor_thread = eprosima::create_thread(thread_func,
-                        typelookup_manager_->participant_->getAttributes().typelookup_service_thread,
+                        typelookup_manager_->participant_->get_attributes().typelookup_service_thread,
                         "dds.tls.requests.%u");
     }
 }
@@ -189,13 +189,24 @@ void TypeLookupRequestListener::check_get_types_request(
         const TypeLookup_getTypes_In& request,
         const rtps::VendorId_t& vendor_id)
 {
-    // Always Sends EK_COMPLETE
-    // TODO: Add a property to the participant to configure this behavior. Allowing it to respond with EK_MINIMAL when possible.
+    xtypes::TypeKind type_to_propagate = typelookup_manager_->get_type_kind_to_propagate();
+
+    // Early return in case type propagation is disabled
+    if (xtypes::TK_NONE == type_to_propagate)
+    {
+        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER,
+                "getTypes request received for a participant with type propagation disabled.");
+        answer_request(request_id, rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_EXCEPTION);
+        return;
+    }
+
     TypeLookup_getTypes_Out out;
     ReturnCode_t type_result = RETCODE_ERROR;
     xtypes::TypeObject obj;
+    xtypes::TypeIdentifier reply_typeid;
     xtypes::TypeIdentifier complete_id;
     xtypes::TypeIdentifier minimal_id;
+
     // Iterate through requested type_ids
     for (const xtypes::TypeIdentifier& type_id : request.type_ids())
     {
@@ -203,23 +214,33 @@ void TypeLookupRequestListener::check_get_types_request(
         if (type_id._d() == xtypes::EK_MINIMAL && rtps::c_VendorId_opendds != vendor_id)
         {
             minimal_id = type_id;
+            reply_typeid = minimal_id;
+
             // Get complete TypeIdentifier from registry
             complete_id = fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
                             get_complementary_type_identifier(minimal_id);
 
-            xtypes::TypeIdentifierPair id_pair;
-            id_pair.type_identifier1(complete_id);
-            id_pair.type_identifier2(minimal_id);
-            // Add the id pair to the result
-            out.complete_to_minimal().push_back(std::move(id_pair));
+            if (xtypes::EK_COMPLETE == type_to_propagate)
+            {
+                reply_typeid = complete_id;
+
+                xtypes::TypeIdentifierPair id_pair;
+                id_pair.type_identifier1(complete_id);
+                id_pair.type_identifier2(minimal_id);
+
+                // Add the id pair to the result
+                out.complete_to_minimal().push_back(std::move(id_pair));
+            }
+
         }
         else
         {
-            complete_id = type_id;
+            reply_typeid = type_id;
         }
 
         type_result = fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
-                        get_type_object(complete_id, obj);
+                        get_type_object(reply_typeid, obj);
+
         if (RETCODE_OK != type_result)
         {
             // If any object is unknown, abort and answer with exception
@@ -227,7 +248,7 @@ void TypeLookupRequestListener::check_get_types_request(
         }
 
         xtypes::TypeIdentifierTypeObjectPair id_obj_pair;
-        id_obj_pair.type_identifier(complete_id);
+        id_obj_pair.type_identifier(reply_typeid);
         id_obj_pair.type_object(obj);
         // Add the id/obj pair to the result
         out.types().push_back(std::move(id_obj_pair));

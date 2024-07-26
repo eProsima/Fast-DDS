@@ -34,6 +34,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/rtps/writer/WriterListener.hpp>
 
+#include <fastdds/utils/TypePropagation.hpp>
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/ProxyHashTables.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
@@ -136,10 +137,42 @@ bool EDP::newLocalReaderProxyData(
                 rpd->topicName(att.getTopicName());
                 rpd->typeName(att.getTopicDataType());
                 rpd->topicKind(att.getTopicKind());
+
+                using dds::utils::TypePropagation;
+                using dds::xtypes::TypeInformationParameter;
+
+                auto type_propagation = mp_RTPSParticipant->type_propagation();
+                assert(TypePropagation::TYPEPROPAGATION_UNKNOWN != type_propagation);
+
                 if (att.type_information.assigned())
                 {
-                    rpd->type_information(att.type_information);
+                    switch (type_propagation)
+                    {
+                        case TypePropagation::TYPEPROPAGATION_ENABLED:
+                        {
+                            rpd->type_information(att.type_information);
+                            break;
+                        }
+                        case TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH:
+                        {
+                            TypeInformationParameter minimal;
+                            minimal.type_information.minimal(att.type_information.type_information.minimal());
+                            minimal.assigned(true);
+                            rpd->type_information(minimal);
+                            break;
+                        }
+                        case TypePropagation::TYPEPROPAGATION_REGISTRATION_ONLY:
+                        default:
+                        {
+                            if (rpd->has_type_information())
+                            {
+                                rpd->type_information().assigned(false);
+                            }
+                            break;
+                        }
+                    }
                 }
+
                 rpd->m_qos.setQos(rqos, true);
                 rpd->userDefinedId(ratt.getUserDefinedID());
                 if (nullptr != content_filter)
@@ -241,10 +274,42 @@ bool EDP::newLocalWriterProxyData(
                 wpd->topicName(att.getTopicName());
                 wpd->typeName(att.getTopicDataType());
                 wpd->topicKind(att.getTopicKind());
+
+                using dds::utils::TypePropagation;
+                using dds::xtypes::TypeInformationParameter;
+
+                auto type_propagation = mp_RTPSParticipant->type_propagation();
+                assert(TypePropagation::TYPEPROPAGATION_UNKNOWN != type_propagation);
+
                 if (att.type_information.assigned())
                 {
-                    wpd->type_information(att.type_information);
+                    switch (type_propagation)
+                    {
+                        case TypePropagation::TYPEPROPAGATION_ENABLED:
+                        {
+                            wpd->type_information(att.type_information);
+                            break;
+                        }
+                        case TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH:
+                        {
+                            TypeInformationParameter minimal;
+                            minimal.type_information.minimal(att.type_information.type_information.minimal());
+                            minimal.assigned(true);
+                            wpd->type_information(minimal);
+                            break;
+                        }
+                        case TypePropagation::TYPEPROPAGATION_REGISTRATION_ONLY:
+                        default:
+                        {
+                            if (wpd->has_type_information())
+                            {
+                                wpd->type_information().assigned(false);
+                            }
+                            break;
+                        }
+                    }
                 }
+
                 BaseWriter* base_writer = BaseWriter::downcast(writer);
                 assert(base_writer->get_history() != nullptr);
                 wpd->typeMaxSerialized(base_writer->get_history()->getTypeMaxSerialized());

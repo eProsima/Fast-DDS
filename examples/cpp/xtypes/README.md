@@ -127,20 +127,21 @@ This is accomplished by setting the environment variable ``FASTDDS_DEFAULT_PROFI
 * Ubuntu ( / MacOS )
 
     ```shell
-    user@machine:example_path$ export FASTDDS_DEFAULT_PROFILES_FILE=xtypes_profile.xml
+    user@machine:example_path$ export FASTDDS_DEFAULT_PROFILES_FILE=xtypes_complete_profile.xml
     ```
 
 * Windows
 
     ```powershell
-    example_path> set FASTDDS_DEFAULT_PROFILES_FILE=xtypes_profile.xml
+    example_path> set FASTDDS_DEFAULT_PROFILES_FILE=xtypes_complete_profile.xml
     ```
 
-The example provides with an XML profiles files with certain QoS:
+The example provides with two XML profiles files with certain QoS:
 
 - Reliable reliability: avoid sample loss.
 - Transient local durability: enable late-join subscriber applications to receive previous samples.
 - Keep-last history with high depth: ensure certain amount of previous samples for late-joiners.
+- Type propagation: Set to either complete of minimal depending on the used XML profiles file.
 
 Applying different configurations to the entities will change to a greater or lesser extent how the application behaves in relation to sample management.
 Even when these settings affect the behavior of the sample management, the applications' output will be the similar.

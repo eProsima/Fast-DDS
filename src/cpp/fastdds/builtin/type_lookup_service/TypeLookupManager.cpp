@@ -108,16 +108,19 @@ bool TypeLookupManager::init(
 {
     participant_ = protocols->mp_participantImpl;
     builtin_protocols_ = protocols;
+    auto locators_allocations = participant_->get_attributes().allocation.locators;
 
     local_instance_name_ = get_instance_name(participant_->getGuid());
 
     temp_reader_proxy_data_ = new fastdds::rtps::ReaderProxyData(
-        protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-        protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators);
-    temp_writer_proxy_data_ = new fastdds::rtps::WriterProxyData(
-        protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-        protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators);
+        locators_allocations.max_unicast_locators,
+        locators_allocations.max_multicast_locators);
 
+    temp_writer_proxy_data_ = new fastdds::rtps::WriterProxyData(
+        locators_allocations.max_unicast_locators,
+        locators_allocations.max_multicast_locators);
+
+    type_propagation_ = participant_->type_propagation();
 
     // Check if ReaderProxyData and WriterProxyData objects were created successfully
     if (temp_reader_proxy_data_ && temp_writer_proxy_data_)
@@ -323,6 +326,23 @@ ReturnCode_t TypeLookupManager::async_get_type(
         temp_reader_data, callback, async_get_type_reader_callbacks_);
 }
 
+TypeKind TypeLookupManager::get_type_kind_to_propagate() const
+{
+    switch (type_propagation_)
+    {
+        case utils::TypePropagation::TYPEPROPAGATION_DISABLED:
+            return xtypes::TK_NONE;
+        case utils::TypePropagation::TYPEPROPAGATION_ENABLED:
+            return xtypes::EK_COMPLETE;
+        case utils::TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH:
+            return xtypes::EK_MINIMAL;
+        case utils::TypePropagation::TYPEPROPAGATION_REGISTRATION_ONLY:
+            return xtypes::TK_NONE;
+        default:
+            return xtypes::EK_COMPLETE;
+    }
+}
+
 template <typename ProxyType, typename AsyncCallback>
 ReturnCode_t TypeLookupManager::check_type_identifier_received(
         typename eprosima::ProxyPool<ProxyType>::smart_ptr& temp_proxy_data,
@@ -332,7 +352,10 @@ ReturnCode_t TypeLookupManager::check_type_identifier_received(
         AsyncCallback>>>& async_get_type_callbacks)
 {
     xtypes::TypeIdentfierWithSize type_identifier_with_size =
-            temp_proxy_data->type_information().type_information.complete().typeid_with_size();
+            temp_proxy_data->type_information().type_information.complete().typeid_with_size().type_id()._d() !=
+            TK_NONE ?
+            temp_proxy_data->type_information().type_information.complete().typeid_with_size() :
+            temp_proxy_data->type_information().type_information.minimal().typeid_with_size();
     fastdds::rtps::GUID_t type_server = temp_proxy_data->guid();
 
     // Check if the type is known
@@ -505,7 +528,7 @@ bool TypeLookupManager::create_endpoints()
 {
     bool ret = true;
 
-    const RTPSParticipantAttributes& pattr = participant_->getRTPSParticipantAttributes();
+    const RTPSParticipantAttributes& pattr = participant_->get_attributes();
 
     // Built-in history attributes.
     HistoryAttributes hatt;

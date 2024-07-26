@@ -182,27 +182,6 @@ public:
     }
 
     /**
-     * Get the type information auto-fill configuration
-     *
-     * @return true if the type information should be auto-filled
-     */
-    FASTDDS_EXPORTED_API inline bool auto_fill_type_information() const
-    {
-        return auto_fill_type_information_;
-    }
-
-    /**
-     * Set type information auto-fill configuration
-     *
-     * @param auto_fill_type_information new value to set
-     */
-    FASTDDS_EXPORTED_API inline void auto_fill_type_information(
-            bool auto_fill_type_information)
-    {
-        auto_fill_type_information_ = auto_fill_type_information;
-    }
-
-    /**
      * Get the type identifiers
      *
      * @return @ref xtypes::TypeIdentifierPair
@@ -265,8 +244,6 @@ private:
 
     //! Data Type Name.
     std::string topic_data_typename_;
-    //TODO(XTypes)
-    bool auto_fill_type_information_ {true};
 
 };
 

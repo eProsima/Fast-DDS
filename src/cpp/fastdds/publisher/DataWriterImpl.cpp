@@ -40,6 +40,7 @@
 #include <fastdds/rtps/RTPSDomain.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
+#include <fastdds/utils/TypePropagation.hpp>
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <rtps/DataSharing/WriterPool.hpp>
@@ -47,8 +48,8 @@
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/resources/ResourceEvent.h>
-#include <rtps/RTPSDomainImpl.hpp>
 #include <rtps/resources/TimedEvent.h>
+#include <rtps/RTPSDomainImpl.hpp>
 #include <rtps/writer/BaseWriter.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
 #include <utils/TimeConversion.hpp>
@@ -1687,12 +1688,44 @@ fastdds::TopicAttributes DataWriterImpl::get_topic_attributes(
     topic_att.topicName = topic.get_name();
     topic_att.topicDataType = topic.get_type_name();
     topic_att.topicKind = type->is_compute_key_provided ? WITH_KEY : NO_KEY;
-    if (type->auto_fill_type_information() && xtypes::TK_NONE != type->type_identifiers().type_identifier1()._d())
+
+    using utils::to_type_propagation;
+    using utils::TypePropagation;
+
+    auto properties = publisher_->get_participant()->get_qos().properties();
+    auto type_propagation = to_type_propagation(properties);
+    bool should_assign_type_information =
+            (TypePropagation::TYPEPROPAGATION_ENABLED == type_propagation) ||
+            (TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH == type_propagation);
+
+    if (should_assign_type_information && (xtypes::TK_NONE != type->type_identifiers().type_identifier1()._d()))
     {
+        xtypes::TypeInformation type_info;
+
         if (RETCODE_OK ==
                 fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
-                    type->type_identifiers(), topic_att.type_information.type_information))
+                    type->type_identifiers(), type_info))
         {
+            switch (type_propagation)
+            {
+                case TypePropagation::TYPEPROPAGATION_ENABLED:
+                {
+                    // Use both complete and minimal type information
+                    topic_att.type_information.type_information = type_info;
+                    break;
+                }
+                case TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH:
+                {
+                    // Use minimal type information only
+                    topic_att.type_information.type_information.minimal() = type_info.minimal();
+                    break;
+                }
+                default:
+                    // This should never happen as other cases are protected by should_assign_type_information
+                    assert(false);
+                    break;
+            }
+
             topic_att.type_information.assigned(true);
         }
     }

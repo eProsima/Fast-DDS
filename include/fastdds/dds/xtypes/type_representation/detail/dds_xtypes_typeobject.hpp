@@ -21903,7 +21903,7 @@ private:
             }
 
 
-    uint8_t m__d {127};
+    uint8_t m__d {TK_NONE};
 
     union
     {
@@ -23249,7 +23249,7 @@ private:
             }
 
 
-    uint8_t m__d {127};
+    uint8_t m__d {TK_NONE};
 
     union
     {
@@ -23627,7 +23627,7 @@ private:
             }
 
 
-    uint8_t m__d {127};
+    uint8_t m__d {TK_NONE};
 
     union
     {

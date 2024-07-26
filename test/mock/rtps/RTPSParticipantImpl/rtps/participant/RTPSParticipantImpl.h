@@ -34,6 +34,7 @@
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
+#include <fastdds/utils/TypePropagation.hpp>
 #include <rtps/network/NetworkFactory.h>
 #include <rtps/reader/BaseReader.hpp>
 #include <rtps/resources/ResourceEvent.h>
@@ -168,8 +169,6 @@ public:
             ReaderListener* listen,
             const EntityId_t& entityId, bool isBuiltin, bool enable));
     // *INDENT-ON*
-
-    MOCK_CONST_METHOD0(getParticipantMutex, std::recursive_mutex* ());
 
     bool createWriter(
             RTPSWriter** writer,
@@ -309,12 +308,7 @@ public:
         return 65536;
     }
 
-    const RTPSParticipantAttributes& getRTPSParticipantAttributes() const
-    {
-        return attr_;
-    }
-
-    RTPSParticipantAttributes& getAttributes()
+    const RTPSParticipantAttributes& get_attributes() const
     {
         return attr_;
     }
@@ -415,6 +409,8 @@ public:
     {
         return nullptr;
     }
+
+    MOCK_METHOD(dds::utils::TypePropagation, type_propagation, (), (const));
 
 private:
 

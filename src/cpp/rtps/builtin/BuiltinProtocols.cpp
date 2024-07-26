@@ -26,6 +26,7 @@
 #include <fastdds/utils/IPFinder.hpp>
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
+#include <fastdds/utils/TypePropagation.hpp>
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/builtin/discovery/endpoint/EDPStatic.h>
@@ -59,7 +60,10 @@ BuiltinProtocols::~BuiltinProtocols()
     }
 
     // The type lookup manager should be deleted first, since it will access the PDP database
-    delete typelookup_manager_;
+    if (nullptr != typelookup_manager_)
+    {
+        delete typelookup_manager_;
+    }
 
     delete mp_WLP;
     delete mp_PDP;
@@ -82,7 +86,7 @@ bool BuiltinProtocols::initBuiltinProtocols(
 
     filter_server_remote_locators(p_part->network_factory());
 
-    const RTPSParticipantAllocationAttributes& allocation = p_part->getRTPSParticipantAttributes().allocation;
+    const RTPSParticipantAllocationAttributes& allocation = p_part->get_attributes().allocation;
 
     // PDP
     switch (m_att.discovery_config.discoveryProtocol)
@@ -138,8 +142,16 @@ bool BuiltinProtocols::initBuiltinProtocols(
     }
 
     // TypeLookupManager
-    typelookup_manager_ = new fastdds::dds::builtin::TypeLookupManager();
-    typelookup_manager_->init(this);
+    auto type_propagation = p_part->type_propagation();
+    bool should_create_typelookup =
+            (dds::utils::TypePropagation::TYPEPROPAGATION_ENABLED == type_propagation) ||
+            (dds::utils::TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH == type_propagation);
+
+    if (should_create_typelookup)
+    {
+        typelookup_manager_ = new fastdds::dds::builtin::TypeLookupManager();
+        typelookup_manager_->init(this);
+    }
 
     return true;
 }

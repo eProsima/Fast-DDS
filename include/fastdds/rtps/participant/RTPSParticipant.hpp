@@ -204,10 +204,10 @@ public:
     std::vector<std::string> getParticipantNames() const;
 
     /**
-     * Get a copy of the actual state of the RTPSParticipantParameters
-     * @return RTPSParticipantAttributes copy of the params.
+     * Get a reference of the current state of the RTPSParticipantParameters.
+     * @return RTPSParticipantAttributes reference.
      */
-    const RTPSParticipantAttributes& getRTPSParticipantAttributes() const;
+    const RTPSParticipantAttributes& get_attributes() const;
 
     /**
      * Retrieves the maximum message size.

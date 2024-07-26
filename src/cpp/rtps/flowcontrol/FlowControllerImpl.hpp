@@ -942,7 +942,7 @@ public:
     {
         if (nullptr != participant)
         {
-            participant_id_ = static_cast<uint32_t>(participant->getRTPSParticipantAttributes().participantID);
+            participant_id_ = static_cast<uint32_t>(participant->get_attributes().participantID);
         }
 
         uint32_t limitation = get_max_payload();

@@ -21,6 +21,8 @@
 #define FASTDDS_EXAMPLES_CPP_XTYPES__SUBSCRIBERAPP_HPP
 
 #include <condition_variable>
+#include <mutex>
+#include <string>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
@@ -82,6 +84,8 @@ private:
 
     ::xtypes::TypeObject remote_type_object_;
 
+    ::xtypes::TypeInformation remote_type_information_;
+
     DynamicType::_ref_type remote_type_;
 
     DomainParticipant* participant_;
@@ -98,13 +102,13 @@ private:
 
     uint16_t received_samples_;
 
-    std::atomic<bool> type_discovered_;
+    std::string type_discovered_;
 
     std::atomic<bool> stop_;
 
-    mutable std::mutex terminate_cv_mtx_;
+    mutable std::mutex mtx_;
 
-    std::condition_variable terminate_cv_;
+    std::condition_variable cv_;
 
 };
 

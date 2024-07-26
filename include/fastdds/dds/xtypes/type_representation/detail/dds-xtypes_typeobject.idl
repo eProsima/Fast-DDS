@@ -956,7 +956,7 @@ module DDS { module XTypes {
     };
 
     @extensibility(FINAL)     @nested
-    union CompleteTypeObject switch (octet) {
+    union CompleteTypeObject switch (@default(TK_NONE) octet) {
         case TK_ALIAS:
             CompleteAliasType      alias_type;
         case TK_ANNOTATION:
@@ -990,7 +990,7 @@ module DDS { module XTypes {
 
 
     @extensibility(FINAL)     @nested
-    union MinimalTypeObject switch (octet) {
+    union MinimalTypeObject switch (@default(TK_NONE) octet) {
         case TK_ALIAS:
             MinimalAliasType       alias_type;
         case TK_ANNOTATION:
@@ -1018,11 +1018,11 @@ module DDS { module XTypes {
     };
 
     @extensibility(APPENDABLE)  @nested
-    union TypeObject switch (octet) { // EquivalenceKind
-    case EK_COMPLETE:
-        CompleteTypeObject   complete;
-    case EK_MINIMAL:
-        MinimalTypeObject    minimal;
+    union TypeObject switch (@default(TK_NONE) octet) { // EquivalenceKind
+        case EK_COMPLETE:
+            CompleteTypeObject   complete;
+        case EK_MINIMAL:
+            MinimalTypeObject    minimal;
     };
     typedef sequence<TypeObject> TypeObjectSeq;
 

@@ -121,7 +121,7 @@ bool PDPServer::init(
     getRTPSParticipant()->enableReader(edp->publications_reader_.first);
 
     // Initialize server dedicated thread.
-    const RTPSParticipantAttributes& part_attr = getRTPSParticipant()->getRTPSParticipantAttributes();
+    const RTPSParticipantAttributes& part_attr = getRTPSParticipant()->get_attributes();
     uint32_t id_for_thread = static_cast<uint32_t>(part_attr.participantID);
     const fastdds::rtps::ThreadSettings& thr_config = part_attr.discovery_server_thread;
     resource_event_thread_.init_thread(thr_config, "dds.ds_ev.%u", id_for_thread);
@@ -253,7 +253,7 @@ bool PDPServer::create_secure_ds_pdp_endpoints()
 bool PDPServer::create_ds_pdp_best_effort_reader(
         DiscoveryServerPDPEndpointsSecure& endpoints)
 {
-    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
+    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->get_attributes();
 
     HistoryAttributes hatt;
     hatt.payloadMaxSize = mp_builtin->m_att.readerPayloadSize;
@@ -337,7 +337,7 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
         bool secure)
 {
     static_cast<void>(secure);
-    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
+    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->get_attributes();
 
     /***********************************
     * PDP READER
@@ -503,11 +503,10 @@ void PDPServer::initializeParticipantProxyData(
 {
     PDP::initializeParticipantProxyData(participant_data);
 
-    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol !=
-            DiscoveryProtocol::SERVER
-            &&
-            getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol !=
-            DiscoveryProtocol::BACKUP)
+    auto discovery_config = getRTPSParticipant()->get_attributes().builtin.discovery_config;
+
+    if (discovery_config.discoveryProtocol != DiscoveryProtocol::SERVER &&
+            discovery_config.discoveryProtocol != DiscoveryProtocol::BACKUP)
     {
         EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Using a PDP Server object with another user's settings");
     }
@@ -530,7 +529,7 @@ void PDPServer::initializeParticipantProxyData(
     }
 #endif //HAVE_SECURITY
 
-    const SimpleEDPAttributes& se = getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP;
+    const SimpleEDPAttributes& se = discovery_config.m_simpleEDP;
 
     if (!(se.use_PublicationWriterANDSubscriptionReader && se.use_PublicationReaderANDSubscriptionWriter))
     {
@@ -549,7 +548,7 @@ void PDPServer::match_reliable_pdp_endpoints(
     auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     uint32_t endp = pdata.m_availableBuiltinEndpoints;
-    bool use_multicast_locators = !mp_RTPSParticipant->getAttributes().builtin.avoid_builtin_multicast ||
+    bool use_multicast_locators = !mp_RTPSParticipant->get_attributes().builtin.avoid_builtin_multicast ||
             pdata.metatraffic_locators.unicast.empty();
 
     // Only SERVER and CLIENT participants will be received. All builtin must be there
@@ -720,7 +719,10 @@ void PDPServer::perform_builtin_endpoints_matching(
         mp_builtin->mp_WLP->assignRemoteEndpoints(pdata, true);
     }
 
-    mp_builtin->typelookup_manager_->assign_remote_endpoints(pdata);
+    if (nullptr != mp_builtin->typelookup_manager_)
+    {
+        mp_builtin->typelookup_manager_->assign_remote_endpoints(pdata);
+    }
 }
 
 void PDPServer::removeRemoteEndpoints(

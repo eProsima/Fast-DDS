@@ -42,6 +42,7 @@
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 #include <fastdds/utils/IPFinder.hpp>
 
+#include <fastdds/utils/TypePropagation.hpp>
 #include <rtps/attributes/ServerAttributes.hpp>
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
@@ -265,7 +266,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 #endif // if HAVE_SECURITY
     , mp_participantListener(plisten)
     , mp_userParticipant(par)
-    , mp_mutex(new std::recursive_mutex())
     , is_intraprocess_only_(should_be_intraprocess_only(PParam))
 #ifdef FASTDDS_STATISTICS
     , monitor_server_(nullptr)
@@ -564,7 +564,7 @@ void RTPSParticipantImpl::setup_meta_traffic()
     /* INSERT DEFAULT MANDATORY MULTICAST LOCATORS HERE */
     if (m_att.builtin.metatrafficMulticastLocatorList.empty() && m_att.builtin.metatrafficUnicastLocatorList.empty())
     {
-        get_default_metatraffic_locators();
+        get_default_metatraffic_locators(m_att);
         internal_metatraffic_locators_ = true;
     }
     else
@@ -625,7 +625,7 @@ void RTPSParticipantImpl::setup_user_traffic()
     {
         //Default Unicast Locators in case they have not been provided
         /* INSERT DEFAULT UNICAST LOCATORS FOR THE PARTICIPANT */
-        get_default_unicast_locators();
+        get_default_unicast_locators(m_att);
         internal_default_locators_ = true;
         EPROSIMA_LOG_INFO(RTPS_PARTICIPANT,
                 m_att.getName() << " Created with NO default Unicast Locator List, adding Locators:"
@@ -795,8 +795,6 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
     delete mp_userParticipant;
     mp_userParticipant = nullptr;
     send_resource_list_.clear();
-
-    delete mp_mutex;
 }
 
 template <EndpointKind_t kind, octet no_key, octet with_key>
@@ -1426,37 +1424,44 @@ bool RTPSParticipantImpl::registerReader(
 void RTPSParticipantImpl::update_attributes(
         const RTPSParticipantAttributes& patt)
 {
+    // Avoid ABBA with PDP mutex by using a local copy of the attributes
+    RTPSParticipantAttributes temp_atts;
+    {
+        std::lock_guard<std::mutex> _(mutex_);
+        temp_atts = m_att;
+    }
+
     bool local_interfaces_changed = false;
 
     // Update cached network interfaces
     if (!SystemInfo::update_interfaces())
     {
         EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT,
-                "Failed to update cached network interfaces during " << m_att.getName() <<
+                "Failed to update cached network interfaces during " << temp_atts.getName() <<
                 " attributes update");
     }
 
     // Check if new interfaces have been added
     if (internal_metatraffic_locators_)
     {
-        LocatorList_t metatraffic_unicast_locator_list = m_att.builtin.metatrafficUnicastLocatorList;
-        get_default_metatraffic_locators();
-        if (!(metatraffic_unicast_locator_list == m_att.builtin.metatrafficUnicastLocatorList))
+        LocatorList_t metatraffic_unicast_locator_list = temp_atts.builtin.metatrafficUnicastLocatorList;
+        get_default_metatraffic_locators(temp_atts);
+        if (!(metatraffic_unicast_locator_list == temp_atts.builtin.metatrafficUnicastLocatorList))
         {
             local_interfaces_changed = true;
-            EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, m_att.getName() << " updated its metatraffic locators");
+            EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, temp_atts.getName() << " updated its metatraffic locators");
         }
     }
     if (internal_default_locators_)
     {
-        LocatorList_t default_unicast_locator_list = m_att.defaultUnicastLocatorList;
-        get_default_unicast_locators();
-        if (!(default_unicast_locator_list == m_att.defaultUnicastLocatorList))
+        LocatorList_t default_unicast_locator_list = temp_atts.defaultUnicastLocatorList;
+        get_default_unicast_locators(temp_atts);
+        if (!(default_unicast_locator_list == temp_atts.defaultUnicastLocatorList))
         {
             local_interfaces_changed = true;
             EPROSIMA_LOG_INFO(RTPS_PARTICIPANT,
-                    m_att.getName() << " updated default unicast locator list, current locators: "
-                                    << m_att.defaultUnicastLocatorList);
+                    temp_atts.getName() << " updated default unicast locator list, current locators: "
+                                        << temp_atts.defaultUnicastLocatorList);
         }
     }
 
@@ -1471,9 +1476,9 @@ void RTPSParticipantImpl::update_attributes(
     // Check if discovery servers need to be updated
     LocatorList_t converted_discovery_servers =
             patt.builtin.discovery_config.m_DiscoveryServers;
-    if (converted_discovery_servers != m_att.builtin.discovery_config.m_DiscoveryServers)
+    if (converted_discovery_servers != temp_atts.builtin.discovery_config.m_DiscoveryServers)
     {
-        for (auto& transportDescriptor : m_att.userTransports)
+        for (auto& transportDescriptor : temp_atts.userTransports)
         {
             TCPTransportDescriptor* pT = dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get());
             if (pT)
@@ -1492,14 +1497,14 @@ void RTPSParticipantImpl::update_attributes(
     }
 
     // Check if there are changes
-    if (converted_discovery_servers != m_att.builtin.discovery_config.m_DiscoveryServers
-            || patt.userData != m_att.userData
+    if (converted_discovery_servers != temp_atts.builtin.discovery_config.m_DiscoveryServers
+            || patt.userData != temp_atts.userData
             || local_interfaces_changed)
     {
         update_pdp = true;
 
-        // Update RTPSParticipantAttributes members
-        m_att.userData = patt.userData;
+        // Update RTPSParticipantAttributes user data
+        temp_atts.userData = patt.userData;
 
         // If there's no PDP don't process Discovery-related attributes.
         if (!pdp)
@@ -1512,13 +1517,13 @@ void RTPSParticipantImpl::update_attributes(
             using namespace network::external_locators;
             if (local_interfaces_changed && internal_metatraffic_locators_)
             {
-                set_listening_locators(m_att.builtin.metatraffic_external_unicast_locators,
-                        m_att.builtin.metatrafficUnicastLocatorList);
+                set_listening_locators(temp_atts.builtin.metatraffic_external_unicast_locators,
+                        temp_atts.builtin.metatrafficUnicastLocatorList);
             }
             if (local_interfaces_changed && internal_default_locators_)
             {
-                set_listening_locators(m_att.default_external_unicast_locators,
-                        m_att.defaultUnicastLocatorList);
+                set_listening_locators(temp_atts.default_external_unicast_locators,
+                        temp_atts.defaultUnicastLocatorList);
             }
         }
 
@@ -1527,65 +1532,71 @@ void RTPSParticipantImpl::update_attributes(
 
             // Update user data
             auto local_participant_proxy_data = pdp->getLocalParticipantProxyData();
-            local_participant_proxy_data->m_userData.data_vec(m_att.userData);
+            local_participant_proxy_data->m_userData.data_vec(temp_atts.userData);
 
             // Update metatraffic locators
-            for (auto locator : m_att.builtin.metatrafficMulticastLocatorList)
+            for (auto locator : temp_atts.builtin.metatrafficMulticastLocatorList)
             {
                 local_participant_proxy_data->metatraffic_locators.add_multicast_locator(locator);
             }
-            for (auto locator : m_att.builtin.metatrafficUnicastLocatorList)
+            for (auto locator : temp_atts.builtin.metatrafficUnicastLocatorList)
             {
                 local_participant_proxy_data->metatraffic_locators.add_unicast_locator(locator);
             }
 
             // Update default locators
-            for (auto locator : m_att.defaultUnicastLocatorList)
+            for (auto locator : temp_atts.defaultUnicastLocatorList)
             {
                 local_participant_proxy_data->default_locators.add_unicast_locator(locator);
             }
 
             if (local_interfaces_changed)
             {
-                createSenderResources(m_att.builtin.metatrafficMulticastLocatorList);
-                createSenderResources(m_att.builtin.metatrafficUnicastLocatorList);
-                createSenderResources(m_att.defaultUnicastLocatorList);
+                createSenderResources(temp_atts.builtin.metatrafficMulticastLocatorList);
+                createSenderResources(temp_atts.builtin.metatrafficUnicastLocatorList);
+                createSenderResources(temp_atts.defaultUnicastLocatorList);
             }
 
             // Update remote servers list
-            if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::CLIENT ||
-                    m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SUPER_CLIENT ||
-                    m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||
-                    m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
+            if (temp_atts.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::CLIENT ||
+                    temp_atts.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SUPER_CLIENT ||
+                    temp_atts.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||
+                    temp_atts.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
             {
                 // Update list of Discovery Servers. The participant will remain connected to the servers of the
                 // previous list but will cease pinging servers that are not included in the new list.
                 // Liveliness will be maintained until the old server is removed from the participant, ensuring
                 // that existing connections are unaffected by the list update.
-                m_att.builtin.discovery_config.m_DiscoveryServers = converted_discovery_servers;
+                temp_atts.builtin.discovery_config.m_DiscoveryServers = converted_discovery_servers;
 
                 // Update the servers list in builtin protocols
                 {
                     std::unique_lock<eprosima::shared_mutex> disc_lock(mp_builtinProtocols->getDiscoveryMutex());
-                    mp_builtinProtocols->m_DiscoveryServers = m_att.builtin.discovery_config.m_DiscoveryServers;
+                    mp_builtinProtocols->m_DiscoveryServers = temp_atts.builtin.discovery_config.m_DiscoveryServers;
                 }
 
                 // Notify PDPServer
-                if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||
-                        m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
+                if (temp_atts.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||
+                        temp_atts.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
                 {
                     PDPServer* pdp_server = static_cast<PDPServer*>(pdp);
                     pdp_server->update_remote_servers_list();
                 }
                 // Notify PDPClient
-                else if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::CLIENT ||
-                        m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SUPER_CLIENT)
+                else if (temp_atts.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::CLIENT ||
+                        temp_atts.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SUPER_CLIENT)
                 {
                     PDPClient* pdp_client = static_cast<PDPClient*>(pdp);
                     pdp_client->update_remote_servers_list();
                 }
             }
         }
+    }
+
+    // Update the attributes data member
+    {
+        std::lock_guard<std::mutex> _(mutex_);
+        m_att = temp_atts;
     }
 
     if (update_pdp)
@@ -2665,24 +2676,26 @@ void RTPSParticipantImpl::environment_file_has_changed()
     }
 }
 
-void RTPSParticipantImpl::get_default_metatraffic_locators()
+void RTPSParticipantImpl::get_default_metatraffic_locators(
+        RTPSParticipantAttributes& att)
 {
-    uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(domain_id_);
+    uint32_t metatraffic_multicast_port = att.port.getMulticastPort(domain_id_);
 
-    m_network_Factory.getDefaultMetatrafficMulticastLocators(m_att.builtin.metatrafficMulticastLocatorList,
+    m_network_Factory.getDefaultMetatrafficMulticastLocators(att.builtin.metatrafficMulticastLocatorList,
             metatraffic_multicast_port);
-    m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficMulticastLocatorList);
+    m_network_Factory.NormalizeLocators(att.builtin.metatrafficMulticastLocatorList);
 
-    m_network_Factory.getDefaultMetatrafficUnicastLocators(m_att.builtin.metatrafficUnicastLocatorList,
+    m_network_Factory.getDefaultMetatrafficUnicastLocators(att.builtin.metatrafficUnicastLocatorList,
             metatraffic_unicast_port_);
-    m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
+    m_network_Factory.NormalizeLocators(att.builtin.metatrafficUnicastLocatorList);
 }
 
-void RTPSParticipantImpl::get_default_unicast_locators()
+void RTPSParticipantImpl::get_default_unicast_locators(
+        RTPSParticipantAttributes& att)
 {
-    uint32_t unicast_port = metatraffic_unicast_port_ + m_att.port.offsetd3 - m_att.port.offsetd1;
-    m_network_Factory.getDefaultUnicastLocators(m_att.defaultUnicastLocatorList, unicast_port);
-    m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
+    uint32_t unicast_port = metatraffic_unicast_port_ + att.port.offsetd3 - att.port.offsetd1;
+    m_network_Factory.getDefaultUnicastLocators(att.defaultUnicastLocatorList, unicast_port);
+    m_network_Factory.NormalizeLocators(att.defaultUnicastLocatorList);
 }
 
 bool RTPSParticipantImpl::is_participant_ignored(
@@ -3160,6 +3173,17 @@ void RTPSParticipantImpl::update_removed_participant(
             remote_participant_locators,
             initial_peers_and_ds);
     }
+}
+
+dds::utils::TypePropagation RTPSParticipantImpl::type_propagation() const
+{
+    std::lock_guard<std::mutex> _(mutex_);
+    return dds::utils::to_type_propagation(m_att.properties);
+}
+
+const RTPSParticipantAttributes& RTPSParticipantImpl::get_attributes() const
+{
+    return m_att;
 }
 
 } /* namespace rtps */
