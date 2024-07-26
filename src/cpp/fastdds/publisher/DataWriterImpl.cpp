@@ -1766,9 +1766,12 @@ ReturnCode_t DataWriterImpl::get_publication_builtin_topic_data(
     publication_data.guid = guid();
     publication_data.participant_guid = publisher_->get_participant()->guid();
 
-    
-    publication_data.persistence_guid.guidPrefix = writer_->get_participant_impl()->get_persistence_guid_prefix();
-    publication_data.persistence_guid.entityId = c_EntityId_RTPSParticipant;
+    const std::string* pers_guid = PropertyPolicyHelper::find_property(qos_.properties(), "dds.persistence.guid");
+    if (pers_guid)
+    {
+        // Load persistence_guid from property
+        std::istringstream(pers_guid->c_str()) >> publication_data.persistence_guid;
+    }
 
     qos_.endpoint().unicast_locator_list.copy_to(publication_data.remote_locators.unicast);
     qos_.endpoint().multicast_locator_list.copy_to(publication_data.remote_locators.multicast);
