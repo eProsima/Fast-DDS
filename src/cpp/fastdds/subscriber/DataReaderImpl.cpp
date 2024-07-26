@@ -276,7 +276,10 @@ ReturnCode_t DataReaderImpl::enable()
                     qos_.lifespan().duration.to_ns() * 1e-6);
 
     // Register the reader
-    auto builtin_topic_data = get_subscription_builtin_topic_data();
+    SubscriptionBuiltinTopicData builtin_topic_data;
+    auto get_data_ret_code = get_subscription_builtin_topic_data(builtin_topic_data);
+    static_cast<void>(get_data_ret_code);
+    assert(RETCODE_OK == get_data_ret_code);
 
     rtps::ContentFilterProperty* filter_property = nullptr;
     if (nullptr != content_topic && !content_topic->filter_property.filter_expression.empty())
@@ -2169,48 +2172,44 @@ void DataReaderImpl::try_notify_read_conditions() noexcept
     }
 }
 
-SubscriptionBuiltinTopicData DataReaderImpl::get_subscription_builtin_topic_data() const
+ReturnCode_t DataReaderImpl::get_subscription_builtin_topic_data(
+        SubscriptionBuiltinTopicData& subscription_data) const
 {
-    SubscriptionBuiltinTopicData sub_builtin_data;
+    if (nullptr == reader_)
+    {
+        return RETCODE_NOT_ENABLED;
+    }
 
     // sanity checks
-    bool subscriber_is_valid = (nullptr != subscriber_);
-    bool topic_is_valid = (nullptr != topic_);
-    bool participant_is_valid = subscriber_is_valid ? (nullptr != subscriber_->get_participant()) : false;
+    assert(nullptr != subscriber_);
+    assert(nullptr != topic_);
+    assert(nullptr != subscriber_->get_participant());
 
-    from_proxy_to_builtin(guid_.entityId, sub_builtin_data.key.value);
+    subscription_data = SubscriptionBuiltinTopicData{};
 
-    if (participant_is_valid)
-    {
-        from_proxy_to_builtin(subscriber_->get_participant()->guid().guidPrefix,
-                sub_builtin_data.participant_key.value);
-    }
+    from_proxy_to_builtin(guid_.entityId, subscription_data.key.value);
+    from_proxy_to_builtin(subscriber_->get_participant()->guid().guidPrefix,
+            subscription_data.participant_key.value);
 
-    if (topic_is_valid)
-    {
-        sub_builtin_data.topic_name = topic_->get_impl()->get_rtps_topic_name();
-        sub_builtin_data.type_name = topic_->get_type_name();
-    }
+    subscription_data.topic_name = topic_->get_impl()->get_rtps_topic_name();
+    subscription_data.type_name = topic_->get_type_name();
 
     // DataReader qos
-    sub_builtin_data.durability = qos_.durability();
-    sub_builtin_data.deadline = qos_.deadline();
-    sub_builtin_data.latency_budget = qos_.latency_budget();
-    sub_builtin_data.lifespan = qos_.lifespan();
-    sub_builtin_data.liveliness = qos_.liveliness();
-    sub_builtin_data.reliability = qos_.reliability();
-    sub_builtin_data.ownership = qos_.ownership();
-    sub_builtin_data.destination_order = qos_.destination_order();
-    sub_builtin_data.user_data = qos_.user_data();
-    sub_builtin_data.time_based_filter = qos_.time_based_filter();
+    subscription_data.durability = qos_.durability();
+    subscription_data.deadline = qos_.deadline();
+    subscription_data.latency_budget = qos_.latency_budget();
+    subscription_data.lifespan = qos_.lifespan();
+    subscription_data.liveliness = qos_.liveliness();
+    subscription_data.reliability = qos_.reliability();
+    subscription_data.ownership = qos_.ownership();
+    subscription_data.destination_order = qos_.destination_order();
+    subscription_data.user_data = qos_.user_data();
+    subscription_data.time_based_filter = qos_.time_based_filter();
 
     // Subscriber qos
-    if (subscriber_is_valid)
-    {
-        sub_builtin_data.presentation = subscriber_->qos_.presentation();
-        sub_builtin_data.partition = subscriber_->qos_.partition();
-        sub_builtin_data.group_data = subscriber_->qos_.group_data();
-    }
+    subscription_data.presentation = subscriber_->qos_.presentation();
+    subscription_data.partition = subscriber_->qos_.partition();
+    subscription_data.group_data = subscriber_->qos_.group_data();
 
     // X-Types 1.3
     using utils::to_type_propagation;
@@ -2235,13 +2234,13 @@ SubscriptionBuiltinTopicData DataReaderImpl::get_subscription_builtin_topic_data
                 case TypePropagation::TYPEPROPAGATION_ENABLED:
                 {
                     // Use both complete and minimal type information
-                    sub_builtin_data.type_information.type_information = type_info;
+                    subscription_data.type_information.type_information = type_info;
                     break;
                 }
                 case TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH:
                 {
                     // Use minimal type information only
-                    sub_builtin_data.type_information.type_information.minimal() = type_info.minimal();
+                    subscription_data.type_information.type_information.minimal() = type_info.minimal();
                     break;
                 }
                 default:
@@ -2250,50 +2249,47 @@ SubscriptionBuiltinTopicData DataReaderImpl::get_subscription_builtin_topic_data
                     break;
             }
 
-            sub_builtin_data.type_information.assigned(true);
-            sub_builtin_data.type_consistency = qos_.type_consistency();
+            subscription_data.type_information.assigned(true);
+            subscription_data.type_consistency = qos_.type_consistency();
         }
     }
-    sub_builtin_data.representation = qos_.representation();
+    subscription_data.representation = qos_.representation();
 
     // eProsima Extensions
 
-    sub_builtin_data.disable_positive_acks = qos_.reliable_reader_qos().disable_positive_acks;
-    sub_builtin_data.data_sharing = qos_.data_sharing();
+    subscription_data.disable_positive_acks = qos_.reliable_reader_qos().disable_positive_acks;
+    subscription_data.data_sharing = qos_.data_sharing();
 
-    if (sub_builtin_data.data_sharing.kind() != OFF &&
-        sub_builtin_data.data_sharing.domain_ids().empty())
+    if (subscription_data.data_sharing.kind() != OFF &&
+        subscription_data.data_sharing.domain_ids().empty())
     {
-        sub_builtin_data.data_sharing.add_domain_id(utils::default_domain_id());
+        subscription_data.data_sharing.add_domain_id(utils::default_domain_id());
     }
 
-    sub_builtin_data.guid = guid();
-    if (subscriber_is_valid)
-    {
-        sub_builtin_data.participant_guid = subscriber_->get_participant()->guid();
-    }
-    qos_.endpoint().unicast_locator_list.copy_to(sub_builtin_data.remote_locators.unicast);
-    qos_.endpoint().multicast_locator_list.copy_to(sub_builtin_data.remote_locators.multicast);
-    sub_builtin_data.expects_inline_qos = qos_.expects_inline_qos();
+    subscription_data.guid = guid();
+    subscription_data.participant_guid = subscriber_->get_participant()->guid();
+    qos_.endpoint().unicast_locator_list.copy_to(subscription_data.remote_locators.unicast);
+    qos_.endpoint().multicast_locator_list.copy_to(subscription_data.remote_locators.multicast);
+    subscription_data.expects_inline_qos = qos_.expects_inline_qos();
 
     if (!is_data_sharing_compatible_)
     {
-        sub_builtin_data.data_sharing.off();
+        subscription_data.data_sharing.off();
     }
     const std::string* endpoint_partitions = PropertyPolicyHelper::find_property(qos_.properties(), "partitions");
     if (endpoint_partitions)
     {
         std::istringstream partition_string(*endpoint_partitions);
         std::string partition_name;
-        sub_builtin_data.partition.clear();
+        subscription_data.partition.clear();
 
         while (std::getline(partition_string, partition_name, ';'))
         {
-            sub_builtin_data.partition.push_back(partition_name.c_str());
+            subscription_data.partition.push_back(partition_name.c_str());
         }
     }
 
-    return sub_builtin_data;
+    return RETCODE_OK;
 }
 
 }  // namespace dds
