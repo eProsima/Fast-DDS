@@ -852,10 +852,10 @@ public:
                         try
                         {
                             int input = std::stoi(argv[i]);
-                            if (input < 1 || static_cast<long>(input) > static_cast<long>(max_duration))
+                            if (input < 0 || static_cast<long>(input) > static_cast<long>(max_duration))
                             {
                                 throw std::out_of_range("wait argument " + std::string(
-                                                  argv[i]) + " out of range [1, " + std::to_string(
+                                                  argv[i]) + " out of range [0, " + std::to_string(
                                                   max_duration) + "].");
                             }
                             else

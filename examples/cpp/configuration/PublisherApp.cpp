@@ -268,8 +268,8 @@ bool PublisherApp::publish()
     std::unique_lock<std::mutex> matched_lock(mutex_);
     cv_.wait(matched_lock, [&]()
             {
-                // at least one has been discovered
-                return ((matched_ > 0) || is_stopped());
+                // Publisher starts sending messages when enough entities have been discovered.
+                return ((matched_ >= static_cast<int16_t>(wait_)) || is_stopped());
             });
     if (!is_stopped())
     {
