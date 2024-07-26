@@ -69,8 +69,7 @@ public:
 
     using endpoint_registrator_t = std::function<bool (
                         fastdds::rtps::RTPSWriter*,
-                        const eprosima::fastdds::rtps::PublicationBuiltinTopicData&,
-                        const fastdds::dds::WriterQos&)>;
+                        const eprosima::fastdds::rtps::PublicationBuiltinTopicData&)>;
 
     MonitorService(
             const fastdds::rtps::GUID_t& guid,

@@ -2876,8 +2876,7 @@ const fastdds::statistics::rtps::IStatusObserver* RTPSParticipantImpl::create_mo
                     return this->createWriter(WriterOut, param, hist, listen, entityId, isBuiltin);
                 },
                 [&](RTPSWriter* w,
-                const PublicationBuiltinTopicData& pub_builtin_data,
-                const fastdds::dds::WriterQos& /*wqos*/) -> bool
+                const PublicationBuiltinTopicData& pub_builtin_data) -> bool
                 {
                     return this->register_writer(w, pub_builtin_data);
                 },
