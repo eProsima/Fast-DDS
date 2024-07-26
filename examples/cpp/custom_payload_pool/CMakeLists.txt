@@ -38,11 +38,16 @@ message(STATUS "Configuring custom payload pool example...")
 file(GLOB CUSTOM_PAYLOAD_POOL_DATA_EXAMPLE_SOURCES_CXX "*.cxx")
 file(GLOB CUSTOM_PAYLOAD_POOL_DATA_EXAMPLE_SOURCES_CPP "*.cpp")
 
-add_executable(custom_payload_pool ${CUSTOM_PAYLOAD_POOL_DATA_EXAMPLE_SOURCES_CXX} ${CUSTOM_PAYLOAD_POOL_DATA_EXAMPLE_SOURCES_CPP})
+add_executable(custom_payload_pool
+    ${CUSTOM_PAYLOAD_POOL_DATA_EXAMPLE_SOURCES_CXX}
+    ${CUSTOM_PAYLOAD_POOL_DATA_EXAMPLE_SOURCES_CPP})
+
 target_compile_definitions(custom_payload_pool PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
+
 target_link_libraries(custom_payload_pool fastdds fastcdr fastdds::optionparser)
+
 install(TARGETS custom_payload_pool
-    RUNTIME DESTINATION examples/cpp/dds/custom_payload_pool/${BIN_INSTALL_DIR})
+    RUNTIME DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples/cpp/custom_payload_pool/${BIN_INSTALL_DIR})
