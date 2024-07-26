@@ -56,9 +56,11 @@ ParticipantProxyData::ParticipantProxyData(
     , m_expectsInlineQos(false)
     , m_availableBuiltinEndpoints(0)
     , m_networkConfiguration(0)
-    , metatraffic_locators(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
-    , default_locators(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
-    , m_manualLivelinessCount ()
+    , metatraffic_locators(allocation.locators.max_unicast_locators,
+            allocation.locators.max_multicast_locators)
+    , default_locators(allocation.locators.max_unicast_locators,
+            allocation.locators.max_multicast_locators)
+    , m_manualLivelinessCount()
 #if HAVE_SECURITY
     , security_attributes_(0UL)
     , plugin_security_attributes_(0UL)
@@ -86,7 +88,7 @@ ParticipantProxyData::ParticipantProxyData(
     , m_networkConfiguration(pdata.m_networkConfiguration)
     , metatraffic_locators(pdata.metatraffic_locators)
     , default_locators(pdata.default_locators)
-    , m_manualLivelinessCount ()
+    , m_manualLivelinessCount()
     , m_participantName(pdata.m_participantName)
     , m_key(pdata.m_key)
     , m_leaseDuration(pdata.m_leaseDuration)
@@ -173,16 +175,22 @@ uint32_t ParticipantProxyData::get_serialized_size(
     ret_val += 4 + PARAMETER_NETWORKCONFIGSET_LENGTH;
 
     // PID_METATRAFFIC_MULTICAST_LOCATOR
-    ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * metatraffic_locators.multicast.size());
+    ret_val +=
+            static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) *
+            metatraffic_locators.multicast.size());
 
     // PID_METATRAFFIC_UNICAST_LOCATOR
-    ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * metatraffic_locators.unicast.size());
+    ret_val +=
+            static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) *
+            metatraffic_locators.unicast.size());
 
     // PID_DEFAULT_UNICAST_LOCATOR
-    ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * default_locators.unicast.size());
+    ret_val +=
+            static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * default_locators.unicast.size());
 
     // PID_DEFAULT_MULTICAST_LOCATOR
-    ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * default_locators.multicast.size());
+    ret_val +=
+            static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * default_locators.multicast.size());
 
     // PID_PARTICIPANT_LEASE_DURATION
     ret_val += 4 + PARAMETER_TIME_LENGTH;
@@ -193,19 +201,22 @@ uint32_t ParticipantProxyData::get_serialized_size(
     if (m_participantName.size() > 0)
     {
         // PID_ENTITY_NAME
-        ret_val += fastdds::dds::ParameterSerializer<Parameter_t>::cdr_serialized_size(m_participantName);
+        ret_val +=
+                fastdds::dds::ParameterSerializer<Parameter_t>::cdr_serialized_size(m_participantName);
     }
 
     if (m_userData.size() > 0)
     {
         // PID_USER_DATA
-        ret_val += fastdds::dds::QosPoliciesSerializer<dds::UserDataQosPolicy>::cdr_serialized_size(m_userData);
+        ret_val += fastdds::dds::QosPoliciesSerializer<dds::UserDataQosPolicy>::cdr_serialized_size(
+            m_userData);
     }
 
     if (m_properties.size() > 0)
     {
         // PID_PROPERTY_LIST
-        ret_val += fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::cdr_serialized_size(m_properties);
+        ret_val += fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::cdr_serialized_size(
+            m_properties);
     }
 
 #if HAVE_SECURITY
@@ -218,7 +229,8 @@ uint32_t ParticipantProxyData::get_serialized_size(
     if (!permissions_token_.class_id().empty())
     {
         // PID_PERMISSIONS_TOKEN
-        ret_val += fastdds::dds::ParameterSerializer<Parameter_t>::cdr_serialized_size(permissions_token_);
+        ret_val += fastdds::dds::ParameterSerializer<Parameter_t>::cdr_serialized_size(
+            permissions_token_);
     }
 
     if ((security_attributes_ != 0UL) || (plugin_security_attributes_ != 0UL))
@@ -247,7 +259,9 @@ bool ParticipantProxyData::writeToCDRMessage(
     {
         ParameterProtocolVersion_t p(fastdds::dds::PID_PROTOCOL_VERSION, PARAMETER_PROTOCOL_LENGTH);
         p.protocolVersion = this->m_protocolVersion;
-        if (!fastdds::dds::ParameterSerializer<ParameterProtocolVersion_t>::add_to_cdr_message(p, msg))
+        if (!fastdds::dds::ParameterSerializer<ParameterProtocolVersion_t>::add_to_cdr_message(
+                    p,
+                    msg))
         {
             return false;
         }
@@ -262,7 +276,8 @@ bool ParticipantProxyData::writeToCDRMessage(
         }
     }
     {
-        ParameterProductVersion_t p(fastdds::dds::PID_PRODUCT_VERSION, PARAMETER_PRODUCT_VERSION_LENGTH);
+        ParameterProductVersion_t p(fastdds::dds::PID_PRODUCT_VERSION,
+                PARAMETER_PRODUCT_VERSION_LENGTH);
         p.version.major = this->product_version.major;
         p.version.minor = this->product_version.minor;
         p.version.patch = this->product_version.patch;
@@ -282,7 +297,8 @@ bool ParticipantProxyData::writeToCDRMessage(
     }
     if (this->m_expectsInlineQos)
     {
-        ParameterBool_t p(fastdds::dds::PID_EXPECTS_INLINE_QOS, PARAMETER_BOOL_LENGTH, m_expectsInlineQos);
+        ParameterBool_t p(fastdds::dds::PID_EXPECTS_INLINE_QOS, PARAMETER_BOOL_LENGTH,
+                m_expectsInlineQos);
         if (!fastdds::dds::ParameterSerializer<ParameterBool_t>::add_to_cdr_message(p, msg))
         {
             return false;
@@ -296,16 +312,20 @@ bool ParticipantProxyData::writeToCDRMessage(
         }
     }
     {
-        ParameterNetworkConfigSet_t p(fastdds::dds::PID_NETWORK_CONFIGURATION_SET, PARAMETER_NETWORKCONFIGSET_LENGTH);
+        ParameterNetworkConfigSet_t p(fastdds::dds::PID_NETWORK_CONFIGURATION_SET,
+                PARAMETER_NETWORKCONFIGSET_LENGTH);
         p.netconfigSet = m_networkConfiguration;
-        if (!fastdds::dds::ParameterSerializer<ParameterNetworkConfigSet_t>::add_to_cdr_message(p, msg))
+        if (!fastdds::dds::ParameterSerializer<ParameterNetworkConfigSet_t>::add_to_cdr_message(
+                    p,
+                    msg))
         {
             return false;
         }
     }
     for (const Locator_t& it : metatraffic_locators.multicast)
     {
-        ParameterLocator_t p(fastdds::dds::PID_METATRAFFIC_MULTICAST_LOCATOR, PARAMETER_LOCATOR_LENGTH, it);
+        ParameterLocator_t p(fastdds::dds::PID_METATRAFFIC_MULTICAST_LOCATOR, PARAMETER_LOCATOR_LENGTH,
+                it);
         if (!fastdds::dds::ParameterSerializer<ParameterLocator_t>::add_to_cdr_message(p, msg))
         {
             return false;
@@ -313,7 +333,8 @@ bool ParticipantProxyData::writeToCDRMessage(
     }
     for (const Locator_t& it : metatraffic_locators.unicast)
     {
-        ParameterLocator_t p(fastdds::dds::PID_METATRAFFIC_UNICAST_LOCATOR, PARAMETER_LOCATOR_LENGTH, it);
+        ParameterLocator_t p(fastdds::dds::PID_METATRAFFIC_UNICAST_LOCATOR, PARAMETER_LOCATOR_LENGTH,
+                it);
         if (!fastdds::dds::ParameterSerializer<ParameterLocator_t>::add_to_cdr_message(p, msg))
         {
             return false;
@@ -344,9 +365,12 @@ bool ParticipantProxyData::writeToCDRMessage(
         }
     }
     {
-        ParameterBuiltinEndpointSet_t p(fastdds::dds::PID_BUILTIN_ENDPOINT_SET, PARAMETER_BUILTINENDPOINTSET_LENGTH);
+        ParameterBuiltinEndpointSet_t p(fastdds::dds::PID_BUILTIN_ENDPOINT_SET,
+                PARAMETER_BUILTINENDPOINTSET_LENGTH);
         p.endpointSet = m_availableBuiltinEndpoints;
-        if (!fastdds::dds::ParameterSerializer<ParameterBuiltinEndpointSet_t>::add_to_cdr_message(p, msg))
+        if (!fastdds::dds::ParameterSerializer<ParameterBuiltinEndpointSet_t>::add_to_cdr_message(
+                    p,
+                    msg))
         {
             return false;
         }
@@ -363,8 +387,9 @@ bool ParticipantProxyData::writeToCDRMessage(
 
     if (m_userData.size() > 0)
     {
-        if (!fastdds::dds::QosPoliciesSerializer<dds::UserDataQosPolicy>::add_to_cdr_message(m_userData,
-                msg))
+        if (!fastdds::dds::QosPoliciesSerializer<dds::UserDataQosPolicy>::add_to_cdr_message(
+                    m_userData,
+                    msg))
         {
             return false;
         }
@@ -372,7 +397,9 @@ bool ParticipantProxyData::writeToCDRMessage(
 
     if (m_properties.size() > 0)
     {
-        if (!fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::add_to_cdr_message(m_properties, msg))
+        if (!fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::add_to_cdr_message(
+                    m_properties,
+                    msg))
         {
             return false;
         }
@@ -404,7 +431,9 @@ bool ParticipantProxyData::writeToCDRMessage(
         ParameterParticipantSecurityInfo_t p;
         p.security_attributes = security_attributes_;
         p.plugin_security_attributes = plugin_security_attributes_;
-        if (!fastdds::dds::ParameterSerializer<ParameterParticipantSecurityInfo_t>::add_to_cdr_message(p, msg))
+        if (!fastdds::dds::ParameterSerializer<ParameterParticipantSecurityInfo_t>::add_to_cdr_message(
+                    p,
+                    msg))
         {
             return false;
         }
@@ -422,15 +451,18 @@ bool ParticipantProxyData::readFromCDRMessage(
         bool should_filter_locators,
         fastdds::rtps::VendorId_t source_vendor_id)
 {
-    auto param_process = [this, &network, &is_shm_transport_available, &should_filter_locators, source_vendor_id](
+    auto param_process =
+            [this, &network, &is_shm_transport_available, &should_filter_locators, source_vendor_id](
         CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
             {
-                switch (pid)
-                {
+                static_cast<void>(source_vendor_id);
+                switch (pid){
                     case fastdds::dds::PID_KEY_HASH:
                     {
                         ParameterKey_t p(pid, plength);
-                        if (!fastdds::dds::ParameterSerializer<ParameterKey_t>::read_from_cdr_message(p, msg, plength))
+                        if (!fastdds::dds::ParameterSerializer<ParameterKey_t>::read_from_cdr_message(
+                                    p, msg,
+                                    plength))
                         {
                             return false;
                         }
@@ -444,8 +476,10 @@ bool ParticipantProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_PROTOCOL_VERSION:
                     {
                         ParameterProtocolVersion_t p(pid, plength);
-                        if (!fastdds::dds::ParameterSerializer<ParameterProtocolVersion_t>::read_from_cdr_message(p,
-                                msg, plength))
+                        if (!fastdds::dds::ParameterSerializer<ParameterProtocolVersion_t>::
+                                read_from_cdr_message(
+                                    p,
+                                    msg, plength))
                         {
                             return false;
                         }
@@ -460,8 +494,9 @@ bool ParticipantProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_VENDORID:
                     {
                         ParameterVendorId_t p(pid, plength);
-                        if (!fastdds::dds::ParameterSerializer<ParameterVendorId_t>::read_from_cdr_message(p, msg,
-                                plength))
+                        if (!fastdds::dds::ParameterSerializer<ParameterVendorId_t>::read_from_cdr_message(
+                                    p, msg,
+                                    plength))
                         {
                             return false;
                         }
@@ -473,19 +508,19 @@ bool ParticipantProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_PRODUCT_VERSION:
                     {
-                        VendorId_t local_vendor_id {select_vendor_id(source_vendor_id)};
-
                         // Ignore custom PID when coming from other vendors
-                        if (c_VendorId_eProsima != local_vendor_id)
+                        if (c_VendorId_eProsima != m_VendorId)
                         {
-                            EPROSIMA_LOG_INFO(RTPS_PROXY_DATA,
-                                    "Ignoring custom PID" << pid << " from vendor " << local_vendor_id);
+                            EPROSIMA_LOG_INFO(
+                                RTPS_PROXY_DATA,
+                                "Ignoring custom PID" << pid << " from vendor " << source_vendor_id);
                             return true;
                         }
 
                         ParameterProductVersion_t p(pid, plength);
-                        if (!fastdds::dds::ParameterSerializer<ParameterProductVersion_t>::read_from_cdr_message(p,
-                                msg, plength))
+                        if (!fastdds::dds::ParameterSerializer<ParameterProductVersion_t>::read_from_cdr_message(
+                                    p,
+                                    msg, plength))
                         {
                             return false;
                         }
@@ -496,8 +531,9 @@ bool ParticipantProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_DOMAIN_ID:
                     {
                         ParameterDomainId_t p(pid, plength);
-                        if (!fastdds::dds::ParameterSerializer<ParameterDomainId_t>::read_from_cdr_message(p, msg,
-                                plength))
+                        if (!fastdds::dds::ParameterSerializer<ParameterDomainId_t>::read_from_cdr_message(
+                                    p, msg,
+                                    plength))
                         {
                             return false;
                         }
@@ -508,7 +544,9 @@ bool ParticipantProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_EXPECTS_INLINE_QOS:
                     {
                         ParameterBool_t p(pid, plength);
-                        if (!fastdds::dds::ParameterSerializer<ParameterBool_t>::read_from_cdr_message(p, msg, plength))
+                        if (!fastdds::dds::ParameterSerializer<ParameterBool_t>::read_from_cdr_message(
+                                    p, msg,
+                                    plength))
                         {
                             return false;
                         }
@@ -519,7 +557,9 @@ bool ParticipantProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_PARTICIPANT_GUID:
                     {
                         ParameterGuid_t p(pid, plength);
-                        if (!fastdds::dds::ParameterSerializer<ParameterGuid_t>::read_from_cdr_message(p, msg, plength))
+                        if (!fastdds::dds::ParameterSerializer<ParameterGuid_t>::read_from_cdr_message(
+                                    p, msg,
+                                    plength))
                         {
                             return false;
                         }
@@ -530,19 +570,20 @@ bool ParticipantProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_NETWORK_CONFIGURATION_SET:
                     {
-                        VendorId_t local_vendor_id {select_vendor_id(source_vendor_id)};
-
                         // Ignore custom PID when coming from other vendors
-                        if (c_VendorId_eProsima != local_vendor_id)
+                        if (c_VendorId_eProsima != m_VendorId)
                         {
-                            EPROSIMA_LOG_INFO(RTPS_PROXY_DATA,
-                                    "Ignoring custom PID" << pid << " from vendor " << local_vendor_id);
+                            EPROSIMA_LOG_INFO(
+                                RTPS_PROXY_DATA,
+                                "Ignoring custom PID" << pid << " from vendor " << source_vendor_id);
                             return true;
                         }
 
                         ParameterNetworkConfigSet_t p(pid, plength);
-                        if (!fastdds::dds::ParameterSerializer<ParameterNetworkConfigSet_t>::read_from_cdr_message(p,
-                                msg, plength))
+                        if (!fastdds::dds::ParameterSerializer<ParameterNetworkConfigSet_t>::
+                                read_from_cdr_message(
+                                    p,
+                                    msg, plength))
                         {
                             return false;
                         }
@@ -553,8 +594,9 @@ bool ParticipantProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_METATRAFFIC_MULTICAST_LOCATOR:
                     {
                         ParameterLocator_t p(pid, plength);
-                        if (!fastdds::dds::ParameterSerializer<ParameterLocator_t>::read_from_cdr_message(p, msg,
-                                plength))
+                        if (!fastdds::dds::ParameterSerializer<ParameterLocator_t>::read_from_cdr_message(
+                                    p, msg,
+                                    plength))
                         {
                             return false;
                         }
@@ -566,8 +608,9 @@ bool ParticipantProxyData::readFromCDRMessage(
                         else
                         {
                             Locator_t temp_locator;
-                            if (network.transform_remote_locator(p.locator, temp_locator, m_networkConfiguration,
-                                    m_guid.is_from_this_host()))
+                            if (network.transform_remote_locator(
+                                        p.locator, temp_locator, m_networkConfiguration,
+                                        m_guid.is_from_this_host()))
                             {
                                 ProxyDataFilters::filter_locators(
                                     is_shm_transport_available,
@@ -581,8 +624,9 @@ bool ParticipantProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_METATRAFFIC_UNICAST_LOCATOR:
                     {
                         ParameterLocator_t p(pid, plength);
-                        if (!fastdds::dds::ParameterSerializer<ParameterLocator_t>::read_from_cdr_message(p, msg,
-                                plength))
+                        if (!fastdds::dds::ParameterSerializer<ParameterLocator_t>::read_from_cdr_message(
+                                    p, msg,
+                                    plength))
                         {
                             return false;
                         }
@@ -594,8 +638,9 @@ bool ParticipantProxyData::readFromCDRMessage(
                         else
                         {
                             Locator_t temp_locator;
-                            if (network.transform_remote_locator(p.locator, temp_locator, m_networkConfiguration,
-                                    m_guid.is_from_this_host()))
+                            if (network.transform_remote_locator(
+                                        p.locator, temp_locator, m_networkConfiguration,
+                                        m_guid.is_from_this_host()))
                             {
                                 ProxyDataFilters::filter_locators(
                                     is_shm_transport_available,
@@ -609,8 +654,9 @@ bool ParticipantProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_DEFAULT_UNICAST_LOCATOR:
                     {
                         ParameterLocator_t p(pid, plength);
-                        if (!fastdds::dds::ParameterSerializer<ParameterLocator_t>::read_from_cdr_message(p, msg,
-                                plength))
+                        if (!fastdds::dds::ParameterSerializer<ParameterLocator_t>::read_from_cdr_message(
+                                    p, msg,
+                                    plength))
                         {
                             return false;
                         }
@@ -622,8 +668,9 @@ bool ParticipantProxyData::readFromCDRMessage(
                         else
                         {
                             Locator_t temp_locator;
-                            if (network.transform_remote_locator(p.locator, temp_locator, m_networkConfiguration,
-                                    m_guid.is_from_this_host()))
+                            if (network.transform_remote_locator(
+                                        p.locator, temp_locator, m_networkConfiguration,
+                                        m_guid.is_from_this_host()))
                             {
                                 ProxyDataFilters::filter_locators(
                                     is_shm_transport_available,
@@ -637,8 +684,9 @@ bool ParticipantProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_DEFAULT_MULTICAST_LOCATOR:
                     {
                         ParameterLocator_t p(pid, plength);
-                        if (!fastdds::dds::ParameterSerializer<ParameterLocator_t>::read_from_cdr_message(p, msg,
-                                plength))
+                        if (!fastdds::dds::ParameterSerializer<ParameterLocator_t>::read_from_cdr_message(
+                                    p, msg,
+                                    plength))
                         {
                             return false;
                         }
@@ -650,8 +698,9 @@ bool ParticipantProxyData::readFromCDRMessage(
                         else
                         {
                             Locator_t temp_locator;
-                            if (network.transform_remote_locator(p.locator, temp_locator, m_networkConfiguration,
-                                    m_guid.is_from_this_host()))
+                            if (network.transform_remote_locator(
+                                        p.locator, temp_locator, m_networkConfiguration,
+                                        m_guid.is_from_this_host()))
                             {
                                 ProxyDataFilters::filter_locators(
                                     is_shm_transport_available,
@@ -665,22 +714,27 @@ bool ParticipantProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_PARTICIPANT_LEASE_DURATION:
                     {
                         ParameterTime_t p(pid, plength);
-                        if (!fastdds::dds::ParameterSerializer<ParameterTime_t>::read_from_cdr_message(p, msg, plength))
+                        if (!fastdds::dds::ParameterSerializer<ParameterTime_t>::read_from_cdr_message(
+                                    p, msg,
+                                    plength))
                         {
                             return false;
                         }
 
                         m_leaseDuration = p.time.to_duration_t();
                         lease_duration_ =
-                                std::chrono::microseconds(fastdds::rtps::TimeConv::Duration_t2MicroSecondsInt64(
-                                            m_leaseDuration));
+                                std::chrono::microseconds(
+                            fastdds::rtps::TimeConv::Duration_t2MicroSecondsInt64(
+                                m_leaseDuration));
                         break;
                     }
                     case fastdds::dds::PID_BUILTIN_ENDPOINT_SET:
                     {
                         ParameterBuiltinEndpointSet_t p(pid, plength);
-                        if (!fastdds::dds::ParameterSerializer<ParameterBuiltinEndpointSet_t>::read_from_cdr_message(p,
-                                msg, plength))
+                        if (!fastdds::dds::ParameterSerializer<ParameterBuiltinEndpointSet_t>::
+                                read_from_cdr_message(
+                                    p,
+                                    msg, plength))
                         {
                             return false;
                         }
@@ -691,8 +745,9 @@ bool ParticipantProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_ENTITY_NAME:
                     {
                         ParameterString_t p(pid, plength);
-                        if (!fastdds::dds::ParameterSerializer<ParameterString_t>::read_from_cdr_message(p, msg,
-                                plength))
+                        if (!fastdds::dds::ParameterSerializer<ParameterString_t>::read_from_cdr_message(
+                                    p, msg,
+                                    plength))
                         {
                             return false;
                         }
@@ -723,15 +778,18 @@ bool ParticipantProxyData::readFromCDRMessage(
                     {
 #if HAVE_SECURITY
                         ParameterToken_t p(pid, plength);
-                        if (!fastdds::dds::ParameterSerializer<ParameterToken_t>::read_from_cdr_message(p, msg,
-                                plength))
+                        if (!fastdds::dds::ParameterSerializer<ParameterToken_t>::read_from_cdr_message(
+                                    p, msg,
+                                    plength))
                         {
                             return false;
                         }
 
                         identity_token_ = std::move(p.token);
 #else
-                        EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT, "Received PID_IDENTITY_TOKEN but security is disabled");
+                        EPROSIMA_LOG_WARNING(
+                            RTPS_PARTICIPANT,
+                            "Received PID_IDENTITY_TOKEN but security is disabled");
 #endif // if HAVE_SECURITY
                         break;
                     }
@@ -739,16 +797,18 @@ bool ParticipantProxyData::readFromCDRMessage(
                     {
 #if HAVE_SECURITY
                         ParameterToken_t p(pid, plength);
-                        if (!fastdds::dds::ParameterSerializer<ParameterToken_t>::read_from_cdr_message(p, msg,
-                                plength))
+                        if (!fastdds::dds::ParameterSerializer<ParameterToken_t>::read_from_cdr_message(
+                                    p, msg,
+                                    plength))
                         {
                             return false;
                         }
 
                         permissions_token_ = std::move(p.token);
 #else
-                        EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT,
-                                "Received PID_PERMISSIONS_TOKEN but security is disabled");
+                        EPROSIMA_LOG_WARNING(
+                            RTPS_PARTICIPANT,
+                            "Received PID_PERMISSIONS_TOKEN but security is disabled");
 #endif // if HAVE_SECURITY
                         break;
                     }
@@ -766,8 +826,9 @@ bool ParticipantProxyData::readFromCDRMessage(
                         security_attributes_ = p.security_attributes;
                         plugin_security_attributes_ = p.plugin_security_attributes;
 #else
-                        EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT,
-                                "Received PID_PARTICIPANT_SECURITY_INFO but security is disabled");
+                        EPROSIMA_LOG_WARNING(
+                            RTPS_PARTICIPANT,
+                            "Received PID_PARTICIPANT_SECURITY_INFO but security is disabled");
 #endif // if HAVE_SECURITY
                         break;
                     }
@@ -784,7 +845,9 @@ bool ParticipantProxyData::readFromCDRMessage(
     clear();
     try
     {
-        return ParameterList::readParameterListfromCDRMsg(*msg, param_process, use_encapsulation, qos_size);
+        return ParameterList::readParameterListfromCDRMsg(
+            *msg, param_process, use_encapsulation,
+            qos_size);
     }
     catch (std::bad_alloc& ba)
     {
@@ -841,8 +904,9 @@ void ParticipantProxyData::copy(
     m_participantName = pdata.m_participantName;
     m_leaseDuration = pdata.m_leaseDuration;
     lease_duration_ =
-            std::chrono::microseconds(fastdds::rtps::TimeConv::Duration_t2MicroSecondsInt64(
-                        pdata.m_leaseDuration));
+            std::chrono::microseconds(
+        fastdds::rtps::TimeConv::Duration_t2MicroSecondsInt64(
+            pdata.m_leaseDuration));
     m_key = pdata.m_key;
     isAlive = pdata.isAlive;
     m_userData = pdata.m_userData;
@@ -925,7 +989,8 @@ void ParticipantProxyData::set_persistence_guid(
     {
         if (!it->modify(persistent_guid))
         {
-            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Failed to change property <"
+            EPROSIMA_LOG_ERROR(
+                RTPS_PARTICIPANT, "Failed to change property <"
                     << it->first() << " | " << it->second() << "> to <"
                     << persistent_guid.first << " | " << persistent_guid.second << ">");
         }
@@ -983,17 +1048,6 @@ GUID_t ParticipantProxyData::get_backup_stamp() const
 void ParticipantProxyData::assert_liveliness()
 {
     last_received_message_tm_ = std::chrono::steady_clock::now();
-}
-
-VendorId_t ParticipantProxyData::select_vendor_id(
-        const VendorId_t source_vendor_id)
-{
-    VendorId_t ret_vendor_id {source_vendor_id};
-    if (c_VendorId_Unknown == ret_vendor_id)
-    {
-        ret_vendor_id = ((c_VendorId_Unknown == m_VendorId) ? c_VendorId_eProsima : m_VendorId);
-    }
-    return ret_vendor_id;
 }
 
 } /* namespace rtps */
