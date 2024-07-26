@@ -2218,16 +2218,16 @@ ReturnCode_t DataReaderImpl::get_subscription_builtin_topic_data(
     auto properties = subscriber_->get_participant()->get_qos().properties();
     auto type_propagation = to_type_propagation(properties);
     bool should_assign_type_information =
-        (TypePropagation::TYPEPROPAGATION_ENABLED == type_propagation) ||
-        (TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH == type_propagation);
+            (TypePropagation::TYPEPROPAGATION_ENABLED == type_propagation) ||
+            (TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH == type_propagation);
 
     if (should_assign_type_information && (xtypes::TK_NONE != type_->type_identifiers().type_identifier1()._d()))
     {
         xtypes::TypeInformation type_info;
 
         if (RETCODE_OK ==
-            fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
-                type_->type_identifiers(), type_info))
+                fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
+                    type_->type_identifiers(), type_info))
         {
             switch (type_propagation)
             {
@@ -2261,7 +2261,7 @@ ReturnCode_t DataReaderImpl::get_subscription_builtin_topic_data(
     subscription_data.data_sharing = qos_.data_sharing();
 
     if (subscription_data.data_sharing.kind() != OFF &&
-        subscription_data.data_sharing.domain_ids().empty())
+            subscription_data.data_sharing.domain_ids().empty())
     {
         subscription_data.data_sharing.add_domain_id(utils::default_domain_id());
     }
