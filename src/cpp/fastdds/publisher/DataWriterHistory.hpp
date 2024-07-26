@@ -55,10 +55,15 @@ public:
 
     /**
      * Constructor of the DataWriterHistory.
-     * @param pub_builtin_data  Information on the publication.
-     * @param payloadMax        Maximum payload size.
-     * @param mempolicy         Set whether the payloads can dynamically resized or not.
-     * @param unack_sample_remove_functor Functor to call DDS listener callback on_unacknowledged_sample_removed
+     *
+     * @param payload_pool                 Pool to use for allocation of payloads.
+     * @param change_pool                  Pool to use for allocation of changes.
+     * @param history_qos                  HistoryQosPolicy of the DataWriter creating this history.
+     * @param resource_limits_qos          ResourceLimitsQosPolicy of the DataWriter creating this history.
+     * @param topic_kind                   TopicKind of the DataWriter creating this history.
+     * @param payloadMax                   Maximum payload size.
+     * @param mempolicy                    Set whether the payloads can dynamically resized or not.
+     * @param unack_sample_remove_functor  Functor to call DDS listener callback on_unacknowledged_sample_removed
      */
     DataWriterHistory(
             const std::shared_ptr<rtps::IPayloadPool>& payload_pool,
