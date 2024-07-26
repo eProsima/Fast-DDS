@@ -448,6 +448,7 @@ public:
         {
             reader_qos_.m_reliability.kind = eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
         }
+        sub_builtin_data_.reliability = reader_qos_.m_reliability;
 
         return *this;
     }
@@ -457,6 +458,7 @@ public:
     {
         reader_attr_.endpoint.durabilityKind = kind;
         reader_qos_.m_durability.durabilityKind(kind);
+        sub_builtin_data_.durability = reader_qos_.m_durability;
 
         return *this;
     }
@@ -518,6 +520,7 @@ public:
             const std::vector<eprosima::fastdds::rtps::octet>& user_data)
     {
         reader_qos_.m_userData = user_data;
+        sub_builtin_data_.user_data = reader_qos_.m_userData;
         return *this;
     }
 
@@ -532,6 +535,7 @@ public:
             std::vector<std::string>& partitions)
     {
         reader_qos_.m_partition.setNames(partitions);
+        sub_builtin_data_.partition = reader_qos_.m_partition;
         return *this;
     }
 
