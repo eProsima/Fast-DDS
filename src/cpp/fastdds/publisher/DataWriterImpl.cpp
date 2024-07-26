@@ -1758,7 +1758,7 @@ ReturnCode_t DataWriterImpl::get_publication_builtin_topic_data(
     publication_data.data_sharing = qos_.data_sharing();
 
     if (publication_data.data_sharing.kind() != OFF &&
-        publication_data.data_sharing.domain_ids().empty())
+            publication_data.data_sharing.domain_ids().empty())
     {
         publication_data.data_sharing.add_domain_id(utils::default_domain_id());
     }

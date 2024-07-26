@@ -383,7 +383,7 @@ public:
      * @return OK if the subscription data is returned.
      */
     ReturnCode_t get_subscription_builtin_topic_data(
-             SubscriptionBuiltinTopicData& subscription_data) const;
+            SubscriptionBuiltinTopicData& subscription_data) const;
 
 protected:
 
