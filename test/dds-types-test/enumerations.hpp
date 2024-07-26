@@ -65,6 +65,16 @@ enum class InnerEnumHelper : int32_t
 
 } // namespace Test
 /*!
+ * @brief This class represents the enumeration EnumWithValues defined by the user in the IDL file.
+ * @ingroup enumerations
+ */
+enum class EnumWithValues : int32_t
+{
+    ENUM_VALUE1 = -3,
+    ENUM_VALUE2 = 0,
+    ENUM_VALUE3 = 3
+};
+/*!
  * @brief This class represents the structure EnumStructure defined by the user in the IDL file.
  * @ingroup enumerations
  */
@@ -488,6 +498,129 @@ public:
 private:
 
     InnerBoundedBitMaskHelper m_var_InnerBoundedBitMaskHelper{0};
+
+};
+/*!
+ * @brief This class represents the structure EnumWithValuesStructure defined by the user in the IDL file.
+ * @ingroup enumerations
+ */
+class EnumWithValuesStructure
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport EnumWithValuesStructure()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~EnumWithValuesStructure()
+    {
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object EnumWithValuesStructure that will be copied.
+     */
+    eProsima_user_DllExport EnumWithValuesStructure(
+            const EnumWithValuesStructure& x)
+    {
+                    m_var_enumwithvalues = x.m_var_enumwithvalues;
+
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object EnumWithValuesStructure that will be copied.
+     */
+    eProsima_user_DllExport EnumWithValuesStructure(
+            EnumWithValuesStructure&& x) noexcept
+    {
+        m_var_enumwithvalues = x.m_var_enumwithvalues;
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object EnumWithValuesStructure that will be copied.
+     */
+    eProsima_user_DllExport EnumWithValuesStructure& operator =(
+            const EnumWithValuesStructure& x)
+    {
+
+                    m_var_enumwithvalues = x.m_var_enumwithvalues;
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object EnumWithValuesStructure that will be copied.
+     */
+    eProsima_user_DllExport EnumWithValuesStructure& operator =(
+            EnumWithValuesStructure&& x) noexcept
+    {
+
+        m_var_enumwithvalues = x.m_var_enumwithvalues;
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x EnumWithValuesStructure object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const EnumWithValuesStructure& x) const
+    {
+        return (m_var_enumwithvalues == x.m_var_enumwithvalues);
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x EnumWithValuesStructure object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const EnumWithValuesStructure& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function sets a value in member var_enumwithvalues
+     * @param _var_enumwithvalues New value for member var_enumwithvalues
+     */
+    eProsima_user_DllExport void var_enumwithvalues(
+            EnumWithValues _var_enumwithvalues)
+    {
+        m_var_enumwithvalues = _var_enumwithvalues;
+    }
+
+    /*!
+     * @brief This function returns the value of member var_enumwithvalues
+     * @return Value of member var_enumwithvalues
+     */
+    eProsima_user_DllExport EnumWithValues var_enumwithvalues() const
+    {
+        return m_var_enumwithvalues;
+    }
+
+    /*!
+     * @brief This function returns a reference to member var_enumwithvalues
+     * @return Reference to member var_enumwithvalues
+     */
+    eProsima_user_DllExport EnumWithValues& var_enumwithvalues()
+    {
+        return m_var_enumwithvalues;
+    }
+
+
+
+private:
+
+    EnumWithValues m_var_enumwithvalues{EnumWithValues::ENUM_VALUE1};
 
 };
 
