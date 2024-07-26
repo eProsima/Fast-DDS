@@ -130,6 +130,9 @@ public:
         t << topic_name << "_" << asio::ip::host_name() << "_" << GET_PID();
         pub_builtin_data_.topic_name = t.str();
 
+        // The tests are assuming a default durability of TRANSIENT_LOCAL, which is not the default mandated by the DDS standard.
+        pub_builtin_data_.durability.kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+
         // By default, heartbeat period and nack response delay are 100 milliseconds.
         writer_attr_.times.heartbeat_period.seconds = 0;
         writer_attr_.times.heartbeat_period.nanosec = 100000000;
@@ -393,6 +396,7 @@ public:
         {
             writer_qos_.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
         }
+        pub_builtin_data_.reliability = writer_qos_.m_reliability;
 
         return *this;
     }
@@ -402,6 +406,7 @@ public:
     {
         writer_attr_.endpoint.durabilityKind = kind;
         writer_qos_.m_durability.durabilityKind(kind);
+        pub_builtin_data_.durability = writer_qos_.m_durability;
 
         return *this;
     }
@@ -517,6 +522,7 @@ public:
             const std::vector<eprosima::fastdds::rtps::octet>& user_data)
     {
         writer_qos_.m_userData = user_data;
+        pub_builtin_data_.user_data = writer_qos_.m_userData;
         return *this;
     }
 
@@ -531,6 +537,7 @@ public:
             std::vector<std::string>& partitions)
     {
         writer_qos_.m_partition.setNames(partitions);
+        pub_builtin_data_.partition = writer_qos_.m_partition;
         return *this;
     }
 
