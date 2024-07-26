@@ -457,7 +457,10 @@ ReturnCode_t DataWriterImpl::enable()
     }
 
     // REGISTER THE WRITER
-    auto builtin_topic_data = get_publication_builtin_topic_data();
+    PublicationBuiltinTopicData builtin_topic_data;
+    auto get_data_ret_code = get_publication_builtin_topic_data(builtin_topic_data);
+    static_cast<void>(get_data_ret_code);
+    assert(RETCODE_OK == get_data_ret_code);
     publisher_->rtps_participant()->register_writer(writer_, builtin_topic_data);
 
     return RETCODE_OK;
@@ -1664,50 +1667,48 @@ ReturnCode_t DataWriterImpl::assert_liveliness()
     return RETCODE_OK;
 }
 
-PublicationBuiltinTopicData DataWriterImpl::get_publication_builtin_topic_data() const
+ReturnCode_t DataWriterImpl::get_publication_builtin_topic_data(
+        PublicationBuiltinTopicData& publication_data) const
 {
-    PublicationBuiltinTopicData pub_builtin_data;
+    if (nullptr == writer_)
+    {
+        return RETCODE_NOT_ENABLED;
+    }
 
     // sanity checks
-    bool writer_is_valid = (nullptr != writer_);
-    bool publisher_is_valid = (nullptr != publisher_);
-    bool topic_is_valid = (nullptr != topic_);
-    bool participant_is_valid = publisher_is_valid ? (nullptr != publisher_->get_participant()) : false;
-    bool rtps_participant_impl_is_valid = writer_is_valid ? (nullptr != writer_->get_participant_impl()) : false;
+    assert(nullptr != publisher_);
+    assert(nullptr != topic_);
+    assert(nullptr != publisher_->get_participant());
+    assert(nullptr != writer_->get_participant_impl());
 
-    from_proxy_to_builtin(guid_.entityId, pub_builtin_data.key.value);
-    if (participant_is_valid)
-    {
-        from_proxy_to_builtin(publisher_->get_participant()->guid().guidPrefix, pub_builtin_data.participant_key.value);
-    }
+    publication_data = PublicationBuiltinTopicData{};
 
-    if (topic_is_valid)
-    {
-        pub_builtin_data.topic_name = topic_->get_name();
-        pub_builtin_data.type_name = topic_->get_type_name();
-        pub_builtin_data.topic_data = topic_->get_qos().topic_data();
-    }
+    from_proxy_to_builtin(guid_.entityId, publication_data.key.value);
+    from_proxy_to_builtin(publisher_->get_participant()->guid().guidPrefix, publication_data.participant_key.value);
+
+    publication_data.topic_name = topic_->get_name();
+    publication_data.type_name = topic_->get_type_name();
+    publication_data.topic_data = topic_->get_qos().topic_data();
 
     // DataWriter qos
-    pub_builtin_data.durability = qos_.durability();
-    pub_builtin_data.durability_service = qos_.durability_service();
-    pub_builtin_data.deadline = qos_.deadline();
-    pub_builtin_data.latency_budget = qos_.latency_budget();
-    pub_builtin_data.liveliness = qos_.liveliness();
-    pub_builtin_data.reliability = qos_.reliability();
-    pub_builtin_data.lifespan = qos_.lifespan();
-    pub_builtin_data.user_data = qos_.user_data();
-    pub_builtin_data.ownership = qos_.ownership();
-    pub_builtin_data.ownership_strength = qos_.ownership_strength();
-    pub_builtin_data.destination_order = qos_.destination_order();
+    publication_data.durability = qos_.durability();
+    publication_data.durability_service = qos_.durability_service();
+    publication_data.deadline = qos_.deadline();
+    publication_data.latency_budget = qos_.latency_budget();
+    publication_data.liveliness = qos_.liveliness();
+    publication_data.reliability = qos_.reliability();
+    publication_data.lifespan = qos_.lifespan();
+    publication_data.user_data = qos_.user_data();
+    publication_data.ownership = qos_.ownership();
+    publication_data.ownership_strength = qos_.ownership_strength();
+    publication_data.destination_order = qos_.destination_order();
 
     // Publisher qos
-    if (publisher_is_valid)
-    {
-        pub_builtin_data.presentation = publisher_->qos_.presentation();
-        pub_builtin_data.partition = publisher_->qos_.partition();
-        pub_builtin_data.group_data = publisher_->qos_.group_data();
-    }
+    publication_data.presentation = publisher_->qos_.presentation();
+    publication_data.partition = publisher_->qos_.partition();
+    publication_data.group_data = publisher_->qos_.group_data();
+
+    // XTypes 1.3
 
     using utils::to_type_propagation;
     using utils::TypePropagation;
@@ -1731,13 +1732,13 @@ PublicationBuiltinTopicData DataWriterImpl::get_publication_builtin_topic_data()
                 case TypePropagation::TYPEPROPAGATION_ENABLED:
                 {
                     // Use both complete and minimal type information
-                    pub_builtin_data.type_information.type_information = type_info;
+                    publication_data.type_information.type_information = type_info;
                     break;
                 }
                 case TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH:
                 {
                     // Use minimal type information only
-                    pub_builtin_data.type_information.type_information.minimal() = type_info.minimal();
+                    publication_data.type_information.type_information.minimal() = type_info.minimal();
                     break;
                 }
                 default:
@@ -1746,45 +1747,38 @@ PublicationBuiltinTopicData DataWriterImpl::get_publication_builtin_topic_data()
                     break;
             }
 
-            pub_builtin_data.type_information.assigned(true);
+            publication_data.type_information.assigned(true);
         }
     }
-    pub_builtin_data.representation = qos_.representation();
+    publication_data.representation = qos_.representation();
 
     // eProsima extensions
 
-    pub_builtin_data.disable_positive_acks = qos_.reliable_writer_qos().disable_positive_acks;
-    pub_builtin_data.data_sharing = qos_.data_sharing();
+    publication_data.disable_positive_acks = qos_.reliable_writer_qos().disable_positive_acks;
+    publication_data.data_sharing = qos_.data_sharing();
 
-    if (pub_builtin_data.data_sharing.kind() != OFF &&
-        pub_builtin_data.data_sharing.domain_ids().empty())
+    if (publication_data.data_sharing.kind() != OFF &&
+        publication_data.data_sharing.domain_ids().empty())
     {
-        pub_builtin_data.data_sharing.add_domain_id(utils::default_domain_id());
-    }
-
-    pub_builtin_data.guid = guid();
-    if (publisher_is_valid)
-    {
-        pub_builtin_data.participant_guid = publisher_->get_participant()->guid();
+        publication_data.data_sharing.add_domain_id(utils::default_domain_id());
     }
 
-    if (rtps_participant_impl_is_valid)
-    {
-        pub_builtin_data.persistence_guid.guidPrefix = writer_->get_participant_impl()->get_persistence_guid_prefix();
-    }
-    pub_builtin_data.persistence_guid.entityId = c_EntityId_RTPSParticipant;
-    qos_.endpoint().unicast_locator_list.copy_to(pub_builtin_data.remote_locators.unicast);
-    qos_.endpoint().multicast_locator_list.copy_to(pub_builtin_data.remote_locators.multicast);
-    pub_builtin_data.max_serialized_size = type_->max_serialized_type_size;
-    if (rtps_participant_impl_is_valid)
-    {
-        pub_builtin_data.loopback_transformation =
-                writer_->get_participant_impl()->network_factory().network_configuration();
-    }
+    publication_data.guid = guid();
+    publication_data.participant_guid = publisher_->get_participant()->guid();
+
+    
+    publication_data.persistence_guid.guidPrefix = writer_->get_participant_impl()->get_persistence_guid_prefix();
+    publication_data.persistence_guid.entityId = c_EntityId_RTPSParticipant;
+
+    qos_.endpoint().unicast_locator_list.copy_to(publication_data.remote_locators.unicast);
+    qos_.endpoint().multicast_locator_list.copy_to(publication_data.remote_locators.multicast);
+    publication_data.max_serialized_size = type_->max_serialized_type_size;
+    publication_data.loopback_transformation =
+            writer_->get_participant_impl()->network_factory().network_configuration();
 
     if (!is_data_sharing_compatible_)
     {
-        pub_builtin_data.data_sharing.off();
+        publication_data.data_sharing.off();
     }
 
     const std::string* endpoint_partitions = PropertyPolicyHelper::find_property(qos_.properties(), "partitions");
@@ -1792,14 +1786,15 @@ PublicationBuiltinTopicData DataWriterImpl::get_publication_builtin_topic_data()
     {
         std::istringstream partition_string(*endpoint_partitions);
         std::string partition_name;
-        pub_builtin_data.partition.clear();
+        publication_data.partition.clear();
 
         while (std::getline(partition_string, partition_name, ';'))
         {
-            pub_builtin_data.partition.push_back(partition_name.c_str());
+            publication_data.partition.push_back(partition_name.c_str());
         }
     }
-    return pub_builtin_data;
+
+    return RETCODE_OK;
 }
 
 OfferedIncompatibleQosStatus& DataWriterImpl::update_offered_incompatible_qos(

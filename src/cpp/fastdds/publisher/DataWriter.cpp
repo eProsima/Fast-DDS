@@ -308,9 +308,10 @@ ReturnCode_t DataWriter::wait_for_acknowledgments(
     return impl_->wait_for_acknowledgments(instance, handle, max_wait);
 }
 
-PublicationBuiltinTopicData DataWriter::get_publication_builtin_topic_data() const
+ReturnCode_t DataWriter::get_publication_builtin_topic_data(
+        PublicationBuiltinTopicData& publication_data) const
 {
-    return impl_->get_publication_builtin_topic_data();
+    return impl_->get_publication_builtin_topic_data(publication_data);
 }
 
 } // namespace dds

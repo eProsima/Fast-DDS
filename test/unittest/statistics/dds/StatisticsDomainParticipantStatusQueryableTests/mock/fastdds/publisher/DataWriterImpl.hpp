@@ -395,9 +395,11 @@ public:
         }
     }
 
-    inline PublicationBuiltinTopicData get_publication_builtin_topic_data() const
+    inline ReturnCode_t get_publication_builtin_topic_data(
+            PublicationBuiltinTopicData& publication_data) const
     {
-        return PublicationBuiltinTopicData();
+        publication_data = PublicationBuiltinTopicData{};
+        return RETCODE_OK;
     }
 
     static ReturnCode_t check_qos(

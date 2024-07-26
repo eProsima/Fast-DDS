@@ -586,9 +586,15 @@ public:
             const fastdds::dds::Duration_t& max_wait);
 
     /**
-     * @brief A method to retrieve the publication data discovery information of this writer.
+     * Retrieve the publication data discovery information.
+     *
+     * @param [out] publication_data The publication data discovery information.
+     *
+     * @return NOT_ENABLED if the writer has not been enabled.
+     * @return OK if the publication data is returned.
      */
-    FASTDDS_EXPORTED_API PublicationBuiltinTopicData get_publication_builtin_topic_data() const;
+    FASTDDS_EXPORTED_API ReturnCode_t get_publication_builtin_topic_data(
+            PublicationBuiltinTopicData& publication_data) const;
 
 protected:
 
