@@ -23,7 +23,8 @@ For simplicity, in this example, the subscriber class inherits from the listener
 ## Run the example
 
 To launch this example, two different terminals are required.
-One of them will run the publisher example application, and the other will run the subscriber application. Before running the applications, it is necessary to export both the path of the folder where the certificates are located in the environment variable ``CERTS_PATH`` and the path to the corresponding xml profile with ``FASTDDS_DEFAULT_PROFILES_FILE`` (see [XML playground](#xml-profile-playground)):
+One of them will run the publisher example application, and the other will run the subscriber application.
+Before running the applications, in order to configure the security plugins, it is necessary to export both the path of the folder where the certificates are located in the environment variable ``CERTS_PATH`` and the path to the corresponding xml profile with ``FASTDDS_DEFAULT_PROFILES_FILE`` (see [XML playground](#xml-profile-playground)):
 
 * Ubuntu ( / MacOS )
 
@@ -36,7 +37,6 @@ One of them will run the publisher example application, and the other will run t
     ```powershell
     example_path> set CERTS_PATH=<path_to_certs_folder>
     ```
-
 
 ### Secure Hello world publisher
 
@@ -139,7 +139,7 @@ This is accomplished by setting the environment variable ``FASTDDS_DEFAULT_PROFI
 
     ```powershell
     example_path> set FASTDDS_DEFAULT_PROFILES_FILE=secure_subscriber_profile.xml
-    ``` 
+    ```
 
 The example provides with an XML profiles files with certain QoS:
 
@@ -147,6 +147,6 @@ The example provides with an XML profiles files with certain QoS:
 - Transient local durability: enable late-join subscriber applications to receive previous samples.
 - Keep-last history with high depth: ensure certain amount of previous samples for late-joiners.
 
-It also includes by default the builtin plugins required to provide secure communications. 
+It also includes by default the builtin plugins required to provide secure communications.
 Applying different configurations to the entities will change to a greater or lesser extent how the application behaves in relation to sample management.
 Even when these settings affect the behavior of the sample management, the applications' output will be the similar.
