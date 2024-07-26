@@ -41,6 +41,8 @@ file(GLOB DELIVERY_MECHANISMS_SOURCES_CPP "*.cpp")
 add_executable(delivery_mechanisms
     ${DELIVERY_MECHANISMS_SOURCES_CXX}
     ${DELIVERY_MECHANISMS_SOURCES_CPP})
+
 target_link_libraries(delivery_mechanisms fastdds fastcdr)
+
 install(TARGETS delivery_mechanisms
-    RUNTIME DESTINATION examples/cpp/delivery_mechanisms/${BIN_INSTALL_DIR})
+    RUNTIME DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples/cpp/delivery_mechanisms/${BIN_INSTALL_DIR})
