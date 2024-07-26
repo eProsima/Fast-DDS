@@ -119,7 +119,7 @@ void register_EnumWithValues_type_identifier(
         CompleteEnumeratedLiteralSeq literal_seq_EnumWithValues;
         {
             EnumeratedLiteralFlag flags_ENUM_VALUE1 = TypeObjectUtils::build_enumerated_literal_flag(false);
-            CommonEnumeratedLiteral common_ENUM_VALUE1 = TypeObjectUtils::build_common_enumerated_literal(0, flags_ENUM_VALUE1);
+            CommonEnumeratedLiteral common_ENUM_VALUE1 = TypeObjectUtils::build_common_enumerated_literal(-3, flags_ENUM_VALUE1);
             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_ENUM_VALUE1;
             ann_custom_EnumWithValues.reset();
             AppliedAnnotationSeq tmp_ann_custom_ENUM_VALUE1;
@@ -134,7 +134,7 @@ void register_EnumWithValues_type_identifier(
         }
         {
             EnumeratedLiteralFlag flags_ENUM_VALUE2 = TypeObjectUtils::build_enumerated_literal_flag(false);
-            CommonEnumeratedLiteral common_ENUM_VALUE2 = TypeObjectUtils::build_common_enumerated_literal(1, flags_ENUM_VALUE2);
+            CommonEnumeratedLiteral common_ENUM_VALUE2 = TypeObjectUtils::build_common_enumerated_literal(0, flags_ENUM_VALUE2);
             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_ENUM_VALUE2;
             ann_custom_EnumWithValues.reset();
             AppliedAnnotationSeq tmp_ann_custom_ENUM_VALUE2;
@@ -149,7 +149,7 @@ void register_EnumWithValues_type_identifier(
         }
         {
             EnumeratedLiteralFlag flags_ENUM_VALUE3 = TypeObjectUtils::build_enumerated_literal_flag(false);
-            CommonEnumeratedLiteral common_ENUM_VALUE3 = TypeObjectUtils::build_common_enumerated_literal(2, flags_ENUM_VALUE3);
+            CommonEnumeratedLiteral common_ENUM_VALUE3 = TypeObjectUtils::build_common_enumerated_literal(3, flags_ENUM_VALUE3);
             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_ENUM_VALUE3;
             ann_custom_EnumWithValues.reset();
             AppliedAnnotationSeq tmp_ann_custom_ENUM_VALUE3;

@@ -253,18 +253,21 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_EnumWithValuesStructure)
         DynamicTypeBuilderFactory::get_instance()->get_primitive_type(
             TK_INT32));
     enum_literal_descriptor->name("ENUM_VALUE1");
+    enum_literal_descriptor->default_value("-3");
     enum_builder->add_member(enum_literal_descriptor);
     enum_literal_descriptor = traits<MemberDescriptor>::make_shared();
     enum_literal_descriptor->type(
         DynamicTypeBuilderFactory::get_instance()->get_primitive_type(
             TK_INT32));
     enum_literal_descriptor->name("ENUM_VALUE2");
+    enum_literal_descriptor->default_value("0");
     enum_builder->add_member(enum_literal_descriptor);
     enum_literal_descriptor = traits<MemberDescriptor>::make_shared();
     enum_literal_descriptor->type(
         DynamicTypeBuilderFactory::get_instance()->get_primitive_type(
             TK_INT32));
     enum_literal_descriptor->name("ENUM_VALUE3");
+    enum_literal_descriptor->default_value("3");
     enum_builder->add_member(enum_literal_descriptor);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -277,12 +280,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_EnumWithValuesStructure)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    int32_t value = 0;
+    int32_t value = 3;
     int32_t test_value = 0;
     EXPECT_EQ(
         data->set_int32_value(
             data->get_member_id_by_name(
-                var_enumwithvalues_name), 1), RETCODE_OK);
+                var_enumwithvalues_name), value), RETCODE_OK);
+    EXPECT_EQ(
+        data->get_int32_value(test_value,
+        data->get_member_id_by_name(var_enumwithvalues_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
     for (auto encoding : encodings)
