@@ -48,7 +48,7 @@ target_compile_definitions(rtps PRIVATE
 )
 target_link_libraries(rtps fastdds fastcdr foonathan_memory)
 install(TARGETS rtps
-    RUNTIME DESTINATION {DATA_INSTALL_DIR}/fastdds/examples/cpp/rtps/${BIN_INSTALL_DIR}
+    RUNTIME DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples/cpp/rtps/${BIN_INSTALL_DIR}
     )
 
 # Copy the XML files over to the build directory
