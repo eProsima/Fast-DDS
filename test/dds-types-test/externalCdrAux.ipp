@@ -1534,7 +1534,7 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
-                        serialize_key(scdr, data.value());
+                        serialize_key(scdr, *data.value());
 
 }
 
@@ -1789,7 +1789,7 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
-                        serialize_key(scdr, data.value());
+                        serialize_key(scdr, *data.value());
 
 }
 
@@ -1874,7 +1874,7 @@ void serialize_key(
     static_cast<void>(data);
                         if (data.value().has_value())
                         {
-                            serialize_key(scdr, data.value().value());
+                            serialize_key(scdr, *data.value().value());
                         }
 
 }

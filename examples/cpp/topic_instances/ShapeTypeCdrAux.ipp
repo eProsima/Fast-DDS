@@ -50,17 +50,17 @@ eProsima_user_DllExport size_t calculate_serialized_size(
                                 current_alignment)};
 
 
-    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
-                    data.color(), current_alignment);
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
+                data.color(), current_alignment);
 
-    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
-                    data.x(), current_alignment);
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
+                data.x(), current_alignment);
 
-    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
-                    data.y(), current_alignment);
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
+                data.y(), current_alignment);
 
-    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
-                    data.shapesize(), current_alignment);
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
+                data.shapesize(), current_alignment);
 
 
     calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
@@ -84,7 +84,7 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.x()
         << eprosima::fastcdr::MemberId(2) << data.y()
         << eprosima::fastcdr::MemberId(3) << data.shapesize()
-    ;
+;
     scdr.end_serialize_type(current_state);
 }
 
@@ -101,21 +101,21 @@ eProsima_user_DllExport void deserialize(
                 bool ret_value = true;
                 switch (mid.id)
                 {
-                    case 0:
-                        dcdr >> data.color();
-                        break;
+                                        case 0:
+                                                dcdr >> data.color();
+                                            break;
 
-                    case 1:
-                        dcdr >> data.x();
-                        break;
+                                        case 1:
+                                                dcdr >> data.x();
+                                            break;
 
-                    case 2:
-                        dcdr >> data.y();
-                        break;
+                                        case 2:
+                                                dcdr >> data.y();
+                                            break;
 
-                    case 3:
-                        dcdr >> data.shapesize();
-                        break;
+                                        case 3:
+                                                dcdr >> data.shapesize();
+                                            break;
 
                     default:
                         ret_value = false;
@@ -132,12 +132,14 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
-    scdr << data.color();
+                        scdr << data.color();
 
 
 
 
 }
+
+
 
 } // namespace fastcdr
 } // namespace eprosima
