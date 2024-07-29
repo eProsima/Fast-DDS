@@ -712,6 +712,14 @@ public:
         return id_counter_;
     }
 
+    bool fill_type_information(
+            const TypeSupport& /*type*/,
+            xtypes::TypeInformationParameter& /*type_information*/)
+    {
+        return false;
+    }
+
+
 protected:
 
     DomainId_t domain_id_;
