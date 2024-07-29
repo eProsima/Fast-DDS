@@ -278,7 +278,7 @@ ReturnCode_t DataReaderImpl::enable()
 
     // Register the reader
     fastdds::rtps::TopicDescription topic_desc;
-    topic_desc.topic_name = topic_->get_name();
+    topic_desc.topic_name = topic_->get_impl()->get_rtps_topic_name();
     topic_desc.type_name = topic_->get_type_name();
     subscriber_->get_participant_impl()->fill_type_information(type_, topic_desc.type_information);
 
