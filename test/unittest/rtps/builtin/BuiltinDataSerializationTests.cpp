@@ -170,11 +170,14 @@ TEST(BuiltinDataSerializationTests, msg_with_product_version)
         {
             // Encapsulation
             0x00, 0x03, 0x00, 0x00,
+            // PID_VENDORID
+            0x16, 0x00, 0x04, 0x00,
+            0x01, 0x0f, 0x00, 0x00,
             // PID_PRODUCT_VERSION
-            0x00, 0x80, 4, 0,
+            0x00, 0x80, 0x04, 0x00,
             FASTDDS_VERSION_MAJOR, FASTDDS_VERSION_MINOR, FASTDDS_VERSION_MICRO, 0,
             // PID_SENTINEL
-            0x01, 0, 0, 0
+            0x01, 0x00, 0x00, 0x00
         };
 
         uint32_t buffer_length = static_cast<uint32_t>(sizeof(data_buffer));
