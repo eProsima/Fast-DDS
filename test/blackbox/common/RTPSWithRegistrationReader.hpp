@@ -193,7 +193,11 @@ public:
             return;
         }
 
-        initialized_ = participant_->register_reader(reader_, sub_builtin_data_, content_filter_property_);
+        eprosima::fastdds::rtps::TopicDescription topic_desc;
+        topic_desc.topic_name = sub_builtin_data_.topic_name;
+        topic_desc.type_name = sub_builtin_data_.type_name;
+
+        initialized_ = participant_->register_reader(reader_, topic_desc, reader_qos_, content_filter_property_);
     }
 
     void update()

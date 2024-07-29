@@ -37,7 +37,6 @@
 
 #include <fastdds/utils/TypePropagation.hpp>
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
-#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/data/ProxyHashTables.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
@@ -98,14 +97,15 @@ EDP::~EDP()
 
 bool EDP::new_reader_proxy_data(
         RTPSReader* rtps_reader,
-        const SubscriptionBuiltinTopicData& sub_builtin_data,
+        const TopicDescription& topic,
+        const fastdds::dds::ReaderQos& qos,
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
     EPROSIMA_LOG_INFO(RTPS_EDP,
             "Adding " << rtps_reader->getGuid().entityId << " in topic " <<
-            sub_builtin_data.topic_name.to_string());
+            topic.topic_name.to_string());
 
-    auto init_fun = [this, rtps_reader, &sub_builtin_data, content_filter](
+    auto init_fun = [this, rtps_reader, &topic, &qos, content_filter](
         ReaderProxyData* rpd,
         bool updating,
         const ParticipantProxyData& participant_data)
@@ -114,14 +114,12 @@ bool EDP::new_reader_proxy_data(
                 {
                     EPROSIMA_LOG_ERROR(RTPS_EDP,
                             "Adding already existent reader " << rtps_reader->getGuid().entityId << " in topic "
-                                                              << sub_builtin_data.topic_name.to_string());
+                                                              << topic.topic_name.to_string());
                     return false;
                 }
 
                 const NetworkFactory& network = mp_RTPSParticipant->network_factory();
                 const auto& ratt = rtps_reader->getAttributes();
-
-                from_builtin_to_proxy(sub_builtin_data, *rpd);
 
                 rpd->isAlive(true);
                 rpd->m_expectsInlineQos = rtps_reader->expects_inline_qos();
@@ -139,8 +137,8 @@ bool EDP::new_reader_proxy_data(
                             ratt.external_unicast_locators);
                 }
                 rpd->RTPSParticipantKey() = mp_RTPSParticipant->getGuid();
-                rpd->topicName(sub_builtin_data.topic_name);
-                rpd->typeName(sub_builtin_data.type_name);
+                rpd->topicName(topic.topic_name);
+                rpd->typeName(topic.type_name);
                 rpd->topicKind((rpd->guid().entityId.value[3] & 0x0F) == 0x07 ? WITH_KEY : NO_KEY);
 
                 using dds::utils::TypePropagation;
@@ -149,7 +147,7 @@ bool EDP::new_reader_proxy_data(
                 auto type_propagation = mp_RTPSParticipant->type_propagation();
                 assert(TypePropagation::TYPEPROPAGATION_UNKNOWN != type_propagation);
 
-                const auto& type_info = sub_builtin_data.type_information;
+                const auto& type_info = topic.type_information;
                 if (type_info.assigned())
                 {
                     switch (type_propagation)
@@ -179,7 +177,7 @@ bool EDP::new_reader_proxy_data(
                     }
                 }
 
-                rpd->m_qos.setQos(rpd->m_qos, true);
+                rpd->m_qos.setQos(qos, true);
                 rpd->userDefinedId(ratt.getUserDefinedID());
                 if (nullptr != content_filter)
                 {

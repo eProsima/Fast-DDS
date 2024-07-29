@@ -133,7 +133,7 @@ public:
      *
      * @param writer  Pointer to the RTPSWriter
      * @param topic   Information regarding the topic where the writer is registering
-     * @param wqos    QoS policies dictated by the publisher
+     * @param qos     QoS policies dictated by the publisher
      *
      * @return True if correct.
      */
@@ -143,14 +143,17 @@ public:
             const fastdds::dds::WriterQos& qos);
     /**
      * Add a local reader to the BuiltinProtocols.
-     * @param rtps_reader       Pointer to the RTPSReader.
-     * @param sub_builtin_data  QoS policies dictated by the subscriber
-     * @param content_filter    Optional content filtering information.
+     *
+     * @param rtps_reader     Pointer to the RTPSReader.
+     * @param topic           Information regarding the topic where the writer is registering
+     * @param qos             QoS policies dictated by the subscriber
+     * @param content_filter  Optional content filtering information.
      * @return True if correct.
      */
     bool add_reader(
             RTPSReader* rtps_reader,
-            const SubscriptionBuiltinTopicData& sub_builtin_data,
+            const TopicDescription& topic,
+            const fastdds::dds::ReaderQos& qos,
             const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
 
     /**

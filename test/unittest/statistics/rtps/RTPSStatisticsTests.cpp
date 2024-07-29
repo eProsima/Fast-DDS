@@ -363,16 +363,6 @@ public:
         topic_desc.type_name = data_type;
         topic_desc.topic_name = topic_name;
 
-        auto& ratt = writer_->getAttributes();
-        SubscriptionBuiltinTopicData sub_builtin_data;
-        sub_builtin_data.type_name = data_type;
-        sub_builtin_data.topic_name = topic_name;
-        sub_builtin_data.durability.durabilityKind(ratt.durabilityKind);
-        sub_builtin_data.reliability.kind =
-                RELIABLE ==
-                ratt.reliabilityKind ? dds::RELIABLE_RELIABILITY_QOS : dds::BEST_EFFORT_RELIABILITY_QOS;
-
-
         dds::WriterQos Wqos;
         auto& watt = writer_->getAttributes();
         Wqos.m_durability.durabilityKind(watt.durabilityKind);
@@ -380,8 +370,15 @@ public:
                 RELIABLE ==
                 watt.reliabilityKind ? dds::RELIABLE_RELIABILITY_QOS : dds::BEST_EFFORT_RELIABILITY_QOS;
 
+        dds::ReaderQos Rqos;
+        auto& ratt = writer_->getAttributes();
+        Rqos.m_durability.durabilityKind(ratt.durabilityKind);
+        Rqos.m_reliability.kind =
+                RELIABLE ==
+                ratt.reliabilityKind ? dds::RELIABLE_RELIABILITY_QOS : dds::BEST_EFFORT_RELIABILITY_QOS;
+
         participant_->register_writer(writer_, topic_desc, Wqos);
-        participant_->register_reader(reader_, sub_builtin_data);
+        participant_->register_reader(reader_, topic_desc, Rqos);
     }
 
     void destroy_endpoints()

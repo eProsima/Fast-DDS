@@ -324,23 +324,6 @@ public:
         return content_filter_;
     }
 
-    void networkConfiguration(
-            const NetworkConfigSet_t& networkConfiguration)
-    {
-        m_networkConfiguration = networkConfiguration;
-    }
-
-    void networkConfiguration(
-            NetworkConfigSet_t&& networkConfiguration)
-    {
-        m_networkConfiguration = std::move(networkConfiguration);
-    }
-
-    const NetworkConfigSet_t& networkConfiguration() const
-    {
-        return m_networkConfiguration;
-    }
-
     void copy(
             ReaderProxyData* /*rdat*/)
     {
@@ -368,7 +351,6 @@ private:
     InstanceHandle_t m_RTPSParticipantKey;
     uint16_t m_userDefinedId;
     fastdds::rtps::ContentFilterProperty content_filter_;
-    NetworkConfigSet_t m_networkConfiguration;
     bool has_type_info_ {false};
 
 };

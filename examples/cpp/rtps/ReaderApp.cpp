@@ -29,7 +29,7 @@
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
-#include <fastdds/rtps/builtin/data/SubscriptionBuiltinTopicData.hpp>
+#include <fastdds/rtps/builtin/data/TopicDescription.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
@@ -114,14 +114,16 @@ ReaderApp::ReaderApp(
 
     std::cout << "Registering RTPS Reader" << std::endl;
 
-    SubscriptionBuiltinTopicData sub_builtin_data;
-    sub_builtin_data.topic_name = topic_name;
-    sub_builtin_data.type_name = "HelloWorld";
-    sub_builtin_data.durability.kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
-    sub_builtin_data.reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    TopicDescription topic_desc;
+    topic_desc.topic_name = topic_name;
+    topic_desc.type_name = "HelloWorld";
+
+    eprosima::fastdds::dds::ReaderQos reader_qos;
+    reader_qos.m_durability.kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    reader_qos.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
 
     // Register entity
-    if (!rtps_participant_->register_reader(rtps_reader_, sub_builtin_data))
+    if (!rtps_participant_->register_reader(rtps_reader_, topic_desc, reader_qos))
     {
         throw std::runtime_error("Entity registration failed");
     }

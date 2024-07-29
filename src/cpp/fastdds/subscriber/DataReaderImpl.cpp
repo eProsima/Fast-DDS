@@ -36,6 +36,7 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
+#include <fastdds/rtps/builtin/data/TopicDescription.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/rtps/RTPSDomain.hpp>
@@ -276,10 +277,27 @@ ReturnCode_t DataReaderImpl::enable()
                     qos_.lifespan().duration.to_ns() * 1e-6);
 
     // Register the reader
-    SubscriptionBuiltinTopicData builtin_topic_data;
-    auto get_data_ret_code = get_subscription_builtin_topic_data(builtin_topic_data);
-    static_cast<void>(get_data_ret_code);
-    assert(RETCODE_OK == get_data_ret_code);
+    fastdds::rtps::TopicDescription topic_desc;
+    topic_desc.topic_name = topic_->get_name();
+    topic_desc.type_name = topic_->get_type_name();
+    subscriber_->get_participant_impl()->fill_type_information(type_, topic_desc.type_information);
+
+    ReaderQos rqos = qos_.get_readerqos(subscriber_->get_qos());
+    if (!is_data_sharing_compatible_)
+    {
+        rqos.data_sharing.off();
+    }
+    if (endpoint_partitions)
+    {
+        std::istringstream partition_string(*endpoint_partitions);
+        std::string partition_name;
+        rqos.m_partition.clear();
+
+        while (std::getline(partition_string, partition_name, ';'))
+        {
+            rqos.m_partition.push_back(partition_name.c_str());
+        }
+    }
 
     rtps::ContentFilterProperty* filter_property = nullptr;
     if (nullptr != content_topic && !content_topic->filter_property.filter_expression.empty())
@@ -288,7 +306,8 @@ ReturnCode_t DataReaderImpl::enable()
     }
     if (!subscriber_->rtps_participant()->register_reader(
                 reader_,
-                builtin_topic_data,
+                topic_desc,
+                rqos,
                 filter_property))
     {
         EPROSIMA_LOG_ERROR(DATA_READER, "Could not register reader on discovery protocols");
@@ -1838,7 +1857,7 @@ void DataReaderImpl::release_payload_pool()
 
 ReturnCode_t DataReaderImpl::check_datasharing_compatible(
         const ReaderAttributes& reader_attributes,
-        bool& is_data_sharing_compatible) const
+        bool& is_datasharing_compatible) const
 {
 #if HAVE_SECURITY
     bool has_security_enabled = subscriber_->rtps_participant()->is_security_enabled_for_reader(reader_attributes);
@@ -1848,7 +1867,7 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
 
     bool has_key = type_->is_compute_key_provided;
 
-    is_data_sharing_compatible = false;
+    is_datasharing_compatible = false;
     switch (qos_.data_sharing().kind())
     {
         case DataSharingKind::OFF:
@@ -1874,7 +1893,7 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
                 return RETCODE_BAD_PARAMETER;
             }
 
-            is_data_sharing_compatible = true;
+            is_datasharing_compatible = true;
             return RETCODE_OK;
             break;
         case DataSharingKind::AUTO:
@@ -1898,7 +1917,7 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
                 return RETCODE_OK;
             }
 
-            is_data_sharing_compatible = true;
+            is_datasharing_compatible = true;
             return RETCODE_OK;
             break;
         default:
@@ -2212,46 +2231,9 @@ ReturnCode_t DataReaderImpl::get_subscription_builtin_topic_data(
     subscription_data.group_data = subscriber_->qos_.group_data();
 
     // X-Types 1.3
-    using utils::to_type_propagation;
-    using utils::TypePropagation;
-
-    auto properties = subscriber_->get_participant()->get_qos().properties();
-    auto type_propagation = to_type_propagation(properties);
-    bool should_assign_type_information =
-            (TypePropagation::TYPEPROPAGATION_ENABLED == type_propagation) ||
-            (TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH == type_propagation);
-
-    if (should_assign_type_information && (xtypes::TK_NONE != type_->type_identifiers().type_identifier1()._d()))
+    if(subscriber_->get_participant_impl()->fill_type_information(type_, subscription_data.type_information))
     {
-        xtypes::TypeInformation type_info;
-
-        if (RETCODE_OK ==
-                fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
-                    type_->type_identifiers(), type_info))
-        {
-            switch (type_propagation)
-            {
-                case TypePropagation::TYPEPROPAGATION_ENABLED:
-                {
-                    // Use both complete and minimal type information
-                    subscription_data.type_information.type_information = type_info;
-                    break;
-                }
-                case TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH:
-                {
-                    // Use minimal type information only
-                    subscription_data.type_information.type_information.minimal() = type_info.minimal();
-                    break;
-                }
-                default:
-                    // This should never happen as other cases are protected by should_assign_type_information
-                    assert(false);
-                    break;
-            }
-
-            subscription_data.type_information.assigned(true);
-            subscription_data.type_consistency = qos_.type_consistency();
-        }
+        subscription_data.type_consistency = qos_.type_consistency();
     }
     subscription_data.representation = qos_.representation();
 
