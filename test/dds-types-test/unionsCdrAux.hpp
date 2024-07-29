@@ -78,6 +78,7 @@ constexpr uint32_t UnionDiscriminatorUShort_max_key_cdr_typesize {0UL};
 
 
 
+
 constexpr uint32_t UnionLong_max_cdr_typesize {16UL};
 constexpr uint32_t UnionLong_max_key_cdr_typesize {0UL};
 
@@ -374,6 +375,7 @@ eProsima_user_DllExport void serialize_key(
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionSeveralFieldsWithDefault& data);
+
 
 
 

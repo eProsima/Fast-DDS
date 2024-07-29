@@ -1968,7 +1968,8 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_enum_dynamic_type(
                                          member_descriptor.is_default_label())};
         // TODO(richi): Literal value might be automatically assigned or taken from default_value (@value annotation)
         CommonEnumeratedLiteral common_literal {TypeObjectUtils::build_common_enumerated_literal(
-                                                    member_descriptor.index(), flags)};
+                                                    member_descriptor.default_value().empty() ? member_descriptor.index() :
+                                                    std::stol(member_descriptor.default_value()), flags)};
         CompleteMemberDetail member_detail;
         complete_member_detail(literal, member_detail);
         CompleteEnumeratedLiteral literal_member {TypeObjectUtils::build_complete_enumerated_literal(common_literal,
