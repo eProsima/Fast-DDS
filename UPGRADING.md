@@ -1,22 +1,21 @@
-# Migration Guide to Fast DDS 3.0.x
+# Migration Guide from Fast DDS v2 to Fast DDS v3
 
-This document aims to help during the migration process from *eProsima Fast DDS* version 2.x to *Fast DDS v3.0.0*.
-The new release includes more changes than the included in this document, so refer to the [release notes](https://fast-dds.docs.eprosima.com/en/latest/notes/notes.html) for further information.
+This document aims to help during the migration process from eProsima *Fast DDS version* 2 to *Fast DDS version* 3.
+For more information about all the updates, please refer to the [release notes](https://fast-dds.docs.eprosima.com/en/latest/notes/notes.html).
 
-As announced in previous minor releases, it is always *recommended* to regenerate the types (if applies) with the latest *eProsima Fast DDS Gen* release.
-In this case, the type regeneration is required (if applies), using *Fast DDS Gen* v4.0.0.
+As announced in previous minor releases, it is always *recommended* to regenerate the types with the latest *eProsima Fast DDS Gen* release.
+In this case, the type regeneration is required, using *Fast DDS Gen* v4.0.0.
 
-The following sections describe in detail the possible changes that your project would require to migrate to *Fast DDS v3.0.0*.
+The following sections describe the possible changes that your project may require to migrate to *Fast DDS v3.0.0*.
 
 - [Library management](#library-management)
 - [Compatibility with Fast CDR](#compatibility-with-fast-cdr)
 - [Namespace migrations and changes](#namespace-migrations-and-changes)
-- [Public headers migrated to *fastdds*](#fast-rtps-public-headers-migration-to-fast-dds)
-- [Public headers moved to private](#headers-migrated-to-private)
+- [Public headers migrated to *fastdds*](#public-headers-migrated-to-fastdds)
+- [Public headers moved to private](#public-headers-moved-to-private)
 - [API changes](#api-changes)
 - [Struct, Enum, Variable](#struct-enum-variable)
 - [Examples](#examples)
-
 
 
 ## Library management
@@ -25,7 +24,7 @@ The below list expose the changes related to the package name, environment varia
 
 * The package has been renamed from `fastrtps` to `fastdds`.
 * XML profiles loading environment variable has been renamed to: `FASTDDS_DEFAULT_PROFILES_FILE`.
-* The XML configuration file that Fast DDS searches by default to load the profiles has been renamed to `DEFAULT_FASTDDS_PROFILES.xml`.
+* The configuration file that Fast DDS looks for to load the profiles has been renamed to `DEFAULT_FASTDDS_PROFILES.xml`.
 * XML Schema namespace in fastdds_profiles.xsd has been updated to http://www.eprosima.com.
 * CMake Windows file names have been changed:
 
@@ -37,7 +36,8 @@ The below list expose the changes related to the package name, environment varia
 
 ## Compatibility with Fast CDR
 
-Fast DDS v3.x is only compatible with Fast CDR v2.x.
+Fast DDS v3 is only compatible with Fast CDR v2.
+If you are not using Fast CDR as [third-party](https://fast-dds.docs.eprosima.com/en/latest/installation/configuration/cmake_options.html#third-party-libraries-options), please ensure updating your local dependencies.
 
 ## Namespace migrations and changes
 
@@ -50,13 +50,13 @@ The following list contains the namespace changes and migrations:
 * `StatisticsEventKind::` references changed to `statistics::EventKind::`.
 * `Duration_t` and `c_TimeInfinite` reference were moved to `dds::`.
 * `ParticipantAttributes`, `PublisherAttributes`, `SubscriberAttributes`, `ReplierAttributes`, `RequesterAttributes` were moved to `xmlparser::`.
-* `Time_hpp` references were divided into `dds::Time_t::` and `rtps::Time_t::`.
-
+* `Time_t.hpp` references were explicitly distingueshed between `dds::Time_t::` and `rtps::Time_t::`.
 
 ## Public headers migrated to *fastdds*
 
 All public header extensions have been changed to `.hpp`.
-Also, the `fixed_size_string.hpp` feature has been migrated from Fast DDS package to Fast CDR.
+Also, the `fixed_size_string.hpp` implementation has been migrated from Fast DDS package to Fast CDR.
+
 All the headers in `include/fastrtps` were migrated to `include/fastdds`.
 In particular, the following list includes headers that have been relocated to different paths or whose implementations have been incorporated into other headers.
 
@@ -81,7 +81,6 @@ In particular, the following list includes headers that have been relocated to d
 | fastrtps/transport/UDPv6TransportDescriptor.h | fastdds/rtps/transport/ UDPv6TransportDescriptor.hpp |
 | fastrtps/transport/UDPTransportDescritpor.h | fastdds/rtps/transport/UDPTransportDescritpor.hpp |
 | fastrtps/transport/TCPTransportDescritpor.h | fastdds/rtps/transport/TCPTransportDescritpor.hpp |
-
 
 ## Public headers moved to private
 
@@ -135,15 +134,18 @@ Since they are no longer public, it is not possible to include them in external 
 
 ## API changes
 
-|        Deprecated APIs           |             New APIs                |
+The table contains the list of API changes, showing the previous methods and the corresponding new ones introduced in Fast DDS v3.
+The new API methods achieve the same functionality, even though the signature of the method is different from the deprecated one.
+
+|        Deprecated methods           |             New methods                |
 |----------------------------------|-------------------------------------|
 | xmlparser::XMLProfileManager::library_settings(`LibrarySettingsAttributes`&) | DomainParticipantFactory::get_instance()->set_library_settings(const `LibrarySettings`&) |
 | fill_discovery_data_from_cdr_message(`ReaderProxyData`&, `MonitorServiceStatusData`&) |fill_discovery_data_from_cdr_message(`SubscriptionBuiltinTopicData`&, `MonitorServiceStatusData`&) |
 | fill_discovery_data_from_cdr_message(`WriterProxyData`&, `MonitorServiceStatusData`&) | fill_discovery_data_from_cdr_message(`PublicationBuiltinTopicData`&,`MonitorServiceStatusData`&) |
 | fill_discovery_data_from_cdr_message(`ParticipantProxyData`&, `MonitorServiceStatusData`&) | fill_discovery_data_from_cdr_message(`ParticipantBuiltinTopicData`&,`MonitorServiceStatusData`&) |
-| on_participant_discovery(`DomainParticipant`*, `ParticipantDiscoveryInfo`&&, bool) |on_participant_discovery(`DomainParticipant`*, `ParticipantDiscoveryStatus`, `ParticipantBuiltinTopicData`&, `should_be_ignored`) |
-| on_subscriber_discovery(`DomainParticipant`*, `ReaderDiscoveryInfo`&&, bool) | on_data_reader_discovery(`DomainParticipant`*, `ReaderDiscoveryStatus`, `SubscriptionBuiltinTopicData`&, `should_be_ignored`) |
-| on_publisher_discovery(`DomainParticipant`*, `WriterDiscoveryInfo`&&, bool) | on_data_writer_discovery(`DomainParticipant`*, `WriterDiscoveryStatus`, `PublicationBuiltinTopicData`&, `should_be_ignored`) |
+| on_participant_discovery(`DomainParticipant`*, `ParticipantDiscoveryInfo`&&, bool) |on_participant_discovery(`DomainParticipant`*, `ParticipantDiscoveryStatus`, `ParticipantBuiltinTopicData`&, bool&) |
+| on_subscriber_discovery(`DomainParticipant`*, `ReaderDiscoveryInfo`&&, bool) | on_data_reader_discovery(`DomainParticipant`*, `ReaderDiscoveryStatus`, `SubscriptionBuiltinTopicData`&, bool&) |
+| on_publisher_discovery(`DomainParticipant`*, `WriterDiscoveryInfo`&&, bool) | on_data_writer_discovery(`DomainParticipant`*, `WriterDiscoveryStatus`, `PublicationBuiltinTopicData`&, bool&) |
 | onReaderDiscovery(`RTPSParticipant`*, `ReaderDiscoveryInfo`&&, bool) | on_reader_discovery(`RTPSParticipant`*,  `ReaderDiscoveryStatus`, `SubscriptionBuiltinTopicData`&, bool&) |
 | onWriterDiscovery(`RTPSParticipant`*, `WriterDiscoveryInfo`&&, bool) | on_writer_discovery(`RTPSParticipant`*, `WriterDiscoveryStatus`, `PublicationBuiltinTopicData`&, bool&) |
 | onParticipantDiscovery(`RTPSParticipant`*, `ParticipantDiscoveryInfo`&&, bool) | on_participant_discovery(`RTPSParticipant`*, `ParticipantDiscoveryStatus`, `ParticipantBuiltinTopicData`&, bool&) |
@@ -152,7 +154,6 @@ Since they are no longer public, it is not possible to include them in external 
 | XMLProfileManager::loadXMLFile(string) | load_XML_profiles_file(string&) |
 | XMLProfileManager::loadXMLString(const char*, size_t) | load_XML_profiles_string(const char*, size_t) |
 | XMLProfileManager::fillParticipantAttributes(const string&, `ParticipantAttributes`&, bool) | get_participant_qos_from_profile(string&, `DomainParticipantQos`&) |
-getDynamicTypeByName
 |DynamicTypeBuilder XMLProfileManager::getDynamicTypeByName(string&) | get_dynamic_type_builder_from_xml_by_name(string&, `DynamicTypeBuilder::_ref_type`&) |
 | XMLProfileManager::fillRequesterAttributes(string&, RequesterAttributes&) | get_requester_qos_from_profile(string&, RequesterQos&) |
 | XMLParser::getXMLThroughputController(`tinyxml2::XMLElement`*, `ThroughputControllerDescriptor`&, uint8_t) | XMLParser::getXMLFlowControllerDescriptorList(`tinyxml2::XMLElement`*, `FlowControllerDescriptorList`&, uint8_t) |
@@ -202,9 +203,9 @@ getDynamicTypeByName
 | DynamicPubSubType::getKey(const void* const, `InstanceHand`*, bool) | DynamicPubSubType::compute_key(const void* const, `InstanceHand`&, bool) |
 | DynamicPubSubType::getSerializedSizeProvider(const void* const, `DataRepresentationId_t`) | DynamicPubSubType::calculate_serialized_size(const void* const, `DataRepresentationId_t`) |
 
-
-
 ## Struct, Enum, Variable
+
+The following list shows the changes of the struct, enums and variables that have been modified.
 
 * Extend `SubscriptionBuiltinTopicData` with additional fields to mimic those of `ReaderProxyData`.
 * Extend `PublicationBuiltinTopicData` with additional fields to mimic those of `WriterProxyData`.
@@ -223,21 +224,27 @@ getDynamicTypeByName
 * `m_isGetKeyDefined` is `is_compute_key_provided`
 * `m_topicDataTypeName` is `topic_data_typename_`
 
-
 ## Examples
+
+All the examples have been refactored to follow the same structure:
+* File names, guards, and classes follow new format.
+* Detailed and well-formed README.md with example explanation.
+* Example structured in applications, stopped by `SIGTERM` signal.
 
 ### Hello World
 Refactor the HelloWorld example with the current new example format.
 In this hello world example, the key changes are:
-* Removed --env option and set that environment behavior as default.
-* Added subscriber waitsets class and its usage.
-* Provided 	XML profiles examples that target several scenarios (e.g.,SampleConfig_Controller, Events, Multimedia).
+* The XML profile is loaded from the environment (if defined), and the `--env` CLI option has been removed.
+* Add a subscriber implementing the waitsets mechanism.
+* Provide XML profiles examples targeting several scenarios (e.g., SampleConfig_Controller, Events, Multimedia).
 
 ### X-Types Examples
-In this X-Types example, a type is defined at runtime on the publisher side using the Dynamic Types API, and the subscriber discovers the type, creates a reader for it, and prints the received data. This example is type compatible with the Hello World example, and a compatibility test has been added for this.
+In this X-Types example, a type is defined at runtime on the publisher side using the Dynamic Types API.
+The subscriber discovers the type, creates a reader for it, and prints the received data.
+This example is type compatible with the Hello World example.
 
 ### Configuration
-In this configuration example, the key changes are:
+In the configuration example, the key changes are:
 * Included LargeData as an option (builtin transport argument).
 * Included all previous QoS examples:
     * Deadline
@@ -266,16 +273,15 @@ In this delivery mechanisms example, the key changes are:
 
 ### Discovery Server
 Refactor the DiscoveryServerExample example with the current new example format.
-This refactors the DiscoveryServerExample to the new example format. It also adds proper tests for the examples testing automation.
 
 ### Flow Controller
 Refactor the FlowControlExample example with the current new example format.
 In this Flow Controller example, the key changes are:
-* Publishers continuously send samples. The user can set the number of samples to 	send.
+* Publishers continuously send samples. The user can set the number of samples to send.
 * User can set the following QoS and properties for the Flow Controller:
     * Scheduler policy used by the flow controller.
     * Maximum number of bytes to be sent to the network per period.
-    * Period of time in milliseconds during which the flow controller is allowed 	to send the maximum number of bytes per period.
+    * Period of time in milliseconds during which the flow controller is allowed to send the maximum number of bytes per period.
     * Property fastdds.sfc.priority.
     * Property fastdds.sfc.bandwidth_reservation.
 
@@ -287,8 +293,8 @@ Refactor the Static EDP Discovery example with the new example format.
 
 ### Security
 Refactor the SecureHelloWorld example with the current new example format.
-A security folder created in examples with a modified version of hello world, supporting security plugins.
 
 ### RTPS Entities
 Refactor the rtps/Registered example with the current new example format.
-This RTPS example demonstrates a basic RTPS deployment. The main change is that serialization and deserialization are done with overload methods from fastcdr.
+This RTPS example demonstrates a basic RTPS deployment.
+The main change is that serialization and deserialization are done with overload methods from fastcdr.
