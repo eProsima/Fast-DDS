@@ -96,6 +96,8 @@ Forthcoming
   * Servers only redirect discovery information of their direct clients.
   * Remote Discovery servers connection list can now be updated and modified at runtime without restrictions.
   * Fast DDS CLI has been updated to allow the creation of servers without GUID.
+  * Servers are responsible of answering TypeLookupRequests of others servers when working with X-Types.
+  * Backup server is not compatible with X-Types.
 * Refactor in XML Parser to return DynamicTypeBuilder instead of DynamicType
 * Setting vendor_id in the received CacheChange_t for Data and DataFrag.
 * Added new DynamicData to JSON serializer (`json_serialize`).
