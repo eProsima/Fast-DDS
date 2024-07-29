@@ -3,8 +3,7 @@
 This document aims to help during the migration process from eProsima *Fast DDS version* 2 to *Fast DDS version* 3.
 For more information about all the updates, please refer to the [release notes](https://fast-dds.docs.eprosima.com/en/latest/notes/notes.html).
 
-As announced in previous minor releases, it is always *recommended* to regenerate the types with the latest *eProsima Fast DDS Gen* release.
-In this case, the type regeneration is required, using *Fast DDS Gen* v4.0.0.
+It is always *required* to regenerate the types with the latest version of *eProsima Fast DDS Gen*, *Fast DDS Gen* v4.0.0.
 
 The following sections describe the possible changes that your project may require to migrate to *Fast DDS v3.0.0*.
 
@@ -20,12 +19,12 @@ The following sections describe the possible changes that your project may requi
 
 ## Library management
 
-The below list expose the changes related to the package name, environment variables and other library usages.
+The below exposes exposes the changes related to the package name, environment variables and other library usages.
 
-* The package has been renamed from `fastrtps` to `fastdds`.
+* The CMake project has been renamed from `fastrtps` to `fastdds`.
 * XML profiles loading environment variable has been renamed to: `FASTDDS_DEFAULT_PROFILES_FILE`.
 * The configuration file that Fast DDS looks for to load the profiles has been renamed to `DEFAULT_FASTDDS_PROFILES.xml`.
-* XML Schema namespace in fastdds_profiles.xsd has been updated to http://www.eprosima.com.
+* XML Schema namespace in `fastdds_profiles.xsd` has been updated to http://www.eprosima.com.
 * CMake Windows file names have been changed:
 
     * fastdds.manifest.in
@@ -37,7 +36,7 @@ The below list expose the changes related to the package name, environment varia
 ## Compatibility with Fast CDR
 
 Fast DDS v3 is only compatible with Fast CDR v2.
-If you are not using Fast CDR as [third-party](https://fast-dds.docs.eprosima.com/en/latest/installation/configuration/cmake_options.html#third-party-libraries-options), please ensure updating your local dependencies.
+If you are not using Fast CDR as [third-party](https://fast-dds.docs.eprosima.com/en/latest/installation/configuration/cmake_options.html#third-party-libraries-options), please ensure that your local dependencies are up-to-date.
 
 ## Namespace migrations and changes
 
@@ -48,13 +47,12 @@ The following list contains the namespace changes and migrations:
 * `EventKindBits::` references changed to`EventKind::`.
 * `EventKindEntityId::` references changed to`EntityId::`.
 * `StatisticsEventKind::` references changed to `statistics::EventKind::`.
-* `Duration_t` and `c_TimeInfinite` reference were moved to `dds::`.
-* `ParticipantAttributes`, `PublisherAttributes`, `SubscriberAttributes`, `ReplierAttributes`, `RequesterAttributes` were moved to `xmlparser::`.
-* `Time_t.hpp` references were explicitly distingueshed between `dds::Time_t::` and `rtps::Time_t::`.
+* `Duration_t` and `c_TimeInfinite` references were moved to `dds::`.
+* `Time_t.hpp` references were moved from `eprosima::fastdds::` to `eprosima::fastdds::dds`.
 
 ## Public headers migrated to *fastdds*
 
-All public header extensions have been changed to `.hpp`.
+All the extensions of the headers in /include (public headers) have been changed to `.hpp`.
 Also, the `fixed_size_string.hpp` implementation has been migrated from Fast DDS package to Fast CDR.
 
 All the headers in `include/fastrtps` were migrated to `include/fastdds`.
@@ -81,6 +79,7 @@ In particular, the following list includes headers that have been relocated to d
 | fastrtps/transport/UDPv6TransportDescriptor.h | fastdds/rtps/transport/ UDPv6TransportDescriptor.hpp |
 | fastrtps/transport/UDPTransportDescritpor.h | fastdds/rtps/transport/UDPTransportDescritpor.hpp |
 | fastrtps/transport/TCPTransportDescritpor.h | fastdds/rtps/transport/TCPTransportDescritpor.hpp |
+| fastdds/rtps/common/Time_t.hpp in namespace{fastdds} | fastdds/dds/core/Time_t.hpp in namespace{fastdds::dds} |
 
 ## Public headers moved to private
 
@@ -134,7 +133,7 @@ Since they are no longer public, it is not possible to include them in external 
 
 ## API changes
 
-The table contains the list of API changes, showing the previous methods and the corresponding new ones introduced in Fast DDS v3.
+The table below contains the list of API changes, showing the previous methods and the corresponding new ones introduced in Fast DDS v3.
 The new API methods achieve the same functionality, even though the signature of the method is different from the deprecated one.
 
 |        Deprecated methods           |             New methods                |
