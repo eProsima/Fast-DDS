@@ -719,7 +719,6 @@ public:
         return false;
     }
 
-
 protected:
 
     DomainId_t domain_id_;

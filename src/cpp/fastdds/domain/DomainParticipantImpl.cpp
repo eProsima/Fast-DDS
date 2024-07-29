@@ -1895,16 +1895,16 @@ bool DomainParticipantImpl::fill_type_information(
     auto properties = qos_.properties();
     auto type_propagation = to_type_propagation(properties);
     bool should_assign_type_information =
-        (TypePropagation::TYPEPROPAGATION_ENABLED == type_propagation) ||
-        (TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH == type_propagation);
+            (TypePropagation::TYPEPROPAGATION_ENABLED == type_propagation) ||
+            (TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH == type_propagation);
 
     if (should_assign_type_information && (xtypes::TK_NONE != type->type_identifiers().type_identifier1()._d()))
     {
         xtypes::TypeInformation type_info;
 
         if (RETCODE_OK ==
-            fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
-                type->type_identifiers(), type_info))
+                fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
+                    type->type_identifiers(), type_info))
         {
             switch (type_propagation)
             {

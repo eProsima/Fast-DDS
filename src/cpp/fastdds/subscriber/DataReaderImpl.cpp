@@ -2231,7 +2231,7 @@ ReturnCode_t DataReaderImpl::get_subscription_builtin_topic_data(
     subscription_data.group_data = subscriber_->qos_.group_data();
 
     // X-Types 1.3
-    if(subscriber_->get_participant_impl()->fill_type_information(type_, subscription_data.type_information))
+    if (subscriber_->get_participant_impl()->fill_type_information(type_, subscription_data.type_information))
     {
         subscription_data.type_consistency = qos_.type_consistency();
     }
