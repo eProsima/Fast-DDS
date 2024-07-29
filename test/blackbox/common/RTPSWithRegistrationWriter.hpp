@@ -182,7 +182,7 @@ public:
             return;
         }
 
-        TopicDescription topic_desc;
+        eprosima::fastdds::rtps::TopicDescription topic_desc;
         topic_desc.type_name = type_.get_name();
         topic_desc.topic_name = pub_builtin_data_.topic_name;
         ASSERT_EQ(participant_->register_writer(writer_, topic_desc, writer_qos_), true);
