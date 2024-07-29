@@ -30,6 +30,7 @@
 #include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
 #include <fastdds/rtps/common/Token.hpp>
+#include <fastdds/rtps/common/ProductVersion_t.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 
 namespace eprosima {
@@ -76,6 +77,8 @@ public:
     GUID_t m_guid;
     //!Vendor ID
     fastdds::rtps::VendorId_t m_VendorId;
+    //! Product version
+    fastdds::rtps::ProductVersion_t product_version;
     //!Domain ID
     fastdds::dds::DomainId_t m_domain_id;
     //!Expects Inline QOS.

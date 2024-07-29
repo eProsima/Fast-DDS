@@ -113,6 +113,7 @@ void from_proxy_to_builtin(
     builtin_data.properties = proxy_data.m_properties;
     builtin_data.lease_duration = proxy_data.m_leaseDuration;
     builtin_data.vendor_id = proxy_data.m_VendorId;
+    builtin_data.product_version = proxy_data.product_version;
     builtin_data.domain_id = proxy_data.m_domain_id;
 }
 
