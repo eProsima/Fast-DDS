@@ -45,7 +45,7 @@ namespace fastdds {
 
 namespace rtps {
 
-struct PublicationBuiltinTopicData;
+struct TopicDescription;
 
 } // namespace rtps
 
@@ -69,7 +69,8 @@ public:
 
     using endpoint_registrator_t = std::function<bool (
                         fastdds::rtps::RTPSWriter*,
-                        const eprosima::fastdds::rtps::PublicationBuiltinTopicData&)>;
+                        const eprosima::fastdds::rtps::TopicDescription&,
+                        const eprosima::fastdds::dds::WriterQos&)>;
 
     MonitorService(
             const fastdds::rtps::GUID_t& guid,

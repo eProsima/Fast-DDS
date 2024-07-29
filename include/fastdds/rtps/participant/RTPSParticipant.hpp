@@ -53,9 +53,6 @@ struct IStatusObserver;
 #endif //FASTDDS_STATISTICS
 
 namespace fastdds {
-
-class TopicAttributes;
-
 namespace rtps {
 
 struct PublicationBuiltinTopicData;
@@ -64,6 +61,7 @@ class RTPSParticipantListener;
 class RTPSWriter;
 class RTPSReader;
 struct SubscriptionBuiltinTopicData;
+struct TopicDescription;
 class EndpointAttributes;
 class WriterAttributes;
 class ReaderAttributes;
@@ -140,13 +138,17 @@ public:
 
     /**
      * Register a Writer in the BuiltinProtocols.
-     * @param rtps_writer Pointer to the RTPSWriter.
-     * @param pub_builtin_data Contains the discovery information of the writer.
+     *
+     * @param rtps_writer  Pointer to the RTPSWriter.
+     * @param topic        Information regarding the topic where the writer is registering.
+     * @param qos          Qos policies of the writer.
+     *
      * @return True if correctly registered.
      */
     bool register_writer(
             RTPSWriter* rtps_writer,
-            const PublicationBuiltinTopicData& pub_builtin_data);
+            const TopicDescription& topic,
+            const fastdds::dds::WriterQos& qos);
 
     /**
      * Register a Reader in the BuiltinProtocols.

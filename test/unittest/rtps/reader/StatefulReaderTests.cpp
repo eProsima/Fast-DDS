@@ -26,6 +26,7 @@
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
+#include <fastdds/rtps/builtin/data/TopicDescription.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/common/Types.hpp>
@@ -93,11 +94,11 @@ TEST(StatefulReaderTests, RTPSCorrectGAPProcessing)
     SubscriptionBuiltinTopicData sub_builtin_data;
     sub_builtin_data.type_name = "string";
     sub_builtin_data.topic_name = "topic";
-    PublicationBuiltinTopicData pub_builtin_data;
-    pub_builtin_data.type_name = "string";
-    pub_builtin_data.topic_name = "topic";
+    TopicDescription topic_desc;
+    topic_desc.type_name = "string";
+    topic_desc.topic_name = "topic";
     part->register_reader(reader, sub_builtin_data);
-    part->register_writer(writer, pub_builtin_data);
+    part->register_writer(writer, topic_desc, {});
 
     // After registration, the writer should be matched
     auto writer_guid = writer->getGuid();

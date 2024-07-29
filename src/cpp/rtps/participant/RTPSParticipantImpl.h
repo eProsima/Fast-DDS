@@ -113,6 +113,7 @@ class MessageReceiver;
 namespace rtps {
 
 struct PublicationBuiltinTopicData;
+struct TopicDescription;
 class RTPSParticipant;
 class RTPSParticipantListener;
 class BuiltinProtocols;
@@ -895,13 +896,17 @@ public:
 
     /**
      * Register a Writer in the BuiltinProtocols.
-     * @param Writer Pointer to the RTPSWriter.
-     * @param pub_builtin_data Contains the discovery information of the writer.
+     *
+     * @param Writer  Pointer to the RTPSWriter.
+     * @param topic   Information regarding the topic where the writer is registering.
+     * @param qos     Qos policies of the writer.
+     *
      * @return True if correctly registered.
      */
     bool register_writer(
             RTPSWriter* Writer,
-            const PublicationBuiltinTopicData& pub_builtin_data);
+            const TopicDescription& topic,
+            const fastdds::dds::WriterQos& qos);
 
     /**
      * Register a Reader in the BuiltinProtocols.

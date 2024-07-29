@@ -18,6 +18,8 @@
 
 #include <statistics/rtps/monitor-service/MonitorService.hpp>
 
+#include <fastdds/rtps/builtin/data/TopicDescription.hpp>
+
 #include <fastdds/publisher/DataWriterHistory.hpp>
 #include <fastdds/statistics/topic_names.hpp>
 
@@ -482,14 +484,17 @@ bool MonitorService::create_endpoint()
     {
         status_writer_ = dynamic_cast<StatefulWriter*>(tmp_writer);
 
-        // Register the writer in the participant
-        PublicationBuiltinTopicData pub_builtin_data;
-        pub_builtin_data.reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
-        pub_builtin_data.durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
-        pub_builtin_data.topic_name = MONITOR_SERVICE_TOPIC;
-        pub_builtin_data.type_name = type_.get_name();
+        //! Register the writer in the participant
+        fastdds::dds::WriterQos wqos;
 
-        endpoint_registrator_(status_writer_, pub_builtin_data);
+        wqos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
+        wqos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+
+        TopicDescription topic_desc;
+        topic_desc.topic_name = MONITOR_SERVICE_TOPIC;
+        topic_desc.type_name = type_.get_name();
+
+        endpoint_registrator_(status_writer_, topic_desc, wqos);
     }
     else
     {

@@ -78,7 +78,8 @@ public:
             },
             [&](
                 fastdds::rtps::RTPSWriter*,
-                const ::eprosima::fastdds::rtps::PublicationBuiltinTopicData&)->bool
+                const ::eprosima::fastdds::rtps::TopicDescription&,
+                const ::eprosima::fastdds::dds::WriterQos&)->bool
             {
                 return true;
             },

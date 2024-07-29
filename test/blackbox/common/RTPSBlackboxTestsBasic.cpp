@@ -21,6 +21,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
+#include <fastdds/rtps/builtin/data/TopicDescription.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
@@ -815,11 +816,12 @@ TEST(RTPS, MultithreadedWriterCreation)
                 eprosima::fastdds::rtps::RTPSWriter*  writer = eprosima::fastdds::rtps::RTPSDomain::createRTPSWriter(
                     rtps_participant, writer_attr, history, nullptr);
 
-                PublicationBuiltinTopicData pub_builtin_data;
-                pub_builtin_data.type_name = "string";
-                pub_builtin_data.topic_name = "test_topic";
+                TopicDescription topic_desc;
+                topic_desc.type_name = "string";
+                topic_desc.topic_name = "test_topic";
                 /* Register writer in participant */
-                ASSERT_EQ(rtps_participant->register_writer(writer, pub_builtin_data), true);
+                eprosima::fastdds::dds::WriterQos writer_qos;
+                ASSERT_EQ(rtps_participant->register_writer(writer, topic_desc, writer_qos), true);
 
                 {
                     /* Wait for test completion request */

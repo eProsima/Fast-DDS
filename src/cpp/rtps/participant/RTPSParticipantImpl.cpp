@@ -1406,9 +1406,10 @@ void RTPSParticipantImpl::disableReader(
 
 bool RTPSParticipantImpl::register_writer(
         RTPSWriter* rtps_writer,
-        const PublicationBuiltinTopicData& pub_builtin_data)
+        const TopicDescription& topic,
+        const fastdds::dds::WriterQos& qos)
 {
-    return this->mp_builtinProtocols->add_writer(rtps_writer, pub_builtin_data);
+    return this->mp_builtinProtocols->add_writer(rtps_writer, topic, qos);
 }
 
 bool RTPSParticipantImpl::register_reader(
@@ -2876,9 +2877,10 @@ const fastdds::statistics::rtps::IStatusObserver* RTPSParticipantImpl::create_mo
                     return this->createWriter(WriterOut, param, hist, listen, entityId, isBuiltin);
                 },
                 [&](RTPSWriter* w,
-                const PublicationBuiltinTopicData& pub_builtin_data) -> bool
+                const TopicDescription& topic,
+                const fastdds::dds::WriterQos& qos) -> bool
                 {
-                    return this->register_writer(w, pub_builtin_data);
+                    return this->register_writer(w, topic, qos);
                 },
                 getEventResource()
                 ));

@@ -34,6 +34,7 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
+#include <fastdds/rtps/builtin/data/TopicDescription.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
@@ -181,7 +182,10 @@ public:
             return;
         }
 
-        ASSERT_EQ(participant_->register_writer(writer_, pub_builtin_data_), true);
+        TopicDescription topic_desc;
+        topic_desc.type_name = type_.get_name();
+        topic_desc.topic_name = pub_builtin_data_.topic_name;
+        ASSERT_EQ(participant_->register_writer(writer_, topic_desc, writer_qos_), true);
 
         initialized_ = true;
     }

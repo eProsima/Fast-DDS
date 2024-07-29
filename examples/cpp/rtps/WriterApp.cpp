@@ -29,7 +29,7 @@
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
-#include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
+#include <fastdds/rtps/builtin/data/TopicDescription.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/RTPSDomain.hpp>
@@ -105,14 +105,16 @@ WriterApp::WriterApp(
 
     std::cout << "Registering RTPS Writer" << std::endl;
 
-    PublicationBuiltinTopicData pub_builtin_data;
-    pub_builtin_data.type_name = "HelloWorld";
-    pub_builtin_data.topic_name = topic_name;
-    pub_builtin_data.durability.kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
-    pub_builtin_data.reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    TopicDescription topic_desc;
+    topic_desc.type_name = "HelloWorld";
+    topic_desc.topic_name = topic_name;
+
+    eprosima::fastdds::dds::WriterQos writer_qos;
+    writer_qos.m_durability.kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    writer_qos.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
 
     // Register entity
-    if (!rtps_participant_->register_writer(rtps_writer_, pub_builtin_data))
+    if (!rtps_participant_->register_writer(rtps_writer_, topic_desc, writer_qos))
     {
         throw std::runtime_error("Entity registration failed");
     }

@@ -54,6 +54,7 @@ class WriterProxyData;
 class RTPSParticipantImpl;
 struct PublicationBuiltinTopicData;
 struct SubscriptionBuiltinTopicData;
+struct TopicDescription;
 
 /**
  * Class EDP, base class for Endpoint Discovery Protocols. It contains generic methods used by the two EDP implemented (EDPSimple and EDPStatic), as well as abstract methods
@@ -178,14 +179,18 @@ public:
             const SubscriptionBuiltinTopicData& sub_builtin_data,
             const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
     /**
-     * Create a new ReaderPD for a local Writer.
-     * @param rtps_writer       Pointer to the RTPSWriter.
-     * @param pub_builtin_data  QoS policies dictated by the publisher.
+     * Create a new WriterPD for a local Writer.
+     *
+     * @param rtps_writer  Pointer to the RTPSWriter.
+     * @param topic        Information regarding the topic where the writer is registering.
+     * @param qos          QoS policies dictated by the publisher.
+     *
      * @return True if correct.
      */
     bool new_writer_proxy_data(
             RTPSWriter* rtps_writer,
-            const PublicationBuiltinTopicData& pub_builtin_data);
+            const TopicDescription& topic,
+            const fastdds::dds::WriterQos& qos);
     /**
      * A previously created Reader has been updated
      * @param rtps_reader      Pointer to the RTPSReader.

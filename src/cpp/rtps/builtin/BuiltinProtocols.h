@@ -25,6 +25,7 @@
 
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
+#include <fastdds/rtps/builtin/data/TopicDescription.hpp>
 
 #include <utils/shared_mutex.hpp>
 
@@ -129,13 +130,17 @@ public:
 
     /**
      * Add a local writer to the BuiltinProtocols.
-     * @param writer            Pointer to the RTPSWriter
-     * @param pub_builtin_data  QoS policies dictated by the publisher
+     *
+     * @param writer  Pointer to the RTPSWriter
+     * @param topic   Information regarding the topic where the writer is registering
+     * @param wqos    QoS policies dictated by the publisher
+     *
      * @return True if correct.
      */
     bool add_writer(
             RTPSWriter* rtps_writer,
-            const PublicationBuiltinTopicData& pub_builtin_data);
+            const TopicDescription& topic,
+            const fastdds::dds::WriterQos& qos);
     /**
      * Add a local reader to the BuiltinProtocols.
      * @param rtps_reader       Pointer to the RTPSReader.

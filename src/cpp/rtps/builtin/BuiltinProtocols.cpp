@@ -197,13 +197,14 @@ void BuiltinProtocols::filter_server_remote_locators(
 
 bool BuiltinProtocols::add_writer(
         RTPSWriter* rtps_writer,
-        const PublicationBuiltinTopicData& pub_builtin_data)
+        const TopicDescription& topic,
+        const fastdds::dds::WriterQos& qos)
 {
     bool ok = true;
 
     if (nullptr != mp_PDP)
     {
-        ok = mp_PDP->get_edp()->new_writer_proxy_data(rtps_writer, pub_builtin_data);
+        ok = mp_PDP->get_edp()->new_writer_proxy_data(rtps_writer, topic, qos);
 
         if (!ok)
         {
@@ -218,7 +219,7 @@ bool BuiltinProtocols::add_writer(
 
     if (nullptr != mp_WLP)
     {
-        ok &= mp_WLP->add_local_writer(rtps_writer, pub_builtin_data.liveliness);
+        ok &= mp_WLP->add_local_writer(rtps_writer, qos.m_liveliness);
     }
     else
     {

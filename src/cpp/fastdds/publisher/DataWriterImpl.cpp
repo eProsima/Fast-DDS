@@ -35,6 +35,7 @@
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/publisher/filtering/DataWriterFilteredChangePool.hpp>
 #include <fastdds/publisher/PublisherImpl.hpp>
+#include <fastdds/rtps/builtin/data/TopicDescription.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/RTPSDomain.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
@@ -457,11 +458,28 @@ ReturnCode_t DataWriterImpl::enable()
     }
 
     // REGISTER THE WRITER
-    PublicationBuiltinTopicData builtin_topic_data;
-    auto get_data_ret_code = get_publication_builtin_topic_data(builtin_topic_data);
-    static_cast<void>(get_data_ret_code);
-    assert(RETCODE_OK == get_data_ret_code);
-    publisher_->rtps_participant()->register_writer(writer_, builtin_topic_data);
+    fastdds::rtps::TopicDescription topic_desc;
+    topic_desc.topic_name = topic_->get_name();
+    topic_desc.type_name = topic_->get_type_name();
+    publisher_->get_participant_impl()->fill_type_information(type_, topic_desc.type_information);
+
+    WriterQos wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
+    if (!is_data_sharing_compatible_)
+    {
+        wqos.data_sharing.off();
+    }
+    if (endpoint_partitions)
+    {
+        std::istringstream partition_string(*endpoint_partitions);
+        std::string partition_name;
+        wqos.m_partition.clear();
+
+        while (std::getline(partition_string, partition_name, ';'))
+        {
+            wqos.m_partition.push_back(partition_name.c_str());
+        }
+    }
+    publisher_->rtps_participant()->register_writer(writer_, topic_desc, wqos);
 
     return RETCODE_OK;
 }
@@ -1709,47 +1727,7 @@ ReturnCode_t DataWriterImpl::get_publication_builtin_topic_data(
     publication_data.group_data = publisher_->qos_.group_data();
 
     // XTypes 1.3
-
-    using utils::to_type_propagation;
-    using utils::TypePropagation;
-
-    auto properties = publisher_->get_participant()->get_qos().properties();
-    auto type_propagation = to_type_propagation(properties);
-    bool should_assign_type_information =
-            (TypePropagation::TYPEPROPAGATION_ENABLED == type_propagation) ||
-            (TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH == type_propagation);
-
-    if (should_assign_type_information && (xtypes::TK_NONE != type_->type_identifiers().type_identifier1()._d()))
-    {
-        xtypes::TypeInformation type_info;
-
-        if (RETCODE_OK ==
-                fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
-                    type_->type_identifiers(), type_info))
-        {
-            switch (type_propagation)
-            {
-                case TypePropagation::TYPEPROPAGATION_ENABLED:
-                {
-                    // Use both complete and minimal type information
-                    publication_data.type_information.type_information = type_info;
-                    break;
-                }
-                case TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH:
-                {
-                    // Use minimal type information only
-                    publication_data.type_information.type_information.minimal() = type_info.minimal();
-                    break;
-                }
-                default:
-                    // This should never happen as other cases are protected by should_assign_type_information
-                    assert(false);
-                    break;
-            }
-
-            publication_data.type_information.assigned(true);
-        }
-    }
+    publisher_->get_participant_impl()->fill_type_information(type_, publication_data.type_information);
     publication_data.representation = qos_.representation();
 
     // eProsima extensions

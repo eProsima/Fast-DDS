@@ -77,9 +77,10 @@ uint32_t RTPSParticipant::getRTPSParticipantID() const
 
 bool RTPSParticipant::register_writer(
         RTPSWriter* writer,
-        const PublicationBuiltinTopicData& pub_builtin_data)
+        const TopicDescription& topic,
+        const fastdds::dds::WriterQos& qos)
 {
-    return mp_impl->register_writer(writer, pub_builtin_data);
+    return mp_impl->register_writer(writer, topic, qos);
 }
 
 bool RTPSParticipant::register_reader(
