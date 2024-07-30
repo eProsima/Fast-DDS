@@ -155,7 +155,24 @@ bool SharedMemTransport::is_locator_allowed(
 bool SharedMemTransport::is_locator_reachable(
         const Locator_t& locator)
 {
-    return SHMLocator::is_shm_and_from_this_host(locator);
+    bool is_reachable = SHMLocator::is_shm_and_from_this_host(locator);
+
+    if (is_reachable)
+    {
+        try
+        {
+            is_reachable = (nullptr != find_port(locator.port));
+        }
+        catch (const std::exception& e)
+        {
+            EPROSIMA_LOG_INFO(RTPS_MSG_OUT,
+                    "Local SHM locator '" << locator <<
+                    "' is not reachable; discarding. Reason: " << e.what());
+            is_reachable = false;
+        }
+    }
+
+    return is_reachable;
 }
 
 LocatorList SharedMemTransport::NormalizeLocator(
