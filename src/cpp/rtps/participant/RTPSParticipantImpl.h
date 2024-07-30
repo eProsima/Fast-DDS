@@ -643,7 +643,7 @@ private:
      * @param kind Endpoint Kind.
      * @return True if exists.
      */
-    bool existsEntityId(
+    bool entity_id_exists(
             const EntityId_t& ent,
             EndpointKind_t kind) const;
 

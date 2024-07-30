@@ -2440,7 +2440,7 @@ bool RTPSParticipantImpl::get_new_entity_id(
     }
     else
     {
-        return !existsEntityId(entityId, READER) && !existsEntityId(entityId, WRITER);
+        return !entity_id_exists(entityId, READER) && !entity_id_exists(entityId, WRITER);
     }
 
     return true;
