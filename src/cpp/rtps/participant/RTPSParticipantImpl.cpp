@@ -894,10 +894,10 @@ bool RTPSParticipantImpl::create_writer(
         return false;
     }
 
-    if (existsEntityId(entId, WRITER))
+    if (!check_entity_id_conditions(entId, WRITER, param.endpoint.topicKind))
     {
         EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
-                "A writer with the same entityId already exists in this RTPSParticipant");
+                "Trying to create a writer with an inconsistent entityId");
         return false;
     }
 
@@ -1047,10 +1047,10 @@ bool RTPSParticipantImpl::create_reader(
         return false;
     }
 
-    if (existsEntityId(entId, READER))
+    if (!check_entity_id_conditions(entId, READER, param.endpoint.topicKind))
     {
         EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
-                "A reader with the same entityId already exists in this RTPSParticipant");
+                "Trying to create a reader with an inconsistent entityId");
         return false;
     }
 
@@ -1628,7 +1628,7 @@ bool RTPSParticipantImpl::update_reader(
  *
  */
 
-bool RTPSParticipantImpl::existsEntityId(
+bool RTPSParticipantImpl::entity_id_exists(
         const EntityId_t& ent,
         EndpointKind_t kind) const
 {
@@ -1650,6 +1650,54 @@ bool RTPSParticipantImpl::existsEntityId(
     }
 
     return false;
+}
+
+bool RTPSParticipantImpl::check_entity_id_conditions(
+        const EntityId_t& entity_id,
+        EndpointKind_t endpoint_kind,
+        TopicKind_t topic_kind) const
+{
+
+    bool ret = !entity_id_exists(entity_id, endpoint_kind);
+
+    if (!ret)
+    {
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
+                "An endpoint with the same entityId already exists in this RTPSParticipant");
+    }
+    else
+    {
+        if (endpoint_kind == WRITER)
+        {
+            if (topic_kind == NO_KEY)
+            {
+                ret = ((entity_id.value[3] & 0x0F) == 0x03);
+            }
+            else
+            {
+                ret = ((entity_id.value[3] & 0x0F) == 0x02);
+            }
+        }
+        else
+        {
+            if (topic_kind == NO_KEY)
+            {
+                ret = ((entity_id.value[3] & 0x0F) == 0x04);
+            }
+            else
+            {
+                ret = ((entity_id.value[3] & 0x0F) == 0x07);
+            }
+        }
+
+        if (!ret)
+        {
+            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
+                "Endpoint's entityId is not consistent with the topic kind");
+        }
+    }
+
+    return ret;
 }
 
 /*

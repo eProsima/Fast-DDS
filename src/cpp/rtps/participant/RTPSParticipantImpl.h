@@ -648,6 +648,21 @@ private:
             EndpointKind_t kind) const;
 
     /**
+     * Method to check if the EnityId conditions are coherent with the endpoint:
+     * - Checks if it already exists in this RTPSParticipant.
+     * - It is consistent with the topic kind of the endpoint.
+     *
+     * @param entity_id EnityId to check
+     * @param endpoint_kind Endpoint Kind.
+     * @param topic_kind Topic kind.
+     * @return True if the EnityId conditions are correct.
+     */
+    bool check_entity_id_conditions(
+            const EntityId_t& entity_id,
+            EndpointKind_t endpoint_kind,
+            TopicKind_t topic_kind) const;
+
+    /**
      * Assign an endpoint to the ReceiverResources, based on its LocatorLists.
      * @param endp Pointer to the endpoint.
      * @return True if correct.
