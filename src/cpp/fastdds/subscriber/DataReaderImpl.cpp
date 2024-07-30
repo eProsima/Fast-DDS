@@ -2212,6 +2212,7 @@ ReturnCode_t DataReaderImpl::get_subscription_builtin_topic_data(
 
     subscription_data.topic_name = topic_->get_impl()->get_rtps_topic_name();
     subscription_data.type_name = topic_->get_type_name();
+    subscription_data.topic_kind = type_->is_compute_key_provided ? WITH_KEY : NO_KEY;
 
     // DataReader qos
     subscription_data.durability = qos_.durability();

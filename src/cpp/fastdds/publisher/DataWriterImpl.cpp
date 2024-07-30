@@ -1706,7 +1706,7 @@ ReturnCode_t DataWriterImpl::get_publication_builtin_topic_data(
 
     publication_data.topic_name = topic_->get_name();
     publication_data.type_name = topic_->get_type_name();
-    publication_data.topic_data = topic_->get_qos().topic_data();
+    publication_data.topic_kind = type_->is_compute_key_provided ? TopicKind_t::WITH_KEY : TopicKind_t::NO_KEY;
 
     // DataWriter qos
     publication_data.durability = qos_.durability();
@@ -1724,6 +1724,7 @@ ReturnCode_t DataWriterImpl::get_publication_builtin_topic_data(
     // Publisher qos
     publication_data.presentation = publisher_->qos_.presentation();
     publication_data.partition = publisher_->qos_.partition();
+    publication_data.topic_data = topic_->get_qos().topic_data();
     publication_data.group_data = publisher_->qos_.group_data();
 
     // XTypes 1.3
