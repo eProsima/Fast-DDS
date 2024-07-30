@@ -3,7 +3,9 @@
 This document aims to help during the migration process from eProsima *Fast DDS version* 2 to *Fast DDS version* 3.
 For more information about all the updates, please refer to the [release notes](https://fast-dds.docs.eprosima.com/en/latest/notes/notes.html).
 
-It is always *required* to regenerate the types with the latest version of *eProsima Fast DDS Gen*, *Fast DDS Gen* v4.0.0.
+It is always *required* to regenerate the types with the appropriate version of *eProsima Fast DDS Gen*,
+(see [products compatibility](https://fast-dds.docs.eprosima.com/en/latest/notes/versions.html#eprosima-products-compatibility)).
+The compatible version with *Fast DDS v3.0.0* is *Fast DDS Gen* v4.0.0.
 
 The following sections describe the possible changes that your project may require to migrate to *Fast DDS v3.0.0*.
 
@@ -16,10 +18,9 @@ The following sections describe the possible changes that your project may requi
 - [Struct, Enum, Variable](#struct-enum-variable)
 - [Examples](#examples)
 
-
 ## Library management
 
-The below exposes exposes the changes related to the package name, environment variables and other library usages.
+The list below exposes exposes the changes related to the package name, environment variables and other library usages.
 
 * The CMake project has been renamed from `fastrtps` to `fastdds`.
 * XML profiles loading environment variable has been renamed to: `FASTDDS_DEFAULT_PROFILES_FILE`.
@@ -52,7 +53,7 @@ The following list contains the namespace changes and migrations:
 
 ## Public headers migrated to *fastdds*
 
-All the extensions of the headers in /include (public headers) have been changed to `.hpp`.
+All the extensions of the headers under `include`, which are the public headers that applications can include, have been changed to `.hpp`.
 Also, the `fixed_size_string.hpp` implementation has been migrated from Fast DDS package to Fast CDR.
 
 All the headers in `include/fastrtps` were migrated to `include/fastdds`.
