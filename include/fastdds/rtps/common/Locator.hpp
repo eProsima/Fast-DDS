@@ -19,19 +19,18 @@
 #ifndef FASTDDS_RTPS_COMMON__LOCATOR_HPP
 #define FASTDDS_RTPS_COMMON__LOCATOR_HPP
 
-#include <fastdds/fastdds_dll.hpp>
-
-#include <fastdds/rtps/common/Types.hpp>
-#include <fastdds/utils/IPLocator.hpp>
-
-#include <fastdds/dds/log/Log.hpp>
-
-#include <sstream>
-#include <vector>
+#include <algorithm>
 #include <cstdint>
 #include <cstring>
 #include <iomanip>
-#include <algorithm>
+#include <sstream>
+#include <vector>
+
+#include <fastdds/config.hpp>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/fastdds_dll.hpp>
+#include <fastdds/rtps/common/Types.hpp>
+#include <fastdds/utils/IPLocator.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -61,7 +60,7 @@ namespace rtps {
 /// TCP over IPv6 locator kind
 #define LOCATOR_KIND_TCPv6 8
 /// Shared memory locator kind
-#define LOCATOR_KIND_SHM 16
+#define LOCATOR_KIND_SHM 16 + FASTDDS_VERSION_MAJOR
 
 /**
  * @brief Class Locator_t, uniquely identifies a communication channel for a particular transport.
