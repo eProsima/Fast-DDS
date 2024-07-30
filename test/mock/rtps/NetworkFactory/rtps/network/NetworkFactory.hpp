@@ -90,6 +90,12 @@ public:
         return true;
     }
 
+    bool is_locator_reachable(
+            const Locator_t&)
+    {
+        return true;
+    }
+
     uint32_t get_min_send_buffer_size()
     {
         return 65536;

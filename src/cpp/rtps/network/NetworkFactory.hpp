@@ -196,6 +196,17 @@ public:
             bool is_fastdds_local) const;
 
     /**
+     * Must report whether the given locator is reachable by at least one of the registered transports.
+     *
+     * @param [in]  locator Locator to check if remote or allowed.
+     *
+     * @return true if the input locator is reachable by at least one of the registered transports,
+     *         false otherwise.
+     */
+    bool is_locator_reachable(
+            const Locator_t& locator);
+
+    /**
      * Perform the locator selection algorithm.
      *
      * It basically consists of the following steps

@@ -284,6 +284,12 @@ bool NetworkFactory::is_locator_remote_or_allowed(
     return (is_locator_supported(locator) && !is_fastdds_local) || is_locator_allowed(locator);
 }
 
+bool NetworkFactory::is_locator_reachable(
+        const Locator_t& /*locator*/)
+{
+    return true;
+}
+
 void NetworkFactory::select_locators(
         LocatorSelector& selector) const
 {
