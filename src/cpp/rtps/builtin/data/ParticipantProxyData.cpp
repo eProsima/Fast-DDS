@@ -32,7 +32,7 @@
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/builtin/discovery/participant/PDPSimple.h>
-#include <rtps/network/NetworkFactory.h>
+#include <rtps/network/NetworkFactory.hpp>
 #include <rtps/resources/TimedEvent.h>
 #include <rtps/transport/shared_mem/SHMLocator.hpp>
 #include <utils/TimeConversion.hpp>

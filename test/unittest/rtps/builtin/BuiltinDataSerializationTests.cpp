@@ -32,7 +32,7 @@
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/messages/CDRMessage.hpp>
-#include <rtps/network/NetworkFactory.h>
+#include <rtps/network/NetworkFactory.hpp>
 
 namespace eprosima {
 namespace fastdds {

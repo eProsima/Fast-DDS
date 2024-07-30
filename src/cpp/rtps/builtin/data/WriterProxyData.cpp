@@ -23,7 +23,7 @@
 #include <fastdds/rtps/common/VendorId_t.hpp>
 
 #include <rtps/builtin/data/WriterProxyData.hpp>
-#include <rtps/network/NetworkFactory.h>
+#include <rtps/network/NetworkFactory.hpp>
 
 #include "ProxyDataFilters.hpp"
 

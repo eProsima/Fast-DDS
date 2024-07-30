@@ -24,7 +24,7 @@
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 
-#include <rtps/network/NetworkFactory.h>
+#include <rtps/network/NetworkFactory.hpp>
 
 #include "ProxyDataFilters.hpp"
 

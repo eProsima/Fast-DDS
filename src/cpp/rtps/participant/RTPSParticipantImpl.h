@@ -54,7 +54,7 @@
 #include <rtps/messages/MessageReceiver.h>
 #include <rtps/messages/RTPSMessageGroup_t.hpp>
 #include <rtps/messages/SendBuffersManager.hpp>
-#include <rtps/network/NetworkFactory.h>
+#include <rtps/network/NetworkFactory.hpp>
 #include <rtps/network/ReceiverResource.h>
 #include <rtps/resources/ResourceEvent.h>
 #include <statistics/rtps/monitor-service/interfaces/IConnectionsObserver.hpp>
