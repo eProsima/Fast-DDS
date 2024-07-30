@@ -127,6 +127,7 @@ void from_proxy_to_builtin(
 
     builtin_data.topic_name = proxy_data.topicName();
     builtin_data.type_name = proxy_data.typeName();
+    builtin_data.topic_kind = proxy_data.topicKind();
     builtin_data.durability = proxy_data.m_qos.m_durability;
     builtin_data.deadline = proxy_data.m_qos.m_deadline;
     builtin_data.latency_budget = proxy_data.m_qos.m_latencyBudget;
@@ -169,6 +170,7 @@ void from_proxy_to_builtin(
 
     builtin_data.topic_name = proxy_data.topicName();
     builtin_data.type_name = proxy_data.typeName();
+    builtin_data.topic_kind = proxy_data.topicKind();
     builtin_data.durability = proxy_data.m_qos.m_durability;
     builtin_data.durability_service = proxy_data.m_qos.m_durabilityService;
     builtin_data.deadline = proxy_data.m_qos.m_deadline;
@@ -213,6 +215,7 @@ void from_builtin_to_proxy(
 
     proxy_data.topicName(builtin_data.topic_name);
     proxy_data.typeName(builtin_data.type_name);
+    proxy_data.topicKind(builtin_data.topic_kind);
 
     qos.m_durability = builtin_data.durability;
     qos.m_durabilityService = builtin_data.durability_service;
@@ -257,6 +260,8 @@ void from_builtin_to_proxy(
 
     proxy_data.topicName(builtin_data.topic_name);
     proxy_data.typeName(builtin_data.type_name);
+    proxy_data.topicKind(builtin_data.topic_kind);
+
     qos.m_durability = builtin_data.durability;
     qos.m_deadline = builtin_data.deadline;
     qos.m_latencyBudget = builtin_data.latency_budget;
