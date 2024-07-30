@@ -1693,7 +1693,7 @@ bool RTPSParticipantImpl::check_entity_id_conditions(
         if (!ret)
         {
             EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
-                "Endpoint's entityId is not consistent with the topic kind");
+                    "Endpoint's entityId is not consistent with the topic kind");
         }
     }
 
