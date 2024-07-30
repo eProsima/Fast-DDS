@@ -109,12 +109,12 @@ public:
     /**
      * Add a local writer to the liveliness protocol.
      * @param writer Pointer to the RTPSWriter.
-     * @param wqos Quality of service policies for the writer.
+     * @param qos Quality of service policies for the writer.
      * @return True if correct.
      */
     bool add_local_writer(
             RTPSWriter* writer,
-            const fastdds::dds::WriterQos& wqos);
+            const fastdds::dds::LivelinessQosPolicy& qos);
     /**
      * Remove a local writer from the liveliness protocol.
      * @param writer Pointer to the RTPSWriter.
@@ -125,13 +125,13 @@ public:
 
     /**
      * @brief Adds a local reader to the liveliness protocol
-     * @param reader Pointer to the RTPS reader
-     * @param rqos Quality of service policies for the reader
+     * @param reader  Pointer to the RTPS reader
+     * @param qos     Quality of service policies for the reader
      * @return True if added successfully
      */
     bool add_local_reader(
             RTPSReader* reader,
-            const fastdds::dds::ReaderQos& rqos);
+            const fastdds::dds::LivelinessQosPolicy& qos);
 
     /**
      * @brief Removes a local reader from the livliness protocol

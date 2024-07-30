@@ -237,18 +237,6 @@ public:
             const fastdds::LibrarySettings& library_settings);
 
     /**
-     * @brief Get the TopicAttributes from XML profile.
-     *
-     * @param profile_name Topic profile name.
-     * @param topic_att TopicAttributes object where the attributes are returned.
-     * @return bool true if the profile exists.
-     *              false otherwise.
-     */
-    static bool get_topic_attributes_from_profile(
-            const std::string& profile_name,
-            TopicAttributes& topic_attributes);
-
-    /**
      * @brief Return the ITypeObjectRegistry member to access the interface for the public API.
      *
      * @return const xtypes::ITypeObjectRegistry reference.

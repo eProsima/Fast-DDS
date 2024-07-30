@@ -60,26 +60,26 @@ public:
     {
     }
 
-    bool removeLocalReader(
+    bool remove_reader(
             RTPSReader* /*R*/) override
     {
         return true;
     }
 
-    bool removeLocalWriter(
+    bool remove_writer(
             RTPSWriter* /*W*/) override
     {
         return true;
     }
 
-    bool processLocalReaderProxyData(
+    bool process_reader_proxy_data(
             RTPSReader* /*reader*/,
             ReaderProxyData* /*rdata*/) override
     {
         return true;
     }
 
-    bool processLocalWriterProxyData(
+    bool process_writer_proxy_data(
             RTPSWriter* /*writer*/,
             WriterProxyData* /*wdata*/) override
     {

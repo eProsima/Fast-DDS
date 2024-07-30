@@ -24,7 +24,6 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/attributes/ResourceManagement.hpp>
-#include <fastdds/rtps/attributes/TopicAttributes.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/history/IChangePool.hpp>
@@ -48,21 +47,30 @@ class DataWriterHistory : public rtps::WriterHistory
 public:
 
     static rtps::HistoryAttributes to_history_attributes(
-            const TopicAttributes& topic_att,
+            const HistoryQosPolicy& history_qos,
+            const ResourceLimitsQosPolicy& resource_limits_qos,
+            const rtps::TopicKind_t& topic_kind,
             uint32_t payloadMaxSize,
             rtps::MemoryManagementPolicy_t mempolicy);
 
     /**
      * Constructor of the DataWriterHistory.
-     * @param topic_att TopicAttributed
-     * @param payloadMax Maximum payload size.
-     * @param mempolicy Set whether the payloads can dynamically resized or not.
-     * @param unack_sample_remove_functor Functor to call DDS listener callback on_unacknowledged_sample_removed
+     *
+     * @param payload_pool                 Pool to use for allocation of payloads.
+     * @param change_pool                  Pool to use for allocation of changes.
+     * @param history_qos                  HistoryQosPolicy of the DataWriter creating this history.
+     * @param resource_limits_qos          ResourceLimitsQosPolicy of the DataWriter creating this history.
+     * @param topic_kind                   TopicKind of the DataWriter creating this history.
+     * @param payloadMax                   Maximum payload size.
+     * @param mempolicy                    Set whether the payloads can dynamically resized or not.
+     * @param unack_sample_remove_functor  Functor to call DDS listener callback on_unacknowledged_sample_removed
      */
     DataWriterHistory(
             const std::shared_ptr<rtps::IPayloadPool>& payload_pool,
             const std::shared_ptr<rtps::IChangePool>& change_pool,
-            const TopicAttributes& topic_att,
+            const HistoryQosPolicy& history_qos,
+            const ResourceLimitsQosPolicy& resource_limits_qos,
+            const rtps::TopicKind_t& topic_kind,
             uint32_t payloadMax,
             rtps::MemoryManagementPolicy_t mempolicy,
             std::function<void (const rtps::InstanceHandle_t&)> unack_sample_remove_functor);
@@ -152,9 +160,8 @@ public:
     #endif // if HAVE_STRICT_REALTIME
             {
                 EPROSIMA_LOG_INFO(RTPS_HISTORY,
-                        topic_att_.getTopicDataType()
-                        << " Change " << change->sequenceNumber << " added with key: " << change->instanceHandle
-                        << " and " << change->serializedPayload.length << " bytes");
+                        " Change " << change->sequenceNumber << " added with key: " << change->instanceHandle
+                                   << " and " << change->serializedPayload.length << " bytes");
                 returnedValue = true;
             }
         }
@@ -257,8 +264,8 @@ private:
     HistoryQosPolicy history_qos_;
     //!ResourceLimitsQosPolicy values.
     ResourceLimitsQosPolicy resource_limited_qos_;
-    //!Topic Attributes
-    TopicAttributes topic_att_;
+    //!TopicKind
+    rtps::TopicKind_t topic_kind_;
 
     //! Unacknowledged sample removed functor
     std::function<void (const rtps::InstanceHandle_t&)> unacknowledged_sample_removed_functor_;

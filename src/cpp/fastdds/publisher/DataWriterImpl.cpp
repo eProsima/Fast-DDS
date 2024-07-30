@@ -35,7 +35,7 @@
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/publisher/filtering/DataWriterFilteredChangePool.hpp>
 #include <fastdds/publisher/PublisherImpl.hpp>
-#include <fastdds/rtps/attributes/TopicAttributes.hpp>
+#include <fastdds/rtps/builtin/data/TopicDescription.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/RTPSDomain.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
@@ -53,6 +53,7 @@
 #include <rtps/writer/BaseWriter.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
 #include <utils/TimeConversion.hpp>
+#include <utils/BuiltinTopicKeyConversions.hpp>
 #ifdef FASTDDS_STATISTICS
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/types/monitorservice_types.hpp>
@@ -228,7 +229,9 @@ void DataWriterImpl::create_history(
 {
     history_.reset(new DataWriterHistory(
                 payload_pool, change_pool,
-                get_topic_attributes(qos_, *topic_, type_),
+                qos_.history(),
+                qos_.resource_limits(),
+                (type_->is_compute_key_provided ? WITH_KEY : NO_KEY),
                 type_->max_serialized_type_size,
                 qos_.endpoint().history_memory_policy,
                 [this](
@@ -245,9 +248,10 @@ ReturnCode_t DataWriterImpl::enable()
 {
     assert(writer_ == nullptr);
 
-    auto topic_att = get_topic_attributes(qos_, *topic_, type_);
     auto history_att = DataWriterHistory::to_history_attributes(
-        topic_att, type_->max_serialized_type_size, qos_.endpoint().history_memory_policy);
+        qos_.history(),
+        qos_.resource_limits(), (type_->is_compute_key_provided ? WITH_KEY : NO_KEY), type_->max_serialized_type_size,
+        qos_.endpoint().history_memory_policy);
     pool_config_ = PoolConfig::from_history_attributes(history_att);
 
     // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
@@ -454,6 +458,11 @@ ReturnCode_t DataWriterImpl::enable()
     }
 
     // REGISTER THE WRITER
+    fastdds::rtps::TopicDescription topic_desc;
+    topic_desc.topic_name = topic_->get_name();
+    topic_desc.type_name = topic_->get_type_name();
+    publisher_->get_participant_impl()->fill_type_information(type_, topic_desc.type_information);
+
     WriterQos wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
     if (!is_data_sharing_compatible_)
     {
@@ -470,7 +479,7 @@ ReturnCode_t DataWriterImpl::enable()
             wqos.m_partition.push_back(partition_name.c_str());
         }
     }
-    publisher_->rtps_participant()->registerWriter(writer_, get_topic_attributes(qos_, *topic_, type_), wqos);
+    publisher_->rtps_participant()->register_writer(writer_, topic_desc, wqos);
 
     return RETCODE_OK;
 }
@@ -1176,7 +1185,7 @@ void DataWriterImpl::publisher_qos_updated()
     {
         //NOTIFY THE BUILTIN PROTOCOLS THAT THE WRITER HAS CHANGED
         WriterQos wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
-        publisher_->rtps_participant()->updateWriter(writer_, get_topic_attributes(qos_, *topic_, type_), wqos);
+        publisher_->rtps_participant()->update_writer(writer_, wqos);
     }
 }
 
@@ -1225,9 +1234,8 @@ ReturnCode_t DataWriterImpl::set_qos(
         }
 
         //Notify the participant that a Writer has changed its QOS
-        fastdds::TopicAttributes topic_att = get_topic_attributes(qos_, *topic_, type_);
         WriterQos wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
-        publisher_->rtps_participant()->updateWriter(writer_, topic_att, wqos);
+        publisher_->rtps_participant()->update_writer(writer_, wqos);
 
         // Deadline
         if (qos_.deadline().period != dds::c_TimeInfinite)
@@ -1677,59 +1685,97 @@ ReturnCode_t DataWriterImpl::assert_liveliness()
     return RETCODE_OK;
 }
 
-fastdds::TopicAttributes DataWriterImpl::get_topic_attributes(
-        const DataWriterQos& qos,
-        const Topic& topic,
-        const TypeSupport& type)
+ReturnCode_t DataWriterImpl::get_publication_builtin_topic_data(
+        PublicationBuiltinTopicData& publication_data) const
 {
-    fastdds::TopicAttributes topic_att;
-    topic_att.historyQos = qos.history();
-    topic_att.resourceLimitsQos = qos.resource_limits();
-    topic_att.topicName = topic.get_name();
-    topic_att.topicDataType = topic.get_type_name();
-    topic_att.topicKind = type->is_compute_key_provided ? WITH_KEY : NO_KEY;
-
-    using utils::to_type_propagation;
-    using utils::TypePropagation;
-
-    auto properties = publisher_->get_participant()->get_qos().properties();
-    auto type_propagation = to_type_propagation(properties);
-    bool should_assign_type_information =
-            (TypePropagation::TYPEPROPAGATION_ENABLED == type_propagation) ||
-            (TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH == type_propagation);
-
-    if (should_assign_type_information && (xtypes::TK_NONE != type->type_identifiers().type_identifier1()._d()))
+    if (nullptr == writer_)
     {
-        xtypes::TypeInformation type_info;
+        return RETCODE_NOT_ENABLED;
+    }
 
-        if (RETCODE_OK ==
-                fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
-                    type->type_identifiers(), type_info))
+    // sanity checks
+    assert(nullptr != publisher_);
+    assert(nullptr != topic_);
+    assert(nullptr != publisher_->get_participant());
+    assert(nullptr != writer_->get_participant_impl());
+
+    publication_data = PublicationBuiltinTopicData{};
+
+    from_proxy_to_builtin(guid_.entityId, publication_data.key.value);
+    from_proxy_to_builtin(publisher_->get_participant()->guid().guidPrefix, publication_data.participant_key.value);
+
+    publication_data.topic_name = topic_->get_name();
+    publication_data.type_name = topic_->get_type_name();
+    publication_data.topic_data = topic_->get_qos().topic_data();
+
+    // DataWriter qos
+    publication_data.durability = qos_.durability();
+    publication_data.durability_service = qos_.durability_service();
+    publication_data.deadline = qos_.deadline();
+    publication_data.latency_budget = qos_.latency_budget();
+    publication_data.liveliness = qos_.liveliness();
+    publication_data.reliability = qos_.reliability();
+    publication_data.lifespan = qos_.lifespan();
+    publication_data.user_data = qos_.user_data();
+    publication_data.ownership = qos_.ownership();
+    publication_data.ownership_strength = qos_.ownership_strength();
+    publication_data.destination_order = qos_.destination_order();
+
+    // Publisher qos
+    publication_data.presentation = publisher_->qos_.presentation();
+    publication_data.partition = publisher_->qos_.partition();
+    publication_data.group_data = publisher_->qos_.group_data();
+
+    // XTypes 1.3
+    publisher_->get_participant_impl()->fill_type_information(type_, publication_data.type_information);
+    publication_data.representation = qos_.representation();
+
+    // eProsima extensions
+
+    publication_data.disable_positive_acks = qos_.reliable_writer_qos().disable_positive_acks;
+    publication_data.data_sharing = qos_.data_sharing();
+
+    if (publication_data.data_sharing.kind() != OFF &&
+            publication_data.data_sharing.domain_ids().empty())
+    {
+        publication_data.data_sharing.add_domain_id(utils::default_domain_id());
+    }
+
+    publication_data.guid = guid();
+    publication_data.participant_guid = publisher_->get_participant()->guid();
+
+    const std::string* pers_guid = PropertyPolicyHelper::find_property(qos_.properties(), "dds.persistence.guid");
+    if (pers_guid)
+    {
+        // Load persistence_guid from property
+        std::istringstream(pers_guid->c_str()) >> publication_data.persistence_guid;
+    }
+
+    qos_.endpoint().unicast_locator_list.copy_to(publication_data.remote_locators.unicast);
+    qos_.endpoint().multicast_locator_list.copy_to(publication_data.remote_locators.multicast);
+    publication_data.max_serialized_size = type_->max_serialized_type_size;
+    publication_data.loopback_transformation =
+            writer_->get_participant_impl()->network_factory().network_configuration();
+
+    if (!is_data_sharing_compatible_)
+    {
+        publication_data.data_sharing.off();
+    }
+
+    const std::string* endpoint_partitions = PropertyPolicyHelper::find_property(qos_.properties(), "partitions");
+    if (endpoint_partitions)
+    {
+        std::istringstream partition_string(*endpoint_partitions);
+        std::string partition_name;
+        publication_data.partition.clear();
+
+        while (std::getline(partition_string, partition_name, ';'))
         {
-            switch (type_propagation)
-            {
-                case TypePropagation::TYPEPROPAGATION_ENABLED:
-                {
-                    // Use both complete and minimal type information
-                    topic_att.type_information.type_information = type_info;
-                    break;
-                }
-                case TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH:
-                {
-                    // Use minimal type information only
-                    topic_att.type_information.type_information.minimal() = type_info.minimal();
-                    break;
-                }
-                default:
-                    // This should never happen as other cases are protected by should_assign_type_information
-                    assert(false);
-                    break;
-            }
-
-            topic_att.type_information.assigned(true);
+            publication_data.partition.push_back(partition_name.c_str());
         }
     }
-    return topic_att;
+
+    return RETCODE_OK;
 }
 
 OfferedIncompatibleQosStatus& DataWriterImpl::update_offered_incompatible_qos(

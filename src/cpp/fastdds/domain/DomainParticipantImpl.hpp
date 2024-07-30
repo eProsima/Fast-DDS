@@ -508,6 +508,18 @@ public:
         return id_counter_;
     }
 
+    /**
+     * @brief Fill a TypeInformationParameter with the type information of a TypeSupport.
+     *
+     * @param type              TypeSupport to get the type information from.
+     * @param type_information  TypeInformationParameter to fill.
+     *
+     * @return true if the constraints for propagating the type information are met.
+     */
+    bool fill_type_information(
+            const TypeSupport& type,
+            xtypes::TypeInformationParameter& type_information);
+
 protected:
 
     //!Domain id

@@ -43,7 +43,7 @@ DSClientEvent::DSClientEvent(
                 return event();
             }, interval)
     , mp_PDP(p_PDP)
-    , mp_EDP(static_cast<EDPClient*>(mp_PDP->getEDP()))
+    , mp_EDP(static_cast<EDPClient*>(mp_PDP->get_edp()))
 {
 }
 

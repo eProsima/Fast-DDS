@@ -1404,21 +1404,21 @@ void RTPSParticipantImpl::disableReader(
     m_receiverResourcelistMutex.unlock();
 }
 
-bool RTPSParticipantImpl::registerWriter(
-        RTPSWriter* Writer,
-        const TopicAttributes& topicAtt,
-        const fastdds::dds::WriterQos& wqos)
+bool RTPSParticipantImpl::register_writer(
+        RTPSWriter* rtps_writer,
+        const TopicDescription& topic,
+        const fastdds::dds::WriterQos& qos)
 {
-    return this->mp_builtinProtocols->addLocalWriter(Writer, topicAtt, wqos);
+    return this->mp_builtinProtocols->add_writer(rtps_writer, topic, qos);
 }
 
-bool RTPSParticipantImpl::registerReader(
-        RTPSReader* reader,
-        const TopicAttributes& topicAtt,
-        const fastdds::dds::ReaderQos& rqos,
+bool RTPSParticipantImpl::register_reader(
+        RTPSReader* rtps_reader,
+        const TopicDescription& topic,
+        const fastdds::dds::ReaderQos& qos,
         const ContentFilterProperty* content_filter)
 {
-    return this->mp_builtinProtocols->addLocalReader(reader, topicAtt, rqos, content_filter);
+    return this->mp_builtinProtocols->add_reader(rtps_reader, topic, qos, content_filter);
 }
 
 void RTPSParticipantImpl::update_attributes(
@@ -1606,21 +1606,19 @@ void RTPSParticipantImpl::update_attributes(
     }
 }
 
-bool RTPSParticipantImpl::updateLocalWriter(
-        RTPSWriter* Writer,
-        const TopicAttributes& topicAtt,
+bool RTPSParticipantImpl::update_writer(
+        RTPSWriter* rtps_writer,
         const fastdds::dds::WriterQos& wqos)
 {
-    return this->mp_builtinProtocols->updateLocalWriter(Writer, topicAtt, wqos);
+    return this->mp_builtinProtocols->update_writer(rtps_writer, wqos);
 }
 
-bool RTPSParticipantImpl::updateLocalReader(
-        RTPSReader* reader,
-        const TopicAttributes& topicAtt,
+bool RTPSParticipantImpl::update_reader(
+        RTPSReader* rtps_reader,
         const fastdds::dds::ReaderQos& rqos,
         const ContentFilterProperty* content_filter)
 {
-    return this->mp_builtinProtocols->updateLocalReader(reader, topicAtt, rqos, content_filter);
+    return this->mp_builtinProtocols->update_reader(rtps_reader, rqos, content_filter);
 }
 
 /*
@@ -2000,7 +1998,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
     {
         if (found_in_users)
         {
-            mp_builtinProtocols->removeLocalWriter(static_cast<RTPSWriter*>(p_endpoint));
+            mp_builtinProtocols->remove_writer(static_cast<RTPSWriter*>(p_endpoint));
         }
 
 #if HAVE_SECURITY
@@ -2015,7 +2013,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
     {
         if (found_in_users)
         {
-            mp_builtinProtocols->removeLocalReader(static_cast<RTPSReader*>(p_endpoint));
+            mp_builtinProtocols->remove_reader(static_cast<RTPSReader*>(p_endpoint));
         }
 
 #if HAVE_SECURITY
@@ -2090,8 +2088,8 @@ void RTPSParticipantImpl::deleteAllUserEndpoints()
     auto removeEndpoint = [this](EndpointKind_t kind, Endpoint* p)
             {
                 return kind == WRITER
-                       ? mp_builtinProtocols->removeLocalWriter((RTPSWriter*)p)
-                       : mp_builtinProtocols->removeLocalReader((RTPSReader*)p);
+                       ? mp_builtinProtocols->remove_writer((RTPSWriter*)p)
+                       : mp_builtinProtocols->remove_reader((RTPSReader*)p);
             };
 
 #if HAVE_SECURITY
@@ -2880,10 +2878,10 @@ const fastdds::statistics::rtps::IStatusObserver* RTPSParticipantImpl::create_mo
                     return this->createWriter(WriterOut, param, hist, listen, entityId, isBuiltin);
                 },
                 [&](RTPSWriter* w,
-                const fastdds::TopicAttributes& topicAtt,
-                const fastdds::dds::WriterQos& wqos) -> bool
+                const TopicDescription& topic,
+                const fastdds::dds::WriterQos& qos) -> bool
                 {
-                    return this->registerWriter(w, topicAtt, wqos);
+                    return this->register_writer(w, topic, qos);
                 },
                 getEventResource()
                 ));

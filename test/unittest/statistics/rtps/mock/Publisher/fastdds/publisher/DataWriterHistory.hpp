@@ -21,17 +21,15 @@
 
 #include <gmock/gmock.h>
 
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/attributes/ResourceManagement.hpp>
+#include <fastdds/rtps/history/IChangePool.hpp>
+#include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
-#include <fastdds/rtps/history/IPayloadPool.hpp>
-#include <fastdds/rtps/history/IChangePool.hpp>
 
 namespace eprosima {
 namespace fastdds {
-
-class TopicAttributes;
-
 namespace rtps {
 
 class WriteParams;
@@ -48,9 +46,11 @@ class Topic;
 
 
 static fastdds::rtps::HistoryAttributes to_history_attributes(
-        const fastdds::TopicAttributes&,
+        const HistoryQosPolicy&,
+        const ResourceLimitsQosPolicy&,
+        const rtps::TopicKind_t&,
         uint32_t,
-        fastdds::rtps::MemoryManagementPolicy_t)
+        rtps::MemoryManagementPolicy_t)
 {
 
     return fastdds::rtps::HistoryAttributes();
@@ -63,11 +63,14 @@ public:
     DataWriterHistory(
             const std::shared_ptr<rtps::IPayloadPool>& payload_pool,
             const std::shared_ptr<rtps::IChangePool>& change_pool,
-            const TopicAttributes& topic_att,
+            const HistoryQosPolicy& history_qos,
+            const ResourceLimitsQosPolicy& resource_limits_qos,
+            const rtps::TopicKind_t& topic_kind,
             uint32_t payloadMaxSize,
             rtps::MemoryManagementPolicy_t mempolicy,
-            std::function<void (const rtps::InstanceHandle_t&)>)
-        : WriterHistory(to_history_attributes(topic_att, payloadMaxSize, mempolicy), payload_pool, change_pool)
+            std::function<void (const fastdds::rtps::InstanceHandle_t&)>)
+        : WriterHistory(to_history_attributes(history_qos, resource_limits_qos, topic_kind, payloadMaxSize,
+                mempolicy), payload_pool, change_pool)
     {
     }
 

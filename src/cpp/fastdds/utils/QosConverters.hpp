@@ -28,13 +28,13 @@
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
-#include <fastdds/rtps/attributes/TopicAttributes.hpp>
 
 #include <xmlparser/attributes/ParticipantAttributes.hpp>
 #include <xmlparser/attributes/PublisherAttributes.hpp>
 #include <xmlparser/attributes/ReplierAttributes.hpp>
 #include <xmlparser/attributes/RequesterAttributes.hpp>
 #include <xmlparser/attributes/SubscriberAttributes.hpp>
+#include <xmlparser/attributes/TopicAttributes.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -125,7 +125,7 @@ void set_attributes_from_extended_qos(
  */
 void set_qos_from_attributes(
         TopicQos& qos,
-        const TopicAttributes& attr);
+        const xmlparser::TopicAttributes& attr);
 
 /**
  * Obtains the SubscriberQos from the SubscriberAttributes provided.

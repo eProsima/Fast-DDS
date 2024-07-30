@@ -488,6 +488,12 @@ ReturnCode_t DataReader::get_listening_locators(
     return impl_->get_listening_locators(locators);
 }
 
+ReturnCode_t DataReader::get_subscription_builtin_topic_data(
+        SubscriptionBuiltinTopicData& subscription_data) const
+{
+    return impl_->get_subscription_builtin_topic_data(subscription_data);
+}
+
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */

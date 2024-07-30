@@ -56,48 +56,6 @@ TEST(RTPSDomainTests, library_settings_test)
     eprosima::fastdds::rtps::RTPSDomain::stopAll();
 }
 
-/**
- * This test checks get_topic_attributes_from_profile API.
- */
-TEST(RTPSDomainTests, get_topic_attributes_from_profile_test)
-{
-    std::string profile_name = "test_profile_name";
-    eprosima::fastdds::TopicAttributes topic_att;
-    EXPECT_FALSE(eprosima::fastdds::rtps::RTPSDomain::get_topic_attributes_from_profile(profile_name, topic_att));
-
-    const std::string xml =
-            R"(<profiles>
-    <topic profile_name="test_profile_name">
-        <name>Test</name>
-        <dataType>DataTest</dataType>
-        <historyQos>
-            <kind>KEEP_LAST</kind>
-            <depth>20</depth>
-        </historyQos>
-        <resourceLimitsQos>
-            <max_samples>5</max_samples>
-            <max_instances>2</max_instances>
-            <max_samples_per_instance>1</max_samples_per_instance>
-            <allocated_samples>20</allocated_samples>
-            <extra_samples>10</extra_samples>
-        </resourceLimitsQos>
-    </topic>
-</profiles>)";
-
-    EXPECT_EQ(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->load_XML_profiles_string(xml.c_str(),
-            xml.length()), eprosima::fastdds::dds::RETCODE_OK);
-    EXPECT_TRUE(eprosima::fastdds::rtps::RTPSDomain::get_topic_attributes_from_profile(profile_name, topic_att));
-    EXPECT_EQ(topic_att.topicName, "Test");
-    EXPECT_EQ(topic_att.topicDataType, "DataTest");
-    EXPECT_EQ(topic_att.historyQos.kind, eprosima::fastdds::dds::HistoryQosPolicyKind::KEEP_LAST_HISTORY_QOS);
-    EXPECT_EQ(topic_att.historyQos.depth, 20);
-    EXPECT_EQ(topic_att.resourceLimitsQos.max_samples, 5);
-    EXPECT_EQ(topic_att.resourceLimitsQos.max_instances, 2);
-    EXPECT_EQ(topic_att.resourceLimitsQos.max_samples_per_instance, 1);
-    EXPECT_EQ(topic_att.resourceLimitsQos.allocated_samples, 20);
-    EXPECT_EQ(topic_att.resourceLimitsQos.extra_samples, 10);
-}
-
 int main(
         int argc,
         char** argv)

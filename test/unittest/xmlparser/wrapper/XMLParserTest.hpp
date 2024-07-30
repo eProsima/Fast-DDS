@@ -239,7 +239,7 @@ public:
 
     static XMLP_ret getXMLTopicAttributes_wrapper(
             tinyxml2::XMLElement* elem,
-            TopicAttributes& topic,
+            xmlparser::TopicAttributes& topic,
             uint8_t ident)
     {
         return getXMLTopicAttributes(elem, topic, ident);
@@ -522,7 +522,7 @@ public:
 
     static XMLP_ret fillDataNode_wrapper(
             tinyxml2::XMLElement* p_profile,
-            DataNode<TopicAttributes>& topic_node)
+            DataNode<xmlparser::TopicAttributes>& topic_node)
     {
         return fillDataNode(p_profile, topic_node);
     }

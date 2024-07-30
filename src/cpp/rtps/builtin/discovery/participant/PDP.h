@@ -342,7 +342,7 @@ public:
      * Get a pointer to the EDP object.
      * @return pointer to the EDP object.
      */
-    inline EDP* getEDP()
+    inline EDP* get_edp()
     {
         return mp_EDP;
     }

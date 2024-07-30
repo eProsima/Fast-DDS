@@ -106,6 +106,11 @@ public:
         return {};
     }
 
+    NetworkConfigSet_t network_configuration() const
+    {
+        return NetworkConfigSet_t{};
+    }
+
 };
 
 } // namespace rtps

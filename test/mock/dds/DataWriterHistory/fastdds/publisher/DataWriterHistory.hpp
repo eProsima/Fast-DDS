@@ -22,7 +22,6 @@
 
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/ResourceManagement.hpp>
-#include <fastdds/rtps/attributes/TopicAttributes.hpp>
 #include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/common/ChangeKind_t.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
@@ -31,6 +30,7 @@
 #include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 
 #include <fastdds/publisher/history/DataWriterInstance.hpp>
 
@@ -45,20 +45,22 @@ class DataWriterHistory : public WriterHistory
 public:
 
     static HistoryAttributes to_history_attributes(
-            const TopicAttributes& topic_att,
+            const HistoryQosPolicy& history_qos,
+            const ResourceLimitsQosPolicy& resource_limits_qos,
+            const rtps::TopicKind_t& topic_kind,
             uint32_t payloadMaxSize,
             MemoryManagementPolicy_t mempolicy)
     {
-        auto initial_samples = topic_att.resourceLimitsQos.allocated_samples;
-        auto max_samples = topic_att.resourceLimitsQos.max_samples;
-        auto extra_samples = topic_att.resourceLimitsQos.extra_samples;
+        auto initial_samples = resource_limits_qos.allocated_samples;
+        auto max_samples = resource_limits_qos.max_samples;
+        auto extra_samples = resource_limits_qos.extra_samples;
 
-        if (topic_att.historyQos.kind != KEEP_ALL_HISTORY_QOS)
+        if (history_qos.kind != KEEP_ALL_HISTORY_QOS)
         {
-            max_samples = topic_att.historyQos.depth;
-            if (topic_att.getTopicKind() != NO_KEY)
+            max_samples = history_qos.depth;
+            if (topic_kind != NO_KEY)
             {
-                max_samples *= topic_att.resourceLimitsQos.max_instances;
+                max_samples *= resource_limits_qos.max_instances;
             }
 
             initial_samples = std::min(initial_samples, max_samples);
@@ -70,14 +72,17 @@ public:
     DataWriterHistory(
             const std::shared_ptr<IPayloadPool>& payload_pool,
             const std::shared_ptr<IChangePool>& change_pool,
-            const TopicAttributes& topic_att,
+            const HistoryQosPolicy& history_qos,
+            const ResourceLimitsQosPolicy& resource_limits_qos,
+            const rtps::TopicKind_t& topic_kind,
             uint32_t payloadMaxSize,
             MemoryManagementPolicy_t mempolicy,
-            std::function<void (const InstanceHandle_t&)> unack_sample_remove_functor)
-        : WriterHistory(to_history_attributes(topic_att, payloadMaxSize, mempolicy), payload_pool, change_pool)
-        , history_qos_(topic_att.historyQos)
-        , resource_limited_qos_(topic_att.resourceLimitsQos)
-        , topic_att_(topic_att)
+            std::function<void (const fastdds::rtps::InstanceHandle_t&)> unack_sample_remove_functor)
+        : WriterHistory(to_history_attributes(history_qos, resource_limits_qos, topic_kind, payloadMaxSize,
+                mempolicy), payload_pool, change_pool)
+        , history_qos_(history_qos)
+        , resource_limited_qos_(resource_limits_qos)
+        , topic_kind_(topic_kind)
         , unacknowledged_sample_removed_functor_(unack_sample_remove_functor)
     {
         if (resource_limited_qos_.max_samples <= 0)
@@ -122,7 +127,7 @@ public:
         payload = nullptr;
 
         /// Preconditions
-        if (topic_att_.getTopicKind() == NO_KEY)
+        if (topic_kind_ == NO_KEY)
         {
             return false;
         }
@@ -184,8 +189,8 @@ public:
         bool returnedValue = false;
 
         // For NO_KEY we can directly add the change
-        bool add = (topic_att_.getTopicKind() == NO_KEY);
-        if (topic_att_.getTopicKind() == WITH_KEY)
+        bool add = (topic_kind_ == NO_KEY);
+        if (topic_kind_ == WITH_KEY)
         {
             t_m_Inst_Caches::iterator vit;
 
@@ -258,7 +263,7 @@ public:
         }
 
         std::lock_guard<RecursiveTimedMutex> guard(*this->mp_mutex);
-        if (topic_att_.getTopicKind() == NO_KEY)
+        if (topic_kind_ == NO_KEY)
         {
             if (remove_change(change))
             {
@@ -303,7 +308,7 @@ private:
     //!ResourceLimitsQosPolicy values.
     ResourceLimitsQosPolicy resource_limited_qos_;
     //!Topic Attributes
-    TopicAttributes topic_att_;
+    TopicKind_t topic_kind_;
 
     //! Unacknowledged sample removed functor
     std::function<void (const fastdds::rtps::InstanceHandle_t&)> unacknowledged_sample_removed_functor_;

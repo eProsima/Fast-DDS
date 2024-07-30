@@ -31,8 +31,8 @@
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
-#include <fastdds/rtps/attributes/TopicAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
+#include <fastdds/rtps/builtin/data/TopicDescription.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
@@ -352,17 +352,16 @@ public:
     }
 
     void match_endpoints(
-            bool key,
+            bool /* key */,
             fastcdr::string_255 data_type,
             fastcdr::string_255 topic_name)
     {
         using namespace fastdds;
         using namespace fastdds::rtps;
 
-        TopicAttributes Tatt;
-        Tatt.topicKind = key ? TopicKind_t::WITH_KEY : TopicKind_t::NO_KEY;
-        Tatt.topicDataType = data_type;
-        Tatt.topicName = topic_name;
+        TopicDescription topic_desc;
+        topic_desc.type_name = data_type;
+        topic_desc.topic_name = topic_name;
 
         dds::WriterQos Wqos;
         auto& watt = writer_->getAttributes();
@@ -378,8 +377,8 @@ public:
                 RELIABLE ==
                 ratt.reliabilityKind ? dds::RELIABLE_RELIABILITY_QOS : dds::BEST_EFFORT_RELIABILITY_QOS;
 
-        participant_->registerWriter(writer_, Tatt, Wqos);
-        participant_->registerReader(reader_, Tatt, Rqos);
+        participant_->register_writer(writer_, topic_desc, Wqos);
+        participant_->register_reader(reader_, topic_desc, Rqos);
     }
 
     void destroy_endpoints()

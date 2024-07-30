@@ -58,8 +58,6 @@ class TypeLookupManager;
 } // namespace builtin
 } // namespace dds
 
-class TopicAttributes;
-
 namespace rtps {
 
 struct PublicationBuiltinTopicData;
@@ -68,6 +66,7 @@ class RTPSParticipantListener;
 class RTPSWriter;
 class RTPSReader;
 struct SubscriptionBuiltinTopicData;
+struct TopicDescription;
 class ResourceEvent;
 class WLP;
 
@@ -187,40 +186,28 @@ public:
 
     MOCK_CONST_METHOD0(typelookup_manager, fastdds::dds::builtin::TypeLookupManager* ());
 
-    MOCK_METHOD3(registerWriter, bool(
+    MOCK_METHOD3(register_writer, bool(
                 RTPSWriter * Writer,
-                const TopicAttributes& topicAtt,
+                const fastdds::rtps::TopicDescription& topic,
+                const fastdds::dds::WriterQos& qos));
+
+    MOCK_METHOD2(update_writer, bool(
+                RTPSWriter * Writer,
                 const fastdds::dds::WriterQos& wqos));
 
-    MOCK_METHOD3(updateWriter, bool(
-                RTPSWriter * Writer,
-                const TopicAttributes& topicAtt,
-                const fastdds::dds::WriterQos& wqos));
-
-    MOCK_METHOD3(registerReader, bool(
+    MOCK_METHOD4(register_reader, bool(
                 RTPSReader * Reader,
-                const TopicAttributes& topicAtt,
-                const fastdds::dds::ReaderQos& rqos));
-
-    MOCK_METHOD4(registerReader, bool(
-                RTPSReader * Reader,
-                const TopicAttributes& topicAtt,
-                const fastdds::dds::ReaderQos& rqos,
+                const fastdds::rtps::TopicDescription& topic,
+                const fastdds::dds::ReaderQos& qos,
                 const fastdds::rtps::ContentFilterProperty* content_filter));
 
-    MOCK_METHOD3(updateReader, bool(
+    MOCK_METHOD3(update_reader, bool(
                 RTPSReader * Reader,
-                const TopicAttributes& topicAtt,
-                const fastdds::dds::ReaderQos& rqos));
+                const fastdds::dds::ReaderQos& rqos,
+                const fastdds::rtps::ContentFilterProperty* content_filter));
 
     MOCK_METHOD1(ignore_participant, bool(
                 const GuidPrefix_t& participant_guid));
-
-    MOCK_METHOD4(updateReader, bool(
-                RTPSReader * Reader,
-                const TopicAttributes& topicAtt,
-                const fastdds::dds::ReaderQos& rqos,
-                const fastdds::rtps::ContentFilterProperty* content_filter));
 
     std::vector<fastdds::rtps::TransportNetmaskFilterInfo> get_netmask_filter_info() const
     {

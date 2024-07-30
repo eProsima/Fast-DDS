@@ -116,7 +116,6 @@ set(${PROJECT_NAME}_source_files
     rtps/attributes/RTPSParticipantAttributes.cpp
     rtps/attributes/ServerAttributes.cpp
     rtps/attributes/ThreadSettings.cpp
-    rtps/attributes/TopicAttributes.cpp
     rtps/builtin/BuiltinProtocols.cpp
     rtps/builtin/data/ParticipantProxyData.cpp
     rtps/builtin/data/ProxyDataConverters.cpp
@@ -237,6 +236,7 @@ set(${PROJECT_NAME}_source_files
     utils/SystemInfo.cpp
     utils/TimedConditionVariable.cpp
     utils/UnitsParser.cpp
+    xmlparser/attributes/TopicAttributes.cpp
     xmlparser/XMLDynamicParser.cpp
     xmlparser/XMLElementParser.cpp
     xmlparser/XMLEndpointParser.cpp

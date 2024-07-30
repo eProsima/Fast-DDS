@@ -32,8 +32,9 @@
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
-#include <fastdds/rtps/attributes/TopicAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
+#include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
+#include <fastdds/rtps/builtin/data/TopicDescription.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
@@ -124,11 +125,14 @@ public:
         , initialized_(false)
         , matched_(0)
     {
-        topic_attr_.topicDataType = type_.get_name();
+        pub_builtin_data_.type_name = type_.get_name();
         // Generate topic name
         std::ostringstream t;
         t << topic_name << "_" << asio::ip::host_name() << "_" << GET_PID();
-        topic_attr_.topicName = t.str();
+        pub_builtin_data_.topic_name = t.str();
+
+        // The tests are assuming a default durability of TRANSIENT_LOCAL, which is not the default mandated by the DDS standard.
+        pub_builtin_data_.durability.kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.
         writer_attr_.times.heartbeat_period.seconds = 0;
@@ -178,7 +182,10 @@ public:
             return;
         }
 
-        ASSERT_EQ(participant_->registerWriter(writer_, topic_attr_, writer_qos_), true);
+        eprosima::fastdds::rtps::TopicDescription topic_desc;
+        topic_desc.type_name = type_.get_name();
+        topic_desc.topic_name = pub_builtin_data_.topic_name;
+        ASSERT_EQ(participant_->register_writer(writer_, topic_desc, writer_qos_), true);
 
         initialized_ = true;
     }
@@ -190,7 +197,7 @@ public:
             return;
         }
 
-        ASSERT_TRUE(participant_->updateWriter(writer_, topic_attr_, writer_qos_));
+        ASSERT_TRUE(participant_->update_writer(writer_, writer_qos_));
     }
 
     void destroy()
@@ -393,6 +400,7 @@ public:
         {
             writer_qos_.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
         }
+        pub_builtin_data_.reliability = writer_qos_.m_reliability;
 
         return *this;
     }
@@ -402,6 +410,7 @@ public:
     {
         writer_attr_.endpoint.durabilityKind = kind;
         writer_qos_.m_durability.durabilityKind(kind);
+        pub_builtin_data_.durability = writer_qos_.m_durability;
 
         return *this;
     }
@@ -466,7 +475,8 @@ public:
     RTPSWithRegistrationWriter& history_depth(
             const int32_t depth)
     {
-        topic_attr_.historyQos.depth = depth;
+        hattr_.maximumReservedCaches = depth;
+        hattr_.initialReservedCaches = std::min(hattr_.initialReservedCaches, depth);
         return *this;
     }
 
@@ -516,6 +526,7 @@ public:
             const std::vector<eprosima::fastdds::rtps::octet>& user_data)
     {
         writer_qos_.m_userData = user_data;
+        pub_builtin_data_.user_data = writer_qos_.m_userData;
         return *this;
     }
 
@@ -530,6 +541,7 @@ public:
             std::vector<std::string>& partitions)
     {
         writer_qos_.m_partition.setNames(partitions);
+        pub_builtin_data_.partition = writer_qos_.m_partition;
         return *this;
     }
 
@@ -586,7 +598,7 @@ private:
     eprosima::fastdds::rtps::RTPSWriter* writer_;
     eprosima::fastdds::rtps::WriterAttributes writer_attr_;
     eprosima::fastdds::dds::WriterQos writer_qos_;
-    eprosima::fastdds::TopicAttributes topic_attr_;
+    eprosima::fastdds::rtps::PublicationBuiltinTopicData pub_builtin_data_;
     eprosima::fastdds::rtps::WriterHistory* history_;
     eprosima::fastdds::rtps::HistoryAttributes hattr_;
     bool initialized_;

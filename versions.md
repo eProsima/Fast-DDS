@@ -16,10 +16,17 @@ Forthcoming
     * Several methods that were meant for internal use have been removed from public API
     * All public methods now have `snake_case` names
     * All public attributes now have `snake_case` names
+  * RTPSParticipant:
+    * Some methods changed to `snake_case`: `register_reader`, `register_writer`, `update_reader`, `update_writer`.
+	* Register methods take a `TopicDescription` instead of `TopicAttributes`.
+	* Update methods no longer take `TopicAttributes`.
 * Discovery callbacks refactor:
   * on_participant_discovery now receives a `ParticipantDiscoveryStatus` and a `ParticipantBuiltinTopicData` instead of a `ParticipantDiscoveryInfo`
   * on_data_reader_discovery now receives a `ReaderDiscoveryStatus` and a `SubscriptionBuiltinTopicData` instead of a `ReaderDiscoveryInfo`
   * on_data_writer_discovery now receives a `WriterDiscoveryStatus` and a `PublicationBuiltinTopicData` instead of a `WriterDiscoveryInfo`
+* New methods to get local discovery information:
+  * `DataWriter::get_publication_builtin_topic_data`
+  * `DataReader::get_subscription_builtin_topic_data`
 * Public API that is no longer public:
   * XML Parser API no longer public.
   * ReaderProxyData
@@ -33,6 +40,7 @@ Forthcoming
   * RequesterAttributes
   * PublisherAttributes
   * SubscriberAttributes
+  * TopicAttributes
   * All discovery implementation related API
   * ProxyPool
   * Semaphore

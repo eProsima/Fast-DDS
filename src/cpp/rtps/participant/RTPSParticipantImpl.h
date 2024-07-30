@@ -108,12 +108,12 @@ class TypeLookupManager;
 
 namespace fastdds {
 
-class TopicAttributes;
 class MessageReceiver;
 
 namespace rtps {
 
 struct PublicationBuiltinTopicData;
+struct TopicDescription;
 class RTPSParticipant;
 class RTPSParticipantListener;
 class BuiltinProtocols;
@@ -896,60 +896,60 @@ public:
 
     /**
      * Register a Writer in the BuiltinProtocols.
-     * @param Writer Pointer to the RTPSWriter.
-     * @param topicAtt TopicAttributes of the Writer.
-     * @param wqos WriterQos.
+     *
+     * @param Writer  Pointer to the RTPSWriter.
+     * @param topic   Information regarding the topic where the writer is registering.
+     * @param qos     Qos policies of the writer.
+     *
      * @return True if correctly registered.
      */
-    bool registerWriter(
+    bool register_writer(
             RTPSWriter* Writer,
-            const TopicAttributes& topicAtt,
-            const fastdds::dds::WriterQos& wqos);
+            const TopicDescription& topic,
+            const fastdds::dds::WriterQos& qos);
 
     /**
      * Register a Reader in the BuiltinProtocols.
+     *
      * @param Reader          Pointer to the RTPSReader.
-     * @param topicAtt        TopicAttributes of the Reader.
-     * @param rqos            ReaderQos.
+     * @param topic           Information regarding the topic where the reader is registering.
+     * @param qos             Qos policies of the reader.
      * @param content_filter  Optional content filtering information.
+     *
      * @return True if correctly registered.
      */
-    bool registerReader(
+    bool register_reader(
             RTPSReader* Reader,
-            const TopicAttributes& topicAtt,
-            const fastdds::dds::ReaderQos& rqos,
+            const TopicDescription& topic,
+            const fastdds::dds::ReaderQos& qos,
             const ContentFilterProperty* content_filter = nullptr);
 
     /**
      * Update participant attributes.
      * @param patt New participant attributes.
-     * @return True on success, false otherwise.
      */
     void update_attributes(
             const RTPSParticipantAttributes& patt);
 
     /**
      * Update local writer QoS
-     * @param Writer Writer to update
-     * @param wqos New QoS for the writer
+     * @param rtps_writer Writer to update.
+     * @param wqos        New QoS for the writer.
      * @return True on success
      */
-    bool updateLocalWriter(
-            RTPSWriter* Writer,
-            const TopicAttributes& topicAtt,
+    bool update_writer(
+            RTPSWriter* rtps_writer,
             const fastdds::dds::WriterQos& wqos);
 
     /**
      * Update local reader QoS
-     * @param Reader          Reader to update
-     * @param topicAtt        TopicAttributes of the Reader.
-     * @param rqos            New QoS for the reader
-     * @param content_filter  Optional content filtering information.
+     * @param rtps_reader      Reader to update.
+     * @param rqos             New QoS for the reader.
+     * @param content_filter   Optional content filtering information.
      * @return True on success
      */
-    bool updateLocalReader(
-            RTPSReader* Reader,
-            const TopicAttributes& topicAtt,
+    bool update_reader(
+            RTPSReader* rtps_reader,
             const fastdds::dds::ReaderQos& rqos,
             const ContentFilterProperty* content_filter = nullptr);
 

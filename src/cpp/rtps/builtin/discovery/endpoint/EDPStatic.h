@@ -17,9 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_RTPS_EDPSTATIC_H_
-#define _FASTDDS_RTPS_EDPSTATIC_H_
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#ifndef FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT__EDPSTATIC_H
+#define FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT__EDPSTATIC_H
 
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 
@@ -72,37 +71,37 @@ public:
             const ParticipantProxyData& pdata,
             bool assign_secure_endpoints) override;
     /**
-     * Abstract method that removes a local Reader from the discovery method
-     * @param R Pointer to the Reader to remove.
+     * Abstract method that removes a local reader from the discovery method
+     * @param rtps_reader Pointer to the Reader to remove.
      * @return True if correctly removed.
      */
-    bool removeLocalReader(
-            RTPSReader* R) override;
+    bool remove_reader(
+            RTPSReader* rtps_reader) override;
     /**
      * Abstract method that removes a local Writer from the discovery method
-     * @param W Pointer to the Writer to remove.
+     * @param rtps_writer Pointer to the writer to remove.
      * @return True if correctly removed.
      */
-    bool removeLocalWriter(
-            RTPSWriter* W) override;
+    bool remove_writer(
+            RTPSWriter* rtps_writer) override;
 
     /**
      * After a new local ReaderProxyData has been created some processing is needed (depends on the implementation).
-     * @param reader Pointer to the RTPSReader object.
-     * @param rdata Pointer to the ReaderProxyData object.
+     * @param rtps_reader Pointer to the RTPSReader object.
+     * @param rdata       Pointer to the ReaderProxyData object.
      * @return True if correct.
      */
-    bool processLocalReaderProxyData(
-            RTPSReader* reader,
+    bool process_reader_proxy_data(
+            RTPSReader* rtps_reader,
             ReaderProxyData* rdata) override;
     /**
      * After a new local WriterProxyData has been created some processing is needed (depends on the implementation).
-     * @param writer Pointer to the RTPSWriter object.
-     * @param wdata Pointer to the Writer ProxyData object.
+     * @param rtps_writer Pointer to the RTPSWriter object.
+     * @param wdata       Pointer to the Writer ProxyData object.
      * @return True if correct.
      */
-    bool processLocalWriterProxyData(
-            RTPSWriter* writer,
+    bool process_writer_proxy_data(
+            RTPSWriter* rtps_writer,
             WriterProxyData* wdata) override;
 
     /**
@@ -162,5 +161,4 @@ private:
 } /* namespace rtps */
 } /* namespace eprosima */
 
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_RTPS_EDPSTATIC_H_ */
+#endif /* FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT__EDPSTATIC_H */

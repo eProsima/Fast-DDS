@@ -24,6 +24,7 @@
 #include <vector>
 
 #include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
+#include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/core/LoanableCollection.hpp>
 #include <fastdds/dds/core/LoanableSequence.hpp>
@@ -1075,6 +1076,17 @@ public:
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_listening_locators(
             rtps::LocatorList& locators) const;
+
+    /**
+     * Retrieve the subscription data discovery information.
+     *
+     * @param [out] subscription_data The subscription data discovery information.
+     *
+     * @return NOT_ENABLED if the reader has not been enabled.
+     * @return OK if the subscription data is returned.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t get_subscription_builtin_topic_data(
+            SubscriptionBuiltinTopicData& subscription_data) const;
 
 protected:
 

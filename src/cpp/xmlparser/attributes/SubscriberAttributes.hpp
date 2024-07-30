@@ -24,9 +24,10 @@
 #include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 #include <fastdds/rtps/attributes/ResourceManagement.hpp>
-#include <fastdds/rtps/attributes/TopicAttributes.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
+
+#include <xmlparser/attributes/TopicAttributes.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -41,7 +42,7 @@ class SubscriberAttributes
 public:
 
     //! Topic Attributes
-    fastdds::TopicAttributes topic;
+    fastdds::xmlparser::TopicAttributes topic;
 
     //! Reader QOs.
     dds::ReaderQos qos;

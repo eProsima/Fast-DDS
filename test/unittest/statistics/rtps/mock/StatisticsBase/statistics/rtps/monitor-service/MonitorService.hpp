@@ -29,6 +29,7 @@
 
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
+#include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 
 #include <rtps/history/ITopicPayloadPool.h>
@@ -41,6 +42,13 @@
 
 namespace eprosima {
 namespace fastdds {
+
+namespace rtps {
+
+struct TopicDescription;
+
+} // namespace rtps
+
 namespace statistics {
 namespace rtps {
 
@@ -61,8 +69,8 @@ public:
 
     using endpoint_registrator_t = std::function<bool (
                         fastdds::rtps::RTPSWriter*,
-                        const fastdds::TopicAttributes&,
-                        const fastdds::dds::WriterQos&)>;
+                        const eprosima::fastdds::rtps::TopicDescription&,
+                        const eprosima::fastdds::dds::WriterQos&)>;
 
     MonitorService(
             const fastdds::rtps::GUID_t& guid,

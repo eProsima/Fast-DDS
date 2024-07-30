@@ -322,7 +322,7 @@ bool EDPStaticProperty::fromProperty(
     return false;
 }
 
-bool EDPStatic::processLocalReaderProxyData(
+bool EDPStatic::process_reader_proxy_data(
         RTPSReader*,
         ReaderProxyData* rdata)
 {
@@ -337,7 +337,7 @@ bool EDPStatic::processLocalReaderProxyData(
     return true;
 }
 
-bool EDPStatic::processLocalWriterProxyData(
+bool EDPStatic::process_writer_proxy_data(
         RTPSWriter*,
         WriterProxyData* wdata)
 {
@@ -352,8 +352,8 @@ bool EDPStatic::processLocalWriterProxyData(
     return true;
 }
 
-bool EDPStatic::removeLocalReader(
-        RTPSReader* R)
+bool EDPStatic::remove_reader(
+        RTPSReader* rtps_reader)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_PDP->getMutex());
     ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
@@ -363,10 +363,10 @@ bool EDPStatic::removeLocalReader(
         EDPStaticProperty staticproperty;
         if (staticproperty.fromProperty((*pit).pair()))
         {
-            if (staticproperty.m_entityId == R->getGuid().entityId)
+            if (staticproperty.m_entityId == rtps_reader->getGuid().entityId)
             {
                 auto new_property = EDPStaticProperty::toProperty(exchange_format_, "Reader", "ENDED",
-                                R->getAttributes().getUserDefinedID(), R->getGuid().entityId);
+                                rtps_reader->getAttributes().getUserDefinedID(), rtps_reader->getGuid().entityId);
                 if (!pit->modify(new_property))
                 {
                     EPROSIMA_LOG_ERROR(RTPS_EDP, "Failed to change property <"
@@ -379,8 +379,8 @@ bool EDPStatic::removeLocalReader(
     return false;
 }
 
-bool EDPStatic::removeLocalWriter(
-        RTPSWriter* W)
+bool EDPStatic::remove_writer(
+        RTPSWriter* rtps_writer)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_PDP->getMutex());
     ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
@@ -390,10 +390,10 @@ bool EDPStatic::removeLocalWriter(
         EDPStaticProperty staticproperty;
         if (staticproperty.fromProperty((*pit).pair()))
         {
-            if (staticproperty.m_entityId == W->getGuid().entityId)
+            if (staticproperty.m_entityId == rtps_writer->getGuid().entityId)
             {
                 auto new_property = EDPStaticProperty::toProperty(exchange_format_, "Writer", "ENDED",
-                                W->getAttributes().getUserDefinedID(), W->getGuid().entityId);
+                                rtps_writer->getAttributes().getUserDefinedID(), rtps_writer->getGuid().entityId);
                 if (!pit->modify(new_property))
                 {
                     EPROSIMA_LOG_ERROR(RTPS_EDP, "Failed to change property <"

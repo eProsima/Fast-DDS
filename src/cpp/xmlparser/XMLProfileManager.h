@@ -27,6 +27,7 @@
 #include <xmlparser/attributes/ParticipantAttributes.hpp>
 #include <xmlparser/attributes/PublisherAttributes.hpp>
 #include <xmlparser/attributes/SubscriberAttributes.hpp>
+#include <xmlparser/attributes/TopicAttributes.hpp>
 #include <xmlparser/XMLParser.h>
 #include <xmlparser/XMLParserCommon.h>
 

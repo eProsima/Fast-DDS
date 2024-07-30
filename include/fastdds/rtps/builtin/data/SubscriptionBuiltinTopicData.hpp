@@ -36,10 +36,10 @@ namespace rtps {
 struct SubscriptionBuiltinTopicData
 {
     /// Builtin topic Key
-    BuiltinTopicKey_t key;
+    BuiltinTopicKey_t key{{0, 0, 0}};
 
     /// Builtin participant topic Key
-    BuiltinTopicKey_t participant_key;
+    BuiltinTopicKey_t participant_key{{0, 0, 0}};
 
     /// Topic name
     fastcdr::string_255 topic_name;

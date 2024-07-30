@@ -25,6 +25,7 @@
 
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
+#include <fastdds/rtps/builtin/data/TopicDescription.hpp>
 
 #include <utils/shared_mutex.hpp>
 
@@ -53,6 +54,8 @@ class RTPSParticipantImpl;
 class RTPSWriter;
 class RTPSReader;
 class NetworkFactory;
+struct PublicationBuiltinTopicData;
+struct SubscriptionBuiltinTopicData;
 
 /**
  * Class BuiltinProtocols that contains builtin endpoints implementing the discovery and liveliness protocols.
@@ -126,68 +129,67 @@ public:
     LocatorList_t m_DiscoveryServers;
 
     /**
-     * Add a local Writer to the BuiltinProtocols.
-     * @param w Pointer to the RTPSWriter
-     * @param topicAtt Attributes of the associated topic
-     * @param wqos QoS policies dictated by the publisher
+     * Add a local writer to the BuiltinProtocols.
+     *
+     * @param writer  Pointer to the RTPSWriter
+     * @param topic   Information regarding the topic where the writer is registering
+     * @param qos     QoS policies dictated by the publisher
+     *
      * @return True if correct.
      */
-    bool addLocalWriter(
-            RTPSWriter* w,
-            const TopicAttributes& topicAtt,
-            const fastdds::dds::WriterQos& wqos);
+    bool add_writer(
+            RTPSWriter* rtps_writer,
+            const TopicDescription& topic,
+            const fastdds::dds::WriterQos& qos);
     /**
-     * Add a local Reader to the BuiltinProtocols.
-     * @param R               Pointer to the RTPSReader.
-     * @param topicAtt        Attributes of the associated topic
-     * @param rqos            QoS policies dictated by the subscriber
+     * Add a local reader to the BuiltinProtocols.
+     *
+     * @param rtps_reader     Pointer to the RTPSReader.
+     * @param topic           Information regarding the topic where the writer is registering
+     * @param qos             QoS policies dictated by the subscriber
      * @param content_filter  Optional content filtering information.
      * @return True if correct.
      */
-    bool addLocalReader(
-            RTPSReader* R,
-            const TopicAttributes& topicAtt,
-            const fastdds::dds::ReaderQos& rqos,
+    bool add_reader(
+            RTPSReader* rtps_reader,
+            const TopicDescription& topic,
+            const fastdds::dds::ReaderQos& qos,
             const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
 
     /**
      * Update a local Writer QOS
-     * @param W Writer to update
-     * @param topicAtt Attributes of the associated topic
-     * @param wqos New Writer QoS
+     * @param rtps_writer      Writer to update
+     * @param wqos             New Writer QoS
      * @return
      */
-    bool updateLocalWriter(
-            RTPSWriter* W,
-            const TopicAttributes& topicAtt,
+    bool update_writer(
+            RTPSWriter* rtps_writer,
             const fastdds::dds::WriterQos& wqos);
     /**
      * Update a local Reader QOS
-     * @param R               Reader to update
-     * @param topicAtt        Attributes of the associated topic
-     * @param qos             New Reader QoS
-     * @param content_filter  Optional content filtering information.
+     * @param rtps_reader      Reader to update
+     * @param rqos             New Reader QoS
+     * @param content_filter   Optional content filtering information.
      * @return
      */
-    bool updateLocalReader(
-            RTPSReader* R,
-            const TopicAttributes& topicAtt,
-            const fastdds::dds::ReaderQos& qos,
+    bool update_reader(
+            RTPSReader* rtps_reader,
+            const fastdds::dds::ReaderQos& rqos,
             const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
     /**
      * Remove a local Writer from the builtinProtocols.
      * @param W Pointer to the writer.
      * @return True if correctly removed.
      */
-    bool removeLocalWriter(
-            RTPSWriter* W);
+    bool remove_writer(
+            RTPSWriter* rtps_writer);
     /**
      * Remove a local Reader from the builtinProtocols.
      * @param R Pointer to the reader.
      * @return True if correctly removed.
      */
-    bool removeLocalReader(
-            RTPSReader* R);
+    bool remove_reader(
+            RTPSReader* rtps_reader);
 
     //! Announce RTPSParticipantState (force the sending of a DPD message.)
     void announceRTPSParticipantState();

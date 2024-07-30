@@ -78,7 +78,7 @@ public:
      * @param rdata Pointer to the ReaderProxyData object.
      * @return true if correct.
      */
-    bool processLocalReaderProxyData(
+    bool process_reader_proxy_data(
             RTPSReader* reader,
             ReaderProxyData* rdata) override;
     /**
@@ -87,7 +87,7 @@ public:
      * @param wdata Pointer to the WriterProxyData object.
      * @return true if correct.
      */
-    bool processLocalWriterProxyData(
+    bool process_writer_proxy_data(
             RTPSWriter* writer,
             WriterProxyData* wdata) override;
     /**
@@ -95,14 +95,14 @@ public:
      * @param R Pointer to the RTPSReader object.
      * @return True if correct.
      */
-    bool removeLocalReader(
+    bool remove_reader(
             RTPSReader* R) override;
     /**
      * This methods generates the change disposing of the local Writer and calls the unpairing and removal methods of the base class.
      * @param W Pointer to the RTPSWriter object.
      * @return True if correct.
      */
-    bool removeLocalWriter(
+    bool remove_writer(
             RTPSWriter* W) override;
 
     /**

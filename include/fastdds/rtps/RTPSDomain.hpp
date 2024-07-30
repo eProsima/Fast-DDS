@@ -29,7 +29,6 @@
 #include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/history/IChangePool.hpp>
-#include <fastdds/rtps/attributes/TopicAttributes.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -250,18 +249,6 @@ public:
      */
     FASTDDS_EXPORTED_API static bool set_library_settings(
             const fastdds::LibrarySettings& library_settings);
-
-    /**
-     * @brief Get the TopicAttributes from XML profile.
-     *
-     * @param profile_name Topic profile name.
-     * @param topic_att TopicAttributes object where the attributes are returned.
-     * @return bool true if the profile exists.
-     *              false otherwise.
-     */
-    FASTDDS_EXPORTED_API static bool get_topic_attributes_from_profile(
-            const std::string& profile_name,
-            TopicAttributes& topic_att);
 
 private:
 

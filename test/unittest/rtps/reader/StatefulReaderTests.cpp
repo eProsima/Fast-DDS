@@ -26,6 +26,7 @@
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
+#include <fastdds/rtps/builtin/data/TopicDescription.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/common/Types.hpp>
@@ -90,12 +91,11 @@ TEST(StatefulReaderTests, RTPSCorrectGAPProcessing)
     ASSERT_NE(writer, nullptr);
 
     // Register both endpoints
-    TopicAttributes topic_att;
-    topic_att.topicKind = NO_KEY;
-    topic_att.topicDataType = "string";
-    topic_att.topicName = "topic";
-    part->registerReader(reader, topic_att, {});
-    part->registerWriter(writer, topic_att, {});
+    TopicDescription topic_desc;
+    topic_desc.type_name = "string";
+    topic_desc.topic_name = "topic";
+    part->register_reader(reader, topic_desc, {});
+    part->register_writer(writer, topic_desc, {});
 
     // After registration, the writer should be matched
     auto writer_guid = writer->getGuid();

@@ -23,6 +23,7 @@
 
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/common/LocatorsIterator.hpp>
+#include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 #include <vector>
 #include <cstdint>
@@ -374,6 +375,16 @@ public:
         }
 
         return false;
+    }
+
+    // Copy the inner locator list to a ResourceLimitedVector locator list.
+    FASTDDS_EXPORTED_API void copy_to(
+            eprosima::fastdds::ResourceLimitedVector<Locator>& locator_list) const
+    {
+        for (auto& locator : m_locators)
+        {
+            locator_list.emplace_back(locator);
+        }
     }
 
 private:

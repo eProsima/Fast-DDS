@@ -2089,7 +2089,7 @@ TEST_F(XMLParserTests, getXMLFlowControllerDescriptorList_NegativeClauses)
 TEST_F(XMLParserTests, getXMLTopicAttributes_NegativeClauses)
 {
     uint8_t ident = 1;
-    TopicAttributes topic;
+    xmlparser::TopicAttributes topic;
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
 

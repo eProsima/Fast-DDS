@@ -21,6 +21,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
+#include <fastdds/rtps/builtin/data/TopicDescription.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
@@ -807,7 +808,6 @@ TEST(RTPS, MultithreadedWriterCreation)
                 /* Create writer history */
                 eprosima::fastdds::rtps::HistoryAttributes hattr;
                 eprosima::fastdds::rtps::WriterHistory* history = new eprosima::fastdds::rtps::WriterHistory(hattr);
-                eprosima::fastdds::TopicAttributes topic_attr;
 
                 /* Create writer with a flow controller */
                 eprosima::fastdds::rtps::WriterAttributes writer_attr;
@@ -816,9 +816,12 @@ TEST(RTPS, MultithreadedWriterCreation)
                 eprosima::fastdds::rtps::RTPSWriter*  writer = eprosima::fastdds::rtps::RTPSDomain::createRTPSWriter(
                     rtps_participant, writer_attr, history, nullptr);
 
+                TopicDescription topic_desc;
+                topic_desc.type_name = "string";
+                topic_desc.topic_name = "test_topic";
                 /* Register writer in participant */
                 eprosima::fastdds::dds::WriterQos writer_qos;
-                ASSERT_EQ(rtps_participant->registerWriter(writer, topic_attr, writer_qos), true);
+                ASSERT_EQ(rtps_participant->register_writer(writer, topic_desc, writer_qos), true);
 
                 {
                     /* Wait for test completion request */

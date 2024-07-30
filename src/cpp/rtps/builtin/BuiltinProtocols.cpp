@@ -195,16 +195,16 @@ void BuiltinProtocols::filter_server_remote_locators(
     m_DiscoveryServers.swap(allowed_locators);
 }
 
-bool BuiltinProtocols::addLocalWriter(
-        RTPSWriter* w,
-        const fastdds::TopicAttributes& topicAtt,
-        const fastdds::dds::WriterQos& wqos)
+bool BuiltinProtocols::add_writer(
+        RTPSWriter* rtps_writer,
+        const TopicDescription& topic,
+        const fastdds::dds::WriterQos& qos)
 {
     bool ok = true;
 
     if (nullptr != mp_PDP)
     {
-        ok = mp_PDP->getEDP()->newLocalWriterProxyData(w, topicAtt, wqos);
+        ok = mp_PDP->get_edp()->new_writer_proxy_data(rtps_writer, topic, qos);
 
         if (!ok)
         {
@@ -219,7 +219,7 @@ bool BuiltinProtocols::addLocalWriter(
 
     if (nullptr != mp_WLP)
     {
-        ok &= mp_WLP->add_local_writer(w, wqos);
+        ok &= mp_WLP->add_local_writer(rtps_writer, qos.m_liveliness);
     }
     else
     {
@@ -229,17 +229,17 @@ bool BuiltinProtocols::addLocalWriter(
     return ok;
 }
 
-bool BuiltinProtocols::addLocalReader(
-        RTPSReader* R,
-        const fastdds::TopicAttributes& topicAtt,
-        const fastdds::dds::ReaderQos& rqos,
+bool BuiltinProtocols::add_reader(
+        RTPSReader* rtps_reader,
+        const TopicDescription& topic,
+        const fastdds::dds::ReaderQos& qos,
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
     bool ok = true;
 
     if (nullptr != mp_PDP)
     {
-        ok = mp_PDP->getEDP()->newLocalReaderProxyData(R, topicAtt, rqos, content_filter);
+        ok = mp_PDP->get_edp()->new_reader_proxy_data(rtps_reader, topic, qos, content_filter);
 
         if (!ok)
         {
@@ -254,65 +254,63 @@ bool BuiltinProtocols::addLocalReader(
 
     if (nullptr != mp_WLP)
     {
-        ok &= mp_WLP->add_local_reader(R, rqos);
+        ok &= mp_WLP->add_local_reader(rtps_reader, qos.m_liveliness);
     }
 
     return ok;
 }
 
-bool BuiltinProtocols::updateLocalWriter(
-        RTPSWriter* W,
-        const TopicAttributes& topicAtt,
+bool BuiltinProtocols::update_writer(
+        RTPSWriter* rtps_writer,
         const fastdds::dds::WriterQos& wqos)
 {
     bool ok = false;
-    if ((nullptr != mp_PDP) && (nullptr != mp_PDP->getEDP()))
+    if ((nullptr != mp_PDP) && (nullptr != mp_PDP->get_edp()))
     {
-        ok = mp_PDP->getEDP()->updatedLocalWriter(W, topicAtt, wqos);
+        ok = mp_PDP->get_edp()->update_writer(rtps_writer, wqos);
     }
     return ok;
 }
 
-bool BuiltinProtocols::updateLocalReader(
-        RTPSReader* R,
-        const TopicAttributes& topicAtt,
+bool BuiltinProtocols::update_reader(
+        RTPSReader* rtps_reader,
         const fastdds::dds::ReaderQos& rqos,
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
     bool ok = false;
-    if ((nullptr != mp_PDP) && (nullptr != mp_PDP->getEDP()))
+    if ((nullptr != mp_PDP) && (nullptr != mp_PDP->get_edp()))
     {
-        ok = mp_PDP->getEDP()->updatedLocalReader(R, topicAtt, rqos, content_filter);
+        ok = mp_PDP->get_edp()->update_reader(rtps_reader, rqos, content_filter);
     }
     return ok;
 }
 
-bool BuiltinProtocols::removeLocalWriter(
-        RTPSWriter* W)
+bool BuiltinProtocols::remove_writer(
+        RTPSWriter* rtps_writer)
 {
     bool ok = false;
     if (nullptr != mp_WLP)
     {
-        ok |= mp_WLP->remove_local_writer(W);
+        ok |= mp_WLP->remove_local_writer(rtps_writer);
     }
-    if ((nullptr != mp_PDP) && (nullptr != mp_PDP->getEDP()))
+    if ((nullptr != mp_PDP) && (nullptr != mp_PDP->get_edp()))
     {
-        ok |= mp_PDP->getEDP()->removeLocalWriter(W);
+        ok |= mp_PDP->get_edp()->remove_writer(rtps_writer);
     }
     return ok;
 }
 
-bool BuiltinProtocols::removeLocalReader(
-        RTPSReader* R)
+bool BuiltinProtocols::remove_reader(
+        RTPSReader* rtps_reader)
 {
     bool ok = false;
     if (nullptr != mp_WLP)
     {
-        ok |= mp_WLP->remove_local_reader(R);
+        ok |= mp_WLP->remove_local_reader(rtps_reader);
     }
-    if ((nullptr != mp_PDP) && (nullptr != mp_PDP->getEDP()))
+    if ((nullptr != mp_PDP) && (nullptr != mp_PDP->get_edp()))
     {
-        ok |= mp_PDP->getEDP()->removeLocalReader(R);
+        ok |= mp_PDP->get_edp()->remove_reader(rtps_reader);
     }
     return ok;
 }

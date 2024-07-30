@@ -67,6 +67,7 @@
 #include <xmlparser/attributes/ReplierAttributes.hpp>
 #include <xmlparser/attributes/RequesterAttributes.hpp>
 #include <xmlparser/attributes/SubscriberAttributes.hpp>
+#include <xmlparser/attributes/TopicAttributes.hpp>
 #include <xmlparser/XMLProfileManager.h>
 
 namespace eprosima {
@@ -116,7 +117,7 @@ DomainParticipantImpl::DomainParticipantImpl(
     XMLProfileManager::getDefaultSubscriberAttributes(sub_attr);
     utils::set_qos_from_attributes(default_sub_qos_, sub_attr);
 
-    TopicAttributes top_attr;
+    xmlparser::TopicAttributes top_attr;
     XMLProfileManager::getDefaultTopicAttributes(top_attr);
     utils::set_qos_from_attributes(default_topic_qos_, top_attr);
 
@@ -1114,7 +1115,7 @@ void DomainParticipantImpl::reset_default_topic_qos()
 {
     // TODO (ILG): Change when we have full XML support for DDS QoS profiles
     TopicImpl::set_qos(default_topic_qos_, TOPIC_QOS_DEFAULT, true);
-    TopicAttributes attr;
+    xmlparser::TopicAttributes attr;
     XMLProfileManager::getDefaultTopicAttributes(attr);
     utils::set_qos_from_attributes(default_topic_qos_, attr);
 }
@@ -1128,7 +1129,7 @@ ReturnCode_t DomainParticipantImpl::get_topic_qos_from_profile(
         const std::string& profile_name,
         TopicQos& qos) const
 {
-    TopicAttributes attr;
+    xmlparser::TopicAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillTopicAttributes(profile_name, attr))
     {
         qos = default_topic_qos_;
@@ -1405,7 +1406,7 @@ Topic* DomainParticipantImpl::create_topic_with_profile(
         const StatusMask& mask)
 {
     // TODO (ILG): Change when we have full XML support for DDS QoS profiles
-    TopicAttributes attr;
+    xmlparser::TopicAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillTopicAttributes(profile_name, attr))
     {
         TopicQos qos = default_topic_qos_;
@@ -1882,6 +1883,55 @@ DomainParticipantListener* DomainParticipantImpl::get_listener_for(
         return get_listener();
     }
     return nullptr;
+}
+
+bool DomainParticipantImpl::fill_type_information(
+        const TypeSupport& type,
+        xtypes::TypeInformationParameter& type_information)
+{
+    using utils::to_type_propagation;
+    using utils::TypePropagation;
+
+    auto properties = qos_.properties();
+    auto type_propagation = to_type_propagation(properties);
+    bool should_assign_type_information =
+            (TypePropagation::TYPEPROPAGATION_ENABLED == type_propagation) ||
+            (TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH == type_propagation);
+
+    if (should_assign_type_information && (xtypes::TK_NONE != type->type_identifiers().type_identifier1()._d()))
+    {
+        xtypes::TypeInformation type_info;
+
+        if (RETCODE_OK ==
+                fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
+                    type->type_identifiers(), type_info))
+        {
+            switch (type_propagation)
+            {
+                case TypePropagation::TYPEPROPAGATION_ENABLED:
+                {
+                    // Use both complete and minimal type information
+                    type_information.type_information = type_info;
+                    break;
+                }
+                case TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH:
+                {
+                    // Use minimal type information only
+                    type_information.type_information.minimal() = type_info.minimal();
+                    break;
+                }
+                default:
+                    // This should never happen as other cases are protected by should_assign_type_information
+                    assert(false);
+                    break;
+            }
+
+            type_information.assigned(true);
+            return true;
+        }
+    }
+
+    return false;
 }
 
 }  // namespace dds

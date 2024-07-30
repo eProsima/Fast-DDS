@@ -130,7 +130,9 @@ public:
         history_.reset(new DataWriterHistory(
                     payload_pool,
                     change_pool,
-                    atts_,
+                    qos_.history(),
+                    qos_.resource_limits(),
+                    topic_kind_,
                     500,
                     fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
                     [](const InstanceHandle_t&)
@@ -393,6 +395,13 @@ public:
         }
     }
 
+    inline ReturnCode_t get_publication_builtin_topic_data(
+            PublicationBuiltinTopicData& publication_data) const
+    {
+        publication_data = PublicationBuiltinTopicData{};
+        return RETCODE_OK;
+    }
+
     static ReturnCode_t check_qos(
             const ::eprosima::fastdds::dds::DataWriterQos&)
     {
@@ -428,7 +437,8 @@ public:
     OfferedIncompatibleQosStatus offered_incompatible_qos_status_;
     std::chrono::duration<double, std::ratio<1, 1000000>> lifespan_duration_us_;
     std::unique_ptr<DataWriterHistory> history_;
-    fastdds::TopicAttributes atts_;
+
+    rtps::TopicKind_t topic_kind_;
 
 };
 

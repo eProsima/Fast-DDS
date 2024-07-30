@@ -21,6 +21,7 @@
 
 #include <memory>
 
+#include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
@@ -33,8 +34,8 @@
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
-#include <fastdds/rtps/common/WriteParams.hpp>
 #include <fastdds/rtps/common/SerializedPayload.hpp>
+#include <fastdds/rtps/common/WriteParams.hpp>
 #include <fastdds/rtps/history/IChangePool.hpp>
 #include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
@@ -380,6 +381,17 @@ public:
     void filter_is_being_removed(
             const char* filter_class_name);
 
+    /**
+     * Retrieve the publication data discovery information.
+     *
+     * @param [out] publication_data The publication data discovery information.
+     *
+     * @return NOT_ENABLED if the writer has not been enabled.
+     * @return OK if the publication data is returned.
+     */
+    ReturnCode_t get_publication_builtin_topic_data(
+            PublicationBuiltinTopicData& publication_data) const;
+
 protected:
 
     using IChangePool = eprosima::fastdds::rtps::IChangePool;
@@ -584,11 +596,6 @@ protected:
             const void* const data,
             fastdds::rtps::WriteParams& wparams,
             const InstanceHandle_t& handle);
-
-    fastdds::TopicAttributes get_topic_attributes(
-            const DataWriterQos& qos,
-            const Topic& topic,
-            const TypeSupport& type);
 
     static void set_qos(
             DataWriterQos& to,
