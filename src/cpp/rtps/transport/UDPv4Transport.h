@@ -147,6 +147,10 @@ protected:
     bool is_locator_allowed(
             const Locator&) const override;
 
+    //! Checks for whether locator is reachable.
+    bool is_locator_reachable(
+            const Locator_t&) override;
+
     //! Checks if the given interface is allowed by the white list.
     bool is_interface_allowed(
             const asio::ip::address_v4& ip) const;

@@ -117,6 +117,17 @@ public:
     virtual bool is_locator_allowed(
             const Locator&) const = 0;
 
+    /**
+     * Must report whether the given locator is reachable by this transport.
+     *
+     * @param [in] locator @ref Locator for which the reachability is checked.
+     *
+     * @return true if the input locator is reachable by this transport, false otherwise.
+     */
+    virtual bool is_locator_reachable(
+            const Locator_t& locator) = 0;
+
+
     //! Returns the locator describing the main (most general) channel that can write to the provided remote locator.
     virtual Locator RemoteToMainLocal(
             const Locator& remote) const = 0;

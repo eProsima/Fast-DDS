@@ -608,6 +608,12 @@ bool UDPv6Transport::is_locator_allowed(
     return is_interface_allowed(IPLocator::toIPv6string(locator));
 }
 
+bool UDPv6Transport::is_locator_reachable(
+        const Locator_t& locator)
+{
+    return IsLocatorSupported(locator);
+}
+
 LocatorList UDPv6Transport::NormalizeLocator(
         const Locator& locator)
 {

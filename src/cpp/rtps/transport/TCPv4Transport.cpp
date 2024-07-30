@@ -434,6 +434,12 @@ bool TCPv4Transport::is_locator_allowed(
     return is_interface_allowed(IPLocator::toIPv4string(locator));
 }
 
+bool TCPv4Transport::is_locator_reachable(
+        const Locator_t& locator)
+{
+    return IsLocatorSupported(locator);
+}
+
 bool TCPv4Transport::compare_locator_ip(
         const Locator& lh,
         const Locator& rh) const

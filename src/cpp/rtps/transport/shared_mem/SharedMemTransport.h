@@ -225,6 +225,10 @@ private:
     bool is_locator_allowed(
             const Locator&) const override;
 
+    //! Checks for whether locator is reachable.
+    bool is_locator_reachable(
+            const Locator_t&) override;
+
 protected:
 
     std::shared_ptr<SharedMemManager> shared_mem_manager_;

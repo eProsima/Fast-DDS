@@ -317,6 +317,12 @@ bool TCPv6Transport::is_locator_allowed(
     return is_interface_allowed(IPLocator::toIPv6string(locator));
 }
 
+bool TCPv6Transport::is_locator_reachable(
+        const Locator_t& locator)
+{
+    return IsLocatorSupported(locator);
+}
+
 bool TCPv6Transport::is_interface_whitelist_empty() const
 {
     return interface_whitelist_.empty();

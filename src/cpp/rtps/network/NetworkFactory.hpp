@@ -198,7 +198,7 @@ public:
     /**
      * Must report whether the given locator is reachable by at least one of the registered transports.
      *
-     * @param [in]  locator Locator to check if remote or allowed.
+     * @param [in] locator @ref Locator for which the reachability is checked.
      *
      * @return true if the input locator is reachable by at least one of the registered transports,
      *         false otherwise.

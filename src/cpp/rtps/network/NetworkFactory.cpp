@@ -285,9 +285,17 @@ bool NetworkFactory::is_locator_remote_or_allowed(
 }
 
 bool NetworkFactory::is_locator_reachable(
-        const Locator_t& /*locator*/)
+        const Locator_t& locator)
 {
-    return true;
+    for (auto& transport : mRegisteredTransports)
+    {
+        if (transport->is_locator_reachable(locator))
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void NetworkFactory::select_locators(

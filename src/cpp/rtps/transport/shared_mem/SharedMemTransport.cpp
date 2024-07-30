@@ -152,6 +152,12 @@ bool SharedMemTransport::is_locator_allowed(
     return IsLocatorSupported(locator);
 }
 
+bool SharedMemTransport::is_locator_reachable(
+        const Locator_t& locator)
+{
+    return SHMLocator::is_shm_and_from_this_host(locator);
+}
+
 LocatorList SharedMemTransport::NormalizeLocator(
         const Locator& locator)
 {
