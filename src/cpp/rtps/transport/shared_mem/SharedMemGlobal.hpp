@@ -16,17 +16,19 @@
 #define _FASTDDS_SHAREDMEM_GLOBAL_H_
 
 #include <algorithm>
-#include <vector>
-#include <mutex>
 #include <memory>
+#include <mutex>
 #include <thread>
+#include <vector>
 
-#include <utils/shared_memory/SharedMemSegment.hpp>
-#include <utils/shared_memory/RobustExclusiveLock.hpp>
-#include <utils/shared_memory/RobustSharedLock.hpp>
-#include <utils/shared_memory/SharedMemWatchdog.hpp>
+#include <fastdds/config.hpp>
+#include <fastdds/rtps/common/Locator.hpp>
 
 #include <rtps/transport/shared_mem/MultiProducerConsumerRingBuffer.hpp>
+#include <utils/shared_memory/RobustExclusiveLock.hpp>
+#include <utils/shared_memory/RobustSharedLock.hpp>
+#include <utils/shared_memory/SharedMemSegment.hpp>
+#include <utils/shared_memory/SharedMemWatchdog.hpp>
 
 #define THREADID "(ID:" << std::this_thread::get_id() << ") "
 
@@ -92,6 +94,8 @@ public:
     typedef MultiProducerConsumerRingBuffer<BufferDescriptor>::Cell PortCell;
 
     static const uint32_t CURRENT_ABI_VERSION = 5;
+    static_assert(CURRENT_ABI_VERSION == (2 + FASTDDS_VERSION_MAJOR), "ABI is not correct");
+    static_assert(LOCATOR_KIND_SHM == (16 + FASTDDS_VERSION_MAJOR), "LOCATOR_KIND_SHM is not correct");
 
     struct PortNode
     {
