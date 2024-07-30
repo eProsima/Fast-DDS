@@ -128,7 +128,7 @@ struct SubscriptionBuiltinTopicData
     RemoteLocatorList remote_locators;
 
     /// Network configuration
-    NetworkConfigSet_t loopback_transformation;
+    NetworkConfigSet_t loopback_transformation{};
 
     /// Expects Inline Qos
     bool expects_inline_qos = false;

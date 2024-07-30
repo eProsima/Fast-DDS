@@ -138,7 +138,7 @@ struct PublicationBuiltinTopicData
     uint32_t max_serialized_size = 0;
 
     /// Network configuration
-    NetworkConfigSet_t loopback_transformation;
+    NetworkConfigSet_t loopback_transformation{};
 
 };
 
