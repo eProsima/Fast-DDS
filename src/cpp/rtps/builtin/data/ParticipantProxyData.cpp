@@ -446,13 +446,12 @@ bool ParticipantProxyData::writeToCDRMessage(
 bool ParticipantProxyData::readFromCDRMessage(
         CDRMessage_t* msg,
         bool use_encapsulation,
-        const NetworkFactory& network,
-        bool is_shm_transport_available,
+        NetworkFactory& network,
         bool should_filter_locators,
         fastdds::rtps::VendorId_t source_vendor_id)
 {
     auto param_process =
-            [this, &network, &is_shm_transport_available, &should_filter_locators, source_vendor_id](
+            [this, &network, &should_filter_locators, source_vendor_id](
         CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
             {
                 static_cast<void>(source_vendor_id);
@@ -503,7 +502,6 @@ bool ParticipantProxyData::readFromCDRMessage(
 
                         m_VendorId[0] = p.vendorId[0];
                         m_VendorId[1] = p.vendorId[1];
-                        is_shm_transport_available &= (m_VendorId == c_VendorId_eProsima);
                         break;
                     }
                     case fastdds::dds::PID_PRODUCT_VERSION:
@@ -613,7 +611,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                                         m_guid.is_from_this_host()))
                             {
                                 ProxyDataFilters::filter_locators(
-                                    is_shm_transport_available,
+                                    network,
                                     metatraffic_locators,
                                     temp_locator,
                                     false);
@@ -643,7 +641,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                                         m_guid.is_from_this_host()))
                             {
                                 ProxyDataFilters::filter_locators(
-                                    is_shm_transport_available,
+                                    network,
                                     metatraffic_locators,
                                     temp_locator,
                                     true);
@@ -673,7 +671,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                                         m_guid.is_from_this_host()))
                             {
                                 ProxyDataFilters::filter_locators(
-                                    is_shm_transport_available,
+                                    network,
                                     default_locators,
                                     temp_locator,
                                     true);
@@ -703,7 +701,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                                         m_guid.is_from_this_host()))
                             {
                                 ProxyDataFilters::filter_locators(
-                                    is_shm_transport_available,
+                                    network,
                                     default_locators,
                                     temp_locator,
                                     false);

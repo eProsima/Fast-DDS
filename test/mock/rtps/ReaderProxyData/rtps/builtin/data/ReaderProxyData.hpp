@@ -141,8 +141,7 @@ public:
 
     bool readFromCDRMessage(
             CDRMessage_t* /*msg*/,
-            const NetworkFactory& /*network*/,
-            bool /*is_shm_transport_possible*/,
+            NetworkFactory& /*network*/,
             fastdds::rtps::VendorId_t /*source_vendor_id*/)
     {
         return true;

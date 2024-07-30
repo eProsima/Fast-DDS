@@ -139,7 +139,6 @@ void PDPServerListener::on_new_cache_change_added(
                     &msg,
                     true,
                     pdp_server()->getRTPSParticipant()->network_factory(),
-                    pdp_server()->getRTPSParticipant()->has_shm_transport(),
                     true,
                     change_in->vendor_id))
         {

@@ -2958,7 +2958,6 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
         &serialized_msg,
         true,
         network_factory(),
-        has_shm_transport(),
         false,
         c_VendorId_eProsima);
 
@@ -2990,7 +2989,6 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
     ret = writer_data.readFromCDRMessage(
         &serialized_msg,
         network_factory(),
-        has_shm_transport(),
         false,
         c_VendorId_eProsima);
 
@@ -3026,7 +3024,6 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
     ret = reader_data.readFromCDRMessage(
         &serialized_msg,
         network_factory(),
-        has_shm_transport(),
         false,
         c_VendorId_eProsima);
 
