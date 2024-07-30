@@ -332,6 +332,8 @@ CacheChange_t* WriterHistory::remove_change_and_reuse(
         return nullptr;
     }
 
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+
     // Create a temporary reference change associated to the sequence number
     CacheChange_t ch;
     ch.sequenceNumber = sequence_number;
