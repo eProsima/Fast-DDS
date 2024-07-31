@@ -50,7 +50,12 @@ namespace rtps {
 MessageReceiver::MessageReceiver(
         RTPSParticipantImpl* participant,
         uint32_t rec_buffer_size)
-    : participant_(participant)
+    : mtx_()
+    , associated_writers_()
+    , associated_readers_()
+#if !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
+    , participant_(participant)
+#endif // if !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
     , source_version_(c_ProtocolVersion)
     , source_vendor_id_(c_VendorId_Unknown)
     , source_guid_prefix_(c_GuidPrefix_Unknown)
