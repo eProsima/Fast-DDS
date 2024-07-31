@@ -16,12 +16,14 @@
 #define _FASTDDS_SHAREDMEM_GLOBAL_H_
 
 #include <algorithm>
+#include <cstring>
 #include <memory>
 #include <mutex>
 #include <thread>
 #include <vector>
 
 #include <fastdds/config.hpp>
+#include <fastdds/dds/core/detail/DDSReturnCode.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
 
 #include <rtps/transport/shared_mem/MultiProducerConsumerRingBuffer.hpp>
@@ -29,6 +31,7 @@
 #include <utils/shared_memory/RobustSharedLock.hpp>
 #include <utils/shared_memory/SharedMemSegment.hpp>
 #include <utils/shared_memory/SharedMemWatchdog.hpp>
+#include <utils/SystemInfo.hpp>
 
 #define THREADID "(ID:" << std::this_thread::get_id() << ") "
 
@@ -53,11 +56,15 @@ public:
             const std::string& domain_name)
         : domain_name_(domain_name)
     {
-        if (domain_name.length() > MAX_CREATOR_NAME_LENGTH)
+        if (fastdds::dds::RETCODE_OK != SystemInfo::get_username(user_name_))
+        {
+            user_name_ = domain_name_;
+        }
+        if (user_name_.length() > MAX_CREATOR_NAME_LENGTH)
         {
             throw std::runtime_error(
-                      domain_name +
-                      " too long for domain name (max " +
+                      user_name_ +
+                      " too long for creator name (max " +
                       std::to_string(MAX_CREATOR_NAME_LENGTH) +
                       " characters");
         }
@@ -1047,6 +1054,8 @@ private:
 
     std::string domain_name_;
 
+    std::string user_name_;
+
     std::shared_ptr<Port> open_port_internal(
             uint32_t port_id,
             uint32_t max_buffer_descriptors,
@@ -1107,6 +1116,14 @@ private:
 
                 port_node = port_segment->get().find<PortNode>(
                     ("port_node_abi" + std::to_string(CURRENT_ABI_VERSION)).c_str()).first;
+
+                if (port_node)
+                {
+                    if (0 != strcmp(port_node->creator_name, user_name_.c_str()))
+                    {
+                        throw std::runtime_error("port_abi not compatible");
+                    }
+                }
 
                 if (port_node)
                 {
@@ -1289,9 +1306,9 @@ private:
         std::fill_n(port_node->listeners_status, PortNode::LISTENERS_STATUS_SIZE, PortNode::ListenerStatus());
 #ifdef _MSC_VER
         strncpy_s(port_node->creator_name, sizeof(port_node->creator_name),
-                domain_name_.c_str(), sizeof(port_node->creator_name) - 1);
+                user_name_.c_str(), sizeof(port_node->creator_name) - 1);
 #else
-        strncpy(port_node->creator_name, domain_name_.c_str(), sizeof(port_node->creator_name) - 1);
+        strncpy(port_node->creator_name, user_name_.c_str(), sizeof(port_node->creator_name) - 1);
 #endif // ifdef _MSC_VER
         port_node->creator_name[sizeof(port_node->creator_name) - 1] = 0;
 
