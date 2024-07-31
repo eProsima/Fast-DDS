@@ -20,6 +20,7 @@ Forthcoming
     * Some methods changed to `snake_case`: `register_reader`, `register_writer`, `update_reader`, `update_writer`.
 	* Register methods take a `TopicDescription` instead of `TopicAttributes`.
 	* Update methods no longer take `TopicAttributes`.
+  * Endpoint creation fails if the `EntityId` is inconsistent with the topic kind.
 * Discovery callbacks refactor:
   * on_participant_discovery now receives a `ParticipantDiscoveryStatus` and a `ParticipantBuiltinTopicData` instead of a `ParticipantDiscoveryInfo`
   * on_data_reader_discovery now receives a `ReaderDiscoveryStatus` and a `SubscriptionBuiltinTopicData` instead of a `ReaderDiscoveryInfo`

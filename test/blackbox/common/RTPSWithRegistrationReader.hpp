@@ -154,6 +154,15 @@ public:
         participant_attr_.builtin.discovery_config.discoveryProtocol =
                 eprosima::fastdds::rtps::DiscoveryProtocol::SIMPLE;
         participant_attr_.builtin.use_WriterLivelinessProtocol = true;
+
+        if (type_.is_compute_key_provided)
+        {
+            reader_attr_.endpoint.topicKind = eprosima::fastdds::rtps::WITH_KEY;
+        }
+        else
+        {
+            reader_attr_.endpoint.topicKind = eprosima::fastdds::rtps::NO_KEY;
+        }
     }
 
     virtual ~RTPSWithRegistrationReader()
@@ -180,8 +189,18 @@ public:
         // Create reader
         if (has_payload_pool_)
         {
-            reader_ = eprosima::fastdds::rtps::RTPSDomain::createRTPSReader(participant_, reader_attr_, payload_pool_,
-                            history_, &listener_);
+            if (custom_entity_id_ != eprosima::fastdds::rtps::c_EntityId_Unknown)
+            {
+                reader_ = eprosima::fastdds::rtps::RTPSDomain::createRTPSReader(participant_, custom_entity_id_,
+                                reader_attr_, payload_pool_,
+                                history_, &listener_);
+            }
+            else
+            {
+                reader_ = eprosima::fastdds::rtps::RTPSDomain::createRTPSReader(participant_, reader_attr_,
+                                payload_pool_,
+                                history_, &listener_);
+            }
         }
         else
         {
@@ -432,6 +451,13 @@ public:
         return *this;
     }
 
+    RTPSWithRegistrationReader& set_entity_id(
+            const eprosima::fastdds::rtps::EntityId_t& entity_id)
+    {
+        custom_entity_id_ = entity_id;
+        return *this;
+    }
+
     RTPSWithRegistrationReader& history_depth(
             const int32_t depth)
     {
@@ -649,6 +675,7 @@ private:
     std::condition_variable cvDiscovery_;
     std::atomic<bool> receiving_;
     std::atomic<uint32_t> matched_;
+    eprosima::fastdds::rtps::EntityId_t custom_entity_id_ = eprosima::fastdds::rtps::c_EntityId_Unknown;
     eprosima::fastdds::rtps::SequenceNumber_t last_seq_;
     std::atomic<size_t> current_received_count_;
     std::atomic<size_t> number_samples_expected_;

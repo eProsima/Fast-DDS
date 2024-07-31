@@ -54,6 +54,9 @@ struct PublicationBuiltinTopicData
     /// Type name
     fastcdr::string_255 type_name;
 
+    /// Topic kind
+    TopicKind_t topic_kind = TopicKind_t::NO_KEY;
+
     // DataWriter Qos
 
     /// Durability Qos, implemented in the library.
@@ -135,7 +138,7 @@ struct PublicationBuiltinTopicData
     uint32_t max_serialized_size = 0;
 
     /// Network configuration
-    NetworkConfigSet_t loopback_transformation;
+    NetworkConfigSet_t loopback_transformation{};
 
 };
 

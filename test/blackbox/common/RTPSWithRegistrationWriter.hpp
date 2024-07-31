@@ -143,6 +143,15 @@ public:
         participant_attr_.builtin.discovery_config.discoveryProtocol =
                 eprosima::fastdds::rtps::DiscoveryProtocol::SIMPLE;
         participant_attr_.builtin.use_WriterLivelinessProtocol = true;
+
+        if (type_.is_compute_key_provided)
+        {
+            writer_attr_.endpoint.topicKind = eprosima::fastdds::rtps::WITH_KEY;
+        }
+        else
+        {
+            writer_attr_.endpoint.topicKind = eprosima::fastdds::rtps::NO_KEY;
+        }
     }
 
     virtual ~RTPSWithRegistrationWriter()
@@ -174,8 +183,16 @@ public:
         }
 
         //Create writer
-        writer_ = eprosima::fastdds::rtps::RTPSDomain::createRTPSWriter(
-            participant_, writer_attr_, history_, &listener_);
+        if (custom_entity_id_ != eprosima::fastdds::rtps::c_EntityId_Unknown)
+        {
+            writer_ = eprosima::fastdds::rtps::RTPSDomain::createRTPSWriter(
+                participant_, custom_entity_id_, writer_attr_, history_, &listener_);
+        }
+        else
+        {
+            writer_ = eprosima::fastdds::rtps::RTPSDomain::createRTPSWriter(
+                participant_, writer_attr_, history_, &listener_);
+        }
 
         if (writer_ == nullptr)
         {
@@ -472,6 +489,13 @@ public:
 
 #endif // if HAVE_SQLITE3
 
+    RTPSWithRegistrationWriter& set_entity_id(
+            const eprosima::fastdds::rtps::EntityId_t& entity_id)
+    {
+        custom_entity_id_ = entity_id;
+        return *this;
+    }
+
     RTPSWithRegistrationWriter& history_depth(
             const int32_t depth)
     {
@@ -605,6 +629,7 @@ private:
     std::mutex mutex_;
     std::condition_variable cv_;
     uint32_t matched_;
+    eprosima::fastdds::rtps::EntityId_t custom_entity_id_ = eprosima::fastdds::rtps::c_EntityId_Unknown;
     type_support type_;
     std::shared_ptr<eprosima::fastdds::rtps::IPayloadPool> payload_pool_;
     bool has_payload_pool_ = false;

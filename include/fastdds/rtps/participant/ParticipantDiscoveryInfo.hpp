@@ -26,8 +26,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-//!Enum ParticipantDiscoveryStatus, four different status for discovered participants.
-//!@ingroup RTPS_MODULE
+//! Enum ParticipantDiscoveryStatus, four different status for discovered participants.
 // *INDENT-OFF* eduponz: Does not understand the #if correctly and ends up removing the ;
 //                       at the end of the enum, which does not build.
 #if defined(_WIN32)

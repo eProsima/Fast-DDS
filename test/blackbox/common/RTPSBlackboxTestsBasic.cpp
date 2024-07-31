@@ -1248,6 +1248,228 @@ TEST(RTPS, max_output_message_size_writer)
 
 }
 
+class DummyPool : public IPayloadPool
+{
+public:
+
+    DummyPool(
+            uint32_t payload_size,
+            uint32_t num_endpoints,
+            uint32_t num_samples)
+        : payload_size_(payload_size)
+    {
+        for (uint32_t i = 0; i < num_samples * num_endpoints; ++i)
+        {
+            octet* payload = (octet*)calloc(payload_size_, sizeof(octet));
+
+            all_payloads_.emplace(payload, 0u);
+            free_payloads_.push_back(payload);
+        }
+    }
+
+    ~DummyPool()
+    {
+        for (auto it : all_payloads_)
+        {
+            free(it.first);
+        }
+    }
+
+    bool get_payload(
+            uint32_t size,
+            SerializedPayload_t& payload) override
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        return do_get_payload(size, payload);
+    }
+
+    bool get_payload(
+            const SerializedPayload_t& data,
+            SerializedPayload_t& payload) override
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+
+        octet* payload_buff = data.data;
+
+        if (data.payload_owner == this)
+        {
+            uint32_t& refs = all_payloads_[payload_buff];
+            EXPECT_LT(0u, refs);
+            ++refs;
+            ++num_reserves_;
+            ++num_references_;
+
+            payload.data = payload_buff;
+            payload.length = data.length;
+            payload.max_size = data.max_size;
+            payload.payload_owner = this;
+            return true;
+        }
+
+        if (!do_get_payload(data.max_size, payload))
+        {
+            return false;
+        }
+
+        ++num_copies_;
+        payload.copy(&data, true);
+
+        return true;
+    }
+
+    bool release_payload(
+            SerializedPayload_t& payload) override
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+
+        EXPECT_EQ(this, payload.payload_owner);
+
+        octet* payload_buff = payload.data;
+        uint32_t& refs = all_payloads_[payload_buff];
+
+        EXPECT_GT(refs, 0u);
+
+        ++num_releases_;
+        if (0 == --refs)
+        {
+            free_payloads_.push_back(payload_buff);
+        }
+
+        payload.data = nullptr;
+        payload.max_size = 0;
+        payload.length = 0;
+        payload.payload_owner = nullptr;
+
+        return true;
+    }
+
+    size_t num_reserves() const
+    {
+        return num_reserves_;
+    }
+
+    size_t num_releases() const
+    {
+        return num_releases_;
+    }
+
+    size_t num_references() const
+    {
+        return num_references_;
+    }
+
+    size_t num_copies() const
+    {
+        return num_copies_;
+    }
+
+private:
+
+    bool do_get_payload(
+            uint32_t size,
+            SerializedPayload_t& payload)
+    {
+        if (free_payloads_.empty())
+        {
+            return false;
+        }
+
+        EXPECT_LE(size, payload_size_);
+
+        octet* payload_buff = free_payloads_.back();
+        uint32_t& refs = all_payloads_[payload_buff];
+        EXPECT_EQ(0u, refs);
+
+        free_payloads_.pop_back();
+        ++refs;
+        ++num_reserves_;
+
+        payload.data = payload_buff;
+        payload.max_size = payload_size_;
+        payload.length = 0;
+        payload.pos = 0;
+        payload.payload_owner = this;
+
+        return true;
+    }
+
+    uint32_t payload_size_;
+
+    size_t num_reserves_ = 0;
+    size_t num_releases_ = 0;
+    size_t num_references_ = 0;
+    size_t num_copies_ = 0;
+
+    std::mutex mutex_;
+    std::map<octet*, uint32_t> all_payloads_;
+    std::vector<octet*> free_payloads_;
+};
+
+/* Endpoint creation fails when entity id is incoherent. */
+TEST(RTPS, endpoint_creation_fails_with_incoherent_entity_id)
+{
+    // create dummy payload pool for reader
+    uint32_t payload_size = static_cast<uint32_t>(256);
+    payload_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(payload_size, 4)); /* possible submessage alignment */
+    payload_size += 4u; // encapsulation header
+
+    std::shared_ptr<DummyPool> pool = std::make_shared<DummyPool>(payload_size, 10, 10);
+
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> wrong_writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> wrong_reader(TEST_TOPIC_NAME);
+
+    RTPSWithRegistrationWriter<KeyedHelloWorldPubSubType> keyed_writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<KeyedHelloWorldPubSubType> keyed_reader(TEST_TOPIC_NAME);
+
+    RTPSWithRegistrationWriter<KeyedHelloWorldPubSubType> wrong_keyed_writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<KeyedHelloWorldPubSubType> wrong_keyed_reader(TEST_TOPIC_NAME);
+
+    const EntityId_t writer_entity_id(0x0003003);
+    const EntityId_t keyed_writer_entity_id(0x0003002);
+
+    const EntityId_t reader_entity_id(0x0003004);
+    const EntityId_t keyed_reader_entity_id(0x0003007);
+
+    writer.set_entity_id(writer_entity_id)
+            .init();
+    reader.set_entity_id(reader_entity_id)
+            .payload_pool(pool)
+            .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+    ASSERT_TRUE(reader.isInitialized());
+
+    wrong_writer.set_entity_id(keyed_writer_entity_id)
+            .init();
+    wrong_reader.set_entity_id(keyed_reader_entity_id)
+            .payload_pool(pool)
+            .init();
+
+    ASSERT_FALSE(wrong_writer.isInitialized());
+    ASSERT_FALSE(wrong_reader.isInitialized());
+
+    keyed_writer.set_entity_id(keyed_writer_entity_id)
+            .init();
+    keyed_reader.set_entity_id(keyed_reader_entity_id)
+            .payload_pool(pool)
+            .init();
+
+    ASSERT_TRUE(keyed_writer.isInitialized());
+    ASSERT_TRUE(keyed_reader.isInitialized());
+
+    wrong_keyed_writer.set_entity_id(writer_entity_id)
+            .init();
+    wrong_keyed_reader.set_entity_id(reader_entity_id)
+            .payload_pool(pool)
+            .init();
+
+    ASSERT_FALSE(wrong_keyed_writer.isInitialized());
+    ASSERT_FALSE(wrong_keyed_reader.isInitialized());
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
