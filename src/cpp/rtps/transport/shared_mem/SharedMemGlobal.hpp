@@ -47,18 +47,18 @@ public:
     struct BufferDescriptor;
 
     // Long names for SHM files could cause problems on some platforms
-    static constexpr uint32_t MAX_DOMAIN_NAME_LENGTH = 255;
+    static constexpr uint32_t MAX_CREATOR_NAME_LENGTH = 255;
 
     SharedMemGlobal(
             const std::string& domain_name)
         : domain_name_(domain_name)
     {
-        if (domain_name.length() > MAX_DOMAIN_NAME_LENGTH)
+        if (domain_name.length() > MAX_CREATOR_NAME_LENGTH)
         {
             throw std::runtime_error(
                       domain_name +
                       " too long for domain name (max " +
-                      std::to_string(MAX_DOMAIN_NAME_LENGTH) +
+                      std::to_string(MAX_CREATOR_NAME_LENGTH) +
                       " characters");
         }
     }
@@ -159,7 +159,7 @@ public:
         };
         ListenerStatus listeners_status[LISTENERS_STATUS_SIZE];
 
-        char domain_name[MAX_DOMAIN_NAME_LENGTH + 1];
+        char creator_name[MAX_CREATOR_NAME_LENGTH + 1];
     };
 
     /**
@@ -908,7 +908,7 @@ public:
                 throw std::runtime_error("port is opened ReadShared");
             }
 
-            std::string lock_name = std::string(node_->domain_name) + "_port" + std::to_string(node_->port_id) + "_el";
+            std::string lock_name = std::string(node_->creator_name) + "_port" + std::to_string(node_->port_id) + "_el";
             read_exclusive_lock_ = std::unique_ptr<RobustExclusiveLock>(new RobustExclusiveLock(lock_name));
         }
 
@@ -919,7 +919,7 @@ public:
                 throw std::runtime_error("port is opened ReadExclusive");
             }
 
-            std::string lock_name = std::string(node_->domain_name) + "_port" + std::to_string(node_->port_id) + "_sl";
+            std::string lock_name = std::string(node_->creator_name) + "_port" + std::to_string(node_->port_id) + "_sl";
             read_shared_lock_ = std::unique_ptr<RobustSharedLock>(new RobustSharedLock(lock_name));
         }
 
@@ -1284,12 +1284,12 @@ private:
         port_node->max_buffer_descriptors = max_buffer_descriptors;
         std::fill_n(port_node->listeners_status, PortNode::LISTENERS_STATUS_SIZE, PortNode::ListenerStatus());
 #ifdef _MSC_VER
-        strncpy_s(port_node->domain_name, sizeof(port_node->domain_name),
-                domain_name_.c_str(), sizeof(port_node->domain_name) - 1);
+        strncpy_s(port_node->creator_name, sizeof(port_node->creator_name),
+                domain_name_.c_str(), sizeof(port_node->creator_name) - 1);
 #else
-        strncpy(port_node->domain_name, domain_name_.c_str(), sizeof(port_node->domain_name) - 1);
+        strncpy(port_node->creator_name, domain_name_.c_str(), sizeof(port_node->creator_name) - 1);
 #endif // ifdef _MSC_VER
-        port_node->domain_name[sizeof(port_node->domain_name) - 1] = 0;
+        port_node->creator_name[sizeof(port_node->creator_name) - 1] = 0;
 
         // Buffer cells allocation
         auto buffer = segment->get().construct<MultiProducerConsumerRingBuffer<BufferDescriptor>::Cell>(
