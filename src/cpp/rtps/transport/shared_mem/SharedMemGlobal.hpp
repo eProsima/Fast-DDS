@@ -413,6 +413,8 @@ public:
         // Keep a reference to the WatchTask so that it is not destroyed until the last Port instance is destroyed
         std::shared_ptr<WatchTask> watch_task_;
 
+        std::string domain_name_;
+
     public:
 
         /**
@@ -447,12 +449,14 @@ public:
         Port(
                 std::shared_ptr<SharedMemSegment>&& port_segment,
                 PortNode* node,
+                std::string domain_name,
                 std::unique_ptr<RobustExclusiveLock>&& read_exclusive_lock = std::unique_ptr<RobustExclusiveLock>())
             : port_segment_(std::move(port_segment))
             , node_(node)
             , overflows_count_(0)
             , read_exclusive_lock_(std::move(read_exclusive_lock))
             , watch_task_(WatchTask::get())
+            , domain_name_(domain_name)
         {
             auto buffer_base = static_cast<MultiProducerConsumerRingBuffer<BufferDescriptor>::Cell*>(
                 port_segment_->get_address_from_offset(node_->buffer));
@@ -908,7 +912,7 @@ public:
                 throw std::runtime_error("port is opened ReadShared");
             }
 
-            std::string lock_name = std::string(node_->creator_name) + "_port" + std::to_string(node_->port_id) + "_el";
+            std::string lock_name = domain_name_ + "_port" + std::to_string(node_->port_id) + "_el";
             read_exclusive_lock_ = std::unique_ptr<RobustExclusiveLock>(new RobustExclusiveLock(lock_name));
         }
 
@@ -919,7 +923,7 @@ public:
                 throw std::runtime_error("port is opened ReadExclusive");
             }
 
-            std::string lock_name = std::string(node_->creator_name) + "_port" + std::to_string(node_->port_id) + "_sl";
+            std::string lock_name = domain_name_ + "_port" + std::to_string(node_->port_id) + "_sl";
             read_shared_lock_ = std::unique_ptr<RobustSharedLock>(new RobustSharedLock(lock_name));
         }
 
@@ -1106,7 +1110,7 @@ private:
 
                 if (port_node)
                 {
-                    port = std::make_shared<Port>(std::move(port_segment), port_node);
+                    port = std::make_shared<Port>(std::move(port_segment), port_node, domain_name_);
                 }
                 else
                 {
@@ -1305,7 +1309,7 @@ private:
         port_node->buffer_node = segment->get_offset_from_address(buffer_node);
 
         port_node->is_port_ok = true;
-        port = std::make_shared<Port>(std::move(segment), port_node, std::move(lock_read_exclusive));
+        port = std::make_shared<Port>(std::move(segment), port_node, domain_name_, std::move(lock_read_exclusive));
 
         if (open_mode == Port::OpenMode::ReadShared)
         {
