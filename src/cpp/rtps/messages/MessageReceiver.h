@@ -96,7 +96,10 @@ private:
     std::vector<BaseWriter*> associated_writers_;
     std::unordered_map<EntityId_t, std::vector<BaseReader*>> associated_readers_;
 
+#if !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
+    //!Pointer to the RTPSParticipantImpl
     RTPSParticipantImpl* participant_;
+#endif // if !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
     //!Protocol version of the message
     ProtocolVersion_t source_version_;
     //!VendorID that created the message
