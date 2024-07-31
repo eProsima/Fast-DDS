@@ -40,11 +40,10 @@
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/utils/shared_mutex.hpp>
 #include <rtps/builtin/discovery/endpoint/EDPClient.h>
-#include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>
-#include <rtps/builtin/discovery/participant/DS/FakeWriter.hpp>
 #include <rtps/builtin/discovery/participant/DS/PDPSecurityInitiatorListener.hpp>
 #include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/common/GuidUtils.hpp>
+#include <utils/DirectSend.hpp>
 #include <utils/SystemInfo.hpp>
 #include <vector>
 
@@ -55,31 +54,6 @@ namespace fastdds {
 namespace rtps {
 
 using namespace fastrtps::rtps;
-
-static void direct_send(
-        RTPSParticipantImpl* participant,
-        LocatorList& locators,
-        std::vector<GUID_t>& remote_readers,
-        const CacheChange_t& change,
-        fastrtps::rtps::Endpoint& sender_endpt)
-{
-    DirectMessageSender sender(participant, &remote_readers, &locators);
-    RTPSMessageGroup group(participant, &sender_endpt, &sender);
-    if (!group.add_data(change, false))
-    {
-        EPROSIMA_LOG_ERROR(RTPS_PDP, "Error sending announcement from client to servers");
-    }
-}
-
-static void direct_send(
-        RTPSParticipantImpl* participant,
-        LocatorList& locators,
-        const CacheChange_t& change)
-{
-    FakeWriter writer(participant, c_EntityId_SPDPWriter);
-    std::vector<GUID_t> remote_readers;
-    direct_send(participant, locators, remote_readers, change, writer);
-}
 
 PDPClient::PDPClient(
         BuiltinProtocols* builtin,
