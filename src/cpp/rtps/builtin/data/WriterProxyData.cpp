@@ -621,7 +621,7 @@ bool WriterProxyData::readFromCDRMessage(
     auto param_process = [this, &network, &should_filter_locators, source_vendor_id](
         CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
             {
-                VendorId_t vendor_id = c_VendorId_Unknown;
+                VendorId_t vendor_id = source_vendor_id;
 
                 switch (pid)
                 {

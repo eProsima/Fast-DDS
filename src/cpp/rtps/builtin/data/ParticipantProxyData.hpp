@@ -32,6 +32,7 @@
 #include <fastdds/rtps/common/RemoteLocators.hpp>
 #include <fastdds/rtps/common/Token.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
+
 #include <rtps/network/NetworkFactory.hpp>
 
 namespace eprosima {

@@ -454,7 +454,7 @@ bool ParticipantProxyData::readFromCDRMessage(
             [this, &network, &should_filter_locators, source_vendor_id](
         CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
             {
-                static_cast<void>(source_vendor_id);
+                m_VendorId = source_vendor_id;
                 switch (pid){
                     case fastdds::dds::PID_KEY_HASH:
                     {
