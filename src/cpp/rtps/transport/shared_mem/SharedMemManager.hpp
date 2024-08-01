@@ -246,12 +246,12 @@ public:
     static std::shared_ptr<SharedMemManager> create(
             const std::string& domain_name)
     {
-        if (domain_name.length() > SharedMemGlobal::MAX_CREATOR_NAME_LENGTH)
+        if (domain_name.length() > SharedMemGlobal::MAX_DOMAIN_NAME_LENGTH)
         {
             throw std::runtime_error(
                       domain_name +
                       " too long for domain name (max " +
-                      std::to_string(SharedMemGlobal::MAX_CREATOR_NAME_LENGTH) +
+                      std::to_string(SharedMemGlobal::MAX_DOMAIN_NAME_LENGTH) +
                       " characters");
         }
 
