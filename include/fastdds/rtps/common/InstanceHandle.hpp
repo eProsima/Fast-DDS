@@ -29,7 +29,9 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using KeyHash_t = std::array<octet, 16>;
+constexpr const uint8_t RTPS_KEY_HASH_SIZE = 16;
+
+using KeyHash_t = std::array<octet, RTPS_KEY_HASH_SIZE>;
 
 struct FASTDDS_EXPORTED_API InstanceHandleValue_t
 {

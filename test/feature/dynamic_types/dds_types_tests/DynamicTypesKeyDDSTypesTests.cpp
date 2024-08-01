@@ -517,7 +517,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_KeyedLongDoubleStruct)
     {
         KeyedLongDoubleStruct struct_data;
         TypeSupport static_pubsubType {new KeyedLongDoubleStructPubSubType()};
-        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType, 10);
         EXPECT_EQ(struct_data.key_longdouble(), test_value);
         EXPECT_EQ(struct_data.var_longdouble(), test_value);
     }
