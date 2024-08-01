@@ -19,16 +19,16 @@
 #include <exception>
 #include <fstream>
 #include <functional>
+#include <iomanip>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <regex>
 #include <thread>
 #include <type_traits>
-#include <vector>
-#include <mutex>
 #include <unordered_set>
-#include <iomanip>
 #include <utility>
+#include <vector>
 
 #ifdef _MSC_VER
 #   include <cstdio>
@@ -47,7 +47,7 @@
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 
 #include "pegtl.hpp"
-#include <pegtl/analyze.hpp>
+#include "pegtl/analyze.hpp"
 
 #include "IdlGrammar.hpp"
 #include "IdlModule.hpp"
@@ -305,11 +305,15 @@ public:
             std::map<std::string, std::string>& state,
             const std::string& type);
 
-    std::vector<std::string> split_string(const std::string& str, char delimiter) {
+    std::vector<std::string> split_string(
+            const std::string& str,
+            char delimiter)
+    {
         std::vector<std::string> tokens;
         std::string token;
         std::istringstream ss(str);
-        while (std::getline(ss, token, delimiter)) {
+        while (std::getline(ss, token, delimiter))
+        {
             tokens.push_back(token);
         }
         return tokens;
@@ -373,10 +377,10 @@ struct action
 {
     template<typename Input>
     static void apply(
-            const Input& in,
-            Context* ctx,
-            std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& operands)
+            const Input& /*in*/,
+            Context* /*ctx*/,
+            std::map<std::string, std::string>& /*state*/,
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         // std::cout << "Rule: " << typeid(Rule).name() << " " << in.string() << std::endl;
     }
@@ -389,9 +393,9 @@ struct action<identifier>
     template<typename Input>
     static void apply(
             const Input& in,
-            Context* ctx,
+            Context* /*ctx*/,
             std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& operands)
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         if (state.count("enum_name"))
         {
@@ -449,13 +453,13 @@ struct action<identifier>
         template<typename Input> \
         static void apply( \
             const Input& in, \
-            Context * ctx, \
+            Context * /*ctx*/, \
             std::map<std::string, std::string>& state, \
-            std::vector<traits<DynamicData>::ref_type>& operands) \
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/) \
         { \
             std::cout << "load_type_action: " << typeid(Rule).name() << " " \
                       << in.string() << std::endl; \
-            state["type"] = std::string{#id}; \
+            state["type"] = std::string(#id); \
         } \
     };
 
@@ -480,10 +484,10 @@ struct action<char_type>
 {
     template<typename Input>
     static void apply(
-            const Input& in,
+            const Input& /*in*/,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& operands)
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         switch (ctx->char_translation)
         {
@@ -510,10 +514,10 @@ struct action<wide_char_type>
 {
     template<typename Input>
     static void apply(
-            const Input& in,
+            const Input& /*in*/,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& operands)
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         switch (ctx->wchar_type)
         {
@@ -538,9 +542,9 @@ struct action<positive_int_const>
     template<typename Input>
     static void apply(
             const Input& in,
-            Context* ctx,
+            Context* /*ctx*/,
             std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& operands)
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         state["positive_int_const"] = in.string();
     }
@@ -554,9 +558,9 @@ struct action<positive_int_const>
         template<typename Input> \
         static void apply( \
             const Input& in, \
-            Context * ctx, \
+            Context * /*ctx*/, \
             std::map<std::string, std::string>& state, \
-            std::vector<traits<DynamicData>::ref_type>& operands) \
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/) \
         { \
             std::cout << "load_stringsize_action: " << typeid(Rule).name() << " " \
                       << in.string() << std::endl; \
@@ -635,7 +639,7 @@ struct action<boolean_literal>
     template<typename Input>
     static void apply(
             const Input& in,
-            Context* ctx,
+            Context* /*ctx*/,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& operands)
     {
@@ -680,7 +684,7 @@ struct action<boolean_literal>
         template<typename Input> \
         static void apply( \
             const Input& in, \
-            Context * ctx, \
+            Context * /*ctx*/, \
             std::map<std::string, std::string>& state, \
             std::vector<traits<DynamicData>::ref_type>& operands) \
         { \
@@ -691,9 +695,18 @@ struct action<boolean_literal>
  \
             std::istringstream ss(in.string()); \
             type value; \
-            if (std::string{#id} == "octal") ss >> std::oct >> value; \
-            else if (std::string{#id} == "hexa") ss >> std::hex >> value; \
-            else ss >> value; \
+            if (std::string{#id} == "octal") \
+            { \
+                ss >> std::oct >> value; \
+            } \
+            else if (std::string{#id} == "hexa") \
+            { \
+                ss >> std::hex >> value; \
+            } \
+            else \
+            { \
+                ss >> value; \
+            } \
  \
             DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()}; \
             DynamicType::_ref_type xtype {factory->get_primitive_type(type_kind)}; \
@@ -716,7 +729,7 @@ load_literal_action(fixed_pt_literal, fixed, long double, TK_FLOAT128, set_float
         template<typename Input> \
         static void apply( \
             const Input& in, \
-            Context * ctx, \
+            Context * /*ctx*/, \
             std::map<std::string, std::string>& state, \
             std::vector<traits<DynamicData>::ref_type>& operands) \
         { \
@@ -770,7 +783,7 @@ load_literal_action(fixed_pt_literal, fixed, long double, TK_FLOAT128, set_float
         template<typename Input> \
         static void apply( \
             const Input& in, \
-            Context * ctx, \
+            Context * /*ctx*/, \
             std::map<std::string, std::string>& state, \
             std::vector<traits<DynamicData>::ref_type>& operands) \
         { \
@@ -816,7 +829,7 @@ load_literal_action(fixed_pt_literal, fixed, long double, TK_FLOAT128, set_float
         template<typename Input> \
         static void apply( \
             const Input& in, \
-            Context * ctx, \
+            Context * /*ctx*/, \
             std::map<std::string, std::string>& state, \
             std::vector<traits<DynamicData>::ref_type>& operands) \
         { \
@@ -880,7 +893,7 @@ struct action<minus_exec>
     template<typename Input>
     static void apply(
             const Input& in,
-            Context* ctx,
+            Context* /*ctx*/,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& operands)
     {
@@ -917,9 +930,9 @@ struct action<plus_exec>
     template<typename Input>
     static void apply(
             const Input& in,
-            Context* ctx,
+            Context* /*ctx*/,
             std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& operands)
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         // noop
         std::cout << "plus_exec: " << typeid(plus_exec).name() << " "
@@ -935,7 +948,7 @@ struct action<inv_exec>
     template<typename Input>
     static void apply(
             const Input& in,
-            Context* ctx,
+            Context* /*ctx*/,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& operands)
     {
@@ -971,10 +984,10 @@ struct action<struct_forward_dcl>
 {
     template<typename Input>
     static void apply(
-            const Input& in,
+            const Input& /*in*/,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& operands)
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         Module& module = ctx->module();
         const std::string& struct_name = state["struct_name"];
@@ -1007,10 +1020,10 @@ struct action<union_forward_dcl>
 {
     template<typename Input>
     static void apply(
-            const Input& in,
+            const Input& /*in*/,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& operands)
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         Module& module = ctx->module();
         const std::string& union_name = state["union_name"];
@@ -1046,7 +1059,7 @@ struct action<const_dcl>
 {
     template<typename Input>
     static void apply(
-            const Input& in,
+            const Input& /*in*/,
             Context* ctx,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& operands)
@@ -1071,10 +1084,10 @@ struct action<kw_enum>
 {
     template<typename Input>
     static void apply(
-            const Input& in,
-            Context* ctx,
+            const Input& /*in*/,
+            Context* /*ctx*/,
             std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& operands)
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         // Create empty enum states to indicate the start of parsing enum
         state["enum_name"] = "";
@@ -1088,10 +1101,10 @@ struct action<enum_dcl>
 {
     template<typename Input>
     static void apply(
-            const Input& in,
+            const Input& /*in*/,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& operands)
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         Module& module = ctx->module();
         const std::string& enum_name = state["enum_name"];
@@ -1133,10 +1146,10 @@ struct action<kw_struct>
 {
     template<typename Input>
     static void apply(
-            const Input& in,
-            Context* ctx,
+            const Input& /*in*/,
+            Context* /*ctx*/,
             std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& operands)
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         // Create empty struct states to indicate the start of parsing struct
         state["struct_name"] = "";
@@ -1151,10 +1164,10 @@ struct action<struct_def>
 {
     template<typename Input>
     static void apply(
-            const Input& in,
+            const Input& /*in*/,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& operands)
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         Module& module = ctx->module();
 
@@ -1192,10 +1205,10 @@ struct action<kw_union>
 {
     template<typename Input>
     static void apply(
-            const Input& in,
-            Context* ctx,
+            const Input& /*in*/,
+            Context* /*ctx*/,
             std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& operands)
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         // Create empty union states to indicate the start of parsing union
         state["union_name"] = "";
@@ -1213,16 +1226,16 @@ struct action<case_label>
     template<typename Input>
     static void apply(
             const Input& in,
-            Context* ctx,
+            Context* /*ctx*/,
             std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& operands)
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
-        Module& module = ctx->module();
         std::string label;
 
         for (char c : in.string())
         {
-            if (std::isdigit(c)) {
+            if (std::isdigit(c))
+            {
                 label += c;
             }
         }
@@ -1262,13 +1275,11 @@ struct action<switch_case>
 {
     template<typename Input>
     static void apply(
-            const Input& in,
-            Context* ctx,
+            const Input& /*in*/,
+            Context* /*ctx*/,
             std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& operands)
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
-        Module& module = ctx->module();
-
         state["union_labels"] += ";";
         state["union_member_types"] += ";";
         state["union_member_names"] += ";";
@@ -1281,10 +1292,10 @@ struct action<union_def>
 {
     template<typename Input>
     static void apply(
-            const Input& in,
+            const Input& /*in*/,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& operands)
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         Module& module = ctx->module();
         const std::string& union_name = state["union_name"];
@@ -1305,7 +1316,10 @@ struct action<union_def>
         int default_label_index = 0;
         for (size_t i = 0; i < label_groups.size(); i++)
         {
-            if (label_groups[i].empty()) continue; // Skip empty strings
+            if (label_groups[i].empty())
+            {
+                continue; // Skip empty strings
+            }
             std::vector<std::string> numbers_str = ctx->split_string(label_groups[i], ',');
             std::vector<int32_t> numbers;
             for (const auto& num_str : numbers_str)
@@ -1313,24 +1327,27 @@ struct action<union_def>
                 if (num_str == "default")
                 {
                     numbers.push_back(std::numeric_limits<int32_t>::max());
-                    default_label_index = i; // mark the index of default label
+                    default_label_index = static_cast<int>(i); // mark the index of default label
                 }
                 else
                 {
                     numbers.push_back(std::stoi(num_str));
                 }
             }
-            if (!numbers.empty())   labels.push_back(numbers);
+            if (!numbers.empty())
+            {
+                labels.push_back(numbers);
+            }
         }
 
-        for (size_t i = 0; i < types.size(); i++)
+        for (uint32_t i = 0; i < (uint32_t)types.size(); i++)
         {
             MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
             member_descriptor->name(names[i]);
             member_descriptor->type(ctx->get_type(state, types[i]));
             member_descriptor->id(i);
             member_descriptor->label(labels[i]);
-            member_descriptor->is_default_label(i == default_label_index);
+            member_descriptor->is_default_label(i == (uint32_t)default_label_index);
             builder->add_member(member_descriptor);
         }
 
@@ -1353,10 +1370,10 @@ struct action<kw_typedef>
 {
     template<typename Input>
     static void apply(
-            const Input& in,
-            Context* ctx,
+            const Input& /*in*/,
+            Context* /*ctx*/,
             std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& operands)
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         // Create empty alias states to indicate the start of parsing alias
         state["alias"] = "";
@@ -1371,9 +1388,9 @@ struct action<fixed_array_size>
     template<typename Input>
     static void apply(
             const Input& in,
-            Context* ctx,
+            Context* /*ctx*/,
             std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& operands)
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         if (state.count("alias") && !state["alias"].empty())
         {
@@ -1399,10 +1416,10 @@ struct action<typedef_dcl>
 {
     template<typename Input>
     static void apply(
-            const Input& in,
+            const Input& /*in*/,
             Context* ctx,
             std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& operands)
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         Module& module = ctx->module();
 
@@ -1508,7 +1525,8 @@ public:
         std::vector<traits<DynamicData>::ref_type> operands;
         parsing_state["evaluated_expr"] = "";
 
-        if (tao::TAO_PEGTL_NAMESPACE::parse<document, action>(input_mem, context_, parsing_state, operands) && input_mem.empty())
+        if (tao::TAO_PEGTL_NAMESPACE::parse<document, action>(input_mem, context_, parsing_state,
+                operands) && input_mem.empty())
         {
             context_->success = true;
             EPROSIMA_LOG_INFO(IDLPARSER, "IDL parsing succeeded.");
@@ -1663,32 +1681,24 @@ private:
         }
         else if (type == "string")
         {
-            TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
-            type_descriptor->kind(TK_STRING8);
-            type_descriptor->element_type(factory->get_primitive_type(TK_CHAR8));
-
+            uint32_t length = static_cast<uint32_t>(LENGTH_UNLIMITED);
             if (state.count("string_size"))
             {
-                uint32_t size = std::atoi(state["string_size"].c_str());
-                type_descriptor->bound({size});
+                length = std::atoi(state["string_size"].c_str());
                 state.erase("string_size");
             }
-            builder = factory->create_type(type_descriptor);
+            builder = factory->create_string_type(length);
             xtype = builder->build();
         }
         else if (type == "wstring")
         {
-            TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
-            type_descriptor->kind(TK_STRING16);
-            type_descriptor->element_type(factory->get_primitive_type(TK_CHAR16));
-
+            uint32_t length = static_cast<uint32_t>(LENGTH_UNLIMITED);
             if (state.count("wstring_size"))
             {
-                uint32_t size = std::atoi(state["wstring_size"].c_str());
-                type_descriptor->bound({size});
+                length = std::atoi(state["wstring_size"].c_str());
                 state.erase("wstring_size");
             }
-            builder = factory->create_type(type_descriptor);
+            builder = factory->create_wstring_type(length);
             xtype = builder->build();
         }
         else
@@ -1716,10 +1726,10 @@ traits<DynamicType>::ref_type Context::get_type(
 } // namespace eprosima
 
 
-#ifdef _MSVC_LANG
+#ifdef _MSC_VER
 #   pragma pop_macro("popen")
 #   pragma pop_macro("pipe")
 #   pragma pop_macro("pclose")
-#endif // ifdef _MSVC_LANG
+#endif // ifdef _MSC_VER
 
 #endif // FASTDDS_XTYPES_DYNAMIC_TYPES_IDL_PARSER_IDLPARSER_HPP
