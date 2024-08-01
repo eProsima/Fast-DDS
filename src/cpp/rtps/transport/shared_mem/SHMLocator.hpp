@@ -53,9 +53,9 @@ public:
         auto host_id = Host::instance().id();
         std::string user_name;
 
-        if ((fastdds::dds::RETCODE_OK == SystemInfo::get_username(user_name)) && (user_name.length() <= 16))
+        if ((fastdds::dds::RETCODE_OK == SystemInfo::get_username(user_name)) && (user_name.length() < 16))
         {
-            std::strcpy(reinterpret_cast<char*>(locator.address), user_name.c_str());
+            std::strcpy(reinterpret_cast<char*>(&locator.address[1]), user_name.c_str());
         }
         else
         {
@@ -79,7 +79,7 @@ public:
             auto host_id = Host::instance().id();
             std::string user_name;
             SystemInfo::get_username(user_name);
-            return ((std::memcmp(locator.address, user_name.c_str(),
+            return ((std::memcmp(&locator.address[1], user_name.c_str(),
                    user_name.length()) == 0) ||
                    (locator.address[1] == octet(host_id) && locator.address[2] == octet(host_id >> 8)));
         }
