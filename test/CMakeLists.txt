@@ -55,16 +55,7 @@ if(EPROSIMA_BUILD_TESTS)
     find_package(GTest CONFIG REQUIRED)
     include(${PROJECT_SOURCE_DIR}/cmake/testing/GoogleTest.cmake)
 
-    add_subdirectory(blackbox)
     add_subdirectory(feature)
-    add_subdirectory(unittest)
-    add_subdirectory(dds/communication)
-    add_subdirectory(dds/communication/security)
-    add_subdirectory(dds/discovery)
-
-    if(UNIX AND NOT APPLE AND STRICT_REALTIME)
-        add_subdirectory(realtime)
-    endif()
 endif()
 
 ###############################################################################

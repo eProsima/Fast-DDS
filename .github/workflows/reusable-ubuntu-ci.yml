@@ -692,7 +692,7 @@ jobs:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/discovery_server.meta
           colcon_test_args: ${{ inputs.colcon-args }}
           colcon_test_args_default: --event-handlers=console_direct+
-          ctest_args: ${{ inputs.ctest-args }}
+          ctest_args: -R DDSTypesTest_KeyedLongDoubleStruct
           packages_names: discovery-server
           workspace: ${{ github.workspace }}
           workspace_dependencies: ''

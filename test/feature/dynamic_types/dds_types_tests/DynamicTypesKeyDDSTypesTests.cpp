@@ -511,6 +511,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_KeyedLongDoubleStruct)
     EXPECT_EQ(data->get_float128_value(test_value, data->get_member_id_by_name(var_long_double_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
+    std::cout << "test_value: " << test_value << std::endl;
+
     for (auto encoding : encodings)
     {
         KeyedLongDoubleStruct struct_data;

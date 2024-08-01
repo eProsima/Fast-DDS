@@ -143,6 +143,7 @@ public:
             ASSERT_TRUE(static_pubsubType.compute_key(&data_static, static_ih));
             ASSERT_TRUE(dyn_pubsubType.compute_key(&data, dyn_ih));
             EXPECT_NE(static_ih, eprosima::fastdds::dds::InstanceHandle_t());
+            std::cout << "static_ih: " << static_ih << " dyn_ih: " << dyn_ih << std::endl;
             EXPECT_EQ(static_ih, dyn_ih);
         }
 

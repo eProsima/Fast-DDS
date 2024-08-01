@@ -162,6 +162,7 @@ bool DynamicPubSubType::compute_key(
     size_t keyBufferSize =
             static_cast<uint32_t>((*data_ptr)->calculate_key_serialized_size(calculator, current_alignment));
 
+    std::cout << "keyBufferSize: " << keyBufferSize << " long double sizeof " << sizeof(long double) << std::endl;
     if (nullptr == key_buffer_)
     {
         key_buffer_ = reinterpret_cast<unsigned char*>(malloc(keyBufferSize > 16 ? keyBufferSize : 16));
