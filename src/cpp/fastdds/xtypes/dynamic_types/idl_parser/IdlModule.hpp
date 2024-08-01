@@ -468,7 +468,6 @@ public:
         {
             for (auto& pair : inner_)
             {
-                const std::string& key = pair.first;
                 std::shared_ptr<Module>& mod = pair.second;
                 builder = mod->get_builder(name, recursive);
             }
