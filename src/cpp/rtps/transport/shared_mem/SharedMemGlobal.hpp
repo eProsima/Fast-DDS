@@ -47,7 +47,7 @@ public:
     struct BufferDescriptor;
 
     // Long names for SHM files could cause problems on some platforms
-    static constexpr uint32_t MAX_DOMAIN_NAME_LENGTH = 255;
+    static constexpr uint32_t MAX_DOMAIN_NAME_LENGTH = 16;
 
     SharedMemGlobal(
             const std::string& domain_name)
@@ -93,8 +93,8 @@ public:
     typedef MultiProducerConsumerRingBuffer<BufferDescriptor>::Listener Listener;
     typedef MultiProducerConsumerRingBuffer<BufferDescriptor>::Cell PortCell;
 
-    static const uint32_t CURRENT_ABI_VERSION = 6;
-    static_assert(CURRENT_ABI_VERSION == (3 + FASTDDS_VERSION_MAJOR), "ABI is not correct");
+    static const uint32_t CURRENT_ABI_VERSION = 5;
+    static_assert(CURRENT_ABI_VERSION == (2 + FASTDDS_VERSION_MAJOR), "ABI is not correct");
     static_assert(LOCATOR_KIND_SHM == (16 + FASTDDS_VERSION_MAJOR), "LOCATOR_KIND_SHM is not correct");
 
     struct PortNode
