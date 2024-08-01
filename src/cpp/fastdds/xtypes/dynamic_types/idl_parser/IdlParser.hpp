@@ -581,10 +581,10 @@ template<typename T> T promote(
         DynamicData::_ref_type xdata)
 {
     DynamicType::_ref_type xtype = xdata->type();
-    if (TK_UINT64 == xtype->get_kind())
+    if (TK_INT64 == xtype->get_kind())
     {
-        uint64_t value;
-        xdata->get_uint64_value(value, MEMBER_ID_INVALID);
+        int64_t value;
+        xdata->get_int64_value(value, MEMBER_ID_INVALID);
         return static_cast<T>(value);
     }
     else if (TK_FLOAT128 == xtype->get_kind())
@@ -611,13 +611,13 @@ const TypeKind promotion_type(
 {
     static std::map<TypeKind, int> priorities = {
         {TK_FLOAT128, 2},
-        {TK_UINT64, 1},
+        {TK_INT64, 1},
         {TK_BOOLEAN, 0},
     };
 
     static std::array<TypeKind, 3> infos = {
         TK_BOOLEAN,
-        TK_UINT64,
+        TK_INT64,
         TK_FLOAT128
     };
 
@@ -716,9 +716,9 @@ struct action<boolean_literal>
         } \
     };
 
-load_literal_action(dec_literal, decimal, uint64_t, TK_UINT64, set_uint64_value)
-load_literal_action(oct_literal, octal, uint64_t, TK_UINT64, set_uint64_value)
-load_literal_action(hex_literal, hexa, uint64_t, TK_UINT64, set_uint64_value)
+load_literal_action(dec_literal, decimal, int64_t, TK_INT64, set_int64_value)
+load_literal_action(oct_literal, octal, int64_t, TK_INT64, set_int64_value)
+load_literal_action(hex_literal, hexa, int64_t, TK_INT64, set_int64_value)
 load_literal_action(float_literal, float, long double, TK_FLOAT128, set_float128_value)
 load_literal_action(fixed_pt_literal, fixed, long double, TK_FLOAT128, set_float128_value)
 
@@ -747,10 +747,10 @@ load_literal_action(fixed_pt_literal, fixed, long double, TK_FLOAT128, set_float
             DynamicType::_ref_type xtype {factory->get_primitive_type(pt)}; \
             DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)}; \
  \
-            if (TK_UINT64 == pt) \
+            if (TK_INT64 == pt) \
             { \
-                uint64_t value = promote<uint64_t>(s2) operation promote<uint64_t>(s1); \
-                xdata->set_uint64_value(MEMBER_ID_INVALID, value); \
+                int64_t value = promote<int64_t>(s2) operation promote<int64_t>(s1); \
+                xdata->set_int64_value(MEMBER_ID_INVALID, value); \
                 std::cout << "=========" << std::endl; \
                 std::cout << #operation << ": " << value << std::endl; \
                 std::cout << "=========" << std::endl; \
@@ -801,10 +801,10 @@ load_literal_action(fixed_pt_literal, fixed, long double, TK_FLOAT128, set_float
             DynamicType::_ref_type xtype {factory->get_primitive_type(pt)}; \
             DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)}; \
  \
-            if (TK_UINT64 == pt) \
+            if (TK_INT64 == pt) \
             { \
-                uint64_t value = promote<uint64_t>(s2) operation promote<uint64_t>(s1); \
-                xdata->set_uint64_value(MEMBER_ID_INVALID, value); \
+                int64_t value = promote<int64_t>(s2) operation promote<int64_t>(s1); \
+                xdata->set_int64_value(MEMBER_ID_INVALID, value); \
                 std::cout << "=========" << std::endl; \
                 std::cout << #operation << ": " << value << std::endl; \
                 std::cout << "=========" << std::endl; \
@@ -847,10 +847,10 @@ load_literal_action(fixed_pt_literal, fixed, long double, TK_FLOAT128, set_float
             DynamicType::_ref_type xtype {factory->get_primitive_type(pt)}; \
             DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)}; \
  \
-            if (TK_UINT64 == pt) \
+            if (TK_INT64 == pt) \
             { \
-                uint64_t value = promote<uint64_t>(s2) operation promote<uint64_t>(s1); \
-                xdata->set_uint64_value(MEMBER_ID_INVALID, value); \
+                int64_t value = promote<int64_t>(s2) operation promote<int64_t>(s1); \
+                xdata->set_int64_value(MEMBER_ID_INVALID, value); \
                 std::cout << "=========" << std::endl; \
                 std::cout << #operation << ": " << value << std::endl; \
                 std::cout << "=========" << std::endl; \
@@ -904,11 +904,11 @@ struct action<minus_exec>
 
         DynamicData::_ref_type xdata = operands.back();
         DynamicType::_ref_type xtype = xdata->type();
-        if (TK_UINT64 == xtype->get_kind())
+        if (TK_INT64 == xtype->get_kind())
         {
-            uint64_t value;
-            xdata->get_uint64_value(value, MEMBER_ID_INVALID);
-            xdata->set_uint64_value(MEMBER_ID_INVALID, -value);
+            int64_t value;
+            xdata->get_int64_value(value, MEMBER_ID_INVALID);
+            xdata->set_int64_value(MEMBER_ID_INVALID, -value);
         }
         else if (TK_FLOAT128 == xtype->get_kind())
         {
@@ -959,11 +959,11 @@ struct action<inv_exec>
 
         DynamicData::_ref_type xdata = operands.back();
         DynamicType::_ref_type xtype = xdata->type();
-        if (TK_UINT64 == xtype->get_kind())
+        if (TK_INT64 == xtype->get_kind())
         {
-            uint64_t value;
-            xdata->get_uint64_value(value, MEMBER_ID_INVALID);
-            xdata->set_uint64_value(MEMBER_ID_INVALID, ~value);
+            int64_t value;
+            xdata->get_int64_value(value, MEMBER_ID_INVALID);
+            xdata->set_int64_value(MEMBER_ID_INVALID, ~value);
         }
         else if (TK_BOOLEAN == xtype->get_kind())
         {
