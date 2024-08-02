@@ -779,4 +779,7 @@ void XMLProfileManager::DeleteInstance()
         }
         dynamic_types_.clear();
     }
+
+    // Clear XML Parser collections
+    XMLParser::clear();
 }

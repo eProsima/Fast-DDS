@@ -1,7 +1,13 @@
 Forthcoming
 -----------
 
+<<<<<<< HEAD
 Version 2.10.4
+=======
+* Added new `flow_controller_descriptor_list` XML configuration.
+
+Version 2.14.0
+>>>>>>> e6044e011 (Add XML configuration for FlowControllerDescriptor to 2.x (#4893))
 --------------
 
 * Added `non_blocking_send` to TCP Transport.

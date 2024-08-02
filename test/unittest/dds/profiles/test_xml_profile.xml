@@ -123,6 +123,41 @@
                 <participantID>66</participantID>
                 <useBuiltinTransports>true</useBuiltinTransports>
                 <name>test_name</name>
+<<<<<<< HEAD
+=======
+                <builtin_controllers_sender_thread>
+                    <affinity>15</affinity>
+                    <stack_size>1048576</stack_size>
+                </builtin_controllers_sender_thread>
+                <timed_events_thread>
+                    <affinity>15</affinity>
+                    <stack_size>1048576</stack_size>
+                </timed_events_thread>
+                <discovery_server_thread>
+                    <affinity>15</affinity>
+                    <stack_size>1048576</stack_size>
+                </discovery_server_thread>
+                <builtin_transports_reception_threads>
+                    <affinity>15</affinity>
+                    <stack_size>1048576</stack_size>
+                </builtin_transports_reception_threads>
+                <security_log_thread>
+                    <affinity>15</affinity>
+                    <stack_size>1048576</stack_size>
+                </security_log_thread>
+                <flow_controller_descriptor_list>
+                    <flow_controller_descriptor>
+                        <name>test_flow_controller</name>
+                        <max_bytes_per_period>2048</max_bytes_per_period>
+                        <period_ms>45</period_ms>
+                        <scheduler>FIFO</scheduler>
+                        <sender_thread>
+                            <affinity>15</affinity>
+                            <stack_size>1048576</stack_size>
+                        </sender_thread>
+                    </flow_controller_descriptor>
+                </flow_controller_descriptor_list>
+>>>>>>> e6044e011 (Add XML configuration for FlowControllerDescriptor to 2.x (#4893))
             </rtps>
         </participant>
 
@@ -248,6 +283,41 @@
                 <participantID>99</participantID>
                 <useBuiltinTransports>true</useBuiltinTransports>
                 <name>default_name</name>
+<<<<<<< HEAD
+=======
+                <builtin_controllers_sender_thread>
+                    <affinity>15</affinity>
+                    <stack_size>1048576</stack_size>
+                </builtin_controllers_sender_thread>
+                <timed_events_thread>
+                    <affinity>15</affinity>
+                    <stack_size>1048576</stack_size>
+                </timed_events_thread>
+                <discovery_server_thread>
+                    <affinity>15</affinity>
+                    <stack_size>1048576</stack_size>
+                </discovery_server_thread>
+                <builtin_transports_reception_threads>
+                    <affinity>15</affinity>
+                    <stack_size>1048576</stack_size>
+                </builtin_transports_reception_threads>
+                <security_log_thread>
+                    <affinity>15</affinity>
+                    <stack_size>1048576</stack_size>
+                </security_log_thread>
+                <flow_controller_descriptor_list>
+                    <flow_controller_descriptor>
+                        <name>test_default_flow_controller</name>
+                        <max_bytes_per_period>2048</max_bytes_per_period>
+                        <period_ms>45</period_ms>
+                        <scheduler>FIFO</scheduler>
+                        <sender_thread>
+                            <affinity>15</affinity>
+                            <stack_size>1048576</stack_size>
+                        </sender_thread>
+                    </flow_controller_descriptor>
+                </flow_controller_descriptor_list>
+>>>>>>> e6044e011 (Add XML configuration for FlowControllerDescriptor to 2.x (#4893))
             </rtps>
         </participant>
 
@@ -397,6 +467,7 @@
                 </partition>
                 <publishMode>
                     <kind>ASYNCHRONOUS</kind>
+                    <flow_controller_name>test_default_flow_controller</flow_controller_name>
                 </publishMode>
             </qos>
             <times>
