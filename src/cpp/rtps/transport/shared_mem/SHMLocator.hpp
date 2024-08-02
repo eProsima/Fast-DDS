@@ -55,7 +55,7 @@ public:
 
         if ((fastdds::dds::RETCODE_OK == SystemInfo::get_username(user_name)) && (user_name.length() < 16))
         {
-            std::strcpy(reinterpret_cast<char*>(&locator.address[1]), user_name.c_str());
+            std::memcpy(&locator.address[1], user_name.c_str(), user_name.length());
         }
         else
         {
