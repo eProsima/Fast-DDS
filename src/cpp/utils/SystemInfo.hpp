@@ -147,6 +147,13 @@ public:
             std::string& username);
 
     /**
+     * Gets the resulting md5 digest of th user name and host id
+     *
+     * * \param [out] user_host_digest array of octets to store the digest
+     */
+    static const unsigned char*  get_username_host_id_md5_digest();
+
+    /**
      * Check if the file with name \c filename exists.
      * \c filename can also include the path to the file.
      *
@@ -266,6 +273,9 @@ private:
     static bool cached_interfaces_;
     static std::vector<fastdds::rtps::IPFinder::info_IP> interfaces_;
     static std::mutex interfaces_mtx_;
+    static std::atomic<bool> username_host_id_md5_digest_initialized_;
+    static std::mutex username_host_id_digest_mtx_;
+    static fastdds::MD5 username_host_id_md5_;
 };
 
 /**

@@ -13,6 +13,7 @@
 # limitations under the License.
 
 set(LOG_SOURCES
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
 )
 

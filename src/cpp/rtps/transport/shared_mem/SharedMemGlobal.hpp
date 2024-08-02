@@ -1106,6 +1106,7 @@ private:
 
                 if (port_node)
                 {
+                    std::cout << "open_portinternal " << domain_name_ << " port domain name " << port_node->domain_name << std::endl;
                     port = std::make_shared<Port>(std::move(port_segment), port_node);
                 }
                 else

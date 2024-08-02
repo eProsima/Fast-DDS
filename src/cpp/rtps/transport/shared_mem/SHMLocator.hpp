@@ -50,18 +50,7 @@ public:
 
         locator.get_address()[0] = (type == Type::UNICAST) ? 'U' : 'M';
 
-        auto host_id = Host::instance().id();
-        std::string user_name;
-
-        if ((fastdds::dds::RETCODE_OK == SystemInfo::get_username(user_name)) && (user_name.length() < 16))
-        {
-            std::memcpy(&locator.address[1], user_name.c_str(), user_name.length());
-        }
-        else
-        {
-            locator.get_address()[1] = octet(host_id);
-            locator.get_address()[2] = octet(host_id >> 8);
-        }
+        memcpy(&locator.get_address()[1], SystemInfo::get_username_host_id_md5_digest(), 15u);
 
         return locator;
     }
@@ -76,12 +65,8 @@ public:
     {
         if (locator.kind == LOCATOR_KIND_SHM)
         {
-            auto host_id = Host::instance().id();
-            std::string user_name;
-            SystemInfo::get_username(user_name);
-            return ((std::memcmp(&locator.address[1], user_name.c_str(),
-                   user_name.length()) == 0) ||
-                   (locator.address[1] == octet(host_id) && locator.address[2] == octet(host_id >> 8)));
+            return ((std::memcmp(&locator.address[1], SystemInfo::get_username_host_id_md5_digest(),
+                   15u) == 0));
         }
 
         return false;
