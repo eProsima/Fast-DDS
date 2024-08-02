@@ -24,6 +24,8 @@ services:
       # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
       LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
       EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/rtps@FILE_EXTENSION@
+    network_mode: host
+    ipc: host
     command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/rtps@FILE_EXTENSION@ reader --samples 20"
 
   sub-dds:
@@ -37,6 +39,8 @@ services:
       LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
       EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/hello_world
       FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/rtps/hello_world_profile.xml
+    network_mode: host
+    ipc: host
     command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/hello_world@FILE_EXTENSION@ subscriber --samples 20"
 
   pub-rtps:
@@ -49,6 +53,8 @@ services:
       # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
       LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
       EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/rtps
+    network_mode: host
+    ipc: host
     command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/rtps@FILE_EXTENSION@ writer --samples 10"
     depends_on:
     - sub-rtps
@@ -65,6 +71,8 @@ services:
       LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
       EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/hello_world
       FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/rtps/hello_world_profile.xml
+    network_mode: host
+    ipc: host
     command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/hello_world@FILE_EXTENSION@ publisher --samples 10"
     depends_on:
     - sub-rtps

@@ -26,6 +26,8 @@ services:
       EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/configuration
       FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/configuration/configuration_profile.xml
       SUBSCRIBER_ADDITIONAL_ARGUMENTS: ${SUB_ARGS}
+    network_mode: host
+    ipc: host
     command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/configuration@FILE_EXTENSION@ subscriber --samples 10 $${SUBSCRIBER_ADDITIONAL_ARGUMENTS}"
 
   publisher-subscriber:
@@ -41,4 +43,6 @@ services:
       FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/configuration/configuration_profile.xml
       PUBLISHER_ADDITIONAL_ARGUMENTS: ${PUB_ARGS}
       SUBSCRIBER_ADDITIONAL_ARGUMENTS: ${SUB_ARGS}
+    network_mode: host
+    ipc: host
     command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/configuration@FILE_EXTENSION@ subscriber --samples 10 $${SUBSCRIBER_ADDITIONAL_ARGUMENTS} & $${EXAMPLE_DIR}/configuration@FILE_EXTENSION@ publisher --samples 10 --wait 2 $${PUBLISHER_ADDITIONAL_ARGUMENTS}"
