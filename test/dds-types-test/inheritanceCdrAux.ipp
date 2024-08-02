@@ -129,8 +129,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InnerStructureHelperChild& data)
 {
-    static_cast<void>(scdr);
-    static_cast<void>(data);
+    extern void serialize_key(
+            Cdr& scdr,
+            const InnerStructureHelper& data);
+    serialize_key(scdr, static_cast<const InnerStructureHelper&>(data));
 }
 
 
@@ -245,8 +247,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InnerStructureHelperChildChild& data)
 {
-    static_cast<void>(scdr);
-    static_cast<void>(data);
+    extern void serialize_key(
+            Cdr& scdr,
+            const InnerStructureHelperChild& data);
+    serialize_key(scdr, static_cast<const InnerStructureHelperChild&>(data));
 }
 
 
@@ -329,8 +333,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InnerStructureHelperEmptyChild& data)
 {
-    static_cast<void>(scdr);
-    static_cast<void>(data);
+    extern void serialize_key(
+            Cdr& scdr,
+            const InnerStructureHelper& data);
+    serialize_key(scdr, static_cast<const InnerStructureHelper&>(data));
 }
 
 
@@ -421,8 +427,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InnerStructureHelperEmptyChildChild& data)
 {
-    static_cast<void>(scdr);
-    static_cast<void>(data);
+    extern void serialize_key(
+            Cdr& scdr,
+            const InnerStructureHelperEmptyChild& data);
+    serialize_key(scdr, static_cast<const InnerStructureHelperEmptyChild&>(data));
 }
 
 
@@ -505,8 +513,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InnerEmptyStructureHelperChild& data)
 {
-    static_cast<void>(scdr);
-    static_cast<void>(data);
+    extern void serialize_key(
+            Cdr& scdr,
+            const InnerEmptyStructureHelper& data);
+    serialize_key(scdr, static_cast<const InnerEmptyStructureHelper&>(data));
 }
 
 
@@ -597,8 +607,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const StructAliasInheritanceStruct& data)
 {
-    static_cast<void>(scdr);
-    static_cast<void>(data);
+    extern void serialize_key(
+            Cdr& scdr,
+            const inner_structure_helper_alias& data);
+    serialize_key(scdr, static_cast<const inner_structure_helper_alias&>(data));
 }
 
 
@@ -713,8 +725,45 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const StructuresInheritanceStruct& data)
 {
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const InnerStructureHelperChild& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const InnerStructureHelperChildChild& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const InnerStructureHelperEmptyChild& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const InnerStructureHelperEmptyChildChild& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const InnerEmptyStructureHelperChild& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const StructAliasInheritanceStruct& data);
+
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.var_InnerStructureHelperChild());
+
+                        serialize_key(scdr, data.var_InnerStructureHelperChildChild());
+
+                        serialize_key(scdr, data.var_InnerStructureHelperEmptyChild());
+
+                        serialize_key(scdr, data.var_InnerStructureHelperEmptyChildChild());
+
+                        serialize_key(scdr, data.var_InnerEmptyStructureHelperChild());
+
+                        serialize_key(scdr, data.var_StructAliasInheritanceStruct());
+
 }
 
 
@@ -1015,8 +1064,15 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const BitsetsChildInheritanceStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_InnerBitsetHelperChild();
+
+                        scdr << data.var_InnerBitsetHelperChildChild();
+
+                        scdr << data.var_BitsetAliasInheritanceBitset();
+
 }
 
 

@@ -217,8 +217,39 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const PrimitivesStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.my_bool();
+
+                        scdr << data.my_octet();
+
+                        scdr << data.my_char();
+
+                        scdr << data.my_wchar();
+
+                        scdr << data.my_long();
+
+                        scdr << data.my_ulong();
+
+                        scdr << data.my_int8();
+
+                        scdr << data.my_uint8();
+
+                        scdr << data.my_short();
+
+                        scdr << data.my_ushort();
+
+                        scdr << data.my_longlong();
+
+                        scdr << data.my_ulonglong();
+
+                        scdr << data.my_float();
+
+                        scdr << data.my_double();
+
+                        scdr << data.my_longdouble();
+
 }
 
 

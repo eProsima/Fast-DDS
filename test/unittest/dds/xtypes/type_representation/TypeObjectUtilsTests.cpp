@@ -3250,9 +3250,9 @@ TEST(TypeObjectUtilsTests, add_to_complete_struct_member_seq)
     EXPECT_NO_THROW(TypeObjectUtils::add_complete_struct_member(member_seq, second));
     EXPECT_THROW(TypeObjectUtils::add_complete_struct_member(member_seq, second), InvalidArgumentError);
     EXPECT_EQ(3, member_seq.size());
-    EXPECT_EQ(first, member_seq[0]);
-    EXPECT_EQ(second, member_seq[1]);
-    EXPECT_EQ(third, member_seq[2]);
+    EXPECT_EQ(third, member_seq[0]);
+    EXPECT_EQ(first, member_seq[1]);
+    EXPECT_EQ(second, member_seq[2]);
 }
 
 // Test add element to UnionCaseLabelSeq
@@ -3308,9 +3308,9 @@ TEST(TypeObjectUtilsTests, add_to_complete_union_member_seq)
     EXPECT_NO_THROW(TypeObjectUtils::add_complete_union_member(member_seq, second_member));
     EXPECT_THROW(TypeObjectUtils::add_complete_union_member(member_seq, second_member), InvalidArgumentError);
     EXPECT_EQ(3, member_seq.size());
-    EXPECT_EQ(first_member, member_seq[0]);
-    EXPECT_EQ(second_member, member_seq[1]);
-    EXPECT_EQ(third_member, member_seq[2]);
+    EXPECT_EQ(third_member, member_seq[0]);
+    EXPECT_EQ(first_member, member_seq[1]);
+    EXPECT_EQ(second_member, member_seq[2]);
 }
 
 // Test add element to CompleteAnnotationParameterSeq

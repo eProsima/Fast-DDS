@@ -129,8 +129,17 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ForwardDeclarationsRecursiveStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_RecursiveUnboundedSeqForwardStruct();
+
+                        scdr << data.var_RecursiveBoundedSeqForwardStruct();
+
+                        scdr << data.var_RecursiveUnboundedSeqForwardUnion();
+
+                        scdr << data.var_RecursiveBoundedSeqForwardUnion();
+
 }
 
 
@@ -343,8 +352,13 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ForwardStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_short();
+
+                        scdr << data.var_long();
+
 }
 
 
@@ -429,6 +443,8 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_u_long_long();
+
 }
 
 
@@ -527,8 +543,17 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ModuledForwardDeclarationsRecursiveStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_ModuledRecursiveUnboundedSeqForwardStruct();
+
+                        scdr << data.var_ModuledRecursiveBoundedSeqForwardStruct();
+
+                        scdr << data.var_ModuledRecursiveUnboundedSeqForwardUnion();
+
+                        scdr << data.var_ModuledRecursiveBoundedSeqForwardUnion();
+
 }
 
 
@@ -621,6 +646,10 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_short();
+
+                        scdr << data.var_long();
+
 }
 
 
@@ -840,8 +869,21 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ModuledCommonNameStructure& data)
 {
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const ForwardStruct& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const declarations_module::ForwardStruct& data);
+
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.global_struct());
+
+                        serialize_key(scdr, data.namespaced_struct());
+
 }
 
 

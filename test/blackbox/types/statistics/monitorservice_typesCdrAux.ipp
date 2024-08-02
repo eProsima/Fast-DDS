@@ -136,9 +136,23 @@ void serialize_key(
         const eprosima::fastdds::statistics::Connection& data)
 {
     using namespace eprosima::fastdds::statistics;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::statistics::detail::GUID_s& data);
+
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.mode();
+
+                        serialize_key(scdr, data.guid());
+
+                        scdr << data.announced_locators();
+
+                        scdr << data.used_locators();
+
 }
 
 
@@ -231,6 +245,10 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.policy_id();
+
+                        scdr << data.count();
+
 }
 
 
@@ -315,6 +333,8 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.total_count();
+
 }
 
 
@@ -416,6 +436,12 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.total_count();
+
+                        scdr << data.last_policy_id();
+
+                        scdr << data.policies();
+
 }
 
 
@@ -516,6 +542,12 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.alive_count();
+
+                        scdr << data.not_alive_count();
+
+                        scdr << data.last_publication_handle();
+
 }
 
 
@@ -608,6 +640,10 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.total_count();
+
+                        scdr << data.last_instance_handle();
+
 }
 
 
@@ -992,12 +1028,18 @@ void serialize_key(
         const eprosima::fastdds::statistics::MonitorServiceStatusData& data)
 {
     using namespace eprosima::fastdds::statistics;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::statistics::detail::GUID_s& data);
+
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
-                                scdr << data.local_entity();
+                        serialize_key(scdr, data.local_entity());
 
-                            scdr << data.status_kind();
+                        scdr << data.status_kind();
 
 
 }

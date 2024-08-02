@@ -107,7 +107,8 @@ public:
             DynamicData::_ref_type& data,
             DataRepresentationId data_representation,
             static_data& data_static,
-            static_pubsub& static_pubsubType)
+            static_pubsub& static_pubsubType,
+            uint8_t ihandle_bytes_to_compare = rtps::RTPS_KEY_HASH_SIZE)
     {
         TypeSupport dyn_pubsubType {new DynamicPubSubType(type)};
 
@@ -134,6 +135,20 @@ public:
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(type)};
         ASSERT_TRUE(dyn_pubsubType.deserialize(static_payload, &data2));
         EXPECT_TRUE(data2->equals(data));
+
+        // Check key hash calculation
+        if (static_pubsubType.get()->is_compute_key_provided)
+        {
+            eprosima::fastdds::rtps::InstanceHandle_t static_ih;
+            eprosima::fastdds::rtps::InstanceHandle_t dyn_ih;
+            ASSERT_TRUE(static_pubsubType.compute_key(&data_static, static_ih));
+            ASSERT_TRUE(dyn_pubsubType.compute_key(&data, dyn_ih));
+            EXPECT_NE(static_ih, eprosima::fastdds::dds::InstanceHandle_t());
+            // Big endian target
+            const rtps::octet* static_ih_start = static_ih.value + rtps::RTPS_KEY_HASH_SIZE - ihandle_bytes_to_compare;
+            const rtps::octet* dyn_ih_start = dyn_ih.value + rtps::RTPS_KEY_HASH_SIZE - ihandle_bytes_to_compare;
+            ASSERT_EQ(memcmp(static_ih_start, dyn_ih_start, ihandle_bytes_to_compare), 0);
+        }
 
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data1), RETCODE_OK);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);

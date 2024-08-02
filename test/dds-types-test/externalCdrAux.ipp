@@ -105,8 +105,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const short_external& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -181,8 +184,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ushort_external& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -257,8 +263,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const long_external& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -333,8 +342,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ulong_external& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -409,8 +421,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const longlong_external& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -485,8 +500,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ulonglong_external& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -561,8 +579,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const float_external& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -637,8 +658,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const double_external& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -713,8 +737,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const longdouble_external& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -789,8 +816,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const boolean_external& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -865,8 +895,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const octet_external& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -941,8 +974,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const char_external& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -1017,8 +1053,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const wchar_external& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -1093,8 +1132,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const sequence_short_external& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -1169,8 +1211,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const string_unbounded_external& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -1245,8 +1290,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const string_bounded_external& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -1321,8 +1369,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const map_short_external& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -1397,8 +1448,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const array_short_external& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -1473,8 +1527,15 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const struct_external& data)
 {
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const InnerStructureHelper& data);
+
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, *data.value());
+
 }
 
 
@@ -1557,8 +1618,13 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InnerStructExternal& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.s();
+
+                        scdr << data.l();
+
 }
 
 
@@ -1633,8 +1699,15 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ext_struct_external& data)
 {
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const InnerStructExternal& data);
+
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.value());
+
 }
 
 
@@ -1709,8 +1782,15 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ext_and_inner_struct_external& data)
 {
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const InnerStructExternal& data);
+
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, *data.value());
+
 }
 
 
@@ -1785,8 +1865,18 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const struct_external_optional& data)
 {
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const InnerStructureHelper& data);
+
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        if (data.value().has_value())
+                        {
+                            serialize_key(scdr, *data.value().value());
+                        }
+
 }
 
 
@@ -1870,8 +1960,13 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const recursive_union_container& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.l();
+
+                        scdr << data.ext();
+
 }
 
 
@@ -2105,8 +2200,13 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const recursive_test_1& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.s();
+
+                        scdr << data.u();
+
 }
 
 
@@ -2341,8 +2441,13 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const recursive_structure& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.s();
+
+                        scdr << data.c();
+
 }
 
 
@@ -2425,8 +2530,17 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const recursive_test_2& data)
 {
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const recursive_structure& data);
+
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.o();
+
+                        serialize_key(scdr, data.s());
+
 }
 
 

@@ -105,8 +105,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_short();
+
 }
 
 
@@ -181,8 +184,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceUShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_ushort();
+
 }
 
 
@@ -257,8 +263,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_long();
+
 }
 
 
@@ -333,8 +342,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceULong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_ulong();
+
 }
 
 
@@ -409,8 +421,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceLongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_longlong();
+
 }
 
 
@@ -485,8 +500,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceULongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_ulonglong();
+
 }
 
 
@@ -561,8 +579,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceFloat& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_float();
+
 }
 
 
@@ -637,8 +658,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_double();
+
 }
 
 
@@ -713,8 +737,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceLongDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_longdouble();
+
 }
 
 
@@ -789,8 +816,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceBoolean& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_boolean();
+
 }
 
 
@@ -865,8 +895,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceOctet& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_octet();
+
 }
 
 
@@ -941,8 +974,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_char();
+
 }
 
 
@@ -1017,8 +1053,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceWChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_wchar();
+
 }
 
 
@@ -1093,8 +1132,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_string();
+
 }
 
 
@@ -1169,8 +1211,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceWString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_wstring();
+
 }
 
 
@@ -1245,8 +1290,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceStringBounded& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_bounded_string();
+
 }
 
 
@@ -1321,8 +1369,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceWStringBounded& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_bounded_wstring();
+
 }
 
 
@@ -1397,8 +1448,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceEnum& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_enum();
+
 }
 
 
@@ -1473,8 +1527,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceBitMask& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_bitmask();
+
 }
 
 
@@ -1549,8 +1606,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceAlias& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_alias();
+
 }
 
 
@@ -1625,8 +1685,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceShortArray& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_short_array();
+
 }
 
 
@@ -1701,8 +1764,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceSequence& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_sequence();
+
 }
 
 
@@ -1777,8 +1843,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceMap& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_map();
+
 }
 
 
@@ -1853,8 +1922,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceUnion& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_union();
+
 }
 
 
@@ -1929,8 +2001,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceStructure& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_structure();
+
 }
 
 
@@ -2005,8 +2080,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceBitset& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_bitset();
+
 }
 
 
@@ -2089,8 +2167,13 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const BoundedSmallSequences& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_small();
+
+                        scdr << data.var_unbounded_string_small_bounded_sequence();
+
 }
 
 
@@ -2173,8 +2256,13 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const BoundedBigSequences& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_sequence_big();
+
+                        scdr << data.var_unbounded_string_large_bounded_sequence();
+
 }
 
 

@@ -129,9 +129,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const CalculatorRequestType& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
-                            scdr << data.client_id();
+                        scdr << data.client_id();
 
 
 
@@ -218,9 +219,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const CalculatorReplyType& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
-                            scdr << data.client_id();
+                        scdr << data.client_id();
 
 
 }

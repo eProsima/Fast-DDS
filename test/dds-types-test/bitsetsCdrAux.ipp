@@ -317,8 +317,19 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const BitsetStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_InnerBitsetHelper();
+
+                        scdr << data.var_InnerTypedBitsetHelper();
+
+                        scdr << data.var_InnerTypedBitsetHelper2();
+
+                        scdr << data.var_InnerTypedBitsetHelper3();
+
+                        scdr << data.var_InnerTypedBitsetHelper4();
+
 }
 
 

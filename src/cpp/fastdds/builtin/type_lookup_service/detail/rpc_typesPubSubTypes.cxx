@@ -189,7 +189,8 @@ bool EntityId_tPubSubType::compute_key(
             eprosima_fastdds_dds_EntityId_t_max_key_cdr_typesize);
 
     // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv1);
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
+    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
     eprosima::fastcdr::serialize_key(ser, *p_type);
     if (force_md5 || eprosima_fastdds_dds_EntityId_t_max_key_cdr_typesize > 16)
     {
@@ -370,7 +371,8 @@ bool GUID_tPubSubType::compute_key(
             eprosima_fastdds_dds_GUID_t_max_key_cdr_typesize);
 
     // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv1);
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
+    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
     eprosima::fastcdr::serialize_key(ser, *p_type);
     if (force_md5 || eprosima_fastdds_dds_GUID_t_max_key_cdr_typesize > 16)
     {
@@ -551,7 +553,8 @@ bool SequenceNumber_tPubSubType::compute_key(
             eprosima_fastdds_dds_SequenceNumber_t_max_key_cdr_typesize);
 
     // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv1);
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
+    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
     eprosima::fastcdr::serialize_key(ser, *p_type);
     if (force_md5 || eprosima_fastdds_dds_SequenceNumber_t_max_key_cdr_typesize > 16)
     {
@@ -732,7 +735,8 @@ bool SampleIdentityPubSubType::compute_key(
             eprosima_fastdds_dds_SampleIdentity_max_key_cdr_typesize);
 
     // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv1);
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
+    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
     eprosima::fastcdr::serialize_key(ser, *p_type);
     if (force_md5 || eprosima_fastdds_dds_SampleIdentity_max_key_cdr_typesize > 16)
     {
@@ -914,7 +918,8 @@ namespace rpc {
                 eprosima_fastdds_dds_rpc_RequestHeader_max_key_cdr_typesize);
 
         // Object that serializes the data.
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv1);
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
+        ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
         eprosima::fastcdr::serialize_key(ser, *p_type);
         if (force_md5 || eprosima_fastdds_dds_rpc_RequestHeader_max_key_cdr_typesize > 16)
         {
@@ -1095,7 +1100,8 @@ namespace rpc {
                 eprosima_fastdds_dds_rpc_ReplyHeader_max_key_cdr_typesize);
 
         // Object that serializes the data.
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv1);
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
+        ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
         eprosima::fastcdr::serialize_key(ser, *p_type);
         if (force_md5 || eprosima_fastdds_dds_rpc_ReplyHeader_max_key_cdr_typesize > 16)
         {

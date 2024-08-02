@@ -5034,8 +5034,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_short();
+
 }
 
 
@@ -5110,8 +5113,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionUShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_ushort();
+
 }
 
 
@@ -5186,8 +5192,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_long();
+
 }
 
 
@@ -5262,8 +5271,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionULong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_ulong();
+
 }
 
 
@@ -5338,8 +5350,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionLongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_long_long();
+
 }
 
 
@@ -5414,8 +5429,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionULongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_ulong_long();
+
 }
 
 
@@ -5490,8 +5508,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionFloat& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_float();
+
 }
 
 
@@ -5566,8 +5587,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_double();
+
 }
 
 
@@ -5642,8 +5666,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionLongDouble& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_long_double();
+
 }
 
 
@@ -5718,8 +5745,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionBoolean& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_boolean();
+
 }
 
 
@@ -5794,8 +5824,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionOctet& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_octet();
+
 }
 
 
@@ -5870,8 +5903,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_char();
+
 }
 
 
@@ -5946,8 +5982,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionWChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_wchar();
+
 }
 
 
@@ -6022,8 +6061,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_string();
+
 }
 
 
@@ -6098,8 +6140,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionWString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_wstring();
+
 }
 
 
@@ -6174,8 +6219,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionBoundedString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_bounded_string();
+
 }
 
 
@@ -6250,8 +6298,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionBoundedWString& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_bounded_wstring();
+
 }
 
 
@@ -6326,8 +6377,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionInnerEnumHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_my_enum();
+
 }
 
 
@@ -6402,8 +6456,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionInnerBitMaskHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_my_bit_mask();
+
 }
 
 
@@ -6478,8 +6535,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionInnerAliasHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_my_alias();
+
 }
 
 
@@ -6554,8 +6614,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionArray& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_array();
+
 }
 
 
@@ -6630,8 +6693,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionSequence& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_sequence();
+
 }
 
 
@@ -6706,8 +6772,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionMap& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_map();
+
 }
 
 
@@ -6782,8 +6851,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionInnerUnionHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_my_union();
+
 }
 
 
@@ -6858,8 +6930,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionInnerStructureHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_my_structure();
+
 }
 
 
@@ -6934,8 +7009,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionInnerBitsetHelper& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_my_bitset();
+
 }
 
 
@@ -7010,8 +7088,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionDiscriminatorShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_discriminator_short();
+
 }
 
 
@@ -7086,8 +7167,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionDiscriminatorUShort& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_discriminator_ushort();
+
 }
 
 
@@ -7162,8 +7246,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionDiscriminatorLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_discriminator_long();
+
 }
 
 
@@ -7238,8 +7325,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionDiscriminatorULong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_discriminator_ulong();
+
 }
 
 
@@ -7314,8 +7404,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionDiscriminatorLongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_discriminator_long_long();
+
 }
 
 
@@ -7390,8 +7483,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionDiscriminatorULongLong& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_discriminator_ulong_long();
+
 }
 
 
@@ -7466,8 +7562,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionDiscriminatorBoolean& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_discriminator_boolean();
+
 }
 
 
@@ -7542,8 +7641,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionDiscriminatorOctet& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_discriminator_octet();
+
 }
 
 
@@ -7618,8 +7720,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionDiscriminatorChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_discriminator_char();
+
 }
 
 
@@ -7694,8 +7799,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionDiscriminatorWChar& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_discriminator_wchar();
+
 }
 
 
@@ -7770,8 +7878,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionDiscriminatorEnum& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_discriminator_enum();
+
 }
 
 
@@ -7846,8 +7957,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionDiscriminatorEnumLabel& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_discriminator_enum();
+
 }
 
 
@@ -7922,8 +8036,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionDiscriminatorAlias& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_discriminator_alias();
+
 }
 
 
@@ -7998,8 +8115,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionSeveralFields& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_several_fields();
+
 }
 
 
@@ -8074,8 +8194,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionSeveralFieldsWithDefault& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_union_several_fields_with_default();
+
 }
 
 

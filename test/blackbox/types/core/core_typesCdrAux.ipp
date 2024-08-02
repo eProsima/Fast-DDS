@@ -115,6 +115,8 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -207,6 +209,10 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.major();
+
+                        scdr << data.minor();
+
 }
 
 
@@ -291,6 +297,8 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.vendorId();
+
 }
 
 
@@ -375,6 +383,8 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -464,9 +474,21 @@ void serialize_key(
         const eprosima::fastdds::rtps::core::detail::GUID_t& data)
 {
     using namespace eprosima::fastdds::rtps::core::detail;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::detail::GuidPrefix_t& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::detail::EntityId_t& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.guidPrefix());
+
+                        serialize_key(scdr, data.entityId());
+
 }
 
 
@@ -559,6 +581,10 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.high();
+
+                        scdr << data.low();
+
 }
 
 
@@ -643,6 +669,8 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -735,6 +763,10 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.seconds();
+
+                        scdr << data.fraction();
+
 }
 
 
@@ -833,9 +865,21 @@ void serialize_key(
         const eprosima::fastdds::rtps::core::detail::SequenceNumberSet& data)
 {
     using namespace eprosima::fastdds::rtps::core::detail;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::detail::SequenceNumber_t& data);
+
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.bitmapBase());
+
+                        scdr << data.numBits();
+
+                        scdr << data.bitmap();
+
 }
 
 
@@ -936,6 +980,12 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.kind();
+
+                        scdr << data.port();
+
+                        scdr << data.address();
+
 }
 
 
@@ -1028,6 +1078,10 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.seconds();
+
+                        scdr << data.fraction();
+
 }
 
 
@@ -1114,6 +1168,8 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -1198,6 +1254,8 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.value();
+
 }
 
 
@@ -1282,6 +1340,8 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.name();
+
 }
 
 
@@ -1387,9 +1447,29 @@ void serialize_key(
         const eprosima::fastdds::rtps::core::Header& data)
 {
     using namespace eprosima::fastdds::rtps::core;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::detail::ProtocolVersion_t& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::detail::VendorId_t& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::detail::GuidPrefix_t& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.prefix();
+
+                        serialize_key(scdr, data.version());
+
+                        serialize_key(scdr, data.vendorId());
+
+                        serialize_key(scdr, data.guidPrefix());
+
 }
 
 
@@ -1490,6 +1570,12 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.submessageId();
+
+                        scdr << data.flags();
+
+                        scdr << data.submessageLength();
+
 }
 
 
@@ -1604,9 +1690,39 @@ void serialize_key(
         const eprosima::fastdds::rtps::core::AckNackSubmessage& data)
 {
     using namespace eprosima::fastdds::rtps::core;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::SubmessageHeader& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::detail::EntityId_t& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::detail::EntityId_t& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::detail::SequenceNumberSet& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::detail::Count_t& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.submsgHeader());
+
+                        serialize_key(scdr, data.readerId());
+
+                        serialize_key(scdr, data.writerId());
+
+                        serialize_key(scdr, data.readerSNState());
+
+                        serialize_key(scdr, data.count());
+
 }
 
 
@@ -1728,9 +1844,45 @@ void serialize_key(
         const eprosima::fastdds::rtps::core::HeartBeatSubmessage& data)
 {
     using namespace eprosima::fastdds::rtps::core;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::SubmessageHeader& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::detail::EntityId_t& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::detail::EntityId_t& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::detail::SequenceNumber_t& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::detail::SequenceNumber_t& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::detail::Count_t& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.submsgHeader());
+
+                        serialize_key(scdr, data.readerId());
+
+                        serialize_key(scdr, data.writerId());
+
+                        serialize_key(scdr, data.firstSN());
+
+                        serialize_key(scdr, data.lastSN());
+
+                        serialize_key(scdr, data.count());
+
 }
 
 
@@ -1820,9 +1972,21 @@ void serialize_key(
         const eprosima::fastdds::rtps::core::InfoDestinationSubmessage& data)
 {
     using namespace eprosima::fastdds::rtps::core;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::SubmessageHeader& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::detail::GuidPrefix_t& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.submsgHeader());
+
+                        serialize_key(scdr, data.guidPrefix());
+
 }
 
 
@@ -1936,9 +2100,36 @@ void serialize_key(
         const eprosima::fastdds::rtps::core::InfoSourceSubmessage& data)
 {
     using namespace eprosima::fastdds::rtps::core;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::SubmessageHeader& data);
+
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::detail::ProtocolVersion_t& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::detail::VendorId_t& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::detail::GuidPrefix_t& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.submsgHeader());
+
+                        scdr << data.unused();
+
+                        serialize_key(scdr, data.version());
+
+                        serialize_key(scdr, data.vendorId());
+
+                        serialize_key(scdr, data.guidPrefix());
+
 }
 
 
@@ -2028,9 +2219,18 @@ void serialize_key(
         const eprosima::fastdds::rtps::core::InfoTimestampSubmessage& data)
 {
     using namespace eprosima::fastdds::rtps::core;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::SubmessageHeader& data);
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.submsgHeader());
+
+                        scdr << data.timestamp();
+
 }
 
 
@@ -2310,9 +2510,18 @@ void serialize_key(
         const eprosima::fastdds::rtps::core::RTPSMessage& data)
 {
     using namespace eprosima::fastdds::rtps::core;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::rtps::core::Header& data);
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.msg_header());
+
+                        scdr << data.submessages();
+
 }
 
 

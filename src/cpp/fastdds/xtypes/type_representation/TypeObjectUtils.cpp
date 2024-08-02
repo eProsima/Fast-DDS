@@ -823,28 +823,21 @@ void TypeObjectUtils::add_complete_struct_member(
 {
 #if !defined(NDEBUG)
     complete_struct_member_consistency(member);
+#endif // !defined(NDEBUG)
     for (const CompleteStructMember& struct_member : member_seq)
     {
         if (struct_member.detail().name() == member.detail().name())
         {
             throw InvalidArgumentError("Sequence has another member with same name");
         }
-    }
-#endif // !defined(NDEBUG)
-    auto it = member_seq.begin();
-    for (; it != member_seq.end(); ++it)
-    {
-        // Ordered by the member_index
-        if (it->common().member_id() > member.common().member_id())
-        {
-            break;
-        }
-        else if (it->common().member_id() == member.common().member_id())
+
+        if (struct_member.common().member_id() == member.common().member_id())
         {
             throw InvalidArgumentError("Sequence has another member with same ID");
         }
     }
-    member_seq.emplace(it, member);
+    // Ordered by the member_index
+    member_seq.emplace_back(member);
 }
 
 const AppliedBuiltinTypeAnnotations TypeObjectUtils::build_applied_builtin_type_annotations(
@@ -987,6 +980,7 @@ void TypeObjectUtils::add_complete_union_member(
     }
 #if !defined(NDEBUG)
     complete_union_member_consistency(member);
+#endif // !defined(NDEBUG)
     std::set<int32_t> case_labels;
     // New member labels are ensured to be unique (complete_union_member_consistency)
     for (int32_t label : member.common().label_seq())
@@ -998,6 +992,10 @@ void TypeObjectUtils::add_complete_union_member(
         if (union_member.detail().name() == member.detail().name())
         {
             throw InvalidArgumentError("Sequence has another member with same name");
+        }
+        if (union_member.common().member_id() == member.common().member_id())
+        {
+            throw InvalidArgumentError("Sequence has another member with same ID");
         }
         if (member.common().member_flags() & MemberFlagBits::IS_DEFAULT &&
                 union_member.common().member_flags() & MemberFlagBits::IS_DEFAULT)
@@ -1012,21 +1010,8 @@ void TypeObjectUtils::add_complete_union_member(
             }
         }
     }
-#endif // !defined(NDEBUG)
-    auto it = complete_union_member_seq.begin();
-    for (; it != complete_union_member_seq.end(); ++it)
-    {
-        // Ordered by member_index
-        if (it->common().member_id() > member.common().member_id())
-        {
-            break;
-        }
-        else if (it->common().member_id() == member.common().member_id())
-        {
-            throw InvalidArgumentError("Sequence has another member with same ID");
-        }
-    }
-    complete_union_member_seq.emplace(it, member);
+    // Ordered by the member_index
+    complete_union_member_seq.emplace_back(member);
 }
 
 const CommonDiscriminatorMember TypeObjectUtils::build_common_discriminator_member(
@@ -1237,7 +1222,7 @@ const CompleteAliasType TypeObjectUtils::build_complete_alias_type(
 #if !defined(NDEBUG)
     complete_alias_header_consistency(header);
     complete_alias_body_consistency(body);
-#endif // !defined(NDEBUF)
+#endif // !defined(NDEBUG)
     CompleteAliasType complete_alias_type;
     complete_alias_type.alias_flags(alias_flags);
     complete_alias_type.header(header);

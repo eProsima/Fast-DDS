@@ -113,9 +113,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const KeyedShortStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
-                            scdr << data.key_short();
+                        scdr << data.key_short();
 
 
 }
@@ -200,9 +201,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const KeyedUShortStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
-                            scdr << data.key_ushort();
+                        scdr << data.key_ushort();
 
 
 }
@@ -287,9 +289,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const KeyedLongStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
-                            scdr << data.key_long();
+                        scdr << data.key_long();
 
 
 }
@@ -374,9 +377,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const KeyedULongStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
-                            scdr << data.key_ulong();
+                        scdr << data.key_ulong();
 
 
 }
@@ -461,9 +465,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const KeyedLongLongStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
-                            scdr << data.key_longlong();
+                        scdr << data.key_longlong();
 
 
 }
@@ -548,9 +553,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const KeyedULongLongStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
-                            scdr << data.key_ulonglong();
+                        scdr << data.key_ulonglong();
 
 
 }
@@ -635,9 +641,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const KeyedFloatStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
-                            scdr << data.key_float();
+                        scdr << data.key_float();
 
 
 }
@@ -722,9 +729,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const KeyedDoubleStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
-                            scdr << data.key_double();
+                        scdr << data.key_double();
 
 
 }
@@ -809,9 +817,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const KeyedLongDoubleStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
-                            scdr << data.key_longdouble();
+                        scdr << data.key_longdouble();
 
 
 }
@@ -896,9 +905,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const KeyedBooleanStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
-                            scdr << data.key_boolean();
+                        scdr << data.key_boolean();
 
 
 }
@@ -983,9 +993,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const KeyedOctetStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
-                            scdr << data.key_octet();
+                        scdr << data.key_octet();
 
 
 }
@@ -1070,9 +1081,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const KeyedCharStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
-                            scdr << data.key_char8();
+                        scdr << data.key_char8();
 
 
 }
@@ -1157,9 +1169,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const KeyedWCharStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
-                            scdr << data.key_char16();
+                        scdr << data.key_char16();
 
 
 }
@@ -1236,9 +1249,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const KeyedEmptyStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
-                            scdr << data.key_short();
+                        scdr << data.key_short();
 
 }
 
@@ -1330,8 +1344,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const KeyedEmptyInheritanceStruct& data)
 {
-    static_cast<void>(scdr);
-    static_cast<void>(data);
+    extern void serialize_key(
+            Cdr& scdr,
+            const KeyedEmptyStruct& data);
+    serialize_key(scdr, static_cast<const KeyedEmptyStruct&>(data));
 }
 
 
@@ -1430,8 +1446,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const KeyedInheritanceStruct& data)
 {
-    static_cast<void>(scdr);
-    static_cast<void>(data);
+    extern void serialize_key(
+            Cdr& scdr,
+            const KeyedShortStruct& data);
+    serialize_key(scdr, static_cast<const KeyedShortStruct&>(data));
 }
 
 
@@ -1514,8 +1532,307 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InheritanceKeyedEmptyStruct& data)
 {
+    extern void serialize_key(
+            Cdr& scdr,
+            const KeyedShortStruct& data);
+    serialize_key(scdr, static_cast<const KeyedShortStruct&>(data));
+}
+
+
+template<>
+eProsima_user_DllExport size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const KeyedFinal& data,
+        size_t& current_alignment)
+{
+    static_cast<void>(data);
+
+    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+                                current_alignment)};
+
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
+                data.key_long(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
+                data.key_short(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
+                data.key_string(), current_alignment);
+
+
+    calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
+
+    return calculated_size;
+}
+
+template<>
+eProsima_user_DllExport void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const KeyedFinal& data)
+{
+    eprosima::fastcdr::Cdr::state current_state(scdr);
+    scdr.begin_serialize_type(current_state,
+            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+
+    scdr
+        << eprosima::fastcdr::MemberId(0) << data.key_long()
+        << eprosima::fastcdr::MemberId(1) << data.key_short()
+        << eprosima::fastcdr::MemberId(2) << data.key_string()
+;
+    scdr.end_serialize_type(current_state);
+}
+
+template<>
+eProsima_user_DllExport void deserialize(
+        eprosima::fastcdr::Cdr& cdr,
+        KeyedFinal& data)
+{
+    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+            [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
+            {
+                bool ret_value = true;
+                switch (mid.id)
+                {
+                                        case 0:
+                                                dcdr >> data.key_long();
+                                            break;
+
+                                        case 1:
+                                                dcdr >> data.key_short();
+                                            break;
+
+                                        case 2:
+                                                dcdr >> data.key_string();
+                                            break;
+
+                    default:
+                        ret_value = false;
+                        break;
+                }
+                return ret_value;
+            });
+}
+
+void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const KeyedFinal& data)
+{
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.key_string();
+
+                        scdr << data.key_short();
+
+                        scdr << data.key_long();
+
+}
+
+
+template<>
+eProsima_user_DllExport size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const KeyedAppendable& data,
+        size_t& current_alignment)
+{
+    static_cast<void>(data);
+
+    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
+                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+                                current_alignment)};
+
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
+                data.key_long(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
+                data.key_short(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
+                data.key_string(), current_alignment);
+
+
+    calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
+
+    return calculated_size;
+}
+
+template<>
+eProsima_user_DllExport void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const KeyedAppendable& data)
+{
+    eprosima::fastcdr::Cdr::state current_state(scdr);
+    scdr.begin_serialize_type(current_state,
+            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+
+    scdr
+        << eprosima::fastcdr::MemberId(0) << data.key_long()
+        << eprosima::fastcdr::MemberId(1) << data.key_short()
+        << eprosima::fastcdr::MemberId(2) << data.key_string()
+;
+    scdr.end_serialize_type(current_state);
+}
+
+template<>
+eProsima_user_DllExport void deserialize(
+        eprosima::fastcdr::Cdr& cdr,
+        KeyedAppendable& data)
+{
+    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+            [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
+            {
+                bool ret_value = true;
+                switch (mid.id)
+                {
+                                        case 0:
+                                                dcdr >> data.key_long();
+                                            break;
+
+                                        case 1:
+                                                dcdr >> data.key_short();
+                                            break;
+
+                                        case 2:
+                                                dcdr >> data.key_string();
+                                            break;
+
+                    default:
+                        ret_value = false;
+                        break;
+                }
+                return ret_value;
+            });
+}
+
+void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const KeyedAppendable& data)
+{
+
+    static_cast<void>(scdr);
+    static_cast<void>(data);
+                        scdr << data.key_string();
+
+                        scdr << data.key_short();
+
+                        scdr << data.key_long();
+
+}
+
+
+template<>
+eProsima_user_DllExport size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const KeyedMutable& data,
+        size_t& current_alignment)
+{
+    static_cast<void>(data);
+
+    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR,
+                                current_alignment)};
+
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0x00000002),
+                data.key_long(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0x00000001),
+                data.key_short(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0x00000000),
+                data.key_string(), current_alignment);
+
+
+    calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
+
+    return calculated_size;
+}
+
+template<>
+eProsima_user_DllExport void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const KeyedMutable& data)
+{
+    eprosima::fastcdr::Cdr::state current_state(scdr);
+    scdr.begin_serialize_type(current_state,
+            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR);
+
+    scdr
+        << eprosima::fastcdr::MemberId(0x00000002) << data.key_long()
+        << eprosima::fastcdr::MemberId(0x00000001) << data.key_short()
+        << eprosima::fastcdr::MemberId(0x00000000) << data.key_string()
+;
+    scdr.end_serialize_type(current_state);
+}
+
+template<>
+eProsima_user_DllExport void deserialize(
+        eprosima::fastcdr::Cdr& cdr,
+        KeyedMutable& data)
+{
+    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR,
+            [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
+            {
+                bool ret_value = true;
+                switch (mid.id)
+                {
+                                        case 0x00000002:
+                                                dcdr >> data.key_long();
+                                            break;
+
+                                        case 0x00000001:
+                                                dcdr >> data.key_short();
+                                            break;
+
+                                        case 0x00000000:
+                                                dcdr >> data.key_string();
+                                            break;
+
+                    default:
+                        ret_value = false;
+                        break;
+                }
+                return ret_value;
+            });
+}
+
+void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const KeyedMutable& data)
+{
+
+    static_cast<void>(scdr);
+    static_cast<void>(data);
+                        scdr << data.key_string();
+
+                        scdr << data.key_short();
+
+                        scdr << data.key_long();
+
 }
 
 

@@ -24,6 +24,9 @@
 
 #include "key.hpp"
 
+constexpr uint32_t KeyedMutable_max_cdr_typesize {292UL};
+constexpr uint32_t KeyedMutable_max_key_cdr_typesize {268UL};
+
 constexpr uint32_t KeyedShortStruct_max_cdr_typesize {8UL};
 constexpr uint32_t KeyedShortStruct_max_key_cdr_typesize {2UL};
 
@@ -36,11 +39,17 @@ constexpr uint32_t KeyedULongLongStruct_max_key_cdr_typesize {8UL};
 constexpr uint32_t KeyedDoubleStruct_max_cdr_typesize {24UL};
 constexpr uint32_t KeyedDoubleStruct_max_key_cdr_typesize {8UL};
 
+constexpr uint32_t KeyedAppendable_max_cdr_typesize {272UL};
+constexpr uint32_t KeyedAppendable_max_key_cdr_typesize {268UL};
+
 constexpr uint32_t KeyedBooleanStruct_max_cdr_typesize {6UL};
 constexpr uint32_t KeyedBooleanStruct_max_key_cdr_typesize {1UL};
 
 constexpr uint32_t KeyedWCharStruct_max_cdr_typesize {8UL};
 constexpr uint32_t KeyedWCharStruct_max_key_cdr_typesize {2UL};
+
+constexpr uint32_t KeyedFinal_max_cdr_typesize {268UL};
+constexpr uint32_t KeyedFinal_max_key_cdr_typesize {268UL};
 
 constexpr uint32_t KeyedInheritanceStruct_max_cdr_typesize {528UL};
 constexpr uint32_t KeyedInheritanceStruct_max_key_cdr_typesize {2UL};
@@ -149,6 +158,18 @@ eProsima_user_DllExport void serialize_key(
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InheritanceKeyedEmptyStruct& data);
+
+eProsima_user_DllExport void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const KeyedFinal& data);
+
+eProsima_user_DllExport void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const KeyedAppendable& data);
+
+eProsima_user_DllExport void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const KeyedMutable& data);
 
 
 } // namespace fastcdr

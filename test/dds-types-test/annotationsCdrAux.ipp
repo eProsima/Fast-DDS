@@ -93,6 +93,7 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AnnotatedStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
 }
@@ -157,6 +158,7 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const EmptyAnnotatedStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
 }
@@ -234,8 +236,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const BasicAnnotationsStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.basic_annotations_member();
+
 }
 
 

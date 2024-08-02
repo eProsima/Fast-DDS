@@ -129,8 +129,17 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const StringStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.my_string();
+
+                        scdr << data.my_wstring();
+
+                        scdr << data.my_bounded_string();
+
+                        scdr << data.my_bounded_wstring();
+
 }
 
 

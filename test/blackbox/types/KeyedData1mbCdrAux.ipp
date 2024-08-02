@@ -113,9 +113,10 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const KeyedData1mb& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
-                            scdr << data.key();
+                        scdr << data.key();
 
 
 }

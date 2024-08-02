@@ -121,12 +121,13 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ImportantStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
-                            scdr << data.my_first_value();
+                        scdr << data.my_first_value();
 
 
-                            scdr << data.my_third_value();
+                        scdr << data.my_third_value();
 
 }
 
@@ -226,13 +227,18 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const KeyStruct& data)
 {
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const ImportantStruct& data);
+
+
     static_cast<void>(scdr);
     static_cast<void>(data);
-                            scdr << data.my_long();
+                        scdr << data.my_long();
 
-                            scdr << data.my_string();
+                        scdr << data.my_string();
 
-                                serialize_key(scdr, data.my_important_struct());
+                        serialize_key(scdr, data.my_important_struct());
 
 }
 

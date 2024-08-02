@@ -139,6 +139,14 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.module1_array_literal_const_moduled();
+
+                        scdr << data.module1_array_literal_const_alias_const_moduled();
+
+                        scdr << data.var1();
+
+                        scdr << data.var2();
+
 }
 
 
@@ -247,6 +255,14 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.module2_array_literal_const_moduled();
+
+                        scdr << data.module2_array_literal_const_alias_const_moduled();
+
+                        scdr << data.module2_array_literal_const_scoped_moduled();
+
+                        scdr << data.module2_array_literal_module1_const_moduled();
+
 }
 
 
@@ -537,8 +553,65 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ConstsLiteralsStruct& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.array_literal_const_short();
+
+                        scdr << data.array_literal_const_ushort();
+
+                        scdr << data.array_literal_const_long();
+
+                        scdr << data.array_literal_const_ulong();
+
+                        scdr << data.array_literal_const_longlong();
+
+                        scdr << data.array_literal_const_ulonglong();
+
+                        scdr << data.array_literal_const_int8();
+
+                        scdr << data.array_literal_const_uint8();
+
+                        scdr << data.array_literal_const_int16();
+
+                        scdr << data.array_literal_const_uint16();
+
+                        scdr << data.array_literal_const_int32();
+
+                        scdr << data.array_literal_const_uint32();
+
+                        scdr << data.array_literal_const_int64();
+
+                        scdr << data.array_literal_const_uint64();
+
+                        scdr << data.array_literals_operations1_const();
+
+                        scdr << data.array_literals_operations2_const();
+
+                        scdr << data.array_literals_operations3_const();
+
+                        scdr << data.array_literals_operations4_const();
+
+                        scdr << data.array_literals_operations5_const();
+
+                        scdr << data.array_literals_operations6_const();
+
+                        scdr << data.array_literals_operations7_const();
+
+                        scdr << data.array_literals_operations8_const();
+
+                        scdr << data.array_literal_const_inner_const_helper();
+
+                        scdr << data.array_moduled1_literal_const();
+
+                        scdr << data.array_moduled2_literal_const();
+
+                        scdr << data.array_literal_const_alias_const();
+
+                        scdr << data.array_moduled1_literal_alias_const_moduled();
+
+                        scdr << data.array_moduled2_literal_alias_const_moduled();
+
 }
 
 

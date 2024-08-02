@@ -123,6 +123,10 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.entityKey();
+
+                        scdr << data.entityKind();
+
 }
 
 
@@ -212,9 +216,17 @@ void serialize_key(
         const eprosima::fastdds::dds::GUID_t& data)
 {
     using namespace eprosima::fastdds::dds;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::EntityId_t& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.guidPrefix();
+
+                        serialize_key(scdr, data.entityId());
+
 }
 
 
@@ -307,6 +319,10 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.high();
+
+                        scdr << data.low();
+
 }
 
 
@@ -396,9 +412,21 @@ void serialize_key(
         const eprosima::fastdds::dds::SampleIdentity& data)
 {
     using namespace eprosima::fastdds::dds;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::GUID_t& data);
+
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::SequenceNumber_t& data);
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.writer_guid());
+
+                        serialize_key(scdr, data.sequence_number());
+
 }
 
 
@@ -488,9 +516,18 @@ void serialize_key(
         const eprosima::fastdds::dds::rpc::RequestHeader& data)
 {
     using namespace eprosima::fastdds::dds::rpc;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::SampleIdentity& data);
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.requestId());
+
+                        scdr << data.instanceName();
+
 }
 
 
@@ -580,9 +617,18 @@ void serialize_key(
         const eprosima::fastdds::dds::rpc::ReplyHeader& data)
 {
     using namespace eprosima::fastdds::dds::rpc;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::dds::SampleIdentity& data);
+
+
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        serialize_key(scdr, data.relatedRequestId());
+
+                        scdr << data.remoteEx();
+
 }
 
 
