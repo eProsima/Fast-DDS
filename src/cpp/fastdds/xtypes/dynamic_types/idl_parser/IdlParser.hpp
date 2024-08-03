@@ -105,7 +105,6 @@ public:
     std::string preprocess_file(
             const std::string& idl_file) const
     {
-        std::vector<std::string> includes;
         std::string args;
         for (const std::string& inc_path : include_paths)
         {
@@ -1312,8 +1311,9 @@ struct action<union_def>
         std::vector<std::string> types = ctx->split_string(state["union_member_types"], ';');
         std::vector<std::string> names = ctx->split_string(state["union_member_names"], ';');
 
-        std::vector<std::vector<int32_t>> labels;
-        int default_label_index = 0;
+        std::vector<std::vector<int32_t>> labels(types.size());
+        int default_label_index = -1;
+
         for (size_t i = 0; i < label_groups.size(); i++)
         {
             if (label_groups[i].empty())
@@ -1321,22 +1321,16 @@ struct action<union_def>
                 continue; // Skip empty strings
             }
             std::vector<std::string> numbers_str = ctx->split_string(label_groups[i], ',');
-            std::vector<int32_t> numbers;
             for (const auto& num_str : numbers_str)
             {
                 if (num_str == "default")
                 {
-                    numbers.push_back(std::numeric_limits<int32_t>::max());
                     default_label_index = static_cast<int>(i); // mark the index of default label
                 }
                 else
                 {
-                    numbers.push_back(std::stoi(num_str));
+                    labels[i].push_back(std::stoi(num_str));
                 }
-            }
-            if (!numbers.empty())
-            {
-                labels.push_back(numbers);
             }
         }
 
@@ -1346,8 +1340,20 @@ struct action<union_def>
             member_descriptor->name(names[i]);
             member_descriptor->type(ctx->get_type(state, types[i]));
             member_descriptor->id(i);
-            member_descriptor->label(labels[i]);
-            member_descriptor->is_default_label(i == (uint32_t)default_label_index);
+
+            if (default_label_index == static_cast<int>(i))
+            {
+                member_descriptor->is_default_label(true);
+                if (!labels[i].empty()) {
+                    member_descriptor->label(labels[i]);
+                }
+            }
+            else
+            {
+                member_descriptor->is_default_label(false);
+                member_descriptor->label(labels[i]);
+            }
+
             builder->add_member(member_descriptor);
         }
 
