@@ -572,8 +572,13 @@ option(INSTALL_EXAMPLES "Install example" OFF)
 if(INSTALL_EXAMPLES)
   # Install examples
   install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples/cpp
+<<<<<<< HEAD
       DESTINATION examples/
       COMPONENT examples
+=======
+      DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples
+      COMPONENT ${DATA_INSTALL_DIR}/fastdds/examples
+>>>>>>> 8c477dce1 (Remove double // in some installation paths (#5111))
       PATTERN "examples/CMakeLists.txt" EXCLUDE
       )
 endif()
@@ -583,7 +588,7 @@ option(INSTALL_TOOLS "Install tools" OFF)
 if(INSTALL_TOOLS)
   # Install tools
   install(DIRECTORY ${PROJECT_SOURCE_DIR}/tools
-      DESTINATION tools/
+      DESTINATION tools
       COMPONENT tools
       PATTERN "tools/CMakeLists.txt" EXCLUDE
       )
