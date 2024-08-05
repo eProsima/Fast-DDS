@@ -232,7 +232,10 @@ void SharedMemTransport::clean_up()
     try
     {
         // Delete send ports
-        opened_ports_.clear();
+        {
+            std::lock_guard<std::mutex> lock(opened_ports_mutex_);
+            opened_ports_.clear();
+        }
 
         // Delete input channels
         {
@@ -539,6 +542,7 @@ bool SharedMemTransport::send(
 
 void SharedMemTransport::cleanup_output_ports()
 {
+    std::lock_guard<std::mutex> lock(opened_ports_mutex_);
     auto it = opened_ports_.begin();
     while (it != opened_ports_.end())
     {
@@ -556,12 +560,17 @@ void SharedMemTransport::cleanup_output_ports()
 std::shared_ptr<SharedMemManager::Port> SharedMemTransport::find_port(
         uint32_t port_id)
 {
-    auto ports_it = opened_ports_.find(port_id);
 
-    // The port is already opened
-    if (ports_it != opened_ports_.end())
     {
-        return (*ports_it).second;
+        std::lock_guard<std::mutex> lock(opened_ports_mutex_);
+
+        auto ports_it = opened_ports_.find(port_id);
+
+        // The port is already opened
+        if (ports_it != opened_ports_.end())
+        {
+            return (*ports_it).second;
+        }
     }
 
     // The port is not opened
@@ -569,7 +578,10 @@ std::shared_ptr<SharedMemManager::Port> SharedMemTransport::find_port(
                     open_port(port_id, configuration_.port_queue_capacity(), configuration_.healthy_check_timeout_ms(),
                     SharedMemGlobal::Port::OpenMode::Write);
 
-    opened_ports_[port_id] = port;
+    {
+        std::lock_guard<std::mutex> lock(opened_ports_mutex_);
+        opened_ports_[port_id] = port;
+    }
 
     return port;
 }

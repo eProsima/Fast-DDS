@@ -237,6 +237,8 @@ private:
 
     void clean_up();
 
+    mutable std::mutex opened_ports_mutex_;
+
     std::map<uint32_t, std::shared_ptr<SharedMemManager::Port>> opened_ports_;
 
     mutable std::recursive_mutex input_channels_mutex_;
