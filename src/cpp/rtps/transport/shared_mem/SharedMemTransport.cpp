@@ -604,6 +604,7 @@ bool SharedMemTransport::push_discard(
                 }
                 else
                 {
+                    std::lock_guard<std::mutex> lock(opened_ports_mutex_);
                     EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "Port " << remote_locator.port << " inconsistent. Port dropped");
                     opened_ports_.erase(remote_locator.port);
                 }
