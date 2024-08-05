@@ -7,17 +7,15 @@ All information is provided as a general guidelines only, and this section may b
 
 Disclaimer:
 
-* This section has been last updated in March 2024.
+* This section has been last updated in August 2024.
   Please take into account its content could be obsolete.
 
 ## Short term
 
-The following list of features are planned to be addressed in the short term, and incorporated into the following release of the product (v3.0.0):
+The following list of features are planned to be addressed in the short term, and incorporated into the following release of the product (v3.1.0):
 
-* DDS-XTypes 1.3
 * Ignore local endpoints configured at endpoint level
 * Complete support for dynamic network interfaces
-* Use a gather-send approach to send data through the transports
 
 ## Medium term
 
