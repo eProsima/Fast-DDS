@@ -225,6 +225,10 @@ private:
     bool is_locator_allowed(
             const Locator&) const override;
 
+    //! Checks for whether locator is reachable.
+    bool is_locator_reachable(
+            const Locator_t&) override;
+
 protected:
 
     std::shared_ptr<SharedMemManager> shared_mem_manager_;
@@ -232,6 +236,8 @@ protected:
 private:
 
     void clean_up();
+
+    mutable std::mutex opened_ports_mutex_;
 
     std::map<uint32_t, std::shared_ptr<SharedMemManager::Port>> opened_ports_;
 

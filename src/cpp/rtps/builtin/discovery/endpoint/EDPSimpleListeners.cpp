@@ -33,7 +33,7 @@
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include <rtps/builtin/discovery/participant/PDPSimple.h>
-#include <rtps/network/NetworkFactory.h>
+#include <rtps/network/NetworkFactory.hpp>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
 
@@ -70,13 +70,12 @@ void EDPBasePUBListener::add_writer_from_change(
         const EndpointAddedCallback& writer_added_callback /* = nullptr*/)
 {
     //LOAD INFORMATION IN DESTINATION WRITER PROXY DATA
-    const NetworkFactory& network = edp->mp_RTPSParticipant->network_factory();
+    NetworkFactory& network = edp->mp_RTPSParticipant->network_factory();
     CDRMessage_t tempMsg(change->serializedPayload);
     auto temp_writer_data = edp->get_temporary_writer_proxies_pool().get();
     const auto type_server = change->writerGUID;
 
-    if (temp_writer_data->readFromCDRMessage(&tempMsg, network,
-            edp->mp_RTPSParticipant->has_shm_transport(), true, change->vendor_id))
+    if (temp_writer_data->readFromCDRMessage(&tempMsg, network, true, change->vendor_id))
     {
         if (temp_writer_data->guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
         {
@@ -215,13 +214,12 @@ void EDPBaseSUBListener::add_reader_from_change(
         const EndpointAddedCallback& reader_added_callback /* = nullptr*/)
 {
     //LOAD INFORMATION IN TEMPORAL READER PROXY DATA
-    const NetworkFactory& network = edp->mp_RTPSParticipant->network_factory();
+    NetworkFactory& network = edp->mp_RTPSParticipant->network_factory();
     CDRMessage_t tempMsg(change->serializedPayload);
     auto temp_reader_data = edp->get_temporary_reader_proxies_pool().get();
     const auto type_server = change->writerGUID;
 
-    if (temp_reader_data->readFromCDRMessage(&tempMsg, network,
-            edp->mp_RTPSParticipant->has_shm_transport(), true, change->vendor_id))
+    if (temp_reader_data->readFromCDRMessage(&tempMsg, network, true, change->vendor_id))
     {
         if (temp_reader_data->guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
         {

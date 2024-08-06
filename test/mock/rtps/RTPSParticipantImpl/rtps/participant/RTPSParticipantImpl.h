@@ -35,7 +35,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
 #include <fastdds/utils/TypePropagation.hpp>
-#include <rtps/network/NetworkFactory.h>
+#include <rtps/network/NetworkFactory.hpp>
 #include <rtps/reader/BaseReader.hpp>
 #include <rtps/resources/ResourceEvent.h>
 #if HAVE_SECURITY

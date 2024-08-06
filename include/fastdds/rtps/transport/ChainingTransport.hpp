@@ -389,6 +389,16 @@ public:
         return low_level_transport_->is_locator_allowed(locator);
     }
 
+    /*!
+     * Call the low-level transport `is_locator_reachable()`.
+     * Must report whether the given locator is reachable by this transport.
+     */
+    FASTDDS_EXPORTED_API bool is_locator_reachable(
+            const fastdds::rtps::Locator_t& locator) override
+    {
+        return low_level_transport_->is_locator_reachable(locator);
+    }
+
 protected:
 
     std::unique_ptr<TransportInterface> low_level_transport_;

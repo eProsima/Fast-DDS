@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_RTPS_BUILTIN_DATA_PROXYDATAFILTERS_H_
-#define _FASTDDS_RTPS_BUILTIN_DATA_PROXYDATAFILTERS_H_
+#ifndef FASTDDS_RTPS_BUILTIN_DATA__PROXYDATAFILTERS_HPP
+#define FASTDDS_RTPS_BUILTIN_DATA__PROXYDATAFILTERS_HPP
 
 #include <fastdds/rtps/common/RemoteLocators.hpp>
+
+#include <rtps/network/NetworkFactory.hpp>
 #include <rtps/transport/shared_mem/SHMLocator.hpp>
 
 namespace eprosima {
@@ -30,27 +32,20 @@ class ProxyDataFilters
 public:
 
     /**
-     * This function filters out SHM locators when they cannot be used for communication on the local host.
-     * @param [in] is_shm_transport_available Indicates whether the participant has SHM transport enabled.
+     * @brief This function filters out unreachable locators.
+     *
+     * @param [in] network_factory Reference to the @ref NetworkFactory
      * @param [in,out] target_locators_list List where parsed locators are stored
      * @param [in] temp_locator New locator to parse
      * @param [in] is_unicast true if temp_locator is unicast, false if it is multicast
      */
     static void filter_locators(
-            bool is_shm_transport_available,
+            NetworkFactory& network_factory,
             RemoteLocatorList& target_locators_list,
             const Locator_t& temp_locator,
             bool is_unicast)
     {
-        using SHMLocator = eprosima::fastdds::rtps::SHMLocator;
-
-        bool can_use_locator = LOCATOR_KIND_SHM != temp_locator.kind;
-        if (!can_use_locator)
-        {
-            can_use_locator = is_shm_transport_available && SHMLocator::is_shm_and_from_this_host(temp_locator);
-        }
-
-        if (can_use_locator)
+        if (network_factory.is_locator_reachable(temp_locator))
         {
             if (is_unicast)
             {
@@ -69,4 +64,4 @@ public:
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif // _FASTDDS_RTPS_BUILTIN_DATA_PROXYDATAFILTERS_H_
+#endif // FASTDDS_RTPS_BUILTIN_DATA__PROXYDATAFILTERS_HPP

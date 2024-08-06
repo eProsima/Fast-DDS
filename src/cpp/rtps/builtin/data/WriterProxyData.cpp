@@ -23,7 +23,7 @@
 #include <fastdds/rtps/common/VendorId_t.hpp>
 
 #include <rtps/builtin/data/WriterProxyData.hpp>
-#include <rtps/network/NetworkFactory.h>
+#include <rtps/network/NetworkFactory.hpp>
 
 #include "ProxyDataFilters.hpp"
 
@@ -614,15 +614,14 @@ bool WriterProxyData::writeToCDRMessage(
 
 bool WriterProxyData::readFromCDRMessage(
         CDRMessage_t* msg,
-        const NetworkFactory& network,
-        bool is_shm_transport_available,
+        NetworkFactory& network,
         bool should_filter_locators,
         fastdds::rtps::VendorId_t source_vendor_id)
 {
-    auto param_process = [this, &network, &is_shm_transport_available, &should_filter_locators, source_vendor_id](
+    auto param_process = [this, &network, &should_filter_locators, source_vendor_id](
         CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
             {
-                VendorId_t vendor_id = c_VendorId_Unknown;
+                VendorId_t vendor_id = source_vendor_id;
 
                 switch (pid)
                 {
@@ -635,7 +634,6 @@ bool WriterProxyData::readFromCDRMessage(
                             return false;
                         }
 
-                        is_shm_transport_available &= (p.vendorId == c_VendorId_eProsima);
                         vendor_id = p.vendorId;
                         break;
                     }
@@ -899,7 +897,7 @@ bool WriterProxyData::readFromCDRMessage(
                                     m_guid.is_from_this_host()))
                             {
                                 ProxyDataFilters::filter_locators(
-                                    is_shm_transport_available,
+                                    network,
                                     remote_locators_,
                                     temp_locator,
                                     true);
@@ -926,7 +924,7 @@ bool WriterProxyData::readFromCDRMessage(
                                     m_guid.is_from_this_host()))
                             {
                                 ProxyDataFilters::filter_locators(
-                                    is_shm_transport_available,
+                                    network,
                                     remote_locators_,
                                     temp_locator,
                                     false);

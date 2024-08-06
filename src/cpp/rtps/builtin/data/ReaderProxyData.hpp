@@ -424,15 +424,13 @@ public:
      * parameter list.
      * @param msg Pointer to the message.
      * @param network Reference to network factory for locator validation and transformation
-     * @param is_shm_transport_available Indicates whether the Reader is reachable by SHM.
      * @param should_filter_locators Whether to retrieve the locators before the external locators filtering
      * @param source_vendor_id VendorId of the source participant from which the message was received
      * @return true on success
      */
     bool readFromCDRMessage(
             CDRMessage_t* msg,
-            const NetworkFactory& network,
-            bool is_shm_transport_available,
+            NetworkFactory& network,
             bool should_filter_locators,
             fastdds::rtps::VendorId_t source_vendor_id = c_VendorId_eProsima);
 

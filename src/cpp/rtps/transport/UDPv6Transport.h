@@ -134,6 +134,10 @@ protected:
     bool is_locator_allowed(
             const Locator&) const override;
 
+    //! Checks for whether locator is reachable.
+    bool is_locator_reachable(
+            const Locator_t&) override;
+
     /**
      * Method to get a list of interfaces to bind the socket associated to the given locator.
      * @return Vector of interfaces in string format.

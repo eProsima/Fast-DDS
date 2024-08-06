@@ -152,6 +152,29 @@ bool SharedMemTransport::is_locator_allowed(
     return IsLocatorSupported(locator);
 }
 
+bool SharedMemTransport::is_locator_reachable(
+        const Locator_t& locator)
+{
+    bool is_reachable = SHMLocator::is_shm_and_from_this_host(locator);
+
+    if (is_reachable)
+    {
+        try
+        {
+            is_reachable = (nullptr != find_port(locator.port));
+        }
+        catch (const std::exception& e)
+        {
+            EPROSIMA_LOG_INFO(RTPS_MSG_OUT,
+                    "Local SHM locator '" << locator <<
+                    "' is not reachable; discarding. Reason: " << e.what());
+            is_reachable = false;
+        }
+    }
+
+    return is_reachable;
+}
+
 LocatorList SharedMemTransport::NormalizeLocator(
         const Locator& locator)
 {
@@ -209,7 +232,10 @@ void SharedMemTransport::clean_up()
     try
     {
         // Delete send ports
-        opened_ports_.clear();
+        {
+            std::lock_guard<std::mutex> lock(opened_ports_mutex_);
+            opened_ports_.clear();
+        }
 
         // Delete input channels
         {
@@ -516,6 +542,7 @@ bool SharedMemTransport::send(
 
 void SharedMemTransport::cleanup_output_ports()
 {
+    std::lock_guard<std::mutex> lock(opened_ports_mutex_);
     auto it = opened_ports_.begin();
     while (it != opened_ports_.end())
     {
@@ -533,12 +560,17 @@ void SharedMemTransport::cleanup_output_ports()
 std::shared_ptr<SharedMemManager::Port> SharedMemTransport::find_port(
         uint32_t port_id)
 {
-    auto ports_it = opened_ports_.find(port_id);
 
-    // The port is already opened
-    if (ports_it != opened_ports_.end())
     {
-        return (*ports_it).second;
+        std::lock_guard<std::mutex> lock(opened_ports_mutex_);
+
+        auto ports_it = opened_ports_.find(port_id);
+
+        // The port is already opened
+        if (ports_it != opened_ports_.end())
+        {
+            return (*ports_it).second;
+        }
     }
 
     // The port is not opened
@@ -546,7 +578,10 @@ std::shared_ptr<SharedMemManager::Port> SharedMemTransport::find_port(
                     open_port(port_id, configuration_.port_queue_capacity(), configuration_.healthy_check_timeout_ms(),
                     SharedMemGlobal::Port::OpenMode::Write);
 
-    opened_ports_[port_id] = port;
+    {
+        std::lock_guard<std::mutex> lock(opened_ports_mutex_);
+        opened_ports_[port_id] = port;
+    }
 
     return port;
 }
@@ -569,6 +604,7 @@ bool SharedMemTransport::push_discard(
                 }
                 else
                 {
+                    std::lock_guard<std::mutex> lock(opened_ports_mutex_);
                     EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "Port " << remote_locator.port << " inconsistent. Port dropped");
                     opened_ports_.erase(remote_locator.port);
                 }

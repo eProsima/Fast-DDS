@@ -86,8 +86,13 @@ public:
 
     bool IsLocatorSupported(
             const Locator_t&)  const override;
+
     bool is_locator_allowed(
             const Locator_t& locator) const override;
+
+    bool is_locator_reachable(
+            const Locator_t&) override;
+
     bool DoInputLocatorsMatch(
             const Locator_t&,
             const Locator_t&) const override;

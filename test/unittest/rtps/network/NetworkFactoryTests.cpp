@@ -25,7 +25,7 @@
 #include <fastdds/utils/IPLocator.hpp>
 
 #include <MockTransport.h>
-#include <rtps/network/NetworkFactory.h>
+#include <rtps/network/NetworkFactory.hpp>
 
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;

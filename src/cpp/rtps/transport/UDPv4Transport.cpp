@@ -603,6 +603,12 @@ bool UDPv4Transport::is_locator_allowed(
     return is_interface_allowed(IPLocator::toIPv4string(locator));
 }
 
+bool UDPv4Transport::is_locator_reachable(
+        const Locator_t& locator)
+{
+    return IsLocatorSupported(locator);
+}
+
 LocatorList UDPv4Transport::NormalizeLocator(
         const Locator& locator)
 {

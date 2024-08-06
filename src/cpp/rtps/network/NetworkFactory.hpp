@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FASTDDS_RTPS_NETWORK__NETWORKFACTORY_H
-#define FASTDDS_RTPS_NETWORK__NETWORKFACTORY_H
+#ifndef FASTDDS_RTPS_NETWORK__NETWORKFACTORY_HPP
+#define FASTDDS_RTPS_NETWORK__NETWORKFACTORY_HPP
 
 #include <vector>
 #include <memory>
@@ -196,6 +196,17 @@ public:
             bool is_fastdds_local) const;
 
     /**
+     * Must report whether the given locator is reachable by at least one of the registered transports.
+     *
+     * @param [in] locator @ref Locator for which the reachability is checked.
+     *
+     * @return true if the input locator is reachable by at least one of the registered transports,
+     *         false otherwise.
+     */
+    bool is_locator_reachable(
+            const Locator_t& locator);
+
+    /**
      * Perform the locator selection algorithm.
      *
      * It basically consists of the following steps
@@ -351,4 +362,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_RTPS_NETWORK__NETWORKFACTORY_H
+#endif // FASTDDS_RTPS_NETWORK__NETWORKFACTORY_HPP

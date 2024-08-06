@@ -73,6 +73,12 @@ bool MockTransport::is_locator_allowed(
     return true;
 }
 
+bool MockTransport::is_locator_reachable(
+        const Locator_t& /*locator*/)
+{
+    return true;
+}
+
 bool MockTransport::OpenOutputChannel(
         fastdds::rtps::SendResourceList& send_resource_list,
         const Locator_t& locator)

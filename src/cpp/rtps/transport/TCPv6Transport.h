@@ -98,6 +98,10 @@ protected:
     bool is_locator_allowed(
             const Locator& locator) const override;
 
+    //! Checks for whether locator is reachable.
+    bool is_locator_reachable(
+            const Locator_t&) override;
+
     //! Checks if the interfaces white list is empty.
     virtual bool is_interface_whitelist_empty() const override;
 

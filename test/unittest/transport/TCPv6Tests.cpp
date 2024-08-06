@@ -26,7 +26,7 @@
 #include <fastdds/rtps/transport/NetworkBuffer.hpp>
 #include <fastdds/utils/IPLocator.hpp>
 
-#include <rtps/network/NetworkFactory.h>
+#include <rtps/network/NetworkFactory.hpp>
 #include <rtps/transport/TCPv6Transport.h>
 #include <utils/Semaphore.hpp>
 

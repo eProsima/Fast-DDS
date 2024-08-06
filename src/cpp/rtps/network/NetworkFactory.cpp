@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <rtps/network/NetworkFactory.h>
+#include <rtps/network/NetworkFactory.hpp>
 
 #include <limits>
 #include <utility>
@@ -282,6 +282,20 @@ bool NetworkFactory::is_locator_remote_or_allowed(
         bool is_fastdds_local) const
 {
     return (is_locator_supported(locator) && !is_fastdds_local) || is_locator_allowed(locator);
+}
+
+bool NetworkFactory::is_locator_reachable(
+        const Locator_t& locator)
+{
+    for (auto& transport : mRegisteredTransports)
+    {
+        if (transport->is_locator_reachable(locator))
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void NetworkFactory::select_locators(

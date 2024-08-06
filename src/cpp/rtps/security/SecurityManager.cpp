@@ -37,7 +37,7 @@
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/messages/CDRMessage.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
-#include <rtps/network/NetworkFactory.h>
+#include <rtps/network/NetworkFactory.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/reader/StatelessReader.hpp>

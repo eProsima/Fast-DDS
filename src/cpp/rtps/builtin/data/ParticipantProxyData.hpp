@@ -28,10 +28,12 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
+#include <fastdds/rtps/common/ProductVersion_t.hpp>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
 #include <fastdds/rtps/common/Token.hpp>
-#include <fastdds/rtps/common/ProductVersion_t.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
+
+#include <rtps/network/NetworkFactory.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -157,8 +159,7 @@ public:
     bool readFromCDRMessage(
             CDRMessage_t* msg,
             bool use_encapsulation,
-            const NetworkFactory& network,
-            bool is_shm_transport_available,
+            NetworkFactory& network,
             bool should_filter_locators,
             fastdds::rtps::VendorId_t source_vendor_id = c_VendorId_eProsima);
 
