@@ -5,6 +5,7 @@ Please, refer to the [master branch](https://github.com/eProsima/Fast-DDS/blob/m
 *eProsima Fast DDS* maintains several releases with different support cycles.
 Major releases are scarce and they are made when public API is broken (more information about *eProsima Fast DDS* versioning can be found [here](https://github.com/eProsima/Fast-DDS/blob/master/VERSIONING.md)).
 Latest major release is v3.0.0 (August 2024), which introduced the DDS-XTypes 1.3.
+Refer to the [migration guide](https://github.com/eProsima/Fast-DDS/blob/master/UPGRADING.md) if looking for hints moving from Fast DDS 2.x to v3.0.0.
 
 Each quarter, a new Fast DDS minor version with new features is released.
 By default, *eProsima Fast DDS* minor releases have a lifecycle of **6 months**.
