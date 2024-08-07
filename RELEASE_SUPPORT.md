@@ -4,7 +4,8 @@ Please, refer to the [master branch](https://github.com/eProsima/Fast-DDS/blob/m
 
 *eProsima Fast DDS* maintains several releases with different support cycles.
 Major releases are scarce and they are made when public API is broken (more information about *eProsima Fast DDS* versioning can be found [here](https://github.com/eProsima/Fast-DDS/blob/master/VERSIONING.md)).
-Latest major release is v2.0.0 (June 2020), which introduced the DDS compliant API.
+Latest major release is v3.0.0 (August 2024), which introduced the DDS-XTypes 1.3.
+Refer to the [migration guide](https://github.com/eProsima/Fast-DDS/blob/master/UPGRADING.md) if looking for hints moving from Fast DDS 2.x to v3.0.0.
 
 Each quarter, a new Fast DDS minor version with new features is released.
 By default, *eProsima Fast DDS* minor releases have a lifecycle of **6 months**.
@@ -18,6 +19,7 @@ This period applies since the end of standard support date to the end of life (E
 
 |Version|Version branch|Latest Release|Release Date|End of Standard Support Date|EOL Date|
 |-------|--------------|--------------|------------|----------------------------|--------|
+|3.0|[3.0.x](https://github.com/eProsima/Fast-DDS/tree/3.0.x) (LTS)|[v3.0.0](https://github.com/eProsima/Fast-DDS/releases/tag/v3.0.0)|August 2024|August 2025 [^*]|August 2025 [^*]|
 |2.14|[2.14.x](https://github.com/eProsima/Fast-DDS/tree/2.14.x) (LTS)|[v2.14.3](https://github.com/eProsima/Fast-DDS/releases/tag/v2.14.3)|March 2024|March 2025 [^*]|March 2025 [^*]|
 |2.10|[2.10.x](https://github.com/eProsima/Fast-DDS/tree/2.10.x) (LTS)|[v2.10.4](https://github.com/eProsima/Fast-DDS/releases/tag/v2.10.4)|March 2023|May 2025 [^*]|May 2025|
 |2.6|[2.6.x](https://github.com/eProsima/Fast-DDS/tree/2.6.x) (LTS)|[v2.6.9](https://github.com/eProsima/Fast-DDS/releases/tag/v2.6.9)|March 2022|July 2024|May 2025[^*]|
