@@ -54,29 +54,6 @@ LatencyTestPublisher::LatencyTestPublisher()
 
 LatencyTestPublisher::~LatencyTestPublisher()
 {
-    // Static type endpoints shpuld have been removed for each payload iteration
-    if (dynamic_types_)
-    {
-        destroy_data_endpoints();
-    }
-    else if (nullptr != data_writer_
-            || nullptr != data_reader_
-            || nullptr != latency_data_pub_topic_
-            || nullptr != latency_data_sub_topic_
-            || !latency_data_type_)
-    {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR unregistering the DATA type and/or removing the endpoints");
-    }
-
-    subscriber_->delete_datareader(command_reader_);
-    participant_->delete_subscriber(subscriber_);
-
-    publisher_->delete_datawriter(command_writer_);
-    participant_->delete_publisher(publisher_);
-
-    participant_->delete_topic(latency_command_sub_topic_);
-    participant_->delete_topic(latency_command_pub_topic_);
-
     std::string TestCommandType("TestCommandType");
     participant_->unregister_type(TestCommandType);
 
@@ -673,6 +650,32 @@ void LatencyTestPublisher::run()
         export_csv("_minimum_", str_reliable, *output_files_[MINIMUM_INDEX]);
         export_csv("_average_", str_reliable, *output_files_[AVERAGE_INDEX]);
     }
+}
+
+void LatencyTestPublisher::destroy_user_entities()
+{
+    // Static type endpoints shpuld have been removed for each payload iteration
+    if (dynamic_types_)
+    {
+        destroy_data_endpoints();
+    }
+    else if (nullptr != data_writer_
+            || nullptr != data_reader_
+            || nullptr != latency_data_pub_topic_
+            || nullptr != latency_data_sub_topic_
+            || !latency_data_type_)
+    {
+        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR unregistering the DATA type and/or removing the endpoints");
+    }
+
+    subscriber_->delete_datareader(command_reader_);
+    participant_->delete_subscriber(subscriber_);
+
+    publisher_->delete_datawriter(command_writer_);
+    participant_->delete_publisher(publisher_);
+
+    participant_->delete_topic(latency_command_sub_topic_);
+    participant_->delete_topic(latency_command_pub_topic_);
 }
 
 void LatencyTestPublisher::export_csv(
