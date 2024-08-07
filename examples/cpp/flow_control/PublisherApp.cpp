@@ -191,7 +191,10 @@ void PublisherApp::run()
         }
         else
         {
-            throw std::runtime_error("Slow Publisher failed sending a message");
+            if (!is_stopped())
+            {
+                std::cout << "Slow Publisher failed sending a message" << std::endl;
+            }
         }
 
         if (publish(fast_writer_, msg))
@@ -200,7 +203,10 @@ void PublisherApp::run()
         }
         else
         {
-            throw std::runtime_error("Fast Publisher failed sending a message");
+            if (!is_stopped())
+            {
+                std::cout << "Fast Publisher failed sending a message" << std::endl;
+            }
         }
 
         // Wait for period or stop event
@@ -214,7 +220,7 @@ void PublisherApp::run()
 
 bool PublisherApp::publish(
         DataWriter* writer_,
-        FlowControl msg)
+        FlowControl& msg)
 {
     bool ret = false;
     // Wait for the data endpoints discovery
