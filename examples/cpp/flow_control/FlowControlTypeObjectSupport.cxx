@@ -54,6 +54,13 @@ void register_FlowControl_type_identifier(
         QualifiedTypeName type_name_FlowControl = "FlowControl";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FlowControl;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_FlowControl;
+        AppliedAnnotationSeq tmp_ann_custom_FlowControl;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_FlowControl;
+        if (!tmp_ann_custom_FlowControl.empty())
+        {
+            ann_custom_FlowControl = tmp_ann_custom_FlowControl;
+        }
+
         CompleteTypeDetail detail_FlowControl = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_FlowControl, ann_custom_FlowControl, type_name_FlowControl.to_string());
         CompleteStructHeader header_FlowControl;
         header_FlowControl = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_FlowControl);
