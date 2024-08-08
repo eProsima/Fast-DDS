@@ -1,0 +1,8 @@
+const float C_FLOAT = 3.141592;
+
+struct Test01
+{
+    long my_long;
+    short my_short;
+    long long my_long_long;
+};

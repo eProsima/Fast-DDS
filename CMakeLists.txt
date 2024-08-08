@@ -62,7 +62,7 @@ if(MSVC OR MSVC_IDE)
     # C4715: 'Test': not all control paths return a value
     # C5038 data member 'member1' will be initialized after data member 'member2'
     # C4100 'identifier' : unreferenced formal parameter (matches clang -Wunused-lambda-capture)
-    add_compile_options(/w34101 /w34189 /w34555 /w34715 /w35038 /w44100)
+    add_compile_options(/w34101 /w34189 /w34555 /w34715 /w35038 /w44100 /bigobj)
 
     if(EPROSIMA_BUILD)
         string(REPLACE "/DNDEBUG" "" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
