@@ -1,3 +1,4 @@
+@extensibility(APPENDABLE)
 struct FlowControl
 {
    unsigned long index;

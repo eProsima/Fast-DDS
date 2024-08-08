@@ -131,7 +131,6 @@ public:
                         if (static_cast<uint16_t>(input) > std::numeric_limits<std::uint16_t>::max())
                         {
                             throw std::out_of_range("sample argument out of range");
-                            print_help(EXIT_FAILURE);
                         }
 
                         config.samples = static_cast<uint16_t>(input);

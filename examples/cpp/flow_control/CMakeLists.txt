@@ -47,6 +47,9 @@ target_compile_definitions(flow_control PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
+if(WIN32)
+    set_target_properties(flow_control PROPERTIES LINK_FLAGS /STACK:4194304)
+endif()
 target_link_libraries(flow_control fastdds fastcdr foonathan_memory)
 install(TARGETS flow_control
     RUNTIME DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples/cpp/flow_control/${BIN_INSTALL_DIR})

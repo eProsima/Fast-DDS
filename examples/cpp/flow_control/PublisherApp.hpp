@@ -72,7 +72,7 @@ private:
     //! Publish a sample
     bool publish(
             DataWriter* writer_,
-            FlowControl msg);
+            FlowControl& msg);
 
     DomainParticipant* participant_;
 
