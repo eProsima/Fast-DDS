@@ -25,6 +25,8 @@ services:
       LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
       EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/static_edp_discovery@FILE_EXTENSION@
       XML_FILE: @PROJECT_BINARY_DIR@/examples/cpp/static_edp_discovery/HelloWorld_static_disc.xml
+    network_mode: host
+    ipc: host
     command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/static_edp_discovery@FILE_EXTENSION@ subscriber --samples 10 --xml $${XML_FILE}"
 
   subscriber-publisher:
@@ -38,6 +40,8 @@ services:
       LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
       EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/static_edp_discovery
       XML_FILE: @PROJECT_BINARY_DIR@/examples/cpp/static_edp_discovery/HelloWorld_static_disc.xml
+    network_mode: host
+    ipc: host
     command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/static_edp_discovery@FILE_EXTENSION@ subscriber --samples 10 --xml $${XML_FILE} & $${EXAMPLE_DIR}/static_edp_discovery@FILE_EXTENSION@ publisher --samples 10 --xml $${XML_FILE}"
     depends_on:
       - subscriber

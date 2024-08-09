@@ -17,6 +17,7 @@
 
 #include <fastdds/rtps/common/Locator.hpp>
 #include <utils/Host.hpp>
+#include <utils/SystemInfo.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -49,9 +50,7 @@ public:
 
         locator.get_address()[0] = (type == Type::UNICAST) ? 'U' : 'M';
 
-        auto host_id = Host::instance().id();
-        locator.get_address()[1] = octet(host_id);
-        locator.get_address()[2] = octet(host_id >> 8);
+        memcpy(&locator.get_address()[1], SystemInfo::get_username_host_id_md5_digest(), 15u);
 
         return locator;
     }
@@ -66,9 +65,8 @@ public:
     {
         if (locator.kind == LOCATOR_KIND_SHM)
         {
-            auto host_id = Host::instance().id();
-
-            return locator.address[1] == octet(host_id) && locator.address[2] == octet(host_id >> 8);
+            return ((std::memcmp(&locator.address[1], SystemInfo::get_username_host_id_md5_digest(),
+                   15u) == 0));
         }
 
         return false;

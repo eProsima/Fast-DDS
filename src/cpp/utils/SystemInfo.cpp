@@ -152,6 +152,30 @@ fastdds::dds::ReturnCode_t SystemInfo::get_username(
 #endif // _WIN32
 }
 
+const unsigned char* SystemInfo::get_username_host_id_md5_digest()
+{
+    if (!username_host_id_md5_digest_initialized_)
+    {
+        std::lock_guard<std::mutex> lock_guard(username_host_id_digest_mtx_);
+        if (!username_host_id_md5_digest_initialized_)
+        {
+            // Initialize user name and host id
+            auto host_id = Host::instance().id();
+            std::string user_name_and_host_id;
+
+            get_username(user_name_and_host_id);
+            user_name_and_host_id += std::to_string(host_id);
+
+            username_host_id_md5_.init();
+            username_host_id_md5_.update(user_name_and_host_id.c_str(), user_name_and_host_id.length());
+            username_host_id_md5_.finalize();
+            username_host_id_md5_digest_initialized_.store(true);
+        }
+    }
+
+    return username_host_id_md5_.digest;
+}
+
 bool SystemInfo::file_exists(
         const std::string& filename)
 {
@@ -332,6 +356,9 @@ std::string SystemInfo::environment_file_;
 bool SystemInfo::cached_interfaces_;
 std::vector<IPFinder::info_IP> SystemInfo::interfaces_;
 std::mutex SystemInfo::interfaces_mtx_;
+std::atomic<bool> SystemInfo::username_host_id_md5_digest_initialized_{false};
+std::mutex SystemInfo::username_host_id_digest_mtx_;
+fastdds::MD5 SystemInfo::username_host_id_md5_;
 
 } // eprosima
 

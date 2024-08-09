@@ -26,6 +26,8 @@ services:
       EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/security
       CERTS_PATH: @PROJECT_BINARY_DIR@/examples/cpp/security/certs
       FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/security/secure_subscriber_profile.xml
+    network_mode: host
+    ipc: host
     command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/security@FILE_EXTENSION@ subscriber --samples 10"
 
   publisher:
@@ -40,5 +42,7 @@ services:
       EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/security
       CERTS_PATH: @PROJECT_BINARY_DIR@/examples/cpp/security/certs
       FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/security/secure_publisher_profile.xml
+    network_mode: host
+    ipc: host
     command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/security@FILE_EXTENSION@ publisher --samples 10"
 

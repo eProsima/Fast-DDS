@@ -25,6 +25,8 @@ services:
       LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
       EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/topic_instances
       SUBSCRIBER_ADDITIONAL_ARGUMENTS: ${SUB_ARGS}
+    network_mode: host
+    ipc: host
     command: @SHELL_EXECUTABLE@ -c "sleep 5 && $${EXAMPLE_DIR}/topic_instances@FILE_EXTENSION@ subscriber --samples 10 $${SUBSCRIBER_ADDITIONAL_ARGUMENTS}"
 
   publisher-subscriber:
@@ -39,4 +41,6 @@ services:
       EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/topic_instances
       PUBLISHER_ADDITIONAL_ARGUMENTS: ${PUB_ARGS}
       SUBSCRIBER_ADDITIONAL_ARGUMENTS: ${SUB_ARGS}
+    network_mode: host
+    ipc: host
     command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/topic_instances@FILE_EXTENSION@ subscriber --samples 10 $${SUBSCRIBER_ADDITIONAL_ARGUMENTS} & $${EXAMPLE_DIR}/topic_instances@FILE_EXTENSION@ publisher --samples 10 $${PUBLISHER_ADDITIONAL_ARGUMENTS}"
