@@ -165,6 +165,8 @@ bool SharedMemTransport::is_locator_reachable(
         }
         catch (const std::exception& e)
         {
+            (void)e;
+
             EPROSIMA_LOG_INFO(RTPS_MSG_OUT,
                     "Local SHM locator '" << locator <<
                     "' is not reachable; discarding. Reason: " << e.what());

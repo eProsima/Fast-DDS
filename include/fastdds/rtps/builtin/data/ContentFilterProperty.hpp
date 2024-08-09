@@ -31,7 +31,6 @@ namespace rtps {
 
 /**
  * Information about the content filter being applied by a reader.
- * @ingroup BUILTIN_MODULE
  */
 class ContentFilterProperty
 {
@@ -39,7 +38,6 @@ public:
 
     /**
      * Allocation configuration for a ContentFilterProperty.
-     * @ingroup BUILTIN_MODULE
      */
     struct AllocationConfiguration
     {

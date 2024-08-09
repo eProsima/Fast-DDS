@@ -46,7 +46,6 @@ namespace rtps {
 
 /**
  * Struct to define participant types to set participant type parameter property
- * @ingroup DISCOVERY_MODULE
  */
 struct ParticipantType
 {
