@@ -1,6 +1,11 @@
 Forthcoming
 -----------
 
+
+
+Version v3.0.0
+--------------
+
 * Rename project to `fastdds`.
 * Rename environment variable to `FASTDDS_DEFAULT_PROFILES_FILE` and rename default XML profiles file to `FASTDDS_DEFAULT_PROFILES`.
 * Remove API marked as deprecated.
