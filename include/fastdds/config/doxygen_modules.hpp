@@ -143,7 +143,7 @@
 
 #ifdef FASTDDS_STATISTICS
 /** @defgroup STATISTICS_MODULE Statistics Module
- * @ingroup MANAGEMENT_MODULE
+ * @ingroup FASTDDS_GENERAL_API
  * This module contains the classes associated with the Statistics Protocols.
  */
 #endif // ifdef FASTDDS_STATISTICS
