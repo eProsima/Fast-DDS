@@ -202,24 +202,13 @@ template<>
 inline std::string PreprocessorContext::preprocess_string<PreprocessorContext::preprocess_strategy::temporary_file>(
         const std::string& idl_string) const
 {
-    std::string processed;
+    auto os_tmp = get_temporary_file();
 
-    try
-    {
-        auto os_tmp = get_temporary_file();
+    // Populate
+    os_tmp.first << idl_string;
+    os_tmp.first.close();
 
-        // Populate
-        os_tmp.first << idl_string;
-        os_tmp.first.close();
-
-        processed = preprocess_file(os_tmp.second);
-    }
-    catch (const std::exception& e)
-    {
-        EPROSIMA_LOG_ERROR(IDLPARSER, "Error: " << e.what());
-    }
-
-    return processed;
+    return preprocess_file(os_tmp.second);
 }
 
 inline std::string PreprocessorContext::preprocess_string(
