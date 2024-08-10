@@ -51,31 +51,7 @@
 
 #include "IdlGrammar.hpp"
 #include "IdlModule.hpp"
-
-// mimic posix pipe APIs
-#ifdef _MSC_VER
-#   pragma push_macro("popen")
-#   define popen _popen
-#   pragma push_macro("pipe")
-#   define pipe _pipe
-#   pragma push_macro("pclose")
-#   define pclose _pclose
-#endif // ifdef _MSC_VER
-
-// define preprocessor strategy
-#ifdef _MSC_VER
-#   define EPROSIMA_PLATFORM_PREPROCESSOR "cl /EP /I."
-#   define EPROSIMA_PLATFORM_PREPROCESSOR_STRATEGY preprocess_strategy::temporary_file
-#   define EPROSIMA_PLATFORM_PREPROCESSOR_INCLUDES "/I"
-#   define EPROSIMA_PLATFORM_PREPROCESSOR_ERRORREDIR " 2>nul"
-#   define EPROSIMA_PLATFORM_PIPE_OPEN_FLAGS "rt"
-#else
-#   define EPROSIMA_PLATFORM_PREPROCESSOR "cpp -H"
-#   define EPROSIMA_PLATFORM_PREPROCESSOR_STRATEGY preprocess_strategy::pipe_stdin
-#   define EPROSIMA_PLATFORM_PREPROCESSOR_INCLUDES "-I"
-#   define EPROSIMA_PLATFORM_PREPROCESSOR_ERRORREDIR " 2>/dev/null"
-#   define EPROSIMA_PLATFORM_PIPE_OPEN_FLAGS "r"
-#endif // ifdef _MSC_VER
+#include "IdlPreprocessor.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -83,191 +59,6 @@ namespace dds {
 namespace idlparser {
 
 using namespace tao::TAO_PEGTL_NAMESPACE;
-
-class PreprocessorContext
-{
-public:
-
-    // Preprocessors capability to use shared memory (pipes) or stick to file input
-    enum class preprocess_strategy
-    {
-        pipe_stdin,
-        temporary_file
-    };
-
-    bool preprocess = true;
-    std::string preprocessor_exec = EPROSIMA_PLATFORM_PREPROCESSOR;
-    std::string error_redir = EPROSIMA_PLATFORM_PREPROCESSOR_ERRORREDIR;
-    preprocess_strategy strategy = EPROSIMA_PLATFORM_PREPROCESSOR_STRATEGY;
-    std::string include_flag = EPROSIMA_PLATFORM_PREPROCESSOR_INCLUDES;
-    std::vector<std::string> include_paths;
-
-    std::string preprocess_file(
-            const std::string& idl_file) const
-    {
-        std::string args;
-        for (const std::string& inc_path : include_paths)
-        {
-            args += include_flag + inc_path + " ";
-        }
-
-        std::string cmd = preprocessor_exec + " " + args + idl_file + error_redir;
-
-        EPROSIMA_LOG_INFO(IDLPARSER, "Calling preprocessor with command: " << cmd);
-        std::string output = exec(cmd);
-        EPROSIMA_LOG_INFO(IDLPARSER, "Pre-processed IDL: " << output);
-        return output;
-    }
-
-    std::string preprocess_string(
-            const std::string& idl_string) const;
-
-private:
-
-    template<preprocess_strategy e>
-    std::string preprocess_string(
-            const std::string& idl_string) const;
-
-#ifdef _MSC_VER
-    std::pair<std::ofstream, std::string> get_temporary_file() const
-    {
-        // Create temporary filename
-        std::array<char, L_tmpnam> filename_buffer;
-        errno_t err = tmpnam_s(filename_buffer.data(), filename_buffer.size());
-        if (err != 0)
-        {
-            throw std::runtime_error("Failed to generate a temporary filename.");
-        }
-
-        std::ofstream tmp_file(filename_buffer.data());
-        if (!tmp_file)
-        {
-            throw std::runtime_error("Failed to open the temporary file.");
-        }
-
-        return std::make_pair(std::move(tmp_file), std::string(filename_buffer.data()));
-    }
-
-#else
-    std::pair<std::ofstream, std::string> get_temporary_file() const
-    {
-        // TODO
-        return std::make_pair(std::ofstream{}, std::string{});
-    }
-
-#endif // _MSC_VER
-
-    void replace_all_string(
-            std::string& str,
-            const std::string& from,
-            const std::string& to) const
-    {
-        size_t froms = from.size();
-        size_t tos = to.size();
-        size_t pos = str.find(from);
-        const std::string escaped = "\\\\\"";
-        size_t escaped_size = escaped.size();
-        while (pos != std::string::npos)
-        {
-            str.replace(pos, froms, to);
-            pos = str.find(from, pos + tos);
-            while (str[pos - 1] == '\\')
-            {
-                str.replace(pos, froms, escaped);
-                pos = str.find(from, pos + escaped_size);
-            }
-
-        }
-    }
-
-    std::string exec(
-            const std::string& cmd) const
-    {
-        std::unique_ptr<FILE, decltype(& pclose)> pipe(
-            popen(cmd.c_str(), EPROSIMA_PLATFORM_PIPE_OPEN_FLAGS), pclose);
-        if (!pipe)
-        {
-            throw std::runtime_error("popen() failed!");
-        }
-
-    #ifdef _MSC_VER
-        std::filebuf buff(pipe.get());
-        std::ostringstream os;
-        os << &buff;
-        return os.str();
-    #else
-        std::array<char, 256> buffer;
-        std::string result;
-        while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr)
-        {
-            result += buffer.data();
-        }
-        return result;
-    #endif // _MSC_VER
-    }
-
-}; // class PreprocessorContext
-
-// preprocessing using pipes
-template<>
-inline std::string PreprocessorContext::preprocess_string<PreprocessorContext::preprocess_strategy::pipe_stdin>(
-        const std::string& idl_string) const
-{
-    std::string args;
-    for (const std::string& inc_path : include_paths)
-    {
-        args += include_flag + inc_path + " ";
-    }
-    // Escape double quotes inside the idl_string
-    std::string escaped_idl_string = idl_string;
-    replace_all_string(escaped_idl_string, "\"", "\\\"");
-    std::string cmd = "echo \"" + escaped_idl_string + "\" | "
-            + preprocessor_exec + " " + args + error_redir;
-
-    EPROSIMA_LOG_INFO(IDLPARSER, "Calling preprocessor '" << preprocessor_exec << "' for an IDL string.");
-
-    return exec(cmd);
-}
-
-// preprocessing using files
-template<>
-inline std::string PreprocessorContext::preprocess_string<PreprocessorContext::preprocess_strategy::temporary_file>(
-        const std::string& idl_string) const
-{
-    std::string processed;
-
-    try
-    {
-        auto os_tmp = get_temporary_file();
-
-        // Populate
-        os_tmp.first << idl_string;
-        os_tmp.first.close();
-
-        processed = preprocess_file(os_tmp.second);
-    }
-    catch (const std::exception& e)
-    {
-        EPROSIMA_LOG_ERROR(IDLPARSER, "Error: " << e.what());
-    }
-
-    return processed;
-}
-
-inline std::string PreprocessorContext::preprocess_string(
-        const std::string& idl_string) const
-{
-    switch (strategy)
-    {
-        case preprocess_strategy::pipe_stdin:
-            return PreprocessorContext::preprocess_string<preprocess_strategy::pipe_stdin>(idl_string);
-        case preprocess_strategy::temporary_file:
-            return PreprocessorContext::preprocess_string<preprocess_strategy::temporary_file>(idl_string);
-        default:
-            EPROSIMA_LOG_ERROR(IDLPARSER, "Unknown preprocessor strategy selected.");
-            return "";
-    }
-}
 
 class Parser;
 
@@ -299,6 +90,7 @@ public:
 
     // Results
     bool success = false;
+    std::string target_type_name;
 
     traits<DynamicType>::ref_type get_type(
             std::map<std::string, std::string>& state,
@@ -1005,7 +797,10 @@ struct action<struct_forward_dcl>
         EPROSIMA_LOG_INFO(IDLPARSER, "Found forward struct declaration: " << struct_name);
         module.structure(builder);
 
-        ctx->builder = builder;
+        if (struct_name == ctx->target_type_name)
+        {
+            ctx->builder = builder;
+        }
 
         state.erase("struct_name");
         state.erase("struct_member_types");
@@ -1042,7 +837,10 @@ struct action<union_forward_dcl>
         EPROSIMA_LOG_INFO(IDLPARSER, "Found forward union declaration: " << union_name);
         module.union_switch(builder);
 
-        ctx->builder = builder;
+        if (union_name == ctx->target_type_name)
+        {
+            ctx->builder = builder;
+        }
 
         state.erase("union_name");
         state.erase("union_discriminant");
@@ -1132,7 +930,10 @@ struct action<enum_dcl>
         EPROSIMA_LOG_INFO(IDLPARSER, "Found enum: " << enum_name);
         module.enum_32(enum_name, builder);
 
-        ctx->builder = builder;
+        if (enum_name == ctx->target_type_name)
+        {
+            ctx->builder = builder;
+        }
 
         state.erase("enum_name");
         state.erase("enum_member_names");
@@ -1169,11 +970,12 @@ struct action<struct_def>
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         Module& module = ctx->module();
+        const std::string& struct_name = state["struct_name"];
 
         DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
         TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
         type_descriptor->kind(TK_STRUCTURE);
-        type_descriptor->name(state["struct_name"]);
+        type_descriptor->name(struct_name);
         DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
 
         std::vector<std::string> types = ctx->split_string(state["struct_member_types"], ';');
@@ -1187,10 +989,13 @@ struct action<struct_def>
             builder->add_member(member_descriptor);
         }
 
-        EPROSIMA_LOG_INFO(IDLPARSER, "Found struct: " << state["struct_name"]);
+        EPROSIMA_LOG_INFO(IDLPARSER, "Found struct: " << struct_name);
         module.structure(builder);
 
-        ctx->builder = builder;
+        if (struct_name == ctx->target_type_name)
+        {
+            ctx->builder = builder;
+        }
 
         state.erase("struct_name");
         state.erase("struct_member_types");
@@ -1360,7 +1165,10 @@ struct action<union_def>
         EPROSIMA_LOG_INFO(IDLPARSER, "Found union: " << union_name);
         module.union_switch(builder);
 
-        ctx->builder = builder;
+        if (union_name == ctx->target_type_name)
+        {
+            ctx->builder = builder;
+        }
 
         state.erase("union_name");
         state.erase("union_discriminant");
@@ -1461,7 +1269,10 @@ struct action<typedef_dcl>
         EPROSIMA_LOG_INFO(IDLPARSER, "Found alias: " << alias_name);
         module.create_alias(alias_name, builder);
 
-        ctx->builder = builder;
+        if (alias_name == ctx->target_type_name)
+        {
+            ctx->builder = builder;
+        }
 
         state.erase("alias");
         state.erase("alias_sizes");
@@ -1546,22 +1357,6 @@ public:
         }
     }
 
-    Context parse_file(
-            const std::string& idl_file)
-    {
-        Context context;
-        parse_file(idl_file, context);
-        return context;
-    }
-
-    Context parse_string(
-            const std::string& idl_string)
-    {
-        Context context;
-        parse_string(idl_string, context);
-        return context;
-    }
-
     bool parse_file(
             const std::string& idl_file,
             Context& context)
@@ -1579,6 +1374,30 @@ public:
         return parse(os.str(), context);
     }
 
+    Context parse_file(
+            const std::string& idl_file)
+    {
+        Context context;
+        parse_file(idl_file, context);
+        return context;
+    }
+
+    Context parse_file(
+            const std::string& idl_file,
+            const std::string& type_name,
+            const IncludePathSeq& include_paths)
+    {
+        Context context;
+        context.target_type_name = type_name;
+        if (!include_paths.empty())
+        {
+            context.include_paths = include_paths;
+            context.preprocess = true;
+        }
+        parse_file(idl_file, context);
+        return context;
+    }
+
     bool parse_string(
             const std::string& idl_string,
             Context& context)
@@ -1593,6 +1412,14 @@ public:
         {
             return parse(idl_string, context);
         }
+    }
+
+    Context parse_string(
+            const std::string& idl_string)
+    {
+        Context context;
+        parse_string(idl_string, context);
+        return context;
     }
 
     //void get_all_types(
@@ -1730,12 +1557,5 @@ traits<DynamicType>::ref_type Context::get_type(
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
-
-
-#ifdef _MSC_VER
-#   pragma pop_macro("popen")
-#   pragma pop_macro("pipe")
-#   pragma pop_macro("pclose")
-#endif // ifdef _MSC_VER
 
 #endif // FASTDDS_XTYPES_DYNAMIC_TYPES_IDL_PARSER_IDLPARSER_HPP

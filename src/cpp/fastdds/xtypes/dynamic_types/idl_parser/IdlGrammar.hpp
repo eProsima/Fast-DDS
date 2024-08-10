@@ -121,8 +121,10 @@ struct float_literal : seq<
                             opt<one<'-'>>,
                             not_at<seq<dot, kw_exp>>,
                             star<digit>,
-                            opt<seq<dot, star<digit>>>,
-                            decimal_exponent
+                            sor<
+                                seq<opt<seq<dot, star<digit>>>, decimal_exponent>,
+                                seq<dot, star<digit>>
+                               >
                           > {};
 
 // fixed-point literals

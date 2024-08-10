@@ -54,9 +54,6 @@ public:
             const std::string& type_name,
             const IncludePathSeq& include_paths) noexcept override;
 
-    traits<DynamicTypeBuilder>::ref_type create_type_w_idl(
-            const std::string& idl) noexcept override;
-
     traits<DynamicTypeBuilder>::ref_type create_type_w_type_object(
             const xtypes::TypeObject& type_object) noexcept override;
 

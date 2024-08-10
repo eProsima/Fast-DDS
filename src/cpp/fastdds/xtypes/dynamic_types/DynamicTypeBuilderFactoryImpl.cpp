@@ -31,7 +31,7 @@
 #include <fastdds/xtypes/type_representation/TypeObjectRegistry.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 
-#include "idl_parser/IdlParser.hpp"
+#include "idl_parser/Idl.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -67,21 +67,9 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type_
         const std::string& type_name,
         const IncludePathSeq& include_paths) noexcept
 {
-    traits<DynamicTypeBuilder>::ref_type nil;
-    static_cast<void>(document);
-    static_cast<void>(type_name);
-    static_cast<void>(include_paths);
-    return nil;
-}
-
-traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type_w_idl(
-        const std::string& idl) noexcept
-{
-    using namespace idlparser;
-
     traits<DynamicTypeBuilder>::ref_type ret_val;
 
-    Context context = Parser::instance()->parse_string(idl);
+    idlparser::Context context = idlparser::parse_file(document, type_name, include_paths);
     ret_val = context.builder;
 
     return ret_val;
