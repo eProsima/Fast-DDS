@@ -1,8 +1,0 @@
-#include <test_include.idl>
-#include "test03.idl"
-
-struct Test04
-{
-    include::TestInclude my_include;
-    Test03 my_test03;
-};
