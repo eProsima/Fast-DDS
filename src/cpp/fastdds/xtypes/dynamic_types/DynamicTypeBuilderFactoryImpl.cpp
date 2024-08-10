@@ -69,8 +69,16 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type_
 {
     traits<DynamicTypeBuilder>::ref_type ret_val;
 
-    idlparser::Context context = idlparser::parse_file(document, type_name, include_paths);
-    ret_val = context.builder;
+    try
+    {
+        idlparser::Context context = idlparser::parse_file(document, type_name, include_paths);
+        ret_val = context.builder;
+    }
+    catch (const std::exception& e)
+    {
+        EPROSIMA_LOG_ERROR(IDLPARSER, e.what());
+        ret_val.reset();
+    }
 
     return ret_val;
 }
