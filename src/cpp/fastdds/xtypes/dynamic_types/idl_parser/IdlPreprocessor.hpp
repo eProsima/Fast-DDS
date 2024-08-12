@@ -22,6 +22,13 @@
 #include <utility>
 #include <vector>
 
+#ifdef _MSC_VER
+#   include <cstdio>
+#else
+#   include <fcntl.h>
+#   include <unistd.h>
+#endif //_MSC_VER
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -120,8 +127,30 @@ private:
 #else
     std::pair<std::ofstream, std::string> get_temporary_file() const
     {
-        // TODO
-        return std::make_pair(std::ofstream{}, std::string{});
+        // Create a temporary filename template
+        std::vector<char> filename_template("/tmp/xtypes_XXXXXX", "/tmp/xtypes_XXXXXX" + 18);
+
+        // Create and open a temporary file securely
+        int fd = mkstemp(filename_template.data());
+        if (fd == -1)
+        {
+            throw std::runtime_error("Failed to create a temporary file: " + std::string(strerror(errno)));
+        }
+
+        // Close the file descriptor since we are going to handle file operations with fstream
+        close(fd);
+
+        // Convert file descriptor to ofstream
+        std::ofstream tmp_file(filename_template.data(), std::ios::out | std::ios::in | std::ios::trunc);
+        if (!tmp_file.is_open())
+        {
+            // If we fail to open the ofstream, we need to remove the file created by mkstemp
+            unlink(filename_template.data());
+            throw std::runtime_error("Failed to open the temporary file.");
+        }
+
+        // Return the file stream and the file name
+        return std::make_pair(std::move(tmp_file), std::string(filename_template.begin(), filename_template.end() - 1));
     }
 #endif // _MSC_VER
 
