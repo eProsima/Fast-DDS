@@ -615,7 +615,7 @@ bool EDPSimple::serialize_proxy_data(
 #endif // if __BIG_ENDIAN__
 
             data.writeToCDRMessage(&aux_msg, true);
-            change->serializedPayload.length = (uint16_t)aux_msg.length;
+            change->serializedPayload.length = aux_msg.length;
 
             if (remove_same_instance)
             {
