@@ -408,6 +408,7 @@ target_include_directories(StatefulReaderTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/dds/DomainParticipantFactory
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
+    ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     ${THIRDPARTY_BOOST_INCLUDE_DIR}
     )
 target_link_libraries(StatefulReaderTests
