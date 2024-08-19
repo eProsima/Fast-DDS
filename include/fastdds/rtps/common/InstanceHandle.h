@@ -298,7 +298,7 @@ inline std::ostream& operator <<(
     {
         output << (int)iHandle.value[i] << ".";
     }
-    output << (int)iHandle.value[15] << std::dec;
+    output << (int)iHandle.value[15u] << std::dec;
     return output;
 }
 
@@ -331,9 +331,9 @@ inline std::istream& operator >>(
                 input.setstate(std::ios_base::failbit);
             }
 
-            iHandle.value[0] = static_cast<octet>(hex);
+            iHandle.value[0u] = static_cast<octet>(hex);
 
-            for (int i = 1; i < 16; ++i)
+            for (uint8_t i = 1; i < 16; ++i)
             {
                 input >> point >> hex;
                 if ( point != '.' || hex > 255 )
