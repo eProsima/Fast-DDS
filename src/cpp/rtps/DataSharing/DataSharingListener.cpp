@@ -17,34 +17,27 @@
  */
 
 #include <rtps/DataSharing/DataSharingListener.hpp>
-
-#include <rtps/reader/BaseReader.hpp>
-#include <utils/thread.hpp>
-#include <utils/threading.hpp>
+#include <fastdds/rtps/reader/RTPSReader.h>
 
 #include <memory>
 #include <mutex>
 
 namespace eprosima {
-namespace fastdds {
+namespace fastrtps {
 namespace rtps {
 
-using BaseReader = fastdds::rtps::BaseReader;
-using ThreadSettings = fastdds::rtps::ThreadSettings;
 
 DataSharingListener::DataSharingListener(
         std::shared_ptr<DataSharingNotification> notification,
         const std::string& datasharing_pools_directory,
-        const ThreadSettings& thr_config,
         ResourceLimitedContainerConfig limits,
-        BaseReader* reader)
+        RTPSReader* reader)
     : notification_(notification)
     , is_running_(false)
     , reader_(reader)
     , writer_pools_(limits)
     , writer_pools_changed_(false)
     , datasharing_pools_directory_(datasharing_pools_directory)
-    , thread_config_(thr_config)
 {
 }
 
@@ -88,7 +81,8 @@ void DataSharingListener::run()
             // If some writer added new data, there may be something to read.
             // If there were matching/unmatching, we may not have finished our last loop
         } while (is_running_.load() &&
-        (notification_->notification_->new_data.load() || writer_pools_changed_.load(std::memory_order_relaxed)));
+                (notification_->notification_->new_data.load() ||
+                writer_pools_changed_.load(std::memory_order_relaxed)));
     }
 }
 
@@ -104,15 +98,13 @@ void DataSharingListener::start()
     }
 
     // Initialize the thread
-    uint32_t thread_id = reader_->getGuid().entityId.to_uint32() & 0x0000FFFF;
-    listening_thread_ = create_thread([this]()
-                    {
-                        run();
-                    }, thread_config_, "dds.dsha.%u", thread_id);
+    listening_thread_ = new std::thread(&DataSharingListener::run, this);
 }
 
 void DataSharingListener::stop()
 {
+    std::thread* thr = nullptr;
+
     {
         std::lock_guard<std::mutex> guard(mutex_);
 
@@ -122,11 +114,15 @@ void DataSharingListener::stop()
         {
             return;
         }
+
+        thr = listening_thread_;
+        listening_thread_ = nullptr;
     }
 
     // Notify the thread and wait for it to finish
     notification_->notify();
-    listening_thread_.join();
+    thr->join();
+    delete thr;
 }
 
 void DataSharingListener::process_new_data ()
@@ -154,13 +150,13 @@ void DataSharingListener::process_new_data ()
 
         // Take the pool to free the lock
         std::shared_ptr<ReaderPool> pool = it->pool;
-        lock.unlock();
+
 
         if (liveliness_assertion_needed)
         {
             reader_->assert_writer_liveliness(pool->writer());
         }
-
+        lock.unlock();
         uint64_t last_payload = pool->end();
         bool has_new_payload = true;
         while (has_new_payload)
@@ -176,8 +172,7 @@ void DataSharingListener::process_new_data ()
                 {
                     EPROSIMA_LOG_WARNING(RTPS_READER, "GAP (" << last_sequence + 1 << " - " << ch.sequenceNumber - 1 << ")"
                                                               << " detected on datasharing writer " << pool->writer());
-                    reader_->process_gap_msg(pool->writer(), last_sequence + 1,
-                            SequenceNumberSet_t(ch.sequenceNumber), c_VendorId_eProsima);
+                    reader_->processGapMsg(pool->writer(), last_sequence + 1, SequenceNumberSet_t(ch.sequenceNumber));
                 }
 
                 if (last_sequence == c_SequenceNumber_Unknown && ch.sequenceNumber > SequenceNumber_t(0, 1))
@@ -185,16 +180,16 @@ void DataSharingListener::process_new_data ()
                     EPROSIMA_LOG_INFO(RTPS_READER, "First change with SN " << ch.sequenceNumber
                                                                            << " detected on datasharing writer " <<
                             pool->writer());
-                    reader_->process_gap_msg(pool->writer(), SequenceNumber_t(0, 1),
-                            SequenceNumberSet_t(ch.sequenceNumber), c_VendorId_eProsima);
+                    reader_->processGapMsg(pool->writer(), SequenceNumber_t(0, 1), SequenceNumberSet_t(
+                                ch.sequenceNumber));
                 }
 
                 EPROSIMA_LOG_INFO(RTPS_READER, "New data found on writer " << pool->writer()
                                                                            << " with SN " << ch.sequenceNumber);
 
-                if (reader_->process_data_msg(&ch))
+                if (reader_->processDataMsg(&ch))
                 {
-                    pool->release_payload(ch.serializedPayload);
+                    pool->release_payload(ch);
                     pool->advance_to_next_payload();
                 }
             }
@@ -224,30 +219,34 @@ bool DataSharingListener::add_datasharing_writer(
 {
     std::lock_guard<std::mutex> lock(mutex_);
 
+    // Check if there is a match
     if (writer_is_matched(writer_guid))
     {
         EPROSIMA_LOG_INFO(RTPS_READER, "Attempting to add existing datasharing writer " << writer_guid);
         return false;
     }
 
-    std::shared_ptr<ReaderPool> pool =
-            std::static_pointer_cast<ReaderPool>(DataSharingPayloadPool::get_reader_pool(is_volatile));
-    if (pool->init_shared_memory(writer_guid, datasharing_pools_directory_))
+    // Get ReaderPool
+    auto pool = std::static_pointer_cast<ReaderPool>(DataSharingPayloadPool::get_reader_pool(is_volatile));
+    if (!pool->init_shared_memory(writer_guid, datasharing_pools_directory_))
     {
-        if (0 >= reader_history_max_samples ||
-                reader_history_max_samples >= static_cast<int32_t>(pool->history_size()))
-        {
-            EPROSIMA_LOG_WARNING(RTPS_READER,
-                    "Reader " << reader_->getGuid() << " was configured to have a large history (" <<
-                    reader_history_max_samples << " max samples), but the history size used with writer " <<
-                    writer_guid << " will be " << pool->history_size() << " max samples.");
-        }
-        writer_pools_.emplace_back(pool, pool->last_liveliness_sequence());
-        writer_pools_changed_.store(true);
-        return true;
+        return false;  // Initialization fails and returns directly
     }
 
-    return false;
+    // Check historical sample size
+    int32_t history_size = static_cast<int32_t>(pool->history_size());
+    if (reader_history_max_samples <= 0 || reader_history_max_samples >= history_size)
+    {
+        EPROSIMA_LOG_WARNING(RTPS_READER,
+                "Reader " << reader_->getGuid() << " was configured to have a large history (" <<
+                reader_history_max_samples << " max samples), but will use " << history_size << " max samples with writer " <<
+                writer_guid << ".");
+    }
+
+    // Add to writer pools and mark status changes
+    writer_pools_.emplace_back(pool, pool->last_liveliness_sequence());
+    writer_pools_changed_.store(true);
+    return true;
 }
 
 bool DataSharingListener::remove_datasharing_writer(
@@ -312,5 +311,5 @@ std::shared_ptr<ReaderPool> DataSharingListener::get_pool_for_writer(
 }
 
 }  // namespace rtps
-}  // namespace fastdds
+}  // namespace fastrtps
 }  // namespace eprosima
