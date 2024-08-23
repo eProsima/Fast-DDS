@@ -154,13 +154,12 @@ void DataSharingListener::process_new_data ()
 
         // Take the pool to free the lock
         std::shared_ptr<ReaderPool> pool = it->pool;
-        lock.unlock();
 
         if (liveliness_assertion_needed)
         {
             reader_->assert_writer_liveliness(pool->writer());
         }
-
+        lock.unlock();
         uint64_t last_payload = pool->end();
         bool has_new_payload = true;
         while (has_new_payload)
@@ -224,30 +223,34 @@ bool DataSharingListener::add_datasharing_writer(
 {
     std::lock_guard<std::mutex> lock(mutex_);
 
+    // Check if there is a match
     if (writer_is_matched(writer_guid))
     {
         EPROSIMA_LOG_INFO(RTPS_READER, "Attempting to add existing datasharing writer " << writer_guid);
         return false;
     }
 
-    std::shared_ptr<ReaderPool> pool =
-            std::static_pointer_cast<ReaderPool>(DataSharingPayloadPool::get_reader_pool(is_volatile));
-    if (pool->init_shared_memory(writer_guid, datasharing_pools_directory_))
+    // Get ReaderPool
+    auto pool = std::static_pointer_cast<ReaderPool>(DataSharingPayloadPool::get_reader_pool(is_volatile));
+    if (!pool->init_shared_memory(writer_guid, datasharing_pools_directory_))
     {
-        if (0 >= reader_history_max_samples ||
-                reader_history_max_samples >= static_cast<int32_t>(pool->history_size()))
-        {
-            EPROSIMA_LOG_WARNING(RTPS_READER,
-                    "Reader " << reader_->getGuid() << " was configured to have a large history (" <<
-                    reader_history_max_samples << " max samples), but the history size used with writer " <<
-                    writer_guid << " will be " << pool->history_size() << " max samples.");
-        }
-        writer_pools_.emplace_back(pool, pool->last_liveliness_sequence());
-        writer_pools_changed_.store(true);
-        return true;
+        return false;  // Initialization fails and returns directly
     }
 
-    return false;
+    // Check historical sample size
+    int32_t history_size = static_cast<int32_t>(pool->history_size());
+    if (reader_history_max_samples <= 0 || reader_history_max_samples >= history_size)
+    {
+        EPROSIMA_LOG_WARNING(RTPS_READER,
+                "Reader " << reader_->getGuid() << " was configured to have a large history (" <<
+                reader_history_max_samples << " max samples), but will use " << history_size << " max samples with writer " <<
+                writer_guid << ".");
+    }
+
+    // Add to writer pools and mark status changes
+    writer_pools_.emplace_back(pool, pool->last_liveliness_sequence());
+    writer_pools_changed_.store(true);
+    return true;
 }
 
 bool DataSharingListener::remove_datasharing_writer(
