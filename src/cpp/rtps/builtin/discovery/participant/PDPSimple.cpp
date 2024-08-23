@@ -307,14 +307,13 @@ bool PDPSimple::createPDPEndpoints()
 
         endpoints = secure_endpoints;
         endpoints->reader.listener_.reset(new PDPSecurityInitiatorListener(this,
-                [this](const ParticipantProxyData& participant_data)
+                [this, secure_endpoints](const ParticipantProxyData& participant_data)
                 {
-                    auto secure_pdp_endpoints =
-                    static_cast<fastdds::rtps::SimplePDPEndpointsSecure*>(builtin_endpoints_.get());
-                    std::lock_guard<fastdds::RecursiveTimedMutex> wlock(secure_pdp_endpoints->writer.writer_->getMutex());
+                    assert(secure_endpoints == builtin_endpoints_.get());
+                    std::lock_guard<fastdds::RecursiveTimedMutex> wlock(secure_endpoints->writer.writer_->getMutex());
 
                     CacheChange_t* change = nullptr;
-                    secure_pdp_endpoints->writer.history_->get_earliest_change(&change);
+                    secure_endpoints->writer.history_->get_earliest_change(&change);
 
                     if (change != nullptr)
                     {
