@@ -143,7 +143,8 @@ private:
 
     void match_pdp_remote_endpoints(
             const ParticipantProxyData& pdata,
-            bool notify_secure_endpoints);
+            bool notify_secure_endpoints,
+            bool writer_only);
 
     void assign_low_level_remote_endpoints(
             const ParticipantProxyData& pdata,

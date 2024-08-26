@@ -307,31 +307,9 @@ bool PDPSimple::createPDPEndpoints()
 
         endpoints = secure_endpoints;
         endpoints->reader.listener_.reset(new PDPSecurityInitiatorListener(this,
-                [this, secure_endpoints](const ParticipantProxyData& participant_data)
+                [this](const ParticipantProxyData& participant_data)
                 {
-                    assert(secure_endpoints == builtin_endpoints_.get());
-                    std::lock_guard<fastdds::RecursiveTimedMutex> wlock(secure_endpoints->writer.writer_->getMutex());
-
-                    CacheChange_t* change = nullptr;
-                    secure_endpoints->writer.history_->get_earliest_change(&change);
-
-                    if (change != nullptr)
-                    {
-                        std::vector<GUID_t> remote_readers;
-                        LocatorList_t locators;
-
-                        // Send discovery information through the non-secure PDP writer
-                        remote_readers.emplace_back(participant_data.m_guid.guidPrefix, c_EntityId_SPDPReader);
-
-                        fastdds::rtps::FakeWriter writer(getRTPSParticipant(), c_EntityId_SPDPWriter);
-
-                        for (auto& locator : participant_data.metatraffic_locators.unicast)
-                        {
-                            locators.push_back(locator);
-                        }
-
-                        direct_send(getRTPSParticipant(), locators, remote_readers, *change, writer);
-                    }
+                    match_pdp_remote_endpoints(participant_data, false, true);
                 }));
     }
     else
@@ -580,7 +558,7 @@ void PDPSimple::assignRemoteEndpoints(
         {
             // This participant is not secure.
             // Match PDP and other builtin endpoints.
-            match_pdp_remote_endpoints(*pdata, false);
+            match_pdp_remote_endpoints(*pdata, false, false);
             assign_low_level_remote_endpoints(*pdata, false);
         }
     }
@@ -623,7 +601,7 @@ void PDPSimple::notifyAboveRemoteEndpoints(
 {
     if (notify_secure_endpoints)
     {
-        match_pdp_remote_endpoints(pdata, true);
+        match_pdp_remote_endpoints(pdata, true, false);
     }
     else
     {
@@ -636,7 +614,7 @@ void PDPSimple::notifyAboveRemoteEndpoints(
             notify_and_maybe_ignore_new_participant(part_data, ignored);
             if (!ignored)
             {
-                match_pdp_remote_endpoints(*part_data, false);
+                match_pdp_remote_endpoints(*part_data, false, false);
                 assign_low_level_remote_endpoints(*part_data, false);
             }
         }
@@ -646,7 +624,8 @@ void PDPSimple::notifyAboveRemoteEndpoints(
 
 void PDPSimple::match_pdp_remote_endpoints(
         const ParticipantProxyData& pdata,
-        bool notify_secure_endpoints)
+        bool notify_secure_endpoints,
+        bool writer_only)
 {
 #if !HAVE_SECURITY
     static_cast<void>(notify_secure_endpoints);
@@ -683,7 +662,7 @@ void PDPSimple::match_pdp_remote_endpoints(
     }
 #endif // HAVE_SECURITY
 
-    if (0 != (endp & pdp_writer_mask))
+    if (!writer_only && (0 != (endp & pdp_writer_mask)))
     {
         auto temp_writer_data = get_temporary_writer_proxies_pool().get();
 
@@ -741,7 +720,7 @@ void PDPSimple::match_pdp_remote_endpoints(
             writer->matched_reader_add_edp(*temp_reader_data);
         }
 
-        if (dds::BEST_EFFORT_RELIABILITY_QOS == reliability_kind)
+        if (!writer_only && (dds::BEST_EFFORT_RELIABILITY_QOS == reliability_kind))
         {
             endpoints->writer.writer_->unsent_changes_reset();
         }
