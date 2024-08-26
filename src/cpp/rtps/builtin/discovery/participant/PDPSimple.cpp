@@ -568,8 +568,13 @@ void PDPSimple::removeRemoteEndpoints(
         ParticipantProxyData* pdata)
 {
     EPROSIMA_LOG_INFO(RTPS_PDP, "For RTPSParticipant: " << pdata->m_guid);
+    unmatch_pdp_remote_endpoints(pdata->m_guid);
+}
 
-    GUID_t guid = pdata->m_guid;
+void PDPSimple::unmatch_pdp_remote_endpoints(
+        const GUID_t& participant_guid)
+{
+    GUID_t guid = participant_guid;
 
     {
         auto endpoints = dynamic_cast<fastdds::rtps::SimplePDPEndpoints*>(builtin_endpoints_.get());
@@ -601,6 +606,7 @@ void PDPSimple::notifyAboveRemoteEndpoints(
 {
     if (notify_secure_endpoints)
     {
+        unmatch_pdp_remote_endpoints(pdata.m_guid);
         match_pdp_remote_endpoints(pdata, true, false);
     }
     else
