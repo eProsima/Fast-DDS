@@ -8,7 +8,6 @@ In this case, the *xtypes* example describes a simple deployment of a Fast DDS p
 
 * [Description of the example](#description-of-the-example)
 * [Run the example](#run-the-example)
-* [Wait-set subscriber](#wait-set-subscriber)
 * [XML profile playground](#xml-profile-playground)
 
 ## Description of the example

@@ -8,8 +8,6 @@ In this case, the *discovery server* example describes the use of *Discovery Ser
 
 * [Description of the example](#description-of-the-example)
 * [Run the example](#run-the-example)
-* [Wait-set subscriber](#wait-set-subscriber)
-* [XML profile playground](#xml-profile-playground)
 
 ## Description of the example
 
