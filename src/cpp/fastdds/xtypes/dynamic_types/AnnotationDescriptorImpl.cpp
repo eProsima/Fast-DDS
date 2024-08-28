@@ -32,7 +32,7 @@ traits<AnnotationDescriptor>::ref_type traits<AnnotationDescriptor>::make_shared
 
 ReturnCode_t AnnotationDescriptorImpl::get_value(
         ObjectName& value,
-        const ObjectName& key) noexcept
+        const ObjectName& key)
 {
     const AnnotationDescriptorImpl& myself = *this;
     return myself.get_value(value, key);
@@ -40,7 +40,7 @@ ReturnCode_t AnnotationDescriptorImpl::get_value(
 
 ReturnCode_t AnnotationDescriptorImpl::get_value(
         ObjectName& value,
-        const ObjectName& key) const noexcept
+        const ObjectName& key) const
 {
     auto it = value_.find(key);
 
@@ -54,14 +54,14 @@ ReturnCode_t AnnotationDescriptorImpl::get_value(
 }
 
 ReturnCode_t AnnotationDescriptorImpl::get_all_value(
-        Parameters& value) noexcept
+        Parameters& value)
 {
     const AnnotationDescriptorImpl& myself = *this;
     return myself.get_all_value(value);
 }
 
 ReturnCode_t AnnotationDescriptorImpl::get_all_value(
-        Parameters& value) const noexcept
+        Parameters& value) const
 {
     value = value_;
     return RETCODE_OK;
@@ -69,14 +69,14 @@ ReturnCode_t AnnotationDescriptorImpl::get_all_value(
 
 ReturnCode_t AnnotationDescriptorImpl::set_value(
         const ObjectName& key,
-        const ObjectName& value) noexcept
+        const ObjectName& value)
 {
     value_[key] = value;
     return RETCODE_OK;
 }
 
 ReturnCode_t AnnotationDescriptorImpl::copy_from(
-        traits<AnnotationDescriptor>::ref_type descriptor) noexcept
+        traits<AnnotationDescriptor>::ref_type descriptor)
 {
     if (!descriptor)
     {
@@ -87,7 +87,7 @@ ReturnCode_t AnnotationDescriptorImpl::copy_from(
 }
 
 ReturnCode_t AnnotationDescriptorImpl::copy_from(
-        const AnnotationDescriptorImpl& descriptor) noexcept
+        const AnnotationDescriptorImpl& descriptor)
 {
     type_ = descriptor.type_;
     value_.clear();
@@ -96,19 +96,19 @@ ReturnCode_t AnnotationDescriptorImpl::copy_from(
 }
 
 bool AnnotationDescriptorImpl::equals(
-        traits<AnnotationDescriptor>::ref_type descriptor) noexcept
+        traits<AnnotationDescriptor>::ref_type descriptor)
 {
     return equals(*traits<AnnotationDescriptor>::narrow<AnnotationDescriptorImpl>(descriptor));
 }
 
 bool AnnotationDescriptorImpl::equals(
-        AnnotationDescriptorImpl& descriptor) noexcept
+        AnnotationDescriptorImpl& descriptor)
 {
     return (type_ && type_->equals(descriptor.type_)) &&
            value_ == descriptor.value_;
 }
 
-bool AnnotationDescriptorImpl::is_consistent() noexcept
+bool AnnotationDescriptorImpl::is_consistent()
 {
     if (!type_ || type_->get_kind() != TK_ANNOTATION)
     {
