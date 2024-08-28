@@ -1687,9 +1687,9 @@ TEST_P(Discovery, CdrWriteDataLength)
                 if (info.guid == writer.datawriter_guid())
                 {
                     std::cout << "Received USER_DATA size from the writer program: "
-                    << info.user_data.size() << std::endl;
+                              << info.user_data.size() << std::endl;
                     std::cout << "Received GROUP_DATA size from the writer program: "
-                    << info.group_data.size() << std::endl;
+                              << info.group_data.size() << std::endl;
 
                     return info.user_data.size() == user_size && info.group_data.size() == group_size;
                 }
