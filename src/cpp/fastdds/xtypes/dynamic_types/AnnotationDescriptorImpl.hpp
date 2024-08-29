@@ -31,63 +31,63 @@ class AnnotationDescriptorImpl : public virtual AnnotationDescriptor
 
 public:
 
-    AnnotationDescriptorImpl() noexcept = default;
+    AnnotationDescriptorImpl() = default;
 
     AnnotationDescriptorImpl(
-            const AnnotationDescriptorImpl&) noexcept = default;
+            const AnnotationDescriptorImpl&) = default;
 
     AnnotationDescriptorImpl(
-            AnnotationDescriptorImpl&&) noexcept = default;
+            AnnotationDescriptorImpl&&) = default;
 
-    virtual ~AnnotationDescriptorImpl() noexcept = default;
+    virtual ~AnnotationDescriptorImpl() = default;
 
-    traits<DynamicType>::ref_type type() const noexcept override
+    traits<DynamicType>::ref_type type() const override
     {
         return type_;
     }
 
-    traits<DynamicType>::ref_type& type() noexcept override
+    traits<DynamicType>::ref_type& type() override
     {
         return type_;
     }
 
     void type(
-            traits<DynamicType>::ref_type type) noexcept override
+            traits<DynamicType>::ref_type type) override
     {
         type_ = type;
     }
 
     ReturnCode_t get_value(
             ObjectName& value,
-            const ObjectName& key) noexcept override;
+            const ObjectName& key) override;
 
     ReturnCode_t get_value(
             ObjectName& value,
-            const ObjectName& key) const noexcept;
+            const ObjectName& key) const;
 
     ReturnCode_t get_all_value(
-            Parameters& value) noexcept override;
+            Parameters& value) override;
 
     ReturnCode_t get_all_value(
-            Parameters& value) const noexcept;
+            Parameters& value) const;
 
     ReturnCode_t set_value(
             const ObjectName& key,
-            const ObjectName& value) noexcept override;
+            const ObjectName& value) override;
 
     ReturnCode_t copy_from(
-            traits<AnnotationDescriptor>::ref_type descriptor) noexcept override;
+            traits<AnnotationDescriptor>::ref_type descriptor) override;
 
     ReturnCode_t copy_from(
-            const AnnotationDescriptorImpl& descriptor) noexcept;
+            const AnnotationDescriptorImpl& descriptor);
 
     bool equals(
-            traits<AnnotationDescriptor>::ref_type descriptor) noexcept override;
+            traits<AnnotationDescriptor>::ref_type descriptor) override;
 
     bool equals(
-            AnnotationDescriptorImpl& descriptor) noexcept;
+            AnnotationDescriptorImpl& descriptor);
 
-    bool is_consistent() noexcept override;
+    bool is_consistent() override;
 };
 
 } // namespace dds
