@@ -87,7 +87,7 @@ ReturnCode_t AnnotationDescriptorImpl::copy_from(
 }
 
 ReturnCode_t AnnotationDescriptorImpl::copy_from(
-        const AnnotationDescriptorImpl& descriptor)
+        const AnnotationDescriptorImpl& descriptor) noexcept
 {
     type_ = descriptor.type_;
     value_.clear();
