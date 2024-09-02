@@ -46,7 +46,7 @@ public:
         return type_;
     }
 
-    traits<DynamicType>::ref_type& type()  override
+    traits<DynamicType>::ref_type& type() noexcept override
     {
         return type_;
     }
