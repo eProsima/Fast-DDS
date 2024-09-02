@@ -1507,9 +1507,12 @@ void RTPSParticipantImpl::update_attributes(
             local_participant_proxy_data->m_userData.data_vec(m_att.userData);
 
             // Update metatraffic locators
-            for (auto locator : m_att.builtin.metatrafficMulticastLocatorList)
+            if (!m_att.builtin.avoid_builtin_multicast || m_att.builtin.metatrafficUnicastLocatorList.empty())
             {
-                local_participant_proxy_data->metatraffic_locators.add_multicast_locator(locator);
+                for (auto locator : m_att.builtin.metatrafficMulticastLocatorList)
+                {
+                    local_participant_proxy_data->metatraffic_locators.add_multicast_locator(locator);
+                }
             }
             for (auto locator : m_att.builtin.metatrafficUnicastLocatorList)
             {
