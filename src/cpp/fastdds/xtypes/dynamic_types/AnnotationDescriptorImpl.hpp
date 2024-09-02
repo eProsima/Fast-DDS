@@ -85,7 +85,7 @@ public:
             traits<AnnotationDescriptor>::ref_type descriptor)  override;
 
     bool equals(
-            AnnotationDescriptorImpl& descriptor);
+            AnnotationDescriptorImpl& descriptor) noexcept;
 
     bool is_consistent() noexcept override;
 };
