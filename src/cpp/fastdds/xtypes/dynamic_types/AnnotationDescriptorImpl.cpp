@@ -69,7 +69,7 @@ ReturnCode_t AnnotationDescriptorImpl::get_all_value(
 
 ReturnCode_t AnnotationDescriptorImpl::set_value(
         const ObjectName& key,
-        const ObjectName& value)
+        const ObjectName& value) noexcept
 {
     value_[key] = value;
     return RETCODE_OK;
