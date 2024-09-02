@@ -96,7 +96,7 @@ ReturnCode_t AnnotationDescriptorImpl::copy_from(
 }
 
 bool AnnotationDescriptorImpl::equals(
-        traits<AnnotationDescriptor>::ref_type descriptor)
+        traits<AnnotationDescriptor>::ref_type descriptor) noexcept
 {
     return equals(*traits<AnnotationDescriptor>::narrow<AnnotationDescriptorImpl>(descriptor));
 }
