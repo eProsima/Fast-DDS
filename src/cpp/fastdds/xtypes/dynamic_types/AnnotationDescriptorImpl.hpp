@@ -31,15 +31,15 @@ class AnnotationDescriptorImpl : public virtual AnnotationDescriptor
 
 public:
 
-    AnnotationDescriptorImpl() noexcept = default;
+    AnnotationDescriptorImpl()  = default;
 
     AnnotationDescriptorImpl(
-            const AnnotationDescriptorImpl&) noexcept = default;
+            const AnnotationDescriptorImpl&)  = default;
 
     AnnotationDescriptorImpl(
-            AnnotationDescriptorImpl&&) noexcept = default;
+            AnnotationDescriptorImpl&&)  = default;
 
-    virtual ~AnnotationDescriptorImpl() noexcept = default;
+    virtual ~AnnotationDescriptorImpl()  = default;
 
     traits<DynamicType>::ref_type type() const noexcept override
     {
