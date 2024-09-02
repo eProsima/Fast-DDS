@@ -82,7 +82,7 @@ public:
             const AnnotationDescriptorImpl& descriptor) noexcept;
 
     bool equals(
-            traits<AnnotationDescriptor>::ref_type descriptor)  override;
+            traits<AnnotationDescriptor>::ref_type descriptor) noexcept override;
 
     bool equals(
             AnnotationDescriptorImpl& descriptor) noexcept;
