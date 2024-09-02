@@ -54,7 +54,7 @@ ReturnCode_t AnnotationDescriptorImpl::get_value(
 }
 
 ReturnCode_t AnnotationDescriptorImpl::get_all_value(
-        Parameters& value)
+        Parameters& value) noexcept
 {
     const AnnotationDescriptorImpl& myself = *this;
     return myself.get_all_value(value);
