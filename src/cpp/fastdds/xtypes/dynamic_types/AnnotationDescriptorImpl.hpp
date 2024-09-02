@@ -41,7 +41,7 @@ public:
 
     virtual ~AnnotationDescriptorImpl()  = default;
 
-    traits<DynamicType>::ref_type type() const override
+    traits<DynamicType>::ref_type type() const noexcept override
     {
         return type_;
     }
