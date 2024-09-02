@@ -61,7 +61,7 @@ ReturnCode_t AnnotationDescriptorImpl::get_all_value(
 }
 
 ReturnCode_t AnnotationDescriptorImpl::get_all_value(
-        Parameters& value) const
+        Parameters& value) const noexcept
 {
     value = value_;
     return RETCODE_OK;
