@@ -87,7 +87,7 @@ public:
     bool equals(
             AnnotationDescriptorImpl& descriptor);
 
-    bool is_consistent()  override;
+    bool is_consistent() noexcept override;
 };
 
 } // namespace dds
