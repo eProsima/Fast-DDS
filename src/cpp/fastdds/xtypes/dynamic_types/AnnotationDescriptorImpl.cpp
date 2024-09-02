@@ -40,7 +40,7 @@ ReturnCode_t AnnotationDescriptorImpl::get_value(
 
 ReturnCode_t AnnotationDescriptorImpl::get_value(
         ObjectName& value,
-        const ObjectName& key) const
+        const ObjectName& key) const noexcept
 {
     auto it = value_.find(key);
 
