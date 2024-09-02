@@ -502,9 +502,15 @@ private:
     bool disable_heartbeat_piggyback_;
     //! True to disable positive ACKs
     bool disable_positive_acks_;
+<<<<<<< HEAD:include/fastdds/rtps/writer/StatefulWriter.h
     //! Keep duration for disable positive ACKs QoS, in microseconds
     std::chrono::duration<double, std::ratio<1, 1000000>> keep_duration_us_;
     //! Last acknowledged cache change (only used if using disable positive ACKs QoS)
+=======
+    /// Keep duration for disable positive ACKs QoS
+    fastdds::dds::Duration_t keep_duration_;
+    /// Last acknowledged cache change (only used if using disable positive ACKs QoS)
+>>>>>>> ccc690c97 (Improve resilience against clock adjustments (#5018)):src/cpp/rtps/writer/StatefulWriter.hpp
     SequenceNumber_t last_sequence_number_;
     //! Biggest sequence number removed from history
     SequenceNumber_t biggest_removed_sequence_number_;

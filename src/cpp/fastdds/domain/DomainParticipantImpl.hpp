@@ -111,10 +111,10 @@ public:
             DomainParticipantListener* listener,
             const std::chrono::seconds timeout = std::chrono::seconds::max())
     {
-        auto time_out = std::chrono::time_point<std::chrono::system_clock>::max();
+        auto time_out = std::chrono::time_point<std::chrono::steady_clock>::max();
         if (timeout < std::chrono::seconds::max())
         {
-            auto now = std::chrono::system_clock::now();
+            auto now = std::chrono::steady_clock::now();
             time_out = now + timeout;
         }
 
