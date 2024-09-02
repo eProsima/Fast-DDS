@@ -52,7 +52,7 @@ public:
     }
 
     void type(
-            traits<DynamicType>::ref_type type)  override
+            traits<DynamicType>::ref_type type) noexcept override
     {
         type_ = type;
     }
