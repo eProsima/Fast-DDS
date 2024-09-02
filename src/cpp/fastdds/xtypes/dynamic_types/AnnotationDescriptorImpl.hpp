@@ -63,7 +63,7 @@ public:
 
     ReturnCode_t get_value(
             ObjectName& value,
-            const ObjectName& key) const;
+            const ObjectName& key) const noexcept;
 
     ReturnCode_t get_all_value(
             Parameters& value)  override;
