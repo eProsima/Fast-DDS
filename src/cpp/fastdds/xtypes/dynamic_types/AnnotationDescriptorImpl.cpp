@@ -32,7 +32,7 @@ traits<AnnotationDescriptor>::ref_type traits<AnnotationDescriptor>::make_shared
 
 ReturnCode_t AnnotationDescriptorImpl::get_value(
         ObjectName& value,
-        const ObjectName& key)
+        const ObjectName& key) noexcept
 {
     const AnnotationDescriptorImpl& myself = *this;
     return myself.get_value(value, key);
