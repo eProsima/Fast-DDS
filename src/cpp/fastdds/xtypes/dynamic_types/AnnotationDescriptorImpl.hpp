@@ -59,7 +59,7 @@ public:
 
     ReturnCode_t get_value(
             ObjectName& value,
-            const ObjectName& key)  override;
+            const ObjectName& key) noexcept override;
 
     ReturnCode_t get_value(
             ObjectName& value,
