@@ -76,7 +76,7 @@ ReturnCode_t AnnotationDescriptorImpl::set_value(
 }
 
 ReturnCode_t AnnotationDescriptorImpl::copy_from(
-        traits<AnnotationDescriptor>::ref_type descriptor)
+        traits<AnnotationDescriptor>::ref_type descriptor) noexcept
 {
     if (!descriptor)
     {
