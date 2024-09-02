@@ -130,7 +130,7 @@ public:
      */
     bool update(
             eprosima::fastdds::rtps::CacheChange_t* change,
-            std::string topic_name);
+            const std::string& topic_name);
 
     bool update(
             eprosima::fastdds::rtps::CacheChange_t* change,
@@ -144,7 +144,7 @@ public:
 
     // enable ddb in persistence mode and open the file to backup up in append mode
     void persistence_enable(
-            std::string backup_file_name);
+            const std::string& backup_file_name);
 
     //! Disable the possibility to add new entries to the database
     void disable()
@@ -498,7 +498,7 @@ protected:
     //! Add a topic to the list of dirty topics, unless it's already present
     // Return true if added, false if already there
     bool set_dirty_topic_(
-            std::string topic);
+            const std::string& topic);
 
     // Add data in pdp_to_send if not already in it
     bool add_pdp_to_send_(

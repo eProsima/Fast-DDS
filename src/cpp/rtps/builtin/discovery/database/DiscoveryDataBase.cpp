@@ -376,7 +376,7 @@ bool DiscoveryDataBase::update(
 
 bool DiscoveryDataBase::update(
         eprosima::fastdds::rtps::CacheChange_t* change,
-        std::string topic_name)
+        const std::string& topic_name)
 {
     // in case the ddb is persistent, we store every cache in queue in a file
     if (is_persistent_ && guid_from_change(change).guidPrefix != server_guid_prefix_)
@@ -1252,7 +1252,7 @@ void DiscoveryDataBase::match_writer_reader_(
 }
 
 bool DiscoveryDataBase::set_dirty_topic_(
-        std::string topic)
+        const std::string& topic)
 {
     EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Setting topic " << topic << " as dirty");
 
@@ -2647,7 +2647,7 @@ void DiscoveryDataBase::clean_backup()
 }
 
 void DiscoveryDataBase::persistence_enable(
-        std::string backup_file_name)
+        const std::string& backup_file_name)
 {
     is_persistent_ = true;
     backup_file_name_ = backup_file_name;
