@@ -73,7 +73,7 @@ public:
 
     ReturnCode_t set_value(
             const ObjectName& key,
-            const ObjectName& value)  override;
+            const ObjectName& value) noexcept override;
 
     ReturnCode_t copy_from(
             traits<AnnotationDescriptor>::ref_type descriptor) noexcept override;
