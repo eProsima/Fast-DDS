@@ -66,10 +66,10 @@ public:
             const ObjectName& key) const noexcept;
 
     ReturnCode_t get_all_value(
-            Parameters& value)  override;
+            Parameters& value) noexcept override;
 
     ReturnCode_t get_all_value(
-            Parameters& value) const;
+            Parameters& value) const noexcept;
 
     ReturnCode_t set_value(
             const ObjectName& key,

@@ -102,13 +102,13 @@ bool AnnotationDescriptorImpl::equals(
 }
 
 bool AnnotationDescriptorImpl::equals(
-        AnnotationDescriptorImpl& descriptor)
+        AnnotationDescriptorImpl& descriptor) noexcept
 {
     return (type_ && type_->equals(descriptor.type_)) &&
            value_ == descriptor.value_;
 }
 
-bool AnnotationDescriptorImpl::is_consistent()
+bool AnnotationDescriptorImpl::is_consistent() noexcept
 {
     if (!type_ || type_->get_kind() != TK_ANNOTATION)
     {
