@@ -504,6 +504,7 @@ int main(
                 dynamic_types, data_sharing, data_loans, shared_memory, forced_domain, data_sizes))
         {
             latency_publisher.run();
+            latency_publisher.destroy_user_entities();
         }
         else
         {
@@ -519,6 +520,7 @@ int main(
                 xml_config_file, dynamic_types, data_sharing, data_loans, shared_memory, forced_domain, data_sizes))
         {
             latency_subscriber.run();
+            latency_subscriber.destroy_user_entities();
         }
         else
         {
@@ -569,6 +571,13 @@ int main(
             {
                 sub.join();
             }
+
+            for (auto& sub : latency_subscribers)
+            {
+                sub->destroy_user_entities();
+            }
+
+            latency_publisher.destroy_user_entities();
         }
         else
         {
