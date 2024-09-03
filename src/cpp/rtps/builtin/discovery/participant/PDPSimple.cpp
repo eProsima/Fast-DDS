@@ -681,11 +681,7 @@ void PDPSimple::match_pdp_remote_endpoints(
             writer->matched_reader_add(*temp_reader_data);
         }
 
-<<<<<<< HEAD
-        if (BEST_EFFORT_RELIABILITY_QOS == reliability_kind)
-=======
-        if (!writer_only && (dds::BEST_EFFORT_RELIABILITY_QOS == reliability_kind))
->>>>>>> 3ca60e061 (Hotfix: Secure simple participants with `initialpeers` over `TCP` match (#5071))
+        if (!writer_only && (BEST_EFFORT_RELIABILITY_QOS == reliability_kind))
         {
             endpoints->writer.writer_->unsent_changes_reset();
         }

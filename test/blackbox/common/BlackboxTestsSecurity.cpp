@@ -21,16 +21,6 @@
 #include <fstream>
 #include <map>
 
-<<<<<<< HEAD
-=======
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/log/Log.hpp>
-#include <fastdds/LibrarySettings.hpp>
-#include <fastdds/rtps/common/EntityId_t.hpp>
-#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
-#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
-#include <fastdds/utils/IPFinder.hpp>
->>>>>>> 3ca60e061 (Hotfix: Secure simple participants with `initialpeers` over `TCP` match (#5071))
 #include <gtest/gtest.h>
 
 #include "PubSubReader.hpp"
@@ -43,6 +33,7 @@
 #include <fastdds/rtps/common/EntityId_t.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastrtps/utils/IPFinder.h>
 
 #include <rtps/transport/test_UDPv4Transport.h>
 
