@@ -2242,6 +2242,88 @@ TEST(OwnershipQos, exclusive_kind_keep_all_reliable)
     reader.block_for_all();
 }
 
+/*!
+ * This is a regression test for redmine issue 20866.
+ *
+ * This test checks that a reader with a KEEP_ALL history and an exclusive ownership policy only does not return
+ * data from the writer with the lowest strength after returning data from the highest one.
+ */
+TEST(OwnershipQos, exclusive_kind_keep_all_reliable_mixed)
+{
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> low_strength_writer(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldPubSubType> high_strength_writer(TEST_TOPIC_NAME);
+
+    // Prepare data.
+    std::list<KeyedHelloWorld> generated_data = default_keyedhelloworld_data_generator(20);
+    auto middle = std::next(generated_data.begin(), 10);
+    std::list<KeyedHelloWorld> low_strength_data(generated_data.begin(), middle);
+    std::list<KeyedHelloWorld> high_strength_data(middle, generated_data.end());
+    auto expected_data = high_strength_data;
+    auto it = low_strength_data.begin();
+    // Expect reception of the first two samples from the low strength writer (one per instance).
+    expected_data.push_front(*it++);
+    expected_data.push_front(*it);
+
+    // Initialize writers.
+    low_strength_writer.ownership_strength(3)
+            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .init();
+    ASSERT_TRUE(low_strength_writer.isInitialized());
+
+    // High strength writer will use a custom transport to ensure its data is received after the low strength data.
+    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    std::atomic<bool> drop_messages(false);
+    test_transport->messages_filter_ = [&drop_messages](eprosima::fastdds::rtps::CDRMessage_t&)
+            {
+                return drop_messages.load();
+            };
+    high_strength_writer.ownership_strength(4)
+            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(test_transport)
+            .init();
+    ASSERT_TRUE(high_strength_writer.isInitialized());
+
+    // Initialize reader.
+    reader.ownership_exclusive()
+            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery.
+    low_strength_writer.wait_discovery();
+    high_strength_writer.wait_discovery();
+    reader.wait_discovery(std::chrono::seconds::zero(), 2);
+
+    // Drop the messages from the high strength writer, so they arrive later to the reader.
+    drop_messages.store(true);
+
+    // Send one sample from each writer, with low strength data first.
+    while (!low_strength_data.empty() && !high_strength_data.empty())
+    {
+        EXPECT_TRUE(low_strength_writer.send_sample(low_strength_data.front()));
+        EXPECT_TRUE(high_strength_writer.send_sample(high_strength_data.front()));
+        low_strength_data.pop_front();
+        high_strength_data.pop_front();
+    }
+
+    // Wait for the reader to receive the low strength data.
+    EXPECT_TRUE(low_strength_writer.waitForAllAcked(std::chrono::seconds(1)));
+
+    // Let high strength writer send the data, and wait for the reader to receive it.
+    drop_messages.store(false);
+    EXPECT_TRUE(high_strength_writer.waitForAllAcked(std::chrono::seconds(1)));
+
+    // Make the reader process the data, expecting only the high strength data.
+    // The issue was reproduced by the reader complaining about reception of unexpected data.
+    reader.startReception(expected_data);
+    reader.block_for_all();
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
