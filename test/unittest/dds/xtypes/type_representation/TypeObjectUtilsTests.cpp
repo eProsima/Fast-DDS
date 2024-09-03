@@ -2768,7 +2768,7 @@ TEST(TypeObjectUtilsTests, register_alias_type_object)
     CompleteAliasType alias = TypeObjectUtils::build_complete_alias_type(0, empty_header, body);
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             TypeObjectUtils::build_and_register_alias_type_object(alias, "alias", type_ids));
-    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER,
             TypeObjectUtils::build_and_register_alias_type_object(alias, "alias", type_ids));
     CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
@@ -2794,7 +2794,8 @@ TEST(TypeObjectUtilsTests, register_annotation_type_object)
     TypeIdentifierPair type_ids;
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(annotation,
             "annotation", type_ids));
-    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(annotation,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER,
+            TypeObjectUtils::build_and_register_annotation_type_object(annotation,
             "annotation", type_ids));
     CompleteAnnotationHeader other_header = TypeObjectUtils::build_complete_annotation_header("other_annotation_name");
     CompleteAnnotationType other_annotation = TypeObjectUtils::build_complete_annotation_type(0, other_header,
@@ -2821,7 +2822,8 @@ TEST(TypeObjectUtilsTests, register_structure_type_object)
     TypeIdentifierPair type_ids;
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_struct_type_object(structure,
             "structure", type_ids));
-    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_struct_type_object(structure,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER,
+            TypeObjectUtils::build_and_register_struct_type_object(structure,
             "structure", type_ids));
     StructTypeFlag other_flags = TypeObjectUtils::build_struct_type_flag(
         eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL, false, false);
@@ -2872,7 +2874,7 @@ TEST(TypeObjectUtilsTests, register_union_type_object)
                     discriminator, member_seq);
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             TypeObjectUtils::build_and_register_union_type_object(union_type, "union", type_ids));
-    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER,
             TypeObjectUtils::build_and_register_union_type_object(union_type, "union", type_ids));
     UnionTypeFlag other_flags = TypeObjectUtils::build_union_type_flag(
         eprosima::fastdds::dds::xtypes::ExtensibilityKind::MUTABLE, false, false);
@@ -2904,7 +2906,7 @@ TEST(TypeObjectUtilsTests, register_bitset_type_object)
     CompleteBitsetType bitset = TypeObjectUtils::build_complete_bitset_type(0, header, bitfield_seq);
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             TypeObjectUtils::build_and_register_bitset_type_object(bitset, "bitset", type_ids));
-    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER,
             TypeObjectUtils::build_and_register_bitset_type_object(bitset, "bitset", type_ids));
     CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
@@ -2936,7 +2938,7 @@ TEST(TypeObjectUtilsTests, register_sequence_type_object)
     CompleteSequenceType sequence = TypeObjectUtils::build_complete_sequence_type(0, header, element);
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             TypeObjectUtils::build_and_register_sequence_type_object(sequence, "sequence"));
-    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER,
             TypeObjectUtils::build_and_register_sequence_type_object(sequence, "sequence"));
     CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
@@ -2973,7 +2975,7 @@ TEST(TypeObjectUtilsTests, register_array_type_object)
     CompleteArrayType array = TypeObjectUtils::build_complete_array_type(0, header, element);
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             TypeObjectUtils::build_and_register_array_type_object(array, "array"));
-    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER,
             TypeObjectUtils::build_and_register_array_type_object(array, "array"));
     type_id._d(TK_INT16);
     CommonCollectionElement other_common_element = TypeObjectUtils::build_common_collection_element(flags, type_id);
@@ -3004,7 +3006,8 @@ TEST(TypeObjectUtilsTests, register_map_type_object)
                     CompleteElementDetail());
     CompleteMapType map = TypeObjectUtils::build_complete_map_type(0, header, element, element);
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_map_type_object(map, "map"));
-    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_map_type_object(map, "map"));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER,
+            TypeObjectUtils::build_and_register_map_type_object(map, "map"));
     type_id._d(TK_INT32);
     CommonCollectionElement key_element = TypeObjectUtils::build_common_collection_element(flags, type_id);
     CompleteCollectionElement key = TypeObjectUtils::build_complete_collection_element(key_element,
@@ -3040,7 +3043,7 @@ TEST(TypeObjectUtilsTests, register_enumerated_type_object)
     CompleteEnumeratedType enumeration = TypeObjectUtils::build_complete_enumerated_type(0, header, literal_seq);
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             TypeObjectUtils::build_and_register_enumerated_type_object(enumeration, "enum", type_ids));
-    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER,
             TypeObjectUtils::build_and_register_enumerated_type_object(enumeration, "enum", type_ids));
     CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
@@ -3075,7 +3078,7 @@ TEST(TypeObjectUtilsTests, register_bitmask_type_object)
     CompleteBitmaskType bitmask = TypeObjectUtils::build_complete_bitmask_type(0, header, bitflag_seq);
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             TypeObjectUtils::build_and_register_bitmask_type_object(bitmask, "bitmask", type_ids));
-    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER,
             TypeObjectUtils::build_and_register_bitmask_type_object(bitmask, "bitmask", type_ids));
     CommonBitflag common = TypeObjectUtils::build_common_bitflag(1, 0);
     CompleteMemberDetail other_member_detail = TypeObjectUtils::build_complete_member_detail("other_member_name",
