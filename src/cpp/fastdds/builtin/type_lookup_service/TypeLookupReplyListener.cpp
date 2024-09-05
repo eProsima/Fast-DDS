@@ -175,6 +175,13 @@ void TypeLookupReplyListener::check_get_types_reply(
                     fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_object(
                         requests_it->second.type_id(), type_object);
                     xtypes::TypeObjectUtils::type_object_consistency(type_object);
+                    xtypes::TypeIdentifierPair type_ids;
+                    if (RETCODE_OK != fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+                                    register_type_object(type_object, type_ids, true))
+                    {
+                        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REPLY_LISTENER,
+                                "Cannot register minimal of remote type");
+                    }
 
                     typelookup_manager_->notify_callbacks(requests_it->second);
                 }
