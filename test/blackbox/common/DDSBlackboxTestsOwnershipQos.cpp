@@ -2168,91 +2168,33 @@ TEST_P(OwnershipQos, exclusive_kind_keyed_besteffort_disposing_instance)
 /*!
  * This is a regression test for redmine issue 20866.
  *
- * This test checks that a reader with a KEEP_ALL history and an exclusive ownership policy only returns the data
- * from the writer with the highest strength.
- */
-TEST(OwnershipQos, exclusive_kind_keep_all_reliable)
-{
-    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<KeyedHelloWorldPubSubType> low_strength_writer(TEST_TOPIC_NAME);
-    PubSubWriter<KeyedHelloWorldPubSubType> high_strength_writer(TEST_TOPIC_NAME);
-
-    // Prepare data.
-    std::list<KeyedHelloWorld> generated_data = default_keyedhelloworld_data_generator(20);
-    auto middle = std::next(generated_data.begin(), 10);
-    std::list<KeyedHelloWorld> low_strength_data(generated_data.begin(), middle);
-    std::list<KeyedHelloWorld> high_strength_data(middle, generated_data.end());
-    auto expected_data = high_strength_data;
-
-    // Initialize writers.
-    low_strength_writer.ownership_strength(3)
-            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
-            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
-            .init();
-    ASSERT_TRUE(low_strength_writer.isInitialized());
-
-    // High strength writer will use a custom transport to ensure its data is received after the low strength data.
-    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
-    std::atomic<bool> drop_messages(false);
-    test_transport->messages_filter_ = [&drop_messages](eprosima::fastdds::rtps::CDRMessage_t&)
-            {
-                return drop_messages.load();
-            };
-    high_strength_writer.ownership_strength(4)
-            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
-            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
-            .disable_builtin_transport()
-            .add_user_transport_to_pparams(test_transport)
-            .init();
-    ASSERT_TRUE(high_strength_writer.isInitialized());
-
-    // Initialize reader.
-    reader.ownership_exclusive()
-            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
-            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
-            .init();
-    ASSERT_TRUE(reader.isInitialized());
-
-    // Wait for discovery.
-    low_strength_writer.wait_discovery();
-    high_strength_writer.wait_discovery();
-    reader.wait_discovery(std::chrono::seconds::zero(), 2);
-
-    // Send high strength data first, so it has the lowest source timestamps, but drop the messages, so they arrive
-    // later to the reader.
-    drop_messages.store(true);
-    high_strength_writer.send(high_strength_data);
-    EXPECT_TRUE(high_strength_data.empty());
-
-    // Send low strength data, so it has the highest source timestamps.
-    low_strength_writer.send(low_strength_data);
-    EXPECT_TRUE(low_strength_data.empty());
-    // Wait for the reader to receive the data.
-    EXPECT_TRUE(low_strength_writer.waitForAllAcked(std::chrono::seconds(1)));
-
-    // Let high strength writer send the data.
-    drop_messages.store(false);
-
-    // Wait for the reader to receive the high strength data.
-    EXPECT_TRUE(high_strength_writer.waitForAllAcked(std::chrono::seconds(1)));
-
-    // Make the reader process the data, expecting only the high strength data.
-    // The issue was reproduced by the reader complaining about reception of unexpected data.
-    reader.startReception(expected_data);
-    reader.block_for_all();
-}
-
-/*!
- * This is a regression test for redmine issue 20866.
+ * This test checks that a reader keeping a long number of samples and with an exclusive ownership policy only
+ * returns the data from the writer with the highest strength.
  *
- * This test checks that a reader with a KEEP_ALL history and an exclusive ownership policy only does not return
- * data from the writer with the lowest strength after returning data from the highest one.
+ * @param use_keep_all_history  Whether to use KEEP_ALL history or KEEP_LAST(20).
+ * @param mixed_data            Whether to send data from both writers in an interleaved way.
  */
-TEST(OwnershipQos, exclusive_kind_keep_all_reliable_mixed)
+static void test_exclusive_kind_big_history(
+        bool use_keep_all_history,
+        bool mixed_data)
 {
     PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     PubSubWriter<KeyedHelloWorldPubSubType> low_strength_writer(TEST_TOPIC_NAME);
     PubSubWriter<KeyedHelloWorldPubSubType> high_strength_writer(TEST_TOPIC_NAME);
+
+    // Configure history QoS.
+    if (use_keep_all_history)
+    {
+        reader.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS);
+        low_strength_writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS);
+        high_strength_writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS);
+    }
+    else
+    {
+        reader.history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS).history_depth(20);
+        low_strength_writer.history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS).history_depth(20);
+        high_strength_writer.history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS).history_depth(20);
+    }
 
     // Prepare data.
     std::list<KeyedHelloWorld> generated_data = default_keyedhelloworld_data_generator(20);
@@ -2260,14 +2202,17 @@ TEST(OwnershipQos, exclusive_kind_keep_all_reliable_mixed)
     std::list<KeyedHelloWorld> low_strength_data(generated_data.begin(), middle);
     std::list<KeyedHelloWorld> high_strength_data(middle, generated_data.end());
     auto expected_data = high_strength_data;
-    auto it = low_strength_data.begin();
-    // Expect reception of the first two samples from the low strength writer (one per instance).
-    expected_data.push_front(*it++);
-    expected_data.push_front(*it);
+
+    if (mixed_data)
+    {
+        // Expect reception of the first two samples from the low strength writer (one per instance).
+        auto it = low_strength_data.begin();
+        expected_data.push_front(*it++);
+        expected_data.push_front(*it);
+    }
 
     // Initialize writers.
     low_strength_writer.ownership_strength(3)
-            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .init();
     ASSERT_TRUE(low_strength_writer.isInitialized());
@@ -2280,7 +2225,6 @@ TEST(OwnershipQos, exclusive_kind_keep_all_reliable_mixed)
                 return drop_messages.load();
             };
     high_strength_writer.ownership_strength(4)
-            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .disable_builtin_transport()
             .add_user_transport_to_pparams(test_transport)
@@ -2289,7 +2233,6 @@ TEST(OwnershipQos, exclusive_kind_keep_all_reliable_mixed)
 
     // Initialize reader.
     reader.ownership_exclusive()
-            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .init();
     ASSERT_TRUE(reader.isInitialized());
@@ -2302,13 +2245,27 @@ TEST(OwnershipQos, exclusive_kind_keep_all_reliable_mixed)
     // Drop the messages from the high strength writer, so they arrive later to the reader.
     drop_messages.store(true);
 
-    // Send one sample from each writer, with low strength data first.
-    while (!low_strength_data.empty() && !high_strength_data.empty())
+    if (mixed_data)
     {
-        EXPECT_TRUE(low_strength_writer.send_sample(low_strength_data.front()));
-        EXPECT_TRUE(high_strength_writer.send_sample(high_strength_data.front()));
-        low_strength_data.pop_front();
-        high_strength_data.pop_front();
+        // Send one sample from each writer, with low strength data first.
+        while (!low_strength_data.empty() && !high_strength_data.empty())
+        {
+            EXPECT_TRUE(low_strength_writer.send_sample(low_strength_data.front()));
+            EXPECT_TRUE(high_strength_writer.send_sample(high_strength_data.front()));
+            low_strength_data.pop_front();
+            high_strength_data.pop_front();
+        }
+    }
+    else
+    {
+        // Send high strength data first, so it has the lowest source timestamps, but drop the messages, so they arrive
+        // later to the reader.
+        high_strength_writer.send(high_strength_data);
+        EXPECT_TRUE(high_strength_data.empty());
+
+        // Send low strength data, so it has the highest source timestamps.
+        low_strength_writer.send(low_strength_data);
+        EXPECT_TRUE(low_strength_data.empty());
     }
 
     // Wait for the reader to receive the low strength data.
@@ -2318,10 +2275,30 @@ TEST(OwnershipQos, exclusive_kind_keep_all_reliable_mixed)
     drop_messages.store(false);
     EXPECT_TRUE(high_strength_writer.waitForAllAcked(std::chrono::seconds(1)));
 
-    // Make the reader process the data, expecting only the high strength data.
+    // Make the reader process the data, expecting only the required data.
     // The issue was reproduced by the reader complaining about reception of unexpected data.
     reader.startReception(expected_data);
     reader.block_for_all();
+}
+
+TEST(OwnershipQos, exclusive_kind_keep_all_reliable)
+{
+    test_exclusive_kind_big_history(true, false);
+}
+
+TEST(OwnershipQos, exclusive_kind_keep_all_reliable_mixed)
+{
+    test_exclusive_kind_big_history(true, true);
+}
+
+TEST(OwnershipQos, exclusive_kind_keep_last_reliable)
+{
+    test_exclusive_kind_big_history(false, false);
+}
+
+TEST(OwnershipQos, exclusive_kind_keep_last_reliable_mixed)
+{
+    test_exclusive_kind_big_history(false, true);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
