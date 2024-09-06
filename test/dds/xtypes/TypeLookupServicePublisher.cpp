@@ -217,7 +217,7 @@ bool TypeLookupServicePublisher::wait_discovery(
     bool result = cv_.wait_for(lock, std::chrono::seconds(timeout),
                     [&]()
                     {
-                        return matched_ == expected_matches_;
+                        return matched_ == static_cast<int32_t>(expected_matches_);
                     });
 
     if (!result)
@@ -238,7 +238,7 @@ bool TypeLookupServicePublisher::run(
         lock, std::chrono::seconds(timeout), [&]
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            uint32_t current_sample = 0;
+            uint32_t current_sample {0};
             std::string type_name;
             while (samples > current_sample)
             {
@@ -249,15 +249,23 @@ bool TypeLookupServicePublisher::run(
                     {
                         DynamicData::_ref_type sample =
                         DynamicDataFactory::get_instance()->create_data(known_type.second.dyn_type_);
-                        //std::cout << "Publisher dyn_type_" << type_name << ": " << current_sample << std::endl;
-                        known_type.second.writer_->write(&sample);
+                        if (RETCODE_OK != known_type.second.writer_->write(&sample))
+                        {
+                            std::cout << "ERROR TypeLookupServicePublisher fails writing sample " <<
+                                current_sample + 1 << std::endl;
+                            return false;
+                        }
                     }
 
                     if (known_type.second.type_)
                     {
                         void* sample = known_type.second.type_sup_.create_data();
-                        //std::cout << "Publisher type_" << type_name << ": " << current_sample << std::endl;
-                        known_type.second.writer_->write(sample);
+                        if (RETCODE_OK != known_type.second.writer_->write(sample))
+                        {
+                            std::cout << "ERROR TypeLookupServicePublisher fails writing sample " <<
+                                current_sample + 1 << std::endl;
+                            return false;
+                        }
                         known_type.second.type_sup_.delete_data(sample);
                     }
 
@@ -296,11 +304,8 @@ void TypeLookupServicePublisher::on_publication_matched(
         const PublicationMatchedStatus& info)
 {
     std::unique_lock<std::mutex> lock(mutex_);
-    if (info.current_count_change == 1)
-    {
-        ++matched_;
-        cv_.notify_all();
-    }
+    matched_ += info.current_count_change;
+    cv_.notify_all();
 }
 
 void TypeLookupServicePublisher::on_data_reader_discovery(

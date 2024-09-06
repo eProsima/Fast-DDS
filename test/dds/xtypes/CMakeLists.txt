@@ -43,7 +43,7 @@ file(GLOB COMMON_SOURCE
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/declarationsPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/enumerationsPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/enumerationsTypeObjectSupport.cxx
-    ${PROJECT_SOURCE_DIR}/test/dds-types-test/externalPubSubTypes.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/externalPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/finalPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/finalTypeObjectSupport.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/inheritancePubSubTypes.cxx

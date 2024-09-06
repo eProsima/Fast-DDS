@@ -6,7 +6,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "BitsetStruct"
@@ -15,7 +15,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }

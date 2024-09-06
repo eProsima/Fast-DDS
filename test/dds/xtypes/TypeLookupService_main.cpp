@@ -107,7 +107,8 @@ int main(
                 eprosima::fastdds::dds::TypeLookupServicePublisher pub;
                 return (pub.init(args.known_types) &&
                        pub.wait_discovery(args.expected_matches, args.timeout) &&
-                       pub.run(args.samples, args.timeout)) ? 0 : -1;
+                       pub.run(args.samples, args.timeout) &&
+                       pub.wait_discovery(0, args.timeout)) ? 0 : -1;
             }
             case 2: {
                 eprosima::fastdds::dds::TypeLookupServiceSubscriber sub;

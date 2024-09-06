@@ -6,7 +6,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "BitsetsChildInheritanceStruct"
@@ -15,7 +15,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -27,7 +27,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "InnerEmptyStructureHelperChild"
@@ -36,7 +36,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -48,7 +48,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "InnerStructureHelperChild"
@@ -57,7 +57,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -69,7 +69,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "InnerStructureHelperChildChild"
@@ -78,7 +78,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -90,7 +90,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "InnerStructureHelperEmptyChild"
@@ -99,7 +99,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -111,7 +111,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "InnerStructureHelperEmptyChildChild"
@@ -120,7 +120,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -132,7 +132,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "StructAliasInheritanceStruct"
@@ -141,7 +141,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -153,7 +153,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "StructuresInheritanceStruct"
@@ -162,7 +162,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }

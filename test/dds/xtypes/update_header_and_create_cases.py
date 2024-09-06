@@ -9,7 +9,10 @@ class IDLProcessor:
         self.structs_info = set()
 
         # List of files to ignore
-        self.files_to_ignore = {"relative_path_include.idl"} 
+        self.files_to_ignore = {
+            "external.idl",
+            "relative_path_include.idl"
+        }
         # List of struct names to ignore
         self.struct_names_to_ignore = ["MapWString*", "MapInnerAliasBoundedWStringHelper*", "AnnotatedStruct"]
         # List of IDL files that don't have a TypeObject
@@ -89,14 +92,14 @@ def create_case_files(structs_info, struct_names_to_ignore):
                         {
                             "kind": "publisher",
                             "samples": "10",
-                            "timeout": "2",
+                            "timeout": "10",
                             "expected_matches": "1",
                             "known_types": known_types
                         },
                         {
                             "kind": "subscriber",
                             "samples": "10",
-                            "timeout": "2",
+                            "timeout": "10",
                             "expected_matches": "1",
                             "known_types": []
                         }

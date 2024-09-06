@@ -6,7 +6,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionArray"
@@ -15,7 +15,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -27,7 +27,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionBoolean"
@@ -36,7 +36,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -48,7 +48,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionBoundedString"
@@ -57,7 +57,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -69,7 +69,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionBoundedWString"
@@ -78,7 +78,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -90,7 +90,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionChar"
@@ -99,7 +99,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -111,7 +111,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionDiscriminatorAlias"
@@ -120,7 +120,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -132,7 +132,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionDiscriminatorBoolean"
@@ -141,7 +141,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -153,7 +153,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionDiscriminatorChar"
@@ -162,7 +162,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -174,7 +174,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionDiscriminatorEnum"
@@ -183,7 +183,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -195,7 +195,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionDiscriminatorEnumLabel"
@@ -204,7 +204,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -216,7 +216,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionDiscriminatorLong"
@@ -225,7 +225,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -237,7 +237,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionDiscriminatorLongLong"
@@ -246,7 +246,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -258,7 +258,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionDiscriminatorOctet"
@@ -267,7 +267,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -279,7 +279,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionDiscriminatorShort"
@@ -288,7 +288,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -300,7 +300,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionDiscriminatorULong"
@@ -309,7 +309,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -321,7 +321,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionDiscriminatorULongLong"
@@ -330,7 +330,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -342,7 +342,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionDiscriminatorUShort"
@@ -351,7 +351,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -363,7 +363,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionDiscriminatorWChar"
@@ -372,7 +372,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -384,7 +384,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionDouble"
@@ -393,7 +393,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -405,7 +405,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionFloat"
@@ -414,7 +414,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -426,7 +426,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionInnerAliasHelper"
@@ -435,7 +435,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -447,7 +447,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionInnerBitMaskHelper"
@@ -456,7 +456,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -468,7 +468,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionInnerBitsetHelper"
@@ -477,7 +477,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -489,7 +489,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionInnerEnumHelper"
@@ -498,7 +498,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -510,7 +510,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionInnerStructureHelper"
@@ -519,7 +519,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -531,7 +531,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionInnerUnionHelper"
@@ -540,7 +540,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -552,7 +552,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionLong"
@@ -561,7 +561,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -573,7 +573,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionLongDouble"
@@ -582,7 +582,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -594,7 +594,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionLongLong"
@@ -603,7 +603,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -615,7 +615,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionMap"
@@ -624,7 +624,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -636,7 +636,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionOctet"
@@ -645,7 +645,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -657,7 +657,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionSequence"
@@ -666,7 +666,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -678,7 +678,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionSeveralFields"
@@ -687,7 +687,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -699,7 +699,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionSeveralFieldsWithDefault"
@@ -708,7 +708,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -720,7 +720,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionShort"
@@ -729,7 +729,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -741,7 +741,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionString"
@@ -750,7 +750,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -762,7 +762,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionULong"
@@ -771,7 +771,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -783,7 +783,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionULongLong"
@@ -792,7 +792,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -804,7 +804,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionUShort"
@@ -813,7 +813,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -825,7 +825,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionWChar"
@@ -834,7 +834,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -846,7 +846,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UnionWString"
@@ -855,7 +855,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }

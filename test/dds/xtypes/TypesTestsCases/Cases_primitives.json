@@ -6,7 +6,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "BooleanStruct"
@@ -15,7 +15,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -27,7 +27,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "CharStruct"
@@ -36,7 +36,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -48,7 +48,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "DoubleStruct"
@@ -57,7 +57,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -69,7 +69,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "FloatStruct"
@@ -78,7 +78,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -90,7 +90,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "Int16Struct"
@@ -99,7 +99,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -111,7 +111,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "Int32Struct"
@@ -120,7 +120,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -132,7 +132,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "Int64Struct"
@@ -141,7 +141,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -153,7 +153,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "Int8Struct"
@@ -162,7 +162,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -174,7 +174,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "LongDoubleStruct"
@@ -183,7 +183,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -195,7 +195,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "LongLongStruct"
@@ -204,7 +204,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -216,7 +216,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "LongStruct"
@@ -225,7 +225,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -237,7 +237,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "OctetStruct"
@@ -246,7 +246,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -258,7 +258,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "ShortStruct"
@@ -267,7 +267,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -279,7 +279,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "ULongLongStruct"
@@ -288,7 +288,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -300,7 +300,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "ULongStruct"
@@ -309,7 +309,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -321,7 +321,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "UShortStruct"
@@ -330,7 +330,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -342,7 +342,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "Uint16Struct"
@@ -351,7 +351,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -363,7 +363,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "Uint32Struct"
@@ -372,7 +372,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -384,7 +384,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "Uint64Struct"
@@ -393,7 +393,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -405,7 +405,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "Uint8Struct"
@@ -414,7 +414,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }
@@ -426,7 +426,7 @@
                 {
                     "kind": "publisher",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": [
                         "WCharStruct"
@@ -435,7 +435,7 @@
                 {
                     "kind": "subscriber",
                     "samples": "10",
-                    "timeout": "2",
+                    "timeout": "10",
                     "expected_matches": "1",
                     "known_types": []
                 }

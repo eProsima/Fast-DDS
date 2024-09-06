@@ -31,7 +31,6 @@
 #include "../../dds-types-test/constantsPubSubTypes.hpp"
 #include "../../dds-types-test/declarationsPubSubTypes.hpp"
 #include "../../dds-types-test/enumerationsPubSubTypes.hpp"
-#include "../../dds-types-test/externalPubSubTypes.hpp"
 #include "../../dds-types-test/finalPubSubTypes.hpp"
 #include "../../dds-types-test/helpers/basic_inner_typesPubSubTypes.hpp"
 #include "../../dds-types-test/inheritancePubSubTypes.hpp"

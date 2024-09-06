@@ -179,8 +179,7 @@ bool TypeLookupServiceSubscriber::process_type_impl(
 
         if (info.valid_data && reader->is_sample_valid(&data, &info))
         {
-            std::lock_guard<std::mutex> guard(known_types_mutex_);
-            // std::cout << "Subscriber type_" << reader->type().get_type_name() << ": " << std::endl;
+            std::lock_guard<std::mutex> guard(mutex_);
             received_samples_[info.sample_identity.writer_guid()]++;
             cv_.notify_all();
         }
@@ -216,8 +215,7 @@ bool TypeLookupServiceSubscriber::process_dyn_type_impl(
 
         if (info.valid_data && reader->is_sample_valid(&data, &info))
         {
-            std::lock_guard<std::mutex> guard(known_types_mutex_);
-            // std::cout << "Subscriber dyn_type_" << reader->type().get_type_name() << ": " << std::endl;
+            std::lock_guard<std::mutex> guard(mutex_);
             received_samples_[info.sample_identity.writer_guid()]++;
             cv_.notify_all();
         }
@@ -302,7 +300,7 @@ bool TypeLookupServiceSubscriber::wait_discovery(
     bool result = cv_.wait_for(lock, std::chrono::seconds(timeout),
                     [&]()
                     {
-                        return matched_ == expected_matches_;
+                        return matched_ == static_cast<int32_t>(expected_matches_);
                     });
 
     if (!result)
@@ -365,11 +363,8 @@ void TypeLookupServiceSubscriber::on_subscription_matched(
         const SubscriptionMatchedStatus& info)
 {
     std::unique_lock<std::mutex> lock(mutex_);
-    if (info.current_count_change == 1)
-    {
-        ++matched_;
-        cv_.notify_all();
-    }
+    matched_ += info.current_count_change;
+    cv_.notify_all();
 }
 
 void TypeLookupServiceSubscriber::on_data_available(
