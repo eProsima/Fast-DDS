@@ -133,12 +133,11 @@ void DataSharingListener::process_new_data ()
 {
     EPROSIMA_LOG_INFO(RTPS_READER, "Received new data notification");
 
-    std::unique_lock<std::mutex> lock(mutex_);
-
-    // It is safe to 'forget' any change now
-    notification_->notification_->new_data.store(false);
-    // All places where this is set to true is locked by the same mutex, memory_order_relaxed is enough
-    writer_pools_changed_.store(false, std::memory_order_relaxed);
+    notification_->notification_->new_data.store(false,std::memory_order_release);
+    // Using Acquire-Release semantics can avoid some blocking problems in traditional locking, such as deadlock and priority inversion. 
+    // This usually means higher concurrency performance because threads don't have to wait for locks to be released.
+    // Through Acquire-Release, you can achieve finer-grained control over specific variables or data structures without having to lock the entire resource or object, which can reduce contention and improve concurrency.
+    writer_pools_changed_.store(false,std::memory_order_release);
 
     // Loop on the writers looking for data not read yet
     for (auto it = writer_pools_.begin(); it != writer_pools_.end(); ++it)
@@ -152,9 +151,7 @@ void DataSharingListener::process_new_data ()
             it->last_assertion_sequence = new_assertion_sequence;
         }
 
-        // Take the pool to free the lock
         std::shared_ptr<ReaderPool> pool = it->pool;
-        lock.unlock();
 
         if (liveliness_assertion_needed)
         {
@@ -199,17 +196,14 @@ void DataSharingListener::process_new_data ()
                 }
             }
 
-            if (writer_pools_changed_.load(std::memory_order_relaxed))
+            if (writer_pools_changed_.load(std::memory_order_acquire))
             {
                 // Break the while on the current writer (it may have been removed)
                 break;
             }
         }
 
-        // Lock again for the next loop
-        lock.lock();
-
-        if (writer_pools_changed_.load(std::memory_order_relaxed))
+        if (writer_pools_changed_.load(std::memory_order_acquire))
         {
             // Break the loop over the writers (itearators may have been invalidated)
             break;
