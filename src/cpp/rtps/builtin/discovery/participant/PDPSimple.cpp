@@ -737,11 +737,6 @@ void PDPSimple::assign_low_level_remote_endpoints(
         const ParticipantProxyData& pdata,
         bool notify_secure_endpoints)
 {
-    if (mp_EDP != nullptr)
-    {
-        mp_EDP->assignRemoteEndpoints(pdata, notify_secure_endpoints);
-    }
-
     if (mp_builtin->mp_WLP != nullptr)
     {
         mp_builtin->mp_WLP->assignRemoteEndpoints(pdata, notify_secure_endpoints);
@@ -750,6 +745,11 @@ void PDPSimple::assign_low_level_remote_endpoints(
     if (nullptr != mp_builtin->typelookup_manager_)
     {
         mp_builtin->typelookup_manager_->assign_remote_endpoints(pdata);
+    }
+
+    if (mp_EDP != nullptr)
+    {
+        mp_EDP->assignRemoteEndpoints(pdata, notify_secure_endpoints);
     }
 }
 
