@@ -27,12 +27,14 @@
 
 #include <utils/string_utilities.hpp>
 
+namespace eprosima {
+namespace fastrtps {
+namespace xmlparser {
+
 std::mutex XMLParser::collections_mtx_;
 std::set<std::string> XMLParser::flow_controller_descriptor_names_;
 
-using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::xmlparser;
 
 XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
         tinyxml2::XMLElement* elem,
@@ -853,7 +855,12 @@ XMLP_ret XMLParser::getXMLFlowControllerDescriptorList(
             {
                 std::lock_guard<std::mutex> lock(collections_mtx_);
                 // name - stringType
-                std::string element = get_element_text(p_aux1);
+                std::string element;
+                const char* text = nullptr;
+                if (nullptr != (text = p_aux1->GetText()))
+                {
+                    element = text;
+                }
                 if (element.empty())
                 {
                     EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << NAME << "' without content");
@@ -871,15 +878,20 @@ XMLP_ret XMLParser::getXMLFlowControllerDescriptorList(
             }
             else if (strcmp(name, SCHEDULER) == 0)
             {
-                std::string text = get_element_text(p_aux1);
-                if (text.empty())
+                std::string element;
+                const char* text = nullptr;
+                if (nullptr != (text = p_aux1->GetText()))
+                {
+                    element = text;
+                }
+                if (element.empty())
                 {
                     EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << SCHEDULER << "' without content");
                     return XMLP_ret::XML_ERROR;
                 }
 
                 // scheduler - flowControllerSchedulerPolicy
-                if (!get_element_enum_value(text.c_str(), flow_controller_descriptor->scheduler,
+                if (!get_element_enum_value(element.c_str(), flow_controller_descriptor->scheduler,
                         FIFO, fastdds::rtps::FlowControllerSchedulerPolicy::FIFO,
                         HIGH_PRIORITY, fastdds::rtps::FlowControllerSchedulerPolicy::HIGH_PRIORITY,
                         ROUND_ROBIN, fastdds::rtps::FlowControllerSchedulerPolicy::ROUND_ROBIN,
@@ -905,11 +917,6 @@ XMLP_ret XMLParser::getXMLFlowControllerDescriptorList(
                 {
                     return XMLP_ret::XML_ERROR;
                 }
-            }
-            else if (strcmp(name, SENDER_THREAD) == 0)
-            {
-                // sender_thread - threadSettingsType
-                getXMLThreadSettings(*p_aux1, flow_controller_descriptor->sender_thread);
             }
             else
             {
@@ -2676,7 +2683,12 @@ XMLP_ret XMLParser::getXMLPublishModeQos(
         else if (strcmp(name, FLOW_CONTROLLER_NAME) == 0)
         {
             std::lock_guard<std::mutex> lock(collections_mtx_);
-            std::string element = get_element_text(p_aux0);
+            std::string element;
+            const char* text = nullptr;
+            if (nullptr != (text = p_aux0->GetText()))
+            {
+                element = text;
+            }
             if (element.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << FLOW_CONTROLLER_NAME << "' without content");
@@ -3783,6 +3795,61 @@ XMLP_ret XMLParser::getXMLUint(
     return XMLP_ret::XML_OK;
 }
 
+XMLP_ret XMLParser::getXMLUint(
+        tinyxml2::XMLElement* elem,
+        uint64_t* ui64,
+        uint8_t /*ident*/)
+{
+    unsigned long int ui = 0u;
+    if (nullptr == elem || nullptr == ui64)
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    auto to_uint64 = [](const char* str, unsigned long int* value) -> bool
+            {
+                // Look for a '-' sign
+                bool ret = false;
+                const char minus = '-';
+                const char* minus_result = str;
+                if (nullptr == std::strchr(minus_result, minus))
+                {
+                    // Minus not found
+                    ret = true;
+                }
+
+                if (ret)
+                {
+                    ret = false;
+#ifdef _WIN32
+                    if (sscanf_s(str, "%lu", value) == 1)
+#else
+                    if (sscanf(str, "%lu", value) == 1)
+#endif // ifdef _WIN32
+                    {
+                        // Number found
+                        ret = true;
+                    }
+                }
+                return ret;
+            };
+
+    std::string element;
+    const char* text = nullptr;
+    if (nullptr != (text = elem->GetText()))
+    {
+        element = text;
+    }
+    if (element.empty() || !to_uint64(element.c_str(), &ui))
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "<" << elem->Value() << "> getXMLUint XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+    *ui64 = static_cast<uint64_t>(ui);
+    return XMLP_ret::XML_OK;
+}
+
 XMLP_ret XMLParser::getXMLBool(
         tinyxml2::XMLElement* elem,
         bool* b,
@@ -4502,3 +4569,7 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
 
     return XMLP_ret::XML_OK;
 }
+
+} // namespace xmlparser
+} // namespace fastrtps
+} // namespace eprosima

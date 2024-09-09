@@ -573,6 +573,11 @@ protected:
             uint16_t* ui16,
             uint8_t ident);
 
+    RTPS_DllAPI static XMLP_ret getXMLUint(
+            tinyxml2::XMLElement* elem,
+            uint64_t* ui64,
+            uint8_t ident);
+
     RTPS_DllAPI static XMLP_ret getXMLBool(
             tinyxml2::XMLElement* elem,
             bool* b,

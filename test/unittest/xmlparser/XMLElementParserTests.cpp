@@ -2047,14 +2047,6 @@ TEST_F(XMLParserTests, getXMLFlowControllerDescriptorList)
             ASSERT_EQ(flow_controller_descriptor_list.at(0)->max_bytes_per_period,
                     static_cast<int32_t>(std::stoi(params[2])));
             ASSERT_EQ(flow_controller_descriptor_list.at(0)->period_ms, static_cast<uint64_t>(std::stoi(params[3])));
-            ASSERT_EQ(flow_controller_descriptor_list.at(0)->sender_thread.scheduling_policy,
-                    static_cast<int32_t>(std::stoi(params[4])));
-            ASSERT_EQ(flow_controller_descriptor_list.at(0)->sender_thread.priority,
-                    static_cast<int32_t>(std::stoi(params[5])));
-            ASSERT_EQ(flow_controller_descriptor_list.at(0)->sender_thread.affinity,
-                    static_cast<uint64_t>(std::stoi(params[6])));
-            ASSERT_EQ(flow_controller_descriptor_list.at(0)->sender_thread.stack_size,
-                    static_cast<int32_t>(std::stoi(params[7])));
         }
     }
 }
