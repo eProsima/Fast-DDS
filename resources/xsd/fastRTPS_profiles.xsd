@@ -1711,15 +1711,13 @@
         ├ name                  [string] req,
         ├ scheduler             [flowControllerSchedulerPolicy],
         ├ max_bytes_per_period  [int32],
-        ├ period_ms             [uint64],
-        └ sender_thread         [threadSettingsType]-->
+        └ period_ms             [uint64]-->
     <xs:complexType name="flowControllerDescriptorType">
         <xs:all>
             <xs:element name="name" type="string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="scheduler" type="flowControllerSchedulerPolicy" minOccurs="0" maxOccurs="1"/>
             <xs:element name="max_bytes_per_period" type="int32" minOccurs="0" maxOccurs="1"/>
             <xs:element name="period_ms" type="uint64" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="sender_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 
@@ -1733,22 +1731,6 @@
             <xs:enumeration value="PRIORITY_WITH_RESERVATION" />
         </xs:restriction>
     </xs:simpleType>
-
-    <!--Thread Settings Type:
-        | ╠ att. port        [uint32]
-        |
-        ├ scheduling_policy  [int32],
-        ├ priority           [int32],
-        ├ affinity           [uint64],
-        └ stack_size         [int32]-->
-    <xs:complexType name="threadSettingsType">
-        <xs:all>
-            <xs:element name="scheduling_policy" type="uint32_with_negative_default" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="priority" type="int32" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="affinity" type="uint64" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="stack_size" type="uint32_with_negative_default" minOccurs="0" maxOccurs="1"/>
-        </xs:all>
-    </xs:complexType>
 
 
     <!--| PRIMITIVE TYPES DEFINITION |-->
