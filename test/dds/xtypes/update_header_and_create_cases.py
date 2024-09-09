@@ -11,6 +11,7 @@ class IDLProcessor:
         # List of files to ignore
         self.files_to_ignore = {
             "external.idl",
+            "member_id.idl", # Not support while @autoid(HASH) StructTypeFlag information cannot be pass to DynamicType API.
             "relative_path_include.idl"
         }
         # List of struct names to ignore

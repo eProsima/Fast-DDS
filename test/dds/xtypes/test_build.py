@@ -171,6 +171,7 @@ async def run_command(test_case, process_args, timeout):
     try:
         await asyncio.wait_for(read_outputs(test_case, proc, num_lines), timeout)
     except asyncio.TimeoutError:
+        logger.debug("    Timeout")
         pass
 
     try:
@@ -192,7 +193,6 @@ async def execute_commands(test_case, commands):
     async with asyncio.TaskGroup() as tg:
         for command in commands:
             tasks.append(tg.create_task(run_command(test_case, command, MAX_TIME)))
-            time.sleep(0.1)  # Delay for consistency
 
     return sum([proc.result() for proc in tasks])
 

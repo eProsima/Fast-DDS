@@ -36,7 +36,6 @@
 #include "../../dds-types-test/inheritancePubSubTypes.hpp"
 #include "../../dds-types-test/keyPubSubTypes.hpp"
 #include "../../dds-types-test/mapsPubSubTypes.hpp"
-#include "../../dds-types-test/member_idPubSubTypes.hpp"
 #include "../../dds-types-test/mutablePubSubTypes.hpp"
 #include "../../dds-types-test/optionalPubSubTypes.hpp"
 #include "../../dds-types-test/primitivesPubSubTypes.hpp"

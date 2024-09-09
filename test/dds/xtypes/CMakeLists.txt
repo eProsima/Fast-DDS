@@ -52,8 +52,8 @@ file(GLOB COMMON_SOURCE
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/keyTypeObjectSupport.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/mapsPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/mapsTypeObjectSupport.cxx
-    ${PROJECT_SOURCE_DIR}/test/dds-types-test/member_idPubSubTypes.cxx
-    ${PROJECT_SOURCE_DIR}/test/dds-types-test/member_idTypeObjectSupport.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/member_idPubSubTypes.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/member_idTypeObjectSupport.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/mutablePubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/mutableTypeObjectSupport.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/optionalPubSubTypes.cxx
