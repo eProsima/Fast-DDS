@@ -817,7 +817,6 @@ XMLP_ret XMLParser::getXMLFlowControllerDescriptorList(
                     <xs:element name="scheduler" type="flowControllerSchedulerPolicy" minOccurs="0" maxOccurs="1"/>
                     <xs:element name="max_bytes_per_period" type="int32" minOccurs="0" maxOccurs="1"/>
                     <xs:element name="period_ms" type="uint64" minOccurs="0" maxOccurs="1"/>
-                    <xs:element name="sender_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
                 </xs:all>
             </xs:complexType>
             <xs:simpleType name="flowControllerSchedulerPolicy">
