@@ -73,6 +73,8 @@ target_include_directories(TypeLookupServiceTests PUBLIC
     ${PROJECT_SOURCE_DIR}/test/mock/xtypes/TypeObjectUtils
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
+    ${Asio_INCLUDE_DIR}
+    $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
 
 target_link_libraries(TypeLookupServiceTests
