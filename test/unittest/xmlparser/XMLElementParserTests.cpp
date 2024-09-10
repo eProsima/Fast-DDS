@@ -1967,38 +1967,32 @@ TEST_F(XMLParserTests, getXMLFlowControllerDescriptorList)
     {
         /*
          * name, scheduler, max_bytes_per_period, period_ms,
-         * sender_thread_scheduling_policy, sender_thread_priority,
-         * sender_thread_affinity, sender_thread_stack_size, extra_xml_tag
+         * extra_xml_tag
          */
         {{"test_flow_controller", "FIFO", "120", "50", \
-            "12", "12", "12", "12", "" }, XMLP_ret::XML_OK},
+            "" }, XMLP_ret::XML_OK},
         {{"test_flow_controller", "ROUND_ROBIN", "2500", "100", \
-            "15", "12", "12", "12", "" }, XMLP_ret::XML_OK},
+            "" }, XMLP_ret::XML_OK},
         {{"test_flow_controller", "HIGH_PRIORITY", "2500", "100", \
-            "15", "12", "12", "12", "" }, XMLP_ret::XML_OK},
+            "" }, XMLP_ret::XML_OK},
         {{"test_flow_controller", "PRIORITY_WITH_RESERVATION", "2500", "100", \
-            "15", "12", "12", "12", "" }, XMLP_ret::XML_OK},
+            "" }, XMLP_ret::XML_OK},
         {{"test_flow_controller", "INVALID", "120", "50", \
-            "12", "12", "12", "12", "" }, XMLP_ret::XML_ERROR},   // Invalid scheduler
+            "" }, XMLP_ret::XML_ERROR},   // Invalid scheduler
         {{"test_flow_controller", "HIGH_PRIORITY", "120", "-10", \
-            "12", "12", "12", "12", "" }, XMLP_ret::XML_ERROR},   // negative period_ms
+            "" }, XMLP_ret::XML_ERROR},   // negative period_ms
         {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", \
-            "12", "12", "12", "12", "<bad_element></bad_element>" }, XMLP_ret::XML_ERROR},   // Invalid tag
+            "<bad_element></bad_element>" }, XMLP_ret::XML_ERROR},   // Invalid tag
         {{"", "HIGH_PRIORITY", "120", "50", \
-            "12", "12", "12", "12", "" }, XMLP_ret::XML_ERROR},   // empty name
+            "" }, XMLP_ret::XML_ERROR},   // empty name
         {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", \
-            "12", "12", "12", "12", "<name>another_name</name>" }, XMLP_ret::XML_ERROR},   // duplicated name tag
+            "<name>another_name</name>" }, XMLP_ret::XML_ERROR},   // duplicated name tag
         {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", \
-            "12", "12", "12", "12", "<scheduler>FIFO</scheduler>" }, XMLP_ret::XML_ERROR},   // duplicated scheduler tag
+            "<scheduler>FIFO</scheduler>" }, XMLP_ret::XML_ERROR},   // duplicated scheduler tag
         {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", \
-            "12", "12", "12", "12", "<max_bytes_per_period>96</max_bytes_per_period>" }, XMLP_ret::XML_ERROR},   // duplicated max_bytes_per_period tag
+            "<max_bytes_per_period>96</max_bytes_per_period>" }, XMLP_ret::XML_ERROR},   // duplicated max_bytes_per_period tag
         {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", \
-            "12", "12", "12", "12", "<period_ms>96</period_ms>" }, XMLP_ret::XML_ERROR},   // duplicated period_ms tag
-        {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", \
-            "12", "12", "12", "12", "<sender_thread><scheduling_policy>12</scheduling_policy></sender_thread>" },
-            XMLP_ret::XML_ERROR}, // duplicated sender_thread tag
-        {{"", "HIGH_PRIORITY", "120", "50", \
-            "12345", "12", "12", "a", "" }, XMLP_ret::XML_ERROR},   // invalid thread settings
+            "<period_ms>96</period_ms>" }, XMLP_ret::XML_ERROR},   // duplicated period_ms tag
     };
 
     /* Run the tests */
@@ -2020,13 +2014,7 @@ TEST_F(XMLParserTests, getXMLFlowControllerDescriptorList)
                 "       <scheduler>" + params[1] + "</scheduler>"
                 "       <max_bytes_per_period>" + params[2] + "</max_bytes_per_period>"
                 "       <period_ms>" + params[3] + "</period_ms>"
-                "       <sender_thread>"
-                "           <scheduling_policy>" + params[4] + "</scheduling_policy>"
-                "           <priority>" + params[5] + "</priority>"
-                "           <affinity>" + params[6] + "</affinity>"
-                "           <stack_size>" + params[7] + "</stack_size>"
-                "       </sender_thread>"
-                + params[8] +
+                + params[4] +
                 "   </flow_controller_descriptor>"
                 "</flow_controller_descriptor_list>";
 
