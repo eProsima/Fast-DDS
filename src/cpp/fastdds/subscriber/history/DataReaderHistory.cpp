@@ -830,12 +830,38 @@ bool DataReaderHistory::update_instance_nts(
 
     assert(vit != instances_.end());
     assert(false == change->isRead);
+    auto previous_owner = vit->second->current_owner.first;
     ++counters_.samples_unread;
     bool ret =
             vit->second->update_state(counters_, change->kind, change->writerGUID,
                     change->reader_info.writer_ownership_strength);
     change->reader_info.disposed_generation_count = vit->second->disposed_generation_count;
     change->reader_info.no_writers_generation_count = vit->second->no_writers_generation_count;
+
+    auto current_owner = vit->second->current_owner.first;
+    if (current_owner != previous_owner)
+    {
+        assert(current_owner == change->writerGUID);
+
+        // Remove all changes from different owners after the change.
+        DataReaderInstance::ChangeCollection& changes = vit->second->cache_changes;
+        auto it = std::lower_bound(changes.begin(), changes.end(), change, rtps::history_order_cmp);
+        assert(it != changes.end());
+        assert(*it == change);
+        ++it;
+        while (it != changes.end())
+        {
+            if ((*it)->writerGUID != current_owner)
+            {
+                // Remove from history
+                remove_change_sub(*it, it);
+
+                // Current iterator will point to change next to the one removed. Avoid incrementing.
+                continue;
+            }
+            ++it;
+        }
+    }
 
     return ret;
 }
