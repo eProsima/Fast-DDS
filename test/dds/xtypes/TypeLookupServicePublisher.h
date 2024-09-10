@@ -77,6 +77,7 @@ public:
     ~TypeLookupServicePublisher();
 
     bool init(
+            uint32_t domain_id,
             std::vector<std::string> known_types);
 
     bool wait_discovery(
@@ -119,8 +120,8 @@ private:
 
     std::mutex mutex_;
     std::condition_variable cv_;
-    int32_t matched_ = 0;
-    uint32_t expected_matches_ = 0;
+    int32_t matched_ {0};
+    uint32_t expected_matches_ {0};
     std::map<eprosima::fastdds::rtps::GUID_t, uint32_t> sent_samples_;
 
     std::mutex known_types_mutex_;
@@ -128,6 +129,7 @@ private:
     std::unordered_set<std::string> types_without_typeobject_;
     std::map<std::string, std::function<bool(const std::string&)>> type_creator_functions_;
     std::vector<std::thread> create_types_threads;
+    uint32_t domain_id_ {0};
 
     /**
      * This method is updated automatically using the update_headers_and_create_cases.py script

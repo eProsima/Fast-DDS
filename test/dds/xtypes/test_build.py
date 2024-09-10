@@ -79,6 +79,7 @@ def define_args(participant):
     args.extend([f"samples={participant.get('samples', 10)}"])
     args.extend([f"timeout={participant.get('timeout', 10)}"])
     args.extend([f"expected_matches={participant.get('expected_matches', 1)}"])
+    args.extend([f"seed={str(os.getpid())}"])
 
     # Check if 'known_types' key exists and is a list
     if 'known_types' in participant and isinstance(participant['known_types'], list):

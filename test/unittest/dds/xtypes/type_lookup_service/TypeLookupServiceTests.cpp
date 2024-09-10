@@ -479,7 +479,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_UNSUPPORTED)
     MockLogConsumer* log_consumer =
             setup_expect_log_msg("TYPELOOKUP_SERVICE_REPLY_LISTENER",
                     "Received reply with exception code: " +
-                    static_cast<int>(rpc::RemoteExceptionCode_t::REMOTE_EX_UNSUPPORTED));
+                    std::to_string(static_cast<int>(rpc::RemoteExceptionCode_t::REMOTE_EX_UNSUPPORTED)));
 
 
     CacheChange_t* change = new CacheChange_t();
@@ -506,7 +506,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_INVALID_ARGUMEN
     MockLogConsumer* log_consumer =
             setup_expect_log_msg("TYPELOOKUP_SERVICE_REPLY_LISTENER",
                     "Received reply with exception code: " +
-                    static_cast<int>(rpc::RemoteExceptionCode_t::REMOTE_EX_INVALID_ARGUMENT));
+                    std::to_string(static_cast<int>(rpc::RemoteExceptionCode_t::REMOTE_EX_INVALID_ARGUMENT)));
 
 
     CacheChange_t* change = new CacheChange_t();
@@ -533,7 +533,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_OUT_OF_RESOURCE
     MockLogConsumer* log_consumer =
             setup_expect_log_msg("TYPELOOKUP_SERVICE_REPLY_LISTENER",
                     "Received reply with exception code: " +
-                    static_cast<int>(rpc::RemoteExceptionCode_t::REMOTE_EX_OUT_OF_RESOURCES));
+                    std::to_string(static_cast<int>(rpc::RemoteExceptionCode_t::REMOTE_EX_OUT_OF_RESOURCES)));
 
 
     CacheChange_t* change = new CacheChange_t();
@@ -559,7 +559,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_UNKNOWN_OPERATI
     MockLogConsumer* log_consumer =
             setup_expect_log_msg("TYPELOOKUP_SERVICE_REPLY_LISTENER",
                     "Received reply with exception code: " +
-                    static_cast<int>(rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_OPERATION));
+                    std::to_string(static_cast<int>(rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_OPERATION)));
 
 
     CacheChange_t* change = new CacheChange_t();
@@ -585,7 +585,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_UNKNOWN_EXCEPTI
     MockLogConsumer* log_consumer =
             setup_expect_log_msg("TYPELOOKUP_SERVICE_REPLY_LISTENER",
                     "Received reply with exception code: " +
-                    static_cast<int>(rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_EXCEPTION));
+                    std::to_string(static_cast<int>(rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_EXCEPTION)));
 
 
     CacheChange_t* change = new CacheChange_t();
@@ -674,7 +674,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_getTypes_registry_empty_t
     type_ids.type_identifier1(pair.type_identifier());
 
     EXPECT_CALL(registry,
-            register_type_object(_, ::testing::Eq(type_ids))).Times(1).WillOnce(
+            register_type_object(_, ::testing::Eq(type_ids), false)).Times(1).WillOnce(
         ::testing::Return(RETCODE_PRECONDITION_NOT_MET));
     EXPECT_CALL(*tlm_, remove_async_get_type_request(_)).WillOnce(testing::Return(true));
 
@@ -700,7 +700,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_getTypes_registry_inconsi
 
     TypeIdentifierTypeObjectPair pair;
     TypeIdentifier id;
-    id._d(TK_STRUCTURE);
+    id._d(TK_CHAR8);
     TypeObject obj;
     obj.complete({});
     obj.complete().sequence_type({});
@@ -717,7 +717,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_getTypes_registry_inconsi
     type_ids.type_identifier1(pair.type_identifier());
 
     EXPECT_CALL(registry,
-            register_type_object(::testing::Eq(obj), ::testing::Eq(type_ids))).Times(1).WillOnce(
+            register_type_object(::testing::Eq(obj), ::testing::Eq(type_ids), false)).Times(1).WillOnce(
         ::testing::Return(RETCODE_PRECONDITION_NOT_MET));
     EXPECT_CALL(*tlm_, remove_async_get_type_request(_)).WillOnce(testing::Return(true));
 
@@ -909,7 +909,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupRequestListener_getTypes_registry_unkno
     TypeLookup_getTypes_In in;
     TypeIdentifierSeq id_seq;
     TypeIdentifier id;
-    id._d(TK_STRUCTURE);
+    id._d(TK_CHAR8);
 
     id_seq.push_back(id);
     in.type_ids(id_seq);
@@ -961,7 +961,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupRequestListener_getDependencies_registr
     TypeLookup_getTypeDependencies_In in;
     TypeIdentifierSeq id_seq;
     TypeIdentifier id;
-    id._d(TK_STRUCTURE);
+    id._d(TK_CHAR8);
     id_seq.push_back(id);
     in.type_ids(id_seq);
     in.type_ids().push_back(id);

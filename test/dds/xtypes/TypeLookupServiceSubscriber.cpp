@@ -30,8 +30,6 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
 
-static int SUB_DOMAIN_ID_ = 173;
-
 TypeLookupServiceSubscriber::~TypeLookupServiceSubscriber()
 {
     if (nullptr != participant_)
@@ -48,8 +46,10 @@ TypeLookupServiceSubscriber::~TypeLookupServiceSubscriber()
 }
 
 bool TypeLookupServiceSubscriber::init(
+        uint32_t domain_id,
         std::vector<std::string> known_types)
 {
+    domain_id_ = domain_id;
     create_type_creator_functions();
 
     LibrarySettings settings;
@@ -61,7 +61,7 @@ bool TypeLookupServiceSubscriber::init(
             << StatusMask::liveliness_changed();
 
     participant_ = DomainParticipantFactory::get_instance()
-                    ->create_participant(SUB_DOMAIN_ID_, PARTICIPANT_QOS_DEFAULT, this, mask);
+                    ->create_participant(domain_id, PARTICIPANT_QOS_DEFAULT, this, mask);
     if (participant_ == nullptr)
     {
         std::cout << "ERROR TypeLookupServiceSubscriber: create_participant" << std::endl;
@@ -94,7 +94,7 @@ bool TypeLookupServiceSubscriber::setup_subscriber(
 
     //CREATE THE TOPIC
     std::ostringstream topic_name;
-    topic_name << type_name << "_" << asio::ip::host_name() << "_" << SUB_DOMAIN_ID_;
+    topic_name << type_name << "_" << asio::ip::host_name() << "_" << domain_id_;
     Topic* topic = participant_->create_topic(topic_name.str(), new_type.type_sup_.get_type_name(), TOPIC_QOS_DEFAULT);
     if (topic == nullptr)
     {

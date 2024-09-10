@@ -32,6 +32,7 @@ struct CommandLineArgs
     int timeout;
     int expected_matches;
     std::vector<std::string> known_types;
+    uint32_t seed {10800};
 };
 
 CommandLineArgs parse_args(
@@ -82,6 +83,10 @@ CommandLineArgs parse_args(
                 args.known_types.push_back(type);
             }
         }
+        else if (key == "seed")
+        {
+            args.seed = strtol(value.c_str(), nullptr, 10);
+        }
     }
 
     return args;
@@ -105,14 +110,14 @@ int main(
         switch (args.kind){
             case 1: {
                 eprosima::fastdds::dds::TypeLookupServicePublisher pub;
-                return (pub.init(args.known_types) &&
+                return (pub.init(args.seed % 230, args.known_types) &&
                        pub.wait_discovery(args.expected_matches, args.timeout) &&
                        pub.run(args.samples, args.timeout) &&
                        pub.wait_discovery(0, args.timeout)) ? 0 : -1;
             }
             case 2: {
                 eprosima::fastdds::dds::TypeLookupServiceSubscriber sub;
-                return (sub.init(args.known_types) &&
+                return (sub.init(args.seed % 230, args.known_types) &&
                        sub.wait_discovery(args.expected_matches, args.timeout) &&
                        sub.run(args.samples, args.timeout)) ? 0 : -1;
             }
