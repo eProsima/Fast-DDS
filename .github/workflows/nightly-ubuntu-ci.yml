@@ -25,6 +25,7 @@ jobs:
       run-build: true
       run-tests: true
       use-ccache: false
+      add-label: false
 
   nightly-ubuntu-ci-3_0_x:
     strategy:
@@ -65,6 +66,7 @@ jobs:
       run-build: true
       run-tests: true
       use-ccache: false
+      add-label: false
 
   nightly-ubuntu-ci-2_10_x:
     strategy:
@@ -85,4 +87,5 @@ jobs:
       run-build: true
       run-tests: true
       use-ccache: false
+      add-label: false
 

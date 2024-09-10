@@ -45,6 +45,11 @@ on:
           Required only if the Discovery Server job is requested
         required: false
         type: string
+      add-label:
+        description: 'Add the CI-PENDING label to the PR'
+        required: false
+        type: boolean
+        default: true
 
 defaults:
   run:
@@ -56,7 +61,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Add ci-pending label if PR
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' && inputs.add-label == true }}
         uses: eProsima/eProsima-CI/external/add_labels@v0
         with:
           labels: ci-pending
@@ -343,7 +348,7 @@ jobs:
       CXX: g++-12
     steps:
       - name: Add ci-pending label if PR
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' && inputs.add-label == true }}
         uses: eProsima/eProsima-CI/external/add_labels@v0
         with:
           labels: ci-pending

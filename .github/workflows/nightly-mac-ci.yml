@@ -20,6 +20,7 @@ jobs:
       ctest-args: "-LE xfail"
       fastdds-branch: 'master'
       use-ccache: false
+      add-label: false
 
   nightly-mac-ci-3_0_x:
     strategy:
@@ -50,6 +51,7 @@ jobs:
       ctest-args: "-LE xfail"
       fastdds-branch: '2.14.x'
       use-ccache: false
+      add-label: false
 
   nightly-mac-ci-2_10_x:
     strategy:
@@ -65,4 +67,5 @@ jobs:
       ctest-args: "-LE xfail"
       fastdds-branch: '2.10.x'
       use-ccache: false
+      add-label: false
 

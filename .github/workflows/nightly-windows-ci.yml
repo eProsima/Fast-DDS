@@ -19,6 +19,7 @@ jobs:
       cmake-args: "-DSECURITY=${{ matrix.security }}"
       ctest-args: "-LE xfail"
       fastdds_branch: 'master'
+      add-label: false
 
   nightly-windows-ci-3_0_x:
     strategy:
@@ -47,6 +48,7 @@ jobs:
         cmake-args: "-DSECURITY=${{ matrix.security }}"
         ctest-args: "-LE xfail"
         fastdds_branch: '2.14.x'
+      add-label: false
 
   nightly-windows-ci-2_10_x:
     strategy:
@@ -61,4 +63,5 @@ jobs:
       cmake-args: "-DSECURITY=${{ matrix.security }}"
       ctest-args: "-LE xfail"
       fastdds_branch: '2.10.x'
+      add-label: false
 
