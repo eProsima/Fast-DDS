@@ -41,7 +41,8 @@ namespace rtps {
 constexpr size_t max_unicast_locators = 4u;
 constexpr size_t max_multicast_locators = 1u;
 
-NetworkFactory network;
+RTPSParticipantAttributes participant_attributes;
+NetworkFactory network {participant_attributes};
 
 /*** Auxiliary functions ***/
 inline uint32_t string_cdr_serialized_size(
