@@ -481,7 +481,7 @@ TEST_P(DDSPersistenceTests, PubSubAsReliablePubPersistentBehavesAsTransient)
             .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .resource_limits_max_samples(100)
             .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
-            // A PERSISTENT writer with a persistence guid must behave as TRANSIENT
+    // A PERSISTENT writer with a persistence guid must behave as TRANSIENT
             .make_persistent(db_file_name(), "77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64")
             .init();
 
@@ -501,7 +501,7 @@ TEST_P(DDSPersistenceTests, PubSubAsReliablePubPersistentBehavesAsTransient)
             .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
             .history_depth(10)
             .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
-            // A TRANSIENT reader with no persistence guid should behave as TRANSIENT_LOCAL
+    // A TRANSIENT reader with no persistence guid should behave as TRANSIENT_LOCAL
             .durability_kind(eprosima::fastdds::dds::TRANSIENT_DURABILITY_QOS)
             .init();
 
@@ -531,7 +531,7 @@ TEST_P(DDSPersistenceTests, PubSubAsReliablePubTransientWithNoPersistenceGUIDBeh
             .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .resource_limits_max_samples(100)
             .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
-            // A TRANSIENT writer with a persistence guid must behave as TRANSIENT_LOCAL
+    // A TRANSIENT writer with a persistence guid must behave as TRANSIENT_LOCAL
             .durability_kind(eprosima::fastdds::dds::TRANSIENT_DURABILITY_QOS)
             .init();
 
@@ -550,7 +550,7 @@ TEST_P(DDSPersistenceTests, PubSubAsReliablePubTransientWithNoPersistenceGUIDBeh
             .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
             .history_depth(10)
             .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
-            // A TRANSIENT reader with no persistence guid should behave as TRANSIENT_LOCAL
+    // A TRANSIENT reader with no persistence guid should behave as TRANSIENT_LOCAL
             .durability_kind(eprosima::fastdds::dds::TRANSIENT_DURABILITY_QOS)
             .init();
 
