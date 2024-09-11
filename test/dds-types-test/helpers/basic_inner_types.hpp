@@ -362,7 +362,10 @@ public:
      */
     eProsima_user_DllExport InnerUnionHelper()
     {
-        shortValue_();
+        selected_member_ = 0x00000003;
+        member_destructor_ = nullptr;
+        m_shortValue = {0};
+
     }
 
     /*!
@@ -719,7 +722,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_longValue = {0};
-    ;
+
                 }
 
                 return m_longValue;
@@ -737,7 +740,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = nullptr;
                     m_floatValue = {0.0};
-    ;
+
                 }
 
                 return m_floatValue;
@@ -755,7 +758,7 @@ private:
                     selected_member_ = 0x00000003;
                     member_destructor_ = nullptr;
                     m_shortValue = {0};
-    ;
+
                 }
 
                 return m_shortValue;

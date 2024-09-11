@@ -653,7 +653,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_case_zero = {0};
-    ;
+
                 }
 
                 return m_case_zero;
@@ -671,7 +671,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = nullptr;
                     m_case_one = {0};
-    ;
+
                 }
 
                 return m_case_one;
@@ -1736,7 +1736,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_case_zero = {0};
-    ;
+
                 }
 
                 return m_case_zero;
@@ -1754,7 +1754,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = nullptr;
                     m_case_one = {0};
-    ;
+
                 }
 
                 return m_case_one;

@@ -633,7 +633,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]() {m_result.~TypeLookup_getTypes_Out();};
                     new(&m_result) TypeLookup_getTypes_Out();
-    ;
+
                 }
 
                 return m_result;
@@ -1263,7 +1263,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]() {m_result.~TypeLookup_getTypeDependencies_Out();};
                     new(&m_result) TypeLookup_getTypeDependencies_Out();
-    ;
+
                 }
 
                 return m_result;
@@ -1613,7 +1613,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]() {m_getTypes.~TypeLookup_getTypes_In();};
                     new(&m_getTypes) TypeLookup_getTypes_In();
-    ;
+
                 }
 
                 return m_getTypes;
@@ -1631,7 +1631,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = [&]() {m_getTypeDependencies.~TypeLookup_getTypeDependencies_In();};
                     new(&m_getTypeDependencies) TypeLookup_getTypeDependencies_In();
-    ;
+
                 }
 
                 return m_getTypeDependencies;
@@ -2162,7 +2162,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]() {m_getType.~TypeLookup_getTypes_Result();};
                     new(&m_getType) TypeLookup_getTypes_Result();
-    ;
+
                 }
 
                 return m_getType;
@@ -2180,7 +2180,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = [&]() {m_getTypeDependencies.~TypeLookup_getTypeDependencies_Result();};
                     new(&m_getTypeDependencies) TypeLookup_getTypeDependencies_Result();
-    ;
+
                 }
 
                 return m_getTypeDependencies;
