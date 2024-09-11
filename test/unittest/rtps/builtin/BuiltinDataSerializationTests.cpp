@@ -2312,7 +2312,7 @@ TEST(BuiltinDataSerializationTests, deserialization_of_big_parameters)
     std::set<uint16_t> failed_for_data_r;
 
     // Loop all parameter IDs in the standard range
-    for (uint16_t pid = 0x2; pid <= 0x0FFF; ++pid)
+    for (uint16_t pid = 0x2; pid <= 0x7FFF; ++pid)
     {
         // Clear big parameter
         std::fill(buffer.begin() + encapsulation_length, buffer.begin() + encapsulation_length + parameter_length, 0);
@@ -2353,17 +2353,31 @@ TEST(BuiltinDataSerializationTests, deserialization_of_big_parameters)
 
             // Custom content for partition
             case eprosima::fastdds::dds::PID_PARTITION:
-                // Number of partitions (1)
-                buffer[encapsulation_length + 4] = 0x01;
-                buffer[encapsulation_length + 5] = 0x00;
-                buffer[encapsulation_length + 6] = 0x00;
-                buffer[encapsulation_length + 7] = 0x00;
-                // Partition name length (fills the rest of the parameter)
-                constexpr uint16_t partition_length = big_parameter_plength - 4 - 4;
-                buffer[encapsulation_length + 8] = static_cast<octet>(partition_length & 0xFF);
-                buffer[encapsulation_length + 9] = static_cast<octet>((partition_length >> 8) & 0xFF);
-                buffer[encapsulation_length + 10] = 0x00;
-                buffer[encapsulation_length + 11] = 0x00;
+                {
+                    // Number of partitions (1)
+                    buffer[encapsulation_length + 4] = 0x01;
+                    buffer[encapsulation_length + 5] = 0x00;
+                    buffer[encapsulation_length + 6] = 0x00;
+                    buffer[encapsulation_length + 7] = 0x00;
+                    // Partition name length (fills the rest of the parameter)
+                    constexpr uint16_t partition_length = big_parameter_plength - 4 - 4;
+                    buffer[encapsulation_length + 8] = static_cast<octet>(partition_length & 0xFF);
+                    buffer[encapsulation_length + 9] = static_cast<octet>((partition_length >> 8) & 0xFF);
+                    buffer[encapsulation_length + 10] = 0x00;
+                    buffer[encapsulation_length + 11] = 0x00;
+                }
+                break;
+
+            // Custom content for security tokens
+            case eprosima::fastdds::dds::PID_IDENTITY_TOKEN:
+            case eprosima::fastdds::dds::PID_PERMISSIONS_TOKEN:
+                {
+                    // Content is a string + properties (0) + binary properties (0)
+                    // Should fill the whole parameter
+                    constexpr uint16_t token_string_length = big_parameter_plength - 4 - 4 - 4;
+                    buffer[encapsulation_length + 4] = static_cast<octet>(token_string_length & 0xFF);
+                    buffer[encapsulation_length + 5] = static_cast<octet>((token_string_length >> 8) & 0xFF);
+                }
                 break;
         }
 
