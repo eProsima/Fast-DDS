@@ -164,17 +164,7 @@ async def run_command(test_case, process_args, timeout):
     try:
         await asyncio.wait_for(read_outputs(test_case, proc, num_lines), timeout)
     except (TimeoutError, asyncio.TimeoutError):
-        pass
-
-    try:
-        proc.send_signal(signal.SIGINT)
-        time.sleep(1)
-    except Exception:
-        pass
-
-    try:
-        proc.kill()
-    except Exception:
+        logger.debug("     Timeout");
         pass
 
     return await proc.wait()

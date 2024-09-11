@@ -16,6 +16,7 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/rtps/RTPSDomain.hpp>
@@ -354,7 +355,8 @@ protected:
     TypeLookupManager* tlm_;
     MockTypeLookupReplyListener* reply_listener_;
     MockTypeLookupRequestListener* request_listener_;
-    NetworkFactory network_factory_;
+    RTPSParticipantAttributes participant_attr_;
+    NetworkFactory network_factory_ {participant_attr_};
     ReaderProxyData reader_proxy_{0, 0};
     WriterProxyData writer_proxy_{0, 0};
     NiceMock<RTPSParticipantImpl> participant_;
