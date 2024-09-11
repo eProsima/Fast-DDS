@@ -333,6 +333,8 @@ TEST_F(XMLProfileParserTests, XMLParserParticipant)
     EXPECT_EQ(rtps_atts.participantID, 9898);
     //EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048u);
     //EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45u);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->period_ms, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
 }
@@ -432,6 +434,8 @@ TEST_F(XMLProfileParserTests, XMLParserParticipantDeprecated)
     EXPECT_EQ(rtps_atts.participantID, 9898);
     EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048u);
     EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45u);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->period_ms, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
 }
@@ -515,6 +519,8 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultParticipantProfile)
     EXPECT_EQ(rtps_atts.participantID, 9898);
     //EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048u);
     //EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45u);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->period_ms, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
 }
@@ -598,6 +604,8 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultParticipantProfileDeprecated)
     EXPECT_EQ(rtps_atts.participantID, 9898);
     EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048u);
     EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45u);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->period_ms, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
 }
@@ -640,6 +648,7 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
     EXPECT_EQ(pub_qos.m_partition.names()[0], "partition_name_a");
     EXPECT_EQ(pub_qos.m_partition.names()[1], "partition_name_b");
     EXPECT_EQ(pub_qos.m_publishMode.kind, ASYNCHRONOUS_PUBLISH_MODE);
+    EXPECT_EQ(0, strcmp(pub_qos.m_publishMode.flow_controller_name, "test_flow_controller"));
     EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
     EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
     EXPECT_EQ(pub_times.heartbeatPeriod.nanosec, 32u);
@@ -715,6 +724,7 @@ TEST_F(XMLProfileParserTests, XMLParserPublisherDeprecated)
     EXPECT_EQ(pub_qos.m_partition.names()[0], "partition_name_a");
     EXPECT_EQ(pub_qos.m_partition.names()[1], "partition_name_b");
     EXPECT_EQ(pub_qos.m_publishMode.kind, ASYNCHRONOUS_PUBLISH_MODE);
+    EXPECT_EQ(0, strcmp(pub_qos.m_publishMode.flow_controller_name, "test_flow_controller"));
     EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
     EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
     EXPECT_EQ(pub_times.heartbeatPeriod.nanosec, 32u);
@@ -788,6 +798,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
     EXPECT_EQ(pub_qos.m_partition.names()[0], "partition_name_a");
     EXPECT_EQ(pub_qos.m_partition.names()[1], "partition_name_b");
     EXPECT_EQ(pub_qos.m_publishMode.kind, ASYNCHRONOUS_PUBLISH_MODE);
+    EXPECT_EQ(0, strcmp(pub_qos.m_publishMode.flow_controller_name, "test_flow_controller"));
     EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
     EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
     EXPECT_EQ(pub_times.heartbeatPeriod.nanosec, 32u);
@@ -861,6 +872,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfileDeprecated)
     EXPECT_EQ(pub_qos.m_partition.names()[0], "partition_name_a");
     EXPECT_EQ(pub_qos.m_partition.names()[1], "partition_name_b");
     EXPECT_EQ(pub_qos.m_publishMode.kind, ASYNCHRONOUS_PUBLISH_MODE);
+    EXPECT_EQ(0, strcmp(pub_qos.m_publishMode.flow_controller_name, "test_flow_controller"));
     EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
     EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
     EXPECT_EQ(pub_times.heartbeatPeriod.nanosec, 32u);

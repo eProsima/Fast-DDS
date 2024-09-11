@@ -1944,6 +1944,102 @@ TEST_F(XMLParserTests, getXMLBuiltinAttributes_NegativeClauses)
 }
 
 /*
+ * This test checks parsing of flow_controller_descriptor_list elements.
+ */
+TEST_F(XMLParserTests, getXMLFlowControllerDescriptorList)
+{
+    uint8_t ident = 1;
+
+    /*
+     * Aux mapping for FlowControllerSchedulerPolicy
+     */
+
+    auto scheduler_policy_map = std::map<std::string, eprosima::fastdds::rtps::FlowControllerSchedulerPolicy>
+    {
+        {"FIFO", eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO},
+        {"ROUND_ROBIN", eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::ROUND_ROBIN},
+        {"HIGH_PRIORITY", eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::HIGH_PRIORITY},
+        {"PRIORITY_WITH_RESERVATION", eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::PRIORITY_WITH_RESERVATION}
+    };
+
+    /* Define the test cases */
+    std::vector<std::pair<std::vector<std::string>, XMLP_ret>> test_cases =
+    {
+        /*
+         * name, scheduler, max_bytes_per_period, period_ms,
+         * extra_xml_tag
+         */
+        {{"test_flow_controller", "FIFO", "120", "50", \
+            "" }, XMLP_ret::XML_OK},
+        {{"test_flow_controller", "ROUND_ROBIN", "2500", "100", \
+            "" }, XMLP_ret::XML_OK},
+        {{"test_flow_controller", "HIGH_PRIORITY", "2500", "100", \
+            "" }, XMLP_ret::XML_OK},
+        {{"test_flow_controller", "PRIORITY_WITH_RESERVATION", "2500", "100", \
+            "" }, XMLP_ret::XML_OK},
+        {{"test_flow_controller", "INVALID", "120", "50", \
+            "" }, XMLP_ret::XML_ERROR},   // Invalid scheduler
+        {{"test_flow_controller", "HIGH_PRIORITY", "120", "-10", \
+            "" }, XMLP_ret::XML_ERROR},   // negative period_ms
+        {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", \
+            "<bad_element></bad_element>" }, XMLP_ret::XML_ERROR},   // Invalid tag
+        {{"", "HIGH_PRIORITY", "120", "50", \
+            "" }, XMLP_ret::XML_ERROR},   // empty name
+        {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", \
+            "<name>another_name</name>" }, XMLP_ret::XML_ERROR},   // duplicated name tag
+        {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", \
+            "<scheduler>FIFO</scheduler>" }, XMLP_ret::XML_ERROR},   // duplicated scheduler tag
+        {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", \
+            "<max_bytes_per_period>96</max_bytes_per_period>" }, XMLP_ret::XML_ERROR},   // duplicated max_bytes_per_period tag
+        {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", \
+            "<period_ms>96</period_ms>" }, XMLP_ret::XML_ERROR},   // duplicated period_ms tag
+    };
+
+    /* Run the tests */
+    for (auto test_case : test_cases)
+    {
+        std::vector<std::string>& params = test_case.first;
+        XMLP_ret& expectation = test_case.second;
+
+        using namespace eprosima::fastdds::rtps;
+        XMLParserTest::FlowControllerDescriptorList flow_controller_descriptor_list;
+        tinyxml2::XMLDocument xml_doc;
+        tinyxml2::XMLElement* titleElement;
+
+        // Create XML snippet
+        std::string xml =
+                "<flow_controller_descriptor_list>"
+                "   <flow_controller_descriptor>"
+                "       <name>" + params[0] + "</name>"
+                "       <scheduler>" + params[1] + "</scheduler>"
+                "       <max_bytes_per_period>" + params[2] + "</max_bytes_per_period>"
+                "       <period_ms>" + params[3] + "</period_ms>"
+                + params[4] +
+                "   </flow_controller_descriptor>"
+                "</flow_controller_descriptor_list>";
+
+        // Parse the XML snippet
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str())) << xml;
+
+        // Extract FlowControllersDescriptors
+        titleElement = xml_doc.RootElement();
+        ASSERT_EQ(expectation,
+                XMLParserTest::getXMLFlowControllerDescriptorList_wrapper(titleElement, flow_controller_descriptor_list,
+                ident));
+
+        // Validate in the OK cases
+        if (expectation == XMLP_ret::XML_OK)
+        {
+            ASSERT_EQ(flow_controller_descriptor_list.at(0)->name, params[0]);
+            ASSERT_EQ(flow_controller_descriptor_list.at(0)->scheduler, scheduler_policy_map[params[1]]);
+            ASSERT_EQ(flow_controller_descriptor_list.at(0)->max_bytes_per_period,
+                    static_cast<int32_t>(std::stoi(params[2])));
+            ASSERT_EQ(flow_controller_descriptor_list.at(0)->period_ms, static_cast<uint64_t>(std::stoi(params[3])));
+        }
+    }
+}
+
+/*
  * This test checks the negative cases in the xml child element of <ThroughputController>
  * 1. Check an invalid tag of:
  *      <dbytesPerPeriod>
@@ -1998,6 +2094,62 @@ TEST_F(XMLParserTests, getXMLThroughputController_NegativeClauses)
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_ERROR,
             XMLParserTest::getXMLThroughputController_wrapper(titleElement, throughputController, ident));
+}
+
+/*
+ * This test checks the negative cases in the xml child element of <flow_controller_descriptor_list>
+ * 1. Check an invalid tag of:
+ *      <flow_controller_descriptor>
+ * 2. Check invalid element
+ */
+TEST_F(XMLParserTests, getXMLFlowControllerDescriptorList_NegativeClauses)
+{
+    uint8_t ident = 1;
+    XMLParserTest::FlowControllerDescriptorList flow_controller_descriptor_list;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+            "\
+            <flow_controller_descriptor_list>\
+                %s\
+            </flow_controller_descriptor_list>\
+            ";
+    constexpr size_t xml_len {1000};
+    char xml[xml_len];
+    const char* field_p =
+            "\
+            <%s>\
+                <bad_element> </bad_element>\
+            </%s>\
+            ";
+    constexpr size_t field_len {500};
+    char field[field_len];
+
+    std::vector<std::string> field_vec =
+    {
+        "flow_controller_descriptor"
+    };
+
+    for (std::string tag : field_vec)
+    {
+        snprintf(field, field_len, field_p, tag.c_str(), tag.c_str());
+        snprintf(xml, xml_len, xml_p, field);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR,
+                XMLParserTest::getXMLFlowControllerDescriptorList_wrapper(titleElement, flow_controller_descriptor_list,
+                ident));
+    }
+
+    // Invalid element
+    snprintf(xml, xml_len, xml_p, "<bad_element> </bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR,
+            XMLParserTest::getXMLFlowControllerDescriptorList_wrapper(titleElement, flow_controller_descriptor_list,
+            ident));
 }
 
 /*

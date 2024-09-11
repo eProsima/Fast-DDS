@@ -142,6 +142,14 @@
                     <bytesPerPeriod>2048</bytesPerPeriod>
                     <periodMillisecs>45</periodMillisecs>
                 </throughputController>
+                <flow_controller_descriptor_list>
+                    <flow_controller_descriptor>
+                        <name>test_flow_controller</name>
+                        <max_bytes_per_period>2048</max_bytes_per_period>
+                        <period_ms>45</period_ms>
+                        <scheduler>FIFO</scheduler>
+                    </flow_controller_descriptor>
+                </flow_controller_descriptor_list>
                 <useBuiltinTransports>true</useBuiltinTransports>
                 <name>test_name</name>
                 <userData>
@@ -195,6 +203,7 @@
                 </partition>
                 <publishMode>
                     <kind>ASYNCHRONOUS</kind>
+                    <flow_controller_name>test_flow_controller</flow_controller_name>
                 </publishMode>
                 <userData>
                     <value>56.30.0.1</value>

@@ -27,9 +27,14 @@
 
 #include <utils/string_utilities.hpp>
 
-using namespace eprosima::fastrtps;
+namespace eprosima {
+namespace fastrtps {
+namespace xmlparser {
+
+std::mutex XMLParser::collections_mtx_;
+std::set<std::string> XMLParser::flow_controller_descriptor_names_;
+
 using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::xmlparser;
 
 XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
         tinyxml2::XMLElement* elem,
@@ -779,6 +784,158 @@ XMLP_ret XMLParser::getXMLThroughputController(
             return XMLP_ret::XML_ERROR;
         }
     }
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::getXMLFlowControllerDescriptorList(
+        tinyxml2::XMLElement* elem,
+        FlowControllerDescriptorList& flow_controller_descriptor_list,
+        uint8_t ident)
+{
+    /*
+        <xs:complexType name="flowControllerDescriptorListType">
+            <xs:sequence>
+                <xs:element name="flow_controller_descriptor" type="flowControllerDescriptorType" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+     */
+
+    tinyxml2::XMLElement* p_aux0 = nullptr;
+    p_aux0 = elem->FirstChildElement(FLOW_CONTROLLER_DESCRIPTOR);
+    if (nullptr == p_aux0)
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << elem->Value() << "' without content");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    while (nullptr != p_aux0)
+    {
+        /*
+            <xs:complexType name="flowControllerDescriptorType">
+                <xs:all>
+                    <xs:element name="name" type="string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="scheduler" type="flowControllerSchedulerPolicy" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="max_bytes_per_period" type="int32" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="period_ms" type="uint64" minOccurs="0" maxOccurs="1"/>
+                </xs:all>
+            </xs:complexType>
+            <xs:simpleType name="flowControllerSchedulerPolicy">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="FIFO" />
+                    <xs:enumeration value="ROUND_ROBIN" />
+                    <xs:enumeration value="HIGH_PRIORITY" />
+                    <xs:enumeration value="PRIORITY_WITH_RESERVATION" />
+                </xs:restriction>
+            </xs:simpleType>
+         */
+
+        tinyxml2::XMLElement* p_aux1;
+        bool name_defined = false;
+        std::set<std::string> tags_present;
+
+        auto flow_controller_descriptor = std::make_shared<fastdds::rtps::FlowControllerDescriptor>();
+
+        for (p_aux1 = p_aux0->FirstChildElement(); p_aux1 != NULL; p_aux1 = p_aux1->NextSiblingElement())
+        {
+            const char* name = p_aux1->Name();
+
+            if (tags_present.count(name) != 0)
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Duplicated element found in 'flowControllerDescriptorType'. Name: " << name);
+                return XMLP_ret::XML_ERROR;
+            }
+            else
+            {
+                tags_present.emplace(name);
+            }
+
+            if (strcmp(name, NAME) == 0)
+            {
+                std::lock_guard<std::mutex> lock(collections_mtx_);
+                // name - stringType
+                std::string element;
+                const char* text = nullptr;
+                if (nullptr != (text = p_aux1->GetText()))
+                {
+                    element = text;
+                }
+                if (element.empty())
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << NAME << "' without content");
+                    return XMLP_ret::XML_ERROR;
+                }
+                auto element_inserted = flow_controller_descriptor_names_.insert(element);
+                if (element_inserted.first == flow_controller_descriptor_names_.end())
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER,
+                            "Insertion error for flow controller node '" << FLOW_CONTROLLER_NAME << "'");
+                    return XMLP_ret::XML_ERROR;
+                }
+                flow_controller_descriptor->name = element_inserted.first->c_str();
+                name_defined = true;
+            }
+            else if (strcmp(name, SCHEDULER) == 0)
+            {
+                std::string element;
+                const char* text = nullptr;
+                if (nullptr != (text = p_aux1->GetText()))
+                {
+                    element = text;
+                }
+                if (element.empty())
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << SCHEDULER << "' without content");
+                    return XMLP_ret::XML_ERROR;
+                }
+
+                // scheduler - flowControllerSchedulerPolicy
+                if (!get_element_enum_value(element.c_str(), flow_controller_descriptor->scheduler,
+                        FIFO, fastdds::rtps::FlowControllerSchedulerPolicy::FIFO,
+                        HIGH_PRIORITY, fastdds::rtps::FlowControllerSchedulerPolicy::HIGH_PRIORITY,
+                        ROUND_ROBIN, fastdds::rtps::FlowControllerSchedulerPolicy::ROUND_ROBIN,
+                        PRIORITY_WITH_RESERVATION,
+                        fastdds::rtps::FlowControllerSchedulerPolicy::PRIORITY_WITH_RESERVATION))
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << SCHEDULER << "' with bad content");
+                    return XMLP_ret::XML_ERROR;
+                }
+            }
+            else if (strcmp(name, MAX_BYTES_PER_PERIOD) == 0)
+            {
+                // max_bytes_per_period - int32Type
+                if (XMLP_ret::XML_OK != getXMLInt(p_aux1, &flow_controller_descriptor->max_bytes_per_period, ident))
+                {
+                    return XMLP_ret::XML_ERROR;
+                }
+            }
+            else if (strcmp(name, PERIOD_MS) == 0)
+            {
+                // period_ms - uint64Type
+                if (XMLP_ret::XML_OK != getXMLUint(p_aux1, &flow_controller_descriptor->period_ms, ident))
+                {
+                    return XMLP_ret::XML_ERROR;
+                }
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Invalid element found into 'flowControllerDescriptorType'. Name: " << name);
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+
+        if (!name_defined)
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Flow Controller Descriptor requires a 'name'");
+            return XMLP_ret::XML_ERROR;
+        }
+
+        flow_controller_descriptor_list.push_back(flow_controller_descriptor);
+        p_aux0 = p_aux0->NextSiblingElement(FLOW_CONTROLLER_DESCRIPTOR);
+
+    }
+
     return XMLP_ret::XML_OK;
 }
 
@@ -2522,6 +2679,28 @@ XMLP_ret XMLParser::getXMLPublishModeQos(
                 return XMLP_ret::XML_ERROR;
             }
         }
+        else if (strcmp(name, FLOW_CONTROLLER_NAME) == 0)
+        {
+            std::lock_guard<std::mutex> lock(collections_mtx_);
+            std::string element;
+            const char* text = nullptr;
+            if (nullptr != (text = p_aux0->GetText()))
+            {
+                element = text;
+            }
+            if (element.empty())
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << FLOW_CONTROLLER_NAME << "' without content");
+                return XMLP_ret::XML_ERROR;
+            }
+            auto element_inserted = flow_controller_descriptor_names_.insert(element);
+            if (element_inserted.first == flow_controller_descriptor_names_.end())
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Insertion error for node '" << FLOW_CONTROLLER_NAME << "'");
+                return XMLP_ret::XML_ERROR;
+            }
+            publishMode.flow_controller_name = element_inserted.first->c_str();
+        }
         else
         {
             EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'publishModeQosPolicyType'. Name: " << name);
@@ -3615,6 +3794,61 @@ XMLP_ret XMLParser::getXMLUint(
     return XMLP_ret::XML_OK;
 }
 
+XMLP_ret XMLParser::getXMLUint(
+        tinyxml2::XMLElement* elem,
+        uint64_t* ui64,
+        uint8_t /*ident*/)
+{
+    unsigned long int ui = 0u;
+    if (nullptr == elem || nullptr == ui64)
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    auto to_uint64 = [](const char* str, unsigned long int* value) -> bool
+            {
+                // Look for a '-' sign
+                bool ret = false;
+                const char minus = '-';
+                const char* minus_result = str;
+                if (nullptr == std::strchr(minus_result, minus))
+                {
+                    // Minus not found
+                    ret = true;
+                }
+
+                if (ret)
+                {
+                    ret = false;
+#ifdef _WIN32
+                    if (sscanf_s(str, "%lu", value) == 1)
+#else
+                    if (sscanf(str, "%lu", value) == 1)
+#endif // ifdef _WIN32
+                    {
+                        // Number found
+                        ret = true;
+                    }
+                }
+                return ret;
+            };
+
+    std::string element;
+    const char* text = nullptr;
+    if (nullptr != (text = elem->GetText()))
+    {
+        element = text;
+    }
+    if (element.empty() || !to_uint64(element.c_str(), &ui))
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "<" << elem->Value() << "> getXMLUint XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+    *ui64 = static_cast<uint64_t>(ui);
+    return XMLP_ret::XML_OK;
+}
+
 XMLP_ret XMLParser::getXMLBool(
         tinyxml2::XMLElement* elem,
         bool* b,
@@ -4334,3 +4568,7 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
 
     return XMLP_ret::XML_OK;
 }
+
+} // namespace xmlparser
+} // namespace fastrtps
+} // namespace eprosima
