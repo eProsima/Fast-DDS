@@ -78,7 +78,7 @@ public:
         // Wait for undiscovery
         reader.wait_undiscovery();
 
-        writer.make_persistent(db_file_name_writer(), guid_prefix())
+        writer.make_transient(db_file_name_writer(), guid_prefix())
                 .reliability(ReliabilityKind_t::RELIABLE).init();
 
         // Wait for discovery
@@ -196,11 +196,11 @@ TEST_F(PersistenceNonIntraprocess, InconsistentAcknackReceived)
     RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
-    reader.make_persistent(db_file_name_reader(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).
+    reader.make_transient(db_file_name_reader(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).
             reliability(ReliabilityKind_t::RELIABLE).init();
     EXPECT_TRUE(reader.isInitialized());
 
-    writer.make_persistent(db_file_name_writer(), guid_prefix()).
+    writer.make_transient(db_file_name_writer(), guid_prefix()).
             reliability(ReliabilityKind_t::RELIABLE).init();
 
     EXPECT_TRUE(writer.isInitialized());

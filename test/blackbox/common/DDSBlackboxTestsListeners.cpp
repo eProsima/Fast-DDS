@@ -1246,9 +1246,9 @@ TEST(DDSStatus, sample_lost_re_dw_re_persistence_dr)
         PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
         writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
-                .make_persistent(db_file_name, "67.62.79.64.75.62.5f.60.75.72.73.5f|76.65.79.74");
+                .make_transient(db_file_name, "67.62.79.64.75.62.5f.60.75.72.73.5f|76.65.79.74");
         reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
-                .make_persistent(db_file_name, "67.62.79.64.75.62.5f.60.75.72.73.5f|76.65.79.72");
+                .make_transient(db_file_name, "67.62.79.64.75.62.5f.60.75.72.73.5f|76.65.79.72");
 
 
         std::mutex test_step_mtx;
@@ -1651,9 +1651,9 @@ TEST(DDSStatus, sample_lost_waitset_re_dw_re_persistence_dr)
         PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
         writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
-                .make_persistent(db_file_name, "67.62.79.64.75.62.5f.60.75.72.73.5f|76.65.79.74");
+                .make_transient(db_file_name, "67.62.79.64.75.62.5f.60.75.72.73.5f|76.65.79.74");
         reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
-                .make_persistent(db_file_name, "67.62.79.64.75.62.5f.60.75.72.73.5f|76.65.79.72");
+                .make_transient(db_file_name, "67.62.79.64.75.62.5f.60.75.72.73.5f|76.65.79.72");
 
         std::mutex test_step_mtx;
         std::condition_variable test_step_cv;
