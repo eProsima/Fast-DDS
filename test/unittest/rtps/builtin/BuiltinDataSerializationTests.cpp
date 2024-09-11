@@ -2197,7 +2197,7 @@ TEST(BuiltinDataSerializationTests, deserialization_of_big_parameters)
     constexpr size_t guid_length = 20;
     constexpr size_t topic_name_length = 16;
     constexpr size_t type_name_length = 16;
-    constexpr size_t parameter_length = 1024;
+    constexpr size_t parameter_length = 65536;
     constexpr size_t sentinel_length = 4;
     constexpr size_t total_length =
             encapsulation_length + // encapsulation
