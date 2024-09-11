@@ -650,9 +650,12 @@ TEST(DataWriterTests, InvalidQos)
     const ReturnCode_t unsupported_code = RETCODE_UNSUPPORTED;
 
     DataWriterQos qos;
-    qos = DATAWRITER_QOS_DEFAULT;
-    qos.durability().kind = PERSISTENT_DURABILITY_QOS;
-    EXPECT_EQ(unsupported_code, datawriter->set_qos(qos));
+
+    // qos = DATAWRITER_QOS_DEFAULT;
+    // qos.durability().kind = PERSISTENT_DURABILITY_QOS;
+    // Despite PERSISTENT_DURABILITY is not supported yet,
+    // DataWriter must behave as TRANSIENT
+    // EXPECT_EQ(unsupported_code, datawriter->set_qos(qos));
 
     qos = DATAWRITER_QOS_DEFAULT;
     qos.destination_order().kind = BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;

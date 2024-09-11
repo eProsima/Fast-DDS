@@ -2157,7 +2157,7 @@ TEST(ParticipantTests, ChangeDefaultTopicQos)
     ASSERT_EQ(tqos.reliability().kind, BEST_EFFORT_RELIABILITY_QOS);
 
     qos.durability().kind = PERSISTENT_DURABILITY_QOS;
-    ASSERT_FALSE(participant->set_default_topic_qos(qos) == RETCODE_OK);
+    ASSERT_TRUE(participant->set_default_topic_qos(qos) == RETCODE_OK);
 
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
@@ -2925,13 +2925,6 @@ TEST(ParticipantTests, CreateTopicNegativeClauses)
     // Check that the topic is not created if a wrong type name is provided
     Topic* topic;
     topic = participant->create_topic("footopic", "fake_type_name", TOPIC_QOS_DEFAULT);
-    ASSERT_EQ(topic, nullptr);
-
-    // Check that the topic is not created if a non supported durability QoS is provided
-    TopicQos tqos;
-    participant->get_default_topic_qos(tqos);
-    tqos.durability().kind = PERSISTENT_DURABILITY_QOS;
-    topic = participant->create_topic("footopic", type.get_type_name(), tqos);
     ASSERT_EQ(topic, nullptr);
 
     // Remove the participant

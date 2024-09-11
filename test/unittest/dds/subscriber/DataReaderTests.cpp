@@ -683,9 +683,11 @@ TEST_F(DataReaderTests, InvalidQos)
     /* Unsupported QoS */
     const ReturnCode_t unsupported_code = RETCODE_UNSUPPORTED;
 
-    qos = DATAREADER_QOS_DEFAULT;
-    qos.durability().kind = PERSISTENT_DURABILITY_QOS;
-    EXPECT_EQ(unsupported_code, data_reader_->set_qos(qos));
+    // qos = DATAREADER_QOS_DEFAULT;
+    // qos.durability().kind = PERSISTENT_DURABILITY_QOS;
+    // Despite PERSISTENT_DURABILITY is not supported yet,
+    // DataReader must behave as TRANSIENT
+    // EXPECT_EQ(unsupported_code, data_reader_->set_qos(qos));
 
     qos = DATAREADER_QOS_DEFAULT;
     qos.destination_order().kind = BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
