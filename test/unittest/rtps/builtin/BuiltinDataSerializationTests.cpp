@@ -2312,8 +2312,11 @@ TEST(BuiltinDataSerializationTests, deserialization_of_big_parameters)
     std::set<uint16_t> failed_for_data_r;
 
     // Loop all parameter IDs in the standard range
-    for (uint16_t pid = 2; pid <= 0x0FFF; ++pid)
+    for (uint16_t pid = 0x2; pid <= 0x0FFF; ++pid)
     {
+        // Clear big parameter
+        std::fill(buffer.begin() + encapsulation_length, buffer.begin() + encapsulation_length + parameter_length, 0);
+
         // Set the parameter ID of the big parameter
         constexpr uint16_t big_parameter_plength = parameter_length - 4;
         buffer[encapsulation_length] = static_cast<octet>(pid & 0xFF);
@@ -2321,12 +2324,57 @@ TEST(BuiltinDataSerializationTests, deserialization_of_big_parameters)
         buffer[encapsulation_length + 2] = static_cast<octet>(big_parameter_plength & 0xFF);
         buffer[encapsulation_length + 3] = static_cast<octet>((big_parameter_plength >> 8) & 0xFF);
 
+        // Beware of semantically incorrect parameters
+        switch(pid)
+        {
+            // The protocol version should be 2
+            case eprosima::fastdds::dds::PID_PROTOCOL_VERSION:
+                buffer[encapsulation_length + 4] = 0x02;
+                break;
+
+            // The length of some string parameters should be lower than 256
+            case eprosima::fastdds::dds::PID_ENTITY_NAME:
+            case eprosima::fastdds::dds::PID_TYPE_NAME:
+            case eprosima::fastdds::dds::PID_TOPIC_NAME:
+                buffer[encapsulation_length + 2] = 0xFF;
+                buffer[encapsulation_length + 3] = 0x00;
+                break;
+
+            // Data parameters should fill the whole parameter
+            case eprosima::fastdds::dds::PID_USER_DATA:
+            case eprosima::fastdds::dds::PID_TOPIC_DATA:
+            case eprosima::fastdds::dds::PID_GROUP_DATA:
+                {
+                    constexpr uint16_t inner_data_length = big_parameter_plength - 4;
+                    buffer[encapsulation_length + 4] = static_cast<octet>(inner_data_length & 0xFF);
+                    buffer[encapsulation_length + 5] = static_cast<octet>((inner_data_length >> 8) & 0xFF);
+                }
+                break;
+
+            // Custom content for partition
+            case eprosima::fastdds::dds::PID_PARTITION:
+                // Number of partitions (1)
+                buffer[encapsulation_length + 4] = 0x01;
+                buffer[encapsulation_length + 5] = 0x00;
+                buffer[encapsulation_length + 6] = 0x00;
+                buffer[encapsulation_length + 7] = 0x00;
+                // Partition name length (fills the rest of the parameter)
+                constexpr uint16_t partition_length = big_parameter_plength - 4 - 4;
+                buffer[encapsulation_length + 8] = static_cast<octet>(partition_length & 0xFF);
+                buffer[encapsulation_length + 9] = static_cast<octet>((partition_length >> 8) & 0xFF);
+                buffer[encapsulation_length + 10] = 0x00;
+                buffer[encapsulation_length + 11] = 0x00;
+                break;
+        }
+
         // Deserialize a DATA(p)
         {
             CDRMessage_t msg(0);
             msg.init(buffer.data(), static_cast<uint32_t>(buffer.size()));
             msg.length = msg.max_size;
 
+            RTPSParticipantAllocationAttributes att;
+            att.data_limits.max_user_data = parameter_length;
             ParticipantProxyData out({});
             EXPECT_NO_THROW(
                 if (!out.readFromCDRMessage(&msg, true, network, false))
@@ -2342,7 +2390,9 @@ TEST(BuiltinDataSerializationTests, deserialization_of_big_parameters)
             msg.init(buffer.data(), static_cast<uint32_t>(buffer.size()));
             msg.length = msg.max_size;
 
-            WriterProxyData out(max_unicast_locators, max_multicast_locators);
+            VariableLengthDataLimits limits;
+            limits.max_user_data = parameter_length;
+            WriterProxyData out(max_unicast_locators, max_multicast_locators, limits);
             EXPECT_NO_THROW(
                 if (!out.readFromCDRMessage(&msg, network, true))
                         {
@@ -2357,7 +2407,9 @@ TEST(BuiltinDataSerializationTests, deserialization_of_big_parameters)
             msg.init(buffer.data(), static_cast<uint32_t>(buffer.size()));
             msg.length = msg.max_size;
 
-            ReaderProxyData out(max_unicast_locators, max_multicast_locators);
+            VariableLengthDataLimits limits;
+            limits.max_user_data = parameter_length;
+            ReaderProxyData out(max_unicast_locators, max_multicast_locators, limits);
             EXPECT_NO_THROW(
                 if (!out.readFromCDRMessage(&msg, network, true))
                         {
