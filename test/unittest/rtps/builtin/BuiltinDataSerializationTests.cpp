@@ -12,7 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <array>
 #include <cstdint>
+#include <iostream>
+#include <set>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -2180,6 +2183,222 @@ TEST(BuiltinDataSerializationTests, interoperability_with_intercomdds)
 
         ReaderProxyData out(max_unicast_locators, max_multicast_locators);
         EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true, intercom_vendor_id)));
+    }
+}
+
+/*!
+ * This is a regression test for redmine issue #21537
+ *
+ * It checks deserialization of builtin data with big parameters.
+ */
+TEST(BuiltinDataSerializationTests, deserialization_of_big_parameters)
+{
+    constexpr size_t encapsulation_length = 4;
+    constexpr size_t guid_length = 20;
+    constexpr size_t topic_name_length = 16;
+    constexpr size_t type_name_length = 16;
+    constexpr size_t parameter_length = 1024;
+    constexpr size_t sentinel_length = 4;
+    constexpr size_t total_length =
+            encapsulation_length + // encapsulation
+            parameter_length +   // Big parameter
+            guid_length +        // Participant GUID
+            guid_length +        // Endpoint GUID
+            topic_name_length +  // Topic name
+            type_name_length +   // Type name
+            sentinel_length;     // Sentinel
+    std::array<octet, total_length> buffer{{0}};
+
+    // Encapsulation (PL_CDR_LE)
+    size_t pos = 0;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x03;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x00;
+
+    // Room for the big parameter
+    pos += parameter_length;
+
+    // Participant GUID
+    buffer[pos++] = 0x50;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x10;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x01;
+    buffer[pos++] = 0x05;
+    buffer[pos++] = 0x0f;
+    buffer[pos++] = 0xda;
+    buffer[pos++] = 0x14;
+    buffer[pos++] = 0xdd;
+    buffer[pos++] = 0x32;
+    buffer[pos++] = 0x62;
+    buffer[pos++] = 0x74;
+    buffer[pos++] = 0xef;
+    buffer[pos++] = 0x08;
+    buffer[pos++] = 0xeb;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x01;
+    buffer[pos++] = 0xc1;
+
+    // Endpoint GUID
+    buffer[pos++] = 0x5a;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x10;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x01;
+    buffer[pos++] = 0x05;
+    buffer[pos++] = 0x0f;
+    buffer[pos++] = 0xda;
+    buffer[pos++] = 0x14;
+    buffer[pos++] = 0xdd;
+    buffer[pos++] = 0x32;
+    buffer[pos++] = 0x62;
+    buffer[pos++] = 0x74;
+    buffer[pos++] = 0xef;
+    buffer[pos++] = 0x08;
+    buffer[pos++] = 0xeb;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x01;
+    buffer[pos++] = 0x07;
+
+    // Topic name ("Square")
+    buffer[pos++] = 0x05;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x0c;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x07;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x53;
+    buffer[pos++] = 0x71;
+    buffer[pos++] = 0x75;
+    buffer[pos++] = 0x61;
+    buffer[pos++] = 0x72;
+    buffer[pos++] = 0x65;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x00;
+
+    // Type name ("MyType")
+    buffer[pos++] = 0x07;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x0c;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x07;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x4d;
+    buffer[pos++] = 0x79;
+    buffer[pos++] = 0x54;
+    buffer[pos++] = 0x79;
+    buffer[pos++] = 0x70;
+    buffer[pos++] = 0x65;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x00;
+
+    // Sentinel
+    buffer[pos++] = 0x01;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x00;
+
+    ASSERT_EQ(total_length, pos);
+
+    std::set<uint16_t> failed_for_data_p;
+    std::set<uint16_t> failed_for_data_w;
+    std::set<uint16_t> failed_for_data_r;
+
+    // Loop all parameter IDs in the standard range
+    for (uint16_t pid = 2; pid <= 0x0FFF; ++pid)
+    {
+        // Set the parameter ID of the big parameter
+        constexpr uint16_t big_parameter_plength = parameter_length - 4;
+        buffer[encapsulation_length] = static_cast<octet>(pid & 0xFF);
+        buffer[encapsulation_length + 1] = static_cast<octet>((pid >> 8) & 0xFF);
+        buffer[encapsulation_length + 2] = static_cast<octet>(big_parameter_plength & 0xFF);
+        buffer[encapsulation_length + 3] = static_cast<octet>((big_parameter_plength >> 8) & 0xFF);
+
+        // Deserialize a DATA(p)
+        {
+            CDRMessage_t msg(0);
+            msg.init(buffer.data(), static_cast<uint32_t>(buffer.size()));
+            msg.length = msg.max_size;
+
+            ParticipantProxyData out({});
+            EXPECT_NO_THROW(
+                if (!out.readFromCDRMessage(&msg, true, network, false))
+                        {
+                            failed_for_data_p.insert(pid);
+                        }
+                );
+        }
+
+        // Deserialize a DATA(w)
+        {
+            CDRMessage_t msg(0);
+            msg.init(buffer.data(), static_cast<uint32_t>(buffer.size()));
+            msg.length = msg.max_size;
+
+            WriterProxyData out(max_unicast_locators, max_multicast_locators);
+            EXPECT_NO_THROW(
+                if (!out.readFromCDRMessage(&msg, network, true))
+                        {
+                            failed_for_data_w.insert(pid);
+                        }
+                );
+        }
+
+        // Deserialize a DATA(r)
+        {
+            CDRMessage_t msg(0);
+            msg.init(buffer.data(), static_cast<uint32_t>(buffer.size()));
+            msg.length = msg.max_size;
+
+            ReaderProxyData out(max_unicast_locators, max_multicast_locators);
+            EXPECT_NO_THROW(
+                if (!out.readFromCDRMessage(&msg, network, true))
+                        {
+                            failed_for_data_r.insert(pid);
+                        }
+                );
+        }
+    }
+
+    // Check if any parameter ID failed
+    EXPECT_EQ(failed_for_data_p.size(), 0u);
+    EXPECT_EQ(failed_for_data_w.size(), 0u);
+    EXPECT_EQ(failed_for_data_r.size(), 0u);
+
+    // Print the failed parameter IDs
+    if (!failed_for_data_p.empty())
+    {
+        std::cout << "Failed for DATA(p): ";
+        for (uint16_t pid : failed_for_data_p)
+        {
+            std::cout << std::hex << std::setfill('0') << std::setw(4) << pid << " ";
+        }
+        std::cout << std::endl;
+    }
+    if (!failed_for_data_w.empty())
+    {
+        std::cout << "Failed for DATA(w): ";
+        for (uint16_t pid : failed_for_data_w)
+        {
+            std::cout << std::hex << std::setfill('0') << std::setw(4) << pid << " ";
+        }
+        std::cout << std::endl;
+    }
+    if (!failed_for_data_r.empty())
+    {
+        std::cout << "Failed for DATA(r): ";
+        for (uint16_t pid : failed_for_data_r)
+        {
+            std::cout << std::hex << std::setfill('0') << std::setw(4) << pid << " ";
+        }
+        std::cout << std::endl;
     }
 }
 
