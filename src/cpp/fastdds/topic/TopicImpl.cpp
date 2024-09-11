@@ -68,8 +68,7 @@ ReturnCode_t TopicImpl::check_qos(
 {
     if (PERSISTENT_DURABILITY_QOS == qos.durability().kind)
     {
-        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK, "PERSISTENT Durability not supported");
-        return RETCODE_UNSUPPORTED;
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "PERSISTENT Durability not supported, behaving as TRANSIENT instead");
     }
     if (BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS == qos.destination_order().kind)
     {

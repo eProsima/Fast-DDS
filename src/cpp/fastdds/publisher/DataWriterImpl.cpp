@@ -1942,8 +1942,7 @@ ReturnCode_t DataWriterImpl::check_qos(
 {
     if (qos.durability().kind == PERSISTENT_DURABILITY_QOS)
     {
-        EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK, "PERSISTENT Durability not supported");
-        return RETCODE_UNSUPPORTED;
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "PERSISTENT Durability not supported, behaving as TRANSIENT instead");
     }
     if (qos.destination_order().kind == BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS)
     {
