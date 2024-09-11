@@ -44,6 +44,7 @@ set(TYPELOOKUPSERVICETESTS_SOURCE TypeLookupServiceTests.cpp
 
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)
+    set_source_files_properties(TypeLookupServiceTests.cpp PROPERTIES COMPILE_OPTIONS /bigobj)
 endif()
 
 add_executable(TypeLookupServiceTests ${TYPELOOKUPSERVICETESTS_SOURCE})

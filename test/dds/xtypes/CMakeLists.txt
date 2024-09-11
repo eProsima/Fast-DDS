@@ -79,6 +79,12 @@ set(DDS_XTYPES_SOURCE ${COMMON_SOURCE}
     TypeLookupServiceSubscriber.cpp
     )
 
+if(WIN32)
+    set_source_files_properties(${PROJECT_SOURCE_DIR}/test/dds-types-test/mapsPubSubTypes.cxx PROPERTIES COMPILE_OPTIONS /bigobj)
+    set_source_files_properties(TypeLookupServicePublisher.cpp PROPERTIES COMPILE_OPTIONS /bigobj)
+    set_source_files_properties(TypeLookupServiceSubscriber.cpp PROPERTIES COMPILE_OPTIONS /bigobj)
+endif()
+
 add_executable(DDSXtypesCommunication ${DDS_XTYPES_SOURCE})
 target_compile_definitions(DDSXtypesCommunication PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
@@ -116,7 +122,10 @@ if(PYTHONINTERP_FOUND)
         set(TEST_NAME DDSXtypesCommunication_${TEST_DEFINITION})
         add_test(
             NAME ${TEST_NAME}
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/${TEST_BUILDER}
+            COMMAND
+            ${PYTHON_EXECUTABLE}
+            ${CMAKE_CURRENT_BINARY_DIR}/${TEST_BUILDER}
+            --app $<TARGET_FILE:DDSXtypesCommunication>
             ${TEST_DEFINITION}
             )
 

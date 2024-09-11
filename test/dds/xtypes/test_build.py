@@ -49,10 +49,18 @@ def parse_options():
     )
 
     parser.add_argument(
-            'file',
-            nargs=1,
-            help='JSON file.'
-            )
+        '-a',
+        '--app',
+        type=str,
+        required=True,
+        help='Path to the executable test.'
+    )
+
+    parser.add_argument(
+        'file',
+        nargs=1,
+        help='JSON file.'
+    )
 
     parser.add_argument(
         '-d',
@@ -90,24 +98,8 @@ def define_args(participant):
     return args
 
 
-def find_executable(executable_name):
-    """Find the full path of an executable file by name."""
-    executable_path = shutil.which(executable_name)
-    if not executable_path or not os.path.isfile(executable_path) or not os.access(executable_path, os.X_OK):
-        # Try looking in the current working directory
-        executable_path = os.path.join(os.getcwd(), executable_name)
-        if not os.path.isfile(executable_path) or not os.access(executable_path, os.X_OK):
-            return None
-    return executable_path
-
-
-def define_commands(test_cases):
+def define_commands(executable_path, test_cases):
     """Create commands for each participant adding executable to args."""
-    executable_path = find_executable('DDSXtypesCommunication')
-    if not executable_path:
-        print("ERROR: Executable 'DDSXtypesCommunication' not found in the system PATH or is not executable.")
-        sys.exit(1)
-
     all_commands = []
     for test_case in test_cases:
         # For each test case, create commands for all participants
@@ -193,6 +185,7 @@ async def execute_commands(test_case, commands):
     async with asyncio.TaskGroup() as tg:
         for command in commands:
             tasks.append(tg.create_task(run_command(test_case, command, MAX_TIME)))
+            await asyncio.sleep(0.3) # Avoid errors with SharedMemory starting all commands at same time
 
     return sum([proc.result() for proc in tasks])
 
@@ -227,7 +220,7 @@ if __name__ == '__main__':
 
     for test_case in test_cases:
         # Define commands for each test case
-        commands = define_commands([test_case])
+        commands = define_commands(args.app, [test_case])
         # Execute the commands and get the return value
         test_value = asyncio.run(execute_commands(test_case['TestCase'], commands))
         total_test_value += test_value
