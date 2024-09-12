@@ -105,6 +105,8 @@ bool TypeLookupServiceSubscriber::setup_subscriber(
     //CREATE THE DATAREADER
     DataReaderQos rqos = subscriber->get_default_datareader_qos();
     rqos.data_sharing().off();
+    rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    rqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     DataReader* reader = subscriber->create_datareader(topic, rqos);
     if (reader == nullptr)
     {

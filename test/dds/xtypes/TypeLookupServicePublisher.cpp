@@ -99,6 +99,8 @@ bool TypeLookupServicePublisher::setup_publisher(
     // CREATE THE DATAWRITER
     DataWriterQos wqos = publisher->get_default_datawriter_qos();
     wqos.data_sharing().off();
+    wqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    wqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     a_type.writer_ = publisher->create_datawriter(topic, wqos);
     if (a_type.writer_ == nullptr)
     {
