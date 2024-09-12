@@ -594,7 +594,7 @@ void PDPClient::removeRemoteEndpoints(
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
         // Verify if this participant is a server
-        for (auto it = connected_servers_.begin(); it != connected_servers_.end(); ++it)
+        for (auto it = connected_servers_.begin(); it != connected_servers_.end();)
         {
             if (it->guidPrefix == pdata->m_guid.guidPrefix)
             {
@@ -602,6 +602,10 @@ void PDPClient::removeRemoteEndpoints(
                 it = connected_servers_.erase(it);
                 is_server = true;
                 mp_sync->restart_timer(); // enable announcement and sync mechanism till this server reappears
+            }
+            else
+            {
+                ++it;
             }
         }
     }
