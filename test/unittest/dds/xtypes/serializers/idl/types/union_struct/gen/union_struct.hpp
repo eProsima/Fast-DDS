@@ -67,7 +67,10 @@ public:
      */
     eProsima_user_DllExport BasicUnion()
     {
-        second_();
+        selected_member_ = 0x00000002;
+        member_destructor_ = nullptr;
+        m_second = {0};
+
     }
 
     /*!
@@ -367,7 +370,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]() {m_first.~basic_string();};
                     new(&m_first) std::string();
-    ;
+
                 }
 
                 return m_first;
@@ -385,7 +388,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = nullptr;
                     m_second = {0};
-    ;
+
                 }
 
                 return m_second;
@@ -417,7 +420,10 @@ public:
      */
     eProsima_user_DllExport ComplexUnion()
     {
-        fourth_();
+        selected_member_ = 0x00000002;
+        member_destructor_ = [&]() {m_fourth.~BasicUnion();};
+        new(&m_fourth) BasicUnion();
+
     }
 
     /*!
@@ -717,7 +723,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_third = {0};
-    ;
+
                 }
 
                 return m_third;
@@ -735,7 +741,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = [&]() {m_fourth.~BasicUnion();};
                     new(&m_fourth) BasicUnion();
-    ;
+
                 }
 
                 return m_fourth;

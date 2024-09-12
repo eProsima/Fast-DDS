@@ -3719,7 +3719,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_l = {0};
-    ;
+
                 }
 
                 return m_l;
@@ -3737,7 +3737,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = [&]() {m_c.~recursive_union_container();};
                     new(&m_c) recursive_union_container();
-    ;
+
                 }
 
                 return m_c;
@@ -3755,7 +3755,7 @@ private:
                     selected_member_ = 0x00000003;
                     member_destructor_ = nullptr;
                     m_s = {0};
-    ;
+
                 }
 
                 return m_s;
@@ -4337,7 +4337,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_l = {0};
-    ;
+
                 }
 
                 return m_l;
@@ -4355,7 +4355,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = [&]() {m_ext.~external();};
                     new(&m_ext) eprosima::fastcdr::external<recursive_structure>();
-    ;
+
                 }
 
                 return m_ext;
@@ -4373,7 +4373,7 @@ private:
                     selected_member_ = 0x00000003;
                     member_destructor_ = nullptr;
                     m_s = {0};
-    ;
+
                 }
 
                 return m_s;
