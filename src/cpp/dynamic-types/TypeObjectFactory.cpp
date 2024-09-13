@@ -48,8 +48,10 @@ TypeObjectFactory* TypeObjectFactory::get_instance()
 {
     if (g_instance == nullptr)
     {
-        g_instance = new TypeObjectFactory();
+        auto instance = new TypeObjectFactory();
+        g_instance = instance;
         g_instance->create_builtin_annotations();
+        return instance;
     }
     return g_instance;
 }
