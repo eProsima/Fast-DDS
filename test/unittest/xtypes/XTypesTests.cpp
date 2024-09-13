@@ -12,6 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <array>
+#include <atomic>
+#include <chrono>
+#include <condition_variable>
+#include <thread>
+
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/qos/QosPolicies.h>
 #include <fastdds/dds/log/Log.hpp>
@@ -843,17 +849,43 @@ TEST(XTypesTestsThreadSafety, TypeObjectFactoryGetInstanceIsThreadSafe)
     constexpr size_t num_threads = 10;
     std::array<TypeObjectFactory*, num_threads> factories;
     std::array<std::thread, num_threads> threads;
+    std::atomic<size_t> n_started_threads{ 0u };
+
+    // We use a fake lock instead of a real mutex since we need the threads to act at the same time
+    struct FakeLock
+    {
+        void lock()
+        {
+        }
+
+        void unlock()
+        {
+        }
+
+    };
+    FakeLock fake_lock;
+    std::condition_variable_any cv;
 
     // Create threads that get an instance of the factory
     for (size_t i = 0; i < num_threads; ++i)
     {
         threads[i] = std::thread(
-            [&factories, i]()
-        {
-            auto factory = TypeObjectFactory::get_instance();
-            EXPECT_NE(factory, nullptr);
-            factories[i] = factory;
-        });
+            [&cv, &fake_lock, &n_started_threads, &factories, i]()
+            {
+                // Notify that this thread is ready
+                ++n_started_threads;
+                cv.notify_all();
+                // Wait for all threads to be ready
+                cv.wait(fake_lock, [&n_started_threads, factories]()
+                {
+                    return n_started_threads == factories.size();
+                });
+
+                // Get the instance from all threads at the same time
+                auto factory = TypeObjectFactory::get_instance();
+                EXPECT_NE(factory, nullptr);
+                factories[i] = factory;
+            });
     }
 
     // Wait for all threads to finish
