@@ -16,6 +16,7 @@
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
+#include <set>
 #include <thread>
 
 #include <fastrtps/types/TypeObjectFactory.h>
@@ -894,11 +895,13 @@ TEST(XTypesTestsThreadSafety, TypeObjectFactoryGetInstanceIsThreadSafe)
         threads[i].join();
     }
 
-    // Check that all threads got the same instance
-    for (size_t i = 1; i < num_threads; ++i)
+    // Count the number of different instances
+    std::set<TypeObjectFactory*> unique_factories;
+    for (size_t i = 0; i < num_threads; ++i)
     {
-        EXPECT_EQ(factories[0], factories[i]);
+        unique_factories.insert(factories[i]);
     }
+    EXPECT_EQ(unique_factories.size(), 1u);
 
     // Delete the instance
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectFactory::delete_instance());
