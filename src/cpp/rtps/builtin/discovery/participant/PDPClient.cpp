@@ -599,7 +599,12 @@ void PDPClient::removeRemoteEndpoints(
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
         // Verify if this participant is a server
+<<<<<<< HEAD
         for (auto& svr : mp_builtin->m_DiscoveryServers)
+=======
+        auto it = connected_servers_.begin();
+        while (it != connected_servers_.end())
+>>>>>>> d4d8e5489 (Correct iterator increment after erasing elements in `connected_servers_list` (#5226))
         {
             if (svr.guidPrefix == pdata->m_guid.guidPrefix)
             {
@@ -607,7 +612,12 @@ void PDPClient::removeRemoteEndpoints(
                 svr.is_connected = false;
                 is_server = true;
                 mp_sync->restart_timer(); // enable announcement and sync mechanism till this server reappears
+
+                // Avoid incrementing iterator after item removal
+                continue;
             }
+
+            ++it;
         }
     }
 
