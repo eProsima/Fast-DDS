@@ -833,6 +833,45 @@ TEST_F(XTypesTests, MemberDescriptorFullyQualifiedName)
     EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, my_builder->add_member(member_id++, "tJ", my_builder->build()));
 }
 
+/**
+ * This is a regression test for redmine issue #21664.
+ *
+ * It calls TypeObjectFactory::get_instance() from multiple threads to check that the factory singleton is thread safe.
+ */
+TEST(XTypesTestsThreadSafety, TypeObjectFactoryGetInstanceIsThreadSafe)
+{
+    constexpr size_t num_threads = 10;
+    std::array<TypeObjectFactory*, num_threads> factories;
+    std::array<std::thread, num_threads> threads;
+
+    // Create threads that get an instance of the factory
+    for (size_t i = 0; i < num_threads; ++i)
+    {
+        threads[i] = std::thread(
+            [&factories, i]()
+        {
+            auto factory = TypeObjectFactory::get_instance();
+            EXPECT_NE(factory, nullptr);
+            factories[i] = factory;
+        });
+    }
+
+    // Wait for all threads to finish
+    for (size_t i = 0; i < num_threads; ++i)
+    {
+        threads[i].join();
+    }
+
+    // Check that all threads got the same instance
+    for (size_t i = 1; i < num_threads; ++i)
+    {
+        EXPECT_EQ(factories[0], factories[i]);
+    }
+
+    // Delete the instance
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectFactory::delete_instance());
+}
+
 int main(
         int argc,
         char** argv)
