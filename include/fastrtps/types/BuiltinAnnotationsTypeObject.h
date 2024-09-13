@@ -29,155 +29,321 @@
 
 using namespace eprosima::fastrtps::types;
 
-void register_builtin_annotations_types(TypeObjectFactory* factory);
+void register_builtin_annotations_types(
+        TypeObjectFactory* factory);
 
-const TypeIdentifier* GetidIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetidObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimalidObject(TypeObjectFactory* factory);
-const TypeObject* GetCompleteidObject(TypeObjectFactory* factory);
+const TypeIdentifier* GetidIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetidObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalidObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompleteidObject(
+        TypeObjectFactory* factory);
 
-const TypeIdentifier* GetautoidIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetautoidObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimalautoidObject(TypeObjectFactory* factory);
-const TypeObject* GetCompleteautoidObject(TypeObjectFactory* factory);
+const TypeIdentifier* GetautoidIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetautoidObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalautoidObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompleteautoidObject(
+        TypeObjectFactory* factory);
 
-namespace autoid
-{
-    const TypeIdentifier* GetAutoidKindIdentifier(TypeObjectFactory* factory, bool complete = false);
-    const TypeObject* GetAutoidKindObject(TypeObjectFactory* factory, bool complete = false);
-    const TypeObject* GetMinimalAutoidKindObject(TypeObjectFactory* factory);
-    const TypeObject* GetCompleteAutoidKindObject(TypeObjectFactory* factory);
-}
+namespace autoid {
+const TypeIdentifier* GetAutoidKindIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetAutoidKindObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalAutoidKindObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompleteAutoidKindObject(
+        TypeObjectFactory* factory);
+} // namespace autoid
 
-const TypeIdentifier* GetoptionalIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetoptionalObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimaloptionalObject(TypeObjectFactory* factory);
-const TypeObject* GetCompleteoptionalObject(TypeObjectFactory* factory);
+const TypeIdentifier* GetoptionalIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetoptionalObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimaloptionalObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompleteoptionalObject(
+        TypeObjectFactory* factory);
 
-const TypeIdentifier* GetpositionIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetpositionObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimalpositionObject(TypeObjectFactory* factory);
-const TypeObject* GetCompletepositionObject(TypeObjectFactory* factory);
+const TypeIdentifier* GetpositionIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetpositionObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalpositionObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompletepositionObject(
+        TypeObjectFactory* factory);
 
-const TypeIdentifier* GetvalueIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetvalueObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimalvalueObject(TypeObjectFactory* factory);
-const TypeObject* GetCompletevalueObject(TypeObjectFactory* factory);
+const TypeIdentifier* GetvalueIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetvalueObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalvalueObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompletevalueObject(
+        TypeObjectFactory* factory);
 
-const TypeIdentifier* GetextensibilityIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetextensibilityObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimalextensibilityObject(TypeObjectFactory* factory);
-const TypeObject* GetCompleteextensibilityObject(TypeObjectFactory* factory);
+const TypeIdentifier* GetextensibilityIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetextensibilityObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalextensibilityObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompleteextensibilityObject(
+        TypeObjectFactory* factory);
 
-namespace extensibility
-{
-    const TypeIdentifier* GetExtensibilityKindIdentifier(TypeObjectFactory* factory, bool complete = false);
-    const TypeObject* GetExtensibilityKindObject(TypeObjectFactory* factory, bool complete = false);
-    const TypeObject* GetMinimalExtensibilityKindObject(TypeObjectFactory* factory);
-    const TypeObject* GetCompleteExtensibilityKindObject(TypeObjectFactory* factory);
-}
+namespace extensibility {
+const TypeIdentifier* GetExtensibilityKindIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetExtensibilityKindObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalExtensibilityKindObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompleteExtensibilityKindObject(
+        TypeObjectFactory* factory);
+} // namespace extensibility
 
-const TypeIdentifier* GetfinalIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetfinalObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimalfinalObject(TypeObjectFactory* factory);
-const TypeObject* GetCompletefinalObject(TypeObjectFactory* factory);
+const TypeIdentifier* GetfinalIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetfinalObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalfinalObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompletefinalObject(
+        TypeObjectFactory* factory);
 
-const TypeIdentifier* GetappendableIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetappendableObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimalappendableObject(TypeObjectFactory* factory);
-const TypeObject* GetCompleteappendableObject(TypeObjectFactory* factory);
+const TypeIdentifier* GetappendableIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetappendableObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalappendableObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompleteappendableObject(
+        TypeObjectFactory* factory);
 
-const TypeIdentifier* GetmutableIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetmutableObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimalmutableObject(TypeObjectFactory* factory);
-const TypeObject* GetCompletemutableObject(TypeObjectFactory* factory);
+const TypeIdentifier* GetmutableIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetmutableObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalmutableObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompletemutableObject(
+        TypeObjectFactory* factory);
 
-const TypeIdentifier* GetkeyIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetkeyObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimalkeyObject(TypeObjectFactory* factory);
-const TypeObject* GetCompletekeyObject(TypeObjectFactory* factory);
+const TypeIdentifier* GetkeyIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetkeyObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalkeyObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompletekeyObject(
+        TypeObjectFactory* factory);
 
-const TypeIdentifier* Getmust_understandIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* Getmust_understandObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimalmust_understandObject(TypeObjectFactory* factory);
-const TypeObject* GetCompletemust_understandObject(TypeObjectFactory* factory);
+const TypeIdentifier* Getmust_understandIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* Getmust_understandObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalmust_understandObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompletemust_understandObject(
+        TypeObjectFactory* factory);
 
-const TypeIdentifier* Getdefault_literalIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* Getdefault_literalObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimaldefault_literalObject(TypeObjectFactory* factory);
-const TypeObject* GetCompletedefault_literalObject(TypeObjectFactory* factory);
+const TypeIdentifier* Getdefault_literalIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* Getdefault_literalObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimaldefault_literalObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompletedefault_literalObject(
+        TypeObjectFactory* factory);
 
-const TypeIdentifier* GetdefaultIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetdefaultObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimaldefaultObject(TypeObjectFactory* factory);
-const TypeObject* GetCompletedefaultObject(TypeObjectFactory* factory);
+const TypeIdentifier* GetdefaultIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetdefaultObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimaldefaultObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompletedefaultObject(
+        TypeObjectFactory* factory);
 
-const TypeIdentifier* GetrangeIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetrangeObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimalrangeObject(TypeObjectFactory* factory);
-const TypeObject* GetCompleterangeObject(TypeObjectFactory* factory);
+const TypeIdentifier* GetrangeIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetrangeObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalrangeObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompleterangeObject(
+        TypeObjectFactory* factory);
 
-const TypeIdentifier* GetminIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetminObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimalminObject(TypeObjectFactory* factory);
-const TypeObject* GetCompleteminObject(TypeObjectFactory* factory);
+const TypeIdentifier* GetminIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetminObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalminObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompleteminObject(
+        TypeObjectFactory* factory);
 
-const TypeIdentifier* GetmaxIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetmaxObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimalmaxObject(TypeObjectFactory* factory);
-const TypeObject* GetCompletemaxObject(TypeObjectFactory* factory);
+const TypeIdentifier* GetmaxIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetmaxObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalmaxObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompletemaxObject(
+        TypeObjectFactory* factory);
 
-const TypeIdentifier* GetunitIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetunitObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimalunitObject(TypeObjectFactory* factory);
-const TypeObject* GetCompleteunitObject(TypeObjectFactory* factory);
+const TypeIdentifier* GetunitIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetunitObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalunitObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompleteunitObject(
+        TypeObjectFactory* factory);
 
-const TypeIdentifier* Getbit_boundIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* Getbit_boundObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimalbit_boundObject(TypeObjectFactory* factory);
-const TypeObject* GetCompletebit_boundObject(TypeObjectFactory* factory);
+const TypeIdentifier* Getbit_boundIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* Getbit_boundObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalbit_boundObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompletebit_boundObject(
+        TypeObjectFactory* factory);
 
-const TypeIdentifier* GetexternalIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetexternalObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimalexternalObject(TypeObjectFactory* factory);
-const TypeObject* GetCompleteexternalObject(TypeObjectFactory* factory);
+const TypeIdentifier* GetexternalIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetexternalObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalexternalObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompleteexternalObject(
+        TypeObjectFactory* factory);
 
-const TypeIdentifier* GetnestedIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetnestedObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimalnestedObject(TypeObjectFactory* factory);
-const TypeObject* GetCompletenestedObject(TypeObjectFactory* factory);
+const TypeIdentifier* GetnestedIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetnestedObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalnestedObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompletenestedObject(
+        TypeObjectFactory* factory);
 
-const TypeIdentifier* GetverbatimIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetverbatimObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimalverbatimObject(TypeObjectFactory* factory);
-const TypeObject* GetCompleteverbatimObject(TypeObjectFactory* factory);
+const TypeIdentifier* GetverbatimIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetverbatimObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalverbatimObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompleteverbatimObject(
+        TypeObjectFactory* factory);
 
-namespace verbatim
-{
-    const TypeIdentifier* GetPlacementKindIdentifier(TypeObjectFactory* factory, bool complete = false);
-    const TypeObject* GetPlacementKindObject(TypeObjectFactory* factory, bool complete = false);
-    const TypeObject* GetMinimalPlacementKindObject(TypeObjectFactory* factory);
-    const TypeObject* GetCompletePlacementKindObject(TypeObjectFactory* factory);
-}
+namespace verbatim {
+const TypeIdentifier* GetPlacementKindIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetPlacementKindObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalPlacementKindObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompletePlacementKindObject(
+        TypeObjectFactory* factory);
+} // namespace verbatim
 
-const TypeIdentifier* GetserviceIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetserviceObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimalserviceObject(TypeObjectFactory* factory);
-const TypeObject* GetCompleteserviceObject(TypeObjectFactory* factory);
+const TypeIdentifier* GetserviceIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetserviceObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalserviceObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompleteserviceObject(
+        TypeObjectFactory* factory);
 
-const TypeIdentifier* GetonewayIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetonewayObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimalonewayObject(TypeObjectFactory* factory);
-const TypeObject* GetCompleteonewayObject(TypeObjectFactory* factory);
+const TypeIdentifier* GetonewayIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetonewayObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalonewayObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompleteonewayObject(
+        TypeObjectFactory* factory);
 
-const TypeIdentifier* GetamiIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetamiObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimalamiObject(TypeObjectFactory* factory);
-const TypeObject* GetCompleteamiObject(TypeObjectFactory* factory);
+const TypeIdentifier* GetamiIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetamiObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalamiObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompleteamiObject(
+        TypeObjectFactory* factory);
 
-const TypeIdentifier* Getnon_serializedIdentifier(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* Getnon_serializedObject(TypeObjectFactory* factory, bool complete = false);
-const TypeObject* GetMinimalnon_serializedObject(TypeObjectFactory* factory);
-const TypeObject* GetCompletenon_serializedObject(TypeObjectFactory* factory);
+const TypeIdentifier* Getnon_serializedIdentifier(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* Getnon_serializedObject(
+        TypeObjectFactory* factory,
+        bool complete = false);
+const TypeObject* GetMinimalnon_serializedObject(
+        TypeObjectFactory* factory);
+const TypeObject* GetCompletenon_serializedObject(
+        TypeObjectFactory* factory);
 
 #endif // _BUILTIN_ANNOTATIONS_TYPE_OBJECT_H_

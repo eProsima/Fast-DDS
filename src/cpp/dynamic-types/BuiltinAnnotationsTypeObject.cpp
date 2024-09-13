@@ -49,8 +49,10 @@ void register_builtin_annotations_types(
     {
         using namespace autoid;
 
-        factory->add_type_object("AutoidKind", GetAutoidKindIdentifier(factory, true), GetAutoidKindObject(factory, true));
-        factory->add_type_object("AutoidKind", GetAutoidKindIdentifier(factory, false), GetAutoidKindObject(factory, false));
+        factory->add_type_object("AutoidKind", GetAutoidKindIdentifier(factory, true), GetAutoidKindObject(factory,
+                true));
+        factory->add_type_object("AutoidKind", GetAutoidKindIdentifier(factory, false),
+                GetAutoidKindObject(factory, false));
 
 
     }
@@ -63,8 +65,10 @@ void register_builtin_annotations_types(
     factory->add_type_object("value", GetvalueIdentifier(factory, true), GetvalueObject(factory, true));
     factory->add_type_object("value", GetvalueIdentifier(factory, false), GetvalueObject(factory, false));
 
-    factory->add_type_object("extensibility", GetextensibilityIdentifier(factory, true), GetextensibilityObject(factory, true));
-    factory->add_type_object("extensibility", GetextensibilityIdentifier(factory, false), GetextensibilityObject(factory, false));
+    factory->add_type_object("extensibility", GetextensibilityIdentifier(factory, true),
+            GetextensibilityObject(factory, true));
+    factory->add_type_object("extensibility", GetextensibilityIdentifier(factory, false),
+            GetextensibilityObject(factory, false));
     {
         using namespace extensibility;
 
@@ -79,7 +83,8 @@ void register_builtin_annotations_types(
     factory->add_type_object("final", GetfinalIdentifier(factory, false), GetfinalObject(factory, false));
 
     factory->add_type_object("appendable", GetappendableIdentifier(factory, true), GetappendableObject(factory, true));
-    factory->add_type_object("appendable", GetappendableIdentifier(factory, false), GetappendableObject(factory, false));
+    factory->add_type_object("appendable", GetappendableIdentifier(factory, false),
+            GetappendableObject(factory, false));
 
     factory->add_type_object("mutable", GetmutableIdentifier(factory, true), GetmutableObject(factory, true));
     factory->add_type_object("mutable", GetmutableIdentifier(factory, false), GetmutableObject(factory, false));
@@ -90,11 +95,15 @@ void register_builtin_annotations_types(
     factory->add_type_object("Key", GetkeyIdentifier(factory, true), GetkeyObject(factory, true));
     factory->add_type_object("Key", GetkeyIdentifier(factory, false), GetkeyObject(factory, false));
 
-    factory->add_type_object("must_understand", Getmust_understandIdentifier(factory, true), Getmust_understandObject(factory, true));
-    factory->add_type_object("must_understand", Getmust_understandIdentifier(factory, false), Getmust_understandObject(factory, false));
+    factory->add_type_object("must_understand", Getmust_understandIdentifier(factory, true),
+            Getmust_understandObject(factory, true));
+    factory->add_type_object("must_understand", Getmust_understandIdentifier(factory, false),
+            Getmust_understandObject(factory, false));
 
-    factory->add_type_object("default_literal", Getdefault_literalIdentifier(factory, true), Getdefault_literalObject(factory, true));
-    factory->add_type_object("default_literal", Getdefault_literalIdentifier(factory, false), Getdefault_literalObject(factory, false));
+    factory->add_type_object("default_literal", Getdefault_literalIdentifier(factory, true),
+            Getdefault_literalObject(factory, true));
+    factory->add_type_object("default_literal", Getdefault_literalIdentifier(factory, false),
+            Getdefault_literalObject(factory, false));
 
     factory->add_type_object("default", GetdefaultIdentifier(factory, true), GetdefaultObject(factory, true));
     factory->add_type_object("default", GetdefaultIdentifier(factory, false), GetdefaultObject(factory, false));
@@ -125,8 +134,10 @@ void register_builtin_annotations_types(
     {
         using namespace verbatim;
 
-        factory->add_type_object("PlacementKind", GetPlacementKindIdentifier(factory, true), GetPlacementKindObject(factory, true));
-        factory->add_type_object("PlacementKind", GetPlacementKindIdentifier(factory, false), GetPlacementKindObject(factory, false));
+        factory->add_type_object("PlacementKind", GetPlacementKindIdentifier(factory, true),
+                GetPlacementKindObject(factory, true));
+        factory->add_type_object("PlacementKind", GetPlacementKindIdentifier(factory, false),
+                GetPlacementKindObject(factory, false));
 
 
     }
@@ -139,13 +150,16 @@ void register_builtin_annotations_types(
     factory->add_type_object("ami", GetamiIdentifier(factory, true), GetamiObject(factory, true));
     factory->add_type_object("ami", GetamiIdentifier(factory, false), GetamiObject(factory, false));
 
-    factory->add_type_object("non_serialized", Getnon_serializedIdentifier(factory, true), Getnon_serializedObject(factory, true));
-    factory->add_type_object("non_serialized", Getnon_serializedIdentifier(factory, false), Getnon_serializedObject(factory, false));
+    factory->add_type_object("non_serialized", Getnon_serializedIdentifier(factory, true),
+            Getnon_serializedObject(factory, true));
+    factory->add_type_object("non_serialized", Getnon_serializedIdentifier(factory, false),
+            Getnon_serializedObject(factory, false));
 
 }
 
 const TypeIdentifier* GetidIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("id", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
@@ -158,7 +172,8 @@ const TypeIdentifier* GetidIdentifier(
 }
 
 const TypeObject* GetidObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("id", complete);
     if (c_type_object != nullptr)
@@ -173,7 +188,8 @@ const TypeObject* GetidObject(
     return GetMinimalidObject(factory);
 }
 
-const TypeObject* GetMinimalidObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalidObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("id", false);
     if (c_type_object != nullptr)
@@ -181,7 +197,7 @@ const TypeObject* GetMinimalidObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -219,7 +235,8 @@ const TypeObject* GetMinimalidObject(TypeObjectFactory* factory)
     return factory->get_type_object("id", false);
 }
 
-const TypeObject* GetCompleteidObject(TypeObjectFactory* factory)
+const TypeObject* GetCompleteidObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("id", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -227,7 +244,7 @@ const TypeObject* GetCompleteidObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
@@ -277,7 +294,8 @@ const TypeObject* GetCompleteidObject(TypeObjectFactory* factory)
 }
 
 const TypeIdentifier* GetautoidIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("autoid", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
@@ -290,7 +308,8 @@ const TypeIdentifier* GetautoidIdentifier(
 }
 
 const TypeObject* GetautoidObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("autoid", complete);
     if (c_type_object != nullptr)
@@ -305,7 +324,8 @@ const TypeObject* GetautoidObject(
     return GetMinimalautoidObject(factory);
 }
 
-const TypeObject* GetMinimalautoidObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalautoidObject(
+        TypeObjectFactory* factory)
 {
     using namespace autoid;
     const TypeObject* c_type_object = factory->get_type_object("autoid", false);
@@ -314,7 +334,7 @@ const TypeObject* GetMinimalautoidObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -356,7 +376,8 @@ const TypeObject* GetMinimalautoidObject(TypeObjectFactory* factory)
     return factory->get_type_object("autoid", false);
 }
 
-const TypeObject* GetCompleteautoidObject(TypeObjectFactory* factory)
+const TypeObject* GetCompleteautoidObject(
+        TypeObjectFactory* factory)
 {
     using namespace autoid;
     const TypeObject* c_type_object = factory->get_type_object("autoid", true);
@@ -365,7 +386,7 @@ const TypeObject* GetCompleteautoidObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
@@ -420,7 +441,8 @@ const TypeObject* GetCompleteautoidObject(TypeObjectFactory* factory)
 
 namespace autoid {
 const TypeIdentifier* GetAutoidKindIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("AutoidKind", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
@@ -433,7 +455,8 @@ const TypeIdentifier* GetAutoidKindIdentifier(
 }
 
 const TypeObject* GetAutoidKindObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("AutoidKind", complete);
     if (c_type_object != nullptr)
@@ -448,7 +471,8 @@ const TypeObject* GetAutoidKindObject(
     return GetMinimalAutoidKindObject(factory);
 }
 
-const TypeObject* GetMinimalAutoidKindObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalAutoidKindObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("AutoidKind", false);
     if (c_type_object != nullptr)
@@ -456,7 +480,7 @@ const TypeObject* GetMinimalAutoidKindObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ENUM);
 
@@ -530,7 +554,8 @@ const TypeObject* GetMinimalAutoidKindObject(TypeObjectFactory* factory)
     return factory->get_type_object("AutoidKind", false);
 }
 
-const TypeObject* GetCompleteAutoidKindObject(TypeObjectFactory* factory)
+const TypeObject* GetCompleteAutoidKindObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("AutoidKind", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -538,7 +563,7 @@ const TypeObject* GetCompleteAutoidKindObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ENUM);
 
@@ -613,7 +638,8 @@ const TypeObject* GetCompleteAutoidKindObject(TypeObjectFactory* factory)
 
 } // autoid namespace
 const TypeIdentifier* GetoptionalIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("optional", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
@@ -626,7 +652,8 @@ const TypeIdentifier* GetoptionalIdentifier(
 }
 
 const TypeObject* GetoptionalObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("optional", complete);
     if (c_type_object != nullptr)
@@ -641,7 +668,8 @@ const TypeObject* GetoptionalObject(
     return GetMinimaloptionalObject(factory);
 }
 
-const TypeObject* GetMinimaloptionalObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimaloptionalObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("optional", false);
     if (c_type_object != nullptr)
@@ -649,7 +677,7 @@ const TypeObject* GetMinimaloptionalObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -691,7 +719,8 @@ const TypeObject* GetMinimaloptionalObject(TypeObjectFactory* factory)
     return factory->get_type_object("optional", false);
 }
 
-const TypeObject* GetCompleteoptionalObject(TypeObjectFactory* factory)
+const TypeObject* GetCompleteoptionalObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("optional", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -699,7 +728,7 @@ const TypeObject* GetCompleteoptionalObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
@@ -753,7 +782,8 @@ const TypeObject* GetCompleteoptionalObject(TypeObjectFactory* factory)
 }
 
 const TypeIdentifier* GetpositionIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("position", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
@@ -766,7 +796,8 @@ const TypeIdentifier* GetpositionIdentifier(
 }
 
 const TypeObject* GetpositionObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("position", complete);
     if (c_type_object != nullptr)
@@ -781,7 +812,8 @@ const TypeObject* GetpositionObject(
     return GetMinimalpositionObject(factory);
 }
 
-const TypeObject* GetMinimalpositionObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalpositionObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("position", false);
     if (c_type_object != nullptr)
@@ -789,7 +821,7 @@ const TypeObject* GetMinimalpositionObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -827,7 +859,8 @@ const TypeObject* GetMinimalpositionObject(TypeObjectFactory* factory)
     return factory->get_type_object("position", false);
 }
 
-const TypeObject* GetCompletepositionObject(TypeObjectFactory* factory)
+const TypeObject* GetCompletepositionObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("position", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -835,7 +868,7 @@ const TypeObject* GetCompletepositionObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
@@ -885,7 +918,8 @@ const TypeObject* GetCompletepositionObject(TypeObjectFactory* factory)
 }
 
 const TypeIdentifier* GetvalueIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("value", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
@@ -898,7 +932,8 @@ const TypeIdentifier* GetvalueIdentifier(
 }
 
 const TypeObject* GetvalueObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("value", complete);
     if (c_type_object != nullptr)
@@ -913,7 +948,8 @@ const TypeObject* GetvalueObject(
     return GetMinimalvalueObject(factory);
 }
 
-const TypeObject* GetMinimalvalueObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalvalueObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("value", false);
     if (c_type_object != nullptr)
@@ -921,7 +957,7 @@ const TypeObject* GetMinimalvalueObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -959,7 +995,8 @@ const TypeObject* GetMinimalvalueObject(TypeObjectFactory* factory)
     return factory->get_type_object("value", false);
 }
 
-const TypeObject* GetCompletevalueObject(TypeObjectFactory* factory)
+const TypeObject* GetCompletevalueObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("value", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -967,7 +1004,7 @@ const TypeObject* GetCompletevalueObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
@@ -1017,7 +1054,8 @@ const TypeObject* GetCompletevalueObject(TypeObjectFactory* factory)
 }
 
 const TypeIdentifier* GetextensibilityIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("extensibility",
                     complete);
@@ -1031,7 +1069,8 @@ const TypeIdentifier* GetextensibilityIdentifier(
 }
 
 const TypeObject* GetextensibilityObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("extensibility", complete);
     if (c_type_object != nullptr)
@@ -1046,7 +1085,8 @@ const TypeObject* GetextensibilityObject(
     return GetMinimalextensibilityObject(factory);
 }
 
-const TypeObject* GetMinimalextensibilityObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalextensibilityObject(
+        TypeObjectFactory* factory)
 {
     using namespace extensibility;
     const TypeObject* c_type_object = factory->get_type_object("extensibility", false);
@@ -1055,7 +1095,7 @@ const TypeObject* GetMinimalextensibilityObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -1093,7 +1133,8 @@ const TypeObject* GetMinimalextensibilityObject(TypeObjectFactory* factory)
     return factory->get_type_object("extensibility", false);
 }
 
-const TypeObject* GetCompleteextensibilityObject(TypeObjectFactory* factory)
+const TypeObject* GetCompleteextensibilityObject(
+        TypeObjectFactory* factory)
 {
     using namespace extensibility;
     const TypeObject* c_type_object = factory->get_type_object("extensibility", true);
@@ -1102,7 +1143,7 @@ const TypeObject* GetCompleteextensibilityObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
@@ -1153,7 +1194,8 @@ const TypeObject* GetCompleteextensibilityObject(TypeObjectFactory* factory)
 
 namespace extensibility {
 const TypeIdentifier* GetExtensibilityKindIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("ExtensibilityKind",
                     complete);
@@ -1167,7 +1209,8 @@ const TypeIdentifier* GetExtensibilityKindIdentifier(
 }
 
 const TypeObject* GetExtensibilityKindObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("ExtensibilityKind", complete);
     if (c_type_object != nullptr)
@@ -1182,7 +1225,8 @@ const TypeObject* GetExtensibilityKindObject(
     return GetMinimalExtensibilityKindObject(factory);
 }
 
-const TypeObject* GetMinimalExtensibilityKindObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalExtensibilityKindObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("ExtensibilityKind", false);
     if (c_type_object != nullptr)
@@ -1190,7 +1234,7 @@ const TypeObject* GetMinimalExtensibilityKindObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ENUM);
 
@@ -1280,7 +1324,8 @@ const TypeObject* GetMinimalExtensibilityKindObject(TypeObjectFactory* factory)
     return factory->get_type_object("ExtensibilityKind", false);
 }
 
-const TypeObject* GetCompleteExtensibilityKindObject(TypeObjectFactory* factory)
+const TypeObject* GetCompleteExtensibilityKindObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("ExtensibilityKind", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -1288,7 +1333,7 @@ const TypeObject* GetCompleteExtensibilityKindObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ENUM);
 
@@ -1377,7 +1422,8 @@ const TypeObject* GetCompleteExtensibilityKindObject(TypeObjectFactory* factory)
 
 } // extensibility namespace
 const TypeIdentifier* GetfinalIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("final", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
@@ -1390,7 +1436,8 @@ const TypeIdentifier* GetfinalIdentifier(
 }
 
 const TypeObject* GetfinalObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("final", complete);
     if (c_type_object != nullptr)
@@ -1405,7 +1452,8 @@ const TypeObject* GetfinalObject(
     return GetMinimalfinalObject(factory);
 }
 
-const TypeObject* GetMinimalfinalObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalfinalObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("final", false);
     if (c_type_object != nullptr)
@@ -1413,7 +1461,7 @@ const TypeObject* GetMinimalfinalObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -1445,7 +1493,8 @@ const TypeObject* GetMinimalfinalObject(TypeObjectFactory* factory)
     return factory->get_type_object("final", false);
 }
 
-const TypeObject* GetCompletefinalObject(TypeObjectFactory* factory)
+const TypeObject* GetCompletefinalObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("final", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -1453,7 +1502,7 @@ const TypeObject* GetCompletefinalObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
@@ -1497,7 +1546,8 @@ const TypeObject* GetCompletefinalObject(TypeObjectFactory* factory)
 }
 
 const TypeIdentifier* GetappendableIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("appendable", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
@@ -1510,7 +1560,8 @@ const TypeIdentifier* GetappendableIdentifier(
 }
 
 const TypeObject* GetappendableObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("appendable", complete);
     if (c_type_object != nullptr)
@@ -1525,7 +1576,8 @@ const TypeObject* GetappendableObject(
     return GetMinimalappendableObject(factory);
 }
 
-const TypeObject* GetMinimalappendableObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalappendableObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("appendable", false);
     if (c_type_object != nullptr)
@@ -1533,7 +1585,7 @@ const TypeObject* GetMinimalappendableObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -1565,7 +1617,8 @@ const TypeObject* GetMinimalappendableObject(TypeObjectFactory* factory)
     return factory->get_type_object("appendable", false);
 }
 
-const TypeObject* GetCompleteappendableObject(TypeObjectFactory* factory)
+const TypeObject* GetCompleteappendableObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("appendable", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -1573,7 +1626,7 @@ const TypeObject* GetCompleteappendableObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
@@ -1617,7 +1670,8 @@ const TypeObject* GetCompleteappendableObject(TypeObjectFactory* factory)
 }
 
 const TypeIdentifier* GetmutableIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("mutable", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
@@ -1630,7 +1684,8 @@ const TypeIdentifier* GetmutableIdentifier(
 }
 
 const TypeObject* GetmutableObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("mutable", complete);
     if (c_type_object != nullptr)
@@ -1645,7 +1700,8 @@ const TypeObject* GetmutableObject(
     return GetMinimalmutableObject(factory);
 }
 
-const TypeObject* GetMinimalmutableObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalmutableObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("mutable", false);
     if (c_type_object != nullptr)
@@ -1653,7 +1709,7 @@ const TypeObject* GetMinimalmutableObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -1685,7 +1741,8 @@ const TypeObject* GetMinimalmutableObject(TypeObjectFactory* factory)
     return factory->get_type_object("mutable", false);
 }
 
-const TypeObject* GetCompletemutableObject(TypeObjectFactory* factory)
+const TypeObject* GetCompletemutableObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("mutable", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -1693,7 +1750,7 @@ const TypeObject* GetCompletemutableObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
@@ -1737,7 +1794,8 @@ const TypeObject* GetCompletemutableObject(TypeObjectFactory* factory)
 }
 
 const TypeIdentifier* GetkeyIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("key", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
@@ -1750,7 +1808,8 @@ const TypeIdentifier* GetkeyIdentifier(
 }
 
 const TypeObject* GetkeyObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("key", complete);
     if (c_type_object != nullptr)
@@ -1765,7 +1824,8 @@ const TypeObject* GetkeyObject(
     return GetMinimalkeyObject(factory);
 }
 
-const TypeObject* GetMinimalkeyObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalkeyObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("key", false);
     if (c_type_object != nullptr)
@@ -1773,7 +1833,7 @@ const TypeObject* GetMinimalkeyObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -1815,7 +1875,8 @@ const TypeObject* GetMinimalkeyObject(TypeObjectFactory* factory)
     return factory->get_type_object("key", false);
 }
 
-const TypeObject* GetCompletekeyObject(TypeObjectFactory* factory)
+const TypeObject* GetCompletekeyObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("key", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -1823,7 +1884,7 @@ const TypeObject* GetCompletekeyObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
@@ -1877,7 +1938,8 @@ const TypeObject* GetCompletekeyObject(TypeObjectFactory* factory)
 }
 
 const TypeIdentifier* Getmust_understandIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("must_understand",
                     complete);
@@ -1891,7 +1953,8 @@ const TypeIdentifier* Getmust_understandIdentifier(
 }
 
 const TypeObject* Getmust_understandObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("must_understand", complete);
     if (c_type_object != nullptr)
@@ -1906,7 +1969,8 @@ const TypeObject* Getmust_understandObject(
     return GetMinimalmust_understandObject(factory);
 }
 
-const TypeObject* GetMinimalmust_understandObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalmust_understandObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("must_understand", false);
     if (c_type_object != nullptr)
@@ -1914,7 +1978,7 @@ const TypeObject* GetMinimalmust_understandObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -1956,7 +2020,8 @@ const TypeObject* GetMinimalmust_understandObject(TypeObjectFactory* factory)
     return factory->get_type_object("must_understand", false);
 }
 
-const TypeObject* GetCompletemust_understandObject(TypeObjectFactory* factory)
+const TypeObject* GetCompletemust_understandObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("must_understand", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -1964,7 +2029,7 @@ const TypeObject* GetCompletemust_understandObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
@@ -2018,7 +2083,8 @@ const TypeObject* GetCompletemust_understandObject(TypeObjectFactory* factory)
 }
 
 const TypeIdentifier* Getdefault_literalIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("default_literal",
                     complete);
@@ -2032,7 +2098,8 @@ const TypeIdentifier* Getdefault_literalIdentifier(
 }
 
 const TypeObject* Getdefault_literalObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("default_literal", complete);
     if (c_type_object != nullptr)
@@ -2047,7 +2114,8 @@ const TypeObject* Getdefault_literalObject(
     return GetMinimaldefault_literalObject(factory);
 }
 
-const TypeObject* GetMinimaldefault_literalObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimaldefault_literalObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("default_literal", false);
     if (c_type_object != nullptr)
@@ -2055,7 +2123,7 @@ const TypeObject* GetMinimaldefault_literalObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -2087,7 +2155,8 @@ const TypeObject* GetMinimaldefault_literalObject(TypeObjectFactory* factory)
     return factory->get_type_object("default_literal", false);
 }
 
-const TypeObject* GetCompletedefault_literalObject(TypeObjectFactory* factory)
+const TypeObject* GetCompletedefault_literalObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("default_literal", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -2095,7 +2164,7 @@ const TypeObject* GetCompletedefault_literalObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
@@ -2139,7 +2208,8 @@ const TypeObject* GetCompletedefault_literalObject(TypeObjectFactory* factory)
 }
 
 const TypeIdentifier* GetdefaultIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("default", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
@@ -2152,7 +2222,8 @@ const TypeIdentifier* GetdefaultIdentifier(
 }
 
 const TypeObject* GetdefaultObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("default", complete);
     if (c_type_object != nullptr)
@@ -2167,7 +2238,8 @@ const TypeObject* GetdefaultObject(
     return GetMinimaldefaultObject(factory);
 }
 
-const TypeObject* GetMinimaldefaultObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimaldefaultObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("default", false);
     if (c_type_object != nullptr)
@@ -2175,7 +2247,7 @@ const TypeObject* GetMinimaldefaultObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -2213,7 +2285,8 @@ const TypeObject* GetMinimaldefaultObject(TypeObjectFactory* factory)
     return factory->get_type_object("default", false);
 }
 
-const TypeObject* GetCompletedefaultObject(TypeObjectFactory* factory)
+const TypeObject* GetCompletedefaultObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("default", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -2221,7 +2294,7 @@ const TypeObject* GetCompletedefaultObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
@@ -2271,7 +2344,8 @@ const TypeObject* GetCompletedefaultObject(TypeObjectFactory* factory)
 }
 
 const TypeIdentifier* GetrangeIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("range", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
@@ -2284,7 +2358,8 @@ const TypeIdentifier* GetrangeIdentifier(
 }
 
 const TypeObject* GetrangeObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("range", complete);
     if (c_type_object != nullptr)
@@ -2299,7 +2374,8 @@ const TypeObject* GetrangeObject(
     return GetMinimalrangeObject(factory);
 }
 
-const TypeObject* GetMinimalrangeObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalrangeObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("range", false);
     if (c_type_object != nullptr)
@@ -2307,7 +2383,7 @@ const TypeObject* GetMinimalrangeObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -2351,7 +2427,8 @@ const TypeObject* GetMinimalrangeObject(TypeObjectFactory* factory)
     return factory->get_type_object("range", false);
 }
 
-const TypeObject* GetCompleterangeObject(TypeObjectFactory* factory)
+const TypeObject* GetCompleterangeObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("range", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -2359,7 +2436,7 @@ const TypeObject* GetCompleterangeObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
@@ -2415,7 +2492,8 @@ const TypeObject* GetCompleterangeObject(TypeObjectFactory* factory)
 }
 
 const TypeIdentifier* GetminIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("min", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
@@ -2428,7 +2506,8 @@ const TypeIdentifier* GetminIdentifier(
 }
 
 const TypeObject* GetminObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("min", complete);
     if (c_type_object != nullptr)
@@ -2443,7 +2522,8 @@ const TypeObject* GetminObject(
     return GetMinimalminObject(factory);
 }
 
-const TypeObject* GetMinimalminObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalminObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("min", false);
     if (c_type_object != nullptr)
@@ -2451,7 +2531,7 @@ const TypeObject* GetMinimalminObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -2489,7 +2569,8 @@ const TypeObject* GetMinimalminObject(TypeObjectFactory* factory)
     return factory->get_type_object("min", false);
 }
 
-const TypeObject* GetCompleteminObject(TypeObjectFactory* factory)
+const TypeObject* GetCompleteminObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("min", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -2497,7 +2578,7 @@ const TypeObject* GetCompleteminObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
@@ -2547,7 +2628,8 @@ const TypeObject* GetCompleteminObject(TypeObjectFactory* factory)
 }
 
 const TypeIdentifier* GetmaxIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("max", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
@@ -2560,7 +2642,8 @@ const TypeIdentifier* GetmaxIdentifier(
 }
 
 const TypeObject* GetmaxObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("max", complete);
     if (c_type_object != nullptr)
@@ -2575,7 +2658,8 @@ const TypeObject* GetmaxObject(
     return GetMinimalmaxObject(factory);
 }
 
-const TypeObject* GetMinimalmaxObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalmaxObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("max", false);
     if (c_type_object != nullptr)
@@ -2583,7 +2667,7 @@ const TypeObject* GetMinimalmaxObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -2621,7 +2705,8 @@ const TypeObject* GetMinimalmaxObject(TypeObjectFactory* factory)
     return factory->get_type_object("max", false);
 }
 
-const TypeObject* GetCompletemaxObject(TypeObjectFactory* factory)
+const TypeObject* GetCompletemaxObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("max", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -2629,7 +2714,7 @@ const TypeObject* GetCompletemaxObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
@@ -2679,7 +2764,8 @@ const TypeObject* GetCompletemaxObject(TypeObjectFactory* factory)
 }
 
 const TypeIdentifier* GetunitIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("unit", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
@@ -2692,7 +2778,8 @@ const TypeIdentifier* GetunitIdentifier(
 }
 
 const TypeObject* GetunitObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("unit", complete);
     if (c_type_object != nullptr)
@@ -2707,7 +2794,8 @@ const TypeObject* GetunitObject(
     return GetMinimalunitObject(factory);
 }
 
-const TypeObject* GetMinimalunitObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalunitObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("unit", false);
     if (c_type_object != nullptr)
@@ -2715,7 +2803,7 @@ const TypeObject* GetMinimalunitObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -2753,7 +2841,8 @@ const TypeObject* GetMinimalunitObject(TypeObjectFactory* factory)
     return factory->get_type_object("unit", false);
 }
 
-const TypeObject* GetCompleteunitObject(TypeObjectFactory* factory)
+const TypeObject* GetCompleteunitObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("unit", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -2761,7 +2850,7 @@ const TypeObject* GetCompleteunitObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
@@ -2811,7 +2900,8 @@ const TypeObject* GetCompleteunitObject(TypeObjectFactory* factory)
 }
 
 const TypeIdentifier* Getbit_boundIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("bit_bound", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
@@ -2824,7 +2914,8 @@ const TypeIdentifier* Getbit_boundIdentifier(
 }
 
 const TypeObject* Getbit_boundObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("bit_bound", complete);
     if (c_type_object != nullptr)
@@ -2839,7 +2930,8 @@ const TypeObject* Getbit_boundObject(
     return GetMinimalbit_boundObject(factory);
 }
 
-const TypeObject* GetMinimalbit_boundObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalbit_boundObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("bit_bound", false);
     if (c_type_object != nullptr)
@@ -2847,7 +2939,7 @@ const TypeObject* GetMinimalbit_boundObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -2885,7 +2977,8 @@ const TypeObject* GetMinimalbit_boundObject(TypeObjectFactory* factory)
     return factory->get_type_object("bit_bound", false);
 }
 
-const TypeObject* GetCompletebit_boundObject(TypeObjectFactory* factory)
+const TypeObject* GetCompletebit_boundObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("bit_bound", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -2893,7 +2986,7 @@ const TypeObject* GetCompletebit_boundObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
@@ -2943,7 +3036,8 @@ const TypeObject* GetCompletebit_boundObject(TypeObjectFactory* factory)
 }
 
 const TypeIdentifier* GetexternalIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("external", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
@@ -2956,7 +3050,8 @@ const TypeIdentifier* GetexternalIdentifier(
 }
 
 const TypeObject* GetexternalObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("external", complete);
     if (c_type_object != nullptr)
@@ -2971,7 +3066,8 @@ const TypeObject* GetexternalObject(
     return GetMinimalexternalObject(factory);
 }
 
-const TypeObject* GetMinimalexternalObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalexternalObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("external", false);
     if (c_type_object != nullptr)
@@ -2979,7 +3075,7 @@ const TypeObject* GetMinimalexternalObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -3021,7 +3117,8 @@ const TypeObject* GetMinimalexternalObject(TypeObjectFactory* factory)
     return factory->get_type_object("external", false);
 }
 
-const TypeObject* GetCompleteexternalObject(TypeObjectFactory* factory)
+const TypeObject* GetCompleteexternalObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("external", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -3029,7 +3126,7 @@ const TypeObject* GetCompleteexternalObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
@@ -3083,7 +3180,8 @@ const TypeObject* GetCompleteexternalObject(TypeObjectFactory* factory)
 }
 
 const TypeIdentifier* GetnestedIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("nested", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
@@ -3096,7 +3194,8 @@ const TypeIdentifier* GetnestedIdentifier(
 }
 
 const TypeObject* GetnestedObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("nested", complete);
     if (c_type_object != nullptr)
@@ -3111,7 +3210,8 @@ const TypeObject* GetnestedObject(
     return GetMinimalnestedObject(factory);
 }
 
-const TypeObject* GetMinimalnestedObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalnestedObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("nested", false);
     if (c_type_object != nullptr)
@@ -3119,7 +3219,7 @@ const TypeObject* GetMinimalnestedObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -3161,7 +3261,8 @@ const TypeObject* GetMinimalnestedObject(TypeObjectFactory* factory)
     return factory->get_type_object("nested", false);
 }
 
-const TypeObject* GetCompletenestedObject(TypeObjectFactory* factory)
+const TypeObject* GetCompletenestedObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("nested", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -3169,7 +3270,7 @@ const TypeObject* GetCompletenestedObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
@@ -3223,7 +3324,8 @@ const TypeObject* GetCompletenestedObject(TypeObjectFactory* factory)
 }
 
 const TypeIdentifier* GetverbatimIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("verbatim", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
@@ -3236,7 +3338,8 @@ const TypeIdentifier* GetverbatimIdentifier(
 }
 
 const TypeObject* GetverbatimObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("verbatim", complete);
     if (c_type_object != nullptr)
@@ -3251,7 +3354,8 @@ const TypeObject* GetverbatimObject(
     return GetMinimalverbatimObject(factory);
 }
 
-const TypeObject* GetMinimalverbatimObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalverbatimObject(
+        TypeObjectFactory* factory)
 {
     using namespace verbatim;
     const TypeObject* c_type_object = factory->get_type_object("verbatim", false);
@@ -3260,7 +3364,7 @@ const TypeObject* GetMinimalverbatimObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -3318,7 +3422,8 @@ const TypeObject* GetMinimalverbatimObject(TypeObjectFactory* factory)
     return factory->get_type_object("verbatim", false);
 }
 
-const TypeObject* GetCompleteverbatimObject(TypeObjectFactory* factory)
+const TypeObject* GetCompleteverbatimObject(
+        TypeObjectFactory* factory)
 {
     using namespace verbatim;
     const TypeObject* c_type_object = factory->get_type_object("verbatim", true);
@@ -3327,7 +3432,7 @@ const TypeObject* GetCompleteverbatimObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
@@ -3398,7 +3503,8 @@ const TypeObject* GetCompleteverbatimObject(TypeObjectFactory* factory)
 
 namespace verbatim {
 const TypeIdentifier* GetPlacementKindIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("PlacementKind",
                     complete);
@@ -3412,7 +3518,8 @@ const TypeIdentifier* GetPlacementKindIdentifier(
 }
 
 const TypeObject* GetPlacementKindObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("PlacementKind", complete);
     if (c_type_object != nullptr)
@@ -3427,7 +3534,8 @@ const TypeObject* GetPlacementKindObject(
     return GetMinimalPlacementKindObject(factory);
 }
 
-const TypeObject* GetMinimalPlacementKindObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalPlacementKindObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("PlacementKind", false);
     if (c_type_object != nullptr)
@@ -3435,7 +3543,7 @@ const TypeObject* GetMinimalPlacementKindObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ENUM);
 
@@ -3573,7 +3681,8 @@ const TypeObject* GetMinimalPlacementKindObject(TypeObjectFactory* factory)
     return factory->get_type_object("PlacementKind", false);
 }
 
-const TypeObject* GetCompletePlacementKindObject(TypeObjectFactory* factory)
+const TypeObject* GetCompletePlacementKindObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("PlacementKind", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -3581,7 +3690,7 @@ const TypeObject* GetCompletePlacementKindObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ENUM);
 
@@ -3712,7 +3821,8 @@ const TypeObject* GetCompletePlacementKindObject(TypeObjectFactory* factory)
 
 } // verbatim namespace
 const TypeIdentifier* GetserviceIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("service", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
@@ -3725,7 +3835,8 @@ const TypeIdentifier* GetserviceIdentifier(
 }
 
 const TypeObject* GetserviceObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("service", complete);
     if (c_type_object != nullptr)
@@ -3740,7 +3851,8 @@ const TypeObject* GetserviceObject(
     return GetMinimalserviceObject(factory);
 }
 
-const TypeObject* GetMinimalserviceObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalserviceObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("service", false);
     if (c_type_object != nullptr)
@@ -3748,7 +3860,7 @@ const TypeObject* GetMinimalserviceObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -3790,7 +3902,8 @@ const TypeObject* GetMinimalserviceObject(TypeObjectFactory* factory)
     return factory->get_type_object("service", false);
 }
 
-const TypeObject* GetCompleteserviceObject(TypeObjectFactory* factory)
+const TypeObject* GetCompleteserviceObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("service", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -3798,7 +3911,7 @@ const TypeObject* GetCompleteserviceObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
@@ -3852,7 +3965,8 @@ const TypeObject* GetCompleteserviceObject(TypeObjectFactory* factory)
 }
 
 const TypeIdentifier* GetonewayIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("oneway", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
@@ -3865,7 +3979,8 @@ const TypeIdentifier* GetonewayIdentifier(
 }
 
 const TypeObject* GetonewayObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("oneway", complete);
     if (c_type_object != nullptr)
@@ -3880,7 +3995,8 @@ const TypeObject* GetonewayObject(
     return GetMinimalonewayObject(factory);
 }
 
-const TypeObject* GetMinimalonewayObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalonewayObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("oneway", false);
     if (c_type_object != nullptr)
@@ -3888,7 +4004,7 @@ const TypeObject* GetMinimalonewayObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -3930,7 +4046,8 @@ const TypeObject* GetMinimalonewayObject(TypeObjectFactory* factory)
     return factory->get_type_object("oneway", false);
 }
 
-const TypeObject* GetCompleteonewayObject(TypeObjectFactory* factory)
+const TypeObject* GetCompleteonewayObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("oneway", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -3938,7 +4055,7 @@ const TypeObject* GetCompleteonewayObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
@@ -3992,7 +4109,8 @@ const TypeObject* GetCompleteonewayObject(TypeObjectFactory* factory)
 }
 
 const TypeIdentifier* GetamiIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("ami", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
@@ -4005,7 +4123,8 @@ const TypeIdentifier* GetamiIdentifier(
 }
 
 const TypeObject* GetamiObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("ami", complete);
     if (c_type_object != nullptr)
@@ -4020,7 +4139,8 @@ const TypeObject* GetamiObject(
     return GetMinimalamiObject(factory);
 }
 
-const TypeObject* GetMinimalamiObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalamiObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("ami", false);
     if (c_type_object != nullptr)
@@ -4028,7 +4148,7 @@ const TypeObject* GetMinimalamiObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -4070,7 +4190,8 @@ const TypeObject* GetMinimalamiObject(TypeObjectFactory* factory)
     return factory->get_type_object("ami", false);
 }
 
-const TypeObject* GetCompleteamiObject(TypeObjectFactory* factory)
+const TypeObject* GetCompleteamiObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("ami", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -4078,7 +4199,7 @@ const TypeObject* GetCompleteamiObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
@@ -4132,7 +4253,8 @@ const TypeObject* GetCompleteamiObject(TypeObjectFactory* factory)
 }
 
 const TypeIdentifier* Getnon_serializedIdentifier(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeIdentifier* c_identifier = factory->get_type_identifier("non_serialized",
                     complete);
@@ -4146,7 +4268,8 @@ const TypeIdentifier* Getnon_serializedIdentifier(
 }
 
 const TypeObject* Getnon_serializedObject(
-        TypeObjectFactory* factory, bool complete)
+        TypeObjectFactory* factory,
+        bool complete)
 {
     const TypeObject* c_type_object = factory->get_type_object("non_serialized", complete);
     if (c_type_object != nullptr)
@@ -4161,7 +4284,8 @@ const TypeObject* Getnon_serializedObject(
     return GetMinimalnon_serializedObject(factory);
 }
 
-const TypeObject* GetMinimalnon_serializedObject(TypeObjectFactory* factory)
+const TypeObject* GetMinimalnon_serializedObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("non_serialized", false);
     if (c_type_object != nullptr)
@@ -4169,7 +4293,7 @@ const TypeObject* GetMinimalnon_serializedObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -4211,7 +4335,8 @@ const TypeObject* GetMinimalnon_serializedObject(TypeObjectFactory* factory)
     return factory->get_type_object("non_serialized", false);
 }
 
-const TypeObject* GetCompletenon_serializedObject(TypeObjectFactory* factory)
+const TypeObject* GetCompletenon_serializedObject(
+        TypeObjectFactory* factory)
 {
     const TypeObject* c_type_object = factory->get_type_object("non_serialized", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -4219,7 +4344,7 @@ const TypeObject* GetCompletenon_serializedObject(TypeObjectFactory* factory)
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject () ;
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
