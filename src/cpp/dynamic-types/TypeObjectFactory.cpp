@@ -198,7 +198,7 @@ TypeObjectFactory::~TypeObjectFactory()
 
 void TypeObjectFactory::create_builtin_annotations()
 {
-    register_builtin_annotations_types(g_instance);
+    register_builtin_annotations_types(this);
 }
 
 void TypeObjectFactory::nullify_all_entries(
