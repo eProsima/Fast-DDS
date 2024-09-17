@@ -157,7 +157,7 @@ jobs:
           name: fastdds_build_${{ inputs.label }}
           path: ${{ github.workspace }}
 
-  fastdds_test:
+  fastdds_build_test:
     needs: fastdds_build
     runs-on: ${{ inputs.os-image }}
     if: ${{ inputs.run-tests == true }}
@@ -171,6 +171,78 @@ jobs:
         uses: eProsima/eProsima-CI/external/download-artifact@v0
         with:
           name: fastdds_build_${{ inputs.label }}
+          path: ${{ github.workspace }}
+
+      - name: Install Fix Python version
+        uses: eProsima/eProsima-CI/external/setup-python@v0
+        with:
+          python-version: '3.11'
+
+      - name: Get minimum supported version of CMake
+        uses: eProsima/eProsima-CI/external/get-cmake@v0
+        with:
+          cmakeVersion: '3.22.6'
+
+      - name: Install apt packages
+        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+        with:
+          packages: libasio-dev libtinyxml2-dev libssl-dev
+
+      - name: Install colcon
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
+
+      - name: Install Python dependencies
+        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        with:
+          packages: vcstool xmlschema
+
+      - name: Setup CCache
+        uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+        if: ${{ inputs.use-ccache == true }}
+        with:
+          api_token: ${{ secrets.GITHUB_TOKEN }}
+
+      # TODO(eduponz): Set up libp11 and SoftHSM. NOTE: using SoftHSM requires adding the runner to a group,
+      #                which entails logout/login or rebooting the machine. This is not feasible in a CI environment.
+
+      - name: Fetch Fast DDS CI dependencies
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        with:
+          vcs_repos_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.repos
+          destination_workspace: src
+          skip_existing: 'true'
+
+      - name: Colcon build
+        continue-on-error: false
+        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        with:
+          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.meta
+          colcon_build_args: ${{ inputs.colcon-args }}
+          cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
+          cmake_args_default: '${{ env.colcon-build-default-cmake-args }} -DFASTDDS_EXAMPLE_TESTS=ON'
+          cmake_build_type: ${{ matrix.cmake-build-type }}
+          workspace: ${{ github.workspace }}
+
+      - name: Upload build test artifacts
+        uses: eProsima/eProsima-CI/external/upload-artifact@v0
+        with:
+          name: fastdds_build_test_${{ inputs.label }}
+          path: ${{ github.workspace }}
+
+  fastdds_test:
+    needs: fastdds_build_test
+    runs-on: ${{ inputs.os-image }}
+    if: ${{ inputs.run-tests == true }}
+    strategy:
+      fail-fast: false
+      matrix:
+        cmake-build-type:
+          - 'RelWithDebInfo'
+    steps:
+      - name: Download build test artifacts
+        uses: eProsima/eProsima-CI/external/download-artifact@v0
+        with:
+          name: fastdds_build_test_${{ inputs.label }}
           path: ${{ github.workspace }}
 
       - name: Install Fix Python version
@@ -216,24 +288,6 @@ jobs:
 
       # TODO(eduponz): Set up libp11 and SoftHSM. NOTE: using SoftHSM requires adding the runner to a group,
       #                which entails logout/login or rebooting the machine. This is not feasible in a CI environment.
-
-      - name: Fetch Fast DDS CI dependencies
-        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
-        with:
-          vcs_repos_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.repos
-          destination_workspace: src
-          skip_existing: 'true'
-
-      - name: Colcon build
-        continue-on-error: false
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
-        with:
-          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.meta
-          colcon_build_args: ${{ inputs.colcon-args }}
-          cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
-          cmake_args_default: '${{ env.colcon-build-default-cmake-args }} -DFASTDDS_EXAMPLE_TESTS=ON'
-          cmake_build_type: ${{ matrix.cmake-build-type }}
-          workspace: ${{ github.workspace }}
 
       - name: Colcon test
         id: test
