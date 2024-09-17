@@ -12,6 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <array>
+#include <atomic>
+#include <chrono>
+#include <condition_variable>
+#include <set>
+#include <thread>
+
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/qos/QosPolicies.h>
 #include <fastdds/dds/log/Log.hpp>
@@ -831,6 +838,76 @@ TEST_F(XTypesTests, MemberDescriptorFullyQualifiedName)
     EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, my_builder->add_member(member_id++, "tI", my_builder->build()));
     my_builder->set_name("my_interface::action*::dds_::Position");
     EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, my_builder->add_member(member_id++, "tJ", my_builder->build()));
+}
+
+/**
+ * This is a regression test for redmine issue #21664.
+ *
+ * It calls TypeObjectFactory::get_instance() from multiple threads to check that the factory singleton is thread safe.
+ */
+TEST(XTypesTestsThreadSafety, TypeObjectFactoryGetInstanceIsThreadSafe)
+{
+    constexpr size_t num_threads = 10;
+    std::array<TypeObjectFactory*, num_threads> factories;
+    std::array<std::thread, num_threads> threads;
+    std::atomic<size_t> n_started_threads{ 0u };
+
+    // We use a fake lock instead of a real mutex since we need the threads to act at the same time
+    struct FakeLock
+    {
+        void lock()
+        {
+        }
+
+        void unlock()
+        {
+        }
+
+    };
+    FakeLock fake_lock;
+    std::condition_variable_any cv;
+
+    // Create threads that get an instance of the factory
+    for (size_t i = 0; i < num_threads; ++i)
+    {
+        threads[i] = std::thread(
+            [&cv, &fake_lock, &n_started_threads, &factories, i]()
+            {
+                // Notify that this thread is ready
+                ++n_started_threads;
+                // Wait for all threads to be ready
+                cv.wait(fake_lock, [&n_started_threads, factories]()
+                {
+                    return n_started_threads == factories.size();
+                });
+
+                // Get the instance from all threads at the same time
+                auto factory = TypeObjectFactory::get_instance();
+                EXPECT_NE(factory, nullptr);
+                factories[i] = factory;
+            });
+    }
+
+    // Notify all threads to start
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    cv.notify_all();
+
+    // Wait for all threads to finish
+    for (size_t i = 0; i < num_threads; ++i)
+    {
+        threads[i].join();
+    }
+
+    // Count the number of different instances
+    std::set<TypeObjectFactory*> unique_factories;
+    for (size_t i = 0; i < num_threads; ++i)
+    {
+        unique_factories.insert(factories[i]);
+    }
+    EXPECT_EQ(unique_factories.size(), 1u);
+
+    // Delete the instance
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, TypeObjectFactory::delete_instance());
 }
 
 int main(
