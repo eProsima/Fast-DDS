@@ -875,7 +875,6 @@ TEST(XTypesTestsThreadSafety, TypeObjectFactoryGetInstanceIsThreadSafe)
             {
                 // Notify that this thread is ready
                 ++n_started_threads;
-                cv.notify_all();
                 // Wait for all threads to be ready
                 cv.wait(fake_lock, [&n_started_threads, factories]()
                 {
@@ -888,6 +887,10 @@ TEST(XTypesTestsThreadSafety, TypeObjectFactoryGetInstanceIsThreadSafe)
                 factories[i] = factory;
             });
     }
+
+    // Notify all threads to start
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    cv.notify_all();
 
     // Wait for all threads to finish
     for (size_t i = 0; i < num_threads; ++i)
