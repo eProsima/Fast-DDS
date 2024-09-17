@@ -41,152 +41,168 @@ using namespace eprosima::fastrtps::rtps;
 void register_builtin_annotations_types(
         TypeObjectFactory* factory)
 {
-    factory->add_type_object("id", GetidIdentifier(true), GetidObject(true));
-    factory->add_type_object("id", GetidIdentifier(false), GetidObject(false));
+    factory->add_type_object("id", GetidIdentifier(factory, true), GetidObject(factory, true));
+    factory->add_type_object("id", GetidIdentifier(factory, false), GetidObject(factory, false));
 
-    factory->add_type_object("autoid", GetautoidIdentifier(true), GetautoidObject(true));
-    factory->add_type_object("autoid", GetautoidIdentifier(false), GetautoidObject(false));
+    factory->add_type_object("autoid", GetautoidIdentifier(factory, true), GetautoidObject(factory, true));
+    factory->add_type_object("autoid", GetautoidIdentifier(factory, false), GetautoidObject(factory, false));
     {
         using namespace autoid;
 
-        factory->add_type_object("AutoidKind", GetAutoidKindIdentifier(true), GetAutoidKindObject(true));
-        factory->add_type_object("AutoidKind", GetAutoidKindIdentifier(false), GetAutoidKindObject(false));
+        factory->add_type_object("AutoidKind", GetAutoidKindIdentifier(factory, true), GetAutoidKindObject(factory,
+                true));
+        factory->add_type_object("AutoidKind", GetAutoidKindIdentifier(factory, false),
+                GetAutoidKindObject(factory, false));
 
 
     }
-    factory->add_type_object("optional", GetoptionalIdentifier(true), GetoptionalObject(true));
-    factory->add_type_object("optional", GetoptionalIdentifier(false), GetoptionalObject(false));
+    factory->add_type_object("optional", GetoptionalIdentifier(factory, true), GetoptionalObject(factory, true));
+    factory->add_type_object("optional", GetoptionalIdentifier(factory, false), GetoptionalObject(factory, false));
 
-    factory->add_type_object("position", GetpositionIdentifier(true), GetpositionObject(true));
-    factory->add_type_object("position", GetpositionIdentifier(false), GetpositionObject(false));
+    factory->add_type_object("position", GetpositionIdentifier(factory, true), GetpositionObject(factory, true));
+    factory->add_type_object("position", GetpositionIdentifier(factory, false), GetpositionObject(factory, false));
 
-    factory->add_type_object("value", GetvalueIdentifier(true), GetvalueObject(true));
-    factory->add_type_object("value", GetvalueIdentifier(false), GetvalueObject(false));
+    factory->add_type_object("value", GetvalueIdentifier(factory, true), GetvalueObject(factory, true));
+    factory->add_type_object("value", GetvalueIdentifier(factory, false), GetvalueObject(factory, false));
 
-    factory->add_type_object("extensibility", GetextensibilityIdentifier(true), GetextensibilityObject(true));
-    factory->add_type_object("extensibility", GetextensibilityIdentifier(false), GetextensibilityObject(false));
+    factory->add_type_object("extensibility", GetextensibilityIdentifier(factory, true),
+            GetextensibilityObject(factory, true));
+    factory->add_type_object("extensibility", GetextensibilityIdentifier(factory, false),
+            GetextensibilityObject(factory, false));
     {
         using namespace extensibility;
 
-        factory->add_type_object("ExtensibilityKind", GetExtensibilityKindIdentifier(true),
-                GetExtensibilityKindObject(true));
-        factory->add_type_object("ExtensibilityKind", GetExtensibilityKindIdentifier(false),
-                GetExtensibilityKindObject(false));
+        factory->add_type_object("ExtensibilityKind", GetExtensibilityKindIdentifier(factory, true),
+                GetExtensibilityKindObject(factory, true));
+        factory->add_type_object("ExtensibilityKind", GetExtensibilityKindIdentifier(factory, false),
+                GetExtensibilityKindObject(factory, false));
 
 
     }
-    factory->add_type_object("final", GetfinalIdentifier(true), GetfinalObject(true));
-    factory->add_type_object("final", GetfinalIdentifier(false), GetfinalObject(false));
+    factory->add_type_object("final", GetfinalIdentifier(factory, true), GetfinalObject(factory, true));
+    factory->add_type_object("final", GetfinalIdentifier(factory, false), GetfinalObject(factory, false));
 
-    factory->add_type_object("appendable", GetappendableIdentifier(true), GetappendableObject(true));
-    factory->add_type_object("appendable", GetappendableIdentifier(false), GetappendableObject(false));
+    factory->add_type_object("appendable", GetappendableIdentifier(factory, true), GetappendableObject(factory, true));
+    factory->add_type_object("appendable", GetappendableIdentifier(factory, false),
+            GetappendableObject(factory, false));
 
-    factory->add_type_object("mutable", GetmutableIdentifier(true), GetmutableObject(true));
-    factory->add_type_object("mutable", GetmutableIdentifier(false), GetmutableObject(false));
+    factory->add_type_object("mutable", GetmutableIdentifier(factory, true), GetmutableObject(factory, true));
+    factory->add_type_object("mutable", GetmutableIdentifier(factory, false), GetmutableObject(factory, false));
 
-    factory->add_type_object("key", GetkeyIdentifier(true), GetkeyObject(true));
-    factory->add_type_object("key", GetkeyIdentifier(false), GetkeyObject(false));
+    factory->add_type_object("key", GetkeyIdentifier(factory, true), GetkeyObject(factory, true));
+    factory->add_type_object("key", GetkeyIdentifier(factory, false), GetkeyObject(factory, false));
 
-    factory->add_type_object("Key", GetkeyIdentifier(true), GetkeyObject(true));
-    factory->add_type_object("Key", GetkeyIdentifier(false), GetkeyObject(false));
+    factory->add_type_object("Key", GetkeyIdentifier(factory, true), GetkeyObject(factory, true));
+    factory->add_type_object("Key", GetkeyIdentifier(factory, false), GetkeyObject(factory, false));
 
-    factory->add_type_object("must_understand", Getmust_understandIdentifier(true), Getmust_understandObject(true));
-    factory->add_type_object("must_understand", Getmust_understandIdentifier(false), Getmust_understandObject(false));
+    factory->add_type_object("must_understand", Getmust_understandIdentifier(factory, true),
+            Getmust_understandObject(factory, true));
+    factory->add_type_object("must_understand", Getmust_understandIdentifier(factory, false),
+            Getmust_understandObject(factory, false));
 
-    factory->add_type_object("default_literal", Getdefault_literalIdentifier(true), Getdefault_literalObject(true));
-    factory->add_type_object("default_literal", Getdefault_literalIdentifier(false), Getdefault_literalObject(false));
+    factory->add_type_object("default_literal", Getdefault_literalIdentifier(factory, true),
+            Getdefault_literalObject(factory, true));
+    factory->add_type_object("default_literal", Getdefault_literalIdentifier(factory, false),
+            Getdefault_literalObject(factory, false));
 
-    factory->add_type_object("default", GetdefaultIdentifier(true), GetdefaultObject(true));
-    factory->add_type_object("default", GetdefaultIdentifier(false), GetdefaultObject(false));
+    factory->add_type_object("default", GetdefaultIdentifier(factory, true), GetdefaultObject(factory, true));
+    factory->add_type_object("default", GetdefaultIdentifier(factory, false), GetdefaultObject(factory, false));
 
-    factory->add_type_object("range", GetrangeIdentifier(true), GetrangeObject(true));
-    factory->add_type_object("range", GetrangeIdentifier(false), GetrangeObject(false));
+    factory->add_type_object("range", GetrangeIdentifier(factory, true), GetrangeObject(factory, true));
+    factory->add_type_object("range", GetrangeIdentifier(factory, false), GetrangeObject(factory, false));
 
-    factory->add_type_object("min", GetminIdentifier(true), GetminObject(true));
-    factory->add_type_object("min", GetminIdentifier(false), GetminObject(false));
+    factory->add_type_object("min", GetminIdentifier(factory, true), GetminObject(factory, true));
+    factory->add_type_object("min", GetminIdentifier(factory, false), GetminObject(factory, false));
 
-    factory->add_type_object("max", GetmaxIdentifier(true), GetmaxObject(true));
-    factory->add_type_object("max", GetmaxIdentifier(false), GetmaxObject(false));
+    factory->add_type_object("max", GetmaxIdentifier(factory, true), GetmaxObject(factory, true));
+    factory->add_type_object("max", GetmaxIdentifier(factory, false), GetmaxObject(factory, false));
 
-    factory->add_type_object("unit", GetunitIdentifier(true), GetunitObject(true));
-    factory->add_type_object("unit", GetunitIdentifier(false), GetunitObject(false));
+    factory->add_type_object("unit", GetunitIdentifier(factory, true), GetunitObject(factory, true));
+    factory->add_type_object("unit", GetunitIdentifier(factory, false), GetunitObject(factory, false));
 
-    factory->add_type_object("bit_bound", Getbit_boundIdentifier(true), Getbit_boundObject(true));
-    factory->add_type_object("bit_bound", Getbit_boundIdentifier(false), Getbit_boundObject(false));
+    factory->add_type_object("bit_bound", Getbit_boundIdentifier(factory, true), Getbit_boundObject(factory, true));
+    factory->add_type_object("bit_bound", Getbit_boundIdentifier(factory, false), Getbit_boundObject(factory, false));
 
-    factory->add_type_object("external", GetexternalIdentifier(true), GetexternalObject(true));
-    factory->add_type_object("external", GetexternalIdentifier(false), GetexternalObject(false));
+    factory->add_type_object("external", GetexternalIdentifier(factory, true), GetexternalObject(factory, true));
+    factory->add_type_object("external", GetexternalIdentifier(factory, false), GetexternalObject(factory, false));
 
-    factory->add_type_object("nested", GetnestedIdentifier(true), GetnestedObject(true));
-    factory->add_type_object("nested", GetnestedIdentifier(false), GetnestedObject(false));
+    factory->add_type_object("nested", GetnestedIdentifier(factory, true), GetnestedObject(factory, true));
+    factory->add_type_object("nested", GetnestedIdentifier(factory, false), GetnestedObject(factory, false));
 
-    factory->add_type_object("verbatim", GetverbatimIdentifier(true), GetverbatimObject(true));
-    factory->add_type_object("verbatim", GetverbatimIdentifier(false), GetverbatimObject(false));
+    factory->add_type_object("verbatim", GetverbatimIdentifier(factory, true), GetverbatimObject(factory, true));
+    factory->add_type_object("verbatim", GetverbatimIdentifier(factory, false), GetverbatimObject(factory, false));
     {
         using namespace verbatim;
 
-        factory->add_type_object("PlacementKind", GetPlacementKindIdentifier(true), GetPlacementKindObject(true));
-        factory->add_type_object("PlacementKind", GetPlacementKindIdentifier(false), GetPlacementKindObject(false));
+        factory->add_type_object("PlacementKind", GetPlacementKindIdentifier(factory, true),
+                GetPlacementKindObject(factory, true));
+        factory->add_type_object("PlacementKind", GetPlacementKindIdentifier(factory, false),
+                GetPlacementKindObject(factory, false));
 
 
     }
-    factory->add_type_object("service", GetserviceIdentifier(true), GetserviceObject(true));
-    factory->add_type_object("service", GetserviceIdentifier(false), GetserviceObject(false));
+    factory->add_type_object("service", GetserviceIdentifier(factory, true), GetserviceObject(factory, true));
+    factory->add_type_object("service", GetserviceIdentifier(factory, false), GetserviceObject(factory, false));
 
-    factory->add_type_object("oneway", GetonewayIdentifier(true), GetonewayObject(true));
-    factory->add_type_object("oneway", GetonewayIdentifier(false), GetonewayObject(false));
+    factory->add_type_object("oneway", GetonewayIdentifier(factory, true), GetonewayObject(factory, true));
+    factory->add_type_object("oneway", GetonewayIdentifier(factory, false), GetonewayObject(factory, false));
 
-    factory->add_type_object("ami", GetamiIdentifier(true), GetamiObject(true));
-    factory->add_type_object("ami", GetamiIdentifier(false), GetamiObject(false));
+    factory->add_type_object("ami", GetamiIdentifier(factory, true), GetamiObject(factory, true));
+    factory->add_type_object("ami", GetamiIdentifier(factory, false), GetamiObject(factory, false));
 
-    factory->add_type_object("non_serialized", Getnon_serializedIdentifier(true), Getnon_serializedObject(true));
-    factory->add_type_object("non_serialized", Getnon_serializedIdentifier(false), Getnon_serializedObject(false));
+    factory->add_type_object("non_serialized", Getnon_serializedIdentifier(factory, true),
+            Getnon_serializedObject(factory, true));
+    factory->add_type_object("non_serialized", Getnon_serializedIdentifier(factory, false),
+            Getnon_serializedObject(factory, false));
 
 }
 
 const TypeIdentifier* GetidIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("id", complete);
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("id", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetidObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("id", complete);
+    GetidObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("id", complete);
 }
 
 const TypeObject* GetidObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("id", complete);
+    const TypeObject* c_type_object = factory->get_type_object("id", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteidObject();
+        return GetCompleteidObject(factory);
     }
     // else
-    return GetMinimalidObject();
+    return GetMinimalidObject(factory);
 }
 
-const TypeObject* GetMinimalidObject()
+const TypeObject* GetMinimalidObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("id", false);
+    const TypeObject* c_type_object = factory->get_type_object("id", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
-    mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint32_t", false));
+    mam_value.common().member_type_id(*factory->get_type_identifier("uint32_t", false));
     mam_value.name("value");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
@@ -214,36 +230,37 @@ const TypeObject* GetMinimalidObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("id", &identifier, type_object);
+    factory->add_type_object("id", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("id", false);
+    return factory->get_type_object("id", false);
 }
 
-const TypeObject* GetCompleteidObject()
+const TypeObject* GetCompleteidObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("id", true);
+    const TypeObject* c_type_object = factory->get_type_object("id", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("id");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint32_t", false));
+    cam_value.common().member_type_id(*factory->get_type_identifier("uint32_t", false));
     cam_value.name("value");
 
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
@@ -271,55 +288,58 @@ const TypeObject* GetCompleteidObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("id", &identifier, type_object);
+    factory->add_type_object("id", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("id", true);
+    return factory->get_type_object("id", true);
 }
 
 const TypeIdentifier* GetautoidIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("autoid", complete);
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("autoid", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetautoidObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("autoid", complete);
+    GetautoidObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("autoid", complete);
 }
 
 const TypeObject* GetautoidObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("autoid", complete);
+    const TypeObject* c_type_object = factory->get_type_object("autoid", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteautoidObject();
+        return GetCompleteautoidObject(factory);
     }
     // else
-    return GetMinimalautoidObject();
+    return GetMinimalautoidObject(factory);
 }
 
-const TypeObject* GetMinimalautoidObject()
+const TypeObject* GetMinimalautoidObject(
+        TypeObjectFactory* factory)
 {
     using namespace autoid;
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("autoid", false);
+    const TypeObject* c_type_object = factory->get_type_object("autoid", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
-    mam_value.common().member_type_id(*GetAutoidKindIdentifier(false));
+    mam_value.common().member_type_id(*GetAutoidKindIdentifier(factory, false));
     mam_value.name("value");
 
     AnnotationParameterValue def_value_value;
@@ -351,37 +371,38 @@ const TypeObject* GetMinimalautoidObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("autoid", &identifier, type_object);
+    factory->add_type_object("autoid", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("autoid", false);
+    return factory->get_type_object("autoid", false);
 }
 
-const TypeObject* GetCompleteautoidObject()
+const TypeObject* GetCompleteautoidObject(
+        TypeObjectFactory* factory)
 {
     using namespace autoid;
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("autoid", true);
+    const TypeObject* c_type_object = factory->get_type_object("autoid", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("autoid");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*GetAutoidKindIdentifier(true));
+    cam_value.common().member_type_id(*GetAutoidKindIdentifier(factory, true));
     cam_value.name("value");
 
     AnnotationParameterValue def_value_value;
@@ -413,59 +434,62 @@ const TypeObject* GetCompleteautoidObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("autoid", &identifier, type_object);
+    factory->add_type_object("autoid", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("autoid", true);
+    return factory->get_type_object("autoid", true);
 }
 
 namespace autoid {
 const TypeIdentifier* GetAutoidKindIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("AutoidKind", complete);
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("AutoidKind", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetAutoidKindObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("AutoidKind", complete);
+    GetAutoidKindObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("AutoidKind", complete);
 }
 
 const TypeObject* GetAutoidKindObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("AutoidKind", complete);
+    const TypeObject* c_type_object = factory->get_type_object("AutoidKind", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteAutoidKindObject();
+        return GetCompleteAutoidKindObject(factory);
     }
     // else
-    return GetMinimalAutoidKindObject();
+    return GetMinimalAutoidKindObject(factory);
 }
 
-const TypeObject* GetMinimalAutoidKindObject()
+const TypeObject* GetMinimalAutoidKindObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("AutoidKind", false);
+    const TypeObject* c_type_object = factory->get_type_object("AutoidKind", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ENUM);
 
     // No flags apply
-    //type_object->minimal().enumerated_type().enum_flags().IS_FINAL(false);
-    //type_object->minimal().enumerated_type().enum_flags().IS_APPENDABLE(false);
-    //type_object->minimal().enumerated_type().enum_flags().IS_MUTABLE(false);
-    //type_object->minimal().enumerated_type().enum_flags().IS_NESTED(false);
-    //type_object->minimal().enumerated_type().enum_flags().IS_AUTOID_HASH(false);
+    //type_object->minimal().enumerated_type().enum_flags().IS_FINAL(factory, false);
+    //type_object->minimal().enumerated_type().enum_flags().IS_APPENDABLE(factory, false);
+    //type_object->minimal().enumerated_type().enum_flags().IS_MUTABLE(factory, false);
+    //type_object->minimal().enumerated_type().enum_flags().IS_NESTED(factory, false);
+    //type_object->minimal().enumerated_type().enum_flags().IS_AUTOID_HASH(factory, false);
 
     type_object->minimal().enumerated_type().header().common().bit_bound(32); // TODO fixed by IDL, isn't?
 
@@ -525,29 +549,30 @@ const TypeObject* GetMinimalAutoidKindObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("AutoidKind", &identifier, type_object);
+    factory->add_type_object("AutoidKind", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("AutoidKind", false);
+    return factory->get_type_object("AutoidKind", false);
 }
 
-const TypeObject* GetCompleteAutoidKindObject()
+const TypeObject* GetCompleteAutoidKindObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("AutoidKind", true);
+    const TypeObject* c_type_object = factory->get_type_object("AutoidKind", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ENUM);
 
     // No flags apply
-    //type_object->complete().enumerated_type().enum_flags().IS_FINAL(false);
-    //type_object->complete().enumerated_type().enum_flags().IS_APPENDABLE(false);
-    //type_object->complete().enumerated_type().enum_flags().IS_MUTABLE(false);
-    //type_object->complete().enumerated_type().enum_flags().IS_NESTED(false);
-    //type_object->complete().enumerated_type().enum_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().enumerated_type().enum_flags().IS_FINAL(factory, false);
+    //type_object->complete().enumerated_type().enum_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().enumerated_type().enum_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().enumerated_type().enum_flags().IS_NESTED(factory, false);
+    //type_object->complete().enumerated_type().enum_flags().IS_AUTOID_HASH(factory, false);
 
     type_object->complete().enumerated_type().header().common().bit_bound(32); // TODO fixed by IDL, isn't?
     //type_object->complete().enumerated_type().header().detail().ann_builtin()...
@@ -606,55 +631,58 @@ const TypeObject* GetCompleteAutoidKindObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("AutoidKind", &identifier, type_object);
+    factory->add_type_object("AutoidKind", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("AutoidKind", true);
+    return factory->get_type_object("AutoidKind", true);
 }
 
 } // autoid namespace
 const TypeIdentifier* GetoptionalIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("optional", complete);
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("optional", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetoptionalObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("optional", complete);
+    GetoptionalObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("optional", complete);
 }
 
 const TypeObject* GetoptionalObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("optional", complete);
+    const TypeObject* c_type_object = factory->get_type_object("optional", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteoptionalObject();
+        return GetCompleteoptionalObject(factory);
     }
     // else
-    return GetMinimaloptionalObject();
+    return GetMinimaloptionalObject(factory);
 }
 
-const TypeObject* GetMinimaloptionalObject()
+const TypeObject* GetMinimaloptionalObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("optional", false);
+    const TypeObject* c_type_object = factory->get_type_object("optional", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
-    mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
+    mam_value.common().member_type_id(*factory->get_type_identifier("bool", false));
     mam_value.name("value");
 
     AnnotationParameterValue def_value_value;
@@ -686,36 +714,37 @@ const TypeObject* GetMinimaloptionalObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("optional", &identifier, type_object);
+    factory->add_type_object("optional", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("optional", false);
+    return factory->get_type_object("optional", false);
 }
 
-const TypeObject* GetCompleteoptionalObject()
+const TypeObject* GetCompleteoptionalObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("optional", true);
+    const TypeObject* c_type_object = factory->get_type_object("optional", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("optional");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
+    cam_value.common().member_type_id(*factory->get_type_identifier("bool", false));
     cam_value.name("value");
 
     AnnotationParameterValue def_value_value;
@@ -747,54 +776,57 @@ const TypeObject* GetCompleteoptionalObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("optional", &identifier, type_object);
+    factory->add_type_object("optional", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("optional", true);
+    return factory->get_type_object("optional", true);
 }
 
 const TypeIdentifier* GetpositionIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("position", complete);
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("position", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetpositionObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("position", complete);
+    GetpositionObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("position", complete);
 }
 
 const TypeObject* GetpositionObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("position", complete);
+    const TypeObject* c_type_object = factory->get_type_object("position", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompletepositionObject();
+        return GetCompletepositionObject(factory);
     }
     // else
-    return GetMinimalpositionObject();
+    return GetMinimalpositionObject(factory);
 }
 
-const TypeObject* GetMinimalpositionObject()
+const TypeObject* GetMinimalpositionObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("position", false);
+    const TypeObject* c_type_object = factory->get_type_object("position", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
-    mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint16_t", false));
+    mam_value.common().member_type_id(*factory->get_type_identifier("uint16_t", false));
     mam_value.name("value");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
@@ -822,36 +854,37 @@ const TypeObject* GetMinimalpositionObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("position", &identifier, type_object);
+    factory->add_type_object("position", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("position", false);
+    return factory->get_type_object("position", false);
 }
 
-const TypeObject* GetCompletepositionObject()
+const TypeObject* GetCompletepositionObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("position", true);
+    const TypeObject* c_type_object = factory->get_type_object("position", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("position");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint16_t", false));
+    cam_value.common().member_type_id(*factory->get_type_identifier("uint16_t", false));
     cam_value.name("value");
 
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
@@ -879,54 +912,57 @@ const TypeObject* GetCompletepositionObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("position", &identifier, type_object);
+    factory->add_type_object("position", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("position", true);
+    return factory->get_type_object("position", true);
 }
 
 const TypeIdentifier* GetvalueIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("value", complete);
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("value", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetvalueObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("value", complete);
+    GetvalueObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("value", complete);
 }
 
 const TypeObject* GetvalueObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("value", complete);
+    const TypeObject* c_type_object = factory->get_type_object("value", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompletevalueObject();
+        return GetCompletevalueObject(factory);
     }
     // else
-    return GetMinimalvalueObject();
+    return GetMinimalvalueObject(factory);
 }
 
-const TypeObject* GetMinimalvalueObject()
+const TypeObject* GetMinimalvalueObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("value", false);
+    const TypeObject* c_type_object = factory->get_type_object("value", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
-    mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    mam_value.common().member_type_id(*factory->get_string_identifier(255, false));
     mam_value.name("value");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
@@ -954,36 +990,37 @@ const TypeObject* GetMinimalvalueObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("value", &identifier, type_object);
+    factory->add_type_object("value", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("value", false);
+    return factory->get_type_object("value", false);
 }
 
-const TypeObject* GetCompletevalueObject()
+const TypeObject* GetCompletevalueObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("value", true);
+    const TypeObject* c_type_object = factory->get_type_object("value", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("value");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    cam_value.common().member_type_id(*factory->get_string_identifier(255, false));
     cam_value.name("value");
 
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
@@ -1011,56 +1048,59 @@ const TypeObject* GetCompletevalueObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("value", &identifier, type_object);
+    factory->add_type_object("value", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("value", true);
+    return factory->get_type_object("value", true);
 }
 
 const TypeIdentifier* GetextensibilityIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("extensibility",
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("extensibility",
                     complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetextensibilityObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("extensibility", complete);
+    GetextensibilityObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("extensibility", complete);
 }
 
 const TypeObject* GetextensibilityObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("extensibility", complete);
+    const TypeObject* c_type_object = factory->get_type_object("extensibility", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteextensibilityObject();
+        return GetCompleteextensibilityObject(factory);
     }
     // else
-    return GetMinimalextensibilityObject();
+    return GetMinimalextensibilityObject(factory);
 }
 
-const TypeObject* GetMinimalextensibilityObject()
+const TypeObject* GetMinimalextensibilityObject(
+        TypeObjectFactory* factory)
 {
     using namespace extensibility;
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("extensibility", false);
+    const TypeObject* c_type_object = factory->get_type_object("extensibility", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
-    mam_value.common().member_type_id(*GetExtensibilityKindIdentifier(false));
+    mam_value.common().member_type_id(*GetExtensibilityKindIdentifier(factory, false));
     mam_value.name("value");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
@@ -1088,37 +1128,38 @@ const TypeObject* GetMinimalextensibilityObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("extensibility", &identifier, type_object);
+    factory->add_type_object("extensibility", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("extensibility", false);
+    return factory->get_type_object("extensibility", false);
 }
 
-const TypeObject* GetCompleteextensibilityObject()
+const TypeObject* GetCompleteextensibilityObject(
+        TypeObjectFactory* factory)
 {
     using namespace extensibility;
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("extensibility", true);
+    const TypeObject* c_type_object = factory->get_type_object("extensibility", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("extensibility");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*GetExtensibilityKindIdentifier(true));
+    cam_value.common().member_type_id(*GetExtensibilityKindIdentifier(factory, true));
     cam_value.name("value");
 
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
@@ -1146,60 +1187,63 @@ const TypeObject* GetCompleteextensibilityObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("extensibility", &identifier, type_object);
+    factory->add_type_object("extensibility", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("extensibility", true);
+    return factory->get_type_object("extensibility", true);
 }
 
 namespace extensibility {
 const TypeIdentifier* GetExtensibilityKindIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("ExtensibilityKind",
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("ExtensibilityKind",
                     complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetExtensibilityKindObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("ExtensibilityKind", complete);
+    GetExtensibilityKindObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("ExtensibilityKind", complete);
 }
 
 const TypeObject* GetExtensibilityKindObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ExtensibilityKind", complete);
+    const TypeObject* c_type_object = factory->get_type_object("ExtensibilityKind", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteExtensibilityKindObject();
+        return GetCompleteExtensibilityKindObject(factory);
     }
     // else
-    return GetMinimalExtensibilityKindObject();
+    return GetMinimalExtensibilityKindObject(factory);
 }
 
-const TypeObject* GetMinimalExtensibilityKindObject()
+const TypeObject* GetMinimalExtensibilityKindObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ExtensibilityKind", false);
+    const TypeObject* c_type_object = factory->get_type_object("ExtensibilityKind", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ENUM);
 
     // No flags apply
-    //type_object->minimal().enumerated_type().enum_flags().IS_FINAL(false);
-    //type_object->minimal().enumerated_type().enum_flags().IS_APPENDABLE(false);
-    //type_object->minimal().enumerated_type().enum_flags().IS_MUTABLE(false);
-    //type_object->minimal().enumerated_type().enum_flags().IS_NESTED(false);
-    //type_object->minimal().enumerated_type().enum_flags().IS_AUTOID_HASH(false);
+    //type_object->minimal().enumerated_type().enum_flags().IS_FINAL(factory, false);
+    //type_object->minimal().enumerated_type().enum_flags().IS_APPENDABLE(factory, false);
+    //type_object->minimal().enumerated_type().enum_flags().IS_MUTABLE(factory, false);
+    //type_object->minimal().enumerated_type().enum_flags().IS_NESTED(factory, false);
+    //type_object->minimal().enumerated_type().enum_flags().IS_AUTOID_HASH(factory, false);
 
     type_object->minimal().enumerated_type().header().common().bit_bound(32); // TODO fixed by IDL, isn't?
 
@@ -1275,29 +1319,30 @@ const TypeObject* GetMinimalExtensibilityKindObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("ExtensibilityKind", &identifier, type_object);
+    factory->add_type_object("ExtensibilityKind", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("ExtensibilityKind", false);
+    return factory->get_type_object("ExtensibilityKind", false);
 }
 
-const TypeObject* GetCompleteExtensibilityKindObject()
+const TypeObject* GetCompleteExtensibilityKindObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ExtensibilityKind", true);
+    const TypeObject* c_type_object = factory->get_type_object("ExtensibilityKind", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ENUM);
 
     // No flags apply
-    //type_object->complete().enumerated_type().enum_flags().IS_FINAL(false);
-    //type_object->complete().enumerated_type().enum_flags().IS_APPENDABLE(false);
-    //type_object->complete().enumerated_type().enum_flags().IS_MUTABLE(false);
-    //type_object->complete().enumerated_type().enum_flags().IS_NESTED(false);
-    //type_object->complete().enumerated_type().enum_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().enumerated_type().enum_flags().IS_FINAL(factory, false);
+    //type_object->complete().enumerated_type().enum_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().enumerated_type().enum_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().enumerated_type().enum_flags().IS_NESTED(factory, false);
+    //type_object->complete().enumerated_type().enum_flags().IS_AUTOID_HASH(factory, false);
 
     type_object->complete().enumerated_type().header().common().bit_bound(32); // TODO fixed by IDL, isn't?
     //type_object->complete().enumerated_type().header().detail().ann_builtin()...
@@ -1370,50 +1415,53 @@ const TypeObject* GetCompleteExtensibilityKindObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("ExtensibilityKind", &identifier, type_object);
+    factory->add_type_object("ExtensibilityKind", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("ExtensibilityKind", true);
+    return factory->get_type_object("ExtensibilityKind", true);
 }
 
 } // extensibility namespace
 const TypeIdentifier* GetfinalIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("final", complete);
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("final", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetfinalObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("final", complete);
+    GetfinalObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("final", complete);
 }
 
 const TypeObject* GetfinalObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("final", complete);
+    const TypeObject* c_type_object = factory->get_type_object("final", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompletefinalObject();
+        return GetCompletefinalObject(factory);
     }
     // else
-    return GetMinimalfinalObject();
+    return GetMinimalfinalObject(factory);
 }
 
-const TypeObject* GetMinimalfinalObject()
+const TypeObject* GetMinimalfinalObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("final", false);
+    const TypeObject* c_type_object = factory->get_type_object("final", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -1440,29 +1488,30 @@ const TypeObject* GetMinimalfinalObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("final", &identifier, type_object);
+    factory->add_type_object("final", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("final", false);
+    return factory->get_type_object("final", false);
 }
 
-const TypeObject* GetCompletefinalObject()
+const TypeObject* GetCompletefinalObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("final", true);
+    const TypeObject* c_type_object = factory->get_type_object("final", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
@@ -1491,49 +1540,52 @@ const TypeObject* GetCompletefinalObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("final", &identifier, type_object);
+    factory->add_type_object("final", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("final", true);
+    return factory->get_type_object("final", true);
 }
 
 const TypeIdentifier* GetappendableIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("appendable", complete);
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("appendable", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetappendableObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("appendable", complete);
+    GetappendableObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("appendable", complete);
 }
 
 const TypeObject* GetappendableObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("appendable", complete);
+    const TypeObject* c_type_object = factory->get_type_object("appendable", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteappendableObject();
+        return GetCompleteappendableObject(factory);
     }
     // else
-    return GetMinimalappendableObject();
+    return GetMinimalappendableObject(factory);
 }
 
-const TypeObject* GetMinimalappendableObject()
+const TypeObject* GetMinimalappendableObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("appendable", false);
+    const TypeObject* c_type_object = factory->get_type_object("appendable", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -1560,29 +1612,30 @@ const TypeObject* GetMinimalappendableObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("appendable", &identifier, type_object);
+    factory->add_type_object("appendable", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("appendable", false);
+    return factory->get_type_object("appendable", false);
 }
 
-const TypeObject* GetCompleteappendableObject()
+const TypeObject* GetCompleteappendableObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("appendable", true);
+    const TypeObject* c_type_object = factory->get_type_object("appendable", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
@@ -1611,49 +1664,52 @@ const TypeObject* GetCompleteappendableObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("appendable", &identifier, type_object);
+    factory->add_type_object("appendable", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("appendable", true);
+    return factory->get_type_object("appendable", true);
 }
 
 const TypeIdentifier* GetmutableIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("mutable", complete);
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("mutable", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetmutableObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("mutable", complete);
+    GetmutableObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("mutable", complete);
 }
 
 const TypeObject* GetmutableObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("mutable", complete);
+    const TypeObject* c_type_object = factory->get_type_object("mutable", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompletemutableObject();
+        return GetCompletemutableObject(factory);
     }
     // else
-    return GetMinimalmutableObject();
+    return GetMinimalmutableObject(factory);
 }
 
-const TypeObject* GetMinimalmutableObject()
+const TypeObject* GetMinimalmutableObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("mutable", false);
+    const TypeObject* c_type_object = factory->get_type_object("mutable", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -1680,29 +1736,30 @@ const TypeObject* GetMinimalmutableObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("mutable", &identifier, type_object);
+    factory->add_type_object("mutable", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("mutable", false);
+    return factory->get_type_object("mutable", false);
 }
 
-const TypeObject* GetCompletemutableObject()
+const TypeObject* GetCompletemutableObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("mutable", true);
+    const TypeObject* c_type_object = factory->get_type_object("mutable", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
@@ -1731,54 +1788,57 @@ const TypeObject* GetCompletemutableObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("mutable", &identifier, type_object);
+    factory->add_type_object("mutable", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("mutable", true);
+    return factory->get_type_object("mutable", true);
 }
 
 const TypeIdentifier* GetkeyIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("key", complete);
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("key", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetkeyObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("key", complete);
+    GetkeyObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("key", complete);
 }
 
 const TypeObject* GetkeyObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("key", complete);
+    const TypeObject* c_type_object = factory->get_type_object("key", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompletekeyObject();
+        return GetCompletekeyObject(factory);
     }
     // else
-    return GetMinimalkeyObject();
+    return GetMinimalkeyObject(factory);
 }
 
-const TypeObject* GetMinimalkeyObject()
+const TypeObject* GetMinimalkeyObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("key", false);
+    const TypeObject* c_type_object = factory->get_type_object("key", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
-    mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
+    mam_value.common().member_type_id(*factory->get_type_identifier("bool", false));
     mam_value.name("value");
 
     AnnotationParameterValue def_value_value;
@@ -1810,36 +1870,37 @@ const TypeObject* GetMinimalkeyObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("key", &identifier, type_object);
+    factory->add_type_object("key", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("key", false);
+    return factory->get_type_object("key", false);
 }
 
-const TypeObject* GetCompletekeyObject()
+const TypeObject* GetCompletekeyObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("key", true);
+    const TypeObject* c_type_object = factory->get_type_object("key", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("key");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
+    cam_value.common().member_type_id(*factory->get_type_identifier("bool", false));
     cam_value.name("value");
 
     AnnotationParameterValue def_value_value;
@@ -1871,55 +1932,58 @@ const TypeObject* GetCompletekeyObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("key", &identifier, type_object);
+    factory->add_type_object("key", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("key", true);
+    return factory->get_type_object("key", true);
 }
 
 const TypeIdentifier* Getmust_understandIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("must_understand",
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("must_understand",
                     complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    Getmust_understandObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("must_understand", complete);
+    Getmust_understandObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("must_understand", complete);
 }
 
 const TypeObject* Getmust_understandObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("must_understand", complete);
+    const TypeObject* c_type_object = factory->get_type_object("must_understand", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompletemust_understandObject();
+        return GetCompletemust_understandObject(factory);
     }
     // else
-    return GetMinimalmust_understandObject();
+    return GetMinimalmust_understandObject(factory);
 }
 
-const TypeObject* GetMinimalmust_understandObject()
+const TypeObject* GetMinimalmust_understandObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("must_understand", false);
+    const TypeObject* c_type_object = factory->get_type_object("must_understand", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
-    mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
+    mam_value.common().member_type_id(*factory->get_type_identifier("bool", false));
     mam_value.name("value");
 
     AnnotationParameterValue def_value_value;
@@ -1951,36 +2015,37 @@ const TypeObject* GetMinimalmust_understandObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("must_understand", &identifier, type_object);
+    factory->add_type_object("must_understand", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("must_understand", false);
+    return factory->get_type_object("must_understand", false);
 }
 
-const TypeObject* GetCompletemust_understandObject()
+const TypeObject* GetCompletemust_understandObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("must_understand", true);
+    const TypeObject* c_type_object = factory->get_type_object("must_understand", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("must_understand");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
+    cam_value.common().member_type_id(*factory->get_type_identifier("bool", false));
     cam_value.name("value");
 
     AnnotationParameterValue def_value_value;
@@ -2012,50 +2077,53 @@ const TypeObject* GetCompletemust_understandObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("must_understand", &identifier, type_object);
+    factory->add_type_object("must_understand", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("must_understand", true);
+    return factory->get_type_object("must_understand", true);
 }
 
 const TypeIdentifier* Getdefault_literalIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("default_literal",
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("default_literal",
                     complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    Getdefault_literalObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("default_literal", complete);
+    Getdefault_literalObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("default_literal", complete);
 }
 
 const TypeObject* Getdefault_literalObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("default_literal", complete);
+    const TypeObject* c_type_object = factory->get_type_object("default_literal", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompletedefault_literalObject();
+        return GetCompletedefault_literalObject(factory);
     }
     // else
-    return GetMinimaldefault_literalObject();
+    return GetMinimaldefault_literalObject(factory);
 }
 
-const TypeObject* GetMinimaldefault_literalObject()
+const TypeObject* GetMinimaldefault_literalObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("default_literal", false);
+    const TypeObject* c_type_object = factory->get_type_object("default_literal", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
@@ -2082,29 +2150,30 @@ const TypeObject* GetMinimaldefault_literalObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("default_literal", &identifier, type_object);
+    factory->add_type_object("default_literal", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("default_literal", false);
+    return factory->get_type_object("default_literal", false);
 }
 
-const TypeObject* GetCompletedefault_literalObject()
+const TypeObject* GetCompletedefault_literalObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("default_literal", true);
+    const TypeObject* c_type_object = factory->get_type_object("default_literal", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
@@ -2133,54 +2202,57 @@ const TypeObject* GetCompletedefault_literalObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("default_literal", &identifier, type_object);
+    factory->add_type_object("default_literal", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("default_literal", true);
+    return factory->get_type_object("default_literal", true);
 }
 
 const TypeIdentifier* GetdefaultIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("default", complete);
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("default", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetdefaultObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("default", complete);
+    GetdefaultObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("default", complete);
 }
 
 const TypeObject* GetdefaultObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("default", complete);
+    const TypeObject* c_type_object = factory->get_type_object("default", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompletedefaultObject();
+        return GetCompletedefaultObject(factory);
     }
     // else
-    return GetMinimaldefaultObject();
+    return GetMinimaldefaultObject(factory);
 }
 
-const TypeObject* GetMinimaldefaultObject()
+const TypeObject* GetMinimaldefaultObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("default", false);
+    const TypeObject* c_type_object = factory->get_type_object("default", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
-    mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    mam_value.common().member_type_id(*factory->get_string_identifier(255, false));
     mam_value.name("value");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
@@ -2208,36 +2280,37 @@ const TypeObject* GetMinimaldefaultObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("default", &identifier, type_object);
+    factory->add_type_object("default", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("default", false);
+    return factory->get_type_object("default", false);
 }
 
-const TypeObject* GetCompletedefaultObject()
+const TypeObject* GetCompletedefaultObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("default", true);
+    const TypeObject* c_type_object = factory->get_type_object("default", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("default");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    cam_value.common().member_type_id(*factory->get_string_identifier(255, false));
     cam_value.name("value");
 
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
@@ -2265,60 +2338,63 @@ const TypeObject* GetCompletedefaultObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("default", &identifier, type_object);
+    factory->add_type_object("default", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("default", true);
+    return factory->get_type_object("default", true);
 }
 
 const TypeIdentifier* GetrangeIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("range", complete);
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("range", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetrangeObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("range", complete);
+    GetrangeObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("range", complete);
 }
 
 const TypeObject* GetrangeObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("range", complete);
+    const TypeObject* c_type_object = factory->get_type_object("range", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleterangeObject();
+        return GetCompleterangeObject(factory);
     }
     // else
-    return GetMinimalrangeObject();
+    return GetMinimalrangeObject(factory);
 }
 
-const TypeObject* GetMinimalrangeObject()
+const TypeObject* GetMinimalrangeObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("range", false);
+    const TypeObject* c_type_object = factory->get_type_object("range", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_min;
-    mam_min.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    mam_min.common().member_type_id(*factory->get_string_identifier(255, false));
     mam_min.name("min");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_min);
 
     MinimalAnnotationParameter mam_max;
-    mam_max.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    mam_max.common().member_type_id(*factory->get_string_identifier(255, false));
     mam_max.name("max");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_max);
@@ -2346,42 +2422,43 @@ const TypeObject* GetMinimalrangeObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("range", &identifier, type_object);
+    factory->add_type_object("range", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("range", false);
+    return factory->get_type_object("range", false);
 }
 
-const TypeObject* GetCompleterangeObject()
+const TypeObject* GetCompleterangeObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("range", true);
+    const TypeObject* c_type_object = factory->get_type_object("range", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("range");
 
     CompleteAnnotationParameter cam_min;
-    cam_min.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    cam_min.common().member_type_id(*factory->get_string_identifier(255, false));
     cam_min.name("min");
 
     type_object->complete().annotation_type().member_seq().emplace_back(cam_min);
 
     CompleteAnnotationParameter cam_max;
-    cam_max.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    cam_max.common().member_type_id(*factory->get_string_identifier(255, false));
     cam_max.name("max");
 
     type_object->complete().annotation_type().member_seq().emplace_back(cam_max);
@@ -2409,54 +2486,57 @@ const TypeObject* GetCompleterangeObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("range", &identifier, type_object);
+    factory->add_type_object("range", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("range", true);
+    return factory->get_type_object("range", true);
 }
 
 const TypeIdentifier* GetminIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("min", complete);
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("min", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetminObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("min", complete);
+    GetminObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("min", complete);
 }
 
 const TypeObject* GetminObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("min", complete);
+    const TypeObject* c_type_object = factory->get_type_object("min", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteminObject();
+        return GetCompleteminObject(factory);
     }
     // else
-    return GetMinimalminObject();
+    return GetMinimalminObject(factory);
 }
 
-const TypeObject* GetMinimalminObject()
+const TypeObject* GetMinimalminObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("min", false);
+    const TypeObject* c_type_object = factory->get_type_object("min", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
-    mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    mam_value.common().member_type_id(*factory->get_string_identifier(255, false));
     mam_value.name("value");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
@@ -2484,36 +2564,37 @@ const TypeObject* GetMinimalminObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("min", &identifier, type_object);
+    factory->add_type_object("min", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("min", false);
+    return factory->get_type_object("min", false);
 }
 
-const TypeObject* GetCompleteminObject()
+const TypeObject* GetCompleteminObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("min", true);
+    const TypeObject* c_type_object = factory->get_type_object("min", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("min");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    cam_value.common().member_type_id(*factory->get_string_identifier(255, false));
     cam_value.name("value");
 
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
@@ -2541,54 +2622,57 @@ const TypeObject* GetCompleteminObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("min", &identifier, type_object);
+    factory->add_type_object("min", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("min", true);
+    return factory->get_type_object("min", true);
 }
 
 const TypeIdentifier* GetmaxIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("max", complete);
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("max", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetmaxObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("max", complete);
+    GetmaxObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("max", complete);
 }
 
 const TypeObject* GetmaxObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("max", complete);
+    const TypeObject* c_type_object = factory->get_type_object("max", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompletemaxObject();
+        return GetCompletemaxObject(factory);
     }
     // else
-    return GetMinimalmaxObject();
+    return GetMinimalmaxObject(factory);
 }
 
-const TypeObject* GetMinimalmaxObject()
+const TypeObject* GetMinimalmaxObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("max", false);
+    const TypeObject* c_type_object = factory->get_type_object("max", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
-    mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    mam_value.common().member_type_id(*factory->get_string_identifier(255, false));
     mam_value.name("value");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
@@ -2616,36 +2700,37 @@ const TypeObject* GetMinimalmaxObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("max", &identifier, type_object);
+    factory->add_type_object("max", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("max", false);
+    return factory->get_type_object("max", false);
 }
 
-const TypeObject* GetCompletemaxObject()
+const TypeObject* GetCompletemaxObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("max", true);
+    const TypeObject* c_type_object = factory->get_type_object("max", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("max");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    cam_value.common().member_type_id(*factory->get_string_identifier(255, false));
     cam_value.name("value");
 
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
@@ -2673,54 +2758,57 @@ const TypeObject* GetCompletemaxObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("max", &identifier, type_object);
+    factory->add_type_object("max", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("max", true);
+    return factory->get_type_object("max", true);
 }
 
 const TypeIdentifier* GetunitIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("unit", complete);
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("unit", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetunitObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("unit", complete);
+    GetunitObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("unit", complete);
 }
 
 const TypeObject* GetunitObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("unit", complete);
+    const TypeObject* c_type_object = factory->get_type_object("unit", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteunitObject();
+        return GetCompleteunitObject(factory);
     }
     // else
-    return GetMinimalunitObject();
+    return GetMinimalunitObject(factory);
 }
 
-const TypeObject* GetMinimalunitObject()
+const TypeObject* GetMinimalunitObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("unit", false);
+    const TypeObject* c_type_object = factory->get_type_object("unit", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
-    mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    mam_value.common().member_type_id(*factory->get_string_identifier(255, false));
     mam_value.name("value");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
@@ -2748,36 +2836,37 @@ const TypeObject* GetMinimalunitObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("unit", &identifier, type_object);
+    factory->add_type_object("unit", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("unit", false);
+    return factory->get_type_object("unit", false);
 }
 
-const TypeObject* GetCompleteunitObject()
+const TypeObject* GetCompleteunitObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("unit", true);
+    const TypeObject* c_type_object = factory->get_type_object("unit", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("unit");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    cam_value.common().member_type_id(*factory->get_string_identifier(255, false));
     cam_value.name("value");
 
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
@@ -2805,54 +2894,57 @@ const TypeObject* GetCompleteunitObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("unit", &identifier, type_object);
+    factory->add_type_object("unit", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("unit", true);
+    return factory->get_type_object("unit", true);
 }
 
 const TypeIdentifier* Getbit_boundIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("bit_bound", complete);
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("bit_bound", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    Getbit_boundObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("bit_bound", complete);
+    Getbit_boundObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("bit_bound", complete);
 }
 
 const TypeObject* Getbit_boundObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("bit_bound", complete);
+    const TypeObject* c_type_object = factory->get_type_object("bit_bound", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompletebit_boundObject();
+        return GetCompletebit_boundObject(factory);
     }
     // else
-    return GetMinimalbit_boundObject();
+    return GetMinimalbit_boundObject(factory);
 }
 
-const TypeObject* GetMinimalbit_boundObject()
+const TypeObject* GetMinimalbit_boundObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("bit_bound", false);
+    const TypeObject* c_type_object = factory->get_type_object("bit_bound", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
-    mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint16_t", false));
+    mam_value.common().member_type_id(*factory->get_type_identifier("uint16_t", false));
     mam_value.name("value");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
@@ -2880,36 +2972,37 @@ const TypeObject* GetMinimalbit_boundObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("bit_bound", &identifier, type_object);
+    factory->add_type_object("bit_bound", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("bit_bound", false);
+    return factory->get_type_object("bit_bound", false);
 }
 
-const TypeObject* GetCompletebit_boundObject()
+const TypeObject* GetCompletebit_boundObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("bit_bound", true);
+    const TypeObject* c_type_object = factory->get_type_object("bit_bound", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("bit_bound");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint16_t", false));
+    cam_value.common().member_type_id(*factory->get_type_identifier("uint16_t", false));
     cam_value.name("value");
 
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
@@ -2937,54 +3030,57 @@ const TypeObject* GetCompletebit_boundObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("bit_bound", &identifier, type_object);
+    factory->add_type_object("bit_bound", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("bit_bound", true);
+    return factory->get_type_object("bit_bound", true);
 }
 
 const TypeIdentifier* GetexternalIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("external", complete);
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("external", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetexternalObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("external", complete);
+    GetexternalObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("external", complete);
 }
 
 const TypeObject* GetexternalObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("external", complete);
+    const TypeObject* c_type_object = factory->get_type_object("external", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteexternalObject();
+        return GetCompleteexternalObject(factory);
     }
     // else
-    return GetMinimalexternalObject();
+    return GetMinimalexternalObject(factory);
 }
 
-const TypeObject* GetMinimalexternalObject()
+const TypeObject* GetMinimalexternalObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("external", false);
+    const TypeObject* c_type_object = factory->get_type_object("external", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
-    mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
+    mam_value.common().member_type_id(*factory->get_type_identifier("bool", false));
     mam_value.name("value");
 
     AnnotationParameterValue def_value_value;
@@ -3016,36 +3112,37 @@ const TypeObject* GetMinimalexternalObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("external", &identifier, type_object);
+    factory->add_type_object("external", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("external", false);
+    return factory->get_type_object("external", false);
 }
 
-const TypeObject* GetCompleteexternalObject()
+const TypeObject* GetCompleteexternalObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("external", true);
+    const TypeObject* c_type_object = factory->get_type_object("external", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("external");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
+    cam_value.common().member_type_id(*factory->get_type_identifier("bool", false));
     cam_value.name("value");
 
     AnnotationParameterValue def_value_value;
@@ -3077,54 +3174,57 @@ const TypeObject* GetCompleteexternalObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("external", &identifier, type_object);
+    factory->add_type_object("external", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("external", true);
+    return factory->get_type_object("external", true);
 }
 
 const TypeIdentifier* GetnestedIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("nested", complete);
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("nested", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetnestedObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("nested", complete);
+    GetnestedObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("nested", complete);
 }
 
 const TypeObject* GetnestedObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("nested", complete);
+    const TypeObject* c_type_object = factory->get_type_object("nested", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompletenestedObject();
+        return GetCompletenestedObject(factory);
     }
     // else
-    return GetMinimalnestedObject();
+    return GetMinimalnestedObject(factory);
 }
 
-const TypeObject* GetMinimalnestedObject()
+const TypeObject* GetMinimalnestedObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("nested", false);
+    const TypeObject* c_type_object = factory->get_type_object("nested", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
-    mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
+    mam_value.common().member_type_id(*factory->get_type_identifier("bool", false));
     mam_value.name("value");
 
     AnnotationParameterValue def_value_value;
@@ -3156,36 +3256,37 @@ const TypeObject* GetMinimalnestedObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("nested", &identifier, type_object);
+    factory->add_type_object("nested", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("nested", false);
+    return factory->get_type_object("nested", false);
 }
 
-const TypeObject* GetCompletenestedObject()
+const TypeObject* GetCompletenestedObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("nested", true);
+    const TypeObject* c_type_object = factory->get_type_object("nested", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("nested");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
+    cam_value.common().member_type_id(*factory->get_type_identifier("bool", false));
     cam_value.name("value");
 
     AnnotationParameterValue def_value_value;
@@ -3217,55 +3318,58 @@ const TypeObject* GetCompletenestedObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("nested", &identifier, type_object);
+    factory->add_type_object("nested", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("nested", true);
+    return factory->get_type_object("nested", true);
 }
 
 const TypeIdentifier* GetverbatimIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("verbatim", complete);
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("verbatim", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetverbatimObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("verbatim", complete);
+    GetverbatimObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("verbatim", complete);
 }
 
 const TypeObject* GetverbatimObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("verbatim", complete);
+    const TypeObject* c_type_object = factory->get_type_object("verbatim", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteverbatimObject();
+        return GetCompleteverbatimObject(factory);
     }
     // else
-    return GetMinimalverbatimObject();
+    return GetMinimalverbatimObject(factory);
 }
 
-const TypeObject* GetMinimalverbatimObject()
+const TypeObject* GetMinimalverbatimObject(
+        TypeObjectFactory* factory)
 {
     using namespace verbatim;
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("verbatim", false);
+    const TypeObject* c_type_object = factory->get_type_object("verbatim", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_language;
-    mam_language.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    mam_language.common().member_type_id(*factory->get_string_identifier(255, false));
     mam_language.name("language");
 
     AnnotationParameterValue def_value_language;
@@ -3275,7 +3379,7 @@ const TypeObject* GetMinimalverbatimObject()
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_language);
 
     MinimalAnnotationParameter mam_placement;
-    mam_placement.common().member_type_id(*GetPlacementKindIdentifier(false));
+    mam_placement.common().member_type_id(*GetPlacementKindIdentifier(factory, false));
     mam_placement.name("placement");
 
     AnnotationParameterValue def_value_placement;
@@ -3285,7 +3389,7 @@ const TypeObject* GetMinimalverbatimObject()
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_placement);
 
     MinimalAnnotationParameter mam_text;
-    mam_text.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    mam_text.common().member_type_id(*factory->get_string_identifier(255, false));
     mam_text.name("text");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_text);
@@ -3313,37 +3417,38 @@ const TypeObject* GetMinimalverbatimObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("verbatim", &identifier, type_object);
+    factory->add_type_object("verbatim", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("verbatim", false);
+    return factory->get_type_object("verbatim", false);
 }
 
-const TypeObject* GetCompleteverbatimObject()
+const TypeObject* GetCompleteverbatimObject(
+        TypeObjectFactory* factory)
 {
     using namespace verbatim;
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("verbatim", true);
+    const TypeObject* c_type_object = factory->get_type_object("verbatim", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("verbatim");
 
     CompleteAnnotationParameter cam_language;
-    cam_language.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    cam_language.common().member_type_id(*factory->get_string_identifier(255, false));
     cam_language.name("language");
 
     AnnotationParameterValue def_value_language;
@@ -3353,7 +3458,7 @@ const TypeObject* GetCompleteverbatimObject()
     type_object->complete().annotation_type().member_seq().emplace_back(cam_language);
 
     CompleteAnnotationParameter cam_placement;
-    cam_placement.common().member_type_id(*GetPlacementKindIdentifier(true));
+    cam_placement.common().member_type_id(*GetPlacementKindIdentifier(factory, true));
     cam_placement.name("placement");
 
     AnnotationParameterValue def_value_placement;
@@ -3363,7 +3468,7 @@ const TypeObject* GetCompleteverbatimObject()
     type_object->complete().annotation_type().member_seq().emplace_back(cam_placement);
 
     CompleteAnnotationParameter cam_text;
-    cam_text.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    cam_text.common().member_type_id(*factory->get_string_identifier(255, false));
     cam_text.name("text");
 
     type_object->complete().annotation_type().member_seq().emplace_back(cam_text);
@@ -3391,60 +3496,63 @@ const TypeObject* GetCompleteverbatimObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("verbatim", &identifier, type_object);
+    factory->add_type_object("verbatim", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("verbatim", true);
+    return factory->get_type_object("verbatim", true);
 }
 
 namespace verbatim {
 const TypeIdentifier* GetPlacementKindIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("PlacementKind",
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("PlacementKind",
                     complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetPlacementKindObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("PlacementKind", complete);
+    GetPlacementKindObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("PlacementKind", complete);
 }
 
 const TypeObject* GetPlacementKindObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("PlacementKind", complete);
+    const TypeObject* c_type_object = factory->get_type_object("PlacementKind", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompletePlacementKindObject();
+        return GetCompletePlacementKindObject(factory);
     }
     // else
-    return GetMinimalPlacementKindObject();
+    return GetMinimalPlacementKindObject(factory);
 }
 
-const TypeObject* GetMinimalPlacementKindObject()
+const TypeObject* GetMinimalPlacementKindObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("PlacementKind", false);
+    const TypeObject* c_type_object = factory->get_type_object("PlacementKind", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ENUM);
 
     // No flags apply
-    //type_object->minimal().enumerated_type().enum_flags().IS_FINAL(false);
-    //type_object->minimal().enumerated_type().enum_flags().IS_APPENDABLE(false);
-    //type_object->minimal().enumerated_type().enum_flags().IS_MUTABLE(false);
-    //type_object->minimal().enumerated_type().enum_flags().IS_NESTED(false);
-    //type_object->minimal().enumerated_type().enum_flags().IS_AUTOID_HASH(false);
+    //type_object->minimal().enumerated_type().enum_flags().IS_FINAL(factory, false);
+    //type_object->minimal().enumerated_type().enum_flags().IS_APPENDABLE(factory, false);
+    //type_object->minimal().enumerated_type().enum_flags().IS_MUTABLE(factory, false);
+    //type_object->minimal().enumerated_type().enum_flags().IS_NESTED(factory, false);
+    //type_object->minimal().enumerated_type().enum_flags().IS_AUTOID_HASH(factory, false);
 
     type_object->minimal().enumerated_type().header().common().bit_bound(32); // TODO fixed by IDL, isn't?
 
@@ -3568,29 +3676,30 @@ const TypeObject* GetMinimalPlacementKindObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("PlacementKind", &identifier, type_object);
+    factory->add_type_object("PlacementKind", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("PlacementKind", false);
+    return factory->get_type_object("PlacementKind", false);
 }
 
-const TypeObject* GetCompletePlacementKindObject()
+const TypeObject* GetCompletePlacementKindObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("PlacementKind", true);
+    const TypeObject* c_type_object = factory->get_type_object("PlacementKind", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ENUM);
 
     // No flags apply
-    //type_object->complete().enumerated_type().enum_flags().IS_FINAL(false);
-    //type_object->complete().enumerated_type().enum_flags().IS_APPENDABLE(false);
-    //type_object->complete().enumerated_type().enum_flags().IS_MUTABLE(false);
-    //type_object->complete().enumerated_type().enum_flags().IS_NESTED(false);
-    //type_object->complete().enumerated_type().enum_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().enumerated_type().enum_flags().IS_FINAL(factory, false);
+    //type_object->complete().enumerated_type().enum_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().enumerated_type().enum_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().enumerated_type().enum_flags().IS_NESTED(factory, false);
+    //type_object->complete().enumerated_type().enum_flags().IS_AUTOID_HASH(factory, false);
 
     type_object->complete().enumerated_type().header().common().bit_bound(32); // TODO fixed by IDL, isn't?
     //type_object->complete().enumerated_type().header().detail().ann_builtin()...
@@ -3705,55 +3814,58 @@ const TypeObject* GetCompletePlacementKindObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("PlacementKind", &identifier, type_object);
+    factory->add_type_object("PlacementKind", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("PlacementKind", true);
+    return factory->get_type_object("PlacementKind", true);
 }
 
 } // verbatim namespace
 const TypeIdentifier* GetserviceIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("service", complete);
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("service", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetserviceObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("service", complete);
+    GetserviceObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("service", complete);
 }
 
 const TypeObject* GetserviceObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("service", complete);
+    const TypeObject* c_type_object = factory->get_type_object("service", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteserviceObject();
+        return GetCompleteserviceObject(factory);
     }
     // else
-    return GetMinimalserviceObject();
+    return GetMinimalserviceObject(factory);
 }
 
-const TypeObject* GetMinimalserviceObject()
+const TypeObject* GetMinimalserviceObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("service", false);
+    const TypeObject* c_type_object = factory->get_type_object("service", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_platform;
-    mam_platform.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    mam_platform.common().member_type_id(*factory->get_string_identifier(255, false));
     mam_platform.name("platform");
 
     AnnotationParameterValue def_value_platform;
@@ -3785,36 +3897,37 @@ const TypeObject* GetMinimalserviceObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("service", &identifier, type_object);
+    factory->add_type_object("service", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("service", false);
+    return factory->get_type_object("service", false);
 }
 
-const TypeObject* GetCompleteserviceObject()
+const TypeObject* GetCompleteserviceObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("service", true);
+    const TypeObject* c_type_object = factory->get_type_object("service", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("service");
 
     CompleteAnnotationParameter cam_platform;
-    cam_platform.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    cam_platform.common().member_type_id(*factory->get_string_identifier(255, false));
     cam_platform.name("platform");
 
     AnnotationParameterValue def_value_platform;
@@ -3846,54 +3959,57 @@ const TypeObject* GetCompleteserviceObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("service", &identifier, type_object);
+    factory->add_type_object("service", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("service", true);
+    return factory->get_type_object("service", true);
 }
 
 const TypeIdentifier* GetonewayIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("oneway", complete);
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("oneway", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetonewayObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("oneway", complete);
+    GetonewayObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("oneway", complete);
 }
 
 const TypeObject* GetonewayObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("oneway", complete);
+    const TypeObject* c_type_object = factory->get_type_object("oneway", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteonewayObject();
+        return GetCompleteonewayObject(factory);
     }
     // else
-    return GetMinimalonewayObject();
+    return GetMinimalonewayObject(factory);
 }
 
-const TypeObject* GetMinimalonewayObject()
+const TypeObject* GetMinimalonewayObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("oneway", false);
+    const TypeObject* c_type_object = factory->get_type_object("oneway", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
-    mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
+    mam_value.common().member_type_id(*factory->get_type_identifier("bool", false));
     mam_value.name("value");
 
     AnnotationParameterValue def_value_value;
@@ -3925,36 +4041,37 @@ const TypeObject* GetMinimalonewayObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("oneway", &identifier, type_object);
+    factory->add_type_object("oneway", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("oneway", false);
+    return factory->get_type_object("oneway", false);
 }
 
-const TypeObject* GetCompleteonewayObject()
+const TypeObject* GetCompleteonewayObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("oneway", true);
+    const TypeObject* c_type_object = factory->get_type_object("oneway", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("oneway");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
+    cam_value.common().member_type_id(*factory->get_type_identifier("bool", false));
     cam_value.name("value");
 
     AnnotationParameterValue def_value_value;
@@ -3986,54 +4103,57 @@ const TypeObject* GetCompleteonewayObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("oneway", &identifier, type_object);
+    factory->add_type_object("oneway", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("oneway", true);
+    return factory->get_type_object("oneway", true);
 }
 
 const TypeIdentifier* GetamiIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("ami", complete);
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("ami", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetamiObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("ami", complete);
+    GetamiObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("ami", complete);
 }
 
 const TypeObject* GetamiObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ami", complete);
+    const TypeObject* c_type_object = factory->get_type_object("ami", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteamiObject();
+        return GetCompleteamiObject(factory);
     }
     // else
-    return GetMinimalamiObject();
+    return GetMinimalamiObject(factory);
 }
 
-const TypeObject* GetMinimalamiObject()
+const TypeObject* GetMinimalamiObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ami", false);
+    const TypeObject* c_type_object = factory->get_type_object("ami", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
-    mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
+    mam_value.common().member_type_id(*factory->get_type_identifier("bool", false));
     mam_value.name("value");
 
     AnnotationParameterValue def_value_value;
@@ -4065,36 +4185,37 @@ const TypeObject* GetMinimalamiObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("ami", &identifier, type_object);
+    factory->add_type_object("ami", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("ami", false);
+    return factory->get_type_object("ami", false);
 }
 
-const TypeObject* GetCompleteamiObject()
+const TypeObject* GetCompleteamiObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ami", true);
+    const TypeObject* c_type_object = factory->get_type_object("ami", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("ami");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
+    cam_value.common().member_type_id(*factory->get_type_identifier("bool", false));
     cam_value.name("value");
 
     AnnotationParameterValue def_value_value;
@@ -4126,55 +4247,58 @@ const TypeObject* GetCompleteamiObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("ami", &identifier, type_object);
+    factory->add_type_object("ami", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("ami", true);
+    return factory->get_type_object("ami", true);
 }
 
 const TypeIdentifier* Getnon_serializedIdentifier(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("non_serialized",
+    const TypeIdentifier* c_identifier = factory->get_type_identifier("non_serialized",
                     complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    Getnon_serializedObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("non_serialized", complete);
+    Getnon_serializedObject(factory, complete); // Generated inside
+    return factory->get_type_identifier("non_serialized", complete);
 }
 
 const TypeObject* Getnon_serializedObject(
+        TypeObjectFactory* factory,
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("non_serialized", complete);
+    const TypeObject* c_type_object = factory->get_type_object("non_serialized", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompletenon_serializedObject();
+        return GetCompletenon_serializedObject(factory);
     }
     // else
-    return GetMinimalnon_serializedObject();
+    return GetMinimalnon_serializedObject(factory);
 }
 
-const TypeObject* GetMinimalnon_serializedObject()
+const TypeObject* GetMinimalnon_serializedObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("non_serialized", false);
+    const TypeObject* c_type_object = factory->get_type_object("non_serialized", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
-    mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
+    mam_value.common().member_type_id(*factory->get_type_identifier("bool", false));
     mam_value.name("value");
 
     AnnotationParameterValue def_value_value;
@@ -4206,36 +4330,37 @@ const TypeObject* GetMinimalnon_serializedObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("non_serialized", &identifier, type_object);
+    factory->add_type_object("non_serialized", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("non_serialized", false);
+    return factory->get_type_object("non_serialized", false);
 }
 
-const TypeObject* GetCompletenon_serializedObject()
+const TypeObject* GetCompletenon_serializedObject(
+        TypeObjectFactory* factory)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("non_serialized", true);
+    const TypeObject* c_type_object = factory->get_type_object("non_serialized", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject* type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject ();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
 
     // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(factory, false);
+    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(factory, false);
 
     //type_object->complete().annotation_type().header().detail().ann_builtin()...
     //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("non_serialized");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
+    cam_value.common().member_type_id(*factory->get_type_identifier("bool", false));
     cam_value.name("value");
 
     AnnotationParameterValue def_value_value;
@@ -4267,7 +4392,7 @@ const TypeObject* GetCompletenon_serializedObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("non_serialized", &identifier, type_object);
+    factory->add_type_object("non_serialized", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("non_serialized", true);
+    return factory->get_type_object("non_serialized", true);
 }

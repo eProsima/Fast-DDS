@@ -28,11 +28,13 @@ namespace types {
 class TypeObjectFactory
 {
 private:
+
     mutable std::recursive_mutex m_MutexIdentifiers;
     mutable std::recursive_mutex m_MutexObjects;
     mutable std::recursive_mutex m_MutexInformations;
 
 protected:
+
     TypeObjectFactory();
     mutable std::map<const std::string, const TypeIdentifier*> identifiers_; // Basic, builtin and EK_MINIMAL
     std::map<const std::string, const TypeIdentifier*> complete_identifiers_; // Only EK_COMPLETE
@@ -59,6 +61,8 @@ protected:
 
     void nullify_all_entries(
             const TypeIdentifier* identifier);
+
+    void create_basic_identifiers();
 
     void create_builtin_annotations();
 
@@ -122,6 +126,7 @@ protected:
             const TypeIdentifier* identifier) const;
 
 public:
+
     RTPS_DllAPI static TypeObjectFactory* get_instance();
 
     RTPS_DllAPI static ReturnCode_t delete_instance();
@@ -134,7 +139,7 @@ public:
      * @return
      */
     RTPS_DllAPI const TypeInformation* get_type_information(
-            const std::string &type_name) const;
+            const std::string& type_name) const;
 
     /**
      * @brief get_type_information Retrieves the TypeInformation of the given TypeIdentifier.
@@ -181,7 +186,7 @@ public:
 
     RTPS_DllAPI const TypeIdentifier* get_array_identifier(
             const std::string& type_name,
-            const std::vector<uint32_t> &bound,
+            const std::vector<uint32_t>& bound,
             bool complete = false);
 
     RTPS_DllAPI const TypeIdentifier* get_map_identifier(
