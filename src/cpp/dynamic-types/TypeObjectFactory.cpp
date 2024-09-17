@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <atomic>
 #include <sstream>
 
 #include <fastdds/dds/log/Log.hpp>
@@ -28,12 +29,6 @@
 #include <fastrtps/types/TypeNamesGenerator.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/utils/md5.h>
-<<<<<<< HEAD
-=======
-#include <fastdds/dds/log/Log.hpp>
-#include <atomic>
-#include <sstream>
->>>>>>> 8f4b4a583 (Fix data race in `TypeObjectFactory::get_instance` (#5238))
 
 namespace eprosima {
 namespace fastrtps {
