@@ -461,7 +461,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_wrong_EntityId)
 
 TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_malformed_Reply)
 {
-    CacheChange_t* change = new CacheChange_t();
+    CacheChange_t* change {new CacheChange_t()};
     change->writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
 
     EXPECT_CALL(*tlm_, receive(
@@ -484,9 +484,9 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_UNSUPPORTED)
                     std::to_string(static_cast<int>(rpc::RemoteExceptionCode_t::REMOTE_EX_UNSUPPORTED)));
 
 
-    CacheChange_t* change = new CacheChange_t();
-    change->writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
-    stateful_reader_.get_history()->add_change(change);
+    CacheChange_t change;
+    change.writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
+    stateful_reader_.get_history()->add_change(&change);
 
     TypeLookup_Reply expectedReply;
     expectedReply.header().remoteEx(rpc::RemoteExceptionCode_t::REMOTE_EX_UNSUPPORTED);
@@ -495,7 +495,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_UNSUPPORTED)
                 testing::Matcher<TypeLookup_Reply&>(_)))
             .WillOnce(testing::DoAll(testing::SetArgReferee<1>(expectedReply), testing::Return(true)));
 
-    reply_listener_->on_new_cache_change_added(&stateful_reader_, change);
+    reply_listener_->on_new_cache_change_added(&stateful_reader_, &change);
 
     EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0);
 
@@ -511,9 +511,9 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_INVALID_ARGUMEN
                     std::to_string(static_cast<int>(rpc::RemoteExceptionCode_t::REMOTE_EX_INVALID_ARGUMENT)));
 
 
-    CacheChange_t* change = new CacheChange_t();
-    change->writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
-    stateful_reader_.get_history()->add_change(change);
+    CacheChange_t change;
+    change.writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
+    stateful_reader_.get_history()->add_change(&change);
 
     TypeLookup_Reply expectedReply;
     expectedReply.header().remoteEx(rpc::RemoteExceptionCode_t::REMOTE_EX_INVALID_ARGUMENT);
@@ -522,7 +522,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_INVALID_ARGUMEN
                 testing::Matcher<TypeLookup_Reply&>(_)))
             .WillOnce(testing::DoAll(testing::SetArgReferee<1>(expectedReply), testing::Return(true)));
 
-    reply_listener_->on_new_cache_change_added(&stateful_reader_, change);
+    reply_listener_->on_new_cache_change_added(&stateful_reader_, &change);
 
     EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0);
 
@@ -538,9 +538,9 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_OUT_OF_RESOURCE
                     std::to_string(static_cast<int>(rpc::RemoteExceptionCode_t::REMOTE_EX_OUT_OF_RESOURCES)));
 
 
-    CacheChange_t* change = new CacheChange_t();
-    change->writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
-    stateful_reader_.get_history()->add_change(change);
+    CacheChange_t change;
+    change.writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
+    stateful_reader_.get_history()->add_change(&change);
 
     TypeLookup_Reply expectedReply;
     expectedReply.header().remoteEx(rpc::RemoteExceptionCode_t::REMOTE_EX_OUT_OF_RESOURCES);
@@ -549,7 +549,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_OUT_OF_RESOURCE
                 testing::Matcher<TypeLookup_Reply&>(_)))
             .WillOnce(testing::DoAll(testing::SetArgReferee<1>(expectedReply), testing::Return(true)));
 
-    reply_listener_->on_new_cache_change_added(&stateful_reader_, change);
+    reply_listener_->on_new_cache_change_added(&stateful_reader_, &change);
     EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0);
 
     Log::Flush();
@@ -564,9 +564,9 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_UNKNOWN_OPERATI
                     std::to_string(static_cast<int>(rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_OPERATION)));
 
 
-    CacheChange_t* change = new CacheChange_t();
-    change->writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
-    stateful_reader_.get_history()->add_change(change);
+    CacheChange_t change;
+    change.writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
+    stateful_reader_.get_history()->add_change(&change);
 
     TypeLookup_Reply expectedReply;
     expectedReply.header().remoteEx(rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_OPERATION);
@@ -575,7 +575,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_UNKNOWN_OPERATI
                 testing::Matcher<TypeLookup_Reply&>(_)))
             .WillOnce(testing::DoAll(testing::SetArgReferee<1>(expectedReply), testing::Return(true)));
 
-    reply_listener_->on_new_cache_change_added(&stateful_reader_, change);
+    reply_listener_->on_new_cache_change_added(&stateful_reader_, &change);
     EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0);
 
     Log::Flush();
@@ -590,9 +590,9 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_UNKNOWN_EXCEPTI
                     std::to_string(static_cast<int>(rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_EXCEPTION)));
 
 
-    CacheChange_t* change = new CacheChange_t();
-    change->writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
-    stateful_reader_.get_history()->add_change(change);
+    CacheChange_t change;
+    change.writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
+    stateful_reader_.get_history()->add_change(&change);
 
     TypeLookup_Reply expectedReply;
     expectedReply.header().remoteEx(rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_EXCEPTION);
@@ -601,7 +601,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_UNKNOWN_EXCEPTI
                 testing::Matcher<TypeLookup_Reply&>(_)))
             .WillOnce(testing::DoAll(testing::SetArgReferee<1>(expectedReply), testing::Return(true)));
 
-    reply_listener_->on_new_cache_change_added(&stateful_reader_, change);
+    reply_listener_->on_new_cache_change_added(&stateful_reader_, &change);
     EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0);
 
     Log::Flush();

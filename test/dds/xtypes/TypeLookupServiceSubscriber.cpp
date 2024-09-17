@@ -145,7 +145,7 @@ bool TypeLookupServiceSubscriber::create_known_type_impl(
 {
     // Create a new SubKnownType for the given type
     SubKnownType a_type;
-    a_type.type_ = new Type();
+    a_type.type_.reset(new Type());
     a_type.type_sup_.reset(new TypePubSubType());
     a_type.type_sup_.register_type(participant_);
 

@@ -28,6 +28,7 @@
 #include <future>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <mutex>
 #include <thread>
 #include <unordered_set>
@@ -51,7 +52,7 @@ namespace dds {
 
 struct SubKnownType
 {
-    void* type_ {nullptr};
+    std::shared_ptr<void> type_;
     DynamicType::_ref_type dyn_type_;
     TypeSupport type_sup_;
 };
