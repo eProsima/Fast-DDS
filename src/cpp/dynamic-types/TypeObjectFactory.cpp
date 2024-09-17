@@ -73,7 +73,6 @@ TypeObjectFactory* TypeObjectFactory::get_instance()
     }
 
     auto instance = new TypeObjectFactory();
-    instance->create_builtin_annotations();
     g_instance = instance;
     g_instance_state.store(TypeObjectFactoryInstanceState::CREATED);
 
@@ -94,6 +93,12 @@ ReturnCode_t TypeObjectFactory::delete_instance()
 }
 
 TypeObjectFactory::TypeObjectFactory()
+{
+    create_basic_identifiers();
+    create_builtin_annotations();
+}
+
+void TypeObjectFactory::create_basic_identifiers()
 {
     std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
     // Generate basic TypeIdentifiers

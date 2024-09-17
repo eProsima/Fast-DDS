@@ -60,6 +60,8 @@ protected:
     void nullify_all_entries(
             const TypeIdentifier* identifier);
 
+    void create_basic_identifiers();
+
     void create_builtin_annotations();
 
     void apply_type_annotations(
