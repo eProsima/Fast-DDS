@@ -1531,32 +1531,7 @@ void RTPSParticipantImpl::update_attributes(
 
         {
             std::lock_guard<std::recursive_mutex> lock(*pdp->getMutex());
-
-            // Update user data
-            auto local_participant_proxy_data = pdp->getLocalParticipantProxyData();
-            local_participant_proxy_data->m_userData.data_vec(temp_atts.userData);
-
-            // Update metatraffic locators
-            local_participant_proxy_data->metatraffic_locators.multicast.clear();
-            if (!m_att.builtin.avoid_builtin_multicast)
-            {
-                for (const auto& locator : temp_atts.builtin.metatrafficMulticastLocatorList)
-                {
-                    local_participant_proxy_data->metatraffic_locators.add_multicast_locator(locator);
-                }
-            }
-            local_participant_proxy_data->metatraffic_locators.unicast.clear();
-            for (const auto& locator : temp_atts.builtin.metatrafficUnicastLocatorList)
-            {
-                local_participant_proxy_data->metatraffic_locators.add_unicast_locator(locator);
-            }
-
-            // Update default locators
-            local_participant_proxy_data->default_locators.unicast.clear();
-            for (const auto& locator : temp_atts.defaultUnicastLocatorList)
-            {
-                local_participant_proxy_data->default_locators.add_unicast_locator(locator);
-            }
+            pdp->local_participant_attributes_update_nts(m_att, temp_atts);
 
             if (local_interfaces_changed)
             {

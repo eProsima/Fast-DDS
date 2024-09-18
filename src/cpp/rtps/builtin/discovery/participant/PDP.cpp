@@ -1698,6 +1698,37 @@ void PDP::add_builtin_security_attributes(
 
 #endif // HAVE_SECURITY
 
+void PDP::local_participant_attributes_update_nts(
+        const RTPSParticipantAttributes& old_atts,
+        const RTPSParticipantAttributes& new_atts)
+{
+    // Update user data
+    auto local_participant_proxy_data = getLocalParticipantProxyData();
+    local_participant_proxy_data->m_userData.data_vec(new_atts.userData);
+
+    // Update metatraffic locators
+    local_participant_proxy_data->metatraffic_locators.multicast.clear();
+    if (!old_atts.builtin.avoid_builtin_multicast)
+    {
+        for (const auto& locator : new_atts.builtin.metatrafficMulticastLocatorList)
+        {
+            local_participant_proxy_data->metatraffic_locators.add_multicast_locator(locator);
+        }
+    }
+    local_participant_proxy_data->metatraffic_locators.unicast.clear();
+    for (const auto& locator : new_atts.builtin.metatrafficUnicastLocatorList)
+    {
+        local_participant_proxy_data->metatraffic_locators.add_unicast_locator(locator);
+    }
+
+    // Update default locators
+    local_participant_proxy_data->default_locators.unicast.clear();
+    for (const auto& locator : new_atts.defaultUnicastLocatorList)
+    {
+        local_participant_proxy_data->default_locators.add_unicast_locator(locator);
+    }
+}
+
 } /* namespace rtps */
 } /* namespace fastdds */
 } /* namespace eprosima */
