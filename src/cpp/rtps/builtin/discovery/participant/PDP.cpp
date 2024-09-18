@@ -1754,11 +1754,15 @@ void PDP::update_endpoint_locators_if_default_nts(
         const RTPSParticipantAttributes& old_atts,
         const RTPSParticipantAttributes& new_atts)
 {
+    // Check if default locators have changed
     const auto& old_default_unicast = old_atts.defaultUnicastLocatorList;
+    const auto& old_default_multicast = old_atts.defaultMulticastLocatorList;
     const auto& new_default_unicast = new_atts.defaultUnicastLocatorList;
+    const auto& new_default_multicast = new_atts.defaultMulticastLocatorList;
 
     // Early return if there is no change in default unicast locators
-    if (old_default_unicast == new_default_unicast)
+    if ((old_default_unicast == new_default_unicast) &&
+            (old_default_multicast == new_default_multicast))
     {
         return;
     }
@@ -1767,8 +1771,8 @@ void PDP::update_endpoint_locators_if_default_nts(
     EDP* edp = get_edp();
     for (BaseWriter* writer : writers)
     {
-        if (writer->getAttributes().multicastLocatorList.empty() &&
-                writer->getAttributes().unicastLocatorList.empty())
+        if ((old_default_multicast == writer->getAttributes().multicastLocatorList) &&
+                (old_default_unicast == writer->getAttributes().unicastLocatorList))
         {
             WriterProxyData* wdata = nullptr;
             GUID_t participant_guid;
@@ -1787,8 +1791,8 @@ void PDP::update_endpoint_locators_if_default_nts(
     }
     for (BaseReader* reader : readers)
     {
-        if (reader->getAttributes().multicastLocatorList.empty() &&
-                reader->getAttributes().unicastLocatorList.empty())
+        if ((old_default_multicast == reader->getAttributes().multicastLocatorList) &&
+                (old_default_unicast == reader->getAttributes().unicastLocatorList))
         {
             ReaderProxyData* rdata = nullptr;
             GUID_t participant_guid;
