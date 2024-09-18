@@ -110,6 +110,7 @@ TEST_F(UDPv4Tests, wrong_configuration)
         UDPv4Transport transportUnderTest(wrong_descriptor);
         ASSERT_FALSE(transportUnderTest.init());
         eprosima::fastdds::dds::Log::Flush();
+        // This is a small change to trigger CI for testing external contributions CI
     }
 
     // maxMessageSize bigger than sendBufferSize
