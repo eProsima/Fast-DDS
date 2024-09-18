@@ -17,6 +17,8 @@
  *
  */
 
+// This is a small change to trigger CI for testing external contributions CI
+
 #include <fastdds/utils/IPFinder.hpp>
 #include <fastdds/utils/IPLocator.hpp>
 
