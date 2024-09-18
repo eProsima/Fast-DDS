@@ -23,11 +23,6 @@ on:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         required: true
         type: string
-      add-label:
-        description: 'Add the CI-PENDING label to the PR'
-        required: false
-        type: boolean
-        default: true
 
 defaults:
   run:
@@ -44,14 +39,6 @@ jobs:
         vs-toolset:
           - 'v142'
     steps:
-      - name: Add ci-pending label if PR
-        if: ${{ github.event_name == 'pull_request' && inputs.add-label == true }}
-        uses: eProsima/eProsima-CI/external/add_labels@v0
-        with:
-          labels: ci-pending
-          number: ${{ github.event.number }}
-          repo: eProsima/Fast-DDS
-
       - name: Sync eProsima/Fast-DDS repository
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:

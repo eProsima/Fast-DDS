@@ -19,4 +19,3 @@ jobs:
       ctest_args: ''
       fastdds_ref: '2.6.x'
       discovery_server_ref: 'v1.2.1'
-      add-label: false
