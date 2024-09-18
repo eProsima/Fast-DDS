@@ -1754,10 +1754,57 @@ void PDP::update_endpoint_locators_if_default_nts(
         const RTPSParticipantAttributes& old_atts,
         const RTPSParticipantAttributes& new_atts)
 {
-    static_cast<void>(writers);
-    static_cast<void>(readers);
-    static_cast<void>(old_atts);
-    static_cast<void>(new_atts);
+    const auto& old_default_unicast = old_atts.defaultUnicastLocatorList;
+    const auto& new_default_unicast = new_atts.defaultUnicastLocatorList;
+
+    // Early return if there is no change in default unicast locators
+    if (old_default_unicast == new_default_unicast)
+    {
+        return;
+    }
+
+    // Update proxies of endpoints with no configured locators
+    EDP* edp = get_edp();
+    for (BaseWriter* writer : writers)
+    {
+        if (writer->getAttributes().multicastLocatorList.empty() &&
+                writer->getAttributes().unicastLocatorList.empty())
+        {
+            WriterProxyData* wdata = nullptr;
+            GUID_t participant_guid;
+            wdata = addWriterProxyData(writer->getGuid(), participant_guid,
+                            [](WriterProxyData* proxy, bool is_update, const ParticipantProxyData& participant)
+                            {
+                                static_cast<void>(is_update);
+                                assert(is_update);
+
+                                proxy->set_locators(participant.default_locators);
+                                return true;
+                            });
+            assert(wdata != nullptr);
+            edp->process_writer_proxy_data(writer, wdata);
+        }
+    }
+    for (BaseReader* reader : readers)
+    {
+        if (reader->getAttributes().multicastLocatorList.empty() &&
+                reader->getAttributes().unicastLocatorList.empty())
+        {
+            ReaderProxyData* rdata = nullptr;
+            GUID_t participant_guid;
+            rdata = addReaderProxyData(reader->getGuid(), participant_guid,
+                            [](ReaderProxyData* proxy, bool is_update, const ParticipantProxyData& participant)
+                            {
+                                static_cast<void>(is_update);
+                                assert(is_update);
+
+                                proxy->set_locators(participant.default_locators);
+                                return true;
+                            });
+            assert(rdata != nullptr);
+            edp->process_reader_proxy_data(reader, rdata);
+        }
+    }
 }
 
 } /* namespace rtps */
