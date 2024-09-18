@@ -1445,6 +1445,7 @@ void RTPSParticipantImpl::update_attributes(
     if (internal_metatraffic_locators_)
     {
         LocatorList_t metatraffic_unicast_locator_list = temp_atts.builtin.metatrafficUnicastLocatorList;
+        temp_atts.builtin.metatrafficUnicastLocatorList.clear();
         get_default_metatraffic_locators(temp_atts);
         if (!(metatraffic_unicast_locator_list == temp_atts.builtin.metatrafficUnicastLocatorList))
         {
@@ -1455,6 +1456,7 @@ void RTPSParticipantImpl::update_attributes(
     if (internal_default_locators_)
     {
         LocatorList_t default_unicast_locator_list = temp_atts.defaultUnicastLocatorList;
+        temp_atts.defaultUnicastLocatorList.clear();
         get_default_unicast_locators(temp_atts);
         if (!(default_unicast_locator_list == temp_atts.defaultUnicastLocatorList))
         {
