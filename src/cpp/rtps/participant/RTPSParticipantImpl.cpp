@@ -1531,7 +1531,7 @@ void RTPSParticipantImpl::update_attributes(
 
         {
             std::lock_guard<std::recursive_mutex> lock(*pdp->getMutex());
-            pdp->local_participant_attributes_update_nts(m_att, temp_atts);
+            pdp->local_participant_attributes_update_nts(temp_atts);
 
             if (local_interfaces_changed)
             {

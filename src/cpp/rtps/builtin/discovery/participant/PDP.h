@@ -485,7 +485,6 @@ public:
 #endif // FASTDDS_STATISTICS
 
     virtual void local_participant_attributes_update_nts(
-            const RTPSParticipantAttributes& old_atts,
             const RTPSParticipantAttributes& new_atts);
 
 protected:
