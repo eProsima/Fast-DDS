@@ -21,4 +21,3 @@ jobs:
       ctest-args: "-LE xfail"
       fastdds-branch: '2.6.x'
       use-ccache: false
-      add-label: false

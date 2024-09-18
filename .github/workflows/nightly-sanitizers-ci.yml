@@ -19,7 +19,6 @@ jobs:
       ctest_args: ''
       fastdds_ref: 'master'
       discovery_server_ref: 'master'
-      add-label: false
 
   nightly-sanitizers-ci-3_0_x:
     uses: eProsima/Fast-DDS/.github/workflows/reusable-sanitizers-ci.yml@3.0.x
@@ -48,7 +47,6 @@ jobs:
       ctest_args: ''
       fastdds_ref: '2.14.x'
       discovery_server_ref: 'v1.2.2'
-      add-label: false
 
   nightly-sanitizers-ci-2_10_x:
     uses: eProsima/Fast-DDS/.github/workflows/reusable-sanitizers-ci.yml@2.10.x
@@ -63,4 +61,3 @@ jobs:
       ctest_args: ''
       fastdds_ref: '2.10.x'
       discovery_server_ref: 'v1.2.1'
-      add-label: false
