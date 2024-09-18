@@ -1533,6 +1533,12 @@ void RTPSParticipantImpl::update_attributes(
             std::lock_guard<std::recursive_mutex> lock(*pdp->getMutex());
             pdp->local_participant_attributes_update_nts(temp_atts);
 
+            if (local_interfaces_changed && internal_default_locators_)
+            {
+                std::lock_guard<shared_mutex> _(endpoints_list_mutex);
+                pdp->update_endpoint_locators_if_default_nts(m_userWriterList, m_userReaderList, m_att, temp_atts);
+            }
+
             if (local_interfaces_changed)
             {
                 createSenderResources(temp_atts.builtin.metatrafficMulticastLocatorList);

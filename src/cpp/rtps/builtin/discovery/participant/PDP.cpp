@@ -62,6 +62,8 @@
 #endif // if HAVE_SECURITY
 #include <utils/shared_mutex.hpp>
 #include <utils/TimeConversion.hpp>
+#include <rtps/writer/BaseWriter.hpp>
+#include <rtps/reader/BaseReader.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -1744,6 +1746,18 @@ void PDP::local_participant_attributes_update_nts(
     fastdds::rtps::network::external_locators::add_external_locators(*participant_data,
             new_atts.builtin.metatraffic_external_unicast_locators,
             new_atts.default_external_unicast_locators);
+}
+
+void PDP::update_endpoint_locators_if_default_nts(
+        const std::vector<BaseWriter*>& writers,
+        const std::vector<BaseReader*>& readers,
+        const RTPSParticipantAttributes& old_atts,
+        const RTPSParticipantAttributes& new_atts)
+{
+    static_cast<void>(writers);
+    static_cast<void>(readers);
+    static_cast<void>(old_atts);
+    static_cast<void>(new_atts);
 }
 
 } /* namespace rtps */
