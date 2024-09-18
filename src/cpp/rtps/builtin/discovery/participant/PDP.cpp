@@ -1767,13 +1767,16 @@ void PDP::update_endpoint_locators_if_default_nts(
         return;
     }
 
-    // Update proxies of endpoints with no configured locators
+    // Update proxies of endpoints with default configured locators
     EDP* edp = get_edp();
     for (BaseWriter* writer : writers)
     {
         if ((old_default_multicast == writer->getAttributes().multicastLocatorList) &&
                 (old_default_unicast == writer->getAttributes().unicastLocatorList))
         {
+            writer->getAttributes().multicastLocatorList = new_default_multicast;
+            writer->getAttributes().unicastLocatorList = new_default_unicast;
+
             WriterProxyData* wdata = nullptr;
             GUID_t participant_guid;
             wdata = addWriterProxyData(writer->getGuid(), participant_guid,
@@ -1794,6 +1797,9 @@ void PDP::update_endpoint_locators_if_default_nts(
         if ((old_default_multicast == reader->getAttributes().multicastLocatorList) &&
                 (old_default_unicast == reader->getAttributes().unicastLocatorList))
         {
+            reader->getAttributes().multicastLocatorList = new_default_multicast;
+            reader->getAttributes().unicastLocatorList = new_default_unicast;
+
             ReaderProxyData* rdata = nullptr;
             GUID_t participant_guid;
             rdata = addReaderProxyData(reader->getGuid(), participant_guid,
