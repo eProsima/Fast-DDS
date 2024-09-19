@@ -242,6 +242,7 @@ DynamicType::_ref_type PublisherApp::create_type(
         {
             std::cout <<
                 "Error getting dynamic type \"HelloWorld\"." << std::endl;
+            return nullptr;
         }
     }
     else
