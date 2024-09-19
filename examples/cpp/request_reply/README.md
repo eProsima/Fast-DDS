@@ -64,21 +64,33 @@ Mind that it is possible to run multiple server instances and client instances s
 * Ubuntu ( / MacOS )
 
     ```shell
-    user@machine:example_path$ ./request_reply client 2 x 5
+    user@machine:example_path$ ./request_reply client 2 5
     2024-07-01T16:08:28.296 [INFO] [ClientApp] Client initialized with ID: 01.0f.cc.6d.21.0f.f0.6b.00.00.00.00
     2024-07-01T16:08:28.296 [INFO] [main] Client running. Please press Ctrl+C to stop the Client at any time.
-    2024-07-01T16:08:29.296 [INFO] [ClientApp] Request sent with ID '1': '2 x 5'
-    2024-07-01T16:08:29.297 [INFO] [ClientApp] Reply received from server 01.0f.cc.6d.92.0e.de.f0.00.00.00.00 with result: 10
+    2024-07-01T16:08:29.296 [INFO] [ClientApp] Request sent with ID '1': '2 + 5'
+    2024-07-01T16:08:29.296 [INFO] [ClientApp] Request sent with ID '2': '2 - 5'
+    2024-07-01T16:08:29.297 [INFO] [ClientApp] Request sent with ID '3': '2 * 5'
+    2024-07-01T16:08:29.297 [INFO] [ClientApp] Request sent with ID '4': '2 / 5'
+    2024-07-01T16:08:29.297 [INFO] [ClientApp] Reply received from server 01.0f.cc.6d.92.0e.de.f0.00.00.00.00 to request with ID '1' with result: '7'
+    2024-07-01T16:08:29.297 [INFO] [ClientApp] Reply received from server 01.0f.cc.6d.92.0e.de.f0.00.00.00.00 to request with ID '2' with result: '-3'
+    2024-07-01T16:08:29.297 [INFO] [ClientApp] Reply received from server 01.0f.cc.6d.92.0e.de.f0.00.00.00.00 to request with ID '3' with result: '10'
+    2024-07-01T16:08:29.297 [INFO] [ClientApp] Reply received from server 01.0f.cc.6d.92.0e.de.f0.00.00.00.00 to request with ID '4' with result: '0'
     ```
 
 * Windows
 
     ```powershell
-    example_path> request_reply.exe client 2 x 5
+    example_path> request_reply.exe client 2 5
     2024-07-01T16:08:28.296 [INFO] [ClientApp] Client initialized with ID: 01.0f.cc.6d.21.0f.f0.6b.00.00.00.00
     2024-07-01T16:08:28.296 [INFO] [main] Client running. Please press Ctrl+C to stop the Client at any time.
-    2024-07-01T16:08:29.296 [INFO] [ClientApp] Request sent with ID '1': '2 x 5'
-    2024-07-01T16:08:29.297 [INFO] [ClientApp] Reply received from server 01.0f.cc.6d.92.0e.de.f0.00.00.00.00 with result: 10
+    2024-07-01T16:08:29.296 [INFO] [ClientApp] Request sent with ID '1': '2 + 5'
+    2024-07-01T16:08:29.296 [INFO] [ClientApp] Request sent with ID '2': '2 - 5'
+    2024-07-01T16:08:29.297 [INFO] [ClientApp] Request sent with ID '3': '2 * 5'
+    2024-07-01T16:08:29.297 [INFO] [ClientApp] Request sent with ID '4': '2 / 5'
+    2024-07-01T16:08:29.297 [INFO] [ClientApp] Reply received from server 01.0f.cc.6d.92.0e.de.f0.00.00.00.00 to request with ID '1' with result: '7'
+    2024-07-01T16:08:29.297 [INFO] [ClientApp] Reply received from server 01.0f.cc.6d.92.0e.de.f0.00.00.00.00 to request with ID '2' with result: '-3'
+    2024-07-01T16:08:29.297 [INFO] [ClientApp] Reply received from server 01.0f.cc.6d.92.0e.de.f0.00.00.00.00 to request with ID '3' with result: '10'
+    2024-07-01T16:08:29.297 [INFO] [ClientApp] Reply received from server 01.0f.cc.6d.92.0e.de.f0.00.00.00.00 to request with ID '4' with result: '0'
     ```
 
 ## XML profile playground

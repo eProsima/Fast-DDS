@@ -42,7 +42,8 @@ class NetworkFactory
 {
 public:
 
-    NetworkFactory()
+    NetworkFactory(
+            const RTPSParticipantAttributes&)
     {
     }
 

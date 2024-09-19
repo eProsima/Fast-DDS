@@ -40,12 +40,8 @@ static void current_time_since_unix_epoch(
 {
     using namespace std::chrono;
 
-    static const auto init_time_since_epoch = system_clock::now().time_since_epoch();
-    static const auto init_steady_time = steady_clock::now();
-
     // Get time since epoch
-    auto t_elapsed = steady_clock::now() - init_steady_time;
-    auto t_since_epoch = init_time_since_epoch + t_elapsed;
+    auto t_since_epoch = system_clock::now().time_since_epoch();
     // Get seconds
     auto secs_t = duration_cast<seconds>(t_since_epoch);
     // Remove seconds from time

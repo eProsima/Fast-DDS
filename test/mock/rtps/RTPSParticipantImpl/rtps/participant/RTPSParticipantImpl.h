@@ -131,7 +131,10 @@ public:
 
     MOCK_CONST_METHOD0(getGuid, const GUID_t& ());
 
-    MOCK_CONST_METHOD0(network_factory, const NetworkFactory& ());
+    const NetworkFactory& network_factory()
+    {
+        return network_factory_;
+    }
 
     MOCK_METHOD0(is_intraprocess_only, bool());
 
@@ -416,9 +419,11 @@ private:
 
     MockParticipantListener listener_;
 
-    ResourceEvent events_;
-
     RTPSParticipantAttributes attr_;
+
+    NetworkFactory network_factory_ {attr_};
+
+    ResourceEvent events_;
 
     std::map<GUID_t, Endpoint*> endpoints_;
 
