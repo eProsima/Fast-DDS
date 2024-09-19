@@ -2315,7 +2315,9 @@ TEST(BuiltinDataSerializationTests, deserialization_of_big_parameters)
     for (uint16_t pid = 0x2; pid <= 0x7FFF; ++pid)
     {
         // Clear big parameter
-        std::fill(buffer.begin() + encapsulation_length, buffer.begin() + encapsulation_length + parameter_length, 0);
+        octet zero = 0u;
+        auto param_begin = buffer.begin() + encapsulation_length;
+        std::fill(param_begin, param_begin + parameter_length, zero);
 
         // Set the parameter ID of the big parameter
         constexpr uint16_t big_parameter_plength = parameter_length - 4;
