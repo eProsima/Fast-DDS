@@ -564,15 +564,6 @@ bool EDP::unpairReaderProxy(
     return true;
 }
 
-bool EDP::validMatching(
-        const WriterProxyData* wdata,
-        const ReaderProxyData* rdata)
-{
-    MatchingFailureMask reason;
-    fastdds::dds::PolicyMask incompatible_qos;
-    return valid_matching(wdata, rdata, reason, incompatible_qos);
-}
-
 bool EDP::valid_matching(
         const WriterProxyData* wdata,
         const ReaderProxyData* rdata,
@@ -796,15 +787,6 @@ bool EDP::checkDataRepresentationQos(
     }
 
     return compatible;
-}
-
-bool EDP::validMatching(
-        const ReaderProxyData* rdata,
-        const WriterProxyData* wdata)
-{
-    MatchingFailureMask reason;
-    fastdds::dds::PolicyMask incompatible_qos;
-    return valid_matching(rdata, wdata, reason, incompatible_qos);
 }
 
 bool EDP::valid_matching(

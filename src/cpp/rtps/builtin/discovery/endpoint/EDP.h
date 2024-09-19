@@ -216,26 +216,6 @@ public:
      * Check the validity of a matching between a local RTPSWriter and a ReaderProxyData object.
      * @param wdata Pointer to the WriterProxyData object of the local RTPSWriter.
      * @param rdata Pointer to the ReaderProxyData object.
-     * @return True if the two can be matched.
-     */
-    bool validMatching(
-            const WriterProxyData* wdata,
-            const ReaderProxyData* rdata);
-
-    /**
-     * Check the validity of a matching between a local RTPSReader and a WriterProxyData object.
-     * @param rdata Pointer to the ReaderProxyData object of the local RTPSReader.
-     * @param wdata Pointer to the WriterProxyData object.
-     * @return True if the two can be matched.
-     */
-    bool validMatching(
-            const ReaderProxyData* rdata,
-            const WriterProxyData* wdata);
-
-    /**
-     * Check the validity of a matching between a local RTPSWriter and a ReaderProxyData object.
-     * @param wdata Pointer to the WriterProxyData object of the local RTPSWriter.
-     * @param rdata Pointer to the ReaderProxyData object.
      * @param [out] reason On return will specify the reason of failed matching (if any).
      * @param [out] incompatible_qos On return will specify all the QoS values that were incompatible (if any).
      * @return True if the two can be matched.
