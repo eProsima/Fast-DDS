@@ -251,7 +251,7 @@ inline bool ParameterSerializer<ParameterLocator_t>::read_content_from_cdr_messa
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_LOCATOR_LENGTH)
+    if (parameter_length < PARAMETER_LOCATOR_LENGTH)
     {
         return false;
     }
@@ -273,7 +273,7 @@ inline bool ParameterSerializer<ParameterKey_t>::read_content_from_cdr_message(
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_KEY_HASH_LENGTH)
+    if (parameter_length < PARAMETER_KEY_HASH_LENGTH)
     {
         return false;
     }
@@ -343,7 +343,7 @@ inline bool ParameterSerializer<ParameterPort_t>::read_content_from_cdr_message(
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_PORT_LENGTH)
+    if (parameter_length < PARAMETER_PORT_LENGTH)
     {
         return false;
     }
@@ -367,7 +367,7 @@ inline bool ParameterSerializer<ParameterGuid_t>::read_content_from_cdr_message(
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_GUID_LENGTH)
+    if (parameter_length < PARAMETER_GUID_LENGTH)
     {
         return false;
     }
@@ -394,7 +394,7 @@ inline bool ParameterSerializer<ParameterProtocolVersion_t>::read_content_from_c
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_PROTOCOL_LENGTH)
+    if (parameter_length < PARAMETER_PROTOCOL_LENGTH)
     {
         return false;
     }
@@ -422,7 +422,7 @@ inline bool ParameterSerializer<ParameterVendorId_t>::read_content_from_cdr_mess
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_VENDOR_LENGTH)
+    if (parameter_length < PARAMETER_VENDOR_LENGTH)
     {
         return false;
     }
@@ -434,6 +434,61 @@ inline bool ParameterSerializer<ParameterVendorId_t>::read_content_from_cdr_mess
 }
 
 template<>
+<<<<<<< HEAD
+=======
+inline bool ParameterSerializer<ParameterProductVersion_t>::add_content_to_cdr_message(
+        const ParameterProductVersion_t& parameter,
+        rtps::CDRMessage_t* cdr_message)
+{
+    bool valid = rtps::CDRMessage::addOctet(cdr_message, parameter.version.major);
+    valid &= rtps::CDRMessage::addOctet(cdr_message, parameter.version.minor);
+    valid &= rtps::CDRMessage::addOctet(cdr_message, parameter.version.patch);
+    valid &= rtps::CDRMessage::addOctet(cdr_message, parameter.version.tweak);
+    return valid;
+}
+
+template<>
+inline bool ParameterSerializer<ParameterProductVersion_t>::read_content_from_cdr_message(
+        ParameterProductVersion_t& parameter,
+        rtps::CDRMessage_t* cdr_message,
+        const uint16_t parameter_length)
+{
+    if (parameter_length < PARAMETER_PRODUCT_VERSION_LENGTH)
+    {
+        return false;
+    }
+    parameter.length = parameter_length;
+    bool valid = rtps::CDRMessage::readOctet(cdr_message, &parameter.version.major);
+    valid &= rtps::CDRMessage::readOctet(cdr_message, &parameter.version.minor);
+    valid &= rtps::CDRMessage::readOctet(cdr_message, &parameter.version.patch);
+    valid &= rtps::CDRMessage::readOctet(cdr_message, &parameter.version.tweak);
+    return valid;
+}
+
+template<>
+inline bool ParameterSerializer<ParameterDomainId_t>::add_content_to_cdr_message(
+        const ParameterDomainId_t& parameter,
+        fastdds::rtps::CDRMessage_t* cdr_message)
+{
+    return fastdds::rtps::CDRMessage::addUInt32(cdr_message, parameter.domain_id);
+}
+
+template<>
+inline bool ParameterSerializer<ParameterDomainId_t>::read_content_from_cdr_message(
+        ParameterDomainId_t& parameter,
+        fastdds::rtps::CDRMessage_t* cdr_message,
+        const uint16_t parameter_length)
+{
+    if (parameter_length < PARAMETER_DOMAINID_LENGTH)
+    {
+        return false;
+    }
+    parameter.length = parameter_length;
+    return fastdds::rtps::CDRMessage::readUInt32(cdr_message, &parameter.domain_id);
+}
+
+template<>
+>>>>>>> 7b111f911 (Be less strict with parameter lengths (#5225))
 inline bool ParameterSerializer<ParameterIP4Address_t>::add_content_to_cdr_message(
         const ParameterIP4Address_t& parameter,
         fastrtps::rtps::CDRMessage_t* cdr_message)
@@ -447,7 +502,7 @@ inline bool ParameterSerializer<ParameterIP4Address_t>::read_content_from_cdr_me
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_IP4_LENGTH)
+    if (parameter_length < PARAMETER_IP4_LENGTH)
     {
         return false;
     }
@@ -473,7 +528,7 @@ inline bool ParameterSerializer<ParameterBool_t>::read_content_from_cdr_message(
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_BOOL_LENGTH)
+    if (parameter_length < PARAMETER_BOOL_LENGTH)
     {
         return false;
     }
@@ -501,7 +556,7 @@ inline bool ParameterSerializer<ParameterStatusInfo_t>::read_content_from_cdr_me
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_STATUS_INFO_LENGTH)
+    if (parameter_length < PARAMETER_STATUS_INFO_LENGTH)
     {
         return false;
     }
@@ -530,7 +585,7 @@ inline bool ParameterSerializer<ParameterCount_t>::read_content_from_cdr_message
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_COUNT_LENGTH)
+    if (parameter_length < PARAMETER_COUNT_LENGTH)
     {
         return false;
     }
@@ -552,7 +607,7 @@ inline bool ParameterSerializer<ParameterEntityId_t>::read_content_from_cdr_mess
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_ENTITYID_LENGTH)
+    if (parameter_length < PARAMETER_ENTITYID_LENGTH)
     {
         return false;
     }
@@ -576,7 +631,7 @@ inline bool ParameterSerializer<ParameterTime_t>::read_content_from_cdr_message(
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_TIME_LENGTH)
+    if (parameter_length < PARAMETER_TIME_LENGTH)
     {
         return false;
     }
@@ -604,7 +659,7 @@ inline bool ParameterSerializer<ParameterBuiltinEndpointSet_t>::read_content_fro
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_BUILTINENDPOINTSET_LENGTH)
+    if (parameter_length < PARAMETER_BUILTINENDPOINTSET_LENGTH)
     {
         return false;
     }
@@ -626,7 +681,7 @@ inline bool ParameterSerializer<ParameterNetworkConfigSet_t>::read_content_from_
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_NETWORKCONFIGSET_LENGTH)
+    if (parameter_length < PARAMETER_NETWORKCONFIGSET_LENGTH)
     {
         return false;
     }
@@ -783,7 +838,7 @@ inline bool ParameterSerializer<ParameterSampleIdentity_t>::read_content_from_cd
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_SAMPLEIDENTITY_LENGTH)
+    if (parameter_length < PARAMETER_SAMPLEIDENTITY_LENGTH)
     {
         return false;
     }
@@ -1061,7 +1116,7 @@ inline bool ParameterSerializer<ParameterParticipantSecurityInfo_t>::read_conten
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH)
+    if (parameter_length < PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH)
     {
         return false;
     }
@@ -1087,7 +1142,7 @@ inline bool ParameterSerializer<ParameterEndpointSecurityInfo_t>::read_content_f
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH)
+    if (parameter_length < PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH)
     {
         return false;
     }
