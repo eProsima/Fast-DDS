@@ -133,6 +133,9 @@ constexpr uint32_t ArraySingleDimensionLiteralsString_max_key_cdr_typesize {0UL}
 constexpr uint32_t ArraySingleDimensionLiteralsShortArray_max_cdr_typesize {204UL};
 constexpr uint32_t ArraySingleDimensionLiteralsShortArray_max_key_cdr_typesize {0UL};
 
+constexpr uint32_t ArrayUInt8_max_cdr_typesize {14UL};
+constexpr uint32_t ArrayUInt8_max_key_cdr_typesize {0UL};
+
 
 constexpr uint32_t ArrayMultiDimensionLiteralsUShort_max_cdr_typesize {504UL};
 constexpr uint32_t ArrayMultiDimensionLiteralsUShort_max_key_cdr_typesize {0UL};
@@ -400,6 +403,10 @@ eProsima_user_DllExport void serialize_key(
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayOctet& data);
+
+eProsima_user_DllExport void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const ArrayUInt8& data);
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
