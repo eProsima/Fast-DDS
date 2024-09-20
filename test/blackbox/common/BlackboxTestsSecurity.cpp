@@ -33,6 +33,7 @@
 #include <fastdds/rtps/common/EntityId_t.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastrtps/utils/IPFinder.h>
 
 #include <rtps/transport/test_UDPv4Transport.h>
 
@@ -5012,6 +5013,77 @@ TEST(Security, ValidateAuthenticationHandshakeProperties)
     writer.waitAuthorized();
 
     ASSERT_TRUE(auth_elapsed_time < max_time);
+}
+
+// Regression test for Redmine issue #20181
+// Two simple secure participants with tcp transport and initial peers must match.
+// It basically tests that the PDPSecurityInitiatorListener
+// in PDPSimple answers back with the proxy data.
+TEST(Security, security_with_initial_peers_over_tcpv4_correctly_behaves)
+{
+    // Create
+    PubSubWriter<HelloWorldPubSubType> tcp_client("HelloWorldTopic_TCP");
+    PubSubReader<HelloWorldPubSubType> tcp_server("HelloWorldTopic_TCP");
+
+    // Search for a valid WAN address
+    LocatorList_t all_locators;
+    Locator_t wan_locator;
+    IPFinder::getIP4Address(&all_locators);
+
+    for (auto& locator : all_locators)
+    {
+        if (!IPLocator::isLocal(locator))
+        {
+            wan_locator = locator;
+            break;
+        }
+    }
+
+    uint16_t server_listening_port = 11810;
+    wan_locator.port = server_listening_port;
+    wan_locator.kind = LOCATOR_KIND_TCPv4;
+
+    auto tcp_client_transport_descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+    LocatorList_t initial_peers;
+    initial_peers.push_back(wan_locator);
+    tcp_client.disable_builtin_transport()
+            .add_user_transport_to_pparams(tcp_client_transport_descriptor)
+            .initial_peers(initial_peers);
+
+    auto tcp_server_transport_descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+    tcp_server_transport_descriptor->listening_ports.push_back(server_listening_port);
+    IPLocator::copyIPv4(wan_locator, tcp_server_transport_descriptor->wan_addr);
+
+    std::cout << "SETTING WAN address to " <<  wan_locator << std::endl;
+
+    tcp_server.disable_builtin_transport()
+            .add_user_transport_to_pparams(tcp_server_transport_descriptor);
+
+    // Configure security
+    const std::string governance_file("governance_helloworld_all_enable.smime");
+    const std::string permissions_file("permissions_helloworld.smime");
+    CommonPermissionsConfigure(tcp_server, tcp_client, governance_file, permissions_file);
+
+    tcp_server.init();
+    tcp_client.init();
+
+    ASSERT_TRUE(tcp_server.isInitialized());
+    ASSERT_TRUE(tcp_client.isInitialized());
+
+    tcp_server.waitAuthorized();
+    tcp_client.waitAuthorized();
+
+    tcp_server.wait_discovery();
+    tcp_client.wait_discovery();
+
+    ASSERT_TRUE(tcp_server.is_matched());
+    ASSERT_TRUE(tcp_client.is_matched());
+
+    auto data = default_helloworld_data_generator();
+    tcp_server.startReception(data);
+    tcp_client.send(data);
+    ASSERT_TRUE(data.empty());
+    tcp_server.block_for_all(std::chrono::seconds(10));
 }
 
 

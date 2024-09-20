@@ -136,7 +136,16 @@ private:
 
     void match_pdp_remote_endpoints(
             const ParticipantProxyData& pdata,
-            bool notify_secure_endpoints);
+            bool notify_secure_endpoints,
+            bool writer_only);
+
+    /**
+     * @brief Unmatch PDP endpoints with a remote participant.
+     *
+     * @param participant_guid GUID of the remote participant.
+     */
+    void unmatch_pdp_remote_endpoints(
+            const GUID_t& participant_guid);
 
     void assign_low_level_remote_endpoints(
             const ParticipantProxyData& pdata,
