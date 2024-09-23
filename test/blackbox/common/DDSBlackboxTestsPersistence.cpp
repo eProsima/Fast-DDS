@@ -564,6 +564,26 @@ TEST_P(DDSPersistenceTests, PubSubAsReliablePubTransientWithNoPersistenceGUIDBeh
 
     // Wait expecting receiving all data.
     reader.block_for_all();
+
+    // Recreate the DataWriter and DataReader
+    writer.destroy();
+    reader.destroy();
+
+    writer.init();
+    reader.init();
+
+    ASSERT_TRUE(writer.isInitialized());
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Reader should not receive any data
+    // as the writer is not transient
+    auto unreceived_data = default_helloworld_data_generator();
+
+    // Send data
+    reader.startReception(unreceived_data);
+
+    // Wait expecting not receiving data.
+    ASSERT_EQ(reader.block_for_all(std::chrono::seconds(2)), 0u);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

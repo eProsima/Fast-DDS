@@ -2909,7 +2909,6 @@ TEST(ParticipantTests, GetParticipantNames)
 /*
  * This test checks that a topic is not created with a wrong settings.
  * 1. Check that the topic is not created if a wrong type name is provided.
- * 2. Check that the topic is not created if a non supported durability QoS is provided.
  */
 TEST(ParticipantTests, CreateTopicNegativeClauses)
 {
@@ -2928,6 +2927,34 @@ TEST(ParticipantTests, CreateTopicNegativeClauses)
     ASSERT_EQ(topic, nullptr);
 
     // Remove the participant
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
+}
+
+/*
+ * This test checks that a topic is created with a valid settings.
+ * 1. Check that the topic is created if a supported durability QoS is provided.
+ */
+TEST(ParticipantTests, CreateTopicPositiveClauses)
+{
+    // Create the participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(
+        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
+
+    // Register the type
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    // Check that the topic is created if a PERSITENT durability QoS is provided
+    TopicQos tqos;
+    Topic* topic;
+    participant->get_default_topic_qos(tqos);
+    tqos.durability().kind = PERSISTENT_DURABILITY_QOS;
+    topic = participant->create_topic("footopic", type.get_type_name(), tqos);
+    ASSERT_NE(topic, nullptr);
+
+    // Cleanup
+    ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
