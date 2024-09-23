@@ -1221,7 +1221,7 @@ bool DomainParticipantImpl::contains_entity(
 ReturnCode_t DomainParticipantImpl::get_current_time(
         fastrtps::Time_t& current_time) const
 {
-    fastdds::dds::Time_t::now(current_time);
+    fastrtps::Time_t::now(current_time);
 
     return ReturnCode_t::RETCODE_OK;
 }
