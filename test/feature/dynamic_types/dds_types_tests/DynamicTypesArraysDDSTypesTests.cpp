@@ -590,10 +590,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayOctet)
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
-void DDSTypesTest_ArrayUInt8_common()
+void DDSTypesTest_ArrayUInt8_common(
+        DynamicTypesDDSTypesTest& support)
 {
-    eprosima::fastdds::dds::DynamicTypesDDSTypesTest_DDSTypesTest_ArrayOctet_Test support;
-
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(uint8_array_struct_name);
@@ -637,7 +636,7 @@ void DDSTypesTest_ArrayUInt8_common()
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayUInt8)
 {
-    DDSTypesTest_ArrayUInt8_common();
+    DDSTypesTest_ArrayUInt8_common(*this);
 }
 
 // Regression test for redmine ticket #20878.
@@ -646,7 +645,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayUInt8_Regression20878)
     xtypes::TypeIdentifierPair regression_type_ids;
     register_ArrayOctet_type_identifier(regression_type_ids);
 
-    DDSTypesTest_ArrayUInt8_common();
+    DDSTypesTest_ArrayUInt8_common(*this);
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayChar)
