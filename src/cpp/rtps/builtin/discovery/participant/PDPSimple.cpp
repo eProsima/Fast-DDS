@@ -304,7 +304,11 @@ bool PDPSimple::createPDPEndpoints()
         secure_endpoints->secure_reader.listener_.reset(new PDPListener(this));
 
         endpoints = secure_endpoints;
-        endpoints->reader.listener_.reset(new PDPSecurityInitiatorListener(this));
+        endpoints->reader.listener_.reset(new PDPSecurityInitiatorListener(this,
+                [this](const ParticipantProxyData& participant_data)
+                {
+                    match_pdp_remote_endpoints(participant_data, false, true);
+                }));
     }
     else
 #endif  // HAVE_SECURITY
@@ -550,7 +554,7 @@ void PDPSimple::assignRemoteEndpoints(
         {
             // This participant is not secure.
             // Match PDP and other builtin endpoints.
-            match_pdp_remote_endpoints(*pdata, false);
+            match_pdp_remote_endpoints(*pdata, false, false);
             assign_low_level_remote_endpoints(*pdata, false);
         }
     }
@@ -560,8 +564,13 @@ void PDPSimple::removeRemoteEndpoints(
         ParticipantProxyData* pdata)
 {
     EPROSIMA_LOG_INFO(RTPS_PDP, "For RTPSParticipant: " << pdata->m_guid);
+    unmatch_pdp_remote_endpoints(pdata->m_guid);
+}
 
-    GUID_t guid = pdata->m_guid;
+void PDPSimple::unmatch_pdp_remote_endpoints(
+        const GUID_t& participant_guid)
+{
+    GUID_t guid = participant_guid;
 
     {
         auto endpoints = dynamic_cast<fastdds::rtps::SimplePDPEndpoints*>(builtin_endpoints_.get());
@@ -593,7 +602,8 @@ void PDPSimple::notifyAboveRemoteEndpoints(
 {
     if (notify_secure_endpoints)
     {
-        match_pdp_remote_endpoints(pdata, true);
+        unmatch_pdp_remote_endpoints(pdata.m_guid);
+        match_pdp_remote_endpoints(pdata, true, false);
     }
     else
     {
@@ -606,7 +616,7 @@ void PDPSimple::notifyAboveRemoteEndpoints(
             notify_and_maybe_ignore_new_participant(part_data, ignored);
             if (!ignored)
             {
-                match_pdp_remote_endpoints(*part_data, false);
+                match_pdp_remote_endpoints(*part_data, false, false);
                 assign_low_level_remote_endpoints(*part_data, false);
             }
         }
@@ -616,7 +626,8 @@ void PDPSimple::notifyAboveRemoteEndpoints(
 
 void PDPSimple::match_pdp_remote_endpoints(
         const ParticipantProxyData& pdata,
-        bool notify_secure_endpoints)
+        bool notify_secure_endpoints,
+        bool writer_only)
 {
 #if !HAVE_SECURITY
     static_cast<void>(notify_secure_endpoints);
@@ -653,7 +664,7 @@ void PDPSimple::match_pdp_remote_endpoints(
     }
 #endif // HAVE_SECURITY
 
-    if (0 != (endp & pdp_writer_mask))
+    if (!writer_only && (0 != (endp & pdp_writer_mask)))
     {
         auto temp_writer_data = get_temporary_writer_proxies_pool().get();
 
@@ -711,7 +722,7 @@ void PDPSimple::match_pdp_remote_endpoints(
             writer->matched_reader_add(*temp_reader_data);
         }
 
-        if (BEST_EFFORT_RELIABILITY_QOS == reliability_kind)
+        if (!writer_only && (BEST_EFFORT_RELIABILITY_QOS == reliability_kind))
         {
             endpoints->writer.writer_->unsent_changes_reset();
         }
