@@ -926,7 +926,7 @@ const TypeIdentifier TypeObjectRegistry::get_complementary_type_identifier(
             {
                 return it->second.complementary_type_id;
             }
-            else
+            else if (EK_COMPLETE == type_id._d()) // From EK_COMPLETE its EK_MINIMAL complementary can be built.
             {
                 TypeRegistryEntry minimal_entry;
                 CompleteTypeObject complete_type_object = it->second.type_object.complete();
