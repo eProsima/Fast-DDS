@@ -639,14 +639,10 @@ TEST(TransportUDP, MaliciousManipulatedDataOctetsToNextHeaderIgnore)
 /**
  * This is a regression test for redmine issue #21707.
  */
-TEST(TransportUDP, KeyOnlyBigPayloadIgnored)
+static void KeyOnlyBigPayloadIgnored(
+        PubSubWriter<KeyedHelloWorldPubSubType>& writer,
+        PubSubReader<KeyedHelloWorldPubSubType>& reader)
 {
-    // Force using UDP transport
-    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
-
-    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-
     struct KeyOnlyBigPayloadDatagram
     {
         std::array<char, 4> rtps_id{ {'R', 'T', 'P', 'S'} };
@@ -708,10 +704,11 @@ TEST(TransportUDP, KeyOnlyBigPayloadIgnored)
 
     UDPMessageSender fake_msg_sender;
 
+    // Force using UDP transport
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+
     // Set common QoS
-    reader.disable_builtin_transport().add_user_transport_to_pparams(udp_transport)
-            .history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
-    writer.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+    reader.disable_builtin_transport().add_user_transport_to_pparams(udp_transport);
 
     // Set custom reader locator so we can send malicious data to a known location
     Locator_t reader_locator;
@@ -763,6 +760,30 @@ TEST(TransportUDP, KeyOnlyBigPayloadIgnored)
     // Wait some time to let the message be processed
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
+}
+
+TEST(TransportUDP, KeyOnlyBigPayloadIgnored_Reliable)
+{
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    // Set reliability
+    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+
+    KeyOnlyBigPayloadIgnored(writer, reader);
+}
+
+TEST(TransportUDP, KeyOnlyBigPayloadIgnored_BestEffort)
+{
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    // Set reliability
+    reader.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
+    writer.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
+
+    KeyOnlyBigPayloadIgnored(writer, reader);
 }
 
 // Test for ==operator UDPTransportDescriptor is not required as it is an abstract class and in UDPv4 is same method
