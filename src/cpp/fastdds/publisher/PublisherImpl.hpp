@@ -169,6 +169,12 @@ public:
             const std::string& profile_name,
             DataWriterQos& qos) const;
 
+    ReturnCode_t get_datawriter_qos_from_xml(
+            const std::string& xml,
+            DataWriterQos& qos,
+            std::string& topic_name,
+            const std::string& profile_name = "") const;
+
     ReturnCode_t static copy_from_topic_qos(
             DataWriterQos& writer_qos,
             const TopicQos& topic_qos);

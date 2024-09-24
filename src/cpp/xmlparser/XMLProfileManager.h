@@ -148,6 +148,11 @@ public:
             fastdds::xmlparser::ParticipantAttributes& atts,
             bool log_error = true);
 
+    static XMLP_ret fill_participant_attributes_from_xml(
+            const std::string& xml,
+            fastdds::xmlparser::ParticipantAttributes& atts,
+            const std::string& profile_name = "");
+
     //!Fills participant_attributes with the default values.
     static void getDefaultParticipantAttributes(
             fastdds::xmlparser::ParticipantAttributes& participant_attributes);
@@ -183,6 +188,11 @@ public:
             fastdds::xmlparser::PublisherAttributes& atts,
             bool log_error = true);
 
+    static XMLP_ret fill_publisher_attributes_from_xml(
+            const std::string& xml,
+            fastdds::xmlparser::PublisherAttributes& atts,
+            const std::string& profile_name = "");
+
     //!Fills publisher_attributes with the default values.
     static void getDefaultPublisherAttributes(
             fastdds::xmlparser::PublisherAttributes& publisher_attributes);
@@ -198,6 +208,11 @@ public:
             const std::string& profile_name,
             fastdds::xmlparser::SubscriberAttributes& atts,
             bool log_error = true);
+
+    static XMLP_ret fill_subscriber_attributes_from_xml(
+            const std::string& xml,
+            fastdds::xmlparser::SubscriberAttributes& atts,
+            const std::string& profile_name = "");
 
     //!Fills subscriber_attributes with the default values.
     static void getDefaultSubscriberAttributes(
@@ -222,6 +237,11 @@ public:
             const std::string& profile_name,
             TopicAttributes& atts);
 
+    static XMLP_ret fill_topic_attributes_from_xml(
+            const std::string& xml,
+            fastdds::xmlparser::TopicAttributes& atts,
+            const std::string& profile_name = "");
+
     //!Fills topic_attributes with the default values.
     static void getDefaultTopicAttributes(
             TopicAttributes& topic_attributes);
@@ -245,6 +265,11 @@ public:
             const std::string& profile_name,
             fastdds::xmlparser::RequesterAttributes& atts);
 
+    static XMLP_ret fill_requester_attributes_from_xml(
+            const std::string& xml,
+            fastdds::xmlparser::RequesterAttributes& atts,
+            const std::string& profile_name = "");
+
     /**
      * Search for the profile specified and fill the structure.
      * @param profile_name Name for the profile to be used to fill the structure.
@@ -254,6 +279,11 @@ public:
     static XMLP_ret fillReplierAttributes(
             const std::string& profile_name,
             fastdds::xmlparser::ReplierAttributes& atts);
+
+    static XMLP_ret fill_replier_attributes_from_xml(
+            const std::string& xml,
+            fastdds::xmlparser::ReplierAttributes& atts,
+            const std::string& profile_name = "");
 
     /**
      * Deletes the XMLProfileManager instance.

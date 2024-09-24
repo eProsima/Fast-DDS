@@ -436,6 +436,24 @@ ReturnCode_t SubscriberImpl::get_datareader_qos_from_profile(
     return RETCODE_BAD_PARAMETER;
 }
 
+ReturnCode_t SubscriberImpl::get_datareader_qos_from_xml(
+        const std::string& xml,
+        DataReaderQos& qos,
+        std::string& topic_name,
+        const std::string& profile_name) const
+{
+    xmlparser::SubscriberAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_subscriber_attributes_from_xml(xml, attr, profile_name))
+    {
+        qos = default_datareader_qos_;
+        utils::set_qos_from_attributes(qos, attr);
+        topic_name = attr.topic.getTopicName();
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
 ReturnCode_t SubscriberImpl::copy_from_topic_qos(
         DataReaderQos& reader_qos,
         const TopicQos& topic_qos)

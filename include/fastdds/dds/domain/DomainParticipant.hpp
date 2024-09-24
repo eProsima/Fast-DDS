@@ -547,6 +547,11 @@ public:
             const std::string& profile_name,
             PublisherQos& qos) const;
 
+    FASTDDS_EXPORTED_API ReturnCode_t get_publisher_qos_from_xml(
+            const std::string& xml,
+            PublisherQos& qos,
+            const std::string& profile_name = "") const;
+
     /**
      * This operation sets a default value of the Subscriber QoS policies that will be used for newly created
      * Subscriber entities in the case where the QoS policies are defaulted in the create_subscriber operation.
@@ -600,6 +605,11 @@ public:
     FASTDDS_EXPORTED_API ReturnCode_t get_subscriber_qos_from_profile(
             const std::string& profile_name,
             SubscriberQos& qos) const;
+
+    FASTDDS_EXPORTED_API ReturnCode_t get_subscriber_qos_from_xml(
+            const std::string& xml,
+            SubscriberQos& qos,
+            const std::string& profile_name = "") const;
 
     /**
      * This operation sets a default value of the Topic QoS policies which will be used for newly created
@@ -655,6 +665,11 @@ public:
             const std::string& profile_name,
             TopicQos& qos) const;
 
+    FASTDDS_EXPORTED_API ReturnCode_t get_topic_qos_from_xml(
+            const std::string& xml,
+            TopicQos& qos,
+            const std::string& profile_name = "") const;
+
     /**
      * Fills the ReplierQos with the values of the XML profile.
      *
@@ -666,6 +681,11 @@ public:
             const std::string& profile_name,
             ReplierQos& qos) const;
 
+    FASTDDS_EXPORTED_API ReturnCode_t get_replier_qos_from_xml(
+            const std::string& xml,
+            ReplierQos& qos,
+            const std::string& profile_name = "") const;
+
     /**
      * Fills the RequesterQos with the values of the XML profile.
      *
@@ -676,6 +696,11 @@ public:
     FASTDDS_EXPORTED_API ReturnCode_t get_requester_qos_from_profile(
             const std::string& profile_name,
             RequesterQos& qos) const;
+
+    FASTDDS_EXPORTED_API ReturnCode_t get_requester_qos_from_xml(
+            const std::string& xml,
+            RequesterQos& qos,
+            const std::string& profile_name = "") const;
 
     /**
      * Retrieves the list of DomainParticipants that have been discovered in the domain and are not "ignored".

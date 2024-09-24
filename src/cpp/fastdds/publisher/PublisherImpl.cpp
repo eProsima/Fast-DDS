@@ -474,6 +474,24 @@ ReturnCode_t PublisherImpl::get_datawriter_qos_from_profile(
     return RETCODE_BAD_PARAMETER;
 }
 
+ReturnCode_t PublisherImpl::get_datawriter_qos_from_xml(
+        const std::string& xml,
+        DataWriterQos& qos,
+        std::string& topic_name,
+        const std::string& profile_name) const
+{
+    xmlparser::PublisherAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_publisher_attributes_from_xml(xml, attr, profile_name))
+    {
+        qos = default_datawriter_qos_;
+        utils::set_qos_from_attributes(qos, attr);
+        topic_name = attr.topic.getTopicName();
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
 ReturnCode_t PublisherImpl::copy_from_topic_qos(
         DataWriterQos& writer_qos,
         const TopicQos& topic_qos)

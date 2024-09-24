@@ -342,6 +342,12 @@ public:
             const std::string& profile_name,
             DataWriterQos& qos) const;
 
+    FASTDDS_EXPORTED_API ReturnCode_t get_datawriter_qos_from_xml(
+            const std::string& xml,
+            DataWriterQos& qos,
+            std::string& topic_name,
+            const std::string& profile_name = "") const;
+
     /**
      * Returns the Publisher's handle.
      *

@@ -237,6 +237,15 @@ ReturnCode_t Publisher::get_datawriter_qos_from_profile(
     return impl_->get_datawriter_qos_from_profile(profile_name, qos);
 }
 
+ReturnCode_t Publisher::get_datawriter_qos_from_xml(
+        const std::string& xml,
+        DataWriterQos& qos,
+        std::string& topic_name,
+        const std::string& profile_name) const
+{
+    return impl_->get_datawriter_qos_from_xml(xml, qos, topic_name, profile_name);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima

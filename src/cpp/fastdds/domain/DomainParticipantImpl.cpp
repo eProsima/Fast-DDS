@@ -1044,6 +1044,22 @@ ReturnCode_t DomainParticipantImpl::get_publisher_qos_from_profile(
     return RETCODE_BAD_PARAMETER;
 }
 
+ReturnCode_t DomainParticipantImpl::get_publisher_qos_from_xml(
+        const std::string& xml,
+        PublisherQos& qos,
+        const std::string& profile_name) const
+{
+    xmlparser::PublisherAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_publisher_attributes_from_xml(xml, attr, profile_name))
+    {
+        qos = default_pub_qos_;
+        utils::set_qos_from_attributes(qos, attr);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
 ReturnCode_t DomainParticipantImpl::set_default_subscriber_qos(
         const SubscriberQos& qos)
 {
@@ -1083,6 +1099,22 @@ ReturnCode_t DomainParticipantImpl::get_subscriber_qos_from_profile(
 {
     xmlparser::SubscriberAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillSubscriberAttributes(profile_name, attr))
+    {
+        qos = default_sub_qos_;
+        utils::set_qos_from_attributes(qos, attr);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantImpl::get_subscriber_qos_from_xml(
+        const std::string& xml,
+        SubscriberQos& qos,
+        const std::string& profile_name) const
+{
+    xmlparser::SubscriberAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_subscriber_attributes_from_xml(xml, attr, profile_name))
     {
         qos = default_sub_qos_;
         utils::set_qos_from_attributes(qos, attr);
@@ -1140,6 +1172,22 @@ ReturnCode_t DomainParticipantImpl::get_topic_qos_from_profile(
     return RETCODE_BAD_PARAMETER;
 }
 
+ReturnCode_t DomainParticipantImpl::get_topic_qos_from_xml(
+        const std::string& profile_name,
+        TopicQos& qos,
+        const std::string& xml) const
+{
+    xmlparser::TopicAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_topic_attributes_from_xml(xml, attr, profile_name))
+    {
+        qos = default_topic_qos_;
+        utils::set_qos_from_attributes(qos, attr);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
 ReturnCode_t DomainParticipantImpl::get_replier_qos_from_profile(
         const std::string& profile_name,
         ReplierQos& qos) const
@@ -1154,12 +1202,42 @@ ReturnCode_t DomainParticipantImpl::get_replier_qos_from_profile(
     return RETCODE_BAD_PARAMETER;
 }
 
+ReturnCode_t DomainParticipantImpl::get_replier_qos_from_xml(
+        const std::string& xml,
+        ReplierQos& qos,
+        const std::string& profile_name) const
+{
+    xmlparser::ReplierAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_replier_attributes_from_xml(xml, attr, profile_name))
+    {
+        utils::set_qos_from_attributes(qos, attr);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
 ReturnCode_t DomainParticipantImpl::get_requester_qos_from_profile(
         const std::string& profile_name,
         RequesterQos& qos) const
 {
     xmlparser::RequesterAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillRequesterAttributes(profile_name, attr))
+    {
+        utils::set_qos_from_attributes(qos, attr);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantImpl::get_requester_qos_from_xml(
+        const std::string& xml,
+        RequesterQos& qos,
+        const std::string& profile_name) const
+{
+    xmlparser::RequesterAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_requester_attributes_from_xml(xml, attr, profile_name))
     {
         utils::set_qos_from_attributes(qos, attr);
         return RETCODE_OK;
