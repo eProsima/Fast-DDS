@@ -45,6 +45,7 @@ constexpr const char* double_array_struct_name = "ArrayDouble";
 constexpr const char* longdouble_array_struct_name = "ArrayLongDouble";
 constexpr const char* bool_array_struct_name = "ArrayBoolean";
 constexpr const char* byte_array_struct_name = "ArrayOctet";
+constexpr const char* uint8_array_struct_name = "ArrayUInt8";
 constexpr const char* char_array_struct_name = "ArrayChar";
 constexpr const char* wchar_array_struct_name = "ArrayWChar";
 constexpr const char* string_array_struct_name = "ArrayString";
@@ -98,6 +99,7 @@ constexpr const char* var_double_array = "var_array_double";
 constexpr const char* var_longdouble_array = "var_array_longdouble";
 constexpr const char* var_bool_array = "var_array_boolean";
 constexpr const char* var_byte_array = "var_array_octet";
+constexpr const char* var_uint8_array = "var_array_uint8";
 constexpr const char* var_char_array = "var_array_char";
 constexpr const char* var_wchar_array = "var_array_wchar";
 constexpr const char* var_string_array = "var_array_string";
@@ -586,6 +588,64 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayOctet)
     check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
+}
+
+void DDSTypesTest_ArrayUInt8_common(
+        DynamicTypesDDSTypesTest& support)
+{
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_STRUCTURE);
+    type_descriptor->name(uint8_array_struct_name);
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    ASSERT_TRUE(type_builder);
+
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->name(var_uint8_array);
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_UINT8), {10})->build());
+    type_builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type struct_type {type_builder->build()};
+    DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
+    ASSERT_TRUE(data);
+
+    UInt8Seq value = {0, 1, 2, 4, 8, 16, 32, 64, 128, 255};
+    UInt8Seq test_value;
+    EXPECT_EQ(data->set_uint8_values(data->get_member_id_by_name(var_uint8_array), value), RETCODE_OK);
+    EXPECT_EQ(data->get_uint8_values(test_value, data->get_member_id_by_name(var_uint8_array)), RETCODE_OK);
+    EXPECT_EQ(value, test_value);
+
+    for (auto encoding : encodings)
+    {
+        ArrayUInt8 struct_data;
+        TypeSupport static_pubsubType {new ArrayUInt8PubSubType()};
+        support.check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+        EXPECT_EQ(struct_data.var_array_uint8().size(), test_value.size());
+        for (size_t i = 0; i < test_value.size(); ++i)
+        {
+            EXPECT_EQ(struct_data.var_array_uint8()[i], test_value[i]);
+        }
+    }
+
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_ArrayUInt8_type_identifier(static_type_ids);
+    support.check_typeobject_registry(struct_type, static_type_ids);
+
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
+}
+
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayUInt8)
+{
+    DDSTypesTest_ArrayUInt8_common(*this);
+}
+
+// Regression test for redmine ticket #20878.
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayUInt8_Regression20878)
+{
+    xtypes::TypeIdentifierPair regression_type_ids;
+    register_ArrayOctet_type_identifier(regression_type_ids);
+
+    DDSTypesTest_ArrayUInt8_common(*this);
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayChar)

@@ -40,6 +40,7 @@
 
 typedef int16_t alias_short;
 
+
 namespace const_module1
 {
     typedef int16_t alias_short_moduled;
