@@ -210,7 +210,7 @@ void TypeLookupRequestListener::check_get_types_request(
     if (0 == request.type_ids().size())
     {
         EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER,
-                "Request no contains any type identifier.");
+                "Received request with no type identifiers.");
     }
 
     // Iterate through requested type_ids

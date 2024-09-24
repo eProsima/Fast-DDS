@@ -151,7 +151,8 @@ public:
                 eprosima::ProxyPool<eprosima::fastdds::rtps::ReaderProxyData>::smart_ptr&,
                 const AsyncGetTypeReaderCallback&));
 
-    MOCK_METHOD1(notify_callbacks, void(
+    MOCK_METHOD2(notify_callbacks, void(
+                ReturnCode_t,
                 const xtypes::TypeIdentfierWithSize&));
 
     MOCK_METHOD2(add_async_get_type_request, bool(
