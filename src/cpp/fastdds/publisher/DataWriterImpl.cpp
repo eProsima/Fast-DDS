@@ -1556,7 +1556,8 @@ bool DataWriterImpl::lifespan_expired()
     CacheChange_t* earliest_change;
     while (history_.get_earliest_change(&earliest_change))
     {
-        fastrtps::Time_t expiration_ts(earliest_change->sourceTimestamp.seconds(), earliest_change->sourceTimestamp.nanosec());
+        fastrtps::Time_t expiration_ts(earliest_change->sourceTimestamp.seconds(),
+                earliest_change->sourceTimestamp.nanosec());
         expiration_ts = expiration_ts + qos_.lifespan().duration;
 
         // Check that the earliest change has expired (the change which started the timer could have been removed from the history)
