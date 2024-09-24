@@ -618,6 +618,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_wrong_replyid)
     tlm_->async_get_type_requests_.emplace(valid_sampleidentity(), tidws);
 
     TypeLookup_Reply reply;
+    reply.header().relatedRequestId(valid_sampleidentity());
     reply.return_value()._default();
     ReplyWithServerGUID reply_with_guid;
     reply_with_guid.reply = reply;
@@ -632,7 +633,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_wrong_replyid)
 TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_getTypes_empty)
 {
     MockLogConsumer* log_consumer =
-            setup_expect_log_msg("TYPELOOKUP_SERVICE_REPLY_LISTENER", "Reply no contains any type.");
+            setup_expect_log_msg("TYPELOOKUP_SERVICE_REPLY_LISTENER", "Received reply with no types.");
 
     TypeIdentfierWithSize tidws;
     tlm_->async_get_type_requests_.emplace(valid_sampleidentity(), tidws);
@@ -852,7 +853,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupRequestListener_getTypes_empty)
 {
     MockLogConsumer* log_consumer =
             setup_expect_log_msg("TYPELOOKUP_SERVICE_REQUEST_LISTENER",
-                    "Request no contains any type identifier.");
+                    "Received request with no type identifiers.");
 
     TypeIdentfierWithSize tidws;
     tlm_->async_get_type_requests_.emplace(valid_sampleidentity(), tidws);

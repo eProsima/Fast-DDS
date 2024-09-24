@@ -218,6 +218,7 @@ void TypeLookupReplyListener::check_get_types_reply(
     }
     else
     {
+        typelookup_manager_->notify_callbacks(RETCODE_NO_DATA, type_id);
         EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REPLY_LISTENER,
                 "Received reply with no types.");
         register_result = RETCODE_ERROR;
