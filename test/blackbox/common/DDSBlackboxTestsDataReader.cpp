@@ -535,6 +535,299 @@ TEST(DDSDataReader, datareader_qos_use_topic_qos)
     ASSERT_EQ(control_qos, test_qos);
 }
 
+bool validate_publication_builtin_topic_data(
+        const eprosima::fastdds::dds::builtin::PublicationBuiltinTopicData& pubdata,
+        const eprosima::fastdds::dds::DataWriter& datawriter)
+{
+    bool ret = true;
+
+    auto dw_qos = datawriter.get_qos();
+    auto pub_qos = datawriter.get_publisher()->get_qos();
+
+    eprosima::fastdds::dds::builtin::BuiltinTopicKey_t dw_key, part_key;
+    GuidPrefix_t guid_prefix = datawriter.get_publisher()->get_participant()->guid().guidPrefix;
+
+    // This conversions may be included later in utils
+    dw_key.value[0] = 0;
+    dw_key.value[1] = 0;
+    dw_key.value[2] = static_cast<uint32_t>(datawriter.guid().entityId.value[0]) << 24
+            | static_cast<uint32_t>(datawriter.guid().entityId.value[1]) << 16
+            | static_cast<uint32_t>(datawriter.guid().entityId.value[2]) << 8
+            | static_cast<uint32_t>(datawriter.guid().entityId.value[3]);
+
+    part_key.value[0] = static_cast<uint32_t>(guid_prefix.value[0]) << 24
+            | static_cast<uint32_t>(guid_prefix.value[1]) << 16
+            | static_cast<uint32_t>(guid_prefix.value[2]) << 8
+            | static_cast<uint32_t>(guid_prefix.value[3]);
+    part_key.value[1] = static_cast<uint32_t>(guid_prefix.value[4]) << 24
+            | static_cast<uint32_t>(guid_prefix.value[5]) << 16
+            | static_cast<uint32_t>(guid_prefix.value[6]) << 8
+            | static_cast<uint32_t>(guid_prefix.value[7]);
+    part_key.value[2] = static_cast<uint32_t>(guid_prefix.value[8]) << 24
+            | static_cast<uint32_t>(guid_prefix.value[9]) << 16
+            | static_cast<uint32_t>(guid_prefix.value[10]) << 8
+            | static_cast<uint32_t>(guid_prefix.value[11]);
+
+    ret &= (0 == memcmp(pubdata.key.value, dw_key.value, sizeof(eprosima::fastdds::dds::builtin::BuiltinTopicKey_t)));
+    ret &=
+            (0 ==
+            memcmp(pubdata.participant_key.value, part_key.value,
+            sizeof(eprosima::fastdds::dds::builtin::BuiltinTopicKey_t)));
+    ret &= (pubdata.topic_name == datawriter.get_topic()->get_name());
+    ret &= (pubdata.type_name == datawriter.get_topic()->get_type_name());
+
+    // DataWriter Qos
+    ret &= (pubdata.durability == dw_qos.durability());
+    ret &= (pubdata.durability_service == dw_qos.durability_service());
+    ret &= (pubdata.deadline == dw_qos.deadline());
+    ret &= (pubdata.latency_budget == dw_qos.latency_budget());
+    ret &= (pubdata.liveliness == dw_qos.liveliness());
+    ret &= (pubdata.reliability == dw_qos.reliability());
+    ret &= (pubdata.lifespan == dw_qos.lifespan());
+    ret &= (pubdata.user_data == dw_qos.user_data());
+    ret &= (pubdata.ownership == dw_qos.ownership());
+    ret &= (pubdata.ownership_strength == dw_qos.ownership_strength());
+    ret &= (pubdata.destination_order == dw_qos.destination_order());
+
+    // Publisher Qos
+    ret &= (pubdata.presentation == pub_qos.presentation());
+    ret &= (pubdata.partition == pub_qos.partition());
+    // topicdata not implemented
+    ret &= (pubdata.group_data == pub_qos.group_data());
+
+    return ret;
+}
+
+/**
+ * Refers to DDS-DR-API-GMPD-01 from the test plan.
+ *
+ * get_matched_publication_data() must return RETCODE_BAD_PARAMETER
+ * if the publication is not matched.
+ */
+TEST(DDSDataReader, datareader_get_matched_publication_data_bad_parameter)
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer_1(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer_2(TEST_TOPIC_NAME);
+
+    eprosima::fastdds::dds::builtin::PublicationBuiltinTopicData pubdata;
+
+    reader.reliability(RELIABLE_RELIABILITY_QOS)
+            .init();
+
+    writer_1.reliability(BEST_EFFORT_RELIABILITY_QOS)
+            .init();
+    writer_2.ownership_strength(10)
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer_1.isInitialized());
+    ASSERT_TRUE(writer_2.isInitialized());
+
+    // Reader should not be matched with any writer
+    reader.wait_discovery(std::chrono::seconds(2), 2);
+
+    ASSERT_TRUE(!reader.is_matched());
+
+    auto& native_reader = reader.get_native_reader();
+
+    InstanceHandle_t w1_handle = writer_1.get_native_writer().get_instance_handle();
+    ReturnCode_t ret = native_reader.get_matched_publication_data(pubdata, w1_handle);
+
+    ASSERT_EQ(ret, ReturnCode_t::RETCODE_BAD_PARAMETER);
+
+    InstanceHandle_t w2_handle = writer_2.get_native_writer().get_instance_handle();
+    ret = native_reader.get_matched_publication_data(pubdata, w2_handle);
+
+    ASSERT_EQ(ret, ReturnCode_t::RETCODE_BAD_PARAMETER);
+}
+
+/**
+ * Refers to DDS-DR-API-GMPD-02 from the test plan.
+ *
+ * The operation must succeed when the publication is matched and correctly
+ * retrieve the publication data. Parameterize the test for different transports.
+ */
+TEST_P(DDSDataReader, datareader_get_matched_publication_data_correctly_behaves)
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer_1(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer_2(TEST_TOPIC_NAME);
+
+    eprosima::fastdds::dds::builtin::PublicationBuiltinTopicData w1_pubdata, w2_pubdata;
+
+    reader.init();
+
+    writer_1.init();
+    writer_2.reliability(BEST_EFFORT_RELIABILITY_QOS)
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer_1.isInitialized());
+    ASSERT_TRUE(writer_2.isInitialized());
+
+    // Reader must match with both writers
+    reader.wait_discovery(std::chrono::seconds::zero(), 2);
+
+    ASSERT_EQ(reader.get_matched(), 2u);
+
+    auto& native_reader = reader.get_native_reader();
+
+    InstanceHandle_t w1_handle = writer_1.get_native_writer().get_instance_handle();
+    ReturnCode_t ret = native_reader.get_matched_publication_data(w1_pubdata, w1_handle);
+
+    ASSERT_EQ(ret, ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(validate_publication_builtin_topic_data(w1_pubdata, writer_1.get_native_writer()));
+
+    InstanceHandle_t w2_handle = writer_1.get_native_writer().get_instance_handle();
+    ret = native_reader.get_matched_publication_data(w2_pubdata, w2_handle);
+
+    ASSERT_EQ(ret, ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(validate_publication_builtin_topic_data(w2_pubdata, writer_2.get_native_writer()));
+}
+
+/**
+ * Refers to DDS-DR-API-GMP-01 from the test plan.
+ *
+ * get_matched_publications() must return RETCODE_OK
+ * with an empty list if no DataWriters are matched.
+ */
+TEST(DDSDataReader, datareader_get_matched_publications_ok_empty_list)
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer_1(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer_2(TEST_TOPIC_NAME);
+
+    std::vector<InstanceHandle_t> pub_handles;
+
+    reader.reliability(RELIABLE_RELIABILITY_QOS)
+            .init();
+
+    writer_1.reliability(BEST_EFFORT_RELIABILITY_QOS)
+            .init();
+
+    writer_2.ownership_strength(10)
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer_1.isInitialized());
+    ASSERT_TRUE(writer_2.isInitialized());
+
+    // Reader should not be matched with any writer
+    reader.wait_discovery(std::chrono::seconds(2), 2);
+    ASSERT_FALSE(reader.is_matched());
+
+    auto& native_reader = reader.get_native_reader();
+    ReturnCode_t ret = native_reader.get_matched_publications(pub_handles);
+
+    ASSERT_EQ(ret, ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(pub_handles.size(), 0u);
+}
+
+/**
+ * Refers to DDS-DR-API-GMP-02 from the test plan.
+ *
+ * get_matched_publications() must provide the correct list of matched publication handles.
+ * Parameterize the test for different transports.
+ */
+TEST_P(DDSDataReader, datareader_get_matched_publications_correctly_behaves)
+{
+    const size_t num_writers = 5;
+
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    std::vector<std::unique_ptr<PubSubWriter<HelloWorldPubSubType>>> writers;
+    std::vector<InstanceHandle_t> expected_pub_handles;
+    std::vector<InstanceHandle_t> pub_handles;
+
+    writers.reserve(num_writers);
+    pub_handles.reserve(num_writers);
+
+    reader.reliability(RELIABLE_RELIABILITY_QOS)
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    for (size_t i = 0; i < num_writers; ++i)
+    {
+        writers.emplace_back(new PubSubWriter<HelloWorldPubSubType>(TEST_TOPIC_NAME));
+        writers.back()->init();
+        ASSERT_TRUE(writers.back()->isInitialized());
+        expected_pub_handles.emplace_back(writers.back()->get_native_writer().get_instance_handle());
+    }
+
+    // Wait for discovery
+    reader.wait_discovery(std::chrono::seconds::zero(), num_writers);
+    ASSERT_EQ(reader.get_matched(), num_writers);
+
+    auto& native_reader = reader.get_native_reader();
+    ReturnCode_t ret = native_reader.get_matched_publications(pub_handles);
+
+    // Check that the list of matched publication handles is correct
+    ASSERT_EQ(ret, ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(pub_handles.size(), num_writers);
+    ASSERT_TRUE(std::is_permutation(pub_handles.begin(), pub_handles.end(), expected_pub_handles.begin()));
+
+    // Remove two writers and check that the list of matched publication handles is updated
+    writers.pop_back();
+    writers.pop_back();
+    expected_pub_handles.pop_back();
+    expected_pub_handles.pop_back();
+
+    // Wait for undiscovery
+    reader.wait_writer_undiscovery(static_cast<unsigned int>(num_writers - 2));
+
+    pub_handles.clear();
+    ret = native_reader.get_matched_publications(pub_handles);
+    ASSERT_EQ(ret, ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(pub_handles.size(), static_cast<size_t>(num_writers - 2));
+    ASSERT_TRUE(std::is_permutation(pub_handles.begin(), pub_handles.end(), expected_pub_handles.begin()));
+}
+
+/**
+ * Refers to DDS-DR-API-GMP-03 from the test plan.
+ *
+ * The operation must provide the correct list of matched publication handles in multiple
+ * participants scenario. Parameterize the test for different transports.
+ */
+TEST_P(DDSDataReader, datareader_get_matched_publications_multiple_participants_correctly_behave)
+{
+    PubSubParticipant<HelloWorldPubSubType> part_1(1, 1, 1, 1);
+    PubSubParticipant<HelloWorldPubSubType> part_2(1, 1, 1, 1);
+
+    part_1.sub_topic_name(TEST_TOPIC_NAME + "_1");
+    part_2.pub_topic_name(TEST_TOPIC_NAME + "_1");
+
+    ASSERT_TRUE(part_1.init_participant());
+    ASSERT_TRUE(part_1.init_publisher(0));
+    ASSERT_TRUE(part_1.init_subscriber(0));
+
+    ASSERT_TRUE(part_2.init_participant());
+    ASSERT_TRUE(part_2.init_subscriber(0));
+    ASSERT_TRUE(part_2.init_publisher(0));
+
+    part_1.pub_wait_discovery();
+    part_1.sub_wait_discovery();
+
+    part_2.pub_wait_discovery();
+    part_2.sub_wait_discovery();
+
+    auto& reader_p1 = part_1.get_native_reader(0);
+    auto& reader_p2 = part_2.get_native_reader(0);
+
+    std::vector<InstanceHandle_t> pub_handles_p1;
+    std::vector<InstanceHandle_t> pub_handles_p2;
+
+    ReturnCode_t ret = reader_p1.get_matched_publications(pub_handles_p1);
+    ASSERT_EQ(ret, ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(pub_handles_p1.size(), 1u);
+    ASSERT_EQ(pub_handles_p1[0], part_2.get_native_writer(0).get_instance_handle());
+
+    ret = reader_p2.get_matched_publications(pub_handles_p2);
+    ASSERT_EQ(ret, ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(pub_handles_p2.size(), 1u);
+    ASSERT_EQ(pub_handles_p2[0], part_1.get_native_writer(0).get_instance_handle());
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
