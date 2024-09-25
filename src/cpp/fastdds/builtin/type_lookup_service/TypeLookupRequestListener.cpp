@@ -207,6 +207,12 @@ void TypeLookupRequestListener::check_get_types_request(
     xtypes::TypeIdentifier complete_id;
     xtypes::TypeIdentifier minimal_id;
 
+    if (0 == request.type_ids().size())
+    {
+        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER,
+                "Received request with no type identifiers.");
+    }
+
     // Iterate through requested type_ids
     for (const xtypes::TypeIdentifier& type_id : request.type_ids())
     {
@@ -280,19 +286,19 @@ void TypeLookupRequestListener::check_get_type_dependencies_request(
         SampleIdentity request_id,
         const TypeLookup_getTypeDependencies_In& request)
 {
+    std::unordered_set<xtypes::TypeIdentfierWithSize>* type_dependencies_ptr {nullptr};
     std::unordered_set<xtypes::TypeIdentfierWithSize> type_dependencies;
     ReturnCode_t type_dependencies_result = RETCODE_ERROR;
     if (!request.type_ids().empty())
     {
         // Check if the received request has been done before and needed a continuation point
-        std::lock_guard<std::mutex> lock(requests_with_continuation_mutex_);
         if (!request.continuation_point().empty())
         {
             auto requests_it = requests_with_continuation_.find(request.type_ids());
             if (requests_it != requests_with_continuation_.end())
             {
                 // Get the dependencies without checking the registry
-                type_dependencies = requests_it->second;
+                type_dependencies_ptr = &requests_it->second;
                 type_dependencies_result = RETCODE_OK;
             }
             else
@@ -313,9 +319,18 @@ void TypeLookupRequestListener::check_get_type_dependencies_request(
             // If there are too many dependent types, store the type dependencies for future requests
             if (type_dependencies_result == RETCODE_OK && type_dependencies.size() > MAX_DEPENDENCIES_PER_REPLY)
             {
-                requests_with_continuation_.emplace(request.type_ids(), type_dependencies);
+                auto ret = requests_with_continuation_.emplace(request.type_ids(), std::move(type_dependencies));
+                type_dependencies_ptr = &ret.first->second;
+            }
+            else
+            {
+                type_dependencies_ptr = &type_dependencies;
             }
         }
+    }
+    else
+    {
+        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER, "Type dependencies request is empty.");
     }
 
     // Handle the result based on the type_dependencies_result
@@ -323,7 +338,7 @@ void TypeLookupRequestListener::check_get_type_dependencies_request(
     {
         // Prepare and send the reply for successful operation
         TypeLookup_getTypeDependencies_Out out = prepare_get_type_dependencies_response(
-            request.type_ids(), type_dependencies, request.continuation_point());
+            request.type_ids(), *type_dependencies_ptr, request.continuation_point());
         answer_request(request_id, rpc::RemoteExceptionCode_t::REMOTE_EX_OK, out);
     }
     else if (RETCODE_NO_DATA == type_dependencies_result)
@@ -378,7 +393,6 @@ TypeLookup_getTypeDependencies_Out TypeLookupRequestListener::prepare_get_type_d
         if ((start_index + MAX_DEPENDENCIES_PER_REPLY) > type_dependencies.size())
         {
             // If all dependent types have been sent, remove from map
-            std::lock_guard<std::mutex> lock(requests_with_continuation_mutex_);
             auto requests_it = requests_with_continuation_.find(id_seq);
             if (requests_it != requests_with_continuation_.end())
             {

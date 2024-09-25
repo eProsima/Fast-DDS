@@ -1,0 +1,25 @@
+{
+    "test_cases": [
+        {
+            "TestCase": "Case_bitsets_BitsetStruct",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "BitsetStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        }
+    ]
+}

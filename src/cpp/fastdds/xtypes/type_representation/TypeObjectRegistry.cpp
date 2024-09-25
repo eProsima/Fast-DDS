@@ -918,11 +918,47 @@ const TypeIdentifier TypeObjectRegistry::get_complementary_type_identifier(
 {
     if (TypeObjectUtils::is_direct_hash_type_identifier(type_id))
     {
-        std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
+        std::unique_lock<std::mutex> lock(type_object_registry_mutex_);
         auto it = type_registry_entries_.find(type_id);
         if (type_registry_entries_.end() != it)
         {
-            return it->second.complementary_type_id;
+            if (TK_NONE != it->second.complementary_type_id._d())
+            {
+                return it->second.complementary_type_id;
+            }
+            else if (EK_COMPLETE == type_id._d()) // From EK_COMPLETE its EK_MINIMAL complementary can be built.
+            {
+                TypeRegistryEntry minimal_entry;
+                CompleteTypeObject complete_type_object = it->second.type_object.complete();
+                lock.unlock();
+                minimal_entry.type_object = build_minimal_from_complete_type_object(complete_type_object);
+                minimal_entry.complementary_type_id = type_id;
+                TypeIdentifier minimal_type_id = calculate_type_identifier(
+                    minimal_entry.type_object,
+                    minimal_entry.type_object_serialized_size);
+
+                lock.lock();
+                auto min_entry_result {type_registry_entries_.insert(
+                                           {minimal_type_id, minimal_entry})};
+                if (!min_entry_result.second)
+                {
+                    EPROSIMA_LOG_INFO(
+                        XTYPES_TYPE_REPRESENTATION,
+                        "Minimal type identifier already registered his EK_MINIMAL remotely.");
+                }
+                it = type_registry_entries_.find(type_id);
+                assert(type_registry_entries_.end() != it);
+                it->second.complementary_type_id = minimal_type_id;
+
+                return minimal_type_id;
+            }
+        }
+        else
+        {
+            EPROSIMA_LOG_WARNING(
+                XTYPES_TYPE_REPRESENTATION,
+                "Complete type identifier was not registered previously.");
+
         }
     }
     return type_id;
@@ -1375,12 +1411,7 @@ const TypeIdentifier TypeObjectRegistry::minimal_from_complete_type_identifier(
     switch (type_id._d()){
         case EK_COMPLETE:
         {
-            std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
-            auto it = type_registry_entries_.find(type_id);
-            if (type_registry_entries_.end() != it)
-            {
-                return it->second.complementary_type_id;
-            }
+            return get_complementary_type_identifier(type_id);
         }
         break;
         case TI_PLAIN_SEQUENCE_SMALL:

@@ -3,15 +3,17 @@
 set -e
 
 files_to_exclude=(
-    )
+    './thirdparty/dds-types-test/IDL/relative_path_include.idl' # Relative path not working in current location.
+)
 
 files_not_needing_typeobject=(
     './include/fastdds/dds/xtypes/type_representation/detail/dds-xtypes_typeobject.idl'
     './src/cpp/fastdds/builtin/type_lookup_service/detail/rpc_types.idl'
     './src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.idl'
+    './test/dds/xtypes/BaseCasesIDLs/XtypesTestsTypeNoTypeObject.idl'
     './thirdparty/dds-types-test/IDL/declarations.idl'
     './thirdparty/dds-types-test/IDL/external.idl'
-    )
+)
 
 files_needing_case_sensitive=(
     )
@@ -58,13 +60,13 @@ files_needing_output_dir=(
     './thirdparty/dds-types-test/IDL/strings.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/structures.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/unions.idl|../../../test/dds-types-test'
-    )
+)
 
 files_needing_no_typesupport=(
     './include/fastdds/dds/core/detail/DDSReturnCode.idl'
     './include/fastdds/dds/core/detail/DDSSecurityReturnCode.idl'
     './include/fastdds/dds/xtypes/dynamic_types/detail/dynamic_language_binding.idl'
-    )
+)
 
 red='\E[1;31m'
 yellow='\E[1;33m'
@@ -84,12 +86,11 @@ fi
 
 readarray -d '' idl_files < <(find . -iname \*.idl -print0)
 
-for del in ${files_to_exclude[@]}
-do
-    idl_files=("${idl_files[@]/$del}")
+for del in ${files_to_exclude[@]}; do
+    idl_files=("${idl_files[@]/$del/}")
 done
 
-idl_files=(${idl_files[@]/$files_to_exclude})
+idl_files=(${idl_files[@]/$files_to_exclude/})
 
 ret_value=0
 
@@ -113,7 +114,7 @@ for idl_file in "${idl_files[@]}"; do
     not_processed=true
     for od_entry in ${files_needing_output_dir[@]}; do
         if [[ $od_entry = $idl_file\|* ]]; then
-            not_processed=false;
+            not_processed=false
             od_entry_split=(${od_entry//\|/ })
             for od_entry_split_element in ${od_entry_split[@]:1}; do
                 od_arg="-d ${od_entry_split_element}"
@@ -123,7 +124,7 @@ for idl_file in "${idl_files[@]}"; do
         fi
     done
 
-    if $not_processed ; then
+    if $not_processed; then
         fastddsgen -replace -genapi $to_arg $cs_arg $nosupport_arg "$file_from_gen" -no-dependencies
     fi
 

@@ -176,9 +176,6 @@ protected:
     //! A pointer to the typelookup manager.
     TypeLookupManager* typelookup_manager_;
 
-    //! Mutex to protect access to requests_with_continuation_.
-    std::mutex requests_with_continuation_mutex_;
-
     //! Collection of the requests that needed continuation points.
     std::unordered_map<xtypes::TypeIdentifierSeq, std::unordered_set<xtypes::TypeIdentfierWithSize>>
     requests_with_continuation_;

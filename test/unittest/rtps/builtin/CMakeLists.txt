@@ -66,8 +66,8 @@ target_compile_definitions(BuiltinDataSerializationTests PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(BuiltinDataSerializationTests PRIVATE
-    ${PROJECT_SOURCE_DIR}/test/mock/dds/TypeObjectRegistry
-    ${PROJECT_SOURCE_DIR}/test/mock/dds/TypeObjectUtils
+    ${PROJECT_SOURCE_DIR}/test/mock/xtypes/TypeObjectRegistry
+    ${PROJECT_SOURCE_DIR}/test/mock/xtypes/TypeObjectUtils
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/NetworkFactory
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
