@@ -877,7 +877,10 @@ bool MessageReceiver::proc_Submsg_Data(
             {
                 if (payload_size <= PARAMETER_KEY_HASH_LENGTH)
                 {
-                    memcpy(ch.instanceHandle.value, &msg->buffer[msg->pos], payload_size);
+                    if (!ch.instanceHandle.isDefined())
+                    {
+                        memcpy(ch.instanceHandle.value, &msg->buffer[msg->pos], payload_size);
+                    }
                 }
                 else
                 {
