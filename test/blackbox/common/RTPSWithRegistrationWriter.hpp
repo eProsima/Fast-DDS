@@ -573,6 +573,26 @@ public:
         return writer_->getGuid();
     }
 
+    eprosima::fastrtps::rtps::RTPSWriter& get_native_writer() const
+    {
+        return *writer_;
+    }
+
+    eprosima::fastrtps::WriterQos& get_writerqos()
+    {
+        return writer_qos_;
+    }
+
+    eprosima::fastrtps::TopicAttributes& get_topic_attributes()
+    {
+        return topic_attr_;
+    }
+
+    eprosima::fastrtps::rtps::RTPSParticipant* get_rtps_participant()
+    {
+        return participant_;
+    }
+
 private:
 
     void on_reader_discovery(

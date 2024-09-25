@@ -551,6 +551,21 @@ public:
         return *reader_;
     }
 
+    eprosima::fastrtps::ReaderQos& get_readerqos()
+    {
+        return reader_qos_;
+    }
+
+    eprosima::fastrtps::TopicAttributes& get_topic_attributes()
+    {
+        return topic_attr_;
+    }
+
+    eprosima::fastrtps::rtps::RTPSParticipant* get_rtps_participant()
+    {
+        return participant_;
+    }
+
 private:
 
     void receive_one(

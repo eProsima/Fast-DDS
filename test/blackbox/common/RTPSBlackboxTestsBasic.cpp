@@ -21,6 +21,9 @@
 
 #include <gtest/gtest.h>
 
+#include <fastdds/dds/builtin/topic/BuiltinTopicKey.hpp>
+#include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
+#include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
@@ -1274,6 +1277,167 @@ TEST(RTPS, max_output_message_size_writer)
     reader.block_for_all(std::chrono::seconds(1));
     EXPECT_EQ(reader.getReceivedCount(), 1u);
 
+}
+
+bool validate_publication_builtin_topic_data(
+        const eprosima::fastdds::dds::builtin::PublicationBuiltinTopicData& pubdata,
+        const RTPSWriter& writer,
+        const TopicAttributes& topic_atts,
+        const WriterQos& writer_qos,
+        const GUID_t& participant_guid)
+{
+    bool ret = true;
+
+    eprosima::fastdds::dds::builtin::BuiltinTopicKey_t w_key, part_key;
+    GuidPrefix_t guid_prefix = participant_guid.guidPrefix;
+
+    // This conversions may be included later in utils
+    w_key.value[0] = 0;
+    w_key.value[1] = 0;
+    w_key.value[2] = static_cast<uint32_t>(writer.getGuid().entityId.value[0]) << 24
+            | static_cast<uint32_t>(writer.getGuid().entityId.value[1]) << 16
+            | static_cast<uint32_t>(writer.getGuid().entityId.value[2]) << 8
+            | static_cast<uint32_t>(writer.getGuid().entityId.value[3]);
+
+    part_key.value[0] = static_cast<uint32_t>(guid_prefix.value[0]) << 24
+            | static_cast<uint32_t>(guid_prefix.value[1]) << 16
+            | static_cast<uint32_t>(guid_prefix.value[2]) << 8
+            | static_cast<uint32_t>(guid_prefix.value[3]);
+    part_key.value[1] = static_cast<uint32_t>(guid_prefix.value[4]) << 24
+            | static_cast<uint32_t>(guid_prefix.value[5]) << 16
+            | static_cast<uint32_t>(guid_prefix.value[6]) << 8
+            | static_cast<uint32_t>(guid_prefix.value[7]);
+    part_key.value[2] = static_cast<uint32_t>(guid_prefix.value[8]) << 24
+            | static_cast<uint32_t>(guid_prefix.value[9]) << 16
+            | static_cast<uint32_t>(guid_prefix.value[10]) << 8
+            | static_cast<uint32_t>(guid_prefix.value[11]);
+
+    ret &= (0 == memcmp(pubdata.key.value, w_key.value, sizeof(eprosima::fastdds::dds::builtin::BuiltinTopicKey_t)));
+    ret &=
+            (0 ==
+            memcmp(pubdata.participant_key.value, part_key.value,
+            sizeof(eprosima::fastdds::dds::builtin::BuiltinTopicKey_t)));
+    ret &= (pubdata.topic_name == topic_atts.topicName.to_string());
+    ret &= (pubdata.type_name == topic_atts.topicDataType.to_string());
+
+    // Writer Qos
+    ret &= (pubdata.durability == writer_qos.m_durability);
+    ret &= (pubdata.durability_service == writer_qos.m_durabilityService);
+    ret &= (pubdata.deadline == writer_qos.m_deadline);
+    ret &= (pubdata.latency_budget == writer_qos.m_latencyBudget);
+    ret &= (pubdata.liveliness == writer_qos.m_liveliness);
+    ret &= (pubdata.reliability == writer_qos.m_reliability);
+    ret &= (pubdata.lifespan == writer_qos.m_lifespan);
+    ret &= (pubdata.user_data == writer_qos.m_userData);
+    ret &= (pubdata.ownership == writer_qos.m_ownership);
+    ret &= (pubdata.ownership_strength == writer_qos.m_ownershipStrength);
+    ret &= (pubdata.destination_order == writer_qos.m_destinationOrder);
+
+    // Publisher Qos
+    ret &= (pubdata.presentation == writer_qos.m_presentation);
+    ret &= (pubdata.partition == writer_qos.m_partition);
+    // topicdata not implemented
+    ret &= (pubdata.group_data == writer_qos.m_groupData);
+
+    return ret;
+}
+
+bool validate_subscription_builtin_topic_data(
+        const eprosima::fastdds::dds::builtin::SubscriptionBuiltinTopicData& subdata,
+        const RTPSReader& reader,
+        const TopicAttributes& topic_atts,
+        const ReaderQos& reader_qos,
+        const GUID_t& participant_guid)
+{
+    bool ret = true;
+
+    eprosima::fastdds::dds::builtin::BuiltinTopicKey_t r_key, part_key;
+    eprosima::fastrtps::rtps::GuidPrefix_t part_guid_prefix = participant_guid.guidPrefix;
+
+    // This conversions may be included later in utils
+    r_key.value[0] = 0;
+    r_key.value[1] = 0;
+    r_key.value[2] = static_cast<uint32_t>(reader.getGuid().entityId.value[0]) << 24
+            | static_cast<uint32_t>(reader.getGuid().entityId.value[1]) << 16
+            | static_cast<uint32_t>(reader.getGuid().entityId.value[2]) << 8
+            | static_cast<uint32_t>(reader.getGuid().entityId.value[3]);
+
+    part_key.value[0] = static_cast<uint32_t>(part_guid_prefix.value[0]) << 24
+            | static_cast<uint32_t>(part_guid_prefix.value[1]) << 16
+            | static_cast<uint32_t>(part_guid_prefix.value[2]) << 8
+            | static_cast<uint32_t>(part_guid_prefix.value[3]);
+    part_key.value[1] = static_cast<uint32_t>(part_guid_prefix.value[4]) << 24
+            | static_cast<uint32_t>(part_guid_prefix.value[5]) << 16
+            | static_cast<uint32_t>(part_guid_prefix.value[6]) << 8
+            | static_cast<uint32_t>(part_guid_prefix.value[7]);
+    part_key.value[2] = static_cast<uint32_t>(part_guid_prefix.value[8]) << 24
+            | static_cast<uint32_t>(part_guid_prefix.value[9]) << 16
+            | static_cast<uint32_t>(part_guid_prefix.value[10]) << 8
+            | static_cast<uint32_t>(part_guid_prefix.value[11]);
+
+    ret &= (0 == memcmp(subdata.key.value, r_key.value, sizeof(eprosima::fastdds::dds::builtin::BuiltinTopicKey_t)));
+    ret &=
+            (0 ==
+            memcmp(subdata.participant_key.value, part_key.value,
+            sizeof(eprosima::fastdds::dds::builtin::BuiltinTopicKey_t)));
+    ret &= (subdata.topic_name == topic_atts.topicName.to_string());
+    ret &= (subdata.type_name == topic_atts.topicDataType.to_string());
+
+    // RTPS Reader
+    ret &= (subdata.durability == reader_qos.m_durability);
+    ret &= (subdata.deadline == reader_qos.m_deadline);
+    ret &= (subdata.latency_budget == reader_qos.m_latencyBudget);
+    ret &= (subdata.liveliness == reader_qos.m_liveliness);
+    ret &= (subdata.reliability == reader_qos.m_reliability);
+    ret &= (subdata.ownership == reader_qos.m_ownership);
+    ret &= (subdata.destination_order == reader_qos.m_destinationOrder);
+    ret &= (subdata.user_data == reader_qos.m_userData);
+    // time based filter not implemented
+
+    // Subscriber Qos
+    ret &= (subdata.presentation == reader_qos.m_presentation);
+    ret &= (subdata.partition == reader_qos.m_partition);
+    ret &= (subdata.group_data == reader_qos.m_groupData);
+
+    return ret;
+}
+
+/**
+ * Tests get_publication_info() get_subscription_info() RTPSParticipant APIs
+ */
+TEST_P(RTPS, rtps_participant_get_pubsub_info)
+{
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    writer.init();
+    reader.init();
+
+    ASSERT_TRUE(writer.isInitialized());
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    ASSERT_TRUE(writer.get_matched());
+    ASSERT_TRUE(reader.get_matched());
+
+    eprosima::fastdds::dds::builtin::PublicationBuiltinTopicData pubdata;
+    eprosima::fastdds::dds::builtin::SubscriptionBuiltinTopicData subdata;
+
+    // Get publication info from the reader participant and validate it
+    bool ret = reader.get_rtps_participant()->get_publication_info(writer.guid(), pubdata);
+    ASSERT_TRUE(ret);
+    ASSERT_TRUE(validate_publication_builtin_topic_data(pubdata, writer.get_native_writer(),
+            writer.get_topic_attributes(),
+            writer.get_writerqos(), reader.get_rtps_participant()->getGuid()));
+
+    // Get subscription info from the reader participant and validate it
+    ret = writer.get_rtps_participant()->get_subscription_info(reader.guid(), subdata);
+    ASSERT_TRUE(ret);
+    ASSERT_TRUE(validate_subscription_builtin_topic_data(subdata, reader.get_native_reader(),
+            reader.get_topic_attributes(),
+            reader.get_readerqos(), reader.get_rtps_participant()->getGuid()));
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
