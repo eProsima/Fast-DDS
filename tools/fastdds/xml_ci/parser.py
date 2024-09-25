@@ -61,7 +61,7 @@ class XMLParser:
             usage='fastdds xml [<xml-command>]',
         )
         parser.add_argument(
-            'xml_command',
+            'validate',
             nargs='*',
             help='validate XML profiles files using an XSD schema'
         )
@@ -88,13 +88,13 @@ class XMLParser:
         except TypeError:
             args.xsd_file = self.xsd_dir()  # get default schema path
 
-        if args.xml_command:
-            if args.xml_command[0] == 'validate':
-                args.xml_command.pop(0)
-                if not Validate(args.xsd_file).run(args.xml_command):
+        if args.validate:
+            if args.validate[0] == 'validate':
+                args.validate.pop(0)
+                if not Validate(args.xsd_file).run(args.validate):
                     exit(1)
             else:
-                print(f'xml-command "{args.xml_command[0]}" is not valid')
+                print(f'xml-command "{args.validate[0]}" is not valid')
         else:
             parser.print_help()
             exit(1)
