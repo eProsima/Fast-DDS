@@ -462,6 +462,12 @@ bool RTPSWriter::send_nts(
                    locator_selector.locator_selector.end(), max_blocking_time_point);
 }
 
+bool RTPSWriter::get_matched_guids(
+        std::vector<GUID_t>&) const
+{
+    return false;
+}
+
 #ifdef FASTDDS_STATISTICS
 
 bool RTPSWriter::add_statistics_listener(
