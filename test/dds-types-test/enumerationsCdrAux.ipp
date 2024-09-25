@@ -352,8 +352,11 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const EnumWithValuesStructure& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.var_enumwithvalues();
+
 }
 
 
