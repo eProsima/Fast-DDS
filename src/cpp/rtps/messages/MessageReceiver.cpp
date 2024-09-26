@@ -874,7 +874,7 @@ bool MessageReceiver::proc_Submsg_Data(
                 ch.serializedPayload.length = payload_size;
                 ch.serializedPayload.max_size = payload_size;
             }
-            else
+            else // keyFlag would be true since we are inside an if (dataFlag || keyFlag)
             {
                 if (payload_size <= PARAMETER_KEY_HASH_LENGTH)
                 {
