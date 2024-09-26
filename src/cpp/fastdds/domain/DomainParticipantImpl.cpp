@@ -1192,11 +1192,11 @@ ReturnCode_t DomainParticipantImpl::get_topic_qos_from_profile(
 }
 
 ReturnCode_t DomainParticipantImpl::get_topic_qos_from_xml(
-        const std::string& profile_name,
+        const std::string& xml,
         TopicQos& qos,
         std::string& topic_name,
         std::string& topic_data_type,
-        const std::string& xml) const
+        const std::string& profile_name) const
 {
     xmlparser::TopicAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fill_topic_attributes_from_xml(xml, attr, profile_name))
