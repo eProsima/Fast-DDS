@@ -31,8 +31,11 @@ bool change_is_relevant_for_filter(
 {
     bool ret = true;
 
-    if ((change.serializedPayload.data == nullptr) &&
-            ((change.kind == fastdds::rtps::ALIVE) || !change.instanceHandle.isDefined()))
+    // If the change has no payload, it should have an instanceHandle.
+    // This is only allowed for UNREGISTERED and DISPOSED changes, where the instanceHandle is used to identify the
+    // instance to unregister or dispose.
+    if ((nullptr == change.serializedPayload.data) &&
+            ((fastdds::rtps::ALIVE == change.kind) || !change.instanceHandle.isDefined()))
     {
         ret = false;
     }
