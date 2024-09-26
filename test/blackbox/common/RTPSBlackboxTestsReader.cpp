@@ -79,9 +79,9 @@ public:
 };
 
 /**
- * Tests get_matched_guids() RTPSReader API
+ * Tests matched_writers_guids() RTPSReader API
  */
-TEST_P(RTPSReaderTests, rtpsreader_get_matched_guids)
+TEST_P(RTPSReaderTests, rtpsreader_matched_writers_guids)
 {
     RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
@@ -101,7 +101,7 @@ TEST_P(RTPSReaderTests, rtpsreader_get_matched_guids)
 
     std::vector<GUID_t> matched_guids;
     auto& native_rtps_reader = reader.get_native_reader();
-    ASSERT_FALSE(native_rtps_reader.get_matched_guids(matched_guids));
+    ASSERT_FALSE(native_rtps_reader.matched_writers_guids(matched_guids));
     ASSERT_TRUE(matched_guids.empty());
 
     writer.destroy();
@@ -123,7 +123,7 @@ TEST_P(RTPSReaderTests, rtpsreader_get_matched_guids)
 
     reader.wait_discovery(num_matched_writers, std::chrono::seconds::zero());
     ASSERT_EQ(num_matched_writers, reader.get_matched());
-    native_rtps_reader.get_matched_guids(matched_guids);
+    native_rtps_reader.matched_writers_guids(matched_guids);
     ASSERT_EQ(expected_matched_guids.size(), matched_guids.size());
     ASSERT_TRUE(std::is_permutation(expected_matched_guids.begin(), expected_matched_guids.end(),
             matched_guids.begin()));

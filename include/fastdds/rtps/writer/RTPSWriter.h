@@ -323,7 +323,7 @@ public:
      * @param[out] guids Vector to be filled with the GUIDs of the matched readers.
      * @return True if the operation was successful.
      */
-    RTPS_DllAPI bool get_matched_guids(
+    RTPS_DllAPI bool matched_readers_guids(
             std::vector<GUID_t>& guids) const;
 
     /**

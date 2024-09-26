@@ -435,7 +435,7 @@ bool RTPSReader::is_sample_valid(
     return true;
 }
 
-bool RTPSReader::get_matched_guids(
+bool RTPSReader::matched_writers_guids(
         std::vector<GUID_t>&) const
 {
     return false;
