@@ -342,6 +342,11 @@ public:
             const std::string& profile_name,
             DataWriterQos& qos) const;
 
+    FASTDDS_EXPORTED_API ReturnCode_t get_datawriter_qos_from_profile(
+            const std::string& profile_name,
+            DataWriterQos& qos,
+            std::string& topic_name) const;
+
     FASTDDS_EXPORTED_API ReturnCode_t get_datawriter_qos_from_xml(
             const std::string& xml,
             DataWriterQos& qos,

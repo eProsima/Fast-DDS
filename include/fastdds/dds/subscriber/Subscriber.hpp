@@ -355,6 +355,11 @@ public:
             const std::string& profile_name,
             DataReaderQos& qos) const;
 
+    FASTDDS_EXPORTED_API ReturnCode_t get_datareader_qos_from_profile(
+            const std::string& profile_name,
+            DataReaderQos& qos,
+            std::string& topic_name) const;
+
     FASTDDS_EXPORTED_API ReturnCode_t get_datareader_qos_from_xml(
             const std::string& xml,
             DataReaderQos& qos,

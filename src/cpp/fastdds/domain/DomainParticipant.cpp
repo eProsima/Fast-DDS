@@ -402,12 +402,23 @@ ReturnCode_t DomainParticipant::get_topic_qos_from_profile(
     return impl_->get_topic_qos_from_profile(profile_name, qos);
 }
 
+ReturnCode_t DomainParticipant::get_topic_qos_from_profile(
+        const std::string& profile_name,
+        TopicQos& qos,
+        std::string& topic_name,
+        std::string& topic_data_type) const
+{
+    return impl_->get_topic_qos_from_profile(profile_name, qos, topic_name, topic_data_type);
+}
+
 ReturnCode_t DomainParticipant::get_topic_qos_from_xml(
         const std::string& xml,
         TopicQos& qos,
+        std::string& topic_name,
+        std::string& topic_data_type,
         const std::string& profile_name) const
 {
-    return impl_->get_topic_qos_from_xml(xml, qos, profile_name);
+    return impl_->get_topic_qos_from_xml(xml, qos, topic_name, topic_data_type, profile_name);
 }
 
 ReturnCode_t DomainParticipant::get_requester_qos_from_profile(

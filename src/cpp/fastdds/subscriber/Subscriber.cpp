@@ -218,6 +218,14 @@ ReturnCode_t Subscriber::get_datareader_qos_from_profile(
     return impl_->get_datareader_qos_from_profile(profile_name, qos);
 }
 
+ReturnCode_t Subscriber::get_datareader_qos_from_profile(
+        const std::string& profile_name,
+        DataReaderQos& qos,
+        std::string& topic_name) const
+{
+    return impl_->get_datareader_qos_from_profile(profile_name, qos, topic_name);
+}
+
 ReturnCode_t Subscriber::get_datareader_qos_from_xml(
         const std::string& xml,
         DataReaderQos& qos,
