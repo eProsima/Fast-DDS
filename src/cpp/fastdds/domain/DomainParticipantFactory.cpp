@@ -372,6 +372,22 @@ ReturnCode_t DomainParticipantFactory::get_participant_extended_qos_from_profile
     return RETCODE_BAD_PARAMETER;
 }
 
+ReturnCode_t DomainParticipantFactory::get_participant_extended_qos_from_xml(
+        const std::string& xml,
+        DomainParticipantExtendedQos& extended_qos,
+        const std::string& profile_name) const
+{
+    extended_qos = default_participant_qos_;
+    ParticipantAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_participant_attributes_from_xml(xml, attr, profile_name))
+    {
+        utils::set_extended_qos_from_attributes(extended_qos, attr);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
 ReturnCode_t DomainParticipantFactory::get_participant_extended_qos_from_default_profile(
         DomainParticipantExtendedQos& extended_qos) const
 {

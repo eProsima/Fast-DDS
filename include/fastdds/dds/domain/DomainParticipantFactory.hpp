@@ -245,6 +245,11 @@ public:
             const std::string& profile_name,
             DomainParticipantExtendedQos& extended_qos) const;
 
+    FASTDDS_EXPORTED_API ReturnCode_t get_participant_extended_qos_from_xml(
+            const std::string& xml,
+            DomainParticipantExtendedQos& extended_qos,
+            const std::string& profile_name = "") const;
+
     /**
      * Fills the DomainParticipantExtendedQos with the values of the default XML profile.
      *
