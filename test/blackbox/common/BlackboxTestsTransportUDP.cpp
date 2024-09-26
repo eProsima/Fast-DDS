@@ -645,10 +645,16 @@ static void KeyOnlyBigPayloadIgnored(
 {
     struct KeyOnlyBigPayloadDatagram
     {
-        std::array<char, 4> rtps_id{ {'R', 'T', 'P', 'S'} };
-        std::array<uint8_t, 2> protocol_version{ {2, 3} };
-        std::array<uint8_t, 2> vendor_id{ {0x01, 0x0F} };
-        GuidPrefix_t sender_prefix{};
+        struct RTPSHeader
+        {
+            std::array<char, 4> rtps_id{ {'R', 'T', 'P', 'S'} };
+            std::array<uint8_t, 2> protocol_version{ {2, 3} };
+            std::array<uint8_t, 2> vendor_id{ {0x01, 0x0F} };
+            GuidPrefix_t sender_prefix{};
+        }
+        header;
+
+        static_assert(sizeof(RTPSHeader) == RTPSMESSAGE_HEADER_SIZE, "Unexpected size for RTPS header");
 
         struct DataSubMsg
         {
@@ -667,6 +673,8 @@ static void KeyOnlyBigPayloadIgnored(
                 EntityId_t writer_id{};
                 SequenceNumber_t sn{ 2 };
             };
+
+            static_assert(sizeof(Header) == RTPSMESSAGE_DATA_MIN_LENGTH, "Unexpected size for DATA header");
 
             struct InlineQoS
             {
@@ -688,6 +696,8 @@ static void KeyOnlyBigPayloadIgnored(
                 Sentinel sentinel;
             };
 
+            static_assert(sizeof(InlineQoS) == 8 + 4, "Unexpected size for InlineQoS");
+
             struct SerializedData
             {
                 std::array<uint8_t, 2> encapsulation {{0}};
@@ -695,12 +705,24 @@ static void KeyOnlyBigPayloadIgnored(
                 std::array<uint8_t, 0x24> data {{0}};
             };
 
+            static_assert(sizeof(SerializedData) == 0x24 + 2 + 2, "Unexpected size for SerializedData");
+
             Header header;
             InlineQoS qos;
             SerializedData payload;
         }
         data;
+
+        static_assert(
+            sizeof(DataSubMsg) ==
+            sizeof(DataSubMsg::Header) + sizeof(DataSubMsg::InlineQoS) + sizeof(DataSubMsg::SerializedData),
+            "Unexpected size for DataSubMsg");
     };
+
+    static_assert(
+        sizeof(KeyOnlyBigPayloadDatagram) ==
+        sizeof(KeyOnlyBigPayloadDatagram::RTPSHeader) + sizeof(KeyOnlyBigPayloadDatagram::DataSubMsg),
+        "Unexpected size for KeyOnlyBigPayloadDatagram");
 
     UDPMessageSender fake_msg_sender;
 
@@ -743,7 +765,7 @@ static void KeyOnlyBigPayloadIgnored(
         auto writer_guid = writer.datawriter_guid();
 
         KeyOnlyBigPayloadDatagram malicious_packet{};
-        malicious_packet.sender_prefix = writer_guid.guidPrefix;
+        malicious_packet.header.sender_prefix = writer_guid.guidPrefix;
         malicious_packet.data.header.writer_id = writer_guid.entityId;
         malicious_packet.data.header.reader_id = reader.datareader_guid().entityId;
         malicious_packet.data.payload.encapsulation[1] = CDR_LE;
