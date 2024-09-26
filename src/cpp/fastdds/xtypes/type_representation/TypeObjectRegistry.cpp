@@ -2140,7 +2140,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_enum_dynamic_type(
         MemberDescriptorImpl& member_descriptor {literal->get_descriptor()};
         EnumeratedLiteralFlag flags {TypeObjectUtils::build_enumerated_literal_flag(
                                          member_descriptor.is_default_label())};
-        // TODO(richi): Literal value might be automatically assigned or taken from default_value (@value annotation)
+        // Literal value might be automatically assigned or taken from default_value (@value annotation)
         CommonEnumeratedLiteral common_literal {TypeObjectUtils::build_common_enumerated_literal(
                                                     member_descriptor.default_value().empty() ? member_descriptor.index() :
                                                     std::stol(member_descriptor.default_value()), flags)};
