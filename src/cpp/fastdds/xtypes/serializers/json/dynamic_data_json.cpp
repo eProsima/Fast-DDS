@@ -199,19 +199,29 @@ ReturnCode_t json_serialize_member(
 
             // Fill JSON object with loaned value
             nlohmann::json j_union;
-            DynamicTypeMember::_ref_type active_type_member;
-            ReturnCode_t ret = st_data->enclosing_type()->get_member(active_type_member,
-                            st_data->selected_union_member());
-            if (RETCODE_OK != ret)
+            ReturnCode_t ret = RETCODE_OK;
+            MemberId selected_member = st_data->selected_union_member();
+
+            if (MEMBER_ID_INVALID == selected_member)
             {
-                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                        "Error encountered while serializing union member to JSON: get_member failed.");
+                // No member selected, insert empty JSON object
+                json_insert(member_name, j_union, output);
             }
             else
             {
-                if (RETCODE_OK == (ret = json_serialize_member(st_data, active_type_member, j_union, format)))
+                DynamicTypeMember::_ref_type active_type_member;
+                ret = st_data->enclosing_type()->get_member(active_type_member, selected_member);
+                if (RETCODE_OK != ret)
                 {
-                    json_insert(member_name, j_union, output);
+                    EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                            "Error encountered while serializing union member to JSON: get_member failed.");
+                }
+                else
+                {
+                    if (RETCODE_OK == (ret = json_serialize_member(st_data, active_type_member, j_union, format)))
+                    {
+                        json_insert(member_name, j_union, output);
+                    }
                 }
             }
 
