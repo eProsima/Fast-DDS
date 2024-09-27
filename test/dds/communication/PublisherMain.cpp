@@ -29,9 +29,10 @@ using namespace eprosima::fastdds::dds;
  * --seed <int>
  * --wait <int>
  * --samples <int>
+ * --interval <int>
  * --magic <str>
  * --xmlfile <path>
- * --interval <int>
+ * --rescan <int>
  */
 
 int main(
@@ -47,6 +48,7 @@ int main(
     char* xml_file = nullptr;
     uint32_t samples = 4;
     uint32_t interval = 250;
+    uint32_t rescan_interval = 0;
     std::string magic;
 
     while (arg_count < argc)
@@ -122,6 +124,16 @@ int main(
             }
 
             xml_file = argv[arg_count];
+        }
+        else if (strcmp(argv[arg_count], "--rescan") == 0)
+        {
+            if (++arg_count >= argc)
+            {
+                std::cout << "--rescan expects a parameter" << std::endl;
+                return -1;
+            }
+
+            rescan_interval = strtol(argv[arg_count], nullptr, 10);
         }
         else
         {
