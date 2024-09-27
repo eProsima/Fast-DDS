@@ -157,7 +157,7 @@ int main(
             publisher.wait_discovery(wait);
         }
 
-        publisher.run(samples, 0, interval);
+        publisher.run(samples, rescan_interval, 0, interval);
         return 0;
     }
 

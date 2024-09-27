@@ -130,16 +130,34 @@ bool SubscriberModule::init(
 }
 
 bool SubscriberModule::run(
-        bool notexit)
+        bool notexit,
+        const uint32_t rescan_interval)
 {
-    return run_for(notexit, std::chrono::hours(24));
+    return run_for(notexit, rescan_interval, std::chrono::hours(24));
 }
 
 bool SubscriberModule::run_for(
         bool notexit,
+        const uint32_t rescan_interval,
         const std::chrono::milliseconds& timeout)
 {
     bool returned_value = false;
+
+    std::thread net_rescan_thread([this, rescan_interval]()
+            {
+                if (rescan_interval > 0)
+                {
+                    auto interval = std::chrono::seconds(rescan_interval);
+                    while (run_)
+                    {
+                        std::this_thread::sleep_for(interval);
+                        if (run_)
+                        {
+                            participant_->set_qos(participant_->get_qos());
+                        }
+                    }
+                }
+            });
 
     while (notexit && run_)
     {
@@ -183,6 +201,9 @@ bool SubscriberModule::run_for(
         std::cout << "ERROR: detected more than " << publishers_ << " publishers" << std::endl;
         returned_value = false;
     }
+
+    run_ = false;
+    net_rescan_thread.join();
 
     return returned_value;
 }

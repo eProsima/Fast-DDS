@@ -146,7 +146,7 @@ int main(
 
     if (subscriber.init(seed, magic))
     {
-        return subscriber.run(notexit) ? 0 : -1;
+        return subscriber.run(notexit, rescan_interval) ? 0 : -1;
     }
 
     return -1;

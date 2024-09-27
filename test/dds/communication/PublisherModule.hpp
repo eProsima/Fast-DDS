@@ -19,8 +19,10 @@
 #ifndef TEST_DDS_COMMUNICATION_PUBLISHERMODULE_HPP
 #define TEST_DDS_COMMUNICATION_PUBLISHERMODULE_HPP
 
-#include <mutex>
+#include <atomic>
+#include <chrono>
 #include <condition_variable>
+#include <mutex>
 
 #include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -42,8 +44,8 @@ public:
 
     PublisherModule(
             bool exit_on_lost_liveliness,
-            bool fixed_type = false,
-            bool zero_copy = false)
+            bool fixed_type,
+            bool zero_copy)
         : exit_on_lost_liveliness_(exit_on_lost_liveliness)
         , fixed_type_(zero_copy || fixed_type) // If zero copy active, fixed type is required
         , zero_copy_(zero_copy)
@@ -83,8 +85,9 @@ public:
 
     void run(
             uint32_t samples,
-            uint32_t loops = 0,
-            uint32_t interval = 250);
+            const uint32_t rescan_interval,
+            uint32_t loops,
+            uint32_t interval);
 
 private:
 
@@ -96,7 +99,7 @@ private:
     bool exit_on_lost_liveliness_ = false;
     bool fixed_type_ = false;
     bool zero_copy_ = false;
-    bool run_ = true;
+    std::atomic_bool run_{true};
     DomainParticipant* participant_ = nullptr;
     TypeSupport type_;
     Publisher* publisher_ = nullptr;
