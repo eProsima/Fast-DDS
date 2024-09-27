@@ -6489,7 +6489,12 @@ bool DynamicDataImpl::deserialize(
                                 break;
                             default:
                                 {
-                                    if (1 == value_.count(selected_union_member_))
+                                    if (MEMBER_ID_INVALID == selected_union_member_)
+                                    {
+                                        // Do nothing
+                                        return false;
+                                    }
+                                    else if (1 == value_.count(selected_union_member_))
                                     {
                                         // Check MemberId in mutable case.
                                         auto member_data {std::static_pointer_cast<DynamicDataImpl>(value_.at(
