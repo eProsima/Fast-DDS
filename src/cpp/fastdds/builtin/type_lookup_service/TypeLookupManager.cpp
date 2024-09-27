@@ -101,6 +101,24 @@ TypeLookupManager::~TypeLookupManager()
 
     delete temp_reader_proxy_data_;
     delete temp_writer_proxy_data_;
+
+    for (auto& writer_entry : async_get_type_writer_callbacks_)
+    {
+        // Delete the proxies and remove the entry
+        for (auto& proxy_callback_pair : writer_entry.second)
+        {
+            delete proxy_callback_pair.first;
+        }
+    }
+
+    for (auto& reader_entry : async_get_type_reader_callbacks_)
+    {
+        // Delete the proxies and remove the entry
+        for (auto& proxy_callback_pair : reader_entry.second)
+        {
+            delete proxy_callback_pair.first;
+        }
+    }
 }
 
 bool TypeLookupManager::init(
