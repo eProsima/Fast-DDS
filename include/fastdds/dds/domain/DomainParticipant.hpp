@@ -936,7 +936,7 @@ public:
      *
      * @return true if any, false otherwise.
      */
-    bool has_active_entities();
+    FASTDDS_EXPORTED_API bool has_active_entities();
 
 protected:
 
