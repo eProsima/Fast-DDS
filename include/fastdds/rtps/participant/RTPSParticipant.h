@@ -317,8 +317,8 @@ public:
      * @return True if the writer was found and the data was filled.
      */
     bool get_publication_info(
-            const GUID_t& writer_guid,
-            fastdds::dds::builtin::PublicationBuiltinTopicData& data) const;
+            fastdds::dds::builtin::PublicationBuiltinTopicData& data,
+            const GUID_t& writer_guid) const;
 
     /**
      * @brief Fills the provided SubscriptionBuiltinTopicData with the information of the
@@ -329,8 +329,8 @@ public:
      * @return True if the reader was found and the data was filled.
      */
     bool get_subscription_info(
-            const GUID_t& reader_guid,
-            fastdds::dds::builtin::SubscriptionBuiltinTopicData& data) const;
+            fastdds::dds::builtin::SubscriptionBuiltinTopicData& data,
+            const GUID_t& reader_guid) const;
 
 #if HAVE_SECURITY
 

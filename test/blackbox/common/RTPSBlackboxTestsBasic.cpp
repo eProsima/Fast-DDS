@@ -1426,14 +1426,14 @@ TEST_P(RTPS, rtps_participant_get_pubsub_info)
     eprosima::fastdds::dds::builtin::SubscriptionBuiltinTopicData subdata;
 
     // Get publication info from the reader participant and validate it
-    bool ret = reader.get_rtps_participant()->get_publication_info(writer.guid(), pubdata);
+    bool ret = reader.get_rtps_participant()->get_publication_info(pubdata, writer.guid());
     ASSERT_TRUE(ret);
     ASSERT_TRUE(validate_publication_builtin_topic_data(pubdata, writer.get_native_writer(),
             writer.get_topic_attributes(),
             writer.get_writerqos(), reader.get_rtps_participant()->getGuid()));
 
     // Get subscription info from the reader participant and validate it
-    ret = writer.get_rtps_participant()->get_subscription_info(reader.guid(), subdata);
+    ret = writer.get_rtps_participant()->get_subscription_info(subdata, reader.guid());
     ASSERT_TRUE(ret);
     ASSERT_TRUE(validate_subscription_builtin_topic_data(subdata, reader.get_native_reader(),
             reader.get_topic_attributes(),

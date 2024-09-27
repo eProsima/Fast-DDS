@@ -229,13 +229,13 @@ public:
 
     MOCK_METHOD2(
         get_publication_info, bool(
-            const GUID_t& writer_guid,
-            fastdds::dds::builtin::PublicationBuiltinTopicData& data));
+            fastdds::dds::builtin::PublicationBuiltinTopicData& data,
+            const GUID_t& writer_guid));
 
     MOCK_METHOD2(
         get_subscription_info, bool(
-            const GUID_t& writer_guid,
-            fastdds::dds::builtin::SubscriptionBuiltinTopicData& data));
+            fastdds::dds::builtin::SubscriptionBuiltinTopicData& data,
+            const GUID_t& reader_guid));
 
     const RTPSParticipantAttributes& getRTPSParticipantAttributes()
     {
