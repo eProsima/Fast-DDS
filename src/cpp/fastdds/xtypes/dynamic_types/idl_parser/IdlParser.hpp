@@ -396,7 +396,7 @@ template<typename T> T promote(
     }
 }
 
-const TypeKind promotion_type(
+TypeKind promotion_type(
         DynamicData::_ref_type a,
         DynamicData::_ref_type b)
 {
