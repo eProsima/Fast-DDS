@@ -1403,7 +1403,40 @@ bool validate_subscription_builtin_topic_data(
 }
 
 /**
- * Tests get_publication_info() get_subscription_info() RTPSParticipant APIs
+ * Refers to RTPS-PART-API-GSI-GPI-01 from the test plan.
+ */
+TEST(RTPS, rtps_participant_get_pubsub_info_negative)
+{
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    writer.reliability(BEST_EFFORT)
+            .init();
+    reader.reliability(RELIABLE)
+            .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.wait_discovery(std::chrono::seconds(1));
+
+    ASSERT_FALSE(writer.get_matched());
+    ASSERT_FALSE(reader.get_matched());
+
+    eprosima::fastdds::dds::builtin::PublicationBuiltinTopicData pubdata;
+    eprosima::fastdds::dds::builtin::SubscriptionBuiltinTopicData subdata;
+
+    // Get publication info from the reader participant and validate it
+    bool ret = reader.get_rtps_participant()->get_publication_info(pubdata, writer.guid());
+    ASSERT_FALSE(ret);
+
+    // Get subscription info from the reader participant and validate it
+    ret = writer.get_rtps_participant()->get_subscription_info(subdata, reader.guid());
+    ASSERT_FALSE(ret);
+}
+
+/**
+ * Refers to RTPS-PART-API-GSI-GPI-02 from the test plan.
  */
 TEST_P(RTPS, rtps_participant_get_pubsub_info)
 {

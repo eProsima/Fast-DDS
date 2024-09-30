@@ -79,7 +79,7 @@ public:
 };
 
 /**
- * Tests matched_writers_guids() RTPSReader API
+ * Refers to RTPS-READER-API-MWG-01 from the test plan.
  */
 TEST_P(RTPSReaderTests, rtpsreader_matched_writers_guids)
 {
