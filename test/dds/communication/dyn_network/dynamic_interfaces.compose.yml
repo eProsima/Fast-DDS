@@ -23,7 +23,7 @@ services:
     environment:
       LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
       EXAMPLE_DIR: @PROJECT_BINARY_DIR@/test/dds/communication
-    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/DDSCommunicationPublisher --xmlfile $${EXAMPLE_DIR}/simple_reliable_profile.xml --samples 10 --seed 0 --magic T"
+    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/DDSCommunicationPublisher --xmlfile $${EXAMPLE_DIR}/simple_reliable_profile.xml --samples 10 --loops 1 --seed 0 --magic T"
 
   subscriber:
     build: .
