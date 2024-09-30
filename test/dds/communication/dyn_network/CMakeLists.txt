@@ -53,22 +53,12 @@ if(NOT (TINYXML2_FROM_SOURCE OR TINYXML2_FROM_THIRDPARTY))
     set(TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH ":${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/fastdds")
 endif()
 
+configure_file(Dockerfile
+               ${CMAKE_CURRENT_BINARY_DIR}/Dockerfile @ONLY)
 configure_file(dynamic_interfaces.compose.yml
-                ${CMAKE_CURRENT_BINARY_DIR}/dynamic_interfaces.compose.yml @ONLY)
+               ${CMAKE_CURRENT_BINARY_DIR}/dynamic_interfaces.compose.yml @ONLY)
 configure_file(launch_subscriber.bash
-                ${CMAKE_CURRENT_BINARY_DIR}/launch_subscriber.bash @ONLY)
-
-## # Find all pytest files for testing
-## file(GLOB examples_python_tests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.py)
-## 
-## # Configure the pytest files, and add a test for each one
-## foreach(example_test ${examples_python_tests})
-##     get_filename_component(example_name ${example_test} NAME_WE)
-##     string(REPLACE "test_" "" example_name "${example_name}")
-##     message(STATUS "  Configuring example test: ${example_name}")
-##     configure_file(${example_test}
-##                    ${CMAKE_CURRENT_BINARY_DIR}/${example_name}/${example_test} @ONLY)
-##     add_test(NAME example_tests.${example_name}
-##              COMMAND ${Python3_EXECUTABLE} -m pytest -vrP
-##              WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${example_name})
-## endforeach()
+               ${CMAKE_CURRENT_BINARY_DIR}/launch_subscriber.bash @ONLY)
+add_test(NAME dds.communication.dynamic_interfaces
+         COMMAND ${DOCKER_EXECUTABLE} compose -f ${CMAKE_CURRENT_BINARY_DIR}/dynamic_interfaces.compose.yml up
+         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
