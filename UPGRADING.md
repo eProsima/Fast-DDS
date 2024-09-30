@@ -5,6 +5,18 @@ For more information about all the updates, please refer to the [release notes](
 
 ## Migration Steps
 
+The following steps describe the possible changes that your project may require to migrate to *Fast DDS v3.0.0*:
+
+- [Step 1: Update the Package Name and CMake Configuration](#step-1-update-the-package-name-and-cmake-configuration)
+- [Step 2: Update Dependencies](#step-2-update-dependencies)
+- [Step 3: Ensure Compability with Related Products](#step-3-ensure-compability-with-related-products)
+- [Step 4: Apply Namespace Changes](#step-4-apply-namespace-changes)
+- [Step 5: Migrate Public Headers](#step-5-migrate-public-headers)
+- [Step 6: Handle Removed or Private Headers](#step-6-handle-removed-or-private-headers)
+- [Step 7: Update API Methods](#step-7-update-api-methods)
+- [Step 8: Update Structs, Enums, and Variables](#step-8-update-structs-enums-and-variables)
+- [Step 9: Refactor Examples](#step-9-refactor-examples)
+
 ### Step 1: Update the Package Name and CMake Configuration
 
 1. CMake Project Name: Rename the CMake project from `fastrtps` to `fastdds`.
@@ -27,7 +39,7 @@ Refer to the [library deprendencies table](https://fast-dds.docs.eprosima.com/en
 
 ### Step 3: Ensure Compability with Related Products
 
-Fast DDS v3 requires Fast DDS Gen v4.0.0 for code generation. Make sure to regenerate types using this compatible version.
+Fast DDS v3 requires Fast DDS Gen v4 for code generation. Make sure to regenerate types using this compatible version.
 
 For other compatibility requirements with related products (e.g., Shapes Demo, Discovery Server), refer to the table of [products compatibility](https://fast-dds.docs.eprosima.com/en/latest/notes/versions.html#eprosima-products-compatibility), which outlines version compatibility across the Fast DDS ecosystem.
 Verify these versions and update accordingly to avoid any integration issues.
@@ -211,6 +223,10 @@ The new API methods achieve the same functionality, even though the signature of
 | DynamicPubSubType::getKey(const void* const, `InstanceHand`*, bool) | DynamicPubSubType::compute_key(const void* const, `InstanceHand`&, bool) |
 | DynamicPubSubType::getSerializedSizeProvider(const void* const, `DataRepresentationId_t`) | DynamicPubSubType::calculate_serialized_size(const void* const, `DataRepresentationId_t`) |
 
+Review your code for any APIs marked with the `FASTDDS_DEPRECATED` and `FASTDDS_TODO_BEFORE` macros.
+Note that these deprecated APIs have been removed in Fast DDS v3.
+Make the necessary updates to your implementation to ensure compatibility with the new version.
+
 ### Step 8: Update Structs, Enums, and Variables
 
 As part of the Fast DDS migration, several structs, enums, and variables have been updated. You will need to modify your code to reflect these changes:
@@ -240,7 +256,7 @@ As part of the Fast DDS migration, several structs, enums, and variables have be
     * `SendBuffersAllocationAttributes` has a new attribute to define the allocation configuration of the `NetworkBuffers`.
     * `TypeConsistencyQos` has been removed from `DataReader`, and the `TypeConsistencyEnforcementQosPolicy` and `DataRepresentationQosPolicy` have been added.
 
-### Step 10: Refactor Examples
+### Step 9: Refactor Examples
 
 All examples have been refactored to follow a consistent structure across the Fast DDS project.
 This includes renaming files, restructuring classes, and updating the overall format.
