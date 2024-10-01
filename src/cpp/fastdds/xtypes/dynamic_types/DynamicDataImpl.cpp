@@ -6479,7 +6479,12 @@ bool DynamicDataImpl::deserialize(
                                         if (MEMBER_ID_INVALID == selected_union_member_)
                                         {
                                             selected_union_member_ = type->default_union_member();
-                                            ret_value = false;
+
+                                            // Check again after attempting to assign the default member
+                                            if (MEMBER_ID_INVALID == selected_union_member_)
+                                            {
+                                                ret_value = false;
+                                            }
                                         }
                                     }
                                     else
