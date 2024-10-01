@@ -58,6 +58,7 @@
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/discovery/participant/PDPClient.h>
 #include <rtps/builtin/discovery/participant/PDPServer.hpp>
 #include <rtps/history/BasicPayloadPool.hpp>
@@ -2937,6 +2938,40 @@ bool RTPSParticipantImpl::ignore_reader(
 std::vector<fastdds::rtps::TransportNetmaskFilterInfo> RTPSParticipantImpl::get_netmask_filter_info() const
 {
     return m_network_Factory.netmask_filter_info();
+}
+
+bool RTPSParticipantImpl::get_publication_info(
+        fastdds::dds::builtin::PublicationBuiltinTopicData& data,
+        const GUID_t& writer_guid) const
+{
+    bool ret = false;
+    WriterProxyData wproxy_data(m_att.allocation.locators.max_unicast_locators,
+            m_att.allocation.locators.max_multicast_locators);
+
+    if (mp_builtinProtocols->mp_PDP->lookupWriterProxyData(writer_guid, wproxy_data))
+    {
+        from_proxy_to_builtin(wproxy_data, data);
+        ret = true;
+    }
+
+    return ret;
+}
+
+bool RTPSParticipantImpl::get_subscription_info(
+        fastdds::dds::builtin::SubscriptionBuiltinTopicData& data,
+        const GUID_t& reader_guid) const
+{
+    bool ret = false;
+    ReaderProxyData rproxy_data(m_att.allocation.locators.max_unicast_locators,
+            m_att.allocation.locators.max_multicast_locators);
+
+    if (mp_builtinProtocols->mp_PDP->lookupReaderProxyData(reader_guid, rproxy_data))
+    {
+        from_proxy_to_builtin(rproxy_data, data);
+        ret = true;
+    }
+
+    return ret;
 }
 
 #ifdef FASTDDS_STATISTICS
