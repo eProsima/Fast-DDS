@@ -101,7 +101,7 @@ TEST_P(RTPSWriterTests, rtpswriter_matched_readers_guids)
 
     std::vector<GUID_t> matched_guids;
     auto& native_rtps_writer = writer.get_native_writer();
-    ASSERT_FALSE(native_rtps_writer.matched_readers_guids(matched_guids));
+    ASSERT_TRUE(native_rtps_writer.matched_readers_guids(matched_guids));
     ASSERT_TRUE(matched_guids.empty());
 
     reader.destroy();

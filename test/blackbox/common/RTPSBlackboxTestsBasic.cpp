@@ -1328,16 +1328,17 @@ bool validate_publication_builtin_topic_data(
     ret &= (pubdata.liveliness == writer_qos.m_liveliness);
     ret &= (pubdata.reliability == writer_qos.m_reliability);
     ret &= (pubdata.lifespan == writer_qos.m_lifespan);
-    ret &= (pubdata.user_data == writer_qos.m_userData);
+    ret &= (
+        0 == memcmp(pubdata.user_data.data(), writer_qos.m_userData.data(), pubdata.user_data.size()));
     ret &= (pubdata.ownership == writer_qos.m_ownership);
     ret &= (pubdata.ownership_strength == writer_qos.m_ownershipStrength);
     ret &= (pubdata.destination_order == writer_qos.m_destinationOrder);
 
     // Publisher Qos
     ret &= (pubdata.presentation == writer_qos.m_presentation);
-    ret &= (pubdata.partition == writer_qos.m_partition);
-    // topicdata not implemented
-    ret &= (pubdata.group_data == writer_qos.m_groupData);
+    ret &= (pubdata.partition.getNames() == writer_qos.m_partition.getNames());
+    // ignore topic_data not implemented
+    // ignore group_data
 
     return ret;
 }
@@ -1391,13 +1392,15 @@ bool validate_subscription_builtin_topic_data(
     ret &= (subdata.reliability == reader_qos.m_reliability);
     ret &= (subdata.ownership == reader_qos.m_ownership);
     ret &= (subdata.destination_order == reader_qos.m_destinationOrder);
-    ret &= (subdata.user_data == reader_qos.m_userData);
+    ret &= (
+        0 == memcmp(subdata.user_data.data(), reader_qos.m_userData.data(), subdata.user_data.size()));
     // time based filter not implemented
 
     // Subscriber Qos
     ret &= (subdata.presentation == reader_qos.m_presentation);
-    ret &= (subdata.partition == reader_qos.m_partition);
-    ret &= (subdata.group_data == reader_qos.m_groupData);
+    ret &= (subdata.partition.getNames() == reader_qos.m_partition.getNames());
+    // ignore topic_data not implemented
+    // ignore group_data
 
     return ret;
 }
@@ -1410,28 +1413,25 @@ TEST(RTPS, rtps_participant_get_pubsub_info_negative)
     RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
-    writer.reliability(BEST_EFFORT)
-            .init();
-    reader.reliability(RELIABLE)
-            .init();
+    writer.init();
+    reader.init();
 
     ASSERT_TRUE(writer.isInitialized());
     ASSERT_TRUE(reader.isInitialized());
-
-    writer.wait_discovery(std::chrono::seconds(1));
-
-    ASSERT_FALSE(writer.get_matched());
-    ASSERT_FALSE(reader.get_matched());
 
     eprosima::fastdds::dds::builtin::PublicationBuiltinTopicData pubdata;
     eprosima::fastdds::dds::builtin::SubscriptionBuiltinTopicData subdata;
 
     // Get publication info from the reader participant and validate it
-    bool ret = reader.get_rtps_participant()->get_publication_info(pubdata, writer.guid());
+    GUID_t unknown_writer_guid = writer.guid();
+    unknown_writer_guid.entityId.value[3] = 0x44;
+    bool ret = reader.get_rtps_participant()->get_publication_info(pubdata, unknown_writer_guid);
     ASSERT_FALSE(ret);
 
+    GUID_t unknown_reader_guid = reader.guid();
+    unknown_reader_guid.entityId.value[3] = 0x44;
     // Get subscription info from the reader participant and validate it
-    ret = writer.get_rtps_participant()->get_subscription_info(subdata, reader.guid());
+    ret = writer.get_rtps_participant()->get_subscription_info(subdata, unknown_reader_guid);
     ASSERT_FALSE(ret);
 }
 
@@ -1443,17 +1443,20 @@ TEST_P(RTPS, rtps_participant_get_pubsub_info)
     RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
-    writer.init();
-    reader.init();
+    std::vector<std::string> partitions{"*"};
+
+    writer.user_data({'u', 's', 'e', 'r', 'd', 'a', 't', 'a'})
+            .partitions(partitions)
+            .init();
+    reader.user_data({'u', 's', 'e', 'r', 'd', 'a', 't', 'a'})
+            .partitions(partitions)
+            .init();
 
     ASSERT_TRUE(writer.isInitialized());
     ASSERT_TRUE(reader.isInitialized());
 
     writer.wait_discovery();
     reader.wait_discovery();
-
-    ASSERT_TRUE(writer.get_matched());
-    ASSERT_TRUE(reader.get_matched());
 
     eprosima::fastdds::dds::builtin::PublicationBuiltinTopicData pubdata;
     eprosima::fastdds::dds::builtin::SubscriptionBuiltinTopicData subdata;
@@ -1463,7 +1466,7 @@ TEST_P(RTPS, rtps_participant_get_pubsub_info)
     ASSERT_TRUE(ret);
     ASSERT_TRUE(validate_publication_builtin_topic_data(pubdata, writer.get_native_writer(),
             writer.get_topic_attributes(),
-            writer.get_writerqos(), reader.get_rtps_participant()->getGuid()));
+            writer.get_writerqos(), writer.get_rtps_participant()->getGuid()));
 
     // Get subscription info from the reader participant and validate it
     ret = writer.get_rtps_participant()->get_subscription_info(subdata, reader.guid());

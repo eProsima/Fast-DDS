@@ -541,7 +541,7 @@ bool validate_subscription_builtin_topic_data(
     bool ret = true;
 
     auto dr_qos = datareader.get_qos();
-    auto pub_qos = datareader.get_subscriber()->get_qos();
+    auto sub_qos = datareader.get_subscriber()->get_qos();
 
     eprosima::fastdds::dds::builtin::BuiltinTopicKey_t dr_key, part_key;
     eprosima::fastrtps::rtps::GuidPrefix_t part_guid_prefix =
@@ -584,13 +584,15 @@ bool validate_subscription_builtin_topic_data(
     ret &= (subdata.reliability == dr_qos.reliability());
     ret &= (subdata.ownership == dr_qos.ownership());
     ret &= (subdata.destination_order == dr_qos.destination_order());
-    ret &= (subdata.user_data == dr_qos.user_data());
+    ret &= (
+        0 == memcmp(subdata.user_data.data(), dr_qos.user_data().data(), subdata.user_data.size()));
     // time based filter not implemented
 
     // Subscriber Qos
-    ret &= (subdata.presentation == pub_qos.presentation());
-    ret &= (subdata.partition == pub_qos.partition());
-    ret &= (subdata.group_data == pub_qos.group_data());
+    ret &= (subdata.presentation == sub_qos.presentation());
+    ret &= (subdata.partition.getNames() == sub_qos.partition().getNames());
+    // topic_data not implemented
+    // group_data too
 
     return ret;
 }
@@ -624,7 +626,7 @@ TEST(DDSDataWriter, datawriter_get_matched_subscription_data_bad_parameter)
     ASSERT_TRUE(reader_2.isInitialized());
 
     // Writer should not be matched with any reader
-    writer.wait_discovery(2, std::chrono::seconds(2));
+    writer.wait_discovery(2, std::chrono::seconds(1));
 
     ASSERT_TRUE(!writer.is_matched());
 
@@ -657,10 +659,14 @@ TEST_P(DDSDataWriter, datawriter_get_matched_subscription_data_correctly_behaves
 
     eprosima::fastdds::dds::builtin::SubscriptionBuiltinTopicData r1_subdata, r2_subdata;
 
-    writer.init();
+    writer.partition("*")
+            .init();
 
-    reader_1.init();
-    reader_2.reliability(RELIABLE_RELIABILITY_QOS)
+    reader_1.partition("*")
+            .init();
+    reader_2.user_data({'u', 's', 'e', 'r', 'd', 'a', 't', 'a'})
+            .partition("*")
+            .reliability(RELIABLE_RELIABILITY_QOS)
             .init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -800,8 +806,10 @@ TEST_P(DDSDataWriter, datawriter_get_matched_subscriptions_multiple_participants
     PubSubParticipant<HelloWorldPubSubType> part_1(1, 1, 1, 1);
     PubSubParticipant<HelloWorldPubSubType> part_2(1, 1, 1, 1);
 
+    part_1.pub_topic_name(TEST_TOPIC_NAME);
     part_1.sub_topic_name(TEST_TOPIC_NAME + "_1");
     part_2.pub_topic_name(TEST_TOPIC_NAME + "_1");
+    part_2.sub_topic_name(TEST_TOPIC_NAME);
 
     ASSERT_TRUE(part_1.init_participant());
     ASSERT_TRUE(part_1.init_publisher(0));

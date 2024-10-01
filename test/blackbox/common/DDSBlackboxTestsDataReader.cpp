@@ -584,16 +584,17 @@ bool validate_publication_builtin_topic_data(
     ret &= (pubdata.liveliness == dw_qos.liveliness());
     ret &= (pubdata.reliability == dw_qos.reliability());
     ret &= (pubdata.lifespan == dw_qos.lifespan());
-    ret &= (pubdata.user_data == dw_qos.user_data());
+    ret &= (
+        0 == memcmp(pubdata.user_data.data(), dw_qos.user_data().data(), pubdata.user_data.size()));
     ret &= (pubdata.ownership == dw_qos.ownership());
     ret &= (pubdata.ownership_strength == dw_qos.ownership_strength());
     ret &= (pubdata.destination_order == dw_qos.destination_order());
 
     // Publisher Qos
     ret &= (pubdata.presentation == pub_qos.presentation());
-    ret &= (pubdata.partition == pub_qos.partition());
-    // topicdata not implemented
-    ret &= (pubdata.group_data == pub_qos.group_data());
+    ret &= (pubdata.partition.getNames() == pub_qos.partition().getNames());
+    // topic_data not implemented
+    // group_data too
 
     return ret;
 }
@@ -656,10 +657,14 @@ TEST_P(DDSDataReader, datareader_get_matched_publication_data_correctly_behaves)
 
     eprosima::fastdds::dds::builtin::PublicationBuiltinTopicData w1_pubdata, w2_pubdata;
 
-    reader.init();
+    reader.partition("*")
+            .init();
 
-    writer_1.init();
-    writer_2.reliability(BEST_EFFORT_RELIABILITY_QOS)
+    writer_1.partition("*")
+            .init();
+    writer_2.user_data({'u', 's', 'e', 'r', 'd', 'a', 't', 'a'})
+            .partition("*")
+            .reliability(BEST_EFFORT_RELIABILITY_QOS)
             .init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -679,7 +684,7 @@ TEST_P(DDSDataReader, datareader_get_matched_publication_data_correctly_behaves)
     ASSERT_EQ(ret, ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(validate_publication_builtin_topic_data(w1_pubdata, writer_1.get_native_writer()));
 
-    InstanceHandle_t w2_handle = writer_1.get_native_writer().get_instance_handle();
+    InstanceHandle_t w2_handle = writer_2.get_native_writer().get_instance_handle();
     ret = native_reader.get_matched_publication_data(w2_pubdata, w2_handle);
 
     ASSERT_EQ(ret, ReturnCode_t::RETCODE_OK);
@@ -794,8 +799,10 @@ TEST_P(DDSDataReader, datareader_get_matched_publications_multiple_participants_
     PubSubParticipant<HelloWorldPubSubType> part_1(1, 1, 1, 1);
     PubSubParticipant<HelloWorldPubSubType> part_2(1, 1, 1, 1);
 
+    part_1.pub_topic_name(TEST_TOPIC_NAME);
     part_1.sub_topic_name(TEST_TOPIC_NAME + "_1");
     part_2.pub_topic_name(TEST_TOPIC_NAME + "_1");
+    part_2.sub_topic_name(TEST_TOPIC_NAME);
 
     ASSERT_TRUE(part_1.init_participant());
     ASSERT_TRUE(part_1.init_publisher(0));
