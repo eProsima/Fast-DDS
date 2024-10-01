@@ -342,11 +342,28 @@ public:
             const std::string& profile_name,
             DataWriterQos& qos) const;
 
+    /**
+     * Fills the DataWriterQos with the values of the XML profile, and also its corresponding topic name (if specified).
+     *
+     * @param profile_name DataWriter profile name.
+     * @param qos DataWriterQos object where the qos is returned.
+     * @param topic_name String where the name of the topic associated to this profile is returned (if specified).
+     * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
+     */
     FASTDDS_EXPORTED_API ReturnCode_t get_datawriter_qos_from_profile(
             const std::string& profile_name,
             DataWriterQos& qos,
             std::string& topic_name) const;
 
+    /**
+     * Fills the DataWriterQos with the first DataWriter profile found in the given XML (or the one specified), and also its corresponding topic name (if specified).
+     *
+     * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
+     * @param qos DataWriterQos object where the qos is returned.
+     * @param topic_name String where the name of the topic associated to this profile is returned (if specified).
+     * @param profile_name DataWriter profile name. Empty by default (first one found).
+     * @return RETCODE_OK on success. RETCODE_BAD_PARAMETER otherwise.
+     */
     FASTDDS_EXPORTED_API ReturnCode_t get_datawriter_qos_from_xml(
             const std::string& xml,
             DataWriterQos& qos,

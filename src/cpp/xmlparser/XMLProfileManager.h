@@ -140,14 +140,21 @@ public:
      * Search for the profile specified and fill the structure.
      * @param profile_name Name for the profile to be used to fill the structure.
      * @param atts Structure to be filled.
-     * @param log_error Flag to log an error if the profile_name is not found.
-     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case. Defaults true.
+     * @param log_error Flag to log an error if the profile_name is not found. Defaults true.
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
     static XMLP_ret fillParticipantAttributes(
             const std::string& profile_name,
             fastdds::xmlparser::ParticipantAttributes& atts,
             bool log_error = true);
 
+    /**
+     * Search for the first participant profile found in the given XML (or the one specified) and fill the structure.
+     * @param xml Raw XML string containing the profile to be used to fill the structure.
+     * @param atts Structure to be filled.
+     * @param profile_name Name for the profile to be used to fill the structure. Empty by default (first one found).
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     */
     static XMLP_ret fill_participant_attributes_from_xml(
             const std::string& xml,
             fastdds::xmlparser::ParticipantAttributes& atts,
@@ -180,14 +187,21 @@ public:
      * Search for the profile specified and fill the structure.
      * @param profile_name Name for the profile to be used to fill the structure.
      * @param atts Structure to be filled.
-     * @param log_error Flag to log an error if the profile_name is not found.
-     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case. Defaults true.
+     * @param log_error Flag to log an error if the profile_name is not found. Defaults true.
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
     static XMLP_ret fillPublisherAttributes(
             const std::string& profile_name,
             fastdds::xmlparser::PublisherAttributes& atts,
             bool log_error = true);
 
+    /**
+     * Search for the first publisher profile found in the given XML (or the one specified) and fill the structure.
+     * @param xml Raw XML string containing the profile to be used to fill the structure.
+     * @param atts Structure to be filled.
+     * @param profile_name Name for the profile to be used to fill the structure. Empty by default (first one found).
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     */
     static XMLP_ret fill_publisher_attributes_from_xml(
             const std::string& xml,
             fastdds::xmlparser::PublisherAttributes& atts,
@@ -201,14 +215,21 @@ public:
      * Search for the profile specified and fill the structure.
      * @param profile_name Name for the profile to be used to fill the structure.
      * @param atts Structure to be filled.
-     * @param log_error Flag to log an error if the profile_name is not found.
-     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case. Defaults true.
+     * @param log_error Flag to log an error if the profile_name is not found. Defaults true.
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
     static XMLP_ret fillSubscriberAttributes(
             const std::string& profile_name,
             fastdds::xmlparser::SubscriberAttributes& atts,
             bool log_error = true);
 
+    /**
+     * Search for the first subscriber profile found in the given XML (or the one specified) and fill the structure.
+     * @param xml Raw XML string containing the profile to be used to fill the structure.
+     * @param atts Structure to be filled.
+     * @param profile_name Name for the profile to be used to fill the structure. Empty by default (first one found).
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     */
     static XMLP_ret fill_subscriber_attributes_from_xml(
             const std::string& xml,
             fastdds::xmlparser::SubscriberAttributes& atts,
@@ -237,6 +258,13 @@ public:
             const std::string& profile_name,
             TopicAttributes& atts);
 
+    /**
+     * Search for the first topic profile found in the given XML (or the one specified) and fill the structure.
+     * @param xml Raw XML string containing the profile to be used to fill the structure.
+     * @param atts Structure to be filled.
+     * @param profile_name Name for the profile to be used to fill the structure. Empty by default (first one found).
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     */
     static XMLP_ret fill_topic_attributes_from_xml(
             const std::string& xml,
             fastdds::xmlparser::TopicAttributes& atts,
@@ -265,6 +293,13 @@ public:
             const std::string& profile_name,
             fastdds::xmlparser::RequesterAttributes& atts);
 
+    /**
+     * Search for the first requester profile found in the given XML (or the one specified) and fill the structure.
+     * @param xml Raw XML string containing the profile to be used to fill the structure.
+     * @param atts Structure to be filled.
+     * @param profile_name Name for the profile to be used to fill the structure. Empty by default (first one found).
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     */
     static XMLP_ret fill_requester_attributes_from_xml(
             const std::string& xml,
             fastdds::xmlparser::RequesterAttributes& atts,
@@ -280,6 +315,13 @@ public:
             const std::string& profile_name,
             fastdds::xmlparser::ReplierAttributes& atts);
 
+    /**
+     * Search for the first replier profile found in the given XML (or the one specified) and fill the structure.
+     * @param xml Raw XML string containing the profile to be used to fill the structure.
+     * @param atts Structure to be filled.
+     * @param profile_name Name for the profile to be used to fill the structure. Empty by default (first one found).
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     */
     static XMLP_ret fill_replier_attributes_from_xml(
             const std::string& xml,
             fastdds::xmlparser::ReplierAttributes& atts,

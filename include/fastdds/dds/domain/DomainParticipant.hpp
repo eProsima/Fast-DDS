@@ -547,6 +547,14 @@ public:
             const std::string& profile_name,
             PublisherQos& qos) const;
 
+    /**
+     * Fills the PublisherQos with the first publisher profile found in the given XML (or the one specified).
+     *
+     * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
+     * @param qos PublisherQos object where the qos is returned.
+     * @param profile_name Publisher profile name. Empty by default (first one found).
+     * @return RETCODE_OK on success. RETCODE_BAD_PARAMETER otherwise.
+     */
     FASTDDS_EXPORTED_API ReturnCode_t get_publisher_qos_from_xml(
             const std::string& xml,
             PublisherQos& qos,
@@ -606,6 +614,14 @@ public:
             const std::string& profile_name,
             SubscriberQos& qos) const;
 
+    /**
+     * Fills the SubscriberQos with the first subscriber profile found in the given XML (or the one specified).
+     *
+     * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
+     * @param qos SubscriberQos object where the qos is returned.
+     * @param profile_name Subscriber profile name. Empty by default (first one found).
+     * @return RETCODE_OK on success. RETCODE_BAD_PARAMETER otherwise.
+     */
     FASTDDS_EXPORTED_API ReturnCode_t get_subscriber_qos_from_xml(
             const std::string& xml,
             SubscriberQos& qos,
@@ -665,12 +681,31 @@ public:
             const std::string& profile_name,
             TopicQos& qos) const;
 
+    /**
+     * Fills the TopicQos with the values of the XML profile, and also its corresponding topic and data type names (if specified).
+     *
+     * @param profile_name Topic profile name.
+     * @param qos TopicQos object where the qos is returned.
+     * @param topic_name String where the name of the topic associated to this profile is returned (if specified).
+     * @param topic_data_type String where the name of the topic data type associated to this profile is returned (if specified).
+     * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
+     */
     FASTDDS_EXPORTED_API ReturnCode_t get_topic_qos_from_profile(
             const std::string& profile_name,
             TopicQos& qos,
             std::string& topic_name,
             std::string& topic_data_type) const;
 
+    /**
+     * Fills the TopicQos with the first topic profile found in the given XML (or the one specified), and also its corresponding topic and data type names (if specified).
+     *
+     * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
+     * @param qos TopicQos object where the qos is returned.
+     * @param topic_name String where the name of the topic associated to this profile is returned (if specified).
+     * @param topic_data_type String where the name of the topic data type associated to this profile is returned (if specified).
+     * @param profile_name Topic profile name. Empty by default (first one found).
+     * @return RETCODE_OK on success. RETCODE_BAD_PARAMETER otherwise.
+     */
     FASTDDS_EXPORTED_API ReturnCode_t get_topic_qos_from_xml(
             const std::string& xml,
             TopicQos& qos,
@@ -689,6 +724,14 @@ public:
             const std::string& profile_name,
             ReplierQos& qos) const;
 
+    /**
+     * Fills the ReplierQos with the first replier profile found in the given XML (or the one specified).
+     *
+     * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
+     * @param qos ReplierQos object where the qos is returned.
+     * @param profile_name Replier profile name. Empty by default (first one found).
+     * @return RETCODE_OK on success. RETCODE_BAD_PARAMETER otherwise.
+     */
     FASTDDS_EXPORTED_API ReturnCode_t get_replier_qos_from_xml(
             const std::string& xml,
             ReplierQos& qos,
@@ -705,6 +748,14 @@ public:
             const std::string& profile_name,
             RequesterQos& qos) const;
 
+    /**
+     * Fills the RequesterQos with the first requester profile found in the given XML (or the one specified).
+     *
+     * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
+     * @param qos RequesterQos object where the qos is returned.
+     * @param profile_name Requester profile name. Empty by default (first one found).
+     * @return RETCODE_OK on success. RETCODE_BAD_PARAMETER otherwise.
+     */
     FASTDDS_EXPORTED_API ReturnCode_t get_requester_qos_from_xml(
             const std::string& xml,
             RequesterQos& qos,
