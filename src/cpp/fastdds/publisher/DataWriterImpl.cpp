@@ -2228,6 +2228,69 @@ void DataWriterImpl::filter_is_being_removed(
     }
 }
 
+ReturnCode_t DataWriterImpl::get_matched_subscription_data(
+        builtin::SubscriptionBuiltinTopicData& subscription_data,
+        const fastrtps::rtps::InstanceHandle_t& subscription_handle) const
+{
+    fastrtps::types::ReturnCode_t ret = ReturnCode_t::RETCODE_BAD_PARAMETER;
+    GUID_t reader_guid = iHandle2GUID(subscription_handle);
+
+    if (writer_ && writer_->matched_reader_is_matched(reader_guid))
+    {
+        if (publisher_)
+        {
+            RTPSParticipant* rtps_participant = publisher_->rtps_participant();
+            if (rtps_participant &&
+                    rtps_participant->get_subscription_info(subscription_data, reader_guid))
+            {
+                ret = ReturnCode_t::RETCODE_OK;
+            }
+        }
+    }
+
+    return ret;
+}
+
+ReturnCode_t DataWriterImpl::get_matched_subscriptions(
+        std::vector<InstanceHandle_t>& subscription_handles) const
+{
+    ReturnCode_t ret = ReturnCode_t::RETCODE_ERROR;
+    std::vector<GUID_t> matched_reader_guids;
+    subscription_handles.clear();
+
+    if (writer_ && writer_->matched_readers_guids(matched_reader_guids))
+    {
+        for (const GUID_t& guid : matched_reader_guids)
+        {
+            subscription_handles.push_back(InstanceHandle_t(guid));
+        }
+        ret = ReturnCode_t::RETCODE_OK;
+    }
+
+    return ret;
+}
+
+ReturnCode_t DataWriterImpl::get_matched_subscriptions(
+        std::vector<InstanceHandle_t*>& subscription_handles) const
+{
+    ReturnCode_t ret = ReturnCode_t::RETCODE_ERROR;
+    std::vector<GUID_t> matched_reader_guids;
+    subscription_handles.clear();
+
+    if (writer_ && writer_->matched_readers_guids(matched_reader_guids))
+    {
+        for (const GUID_t& guid : matched_reader_guids)
+        {
+            // Note: user is responsible for deleting the InstanceHandle_t objects
+            subscription_handles.push_back(new InstanceHandle_t(guid));
+        }
+
+        ret = ReturnCode_t::RETCODE_OK;
+    }
+
+    return ret;
+}
+
 bool DataWriterImpl::is_relevant(
         const fastrtps::rtps::CacheChange_t& change,
         const fastrtps::rtps::GUID_t& reader_guid) const
