@@ -203,6 +203,7 @@ set(${PROJECT_NAME}_source_files
     rtps/builtin/liveliness/WLP.cpp
     rtps/builtin/liveliness/WLPListener.cpp
     rtps/builtin/data/ParticipantProxyData.cpp
+    rtps/builtin/data/ProxyDataConverters.cpp
     rtps/builtin/data/WriterProxyData.cpp
     rtps/builtin/data/ReaderProxyData.cpp
     rtps/flowcontrol/ThroughputControllerDescriptor.cpp
