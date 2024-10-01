@@ -435,12 +435,6 @@ bool RTPSReader::is_sample_valid(
     return true;
 }
 
-bool RTPSReader::matched_writers_guids(
-        std::vector<GUID_t>&) const
-{
-    return false;
-}
-
 #ifdef FASTDDS_STATISTICS
 
 bool RTPSReader::add_statistics_listener(
