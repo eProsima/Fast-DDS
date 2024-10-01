@@ -323,8 +323,8 @@ public:
      * @param[out] guids Vector to be filled with the GUIDs of the matched readers.
      * @return True if the operation was successful.
      */
-    RTPS_DllAPI bool matched_readers_guids(
-            std::vector<GUID_t>& guids) const;
+    RTPS_DllAPI virtual bool matched_readers_guids(
+            std::vector<GUID_t>& guids) const = 0;
 
     /**
      * Tries to remove a change waiting a maximum of the provided microseconds.

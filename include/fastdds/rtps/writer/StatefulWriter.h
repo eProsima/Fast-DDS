@@ -448,6 +448,15 @@ public:
         return locator_selector_async_;
     }
 
+    /**
+     * @brief Fills the provided vector with the GUIDs of the matched readers.
+     *
+     * @param[out] guids Vector to be filled with the GUIDs of the matched readers.
+     * @return True if the operation was successful.
+     */
+    bool matched_readers_guids(
+            std::vector<GUID_t>& guids) const override;
+
 #ifdef FASTDDS_STATISTICS
     bool get_connections(
             fastdds::statistics::rtps::ConnectionList& connection_list) override;
