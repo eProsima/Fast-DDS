@@ -95,9 +95,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                a_() = x.m_a;
-                break;
+                        case 0x00000001:
+                            a_() = x.m_a;
+                            break;
 
         }
     }
@@ -113,9 +113,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                a_() = std::move(x.m_a);
-                break;
+                        case 0x00000001:
+                            a_() = std::move(x.m_a);
+                            break;
 
         }
     }
@@ -131,9 +131,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                a_() = x.m_a;
-                break;
+                        case 0x00000001:
+                            a_() = x.m_a;
+                            break;
 
         }
 
@@ -151,9 +151,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                a_() = std::move(x.m_a);
-                break;
+                        case 0x00000001:
+                            a_() = std::move(x.m_a);
+                            break;
 
         }
 
@@ -174,9 +174,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_a == x.m_a);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_a == x.m_a);
+                                    break;
 
             }
         }
@@ -206,19 +206,18 @@ public:
 
         switch (__d)
         {
-            case 0:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 0:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -274,6 +273,7 @@ public:
         return m_a;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -284,25 +284,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    int16_t& a_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            int16_t& a_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_a = {0};
+
+                }
+
+                return m_a;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_a = {0};
-
-        }
-
-        return m_a;
-    }
 
     int32_t m__d {2147483647};
 
@@ -352,9 +354,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                b_() = x.m_b;
-                break;
+                        case 0x00000001:
+                            b_() = x.m_b;
+                            break;
 
         }
     }
@@ -370,9 +372,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                b_() = std::move(x.m_b);
-                break;
+                        case 0x00000001:
+                            b_() = std::move(x.m_b);
+                            break;
 
         }
     }
@@ -388,9 +390,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                b_() = x.m_b;
-                break;
+                        case 0x00000001:
+                            b_() = x.m_b;
+                            break;
 
         }
 
@@ -408,9 +410,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                b_() = std::move(x.m_b);
-                break;
+                        case 0x00000001:
+                            b_() = std::move(x.m_b);
+                            break;
 
         }
 
@@ -431,9 +433,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_b == x.m_b);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_b == x.m_b);
+                                    break;
 
             }
         }
@@ -463,19 +465,18 @@ public:
 
         switch (__d)
         {
-            case 1:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 1:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -531,6 +532,7 @@ public:
         return m_b;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -541,25 +543,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    uint16_t& b_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            uint16_t& b_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_b = {0};
+
+                }
+
+                return m_b;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_b = {0};
-
-        }
-
-        return m_b;
-    }
 
     int32_t m__d {2147483647};
 
@@ -609,9 +613,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                c_() = x.m_c;
-                break;
+                        case 0x00000001:
+                            c_() = x.m_c;
+                            break;
 
         }
     }
@@ -627,9 +631,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                c_() = std::move(x.m_c);
-                break;
+                        case 0x00000001:
+                            c_() = std::move(x.m_c);
+                            break;
 
         }
     }
@@ -645,9 +649,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                c_() = x.m_c;
-                break;
+                        case 0x00000001:
+                            c_() = x.m_c;
+                            break;
 
         }
 
@@ -665,9 +669,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                c_() = std::move(x.m_c);
-                break;
+                        case 0x00000001:
+                            c_() = std::move(x.m_c);
+                            break;
 
         }
 
@@ -688,9 +692,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_c == x.m_c);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_c == x.m_c);
+                                    break;
 
             }
         }
@@ -720,19 +724,18 @@ public:
 
         switch (__d)
         {
-            case 2:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 2:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -788,6 +791,7 @@ public:
         return m_c;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -798,25 +802,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    int32_t& c_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            int32_t& c_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_c = {0};
+
+                }
+
+                return m_c;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_c = {0};
-
-        }
-
-        return m_c;
-    }
 
     int32_t m__d {2147483647};
 
@@ -866,9 +872,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                d_() = x.m_d;
-                break;
+                        case 0x00000001:
+                            d_() = x.m_d;
+                            break;
 
         }
     }
@@ -884,9 +890,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                d_() = std::move(x.m_d);
-                break;
+                        case 0x00000001:
+                            d_() = std::move(x.m_d);
+                            break;
 
         }
     }
@@ -902,9 +908,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                d_() = x.m_d;
-                break;
+                        case 0x00000001:
+                            d_() = x.m_d;
+                            break;
 
         }
 
@@ -922,9 +928,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                d_() = std::move(x.m_d);
-                break;
+                        case 0x00000001:
+                            d_() = std::move(x.m_d);
+                            break;
 
         }
 
@@ -945,9 +951,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_d == x.m_d);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_d == x.m_d);
+                                    break;
 
             }
         }
@@ -977,19 +983,18 @@ public:
 
         switch (__d)
         {
-            case 3:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 3:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -1045,6 +1050,7 @@ public:
         return m_d;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -1055,25 +1061,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    uint32_t& d_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            uint32_t& d_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_d = {0};
+
+                }
+
+                return m_d;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_d = {0};
-
-        }
-
-        return m_d;
-    }
 
     int32_t m__d {2147483647};
 
@@ -1123,9 +1131,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                e_() = x.m_e;
-                break;
+                        case 0x00000001:
+                            e_() = x.m_e;
+                            break;
 
         }
     }
@@ -1141,9 +1149,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                e_() = std::move(x.m_e);
-                break;
+                        case 0x00000001:
+                            e_() = std::move(x.m_e);
+                            break;
 
         }
     }
@@ -1159,9 +1167,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                e_() = x.m_e;
-                break;
+                        case 0x00000001:
+                            e_() = x.m_e;
+                            break;
 
         }
 
@@ -1179,9 +1187,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                e_() = std::move(x.m_e);
-                break;
+                        case 0x00000001:
+                            e_() = std::move(x.m_e);
+                            break;
 
         }
 
@@ -1202,9 +1210,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_e == x.m_e);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_e == x.m_e);
+                                    break;
 
             }
         }
@@ -1234,19 +1242,18 @@ public:
 
         switch (__d)
         {
-            case 4:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 4:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -1302,6 +1309,7 @@ public:
         return m_e;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -1312,25 +1320,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    int64_t& e_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            int64_t& e_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_e = {0};
+
+                }
+
+                return m_e;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_e = {0};
-
-        }
-
-        return m_e;
-    }
 
     int32_t m__d {2147483647};
 
@@ -1380,9 +1390,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                f_() = x.m_f;
-                break;
+                        case 0x00000001:
+                            f_() = x.m_f;
+                            break;
 
         }
     }
@@ -1398,9 +1408,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                f_() = std::move(x.m_f);
-                break;
+                        case 0x00000001:
+                            f_() = std::move(x.m_f);
+                            break;
 
         }
     }
@@ -1416,9 +1426,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                f_() = x.m_f;
-                break;
+                        case 0x00000001:
+                            f_() = x.m_f;
+                            break;
 
         }
 
@@ -1436,9 +1446,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                f_() = std::move(x.m_f);
-                break;
+                        case 0x00000001:
+                            f_() = std::move(x.m_f);
+                            break;
 
         }
 
@@ -1459,9 +1469,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_f == x.m_f);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_f == x.m_f);
+                                    break;
 
             }
         }
@@ -1491,19 +1501,18 @@ public:
 
         switch (__d)
         {
-            case 5:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 5:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -1559,6 +1568,7 @@ public:
         return m_f;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -1569,25 +1579,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    uint64_t& f_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            uint64_t& f_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_f = {0};
+
+                }
+
+                return m_f;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_f = {0};
-
-        }
-
-        return m_f;
-    }
 
     int32_t m__d {2147483647};
 
@@ -1637,9 +1649,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                g_() = x.m_g;
-                break;
+                        case 0x00000001:
+                            g_() = x.m_g;
+                            break;
 
         }
     }
@@ -1655,9 +1667,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                g_() = std::move(x.m_g);
-                break;
+                        case 0x00000001:
+                            g_() = std::move(x.m_g);
+                            break;
 
         }
     }
@@ -1673,9 +1685,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                g_() = x.m_g;
-                break;
+                        case 0x00000001:
+                            g_() = x.m_g;
+                            break;
 
         }
 
@@ -1693,9 +1705,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                g_() = std::move(x.m_g);
-                break;
+                        case 0x00000001:
+                            g_() = std::move(x.m_g);
+                            break;
 
         }
 
@@ -1716,9 +1728,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_g == x.m_g);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_g == x.m_g);
+                                    break;
 
             }
         }
@@ -1748,19 +1760,18 @@ public:
 
         switch (__d)
         {
-            case 6:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 6:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -1816,6 +1827,7 @@ public:
         return m_g;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -1826,25 +1838,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    float& g_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            float& g_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_g = {0.0};
+
+                }
+
+                return m_g;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_g = {0.0};
-
-        }
-
-        return m_g;
-    }
 
     int32_t m__d {2147483647};
 
@@ -1894,9 +1908,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                h_() = x.m_h;
-                break;
+                        case 0x00000001:
+                            h_() = x.m_h;
+                            break;
 
         }
     }
@@ -1912,9 +1926,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                h_() = std::move(x.m_h);
-                break;
+                        case 0x00000001:
+                            h_() = std::move(x.m_h);
+                            break;
 
         }
     }
@@ -1930,9 +1944,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                h_() = x.m_h;
-                break;
+                        case 0x00000001:
+                            h_() = x.m_h;
+                            break;
 
         }
 
@@ -1950,9 +1964,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                h_() = std::move(x.m_h);
-                break;
+                        case 0x00000001:
+                            h_() = std::move(x.m_h);
+                            break;
 
         }
 
@@ -1973,9 +1987,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_h == x.m_h);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_h == x.m_h);
+                                    break;
 
             }
         }
@@ -2005,19 +2019,18 @@ public:
 
         switch (__d)
         {
-            case 7:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 7:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -2073,6 +2086,7 @@ public:
         return m_h;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -2083,25 +2097,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    double& h_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            double& h_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_h = {0.0};
+
+                }
+
+                return m_h;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_h = {0.0};
-
-        }
-
-        return m_h;
-    }
 
     int32_t m__d {2147483647};
 
@@ -2151,9 +2167,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                i_() = x.m_i;
-                break;
+                        case 0x00000001:
+                            i_() = x.m_i;
+                            break;
 
         }
     }
@@ -2169,9 +2185,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                i_() = std::move(x.m_i);
-                break;
+                        case 0x00000001:
+                            i_() = std::move(x.m_i);
+                            break;
 
         }
     }
@@ -2187,9 +2203,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                i_() = x.m_i;
-                break;
+                        case 0x00000001:
+                            i_() = x.m_i;
+                            break;
 
         }
 
@@ -2207,9 +2223,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                i_() = std::move(x.m_i);
-                break;
+                        case 0x00000001:
+                            i_() = std::move(x.m_i);
+                            break;
 
         }
 
@@ -2230,9 +2246,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_i == x.m_i);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_i == x.m_i);
+                                    break;
 
             }
         }
@@ -2262,19 +2278,18 @@ public:
 
         switch (__d)
         {
-            case 8:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 8:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -2330,6 +2345,7 @@ public:
         return m_i;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -2340,25 +2356,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    long double& i_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            long double& i_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_i = {0.0};
+
+                }
+
+                return m_i;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_i = {0.0};
-
-        }
-
-        return m_i;
-    }
 
     int32_t m__d {2147483647};
 
@@ -2408,9 +2426,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                j_() = x.m_j;
-                break;
+                        case 0x00000001:
+                            j_() = x.m_j;
+                            break;
 
         }
     }
@@ -2426,9 +2444,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                j_() = std::move(x.m_j);
-                break;
+                        case 0x00000001:
+                            j_() = std::move(x.m_j);
+                            break;
 
         }
     }
@@ -2444,9 +2462,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                j_() = x.m_j;
-                break;
+                        case 0x00000001:
+                            j_() = x.m_j;
+                            break;
 
         }
 
@@ -2464,9 +2482,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                j_() = std::move(x.m_j);
-                break;
+                        case 0x00000001:
+                            j_() = std::move(x.m_j);
+                            break;
 
         }
 
@@ -2487,9 +2505,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_j == x.m_j);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_j == x.m_j);
+                                    break;
 
             }
         }
@@ -2519,19 +2537,18 @@ public:
 
         switch (__d)
         {
-            case 9:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 9:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -2587,6 +2604,7 @@ public:
         return m_j;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -2597,25 +2615,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    bool& j_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            bool& j_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_j = {false};
+
+                }
+
+                return m_j;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_j = {false};
-
-        }
-
-        return m_j;
-    }
 
     int32_t m__d {2147483647};
 
@@ -2665,9 +2685,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                k_() = x.m_k;
-                break;
+                        case 0x00000001:
+                            k_() = x.m_k;
+                            break;
 
         }
     }
@@ -2683,9 +2703,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                k_() = std::move(x.m_k);
-                break;
+                        case 0x00000001:
+                            k_() = std::move(x.m_k);
+                            break;
 
         }
     }
@@ -2701,9 +2721,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                k_() = x.m_k;
-                break;
+                        case 0x00000001:
+                            k_() = x.m_k;
+                            break;
 
         }
 
@@ -2721,9 +2741,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                k_() = std::move(x.m_k);
-                break;
+                        case 0x00000001:
+                            k_() = std::move(x.m_k);
+                            break;
 
         }
 
@@ -2744,9 +2764,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_k == x.m_k);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_k == x.m_k);
+                                    break;
 
             }
         }
@@ -2776,19 +2796,18 @@ public:
 
         switch (__d)
         {
-            case 10:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 10:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -2844,6 +2863,7 @@ public:
         return m_k;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -2854,25 +2874,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    uint8_t& k_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            uint8_t& k_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_k = {0};
+
+                }
+
+                return m_k;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_k = {0};
-
-        }
-
-        return m_k;
-    }
 
     int32_t m__d {2147483647};
 
@@ -2922,9 +2944,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                l_() = x.m_l;
-                break;
+                        case 0x00000001:
+                            l_() = x.m_l;
+                            break;
 
         }
     }
@@ -2940,9 +2962,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                l_() = std::move(x.m_l);
-                break;
+                        case 0x00000001:
+                            l_() = std::move(x.m_l);
+                            break;
 
         }
     }
@@ -2958,9 +2980,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                l_() = x.m_l;
-                break;
+                        case 0x00000001:
+                            l_() = x.m_l;
+                            break;
 
         }
 
@@ -2978,9 +3000,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                l_() = std::move(x.m_l);
-                break;
+                        case 0x00000001:
+                            l_() = std::move(x.m_l);
+                            break;
 
         }
 
@@ -3001,9 +3023,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_l == x.m_l);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_l == x.m_l);
+                                    break;
 
             }
         }
@@ -3033,19 +3055,18 @@ public:
 
         switch (__d)
         {
-            case 11:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 11:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -3101,6 +3122,7 @@ public:
         return m_l;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -3111,25 +3133,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    char& l_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            char& l_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_l = {0};
+
+                }
+
+                return m_l;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_l = {0};
-
-        }
-
-        return m_l;
-    }
 
     int32_t m__d {2147483647};
 
@@ -3179,9 +3203,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                m_() = x.m_m;
-                break;
+                        case 0x00000001:
+                            m_() = x.m_m;
+                            break;
 
         }
     }
@@ -3197,9 +3221,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                m_() = std::move(x.m_m);
-                break;
+                        case 0x00000001:
+                            m_() = std::move(x.m_m);
+                            break;
 
         }
     }
@@ -3215,9 +3239,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                m_() = x.m_m;
-                break;
+                        case 0x00000001:
+                            m_() = x.m_m;
+                            break;
 
         }
 
@@ -3235,9 +3259,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                m_() = std::move(x.m_m);
-                break;
+                        case 0x00000001:
+                            m_() = std::move(x.m_m);
+                            break;
 
         }
 
@@ -3258,9 +3282,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_m == x.m_m);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_m == x.m_m);
+                                    break;
 
             }
         }
@@ -3290,19 +3314,18 @@ public:
 
         switch (__d)
         {
-            case 12:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 12:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -3358,6 +3381,7 @@ public:
         return m_m;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -3368,25 +3392,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    wchar_t& m_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            wchar_t& m_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_m = {0};
+
+                }
+
+                return m_m;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_m = {0};
-
-        }
-
-        return m_m;
-    }
 
     int32_t m__d {2147483647};
 
@@ -3436,9 +3462,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                n_() = x.m_n;
-                break;
+                        case 0x00000001:
+                            n_() = x.m_n;
+                            break;
 
         }
     }
@@ -3454,9 +3480,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                n_() = std::move(x.m_n);
-                break;
+                        case 0x00000001:
+                            n_() = std::move(x.m_n);
+                            break;
 
         }
     }
@@ -3472,9 +3498,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                n_() = x.m_n;
-                break;
+                        case 0x00000001:
+                            n_() = x.m_n;
+                            break;
 
         }
 
@@ -3492,9 +3518,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                n_() = std::move(x.m_n);
-                break;
+                        case 0x00000001:
+                            n_() = std::move(x.m_n);
+                            break;
 
         }
 
@@ -3515,9 +3541,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_n == x.m_n);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_n == x.m_n);
+                                    break;
 
             }
         }
@@ -3547,19 +3573,18 @@ public:
 
         switch (__d)
         {
-            case 13:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 13:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -3626,6 +3651,7 @@ public:
         return m_n;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -3636,28 +3662,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    std::string& n_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            std::string& n_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_n.~basic_string();};
+                    new(&m_n) std::string();
+
+                }
+
+                return m_n;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = [&]()
-                    {
-                        m_n.~basic_string();
-                    };
-            new(&m_n) std::string();
-
-        }
-
-        return m_n;
-    }
 
     int32_t m__d {2147483647};
 
@@ -3707,9 +3732,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                o_() = x.m_o;
-                break;
+                        case 0x00000001:
+                            o_() = x.m_o;
+                            break;
 
         }
     }
@@ -3725,9 +3750,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                o_() = std::move(x.m_o);
-                break;
+                        case 0x00000001:
+                            o_() = std::move(x.m_o);
+                            break;
 
         }
     }
@@ -3743,9 +3768,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                o_() = x.m_o;
-                break;
+                        case 0x00000001:
+                            o_() = x.m_o;
+                            break;
 
         }
 
@@ -3763,9 +3788,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                o_() = std::move(x.m_o);
-                break;
+                        case 0x00000001:
+                            o_() = std::move(x.m_o);
+                            break;
 
         }
 
@@ -3786,9 +3811,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_o == x.m_o);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_o == x.m_o);
+                                    break;
 
             }
         }
@@ -3818,19 +3843,18 @@ public:
 
         switch (__d)
         {
-            case 14:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 14:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -3897,6 +3921,7 @@ public:
         return m_o;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -3907,28 +3932,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    std::wstring& o_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            std::wstring& o_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_o.~basic_string();};
+                    new(&m_o) std::wstring();
+
+                }
+
+                return m_o;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = [&]()
-                    {
-                        m_o.~basic_string();
-                    };
-            new(&m_o) std::wstring();
-
-        }
-
-        return m_o;
-    }
 
     int32_t m__d {2147483647};
 
@@ -3978,9 +4002,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                bn_() = x.m_bn;
-                break;
+                        case 0x00000001:
+                            bn_() = x.m_bn;
+                            break;
 
         }
     }
@@ -3996,9 +4020,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                bn_() = std::move(x.m_bn);
-                break;
+                        case 0x00000001:
+                            bn_() = std::move(x.m_bn);
+                            break;
 
         }
     }
@@ -4014,9 +4038,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                bn_() = x.m_bn;
-                break;
+                        case 0x00000001:
+                            bn_() = x.m_bn;
+                            break;
 
         }
 
@@ -4034,9 +4058,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                bn_() = std::move(x.m_bn);
-                break;
+                        case 0x00000001:
+                            bn_() = std::move(x.m_bn);
+                            break;
 
         }
 
@@ -4057,9 +4081,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_bn == x.m_bn);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_bn == x.m_bn);
+                                    break;
 
             }
         }
@@ -4089,19 +4113,18 @@ public:
 
         switch (__d)
         {
-            case 13:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 13:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -4168,6 +4191,7 @@ public:
         return m_bn;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -4178,28 +4202,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    Inner_alias_bounded_string_helper& bn_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            Inner_alias_bounded_string_helper& bn_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_bn.~Inner_alias_bounded_string_helper();};
+                    new(&m_bn) Inner_alias_bounded_string_helper();
+
+                }
+
+                return m_bn;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = [&]()
-                    {
-                        m_bn.~Inner_alias_bounded_string_helper();
-                    };
-            new(&m_bn) Inner_alias_bounded_string_helper();
-
-        }
-
-        return m_bn;
-    }
 
     int32_t m__d {2147483647};
 
@@ -4249,9 +4272,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                bo_() = x.m_bo;
-                break;
+                        case 0x00000001:
+                            bo_() = x.m_bo;
+                            break;
 
         }
     }
@@ -4267,9 +4290,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                bo_() = std::move(x.m_bo);
-                break;
+                        case 0x00000001:
+                            bo_() = std::move(x.m_bo);
+                            break;
 
         }
     }
@@ -4285,9 +4308,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                bo_() = x.m_bo;
-                break;
+                        case 0x00000001:
+                            bo_() = x.m_bo;
+                            break;
 
         }
 
@@ -4305,9 +4328,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                bo_() = std::move(x.m_bo);
-                break;
+                        case 0x00000001:
+                            bo_() = std::move(x.m_bo);
+                            break;
 
         }
 
@@ -4328,9 +4351,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_bo == x.m_bo);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_bo == x.m_bo);
+                                    break;
 
             }
         }
@@ -4360,19 +4383,18 @@ public:
 
         switch (__d)
         {
-            case 14:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 14:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -4439,6 +4461,7 @@ public:
         return m_bo;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -4449,28 +4472,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    Inner_alias_bounded_wstring_helper& bo_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            Inner_alias_bounded_wstring_helper& bo_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_bo.~Inner_alias_bounded_wstring_helper();};
+                    new(&m_bo) Inner_alias_bounded_wstring_helper();
+
+                }
+
+                return m_bo;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = [&]()
-                    {
-                        m_bo.~Inner_alias_bounded_wstring_helper();
-                    };
-            new(&m_bo) Inner_alias_bounded_wstring_helper();
-
-        }
-
-        return m_bo;
-    }
 
     int32_t m__d {2147483647};
 
@@ -4520,9 +4542,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                p_() = x.m_p;
-                break;
+                        case 0x00000001:
+                            p_() = x.m_p;
+                            break;
 
         }
     }
@@ -4538,9 +4560,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                p_() = std::move(x.m_p);
-                break;
+                        case 0x00000001:
+                            p_() = std::move(x.m_p);
+                            break;
 
         }
     }
@@ -4556,9 +4578,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                p_() = x.m_p;
-                break;
+                        case 0x00000001:
+                            p_() = x.m_p;
+                            break;
 
         }
 
@@ -4576,9 +4598,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                p_() = std::move(x.m_p);
-                break;
+                        case 0x00000001:
+                            p_() = std::move(x.m_p);
+                            break;
 
         }
 
@@ -4599,9 +4621,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_p == x.m_p);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_p == x.m_p);
+                                    break;
 
             }
         }
@@ -4631,19 +4653,18 @@ public:
 
         switch (__d)
         {
-            case 15:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 15:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -4699,6 +4720,7 @@ public:
         return m_p;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -4709,25 +4731,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    InnerEnumHelper& p_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            InnerEnumHelper& p_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_p = {InnerEnumHelper::ENUM_VALUE_1};
+
+                }
+
+                return m_p;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_p = {InnerEnumHelper::ENUM_VALUE_1};
-
-        }
-
-        return m_p;
-    }
 
     int32_t m__d {2147483647};
 
@@ -4777,9 +4801,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                q_() = x.m_q;
-                break;
+                        case 0x00000001:
+                            q_() = x.m_q;
+                            break;
 
         }
     }
@@ -4795,9 +4819,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                q_() = std::move(x.m_q);
-                break;
+                        case 0x00000001:
+                            q_() = std::move(x.m_q);
+                            break;
 
         }
     }
@@ -4813,9 +4837,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                q_() = x.m_q;
-                break;
+                        case 0x00000001:
+                            q_() = x.m_q;
+                            break;
 
         }
 
@@ -4833,9 +4857,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                q_() = std::move(x.m_q);
-                break;
+                        case 0x00000001:
+                            q_() = std::move(x.m_q);
+                            break;
 
         }
 
@@ -4856,9 +4880,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_q == x.m_q);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_q == x.m_q);
+                                    break;
 
             }
         }
@@ -4888,19 +4912,18 @@ public:
 
         switch (__d)
         {
-            case 16:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 16:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -4967,6 +4990,7 @@ public:
         return m_q;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -4977,28 +5001,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    InnerBitMaskHelper& q_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            InnerBitMaskHelper& q_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_q.~InnerBitMaskHelper();};
+                    new(&m_q) InnerBitMaskHelper();
+
+                }
+
+                return m_q;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = [&]()
-                    {
-                        m_q.~InnerBitMaskHelper();
-                    };
-            new(&m_q) InnerBitMaskHelper();
-
-        }
-
-        return m_q;
-    }
 
     int32_t m__d {2147483647};
 
@@ -5048,9 +5071,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                r_() = x.m_r;
-                break;
+                        case 0x00000001:
+                            r_() = x.m_r;
+                            break;
 
         }
     }
@@ -5066,9 +5089,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                r_() = std::move(x.m_r);
-                break;
+                        case 0x00000001:
+                            r_() = std::move(x.m_r);
+                            break;
 
         }
     }
@@ -5084,9 +5107,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                r_() = x.m_r;
-                break;
+                        case 0x00000001:
+                            r_() = x.m_r;
+                            break;
 
         }
 
@@ -5104,9 +5127,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                r_() = std::move(x.m_r);
-                break;
+                        case 0x00000001:
+                            r_() = std::move(x.m_r);
+                            break;
 
         }
 
@@ -5127,9 +5150,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_r == x.m_r);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_r == x.m_r);
+                                    break;
 
             }
         }
@@ -5159,19 +5182,18 @@ public:
 
         switch (__d)
         {
-            case 17:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 17:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -5227,6 +5249,7 @@ public:
         return m_r;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -5237,25 +5260,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    InnerAliasHelper& r_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            InnerAliasHelper& r_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_r = {0};
+
+                }
+
+                return m_r;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_r = {0};
-
-        }
-
-        return m_r;
-    }
 
     int32_t m__d {2147483647};
 
@@ -5305,9 +5330,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                s_() = x.m_s;
-                break;
+                        case 0x00000001:
+                            s_() = x.m_s;
+                            break;
 
         }
     }
@@ -5323,9 +5348,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                s_() = std::move(x.m_s);
-                break;
+                        case 0x00000001:
+                            s_() = std::move(x.m_s);
+                            break;
 
         }
     }
@@ -5341,9 +5366,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                s_() = x.m_s;
-                break;
+                        case 0x00000001:
+                            s_() = x.m_s;
+                            break;
 
         }
 
@@ -5361,9 +5386,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                s_() = std::move(x.m_s);
-                break;
+                        case 0x00000001:
+                            s_() = std::move(x.m_s);
+                            break;
 
         }
 
@@ -5384,9 +5409,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_s == x.m_s);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_s == x.m_s);
+                                    break;
 
             }
         }
@@ -5416,19 +5441,18 @@ public:
 
         switch (__d)
         {
-            case 18:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 18:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -5495,6 +5519,7 @@ public:
         return m_s;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -5505,28 +5530,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    Inner_alias_array_helper& s_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            Inner_alias_array_helper& s_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_s.~Inner_alias_array_helper();};
+                    new(&m_s) Inner_alias_array_helper();
+
+                }
+
+                return m_s;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = [&]()
-                    {
-                        m_s.~Inner_alias_array_helper();
-                    };
-            new(&m_s) Inner_alias_array_helper();
-
-        }
-
-        return m_s;
-    }
 
     int32_t m__d {2147483647};
 
@@ -5576,9 +5600,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                t_() = x.m_t;
-                break;
+                        case 0x00000001:
+                            t_() = x.m_t;
+                            break;
 
         }
     }
@@ -5594,9 +5618,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                t_() = std::move(x.m_t);
-                break;
+                        case 0x00000001:
+                            t_() = std::move(x.m_t);
+                            break;
 
         }
     }
@@ -5612,9 +5636,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                t_() = x.m_t;
-                break;
+                        case 0x00000001:
+                            t_() = x.m_t;
+                            break;
 
         }
 
@@ -5632,9 +5656,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                t_() = std::move(x.m_t);
-                break;
+                        case 0x00000001:
+                            t_() = std::move(x.m_t);
+                            break;
 
         }
 
@@ -5655,9 +5679,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_t == x.m_t);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_t == x.m_t);
+                                    break;
 
             }
         }
@@ -5687,19 +5711,18 @@ public:
 
         switch (__d)
         {
-            case 19:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 19:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -5766,6 +5789,7 @@ public:
         return m_t;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -5776,28 +5800,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    std::vector<int16_t>& t_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            std::vector<int16_t>& t_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_t.~vector();};
+                    new(&m_t) std::vector<int16_t>();
+
+                }
+
+                return m_t;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = [&]()
-                    {
-                        m_t.~vector();
-                    };
-            new(&m_t) std::vector<int16_t>();
-
-        }
-
-        return m_t;
-    }
 
     int32_t m__d {2147483647};
 
@@ -5847,9 +5870,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                u_() = x.m_u;
-                break;
+                        case 0x00000001:
+                            u_() = x.m_u;
+                            break;
 
         }
     }
@@ -5865,9 +5888,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                u_() = std::move(x.m_u);
-                break;
+                        case 0x00000001:
+                            u_() = std::move(x.m_u);
+                            break;
 
         }
     }
@@ -5883,9 +5906,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                u_() = x.m_u;
-                break;
+                        case 0x00000001:
+                            u_() = x.m_u;
+                            break;
 
         }
 
@@ -5903,9 +5926,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                u_() = std::move(x.m_u);
-                break;
+                        case 0x00000001:
+                            u_() = std::move(x.m_u);
+                            break;
 
         }
 
@@ -5926,9 +5949,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_u == x.m_u);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_u == x.m_u);
+                                    break;
 
             }
         }
@@ -5958,19 +5981,18 @@ public:
 
         switch (__d)
         {
-            case 20:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 20:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -6037,6 +6059,7 @@ public:
         return m_u;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -6047,28 +6070,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    std::map<int32_t, int32_t>& u_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            std::map<int32_t, int32_t>& u_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_u.~map();};
+                    new(&m_u) std::map<int32_t, int32_t>();
+
+                }
+
+                return m_u;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = [&]()
-                    {
-                        m_u.~map();
-                    };
-            new(&m_u) std::map<int32_t, int32_t>();
-
-        }
-
-        return m_u;
-    }
 
     int32_t m__d {2147483647};
 
@@ -6118,9 +6140,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                v_() = x.m_v;
-                break;
+                        case 0x00000001:
+                            v_() = x.m_v;
+                            break;
 
         }
     }
@@ -6136,9 +6158,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                v_() = std::move(x.m_v);
-                break;
+                        case 0x00000001:
+                            v_() = std::move(x.m_v);
+                            break;
 
         }
     }
@@ -6154,9 +6176,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                v_() = x.m_v;
-                break;
+                        case 0x00000001:
+                            v_() = x.m_v;
+                            break;
 
         }
 
@@ -6174,9 +6196,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                v_() = std::move(x.m_v);
-                break;
+                        case 0x00000001:
+                            v_() = std::move(x.m_v);
+                            break;
 
         }
 
@@ -6197,9 +6219,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_v == x.m_v);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_v == x.m_v);
+                                    break;
 
             }
         }
@@ -6229,19 +6251,18 @@ public:
 
         switch (__d)
         {
-            case 21:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 21:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -6308,6 +6329,7 @@ public:
         return m_v;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -6318,28 +6340,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    InnerUnionHelper& v_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            InnerUnionHelper& v_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_v.~InnerUnionHelper();};
+                    new(&m_v) InnerUnionHelper();
+
+                }
+
+                return m_v;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = [&]()
-                    {
-                        m_v.~InnerUnionHelper();
-                    };
-            new(&m_v) InnerUnionHelper();
-
-        }
-
-        return m_v;
-    }
 
     int32_t m__d {2147483647};
 
@@ -6389,9 +6410,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                w_() = x.m_w;
-                break;
+                        case 0x00000001:
+                            w_() = x.m_w;
+                            break;
 
         }
     }
@@ -6407,9 +6428,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                w_() = std::move(x.m_w);
-                break;
+                        case 0x00000001:
+                            w_() = std::move(x.m_w);
+                            break;
 
         }
     }
@@ -6425,9 +6446,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                w_() = x.m_w;
-                break;
+                        case 0x00000001:
+                            w_() = x.m_w;
+                            break;
 
         }
 
@@ -6445,9 +6466,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                w_() = std::move(x.m_w);
-                break;
+                        case 0x00000001:
+                            w_() = std::move(x.m_w);
+                            break;
 
         }
 
@@ -6468,9 +6489,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_w == x.m_w);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_w == x.m_w);
+                                    break;
 
             }
         }
@@ -6500,19 +6521,18 @@ public:
 
         switch (__d)
         {
-            case 22:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 22:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -6579,6 +6599,7 @@ public:
         return m_w;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -6589,28 +6610,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    InnerStructureHelper& w_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            InnerStructureHelper& w_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_w.~InnerStructureHelper();};
+                    new(&m_w) InnerStructureHelper();
+
+                }
+
+                return m_w;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = [&]()
-                    {
-                        m_w.~InnerStructureHelper();
-                    };
-            new(&m_w) InnerStructureHelper();
-
-        }
-
-        return m_w;
-    }
 
     int32_t m__d {2147483647};
 
@@ -6660,9 +6680,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                x_() = x.m_x;
-                break;
+                        case 0x00000001:
+                            x_() = x.m_x;
+                            break;
 
         }
     }
@@ -6678,9 +6698,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                x_() = std::move(x.m_x);
-                break;
+                        case 0x00000001:
+                            x_() = std::move(x.m_x);
+                            break;
 
         }
     }
@@ -6696,9 +6716,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                x_() = x.m_x;
-                break;
+                        case 0x00000001:
+                            x_() = x.m_x;
+                            break;
 
         }
 
@@ -6716,9 +6736,9 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                x_() = std::move(x.m_x);
-                break;
+                        case 0x00000001:
+                            x_() = std::move(x.m_x);
+                            break;
 
         }
 
@@ -6739,9 +6759,9 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_x == x.m_x);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_x == x.m_x);
+                                    break;
 
             }
         }
@@ -6771,19 +6791,18 @@ public:
 
         switch (__d)
         {
-            case 23:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 23:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -6850,6 +6869,7 @@ public:
         return m_x;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -6860,28 +6880,27 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    InnerBitsetHelper& x_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            InnerBitsetHelper& x_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_x.~InnerBitsetHelper();};
+                    new(&m_x) InnerBitsetHelper();
+
+                }
+
+                return m_x;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = [&]()
-                    {
-                        m_x.~InnerBitsetHelper();
-                    };
-            new(&m_x) InnerBitsetHelper();
-
-        }
-
-        return m_x;
-    }
 
     int32_t m__d {2147483647};
 
@@ -6931,13 +6950,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
         }
     }
@@ -6953,13 +6972,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
         }
     }
@@ -6975,13 +6994,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
         }
 
@@ -6999,13 +7018,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
         }
 
@@ -7026,13 +7045,13 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_first == x.m_first);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
 
-                case 0x00000002:
-                    ret_value = (m_second == x.m_second);
-                    break;
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
 
             }
         }
@@ -7062,26 +7081,25 @@ public:
 
         switch (__d)
         {
-            case 1:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 1:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case -2:
-                if (0x00000002 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case -2:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -7137,6 +7155,7 @@ public:
         return m_first;
     }
 
+
     /*!
      * @brief This function sets a value in member second
      * @param _second New value for member second
@@ -7178,6 +7197,7 @@ public:
         return m_second;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -7188,43 +7208,45 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    int32_t& first_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            int32_t& first_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+
+                }
+
+                return m_first;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_first = {0};
-
-        }
-
-        return m_first;
-    }
-
-    int64_t& second_()
-    {
-        if (0x00000002 != selected_member_)
-        {
-            if (member_destructor_)
+            int64_t& second_()
             {
-                member_destructor_();
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+
+                }
+
+                return m_second;
             }
 
-            selected_member_ = 0x00000002;
-            member_destructor_ = nullptr;
-            m_second = {0};
-
-        }
-
-        return m_second;
-    }
 
     int16_t m__d {32767};
 
@@ -7275,13 +7297,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
         }
     }
@@ -7297,13 +7319,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
         }
     }
@@ -7319,13 +7341,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
         }
 
@@ -7343,13 +7365,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
         }
 
@@ -7370,13 +7392,13 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_first == x.m_first);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
 
-                case 0x00000002:
-                    ret_value = (m_second == x.m_second);
-                    break;
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
 
             }
         }
@@ -7406,26 +7428,25 @@ public:
 
         switch (__d)
         {
-            case 1:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 1:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 2:
-                if (0x00000002 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 2:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -7481,6 +7502,7 @@ public:
         return m_first;
     }
 
+
     /*!
      * @brief This function sets a value in member second
      * @param _second New value for member second
@@ -7522,6 +7544,7 @@ public:
         return m_second;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -7532,43 +7555,45 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    int32_t& first_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            int32_t& first_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+
+                }
+
+                return m_first;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_first = {0};
-
-        }
-
-        return m_first;
-    }
-
-    int64_t& second_()
-    {
-        if (0x00000002 != selected_member_)
-        {
-            if (member_destructor_)
+            int64_t& second_()
             {
-                member_destructor_();
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+
+                }
+
+                return m_second;
             }
 
-            selected_member_ = 0x00000002;
-            member_destructor_ = nullptr;
-            m_second = {0};
-
-        }
-
-        return m_second;
-    }
 
     uint16_t m__d {32767};
 
@@ -7619,13 +7644,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
         }
     }
@@ -7641,13 +7666,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
         }
     }
@@ -7663,13 +7688,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
         }
 
@@ -7687,13 +7712,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
         }
 
@@ -7714,13 +7739,13 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_first == x.m_first);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
 
-                case 0x00000002:
-                    ret_value = (m_second == x.m_second);
-                    break;
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
 
             }
         }
@@ -7750,26 +7775,25 @@ public:
 
         switch (__d)
         {
-            case 1:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 1:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case -2:
-                if (0x00000002 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case -2:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -7825,6 +7849,7 @@ public:
         return m_first;
     }
 
+
     /*!
      * @brief This function sets a value in member second
      * @param _second New value for member second
@@ -7866,6 +7891,7 @@ public:
         return m_second;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -7876,43 +7902,45 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    int32_t& first_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            int32_t& first_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+
+                }
+
+                return m_first;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_first = {0};
-
-        }
-
-        return m_first;
-    }
-
-    int64_t& second_()
-    {
-        if (0x00000002 != selected_member_)
-        {
-            if (member_destructor_)
+            int64_t& second_()
             {
-                member_destructor_();
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+
+                }
+
+                return m_second;
             }
 
-            selected_member_ = 0x00000002;
-            member_destructor_ = nullptr;
-            m_second = {0};
-
-        }
-
-        return m_second;
-    }
 
     int32_t m__d {2147483647};
 
@@ -7963,13 +7991,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
         }
     }
@@ -7985,13 +8013,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
         }
     }
@@ -8007,13 +8035,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
         }
 
@@ -8031,13 +8059,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
         }
 
@@ -8058,13 +8086,13 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_first == x.m_first);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
 
-                case 0x00000002:
-                    ret_value = (m_second == x.m_second);
-                    break;
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
 
             }
         }
@@ -8094,26 +8122,25 @@ public:
 
         switch (__d)
         {
-            case 1:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 1:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 2:
-                if (0x00000002 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 2:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -8169,6 +8196,7 @@ public:
         return m_first;
     }
 
+
     /*!
      * @brief This function sets a value in member second
      * @param _second New value for member second
@@ -8210,6 +8238,7 @@ public:
         return m_second;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -8220,43 +8249,45 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    int32_t& first_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            int32_t& first_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+
+                }
+
+                return m_first;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_first = {0};
-
-        }
-
-        return m_first;
-    }
-
-    int64_t& second_()
-    {
-        if (0x00000002 != selected_member_)
-        {
-            if (member_destructor_)
+            int64_t& second_()
             {
-                member_destructor_();
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+
+                }
+
+                return m_second;
             }
 
-            selected_member_ = 0x00000002;
-            member_destructor_ = nullptr;
-            m_second = {0};
-
-        }
-
-        return m_second;
-    }
 
     uint32_t m__d {2147483647};
 
@@ -8307,13 +8338,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
         }
     }
@@ -8329,13 +8360,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
         }
     }
@@ -8351,13 +8382,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
         }
 
@@ -8375,13 +8406,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
         }
 
@@ -8402,13 +8433,13 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_first == x.m_first);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
 
-                case 0x00000002:
-                    ret_value = (m_second == x.m_second);
-                    break;
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
 
             }
         }
@@ -8438,26 +8469,25 @@ public:
 
         switch (__d)
         {
-            case 1:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 1:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case -2:
-                if (0x00000002 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case -2:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -8513,6 +8543,7 @@ public:
         return m_first;
     }
 
+
     /*!
      * @brief This function sets a value in member second
      * @param _second New value for member second
@@ -8554,6 +8585,7 @@ public:
         return m_second;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -8564,43 +8596,45 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    int32_t& first_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            int32_t& first_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+
+                }
+
+                return m_first;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_first = {0};
-
-        }
-
-        return m_first;
-    }
-
-    int64_t& second_()
-    {
-        if (0x00000002 != selected_member_)
-        {
-            if (member_destructor_)
+            int64_t& second_()
             {
-                member_destructor_();
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+
+                }
+
+                return m_second;
             }
 
-            selected_member_ = 0x00000002;
-            member_destructor_ = nullptr;
-            m_second = {0};
-
-        }
-
-        return m_second;
-    }
 
     int64_t m__d {9223372036854775807};
 
@@ -8651,13 +8685,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
         }
     }
@@ -8673,13 +8707,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
         }
     }
@@ -8695,13 +8729,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
         }
 
@@ -8719,13 +8753,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
         }
 
@@ -8746,13 +8780,13 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_first == x.m_first);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
 
-                case 0x00000002:
-                    ret_value = (m_second == x.m_second);
-                    break;
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
 
             }
         }
@@ -8782,26 +8816,25 @@ public:
 
         switch (__d)
         {
-            case 2:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 2:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 1:
-                if (0x00000002 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 1:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -8857,6 +8890,7 @@ public:
         return m_first;
     }
 
+
     /*!
      * @brief This function sets a value in member second
      * @param _second New value for member second
@@ -8898,6 +8932,7 @@ public:
         return m_second;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -8908,43 +8943,45 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    int32_t& first_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            int32_t& first_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+
+                }
+
+                return m_first;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_first = {0};
-
-        }
-
-        return m_first;
-    }
-
-    int64_t& second_()
-    {
-        if (0x00000002 != selected_member_)
-        {
-            if (member_destructor_)
+            int64_t& second_()
             {
-                member_destructor_();
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+
+                }
+
+                return m_second;
             }
 
-            selected_member_ = 0x00000002;
-            member_destructor_ = nullptr;
-            m_second = {0};
-
-        }
-
-        return m_second;
-    }
 
     uint64_t m__d {9223372036854775807};
 
@@ -8999,13 +9036,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
         }
     }
@@ -9021,13 +9058,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
         }
     }
@@ -9043,13 +9080,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
         }
 
@@ -9067,13 +9104,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
         }
 
@@ -9094,13 +9131,13 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_first == x.m_first);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
 
-                case 0x00000002:
-                    ret_value = (m_second == x.m_second);
-                    break;
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
 
             }
         }
@@ -9130,26 +9167,25 @@ public:
 
         switch (__d)
         {
-            case true:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case true:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case false:
-                if (0x00000002 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case false:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -9205,6 +9241,7 @@ public:
         return m_first;
     }
 
+
     /*!
      * @brief This function sets a value in member second
      * @param _second New value for member second
@@ -9246,43 +9283,46 @@ public:
         return m_second;
     }
 
+
+
 private:
 
-    int32_t& first_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            int32_t& first_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+
+                }
+
+                return m_first;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_first = {0};
-
-        }
-
-        return m_first;
-    }
-
-    int64_t& second_()
-    {
-        if (0x00000002 != selected_member_)
-        {
-            if (member_destructor_)
+            int64_t& second_()
             {
-                member_destructor_();
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+
+                }
+
+                return m_second;
             }
 
-            selected_member_ = 0x00000002;
-            member_destructor_ = nullptr;
-            m_second = {0};
-
-        }
-
-        return m_second;
-    }
 
     bool m__d {true};
 
@@ -9333,13 +9373,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
         }
     }
@@ -9355,13 +9395,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
         }
     }
@@ -9377,13 +9417,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
         }
 
@@ -9401,13 +9441,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
         }
 
@@ -9428,13 +9468,13 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_first == x.m_first);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
 
-                case 0x00000002:
-                    ret_value = (m_second == x.m_second);
-                    break;
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
 
             }
         }
@@ -9464,26 +9504,25 @@ public:
 
         switch (__d)
         {
-            case 0:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 0:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 1:
-                if (0x00000002 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 1:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -9539,6 +9578,7 @@ public:
         return m_first;
     }
 
+
     /*!
      * @brief This function sets a value in member second
      * @param _second New value for member second
@@ -9580,6 +9620,7 @@ public:
         return m_second;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -9590,43 +9631,45 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    int32_t& first_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            int32_t& first_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+
+                }
+
+                return m_first;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_first = {0};
-
-        }
-
-        return m_first;
-    }
-
-    int64_t& second_()
-    {
-        if (0x00000002 != selected_member_)
-        {
-            if (member_destructor_)
+            int64_t& second_()
             {
-                member_destructor_();
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+
+                }
+
+                return m_second;
             }
 
-            selected_member_ = 0x00000002;
-            member_destructor_ = nullptr;
-            m_second = {0};
-
-        }
-
-        return m_second;
-    }
 
     uint8_t m__d {127};
 
@@ -9677,13 +9720,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
         }
     }
@@ -9699,13 +9742,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
         }
     }
@@ -9721,13 +9764,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
         }
 
@@ -9745,13 +9788,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
         }
 
@@ -9772,13 +9815,13 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_first == x.m_first);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
 
-                case 0x00000002:
-                    ret_value = (m_second == x.m_second);
-                    break;
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
 
             }
         }
@@ -9808,26 +9851,25 @@ public:
 
         switch (__d)
         {
-            case 'a':
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 'a':
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 'b':
-                if (0x00000002 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 'b':
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -9883,6 +9925,7 @@ public:
         return m_first;
     }
 
+
     /*!
      * @brief This function sets a value in member second
      * @param _second New value for member second
@@ -9924,6 +9967,7 @@ public:
         return m_second;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -9934,43 +9978,45 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    int32_t& first_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            int32_t& first_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+
+                }
+
+                return m_first;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_first = {0};
-
-        }
-
-        return m_first;
-    }
-
-    int64_t& second_()
-    {
-        if (0x00000002 != selected_member_)
-        {
-            if (member_destructor_)
+            int64_t& second_()
             {
-                member_destructor_();
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+
+                }
+
+                return m_second;
             }
 
-            selected_member_ = 0x00000002;
-            member_destructor_ = nullptr;
-            m_second = {0};
-
-        }
-
-        return m_second;
-    }
 
     char m__d {127};
 
@@ -10021,13 +10067,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
         }
     }
@@ -10043,13 +10089,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
         }
     }
@@ -10065,13 +10111,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
         }
 
@@ -10089,13 +10135,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
         }
 
@@ -10116,13 +10162,13 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_first == x.m_first);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
 
-                case 0x00000002:
-                    ret_value = (m_second == x.m_second);
-                    break;
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
 
             }
         }
@@ -10152,26 +10198,25 @@ public:
 
         switch (__d)
         {
-            case L'a':
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case L'a':
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case L'b':
-                if (0x00000002 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case L'b':
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -10227,6 +10272,7 @@ public:
         return m_first;
     }
 
+
     /*!
      * @brief This function sets a value in member second
      * @param _second New value for member second
@@ -10268,6 +10314,7 @@ public:
         return m_second;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -10278,43 +10325,45 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    int32_t& first_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            int32_t& first_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+
+                }
+
+                return m_first;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_first = {0};
-
-        }
-
-        return m_first;
-    }
-
-    int64_t& second_()
-    {
-        if (0x00000002 != selected_member_)
-        {
-            if (member_destructor_)
+            int64_t& second_()
             {
-                member_destructor_();
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+
+                }
+
+                return m_second;
             }
 
-            selected_member_ = 0x00000002;
-            member_destructor_ = nullptr;
-            m_second = {0};
-
-        }
-
-        return m_second;
-    }
 
     wchar_t m__d {32767};
 
@@ -10369,17 +10418,17 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case 0x00000003:
-                third_() = x.m_third;
-                break;
+                        case 0x00000003:
+                            third_() = x.m_third;
+                            break;
 
         }
     }
@@ -10395,17 +10444,17 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case 0x00000003:
-                third_() = std::move(x.m_third);
-                break;
+                        case 0x00000003:
+                            third_() = std::move(x.m_third);
+                            break;
 
         }
     }
@@ -10421,17 +10470,17 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case 0x00000003:
-                third_() = x.m_third;
-                break;
+                        case 0x00000003:
+                            third_() = x.m_third;
+                            break;
 
         }
 
@@ -10449,17 +10498,17 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case 0x00000003:
-                third_() = std::move(x.m_third);
-                break;
+                        case 0x00000003:
+                            third_() = std::move(x.m_third);
+                            break;
 
         }
 
@@ -10480,17 +10529,17 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_first == x.m_first);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
 
-                case 0x00000002:
-                    ret_value = (m_second == x.m_second);
-                    break;
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
 
-                case 0x00000003:
-                    ret_value = (m_third == x.m_third);
-                    break;
+                                case 0x00000003:
+                                    ret_value = (m_third == x.m_third);
+                                    break;
 
             }
         }
@@ -10520,33 +10569,32 @@ public:
 
         switch (__d)
         {
-            case InnerEnumHelper::ENUM_VALUE_1:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case InnerEnumHelper::ENUM_VALUE_1:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case InnerEnumHelper::ENUM_VALUE_2:
-                if (0x00000002 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case InnerEnumHelper::ENUM_VALUE_2:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                if (0x00000003 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        default:
+                            if (0x00000003 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -10602,6 +10650,7 @@ public:
         return m_first;
     }
 
+
     /*!
      * @brief This function sets a value in member second
      * @param _second New value for member second
@@ -10642,6 +10691,7 @@ public:
 
         return m_second;
     }
+
 
     /*!
      * @brief This function sets a value in member third
@@ -10684,61 +10734,64 @@ public:
         return m_third;
     }
 
+
+
 private:
 
-    int32_t& first_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            int32_t& first_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+
+                }
+
+                return m_first;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_first = {0};
-
-        }
-
-        return m_first;
-    }
-
-    int64_t& second_()
-    {
-        if (0x00000002 != selected_member_)
-        {
-            if (member_destructor_)
+            int64_t& second_()
             {
-                member_destructor_();
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+
+                }
+
+                return m_second;
             }
 
-            selected_member_ = 0x00000002;
-            member_destructor_ = nullptr;
-            m_second = {0};
-
-        }
-
-        return m_second;
-    }
-
-    uint8_t& third_()
-    {
-        if (0x00000003 != selected_member_)
-        {
-            if (member_destructor_)
+            uint8_t& third_()
             {
-                member_destructor_();
+                if (0x00000003 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000003;
+                    member_destructor_ = nullptr;
+                    m_third = {0};
+
+                }
+
+                return m_third;
             }
 
-            selected_member_ = 0x00000003;
-            member_destructor_ = nullptr;
-            m_third = {0};
-
-        }
-
-        return m_third;
-    }
 
     InnerEnumHelper m__d {InnerEnumHelper::ENUM_VALUE_3};
 
@@ -10794,13 +10847,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
         }
     }
@@ -10816,13 +10869,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
         }
     }
@@ -10838,13 +10891,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
         }
 
@@ -10862,13 +10915,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
         }
 
@@ -10889,13 +10942,13 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_first == x.m_first);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
 
-                case 0x00000002:
-                    ret_value = (m_second == x.m_second);
-                    break;
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
 
             }
         }
@@ -10925,27 +10978,26 @@ public:
 
         switch (__d)
         {
-            case InnerEnumHelper::ENUM_VALUE_3:
-            case InnerEnumHelper::ENUM_VALUE_1:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case InnerEnumHelper::ENUM_VALUE_3:
+                        case InnerEnumHelper::ENUM_VALUE_1:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case InnerEnumHelper::ENUM_VALUE_2:
-                if (0x00000002 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case InnerEnumHelper::ENUM_VALUE_2:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -11001,6 +11053,7 @@ public:
         return m_first;
     }
 
+
     /*!
      * @brief This function sets a value in member second
      * @param _second New value for member second
@@ -11042,6 +11095,7 @@ public:
         return m_second;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -11052,43 +11106,45 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    int16_t& first_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            int16_t& first_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+
+                }
+
+                return m_first;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_first = {0};
-
-        }
-
-        return m_first;
-    }
-
-    int16_t& second_()
-    {
-        if (0x00000002 != selected_member_)
-        {
-            if (member_destructor_)
+            int16_t& second_()
             {
-                member_destructor_();
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+
+                }
+
+                return m_second;
             }
 
-            selected_member_ = 0x00000002;
-            member_destructor_ = nullptr;
-            m_second = {0};
-
-        }
-
-        return m_second;
-    }
 
     InnerEnumHelper m__d {InnerEnumHelper::ENUM_VALUE_3};
 
@@ -11139,13 +11195,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
         }
     }
@@ -11161,13 +11217,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
         }
     }
@@ -11183,13 +11239,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
-            case 0x00000002:
-                second_() = x.m_second;
-                break;
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
         }
 
@@ -11207,13 +11263,13 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                first_() = std::move(x.m_first);
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
-            case 0x00000002:
-                second_() = std::move(x.m_second);
-                break;
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
         }
 
@@ -11234,13 +11290,13 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_first == x.m_first);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
 
-                case 0x00000002:
-                    ret_value = (m_second == x.m_second);
-                    break;
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
 
             }
         }
@@ -11270,26 +11326,25 @@ public:
 
         switch (__d)
         {
-            case 1:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 1:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 2:
-                if (0x00000002 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 2:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -11345,6 +11400,7 @@ public:
         return m_first;
     }
 
+
     /*!
      * @brief This function sets a value in member second
      * @param _second New value for member second
@@ -11386,6 +11442,7 @@ public:
         return m_second;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -11396,43 +11453,45 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    int32_t& first_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            int32_t& first_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+
+                }
+
+                return m_first;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_first = {0};
-
-        }
-
-        return m_first;
-    }
-
-    int64_t& second_()
-    {
-        if (0x00000002 != selected_member_)
-        {
-            if (member_destructor_)
+            int64_t& second_()
             {
-                member_destructor_();
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+
+                }
+
+                return m_second;
             }
 
-            selected_member_ = 0x00000002;
-            member_destructor_ = nullptr;
-            m_second = {0};
-
-        }
-
-        return m_second;
-    }
 
     InnerAliasHelper m__d {2147483647};
 
@@ -11483,25 +11542,25 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                a_() = x.m_a;
-                break;
+                        case 0x00000001:
+                            a_() = x.m_a;
+                            break;
 
-            case 0x00000002:
-                b_() = x.m_b;
-                break;
+                        case 0x00000002:
+                            b_() = x.m_b;
+                            break;
 
-            case 0x00000003:
-                c_() = x.m_c;
-                break;
+                        case 0x00000003:
+                            c_() = x.m_c;
+                            break;
 
-            case 0x00000004:
-                d_() = x.m_d;
-                break;
+                        case 0x00000004:
+                            d_() = x.m_d;
+                            break;
 
-            case 0x00000005:
-                e_() = x.m_e;
-                break;
+                        case 0x00000005:
+                            e_() = x.m_e;
+                            break;
 
         }
     }
@@ -11517,25 +11576,25 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                a_() = std::move(x.m_a);
-                break;
+                        case 0x00000001:
+                            a_() = std::move(x.m_a);
+                            break;
 
-            case 0x00000002:
-                b_() = std::move(x.m_b);
-                break;
+                        case 0x00000002:
+                            b_() = std::move(x.m_b);
+                            break;
 
-            case 0x00000003:
-                c_() = std::move(x.m_c);
-                break;
+                        case 0x00000003:
+                            c_() = std::move(x.m_c);
+                            break;
 
-            case 0x00000004:
-                d_() = std::move(x.m_d);
-                break;
+                        case 0x00000004:
+                            d_() = std::move(x.m_d);
+                            break;
 
-            case 0x00000005:
-                e_() = std::move(x.m_e);
-                break;
+                        case 0x00000005:
+                            e_() = std::move(x.m_e);
+                            break;
 
         }
     }
@@ -11551,25 +11610,25 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                a_() = x.m_a;
-                break;
+                        case 0x00000001:
+                            a_() = x.m_a;
+                            break;
 
-            case 0x00000002:
-                b_() = x.m_b;
-                break;
+                        case 0x00000002:
+                            b_() = x.m_b;
+                            break;
 
-            case 0x00000003:
-                c_() = x.m_c;
-                break;
+                        case 0x00000003:
+                            c_() = x.m_c;
+                            break;
 
-            case 0x00000004:
-                d_() = x.m_d;
-                break;
+                        case 0x00000004:
+                            d_() = x.m_d;
+                            break;
 
-            case 0x00000005:
-                e_() = x.m_e;
-                break;
+                        case 0x00000005:
+                            e_() = x.m_e;
+                            break;
 
         }
 
@@ -11587,25 +11646,25 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                a_() = std::move(x.m_a);
-                break;
+                        case 0x00000001:
+                            a_() = std::move(x.m_a);
+                            break;
 
-            case 0x00000002:
-                b_() = std::move(x.m_b);
-                break;
+                        case 0x00000002:
+                            b_() = std::move(x.m_b);
+                            break;
 
-            case 0x00000003:
-                c_() = std::move(x.m_c);
-                break;
+                        case 0x00000003:
+                            c_() = std::move(x.m_c);
+                            break;
 
-            case 0x00000004:
-                d_() = std::move(x.m_d);
-                break;
+                        case 0x00000004:
+                            d_() = std::move(x.m_d);
+                            break;
 
-            case 0x00000005:
-                e_() = std::move(x.m_e);
-                break;
+                        case 0x00000005:
+                            e_() = std::move(x.m_e);
+                            break;
 
         }
 
@@ -11626,25 +11685,25 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_a == x.m_a);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_a == x.m_a);
+                                    break;
 
-                case 0x00000002:
-                    ret_value = (m_b == x.m_b);
-                    break;
+                                case 0x00000002:
+                                    ret_value = (m_b == x.m_b);
+                                    break;
 
-                case 0x00000003:
-                    ret_value = (m_c == x.m_c);
-                    break;
+                                case 0x00000003:
+                                    ret_value = (m_c == x.m_c);
+                                    break;
 
-                case 0x00000004:
-                    ret_value = (m_d == x.m_d);
-                    break;
+                                case 0x00000004:
+                                    ret_value = (m_d == x.m_d);
+                                    break;
 
-                case 0x00000005:
-                    ret_value = (m_e == x.m_e);
-                    break;
+                                case 0x00000005:
+                                    ret_value = (m_e == x.m_e);
+                                    break;
 
             }
         }
@@ -11674,47 +11733,46 @@ public:
 
         switch (__d)
         {
-            case 0:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 0:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 1:
-                if (0x00000002 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 1:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 2:
-                if (0x00000003 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 2:
+                            if (0x00000003 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 3:
-                if (0x00000004 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 3:
+                            if (0x00000004 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 4:
-                if (0x00000005 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 4:
+                            if (0x00000005 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -11781,6 +11839,7 @@ public:
         return m_a;
     }
 
+
     /*!
      * @brief This function copies the value in member b
      * @param _b New value to be copied in member b
@@ -11832,6 +11891,7 @@ public:
 
         return m_b;
     }
+
 
     /*!
      * @brief This function copies the value in member c
@@ -11885,6 +11945,7 @@ public:
         return m_c;
     }
 
+
     /*!
      * @brief This function copies the value in member d
      * @param _d New value to be copied in member d
@@ -11936,6 +11997,7 @@ public:
 
         return m_d;
     }
+
 
     /*!
      * @brief This function copies the value in member e
@@ -11989,6 +12051,7 @@ public:
         return m_e;
     }
 
+
     void _default()
     {
         if (member_destructor_)
@@ -11999,112 +12062,99 @@ public:
         selected_member_ = 0x0FFFFFFFu;
     }
 
+
 private:
 
-    InnerStructureHelper& a_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            InnerStructureHelper& a_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_a.~InnerStructureHelper();};
+                    new(&m_a) InnerStructureHelper();
+
+                }
+
+                return m_a;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = [&]()
-                    {
-                        m_a.~InnerStructureHelper();
-                    };
-            new(&m_a) InnerStructureHelper();
-
-        }
-
-        return m_a;
-    }
-
-    InnerEmptyStructureHelper& b_()
-    {
-        if (0x00000002 != selected_member_)
-        {
-            if (member_destructor_)
+            InnerEmptyStructureHelper& b_()
             {
-                member_destructor_();
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = [&]() {m_b.~InnerEmptyStructureHelper();};
+                    new(&m_b) InnerEmptyStructureHelper();
+
+                }
+
+                return m_b;
             }
 
-            selected_member_ = 0x00000002;
-            member_destructor_ = [&]()
-                    {
-                        m_b.~InnerEmptyStructureHelper();
-                    };
-            new(&m_b) InnerEmptyStructureHelper();
-
-        }
-
-        return m_b;
-    }
-
-    Inner_alias_bounded_string_helper& c_()
-    {
-        if (0x00000003 != selected_member_)
-        {
-            if (member_destructor_)
+            Inner_alias_bounded_string_helper& c_()
             {
-                member_destructor_();
+                if (0x00000003 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000003;
+                    member_destructor_ = [&]() {m_c.~Inner_alias_bounded_string_helper();};
+                    new(&m_c) Inner_alias_bounded_string_helper();
+
+                }
+
+                return m_c;
             }
 
-            selected_member_ = 0x00000003;
-            member_destructor_ = [&]()
-                    {
-                        m_c.~Inner_alias_bounded_string_helper();
-                    };
-            new(&m_c) Inner_alias_bounded_string_helper();
-
-        }
-
-        return m_c;
-    }
-
-    Inner_alias_array_helper& d_()
-    {
-        if (0x00000004 != selected_member_)
-        {
-            if (member_destructor_)
+            Inner_alias_array_helper& d_()
             {
-                member_destructor_();
+                if (0x00000004 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000004;
+                    member_destructor_ = [&]() {m_d.~Inner_alias_array_helper();};
+                    new(&m_d) Inner_alias_array_helper();
+
+                }
+
+                return m_d;
             }
 
-            selected_member_ = 0x00000004;
-            member_destructor_ = [&]()
-                    {
-                        m_d.~Inner_alias_array_helper();
-                    };
-            new(&m_d) Inner_alias_array_helper();
-
-        }
-
-        return m_d;
-    }
-
-    Inner_alias_sequence_helper& e_()
-    {
-        if (0x00000005 != selected_member_)
-        {
-            if (member_destructor_)
+            Inner_alias_sequence_helper& e_()
             {
-                member_destructor_();
+                if (0x00000005 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000005;
+                    member_destructor_ = [&]() {m_e.~Inner_alias_sequence_helper();};
+                    new(&m_e) Inner_alias_sequence_helper();
+
+                }
+
+                return m_e;
             }
 
-            selected_member_ = 0x00000005;
-            member_destructor_ = [&]()
-                    {
-                        m_e.~Inner_alias_sequence_helper();
-                    };
-            new(&m_e) Inner_alias_sequence_helper();
-
-        }
-
-        return m_e;
-    }
 
     int32_t m__d {2147483647};
 
@@ -12135,10 +12185,7 @@ public:
     eProsima_user_DllExport Union_Several_Fields_With_Default()
     {
         selected_member_ = 0x00000006;
-        member_destructor_ = [&]()
-                {
-                    m_f.~vector();
-                };
+        member_destructor_ = [&]() {m_f.~vector();};
         new(&m_f) std::vector<int16_t>();
 
     }
@@ -12165,29 +12212,29 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                a_() = x.m_a;
-                break;
+                        case 0x00000001:
+                            a_() = x.m_a;
+                            break;
 
-            case 0x00000002:
-                b_() = x.m_b;
-                break;
+                        case 0x00000002:
+                            b_() = x.m_b;
+                            break;
 
-            case 0x00000003:
-                c_() = x.m_c;
-                break;
+                        case 0x00000003:
+                            c_() = x.m_c;
+                            break;
 
-            case 0x00000004:
-                d_() = x.m_d;
-                break;
+                        case 0x00000004:
+                            d_() = x.m_d;
+                            break;
 
-            case 0x00000005:
-                e_() = x.m_e;
-                break;
+                        case 0x00000005:
+                            e_() = x.m_e;
+                            break;
 
-            case 0x00000006:
-                f_() = x.m_f;
-                break;
+                        case 0x00000006:
+                            f_() = x.m_f;
+                            break;
 
         }
     }
@@ -12203,29 +12250,29 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                a_() = std::move(x.m_a);
-                break;
+                        case 0x00000001:
+                            a_() = std::move(x.m_a);
+                            break;
 
-            case 0x00000002:
-                b_() = std::move(x.m_b);
-                break;
+                        case 0x00000002:
+                            b_() = std::move(x.m_b);
+                            break;
 
-            case 0x00000003:
-                c_() = std::move(x.m_c);
-                break;
+                        case 0x00000003:
+                            c_() = std::move(x.m_c);
+                            break;
 
-            case 0x00000004:
-                d_() = std::move(x.m_d);
-                break;
+                        case 0x00000004:
+                            d_() = std::move(x.m_d);
+                            break;
 
-            case 0x00000005:
-                e_() = std::move(x.m_e);
-                break;
+                        case 0x00000005:
+                            e_() = std::move(x.m_e);
+                            break;
 
-            case 0x00000006:
-                f_() = std::move(x.m_f);
-                break;
+                        case 0x00000006:
+                            f_() = std::move(x.m_f);
+                            break;
 
         }
     }
@@ -12241,29 +12288,29 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                a_() = x.m_a;
-                break;
+                        case 0x00000001:
+                            a_() = x.m_a;
+                            break;
 
-            case 0x00000002:
-                b_() = x.m_b;
-                break;
+                        case 0x00000002:
+                            b_() = x.m_b;
+                            break;
 
-            case 0x00000003:
-                c_() = x.m_c;
-                break;
+                        case 0x00000003:
+                            c_() = x.m_c;
+                            break;
 
-            case 0x00000004:
-                d_() = x.m_d;
-                break;
+                        case 0x00000004:
+                            d_() = x.m_d;
+                            break;
 
-            case 0x00000005:
-                e_() = x.m_e;
-                break;
+                        case 0x00000005:
+                            e_() = x.m_e;
+                            break;
 
-            case 0x00000006:
-                f_() = x.m_f;
-                break;
+                        case 0x00000006:
+                            f_() = x.m_f;
+                            break;
 
         }
 
@@ -12281,29 +12328,29 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                a_() = std::move(x.m_a);
-                break;
+                        case 0x00000001:
+                            a_() = std::move(x.m_a);
+                            break;
 
-            case 0x00000002:
-                b_() = std::move(x.m_b);
-                break;
+                        case 0x00000002:
+                            b_() = std::move(x.m_b);
+                            break;
 
-            case 0x00000003:
-                c_() = std::move(x.m_c);
-                break;
+                        case 0x00000003:
+                            c_() = std::move(x.m_c);
+                            break;
 
-            case 0x00000004:
-                d_() = std::move(x.m_d);
-                break;
+                        case 0x00000004:
+                            d_() = std::move(x.m_d);
+                            break;
 
-            case 0x00000005:
-                e_() = std::move(x.m_e);
-                break;
+                        case 0x00000005:
+                            e_() = std::move(x.m_e);
+                            break;
 
-            case 0x00000006:
-                f_() = std::move(x.m_f);
-                break;
+                        case 0x00000006:
+                            f_() = std::move(x.m_f);
+                            break;
 
         }
 
@@ -12324,29 +12371,29 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_a == x.m_a);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_a == x.m_a);
+                                    break;
 
-                case 0x00000002:
-                    ret_value = (m_b == x.m_b);
-                    break;
+                                case 0x00000002:
+                                    ret_value = (m_b == x.m_b);
+                                    break;
 
-                case 0x00000003:
-                    ret_value = (m_c == x.m_c);
-                    break;
+                                case 0x00000003:
+                                    ret_value = (m_c == x.m_c);
+                                    break;
 
-                case 0x00000004:
-                    ret_value = (m_d == x.m_d);
-                    break;
+                                case 0x00000004:
+                                    ret_value = (m_d == x.m_d);
+                                    break;
 
-                case 0x00000005:
-                    ret_value = (m_e == x.m_e);
-                    break;
+                                case 0x00000005:
+                                    ret_value = (m_e == x.m_e);
+                                    break;
 
-                case 0x00000006:
-                    ret_value = (m_f == x.m_f);
-                    break;
+                                case 0x00000006:
+                                    ret_value = (m_f == x.m_f);
+                                    break;
 
             }
         }
@@ -12376,54 +12423,53 @@ public:
 
         switch (__d)
         {
-            case 0:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 0:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 1:
-                if (0x00000002 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 1:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 2:
-                if (0x00000003 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 2:
+                            if (0x00000003 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 3:
-                if (0x00000004 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 3:
+                            if (0x00000004 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 4:
-                if (0x00000005 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 4:
+                            if (0x00000005 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                if (0x00000006 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        default:
+                            if (0x00000006 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -12490,6 +12536,7 @@ public:
         return m_a;
     }
 
+
     /*!
      * @brief This function copies the value in member b
      * @param _b New value to be copied in member b
@@ -12541,6 +12588,7 @@ public:
 
         return m_b;
     }
+
 
     /*!
      * @brief This function copies the value in member c
@@ -12594,6 +12642,7 @@ public:
         return m_c;
     }
 
+
     /*!
      * @brief This function copies the value in member d
      * @param _d New value to be copied in member d
@@ -12646,6 +12695,7 @@ public:
         return m_d;
     }
 
+
     /*!
      * @brief This function copies the value in member e
      * @param _e New value to be copied in member e
@@ -12697,6 +12747,7 @@ public:
 
         return m_e;
     }
+
 
     /*!
      * @brief This function copies the value in member f
@@ -12750,133 +12801,118 @@ public:
         return m_f;
     }
 
+
+
 private:
 
-    InnerStructureHelper& a_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            InnerStructureHelper& a_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_a.~InnerStructureHelper();};
+                    new(&m_a) InnerStructureHelper();
+
+                }
+
+                return m_a;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = [&]()
-                    {
-                        m_a.~InnerStructureHelper();
-                    };
-            new(&m_a) InnerStructureHelper();
-
-        }
-
-        return m_a;
-    }
-
-    InnerEmptyStructureHelper& b_()
-    {
-        if (0x00000002 != selected_member_)
-        {
-            if (member_destructor_)
+            InnerEmptyStructureHelper& b_()
             {
-                member_destructor_();
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = [&]() {m_b.~InnerEmptyStructureHelper();};
+                    new(&m_b) InnerEmptyStructureHelper();
+
+                }
+
+                return m_b;
             }
 
-            selected_member_ = 0x00000002;
-            member_destructor_ = [&]()
-                    {
-                        m_b.~InnerEmptyStructureHelper();
-                    };
-            new(&m_b) InnerEmptyStructureHelper();
-
-        }
-
-        return m_b;
-    }
-
-    Inner_alias_bounded_string_helper& c_()
-    {
-        if (0x00000003 != selected_member_)
-        {
-            if (member_destructor_)
+            Inner_alias_bounded_string_helper& c_()
             {
-                member_destructor_();
+                if (0x00000003 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000003;
+                    member_destructor_ = [&]() {m_c.~Inner_alias_bounded_string_helper();};
+                    new(&m_c) Inner_alias_bounded_string_helper();
+
+                }
+
+                return m_c;
             }
 
-            selected_member_ = 0x00000003;
-            member_destructor_ = [&]()
-                    {
-                        m_c.~Inner_alias_bounded_string_helper();
-                    };
-            new(&m_c) Inner_alias_bounded_string_helper();
-
-        }
-
-        return m_c;
-    }
-
-    Inner_alias_array_helper& d_()
-    {
-        if (0x00000004 != selected_member_)
-        {
-            if (member_destructor_)
+            Inner_alias_array_helper& d_()
             {
-                member_destructor_();
+                if (0x00000004 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000004;
+                    member_destructor_ = [&]() {m_d.~Inner_alias_array_helper();};
+                    new(&m_d) Inner_alias_array_helper();
+
+                }
+
+                return m_d;
             }
 
-            selected_member_ = 0x00000004;
-            member_destructor_ = [&]()
-                    {
-                        m_d.~Inner_alias_array_helper();
-                    };
-            new(&m_d) Inner_alias_array_helper();
-
-        }
-
-        return m_d;
-    }
-
-    Inner_alias_sequence_helper& e_()
-    {
-        if (0x00000005 != selected_member_)
-        {
-            if (member_destructor_)
+            Inner_alias_sequence_helper& e_()
             {
-                member_destructor_();
+                if (0x00000005 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000005;
+                    member_destructor_ = [&]() {m_e.~Inner_alias_sequence_helper();};
+                    new(&m_e) Inner_alias_sequence_helper();
+
+                }
+
+                return m_e;
             }
 
-            selected_member_ = 0x00000005;
-            member_destructor_ = [&]()
-                    {
-                        m_e.~Inner_alias_sequence_helper();
-                    };
-            new(&m_e) Inner_alias_sequence_helper();
-
-        }
-
-        return m_e;
-    }
-
-    std::vector<int16_t>& f_()
-    {
-        if (0x00000006 != selected_member_)
-        {
-            if (member_destructor_)
+            std::vector<int16_t>& f_()
             {
-                member_destructor_();
+                if (0x00000006 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000006;
+                    member_destructor_ = [&]() {m_f.~vector();};
+                    new(&m_f) std::vector<int16_t>();
+
+                }
+
+                return m_f;
             }
 
-            selected_member_ = 0x00000006;
-            member_destructor_ = [&]()
-                    {
-                        m_f.~vector();
-                    };
-            new(&m_f) std::vector<int16_t>();
-
-        }
-
-        return m_f;
-    }
 
     int32_t m__d {2147483647};
 
@@ -12923,7 +12959,7 @@ public:
     eProsima_user_DllExport UnionShort(
             const UnionShort& x)
     {
-        m_var_union_short = x.m_var_union_short;
+                    m_var_union_short = x.m_var_union_short;
 
     }
 
@@ -12945,7 +12981,7 @@ public:
             const UnionShort& x)
     {
 
-        m_var_union_short = x.m_var_union_short;
+                    m_var_union_short = x.m_var_union_short;
 
         return *this;
     }
@@ -13020,6 +13056,8 @@ public:
         return m_var_union_short;
     }
 
+
+
 private:
 
     Union_Short m_var_union_short;
@@ -13054,7 +13092,7 @@ public:
     eProsima_user_DllExport UnionUShort(
             const UnionUShort& x)
     {
-        m_var_union_ushort = x.m_var_union_ushort;
+                    m_var_union_ushort = x.m_var_union_ushort;
 
     }
 
@@ -13076,7 +13114,7 @@ public:
             const UnionUShort& x)
     {
 
-        m_var_union_ushort = x.m_var_union_ushort;
+                    m_var_union_ushort = x.m_var_union_ushort;
 
         return *this;
     }
@@ -13151,6 +13189,8 @@ public:
         return m_var_union_ushort;
     }
 
+
+
 private:
 
     Union_UShort m_var_union_ushort;
@@ -13185,7 +13225,7 @@ public:
     eProsima_user_DllExport UnionLong(
             const UnionLong& x)
     {
-        m_var_union_long = x.m_var_union_long;
+                    m_var_union_long = x.m_var_union_long;
 
     }
 
@@ -13207,7 +13247,7 @@ public:
             const UnionLong& x)
     {
 
-        m_var_union_long = x.m_var_union_long;
+                    m_var_union_long = x.m_var_union_long;
 
         return *this;
     }
@@ -13282,6 +13322,8 @@ public:
         return m_var_union_long;
     }
 
+
+
 private:
 
     Union_Long m_var_union_long;
@@ -13316,7 +13358,7 @@ public:
     eProsima_user_DllExport UnionULong(
             const UnionULong& x)
     {
-        m_var_union_ulong = x.m_var_union_ulong;
+                    m_var_union_ulong = x.m_var_union_ulong;
 
     }
 
@@ -13338,7 +13380,7 @@ public:
             const UnionULong& x)
     {
 
-        m_var_union_ulong = x.m_var_union_ulong;
+                    m_var_union_ulong = x.m_var_union_ulong;
 
         return *this;
     }
@@ -13413,6 +13455,8 @@ public:
         return m_var_union_ulong;
     }
 
+
+
 private:
 
     Union_ULong m_var_union_ulong;
@@ -13447,7 +13491,7 @@ public:
     eProsima_user_DllExport UnionLongLong(
             const UnionLongLong& x)
     {
-        m_var_union_long_long = x.m_var_union_long_long;
+                    m_var_union_long_long = x.m_var_union_long_long;
 
     }
 
@@ -13469,7 +13513,7 @@ public:
             const UnionLongLong& x)
     {
 
-        m_var_union_long_long = x.m_var_union_long_long;
+                    m_var_union_long_long = x.m_var_union_long_long;
 
         return *this;
     }
@@ -13544,6 +13588,8 @@ public:
         return m_var_union_long_long;
     }
 
+
+
 private:
 
     Union_LongLong m_var_union_long_long;
@@ -13578,7 +13624,7 @@ public:
     eProsima_user_DllExport UnionULongLong(
             const UnionULongLong& x)
     {
-        m_var_union_ulong_long = x.m_var_union_ulong_long;
+                    m_var_union_ulong_long = x.m_var_union_ulong_long;
 
     }
 
@@ -13600,7 +13646,7 @@ public:
             const UnionULongLong& x)
     {
 
-        m_var_union_ulong_long = x.m_var_union_ulong_long;
+                    m_var_union_ulong_long = x.m_var_union_ulong_long;
 
         return *this;
     }
@@ -13675,6 +13721,8 @@ public:
         return m_var_union_ulong_long;
     }
 
+
+
 private:
 
     Union_ULongLOng m_var_union_ulong_long;
@@ -13709,7 +13757,7 @@ public:
     eProsima_user_DllExport UnionFloat(
             const UnionFloat& x)
     {
-        m_var_union_float = x.m_var_union_float;
+                    m_var_union_float = x.m_var_union_float;
 
     }
 
@@ -13731,7 +13779,7 @@ public:
             const UnionFloat& x)
     {
 
-        m_var_union_float = x.m_var_union_float;
+                    m_var_union_float = x.m_var_union_float;
 
         return *this;
     }
@@ -13806,6 +13854,8 @@ public:
         return m_var_union_float;
     }
 
+
+
 private:
 
     Union_Float m_var_union_float;
@@ -13840,7 +13890,7 @@ public:
     eProsima_user_DllExport UnionDouble(
             const UnionDouble& x)
     {
-        m_var_union_double = x.m_var_union_double;
+                    m_var_union_double = x.m_var_union_double;
 
     }
 
@@ -13862,7 +13912,7 @@ public:
             const UnionDouble& x)
     {
 
-        m_var_union_double = x.m_var_union_double;
+                    m_var_union_double = x.m_var_union_double;
 
         return *this;
     }
@@ -13937,6 +13987,8 @@ public:
         return m_var_union_double;
     }
 
+
+
 private:
 
     Union_Double m_var_union_double;
@@ -13971,7 +14023,7 @@ public:
     eProsima_user_DllExport UnionLongDouble(
             const UnionLongDouble& x)
     {
-        m_var_union_long_double = x.m_var_union_long_double;
+                    m_var_union_long_double = x.m_var_union_long_double;
 
     }
 
@@ -13993,7 +14045,7 @@ public:
             const UnionLongDouble& x)
     {
 
-        m_var_union_long_double = x.m_var_union_long_double;
+                    m_var_union_long_double = x.m_var_union_long_double;
 
         return *this;
     }
@@ -14068,6 +14120,8 @@ public:
         return m_var_union_long_double;
     }
 
+
+
 private:
 
     Union_LongDouble m_var_union_long_double;
@@ -14102,7 +14156,7 @@ public:
     eProsima_user_DllExport UnionBoolean(
             const UnionBoolean& x)
     {
-        m_var_union_boolean = x.m_var_union_boolean;
+                    m_var_union_boolean = x.m_var_union_boolean;
 
     }
 
@@ -14124,7 +14178,7 @@ public:
             const UnionBoolean& x)
     {
 
-        m_var_union_boolean = x.m_var_union_boolean;
+                    m_var_union_boolean = x.m_var_union_boolean;
 
         return *this;
     }
@@ -14199,6 +14253,8 @@ public:
         return m_var_union_boolean;
     }
 
+
+
 private:
 
     Union_Boolean m_var_union_boolean;
@@ -14233,7 +14289,7 @@ public:
     eProsima_user_DllExport UnionOctet(
             const UnionOctet& x)
     {
-        m_var_union_octet = x.m_var_union_octet;
+                    m_var_union_octet = x.m_var_union_octet;
 
     }
 
@@ -14255,7 +14311,7 @@ public:
             const UnionOctet& x)
     {
 
-        m_var_union_octet = x.m_var_union_octet;
+                    m_var_union_octet = x.m_var_union_octet;
 
         return *this;
     }
@@ -14330,6 +14386,8 @@ public:
         return m_var_union_octet;
     }
 
+
+
 private:
 
     Union_Octet m_var_union_octet;
@@ -14364,7 +14422,7 @@ public:
     eProsima_user_DllExport UnionChar(
             const UnionChar& x)
     {
-        m_var_union_char = x.m_var_union_char;
+                    m_var_union_char = x.m_var_union_char;
 
     }
 
@@ -14386,7 +14444,7 @@ public:
             const UnionChar& x)
     {
 
-        m_var_union_char = x.m_var_union_char;
+                    m_var_union_char = x.m_var_union_char;
 
         return *this;
     }
@@ -14461,6 +14519,8 @@ public:
         return m_var_union_char;
     }
 
+
+
 private:
 
     Union_Char m_var_union_char;
@@ -14495,7 +14555,7 @@ public:
     eProsima_user_DllExport UnionWChar(
             const UnionWChar& x)
     {
-        m_var_union_wchar = x.m_var_union_wchar;
+                    m_var_union_wchar = x.m_var_union_wchar;
 
     }
 
@@ -14517,7 +14577,7 @@ public:
             const UnionWChar& x)
     {
 
-        m_var_union_wchar = x.m_var_union_wchar;
+                    m_var_union_wchar = x.m_var_union_wchar;
 
         return *this;
     }
@@ -14592,6 +14652,8 @@ public:
         return m_var_union_wchar;
     }
 
+
+
 private:
 
     Union_WChar m_var_union_wchar;
@@ -14626,7 +14688,7 @@ public:
     eProsima_user_DllExport UnionString(
             const UnionString& x)
     {
-        m_var_union_string = x.m_var_union_string;
+                    m_var_union_string = x.m_var_union_string;
 
     }
 
@@ -14648,7 +14710,7 @@ public:
             const UnionString& x)
     {
 
-        m_var_union_string = x.m_var_union_string;
+                    m_var_union_string = x.m_var_union_string;
 
         return *this;
     }
@@ -14723,6 +14785,8 @@ public:
         return m_var_union_string;
     }
 
+
+
 private:
 
     Union_String m_var_union_string;
@@ -14757,7 +14821,7 @@ public:
     eProsima_user_DllExport UnionWString(
             const UnionWString& x)
     {
-        m_var_union_wstring = x.m_var_union_wstring;
+                    m_var_union_wstring = x.m_var_union_wstring;
 
     }
 
@@ -14779,7 +14843,7 @@ public:
             const UnionWString& x)
     {
 
-        m_var_union_wstring = x.m_var_union_wstring;
+                    m_var_union_wstring = x.m_var_union_wstring;
 
         return *this;
     }
@@ -14854,6 +14918,8 @@ public:
         return m_var_union_wstring;
     }
 
+
+
 private:
 
     Union_WString m_var_union_wstring;
@@ -14888,7 +14954,7 @@ public:
     eProsima_user_DllExport UnionBoundedString(
             const UnionBoundedString& x)
     {
-        m_var_union_bounded_string = x.m_var_union_bounded_string;
+                    m_var_union_bounded_string = x.m_var_union_bounded_string;
 
     }
 
@@ -14910,7 +14976,7 @@ public:
             const UnionBoundedString& x)
     {
 
-        m_var_union_bounded_string = x.m_var_union_bounded_string;
+                    m_var_union_bounded_string = x.m_var_union_bounded_string;
 
         return *this;
     }
@@ -14985,6 +15051,8 @@ public:
         return m_var_union_bounded_string;
     }
 
+
+
 private:
 
     Union_BoundedString m_var_union_bounded_string;
@@ -15019,7 +15087,7 @@ public:
     eProsima_user_DllExport UnionBoundedWString(
             const UnionBoundedWString& x)
     {
-        m_var_union_bounded_wstring = x.m_var_union_bounded_wstring;
+                    m_var_union_bounded_wstring = x.m_var_union_bounded_wstring;
 
     }
 
@@ -15041,7 +15109,7 @@ public:
             const UnionBoundedWString& x)
     {
 
-        m_var_union_bounded_wstring = x.m_var_union_bounded_wstring;
+                    m_var_union_bounded_wstring = x.m_var_union_bounded_wstring;
 
         return *this;
     }
@@ -15116,6 +15184,8 @@ public:
         return m_var_union_bounded_wstring;
     }
 
+
+
 private:
 
     Union_BoundedWString m_var_union_bounded_wstring;
@@ -15150,7 +15220,7 @@ public:
     eProsima_user_DllExport UnionInnerEnumHelper(
             const UnionInnerEnumHelper& x)
     {
-        m_var_union_my_enum = x.m_var_union_my_enum;
+                    m_var_union_my_enum = x.m_var_union_my_enum;
 
     }
 
@@ -15172,7 +15242,7 @@ public:
             const UnionInnerEnumHelper& x)
     {
 
-        m_var_union_my_enum = x.m_var_union_my_enum;
+                    m_var_union_my_enum = x.m_var_union_my_enum;
 
         return *this;
     }
@@ -15247,6 +15317,8 @@ public:
         return m_var_union_my_enum;
     }
 
+
+
 private:
 
     Union_InnerEnumHelper m_var_union_my_enum;
@@ -15281,7 +15353,7 @@ public:
     eProsima_user_DllExport UnionInnerBitMaskHelper(
             const UnionInnerBitMaskHelper& x)
     {
-        m_var_union_my_bit_mask = x.m_var_union_my_bit_mask;
+                    m_var_union_my_bit_mask = x.m_var_union_my_bit_mask;
 
     }
 
@@ -15303,7 +15375,7 @@ public:
             const UnionInnerBitMaskHelper& x)
     {
 
-        m_var_union_my_bit_mask = x.m_var_union_my_bit_mask;
+                    m_var_union_my_bit_mask = x.m_var_union_my_bit_mask;
 
         return *this;
     }
@@ -15378,6 +15450,8 @@ public:
         return m_var_union_my_bit_mask;
     }
 
+
+
 private:
 
     Union_InnerBitMaskHelper m_var_union_my_bit_mask;
@@ -15412,7 +15486,7 @@ public:
     eProsima_user_DllExport UnionInnerAliasHelper(
             const UnionInnerAliasHelper& x)
     {
-        m_var_union_my_alias = x.m_var_union_my_alias;
+                    m_var_union_my_alias = x.m_var_union_my_alias;
 
     }
 
@@ -15434,7 +15508,7 @@ public:
             const UnionInnerAliasHelper& x)
     {
 
-        m_var_union_my_alias = x.m_var_union_my_alias;
+                    m_var_union_my_alias = x.m_var_union_my_alias;
 
         return *this;
     }
@@ -15509,6 +15583,8 @@ public:
         return m_var_union_my_alias;
     }
 
+
+
 private:
 
     Union_InnerAliasHelper m_var_union_my_alias;
@@ -15543,7 +15619,7 @@ public:
     eProsima_user_DllExport UnionArray(
             const UnionArray& x)
     {
-        m_var_union_array = x.m_var_union_array;
+                    m_var_union_array = x.m_var_union_array;
 
     }
 
@@ -15565,7 +15641,7 @@ public:
             const UnionArray& x)
     {
 
-        m_var_union_array = x.m_var_union_array;
+                    m_var_union_array = x.m_var_union_array;
 
         return *this;
     }
@@ -15640,6 +15716,8 @@ public:
         return m_var_union_array;
     }
 
+
+
 private:
 
     Union_Array m_var_union_array;
@@ -15674,7 +15752,7 @@ public:
     eProsima_user_DllExport UnionSequence(
             const UnionSequence& x)
     {
-        m_var_union_sequence = x.m_var_union_sequence;
+                    m_var_union_sequence = x.m_var_union_sequence;
 
     }
 
@@ -15696,7 +15774,7 @@ public:
             const UnionSequence& x)
     {
 
-        m_var_union_sequence = x.m_var_union_sequence;
+                    m_var_union_sequence = x.m_var_union_sequence;
 
         return *this;
     }
@@ -15771,6 +15849,8 @@ public:
         return m_var_union_sequence;
     }
 
+
+
 private:
 
     Union_Sequence m_var_union_sequence;
@@ -15805,7 +15885,7 @@ public:
     eProsima_user_DllExport UnionMap(
             const UnionMap& x)
     {
-        m_var_union_map = x.m_var_union_map;
+                    m_var_union_map = x.m_var_union_map;
 
     }
 
@@ -15827,7 +15907,7 @@ public:
             const UnionMap& x)
     {
 
-        m_var_union_map = x.m_var_union_map;
+                    m_var_union_map = x.m_var_union_map;
 
         return *this;
     }
@@ -15902,6 +15982,8 @@ public:
         return m_var_union_map;
     }
 
+
+
 private:
 
     Union_Map m_var_union_map;
@@ -15936,7 +16018,7 @@ public:
     eProsima_user_DllExport UnionInnerUnionHelper(
             const UnionInnerUnionHelper& x)
     {
-        m_var_union_my_union = x.m_var_union_my_union;
+                    m_var_union_my_union = x.m_var_union_my_union;
 
     }
 
@@ -15958,7 +16040,7 @@ public:
             const UnionInnerUnionHelper& x)
     {
 
-        m_var_union_my_union = x.m_var_union_my_union;
+                    m_var_union_my_union = x.m_var_union_my_union;
 
         return *this;
     }
@@ -16033,6 +16115,8 @@ public:
         return m_var_union_my_union;
     }
 
+
+
 private:
 
     Union_InnerUnionHelper m_var_union_my_union;
@@ -16067,7 +16151,7 @@ public:
     eProsima_user_DllExport UnionInnerStructureHelper(
             const UnionInnerStructureHelper& x)
     {
-        m_var_union_my_structure = x.m_var_union_my_structure;
+                    m_var_union_my_structure = x.m_var_union_my_structure;
 
     }
 
@@ -16089,7 +16173,7 @@ public:
             const UnionInnerStructureHelper& x)
     {
 
-        m_var_union_my_structure = x.m_var_union_my_structure;
+                    m_var_union_my_structure = x.m_var_union_my_structure;
 
         return *this;
     }
@@ -16164,6 +16248,8 @@ public:
         return m_var_union_my_structure;
     }
 
+
+
 private:
 
     Union_InnerStructureHelper m_var_union_my_structure;
@@ -16198,7 +16284,7 @@ public:
     eProsima_user_DllExport UnionInnerBitsetHelper(
             const UnionInnerBitsetHelper& x)
     {
-        m_var_union_my_bitset = x.m_var_union_my_bitset;
+                    m_var_union_my_bitset = x.m_var_union_my_bitset;
 
     }
 
@@ -16220,7 +16306,7 @@ public:
             const UnionInnerBitsetHelper& x)
     {
 
-        m_var_union_my_bitset = x.m_var_union_my_bitset;
+                    m_var_union_my_bitset = x.m_var_union_my_bitset;
 
         return *this;
     }
@@ -16295,6 +16381,8 @@ public:
         return m_var_union_my_bitset;
     }
 
+
+
 private:
 
     Union_InnerBitsetHelper m_var_union_my_bitset;
@@ -16329,7 +16417,7 @@ public:
     eProsima_user_DllExport UnionDiscriminatorShort(
             const UnionDiscriminatorShort& x)
     {
-        m_var_union_discriminator_short = x.m_var_union_discriminator_short;
+                    m_var_union_discriminator_short = x.m_var_union_discriminator_short;
 
     }
 
@@ -16351,7 +16439,7 @@ public:
             const UnionDiscriminatorShort& x)
     {
 
-        m_var_union_discriminator_short = x.m_var_union_discriminator_short;
+                    m_var_union_discriminator_short = x.m_var_union_discriminator_short;
 
         return *this;
     }
@@ -16426,6 +16514,8 @@ public:
         return m_var_union_discriminator_short;
     }
 
+
+
 private:
 
     Union_Discriminator_short m_var_union_discriminator_short;
@@ -16460,7 +16550,7 @@ public:
     eProsima_user_DllExport UnionDiscriminatorUShort(
             const UnionDiscriminatorUShort& x)
     {
-        m_var_union_discriminator_ushort = x.m_var_union_discriminator_ushort;
+                    m_var_union_discriminator_ushort = x.m_var_union_discriminator_ushort;
 
     }
 
@@ -16482,7 +16572,7 @@ public:
             const UnionDiscriminatorUShort& x)
     {
 
-        m_var_union_discriminator_ushort = x.m_var_union_discriminator_ushort;
+                    m_var_union_discriminator_ushort = x.m_var_union_discriminator_ushort;
 
         return *this;
     }
@@ -16557,6 +16647,8 @@ public:
         return m_var_union_discriminator_ushort;
     }
 
+
+
 private:
 
     Union_Discriminator_unsigned_short m_var_union_discriminator_ushort;
@@ -16591,7 +16683,7 @@ public:
     eProsima_user_DllExport UnionDiscriminatorLong(
             const UnionDiscriminatorLong& x)
     {
-        m_var_union_discriminator_long = x.m_var_union_discriminator_long;
+                    m_var_union_discriminator_long = x.m_var_union_discriminator_long;
 
     }
 
@@ -16613,7 +16705,7 @@ public:
             const UnionDiscriminatorLong& x)
     {
 
-        m_var_union_discriminator_long = x.m_var_union_discriminator_long;
+                    m_var_union_discriminator_long = x.m_var_union_discriminator_long;
 
         return *this;
     }
@@ -16688,6 +16780,8 @@ public:
         return m_var_union_discriminator_long;
     }
 
+
+
 private:
 
     Union_Discriminator_long m_var_union_discriminator_long;
@@ -16722,7 +16816,7 @@ public:
     eProsima_user_DllExport UnionDiscriminatorULong(
             const UnionDiscriminatorULong& x)
     {
-        m_var_union_discriminator_ulong = x.m_var_union_discriminator_ulong;
+                    m_var_union_discriminator_ulong = x.m_var_union_discriminator_ulong;
 
     }
 
@@ -16744,7 +16838,7 @@ public:
             const UnionDiscriminatorULong& x)
     {
 
-        m_var_union_discriminator_ulong = x.m_var_union_discriminator_ulong;
+                    m_var_union_discriminator_ulong = x.m_var_union_discriminator_ulong;
 
         return *this;
     }
@@ -16819,6 +16913,8 @@ public:
         return m_var_union_discriminator_ulong;
     }
 
+
+
 private:
 
     Union_Discriminator_unsigned_long m_var_union_discriminator_ulong;
@@ -16853,7 +16949,7 @@ public:
     eProsima_user_DllExport UnionDiscriminatorLongLong(
             const UnionDiscriminatorLongLong& x)
     {
-        m_var_union_discriminator_long_long = x.m_var_union_discriminator_long_long;
+                    m_var_union_discriminator_long_long = x.m_var_union_discriminator_long_long;
 
     }
 
@@ -16875,7 +16971,7 @@ public:
             const UnionDiscriminatorLongLong& x)
     {
 
-        m_var_union_discriminator_long_long = x.m_var_union_discriminator_long_long;
+                    m_var_union_discriminator_long_long = x.m_var_union_discriminator_long_long;
 
         return *this;
     }
@@ -16950,6 +17046,8 @@ public:
         return m_var_union_discriminator_long_long;
     }
 
+
+
 private:
 
     Union_Discriminator_long_long m_var_union_discriminator_long_long;
@@ -16984,7 +17082,7 @@ public:
     eProsima_user_DllExport UnionDiscriminatorULongLong(
             const UnionDiscriminatorULongLong& x)
     {
-        m_var_union_discriminator_ulong_long = x.m_var_union_discriminator_ulong_long;
+                    m_var_union_discriminator_ulong_long = x.m_var_union_discriminator_ulong_long;
 
     }
 
@@ -17006,7 +17104,7 @@ public:
             const UnionDiscriminatorULongLong& x)
     {
 
-        m_var_union_discriminator_ulong_long = x.m_var_union_discriminator_ulong_long;
+                    m_var_union_discriminator_ulong_long = x.m_var_union_discriminator_ulong_long;
 
         return *this;
     }
@@ -17081,6 +17179,8 @@ public:
         return m_var_union_discriminator_ulong_long;
     }
 
+
+
 private:
 
     Union_Discriminator_unsigned_long_long m_var_union_discriminator_ulong_long;
@@ -17115,7 +17215,7 @@ public:
     eProsima_user_DllExport UnionDiscriminatorBoolean(
             const UnionDiscriminatorBoolean& x)
     {
-        m_var_union_discriminator_boolean = x.m_var_union_discriminator_boolean;
+                    m_var_union_discriminator_boolean = x.m_var_union_discriminator_boolean;
 
     }
 
@@ -17137,7 +17237,7 @@ public:
             const UnionDiscriminatorBoolean& x)
     {
 
-        m_var_union_discriminator_boolean = x.m_var_union_discriminator_boolean;
+                    m_var_union_discriminator_boolean = x.m_var_union_discriminator_boolean;
 
         return *this;
     }
@@ -17212,6 +17312,8 @@ public:
         return m_var_union_discriminator_boolean;
     }
 
+
+
 private:
 
     Union_Discriminator_boolean m_var_union_discriminator_boolean;
@@ -17246,7 +17348,7 @@ public:
     eProsima_user_DllExport UnionDiscriminatorOctet(
             const UnionDiscriminatorOctet& x)
     {
-        m_var_union_discriminator_octet = x.m_var_union_discriminator_octet;
+                    m_var_union_discriminator_octet = x.m_var_union_discriminator_octet;
 
     }
 
@@ -17268,7 +17370,7 @@ public:
             const UnionDiscriminatorOctet& x)
     {
 
-        m_var_union_discriminator_octet = x.m_var_union_discriminator_octet;
+                    m_var_union_discriminator_octet = x.m_var_union_discriminator_octet;
 
         return *this;
     }
@@ -17343,6 +17445,8 @@ public:
         return m_var_union_discriminator_octet;
     }
 
+
+
 private:
 
     Union_Discriminator_octet m_var_union_discriminator_octet;
@@ -17377,7 +17481,7 @@ public:
     eProsima_user_DllExport UnionDiscriminatorChar(
             const UnionDiscriminatorChar& x)
     {
-        m_var_union_discriminator_char = x.m_var_union_discriminator_char;
+                    m_var_union_discriminator_char = x.m_var_union_discriminator_char;
 
     }
 
@@ -17399,7 +17503,7 @@ public:
             const UnionDiscriminatorChar& x)
     {
 
-        m_var_union_discriminator_char = x.m_var_union_discriminator_char;
+                    m_var_union_discriminator_char = x.m_var_union_discriminator_char;
 
         return *this;
     }
@@ -17474,6 +17578,8 @@ public:
         return m_var_union_discriminator_char;
     }
 
+
+
 private:
 
     Union_Discriminator_char m_var_union_discriminator_char;
@@ -17508,7 +17614,7 @@ public:
     eProsima_user_DllExport UnionDiscriminatorWChar(
             const UnionDiscriminatorWChar& x)
     {
-        m_var_union_discriminator_wchar = x.m_var_union_discriminator_wchar;
+                    m_var_union_discriminator_wchar = x.m_var_union_discriminator_wchar;
 
     }
 
@@ -17530,7 +17636,7 @@ public:
             const UnionDiscriminatorWChar& x)
     {
 
-        m_var_union_discriminator_wchar = x.m_var_union_discriminator_wchar;
+                    m_var_union_discriminator_wchar = x.m_var_union_discriminator_wchar;
 
         return *this;
     }
@@ -17605,6 +17711,8 @@ public:
         return m_var_union_discriminator_wchar;
     }
 
+
+
 private:
 
     Union_Discriminator_wchar m_var_union_discriminator_wchar;
@@ -17639,7 +17747,7 @@ public:
     eProsima_user_DllExport UnionDiscriminatorEnum(
             const UnionDiscriminatorEnum& x)
     {
-        m_var_union_discriminator_enum = x.m_var_union_discriminator_enum;
+                    m_var_union_discriminator_enum = x.m_var_union_discriminator_enum;
 
     }
 
@@ -17661,7 +17769,7 @@ public:
             const UnionDiscriminatorEnum& x)
     {
 
-        m_var_union_discriminator_enum = x.m_var_union_discriminator_enum;
+                    m_var_union_discriminator_enum = x.m_var_union_discriminator_enum;
 
         return *this;
     }
@@ -17736,6 +17844,8 @@ public:
         return m_var_union_discriminator_enum;
     }
 
+
+
 private:
 
     Union_Discriminator_enum m_var_union_discriminator_enum;
@@ -17770,7 +17880,7 @@ public:
     eProsima_user_DllExport UnionDiscriminatorEnumLabel(
             const UnionDiscriminatorEnumLabel& x)
     {
-        m_var_union_discriminator_enum = x.m_var_union_discriminator_enum;
+                    m_var_union_discriminator_enum = x.m_var_union_discriminator_enum;
 
     }
 
@@ -17792,7 +17902,7 @@ public:
             const UnionDiscriminatorEnumLabel& x)
     {
 
-        m_var_union_discriminator_enum = x.m_var_union_discriminator_enum;
+                    m_var_union_discriminator_enum = x.m_var_union_discriminator_enum;
 
         return *this;
     }
@@ -17867,6 +17977,8 @@ public:
         return m_var_union_discriminator_enum;
     }
 
+
+
 private:
 
     Union_Discriminator_enum_labels m_var_union_discriminator_enum;
@@ -17901,7 +18013,7 @@ public:
     eProsima_user_DllExport UnionDiscriminatorAlias(
             const UnionDiscriminatorAlias& x)
     {
-        m_var_union_discriminator_alias = x.m_var_union_discriminator_alias;
+                    m_var_union_discriminator_alias = x.m_var_union_discriminator_alias;
 
     }
 
@@ -17923,7 +18035,7 @@ public:
             const UnionDiscriminatorAlias& x)
     {
 
-        m_var_union_discriminator_alias = x.m_var_union_discriminator_alias;
+                    m_var_union_discriminator_alias = x.m_var_union_discriminator_alias;
 
         return *this;
     }
@@ -17998,6 +18110,8 @@ public:
         return m_var_union_discriminator_alias;
     }
 
+
+
 private:
 
     Union_Discriminator_alias m_var_union_discriminator_alias;
@@ -18032,7 +18146,7 @@ public:
     eProsima_user_DllExport UnionSeveralFields(
             const UnionSeveralFields& x)
     {
-        m_var_union_several_fields = x.m_var_union_several_fields;
+                    m_var_union_several_fields = x.m_var_union_several_fields;
 
     }
 
@@ -18054,7 +18168,7 @@ public:
             const UnionSeveralFields& x)
     {
 
-        m_var_union_several_fields = x.m_var_union_several_fields;
+                    m_var_union_several_fields = x.m_var_union_several_fields;
 
         return *this;
     }
@@ -18129,6 +18243,8 @@ public:
         return m_var_union_several_fields;
     }
 
+
+
 private:
 
     Union_Several_Fields m_var_union_several_fields;
@@ -18163,7 +18279,7 @@ public:
     eProsima_user_DllExport UnionSeveralFieldsWithDefault(
             const UnionSeveralFieldsWithDefault& x)
     {
-        m_var_union_several_fields_with_default = x.m_var_union_several_fields_with_default;
+                    m_var_union_several_fields_with_default = x.m_var_union_several_fields_with_default;
 
     }
 
@@ -18185,7 +18301,7 @@ public:
             const UnionSeveralFieldsWithDefault& x)
     {
 
-        m_var_union_several_fields_with_default = x.m_var_union_several_fields_with_default;
+                    m_var_union_several_fields_with_default = x.m_var_union_several_fields_with_default;
 
         return *this;
     }
@@ -18260,6 +18376,8 @@ public:
         return m_var_union_several_fields_with_default;
     }
 
+
+
 private:
 
     Union_Several_Fields_With_Default m_var_union_several_fields_with_default;
@@ -18306,17 +18424,17 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                a_() = x.m_a;
-                break;
+                        case 0x00000001:
+                            a_() = x.m_a;
+                            break;
 
-            case 0x00000002:
-                b_() = x.m_b;
-                break;
+                        case 0x00000002:
+                            b_() = x.m_b;
+                            break;
 
-            case 0x00000003:
-                c_() = x.m_c;
-                break;
+                        case 0x00000003:
+                            c_() = x.m_c;
+                            break;
 
         }
     }
@@ -18332,17 +18450,17 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                a_() = std::move(x.m_a);
-                break;
+                        case 0x00000001:
+                            a_() = std::move(x.m_a);
+                            break;
 
-            case 0x00000002:
-                b_() = std::move(x.m_b);
-                break;
+                        case 0x00000002:
+                            b_() = std::move(x.m_b);
+                            break;
 
-            case 0x00000003:
-                c_() = std::move(x.m_c);
-                break;
+                        case 0x00000003:
+                            c_() = std::move(x.m_c);
+                            break;
 
         }
     }
@@ -18358,17 +18476,17 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                a_() = x.m_a;
-                break;
+                        case 0x00000001:
+                            a_() = x.m_a;
+                            break;
 
-            case 0x00000002:
-                b_() = x.m_b;
-                break;
+                        case 0x00000002:
+                            b_() = x.m_b;
+                            break;
 
-            case 0x00000003:
-                c_() = x.m_c;
-                break;
+                        case 0x00000003:
+                            c_() = x.m_c;
+                            break;
 
         }
 
@@ -18386,17 +18504,17 @@ public:
 
         switch (x.selected_member_)
         {
-            case 0x00000001:
-                a_() = std::move(x.m_a);
-                break;
+                        case 0x00000001:
+                            a_() = std::move(x.m_a);
+                            break;
 
-            case 0x00000002:
-                b_() = std::move(x.m_b);
-                break;
+                        case 0x00000002:
+                            b_() = std::move(x.m_b);
+                            break;
 
-            case 0x00000003:
-                c_() = std::move(x.m_c);
-                break;
+                        case 0x00000003:
+                            c_() = std::move(x.m_c);
+                            break;
 
         }
 
@@ -18417,17 +18535,17 @@ public:
         {
             switch (selected_member_)
             {
-                case 0x00000001:
-                    ret_value = (m_a == x.m_a);
-                    break;
+                                case 0x00000001:
+                                    ret_value = (m_a == x.m_a);
+                                    break;
 
-                case 0x00000002:
-                    ret_value = (m_b == x.m_b);
-                    break;
+                                case 0x00000002:
+                                    ret_value = (m_b == x.m_b);
+                                    break;
 
-                case 0x00000003:
-                    ret_value = (m_c == x.m_c);
-                    break;
+                                case 0x00000003:
+                                    ret_value = (m_c == x.m_c);
+                                    break;
 
             }
         }
@@ -18457,33 +18575,32 @@ public:
 
         switch (__d)
         {
-            case 0:
-                if (0x00000001 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 0:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 1:
-                if (0x00000002 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        case 1:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                if (0x00000003 == selected_member_)
-                {
-                    valid_discriminator = true;
-                }
-                break;
+                        default:
+                            if (0x00000003 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -18539,6 +18656,7 @@ public:
         return m_a;
     }
 
+
     /*!
      * @brief This function sets a value in member b
      * @param _b New value for member b
@@ -18579,6 +18697,7 @@ public:
 
         return m_b;
     }
+
 
     /*!
      * @brief This function sets a value in member c
@@ -18621,61 +18740,64 @@ public:
         return m_c;
     }
 
+
+
 private:
 
-    uint8_t& a_()
-    {
-        if (0x00000001 != selected_member_)
-        {
-            if (member_destructor_)
+            uint8_t& a_()
             {
-                member_destructor_();
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_a = {0};
+
+                }
+
+                return m_a;
             }
 
-            selected_member_ = 0x00000001;
-            member_destructor_ = nullptr;
-            m_a = {0};
-
-        }
-
-        return m_a;
-    }
-
-    int16_t& b_()
-    {
-        if (0x00000002 != selected_member_)
-        {
-            if (member_destructor_)
+            int16_t& b_()
             {
-                member_destructor_();
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_b = {0};
+
+                }
+
+                return m_b;
             }
 
-            selected_member_ = 0x00000002;
-            member_destructor_ = nullptr;
-            m_b = {0};
-
-        }
-
-        return m_b;
-    }
-
-    int32_t& c_()
-    {
-        if (0x00000003 != selected_member_)
-        {
-            if (member_destructor_)
+            int32_t& c_()
             {
-                member_destructor_();
+                if (0x00000003 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000003;
+                    member_destructor_ = nullptr;
+                    m_c = {0};
+
+                }
+
+                return m_c;
             }
 
-            selected_member_ = 0x00000003;
-            member_destructor_ = nullptr;
-            m_c = {0};
-
-        }
-
-        return m_c;
-    }
 
     int32_t m__d {0};
 

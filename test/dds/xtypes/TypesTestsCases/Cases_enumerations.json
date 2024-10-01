@@ -62,6 +62,27 @@
                     "known_types": []
                 }
             ]
+        },
+        {
+            "TestCase": "Case_enumerations_EnumWithValuesStructure",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "EnumWithValuesStructure"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
         }
     ]
 }

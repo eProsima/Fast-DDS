@@ -99,7 +99,79 @@ void register_InnerEnumHelper_type_identifier(
     }
 }
 } // namespace Test
-// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_EnumWithValues_type_identifier(
+        TypeIdentifierPair& type_ids_EnumWithValues)
+{
+    ReturnCode_t return_code_EnumWithValues {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_EnumWithValues =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "EnumWithValues", type_ids_EnumWithValues);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_EnumWithValues)
+    {
+        EnumTypeFlag enum_flags_EnumWithValues = 0;
+        BitBound bit_bound_EnumWithValues = 32;
+        CommonEnumeratedHeader common_EnumWithValues = TypeObjectUtils::build_common_enumerated_header(bit_bound_EnumWithValues);
+        QualifiedTypeName type_name_EnumWithValues = "EnumWithValues";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_EnumWithValues;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_EnumWithValues;
+        CompleteTypeDetail detail_EnumWithValues = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_EnumWithValues, ann_custom_EnumWithValues, type_name_EnumWithValues.to_string());
+        CompleteEnumeratedHeader header_EnumWithValues = TypeObjectUtils::build_complete_enumerated_header(common_EnumWithValues, detail_EnumWithValues);
+        CompleteEnumeratedLiteralSeq literal_seq_EnumWithValues;
+        {
+            EnumeratedLiteralFlag flags_ENUM_VALUE1 = TypeObjectUtils::build_enumerated_literal_flag(false);
+            CommonEnumeratedLiteral common_ENUM_VALUE1 = TypeObjectUtils::build_common_enumerated_literal(-3, flags_ENUM_VALUE1);
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_ENUM_VALUE1;
+            ann_custom_EnumWithValues.reset();
+            AppliedAnnotationSeq tmp_ann_custom_ENUM_VALUE1;
+            if (!tmp_ann_custom_ENUM_VALUE1.empty())
+            {
+                ann_custom_EnumWithValues = tmp_ann_custom_ENUM_VALUE1;
+            }
+            MemberName name_ENUM_VALUE1 = "ENUM_VALUE1";
+            CompleteMemberDetail detail_ENUM_VALUE1 = TypeObjectUtils::build_complete_member_detail(name_ENUM_VALUE1, member_ann_builtin_ENUM_VALUE1, ann_custom_EnumWithValues);
+            CompleteEnumeratedLiteral literal_ENUM_VALUE1 = TypeObjectUtils::build_complete_enumerated_literal(common_ENUM_VALUE1, detail_ENUM_VALUE1);
+            TypeObjectUtils::add_complete_enumerated_literal(literal_seq_EnumWithValues, literal_ENUM_VALUE1);
+        }
+        {
+            EnumeratedLiteralFlag flags_ENUM_VALUE2 = TypeObjectUtils::build_enumerated_literal_flag(false);
+            CommonEnumeratedLiteral common_ENUM_VALUE2 = TypeObjectUtils::build_common_enumerated_literal(0, flags_ENUM_VALUE2);
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_ENUM_VALUE2;
+            ann_custom_EnumWithValues.reset();
+            AppliedAnnotationSeq tmp_ann_custom_ENUM_VALUE2;
+            if (!tmp_ann_custom_ENUM_VALUE2.empty())
+            {
+                ann_custom_EnumWithValues = tmp_ann_custom_ENUM_VALUE2;
+            }
+            MemberName name_ENUM_VALUE2 = "ENUM_VALUE2";
+            CompleteMemberDetail detail_ENUM_VALUE2 = TypeObjectUtils::build_complete_member_detail(name_ENUM_VALUE2, member_ann_builtin_ENUM_VALUE2, ann_custom_EnumWithValues);
+            CompleteEnumeratedLiteral literal_ENUM_VALUE2 = TypeObjectUtils::build_complete_enumerated_literal(common_ENUM_VALUE2, detail_ENUM_VALUE2);
+            TypeObjectUtils::add_complete_enumerated_literal(literal_seq_EnumWithValues, literal_ENUM_VALUE2);
+        }
+        {
+            EnumeratedLiteralFlag flags_ENUM_VALUE3 = TypeObjectUtils::build_enumerated_literal_flag(false);
+            CommonEnumeratedLiteral common_ENUM_VALUE3 = TypeObjectUtils::build_common_enumerated_literal(3, flags_ENUM_VALUE3);
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_ENUM_VALUE3;
+            ann_custom_EnumWithValues.reset();
+            AppliedAnnotationSeq tmp_ann_custom_ENUM_VALUE3;
+            if (!tmp_ann_custom_ENUM_VALUE3.empty())
+            {
+                ann_custom_EnumWithValues = tmp_ann_custom_ENUM_VALUE3;
+            }
+            MemberName name_ENUM_VALUE3 = "ENUM_VALUE3";
+            CompleteMemberDetail detail_ENUM_VALUE3 = TypeObjectUtils::build_complete_member_detail(name_ENUM_VALUE3, member_ann_builtin_ENUM_VALUE3, ann_custom_EnumWithValues);
+            CompleteEnumeratedLiteral literal_ENUM_VALUE3 = TypeObjectUtils::build_complete_enumerated_literal(common_ENUM_VALUE3, detail_ENUM_VALUE3);
+            TypeObjectUtils::add_complete_enumerated_literal(literal_seq_EnumWithValues, literal_ENUM_VALUE3);
+        }
+        CompleteEnumeratedType enumerated_type_EnumWithValues = TypeObjectUtils::build_complete_enumerated_type(enum_flags_EnumWithValues, header_EnumWithValues,
+                literal_seq_EnumWithValues);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_enumerated_type_object(enumerated_type_EnumWithValues, type_name_EnumWithValues.to_string(), type_ids_EnumWithValues))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                "EnumWithValues already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_EnumStructure_type_identifier(
         TypeIdentifierPair& type_ids_EnumStructure)
 {
@@ -295,6 +367,63 @@ void register_BoundedBitMaskStructure_type_identifier(
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "BoundedBitMaskStructure already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_EnumWithValuesStructure_type_identifier(
+        TypeIdentifierPair& type_ids_EnumWithValuesStructure)
+{
+
+    ReturnCode_t return_code_EnumWithValuesStructure {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_EnumWithValuesStructure =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "EnumWithValuesStructure", type_ids_EnumWithValuesStructure);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_EnumWithValuesStructure)
+    {
+        StructTypeFlag struct_flags_EnumWithValuesStructure = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
+                false, false);
+        QualifiedTypeName type_name_EnumWithValuesStructure = "EnumWithValuesStructure";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_EnumWithValuesStructure;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_EnumWithValuesStructure;
+        CompleteTypeDetail detail_EnumWithValuesStructure = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_EnumWithValuesStructure, ann_custom_EnumWithValuesStructure, type_name_EnumWithValuesStructure.to_string());
+        CompleteStructHeader header_EnumWithValuesStructure;
+        header_EnumWithValuesStructure = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_EnumWithValuesStructure);
+        CompleteStructMemberSeq member_seq_EnumWithValuesStructure;
+        {
+            TypeIdentifierPair type_ids_var_enumwithvalues;
+            ReturnCode_t return_code_var_enumwithvalues {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_var_enumwithvalues =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "EnumWithValues", type_ids_var_enumwithvalues);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_enumwithvalues)
+            {
+            ::register_EnumWithValues_type_identifier(type_ids_var_enumwithvalues);
+            }
+            StructMemberFlag member_flags_var_enumwithvalues = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_var_enumwithvalues = 0x00000000;
+            bool common_var_enumwithvalues_ec {false};
+            CommonStructMember common_var_enumwithvalues {TypeObjectUtils::build_common_struct_member(member_id_var_enumwithvalues, member_flags_var_enumwithvalues, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_enumwithvalues, common_var_enumwithvalues_ec))};
+            if (!common_var_enumwithvalues_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_enumwithvalues member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_enumwithvalues = "var_enumwithvalues";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_var_enumwithvalues;
+            ann_custom_EnumWithValuesStructure.reset();
+            CompleteMemberDetail detail_var_enumwithvalues = TypeObjectUtils::build_complete_member_detail(name_var_enumwithvalues, member_ann_builtin_var_enumwithvalues, ann_custom_EnumWithValuesStructure);
+            CompleteStructMember member_var_enumwithvalues = TypeObjectUtils::build_complete_struct_member(common_var_enumwithvalues, detail_var_enumwithvalues);
+            TypeObjectUtils::add_complete_struct_member(member_seq_EnumWithValuesStructure, member_var_enumwithvalues);
+        }
+        CompleteStructType struct_type_EnumWithValuesStructure = TypeObjectUtils::build_complete_struct_type(struct_flags_EnumWithValuesStructure, header_EnumWithValuesStructure, member_seq_EnumWithValuesStructure);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_EnumWithValuesStructure, type_name_EnumWithValuesStructure.to_string(), type_ids_EnumWithValuesStructure))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "EnumWithValuesStructure already registered in TypeObjectRegistry for a different type.");
         }
     }
 }
