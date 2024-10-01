@@ -977,9 +977,9 @@ public:
      *
      * @param[out] publication_data publication data struct
      * @param publication_handle InstanceHandle_t of the publication
-     * @return RETCODE_OK
+     * @return RETCODE_BAD_PARAMETER if the DataReader is not matched with
+     * the given publication handle, RETCODE_OK otherwise.
      *
-     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t get_matched_publication_data(
             builtin::PublicationBuiltinTopicData& publication_data,
@@ -989,9 +989,10 @@ public:
      * @brief Fills the given vector with the InstanceHandle_t of matched DataReaders
      *
      * @param[out] publication_handles Vector where the InstanceHandle_t are returned
-     * @return RETCODE_OK
+     * @return RETCODE_OK if the operation succeeds.
      *
-     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
+     * @note Returning an empty list is not an error, it returns RETCODE_OK.
+     *
      */
     RTPS_DllAPI ReturnCode_t get_matched_publications(
             std::vector<InstanceHandle_t>& publication_handles) const;

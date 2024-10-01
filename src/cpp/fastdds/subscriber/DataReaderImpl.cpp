@@ -1198,6 +1198,48 @@ ReturnCode_t DataReaderImpl::get_subscription_matched_status(
     return ReturnCode_t::RETCODE_OK;
 }
 
+ReturnCode_t DataReaderImpl::get_matched_publication_data(
+        builtin::PublicationBuiltinTopicData& publication_data,
+        const fastrtps::rtps::InstanceHandle_t& publication_handle) const
+{
+    fastrtps::types::ReturnCode_t ret = ReturnCode_t::RETCODE_BAD_PARAMETER;
+    GUID_t writer_guid = iHandle2GUID(publication_handle);
+
+    if (reader_ && reader_->matched_writer_is_matched(writer_guid))
+    {
+        if (subscriber_)
+        {
+            RTPSParticipant* rtps_participant = subscriber_->rtps_participant();
+            if (rtps_participant &&
+                    rtps_participant->get_publication_info(publication_data, writer_guid))
+            {
+                ret = ReturnCode_t::RETCODE_OK;
+            }
+        }
+    }
+
+    return ret;
+}
+
+ReturnCode_t DataReaderImpl::get_matched_publications(
+        std::vector<InstanceHandle_t>& publication_handles) const
+{
+    ReturnCode_t ret = ReturnCode_t::RETCODE_ERROR;
+    std::vector<GUID_t> matched_writers_guids;
+    publication_handles.clear();
+
+    if (reader_ && reader_->matched_writers_guids(matched_writers_guids))
+    {
+        for (const GUID_t& guid : matched_writers_guids)
+        {
+            publication_handles.push_back(InstanceHandle_t(guid));
+        }
+        ret = ReturnCode_t::RETCODE_OK;
+    }
+
+    return ret;
+}
+
 bool DataReaderImpl::deadline_timer_reschedule()
 {
     assert(qos_.deadline().period != c_TimeInfinite);
