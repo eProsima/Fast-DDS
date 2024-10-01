@@ -162,8 +162,9 @@ XMLP_ret fill_attributes_from_xml(
             if (profile_name != "")
             {
                 node_att_map_cit_t it = node->getAttributes().find(PROFILE_NAME);
-                if (it != node->getAttributes().end() && it->second != profile_name)
+                if (it == node->getAttributes().end() || it->second != profile_name)
                 {
+                    // No profile name in this node, or different than the one requested
                     continue;
                 }
             }
