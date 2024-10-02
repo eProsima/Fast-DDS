@@ -248,6 +248,14 @@ ReturnCode_t Publisher::get_datawriter_qos_from_profile(
 ReturnCode_t Publisher::get_datawriter_qos_from_xml(
         const std::string& xml,
         DataWriterQos& qos,
+        const std::string& profile_name) const
+{
+    return impl_->get_datawriter_qos_from_xml(xml, qos, profile_name);
+}
+
+ReturnCode_t Publisher::get_datawriter_qos_from_xml(
+        const std::string& xml,
+        DataWriterQos& qos,
         std::string& topic_name,
         const std::string& profile_name) const
 {

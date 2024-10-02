@@ -414,6 +414,14 @@ ReturnCode_t DomainParticipant::get_topic_qos_from_profile(
 ReturnCode_t DomainParticipant::get_topic_qos_from_xml(
         const std::string& xml,
         TopicQos& qos,
+        const std::string& profile_name) const
+{
+    return impl_->get_topic_qos_from_xml(xml, qos, profile_name);
+}
+
+ReturnCode_t DomainParticipant::get_topic_qos_from_xml(
+        const std::string& xml,
+        TopicQos& qos,
         std::string& topic_name,
         std::string& topic_data_type,
         const std::string& profile_name) const

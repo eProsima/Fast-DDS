@@ -697,6 +697,19 @@ public:
             std::string& topic_data_type) const;
 
     /**
+     * Fills the TopicQos with the first topic profile found in the given XML (or the one specified).
+     *
+     * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
+     * @param qos TopicQos object where the qos is returned.
+     * @param profile_name Topic profile name. Empty by default (first one found).
+     * @return RETCODE_OK on success. RETCODE_BAD_PARAMETER otherwise.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t get_topic_qos_from_xml(
+            const std::string& xml,
+            TopicQos& qos,
+            const std::string& profile_name = "") const;
+
+    /**
      * Fills the TopicQos with the first topic profile found in the given XML (or the one specified), and also its corresponding topic and data type names (if specified).
      *
      * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.

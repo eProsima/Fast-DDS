@@ -155,6 +155,11 @@ public:
     ReturnCode_t get_datareader_qos_from_xml(
             const std::string& xml,
             DataReaderQos& qos,
+            const std::string& profile_name = "") const;
+
+    ReturnCode_t get_datareader_qos_from_xml(
+            const std::string& xml,
+            DataReaderQos& qos,
             std::string& topic_name,
             const std::string& profile_name = "") const;
 

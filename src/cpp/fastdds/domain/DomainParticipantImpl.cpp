@@ -1161,15 +1161,9 @@ ReturnCode_t DomainParticipantImpl::get_topic_qos_from_profile(
         const std::string& profile_name,
         TopicQos& qos) const
 {
-    xmlparser::TopicAttributes attr;
-    if (XMLP_ret::XML_OK == XMLProfileManager::fillTopicAttributes(profile_name, attr))
-    {
-        qos = default_topic_qos_;
-        utils::set_qos_from_attributes(qos, attr);
-        return RETCODE_OK;
-    }
-
-    return RETCODE_BAD_PARAMETER;
+    std::string _topic_name;
+    std::string _topic_data_type;
+    return get_topic_qos_from_profile(profile_name, qos, _topic_name, _topic_data_type);
 }
 
 ReturnCode_t DomainParticipantImpl::get_topic_qos_from_profile(
@@ -1189,6 +1183,16 @@ ReturnCode_t DomainParticipantImpl::get_topic_qos_from_profile(
     }
 
     return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantImpl::get_topic_qos_from_xml(
+        const std::string& xml,
+        TopicQos& qos,
+        const std::string& profile_name) const
+{
+    std::string _topic_name;
+    std::string _topic_data_type;
+    return get_topic_qos_from_xml(xml, qos, _topic_name, _topic_data_type, profile_name);
 }
 
 ReturnCode_t DomainParticipantImpl::get_topic_qos_from_xml(

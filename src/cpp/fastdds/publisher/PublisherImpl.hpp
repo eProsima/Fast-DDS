@@ -177,6 +177,11 @@ public:
     ReturnCode_t get_datawriter_qos_from_xml(
             const std::string& xml,
             DataWriterQos& qos,
+            const std::string& profile_name = "") const;
+
+    ReturnCode_t get_datawriter_qos_from_xml(
+            const std::string& xml,
+            DataWriterQos& qos,
             std::string& topic_name,
             const std::string& profile_name = "") const;
 

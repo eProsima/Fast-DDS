@@ -425,15 +425,8 @@ ReturnCode_t SubscriberImpl::get_datareader_qos_from_profile(
         const std::string& profile_name,
         DataReaderQos& qos) const
 {
-    xmlparser::SubscriberAttributes attr;
-    if (XMLP_ret::XML_OK == XMLProfileManager::fillSubscriberAttributes(profile_name, attr, false))
-    {
-        qos = default_datareader_qos_;
-        utils::set_qos_from_attributes(qos, attr);
-        return RETCODE_OK;
-    }
-
-    return RETCODE_BAD_PARAMETER;
+    std::string _topic_name;
+    return get_datareader_qos_from_profile(profile_name, qos, _topic_name);
 }
 
 ReturnCode_t SubscriberImpl::get_datareader_qos_from_profile(
@@ -451,6 +444,15 @@ ReturnCode_t SubscriberImpl::get_datareader_qos_from_profile(
     }
 
     return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t SubscriberImpl::get_datareader_qos_from_xml(
+        const std::string& xml,
+        DataReaderQos& qos,
+        const std::string& profile_name) const
+{
+    std::string _topic_name;
+    return get_datareader_qos_from_xml(xml, qos, _topic_name, profile_name);
 }
 
 ReturnCode_t SubscriberImpl::get_datareader_qos_from_xml(

@@ -416,6 +416,11 @@ public:
     ReturnCode_t get_topic_qos_from_xml(
             const std::string& xml,
             TopicQos& qos,
+            const std::string& profile_name = "") const;
+
+    ReturnCode_t get_topic_qos_from_xml(
+            const std::string& xml,
+            TopicQos& qos,
             std::string& topic_name,
             std::string& topic_data_type,
             const std::string& profile_name = "") const;
