@@ -67,6 +67,8 @@
 #include <xmlparser/attributes/PublisherAttributes.hpp>
 #include <xmlparser/attributes/SubscriberAttributes.hpp>
 
+#include <FileUtils.hpp>
+
 #include "../../common/env_var_utils.hpp"
 #include "../../logging/mock/MockConsumer.h"
 
@@ -752,6 +754,88 @@ TEST(ParticipantTests, GetParticipantProfileQos)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
+TEST(ParticipantTests, GetParticipantQosFromXml)
+{
+    const std::string xml_filename("test_xml_profile.xml");
+    const std::string profile_name("test_participant_profile");
+
+    std::string complete_xml = testing::load_file(xml_filename);
+
+    // Get QoS given profile name
+    DomainParticipantQos qos;
+    EXPECT_EQ(
+        DomainParticipantFactory::get_instance()->get_participant_qos_from_xml(complete_xml, qos, profile_name),
+        RETCODE_OK);
+
+    // Get QoS given profile name with empty profile name (gets first one found)
+    DomainParticipantQos qos_empty_profile;
+    EXPECT_EQ(
+        DomainParticipantFactory::get_instance()->get_participant_qos_from_xml(complete_xml, qos_empty_profile, ""),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    // NOTE: test_participant_profile is assumed to be the first participant profile in the XML file
+    check_equivalent_qos(qos, qos_empty_profile);
+
+    // Load profiles from XML file and get QoS given profile name
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_filename);
+    DomainParticipantQos qos_from_profile;
+    EXPECT_EQ(
+        DomainParticipantFactory::get_instance()->get_participant_qos_from_profile(profile_name, qos_from_profile),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    check_equivalent_qos(qos, qos_from_profile);
+
+    // Test return when a non-existent profile is used
+    EXPECT_EQ(
+        DomainParticipantFactory::get_instance()->get_participant_qos_from_xml(complete_xml, qos,
+        "incorrect_profile_name"),
+        RETCODE_BAD_PARAMETER);
+}
+
+TEST(ParticipantTests, GetParticipantExtendedQosFromXml)
+{
+    const std::string xml_filename("test_xml_profile.xml");
+    const std::string profile_name("test_participant_profile");
+
+    std::string complete_xml = testing::load_file(xml_filename);
+
+    // Get QoS given profile name
+    DomainParticipantExtendedQos qos;
+    EXPECT_EQ(
+        DomainParticipantFactory::get_instance()->get_participant_extended_qos_from_xml(complete_xml, qos,
+        profile_name),
+        RETCODE_OK);
+
+    // Get QoS given profile name with empty profile name (gets first one found)
+    DomainParticipantExtendedQos qos_empty_profile;
+    EXPECT_EQ(
+        DomainParticipantFactory::get_instance()->get_participant_extended_qos_from_xml(complete_xml, qos_empty_profile,
+        ""),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    // NOTE: test_participant_profile is assumed to be the first participant profile in the XML file
+    check_equivalent_extended_qos(qos, qos_empty_profile);
+
+    // Load profiles from XML file and get QoS given profile name
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_filename);
+    DomainParticipantExtendedQos qos_from_profile;
+    EXPECT_EQ(
+        DomainParticipantFactory::get_instance()->get_participant_extended_qos_from_profile(profile_name,
+        qos_from_profile),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    check_equivalent_extended_qos(qos, qos_from_profile);
+
+    // Test return when a non-existent profile is used
+    EXPECT_EQ(
+        DomainParticipantFactory::get_instance()->get_participant_extended_qos_from_xml(complete_xml, qos,
+        "incorrect_profile_name"),
+        RETCODE_BAD_PARAMETER);
+}
 
 TEST(ParticipantTests, DeleteDomainParticipant)
 {
@@ -1992,6 +2076,53 @@ TEST(ParticipantTests, GetSubscriberProfileQos)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
+TEST(ParticipantTests, GetSubscriberQosFromXml)
+{
+    const std::string xml_filename("test_xml_profile.xml");
+    const std::string profile_name("test_subscriber_profile");
+
+    std::string complete_xml = testing::load_file(xml_filename);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(
+        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    // Get QoS given profile name
+    SubscriberQos qos;
+    EXPECT_EQ(
+        participant->get_subscriber_qos_from_xml(complete_xml, qos, profile_name),
+        RETCODE_OK);
+
+    // Get QoS given profile name with empty profile name (gets first one found)
+    SubscriberQos qos_empty_profile;
+    EXPECT_EQ(
+        participant->get_subscriber_qos_from_xml(complete_xml, qos_empty_profile, ""),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    // NOTE: test_subscriber_profile is assumed to be the first subscriber profile in the XML file
+    EXPECT_EQ(qos, qos_empty_profile);
+
+    // Load profiles from XML file and get QoS given profile name
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_filename);
+    SubscriberQos qos_from_profile;
+    EXPECT_EQ(
+        participant->get_subscriber_qos_from_profile(profile_name, qos_from_profile),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    EXPECT_EQ(qos, qos_from_profile);
+
+    // Test return when a non-existent profile is used
+    EXPECT_EQ(
+        participant->get_subscriber_qos_from_xml(complete_xml, qos, "incorrect_profile_name"),
+        RETCODE_BAD_PARAMETER);
+
+    // Clean up
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
+}
+
 TEST(ParticipantTests, CreateSubscriberWithProfile)
 {
     DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");
@@ -2043,6 +2174,53 @@ TEST(ParticipantTests, GetPublisherProfileQos)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
+TEST(ParticipantTests, GetPublisherQosFromXml)
+{
+    const std::string xml_filename("test_xml_profile.xml");
+    const std::string profile_name("test_publisher_profile");
+
+    std::string complete_xml = testing::load_file(xml_filename);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(
+        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    // Get QoS given profile name
+    PublisherQos qos;
+    EXPECT_EQ(
+        participant->get_publisher_qos_from_xml(complete_xml, qos, profile_name),
+        RETCODE_OK);
+
+    // Get QoS given profile name with empty profile name (gets first one found)
+    PublisherQos qos_empty_profile;
+    EXPECT_EQ(
+        participant->get_publisher_qos_from_xml(complete_xml, qos_empty_profile, ""),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    // NOTE: test_publisher_profile is assumed to be the first publisher profile in the XML file
+    EXPECT_EQ(qos, qos_empty_profile);
+
+    // Load profiles from XML file and get QoS given profile name
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_filename);
+    PublisherQos qos_from_profile;
+    EXPECT_EQ(
+        participant->get_publisher_qos_from_profile(profile_name, qos_from_profile),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    EXPECT_EQ(qos, qos_from_profile);
+
+    // Test return when a non-existent profile is used
+    EXPECT_EQ(
+        participant->get_publisher_qos_from_xml(complete_xml, qos, "incorrect_profile_name"),
+        RETCODE_BAD_PARAMETER);
+
+    // Clean up
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
+}
+
 TEST(ParticipantTests, GetReplierProfileQos)
 {
     DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");
@@ -2066,6 +2244,53 @@ TEST(ParticipantTests, GetReplierProfileQos)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
+TEST(ParticipantTests, GetReplierQosFromXml)
+{
+    const std::string xml_filename("test_xml_profile.xml");
+    const std::string profile_name("test_replier_profile");
+
+    std::string complete_xml = testing::load_file(xml_filename);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(
+        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    // Get QoS given profile name
+    ReplierQos qos;
+    EXPECT_EQ(
+        participant->get_replier_qos_from_xml(complete_xml, qos, profile_name),
+        RETCODE_OK);
+
+    // Get QoS given profile name with empty profile name (gets first one found)
+    ReplierQos qos_empty_profile;
+    EXPECT_EQ(
+        participant->get_replier_qos_from_xml(complete_xml, qos_empty_profile, ""),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    // NOTE: test_replier_profile is assumed to be the first replier profile in the XML file
+    EXPECT_EQ(qos, qos_empty_profile);
+
+    // Load profiles from XML file and get QoS given profile name
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_filename);
+    ReplierQos qos_from_profile;
+    EXPECT_EQ(
+        participant->get_replier_qos_from_profile(profile_name, qos_from_profile),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    EXPECT_EQ(qos, qos_from_profile);
+
+    // Test return when a non-existent profile is used
+    EXPECT_EQ(
+        participant->get_replier_qos_from_xml(complete_xml, qos, "incorrect_profile_name"),
+        RETCODE_BAD_PARAMETER);
+
+    // Clean up
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
+}
+
 TEST(ParticipantTests, GetRequesterProfileQos)
 {
     DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");
@@ -2083,6 +2308,53 @@ TEST(ParticipantTests, GetRequesterProfileQos)
     // Test return when a non-existent profile is used
     EXPECT_EQ(
         participant->get_requester_qos_from_profile("incorrect_profile_name", qos),
+        RETCODE_BAD_PARAMETER);
+
+    // Clean up
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
+}
+
+TEST(ParticipantTests, GetRequesterQosFromXml)
+{
+    const std::string xml_filename("test_xml_profile.xml");
+    const std::string profile_name("test_requester_profile");
+
+    std::string complete_xml = testing::load_file(xml_filename);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(
+        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    // Get QoS given profile name
+    RequesterQos qos;
+    EXPECT_EQ(
+        participant->get_requester_qos_from_xml(complete_xml, qos, profile_name),
+        RETCODE_OK);
+
+    // Get QoS given profile name with empty profile name (gets first one found)
+    RequesterQos qos_empty_profile;
+    EXPECT_EQ(
+        participant->get_requester_qos_from_xml(complete_xml, qos_empty_profile, ""),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    // NOTE: test_requester_profile is assumed to be the first requester profile in the XML file
+    EXPECT_EQ(qos, qos_empty_profile);
+
+    // Load profiles from XML file and get QoS given profile name
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_filename);
+    RequesterQos qos_from_profile;
+    EXPECT_EQ(
+        participant->get_requester_qos_from_profile(profile_name, qos_from_profile),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    EXPECT_EQ(qos, qos_from_profile);
+
+    // Test return when a non-existent profile is used
+    EXPECT_EQ(
+        participant->get_requester_qos_from_xml(complete_xml, qos, "incorrect_profile_name"),
         RETCODE_BAD_PARAMETER);
 
     // Clean up
@@ -2212,6 +2484,53 @@ TEST(ParticipantTests, GetTopicProfileQos)
 
     // Clean up
     ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
+}
+
+TEST(ParticipantTests, GetTopicQosFromXml)
+{
+    const std::string xml_filename("test_xml_profile.xml");
+    const std::string profile_name("test_topic_profile");
+
+    std::string complete_xml = testing::load_file(xml_filename);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(
+        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    // Get QoS given profile name
+    TopicQos qos;
+    EXPECT_EQ(
+        participant->get_topic_qos_from_xml(complete_xml, qos, profile_name),
+        RETCODE_OK);
+
+    // Get QoS given profile name with empty profile name (gets first one found)
+    TopicQos qos_empty_profile;
+    EXPECT_EQ(
+        participant->get_topic_qos_from_xml(complete_xml, qos_empty_profile, ""),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    // NOTE: test_topic_profile is assumed to be the first topic profile in the XML file
+    EXPECT_EQ(qos, qos_empty_profile);
+
+    // Load profiles from XML file and get QoS given profile name
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_filename);
+    TopicQos qos_from_profile;
+    EXPECT_EQ(
+        participant->get_topic_qos_from_profile(profile_name, qos_from_profile),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    EXPECT_EQ(qos, qos_from_profile);
+
+    // Test return when a non-existent profile is used
+    EXPECT_EQ(
+        participant->get_topic_qos_from_xml(complete_xml, qos, "incorrect_profile_name"),
+        RETCODE_BAD_PARAMETER);
+
+    // Clean up
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 

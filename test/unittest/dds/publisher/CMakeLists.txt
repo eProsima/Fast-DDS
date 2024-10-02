@@ -321,6 +321,7 @@ target_include_directories(PublisherTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
+    ${PROJECT_SOURCE_DIR}/test/utils
     )
 target_link_libraries(PublisherTests fastdds fastcdr foonathan_memory
     GTest::gmock
