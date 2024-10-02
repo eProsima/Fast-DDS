@@ -56,7 +56,7 @@ on:
         description: 'Add the CI-PENDING label to the PR'
         required: false
         type: boolean
-        default: true
+        default: false
 
 env:
   security-cmake-flag: ${{ inputs.security == true && '-DSECURITY=ON' || '-DSECURITY=OFF' }}
