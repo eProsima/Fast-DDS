@@ -1069,6 +1069,205 @@ void register_SampleLostStatus_s_type_identifier(
     }
 }
 
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_ExtendedIncompatibleQoSStatus_s_type_identifier(
+        TypeIdentifierPair& type_ids_ExtendedIncompatibleQoSStatus_s)
+{
+
+    ReturnCode_t return_code_ExtendedIncompatibleQoSStatus_s {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_ExtendedIncompatibleQoSStatus_s =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "eprosima::fastdds::statistics::ExtendedIncompatibleQoSStatus_s", type_ids_ExtendedIncompatibleQoSStatus_s);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_ExtendedIncompatibleQoSStatus_s)
+    {
+        StructTypeFlag struct_flags_ExtendedIncompatibleQoSStatus_s = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
+                false, false);
+        QualifiedTypeName type_name_ExtendedIncompatibleQoSStatus_s = "eprosima::fastdds::statistics::ExtendedIncompatibleQoSStatus_s";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_ExtendedIncompatibleQoSStatus_s;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_ExtendedIncompatibleQoSStatus_s;
+        CompleteTypeDetail detail_ExtendedIncompatibleQoSStatus_s = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_ExtendedIncompatibleQoSStatus_s, ann_custom_ExtendedIncompatibleQoSStatus_s, type_name_ExtendedIncompatibleQoSStatus_s.to_string());
+        CompleteStructHeader header_ExtendedIncompatibleQoSStatus_s;
+        header_ExtendedIncompatibleQoSStatus_s = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_ExtendedIncompatibleQoSStatus_s);
+        CompleteStructMemberSeq member_seq_ExtendedIncompatibleQoSStatus_s;
+        {
+            TypeIdentifierPair type_ids_remote_guid;
+            ReturnCode_t return_code_remote_guid {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_remote_guid =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "eprosima::fastdds::statistics::detail::GUID_s", type_ids_remote_guid);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_remote_guid)
+            {
+                eprosima::fastdds::statistics::detail::register_GUID_s_type_identifier(type_ids_remote_guid);
+            }
+            StructMemberFlag member_flags_remote_guid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_remote_guid = 0x00000000;
+            bool common_remote_guid_ec {false};
+            CommonStructMember common_remote_guid {TypeObjectUtils::build_common_struct_member(member_id_remote_guid, member_flags_remote_guid, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_remote_guid, common_remote_guid_ec))};
+            if (!common_remote_guid_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure remote_guid member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_remote_guid = "remote_guid";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_remote_guid;
+            ann_custom_ExtendedIncompatibleQoSStatus_s.reset();
+            CompleteMemberDetail detail_remote_guid = TypeObjectUtils::build_complete_member_detail(name_remote_guid, member_ann_builtin_remote_guid, ann_custom_ExtendedIncompatibleQoSStatus_s);
+            CompleteStructMember member_remote_guid = TypeObjectUtils::build_complete_struct_member(common_remote_guid, detail_remote_guid);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ExtendedIncompatibleQoSStatus_s, member_remote_guid);
+        }
+        {
+            TypeIdentifierPair type_ids_current_incompatible_policies;
+            ReturnCode_t return_code_current_incompatible_policies {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_current_incompatible_policies =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "anonymous_sequence_uint32_t_unbounded", type_ids_current_incompatible_policies);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_current_incompatible_policies)
+            {
+                return_code_current_incompatible_policies =
+                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                    "_uint32_t", type_ids_current_incompatible_policies);
+
+                if (eprosima::fastdds::dds::RETCODE_OK != return_code_current_incompatible_policies)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                    return;
+                }
+                bool element_identifier_anonymous_sequence_uint32_t_unbounded_ec {false};
+                TypeIdentifier* element_identifier_anonymous_sequence_uint32_t_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_current_incompatible_policies, element_identifier_anonymous_sequence_uint32_t_unbounded_ec))};
+                if (!element_identifier_anonymous_sequence_uint32_t_unbounded_ec)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Sequence element TypeIdentifier inconsistent.");
+                    return;
+                }
+                EquivalenceKind equiv_kind_anonymous_sequence_uint32_t_unbounded = EK_COMPLETE;
+                if (TK_NONE == type_ids_current_incompatible_policies.type_identifier2()._d())
+                {
+                    equiv_kind_anonymous_sequence_uint32_t_unbounded = EK_BOTH;
+                }
+                CollectionElementFlag element_flags_anonymous_sequence_uint32_t_unbounded = 0;
+                PlainCollectionHeader header_anonymous_sequence_uint32_t_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_sequence_uint32_t_unbounded, element_flags_anonymous_sequence_uint32_t_unbounded);
+                {
+                    SBound bound = 0;
+                    PlainSequenceSElemDefn seq_sdefn = TypeObjectUtils::build_plain_sequence_s_elem_defn(header_anonymous_sequence_uint32_t_unbounded, bound,
+                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_uint32_t_unbounded));
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_s_sequence_type_identifier(seq_sdefn, "anonymous_sequence_uint32_t_unbounded", type_ids_current_incompatible_policies))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_sequence_uint32_t_unbounded already registered in TypeObjectRegistry for a different type.");
+                    }
+                }
+            }
+            StructMemberFlag member_flags_current_incompatible_policies = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_current_incompatible_policies = 0x00000001;
+            bool common_current_incompatible_policies_ec {false};
+            CommonStructMember common_current_incompatible_policies {TypeObjectUtils::build_common_struct_member(member_id_current_incompatible_policies, member_flags_current_incompatible_policies, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_current_incompatible_policies, common_current_incompatible_policies_ec))};
+            if (!common_current_incompatible_policies_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure current_incompatible_policies member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_current_incompatible_policies = "current_incompatible_policies";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_current_incompatible_policies;
+            ann_custom_ExtendedIncompatibleQoSStatus_s.reset();
+            CompleteMemberDetail detail_current_incompatible_policies = TypeObjectUtils::build_complete_member_detail(name_current_incompatible_policies, member_ann_builtin_current_incompatible_policies, ann_custom_ExtendedIncompatibleQoSStatus_s);
+            CompleteStructMember member_current_incompatible_policies = TypeObjectUtils::build_complete_struct_member(common_current_incompatible_policies, detail_current_incompatible_policies);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ExtendedIncompatibleQoSStatus_s, member_current_incompatible_policies);
+        }
+        CompleteStructType struct_type_ExtendedIncompatibleQoSStatus_s = TypeObjectUtils::build_complete_struct_type(struct_flags_ExtendedIncompatibleQoSStatus_s, header_ExtendedIncompatibleQoSStatus_s, member_seq_ExtendedIncompatibleQoSStatus_s);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_ExtendedIncompatibleQoSStatus_s, type_name_ExtendedIncompatibleQoSStatus_s.to_string(), type_ids_ExtendedIncompatibleQoSStatus_s))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "eprosima::fastdds::statistics::ExtendedIncompatibleQoSStatus_s already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
+void register_ExtendedIncompatibleQoSStatusSeq_s_type_identifier(
+        TypeIdentifierPair& type_ids_ExtendedIncompatibleQoSStatusSeq_s)
+{
+    ReturnCode_t return_code_ExtendedIncompatibleQoSStatusSeq_s {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_ExtendedIncompatibleQoSStatusSeq_s =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "eprosima::fastdds::statistics::ExtendedIncompatibleQoSStatusSeq_s", type_ids_ExtendedIncompatibleQoSStatusSeq_s);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_ExtendedIncompatibleQoSStatusSeq_s)
+    {
+        AliasTypeFlag alias_flags_ExtendedIncompatibleQoSStatusSeq_s = 0;
+        QualifiedTypeName type_name_ExtendedIncompatibleQoSStatusSeq_s = "eprosima::fastdds::statistics::ExtendedIncompatibleQoSStatusSeq_s";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_ExtendedIncompatibleQoSStatusSeq_s;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_ExtendedIncompatibleQoSStatusSeq_s;
+        CompleteTypeDetail detail_ExtendedIncompatibleQoSStatusSeq_s = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_ExtendedIncompatibleQoSStatusSeq_s, ann_custom_ExtendedIncompatibleQoSStatusSeq_s, type_name_ExtendedIncompatibleQoSStatusSeq_s.to_string());
+        CompleteAliasHeader header_ExtendedIncompatibleQoSStatusSeq_s = TypeObjectUtils::build_complete_alias_header(detail_ExtendedIncompatibleQoSStatusSeq_s);
+        AliasMemberFlag related_flags_ExtendedIncompatibleQoSStatusSeq_s = 0;
+        return_code_ExtendedIncompatibleQoSStatusSeq_s =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+            "anonymous_sequence_eprosima_fastdds_statistics_ExtendedIncompatibleQoSStatus_s_unbounded", type_ids_ExtendedIncompatibleQoSStatusSeq_s);
+
+        if (eprosima::fastdds::dds::RETCODE_OK != return_code_ExtendedIncompatibleQoSStatusSeq_s)
+        {
+            return_code_ExtendedIncompatibleQoSStatusSeq_s =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "eprosima::fastdds::statistics::ExtendedIncompatibleQoSStatus_s", type_ids_ExtendedIncompatibleQoSStatusSeq_s);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_ExtendedIncompatibleQoSStatusSeq_s)
+            {
+                eprosima::fastdds::statistics::register_ExtendedIncompatibleQoSStatus_s_type_identifier(type_ids_ExtendedIncompatibleQoSStatusSeq_s);
+            }
+            bool element_identifier_anonymous_sequence_eprosima_fastdds_statistics_ExtendedIncompatibleQoSStatus_s_unbounded_ec {false};
+            TypeIdentifier* element_identifier_anonymous_sequence_eprosima_fastdds_statistics_ExtendedIncompatibleQoSStatus_s_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_ExtendedIncompatibleQoSStatusSeq_s, element_identifier_anonymous_sequence_eprosima_fastdds_statistics_ExtendedIncompatibleQoSStatus_s_unbounded_ec))};
+            if (!element_identifier_anonymous_sequence_eprosima_fastdds_statistics_ExtendedIncompatibleQoSStatus_s_unbounded_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Sequence element TypeIdentifier inconsistent.");
+                return;
+            }
+            EquivalenceKind equiv_kind_anonymous_sequence_eprosima_fastdds_statistics_ExtendedIncompatibleQoSStatus_s_unbounded = EK_COMPLETE;
+            if (TK_NONE == type_ids_ExtendedIncompatibleQoSStatusSeq_s.type_identifier2()._d())
+            {
+                equiv_kind_anonymous_sequence_eprosima_fastdds_statistics_ExtendedIncompatibleQoSStatus_s_unbounded = EK_BOTH;
+            }
+            CollectionElementFlag element_flags_anonymous_sequence_eprosima_fastdds_statistics_ExtendedIncompatibleQoSStatus_s_unbounded = 0;
+            PlainCollectionHeader header_anonymous_sequence_eprosima_fastdds_statistics_ExtendedIncompatibleQoSStatus_s_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_sequence_eprosima_fastdds_statistics_ExtendedIncompatibleQoSStatus_s_unbounded, element_flags_anonymous_sequence_eprosima_fastdds_statistics_ExtendedIncompatibleQoSStatus_s_unbounded);
+            {
+                SBound bound = 0;
+                PlainSequenceSElemDefn seq_sdefn = TypeObjectUtils::build_plain_sequence_s_elem_defn(header_anonymous_sequence_eprosima_fastdds_statistics_ExtendedIncompatibleQoSStatus_s_unbounded, bound,
+                            eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_eprosima_fastdds_statistics_ExtendedIncompatibleQoSStatus_s_unbounded));
+                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                        TypeObjectUtils::build_and_register_s_sequence_type_identifier(seq_sdefn, "anonymous_sequence_eprosima_fastdds_statistics_ExtendedIncompatibleQoSStatus_s_unbounded", type_ids_ExtendedIncompatibleQoSStatusSeq_s))
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "anonymous_sequence_eprosima_fastdds_statistics_ExtendedIncompatibleQoSStatus_s_unbounded already registered in TypeObjectRegistry for a different type.");
+                }
+            }
+        }
+        bool common_ExtendedIncompatibleQoSStatusSeq_s_ec {false};
+        CommonAliasBody common_ExtendedIncompatibleQoSStatusSeq_s {TypeObjectUtils::build_common_alias_body(related_flags_ExtendedIncompatibleQoSStatusSeq_s,
+                TypeObjectUtils::retrieve_complete_type_identifier(type_ids_ExtendedIncompatibleQoSStatusSeq_s, common_ExtendedIncompatibleQoSStatusSeq_s_ec))};
+        if (!common_ExtendedIncompatibleQoSStatusSeq_s_ec)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "eprosima::fastdds::statistics::ExtendedIncompatibleQoSStatusSeq_s related TypeIdentifier inconsistent.");
+            return;
+        }
+        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_ExtendedIncompatibleQoSStatusSeq_s;
+        ann_custom_ExtendedIncompatibleQoSStatusSeq_s.reset();
+        CompleteAliasBody body_ExtendedIncompatibleQoSStatusSeq_s = TypeObjectUtils::build_complete_alias_body(common_ExtendedIncompatibleQoSStatusSeq_s,
+                member_ann_builtin_ExtendedIncompatibleQoSStatusSeq_s, ann_custom_ExtendedIncompatibleQoSStatusSeq_s);
+        CompleteAliasType alias_type_ExtendedIncompatibleQoSStatusSeq_s = TypeObjectUtils::build_complete_alias_type(alias_flags_ExtendedIncompatibleQoSStatusSeq_s,
+                header_ExtendedIncompatibleQoSStatusSeq_s, body_ExtendedIncompatibleQoSStatusSeq_s);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_alias_type_object(alias_type_ExtendedIncompatibleQoSStatusSeq_s,
+                    type_name_ExtendedIncompatibleQoSStatusSeq_s.to_string(), type_ids_ExtendedIncompatibleQoSStatusSeq_s))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                "eprosima::fastdds::statistics::ExtendedIncompatibleQoSStatusSeq_s already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
+
 namespace StatusKind {
 void register_StatusKind_type_identifier(
         TypeIdentifierPair& type_ids_StatusKind)
@@ -1478,6 +1677,36 @@ void register_MonitorServiceData_type_identifier(
         {
             return_code_MonitorServiceData =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "eprosima::fastdds::statistics::ExtendedIncompatibleQoSStatusSeq_s", type_ids_MonitorServiceData);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_MonitorServiceData)
+            {
+                eprosima::fastdds::statistics::register_ExtendedIncompatibleQoSStatusSeq_s_type_identifier(type_ids_MonitorServiceData);
+            }
+            UnionMemberFlag member_flags_extended_incompatible_qos_status = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false);
+            UnionCaseLabelSeq label_seq_extended_incompatible_qos_status;
+            TypeObjectUtils::add_union_case_label(label_seq_extended_incompatible_qos_status, static_cast<int32_t>(StatusKind::EXTENDED_INCOMPATIBLE_QOS));
+            MemberId member_id_extended_incompatible_qos_status = 0x00000009;
+            bool common_extended_incompatible_qos_status_ec {false};
+            CommonUnionMember common_extended_incompatible_qos_status {TypeObjectUtils::build_common_union_member(member_id_extended_incompatible_qos_status,
+                    member_flags_extended_incompatible_qos_status, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_MonitorServiceData,
+                        common_extended_incompatible_qos_status_ec), label_seq_extended_incompatible_qos_status)};
+            if (!common_extended_incompatible_qos_status_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Union extended_incompatible_qos_status member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_extended_incompatible_qos_status = "extended_incompatible_qos_status";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_extended_incompatible_qos_status;
+            ann_custom_MonitorServiceData.reset();
+            CompleteMemberDetail detail_extended_incompatible_qos_status = TypeObjectUtils::build_complete_member_detail(name_extended_incompatible_qos_status, member_ann_builtin_extended_incompatible_qos_status, ann_custom_MonitorServiceData);
+            CompleteUnionMember member_extended_incompatible_qos_status = TypeObjectUtils::build_complete_union_member(common_extended_incompatible_qos_status, detail_extended_incompatible_qos_status);
+            TypeObjectUtils::add_complete_union_member(member_seq_MonitorServiceData, member_extended_incompatible_qos_status);
+        }
+        {
+            return_code_MonitorServiceData =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                 "_byte", type_ids_MonitorServiceData);
 
             if (eprosima::fastdds::dds::RETCODE_OK != return_code_MonitorServiceData)
@@ -1490,7 +1719,7 @@ void register_MonitorServiceData_type_identifier(
                     false, false);
             UnionCaseLabelSeq label_seq_statuses_size;
             TypeObjectUtils::add_union_case_label(label_seq_statuses_size, static_cast<int32_t>(StatusKind::STATUSES_SIZE));
-            MemberId member_id_statuses_size = 0x00000009;
+            MemberId member_id_statuses_size = 0x0000000a;
             bool common_statuses_size_ec {false};
             CommonUnionMember common_statuses_size {TypeObjectUtils::build_common_union_member(member_id_statuses_size,
                     member_flags_statuses_size, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_MonitorServiceData,
