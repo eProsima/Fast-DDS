@@ -14,6 +14,7 @@
 
 #include <cstdint>
 #include <mutex>
+#include <thread>
 #include <vector>
 
 #include <gtest/gtest.h>
@@ -633,6 +634,178 @@ TEST(TransportUDP, MaliciousManipulatedDataOctetsToNextHeaderIgnore)
 
     // Block reader until reception finished or timeout.
     reader.block_for_all();
+}
+
+/**
+ * This is a regression test for redmine issue #21707.
+ */
+static void KeyOnlyBigPayloadIgnored(
+        PubSubWriter<KeyedHelloWorldPubSubType>& writer,
+        PubSubReader<KeyedHelloWorldPubSubType>& reader)
+{
+    struct KeyOnlyBigPayloadDatagram
+    {
+        struct RTPSHeader
+        {
+            std::array<char, 4> rtps_id{ {'R', 'T', 'P', 'S'} };
+            std::array<uint8_t, 2> protocol_version{ {2, 3} };
+            std::array<uint8_t, 2> vendor_id{ {0x01, 0x0F} };
+            GuidPrefix_t sender_prefix{};
+        }
+        header;
+
+        static_assert(sizeof(RTPSHeader) == RTPSMESSAGE_HEADER_SIZE, "Unexpected size for RTPS header");
+
+        struct DataSubMsg
+        {
+            struct Header
+            {
+                uint8_t submessage_id = 0x15;
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
+                uint8_t flags = 0x0A; // Serialized key, inline QoS
+#else
+                uint8_t flags = 0x0B; // Serialized key, inline QoS, endianness
+#endif  // FASTDDS_IS_BIG_ENDIAN_TARGET
+                uint16_t octets_to_next_header = 0x48;
+                uint16_t extra_flags = 0;
+                uint16_t octets_to_inline_qos = 0x10;
+                EntityId_t reader_id{};
+                EntityId_t writer_id{};
+                SequenceNumber_t sn{ 2 };
+            };
+
+            static_assert(sizeof(Header) == RTPSMESSAGE_DATA_MIN_LENGTH, "Unexpected size for DATA header");
+
+            struct InlineQoS
+            {
+                // PID_STATUS_INFO (unregistered + disposed)
+                struct StatusInfo
+                {
+                    uint16_t pid = 0x0071;
+                    uint16_t length = 0x0004;
+                    std::array<uint8_t, 4> status_value{ {0x00, 0x00, 0x00, 0x03} };
+                };
+                // PID_SENTINEL
+                struct Sentinel
+                {
+                    uint16_t pid = 0x0001;
+                    uint16_t length = 0x0000;
+                };
+
+                StatusInfo status_info;
+                Sentinel sentinel;
+            };
+
+            static_assert(sizeof(InlineQoS) == 8 + 4, "Unexpected size for InlineQoS");
+
+            struct SerializedData
+            {
+                std::array<uint8_t, 2> encapsulation {{0}};
+                std::array<uint8_t, 2> encapsulation_opts {{0}};
+                std::array<uint8_t, 0x24> data {{0}};
+            };
+
+            static_assert(sizeof(SerializedData) == 0x24 + 2 + 2, "Unexpected size for SerializedData");
+
+            Header header;
+            InlineQoS qos;
+            SerializedData payload;
+        }
+        data;
+
+        static_assert(
+            sizeof(DataSubMsg) ==
+            sizeof(DataSubMsg::Header) + sizeof(DataSubMsg::InlineQoS) + sizeof(DataSubMsg::SerializedData),
+            "Unexpected size for DataSubMsg");
+    };
+
+    static_assert(
+        sizeof(KeyOnlyBigPayloadDatagram) ==
+        sizeof(KeyOnlyBigPayloadDatagram::RTPSHeader) + sizeof(KeyOnlyBigPayloadDatagram::DataSubMsg),
+        "Unexpected size for KeyOnlyBigPayloadDatagram");
+
+    UDPMessageSender fake_msg_sender;
+
+    // Force using UDP transport
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+
+    // Set common QoS
+    reader.disable_builtin_transport().add_user_transport_to_pparams(udp_transport);
+
+    // Set custom reader locator so we can send malicious data to a known location
+    Locator_t reader_locator;
+    ASSERT_TRUE(IPLocator::setIPv4(reader_locator, "127.0.0.1"));
+    reader_locator.port = 7000;
+    reader.add_to_unicast_locator_list("127.0.0.1", 7000);
+
+    // Initialize and wait for discovery
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+    reader.wait_discovery();
+    writer.wait_discovery();
+
+    // Send one sample
+    std::list<KeyedHelloWorld> data;
+    KeyedHelloWorld sample;
+    sample.key(0);
+    sample.index(1);
+    sample.message("KeyedHelloWorld 1 (key = 0)");
+    data.push_back(sample);
+    reader.startReception(data);
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+
+    // Wait for the reader to receive the sample
+    reader.block_for_all();
+
+    // Send unregister disposed without PID_KEY_HASH, and long key-only payload
+    {
+        auto writer_guid = writer.datawriter_guid();
+
+        KeyOnlyBigPayloadDatagram malicious_packet{};
+        malicious_packet.header.sender_prefix = writer_guid.guidPrefix;
+        malicious_packet.data.header.writer_id = writer_guid.entityId;
+        malicious_packet.data.header.reader_id = reader.datareader_guid().entityId;
+        malicious_packet.data.payload.encapsulation[1] = CDR_LE;
+        malicious_packet.data.payload.data.fill(0x00);
+
+        CDRMessage_t msg(0);
+        uint32_t msg_len = static_cast<uint32_t>(sizeof(malicious_packet));
+        msg.init(reinterpret_cast<octet*>(&malicious_packet), msg_len);
+        msg.length = msg_len;
+        msg.pos = msg_len;
+        fake_msg_sender.send(msg, reader_locator);
+    }
+
+    // Wait some time to let the message be processed
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+}
+
+TEST(TransportUDP, KeyOnlyBigPayloadIgnored_Reliable)
+{
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    // Set reliability
+    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+
+    KeyOnlyBigPayloadIgnored(writer, reader);
+}
+
+TEST(TransportUDP, KeyOnlyBigPayloadIgnored_BestEffort)
+{
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    // Set reliability
+    reader.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
+    writer.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
+
+    KeyOnlyBigPayloadIgnored(writer, reader);
 }
 
 // Test for ==operator UDPTransportDescriptor is not required as it is an abstract class and in UDPv4 is same method

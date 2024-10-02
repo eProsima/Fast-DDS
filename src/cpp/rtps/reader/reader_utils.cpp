@@ -31,6 +31,15 @@ bool change_is_relevant_for_filter(
 {
     bool ret = true;
 
+    // If the change has no payload, it should have an instanceHandle.
+    // This is only allowed for UNREGISTERED and DISPOSED changes, where the instanceHandle is used to identify the
+    // instance to unregister or dispose.
+    if ((nullptr == change.serializedPayload.data) &&
+            ((fastrtps::rtps::ALIVE == change.kind) || !change.instanceHandle.isDefined()))
+    {
+        ret = false;
+    }
+
     // Only evaluate filter on ALIVE changes, as UNREGISTERED and DISPOSED are always relevant
     if ((nullptr != filter) && (fastrtps::rtps::ALIVE == change.kind) && (!filter->is_relevant(change, reader_guid)))
     {
