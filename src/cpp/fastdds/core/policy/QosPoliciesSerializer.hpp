@@ -97,7 +97,7 @@ inline bool QosPoliciesSerializer<DurabilityQosPolicy>::read_content_from_cdr_me
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_KIND_LENGTH)
+    if (parameter_length < PARAMETER_KIND_LENGTH)
     {
         return false;
     }
@@ -126,7 +126,7 @@ inline bool QosPoliciesSerializer<DeadlineQosPolicy>::read_content_from_cdr_mess
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_TIME_LENGTH)
+    if (parameter_length < PARAMETER_TIME_LENGTH)
     {
         return false;
     }
@@ -155,7 +155,7 @@ inline bool QosPoliciesSerializer<LatencyBudgetQosPolicy>::read_content_from_cdr
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_TIME_LENGTH)
+    if (parameter_length < PARAMETER_TIME_LENGTH)
     {
         return false;
     }
@@ -190,7 +190,7 @@ inline bool QosPoliciesSerializer<LivelinessQosPolicy>::read_content_from_cdr_me
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_KIND_LENGTH + PARAMETER_TIME_LENGTH)
+    if (parameter_length < PARAMETER_KIND_LENGTH + PARAMETER_TIME_LENGTH)
     {
         return false;
     }
@@ -229,7 +229,7 @@ inline bool QosPoliciesSerializer<ReliabilityQosPolicy>::read_content_from_cdr_m
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_KIND_LENGTH + PARAMETER_TIME_LENGTH)
+    if (parameter_length < PARAMETER_KIND_LENGTH + PARAMETER_TIME_LENGTH)
     {
         return false;
     }
@@ -263,7 +263,7 @@ inline bool QosPoliciesSerializer<OwnershipQosPolicy>::read_content_from_cdr_mes
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_KIND_LENGTH)
+    if (parameter_length < PARAMETER_KIND_LENGTH)
     {
         return false;
     }
@@ -292,7 +292,7 @@ inline bool QosPoliciesSerializer<DestinationOrderQosPolicy>::read_content_from_
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_KIND_LENGTH)
+    if (parameter_length < PARAMETER_KIND_LENGTH)
     {
         return false;
     }
@@ -323,7 +323,7 @@ inline bool QosPoliciesSerializer<ResourceLimitsQosPolicy>::read_content_from_cd
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != 12)
+    if (parameter_length < 12)
     {
         return false;
     }
@@ -357,7 +357,7 @@ inline bool QosPoliciesSerializer<TimeBasedFilterQosPolicy>::read_content_from_c
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_TIME_LENGTH)
+    if (parameter_length < PARAMETER_TIME_LENGTH)
     {
         return false;
     }
@@ -397,7 +397,7 @@ inline bool QosPoliciesSerializer<PresentationQosPolicy>::read_content_from_cdr_
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_PRESENTATION_LENGTH)
+    if (parameter_length < PARAMETER_PRESENTATION_LENGTH)
     {
         return false;
     }
@@ -516,7 +516,7 @@ inline bool QosPoliciesSerializer<HistoryQosPolicy>::read_content_from_cdr_messa
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_KIND_LENGTH + 4)
+    if (parameter_length < PARAMETER_KIND_LENGTH + 4)
     {
         return false;
     }
@@ -553,7 +553,7 @@ inline bool QosPoliciesSerializer<DurabilityServiceQosPolicy>::read_content_from
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_TIME_LENGTH + PARAMETER_KIND_LENGTH + 16)
+    if (parameter_length < PARAMETER_TIME_LENGTH + PARAMETER_KIND_LENGTH + 16)
     {
         return false;
     }
@@ -588,7 +588,7 @@ inline bool QosPoliciesSerializer<LifespanQosPolicy>::read_content_from_cdr_mess
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_TIME_LENGTH)
+    if (parameter_length < PARAMETER_TIME_LENGTH)
     {
         return false;
     }
@@ -615,7 +615,7 @@ inline bool QosPoliciesSerializer<OwnershipStrengthQosPolicy>::read_content_from
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != 4)
+    if (parameter_length < 4)
     {
         return false;
     }
@@ -638,7 +638,7 @@ inline bool QosPoliciesSerializer<TransportPriorityQosPolicy>::read_content_from
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != 4)
+    if (parameter_length < 4)
     {
         return false;
     }
@@ -800,7 +800,7 @@ inline bool QosPoliciesSerializer<DisablePositiveACKsQosPolicy>::read_content_fr
         fastrtps::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length != PARAMETER_BOOL_LENGTH)
+    if (parameter_length < PARAMETER_BOOL_LENGTH)
     {
         return false;
     }
