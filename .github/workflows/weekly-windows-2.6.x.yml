@@ -6,7 +6,6 @@ on:
     - cron: '0 0 * * 1' # Run at minute 0 on Monday
 
 jobs:
-
   weekly-windows-ci-2_6_x:
     strategy:
       fail-fast: false
