@@ -15,6 +15,7 @@
 #include <xmlparser/XMLProfileManager.h>
 
 #include <cstdlib>
+#include <functional>
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -147,38 +148,73 @@ XMLP_ret fill_attributes_from_xml(
         return XMLP_ret::XML_ERROR;
     }
 
-    for (auto&& child: root_node->getChildren())
-    {
-        if (Traits::node_type == child.get()->getType())
-        {
-            typename Traits::NodePtrType node = dynamic_cast<typename Traits::NodePtrType>(child.get());
-
-            if (!node)
+    // Process node function
+    auto process_node = [](const up_base_node_t& node_to_process, AttributesType& atts, const std::string& profile_name)
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER, "Error casting node");
-                return XMLP_ret::XML_ERROR;
-            }
-
-            if (profile_name != "")
-            {
-                node_att_map_cit_t it = node->getAttributes().find(PROFILE_NAME);
-                if (it == node->getAttributes().end() || it->second != profile_name)
+                // If node type doesn't match, skip
+                if (Traits::node_type != node_to_process->getType())
                 {
-                    // No profile name in this node, or different than the one requested
-                    continue;
+                    return XMLP_ret::XML_NOK;
                 }
-            }
 
-            typename Traits::NodeUniquePtrType node_data = node->getData();
-            if (!node_data)
+                // Cast the node to the expected type
+                typename Traits::NodePtrType node = dynamic_cast<typename Traits::NodePtrType>(node_to_process.get());
+                if (!node)
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "Error casting node");
+                    return XMLP_ret::XML_ERROR;
+                }
+
+                // Check profile name, if provided
+                if (profile_name != "")
+                {
+                    node_att_map_cit_t it = node->getAttributes().find(PROFILE_NAME);
+                    if (it == node->getAttributes().end() || it->second != profile_name)
+                    {
+                        // No profile name in this node, or different than the one requested
+                        return XMLP_ret::XML_NOK;
+                    }
+                }
+
+                // Retrieve node data
+                typename Traits::NodeUniquePtrType node_data = node->getData();
+                if (!node_data)
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "Error retrieving node data");
+                    return XMLP_ret::XML_ERROR;
+                }
+
+                // Fill attributes
+                atts = *node_data;
+                return XMLP_ret::XML_OK;
+            };
+
+    // Recursive function to process the root node and its children
+    std::function<XMLP_ret(const up_base_node_t&, AttributesType&, const std::string&)> process_node_recursive;
+    process_node_recursive =
+            [&process_node, &process_node_recursive](const up_base_node_t& node_to_process, AttributesType& atts,
+                    const std::string& profile_name)
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER, "Error retrieving node data");
-                return XMLP_ret::XML_ERROR;
-            }
+                XMLP_ret ret = process_node(node_to_process, atts, profile_name);
+                if (XMLP_ret::XML_OK == ret || XMLP_ret::XML_ERROR == ret)
+                {
+                    return ret;
+                }
 
-            atts = *node_data;
-            return XMLP_ret::XML_OK;
-        }
+                for (auto&& child: node_to_process->getChildren())
+                {
+                    ret = process_node_recursive(child, atts, profile_name);
+                    if (XMLP_ret::XML_OK == ret || XMLP_ret::XML_ERROR == ret)
+                    {
+                        return ret;
+                    }
+                }
+                return XMLP_ret::XML_NOK;
+            };
+
+    if (XMLP_ret::XML_OK == process_node_recursive(root_node, atts, profile_name))
+    {
+        return XMLP_ret::XML_OK;
     }
 
     EPROSIMA_LOG_ERROR(XMLPARSER, Traits::name() << " profile not found");
