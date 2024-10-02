@@ -20,6 +20,20 @@ jobs:
       fastdds_ref: 'master'
       discovery_server_ref: 'master'
 
+  nightly-sanitizers-ci-3_0_x:
+    uses: eProsima/Fast-DDS/.github/workflows/reusable-sanitizers-ci.yml@3.0.x
+    with:
+      label: 'nightly-sec-sanitizers-ci-3.0.x'
+      run_asan_fastdds: true
+      run_asan_discovery_server: true
+      run_tsan_fastdds: true
+      colcon_build_args: ''
+      colcon_test_args: ''
+      cmake_args: ''
+      ctest_args: ''
+      fastdds_ref: '3.0.x'
+      discovery_server_ref: '2.0.x'
+
   nightly-sanitizers-ci-2_14_x:
     uses: eProsima/Fast-DDS/.github/workflows/reusable-sanitizers-ci.yml@2.14.x
     with:
