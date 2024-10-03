@@ -650,9 +650,6 @@ TEST(DataWriterTests, InvalidQos)
     const ReturnCode_t unsupported_code = RETCODE_UNSUPPORTED;
 
     DataWriterQos qos;
-    qos = DATAWRITER_QOS_DEFAULT;
-    qos.durability().kind = PERSISTENT_DURABILITY_QOS;
-    EXPECT_EQ(unsupported_code, datawriter->set_qos(qos));
 
     qos = DATAWRITER_QOS_DEFAULT;
     qos.destination_order().kind = BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
@@ -712,6 +709,37 @@ TEST(DataWriterTests, InvalidQos)
     ASSERT_TRUE(participant->delete_topic(topic) == RETCODE_OK);
     ASSERT_TRUE(participant->delete_publisher(publisher) == RETCODE_OK);
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
+}
+
+TEST(DataWriterTests, PersistentDurabilityIsAValidQoS)
+{
+    DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
+    pqos.entity_factory().autoenable_created_entities = false;
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+    ASSERT_NE(participant, nullptr);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(datawriter, nullptr);
+
+    DataWriterQos qos;
+    qos = DATAWRITER_QOS_DEFAULT;
+    qos.durability().kind = PERSISTENT_DURABILITY_QOS;
+    // PERSISTENT DataWriter behaves as TRANSIENT
+    EXPECT_EQ(RETCODE_OK, datawriter->set_qos(qos));
+
+    // Cleanup
+    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(topic) == RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(publisher) == RETCODE_OK);
 }
 
 //TODO: Activate the test once PSM API for DataWriter is in place

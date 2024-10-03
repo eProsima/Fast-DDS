@@ -684,10 +684,6 @@ TEST_F(DataReaderTests, InvalidQos)
     const ReturnCode_t unsupported_code = RETCODE_UNSUPPORTED;
 
     qos = DATAREADER_QOS_DEFAULT;
-    qos.durability().kind = PERSISTENT_DURABILITY_QOS;
-    EXPECT_EQ(unsupported_code, data_reader_->set_qos(qos));
-
-    qos = DATAREADER_QOS_DEFAULT;
     qos.destination_order().kind = BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
     EXPECT_EQ(unsupported_code, data_reader_->set_qos(qos));
 
@@ -728,6 +724,10 @@ TEST_F(DataReaderTests, InvalidQos)
 
     /* Inmutable QoS */
     const ReturnCode_t inmutable_code = RETCODE_IMMUTABLE_POLICY;
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.durability().kind = PERSISTENT_DURABILITY_QOS;
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
 
     qos = DATAREADER_QOS_DEFAULT;
     qos.resource_limits().max_samples = 5000;
@@ -779,6 +779,21 @@ TEST_F(DataReaderTests, InvalidQos)
     qos = DATAREADER_QOS_DEFAULT;
     qos.properties().properties().emplace_back("fastdds.unique_network_flows", "");
     EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+}
+
+TEST_F(DataReaderTests, PersistentDurabilityIsAValidQoS)
+{
+    DataReaderQos qos;
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.durability().kind = PERSISTENT_DURABILITY_QOS;
+
+    create_entities(
+        nullptr,
+        qos
+        );
+
+    // PERSISTENT DataReader behaves as TRANSIENT
+    EXPECT_NE(nullptr, data_reader_);
 }
 
 /**

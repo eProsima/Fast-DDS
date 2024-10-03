@@ -1,7 +1,7 @@
 Forthcoming
 -----------
 
-
+* Allow `PERSISTENT_DURABILITY` behaving as `TRANSIENT_DURABILITY`. Fallback to `TRANSIENT_LOCAL_DURABILITY` if no persistence guid is set.
 
 Version v3.0.0
 --------------

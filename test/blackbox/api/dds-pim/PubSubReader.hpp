@@ -1631,16 +1631,31 @@ public:
     }
 
 #if HAVE_SQLITE3
+    PubSubReader& make_transient(
+            const std::string& filename,
+            const std::string& persistence_guid)
+    {
+        add_persitence_properties(filename, persistence_guid);
+        durability_kind(eprosima::fastdds::dds::TRANSIENT_DURABILITY_QOS);
+        return *this;
+    }
+
     PubSubReader& make_persistent(
+            const std::string& filename,
+            const std::string& persistence_guid)
+    {
+        add_persitence_properties(filename, persistence_guid);
+        durability_kind(eprosima::fastdds::dds::PERSISTENT_DURABILITY_QOS);
+        return *this;
+    }
+
+    void add_persitence_properties(
             const std::string& filename,
             const std::string& persistence_guid)
     {
         participant_qos_.properties().properties().emplace_back("dds.persistence.plugin", "builtin.SQLITE3");
         participant_qos_.properties().properties().emplace_back("dds.persistence.sqlite3.filename", filename);
-        datareader_qos_.durability().kind = eprosima::fastdds::dds::TRANSIENT_DURABILITY_QOS;
         datareader_qos_.properties().properties().emplace_back("dds.persistence.guid", persistence_guid);
-
-        return *this;
     }
 
 #endif // if HAVE_SQLITE3

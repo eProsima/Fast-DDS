@@ -35,7 +35,7 @@ enum communication_type
     DATASHARING
 };
 
-class PersistenceLargeData : public testing::TestWithParam<communication_type>
+class DDSPersistenceTests : public testing::TestWithParam<communication_type>
 {
 public:
 
@@ -113,7 +113,7 @@ protected:
                 .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
                 .resource_limits_max_samples(100)
                 .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
-                .make_persistent(db_file_name(), "77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64")
+                .make_transient(db_file_name(), "77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64")
                 .disable_builtin_transport()
                 .add_user_transport_to_pparams(testTransport)
                 .init();
@@ -160,17 +160,17 @@ protected:
 
 };
 
-TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithFrag)
+TEST_P(DDSPersistenceTests, PubSubAsReliablePubTransientWithFrag)
 {
     fragment_data(true);
 }
 
-TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentNoFrag)
+TEST_P(DDSPersistenceTests, PubSubAsReliablePubTransientNoFrag)
 {
     fragment_data(false);
 }
 
-TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithLifespanBefore)
+TEST_P(DDSPersistenceTests, PubSubAsReliablePubTransientWithLifespanBefore)
 {
     PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
     PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
@@ -179,7 +179,7 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithLifespanBefore)
             .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .resource_limits_max_samples(100)
             .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
-            .make_persistent(db_file_name(), "77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64")
+            .make_transient(db_file_name(), "77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64")
             .lifespan_period({1, 0})
             .init();
 
@@ -221,7 +221,7 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithLifespanBefore)
     ASSERT_EQ(0u, reader.block_for_all(std::chrono::seconds(1)));
 }
 
-TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithLifespanSendingBefore)
+TEST_P(DDSPersistenceTests, PubSubAsReliablePubTransientWithLifespanSendingBefore)
 {
     PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
     PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
@@ -230,7 +230,7 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithLifespanSendingBef
             .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .resource_limits_max_samples(100)
             .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
-            .make_persistent(db_file_name(), "77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64")
+            .make_transient(db_file_name(), "77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64")
             .lifespan_period({0, 100})
             .init();
 
@@ -280,7 +280,7 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithLifespanSendingBef
     ASSERT_EQ(0u, reader.block_for_all(std::chrono::seconds(1)));
 }
 
-TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithLifespanAfter)
+TEST_P(DDSPersistenceTests, PubSubAsReliablePubTransientWithLifespanAfter)
 {
     PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
     PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
@@ -289,7 +289,7 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithLifespanAfter)
             .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .resource_limits_max_samples(100)
             .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
-            .make_persistent(db_file_name(), "77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64")
+            .make_transient(db_file_name(), "77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64")
             .lifespan_period({1, 0})
             .init();
 
@@ -332,7 +332,7 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithLifespanAfter)
     ASSERT_EQ(0u, reader.block_for_all(std::chrono::seconds(1)));
 }
 
-TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithStaticDiscovery)
+TEST_P(DDSPersistenceTests, PubSubAsReliablePubTransientWithStaticDiscovery)
 {
     char* value = nullptr;
     std::string TOPIC_RANDOM_NUMBER;
@@ -398,7 +398,7 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithStaticDiscovery)
     writer
             .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
-            .make_persistent(db_file_name(), "78.73.69.74.65.72.5f.70.65.72.73.5f|67.75.69.1")
+            .make_transient(db_file_name(), "78.73.69.74.65.72.5f.70.65.72.73.5f|67.75.69.1")
             .static_discovery("file://PubSubWriterPersistence_static_disc.xml")
             .unicastLocatorList(WriterUnicastLocators)
             .multicastLocatorList(WriterMulticastLocators)
@@ -426,7 +426,7 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithStaticDiscovery)
             .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
             .history_depth(10)
             .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
-            .make_persistent(db_file_name(), "78.73.69.74.65.72.5f.70.65.72.73.5f|67.75.69.3")
+            .make_transient(db_file_name(), "78.73.69.74.65.72.5f.70.65.72.73.5f|67.75.69.3")
             .static_discovery("file://PubSubReaderPersistence_static_disc.xml")
             .unicastLocatorList(ReaderUnicastLocators)
             .multicastLocatorList(ReaderMulticastLocators)
@@ -453,7 +453,6 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithStaticDiscovery)
     // Wait expecting not receiving data.
     ASSERT_EQ(10u, reader.block_for_all(std::chrono::seconds(1)));
 
-
     // Destroy the DataWriter
     writer.destroy();
     reader.stopReception();
@@ -473,16 +472,130 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithStaticDiscovery)
 }
 
 
+TEST_P(DDSPersistenceTests, PubSubAsReliablePubPersistentBehavesAsTransient)
+{
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    writer
+            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .resource_limits_max_samples(100)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+    // A PERSISTENT writer with a persistence guid must behave as TRANSIENT
+            .make_persistent(db_file_name(), "77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64")
+            .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    auto data = default_helloworld_data_generator();
+    auto received_data = data;
+
+    // Send data
+    writer.send(data);
+    // All data should be sent
+    ASSERT_TRUE(data.empty());
+    // Destroy the DataWriter
+    writer.destroy();
+
+    reader
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
+            .history_depth(10)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+    // A TRANSIENT reader with no persistence guid should behave as TRANSIENT_LOCAL
+            .durability_kind(eprosima::fastdds::dds::TRANSIENT_DURABILITY_QOS)
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Load the transient DataWriter with the changes saved in the database
+    writer.init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    reader.startReception(received_data);
+
+    // Wait expecting receiving all data.
+    reader.block_for_all();
+}
+
+TEST_P(DDSPersistenceTests, PubSubAsReliablePubTransientWithNoPersistenceGUIDBehavesAsTransientLocal)
+{
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    writer
+            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .resource_limits_max_samples(100)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+    // A TRANSIENT writer with a persistence guid must behave as TRANSIENT_LOCAL
+            .durability_kind(eprosima::fastdds::dds::TRANSIENT_DURABILITY_QOS)
+            .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    auto data = default_helloworld_data_generator();
+    auto received_data = data;
+
+    // Send data
+    writer.send(data);
+
+    // All data should be sent
+    ASSERT_TRUE(data.empty());
+
+    reader
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
+            .history_depth(10)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+    // A TRANSIENT reader with no persistence guid should behave as TRANSIENT_LOCAL
+            .durability_kind(eprosima::fastdds::dds::TRANSIENT_DURABILITY_QOS)
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    reader.startReception(received_data);
+
+    // Wait expecting receiving all data.
+    reader.block_for_all();
+
+    // Recreate the DataWriter and DataReader
+    writer.destroy();
+    reader.destroy();
+
+    writer.init();
+    reader.init();
+
+    ASSERT_TRUE(writer.isInitialized());
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Reader should not receive any data
+    // as the writer is not transient
+    auto unreceived_data = default_helloworld_data_generator();
+
+    // Send data
+    reader.startReception(unreceived_data);
+
+    // Wait expecting not receiving data.
+    ASSERT_EQ(reader.block_for_all(std::chrono::seconds(2)), 0u);
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_CASE_P(x, y, z, w)
 #endif // ifdef INSTANTIATE_TEST_SUITE_P
 
-GTEST_INSTANTIATE_TEST_MACRO(PersistenceLargeData,
-        PersistenceLargeData,
+GTEST_INSTANTIATE_TEST_MACRO(DDSPersistenceTests,
+        DDSPersistenceTests,
         testing::Values(TRANSPORT, INTRAPROCESS, DATASHARING),
-        [](const testing::TestParamInfo<PersistenceLargeData::ParamType>& info)
+        [](const testing::TestParamInfo<DDSPersistenceTests::ParamType>& info)
         {
             switch (info.param)
             {

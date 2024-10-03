@@ -530,6 +530,21 @@ public:
     }
 
 #if HAVE_SQLITE3
+    RTPSWithRegistrationReader& make_transient(
+            const std::string& filename,
+            const eprosima::fastdds::rtps::GuidPrefix_t& guidPrefix)
+    {
+        reader_attr_.endpoint.persistence_guid.guidPrefix = guidPrefix;
+        reader_attr_.endpoint.persistence_guid.entityId = 0x55555555;
+
+        std::cout << "Initializing transient READER " << reader_attr_.endpoint.persistence_guid << " with file " <<
+            filename << std::endl;
+
+        return durability(eprosima::fastdds::rtps::DurabilityKind_t::TRANSIENT)
+                       .add_property("dds.persistence.plugin", "builtin.SQLITE3")
+                       .add_property("dds.persistence.sqlite3.filename", filename);
+    }
+
     RTPSWithRegistrationReader& make_persistent(
             const std::string& filename,
             const eprosima::fastdds::rtps::GuidPrefix_t& guidPrefix)
@@ -540,7 +555,7 @@ public:
         std::cout << "Initializing persistent READER " << reader_attr_.endpoint.persistence_guid << " with file " <<
             filename << std::endl;
 
-        return durability(eprosima::fastdds::rtps::DurabilityKind_t::TRANSIENT)
+        return durability(eprosima::fastdds::rtps::DurabilityKind_t::PERSISTENT)
                        .add_property("dds.persistence.plugin", "builtin.SQLITE3")
                        .add_property("dds.persistence.sqlite3.filename", filename);
     }

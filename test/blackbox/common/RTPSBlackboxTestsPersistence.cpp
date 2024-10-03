@@ -184,11 +184,11 @@ TEST_P(Persistence, RTPSAsNonReliableWithPersistence)
     RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
-    reader.make_persistent(db_file_name(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).init();
+    reader.make_transient(db_file_name(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.make_persistent(db_file_name(), guid_prefix()).reliability(ReliabilityKind_t::BEST_EFFORT).init();
+    writer.make_transient(db_file_name(), guid_prefix()).reliability(ReliabilityKind_t::BEST_EFFORT).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -215,11 +215,11 @@ TEST_P(Persistence, AsyncRTPSAsNonReliableWithPersistence)
     RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
-    reader.make_persistent(db_file_name(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).init();
+    reader.make_transient(db_file_name(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.make_persistent(db_file_name(), guid_prefix()).reliability(ReliabilityKind_t::BEST_EFFORT).
+    writer.make_transient(db_file_name(), guid_prefix()).reliability(ReliabilityKind_t::BEST_EFFORT).
             asynchronously(RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -247,12 +247,12 @@ TEST_P(Persistence, RTPSAsReliableWithPersistence)
     RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
-    reader.make_persistent(db_file_name(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).
+    reader.make_transient(db_file_name(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).
             reliability(ReliabilityKind_t::RELIABLE).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.make_persistent(db_file_name(), guid_prefix()).init();
+    writer.make_transient(db_file_name(), guid_prefix()).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -279,12 +279,12 @@ TEST_P(Persistence, AsyncRTPSAsReliableWithPersistence)
     RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
-    reader.make_persistent(db_file_name(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).
+    reader.make_transient(db_file_name(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).
             reliability(ReliabilityKind_t::RELIABLE).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.make_persistent(db_file_name(), guid_prefix()).history_depth(10).
+    writer.make_transient(db_file_name(), guid_prefix()).history_depth(10).
             asynchronously(RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());

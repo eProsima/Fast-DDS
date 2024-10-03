@@ -66,11 +66,6 @@ ReturnCode_t TopicImpl::check_qos_including_resource_limits(
 ReturnCode_t TopicImpl::check_qos(
         const TopicQos& qos)
 {
-    if (PERSISTENT_DURABILITY_QOS == qos.durability().kind)
-    {
-        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK, "PERSISTENT Durability not supported");
-        return RETCODE_UNSUPPORTED;
-    }
     if (BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS == qos.destination_order().kind)
     {
         EPROSIMA_LOG_ERROR(DDS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");

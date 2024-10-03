@@ -1940,11 +1940,6 @@ ReturnCode_t DataWriterImpl::check_qos_including_resource_limits(
 ReturnCode_t DataWriterImpl::check_qos(
         const DataWriterQos& qos)
 {
-    if (qos.durability().kind == PERSISTENT_DURABILITY_QOS)
-    {
-        EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK, "PERSISTENT Durability not supported");
-        return RETCODE_UNSUPPORTED;
-    }
     if (qos.destination_order().kind == BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS)
     {
         EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
