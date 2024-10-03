@@ -52,6 +52,11 @@ on:
         required: false
         type: boolean
         default: false
+      add-label:
+        description: 'Add the CI-PENDING label to the PR'
+        required: false
+        type: boolean
+        default: false
 
 env:
   security-cmake-flag: ${{ inputs.security == true && '-DSECURITY=ON' || '-DSECURITY=OFF' }}
@@ -71,7 +76,7 @@ jobs:
           - 'RelWithDebInfo'
     steps:
       - name: Add ci-pending label if PR
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' && inputs.add-label == true }}
         uses: eProsima/eProsima-CI/external/add_labels@v0
         with:
           labels: ci-pending
