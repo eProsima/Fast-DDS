@@ -182,6 +182,8 @@ set(${PROJECT_NAME}_source_files
     rtps/participant/RTPSParticipantImpl.cpp
     rtps/persistence/PersistenceFactory.cpp
     rtps/reader/BaseReader.cpp
+    rtps/reader/LocalReaderPointer.cpp
+    rtps/reader/LocalReaderView.cpp
     rtps/reader/reader_utils.cpp
     rtps/reader/RTPSReader.cpp
     rtps/reader/StatefulPersistentReader.cpp
