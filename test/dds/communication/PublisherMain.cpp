@@ -50,7 +50,7 @@ int main(
     uint32_t samples = 4;
     uint32_t loops = 0;
     uint32_t interval = 250;
-    uint32_t rescan_interval = 0;
+    uint32_t rescan_interval_seconds = 0;
     std::string magic;
 
     while (arg_count < argc)
@@ -145,7 +145,7 @@ int main(
                 return -1;
             }
 
-            rescan_interval = strtol(argv[arg_count], nullptr, 10);
+            rescan_interval_seconds = strtol(argv[arg_count], nullptr, 10);
         }
         else
         {
@@ -170,7 +170,7 @@ int main(
             publisher.wait_discovery(wait);
         }
 
-        publisher.run(samples, rescan_interval, loops, interval);
+        publisher.run(samples, rescan_interval_seconds, loops, interval);
         return 0;
     }
 

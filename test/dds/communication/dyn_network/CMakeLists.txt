@@ -13,9 +13,6 @@
 # limitations under the License.
 message(STATUS "Configuring dynamic network interfaces tests")
 
-# Find Python3
-# find_package(Python3 COMPONENTS Interpreter REQUIRED)
-
 # Find docker
 find_program(DOCKER_EXECUTABLE docker)
 if(NOT DOCKER_EXECUTABLE)

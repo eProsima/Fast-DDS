@@ -51,7 +51,7 @@ int main(
     uint32_t samples = 4;
     uint32_t publishers = 1;
     uint32_t timeout = 86400000; // 24 h in ms
-    uint32_t rescan_interval = 0;
+    uint32_t rescan_interval_seconds = 0;
     char* xml_file = nullptr;
     std::string magic;
 
@@ -145,7 +145,7 @@ int main(
                 return -1;
             }
 
-            rescan_interval = strtol(argv[arg_count], nullptr, 10);
+            rescan_interval_seconds = strtol(argv[arg_count], nullptr, 10);
         }
         else
         {
@@ -165,7 +165,7 @@ int main(
 
     if (subscriber.init(seed, magic))
     {
-        return subscriber.run(notexit, rescan_interval, timeout) ? 0 : -1;
+        return subscriber.run(notexit, rescan_interval_seconds, timeout) ? 0 : -1;
     }
 
     return -1;
