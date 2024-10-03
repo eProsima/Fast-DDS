@@ -133,7 +133,6 @@ void DataSharingListener::stop()
 void DataSharingListener::process_new_data ()
 {
     EPROSIMA_LOG_INFO(RTPS_READER, "Received new data notification");
-
     notification_->notification_->new_data.store(false, std::memory_order_release);
     // Using Acquire-Release semantics can avoid some blocking problems in traditional locking, such as deadlock and priority inversion.
     // This usually means higher concurrency performance because threads don't have to wait for locks to be released.
@@ -198,18 +197,22 @@ void DataSharingListener::process_new_data ()
             }
 
             if (writer_pools_changed_.load(std::memory_order_acquire))
-            if (writer_pools_changed_.load(std::memory_order_acquire))
             {
-                // Break the while on the current writer (it may have been removed)
-                break;
+                if (writer_pools_changed_.load(std::memory_order_acquire))
+                {
+                    // Break the while on the current writer (it may have been removed)
+                    break;
+                }
             }
         }
 
         if (writer_pools_changed_.load(std::memory_order_acquire))
-        if (writer_pools_changed_.load(std::memory_order_acquire))
         {
-            // Break the loop over the writers (itearators may have been invalidated)
-            break;
+            if (writer_pools_changed_.load(std::memory_order_acquire))
+            {
+                // Break the loop over the writers (itearators may have been invalidated)
+                break;
+            }
         }
     }
 }
