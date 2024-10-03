@@ -49,6 +49,7 @@ ReaderLocator::ReaderLocator(
     , guid_prefix_as_vector_(1u)
     , guid_as_vector_(1u)
     , datasharing_notifier_(nullptr)
+    , local_reader_view_(nullptr)
 {
     if (owner->is_datasharing_compatible())
     {
@@ -206,13 +207,27 @@ bool ReaderLocator::send(
     return true;
 }
 
-BaseReader* ReaderLocator::local_reader()
+LocalReaderPointer ReaderLocator::local_reader()
 {
+    LocalReaderPointer local_reader_pointer;
+
     if (!local_reader_)
     {
         local_reader_ = RTPSDomainImpl::find_local_reader(general_locator_info_.remote_guid);
+
+        if (local_reader_)
+        {
+            local_reader_view_ = local_reader_->get_local_view();
+        }
     }
-    return local_reader_;
+
+    if (local_reader_)
+    {
+        local_reader_pointer.local_reader(local_reader_);
+        local_reader_pointer.local_reader_view(local_reader_view_);
+    }
+
+    return local_reader_pointer;
 }
 
 bool ReaderLocator::is_datasharing_reader() const
@@ -225,7 +240,7 @@ void ReaderLocator::datasharing_notify()
     RTPSReader* reader = nullptr;
     if (is_local_reader())
     {
-        reader = local_reader();
+        reader = local_reader().reader();
     }
 
     if (reader)
