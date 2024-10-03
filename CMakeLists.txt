@@ -579,12 +579,12 @@ install(FILES ${PROJECT_SOURCE_DIR}/LICENSE
 
 # Install xml validators
 install(FILES ${PROJECT_SOURCE_DIR}/resources/xsd/fastdds_profiles.xsd
-    DESTINATION ${DATA_INSTALL_DIR}
+    DESTINATION ${DATA_INSTALL_DIR}/fastdds
     COMPONENT xsd
     )
 
 install(FILES ${PROJECT_SOURCE_DIR}/resources/xsd/fastdds_static_discovery.xsd
-    DESTINATION ${DATA_INSTALL_DIR}
+    DESTINATION ${DATA_INSTALL_DIR}/fastdds
     COMPONENT xsd
     )
 
