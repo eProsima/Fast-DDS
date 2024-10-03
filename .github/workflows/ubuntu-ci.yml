@@ -69,3 +69,4 @@ jobs:
       run-build: ${{ !(github.event_name == 'pull_request') || !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
       run-tests: ${{ ((inputs.run-tests == true) && true) || (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'no-test')) }}
       use-ccache: ${{ ((inputs.use-ccache == true) && true) || false }}
+      add-label: ${{ (github.event_name == 'pull_request') && (github.event.pull_request.head.repo.full_name == github.repository) && true || false }}
