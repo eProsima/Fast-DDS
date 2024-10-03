@@ -54,15 +54,15 @@ void LocalReaderView::dereference()
 }
 
 void LocalReaderView::wait_for_references_and_set_status(
-        size_t references,
+        size_t n_references,
         LocalReaderViewStatus new_status)
 {
     std::unique_lock<std::mutex> lock(mutex);
-    if (this->references.load() != references)
+    if (this->references.load() != n_references)
     {
         cv.wait(lock, [&]()
                 {
-                    return this->references.load() == references;
+                    return this->references.load() == n_references;
                 });
     }
     status = new_status;

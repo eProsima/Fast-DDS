@@ -443,8 +443,6 @@ bool StatefulWriter::intraprocess_heartbeat(
         bool liveliness)
 {
     bool returned_value = false;
-
-    std::lock_guard<RecursiveTimedMutex> guardW(mp_mutex);
     LocalReaderPointer local_reader_pt = reader_proxy->local_reader();
 
     if (local_reader_pt.is_valid())
