@@ -88,7 +88,8 @@ void DataSharingListener::run()
             // If some writer added new data, there may be something to read.
             // If there were matching/unmatching, we may not have finished our last loop
         } while (is_running_.load() &&
-        (notification_->notification_->new_data.load() || writer_pools_changed_.load(std::memory_order_relaxed)));
+                (notification_->notification_->new_data.load() ||
+                writer_pools_changed_.load(std::memory_order_relaxed)));
     }
 }
 
@@ -133,11 +134,11 @@ void DataSharingListener::process_new_data ()
 {
     EPROSIMA_LOG_INFO(RTPS_READER, "Received new data notification");
 
-    notification_->notification_->new_data.store(false,std::memory_order_release);
-    // Using Acquire-Release semantics can avoid some blocking problems in traditional locking, such as deadlock and priority inversion. 
+    notification_->notification_->new_data.store(false, std::memory_order_release);
+    // Using Acquire-Release semantics can avoid some blocking problems in traditional locking, such as deadlock and priority inversion.
     // This usually means higher concurrency performance because threads don't have to wait for locks to be released.
     // Through Acquire-Release, you can achieve finer-grained control over specific variables or data structures without having to lock the entire resource or object, which can reduce contention and improve concurrency.
-    writer_pools_changed_.store(false,std::memory_order_release);
+    writer_pools_changed_.store(false, std::memory_order_release);
 
     // Loop on the writers looking for data not read yet
     for (auto it = writer_pools_.begin(); it != writer_pools_.end(); ++it)
