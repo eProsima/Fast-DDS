@@ -500,26 +500,7 @@ void check_equivalent_qos(
     ASSERT_EQ(qos_1.security_log_thread(), qos_2.security_log_thread());
 #endif // if HAVE_SECURITY
 
-    auto compare_flow_controllers = [](const DomainParticipantQos& lhs, const DomainParticipantQos& rhs) -> bool
-            {
-                const auto& lhs_flow_controllers = lhs.flow_controllers();
-                const auto& rhs_flow_controllers = rhs.flow_controllers();
-
-                if (lhs_flow_controllers.size() != rhs_flow_controllers.size())
-                {
-                    return false;
-                }
-
-                return std::equal(lhs_flow_controllers.begin(), lhs_flow_controllers.end(),
-                                rhs_flow_controllers.begin(),
-                                [](const std::shared_ptr<fastdds::rtps::FlowControllerDescriptor>& a,
-                                const std::shared_ptr<fastdds::rtps::FlowControllerDescriptor>& b)
-                                {
-                                    return *a == *b;
-                                });
-            };
-
-    ASSERT_TRUE(compare_flow_controllers(qos_1, qos_2));
+    ASSERT_TRUE(qos_1.compare_flow_controllers(qos_2));
 }
 
 void check_participant_with_profile(

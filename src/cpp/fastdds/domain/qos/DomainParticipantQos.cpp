@@ -41,6 +41,26 @@ void DomainParticipantQos::setup_transports(
     utils::set_qos_from_attributes(*this, attr);
 }
 
+bool DomainParticipantQos::compare_flow_controllers(
+        const DomainParticipantQos& qos) const
+{
+    const auto& lhs_flow_controllers = flow_controllers();
+    const auto& rhs_flow_controllers = qos.flow_controllers();
+
+    if (lhs_flow_controllers.size() != rhs_flow_controllers.size())
+    {
+        return false;
+    }
+
+    return std::equal(lhs_flow_controllers.begin(), lhs_flow_controllers.end(),
+                   rhs_flow_controllers.begin(),
+                   [](const std::shared_ptr<fastdds::rtps::FlowControllerDescriptor>& a,
+                   const std::shared_ptr<fastdds::rtps::FlowControllerDescriptor>& b)
+                   {
+                       return *a == *b;
+                   });
+}
+
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */

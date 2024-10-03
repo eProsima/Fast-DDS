@@ -78,25 +78,6 @@ public:
     virtual bool operator ==(
             const DomainParticipantQos& b) const
     {
-        auto compare_flow_controllers = [](const DomainParticipantQos& lhs, const DomainParticipantQos& rhs) -> bool
-                {
-                    const auto& lhs_flow_controllers = lhs.flow_controllers();
-                    const auto& rhs_flow_controllers = rhs.flow_controllers();
-
-                    if (lhs_flow_controllers.size() != rhs_flow_controllers.size())
-                    {
-                        return false;
-                    }
-
-                    return std::equal(lhs_flow_controllers.begin(), lhs_flow_controllers.end(),
-                                    rhs_flow_controllers.begin(),
-                                    [](const std::shared_ptr<fastdds::rtps::FlowControllerDescriptor>& a,
-                                    const std::shared_ptr<fastdds::rtps::FlowControllerDescriptor>& b)
-                                    {
-                                        return *a == *b;
-                                    });
-                };
-
         return (this->user_data_ == b.user_data()) &&
                (this->entity_factory_ == b.entity_factory()) &&
                (this->allocation_ == b.allocation()) &&
@@ -111,7 +92,7 @@ public:
 #if HAVE_SECURITY
                (this->security_log_thread_ == b.security_log_thread()) &&
 #endif // if HAVE_SECURITY
-               (compare_flow_controllers(*this, b));
+               (compare_flow_controllers(b));
     }
 
     /**
@@ -340,6 +321,15 @@ public:
     {
         return flow_controllers_;
     }
+
+    /**
+     * Compares the flow controllers of two DomainParticipantQos element-wise.
+     *
+     * @param qos The DomainParticipantQos to compare with.
+     * @return true if the flow controllers are the same, false otherwise.
+     */
+    FASTDDS_EXPORTED_API bool compare_flow_controllers(
+            const DomainParticipantQos& qos) const;
 
     /**
      * Getter for FlowControllerDescriptorList
