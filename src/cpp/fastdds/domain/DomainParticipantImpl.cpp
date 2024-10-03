@@ -1252,14 +1252,7 @@ bool DomainParticipantImpl::contains_entity(
 ReturnCode_t DomainParticipantImpl::get_current_time(
         fastdds::dds::Time_t& current_time) const
 {
-    auto now = std::chrono::system_clock::now();
-    auto duration = now.time_since_epoch();
-    auto seconds = std::chrono::duration_cast<std::chrono::seconds>(duration);
-    duration -= seconds;
-    auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(duration);
-
-    current_time.seconds = static_cast<int32_t>(seconds.count());
-    current_time.nanosec = static_cast<uint32_t>(nanos.count());
+    fastdds::dds::Time_t::now(current_time);
 
     return RETCODE_OK;
 }

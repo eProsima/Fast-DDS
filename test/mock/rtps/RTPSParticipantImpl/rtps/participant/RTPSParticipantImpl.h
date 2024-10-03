@@ -26,6 +26,7 @@
 #include <gmock/gmock.h>
 
 // Include first possible mocks (depending on include on CMakeLists.txt)
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
@@ -131,7 +132,10 @@ public:
 
     MOCK_CONST_METHOD0(getGuid, const GUID_t& ());
 
-    MOCK_CONST_METHOD0(network_factory, const NetworkFactory& ());
+    const NetworkFactory& network_factory()
+    {
+        return network_factory_;
+    }
 
     MOCK_METHOD0(is_intraprocess_only, bool());
 
@@ -348,6 +352,10 @@ public:
 
     MOCK_METHOD(bool, update_removed_participant, (rtps::LocatorList_t&));
 
+    MOCK_METHOD0(has_shm_transport, bool());
+
+    MOCK_METHOD0(typelookup_manager, fastdds::dds::builtin::TypeLookupManager* ());
+
     uint32_t getRTPSParticipantID() const
     {
         return 0;
@@ -416,9 +424,11 @@ private:
 
     MockParticipantListener listener_;
 
-    ResourceEvent events_;
-
     RTPSParticipantAttributes attr_;
+
+    NetworkFactory network_factory_ {attr_};
+
+    ::testing::NiceMock<ResourceEvent> events_;
 
     std::map<GUID_t, Endpoint*> endpoints_;
 

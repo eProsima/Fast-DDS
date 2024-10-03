@@ -1520,6 +1520,139 @@ private:
 
 };
 /*!
+ * @brief This class represents the structure ArrayUInt8 defined by the user in the IDL file.
+ * @ingroup arrays
+ */
+class ArrayUInt8
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport ArrayUInt8()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~ArrayUInt8()
+    {
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object ArrayUInt8 that will be copied.
+     */
+    eProsima_user_DllExport ArrayUInt8(
+            const ArrayUInt8& x)
+    {
+                    m_var_array_uint8 = x.m_var_array_uint8;
+
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object ArrayUInt8 that will be copied.
+     */
+    eProsima_user_DllExport ArrayUInt8(
+            ArrayUInt8&& x) noexcept
+    {
+        m_var_array_uint8 = std::move(x.m_var_array_uint8);
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object ArrayUInt8 that will be copied.
+     */
+    eProsima_user_DllExport ArrayUInt8& operator =(
+            const ArrayUInt8& x)
+    {
+
+                    m_var_array_uint8 = x.m_var_array_uint8;
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object ArrayUInt8 that will be copied.
+     */
+    eProsima_user_DllExport ArrayUInt8& operator =(
+            ArrayUInt8&& x) noexcept
+    {
+
+        m_var_array_uint8 = std::move(x.m_var_array_uint8);
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x ArrayUInt8 object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const ArrayUInt8& x) const
+    {
+        return (m_var_array_uint8 == x.m_var_array_uint8);
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x ArrayUInt8 object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const ArrayUInt8& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function copies the value in member var_array_uint8
+     * @param _var_array_uint8 New value to be copied in member var_array_uint8
+     */
+    eProsima_user_DllExport void var_array_uint8(
+            const std::array<uint8_t, 10>& _var_array_uint8)
+    {
+        m_var_array_uint8 = _var_array_uint8;
+    }
+
+    /*!
+     * @brief This function moves the value in member var_array_uint8
+     * @param _var_array_uint8 New value to be moved in member var_array_uint8
+     */
+    eProsima_user_DllExport void var_array_uint8(
+            std::array<uint8_t, 10>&& _var_array_uint8)
+    {
+        m_var_array_uint8 = std::move(_var_array_uint8);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member var_array_uint8
+     * @return Constant reference to member var_array_uint8
+     */
+    eProsima_user_DllExport const std::array<uint8_t, 10>& var_array_uint8() const
+    {
+        return m_var_array_uint8;
+    }
+
+    /*!
+     * @brief This function returns a reference to member var_array_uint8
+     * @return Reference to member var_array_uint8
+     */
+    eProsima_user_DllExport std::array<uint8_t, 10>& var_array_uint8()
+    {
+        return m_var_array_uint8;
+    }
+
+
+
+private:
+
+    std::array<uint8_t, 10> m_var_array_uint8{0};
+
+};
+/*!
  * @brief This class represents the structure ArrayChar defined by the user in the IDL file.
  * @ingroup arrays
  */

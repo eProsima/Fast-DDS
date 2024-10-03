@@ -392,7 +392,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]() {m_hash.~EquivalenceHash();};
                     new(&m_hash) EquivalenceHash();
-    ;
+
                 }
 
                 return m_hash;
@@ -2812,7 +2812,10 @@ public:
      */
     eProsima_user_DllExport TypeIdentifier()
     {
-        no_value_();
+        selected_member_ = 0x00000001;
+        member_destructor_ = [&]() {m_no_value.~Dummy();};
+        new(&m_no_value) Dummy();
+
     }
 
     /*!
@@ -3940,7 +3943,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]() {m_no_value.~Dummy();};
                     new(&m_no_value) Dummy();
-    ;
+
                 }
 
                 return m_no_value;
@@ -3958,7 +3961,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = [&]() {m_string_sdefn.~StringSTypeDefn();};
                     new(&m_string_sdefn) StringSTypeDefn();
-    ;
+
                 }
 
                 return m_string_sdefn;
@@ -3976,7 +3979,7 @@ private:
                     selected_member_ = 0x00000003;
                     member_destructor_ = [&]() {m_string_ldefn.~StringLTypeDefn();};
                     new(&m_string_ldefn) StringLTypeDefn();
-    ;
+
                 }
 
                 return m_string_ldefn;
@@ -3994,7 +3997,7 @@ private:
                     selected_member_ = 0x00000004;
                     member_destructor_ = [&]() {m_seq_sdefn.~PlainSequenceSElemDefn();};
                     new(&m_seq_sdefn) PlainSequenceSElemDefn();
-    ;
+
                 }
 
                 return m_seq_sdefn;
@@ -4012,7 +4015,7 @@ private:
                     selected_member_ = 0x00000005;
                     member_destructor_ = [&]() {m_seq_ldefn.~PlainSequenceLElemDefn();};
                     new(&m_seq_ldefn) PlainSequenceLElemDefn();
-    ;
+
                 }
 
                 return m_seq_ldefn;
@@ -4030,7 +4033,7 @@ private:
                     selected_member_ = 0x00000006;
                     member_destructor_ = [&]() {m_array_sdefn.~PlainArraySElemDefn();};
                     new(&m_array_sdefn) PlainArraySElemDefn();
-    ;
+
                 }
 
                 return m_array_sdefn;
@@ -4048,7 +4051,7 @@ private:
                     selected_member_ = 0x00000007;
                     member_destructor_ = [&]() {m_array_ldefn.~PlainArrayLElemDefn();};
                     new(&m_array_ldefn) PlainArrayLElemDefn();
-    ;
+
                 }
 
                 return m_array_ldefn;
@@ -4066,7 +4069,7 @@ private:
                     selected_member_ = 0x00000008;
                     member_destructor_ = [&]() {m_map_sdefn.~PlainMapSTypeDefn();};
                     new(&m_map_sdefn) PlainMapSTypeDefn();
-    ;
+
                 }
 
                 return m_map_sdefn;
@@ -4084,7 +4087,7 @@ private:
                     selected_member_ = 0x00000009;
                     member_destructor_ = [&]() {m_map_ldefn.~PlainMapLTypeDefn();};
                     new(&m_map_ldefn) PlainMapLTypeDefn();
-    ;
+
                 }
 
                 return m_map_ldefn;
@@ -4102,7 +4105,7 @@ private:
                     selected_member_ = 0x0000000a;
                     member_destructor_ = [&]() {m_sc_component_id.~StronglyConnectedComponentId();};
                     new(&m_sc_component_id) StronglyConnectedComponentId();
-    ;
+
                 }
 
                 return m_sc_component_id;
@@ -4120,7 +4123,7 @@ private:
                     selected_member_ = 0x0000000b;
                     member_destructor_ = [&]() {m_equivalence_hash.~EquivalenceHash();};
                     new(&m_equivalence_hash) EquivalenceHash();
-    ;
+
                 }
 
                 return m_equivalence_hash;
@@ -4138,7 +4141,7 @@ private:
                     selected_member_ = 0x0000000c;
                     member_destructor_ = [&]() {m_extended_defn.~ExtendedTypeDefn();};
                     new(&m_extended_defn) ExtendedTypeDefn();
-    ;
+
                 }
 
                 return m_extended_defn;
@@ -4281,7 +4284,10 @@ public:
      */
     eProsima_user_DllExport AnnotationParameterValue()
     {
-        extended_value_();
+        selected_member_ = 0x00000013;
+        member_destructor_ = [&]() {m_extended_value.~ExtendedAnnotationParameterValue();};
+        new(&m_extended_value) ExtendedAnnotationParameterValue();
+
     }
 
     /*!
@@ -5775,7 +5781,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_boolean_value = {false};
-    ;
+
                 }
 
                 return m_boolean_value;
@@ -5793,7 +5799,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = nullptr;
                     m_byte_value = {0};
-    ;
+
                 }
 
                 return m_byte_value;
@@ -5811,7 +5817,7 @@ private:
                     selected_member_ = 0x00000003;
                     member_destructor_ = nullptr;
                     m_int8_value = {0};
-    ;
+
                 }
 
                 return m_int8_value;
@@ -5829,7 +5835,7 @@ private:
                     selected_member_ = 0x00000004;
                     member_destructor_ = nullptr;
                     m_uint8_value = {0};
-    ;
+
                 }
 
                 return m_uint8_value;
@@ -5847,7 +5853,7 @@ private:
                     selected_member_ = 0x00000005;
                     member_destructor_ = nullptr;
                     m_int16_value = {0};
-    ;
+
                 }
 
                 return m_int16_value;
@@ -5865,7 +5871,7 @@ private:
                     selected_member_ = 0x00000006;
                     member_destructor_ = nullptr;
                     m_uint_16_value = {0};
-    ;
+
                 }
 
                 return m_uint_16_value;
@@ -5883,7 +5889,7 @@ private:
                     selected_member_ = 0x00000007;
                     member_destructor_ = nullptr;
                     m_int32_value = {0};
-    ;
+
                 }
 
                 return m_int32_value;
@@ -5901,7 +5907,7 @@ private:
                     selected_member_ = 0x00000008;
                     member_destructor_ = nullptr;
                     m_uint32_value = {0};
-    ;
+
                 }
 
                 return m_uint32_value;
@@ -5919,7 +5925,7 @@ private:
                     selected_member_ = 0x00000009;
                     member_destructor_ = nullptr;
                     m_int64_value = {0};
-    ;
+
                 }
 
                 return m_int64_value;
@@ -5937,7 +5943,7 @@ private:
                     selected_member_ = 0x0000000a;
                     member_destructor_ = nullptr;
                     m_uint64_value = {0};
-    ;
+
                 }
 
                 return m_uint64_value;
@@ -5955,7 +5961,7 @@ private:
                     selected_member_ = 0x0000000b;
                     member_destructor_ = nullptr;
                     m_float32_value = {0.0};
-    ;
+
                 }
 
                 return m_float32_value;
@@ -5973,7 +5979,7 @@ private:
                     selected_member_ = 0x0000000c;
                     member_destructor_ = nullptr;
                     m_float64_value = {0.0};
-    ;
+
                 }
 
                 return m_float64_value;
@@ -5991,7 +5997,7 @@ private:
                     selected_member_ = 0x0000000d;
                     member_destructor_ = nullptr;
                     m_float128_value = {0.0};
-    ;
+
                 }
 
                 return m_float128_value;
@@ -6009,7 +6015,7 @@ private:
                     selected_member_ = 0x0000000e;
                     member_destructor_ = nullptr;
                     m_char_value = {0};
-    ;
+
                 }
 
                 return m_char_value;
@@ -6027,7 +6033,7 @@ private:
                     selected_member_ = 0x0000000f;
                     member_destructor_ = nullptr;
                     m_wchar_value = {0};
-    ;
+
                 }
 
                 return m_wchar_value;
@@ -6045,7 +6051,7 @@ private:
                     selected_member_ = 0x00000010;
                     member_destructor_ = nullptr;
                     m_enumerated_value = {0};
-    ;
+
                 }
 
                 return m_enumerated_value;
@@ -6063,7 +6069,7 @@ private:
                     selected_member_ = 0x00000011;
                     member_destructor_ = [&]() {m_string8_value.~fixed_string();};
                     new(&m_string8_value) eprosima::fastcdr::fixed_string<ANNOTATION_STR_VALUE_MAX_LEN>();
-    ;
+
                 }
 
                 return m_string8_value;
@@ -6081,7 +6087,7 @@ private:
                     selected_member_ = 0x00000012;
                     member_destructor_ = [&]() {m_string16_value.~basic_string();};
                     new(&m_string16_value) std::wstring();
-    ;
+
                 }
 
                 return m_string16_value;
@@ -6099,7 +6105,7 @@ private:
                     selected_member_ = 0x00000013;
                     member_destructor_ = [&]() {m_extended_value.~ExtendedAnnotationParameterValue();};
                     new(&m_extended_value) ExtendedAnnotationParameterValue();
-    ;
+
                 }
 
                 return m_extended_value;
@@ -20686,7 +20692,10 @@ public:
      */
     eProsima_user_DllExport CompleteTypeObject()
     {
-        extended_type_();
+        selected_member_ = 0x0000000b;
+        member_destructor_ = [&]() {m_extended_type.~CompleteExtendedType();};
+        new(&m_extended_type) CompleteExtendedType();
+
     }
 
     /*!
@@ -21716,7 +21725,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]() {m_alias_type.~CompleteAliasType();};
                     new(&m_alias_type) CompleteAliasType();
-    ;
+
                 }
 
                 return m_alias_type;
@@ -21734,7 +21743,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = [&]() {m_annotation_type.~CompleteAnnotationType();};
                     new(&m_annotation_type) CompleteAnnotationType();
-    ;
+
                 }
 
                 return m_annotation_type;
@@ -21752,7 +21761,7 @@ private:
                     selected_member_ = 0x00000003;
                     member_destructor_ = [&]() {m_struct_type.~CompleteStructType();};
                     new(&m_struct_type) CompleteStructType();
-    ;
+
                 }
 
                 return m_struct_type;
@@ -21770,7 +21779,7 @@ private:
                     selected_member_ = 0x00000004;
                     member_destructor_ = [&]() {m_union_type.~CompleteUnionType();};
                     new(&m_union_type) CompleteUnionType();
-    ;
+
                 }
 
                 return m_union_type;
@@ -21788,7 +21797,7 @@ private:
                     selected_member_ = 0x00000005;
                     member_destructor_ = [&]() {m_bitset_type.~CompleteBitsetType();};
                     new(&m_bitset_type) CompleteBitsetType();
-    ;
+
                 }
 
                 return m_bitset_type;
@@ -21806,7 +21815,7 @@ private:
                     selected_member_ = 0x00000006;
                     member_destructor_ = [&]() {m_sequence_type.~CompleteSequenceType();};
                     new(&m_sequence_type) CompleteSequenceType();
-    ;
+
                 }
 
                 return m_sequence_type;
@@ -21824,7 +21833,7 @@ private:
                     selected_member_ = 0x00000007;
                     member_destructor_ = [&]() {m_array_type.~CompleteArrayType();};
                     new(&m_array_type) CompleteArrayType();
-    ;
+
                 }
 
                 return m_array_type;
@@ -21842,7 +21851,7 @@ private:
                     selected_member_ = 0x00000008;
                     member_destructor_ = [&]() {m_map_type.~CompleteMapType();};
                     new(&m_map_type) CompleteMapType();
-    ;
+
                 }
 
                 return m_map_type;
@@ -21860,7 +21869,7 @@ private:
                     selected_member_ = 0x00000009;
                     member_destructor_ = [&]() {m_enumerated_type.~CompleteEnumeratedType();};
                     new(&m_enumerated_type) CompleteEnumeratedType();
-    ;
+
                 }
 
                 return m_enumerated_type;
@@ -21878,7 +21887,7 @@ private:
                     selected_member_ = 0x0000000a;
                     member_destructor_ = [&]() {m_bitmask_type.~CompleteBitmaskType();};
                     new(&m_bitmask_type) CompleteBitmaskType();
-    ;
+
                 }
 
                 return m_bitmask_type;
@@ -21896,7 +21905,7 @@ private:
                     selected_member_ = 0x0000000b;
                     member_destructor_ = [&]() {m_extended_type.~CompleteExtendedType();};
                     new(&m_extended_type) CompleteExtendedType();
-    ;
+
                 }
 
                 return m_extended_type;
@@ -22032,7 +22041,10 @@ public:
      */
     eProsima_user_DllExport MinimalTypeObject()
     {
-        extended_type_();
+        selected_member_ = 0x0000000b;
+        member_destructor_ = [&]() {m_extended_type.~MinimalExtendedType();};
+        new(&m_extended_type) MinimalExtendedType();
+
     }
 
     /*!
@@ -23062,7 +23074,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]() {m_alias_type.~MinimalAliasType();};
                     new(&m_alias_type) MinimalAliasType();
-    ;
+
                 }
 
                 return m_alias_type;
@@ -23080,7 +23092,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = [&]() {m_annotation_type.~MinimalAnnotationType();};
                     new(&m_annotation_type) MinimalAnnotationType();
-    ;
+
                 }
 
                 return m_annotation_type;
@@ -23098,7 +23110,7 @@ private:
                     selected_member_ = 0x00000003;
                     member_destructor_ = [&]() {m_struct_type.~MinimalStructType();};
                     new(&m_struct_type) MinimalStructType();
-    ;
+
                 }
 
                 return m_struct_type;
@@ -23116,7 +23128,7 @@ private:
                     selected_member_ = 0x00000004;
                     member_destructor_ = [&]() {m_union_type.~MinimalUnionType();};
                     new(&m_union_type) MinimalUnionType();
-    ;
+
                 }
 
                 return m_union_type;
@@ -23134,7 +23146,7 @@ private:
                     selected_member_ = 0x00000005;
                     member_destructor_ = [&]() {m_bitset_type.~MinimalBitsetType();};
                     new(&m_bitset_type) MinimalBitsetType();
-    ;
+
                 }
 
                 return m_bitset_type;
@@ -23152,7 +23164,7 @@ private:
                     selected_member_ = 0x00000006;
                     member_destructor_ = [&]() {m_sequence_type.~MinimalSequenceType();};
                     new(&m_sequence_type) MinimalSequenceType();
-    ;
+
                 }
 
                 return m_sequence_type;
@@ -23170,7 +23182,7 @@ private:
                     selected_member_ = 0x00000007;
                     member_destructor_ = [&]() {m_array_type.~MinimalArrayType();};
                     new(&m_array_type) MinimalArrayType();
-    ;
+
                 }
 
                 return m_array_type;
@@ -23188,7 +23200,7 @@ private:
                     selected_member_ = 0x00000008;
                     member_destructor_ = [&]() {m_map_type.~MinimalMapType();};
                     new(&m_map_type) MinimalMapType();
-    ;
+
                 }
 
                 return m_map_type;
@@ -23206,7 +23218,7 @@ private:
                     selected_member_ = 0x00000009;
                     member_destructor_ = [&]() {m_enumerated_type.~MinimalEnumeratedType();};
                     new(&m_enumerated_type) MinimalEnumeratedType();
-    ;
+
                 }
 
                 return m_enumerated_type;
@@ -23224,7 +23236,7 @@ private:
                     selected_member_ = 0x0000000a;
                     member_destructor_ = [&]() {m_bitmask_type.~MinimalBitmaskType();};
                     new(&m_bitmask_type) MinimalBitmaskType();
-    ;
+
                 }
 
                 return m_bitmask_type;
@@ -23242,7 +23254,7 @@ private:
                     selected_member_ = 0x0000000b;
                     member_destructor_ = [&]() {m_extended_type.~MinimalExtendedType();};
                     new(&m_extended_type) MinimalExtendedType();
-    ;
+
                 }
 
                 return m_extended_type;
@@ -23602,7 +23614,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]() {m_complete.~CompleteTypeObject();};
                     new(&m_complete) CompleteTypeObject();
-    ;
+
                 }
 
                 return m_complete;
@@ -23620,7 +23632,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = [&]() {m_minimal.~MinimalTypeObject();};
                     new(&m_minimal) MinimalTypeObject();
-    ;
+
                 }
 
                 return m_minimal;

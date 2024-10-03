@@ -52,6 +52,11 @@ on:
         required: false
         type: boolean
         default: false
+      add-label:
+        description: 'Add the CI-PENDING label to the PR'
+        required: false
+        type: boolean
+        default: false
 
 env:
   security-cmake-flag: ${{ inputs.security == true && '-DSECURITY=ON' || '-DSECURITY=OFF' }}
@@ -71,7 +76,7 @@ jobs:
           - 'RelWithDebInfo'
     steps:
       - name: Add ci-pending label if PR
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' && inputs.add-label == true }}
         uses: eProsima/eProsima-CI/external/add_labels@v0
         with:
           labels: ci-pending
@@ -590,7 +595,7 @@ jobs:
       # Do not setup python as it will internally modify the pythonLocation env variable
       # and we want to use a fix version
       - name: Install Qt
-        uses: jurplel/install-qt-action@v2.13.0
+        uses: eProsima/eProsima-CI/external/install_qt@v0
         with:
           version: '5.15.2'
           dir: '${{ github.workspace }}/qt_installation/'

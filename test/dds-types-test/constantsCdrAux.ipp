@@ -180,6 +180,9 @@ eProsima_user_DllExport size_t calculate_serialized_size(
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
                 data.module2_array_literal_module1_const_moduled(), current_alignment);
 
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
+                data.module2_array_literal_const_moduled_module1(), current_alignment);
+
 
     calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
 
@@ -204,6 +207,7 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(1) << data.module2_array_literal_const_alias_const_moduled()
         << eprosima::fastcdr::MemberId(2) << data.module2_array_literal_const_scoped_moduled()
         << eprosima::fastcdr::MemberId(3) << data.module2_array_literal_module1_const_moduled()
+        << eprosima::fastcdr::MemberId(4) << data.module2_array_literal_const_moduled_module1()
 ;
     scdr.end_serialize_type(current_state);
 }
@@ -239,6 +243,10 @@ eProsima_user_DllExport void deserialize(
                                                 dcdr >> data.module2_array_literal_module1_const_moduled();
                                             break;
 
+                                        case 4:
+                                                dcdr >> data.module2_array_literal_const_moduled_module1();
+                                            break;
+
                     default:
                         ret_value = false;
                         break;
@@ -262,6 +270,8 @@ void serialize_key(
                         scdr << data.module2_array_literal_const_scoped_moduled();
 
                         scdr << data.module2_array_literal_module1_const_moduled();
+
+                        scdr << data.module2_array_literal_const_moduled_module1();
 
 }
 

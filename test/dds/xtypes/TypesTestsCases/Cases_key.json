@@ -1,0 +1,424 @@
+{
+    "test_cases": [
+        {
+            "TestCase": "Case_key_InheritanceKeyedEmptyStruct",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "InheritanceKeyedEmptyStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_key_KeyedAppendable",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "KeyedAppendable"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_key_KeyedBooleanStruct",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "KeyedBooleanStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_key_KeyedCharStruct",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "KeyedCharStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_key_KeyedDoubleStruct",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "KeyedDoubleStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_key_KeyedEmptyInheritanceStruct",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "KeyedEmptyInheritanceStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_key_KeyedEmptyStruct",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "KeyedEmptyStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_key_KeyedFinal",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "KeyedFinal"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_key_KeyedFloatStruct",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "KeyedFloatStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_key_KeyedInheritanceStruct",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "KeyedInheritanceStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_key_KeyedLongDoubleStruct",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "KeyedLongDoubleStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_key_KeyedLongLongStruct",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "KeyedLongLongStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_key_KeyedLongStruct",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "KeyedLongStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_key_KeyedMutable",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "KeyedMutable"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_key_KeyedOctetStruct",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "KeyedOctetStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_key_KeyedShortStruct",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "KeyedShortStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_key_KeyedULongLongStruct",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "KeyedULongLongStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_key_KeyedULongStruct",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "KeyedULongStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_key_KeyedUShortStruct",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "KeyedUShortStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_key_KeyedWCharStruct",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "KeyedWCharStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        }
+    ]
+}

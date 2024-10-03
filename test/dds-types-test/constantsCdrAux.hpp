@@ -31,7 +31,7 @@ constexpr uint32_t ConstsLiteralsStruct_max_key_cdr_typesize {0UL};
 
 
 
-constexpr uint32_t const_module2_Module2ConstsLiteralsStruct_max_cdr_typesize {118UL};
+constexpr uint32_t const_module2_Module2ConstsLiteralsStruct_max_cdr_typesize {140UL};
 constexpr uint32_t const_module2_Module2ConstsLiteralsStruct_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t const_module1_ModuleConstsLiteralsStruct_max_cdr_typesize {50UL};

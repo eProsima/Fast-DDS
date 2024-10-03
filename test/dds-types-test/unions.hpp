@@ -299,7 +299,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_a = {0};
-    ;
+
                 }
 
                 return m_a;
@@ -558,7 +558,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_b = {0};
-    ;
+
                 }
 
                 return m_b;
@@ -817,7 +817,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_c = {0};
-    ;
+
                 }
 
                 return m_c;
@@ -1076,7 +1076,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_d = {0};
-    ;
+
                 }
 
                 return m_d;
@@ -1335,7 +1335,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_e = {0};
-    ;
+
                 }
 
                 return m_e;
@@ -1594,7 +1594,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_f = {0};
-    ;
+
                 }
 
                 return m_f;
@@ -1853,7 +1853,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_g = {0.0};
-    ;
+
                 }
 
                 return m_g;
@@ -2112,7 +2112,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_h = {0.0};
-    ;
+
                 }
 
                 return m_h;
@@ -2371,7 +2371,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_i = {0.0};
-    ;
+
                 }
 
                 return m_i;
@@ -2630,7 +2630,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_j = {false};
-    ;
+
                 }
 
                 return m_j;
@@ -2889,7 +2889,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_k = {0};
-    ;
+
                 }
 
                 return m_k;
@@ -3148,7 +3148,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_l = {0};
-    ;
+
                 }
 
                 return m_l;
@@ -3407,7 +3407,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_m = {0};
-    ;
+
                 }
 
                 return m_m;
@@ -3677,7 +3677,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]() {m_n.~basic_string();};
                     new(&m_n) std::string();
-    ;
+
                 }
 
                 return m_n;
@@ -3947,7 +3947,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]() {m_o.~basic_string();};
                     new(&m_o) std::wstring();
-    ;
+
                 }
 
                 return m_o;
@@ -4217,7 +4217,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]() {m_bn.~Inner_alias_bounded_string_helper();};
                     new(&m_bn) Inner_alias_bounded_string_helper();
-    ;
+
                 }
 
                 return m_bn;
@@ -4487,7 +4487,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]() {m_bo.~Inner_alias_bounded_wstring_helper();};
                     new(&m_bo) Inner_alias_bounded_wstring_helper();
-    ;
+
                 }
 
                 return m_bo;
@@ -4746,7 +4746,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_p = {InnerEnumHelper::ENUM_VALUE_1};
-    ;
+
                 }
 
                 return m_p;
@@ -5016,7 +5016,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]() {m_q.~InnerBitMaskHelper();};
                     new(&m_q) InnerBitMaskHelper();
-    ;
+
                 }
 
                 return m_q;
@@ -5275,7 +5275,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_r = {0};
-    ;
+
                 }
 
                 return m_r;
@@ -5545,7 +5545,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]() {m_s.~Inner_alias_array_helper();};
                     new(&m_s) Inner_alias_array_helper();
-    ;
+
                 }
 
                 return m_s;
@@ -5815,7 +5815,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]() {m_t.~vector();};
                     new(&m_t) std::vector<int16_t>();
-    ;
+
                 }
 
                 return m_t;
@@ -6085,7 +6085,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]() {m_u.~map();};
                     new(&m_u) std::map<int32_t, int32_t>();
-    ;
+
                 }
 
                 return m_u;
@@ -6355,7 +6355,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]() {m_v.~InnerUnionHelper();};
                     new(&m_v) InnerUnionHelper();
-    ;
+
                 }
 
                 return m_v;
@@ -6625,7 +6625,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]() {m_w.~InnerStructureHelper();};
                     new(&m_w) InnerStructureHelper();
-    ;
+
                 }
 
                 return m_w;
@@ -6895,7 +6895,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]() {m_x.~InnerBitsetHelper();};
                     new(&m_x) InnerBitsetHelper();
-    ;
+
                 }
 
                 return m_x;
@@ -7223,7 +7223,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_first = {0};
-    ;
+
                 }
 
                 return m_first;
@@ -7241,7 +7241,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = nullptr;
                     m_second = {0};
-    ;
+
                 }
 
                 return m_second;
@@ -7570,7 +7570,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_first = {0};
-    ;
+
                 }
 
                 return m_first;
@@ -7588,7 +7588,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = nullptr;
                     m_second = {0};
-    ;
+
                 }
 
                 return m_second;
@@ -7917,7 +7917,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_first = {0};
-    ;
+
                 }
 
                 return m_first;
@@ -7935,7 +7935,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = nullptr;
                     m_second = {0};
-    ;
+
                 }
 
                 return m_second;
@@ -8264,7 +8264,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_first = {0};
-    ;
+
                 }
 
                 return m_first;
@@ -8282,7 +8282,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = nullptr;
                     m_second = {0};
-    ;
+
                 }
 
                 return m_second;
@@ -8611,7 +8611,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_first = {0};
-    ;
+
                 }
 
                 return m_first;
@@ -8629,7 +8629,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = nullptr;
                     m_second = {0};
-    ;
+
                 }
 
                 return m_second;
@@ -8958,7 +8958,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_first = {0};
-    ;
+
                 }
 
                 return m_first;
@@ -8976,7 +8976,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = nullptr;
                     m_second = {0};
-    ;
+
                 }
 
                 return m_second;
@@ -9008,6 +9008,10 @@ public:
      */
     eProsima_user_DllExport Union_Discriminator_boolean()
     {
+        selected_member_ = 0x00000001;
+        member_destructor_ = nullptr;
+        m_first = {0};
+
     }
 
     /*!
@@ -9295,7 +9299,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_first = {0};
-    ;
+
                 }
 
                 return m_first;
@@ -9313,7 +9317,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = nullptr;
                     m_second = {0};
-    ;
+
                 }
 
                 return m_second;
@@ -9642,7 +9646,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_first = {0};
-    ;
+
                 }
 
                 return m_first;
@@ -9660,7 +9664,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = nullptr;
                     m_second = {0};
-    ;
+
                 }
 
                 return m_second;
@@ -9989,7 +9993,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_first = {0};
-    ;
+
                 }
 
                 return m_first;
@@ -10007,7 +10011,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = nullptr;
                     m_second = {0};
-    ;
+
                 }
 
                 return m_second;
@@ -10336,7 +10340,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_first = {0};
-    ;
+
                 }
 
                 return m_first;
@@ -10354,7 +10358,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = nullptr;
                     m_second = {0};
-    ;
+
                 }
 
                 return m_second;
@@ -10386,7 +10390,10 @@ public:
      */
     eProsima_user_DllExport Union_Discriminator_enum()
     {
-        third_();
+        selected_member_ = 0x00000003;
+        member_destructor_ = nullptr;
+        m_third = {0};
+
     }
 
     /*!
@@ -10743,7 +10750,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_first = {0};
-    ;
+
                 }
 
                 return m_first;
@@ -10761,7 +10768,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = nullptr;
                     m_second = {0};
-    ;
+
                 }
 
                 return m_second;
@@ -10779,7 +10786,7 @@ private:
                     selected_member_ = 0x00000003;
                     member_destructor_ = nullptr;
                     m_third = {0};
-    ;
+
                 }
 
                 return m_third;
@@ -10812,6 +10819,10 @@ public:
      */
     eProsima_user_DllExport Union_Discriminator_enum_labels()
     {
+        selected_member_ = 0x00000001;
+        member_destructor_ = nullptr;
+        m_first = {0};
+
     }
 
     /*!
@@ -11110,7 +11121,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_first = {0};
-    ;
+
                 }
 
                 return m_first;
@@ -11128,7 +11139,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = nullptr;
                     m_second = {0};
-    ;
+
                 }
 
                 return m_second;
@@ -11457,7 +11468,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_first = {0};
-    ;
+
                 }
 
                 return m_first;
@@ -11475,7 +11486,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = nullptr;
                     m_second = {0};
-    ;
+
                 }
 
                 return m_second;
@@ -12066,7 +12077,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]() {m_a.~InnerStructureHelper();};
                     new(&m_a) InnerStructureHelper();
-    ;
+
                 }
 
                 return m_a;
@@ -12084,7 +12095,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = [&]() {m_b.~InnerEmptyStructureHelper();};
                     new(&m_b) InnerEmptyStructureHelper();
-    ;
+
                 }
 
                 return m_b;
@@ -12102,7 +12113,7 @@ private:
                     selected_member_ = 0x00000003;
                     member_destructor_ = [&]() {m_c.~Inner_alias_bounded_string_helper();};
                     new(&m_c) Inner_alias_bounded_string_helper();
-    ;
+
                 }
 
                 return m_c;
@@ -12120,7 +12131,7 @@ private:
                     selected_member_ = 0x00000004;
                     member_destructor_ = [&]() {m_d.~Inner_alias_array_helper();};
                     new(&m_d) Inner_alias_array_helper();
-    ;
+
                 }
 
                 return m_d;
@@ -12138,7 +12149,7 @@ private:
                     selected_member_ = 0x00000005;
                     member_destructor_ = [&]() {m_e.~Inner_alias_sequence_helper();};
                     new(&m_e) Inner_alias_sequence_helper();
-    ;
+
                 }
 
                 return m_e;
@@ -12173,7 +12184,10 @@ public:
      */
     eProsima_user_DllExport Union_Several_Fields_With_Default()
     {
-        f_();
+        selected_member_ = 0x00000006;
+        member_destructor_ = [&]() {m_f.~vector();};
+        new(&m_f) std::vector<int16_t>();
+
     }
 
     /*!
@@ -12803,7 +12817,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]() {m_a.~InnerStructureHelper();};
                     new(&m_a) InnerStructureHelper();
-    ;
+
                 }
 
                 return m_a;
@@ -12821,7 +12835,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = [&]() {m_b.~InnerEmptyStructureHelper();};
                     new(&m_b) InnerEmptyStructureHelper();
-    ;
+
                 }
 
                 return m_b;
@@ -12839,7 +12853,7 @@ private:
                     selected_member_ = 0x00000003;
                     member_destructor_ = [&]() {m_c.~Inner_alias_bounded_string_helper();};
                     new(&m_c) Inner_alias_bounded_string_helper();
-    ;
+
                 }
 
                 return m_c;
@@ -12857,7 +12871,7 @@ private:
                     selected_member_ = 0x00000004;
                     member_destructor_ = [&]() {m_d.~Inner_alias_array_helper();};
                     new(&m_d) Inner_alias_array_helper();
-    ;
+
                 }
 
                 return m_d;
@@ -12875,7 +12889,7 @@ private:
                     selected_member_ = 0x00000005;
                     member_destructor_ = [&]() {m_e.~Inner_alias_sequence_helper();};
                     new(&m_e) Inner_alias_sequence_helper();
-    ;
+
                 }
 
                 return m_e;
@@ -12893,7 +12907,7 @@ private:
                     selected_member_ = 0x00000006;
                     member_destructor_ = [&]() {m_f.~vector();};
                     new(&m_f) std::vector<int16_t>();
-    ;
+
                 }
 
                 return m_f;
@@ -18382,7 +18396,10 @@ public:
      */
     eProsima_user_DllExport DefaultAnnotation()
     {
-        a_();
+        selected_member_ = 0x00000001;
+        member_destructor_ = nullptr;
+        m_a = {0};
+
     }
 
     /*!
@@ -18739,7 +18756,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_a = {0};
-    ;
+
                 }
 
                 return m_a;
@@ -18757,7 +18774,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = nullptr;
                     m_b = {0};
-    ;
+
                 }
 
                 return m_b;
@@ -18775,7 +18792,7 @@ private:
                     selected_member_ = 0x00000003;
                     member_destructor_ = nullptr;
                     m_c = {0};
-    ;
+
                 }
 
                 return m_c;
@@ -18789,6 +18806,353 @@ private:
         uint8_t m_a;
         int16_t m_b;
         int32_t m_c;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
+};
+/*!
+ * @brief This class represents the union DefaultAnnotationExternalValue defined by the user in the IDL file.
+ * @ingroup unions
+ */
+class DefaultAnnotationExternalValue
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport DefaultAnnotationExternalValue()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~DefaultAnnotationExternalValue()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object DefaultAnnotationExternalValue that will be copied.
+     */
+    eProsima_user_DllExport DefaultAnnotationExternalValue(
+            const DefaultAnnotationExternalValue& x)
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            a_() = x.m_a;
+                            break;
+
+                        case 0x00000002:
+                            b_() = x.m_b;
+                            break;
+
+        }
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object DefaultAnnotationExternalValue that will be copied.
+     */
+    eProsima_user_DllExport DefaultAnnotationExternalValue(
+            DefaultAnnotationExternalValue&& x) noexcept
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            a_() = std::move(x.m_a);
+                            break;
+
+                        case 0x00000002:
+                            b_() = std::move(x.m_b);
+                            break;
+
+        }
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object DefaultAnnotationExternalValue that will be copied.
+     */
+    eProsima_user_DllExport DefaultAnnotationExternalValue& operator =(
+            const DefaultAnnotationExternalValue& x)
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            a_() = x.m_a;
+                            break;
+
+                        case 0x00000002:
+                            b_() = x.m_b;
+                            break;
+
+        }
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object DefaultAnnotationExternalValue that will be copied.
+     */
+    eProsima_user_DllExport DefaultAnnotationExternalValue& operator =(
+            DefaultAnnotationExternalValue&& x) noexcept
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            a_() = std::move(x.m_a);
+                            break;
+
+                        case 0x00000002:
+                            b_() = std::move(x.m_b);
+                            break;
+
+        }
+
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x DefaultAnnotationExternalValue object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const DefaultAnnotationExternalValue& x) const
+    {
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
+        {
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_a == x.m_a);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_b == x.m_b);
+                                    break;
+
+            }
+        }
+
+        return ret_value;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x DefaultAnnotationExternalValue object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const DefaultAnnotationExternalValue& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function sets the discriminator value.
+     * @param __d New value for the discriminator.
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
+     */
+    eProsima_user_DllExport void _d(
+            int32_t __d)
+    {
+        bool valid_discriminator = false;
+
+        switch (__d)
+        {
+                        case 0:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
+
+                        case 1:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
+
+        }
+
+        if (!valid_discriminator)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
+        }
+
+        m__d = __d;
+    }
+
+    /*!
+     * @brief This function returns the value of the discriminator.
+     * @return Value of the discriminator
+     */
+    eProsima_user_DllExport int32_t _d() const
+    {
+        return m__d;
+    }
+
+    /*!
+     * @brief This function sets a value in member a
+     * @param _a New value for member a
+     */
+    eProsima_user_DllExport void a(
+            uint8_t _a)
+    {
+        a_() = _a;
+        m__d = 0;
+    }
+
+    /*!
+     * @brief This function returns the value of member a
+     * @return Value of member a
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport uint8_t a() const
+    {
+        if (0x00000001 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_a;
+    }
+
+    /*!
+     * @brief This function returns a reference to member a
+     * @return Reference to member a
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport uint8_t& a()
+    {
+        if (0x00000001 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_a;
+    }
+
+
+    /*!
+     * @brief This function sets a value in member b
+     * @param _b New value for member b
+     */
+    eProsima_user_DllExport void b(
+            int16_t _b)
+    {
+        b_() = _b;
+        m__d = 1;
+    }
+
+    /*!
+     * @brief This function returns the value of member b
+     * @return Value of member b
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport int16_t b() const
+    {
+        if (0x00000002 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_b;
+    }
+
+    /*!
+     * @brief This function returns a reference to member b
+     * @return Reference to member b
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport int16_t& b()
+    {
+        if (0x00000002 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_b;
+    }
+
+
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
+
+private:
+
+            uint8_t& a_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_a = {0};
+
+                }
+
+                return m_a;
+            }
+
+            int16_t& b_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_b = {0};
+
+                }
+
+                return m_b;
+            }
+
+
+    int32_t m__d {2};
+
+    union
+    {
+        uint8_t m_a;
+        int16_t m_b;
     };
 
     uint32_t selected_member_ {0x0FFFFFFFu};

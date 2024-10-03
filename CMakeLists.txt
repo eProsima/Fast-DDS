@@ -29,7 +29,7 @@ endif()
 ###############################################################################
 # Project                                                                     #
 ###############################################################################
-project(fastdds VERSION "3.0.0" LANGUAGES C CXX)
+project(fastdds VERSION "3.1.0" LANGUAGES C CXX)
 
 set(PROJECT_NAME_LARGE "Fast DDS")
 string(TOUPPER "${PROJECT_NAME}" PROJECT_NAME_UPPER)
@@ -70,7 +70,7 @@ if(MSVC OR MSVC_IDE)
 else()
     # Add some generic warnings common to all compilers
     set(CMAKE_CXX_FLAGS
-        "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -Wno-unknown-pragmas -Wno-error=deprecated-declarations -Wno-switch-bool")
+        "${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Wextra -Wno-unknown-pragmas -Wno-error=deprecated-declarations -Wno-switch-bool")
     # Add compiler specific options
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-psabi")
@@ -80,6 +80,10 @@ else()
             set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-builtins")
         endif()
         set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl")
+    endif()
+
+    if(EPROSIMA_EXTRA_CMAKE_CXX_FLAGS)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EPROSIMA_EXTRA_CMAKE_CXX_FLAGS}")
     endif()
 
     if(EPROSIMA_BUILD)

@@ -25,6 +25,7 @@
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/messages/CDRMessage.hpp>
 #include <rtps/builtin/BuiltinProtocols.h>
+#include <utils/ProxyPool.hpp>
 
 namespace eprosima {
 namespace fastdds {

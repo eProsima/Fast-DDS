@@ -2107,7 +2107,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]() {m_entity_proxy.~vector();};
                     new(&m_entity_proxy) std::vector<uint8_t>();
-    ;
+
                 }
 
                 return m_entity_proxy;
@@ -2125,7 +2125,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = [&]() {m_connection_list.~vector();};
                     new(&m_connection_list) std::vector<Connection>();
-    ;
+
                 }
 
                 return m_connection_list;
@@ -2143,7 +2143,7 @@ private:
                     selected_member_ = 0x00000003;
                     member_destructor_ = [&]() {m_incompatible_qos_status.~IncompatibleQoSStatus_s();};
                     new(&m_incompatible_qos_status) IncompatibleQoSStatus_s();
-    ;
+
                 }
 
                 return m_incompatible_qos_status;
@@ -2161,7 +2161,7 @@ private:
                     selected_member_ = 0x00000004;
                     member_destructor_ = [&]() {m_inconsistent_topic_status.~InconsistentTopicStatus_s();};
                     new(&m_inconsistent_topic_status) InconsistentTopicStatus_s();
-    ;
+
                 }
 
                 return m_inconsistent_topic_status;
@@ -2179,7 +2179,7 @@ private:
                     selected_member_ = 0x00000005;
                     member_destructor_ = [&]() {m_liveliness_lost_status.~LivelinessLostStatus_s();};
                     new(&m_liveliness_lost_status) LivelinessLostStatus_s();
-    ;
+
                 }
 
                 return m_liveliness_lost_status;
@@ -2197,7 +2197,7 @@ private:
                     selected_member_ = 0x00000006;
                     member_destructor_ = [&]() {m_liveliness_changed_status.~LivelinessChangedStatus_s();};
                     new(&m_liveliness_changed_status) LivelinessChangedStatus_s();
-    ;
+
                 }
 
                 return m_liveliness_changed_status;
@@ -2215,7 +2215,7 @@ private:
                     selected_member_ = 0x00000007;
                     member_destructor_ = [&]() {m_deadline_missed_status.~DeadlineMissedStatus_s();};
                     new(&m_deadline_missed_status) DeadlineMissedStatus_s();
-    ;
+
                 }
 
                 return m_deadline_missed_status;
@@ -2233,7 +2233,7 @@ private:
                     selected_member_ = 0x00000008;
                     member_destructor_ = [&]() {m_sample_lost_status.~SampleLostStatus_s();};
                     new(&m_sample_lost_status) SampleLostStatus_s();
-    ;
+
                 }
 
                 return m_sample_lost_status;
@@ -2251,7 +2251,7 @@ private:
                     selected_member_ = 0x00000009;
                     member_destructor_ = nullptr;
                     m_statuses_size = {0};
-    ;
+
                 }
 
                 return m_statuses_size;

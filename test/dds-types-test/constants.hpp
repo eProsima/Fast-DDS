@@ -57,7 +57,7 @@ const int32_t const_long = 23;
 const uint32_t const_ulong = 6;
 const int64_t const_longlong = 8;
 const uint64_t const_ulonglong = 67;
-const float const_float = 13.1;
+const float const_float = 13.1f;
 const double const_double = 84.1;
 const long double const_longdouble = 46.1;
 const bool const_boolean = true;
@@ -75,6 +75,7 @@ const uint64_t const_uint64 = 19;
 typedef int16_t alias_short;
 
 const alias_short alias_const = 55;
+const InnerEnumHelper const_enum = InnerEnumHelper::ENUM_VALUE_1;
 namespace const_module1 {
 
 const int16_t const_moduled = 11;
@@ -341,6 +342,7 @@ namespace const_module2 {
 
 const int16_t const_moduled = 22;
 const const_module1::alias_short_moduled alias_const_moduled = 2;
+const int16_t const_moduled_module1 = const_module1::const_moduled;
 /*!
  * @brief This class represents the structure Module2ConstsLiteralsStruct defined by the user in the IDL file.
  * @ingroup constants
@@ -378,6 +380,8 @@ public:
 
                     m_module2_array_literal_module1_const_moduled = x.m_module2_array_literal_module1_const_moduled;
 
+                    m_module2_array_literal_const_moduled_module1 = x.m_module2_array_literal_const_moduled_module1;
+
     }
 
     /*!
@@ -391,6 +395,7 @@ public:
         m_module2_array_literal_const_alias_const_moduled = std::move(x.m_module2_array_literal_const_alias_const_moduled);
         m_module2_array_literal_const_scoped_moduled = std::move(x.m_module2_array_literal_const_scoped_moduled);
         m_module2_array_literal_module1_const_moduled = std::move(x.m_module2_array_literal_module1_const_moduled);
+        m_module2_array_literal_const_moduled_module1 = std::move(x.m_module2_array_literal_const_moduled_module1);
     }
 
     /*!
@@ -409,6 +414,8 @@ public:
 
                     m_module2_array_literal_module1_const_moduled = x.m_module2_array_literal_module1_const_moduled;
 
+                    m_module2_array_literal_const_moduled_module1 = x.m_module2_array_literal_const_moduled_module1;
+
         return *this;
     }
 
@@ -424,6 +431,7 @@ public:
         m_module2_array_literal_const_alias_const_moduled = std::move(x.m_module2_array_literal_const_alias_const_moduled);
         m_module2_array_literal_const_scoped_moduled = std::move(x.m_module2_array_literal_const_scoped_moduled);
         m_module2_array_literal_module1_const_moduled = std::move(x.m_module2_array_literal_module1_const_moduled);
+        m_module2_array_literal_const_moduled_module1 = std::move(x.m_module2_array_literal_const_moduled_module1);
         return *this;
     }
 
@@ -437,7 +445,8 @@ public:
         return (m_module2_array_literal_const_moduled == x.m_module2_array_literal_const_moduled &&
            m_module2_array_literal_const_alias_const_moduled == x.m_module2_array_literal_const_alias_const_moduled &&
            m_module2_array_literal_const_scoped_moduled == x.m_module2_array_literal_const_scoped_moduled &&
-           m_module2_array_literal_module1_const_moduled == x.m_module2_array_literal_module1_const_moduled);
+           m_module2_array_literal_module1_const_moduled == x.m_module2_array_literal_module1_const_moduled &&
+           m_module2_array_literal_const_moduled_module1 == x.m_module2_array_literal_const_moduled_module1);
     }
 
     /*!
@@ -606,6 +615,45 @@ public:
     }
 
 
+    /*!
+     * @brief This function copies the value in member module2_array_literal_const_moduled_module1
+     * @param _module2_array_literal_const_moduled_module1 New value to be copied in member module2_array_literal_const_moduled_module1
+     */
+    eProsima_user_DllExport void module2_array_literal_const_moduled_module1(
+            const std::array<int16_t, const_moduled_module1>& _module2_array_literal_const_moduled_module1)
+    {
+        m_module2_array_literal_const_moduled_module1 = _module2_array_literal_const_moduled_module1;
+    }
+
+    /*!
+     * @brief This function moves the value in member module2_array_literal_const_moduled_module1
+     * @param _module2_array_literal_const_moduled_module1 New value to be moved in member module2_array_literal_const_moduled_module1
+     */
+    eProsima_user_DllExport void module2_array_literal_const_moduled_module1(
+            std::array<int16_t, const_moduled_module1>&& _module2_array_literal_const_moduled_module1)
+    {
+        m_module2_array_literal_const_moduled_module1 = std::move(_module2_array_literal_const_moduled_module1);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member module2_array_literal_const_moduled_module1
+     * @return Constant reference to member module2_array_literal_const_moduled_module1
+     */
+    eProsima_user_DllExport const std::array<int16_t, const_moduled_module1>& module2_array_literal_const_moduled_module1() const
+    {
+        return m_module2_array_literal_const_moduled_module1;
+    }
+
+    /*!
+     * @brief This function returns a reference to member module2_array_literal_const_moduled_module1
+     * @return Reference to member module2_array_literal_const_moduled_module1
+     */
+    eProsima_user_DllExport std::array<int16_t, const_moduled_module1>& module2_array_literal_const_moduled_module1()
+    {
+        return m_module2_array_literal_const_moduled_module1;
+    }
+
+
 
 private:
 
@@ -613,6 +661,7 @@ private:
     std::array<int16_t, alias_const_moduled> m_module2_array_literal_const_alias_const_moduled{0};
     std::array<int16_t, const_module2::const_moduled> m_module2_array_literal_const_scoped_moduled{0};
     std::array<int16_t, const_module1::const_moduled> m_module2_array_literal_module1_const_moduled{0};
+    std::array<int16_t, const_moduled_module1> m_module2_array_literal_const_moduled_module1{0};
 
 };
 

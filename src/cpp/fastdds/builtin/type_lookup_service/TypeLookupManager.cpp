@@ -101,6 +101,24 @@ TypeLookupManager::~TypeLookupManager()
 
     delete temp_reader_proxy_data_;
     delete temp_writer_proxy_data_;
+
+    for (auto& writer_entry : async_get_type_writer_callbacks_)
+    {
+        // Delete the proxies and remove the entry
+        for (auto& proxy_callback_pair : writer_entry.second)
+        {
+            delete proxy_callback_pair.first;
+        }
+    }
+
+    for (auto& reader_entry : async_get_type_reader_callbacks_)
+    {
+        // Delete the proxies and remove the entry
+        for (auto& proxy_callback_pair : reader_entry.second)
+        {
+            delete proxy_callback_pair.first;
+        }
+    }
 }
 
 bool TypeLookupManager::init(
@@ -365,7 +383,7 @@ ReturnCode_t TypeLookupManager::check_type_identifier_received(
                     is_type_identifier_known(type_identifier_with_size))
     {
         // The type is already known, invoke the callback
-        callback(temp_proxy_data.get());
+        callback(RETCODE_OK, temp_proxy_data.get());
         return RETCODE_OK;
     }
 
@@ -408,7 +426,8 @@ ReturnCode_t TypeLookupManager::check_type_identifier_received(
 }
 
 void TypeLookupManager::notify_callbacks(
-        xtypes::TypeIdentfierWithSize type_identifier_with_size)
+        ReturnCode_t request_ret_status,
+        const xtypes::TypeIdentfierWithSize& type_identifier_with_size)
 {
     bool removed = false;
     // Check that type is pending to be resolved
@@ -417,7 +436,7 @@ void TypeLookupManager::notify_callbacks(
     {
         for (auto& proxy_callback_pair : writer_callbacks_it->second)
         {
-            proxy_callback_pair.second(proxy_callback_pair.first);
+            proxy_callback_pair.second(request_ret_status, proxy_callback_pair.first);
         }
         removed = true;
     }
@@ -427,7 +446,7 @@ void TypeLookupManager::notify_callbacks(
     {
         for (auto& proxy_callback_pair : reader_callbacks_it->second)
         {
-            proxy_callback_pair.second(proxy_callback_pair.first);
+            proxy_callback_pair.second(request_ret_status, proxy_callback_pair.first);
         }
         removed = true;
     }

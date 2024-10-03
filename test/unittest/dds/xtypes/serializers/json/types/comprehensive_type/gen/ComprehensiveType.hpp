@@ -742,7 +742,10 @@ public:
      */
     eProsima_user_DllExport InnerUnion()
     {
-        second_();
+        selected_member_ = 0x00000011;
+        member_destructor_ = nullptr;
+        m_second = {0};
+
     }
 
     /*!
@@ -1042,7 +1045,7 @@ private:
                     selected_member_ = 0x00000010;
                     member_destructor_ = [&]() {m_first.~PrimitivesStruct();};
                     new(&m_first) PrimitivesStruct();
-    ;
+
                 }
 
                 return m_first;
@@ -1060,7 +1063,7 @@ private:
                     selected_member_ = 0x00000011;
                     member_destructor_ = nullptr;
                     m_second = {0};
-    ;
+
                 }
 
                 return m_second;
@@ -1092,7 +1095,10 @@ public:
      */
     eProsima_user_DllExport ComplexUnion()
     {
-        fourth_();
+        selected_member_ = 0x00000002;
+        member_destructor_ = [&]() {m_fourth.~InnerUnion();};
+        new(&m_fourth) InnerUnion();
+
     }
 
     /*!
@@ -1392,7 +1398,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = nullptr;
                     m_third = {0};
-    ;
+
                 }
 
                 return m_third;
@@ -1410,7 +1416,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = [&]() {m_fourth.~InnerUnion();};
                     new(&m_fourth) InnerUnion();
-    ;
+
                 }
 
                 return m_fourth;

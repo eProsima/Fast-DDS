@@ -1,0 +1,130 @@
+{
+    "test_cases": [
+        {
+            "TestCase": "Case_strings_LargeStringStruct",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "LargeStringStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_strings_LargeWStringStruct",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "LargeWStringStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_strings_SmallStringStruct",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "SmallStringStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_strings_SmallWStringStruct",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "SmallWStringStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_strings_StringStruct",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "StringStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_strings_WStringStruct",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "WStringStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        }
+    ]
+}

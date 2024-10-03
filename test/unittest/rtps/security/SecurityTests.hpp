@@ -69,6 +69,20 @@ public:
 
 typedef HandleImpl<MockParticipantCrypto, SecurityTest> MockParticipantCryptoHandle;
 
+struct SecurityTestsGlobalDefaultValues
+{
+    // Default Values
+    RTPSParticipantAttributes pattr;
+
+    SecurityTestsGlobalDefaultValues()
+    {
+        ::testing::DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
+    }
+
+};
+
+static SecurityTestsGlobalDefaultValues g_security_default_values_;
+
 class SecurityTest : public ::testing::Test
 {
 protected:
@@ -182,7 +196,7 @@ public:
     bool security_activated_;
 
     // Default Values
-    NetworkFactory network;
+    NetworkFactory network{g_security_default_values_.pattr};
     GUID_t guid;
     CDRMessage_t default_cdr_message;
 
@@ -217,19 +231,5 @@ public:
     }
 
 };
-
-struct SecurityTestsGlobalDefaultValues
-{
-    // Default Values
-    RTPSParticipantAttributes pattr;
-
-    SecurityTestsGlobalDefaultValues()
-    {
-        ::testing::DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
-    }
-
-};
-
-static SecurityTestsGlobalDefaultValues g_security_default_values_;
 
 #endif // __TEST_UNITTEST_RTPS_SECURITY_SECURITYTESTS_HPP__
