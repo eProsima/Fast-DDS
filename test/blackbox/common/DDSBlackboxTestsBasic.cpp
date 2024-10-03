@@ -996,15 +996,15 @@ TEST(DDSBasic, successful_destruction_among_intraprocess_participants)
         for (auto& reception_participant : reception_participants)
         {
             reception_threads.emplace_back([&reception_participant]()
-                {
-                    auto data_21 = default_helloworld_data_generator();
-                    for (auto& data : data_21)
                     {
-                        reception_participant->send_sample(data);
-                    }
+                        auto data_21 = default_helloworld_data_generator();
+                        for (auto& data : data_21)
+                        {
+                            reception_participant->send_sample(data);
+                        }
 
-                    reception_participant.reset();
-                });
+                        reception_participant.reset();
+                    });
         }
 
         p1_thread.join();

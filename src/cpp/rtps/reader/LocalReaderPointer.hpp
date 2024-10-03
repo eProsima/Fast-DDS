@@ -75,7 +75,7 @@ public:
      *
      * @return Pointer to the associated BaseReader, enabling member access.
      */
-    BaseReader* operator->();
+    BaseReader* operator ->();
 
     /**
      * @brief Sets the local reader pointer.
