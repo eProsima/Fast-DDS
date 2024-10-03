@@ -1,4 +1,4 @@
-name: Fast DDS Sanitizers CI (nightly)
+name: Fast DDS Sanitizers CI (nightly 2.10.x)
 
 on:
   workflow_dispatch:

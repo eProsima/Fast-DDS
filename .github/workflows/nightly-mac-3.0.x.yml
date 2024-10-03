@@ -1,4 +1,4 @@
-name: Fast DDS MacOS CI (nightly)
+name: Fast DDS MacOS CI (nightly 3.0.x)
 
 on:
   workflow_dispatch:

@@ -1,4 +1,4 @@
-name: Fast DDS Ubuntu CI (weekly)
+name: Fast DDS Ubuntu CI (weekly 2.6.x)
 
 on:
   workflow_dispatch:

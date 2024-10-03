@@ -1,4 +1,4 @@
-name: Fast DDS MacOS CI (weekly)
+name: Fast DDS MacOS CI (weekly 2.6.x)
 
 on:
   workflow_dispatch:
