@@ -736,6 +736,27 @@
             ]
         },
         {
+            "TestCase": "Case_unions_UnionShortExtraMember",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "UnionShortExtraMember"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
             "TestCase": "Case_unions_UnionString",
             "participants": [
                 {

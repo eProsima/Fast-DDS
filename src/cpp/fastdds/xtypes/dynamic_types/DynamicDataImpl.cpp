@@ -373,11 +373,12 @@ bool DynamicDataImpl::equals(
         }
         else if (TK_UNION == type_kind)
         {
-            return std::static_pointer_cast<DynamicDataImpl>(value_.at(0))->equals(
-                std::static_pointer_cast<DynamicDataImpl>(other_data->value_.at(0))) &&
-                   (MEMBER_ID_INVALID == selected_union_member_ ||
-                   std::static_pointer_cast<DynamicDataImpl>(value_.at(selected_union_member_))->equals(
-                       std::static_pointer_cast<DynamicDataImpl>(other_data->value_.at(selected_union_member_))));
+            return (MEMBER_ID_INVALID == selected_union_member_ &&
+                   MEMBER_ID_INVALID == other_data->selected_union_member()) ||
+                   (std::static_pointer_cast<DynamicDataImpl>(value_.at(0))->equals(std::static_pointer_cast<DynamicDataImpl>(
+                       other_data->value_.at(0))) &&
+                   std::static_pointer_cast<DynamicDataImpl>(value_.at(selected_union_member_))->equals(std::
+                           static_pointer_cast<DynamicDataImpl>(other_data->value_.at(selected_union_member_))));
         }
         else if (TK_ARRAY == type_kind ||
                 TK_SEQUENCE == type_kind)
@@ -6478,6 +6479,12 @@ bool DynamicDataImpl::deserialize(
                                         if (MEMBER_ID_INVALID == selected_union_member_)
                                         {
                                             selected_union_member_ = type->default_union_member();
+
+                                            // Check again after attempting to assign the default member
+                                            if (MEMBER_ID_INVALID == selected_union_member_)
+                                            {
+                                                ret_value = false;
+                                            }
                                         }
                                     }
                                     else
@@ -6488,7 +6495,12 @@ bool DynamicDataImpl::deserialize(
                                 break;
                             default:
                                 {
-                                    if (1 == value_.count(selected_union_member_))
+                                    if (MEMBER_ID_INVALID == selected_union_member_)
+                                    {
+                                        // Do nothing
+                                        return false;
+                                    }
+                                    else if (1 == value_.count(selected_union_member_))
                                     {
                                         // Check MemberId in mutable case.
                                         auto member_data {std::static_pointer_cast<DynamicDataImpl>(value_.at(

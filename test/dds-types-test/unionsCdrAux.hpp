@@ -182,6 +182,9 @@ constexpr uint32_t UnionInnerUnionHelper_max_key_cdr_typesize {0UL};
 
 
 
+constexpr uint32_t UnionShortExtraMember_max_cdr_typesize {20UL};
+constexpr uint32_t UnionShortExtraMember_max_key_cdr_typesize {0UL};
+
 
 
 constexpr uint32_t UnionDiscriminatorULongLong_max_cdr_typesize {24UL};
@@ -377,6 +380,10 @@ eProsima_user_DllExport void serialize_key(
         const UnionSeveralFieldsWithDefault& data);
 
 
+
+eProsima_user_DllExport void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const UnionShortExtraMember& data);
 
 
 } // namespace fastcdr

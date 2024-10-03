@@ -19159,6 +19159,176 @@ private:
 
     std::function<void()> member_destructor_;
 };
+/*!
+ * @brief This class represents the structure UnionShortExtraMember defined by the user in the IDL file.
+ * @ingroup unions
+ */
+class UnionShortExtraMember
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport UnionShortExtraMember()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~UnionShortExtraMember()
+    {
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object UnionShortExtraMember that will be copied.
+     */
+    eProsima_user_DllExport UnionShortExtraMember(
+            const UnionShortExtraMember& x)
+    {
+                    m_var_union_short = x.m_var_union_short;
+
+                    m_var_long = x.m_var_long;
+
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object UnionShortExtraMember that will be copied.
+     */
+    eProsima_user_DllExport UnionShortExtraMember(
+            UnionShortExtraMember&& x) noexcept
+    {
+        m_var_union_short = std::move(x.m_var_union_short);
+        m_var_long = x.m_var_long;
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object UnionShortExtraMember that will be copied.
+     */
+    eProsima_user_DllExport UnionShortExtraMember& operator =(
+            const UnionShortExtraMember& x)
+    {
+
+                    m_var_union_short = x.m_var_union_short;
+
+                    m_var_long = x.m_var_long;
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object UnionShortExtraMember that will be copied.
+     */
+    eProsima_user_DllExport UnionShortExtraMember& operator =(
+            UnionShortExtraMember&& x) noexcept
+    {
+
+        m_var_union_short = std::move(x.m_var_union_short);
+        m_var_long = x.m_var_long;
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x UnionShortExtraMember object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const UnionShortExtraMember& x) const
+    {
+        return (m_var_union_short == x.m_var_union_short &&
+           m_var_long == x.m_var_long);
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x UnionShortExtraMember object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const UnionShortExtraMember& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function copies the value in member var_union_short
+     * @param _var_union_short New value to be copied in member var_union_short
+     */
+    eProsima_user_DllExport void var_union_short(
+            const Union_Short& _var_union_short)
+    {
+        m_var_union_short = _var_union_short;
+    }
+
+    /*!
+     * @brief This function moves the value in member var_union_short
+     * @param _var_union_short New value to be moved in member var_union_short
+     */
+    eProsima_user_DllExport void var_union_short(
+            Union_Short&& _var_union_short)
+    {
+        m_var_union_short = std::move(_var_union_short);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member var_union_short
+     * @return Constant reference to member var_union_short
+     */
+    eProsima_user_DllExport const Union_Short& var_union_short() const
+    {
+        return m_var_union_short;
+    }
+
+    /*!
+     * @brief This function returns a reference to member var_union_short
+     * @return Reference to member var_union_short
+     */
+    eProsima_user_DllExport Union_Short& var_union_short()
+    {
+        return m_var_union_short;
+    }
+
+
+    /*!
+     * @brief This function sets a value in member var_long
+     * @param _var_long New value for member var_long
+     */
+    eProsima_user_DllExport void var_long(
+            int32_t _var_long)
+    {
+        m_var_long = _var_long;
+    }
+
+    /*!
+     * @brief This function returns the value of member var_long
+     * @return Value of member var_long
+     */
+    eProsima_user_DllExport int32_t var_long() const
+    {
+        return m_var_long;
+    }
+
+    /*!
+     * @brief This function returns a reference to member var_long
+     * @return Reference to member var_long
+     */
+    eProsima_user_DllExport int32_t& var_long()
+    {
+        return m_var_long;
+    }
+
+
+
+private:
+
+    Union_Short m_var_union_short;
+    int32_t m_var_long{0};
+
+};
 
 #endif // _FAST_DDS_GENERATED_UNIONS_HPP_
 

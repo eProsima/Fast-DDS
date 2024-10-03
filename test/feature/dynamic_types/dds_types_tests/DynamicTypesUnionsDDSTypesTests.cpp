@@ -72,6 +72,7 @@ constexpr const char* struct_union_enum_label_discriminator_name = "UnionDiscrim
 constexpr const char* struct_union_alias_discriminator_name = "UnionDiscriminatorAlias";
 constexpr const char* struct_union_several_fields_name = "UnionSeveralFields";
 constexpr const char* struct_union_several_fields_with_default_name = "UnionSeveralFieldsWithDefault";
+constexpr const char* struct_union_short_extra_member_name = "UnionShortExtraMember";
 
 constexpr const char* union_short_name = "Union_Short";
 constexpr const char* union_ushort_name = "Union_UShort";
@@ -2735,6 +2736,64 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionSeveralFieldsWithDefault)
 
     xtypes::TypeIdentifierPair static_type_ids;
     register_UnionSeveralFieldsWithDefault_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
+
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
+}
+
+// Regression test for issue #21773
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionShortExtraMember)
+{
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_STRUCTURE);
+    type_descriptor->name(struct_union_short_extra_member_name);
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+
+    type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(TK_UNION);
+    type_descriptor->name(union_short_name);
+    type_descriptor->discriminator_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
+    DynamicTypeBuilder::_ref_type union_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->name(var_union_member_a);
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16));
+    member_descriptor->label({0});
+    union_builder->add_member(member_descriptor);
+
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->name(var_union_short_name);
+    member_descriptor->type(union_builder->build());
+    struct_builder->add_member(member_descriptor);
+
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->name(var_long_name);
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
+    struct_builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type struct_type {struct_builder->build()};
+
+    DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
+    ASSERT_TRUE(data);
+
+    // Set no value for union (will be empty as no default is set)
+
+    // Set value for extra member
+    int32_t test_value = 23;
+    EXPECT_EQ(data->set_int32_value(data->get_member_id_by_name(var_long_name), test_value), RETCODE_OK);
+
+    for (auto encoding : encodings)
+    {
+        UnionShortExtraMember struct_data;
+        TypeSupport static_pubsubType {new UnionShortExtraMemberPubSubType()};
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
+                static_pubsubType);
+        EXPECT_THROW(struct_data.var_union_short().a(), eprosima::fastcdr::exception::BadParamException);
+        EXPECT_EQ(struct_data.var_long(), test_value);
+    }
+
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_UnionShortExtraMember_type_identifier(static_type_ids);
     check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);

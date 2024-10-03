@@ -7228,4 +7228,91 @@ void register_DefaultAnnotationExternalValue_type_identifier(
         }
     }
 }
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_UnionShortExtraMember_type_identifier(
+        TypeIdentifierPair& type_ids_UnionShortExtraMember)
+{
+
+    ReturnCode_t return_code_UnionShortExtraMember {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_UnionShortExtraMember =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "UnionShortExtraMember", type_ids_UnionShortExtraMember);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_UnionShortExtraMember)
+    {
+        StructTypeFlag struct_flags_UnionShortExtraMember = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
+                false, false);
+        QualifiedTypeName type_name_UnionShortExtraMember = "UnionShortExtraMember";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_UnionShortExtraMember;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_UnionShortExtraMember;
+        CompleteTypeDetail detail_UnionShortExtraMember = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_UnionShortExtraMember, ann_custom_UnionShortExtraMember, type_name_UnionShortExtraMember.to_string());
+        CompleteStructHeader header_UnionShortExtraMember;
+        header_UnionShortExtraMember = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_UnionShortExtraMember);
+        CompleteStructMemberSeq member_seq_UnionShortExtraMember;
+        {
+            TypeIdentifierPair type_ids_var_union_short;
+            ReturnCode_t return_code_var_union_short {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_var_union_short =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "Union_Short", type_ids_var_union_short);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_union_short)
+            {
+            ::register_Union_Short_type_identifier(type_ids_var_union_short);
+            }
+            StructMemberFlag member_flags_var_union_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_var_union_short = 0x00000000;
+            bool common_var_union_short_ec {false};
+            CommonStructMember common_var_union_short {TypeObjectUtils::build_common_struct_member(member_id_var_union_short, member_flags_var_union_short, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_union_short, common_var_union_short_ec))};
+            if (!common_var_union_short_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_union_short member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_union_short = "var_union_short";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_var_union_short;
+            ann_custom_UnionShortExtraMember.reset();
+            CompleteMemberDetail detail_var_union_short = TypeObjectUtils::build_complete_member_detail(name_var_union_short, member_ann_builtin_var_union_short, ann_custom_UnionShortExtraMember);
+            CompleteStructMember member_var_union_short = TypeObjectUtils::build_complete_struct_member(common_var_union_short, detail_var_union_short);
+            TypeObjectUtils::add_complete_struct_member(member_seq_UnionShortExtraMember, member_var_union_short);
+        }
+        {
+            TypeIdentifierPair type_ids_var_long;
+            ReturnCode_t return_code_var_long {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_var_long =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int32_t", type_ids_var_long);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_long)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_long Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_var_long = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_var_long = 0x00000001;
+            bool common_var_long_ec {false};
+            CommonStructMember common_var_long {TypeObjectUtils::build_common_struct_member(member_id_var_long, member_flags_var_long, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_long, common_var_long_ec))};
+            if (!common_var_long_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_long member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_long = "var_long";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_var_long;
+            ann_custom_UnionShortExtraMember.reset();
+            CompleteMemberDetail detail_var_long = TypeObjectUtils::build_complete_member_detail(name_var_long, member_ann_builtin_var_long, ann_custom_UnionShortExtraMember);
+            CompleteStructMember member_var_long = TypeObjectUtils::build_complete_struct_member(common_var_long, detail_var_long);
+            TypeObjectUtils::add_complete_struct_member(member_seq_UnionShortExtraMember, member_var_long);
+        }
+        CompleteStructType struct_type_UnionShortExtraMember = TypeObjectUtils::build_complete_struct_type(struct_flags_UnionShortExtraMember, header_UnionShortExtraMember, member_seq_UnionShortExtraMember);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_UnionShortExtraMember, type_name_UnionShortExtraMember.to_string(), type_ids_UnionShortExtraMember))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "UnionShortExtraMember already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
 
