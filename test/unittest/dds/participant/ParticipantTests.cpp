@@ -775,7 +775,7 @@ TEST(ParticipantTests, GetParticipantQosFromXml)
 
     // Check they correspond to the same profile
     // NOTE: test_participant_profile is assumed to be the first participant profile in the XML file
-    check_equivalent_qos(qos, qos_empty_profile);
+    EXPECT_EQ(qos, qos_empty_profile);
 
     // Load profiles from XML file and get QoS given profile name
     DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_filename);
@@ -785,7 +785,7 @@ TEST(ParticipantTests, GetParticipantQosFromXml)
         RETCODE_OK);
 
     // Check they correspond to the same profile
-    check_equivalent_qos(qos, qos_from_profile);
+    EXPECT_EQ(qos, qos_from_profile);
 
     // Test return when a non-existent profile is used
     EXPECT_EQ(
@@ -817,7 +817,7 @@ TEST(ParticipantTests, GetParticipantExtendedQosFromXml)
 
     // Check they correspond to the same profile
     // NOTE: test_participant_profile is assumed to be the first participant profile in the XML file
-    check_equivalent_extended_qos(qos, qos_empty_profile);
+    EXPECT_EQ(qos, qos_empty_profile);
 
     // Load profiles from XML file and get QoS given profile name
     DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_filename);
@@ -828,7 +828,7 @@ TEST(ParticipantTests, GetParticipantExtendedQosFromXml)
         RETCODE_OK);
 
     // Check they correspond to the same profile
-    check_equivalent_extended_qos(qos, qos_from_profile);
+    EXPECT_EQ(qos, qos_from_profile);
 
     // Test return when a non-existent profile is used
     EXPECT_EQ(
