@@ -130,7 +130,7 @@ void DataSharingListener::stop()
     listening_thread_.join();
 }
 
-void DataSharingListener::process_new_data ()
+void DataSharingListener::process_new_data()
 {
     EPROSIMA_LOG_INFO(RTPS_READER, "Received new data notification");
     notification_->notification_->new_data.store(false, std::memory_order_release);
@@ -198,21 +198,15 @@ void DataSharingListener::process_new_data ()
 
             if (writer_pools_changed_.load(std::memory_order_acquire))
             {
-                if (writer_pools_changed_.load(std::memory_order_acquire))
-                {
-                    // Break the while on the current writer (it may have been removed)
-                    break;
-                }
+                // Break the while on the current writer (it may have been removed)
+                break;
             }
         }
 
         if (writer_pools_changed_.load(std::memory_order_acquire))
         {
-            if (writer_pools_changed_.load(std::memory_order_acquire))
-            {
-                // Break the loop over the writers (itearators may have been invalidated)
-                break;
-            }
+            // Break the loop over the writers (itearators may have been invalidated)
+            break;
         }
     }
 }
