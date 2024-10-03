@@ -3,7 +3,7 @@ name: Fast DDS Windows CI (nightly)
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 1 * * *'
+    - cron: '0 22 * * *' # At 22:00 GMT
 
 jobs:
   nightly-windows-ci-3_0_x:
