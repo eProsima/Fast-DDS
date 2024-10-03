@@ -43,6 +43,7 @@
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/LocalReaderView.hpp>
 #include <rtps/reader/ReaderHistoryState.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
 
@@ -105,6 +106,11 @@ BaseReader::BaseReader(
 {
     init(payload_pool, change_pool);
     setup_datasharing(att);
+}
+
+void BaseReader::local_actions_on_reader_removed()
+{
+    local_view_->wait_for_references_and_set_status(0, LocalReaderViewStatus::INACTIVE);
 }
 
 BaseReader::~BaseReader()
@@ -500,6 +506,8 @@ void BaseReader::init(
     {
         fixed_payload_size_ = history_->m_att.payloadMaxSize;
     }
+
+    local_view_ = std::make_shared<LocalReaderView>();
 
     EPROSIMA_LOG_INFO(RTPS_READER, "RTPSReader created correctly");
 }
