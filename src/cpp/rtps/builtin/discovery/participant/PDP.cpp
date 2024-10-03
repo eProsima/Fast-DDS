@@ -1707,45 +1707,43 @@ void PDP::local_participant_attributes_update_nts(
     auto participant_data = getLocalParticipantProxyData();
     participant_data->m_userData.data_vec(new_atts.userData);
 
+    // If we are intraprocess only, we do not need to update locators
     bool announce_locators = !mp_RTPSParticipant->is_intraprocess_only();
-    if (!announce_locators)
+    if (announce_locators)
     {
-        // If we are intraprocess only, we do not need to update locators
-        return;
-    }
+        // Clear all locators
+        participant_data->metatraffic_locators.unicast.clear();
+        participant_data->metatraffic_locators.multicast.clear();
+        participant_data->default_locators.unicast.clear();
+        participant_data->default_locators.multicast.clear();
 
-    // Clear all locators
-    participant_data->metatraffic_locators.unicast.clear();
-    participant_data->metatraffic_locators.multicast.clear();
-    participant_data->default_locators.unicast.clear();
-    participant_data->default_locators.multicast.clear();
-
-    // Update default locators
-    for (const Locator_t& loc : new_atts.defaultUnicastLocatorList)
-    {
-        participant_data->default_locators.add_unicast_locator(loc);
-    }
-    for (const Locator_t& loc : new_atts.defaultMulticastLocatorList)
-    {
-        participant_data->default_locators.add_multicast_locator(loc);
-    }
-
-    // Update metatraffic locators
-    for (const auto& locator : new_atts.builtin.metatrafficUnicastLocatorList)
-    {
-        participant_data->metatraffic_locators.add_unicast_locator(locator);
-    }
-    if (!new_atts.builtin.avoid_builtin_multicast || participant_data->metatraffic_locators.unicast.empty())
-    {
-        for (const auto& locator : new_atts.builtin.metatrafficMulticastLocatorList)
+        // Update default locators
+        for (const Locator_t& loc : new_atts.defaultUnicastLocatorList)
         {
-            participant_data->metatraffic_locators.add_multicast_locator(locator);
+            participant_data->default_locators.add_unicast_locator(loc);
         }
-    }
+        for (const Locator_t& loc : new_atts.defaultMulticastLocatorList)
+        {
+            participant_data->default_locators.add_multicast_locator(loc);
+        }
 
-    fastdds::rtps::network::external_locators::add_external_locators(*participant_data,
-            new_atts.builtin.metatraffic_external_unicast_locators,
-            new_atts.default_external_unicast_locators);
+        // Update metatraffic locators
+        for (const auto& locator : new_atts.builtin.metatrafficUnicastLocatorList)
+        {
+            participant_data->metatraffic_locators.add_unicast_locator(locator);
+        }
+        if (!new_atts.builtin.avoid_builtin_multicast || participant_data->metatraffic_locators.unicast.empty())
+        {
+            for (const auto& locator : new_atts.builtin.metatrafficMulticastLocatorList)
+            {
+                participant_data->metatraffic_locators.add_multicast_locator(locator);
+            }
+        }
+
+        fastdds::rtps::network::external_locators::add_external_locators(*participant_data,
+                new_atts.builtin.metatraffic_external_unicast_locators,
+                new_atts.default_external_unicast_locators);
+    }
 }
 
 void PDP::update_endpoint_locators_if_default_nts(
