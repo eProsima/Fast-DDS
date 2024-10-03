@@ -509,7 +509,7 @@ jobs:
       # Do not setup python as it will internally modify the pythonLocation env variable
       # and we want to use a fix version
       - name: Install Qt
-        uses: jurplel/install-qt-action@v2.13.0
+        uses: eProsima/eProsima-CI/external/install_qt@v0
         with:
           version: '5.15.2'
           dir: '${{ github.workspace }}/qt_installation/'
