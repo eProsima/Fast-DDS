@@ -86,10 +86,11 @@ void EDPBasePUBListener::add_writer_from_change(
         // Callback function to continue after typelookup is complete
         fastdds::dds::builtin::AsyncGetTypeWriterCallback after_typelookup_callback =
                 [reader, change, edp, &network, writer_added_callback]
-                    (eprosima::fastdds::rtps::WriterProxyData* temp_writer_data)
+                    (eprosima::fastdds::dds::ReturnCode_t request_ret_status,
+                        eprosima::fastdds::rtps::WriterProxyData* temp_writer_data)
                 {
                     //LOAD INFORMATION IN DESTINATION WRITER PROXY DATA
-                    auto copy_data_fun = [&temp_writer_data, &network](
+                    auto copy_data_fun = [&request_ret_status, &temp_writer_data, &network](
                         WriterProxyData* data,
                         bool updating,
                         const ParticipantProxyData& participant_data)
@@ -107,6 +108,11 @@ void EDPBasePUBListener::add_writer_from_change(
                                             data->guid());
                                 }
                                 *data = *temp_writer_data;
+
+                                if (request_ret_status != fastdds::dds::RETCODE_OK)
+                                {
+                                    data->type_information().clear();
+                                }
                                 return true;
                             };
 
@@ -149,7 +155,7 @@ void EDPBasePUBListener::add_writer_from_change(
         {
             EPROSIMA_LOG_INFO(
                 RTPS_EDP, "EDPSimpleListener: No TypeLookupManager or TypeInformation. Trying fallback mechanism");
-            after_typelookup_callback(temp_writer_data.get());
+            after_typelookup_callback(fastdds::dds::RETCODE_NO_DATA, temp_writer_data.get());
         }
         // Release temporary proxy
         temp_writer_data.reset();
@@ -230,10 +236,11 @@ void EDPBaseSUBListener::add_reader_from_change(
         // Callback function to continue after typelookup is complete
         fastdds::dds::builtin::AsyncGetTypeReaderCallback after_typelookup_callback =
                 [reader, change, edp, &network, reader_added_callback]
-                    (eprosima::fastdds::rtps::ReaderProxyData* temp_reader_data)
+                    (eprosima::fastdds::dds::ReturnCode_t request_ret_status,
+                        eprosima::fastdds::rtps::ReaderProxyData* temp_reader_data)
                 {
                     //LOAD INFORMATION IN DESTINATION READER PROXY DATA
-                    auto copy_data_fun = [&temp_reader_data, &network](
+                    auto copy_data_fun = [&request_ret_status, &temp_reader_data, &network](
                         ReaderProxyData* data,
                         bool updating,
                         const ParticipantProxyData& participant_data)
@@ -251,6 +258,11 @@ void EDPBaseSUBListener::add_reader_from_change(
                                             data->guid());
                                 }
                                 *data = *temp_reader_data;
+
+                                if (request_ret_status != fastdds::dds::RETCODE_OK)
+                                {
+                                    data->type_information().clear();
+                                }
                                 return true;
                             };
 
@@ -294,7 +306,7 @@ void EDPBaseSUBListener::add_reader_from_change(
         {
             EPROSIMA_LOG_INFO(
                 RTPS_EDP, "EDPSimpleListener: No TypeLookupManager or TypeInformation. Trying fallback mechanism");
-            after_typelookup_callback(temp_reader_data.get());
+            after_typelookup_callback(fastdds::dds::RETCODE_NO_DATA, temp_reader_data.get());
         }
         // Release the temporary proxy
         temp_reader_data.reset();

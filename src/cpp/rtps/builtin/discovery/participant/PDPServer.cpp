@@ -708,12 +708,6 @@ bool PDPServer::pairing_remote_reader_with_local_writer_after_security(
 void PDPServer::perform_builtin_endpoints_matching(
         const ParticipantProxyData& pdata)
 {
-    // Inform EDP of new RTPSParticipant data:
-    if (mp_EDP != nullptr)
-    {
-        mp_EDP->assignRemoteEndpoints(pdata, true);
-    }
-
     if (mp_builtin->mp_WLP != nullptr)
     {
         mp_builtin->mp_WLP->assignRemoteEndpoints(pdata, true);
@@ -722,6 +716,12 @@ void PDPServer::perform_builtin_endpoints_matching(
     if (nullptr != mp_builtin->typelookup_manager_)
     {
         mp_builtin->typelookup_manager_->assign_remote_endpoints(pdata);
+    }
+
+    // Inform EDP of new RTPSParticipant data:
+    if (mp_EDP != nullptr)
+    {
+        mp_EDP->assignRemoteEndpoints(pdata, true);
     }
 }
 

@@ -1244,7 +1244,7 @@ void register_MapShortOctet_type_identifier(
             ReturnCode_t return_code_var_map_short_octet {eprosima::fastdds::dds::RETCODE_OK};
             return_code_var_map_short_octet =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "anonymous_map_int16_t_uint8_t_unbounded", type_ids_var_map_short_octet);
+                "anonymous_map_int16_t_byte_unbounded", type_ids_var_map_short_octet);
 
             if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_map_short_octet)
             {
@@ -1258,12 +1258,12 @@ void register_MapShortOctet_type_identifier(
                             "Map element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                bool element_identifier_anonymous_map_int16_t_uint8_t_unbounded_ec {false};
-                TypeIdentifier* element_identifier_anonymous_map_int16_t_uint8_t_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_short_octet, element_identifier_anonymous_map_int16_t_uint8_t_unbounded_ec))};
-                if (!element_identifier_anonymous_map_int16_t_uint8_t_unbounded_ec)
+                bool element_identifier_anonymous_map_int16_t_byte_unbounded_ec {false};
+                TypeIdentifier* element_identifier_anonymous_map_int16_t_byte_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_short_octet, element_identifier_anonymous_map_int16_t_byte_unbounded_ec))};
+                if (!element_identifier_anonymous_map_int16_t_byte_unbounded_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "anonymous_map_int16_t_uint8_t_unbounded inconsistent element TypeIdentifier.");
+                        "anonymous_map_int16_t_byte_unbounded inconsistent element TypeIdentifier.");
                     return;
                 }
                 return_code_var_map_short_octet =
@@ -1276,38 +1276,38 @@ void register_MapShortOctet_type_identifier(
                             "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                bool key_identifier_anonymous_map_int16_t_uint8_t_unbounded_ec {false};
-                TypeIdentifier* key_identifier_anonymous_map_int16_t_uint8_t_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_short_octet, key_identifier_anonymous_map_int16_t_uint8_t_unbounded_ec))};
-                if (!key_identifier_anonymous_map_int16_t_uint8_t_unbounded_ec)
+                bool key_identifier_anonymous_map_int16_t_byte_unbounded_ec {false};
+                TypeIdentifier* key_identifier_anonymous_map_int16_t_byte_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_short_octet, key_identifier_anonymous_map_int16_t_byte_unbounded_ec))};
+                if (!key_identifier_anonymous_map_int16_t_byte_unbounded_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "anonymous_map_int16_t_uint8_t_unbounded inconsistent key TypeIdentifier.");
+                        "anonymous_map_int16_t_byte_unbounded inconsistent key TypeIdentifier.");
                     return;
                 }
-                EquivalenceKind equiv_kind_anonymous_map_int16_t_uint8_t_unbounded = EK_BOTH;
-                if ((EK_COMPLETE == key_identifier_anonymous_map_int16_t_uint8_t_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_int16_t_uint8_t_unbounded->_d()) ||
-                        (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_int16_t_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int16_t_uint8_t_unbounded->seq_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_int16_t_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int16_t_uint8_t_unbounded->seq_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_int16_t_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int16_t_uint8_t_unbounded->array_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_int16_t_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int16_t_uint8_t_unbounded->array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int16_t_uint8_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int16_t_uint8_t_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int16_t_uint8_t_unbounded->map_sdefn().header().equiv_kind())) ||
-                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int16_t_uint8_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int16_t_uint8_t_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int16_t_uint8_t_unbounded->map_ldefn().header().equiv_kind())))
+                EquivalenceKind equiv_kind_anonymous_map_int16_t_byte_unbounded = EK_BOTH;
+                if ((EK_COMPLETE == key_identifier_anonymous_map_int16_t_byte_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_int16_t_byte_unbounded->_d()) ||
+                        (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_int16_t_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int16_t_byte_unbounded->seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_int16_t_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int16_t_byte_unbounded->seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_int16_t_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int16_t_byte_unbounded->array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_int16_t_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int16_t_byte_unbounded->array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int16_t_byte_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int16_t_byte_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int16_t_byte_unbounded->map_sdefn().header().equiv_kind())) ||
+                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int16_t_byte_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int16_t_byte_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int16_t_byte_unbounded->map_ldefn().header().equiv_kind())))
                 {
-                    equiv_kind_anonymous_map_int16_t_uint8_t_unbounded = EK_COMPLETE;
+                    equiv_kind_anonymous_map_int16_t_byte_unbounded = EK_COMPLETE;
                 }
-                CollectionElementFlag element_flags_anonymous_map_int16_t_uint8_t_unbounded = 0;
-                CollectionElementFlag key_flags_anonymous_map_int16_t_uint8_t_unbounded = 0;
-                PlainCollectionHeader header_anonymous_map_int16_t_uint8_t_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_map_int16_t_uint8_t_unbounded, element_flags_anonymous_map_int16_t_uint8_t_unbounded);
+                CollectionElementFlag element_flags_anonymous_map_int16_t_byte_unbounded = 0;
+                CollectionElementFlag key_flags_anonymous_map_int16_t_byte_unbounded = 0;
+                PlainCollectionHeader header_anonymous_map_int16_t_byte_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_map_int16_t_byte_unbounded, element_flags_anonymous_map_int16_t_byte_unbounded);
                 {
                     SBound bound = 0;
-                    PlainMapSTypeDefn map_sdefn = TypeObjectUtils::build_plain_map_s_type_defn(header_anonymous_map_int16_t_uint8_t_unbounded, bound,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_map_int16_t_uint8_t_unbounded), key_flags_anonymous_map_int16_t_uint8_t_unbounded,
-                                eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_int16_t_uint8_t_unbounded));
+                    PlainMapSTypeDefn map_sdefn = TypeObjectUtils::build_plain_map_s_type_defn(header_anonymous_map_int16_t_byte_unbounded, bound,
+                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_map_int16_t_byte_unbounded), key_flags_anonymous_map_int16_t_byte_unbounded,
+                                eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_int16_t_byte_unbounded));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_int16_t_uint8_t_unbounded", type_ids_var_map_short_octet))
+                            TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_int16_t_byte_unbounded", type_ids_var_map_short_octet))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_map_int16_t_uint8_t_unbounded already registered in TypeObjectRegistry for a different type.");
+                            "anonymous_map_int16_t_byte_unbounded already registered in TypeObjectRegistry for a different type.");
                     }
                 }
             }
@@ -4306,7 +4306,7 @@ void register_MapUShortOctet_type_identifier(
             ReturnCode_t return_code_var_map_ushort_octet {eprosima::fastdds::dds::RETCODE_OK};
             return_code_var_map_ushort_octet =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "anonymous_map_uint16_t_uint8_t_unbounded", type_ids_var_map_ushort_octet);
+                "anonymous_map_uint16_t_byte_unbounded", type_ids_var_map_ushort_octet);
 
             if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_map_ushort_octet)
             {
@@ -4320,12 +4320,12 @@ void register_MapUShortOctet_type_identifier(
                             "Map element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                bool element_identifier_anonymous_map_uint16_t_uint8_t_unbounded_ec {false};
-                TypeIdentifier* element_identifier_anonymous_map_uint16_t_uint8_t_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_ushort_octet, element_identifier_anonymous_map_uint16_t_uint8_t_unbounded_ec))};
-                if (!element_identifier_anonymous_map_uint16_t_uint8_t_unbounded_ec)
+                bool element_identifier_anonymous_map_uint16_t_byte_unbounded_ec {false};
+                TypeIdentifier* element_identifier_anonymous_map_uint16_t_byte_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_ushort_octet, element_identifier_anonymous_map_uint16_t_byte_unbounded_ec))};
+                if (!element_identifier_anonymous_map_uint16_t_byte_unbounded_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "anonymous_map_uint16_t_uint8_t_unbounded inconsistent element TypeIdentifier.");
+                        "anonymous_map_uint16_t_byte_unbounded inconsistent element TypeIdentifier.");
                     return;
                 }
                 return_code_var_map_ushort_octet =
@@ -4338,38 +4338,38 @@ void register_MapUShortOctet_type_identifier(
                             "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                bool key_identifier_anonymous_map_uint16_t_uint8_t_unbounded_ec {false};
-                TypeIdentifier* key_identifier_anonymous_map_uint16_t_uint8_t_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_ushort_octet, key_identifier_anonymous_map_uint16_t_uint8_t_unbounded_ec))};
-                if (!key_identifier_anonymous_map_uint16_t_uint8_t_unbounded_ec)
+                bool key_identifier_anonymous_map_uint16_t_byte_unbounded_ec {false};
+                TypeIdentifier* key_identifier_anonymous_map_uint16_t_byte_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_ushort_octet, key_identifier_anonymous_map_uint16_t_byte_unbounded_ec))};
+                if (!key_identifier_anonymous_map_uint16_t_byte_unbounded_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "anonymous_map_uint16_t_uint8_t_unbounded inconsistent key TypeIdentifier.");
+                        "anonymous_map_uint16_t_byte_unbounded inconsistent key TypeIdentifier.");
                     return;
                 }
-                EquivalenceKind equiv_kind_anonymous_map_uint16_t_uint8_t_unbounded = EK_BOTH;
-                if ((EK_COMPLETE == key_identifier_anonymous_map_uint16_t_uint8_t_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_uint16_t_uint8_t_unbounded->_d()) ||
-                        (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_uint16_t_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint16_t_uint8_t_unbounded->seq_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_uint16_t_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint16_t_uint8_t_unbounded->seq_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_uint16_t_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint16_t_uint8_t_unbounded->array_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_uint16_t_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint16_t_uint8_t_unbounded->array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_uint16_t_uint8_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_uint16_t_uint8_t_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_uint16_t_uint8_t_unbounded->map_sdefn().header().equiv_kind())) ||
-                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_uint16_t_uint8_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_uint16_t_uint8_t_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_uint16_t_uint8_t_unbounded->map_ldefn().header().equiv_kind())))
+                EquivalenceKind equiv_kind_anonymous_map_uint16_t_byte_unbounded = EK_BOTH;
+                if ((EK_COMPLETE == key_identifier_anonymous_map_uint16_t_byte_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_uint16_t_byte_unbounded->_d()) ||
+                        (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_uint16_t_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint16_t_byte_unbounded->seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_uint16_t_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint16_t_byte_unbounded->seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_uint16_t_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint16_t_byte_unbounded->array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_uint16_t_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint16_t_byte_unbounded->array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_uint16_t_byte_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_uint16_t_byte_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_uint16_t_byte_unbounded->map_sdefn().header().equiv_kind())) ||
+                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_uint16_t_byte_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_uint16_t_byte_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_uint16_t_byte_unbounded->map_ldefn().header().equiv_kind())))
                 {
-                    equiv_kind_anonymous_map_uint16_t_uint8_t_unbounded = EK_COMPLETE;
+                    equiv_kind_anonymous_map_uint16_t_byte_unbounded = EK_COMPLETE;
                 }
-                CollectionElementFlag element_flags_anonymous_map_uint16_t_uint8_t_unbounded = 0;
-                CollectionElementFlag key_flags_anonymous_map_uint16_t_uint8_t_unbounded = 0;
-                PlainCollectionHeader header_anonymous_map_uint16_t_uint8_t_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_map_uint16_t_uint8_t_unbounded, element_flags_anonymous_map_uint16_t_uint8_t_unbounded);
+                CollectionElementFlag element_flags_anonymous_map_uint16_t_byte_unbounded = 0;
+                CollectionElementFlag key_flags_anonymous_map_uint16_t_byte_unbounded = 0;
+                PlainCollectionHeader header_anonymous_map_uint16_t_byte_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_map_uint16_t_byte_unbounded, element_flags_anonymous_map_uint16_t_byte_unbounded);
                 {
                     SBound bound = 0;
-                    PlainMapSTypeDefn map_sdefn = TypeObjectUtils::build_plain_map_s_type_defn(header_anonymous_map_uint16_t_uint8_t_unbounded, bound,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_map_uint16_t_uint8_t_unbounded), key_flags_anonymous_map_uint16_t_uint8_t_unbounded,
-                                eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_uint16_t_uint8_t_unbounded));
+                    PlainMapSTypeDefn map_sdefn = TypeObjectUtils::build_plain_map_s_type_defn(header_anonymous_map_uint16_t_byte_unbounded, bound,
+                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_map_uint16_t_byte_unbounded), key_flags_anonymous_map_uint16_t_byte_unbounded,
+                                eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_uint16_t_byte_unbounded));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_uint16_t_uint8_t_unbounded", type_ids_var_map_ushort_octet))
+                            TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_uint16_t_byte_unbounded", type_ids_var_map_ushort_octet))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_map_uint16_t_uint8_t_unbounded already registered in TypeObjectRegistry for a different type.");
+                            "anonymous_map_uint16_t_byte_unbounded already registered in TypeObjectRegistry for a different type.");
                     }
                 }
             }
@@ -7368,7 +7368,7 @@ void register_MapLongOctet_type_identifier(
             ReturnCode_t return_code_var_map_long_octet {eprosima::fastdds::dds::RETCODE_OK};
             return_code_var_map_long_octet =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "anonymous_map_int32_t_uint8_t_unbounded", type_ids_var_map_long_octet);
+                "anonymous_map_int32_t_byte_unbounded", type_ids_var_map_long_octet);
 
             if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_map_long_octet)
             {
@@ -7382,12 +7382,12 @@ void register_MapLongOctet_type_identifier(
                             "Map element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                bool element_identifier_anonymous_map_int32_t_uint8_t_unbounded_ec {false};
-                TypeIdentifier* element_identifier_anonymous_map_int32_t_uint8_t_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_long_octet, element_identifier_anonymous_map_int32_t_uint8_t_unbounded_ec))};
-                if (!element_identifier_anonymous_map_int32_t_uint8_t_unbounded_ec)
+                bool element_identifier_anonymous_map_int32_t_byte_unbounded_ec {false};
+                TypeIdentifier* element_identifier_anonymous_map_int32_t_byte_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_long_octet, element_identifier_anonymous_map_int32_t_byte_unbounded_ec))};
+                if (!element_identifier_anonymous_map_int32_t_byte_unbounded_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "anonymous_map_int32_t_uint8_t_unbounded inconsistent element TypeIdentifier.");
+                        "anonymous_map_int32_t_byte_unbounded inconsistent element TypeIdentifier.");
                     return;
                 }
                 return_code_var_map_long_octet =
@@ -7400,38 +7400,38 @@ void register_MapLongOctet_type_identifier(
                             "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                bool key_identifier_anonymous_map_int32_t_uint8_t_unbounded_ec {false};
-                TypeIdentifier* key_identifier_anonymous_map_int32_t_uint8_t_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_long_octet, key_identifier_anonymous_map_int32_t_uint8_t_unbounded_ec))};
-                if (!key_identifier_anonymous_map_int32_t_uint8_t_unbounded_ec)
+                bool key_identifier_anonymous_map_int32_t_byte_unbounded_ec {false};
+                TypeIdentifier* key_identifier_anonymous_map_int32_t_byte_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_long_octet, key_identifier_anonymous_map_int32_t_byte_unbounded_ec))};
+                if (!key_identifier_anonymous_map_int32_t_byte_unbounded_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "anonymous_map_int32_t_uint8_t_unbounded inconsistent key TypeIdentifier.");
+                        "anonymous_map_int32_t_byte_unbounded inconsistent key TypeIdentifier.");
                     return;
                 }
-                EquivalenceKind equiv_kind_anonymous_map_int32_t_uint8_t_unbounded = EK_BOTH;
-                if ((EK_COMPLETE == key_identifier_anonymous_map_int32_t_uint8_t_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_uint8_t_unbounded->_d()) ||
-                        (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_int32_t_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_uint8_t_unbounded->seq_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_int32_t_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_uint8_t_unbounded->seq_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_int32_t_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_uint8_t_unbounded->array_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_int32_t_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_uint8_t_unbounded->array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_uint8_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_uint8_t_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_uint8_t_unbounded->map_sdefn().header().equiv_kind())) ||
-                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_uint8_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_uint8_t_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_uint8_t_unbounded->map_ldefn().header().equiv_kind())))
+                EquivalenceKind equiv_kind_anonymous_map_int32_t_byte_unbounded = EK_BOTH;
+                if ((EK_COMPLETE == key_identifier_anonymous_map_int32_t_byte_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_byte_unbounded->_d()) ||
+                        (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_int32_t_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_byte_unbounded->seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_int32_t_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_byte_unbounded->seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_int32_t_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_byte_unbounded->array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_int32_t_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_byte_unbounded->array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_byte_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_byte_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_byte_unbounded->map_sdefn().header().equiv_kind())) ||
+                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_byte_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_byte_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_byte_unbounded->map_ldefn().header().equiv_kind())))
                 {
-                    equiv_kind_anonymous_map_int32_t_uint8_t_unbounded = EK_COMPLETE;
+                    equiv_kind_anonymous_map_int32_t_byte_unbounded = EK_COMPLETE;
                 }
-                CollectionElementFlag element_flags_anonymous_map_int32_t_uint8_t_unbounded = 0;
-                CollectionElementFlag key_flags_anonymous_map_int32_t_uint8_t_unbounded = 0;
-                PlainCollectionHeader header_anonymous_map_int32_t_uint8_t_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_map_int32_t_uint8_t_unbounded, element_flags_anonymous_map_int32_t_uint8_t_unbounded);
+                CollectionElementFlag element_flags_anonymous_map_int32_t_byte_unbounded = 0;
+                CollectionElementFlag key_flags_anonymous_map_int32_t_byte_unbounded = 0;
+                PlainCollectionHeader header_anonymous_map_int32_t_byte_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_map_int32_t_byte_unbounded, element_flags_anonymous_map_int32_t_byte_unbounded);
                 {
                     SBound bound = 0;
-                    PlainMapSTypeDefn map_sdefn = TypeObjectUtils::build_plain_map_s_type_defn(header_anonymous_map_int32_t_uint8_t_unbounded, bound,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_map_int32_t_uint8_t_unbounded), key_flags_anonymous_map_int32_t_uint8_t_unbounded,
-                                eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_int32_t_uint8_t_unbounded));
+                    PlainMapSTypeDefn map_sdefn = TypeObjectUtils::build_plain_map_s_type_defn(header_anonymous_map_int32_t_byte_unbounded, bound,
+                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_map_int32_t_byte_unbounded), key_flags_anonymous_map_int32_t_byte_unbounded,
+                                eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_int32_t_byte_unbounded));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_int32_t_uint8_t_unbounded", type_ids_var_map_long_octet))
+                            TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_int32_t_byte_unbounded", type_ids_var_map_long_octet))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_map_int32_t_uint8_t_unbounded already registered in TypeObjectRegistry for a different type.");
+                            "anonymous_map_int32_t_byte_unbounded already registered in TypeObjectRegistry for a different type.");
                     }
                 }
             }
@@ -10430,7 +10430,7 @@ void register_MapULongOctet_type_identifier(
             ReturnCode_t return_code_var_map_ulong_octet {eprosima::fastdds::dds::RETCODE_OK};
             return_code_var_map_ulong_octet =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "anonymous_map_uint32_t_uint8_t_unbounded", type_ids_var_map_ulong_octet);
+                "anonymous_map_uint32_t_byte_unbounded", type_ids_var_map_ulong_octet);
 
             if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_map_ulong_octet)
             {
@@ -10444,12 +10444,12 @@ void register_MapULongOctet_type_identifier(
                             "Map element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                bool element_identifier_anonymous_map_uint32_t_uint8_t_unbounded_ec {false};
-                TypeIdentifier* element_identifier_anonymous_map_uint32_t_uint8_t_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_ulong_octet, element_identifier_anonymous_map_uint32_t_uint8_t_unbounded_ec))};
-                if (!element_identifier_anonymous_map_uint32_t_uint8_t_unbounded_ec)
+                bool element_identifier_anonymous_map_uint32_t_byte_unbounded_ec {false};
+                TypeIdentifier* element_identifier_anonymous_map_uint32_t_byte_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_ulong_octet, element_identifier_anonymous_map_uint32_t_byte_unbounded_ec))};
+                if (!element_identifier_anonymous_map_uint32_t_byte_unbounded_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "anonymous_map_uint32_t_uint8_t_unbounded inconsistent element TypeIdentifier.");
+                        "anonymous_map_uint32_t_byte_unbounded inconsistent element TypeIdentifier.");
                     return;
                 }
                 return_code_var_map_ulong_octet =
@@ -10462,38 +10462,38 @@ void register_MapULongOctet_type_identifier(
                             "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                bool key_identifier_anonymous_map_uint32_t_uint8_t_unbounded_ec {false};
-                TypeIdentifier* key_identifier_anonymous_map_uint32_t_uint8_t_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_ulong_octet, key_identifier_anonymous_map_uint32_t_uint8_t_unbounded_ec))};
-                if (!key_identifier_anonymous_map_uint32_t_uint8_t_unbounded_ec)
+                bool key_identifier_anonymous_map_uint32_t_byte_unbounded_ec {false};
+                TypeIdentifier* key_identifier_anonymous_map_uint32_t_byte_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_ulong_octet, key_identifier_anonymous_map_uint32_t_byte_unbounded_ec))};
+                if (!key_identifier_anonymous_map_uint32_t_byte_unbounded_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "anonymous_map_uint32_t_uint8_t_unbounded inconsistent key TypeIdentifier.");
+                        "anonymous_map_uint32_t_byte_unbounded inconsistent key TypeIdentifier.");
                     return;
                 }
-                EquivalenceKind equiv_kind_anonymous_map_uint32_t_uint8_t_unbounded = EK_BOTH;
-                if ((EK_COMPLETE == key_identifier_anonymous_map_uint32_t_uint8_t_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_uint32_t_uint8_t_unbounded->_d()) ||
-                        (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_uint32_t_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint32_t_uint8_t_unbounded->seq_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_uint32_t_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint32_t_uint8_t_unbounded->seq_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_uint32_t_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint32_t_uint8_t_unbounded->array_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_uint32_t_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint32_t_uint8_t_unbounded->array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_uint32_t_uint8_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_uint32_t_uint8_t_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_uint32_t_uint8_t_unbounded->map_sdefn().header().equiv_kind())) ||
-                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_uint32_t_uint8_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_uint32_t_uint8_t_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_uint32_t_uint8_t_unbounded->map_ldefn().header().equiv_kind())))
+                EquivalenceKind equiv_kind_anonymous_map_uint32_t_byte_unbounded = EK_BOTH;
+                if ((EK_COMPLETE == key_identifier_anonymous_map_uint32_t_byte_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_uint32_t_byte_unbounded->_d()) ||
+                        (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_uint32_t_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint32_t_byte_unbounded->seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_uint32_t_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint32_t_byte_unbounded->seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_uint32_t_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint32_t_byte_unbounded->array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_uint32_t_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint32_t_byte_unbounded->array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_uint32_t_byte_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_uint32_t_byte_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_uint32_t_byte_unbounded->map_sdefn().header().equiv_kind())) ||
+                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_uint32_t_byte_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_uint32_t_byte_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_uint32_t_byte_unbounded->map_ldefn().header().equiv_kind())))
                 {
-                    equiv_kind_anonymous_map_uint32_t_uint8_t_unbounded = EK_COMPLETE;
+                    equiv_kind_anonymous_map_uint32_t_byte_unbounded = EK_COMPLETE;
                 }
-                CollectionElementFlag element_flags_anonymous_map_uint32_t_uint8_t_unbounded = 0;
-                CollectionElementFlag key_flags_anonymous_map_uint32_t_uint8_t_unbounded = 0;
-                PlainCollectionHeader header_anonymous_map_uint32_t_uint8_t_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_map_uint32_t_uint8_t_unbounded, element_flags_anonymous_map_uint32_t_uint8_t_unbounded);
+                CollectionElementFlag element_flags_anonymous_map_uint32_t_byte_unbounded = 0;
+                CollectionElementFlag key_flags_anonymous_map_uint32_t_byte_unbounded = 0;
+                PlainCollectionHeader header_anonymous_map_uint32_t_byte_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_map_uint32_t_byte_unbounded, element_flags_anonymous_map_uint32_t_byte_unbounded);
                 {
                     SBound bound = 0;
-                    PlainMapSTypeDefn map_sdefn = TypeObjectUtils::build_plain_map_s_type_defn(header_anonymous_map_uint32_t_uint8_t_unbounded, bound,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_map_uint32_t_uint8_t_unbounded), key_flags_anonymous_map_uint32_t_uint8_t_unbounded,
-                                eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_uint32_t_uint8_t_unbounded));
+                    PlainMapSTypeDefn map_sdefn = TypeObjectUtils::build_plain_map_s_type_defn(header_anonymous_map_uint32_t_byte_unbounded, bound,
+                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_map_uint32_t_byte_unbounded), key_flags_anonymous_map_uint32_t_byte_unbounded,
+                                eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_uint32_t_byte_unbounded));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_uint32_t_uint8_t_unbounded", type_ids_var_map_ulong_octet))
+                            TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_uint32_t_byte_unbounded", type_ids_var_map_ulong_octet))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_map_uint32_t_uint8_t_unbounded already registered in TypeObjectRegistry for a different type.");
+                            "anonymous_map_uint32_t_byte_unbounded already registered in TypeObjectRegistry for a different type.");
                     }
                 }
             }
@@ -13492,7 +13492,7 @@ void register_MapLongLongOctet_type_identifier(
             ReturnCode_t return_code_var_map_longlong_octet {eprosima::fastdds::dds::RETCODE_OK};
             return_code_var_map_longlong_octet =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "anonymous_map_int64_t_uint8_t_unbounded", type_ids_var_map_longlong_octet);
+                "anonymous_map_int64_t_byte_unbounded", type_ids_var_map_longlong_octet);
 
             if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_map_longlong_octet)
             {
@@ -13506,12 +13506,12 @@ void register_MapLongLongOctet_type_identifier(
                             "Map element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                bool element_identifier_anonymous_map_int64_t_uint8_t_unbounded_ec {false};
-                TypeIdentifier* element_identifier_anonymous_map_int64_t_uint8_t_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_longlong_octet, element_identifier_anonymous_map_int64_t_uint8_t_unbounded_ec))};
-                if (!element_identifier_anonymous_map_int64_t_uint8_t_unbounded_ec)
+                bool element_identifier_anonymous_map_int64_t_byte_unbounded_ec {false};
+                TypeIdentifier* element_identifier_anonymous_map_int64_t_byte_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_longlong_octet, element_identifier_anonymous_map_int64_t_byte_unbounded_ec))};
+                if (!element_identifier_anonymous_map_int64_t_byte_unbounded_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "anonymous_map_int64_t_uint8_t_unbounded inconsistent element TypeIdentifier.");
+                        "anonymous_map_int64_t_byte_unbounded inconsistent element TypeIdentifier.");
                     return;
                 }
                 return_code_var_map_longlong_octet =
@@ -13524,38 +13524,38 @@ void register_MapLongLongOctet_type_identifier(
                             "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                bool key_identifier_anonymous_map_int64_t_uint8_t_unbounded_ec {false};
-                TypeIdentifier* key_identifier_anonymous_map_int64_t_uint8_t_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_longlong_octet, key_identifier_anonymous_map_int64_t_uint8_t_unbounded_ec))};
-                if (!key_identifier_anonymous_map_int64_t_uint8_t_unbounded_ec)
+                bool key_identifier_anonymous_map_int64_t_byte_unbounded_ec {false};
+                TypeIdentifier* key_identifier_anonymous_map_int64_t_byte_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_longlong_octet, key_identifier_anonymous_map_int64_t_byte_unbounded_ec))};
+                if (!key_identifier_anonymous_map_int64_t_byte_unbounded_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "anonymous_map_int64_t_uint8_t_unbounded inconsistent key TypeIdentifier.");
+                        "anonymous_map_int64_t_byte_unbounded inconsistent key TypeIdentifier.");
                     return;
                 }
-                EquivalenceKind equiv_kind_anonymous_map_int64_t_uint8_t_unbounded = EK_BOTH;
-                if ((EK_COMPLETE == key_identifier_anonymous_map_int64_t_uint8_t_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_int64_t_uint8_t_unbounded->_d()) ||
-                        (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_int64_t_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int64_t_uint8_t_unbounded->seq_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_int64_t_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int64_t_uint8_t_unbounded->seq_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_int64_t_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int64_t_uint8_t_unbounded->array_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_int64_t_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int64_t_uint8_t_unbounded->array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int64_t_uint8_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int64_t_uint8_t_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int64_t_uint8_t_unbounded->map_sdefn().header().equiv_kind())) ||
-                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int64_t_uint8_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int64_t_uint8_t_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int64_t_uint8_t_unbounded->map_ldefn().header().equiv_kind())))
+                EquivalenceKind equiv_kind_anonymous_map_int64_t_byte_unbounded = EK_BOTH;
+                if ((EK_COMPLETE == key_identifier_anonymous_map_int64_t_byte_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_int64_t_byte_unbounded->_d()) ||
+                        (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_int64_t_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int64_t_byte_unbounded->seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_int64_t_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int64_t_byte_unbounded->seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_int64_t_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int64_t_byte_unbounded->array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_int64_t_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int64_t_byte_unbounded->array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int64_t_byte_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int64_t_byte_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int64_t_byte_unbounded->map_sdefn().header().equiv_kind())) ||
+                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int64_t_byte_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int64_t_byte_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int64_t_byte_unbounded->map_ldefn().header().equiv_kind())))
                 {
-                    equiv_kind_anonymous_map_int64_t_uint8_t_unbounded = EK_COMPLETE;
+                    equiv_kind_anonymous_map_int64_t_byte_unbounded = EK_COMPLETE;
                 }
-                CollectionElementFlag element_flags_anonymous_map_int64_t_uint8_t_unbounded = 0;
-                CollectionElementFlag key_flags_anonymous_map_int64_t_uint8_t_unbounded = 0;
-                PlainCollectionHeader header_anonymous_map_int64_t_uint8_t_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_map_int64_t_uint8_t_unbounded, element_flags_anonymous_map_int64_t_uint8_t_unbounded);
+                CollectionElementFlag element_flags_anonymous_map_int64_t_byte_unbounded = 0;
+                CollectionElementFlag key_flags_anonymous_map_int64_t_byte_unbounded = 0;
+                PlainCollectionHeader header_anonymous_map_int64_t_byte_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_map_int64_t_byte_unbounded, element_flags_anonymous_map_int64_t_byte_unbounded);
                 {
                     SBound bound = 0;
-                    PlainMapSTypeDefn map_sdefn = TypeObjectUtils::build_plain_map_s_type_defn(header_anonymous_map_int64_t_uint8_t_unbounded, bound,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_map_int64_t_uint8_t_unbounded), key_flags_anonymous_map_int64_t_uint8_t_unbounded,
-                                eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_int64_t_uint8_t_unbounded));
+                    PlainMapSTypeDefn map_sdefn = TypeObjectUtils::build_plain_map_s_type_defn(header_anonymous_map_int64_t_byte_unbounded, bound,
+                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_map_int64_t_byte_unbounded), key_flags_anonymous_map_int64_t_byte_unbounded,
+                                eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_int64_t_byte_unbounded));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_int64_t_uint8_t_unbounded", type_ids_var_map_longlong_octet))
+                            TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_int64_t_byte_unbounded", type_ids_var_map_longlong_octet))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_map_int64_t_uint8_t_unbounded already registered in TypeObjectRegistry for a different type.");
+                            "anonymous_map_int64_t_byte_unbounded already registered in TypeObjectRegistry for a different type.");
                     }
                 }
             }
@@ -16554,7 +16554,7 @@ void register_MapULongLongOctet_type_identifier(
             ReturnCode_t return_code_var_map_u_long_long_octet {eprosima::fastdds::dds::RETCODE_OK};
             return_code_var_map_u_long_long_octet =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "anonymous_map_uint64_t_uint8_t_unbounded", type_ids_var_map_u_long_long_octet);
+                "anonymous_map_uint64_t_byte_unbounded", type_ids_var_map_u_long_long_octet);
 
             if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_map_u_long_long_octet)
             {
@@ -16568,12 +16568,12 @@ void register_MapULongLongOctet_type_identifier(
                             "Map element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                bool element_identifier_anonymous_map_uint64_t_uint8_t_unbounded_ec {false};
-                TypeIdentifier* element_identifier_anonymous_map_uint64_t_uint8_t_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_u_long_long_octet, element_identifier_anonymous_map_uint64_t_uint8_t_unbounded_ec))};
-                if (!element_identifier_anonymous_map_uint64_t_uint8_t_unbounded_ec)
+                bool element_identifier_anonymous_map_uint64_t_byte_unbounded_ec {false};
+                TypeIdentifier* element_identifier_anonymous_map_uint64_t_byte_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_u_long_long_octet, element_identifier_anonymous_map_uint64_t_byte_unbounded_ec))};
+                if (!element_identifier_anonymous_map_uint64_t_byte_unbounded_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "anonymous_map_uint64_t_uint8_t_unbounded inconsistent element TypeIdentifier.");
+                        "anonymous_map_uint64_t_byte_unbounded inconsistent element TypeIdentifier.");
                     return;
                 }
                 return_code_var_map_u_long_long_octet =
@@ -16586,38 +16586,38 @@ void register_MapULongLongOctet_type_identifier(
                             "Map key TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                bool key_identifier_anonymous_map_uint64_t_uint8_t_unbounded_ec {false};
-                TypeIdentifier* key_identifier_anonymous_map_uint64_t_uint8_t_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_u_long_long_octet, key_identifier_anonymous_map_uint64_t_uint8_t_unbounded_ec))};
-                if (!key_identifier_anonymous_map_uint64_t_uint8_t_unbounded_ec)
+                bool key_identifier_anonymous_map_uint64_t_byte_unbounded_ec {false};
+                TypeIdentifier* key_identifier_anonymous_map_uint64_t_byte_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_u_long_long_octet, key_identifier_anonymous_map_uint64_t_byte_unbounded_ec))};
+                if (!key_identifier_anonymous_map_uint64_t_byte_unbounded_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "anonymous_map_uint64_t_uint8_t_unbounded inconsistent key TypeIdentifier.");
+                        "anonymous_map_uint64_t_byte_unbounded inconsistent key TypeIdentifier.");
                     return;
                 }
-                EquivalenceKind equiv_kind_anonymous_map_uint64_t_uint8_t_unbounded = EK_BOTH;
-                if ((EK_COMPLETE == key_identifier_anonymous_map_uint64_t_uint8_t_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_uint64_t_uint8_t_unbounded->_d()) ||
-                        (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_uint64_t_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint64_t_uint8_t_unbounded->seq_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_uint64_t_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint64_t_uint8_t_unbounded->seq_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_uint64_t_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint64_t_uint8_t_unbounded->array_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_uint64_t_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint64_t_uint8_t_unbounded->array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_uint64_t_uint8_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_uint64_t_uint8_t_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_uint64_t_uint8_t_unbounded->map_sdefn().header().equiv_kind())) ||
-                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_uint64_t_uint8_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_uint64_t_uint8_t_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_uint64_t_uint8_t_unbounded->map_ldefn().header().equiv_kind())))
+                EquivalenceKind equiv_kind_anonymous_map_uint64_t_byte_unbounded = EK_BOTH;
+                if ((EK_COMPLETE == key_identifier_anonymous_map_uint64_t_byte_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_uint64_t_byte_unbounded->_d()) ||
+                        (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_uint64_t_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint64_t_byte_unbounded->seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_uint64_t_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint64_t_byte_unbounded->seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_uint64_t_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint64_t_byte_unbounded->array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_uint64_t_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint64_t_byte_unbounded->array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_uint64_t_byte_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_uint64_t_byte_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_uint64_t_byte_unbounded->map_sdefn().header().equiv_kind())) ||
+                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_uint64_t_byte_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_uint64_t_byte_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_uint64_t_byte_unbounded->map_ldefn().header().equiv_kind())))
                 {
-                    equiv_kind_anonymous_map_uint64_t_uint8_t_unbounded = EK_COMPLETE;
+                    equiv_kind_anonymous_map_uint64_t_byte_unbounded = EK_COMPLETE;
                 }
-                CollectionElementFlag element_flags_anonymous_map_uint64_t_uint8_t_unbounded = 0;
-                CollectionElementFlag key_flags_anonymous_map_uint64_t_uint8_t_unbounded = 0;
-                PlainCollectionHeader header_anonymous_map_uint64_t_uint8_t_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_map_uint64_t_uint8_t_unbounded, element_flags_anonymous_map_uint64_t_uint8_t_unbounded);
+                CollectionElementFlag element_flags_anonymous_map_uint64_t_byte_unbounded = 0;
+                CollectionElementFlag key_flags_anonymous_map_uint64_t_byte_unbounded = 0;
+                PlainCollectionHeader header_anonymous_map_uint64_t_byte_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_map_uint64_t_byte_unbounded, element_flags_anonymous_map_uint64_t_byte_unbounded);
                 {
                     SBound bound = 0;
-                    PlainMapSTypeDefn map_sdefn = TypeObjectUtils::build_plain_map_s_type_defn(header_anonymous_map_uint64_t_uint8_t_unbounded, bound,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_map_uint64_t_uint8_t_unbounded), key_flags_anonymous_map_uint64_t_uint8_t_unbounded,
-                                eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_uint64_t_uint8_t_unbounded));
+                    PlainMapSTypeDefn map_sdefn = TypeObjectUtils::build_plain_map_s_type_defn(header_anonymous_map_uint64_t_byte_unbounded, bound,
+                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_map_uint64_t_byte_unbounded), key_flags_anonymous_map_uint64_t_byte_unbounded,
+                                eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_uint64_t_byte_unbounded));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_uint64_t_uint8_t_unbounded", type_ids_var_map_u_long_long_octet))
+                            TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_uint64_t_byte_unbounded", type_ids_var_map_u_long_long_octet))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_map_uint64_t_uint8_t_unbounded already registered in TypeObjectRegistry for a different type.");
+                            "anonymous_map_uint64_t_byte_unbounded already registered in TypeObjectRegistry for a different type.");
                     }
                 }
             }
@@ -19696,7 +19696,7 @@ void register_MapStringOctet_type_identifier(
             ReturnCode_t return_code_var_map_string_octet {eprosima::fastdds::dds::RETCODE_OK};
             return_code_var_map_string_octet =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "anonymous_map_anonymous_string_unbounded_uint8_t_unbounded", type_ids_var_map_string_octet);
+                "anonymous_map_anonymous_string_unbounded_byte_unbounded", type_ids_var_map_string_octet);
 
             if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_map_string_octet)
             {
@@ -19710,12 +19710,12 @@ void register_MapStringOctet_type_identifier(
                             "Map element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                bool element_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded_ec {false};
-                TypeIdentifier* element_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_string_octet, element_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded_ec))};
-                if (!element_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded_ec)
+                bool element_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded_ec {false};
+                TypeIdentifier* element_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_string_octet, element_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded_ec))};
+                if (!element_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "anonymous_map_anonymous_string_unbounded_uint8_t_unbounded inconsistent element TypeIdentifier.");
+                        "anonymous_map_anonymous_string_unbounded_byte_unbounded inconsistent element TypeIdentifier.");
                     return;
                 }
                 return_code_var_map_string_octet =
@@ -19736,38 +19736,38 @@ void register_MapStringOctet_type_identifier(
                         }
                     }
                 }
-                bool key_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded_ec {false};
-                TypeIdentifier* key_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_string_octet, key_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded_ec))};
-                if (!key_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded_ec)
+                bool key_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded_ec {false};
+                TypeIdentifier* key_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_string_octet, key_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded_ec))};
+                if (!key_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "anonymous_map_anonymous_string_unbounded_uint8_t_unbounded inconsistent key TypeIdentifier.");
+                        "anonymous_map_anonymous_string_unbounded_byte_unbounded inconsistent key TypeIdentifier.");
                     return;
                 }
-                EquivalenceKind equiv_kind_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded = EK_BOTH;
-                if ((EK_COMPLETE == key_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded->_d()) ||
-                        (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded->seq_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded->seq_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded->array_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded->array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded->map_sdefn().header().equiv_kind())) ||
-                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded->map_ldefn().header().equiv_kind())))
+                EquivalenceKind equiv_kind_anonymous_map_anonymous_string_unbounded_byte_unbounded = EK_BOTH;
+                if ((EK_COMPLETE == key_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded->_d()) ||
+                        (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded->seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded->seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded->array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded->array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded->map_sdefn().header().equiv_kind())) ||
+                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded->map_ldefn().header().equiv_kind())))
                 {
-                    equiv_kind_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded = EK_COMPLETE;
+                    equiv_kind_anonymous_map_anonymous_string_unbounded_byte_unbounded = EK_COMPLETE;
                 }
-                CollectionElementFlag element_flags_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded = 0;
-                CollectionElementFlag key_flags_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded = 0;
-                PlainCollectionHeader header_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded, element_flags_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded);
+                CollectionElementFlag element_flags_anonymous_map_anonymous_string_unbounded_byte_unbounded = 0;
+                CollectionElementFlag key_flags_anonymous_map_anonymous_string_unbounded_byte_unbounded = 0;
+                PlainCollectionHeader header_anonymous_map_anonymous_string_unbounded_byte_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_map_anonymous_string_unbounded_byte_unbounded, element_flags_anonymous_map_anonymous_string_unbounded_byte_unbounded);
                 {
                     SBound bound = 0;
-                    PlainMapSTypeDefn map_sdefn = TypeObjectUtils::build_plain_map_s_type_defn(header_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded, bound,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded), key_flags_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded,
-                                eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_anonymous_string_unbounded_uint8_t_unbounded));
+                    PlainMapSTypeDefn map_sdefn = TypeObjectUtils::build_plain_map_s_type_defn(header_anonymous_map_anonymous_string_unbounded_byte_unbounded, bound,
+                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded), key_flags_anonymous_map_anonymous_string_unbounded_byte_unbounded,
+                                eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_anonymous_string_unbounded_byte_unbounded));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_anonymous_string_unbounded_uint8_t_unbounded", type_ids_var_map_string_octet))
+                            TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_anonymous_string_unbounded_byte_unbounded", type_ids_var_map_string_octet))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_map_anonymous_string_unbounded_uint8_t_unbounded already registered in TypeObjectRegistry for a different type.");
+                            "anonymous_map_anonymous_string_unbounded_byte_unbounded already registered in TypeObjectRegistry for a different type.");
                     }
                 }
             }
@@ -22966,7 +22966,7 @@ void register_MapWStringOctet_type_identifier(
             ReturnCode_t return_code_var_map_wstring_octet {eprosima::fastdds::dds::RETCODE_OK};
             return_code_var_map_wstring_octet =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded", type_ids_var_map_wstring_octet);
+                "anonymous_map_anonymous_wstring_unbounded_byte_unbounded", type_ids_var_map_wstring_octet);
 
             if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_map_wstring_octet)
             {
@@ -22980,12 +22980,12 @@ void register_MapWStringOctet_type_identifier(
                             "Map element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                bool element_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded_ec {false};
-                TypeIdentifier* element_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_wstring_octet, element_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded_ec))};
-                if (!element_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded_ec)
+                bool element_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded_ec {false};
+                TypeIdentifier* element_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_wstring_octet, element_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded_ec))};
+                if (!element_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded inconsistent element TypeIdentifier.");
+                        "anonymous_map_anonymous_wstring_unbounded_byte_unbounded inconsistent element TypeIdentifier.");
                     return;
                 }
                 return_code_var_map_wstring_octet =
@@ -23006,38 +23006,38 @@ void register_MapWStringOctet_type_identifier(
                         }
                     }
                 }
-                bool key_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded_ec {false};
-                TypeIdentifier* key_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_wstring_octet, key_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded_ec))};
-                if (!key_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded_ec)
+                bool key_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded_ec {false};
+                TypeIdentifier* key_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_wstring_octet, key_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded_ec))};
+                if (!key_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded inconsistent key TypeIdentifier.");
+                        "anonymous_map_anonymous_wstring_unbounded_byte_unbounded inconsistent key TypeIdentifier.");
                     return;
                 }
-                EquivalenceKind equiv_kind_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded = EK_BOTH;
-                if ((EK_COMPLETE == key_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded->_d()) ||
-                        (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded->seq_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded->seq_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded->array_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded->array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded->map_sdefn().header().equiv_kind())) ||
-                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded->map_ldefn().header().equiv_kind())))
+                EquivalenceKind equiv_kind_anonymous_map_anonymous_wstring_unbounded_byte_unbounded = EK_BOTH;
+                if ((EK_COMPLETE == key_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded->_d()) ||
+                        (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded->seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded->seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded->array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded->array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded->map_sdefn().header().equiv_kind())) ||
+                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded->map_ldefn().header().equiv_kind())))
                 {
-                    equiv_kind_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded = EK_COMPLETE;
+                    equiv_kind_anonymous_map_anonymous_wstring_unbounded_byte_unbounded = EK_COMPLETE;
                 }
-                CollectionElementFlag element_flags_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded = 0;
-                CollectionElementFlag key_flags_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded = 0;
-                PlainCollectionHeader header_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded, element_flags_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded);
+                CollectionElementFlag element_flags_anonymous_map_anonymous_wstring_unbounded_byte_unbounded = 0;
+                CollectionElementFlag key_flags_anonymous_map_anonymous_wstring_unbounded_byte_unbounded = 0;
+                PlainCollectionHeader header_anonymous_map_anonymous_wstring_unbounded_byte_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_map_anonymous_wstring_unbounded_byte_unbounded, element_flags_anonymous_map_anonymous_wstring_unbounded_byte_unbounded);
                 {
                     SBound bound = 0;
-                    PlainMapSTypeDefn map_sdefn = TypeObjectUtils::build_plain_map_s_type_defn(header_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded, bound,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded), key_flags_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded,
-                                eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded));
+                    PlainMapSTypeDefn map_sdefn = TypeObjectUtils::build_plain_map_s_type_defn(header_anonymous_map_anonymous_wstring_unbounded_byte_unbounded, bound,
+                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded), key_flags_anonymous_map_anonymous_wstring_unbounded_byte_unbounded,
+                                eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_anonymous_wstring_unbounded_byte_unbounded));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded", type_ids_var_map_wstring_octet))
+                            TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_anonymous_wstring_unbounded_byte_unbounded", type_ids_var_map_wstring_octet))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_map_anonymous_wstring_unbounded_uint8_t_unbounded already registered in TypeObjectRegistry for a different type.");
+                            "anonymous_map_anonymous_wstring_unbounded_byte_unbounded already registered in TypeObjectRegistry for a different type.");
                     }
                 }
             }
@@ -26136,7 +26136,7 @@ void register_MapInnerAliasBoundedStringHelperOctet_type_identifier(
             ReturnCode_t return_code_var_map_inneraliasboundedstringhelper_octet {eprosima::fastdds::dds::RETCODE_OK};
             return_code_var_map_inneraliasboundedstringhelper_octet =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "anonymous_map_anonymous_string_10_uint8_t_unbounded", type_ids_var_map_inneraliasboundedstringhelper_octet);
+                "anonymous_map_anonymous_string_10_byte_unbounded", type_ids_var_map_inneraliasboundedstringhelper_octet);
 
             if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_map_inneraliasboundedstringhelper_octet)
             {
@@ -26150,12 +26150,12 @@ void register_MapInnerAliasBoundedStringHelperOctet_type_identifier(
                             "Map element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                bool element_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded_ec {false};
-                TypeIdentifier* element_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_inneraliasboundedstringhelper_octet, element_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded_ec))};
-                if (!element_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded_ec)
+                bool element_identifier_anonymous_map_anonymous_string_10_byte_unbounded_ec {false};
+                TypeIdentifier* element_identifier_anonymous_map_anonymous_string_10_byte_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_inneraliasboundedstringhelper_octet, element_identifier_anonymous_map_anonymous_string_10_byte_unbounded_ec))};
+                if (!element_identifier_anonymous_map_anonymous_string_10_byte_unbounded_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "anonymous_map_anonymous_string_10_uint8_t_unbounded inconsistent element TypeIdentifier.");
+                        "anonymous_map_anonymous_string_10_byte_unbounded inconsistent element TypeIdentifier.");
                     return;
                 }
                 return_code_var_map_inneraliasboundedstringhelper_octet =
@@ -26166,38 +26166,38 @@ void register_MapInnerAliasBoundedStringHelperOctet_type_identifier(
                 {
                 ::register_Inner_alias_bounded_string_helper_type_identifier(type_ids_var_map_inneraliasboundedstringhelper_octet);
                 }
-                bool key_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded_ec {false};
-                TypeIdentifier* key_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_inneraliasboundedstringhelper_octet, key_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded_ec))};
-                if (!key_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded_ec)
+                bool key_identifier_anonymous_map_anonymous_string_10_byte_unbounded_ec {false};
+                TypeIdentifier* key_identifier_anonymous_map_anonymous_string_10_byte_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_inneraliasboundedstringhelper_octet, key_identifier_anonymous_map_anonymous_string_10_byte_unbounded_ec))};
+                if (!key_identifier_anonymous_map_anonymous_string_10_byte_unbounded_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "anonymous_map_anonymous_string_10_uint8_t_unbounded inconsistent key TypeIdentifier.");
+                        "anonymous_map_anonymous_string_10_byte_unbounded inconsistent key TypeIdentifier.");
                     return;
                 }
-                EquivalenceKind equiv_kind_anonymous_map_anonymous_string_10_uint8_t_unbounded = EK_BOTH;
-                if ((EK_COMPLETE == key_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded->_d()) ||
-                        (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded->seq_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded->seq_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded->array_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded->array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded->map_sdefn().header().equiv_kind())) ||
-                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded->map_ldefn().header().equiv_kind())))
+                EquivalenceKind equiv_kind_anonymous_map_anonymous_string_10_byte_unbounded = EK_BOTH;
+                if ((EK_COMPLETE == key_identifier_anonymous_map_anonymous_string_10_byte_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_10_byte_unbounded->_d()) ||
+                        (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_anonymous_string_10_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_10_byte_unbounded->seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_anonymous_string_10_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_10_byte_unbounded->seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_anonymous_string_10_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_10_byte_unbounded->array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_anonymous_string_10_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_10_byte_unbounded->array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_anonymous_string_10_byte_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_10_byte_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_10_byte_unbounded->map_sdefn().header().equiv_kind())) ||
+                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_anonymous_string_10_byte_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_10_byte_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_string_10_byte_unbounded->map_ldefn().header().equiv_kind())))
                 {
-                    equiv_kind_anonymous_map_anonymous_string_10_uint8_t_unbounded = EK_COMPLETE;
+                    equiv_kind_anonymous_map_anonymous_string_10_byte_unbounded = EK_COMPLETE;
                 }
-                CollectionElementFlag element_flags_anonymous_map_anonymous_string_10_uint8_t_unbounded = 0;
-                CollectionElementFlag key_flags_anonymous_map_anonymous_string_10_uint8_t_unbounded = 0;
-                PlainCollectionHeader header_anonymous_map_anonymous_string_10_uint8_t_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_map_anonymous_string_10_uint8_t_unbounded, element_flags_anonymous_map_anonymous_string_10_uint8_t_unbounded);
+                CollectionElementFlag element_flags_anonymous_map_anonymous_string_10_byte_unbounded = 0;
+                CollectionElementFlag key_flags_anonymous_map_anonymous_string_10_byte_unbounded = 0;
+                PlainCollectionHeader header_anonymous_map_anonymous_string_10_byte_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_map_anonymous_string_10_byte_unbounded, element_flags_anonymous_map_anonymous_string_10_byte_unbounded);
                 {
                     SBound bound = 0;
-                    PlainMapSTypeDefn map_sdefn = TypeObjectUtils::build_plain_map_s_type_defn(header_anonymous_map_anonymous_string_10_uint8_t_unbounded, bound,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded), key_flags_anonymous_map_anonymous_string_10_uint8_t_unbounded,
-                                eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_anonymous_string_10_uint8_t_unbounded));
+                    PlainMapSTypeDefn map_sdefn = TypeObjectUtils::build_plain_map_s_type_defn(header_anonymous_map_anonymous_string_10_byte_unbounded, bound,
+                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_map_anonymous_string_10_byte_unbounded), key_flags_anonymous_map_anonymous_string_10_byte_unbounded,
+                                eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_anonymous_string_10_byte_unbounded));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_anonymous_string_10_uint8_t_unbounded", type_ids_var_map_inneraliasboundedstringhelper_octet))
+                            TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_anonymous_string_10_byte_unbounded", type_ids_var_map_inneraliasboundedstringhelper_octet))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_map_anonymous_string_10_uint8_t_unbounded already registered in TypeObjectRegistry for a different type.");
+                            "anonymous_map_anonymous_string_10_byte_unbounded already registered in TypeObjectRegistry for a different type.");
                     }
                 }
             }
@@ -29146,7 +29146,7 @@ void register_MapInnerAliasBoundedWStringHelperOctet_type_identifier(
             ReturnCode_t return_code_var_map_inneraliasboundedwstringhelper_octet {eprosima::fastdds::dds::RETCODE_OK};
             return_code_var_map_inneraliasboundedwstringhelper_octet =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "anonymous_map_anonymous_wstring_10_uint8_t_unbounded", type_ids_var_map_inneraliasboundedwstringhelper_octet);
+                "anonymous_map_anonymous_wstring_10_byte_unbounded", type_ids_var_map_inneraliasboundedwstringhelper_octet);
 
             if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_map_inneraliasboundedwstringhelper_octet)
             {
@@ -29160,12 +29160,12 @@ void register_MapInnerAliasBoundedWStringHelperOctet_type_identifier(
                             "Map element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                bool element_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded_ec {false};
-                TypeIdentifier* element_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_inneraliasboundedwstringhelper_octet, element_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded_ec))};
-                if (!element_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded_ec)
+                bool element_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded_ec {false};
+                TypeIdentifier* element_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_inneraliasboundedwstringhelper_octet, element_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded_ec))};
+                if (!element_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "anonymous_map_anonymous_wstring_10_uint8_t_unbounded inconsistent element TypeIdentifier.");
+                        "anonymous_map_anonymous_wstring_10_byte_unbounded inconsistent element TypeIdentifier.");
                     return;
                 }
                 return_code_var_map_inneraliasboundedwstringhelper_octet =
@@ -29176,38 +29176,38 @@ void register_MapInnerAliasBoundedWStringHelperOctet_type_identifier(
                 {
                 ::register_Inner_alias_bounded_wstring_helper_type_identifier(type_ids_var_map_inneraliasboundedwstringhelper_octet);
                 }
-                bool key_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded_ec {false};
-                TypeIdentifier* key_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_inneraliasboundedwstringhelper_octet, key_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded_ec))};
-                if (!key_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded_ec)
+                bool key_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded_ec {false};
+                TypeIdentifier* key_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_map_inneraliasboundedwstringhelper_octet, key_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded_ec))};
+                if (!key_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "anonymous_map_anonymous_wstring_10_uint8_t_unbounded inconsistent key TypeIdentifier.");
+                        "anonymous_map_anonymous_wstring_10_byte_unbounded inconsistent key TypeIdentifier.");
                     return;
                 }
-                EquivalenceKind equiv_kind_anonymous_map_anonymous_wstring_10_uint8_t_unbounded = EK_BOTH;
-                if ((EK_COMPLETE == key_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded->_d()) ||
-                        (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded->seq_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded->seq_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded->array_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded->array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded->map_sdefn().header().equiv_kind())) ||
-                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded->map_ldefn().header().equiv_kind())))
+                EquivalenceKind equiv_kind_anonymous_map_anonymous_wstring_10_byte_unbounded = EK_BOTH;
+                if ((EK_COMPLETE == key_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded->_d()) ||
+                        (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded->seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded->seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded->array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded->array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded->map_sdefn().header().equiv_kind())) ||
+                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded->map_ldefn().header().equiv_kind())))
                 {
-                    equiv_kind_anonymous_map_anonymous_wstring_10_uint8_t_unbounded = EK_COMPLETE;
+                    equiv_kind_anonymous_map_anonymous_wstring_10_byte_unbounded = EK_COMPLETE;
                 }
-                CollectionElementFlag element_flags_anonymous_map_anonymous_wstring_10_uint8_t_unbounded = 0;
-                CollectionElementFlag key_flags_anonymous_map_anonymous_wstring_10_uint8_t_unbounded = 0;
-                PlainCollectionHeader header_anonymous_map_anonymous_wstring_10_uint8_t_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_map_anonymous_wstring_10_uint8_t_unbounded, element_flags_anonymous_map_anonymous_wstring_10_uint8_t_unbounded);
+                CollectionElementFlag element_flags_anonymous_map_anonymous_wstring_10_byte_unbounded = 0;
+                CollectionElementFlag key_flags_anonymous_map_anonymous_wstring_10_byte_unbounded = 0;
+                PlainCollectionHeader header_anonymous_map_anonymous_wstring_10_byte_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_map_anonymous_wstring_10_byte_unbounded, element_flags_anonymous_map_anonymous_wstring_10_byte_unbounded);
                 {
                     SBound bound = 0;
-                    PlainMapSTypeDefn map_sdefn = TypeObjectUtils::build_plain_map_s_type_defn(header_anonymous_map_anonymous_wstring_10_uint8_t_unbounded, bound,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded), key_flags_anonymous_map_anonymous_wstring_10_uint8_t_unbounded,
-                                eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_anonymous_wstring_10_uint8_t_unbounded));
+                    PlainMapSTypeDefn map_sdefn = TypeObjectUtils::build_plain_map_s_type_defn(header_anonymous_map_anonymous_wstring_10_byte_unbounded, bound,
+                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded), key_flags_anonymous_map_anonymous_wstring_10_byte_unbounded,
+                                eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_anonymous_wstring_10_byte_unbounded));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_anonymous_wstring_10_uint8_t_unbounded", type_ids_var_map_inneraliasboundedwstringhelper_octet))
+                            TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_anonymous_wstring_10_byte_unbounded", type_ids_var_map_inneraliasboundedwstringhelper_octet))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_map_anonymous_wstring_10_uint8_t_unbounded already registered in TypeObjectRegistry for a different type.");
+                            "anonymous_map_anonymous_wstring_10_byte_unbounded already registered in TypeObjectRegistry for a different type.");
                     }
                 }
             }

@@ -20,12 +20,14 @@
 
 #include <fastdds/rtps/builtin/data/TopicDescription.hpp>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/publisher/DataWriterHistory.hpp>
 #include <fastdds/statistics/topic_names.hpp>
 
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/history/PoolConfig.h>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
+#include <rtps/RTPSDomainImpl.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
 #include <utils/TimeConversion.hpp>
 
@@ -493,6 +495,20 @@ bool MonitorService::create_endpoint()
         TopicDescription topic_desc;
         topic_desc.topic_name = MONITOR_SERVICE_TOPIC;
         topic_desc.type_name = type_.get_name();
+
+        //! Register and propagate type object representation
+        type_.register_type_object_representation();
+        fastdds::dds::xtypes::TypeInformation type_info;
+        if (fastdds::dds::RETCODE_OK ==
+                RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
+                    type_.type_identifiers(), type_info))
+        {
+            topic_desc.type_information = type_info;
+        }
+        else
+        {
+            EPROSIMA_LOG_WARNING(MONITOR_SERVICE, "Failed to retrieve type information for " << MONITOR_SERVICE_TOPIC);
+        }
 
         endpoint_registrator_(status_writer_, topic_desc, wqos);
     }

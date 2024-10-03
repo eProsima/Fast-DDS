@@ -100,6 +100,7 @@ protected:
      */
     void check_get_types_reply(
             const SampleIdentity& request_id,
+            const xtypes::TypeIdentfierWithSize& type_id,
             const TypeLookup_getTypes_Out& reply,
             SampleIdentity related_request);
 
@@ -114,6 +115,7 @@ protected:
      */
     void check_get_type_dependencies_reply(
             const SampleIdentity& request_id,
+            const xtypes::TypeIdentfierWithSize& type_id,
             const fastdds::rtps::GUID_t type_server,
             const TypeLookup_getTypeDependencies_Out& reply);
 

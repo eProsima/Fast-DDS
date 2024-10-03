@@ -18812,6 +18812,353 @@ private:
 
     std::function<void()> member_destructor_;
 };
+/*!
+ * @brief This class represents the union DefaultAnnotationExternalValue defined by the user in the IDL file.
+ * @ingroup unions
+ */
+class DefaultAnnotationExternalValue
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport DefaultAnnotationExternalValue()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~DefaultAnnotationExternalValue()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object DefaultAnnotationExternalValue that will be copied.
+     */
+    eProsima_user_DllExport DefaultAnnotationExternalValue(
+            const DefaultAnnotationExternalValue& x)
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            a_() = x.m_a;
+                            break;
+
+                        case 0x00000002:
+                            b_() = x.m_b;
+                            break;
+
+        }
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object DefaultAnnotationExternalValue that will be copied.
+     */
+    eProsima_user_DllExport DefaultAnnotationExternalValue(
+            DefaultAnnotationExternalValue&& x) noexcept
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            a_() = std::move(x.m_a);
+                            break;
+
+                        case 0x00000002:
+                            b_() = std::move(x.m_b);
+                            break;
+
+        }
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object DefaultAnnotationExternalValue that will be copied.
+     */
+    eProsima_user_DllExport DefaultAnnotationExternalValue& operator =(
+            const DefaultAnnotationExternalValue& x)
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            a_() = x.m_a;
+                            break;
+
+                        case 0x00000002:
+                            b_() = x.m_b;
+                            break;
+
+        }
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object DefaultAnnotationExternalValue that will be copied.
+     */
+    eProsima_user_DllExport DefaultAnnotationExternalValue& operator =(
+            DefaultAnnotationExternalValue&& x) noexcept
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            a_() = std::move(x.m_a);
+                            break;
+
+                        case 0x00000002:
+                            b_() = std::move(x.m_b);
+                            break;
+
+        }
+
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x DefaultAnnotationExternalValue object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const DefaultAnnotationExternalValue& x) const
+    {
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
+        {
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_a == x.m_a);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_b == x.m_b);
+                                    break;
+
+            }
+        }
+
+        return ret_value;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x DefaultAnnotationExternalValue object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const DefaultAnnotationExternalValue& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function sets the discriminator value.
+     * @param __d New value for the discriminator.
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
+     */
+    eProsima_user_DllExport void _d(
+            int32_t __d)
+    {
+        bool valid_discriminator = false;
+
+        switch (__d)
+        {
+                        case 0:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
+
+                        case 1:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
+
+        }
+
+        if (!valid_discriminator)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
+        }
+
+        m__d = __d;
+    }
+
+    /*!
+     * @brief This function returns the value of the discriminator.
+     * @return Value of the discriminator
+     */
+    eProsima_user_DllExport int32_t _d() const
+    {
+        return m__d;
+    }
+
+    /*!
+     * @brief This function sets a value in member a
+     * @param _a New value for member a
+     */
+    eProsima_user_DllExport void a(
+            uint8_t _a)
+    {
+        a_() = _a;
+        m__d = 0;
+    }
+
+    /*!
+     * @brief This function returns the value of member a
+     * @return Value of member a
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport uint8_t a() const
+    {
+        if (0x00000001 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_a;
+    }
+
+    /*!
+     * @brief This function returns a reference to member a
+     * @return Reference to member a
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport uint8_t& a()
+    {
+        if (0x00000001 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_a;
+    }
+
+
+    /*!
+     * @brief This function sets a value in member b
+     * @param _b New value for member b
+     */
+    eProsima_user_DllExport void b(
+            int16_t _b)
+    {
+        b_() = _b;
+        m__d = 1;
+    }
+
+    /*!
+     * @brief This function returns the value of member b
+     * @return Value of member b
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport int16_t b() const
+    {
+        if (0x00000002 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_b;
+    }
+
+    /*!
+     * @brief This function returns a reference to member b
+     * @return Reference to member b
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport int16_t& b()
+    {
+        if (0x00000002 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_b;
+    }
+
+
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
+
+private:
+
+            uint8_t& a_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_a = {0};
+
+                }
+
+                return m_a;
+            }
+
+            int16_t& b_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_b = {0};
+
+                }
+
+                return m_b;
+            }
+
+
+    int32_t m__d {2};
+
+    union
+    {
+        uint8_t m_a;
+        int16_t m_b;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
+};
 
 #endif // _FAST_DDS_GENERATED_UNIONS_HPP_
 

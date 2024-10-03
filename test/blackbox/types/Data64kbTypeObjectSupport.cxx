@@ -63,7 +63,7 @@ void register_Data64kb_type_identifier(
             ReturnCode_t return_code_data {eprosima::fastdds::dds::RETCODE_OK};
             return_code_data =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "anonymous_sequence_uint8_t_63996", type_ids_data);
+                "anonymous_sequence_byte_63996", type_ids_data);
 
             if (eprosima::fastdds::dds::RETCODE_OK != return_code_data)
             {
@@ -77,29 +77,29 @@ void register_Data64kb_type_identifier(
                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                bool element_identifier_anonymous_sequence_uint8_t_63996_ec {false};
-                TypeIdentifier* element_identifier_anonymous_sequence_uint8_t_63996 {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_data, element_identifier_anonymous_sequence_uint8_t_63996_ec))};
-                if (!element_identifier_anonymous_sequence_uint8_t_63996_ec)
+                bool element_identifier_anonymous_sequence_byte_63996_ec {false};
+                TypeIdentifier* element_identifier_anonymous_sequence_byte_63996 {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_data, element_identifier_anonymous_sequence_byte_63996_ec))};
+                if (!element_identifier_anonymous_sequence_byte_63996_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Sequence element TypeIdentifier inconsistent.");
                     return;
                 }
-                EquivalenceKind equiv_kind_anonymous_sequence_uint8_t_63996 = EK_COMPLETE;
+                EquivalenceKind equiv_kind_anonymous_sequence_byte_63996 = EK_COMPLETE;
                 if (TK_NONE == type_ids_data.type_identifier2()._d())
                 {
-                    equiv_kind_anonymous_sequence_uint8_t_63996 = EK_BOTH;
+                    equiv_kind_anonymous_sequence_byte_63996 = EK_BOTH;
                 }
-                CollectionElementFlag element_flags_anonymous_sequence_uint8_t_63996 = 0;
-                PlainCollectionHeader header_anonymous_sequence_uint8_t_63996 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_sequence_uint8_t_63996, element_flags_anonymous_sequence_uint8_t_63996);
+                CollectionElementFlag element_flags_anonymous_sequence_byte_63996 = 0;
+                PlainCollectionHeader header_anonymous_sequence_byte_63996 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_sequence_byte_63996, element_flags_anonymous_sequence_byte_63996);
                 {
                     LBound bound = 63996;
-                    PlainSequenceLElemDefn seq_ldefn = TypeObjectUtils::build_plain_sequence_l_elem_defn(header_anonymous_sequence_uint8_t_63996, bound,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_uint8_t_63996));
+                    PlainSequenceLElemDefn seq_ldefn = TypeObjectUtils::build_plain_sequence_l_elem_defn(header_anonymous_sequence_byte_63996, bound,
+                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_byte_63996));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_sequence_type_identifier(seq_ldefn, "anonymous_sequence_uint8_t_63996", type_ids_data))
+                            TypeObjectUtils::build_and_register_l_sequence_type_identifier(seq_ldefn, "anonymous_sequence_byte_63996", type_ids_data))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_sequence_uint8_t_63996 already registered in TypeObjectRegistry for a different type.");
+                            "anonymous_sequence_byte_63996 already registered in TypeObjectRegistry for a different type.");
                     }
                 }
             }

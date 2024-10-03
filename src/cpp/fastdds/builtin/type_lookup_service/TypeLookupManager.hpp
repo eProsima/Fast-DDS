@@ -105,9 +105,9 @@ namespace builtin {
 const SampleIdentity INVALID_SAMPLE_IDENTITY;
 
 using AsyncGetTypeWriterCallback = std::function<
-    void (eprosima::fastdds::rtps::WriterProxyData*)>;
+    void (eprosima::fastdds::dds::ReturnCode_t, eprosima::fastdds::rtps::WriterProxyData*)>;
 using AsyncGetTypeReaderCallback = std::function<
-    void (eprosima::fastdds::rtps::ReaderProxyData*)>;
+    void (eprosima::fastdds::dds::ReturnCode_t, eprosima::fastdds::rtps::ReaderProxyData*)>;
 
 /**
  * Class TypeLookupManager that implements the TypeLookup Service described in the DDS-XTYPES 1.3 specification.
@@ -229,7 +229,8 @@ protected:
      * @param type_identifier_with_size[in] TypeIdentfierWithSize of the callbacks to notify.
      */
     void notify_callbacks(
-            xtypes::TypeIdentfierWithSize type_identifier_with_size);
+            ReturnCode_t request_ret_status,
+            const xtypes::TypeIdentfierWithSize& type_identifier_with_size);
 
     /**
      * Adds a callback to the async_get_type_callbacks_ entry of the TypeIdentfierWithSize, or creates a new one if

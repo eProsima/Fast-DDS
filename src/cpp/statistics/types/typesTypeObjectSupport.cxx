@@ -67,7 +67,7 @@ void register_EntityId_s_type_identifier(
             ReturnCode_t return_code_value {eprosima::fastdds::dds::RETCODE_OK};
             return_code_value =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "anonymous_array_uint8_t_4", type_ids_value);
+                "anonymous_array_byte_4", type_ids_value);
 
             if (eprosima::fastdds::dds::RETCODE_OK != return_code_value)
             {
@@ -81,31 +81,31 @@ void register_EntityId_s_type_identifier(
                             "Array element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                bool element_identifier_anonymous_array_uint8_t_4_ec {false};
-                TypeIdentifier* element_identifier_anonymous_array_uint8_t_4 {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_value, element_identifier_anonymous_array_uint8_t_4_ec))};
-                if (!element_identifier_anonymous_array_uint8_t_4_ec)
+                bool element_identifier_anonymous_array_byte_4_ec {false};
+                TypeIdentifier* element_identifier_anonymous_array_byte_4 {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_value, element_identifier_anonymous_array_byte_4_ec))};
+                if (!element_identifier_anonymous_array_byte_4_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Array element TypeIdentifier inconsistent.");
                     return;
                 }
-                EquivalenceKind equiv_kind_anonymous_array_uint8_t_4 = EK_COMPLETE;
+                EquivalenceKind equiv_kind_anonymous_array_byte_4 = EK_COMPLETE;
                 if (TK_NONE == type_ids_value.type_identifier2()._d())
                 {
-                    equiv_kind_anonymous_array_uint8_t_4 = EK_BOTH;
+                    equiv_kind_anonymous_array_byte_4 = EK_BOTH;
                 }
-                CollectionElementFlag element_flags_anonymous_array_uint8_t_4 = 0;
-                PlainCollectionHeader header_anonymous_array_uint8_t_4 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_uint8_t_4, element_flags_anonymous_array_uint8_t_4);
+                CollectionElementFlag element_flags_anonymous_array_byte_4 = 0;
+                PlainCollectionHeader header_anonymous_array_byte_4 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_byte_4, element_flags_anonymous_array_byte_4);
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(4));
 
-                    PlainArraySElemDefn array_sdefn = TypeObjectUtils::build_plain_array_s_elem_defn(header_anonymous_array_uint8_t_4, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_uint8_t_4));
+                    PlainArraySElemDefn array_sdefn = TypeObjectUtils::build_plain_array_s_elem_defn(header_anonymous_array_byte_4, array_bound_seq,
+                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_byte_4));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_uint8_t_4", type_ids_value))
+                            TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_byte_4", type_ids_value))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_uint8_t_4 already registered in TypeObjectRegistry for a different type.");
+                            "anonymous_array_byte_4 already registered in TypeObjectRegistry for a different type.");
                     }
                 }
             }
@@ -160,7 +160,7 @@ void register_GuidPrefix_s_type_identifier(
             ReturnCode_t return_code_value {eprosima::fastdds::dds::RETCODE_OK};
             return_code_value =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "anonymous_array_uint8_t_12", type_ids_value);
+                "anonymous_array_byte_12", type_ids_value);
 
             if (eprosima::fastdds::dds::RETCODE_OK != return_code_value)
             {
@@ -174,31 +174,31 @@ void register_GuidPrefix_s_type_identifier(
                             "Array element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                bool element_identifier_anonymous_array_uint8_t_12_ec {false};
-                TypeIdentifier* element_identifier_anonymous_array_uint8_t_12 {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_value, element_identifier_anonymous_array_uint8_t_12_ec))};
-                if (!element_identifier_anonymous_array_uint8_t_12_ec)
+                bool element_identifier_anonymous_array_byte_12_ec {false};
+                TypeIdentifier* element_identifier_anonymous_array_byte_12 {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_value, element_identifier_anonymous_array_byte_12_ec))};
+                if (!element_identifier_anonymous_array_byte_12_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Array element TypeIdentifier inconsistent.");
                     return;
                 }
-                EquivalenceKind equiv_kind_anonymous_array_uint8_t_12 = EK_COMPLETE;
+                EquivalenceKind equiv_kind_anonymous_array_byte_12 = EK_COMPLETE;
                 if (TK_NONE == type_ids_value.type_identifier2()._d())
                 {
-                    equiv_kind_anonymous_array_uint8_t_12 = EK_BOTH;
+                    equiv_kind_anonymous_array_byte_12 = EK_BOTH;
                 }
-                CollectionElementFlag element_flags_anonymous_array_uint8_t_12 = 0;
-                PlainCollectionHeader header_anonymous_array_uint8_t_12 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_uint8_t_12, element_flags_anonymous_array_uint8_t_12);
+                CollectionElementFlag element_flags_anonymous_array_byte_12 = 0;
+                PlainCollectionHeader header_anonymous_array_byte_12 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_byte_12, element_flags_anonymous_array_byte_12);
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(12));
 
-                    PlainArraySElemDefn array_sdefn = TypeObjectUtils::build_plain_array_s_elem_defn(header_anonymous_array_uint8_t_12, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_uint8_t_12));
+                    PlainArraySElemDefn array_sdefn = TypeObjectUtils::build_plain_array_s_elem_defn(header_anonymous_array_byte_12, array_bound_seq,
+                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_byte_12));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_uint8_t_12", type_ids_value))
+                            TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_byte_12", type_ids_value))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_uint8_t_12 already registered in TypeObjectRegistry for a different type.");
+                            "anonymous_array_byte_12 already registered in TypeObjectRegistry for a different type.");
                     }
                 }
             }
@@ -572,7 +572,7 @@ void register_Locator_s_type_identifier(
             ReturnCode_t return_code_address {eprosima::fastdds::dds::RETCODE_OK};
             return_code_address =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "anonymous_array_uint8_t_16", type_ids_address);
+                "anonymous_array_byte_16", type_ids_address);
 
             if (eprosima::fastdds::dds::RETCODE_OK != return_code_address)
             {
@@ -586,31 +586,31 @@ void register_Locator_s_type_identifier(
                             "Array element TypeIdentifier unknown to TypeObjectRegistry.");
                     return;
                 }
-                bool element_identifier_anonymous_array_uint8_t_16_ec {false};
-                TypeIdentifier* element_identifier_anonymous_array_uint8_t_16 {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_address, element_identifier_anonymous_array_uint8_t_16_ec))};
-                if (!element_identifier_anonymous_array_uint8_t_16_ec)
+                bool element_identifier_anonymous_array_byte_16_ec {false};
+                TypeIdentifier* element_identifier_anonymous_array_byte_16 {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_address, element_identifier_anonymous_array_byte_16_ec))};
+                if (!element_identifier_anonymous_array_byte_16_ec)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Array element TypeIdentifier inconsistent.");
                     return;
                 }
-                EquivalenceKind equiv_kind_anonymous_array_uint8_t_16 = EK_COMPLETE;
+                EquivalenceKind equiv_kind_anonymous_array_byte_16 = EK_COMPLETE;
                 if (TK_NONE == type_ids_address.type_identifier2()._d())
                 {
-                    equiv_kind_anonymous_array_uint8_t_16 = EK_BOTH;
+                    equiv_kind_anonymous_array_byte_16 = EK_BOTH;
                 }
-                CollectionElementFlag element_flags_anonymous_array_uint8_t_16 = 0;
-                PlainCollectionHeader header_anonymous_array_uint8_t_16 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_uint8_t_16, element_flags_anonymous_array_uint8_t_16);
+                CollectionElementFlag element_flags_anonymous_array_byte_16 = 0;
+                PlainCollectionHeader header_anonymous_array_byte_16 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_byte_16, element_flags_anonymous_array_byte_16);
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(16));
 
-                    PlainArraySElemDefn array_sdefn = TypeObjectUtils::build_plain_array_s_elem_defn(header_anonymous_array_uint8_t_16, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_uint8_t_16));
+                    PlainArraySElemDefn array_sdefn = TypeObjectUtils::build_plain_array_s_elem_defn(header_anonymous_array_byte_16, array_bound_seq,
+                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_byte_16));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_uint8_t_16", type_ids_address))
+                            TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_byte_16", type_ids_address))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_uint8_t_16 already registered in TypeObjectRegistry for a different type.");
+                            "anonymous_array_byte_16 already registered in TypeObjectRegistry for a different type.");
                     }
                 }
             }

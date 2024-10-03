@@ -632,6 +632,70 @@ void register_Module2ConstsLiteralsStruct_type_identifier(
             CompleteStructMember member_module2_array_literal_module1_const_moduled = TypeObjectUtils::build_complete_struct_member(common_module2_array_literal_module1_const_moduled, detail_module2_array_literal_module1_const_moduled);
             TypeObjectUtils::add_complete_struct_member(member_seq_Module2ConstsLiteralsStruct, member_module2_array_literal_module1_const_moduled);
         }
+        {
+            TypeIdentifierPair type_ids_module2_array_literal_const_moduled_module1;
+            ReturnCode_t return_code_module2_array_literal_const_moduled_module1 {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_module2_array_literal_const_moduled_module1 =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "anonymous_array_int16_t_11", type_ids_module2_array_literal_const_moduled_module1);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_module2_array_literal_const_moduled_module1)
+            {
+                return_code_module2_array_literal_const_moduled_module1 =
+                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                    "_int16_t", type_ids_module2_array_literal_const_moduled_module1);
+
+                if (eprosima::fastdds::dds::RETCODE_OK != return_code_module2_array_literal_const_moduled_module1)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "Array element TypeIdentifier unknown to TypeObjectRegistry.");
+                    return;
+                }
+                bool element_identifier_anonymous_array_int16_t_11_ec {false};
+                TypeIdentifier* element_identifier_anonymous_array_int16_t_11 {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_module2_array_literal_const_moduled_module1, element_identifier_anonymous_array_int16_t_11_ec))};
+                if (!element_identifier_anonymous_array_int16_t_11_ec)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Array element TypeIdentifier inconsistent.");
+                    return;
+                }
+                EquivalenceKind equiv_kind_anonymous_array_int16_t_11 = EK_COMPLETE;
+                if (TK_NONE == type_ids_module2_array_literal_const_moduled_module1.type_identifier2()._d())
+                {
+                    equiv_kind_anonymous_array_int16_t_11 = EK_BOTH;
+                }
+                CollectionElementFlag element_flags_anonymous_array_int16_t_11 = 0;
+                PlainCollectionHeader header_anonymous_array_int16_t_11 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_11, element_flags_anonymous_array_int16_t_11);
+                {
+                    SBoundSeq array_bound_seq;
+                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(11));
+
+                    PlainArraySElemDefn array_sdefn = TypeObjectUtils::build_plain_array_s_elem_defn(header_anonymous_array_int16_t_11, array_bound_seq,
+                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_11));
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_11", type_ids_module2_array_literal_const_moduled_module1))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_array_int16_t_11 already registered in TypeObjectRegistry for a different type.");
+                    }
+                }
+            }
+            StructMemberFlag member_flags_module2_array_literal_const_moduled_module1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_module2_array_literal_const_moduled_module1 = 0x00000004;
+            bool common_module2_array_literal_const_moduled_module1_ec {false};
+            CommonStructMember common_module2_array_literal_const_moduled_module1 {TypeObjectUtils::build_common_struct_member(member_id_module2_array_literal_const_moduled_module1, member_flags_module2_array_literal_const_moduled_module1, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_module2_array_literal_const_moduled_module1, common_module2_array_literal_const_moduled_module1_ec))};
+            if (!common_module2_array_literal_const_moduled_module1_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure module2_array_literal_const_moduled_module1 member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_module2_array_literal_const_moduled_module1 = "module2_array_literal_const_moduled_module1";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_module2_array_literal_const_moduled_module1;
+            ann_custom_Module2ConstsLiteralsStruct.reset();
+            CompleteMemberDetail detail_module2_array_literal_const_moduled_module1 = TypeObjectUtils::build_complete_member_detail(name_module2_array_literal_const_moduled_module1, member_ann_builtin_module2_array_literal_const_moduled_module1, ann_custom_Module2ConstsLiteralsStruct);
+            CompleteStructMember member_module2_array_literal_const_moduled_module1 = TypeObjectUtils::build_complete_struct_member(common_module2_array_literal_const_moduled_module1, detail_module2_array_literal_const_moduled_module1);
+            TypeObjectUtils::add_complete_struct_member(member_seq_Module2ConstsLiteralsStruct, member_module2_array_literal_const_moduled_module1);
+        }
         CompleteStructType struct_type_Module2ConstsLiteralsStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_Module2ConstsLiteralsStruct, header_Module2ConstsLiteralsStruct, member_seq_Module2ConstsLiteralsStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                 TypeObjectUtils::build_and_register_struct_type_object(struct_type_Module2ConstsLiteralsStruct, type_name_Module2ConstsLiteralsStruct.to_string(), type_ids_Module2ConstsLiteralsStruct))
