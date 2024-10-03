@@ -54,6 +54,8 @@ StatelessReader::~StatelessReader()
 {
     EPROSIMA_LOG_INFO(RTPS_READER, "Removing reader " << m_guid);
 
+    local_actions_on_reader_removed();
+
     // Datasharing listener must be stopped to avoid processing notifications
     // while the reader is being destroyed
     if (is_datasharing_compatible_)
