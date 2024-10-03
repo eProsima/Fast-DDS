@@ -1,0 +1,21 @@
+name: Fast DDS Windows CI (nightly 2.10.x)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 22 * * *' # At 22:00 GMT
+
+jobs:
+  nightly-windows-ci-2_10_x:
+    strategy:
+      fail-fast: false
+      matrix:
+        security:
+          - 'ON'
+          - 'OFF'
+    uses: eProsima/Fast-DDS/.github/workflows/reusable-windows-ci.yml@2.10.x
+    with:
+      label: 'nightly-sec-${{ matrix.security }}-windows-ci-2.10.x'
+      cmake-args: "-DSECURITY=${{ matrix.security }}"
+      ctest-args: "-LE xfail"
+      fastdds_branch: '2.10.x'

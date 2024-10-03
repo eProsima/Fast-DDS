@@ -1,0 +1,27 @@
+name: Fast DDS Ubuntu CI (nightly)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 22 * * *' # At 22:00 GMT
+
+jobs:
+  nightly-ubuntu-ci-master:
+    strategy:
+      fail-fast: false
+      matrix:
+        os-image:
+          - 'ubuntu-22.04'
+        security:
+          - true
+          - false
+    uses: eProsima/Fast-DDS/.github/workflows/reusable-ubuntu-ci.yml@master
+    with:
+      os-image: ${{ matrix.os-image }}
+      label: '${{ matrix.os-image }}-nightly-sec-${{ matrix.security }}-ubuntu-ci-master'
+      ctest-args: "-LE xfail"
+      fastdds-branch: 'master'
+      security: ${{ matrix.security }}
+      run-build: true
+      run-tests: true
+      use-ccache: false

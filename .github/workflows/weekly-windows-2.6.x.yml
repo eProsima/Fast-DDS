@@ -1,4 +1,4 @@
-name: Fast DDS Windows CI (weekly)
+name: Fast DDS Windows CI (weekly 2.6.x)
 
 on:
   workflow_dispatch:
@@ -6,7 +6,6 @@ on:
     - cron: '0 0 * * 1' # Run at minute 0 on Monday
 
 jobs:
-
   weekly-windows-ci-2_6_x:
     strategy:
       fail-fast: false

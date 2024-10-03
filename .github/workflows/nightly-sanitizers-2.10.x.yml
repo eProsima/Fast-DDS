@@ -1,0 +1,21 @@
+name: Fast DDS Sanitizers CI (nightly 2.10.x)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 22 * * *' # At 22:00 GMT
+
+jobs:
+  nightly-sanitizers-ci-2_10_x:
+    uses: eProsima/Fast-DDS/.github/workflows/reusable-sanitizers-ci.yml@2.10.x
+    with:
+      label: 'nightly-sec-sanitizers-ci-2.10.x'
+      run_asan_fastdds: true
+      run_asan_discovery_server: true
+      run_tsan_fastdds: true
+      colcon_build_args: ''
+      colcon_test_args: ''
+      cmake_args: ''
+      ctest_args: ''
+      fastdds_ref: '2.10.x'
+      discovery_server_ref: 'v1.2.1'
