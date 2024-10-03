@@ -831,13 +831,6 @@ bool MessageReceiver::proc_Submsg_Data(
             }
             else // keyFlag would be true since we are inside an if (dataFlag || keyFlag)
             {
-<<<<<<< HEAD
-                logWarning(RTPS_MSG_IN, IDSTRING "Serialized Payload value invalid or larger than maximum allowed size"
-                        "(" << payload_size << "/" << (msg->length - msg->pos) << ")");
-                ch.serializedPayload.data = nullptr;
-                ch.inline_qos.data = nullptr;
-                return false;
-=======
                 if (payload_size <= PARAMETER_KEY_HASH_LENGTH)
                 {
                     if (!ch.instanceHandle.isDefined())
@@ -847,41 +840,19 @@ bool MessageReceiver::proc_Submsg_Data(
                 }
                 else
                 {
-                    EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Ignoring Serialized Payload for too large key-only data (" <<
+                    logWarning(RTPS_MSG_IN, IDSTRING "Ignoring Serialized Payload for too large key-only data (" <<
                             payload_size << ")");
                 }
->>>>>>> 175add5c2 (Discard changes with big key-only payload and no key hash (#5262))
             }
             msg->pos = next_pos;
         }
         else
         {
-<<<<<<< HEAD
-            if (payload_size <= 0)
-            {
-                logWarning(RTPS_MSG_IN, IDSTRING "Serialized Payload value invalid (" << payload_size << ")");
-                ch.serializedPayload.data = nullptr;
-                ch.inline_qos.data = nullptr;
-                return false;
-            }
-
-            if (payload_size <= PARAMETER_KEY_HASH_LENGTH)
-            {
-                memcpy(ch.instanceHandle.value, &msg->buffer[msg->pos], payload_size);
-            }
-            else
-            {
-                logWarning(RTPS_MSG_IN, IDSTRING "Ignoring Serialized Payload for too large key-only data (" <<
-                        payload_size << ")");
-            }
-            msg->pos += payload_size;
-=======
-            EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Serialized Payload value invalid or larger than maximum allowed size"
+            logWarning(RTPS_MSG_IN, IDSTRING "Serialized Payload value invalid or larger than maximum allowed size"
                     "(" << payload_size << "/" << (msg->length - msg->pos) << ")");
             ch.serializedPayload.data = nullptr;
             ch.inline_qos.data = nullptr;
             return false;
->>>>>>> 175add5c2 (Discard changes with big key-only payload and no key hash (#5262))
         }
     }
 

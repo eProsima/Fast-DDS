@@ -15,11 +15,8 @@
 #include <cstdint>
 #include <fstream>
 #include <mutex>
-<<<<<<< HEAD
 #include <set>
-=======
 #include <thread>
->>>>>>> 175add5c2 (Discard changes with big key-only payload and no key hash (#5262))
 #include <vector>
 
 #include <gtest/gtest.h>
