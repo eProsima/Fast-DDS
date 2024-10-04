@@ -1445,6 +1445,7 @@ void RTPSParticipantImpl::update_attributes(
     if (internal_metatraffic_locators_)
     {
         LocatorList_t metatraffic_unicast_locator_list = temp_atts.builtin.metatrafficUnicastLocatorList;
+        temp_atts.builtin.metatrafficUnicastLocatorList.clear();
         get_default_metatraffic_locators(temp_atts);
         if (!(metatraffic_unicast_locator_list == temp_atts.builtin.metatrafficUnicastLocatorList))
         {
@@ -1455,6 +1456,7 @@ void RTPSParticipantImpl::update_attributes(
     if (internal_default_locators_)
     {
         LocatorList_t default_unicast_locator_list = temp_atts.defaultUnicastLocatorList;
+        temp_atts.defaultUnicastLocatorList.clear();
         get_default_unicast_locators(temp_atts);
         if (!(default_unicast_locator_list == temp_atts.defaultUnicastLocatorList))
         {
@@ -1529,25 +1531,12 @@ void RTPSParticipantImpl::update_attributes(
 
         {
             std::lock_guard<std::recursive_mutex> lock(*pdp->getMutex());
+            pdp->local_participant_attributes_update_nts(temp_atts);
 
-            // Update user data
-            auto local_participant_proxy_data = pdp->getLocalParticipantProxyData();
-            local_participant_proxy_data->m_userData.data_vec(temp_atts.userData);
-
-            // Update metatraffic locators
-            for (auto locator : temp_atts.builtin.metatrafficMulticastLocatorList)
+            if (local_interfaces_changed && internal_default_locators_)
             {
-                local_participant_proxy_data->metatraffic_locators.add_multicast_locator(locator);
-            }
-            for (auto locator : temp_atts.builtin.metatrafficUnicastLocatorList)
-            {
-                local_participant_proxy_data->metatraffic_locators.add_unicast_locator(locator);
-            }
-
-            // Update default locators
-            for (auto locator : temp_atts.defaultUnicastLocatorList)
-            {
-                local_participant_proxy_data->default_locators.add_unicast_locator(locator);
+                std::lock_guard<shared_mutex> _(endpoints_list_mutex);
+                pdp->update_endpoint_locators_if_default_nts(m_userWriterList, m_userReaderList, m_att, temp_atts);
             }
 
             if (local_interfaces_changed)
