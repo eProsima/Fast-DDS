@@ -2,6 +2,7 @@ Forthcoming
 -----------
 
 * Allow `PERSISTENT_DURABILITY` behaving as `TRANSIENT_DURABILITY`. Fallback to `TRANSIENT_LOCAL_DURABILITY` if no persistence guid is set.
+* Fix DomainParticipantQos equality operator by using the new `DomainParticipantQos::compare_flow_controllers`.
 
 Version v3.0.0
 --------------
