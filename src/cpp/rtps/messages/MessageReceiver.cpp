@@ -819,46 +819,39 @@ bool MessageReceiver::proc_Submsg_Data(
         }
 
         payload_size = smh->submessageLength - submsg_no_payload_size;
-
-        if (dataFlag)
+        uint32_t next_pos = msg->pos + payload_size;
+        if (msg->length >= next_pos && payload_size > 0)
         {
-            uint32_t next_pos = msg->pos + payload_size;
-            if (msg->length >= next_pos && payload_size > 0)
+            if (dataFlag)
             {
                 ch.serializedPayload.data = &msg->buffer[msg->pos];
                 ch.serializedPayload.length = payload_size;
                 ch.serializedPayload.max_size = payload_size;
-                msg->pos = next_pos;
             }
-            else
+            else // keyFlag would be true since we are inside an if (dataFlag || keyFlag)
             {
-                logWarning(RTPS_MSG_IN, IDSTRING "Serialized Payload value invalid or larger than maximum allowed size"
-                        "(" << payload_size << "/" << (msg->length - msg->pos) << ")");
-                ch.serializedPayload.data = nullptr;
-                ch.inline_qos.data = nullptr;
-                return false;
+                if (payload_size <= PARAMETER_KEY_HASH_LENGTH)
+                {
+                    if (!ch.instanceHandle.isDefined())
+                    {
+                        memcpy(ch.instanceHandle.value, &msg->buffer[msg->pos], payload_size);
+                    }
+                }
+                else
+                {
+                    logWarning(RTPS_MSG_IN, IDSTRING "Ignoring Serialized Payload for too large key-only data (" <<
+                            payload_size << ")");
+                }
             }
+            msg->pos = next_pos;
         }
-        else if (keyFlag)
+        else
         {
-            if (payload_size <= 0)
-            {
-                logWarning(RTPS_MSG_IN, IDSTRING "Serialized Payload value invalid (" << payload_size << ")");
-                ch.serializedPayload.data = nullptr;
-                ch.inline_qos.data = nullptr;
-                return false;
-            }
-
-            if (payload_size <= PARAMETER_KEY_HASH_LENGTH)
-            {
-                memcpy(ch.instanceHandle.value, &msg->buffer[msg->pos], payload_size);
-            }
-            else
-            {
-                logWarning(RTPS_MSG_IN, IDSTRING "Ignoring Serialized Payload for too large key-only data (" <<
-                        payload_size << ")");
-            }
-            msg->pos += payload_size;
+            logWarning(RTPS_MSG_IN, IDSTRING "Serialized Payload value invalid or larger than maximum allowed size"
+                    "(" << payload_size << "/" << (msg->length - msg->pos) << ")");
+            ch.serializedPayload.data = nullptr;
+            ch.inline_qos.data = nullptr;
+            return false;
         }
     }
 
