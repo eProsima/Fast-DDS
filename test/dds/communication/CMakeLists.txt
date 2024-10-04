@@ -314,3 +314,7 @@ if(Python3_Interpreter_FOUND)
     endif()
 
 endif()
+
+if(UNIX AND NOT(APPLE) AND NOT(QNXNTO) AND NOT(ANDROID))
+    add_subdirectory(dyn_network)
+endif()

@@ -22,10 +22,14 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <atomic>
+#include <cstdint>
 #include <functional>
 #include <memory>
 #include <mutex>
+#include <string>
+#include <vector>
 
+<<<<<<< HEAD:include/fastdds/rtps/builtin/discovery/participant/PDP.h
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
@@ -37,6 +41,35 @@
 #include <fastrtps/qos/QosPolicies.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <fastrtps/utils/ProxyPool.hpp>
+=======
+#include <fastcdr/cdr/fixed_size_string.hpp>
+
+#include <fastdds/dds/core/Time_t.hpp>
+#include <fastdds/dds/core/policy/ParameterTypes.hpp>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/attributes/ReaderAttributes.hpp>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
+#include <fastdds/rtps/attributes/WriterAttributes.hpp>
+#include <fastdds/rtps/common/CDRMessage_t.hpp>
+#include <fastdds/rtps/common/Guid.hpp>
+#include <fastdds/rtps/common/GuidPrefix_t.hpp>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
+#include <fastdds/rtps/common/LocatorList.hpp>
+#include <fastdds/rtps/common/Types.hpp>
+#include <fastdds/rtps/common/WriteParams.hpp>
+#include <fastdds/rtps/history/IPayloadPool.hpp>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
+#include <fastdds/rtps/reader/ReaderDiscoveryStatus.hpp>
+#include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
+#include <fastdds/utils/collections/ResourceLimitedVector.hpp>
+
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
+#include <rtps/builtin/data/ReaderProxyData.hpp>
+#include <rtps/builtin/data/WriterProxyData.hpp>
+#include <statistics/rtps/monitor-service/interfaces/IProxyObserver.hpp>
+#include <statistics/rtps/monitor-service/interfaces/IProxyQueryable.hpp>
+#include <utils/ProxyPool.hpp>
+>>>>>>> 91bd7c857 (Fix issues in Dynamic Network Interfaces (#5282)):src/cpp/rtps/builtin/discovery/participant/PDP.h
 
 namespace eprosima {
 
@@ -51,6 +84,7 @@ struct IProxyObserver;
 
 namespace rtps {
 
+<<<<<<< HEAD:include/fastdds/rtps/builtin/discovery/participant/PDP.h
 class PDPServerListener;
 class PDPEndpoints;
 
@@ -68,8 +102,13 @@ namespace rtps {
 
 class RTPSWriter;
 class RTPSReader;
+=======
+class BaseWriter;
+class BaseReader;
+>>>>>>> 91bd7c857 (Fix issues in Dynamic Network Interfaces (#5282)):src/cpp/rtps/builtin/discovery/participant/PDP.h
 class WriterHistory;
 class ReaderHistory;
+struct RTPSParticipantAllocationAttributes;
 class RTPSParticipantImpl;
 class RTPSParticipantListener;
 class BuiltinProtocols;
@@ -79,6 +118,7 @@ class ReaderProxyData;
 class WriterProxyData;
 class ParticipantProxyData;
 class ReaderListener;
+class PDPEndpoints;
 class PDPListener;
 class PDPServerListener;
 class ITopicPayloadPool;
@@ -492,6 +532,15 @@ public:
     }
 
 #endif // FASTDDS_STATISTICS
+
+    virtual void local_participant_attributes_update_nts(
+            const RTPSParticipantAttributes& new_atts);
+
+    virtual void update_endpoint_locators_if_default_nts(
+            const std::vector<BaseWriter*>& writers,
+            const std::vector<BaseReader*>& readers,
+            const RTPSParticipantAttributes& old_atts,
+            const RTPSParticipantAttributes& new_atts);
 
 protected:
 

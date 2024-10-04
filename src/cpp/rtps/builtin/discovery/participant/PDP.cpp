@@ -66,6 +66,52 @@
 #include <mutex>
 #include <chrono>
 
+<<<<<<< HEAD
+=======
+#include <fastdds/config.hpp>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantBuiltinTopicData.hpp>
+#include <fastdds/rtps/common/LocatorList.hpp>
+#include <fastdds/rtps/history/ReaderHistory.hpp>
+#include <fastdds/rtps/history/WriterHistory.hpp>
+#include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
+#include <fastdds/rtps/reader/ReaderDiscoveryStatus.hpp>
+#include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
+#include <fastdds/utils/IPLocator.hpp>
+
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
+#include <fastdds/utils/TypePropagation.hpp>
+#include <rtps/builtin/BuiltinProtocols.h>
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
+#include <rtps/builtin/data/ProxyDataConverters.hpp>
+#include <rtps/builtin/data/ProxyHashTables.hpp>
+#include <rtps/builtin/data/ReaderProxyData.hpp>
+#include <rtps/builtin/data/WriterProxyData.hpp>
+#include <rtps/builtin/discovery/endpoint/EDPSimple.h>
+#include <rtps/builtin/discovery/endpoint/EDPStatic.h>
+#include <rtps/builtin/discovery/participant/PDPEndpoints.hpp>
+#include <rtps/builtin/discovery/participant/PDPListener.h>
+#include <rtps/builtin/liveliness/WLP.hpp>
+#include <rtps/history/TopicPayloadPoolRegistry.hpp>
+#include <rtps/network/utils/external_locators.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/StatefulReader.hpp>
+#include <rtps/reader/StatelessReader.hpp>
+#include <rtps/resources/TimedEvent.h>
+#include <rtps/writer/StatelessWriter.hpp>
+#if HAVE_SECURITY
+#include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#endif // if HAVE_SECURITY
+#include <utils/shared_mutex.hpp>
+#include <utils/TimeConversion.hpp>
+#include <rtps/writer/BaseWriter.hpp>
+#include <rtps/reader/BaseReader.hpp>
+
+>>>>>>> 91bd7c857 (Fix issues in Dynamic Network Interfaces (#5282))
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -1661,6 +1707,121 @@ void PDP::add_builtin_security_attributes(
 }
 
 #endif // HAVE_SECURITY
+
+void PDP::local_participant_attributes_update_nts(
+        const RTPSParticipantAttributes& new_atts)
+{
+    // Update user data
+    auto participant_data = getLocalParticipantProxyData();
+    participant_data->m_userData.data_vec(new_atts.userData);
+
+    // If we are intraprocess only, we do not need to update locators
+    bool announce_locators = !mp_RTPSParticipant->is_intraprocess_only();
+    if (announce_locators)
+    {
+        // Clear all locators
+        participant_data->metatraffic_locators.unicast.clear();
+        participant_data->metatraffic_locators.multicast.clear();
+        participant_data->default_locators.unicast.clear();
+        participant_data->default_locators.multicast.clear();
+
+        // Update default locators
+        for (const Locator_t& loc : new_atts.defaultUnicastLocatorList)
+        {
+            participant_data->default_locators.add_unicast_locator(loc);
+        }
+        for (const Locator_t& loc : new_atts.defaultMulticastLocatorList)
+        {
+            participant_data->default_locators.add_multicast_locator(loc);
+        }
+
+        // Update metatraffic locators
+        for (const auto& locator : new_atts.builtin.metatrafficUnicastLocatorList)
+        {
+            participant_data->metatraffic_locators.add_unicast_locator(locator);
+        }
+        if (!new_atts.builtin.avoid_builtin_multicast || participant_data->metatraffic_locators.unicast.empty())
+        {
+            for (const auto& locator : new_atts.builtin.metatrafficMulticastLocatorList)
+            {
+                participant_data->metatraffic_locators.add_multicast_locator(locator);
+            }
+        }
+
+        fastdds::rtps::network::external_locators::add_external_locators(*participant_data,
+                new_atts.builtin.metatraffic_external_unicast_locators,
+                new_atts.default_external_unicast_locators);
+    }
+}
+
+void PDP::update_endpoint_locators_if_default_nts(
+        const std::vector<BaseWriter*>& writers,
+        const std::vector<BaseReader*>& readers,
+        const RTPSParticipantAttributes& old_atts,
+        const RTPSParticipantAttributes& new_atts)
+{
+    // Check if default locators have changed
+    const auto& old_default_unicast = old_atts.defaultUnicastLocatorList;
+    const auto& old_default_multicast = old_atts.defaultMulticastLocatorList;
+    const auto& new_default_unicast = new_atts.defaultUnicastLocatorList;
+    const auto& new_default_multicast = new_atts.defaultMulticastLocatorList;
+
+    // Early return if there is no change in default unicast locators
+    if ((old_default_unicast == new_default_unicast) &&
+            (old_default_multicast == new_default_multicast))
+    {
+        return;
+    }
+
+    // Update proxies of endpoints with default configured locators
+    EDP* edp = get_edp();
+    for (BaseWriter* writer : writers)
+    {
+        if ((old_default_multicast == writer->getAttributes().multicastLocatorList) &&
+                (old_default_unicast == writer->getAttributes().unicastLocatorList))
+        {
+            writer->getAttributes().multicastLocatorList = new_default_multicast;
+            writer->getAttributes().unicastLocatorList = new_default_unicast;
+
+            WriterProxyData* wdata = nullptr;
+            GUID_t participant_guid;
+            wdata = addWriterProxyData(writer->getGuid(), participant_guid,
+                            [](WriterProxyData* proxy, bool is_update, const ParticipantProxyData& participant)
+                            {
+                                static_cast<void>(is_update);
+                                assert(is_update);
+
+                                proxy->set_locators(participant.default_locators);
+                                return true;
+                            });
+            assert(wdata != nullptr);
+            edp->process_writer_proxy_data(writer, wdata);
+        }
+    }
+    for (BaseReader* reader : readers)
+    {
+        if ((old_default_multicast == reader->getAttributes().multicastLocatorList) &&
+                (old_default_unicast == reader->getAttributes().unicastLocatorList))
+        {
+            reader->getAttributes().multicastLocatorList = new_default_multicast;
+            reader->getAttributes().unicastLocatorList = new_default_unicast;
+
+            ReaderProxyData* rdata = nullptr;
+            GUID_t participant_guid;
+            rdata = addReaderProxyData(reader->getGuid(), participant_guid,
+                            [](ReaderProxyData* proxy, bool is_update, const ParticipantProxyData& participant)
+                            {
+                                static_cast<void>(is_update);
+                                assert(is_update);
+
+                                proxy->set_locators(participant.default_locators);
+                                return true;
+                            });
+            assert(rdata != nullptr);
+            edp->process_reader_proxy_data(reader, rdata);
+        }
+    }
+}
 
 } /* namespace rtps */
 } /* namespace fastrtps */
