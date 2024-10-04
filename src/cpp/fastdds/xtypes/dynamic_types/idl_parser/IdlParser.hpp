@@ -244,7 +244,7 @@ struct action<identifier>
         template<typename Input> \
         static void apply( \
             const Input& in, \
-            Context * /*ctx*/, \
+            Context* /*ctx*/, \
             std::map<std::string, std::string>& state, \
             std::vector<traits<DynamicData>::ref_type>& /*operands*/) \
         { \
@@ -349,7 +349,7 @@ struct action<positive_int_const>
         template<typename Input> \
         static void apply( \
             const Input& in, \
-            Context * /*ctx*/, \
+            Context* /*ctx*/, \
             std::map<std::string, std::string>& state, \
             std::vector<traits<DynamicData>::ref_type>& /*operands*/) \
         { \
@@ -475,7 +475,7 @@ struct action<boolean_literal>
         template<typename Input> \
         static void apply( \
             const Input& in, \
-            Context * /*ctx*/, \
+            Context* /*ctx*/, \
             std::map<std::string, std::string>& state, \
             std::vector<traits<DynamicData>::ref_type>& operands) \
         { \
@@ -520,7 +520,7 @@ load_literal_action(fixed_pt_literal, fixed, long double, TK_FLOAT128, set_float
         template<typename Input> \
         static void apply( \
             const Input& in, \
-            Context * /*ctx*/, \
+            Context* /*ctx*/, \
             std::map<std::string, std::string>& state, \
             std::vector<traits<DynamicData>::ref_type>& operands) \
         { \
@@ -574,7 +574,7 @@ load_literal_action(fixed_pt_literal, fixed, long double, TK_FLOAT128, set_float
         template<typename Input> \
         static void apply( \
             const Input& in, \
-            Context * /*ctx*/, \
+            Context* /*ctx*/, \
             std::map<std::string, std::string>& state, \
             std::vector<traits<DynamicData>::ref_type>& operands) \
         { \
@@ -620,7 +620,7 @@ load_literal_action(fixed_pt_literal, fixed, long double, TK_FLOAT128, set_float
         template<typename Input> \
         static void apply( \
             const Input& in, \
-            Context * /*ctx*/, \
+            Context* /*ctx*/, \
             std::map<std::string, std::string>& state, \
             std::vector<traits<DynamicData>::ref_type>& operands) \
         { \
@@ -773,6 +773,15 @@ struct action<inv_exec>
 template<>
 struct action<struct_forward_dcl>
 {
+    // Function to handle the cleanup of state
+    static void cleanup_state(
+            std::map<std::string, std::string>& state)
+    {
+        state.erase("struct_name");
+        state.erase("struct_member_types");
+        state.erase("struct_member_names");
+    }
+
     template<typename Input>
     static void apply(
             const Input& /*in*/,
@@ -780,6 +789,18 @@ struct action<struct_forward_dcl>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
+        // Ensure cleanup happens at the end of this scope using a RAII-style guard
+        struct CleanupGuard
+        {
+            std::map<std::string, std::string>& state;
+            ~CleanupGuard()
+            {
+                cleanup_state(state);
+            }
+
+        }
+        cleanup_guard{state};
+
         Module& module = ctx->module();
         const std::string& struct_name = state["struct_name"];
         if (module.has_symbol(struct_name, false))
@@ -801,10 +822,6 @@ struct action<struct_forward_dcl>
         {
             ctx->builder = builder;
         }
-
-        state.erase("struct_name");
-        state.erase("struct_member_types");
-        state.erase("struct_member_names");
     }
 
 };
@@ -812,6 +829,17 @@ struct action<struct_forward_dcl>
 template<>
 struct action<union_forward_dcl>
 {
+    // Function to handle the cleanup of state
+    static void cleanup_state(
+            std::map<std::string, std::string>& state)
+    {
+        state.erase("union_name");
+        state.erase("union_discriminant");
+        state.erase("union_labels");
+        state.erase("union_member_types");
+        state.erase("union_member_names");
+    }
+
     template<typename Input>
     static void apply(
             const Input& /*in*/,
@@ -819,6 +847,18 @@ struct action<union_forward_dcl>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
+        // Ensure cleanup happens at the end of this scope using a RAII-style guard
+        struct CleanupGuard
+        {
+            std::map<std::string, std::string>& state;
+            ~CleanupGuard()
+            {
+                cleanup_state(state);
+            }
+
+        }
+        cleanup_guard{state};
+
         Module& module = ctx->module();
         const std::string& union_name = state["union_name"];
         if (module.has_symbol(union_name, false))
@@ -841,12 +881,6 @@ struct action<union_forward_dcl>
         {
             ctx->builder = builder;
         }
-
-        state.erase("union_name");
-        state.erase("union_discriminant");
-        state.erase("union_labels");
-        state.erase("union_member_types");
-        state.erase("union_member_names");
     }
 
 };
@@ -962,6 +996,15 @@ struct action<kw_struct>
 template<>
 struct action<struct_def>
 {
+    // Function to handle the cleanup of state
+    static void cleanup_state(
+            std::map<std::string, std::string>& state)
+    {
+        state.erase("struct_name");
+        state.erase("struct_member_types");
+        state.erase("struct_member_names");
+    }
+
     template<typename Input>
     static void apply(
             const Input& /*in*/,
@@ -969,6 +1012,18 @@ struct action<struct_def>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
+        // Ensure cleanup happens at the end of this scope using a RAII-style guard
+        struct CleanupGuard
+        {
+            std::map<std::string, std::string>& state;
+            ~CleanupGuard()
+            {
+                cleanup_state(state);
+            }
+
+        }
+        cleanup_guard{state};
+
         Module& module = ctx->module();
         const std::string& struct_name = state["struct_name"];
 
@@ -983,9 +1038,15 @@ struct action<struct_def>
 
         for (size_t i = 0; i < types.size(); i++)
         {
+            DynamicType::_ref_type member_type = ctx->get_type(state, types[i]);
+            if (!member_type)
+            {
+                EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] member type not supported: " << types[i]);
+                return;
+            }
             MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
             member_descriptor->name(names[i]);
-            member_descriptor->type(ctx->get_type(state, types[i]));
+            member_descriptor->type(member_type);
             builder->add_member(member_descriptor);
         }
 
@@ -996,10 +1057,6 @@ struct action<struct_def>
         {
             ctx->builder = builder;
         }
-
-        state.erase("struct_name");
-        state.erase("struct_member_types");
-        state.erase("struct_member_names");
     }
 
 };
@@ -1094,6 +1151,17 @@ struct action<switch_case>
 template<>
 struct action<union_def>
 {
+    // Function to handle the cleanup of state
+    static void cleanup_state(
+            std::map<std::string, std::string>& state)
+    {
+        state.erase("union_name");
+        state.erase("union_discriminant");
+        state.erase("union_labels");
+        state.erase("union_member_types");
+        state.erase("union_member_names");
+    }
+
     template<typename Input>
     static void apply(
             const Input& /*in*/,
@@ -1101,12 +1169,29 @@ struct action<union_def>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
+        // Ensure cleanup happens at the end of this scope using a RAII-style guard
+        struct CleanupGuard
+        {
+            std::map<std::string, std::string>& state;
+            ~CleanupGuard()
+            {
+                cleanup_state(state);
+            }
+
+        }
+        cleanup_guard{state};
+
         Module& module = ctx->module();
         const std::string& union_name = state["union_name"];
 
         DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
         TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
         DynamicType::_ref_type discriminant_type = ctx->get_type(state, state["union_discriminant"]);
+        if (!discriminant_type)
+        {
+            EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] union type not supported: " << state["union_discriminant"]);
+            return;
+        }
         type_descriptor->kind(TK_UNION);
         type_descriptor->name(union_name);
         type_descriptor->discriminator_type(discriminant_type);
@@ -1141,15 +1226,22 @@ struct action<union_def>
 
         for (uint32_t i = 0; i < (uint32_t)types.size(); i++)
         {
+            DynamicType::_ref_type member_type = ctx->get_type(state, types[i]);
+            if (!member_type)
+            {
+                EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] member type not supported: " << types[i]);
+                return;
+            }
             MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
             member_descriptor->name(names[i]);
-            member_descriptor->type(ctx->get_type(state, types[i]));
+            member_descriptor->type(member_type);
             member_descriptor->id(i);
 
             if (default_label_index == static_cast<int>(i))
             {
                 member_descriptor->is_default_label(true);
-                if (!labels[i].empty()) {
+                if (!labels[i].empty())
+                {
                     member_descriptor->label(labels[i]);
                 }
             }
@@ -1169,12 +1261,6 @@ struct action<union_def>
         {
             ctx->builder = builder;
         }
-
-        state.erase("union_name");
-        state.erase("union_discriminant");
-        state.erase("union_labels");
-        state.erase("union_member_types");
-        state.erase("union_member_names");
     }
 
 };
@@ -1228,6 +1314,14 @@ struct action<fixed_array_size>
 template<>
 struct action<typedef_dcl>
 {
+    // Function to handle the cleanup of state
+    static void cleanup_state(
+            std::map<std::string, std::string>& state)
+    {
+        state.erase("alias");
+        state.erase("alias_sizes");
+    }
+
     template<typename Input>
     static void apply(
             const Input& /*in*/,
@@ -1235,16 +1329,49 @@ struct action<typedef_dcl>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
+        // Ensure cleanup happens at the end of this scope using a RAII-style guard
+        struct CleanupGuard
+        {
+            std::map<std::string, std::string>& state;
+            ~CleanupGuard()
+            {
+                cleanup_state(state);
+            }
+
+        }
+        cleanup_guard{state};
+
         Module& module = ctx->module();
 
         std::string alias_name;
         std::vector<std::string> sizes_str = ctx->split_string(state["alias_sizes"], ';');
 
-        std::stringstream ss(state["alias"]);
-        std::getline(ss, state["type"], ',');
-        std::getline(ss, alias_name, ',');
+        // state["alias"] is supposed to contain up to two fields, alias type (optional) and name
+        std::ptrdiff_t comma_count = std::count(state["alias"].begin(), state["alias"].end(), ',');
+        if (comma_count > 1)
+        {
+            throw std::runtime_error("Invalid state[\"alias\"]: " + state["alias"]);
+        }
+
+        if (comma_count == 1)
+        {
+            std::stringstream ss(state["alias"]);
+            std::getline(ss, state["type"], ',');
+            std::getline(ss, alias_name, ',');
+        }
+        else
+        {
+            // When alias type is a primitive type
+            alias_name = state["alias"];
+        }
 
         DynamicType::_ref_type alias_type = ctx->get_type(state, state["type"]);
+        if (!alias_type)
+        {
+            EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] alias type not supported: " << state["type"]);
+            return;
+        }
+
         DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
         TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
         type_descriptor->kind(TK_ALIAS);
@@ -1273,9 +1400,54 @@ struct action<typedef_dcl>
         {
             ctx->builder = builder;
         }
+    }
 
-        state.erase("alias");
-        state.erase("alias_sizes");
+};
+
+template<>
+struct action<annotation_appl>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* /*ctx*/,
+            std::map<std::string, std::string>& /*state*/,
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
+    {
+        const std::string type = in.string();
+        EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] annotation_appl parsing not supported: " << type);
+    }
+
+};
+
+template<>
+struct action<bitmask_dcl>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* /*ctx*/,
+            std::map<std::string, std::string>& /*state*/,
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
+    {
+        const std::string type = in.string();
+        EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] bitmask_dcl parsing not supported: " << type);
+    }
+
+};
+
+template<>
+struct action<bitset_dcl>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* /*ctx*/,
+            std::map<std::string, std::string>& /*state*/,
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
+    {
+        const std::string type = in.string();
+        EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] bitset_dcl parsing not supported: " << type);
     }
 
 };
@@ -1537,7 +1709,10 @@ private:
         else
         {
             builder = context_->module().get_builder(type);
-            xtype = builder->build();
+            if (builder)
+            {
+                xtype = builder->build();
+            }
         }
 
         return xtype;
