@@ -2274,6 +2274,7 @@ TEST(ParticipantTests, CreateTopicWithDifferentTypeName_negative)
         // Topic using the default profile
         Topic* topic = participant->create_topic("footopic", type_name, TOPIC_QOS_DEFAULT);
         ASSERT_EQ(topic, nullptr);
+        ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
     }
 
     // Using type support type name when registered with other name
@@ -2288,6 +2289,7 @@ TEST(ParticipantTests, CreateTopicWithDifferentTypeName_negative)
         // Topic using the default profile
         Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
         ASSERT_EQ(topic, nullptr);
+        ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
     }
 }
 
