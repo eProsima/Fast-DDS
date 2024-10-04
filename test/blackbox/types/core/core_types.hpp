@@ -4268,31 +4268,40 @@ public:
     {
         bool ret_value {false};
 
-        if (m__d == x.m__d &&
-                selected_member_ == x.selected_member_)
+        if (x.selected_member_ == selected_member_)
         {
-            switch (selected_member_)
+            if (0x0FFFFFFFu != selected_member_)
             {
-                                case 0x00000001:
-                                    ret_value = (m_heartbeat_submsg == x.m_heartbeat_submsg);
-                                    break;
+                if (x.m__d == m__d)
+                {
+                    switch (selected_member_)
+                    {
+                                                    case 0x00000001:
+                                                        ret_value = (x.m_heartbeat_submsg == m_heartbeat_submsg);
+                                                        break;
 
-                                case 0x00000002:
-                                    ret_value = (m_info_ts_submsg == x.m_info_ts_submsg);
-                                    break;
+                                                    case 0x00000002:
+                                                        ret_value = (x.m_info_ts_submsg == m_info_ts_submsg);
+                                                        break;
 
-                                case 0x00000003:
-                                    ret_value = (m_info_src_submsg == x.m_info_src_submsg);
-                                    break;
+                                                    case 0x00000003:
+                                                        ret_value = (x.m_info_src_submsg == m_info_src_submsg);
+                                                        break;
 
-                                case 0x00000004:
-                                    ret_value = (m_info_dst_submsg == x.m_info_dst_submsg);
-                                    break;
+                                                    case 0x00000004:
+                                                        ret_value = (x.m_info_dst_submsg == m_info_dst_submsg);
+                                                        break;
 
-                                case 0x00000005:
-                                    ret_value = (m_unknown_submsg == x.m_unknown_submsg);
-                                    break;
+                                                    case 0x00000005:
+                                                        ret_value = (x.m_unknown_submsg == m_unknown_submsg);
+                                                        break;
 
+                    }
+                }
+            }
+            else
+            {
+                ret_value = true;
             }
         }
 

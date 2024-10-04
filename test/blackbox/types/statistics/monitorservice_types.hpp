@@ -1465,47 +1465,56 @@ public:
     {
         bool ret_value {false};
 
-        if (m__d == x.m__d &&
-                selected_member_ == x.selected_member_)
+        if (x.selected_member_ == selected_member_)
         {
-            switch (selected_member_)
+            if (0x0FFFFFFFu != selected_member_)
             {
-                                case 0x00000001:
-                                    ret_value = (m_entity_proxy == x.m_entity_proxy);
-                                    break;
+                if (x.m__d == m__d)
+                {
+                    switch (selected_member_)
+                    {
+                                                    case 0x00000001:
+                                                        ret_value = (x.m_entity_proxy == m_entity_proxy);
+                                                        break;
 
-                                case 0x00000002:
-                                    ret_value = (m_connection_list == x.m_connection_list);
-                                    break;
+                                                    case 0x00000002:
+                                                        ret_value = (x.m_connection_list == m_connection_list);
+                                                        break;
 
-                                case 0x00000003:
-                                    ret_value = (m_incompatible_qos_status == x.m_incompatible_qos_status);
-                                    break;
+                                                    case 0x00000003:
+                                                        ret_value = (x.m_incompatible_qos_status == m_incompatible_qos_status);
+                                                        break;
 
-                                case 0x00000004:
-                                    ret_value = (m_inconsistent_topic_status == x.m_inconsistent_topic_status);
-                                    break;
+                                                    case 0x00000004:
+                                                        ret_value = (x.m_inconsistent_topic_status == m_inconsistent_topic_status);
+                                                        break;
 
-                                case 0x00000005:
-                                    ret_value = (m_liveliness_lost_status == x.m_liveliness_lost_status);
-                                    break;
+                                                    case 0x00000005:
+                                                        ret_value = (x.m_liveliness_lost_status == m_liveliness_lost_status);
+                                                        break;
 
-                                case 0x00000006:
-                                    ret_value = (m_liveliness_changed_status == x.m_liveliness_changed_status);
-                                    break;
+                                                    case 0x00000006:
+                                                        ret_value = (x.m_liveliness_changed_status == m_liveliness_changed_status);
+                                                        break;
 
-                                case 0x00000007:
-                                    ret_value = (m_deadline_missed_status == x.m_deadline_missed_status);
-                                    break;
+                                                    case 0x00000007:
+                                                        ret_value = (x.m_deadline_missed_status == m_deadline_missed_status);
+                                                        break;
 
-                                case 0x00000008:
-                                    ret_value = (m_sample_lost_status == x.m_sample_lost_status);
-                                    break;
+                                                    case 0x00000008:
+                                                        ret_value = (x.m_sample_lost_status == m_sample_lost_status);
+                                                        break;
 
-                                case 0x00000009:
-                                    ret_value = (m_statuses_size == x.m_statuses_size);
-                                    break;
+                                                    case 0x00000009:
+                                                        ret_value = (x.m_statuses_size == m_statuses_size);
+                                                        break;
 
+                    }
+                }
+            }
+            else
+            {
+                ret_value = true;
             }
         }
 

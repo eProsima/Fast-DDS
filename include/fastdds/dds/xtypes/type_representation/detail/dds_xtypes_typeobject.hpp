@@ -250,15 +250,24 @@ public:
     {
         bool ret_value {false};
 
-        if (m__d == x.m__d &&
-                selected_member_ == x.selected_member_)
+        if (x.selected_member_ == selected_member_)
         {
-            switch (selected_member_)
+            if (0x0FFFFFFFu != selected_member_)
             {
-                                case 0x00000001:
-                                    ret_value = (m_hash == x.m_hash);
-                                    break;
+                if (x.m__d == m__d)
+                {
+                    switch (selected_member_)
+                    {
+                                                    case 0x00000001:
+                                                        ret_value = (x.m_hash == m_hash);
+                                                        break;
 
+                    }
+                }
+            }
+            else
+            {
+                ret_value = true;
             }
         }
 
@@ -3090,59 +3099,68 @@ public:
     {
         bool ret_value {false};
 
-        if (m__d == x.m__d &&
-                selected_member_ == x.selected_member_)
+        if (x.selected_member_ == selected_member_)
         {
-            switch (selected_member_)
+            if (0x0FFFFFFFu != selected_member_)
             {
-                                case 0x00000001:
-                                    ret_value = (m_no_value == x.m_no_value);
-                                    break;
+                if (x.m__d == m__d)
+                {
+                    switch (selected_member_)
+                    {
+                                                    case 0x00000001:
+                                                        ret_value = (x.m_no_value == m_no_value);
+                                                        break;
 
-                                case 0x00000002:
-                                    ret_value = (m_string_sdefn == x.m_string_sdefn);
-                                    break;
+                                                    case 0x00000002:
+                                                        ret_value = (x.m_string_sdefn == m_string_sdefn);
+                                                        break;
 
-                                case 0x00000003:
-                                    ret_value = (m_string_ldefn == x.m_string_ldefn);
-                                    break;
+                                                    case 0x00000003:
+                                                        ret_value = (x.m_string_ldefn == m_string_ldefn);
+                                                        break;
 
-                                case 0x00000004:
-                                    ret_value = (m_seq_sdefn == x.m_seq_sdefn);
-                                    break;
+                                                    case 0x00000004:
+                                                        ret_value = (x.m_seq_sdefn == m_seq_sdefn);
+                                                        break;
 
-                                case 0x00000005:
-                                    ret_value = (m_seq_ldefn == x.m_seq_ldefn);
-                                    break;
+                                                    case 0x00000005:
+                                                        ret_value = (x.m_seq_ldefn == m_seq_ldefn);
+                                                        break;
 
-                                case 0x00000006:
-                                    ret_value = (m_array_sdefn == x.m_array_sdefn);
-                                    break;
+                                                    case 0x00000006:
+                                                        ret_value = (x.m_array_sdefn == m_array_sdefn);
+                                                        break;
 
-                                case 0x00000007:
-                                    ret_value = (m_array_ldefn == x.m_array_ldefn);
-                                    break;
+                                                    case 0x00000007:
+                                                        ret_value = (x.m_array_ldefn == m_array_ldefn);
+                                                        break;
 
-                                case 0x00000008:
-                                    ret_value = (m_map_sdefn == x.m_map_sdefn);
-                                    break;
+                                                    case 0x00000008:
+                                                        ret_value = (x.m_map_sdefn == m_map_sdefn);
+                                                        break;
 
-                                case 0x00000009:
-                                    ret_value = (m_map_ldefn == x.m_map_ldefn);
-                                    break;
+                                                    case 0x00000009:
+                                                        ret_value = (x.m_map_ldefn == m_map_ldefn);
+                                                        break;
 
-                                case 0x0000000a:
-                                    ret_value = (m_sc_component_id == x.m_sc_component_id);
-                                    break;
+                                                    case 0x0000000a:
+                                                        ret_value = (x.m_sc_component_id == m_sc_component_id);
+                                                        break;
 
-                                case 0x0000000b:
-                                    ret_value = (m_equivalence_hash == x.m_equivalence_hash);
-                                    break;
+                                                    case 0x0000000b:
+                                                        ret_value = (x.m_equivalence_hash == m_equivalence_hash);
+                                                        break;
 
-                                case 0x0000000c:
-                                    ret_value = (m_extended_defn == x.m_extended_defn);
-                                    break;
+                                                    case 0x0000000c:
+                                                        ret_value = (x.m_extended_defn == m_extended_defn);
+                                                        break;
 
+                    }
+                }
+            }
+            else
+            {
+                ret_value = true;
             }
         }
 
@@ -4674,87 +4692,96 @@ public:
     {
         bool ret_value {false};
 
-        if (m__d == x.m__d &&
-                selected_member_ == x.selected_member_)
+        if (x.selected_member_ == selected_member_)
         {
-            switch (selected_member_)
+            if (0x0FFFFFFFu != selected_member_)
             {
-                                case 0x00000001:
-                                    ret_value = (m_boolean_value == x.m_boolean_value);
-                                    break;
+                if (x.m__d == m__d)
+                {
+                    switch (selected_member_)
+                    {
+                                                    case 0x00000001:
+                                                        ret_value = (x.m_boolean_value == m_boolean_value);
+                                                        break;
 
-                                case 0x00000002:
-                                    ret_value = (m_byte_value == x.m_byte_value);
-                                    break;
+                                                    case 0x00000002:
+                                                        ret_value = (x.m_byte_value == m_byte_value);
+                                                        break;
 
-                                case 0x00000003:
-                                    ret_value = (m_int8_value == x.m_int8_value);
-                                    break;
+                                                    case 0x00000003:
+                                                        ret_value = (x.m_int8_value == m_int8_value);
+                                                        break;
 
-                                case 0x00000004:
-                                    ret_value = (m_uint8_value == x.m_uint8_value);
-                                    break;
+                                                    case 0x00000004:
+                                                        ret_value = (x.m_uint8_value == m_uint8_value);
+                                                        break;
 
-                                case 0x00000005:
-                                    ret_value = (m_int16_value == x.m_int16_value);
-                                    break;
+                                                    case 0x00000005:
+                                                        ret_value = (x.m_int16_value == m_int16_value);
+                                                        break;
 
-                                case 0x00000006:
-                                    ret_value = (m_uint_16_value == x.m_uint_16_value);
-                                    break;
+                                                    case 0x00000006:
+                                                        ret_value = (x.m_uint_16_value == m_uint_16_value);
+                                                        break;
 
-                                case 0x00000007:
-                                    ret_value = (m_int32_value == x.m_int32_value);
-                                    break;
+                                                    case 0x00000007:
+                                                        ret_value = (x.m_int32_value == m_int32_value);
+                                                        break;
 
-                                case 0x00000008:
-                                    ret_value = (m_uint32_value == x.m_uint32_value);
-                                    break;
+                                                    case 0x00000008:
+                                                        ret_value = (x.m_uint32_value == m_uint32_value);
+                                                        break;
 
-                                case 0x00000009:
-                                    ret_value = (m_int64_value == x.m_int64_value);
-                                    break;
+                                                    case 0x00000009:
+                                                        ret_value = (x.m_int64_value == m_int64_value);
+                                                        break;
 
-                                case 0x0000000a:
-                                    ret_value = (m_uint64_value == x.m_uint64_value);
-                                    break;
+                                                    case 0x0000000a:
+                                                        ret_value = (x.m_uint64_value == m_uint64_value);
+                                                        break;
 
-                                case 0x0000000b:
-                                    ret_value = (m_float32_value == x.m_float32_value);
-                                    break;
+                                                    case 0x0000000b:
+                                                        ret_value = (x.m_float32_value == m_float32_value);
+                                                        break;
 
-                                case 0x0000000c:
-                                    ret_value = (m_float64_value == x.m_float64_value);
-                                    break;
+                                                    case 0x0000000c:
+                                                        ret_value = (x.m_float64_value == m_float64_value);
+                                                        break;
 
-                                case 0x0000000d:
-                                    ret_value = (m_float128_value == x.m_float128_value);
-                                    break;
+                                                    case 0x0000000d:
+                                                        ret_value = (x.m_float128_value == m_float128_value);
+                                                        break;
 
-                                case 0x0000000e:
-                                    ret_value = (m_char_value == x.m_char_value);
-                                    break;
+                                                    case 0x0000000e:
+                                                        ret_value = (x.m_char_value == m_char_value);
+                                                        break;
 
-                                case 0x0000000f:
-                                    ret_value = (m_wchar_value == x.m_wchar_value);
-                                    break;
+                                                    case 0x0000000f:
+                                                        ret_value = (x.m_wchar_value == m_wchar_value);
+                                                        break;
 
-                                case 0x00000010:
-                                    ret_value = (m_enumerated_value == x.m_enumerated_value);
-                                    break;
+                                                    case 0x00000010:
+                                                        ret_value = (x.m_enumerated_value == m_enumerated_value);
+                                                        break;
 
-                                case 0x00000011:
-                                    ret_value = (m_string8_value == x.m_string8_value);
-                                    break;
+                                                    case 0x00000011:
+                                                        ret_value = (x.m_string8_value == m_string8_value);
+                                                        break;
 
-                                case 0x00000012:
-                                    ret_value = (m_string16_value == x.m_string16_value);
-                                    break;
+                                                    case 0x00000012:
+                                                        ret_value = (x.m_string16_value == m_string16_value);
+                                                        break;
 
-                                case 0x00000013:
-                                    ret_value = (m_extended_value == x.m_extended_value);
-                                    break;
+                                                    case 0x00000013:
+                                                        ret_value = (x.m_extended_value == m_extended_value);
+                                                        break;
 
+                    }
+                }
+            }
+            else
+            {
+                ret_value = true;
             }
         }
 
@@ -20954,55 +20981,64 @@ public:
     {
         bool ret_value {false};
 
-        if (m__d == x.m__d &&
-                selected_member_ == x.selected_member_)
+        if (x.selected_member_ == selected_member_)
         {
-            switch (selected_member_)
+            if (0x0FFFFFFFu != selected_member_)
             {
-                                case 0x00000001:
-                                    ret_value = (m_alias_type == x.m_alias_type);
-                                    break;
+                if (x.m__d == m__d)
+                {
+                    switch (selected_member_)
+                    {
+                                                    case 0x00000001:
+                                                        ret_value = (x.m_alias_type == m_alias_type);
+                                                        break;
 
-                                case 0x00000002:
-                                    ret_value = (m_annotation_type == x.m_annotation_type);
-                                    break;
+                                                    case 0x00000002:
+                                                        ret_value = (x.m_annotation_type == m_annotation_type);
+                                                        break;
 
-                                case 0x00000003:
-                                    ret_value = (m_struct_type == x.m_struct_type);
-                                    break;
+                                                    case 0x00000003:
+                                                        ret_value = (x.m_struct_type == m_struct_type);
+                                                        break;
 
-                                case 0x00000004:
-                                    ret_value = (m_union_type == x.m_union_type);
-                                    break;
+                                                    case 0x00000004:
+                                                        ret_value = (x.m_union_type == m_union_type);
+                                                        break;
 
-                                case 0x00000005:
-                                    ret_value = (m_bitset_type == x.m_bitset_type);
-                                    break;
+                                                    case 0x00000005:
+                                                        ret_value = (x.m_bitset_type == m_bitset_type);
+                                                        break;
 
-                                case 0x00000006:
-                                    ret_value = (m_sequence_type == x.m_sequence_type);
-                                    break;
+                                                    case 0x00000006:
+                                                        ret_value = (x.m_sequence_type == m_sequence_type);
+                                                        break;
 
-                                case 0x00000007:
-                                    ret_value = (m_array_type == x.m_array_type);
-                                    break;
+                                                    case 0x00000007:
+                                                        ret_value = (x.m_array_type == m_array_type);
+                                                        break;
 
-                                case 0x00000008:
-                                    ret_value = (m_map_type == x.m_map_type);
-                                    break;
+                                                    case 0x00000008:
+                                                        ret_value = (x.m_map_type == m_map_type);
+                                                        break;
 
-                                case 0x00000009:
-                                    ret_value = (m_enumerated_type == x.m_enumerated_type);
-                                    break;
+                                                    case 0x00000009:
+                                                        ret_value = (x.m_enumerated_type == m_enumerated_type);
+                                                        break;
 
-                                case 0x0000000a:
-                                    ret_value = (m_bitmask_type == x.m_bitmask_type);
-                                    break;
+                                                    case 0x0000000a:
+                                                        ret_value = (x.m_bitmask_type == m_bitmask_type);
+                                                        break;
 
-                                case 0x0000000b:
-                                    ret_value = (m_extended_type == x.m_extended_type);
-                                    break;
+                                                    case 0x0000000b:
+                                                        ret_value = (x.m_extended_type == m_extended_type);
+                                                        break;
 
+                    }
+                }
+            }
+            else
+            {
+                ret_value = true;
             }
         }
 
@@ -22303,55 +22339,64 @@ public:
     {
         bool ret_value {false};
 
-        if (m__d == x.m__d &&
-                selected_member_ == x.selected_member_)
+        if (x.selected_member_ == selected_member_)
         {
-            switch (selected_member_)
+            if (0x0FFFFFFFu != selected_member_)
             {
-                                case 0x00000001:
-                                    ret_value = (m_alias_type == x.m_alias_type);
-                                    break;
+                if (x.m__d == m__d)
+                {
+                    switch (selected_member_)
+                    {
+                                                    case 0x00000001:
+                                                        ret_value = (x.m_alias_type == m_alias_type);
+                                                        break;
 
-                                case 0x00000002:
-                                    ret_value = (m_annotation_type == x.m_annotation_type);
-                                    break;
+                                                    case 0x00000002:
+                                                        ret_value = (x.m_annotation_type == m_annotation_type);
+                                                        break;
 
-                                case 0x00000003:
-                                    ret_value = (m_struct_type == x.m_struct_type);
-                                    break;
+                                                    case 0x00000003:
+                                                        ret_value = (x.m_struct_type == m_struct_type);
+                                                        break;
 
-                                case 0x00000004:
-                                    ret_value = (m_union_type == x.m_union_type);
-                                    break;
+                                                    case 0x00000004:
+                                                        ret_value = (x.m_union_type == m_union_type);
+                                                        break;
 
-                                case 0x00000005:
-                                    ret_value = (m_bitset_type == x.m_bitset_type);
-                                    break;
+                                                    case 0x00000005:
+                                                        ret_value = (x.m_bitset_type == m_bitset_type);
+                                                        break;
 
-                                case 0x00000006:
-                                    ret_value = (m_sequence_type == x.m_sequence_type);
-                                    break;
+                                                    case 0x00000006:
+                                                        ret_value = (x.m_sequence_type == m_sequence_type);
+                                                        break;
 
-                                case 0x00000007:
-                                    ret_value = (m_array_type == x.m_array_type);
-                                    break;
+                                                    case 0x00000007:
+                                                        ret_value = (x.m_array_type == m_array_type);
+                                                        break;
 
-                                case 0x00000008:
-                                    ret_value = (m_map_type == x.m_map_type);
-                                    break;
+                                                    case 0x00000008:
+                                                        ret_value = (x.m_map_type == m_map_type);
+                                                        break;
 
-                                case 0x00000009:
-                                    ret_value = (m_enumerated_type == x.m_enumerated_type);
-                                    break;
+                                                    case 0x00000009:
+                                                        ret_value = (x.m_enumerated_type == m_enumerated_type);
+                                                        break;
 
-                                case 0x0000000a:
-                                    ret_value = (m_bitmask_type == x.m_bitmask_type);
-                                    break;
+                                                    case 0x0000000a:
+                                                        ret_value = (x.m_bitmask_type == m_bitmask_type);
+                                                        break;
 
-                                case 0x0000000b:
-                                    ret_value = (m_extended_type == x.m_extended_type);
-                                    break;
+                                                    case 0x0000000b:
+                                                        ret_value = (x.m_extended_type == m_extended_type);
+                                                        break;
 
+                    }
+                }
+            }
+            else
+            {
+                ret_value = true;
             }
         }
 
@@ -23409,19 +23454,28 @@ public:
     {
         bool ret_value {false};
 
-        if (m__d == x.m__d &&
-                selected_member_ == x.selected_member_)
+        if (x.selected_member_ == selected_member_)
         {
-            switch (selected_member_)
+            if (0x0FFFFFFFu != selected_member_)
             {
-                                case 0x00000001:
-                                    ret_value = (m_complete == x.m_complete);
-                                    break;
+                if (x.m__d == m__d)
+                {
+                    switch (selected_member_)
+                    {
+                                                    case 0x00000001:
+                                                        ret_value = (x.m_complete == m_complete);
+                                                        break;
 
-                                case 0x00000002:
-                                    ret_value = (m_minimal == x.m_minimal);
-                                    break;
+                                                    case 0x00000002:
+                                                        ret_value = (x.m_minimal == m_minimal);
+                                                        break;
 
+                    }
+                }
+            }
+            else
+            {
+                ret_value = true;
             }
         }
 
