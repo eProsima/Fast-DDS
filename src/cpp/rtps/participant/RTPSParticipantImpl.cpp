@@ -1539,9 +1539,16 @@ void RTPSParticipantImpl::update_attributes(
     // Check if new interfaces have been added
     if (internal_metatraffic_locators_)
     {
+<<<<<<< HEAD
         LocatorList_t metatraffic_unicast_locator_list = m_att.builtin.metatrafficUnicastLocatorList;
         get_default_metatraffic_locators();
         if (!(metatraffic_unicast_locator_list == m_att.builtin.metatrafficUnicastLocatorList))
+=======
+        LocatorList_t metatraffic_unicast_locator_list = temp_atts.builtin.metatrafficUnicastLocatorList;
+        temp_atts.builtin.metatrafficUnicastLocatorList.clear();
+        get_default_metatraffic_locators(temp_atts);
+        if (!(metatraffic_unicast_locator_list == temp_atts.builtin.metatrafficUnicastLocatorList))
+>>>>>>> 91bd7c857 (Fix issues in Dynamic Network Interfaces (#5282))
         {
             local_interfaces_changed = true;
             EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, m_att.getName() << " updated its metatraffic locators");
@@ -1549,9 +1556,16 @@ void RTPSParticipantImpl::update_attributes(
     }
     if (internal_default_locators_)
     {
+<<<<<<< HEAD
         LocatorList_t default_unicast_locator_list = m_att.defaultUnicastLocatorList;
         get_default_unicast_locators();
         if (!(default_unicast_locator_list == m_att.defaultUnicastLocatorList))
+=======
+        LocatorList_t default_unicast_locator_list = temp_atts.defaultUnicastLocatorList;
+        temp_atts.defaultUnicastLocatorList.clear();
+        get_default_unicast_locators(temp_atts);
+        if (!(default_unicast_locator_list == temp_atts.defaultUnicastLocatorList))
+>>>>>>> 91bd7c857 (Fix issues in Dynamic Network Interfaces (#5282))
         {
             local_interfaces_changed = true;
             EPROSIMA_LOG_INFO(RTPS_PARTICIPANT,
@@ -1673,7 +1687,9 @@ void RTPSParticipantImpl::update_attributes(
 
         {
             std::lock_guard<std::recursive_mutex> lock(*pdp->getMutex());
+            pdp->local_participant_attributes_update_nts(temp_atts);
 
+<<<<<<< HEAD
             // Update user data
             auto local_participant_proxy_data = pdp->getLocalParticipantProxyData();
             local_participant_proxy_data->m_userData.data_vec(m_att.userData);
@@ -1692,6 +1708,12 @@ void RTPSParticipantImpl::update_attributes(
             for (auto locator : m_att.defaultUnicastLocatorList)
             {
                 local_participant_proxy_data->default_locators.add_unicast_locator(locator);
+=======
+            if (local_interfaces_changed && internal_default_locators_)
+            {
+                std::lock_guard<shared_mutex> _(endpoints_list_mutex);
+                pdp->update_endpoint_locators_if_default_nts(m_userWriterList, m_userReaderList, m_att, temp_atts);
+>>>>>>> 91bd7c857 (Fix issues in Dynamic Network Interfaces (#5282))
             }
 
             if (local_interfaces_changed)
