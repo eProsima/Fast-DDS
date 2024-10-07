@@ -92,7 +92,7 @@ public:
 #if HAVE_SECURITY
                (this->security_log_thread_ == b.security_log_thread()) &&
 #endif // if HAVE_SECURITY
-               (this->flow_controllers_ == b.flow_controllers());
+               (compare_flow_controllers(b));
     }
 
     /**
@@ -321,6 +321,15 @@ public:
     {
         return flow_controllers_;
     }
+
+    /**
+     * Compares the flow controllers of two DomainParticipantQos element-wise.
+     *
+     * @param qos The DomainParticipantQos to compare with.
+     * @return true if the flow controllers are the same, false otherwise.
+     */
+    FASTDDS_EXPORTED_API bool compare_flow_controllers(
+            const DomainParticipantQos& qos) const;
 
     /**
      * Getter for FlowControllerDescriptorList

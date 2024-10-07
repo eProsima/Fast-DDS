@@ -492,7 +492,15 @@ void check_equivalent_qos(
     ASSERT_EQ(qos_1.wire_protocol(), qos_2.wire_protocol());
     ASSERT_EQ(qos_1.transport(), qos_2.transport());
     ASSERT_EQ(qos_1.name(), qos_2.name());
-    ASSERT_EQ(qos_1.flow_controllers(), qos_2.flow_controllers());
+    ASSERT_EQ(qos_1.builtin_controllers_sender_thread(), qos_2.builtin_controllers_sender_thread());
+    ASSERT_EQ(qos_1.timed_events_thread(), qos_2.timed_events_thread());
+    ASSERT_EQ(qos_1.discovery_server_thread(), qos_2.discovery_server_thread());
+    ASSERT_EQ(qos_1.typelookup_service_thread(), qos_2.typelookup_service_thread());
+#if HAVE_SECURITY
+    ASSERT_EQ(qos_1.security_log_thread(), qos_2.security_log_thread());
+#endif // if HAVE_SECURITY
+
+    ASSERT_TRUE(qos_1.compare_flow_controllers(qos_2));
 }
 
 void check_participant_with_profile(

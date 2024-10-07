@@ -58,6 +58,16 @@ struct FlowControllerDescriptor
     //! Thread settings for the sender thread
     ThreadSettings sender_thread;
 
+    bool operator ==(
+            const FlowControllerDescriptor& b) const
+    {
+        return (this->name == b.name) &&
+               (this->scheduler == b.scheduler) &&
+               (this->max_bytes_per_period == b.max_bytes_per_period) &&
+               (this->period_ms == b.period_ms) &&
+               (this->sender_thread == b.sender_thread);
+    }
+
 };
 
 } // namespace rtps
