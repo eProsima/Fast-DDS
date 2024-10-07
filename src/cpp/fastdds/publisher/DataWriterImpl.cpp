@@ -2262,7 +2262,7 @@ ReturnCode_t DataWriterImpl::get_matched_subscriptions(
     {
         for (const GUID_t& guid : matched_reader_guids)
         {
-            subscription_handles.push_back(InstanceHandle_t(guid));
+            subscription_handles.emplace_back(InstanceHandle_t(guid));
         }
         ret = ReturnCode_t::RETCODE_OK;
     }

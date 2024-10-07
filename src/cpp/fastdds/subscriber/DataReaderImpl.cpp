@@ -1232,7 +1232,7 @@ ReturnCode_t DataReaderImpl::get_matched_publications(
     {
         for (const GUID_t& guid : matched_writers_guids)
         {
-            publication_handles.push_back(InstanceHandle_t(guid));
+            publication_handles.emplace_back(InstanceHandle_t(guid));
         }
         ret = ReturnCode_t::RETCODE_OK;
     }

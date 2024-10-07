@@ -536,12 +536,13 @@ public:
      */
     RTPS_DllAPI ReturnCode_t get_matched_subscriptions(
             std::vector<InstanceHandle_t>& subscription_handles) const;
-    /**
-     * @note User is responsible for the memory deallocation of the returned vector.
-     */
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds:DataWriter::get_matched_subscriptions()",
             "In favor of version using std::vector<fastrtps::rtps::InstanceHandle_t>.")
+    /**
+     * @note User is responsible for the memory deallocation of the returned vector.
+     */
     RTPS_DllAPI ReturnCode_t get_matched_subscriptions(
             std::vector<InstanceHandle_t*>& subscription_handles) const;
 #endif // DOXYGEN_SHOULD_SKIP_THIS

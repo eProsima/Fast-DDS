@@ -180,7 +180,7 @@ public:
     virtual bool matched_writers_guids(
             std::vector<GUID_t>&) const
     {
-        return true;
+        return false;
     }
 
     virtual bool isInCleanState()
