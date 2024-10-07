@@ -16,9 +16,10 @@
 
 #include <gtest/gtest.h>
 
+#include <fastdds/dds/builtin/topic/BuiltinTopicKey.hpp>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/rtps/RTPSDomain.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastdds/dds/log/Log.hpp>
 
 #include <thread>
 #include <memory>
@@ -84,6 +85,36 @@ public:
     }
 
 };
+
+void entity_id_to_builtin_topic_key(
+        eprosima::fastdds::dds::builtin::BuiltinTopicKey_t& bt_key,
+        const eprosima::fastrtps::rtps::EntityId_t& entity_id)
+{
+    bt_key.value[0] = 0;
+    bt_key.value[1] = 0;
+    bt_key.value[2] = static_cast<uint32_t>(entity_id.value[0]) << 24
+            | static_cast<uint32_t>(entity_id.value[1]) << 16
+            | static_cast<uint32_t>(entity_id.value[2]) << 8
+            | static_cast<uint32_t>(entity_id.value[3]);
+}
+
+void guid_prefix_to_builtin_topic_key(
+        eprosima::fastdds::dds::builtin::BuiltinTopicKey_t& bt_key,
+        const eprosima::fastrtps::rtps::GuidPrefix_t& guid_prefix)
+{
+    bt_key.value[0] = static_cast<uint32_t>(guid_prefix.value[0]) << 24
+            | static_cast<uint32_t>(guid_prefix.value[1]) << 16
+            | static_cast<uint32_t>(guid_prefix.value[2]) << 8
+            | static_cast<uint32_t>(guid_prefix.value[3]);
+    bt_key.value[1] = static_cast<uint32_t>(guid_prefix.value[4]) << 24
+            | static_cast<uint32_t>(guid_prefix.value[5]) << 16
+            | static_cast<uint32_t>(guid_prefix.value[6]) << 8
+            | static_cast<uint32_t>(guid_prefix.value[7]);
+    bt_key.value[2] = static_cast<uint32_t>(guid_prefix.value[8]) << 24
+            | static_cast<uint32_t>(guid_prefix.value[9]) << 16
+            | static_cast<uint32_t>(guid_prefix.value[10]) << 8
+            | static_cast<uint32_t>(guid_prefix.value[11]);
+}
 
 int main(
         int argc,

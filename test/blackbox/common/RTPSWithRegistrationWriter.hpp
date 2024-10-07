@@ -578,12 +578,12 @@ public:
         return *writer_;
     }
 
-    eprosima::fastrtps::WriterQos& get_writerqos()
+    const eprosima::fastrtps::WriterQos& get_writerqos() const
     {
         return writer_qos_;
     }
 
-    eprosima::fastrtps::TopicAttributes& get_topic_attributes()
+    const eprosima::fastrtps::TopicAttributes& get_topic_attributes() const
     {
         return topic_attr_;
     }

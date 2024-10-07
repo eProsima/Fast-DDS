@@ -544,29 +544,9 @@ bool validate_subscription_builtin_topic_data(
     auto sub_qos = datareader.get_subscriber()->get_qos();
 
     eprosima::fastdds::dds::builtin::BuiltinTopicKey_t dr_key, part_key;
-    eprosima::fastrtps::rtps::GuidPrefix_t part_guid_prefix =
-            datareader.get_subscriber()->get_participant()->guid().guidPrefix;
 
-    // This conversions may be included later in utils
-    dr_key.value[0] = 0;
-    dr_key.value[1] = 0;
-    dr_key.value[2] = static_cast<uint32_t>(datareader.guid().entityId.value[0]) << 24
-            | static_cast<uint32_t>(datareader.guid().entityId.value[1]) << 16
-            | static_cast<uint32_t>(datareader.guid().entityId.value[2]) << 8
-            | static_cast<uint32_t>(datareader.guid().entityId.value[3]);
-
-    part_key.value[0] = static_cast<uint32_t>(part_guid_prefix.value[0]) << 24
-            | static_cast<uint32_t>(part_guid_prefix.value[1]) << 16
-            | static_cast<uint32_t>(part_guid_prefix.value[2]) << 8
-            | static_cast<uint32_t>(part_guid_prefix.value[3]);
-    part_key.value[1] = static_cast<uint32_t>(part_guid_prefix.value[4]) << 24
-            | static_cast<uint32_t>(part_guid_prefix.value[5]) << 16
-            | static_cast<uint32_t>(part_guid_prefix.value[6]) << 8
-            | static_cast<uint32_t>(part_guid_prefix.value[7]);
-    part_key.value[2] = static_cast<uint32_t>(part_guid_prefix.value[8]) << 24
-            | static_cast<uint32_t>(part_guid_prefix.value[9]) << 16
-            | static_cast<uint32_t>(part_guid_prefix.value[10]) << 8
-            | static_cast<uint32_t>(part_guid_prefix.value[11]);
+    entity_id_to_builtin_topic_key(dr_key, datareader.guid().entityId);
+    guid_prefix_to_builtin_topic_key(part_key, datareader.get_subscriber()->get_participant()->guid().guidPrefix);
 
     ret &= (0 == memcmp(subdata.key.value, dr_key.value, sizeof(eprosima::fastdds::dds::builtin::BuiltinTopicKey_t)));
     ret &=
@@ -585,7 +565,8 @@ bool validate_subscription_builtin_topic_data(
     ret &= (subdata.ownership == dr_qos.ownership());
     ret &= (subdata.destination_order == dr_qos.destination_order());
     ret &= (
-        0 == memcmp(subdata.user_data.data(), dr_qos.user_data().data(), subdata.user_data.size()));
+        (subdata.user_data.size() == dr_qos.user_data().size()) &&
+        (0 == memcmp(subdata.user_data.data(), dr_qos.user_data().data(), subdata.user_data.size())));
     // time based filter not implemented
 
     // Subscriber Qos
@@ -598,7 +579,7 @@ bool validate_subscription_builtin_topic_data(
 }
 
 /**
- * Refers to DDS-DW-API-GMSD-01 from the test plan.
+ * @test DDS-DW-API-GMSD-01
  *
  * get_matched_subscription_data() must return RETCODE_BAD_PARAMETER
  * if the subscription is not matched.
@@ -644,7 +625,7 @@ TEST(DDSDataWriter, datawriter_get_matched_subscription_data_bad_parameter)
 }
 
 /**
- * Refers to DDS-DW-API-GMSD-02 from the test plan.
+ * @test DDS-DW-API-GMSD-02
  *
  * The operation must succeed when the subscription is matched and correctly
  * retrieve the publication data. Parameterize the test for different transports.
@@ -694,7 +675,7 @@ TEST_P(DDSDataWriter, datawriter_get_matched_subscription_data_correctly_behaves
 }
 
 /**
- * Refers to DDS-DW-API-GMS-01 from the test plan.
+ * @test DDS-DW-API-GMS-01
  *
  * get_matched_subscriptions() must return RETCODE_OK
  * with an empty list if no DataWriters are matched.
@@ -734,7 +715,7 @@ TEST(DDSDataWriter, datawriter_get_matched_subscriptions_ok_empty_list)
 }
 
 /**
- * Refers to DDS-DW-API-GMS-02 from the test plan.
+ * @test DDS-DW-API-GMS-02
  *
  * get_matched_subscriptions() must provide the correct list of matched subscription handles.
  * Parameterize the test for different transports.
@@ -794,7 +775,7 @@ TEST_P(DDSDataWriter, datawriter_get_matched_subscriptions_correctly_behaves)
 }
 
 /**
- * Refers to DDS-DW-API-GMS-03 from the test plan.
+ * @test DDS-DW-API-GMS-03
  *
  * The operation must provide the correct list of matched subscription handles in multiple
  * participants scenario. Parameterize the test for different transports.

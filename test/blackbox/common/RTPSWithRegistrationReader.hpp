@@ -551,12 +551,12 @@ public:
         return *reader_;
     }
 
-    eprosima::fastrtps::ReaderQos& get_readerqos()
+    const eprosima::fastrtps::ReaderQos& get_readerqos() const
     {
         return reader_qos_;
     }
 
-    eprosima::fastrtps::TopicAttributes& get_topic_attributes()
+    const eprosima::fastrtps::TopicAttributes& get_topic_attributes() const
     {
         return topic_attr_;
     }

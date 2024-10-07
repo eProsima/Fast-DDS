@@ -79,7 +79,10 @@ public:
 };
 
 /**
- * Refers to RTPS-READER-API-MWG-01 from the test plan.
+ * @test RTPS-READER-API-MWG-01
+ *
+ * matched_writers_guids() must return true with empty list when the entitiy is not matched.
+ * matched_writers_guids() must return true with a correct list when the entitiy is matched.
  */
 TEST_P(RTPSReaderTests, rtpsreader_matched_writers_guids)
 {

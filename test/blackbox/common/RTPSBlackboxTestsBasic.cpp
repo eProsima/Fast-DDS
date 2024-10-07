@@ -1289,28 +1289,9 @@ bool validate_publication_builtin_topic_data(
     bool ret = true;
 
     eprosima::fastdds::dds::builtin::BuiltinTopicKey_t w_key, part_key;
-    GuidPrefix_t guid_prefix = participant_guid.guidPrefix;
 
-    // This conversions may be included later in utils
-    w_key.value[0] = 0;
-    w_key.value[1] = 0;
-    w_key.value[2] = static_cast<uint32_t>(writer.getGuid().entityId.value[0]) << 24
-            | static_cast<uint32_t>(writer.getGuid().entityId.value[1]) << 16
-            | static_cast<uint32_t>(writer.getGuid().entityId.value[2]) << 8
-            | static_cast<uint32_t>(writer.getGuid().entityId.value[3]);
-
-    part_key.value[0] = static_cast<uint32_t>(guid_prefix.value[0]) << 24
-            | static_cast<uint32_t>(guid_prefix.value[1]) << 16
-            | static_cast<uint32_t>(guid_prefix.value[2]) << 8
-            | static_cast<uint32_t>(guid_prefix.value[3]);
-    part_key.value[1] = static_cast<uint32_t>(guid_prefix.value[4]) << 24
-            | static_cast<uint32_t>(guid_prefix.value[5]) << 16
-            | static_cast<uint32_t>(guid_prefix.value[6]) << 8
-            | static_cast<uint32_t>(guid_prefix.value[7]);
-    part_key.value[2] = static_cast<uint32_t>(guid_prefix.value[8]) << 24
-            | static_cast<uint32_t>(guid_prefix.value[9]) << 16
-            | static_cast<uint32_t>(guid_prefix.value[10]) << 8
-            | static_cast<uint32_t>(guid_prefix.value[11]);
+    entity_id_to_builtin_topic_key(w_key, writer.getGuid().entityId);
+    guid_prefix_to_builtin_topic_key(part_key, participant_guid.guidPrefix);
 
     ret &= (0 == memcmp(pubdata.key.value, w_key.value, sizeof(eprosima::fastdds::dds::builtin::BuiltinTopicKey_t)));
     ret &=
@@ -1329,7 +1310,8 @@ bool validate_publication_builtin_topic_data(
     ret &= (pubdata.reliability == writer_qos.m_reliability);
     ret &= (pubdata.lifespan == writer_qos.m_lifespan);
     ret &= (
-        0 == memcmp(pubdata.user_data.data(), writer_qos.m_userData.data(), pubdata.user_data.size()));
+        (pubdata.user_data.size() == writer_qos.m_userData.size()) &&
+        (0 == memcmp(pubdata.user_data.data(), writer_qos.m_userData.data(), pubdata.user_data.size())));
     ret &= (pubdata.ownership == writer_qos.m_ownership);
     ret &= (pubdata.ownership_strength == writer_qos.m_ownershipStrength);
     ret &= (pubdata.destination_order == writer_qos.m_destinationOrder);
@@ -1353,28 +1335,9 @@ bool validate_subscription_builtin_topic_data(
     bool ret = true;
 
     eprosima::fastdds::dds::builtin::BuiltinTopicKey_t r_key, part_key;
-    eprosima::fastrtps::rtps::GuidPrefix_t part_guid_prefix = participant_guid.guidPrefix;
 
-    // This conversions may be included later in utils
-    r_key.value[0] = 0;
-    r_key.value[1] = 0;
-    r_key.value[2] = static_cast<uint32_t>(reader.getGuid().entityId.value[0]) << 24
-            | static_cast<uint32_t>(reader.getGuid().entityId.value[1]) << 16
-            | static_cast<uint32_t>(reader.getGuid().entityId.value[2]) << 8
-            | static_cast<uint32_t>(reader.getGuid().entityId.value[3]);
-
-    part_key.value[0] = static_cast<uint32_t>(part_guid_prefix.value[0]) << 24
-            | static_cast<uint32_t>(part_guid_prefix.value[1]) << 16
-            | static_cast<uint32_t>(part_guid_prefix.value[2]) << 8
-            | static_cast<uint32_t>(part_guid_prefix.value[3]);
-    part_key.value[1] = static_cast<uint32_t>(part_guid_prefix.value[4]) << 24
-            | static_cast<uint32_t>(part_guid_prefix.value[5]) << 16
-            | static_cast<uint32_t>(part_guid_prefix.value[6]) << 8
-            | static_cast<uint32_t>(part_guid_prefix.value[7]);
-    part_key.value[2] = static_cast<uint32_t>(part_guid_prefix.value[8]) << 24
-            | static_cast<uint32_t>(part_guid_prefix.value[9]) << 16
-            | static_cast<uint32_t>(part_guid_prefix.value[10]) << 8
-            | static_cast<uint32_t>(part_guid_prefix.value[11]);
+    entity_id_to_builtin_topic_key(r_key, reader.getGuid().entityId);
+    guid_prefix_to_builtin_topic_key(part_key, participant_guid.guidPrefix);
 
     ret &= (0 == memcmp(subdata.key.value, r_key.value, sizeof(eprosima::fastdds::dds::builtin::BuiltinTopicKey_t)));
     ret &=
@@ -1393,7 +1356,8 @@ bool validate_subscription_builtin_topic_data(
     ret &= (subdata.ownership == reader_qos.m_ownership);
     ret &= (subdata.destination_order == reader_qos.m_destinationOrder);
     ret &= (
-        0 == memcmp(subdata.user_data.data(), reader_qos.m_userData.data(), subdata.user_data.size()));
+        (subdata.user_data.size() == reader_qos.m_userData.size()) &&
+        (0 == memcmp(subdata.user_data.data(), reader_qos.m_userData.data(), subdata.user_data.size())));
     // time based filter not implemented
 
     // Subscriber Qos
@@ -1406,7 +1370,9 @@ bool validate_subscription_builtin_topic_data(
 }
 
 /**
- * Refers to RTPS-PART-API-GSI-GPI-01 from the test plan.
+ * @test RTPS-PART-API-GSI-GPI-01
+ *
+ * get_subscription/publication_info() must return false if the entity is not found.
  */
 TEST(RTPS, rtps_participant_get_pubsub_info_negative)
 {
@@ -1436,7 +1402,10 @@ TEST(RTPS, rtps_participant_get_pubsub_info_negative)
 }
 
 /**
- * Refers to RTPS-PART-API-GSI-GPI-02 from the test plan.
+ * @test RTPS-PART-API-GSI-GPI-02
+ *
+ * get_subscription/publication_info() must succeed when the guid is known and correctly retrieve the publication/subscription data.
+ * Parameterize the test for different transports (Transport, Datasharing and Intraprocess).
  */
 TEST_P(RTPS, rtps_participant_get_pubsub_info)
 {

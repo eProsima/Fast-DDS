@@ -227,15 +227,13 @@ public:
         return {};
     }
 
-    MOCK_METHOD2(
-        get_publication_info, bool(
-            fastdds::dds::builtin::PublicationBuiltinTopicData& data,
-            const GUID_t& writer_guid));
+    MOCK_METHOD(bool, get_publication_info,
+            (fastdds::dds::builtin::PublicationBuiltinTopicData&,
+            const GUID_t&), (const));
 
-    MOCK_METHOD2(
-        get_subscription_info, bool(
-            fastdds::dds::builtin::SubscriptionBuiltinTopicData& data,
-            const GUID_t& reader_guid));
+    MOCK_METHOD(bool, get_subscription_info,
+            (fastdds::dds::builtin::SubscriptionBuiltinTopicData&,
+            const GUID_t&), (const));
 
     const RTPSParticipantAttributes& getRTPSParticipantAttributes()
     {

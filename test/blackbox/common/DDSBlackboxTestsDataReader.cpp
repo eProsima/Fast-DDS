@@ -545,28 +545,9 @@ bool validate_publication_builtin_topic_data(
     auto pub_qos = datawriter.get_publisher()->get_qos();
 
     eprosima::fastdds::dds::builtin::BuiltinTopicKey_t dw_key, part_key;
-    GuidPrefix_t guid_prefix = datawriter.get_publisher()->get_participant()->guid().guidPrefix;
 
-    // This conversions may be included later in utils
-    dw_key.value[0] = 0;
-    dw_key.value[1] = 0;
-    dw_key.value[2] = static_cast<uint32_t>(datawriter.guid().entityId.value[0]) << 24
-            | static_cast<uint32_t>(datawriter.guid().entityId.value[1]) << 16
-            | static_cast<uint32_t>(datawriter.guid().entityId.value[2]) << 8
-            | static_cast<uint32_t>(datawriter.guid().entityId.value[3]);
-
-    part_key.value[0] = static_cast<uint32_t>(guid_prefix.value[0]) << 24
-            | static_cast<uint32_t>(guid_prefix.value[1]) << 16
-            | static_cast<uint32_t>(guid_prefix.value[2]) << 8
-            | static_cast<uint32_t>(guid_prefix.value[3]);
-    part_key.value[1] = static_cast<uint32_t>(guid_prefix.value[4]) << 24
-            | static_cast<uint32_t>(guid_prefix.value[5]) << 16
-            | static_cast<uint32_t>(guid_prefix.value[6]) << 8
-            | static_cast<uint32_t>(guid_prefix.value[7]);
-    part_key.value[2] = static_cast<uint32_t>(guid_prefix.value[8]) << 24
-            | static_cast<uint32_t>(guid_prefix.value[9]) << 16
-            | static_cast<uint32_t>(guid_prefix.value[10]) << 8
-            | static_cast<uint32_t>(guid_prefix.value[11]);
+    entity_id_to_builtin_topic_key(dw_key, datawriter.guid().entityId);
+    guid_prefix_to_builtin_topic_key(part_key, datawriter.get_publisher()->get_participant()->guid().guidPrefix);
 
     ret &= (0 == memcmp(pubdata.key.value, dw_key.value, sizeof(eprosima::fastdds::dds::builtin::BuiltinTopicKey_t)));
     ret &=
@@ -585,7 +566,8 @@ bool validate_publication_builtin_topic_data(
     ret &= (pubdata.reliability == dw_qos.reliability());
     ret &= (pubdata.lifespan == dw_qos.lifespan());
     ret &= (
-        0 == memcmp(pubdata.user_data.data(), dw_qos.user_data().data(), pubdata.user_data.size()));
+        (pubdata.user_data.size() == dw_qos.user_data().size()) &&
+        (0 == memcmp(pubdata.user_data.data(), dw_qos.user_data().data(), pubdata.user_data.size())));
     ret &= (pubdata.ownership == dw_qos.ownership());
     ret &= (pubdata.ownership_strength == dw_qos.ownership_strength());
     ret &= (pubdata.destination_order == dw_qos.destination_order());
@@ -600,7 +582,7 @@ bool validate_publication_builtin_topic_data(
 }
 
 /**
- * Refers to DDS-DR-API-GMPD-01 from the test plan.
+ * @test DDS-DR-API-GMPD-01
  *
  * get_matched_publication_data() must return RETCODE_BAD_PARAMETER
  * if the publication is not matched.
@@ -644,7 +626,7 @@ TEST(DDSDataReader, datareader_get_matched_publication_data_bad_parameter)
 }
 
 /**
- * Refers to DDS-DR-API-GMPD-02 from the test plan.
+ * @test DDS-DR-API-GMPD-02
  *
  * The operation must succeed when the publication is matched and correctly
  * retrieve the publication data. Parameterize the test for different transports.
@@ -692,7 +674,7 @@ TEST_P(DDSDataReader, datareader_get_matched_publication_data_correctly_behaves)
 }
 
 /**
- * Refers to DDS-DR-API-GMP-01 from the test plan.
+ * @test DDS-DR-API-GMP-01
  *
  * get_matched_publications() must return RETCODE_OK
  * with an empty list if no DataWriters are matched.
@@ -730,7 +712,7 @@ TEST(DDSDataReader, datareader_get_matched_publications_ok_empty_list)
 }
 
 /**
- * Refers to DDS-DR-API-GMP-02 from the test plan.
+ * @test DDS-DR-API-GMP-02
  *
  * get_matched_publications() must provide the correct list of matched publication handles.
  * Parameterize the test for different transports.
@@ -789,7 +771,7 @@ TEST_P(DDSDataReader, datareader_get_matched_publications_correctly_behaves)
 }
 
 /**
- * Refers to DDS-DR-API-GMP-03 from the test plan.
+ * @test DDS-DR-API-GMP-03
  *
  * The operation must provide the correct list of matched publication handles in multiple
  * participants scenario. Parameterize the test for different transports.
