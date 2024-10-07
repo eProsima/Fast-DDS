@@ -484,9 +484,15 @@ void WriterHistory::set_fragments(
     // If inlineqos for related_sample_identity is required, then remove its size from the final fragment size.
     if (0 < inline_qos_size)
     {
-        final_high_mark_for_frag -= (
-            fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_SENTINEL_SIZE +
-            inline_qos_size);
+        uint32_t overhead = fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_SENTINEL_SIZE + inline_qos_size;
+        if (final_high_mark_for_frag < overhead)
+        {
+            final_high_mark_for_frag = 4;
+        }
+        else
+        {
+            final_high_mark_for_frag -= overhead;
+        }
     }
 
     // If it is big data, fragment it.
