@@ -794,6 +794,32 @@ TEST(ParticipantTests, GetParticipantQosFromXml)
         RETCODE_BAD_PARAMETER);
 }
 
+TEST(ParticipantTests, GetDefaultParticipantQosFromXml)
+{
+    const std::string xml_filename("test_xml_profile.xml");
+
+    std::string complete_xml = testing::load_file(xml_filename);
+
+    // Get default QoS from XML
+    DomainParticipantQos default_qos;
+    EXPECT_EQ(
+        DomainParticipantFactory::get_instance()->get_default_participant_qos_from_xml(complete_xml, default_qos),
+        RETCODE_OK);
+
+    // Load profiles from XML file and get default QoS after resetting its value
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_filename);
+    // NOTE: At the time of this writing, the only way to reset the default qos after loading an XML is to do as follows
+    DomainParticipantFactory::get_instance()->load_profiles();
+    DomainParticipantFactory::get_instance()->set_default_participant_qos(PARTICIPANT_QOS_DEFAULT);
+    DomainParticipantQos default_qos_from_profile;
+    EXPECT_EQ(
+        DomainParticipantFactory::get_instance()->get_default_participant_qos(default_qos_from_profile),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    EXPECT_EQ(default_qos, default_qos_from_profile);
+}
+
 TEST(ParticipantTests, GetParticipantExtendedQosFromXml)
 {
     const std::string xml_filename("test_xml_profile.xml");
@@ -833,6 +859,22 @@ TEST(ParticipantTests, GetParticipantExtendedQosFromXml)
         DomainParticipantFactory::get_instance()->get_participant_extended_qos_from_xml(complete_xml, qos,
         "incorrect_profile_name"),
         RETCODE_BAD_PARAMETER);
+}
+
+TEST(ParticipantTests, GetDefaultParticipantExtendedQosFromXml)
+{
+    const std::string xml_filename("test_xml_profile.xml");
+
+    std::string complete_xml = testing::load_file(xml_filename);
+
+    // Get default QoS from XML
+    DomainParticipantExtendedQos default_qos;
+    EXPECT_EQ(
+        DomainParticipantFactory::get_instance()->get_default_participant_extended_qos_from_xml(complete_xml, default_qos),
+        RETCODE_OK);
+
+    // NOTE: cannot load profiles file and compare with default value as
+    // DomainParticipantFactory::get_default_participant_extended_qos is currently unavailable
 }
 
 TEST(ParticipantTests, DeleteDomainParticipant)
@@ -2121,6 +2163,40 @@ TEST(ParticipantTests, GetSubscriberQosFromXml)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
+TEST(ParticipantTests, GetDefaultSubscriberQosFromXml)
+{
+    const std::string xml_filename("test_xml_profile.xml");
+
+    std::string complete_xml = testing::load_file(xml_filename);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(
+        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    // Get default QoS from XML
+    SubscriberQos default_qos;
+    EXPECT_EQ(
+        participant->get_default_subscriber_qos_from_xml(complete_xml, default_qos),
+        RETCODE_OK);
+
+    // Load profiles from XML file and get default QoS after resetting its value
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_filename);
+    // NOTE: At the time of this writing, the only way to reset the default qos after loading an XML is to do as follows
+    DomainParticipantFactory::get_instance()->load_profiles();
+    participant->set_default_subscriber_qos(SUBSCRIBER_QOS_DEFAULT);
+    SubscriberQos default_qos_from_profile;
+    EXPECT_EQ(
+        participant->get_default_subscriber_qos(default_qos_from_profile),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    EXPECT_EQ(default_qos, default_qos_from_profile);
+
+    // Clean up
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
+}
+
 TEST(ParticipantTests, CreateSubscriberWithProfile)
 {
     DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");
@@ -2219,6 +2295,40 @@ TEST(ParticipantTests, GetPublisherQosFromXml)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
+TEST(ParticipantTests, GetDefaultPublisherQosFromXml)
+{
+    const std::string xml_filename("test_xml_profile.xml");
+
+    std::string complete_xml = testing::load_file(xml_filename);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(
+        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    // Get default QoS from XML
+    PublisherQos default_qos;
+    EXPECT_EQ(
+        participant->get_default_publisher_qos_from_xml(complete_xml, default_qos),
+        RETCODE_OK);
+
+    // Load profiles from XML file and get default QoS after resetting its value
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_filename);
+    // NOTE: At the time of this writing, the only way to reset the default qos after loading an XML is to do as follows
+    DomainParticipantFactory::get_instance()->load_profiles();
+    participant->set_default_publisher_qos(PUBLISHER_QOS_DEFAULT);
+    PublisherQos default_qos_from_profile;
+    EXPECT_EQ(
+        participant->get_default_publisher_qos(default_qos_from_profile),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    EXPECT_EQ(default_qos, default_qos_from_profile);
+
+    // Clean up
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
+}
+
 TEST(ParticipantTests, GetReplierProfileQos)
 {
     DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");
@@ -2289,6 +2399,30 @@ TEST(ParticipantTests, GetReplierQosFromXml)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
+TEST(ParticipantTests, GetDefaultReplierQosFromXml)
+{
+    const std::string xml_filename("test_xml_profile.xml");
+
+    std::string complete_xml = testing::load_file(xml_filename);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(
+        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    // Get default QoS from XML
+    ReplierQos default_qos;
+    EXPECT_EQ(
+        participant->get_default_replier_qos_from_xml(complete_xml, default_qos),
+        RETCODE_OK);
+
+    // NOTE: cannot load profiles file and compare with default value as
+    // DomainParticipant::get_default_replier_qos is currently unavailable
+
+    // Clean up
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
+}
+
 TEST(ParticipantTests, GetRequesterProfileQos)
 {
     DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");
@@ -2354,6 +2488,30 @@ TEST(ParticipantTests, GetRequesterQosFromXml)
     EXPECT_EQ(
         participant->get_requester_qos_from_xml(complete_xml, qos, "incorrect_profile_name"),
         RETCODE_BAD_PARAMETER);
+
+    // Clean up
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
+}
+
+TEST(ParticipantTests, GetDefaultRequesterQosFromXml)
+{
+    const std::string xml_filename("test_xml_profile.xml");
+
+    std::string complete_xml = testing::load_file(xml_filename);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(
+        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    // Get default QoS from XML
+    RequesterQos default_qos;
+    EXPECT_EQ(
+        participant->get_default_requester_qos_from_xml(complete_xml, default_qos),
+        RETCODE_OK);
+
+    // NOTE: cannot load profiles file and compare with default value as
+    // DomainParticipant::get_default_requester_qos is currently unavailable
 
     // Clean up
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
@@ -2527,6 +2685,40 @@ TEST(ParticipantTests, GetTopicQosFromXml)
     EXPECT_EQ(
         participant->get_topic_qos_from_xml(complete_xml, qos, "incorrect_profile_name"),
         RETCODE_BAD_PARAMETER);
+
+    // Clean up
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
+}
+
+TEST(ParticipantTests, GetDefaultTopicQosFromXml)
+{
+    const std::string xml_filename("test_xml_profile.xml");
+
+    std::string complete_xml = testing::load_file(xml_filename);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(
+        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    // Get default QoS from XML
+    TopicQos default_qos;
+    EXPECT_EQ(
+        participant->get_default_topic_qos_from_xml(complete_xml, default_qos),
+        RETCODE_OK);
+
+    // Load profiles from XML file and get default QoS after resetting its value
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_filename);
+    // NOTE: At the time of this writing, the only way to reset the default qos after loading an XML is to do as follows
+    DomainParticipantFactory::get_instance()->load_profiles();
+    participant->set_default_topic_qos(TOPIC_QOS_DEFAULT);
+    TopicQos default_qos_from_profile;
+    EXPECT_EQ(
+        participant->get_default_topic_qos(default_qos_from_profile),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    EXPECT_EQ(default_qos, default_qos_from_profile);
 
     // Clean up
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);

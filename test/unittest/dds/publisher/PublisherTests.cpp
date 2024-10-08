@@ -620,6 +620,42 @@ TEST(PublisherTests, GetDataWriterQosFromXml)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
+TEST(PublisherTests, GetDefaultDataWriterQosFromXml)
+{
+    const std::string xml_filename("test_xml_profile.xml");
+
+    std::string complete_xml = testing::load_file(xml_filename);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    // Get default QoS from XML
+    DataWriterQos default_qos;
+    EXPECT_EQ(
+        publisher->get_default_datawriter_qos_from_xml(complete_xml, default_qos),
+        RETCODE_OK);
+
+    // Load profiles from XML file and get default QoS after resetting its value
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_filename);
+    // NOTE: At the time of this writing, the only way to reset the default qos after loading an XML is to do as follows
+    DomainParticipantFactory::get_instance()->load_profiles();
+    publisher->set_default_datawriter_qos(DATAWRITER_QOS_DEFAULT);
+    DataWriterQos default_qos_from_profile;
+    EXPECT_EQ(
+        publisher->get_default_datawriter_qos(default_qos_from_profile),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    EXPECT_EQ(default_qos, default_qos_from_profile);
+
+    // Clean up
+    ASSERT_EQ(participant->delete_publisher(publisher), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
+}
+
 TEST(PublisherTests, DeletePublisherWithWriters)
 {
     DomainParticipant* participant =
