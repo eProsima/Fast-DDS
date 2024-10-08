@@ -316,7 +316,7 @@ public:
      * @param[in] writer_guid GUID of the writer to get the information from.
      * @return True if the writer was found and the data was filled.
      */
-    RTPS_DllAPI bool get_publication_info(
+    bool get_publication_info(
             fastdds::dds::builtin::PublicationBuiltinTopicData& data,
             const GUID_t& writer_guid) const;
 
@@ -328,7 +328,7 @@ public:
      * @param[in] reader_guid GUID of the reader to get the information from.
      * @return True if the reader was found and the data was filled.
      */
-    RTPS_DllAPI bool get_subscription_info(
+    bool get_subscription_info(
             fastdds::dds::builtin::SubscriptionBuiltinTopicData& data,
             const GUID_t& reader_guid) const;
 
