@@ -343,11 +343,47 @@ ReturnCode_t DomainParticipantFactory::get_participant_qos_from_profile(
 
 ReturnCode_t DomainParticipantFactory::get_participant_qos_from_xml(
         const std::string& xml,
+        DomainParticipantQos& qos) const
+{
+    ParticipantAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_participant_attributes_from_xml(xml, attr, false))
+    {
+        qos = default_participant_qos_;
+        utils::set_qos_from_attributes(qos, attr.rtps);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantFactory::get_participant_qos_from_xml(
+        const std::string& xml,
         DomainParticipantQos& qos,
         const std::string& profile_name) const
 {
+    if (profile_name.empty())
+    {
+        EPROSIMA_LOG_ERROR(DOMAIN, "Provided profile name must be non-empty");
+        return RETCODE_BAD_PARAMETER;
+    }
+
     ParticipantAttributes attr;
-    if (XMLP_ret::XML_OK == XMLProfileManager::fill_participant_attributes_from_xml(xml, attr, profile_name))
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_participant_attributes_from_xml(xml, attr, true, profile_name))
+    {
+        qos = default_participant_qos_;
+        utils::set_qos_from_attributes(qos, attr.rtps);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantFactory::get_default_participant_qos_from_xml(
+        const std::string& xml,
+        DomainParticipantQos& qos) const
+{
+    ParticipantAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_default_participant_attributes_from_xml(xml, attr, true))
     {
         qos = default_participant_qos_;
         utils::set_qos_from_attributes(qos, attr.rtps);
@@ -374,12 +410,48 @@ ReturnCode_t DomainParticipantFactory::get_participant_extended_qos_from_profile
 
 ReturnCode_t DomainParticipantFactory::get_participant_extended_qos_from_xml(
         const std::string& xml,
-        DomainParticipantExtendedQos& extended_qos,
-        const std::string& profile_name) const
+        DomainParticipantExtendedQos& extended_qos) const
 {
     extended_qos = default_participant_qos_;
     ParticipantAttributes attr;
-    if (XMLP_ret::XML_OK == XMLProfileManager::fill_participant_attributes_from_xml(xml, attr, profile_name))
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_participant_attributes_from_xml(xml, attr, false))
+    {
+        utils::set_extended_qos_from_attributes(extended_qos, attr);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantFactory::get_participant_extended_qos_from_xml(
+        const std::string& xml,
+        DomainParticipantExtendedQos& extended_qos,
+        const std::string& profile_name) const
+{
+    if (profile_name.empty())
+    {
+        EPROSIMA_LOG_ERROR(DOMAIN, "Provided profile name must be non-empty");
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    extended_qos = default_participant_qos_;
+    ParticipantAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_participant_attributes_from_xml(xml, attr, true, profile_name))
+    {
+        utils::set_extended_qos_from_attributes(extended_qos, attr);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantFactory::get_default_participant_extended_qos_from_xml(
+        const std::string& xml,
+        DomainParticipantExtendedQos& extended_qos) const
+{
+    extended_qos = default_participant_qos_;
+    ParticipantAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_default_participant_attributes_from_xml(xml, attr, true))
     {
         utils::set_extended_qos_from_attributes(extended_qos, attr);
         return RETCODE_OK;

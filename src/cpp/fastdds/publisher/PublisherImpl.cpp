@@ -486,6 +486,31 @@ ReturnCode_t PublisherImpl::get_datawriter_qos_from_profile(
 
 ReturnCode_t PublisherImpl::get_datawriter_qos_from_xml(
         const std::string& xml,
+        DataWriterQos& qos) const
+{
+    std::string _topic_name;
+    return get_datawriter_qos_from_xml(xml, qos, _topic_name);
+}
+
+ReturnCode_t PublisherImpl::get_datawriter_qos_from_xml(
+        const std::string& xml,
+        DataWriterQos& qos,
+        std::string& topic_name) const
+{
+    xmlparser::PublisherAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_publisher_attributes_from_xml(xml, attr, false))
+    {
+        qos = default_datawriter_qos_;
+        utils::set_qos_from_attributes(qos, attr);
+        topic_name = attr.topic.getTopicName();
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t PublisherImpl::get_datawriter_qos_from_xml(
+        const std::string& xml,
         DataWriterQos& qos,
         const std::string& profile_name) const
 {
@@ -499,8 +524,39 @@ ReturnCode_t PublisherImpl::get_datawriter_qos_from_xml(
         std::string& topic_name,
         const std::string& profile_name) const
 {
+    if (profile_name.empty())
+    {
+        EPROSIMA_LOG_ERROR(PUBLISHER, "Provided profile name must be non-empty");
+        return RETCODE_BAD_PARAMETER;
+    }
+
     xmlparser::PublisherAttributes attr;
-    if (XMLP_ret::XML_OK == XMLProfileManager::fill_publisher_attributes_from_xml(xml, attr, profile_name))
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_publisher_attributes_from_xml(xml, attr, true, profile_name))
+    {
+        qos = default_datawriter_qos_;
+        utils::set_qos_from_attributes(qos, attr);
+        topic_name = attr.topic.getTopicName();
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t PublisherImpl::get_default_datawriter_qos_from_xml(
+        const std::string& xml,
+        DataWriterQos& qos) const
+{
+    std::string _topic_name;
+    return get_default_datawriter_qos_from_xml(xml, qos, _topic_name);
+}
+
+ReturnCode_t PublisherImpl::get_default_datawriter_qos_from_xml(
+        const std::string& xml,
+        DataWriterQos& qos,
+        std::string& topic_name) const
+{
+    xmlparser::PublisherAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_default_publisher_attributes_from_xml(xml, attr, true))
     {
         qos = default_datawriter_qos_;
         utils::set_qos_from_attributes(qos, attr);

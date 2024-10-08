@@ -377,8 +377,16 @@ public:
 
     ReturnCode_t get_publisher_qos_from_xml(
             const std::string& xml,
+            PublisherQos& qos) const;
+
+    ReturnCode_t get_publisher_qos_from_xml(
+            const std::string& xml,
             PublisherQos& qos,
-            const std::string& profile_name = "") const;
+            const std::string& profile_name ) const;
+
+    ReturnCode_t get_default_publisher_qos_from_xml(
+            const std::string& xml,
+            PublisherQos& qos) const;
 
     ReturnCode_t set_default_subscriber_qos(
             const SubscriberQos& qos);
@@ -393,8 +401,16 @@ public:
 
     ReturnCode_t get_subscriber_qos_from_xml(
             const std::string& xml,
+            SubscriberQos& qos) const;
+
+    ReturnCode_t get_subscriber_qos_from_xml(
+            const std::string& xml,
             SubscriberQos& qos,
-            const std::string& profile_name = "") const;
+            const std::string& profile_name) const;
+
+    ReturnCode_t get_default_subscriber_qos_from_xml(
+            const std::string& xml,
+            SubscriberQos& qos) const;
 
     ReturnCode_t set_default_topic_qos(
             const TopicQos& qos);
@@ -415,15 +431,35 @@ public:
 
     ReturnCode_t get_topic_qos_from_xml(
             const std::string& xml,
+            TopicQos& qos) const;
+
+    ReturnCode_t get_topic_qos_from_xml(
+            const std::string& xml,
             TopicQos& qos,
-            const std::string& profile_name = "") const;
+            std::string& topic_name,
+            std::string& topic_data_type) const;
+
+    ReturnCode_t get_topic_qos_from_xml(
+            const std::string& xml,
+            TopicQos& qos,
+            const std::string& profile_name) const;
 
     ReturnCode_t get_topic_qos_from_xml(
             const std::string& xml,
             TopicQos& qos,
             std::string& topic_name,
             std::string& topic_data_type,
-            const std::string& profile_name = "") const;
+            const std::string& profile_name) const;
+
+    ReturnCode_t get_default_topic_qos_from_xml(
+            const std::string& xml,
+            TopicQos& qos) const;
+
+    ReturnCode_t get_default_topic_qos_from_xml(
+            const std::string& xml,
+            TopicQos& qos,
+            std::string& topic_name,
+            std::string& topic_data_type) const;
 
     ReturnCode_t get_replier_qos_from_profile(
             const std::string& profile_name,
@@ -431,8 +467,16 @@ public:
 
     ReturnCode_t get_replier_qos_from_xml(
             const std::string& xml,
+            ReplierQos& qos) const;
+
+    ReturnCode_t get_replier_qos_from_xml(
+            const std::string& xml,
             ReplierQos& qos,
-            const std::string& profile_name = "") const;
+            const std::string& profile_name) const;
+
+    ReturnCode_t get_default_replier_qos_from_xml(
+            const std::string& xml,
+            ReplierQos& qos) const;
 
     ReturnCode_t get_requester_qos_from_profile(
             const std::string& profile_name,
@@ -440,8 +484,16 @@ public:
 
     ReturnCode_t get_requester_qos_from_xml(
             const std::string& xml,
+            RequesterQos& qos) const;
+
+    ReturnCode_t get_requester_qos_from_xml(
+            const std::string& xml,
             RequesterQos& qos,
-            const std::string& profile_name = "") const;
+            const std::string& profile_name) const;
+
+    ReturnCode_t get_default_requester_qos_from_xml(
+            const std::string& xml,
+            RequesterQos& qos) const;
 
     /* TODO
        bool get_discovered_participants(

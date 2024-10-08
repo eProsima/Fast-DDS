@@ -767,10 +767,10 @@ TEST(ParticipantTests, GetParticipantQosFromXml)
         DomainParticipantFactory::get_instance()->get_participant_qos_from_xml(complete_xml, qos, profile_name),
         RETCODE_OK);
 
-    // Get QoS given profile name with empty profile name (gets first one found)
+    // Get QoS without providing profile name (gets first one found)
     DomainParticipantQos qos_empty_profile;
     EXPECT_EQ(
-        DomainParticipantFactory::get_instance()->get_participant_qos_from_xml(complete_xml, qos_empty_profile, ""),
+        DomainParticipantFactory::get_instance()->get_participant_qos_from_xml(complete_xml, qos_empty_profile),
         RETCODE_OK);
 
     // Check they correspond to the same profile
@@ -808,12 +808,10 @@ TEST(ParticipantTests, GetParticipantExtendedQosFromXml)
         profile_name),
         RETCODE_OK);
 
-    // Get QoS given profile name with empty profile name (gets first one found)
+    // Get QoS without providing profile name (gets first one found)
     DomainParticipantExtendedQos qos_empty_profile;
     EXPECT_EQ(
-        DomainParticipantFactory::get_instance()->get_participant_extended_qos_from_xml(complete_xml, qos_empty_profile,
-        ""),
-        RETCODE_OK);
+        DomainParticipantFactory::get_instance()->get_participant_extended_qos_from_xml(complete_xml, qos_empty_profile), RETCODE_OK);
 
     // Check they correspond to the same profile
     // NOTE: test_participant_profile is assumed to be the first participant profile in the XML file
@@ -2094,10 +2092,10 @@ TEST(ParticipantTests, GetSubscriberQosFromXml)
         participant->get_subscriber_qos_from_xml(complete_xml, qos, profile_name),
         RETCODE_OK);
 
-    // Get QoS given profile name with empty profile name (gets first one found)
+    // Get QoS without providing profile name (gets first one found)
     SubscriberQos qos_empty_profile;
     EXPECT_EQ(
-        participant->get_subscriber_qos_from_xml(complete_xml, qos_empty_profile, ""),
+        participant->get_subscriber_qos_from_xml(complete_xml, qos_empty_profile),
         RETCODE_OK);
 
     // Check they correspond to the same profile
@@ -2192,10 +2190,10 @@ TEST(ParticipantTests, GetPublisherQosFromXml)
         participant->get_publisher_qos_from_xml(complete_xml, qos, profile_name),
         RETCODE_OK);
 
-    // Get QoS given profile name with empty profile name (gets first one found)
+    // Get QoS without providing profile name (gets first one found)
     PublisherQos qos_empty_profile;
     EXPECT_EQ(
-        participant->get_publisher_qos_from_xml(complete_xml, qos_empty_profile, ""),
+        participant->get_publisher_qos_from_xml(complete_xml, qos_empty_profile),
         RETCODE_OK);
 
     // Check they correspond to the same profile
@@ -2262,10 +2260,10 @@ TEST(ParticipantTests, GetReplierQosFromXml)
         participant->get_replier_qos_from_xml(complete_xml, qos, profile_name),
         RETCODE_OK);
 
-    // Get QoS given profile name with empty profile name (gets first one found)
+    // Get QoS without providing profile name (gets first one found)
     ReplierQos qos_empty_profile;
     EXPECT_EQ(
-        participant->get_replier_qos_from_xml(complete_xml, qos_empty_profile, ""),
+        participant->get_replier_qos_from_xml(complete_xml, qos_empty_profile),
         RETCODE_OK);
 
     // Check they correspond to the same profile
@@ -2332,10 +2330,10 @@ TEST(ParticipantTests, GetRequesterQosFromXml)
         participant->get_requester_qos_from_xml(complete_xml, qos, profile_name),
         RETCODE_OK);
 
-    // Get QoS given profile name with empty profile name (gets first one found)
+    // Get QoS without providing profile name (gets first one found)
     RequesterQos qos_empty_profile;
     EXPECT_EQ(
-        participant->get_requester_qos_from_xml(complete_xml, qos_empty_profile, ""),
+        participant->get_requester_qos_from_xml(complete_xml, qos_empty_profile),
         RETCODE_OK);
 
     // Check they correspond to the same profile
@@ -2505,10 +2503,10 @@ TEST(ParticipantTests, GetTopicQosFromXml)
         participant->get_topic_qos_from_xml(complete_xml, qos, profile_name),
         RETCODE_OK);
 
-    // Get QoS given profile name with empty profile name (gets first one found)
+    // Get QoS without providing profile name (gets first one found)
     TopicQos qos_empty_profile;
     EXPECT_EQ(
-        participant->get_topic_qos_from_xml(complete_xml, qos_empty_profile, ""),
+        participant->get_topic_qos_from_xml(complete_xml, qos_empty_profile),
         RETCODE_OK);
 
     // Check they correspond to the same profile

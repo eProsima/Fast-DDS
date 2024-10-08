@@ -338,10 +338,24 @@ ReturnCode_t DomainParticipant::get_publisher_qos_from_profile(
 
 ReturnCode_t DomainParticipant::get_publisher_qos_from_xml(
         const std::string& xml,
+        PublisherQos& qos) const
+{
+    return impl_->get_publisher_qos_from_xml(xml, qos);
+}
+
+ReturnCode_t DomainParticipant::get_publisher_qos_from_xml(
+        const std::string& xml,
         PublisherQos& qos,
         const std::string& profile_name) const
 {
     return impl_->get_publisher_qos_from_xml(xml, qos, profile_name);
+}
+
+ReturnCode_t DomainParticipant::get_default_publisher_qos_from_xml(
+        const std::string& xml,
+        PublisherQos& qos) const
+{
+    return impl_->get_default_publisher_qos_from_xml(xml, qos);
 }
 
 ReturnCode_t DomainParticipant::set_default_subscriber_qos(
@@ -371,10 +385,24 @@ ReturnCode_t DomainParticipant::get_subscriber_qos_from_profile(
 
 ReturnCode_t DomainParticipant::get_subscriber_qos_from_xml(
         const std::string& xml,
+        SubscriberQos& qos) const
+{
+    return impl_->get_subscriber_qos_from_xml(xml, qos);
+}
+
+ReturnCode_t DomainParticipant::get_subscriber_qos_from_xml(
+        const std::string& xml,
         SubscriberQos& qos,
         const std::string& profile_name) const
 {
     return impl_->get_subscriber_qos_from_xml(xml, qos, profile_name);
+}
+
+ReturnCode_t DomainParticipant::get_default_subscriber_qos_from_xml(
+        const std::string& xml,
+        SubscriberQos& qos) const
+{
+    return impl_->get_default_subscriber_qos_from_xml(xml, qos);
 }
 
 ReturnCode_t DomainParticipant::set_default_topic_qos(
@@ -413,6 +441,22 @@ ReturnCode_t DomainParticipant::get_topic_qos_from_profile(
 
 ReturnCode_t DomainParticipant::get_topic_qos_from_xml(
         const std::string& xml,
+        TopicQos& qos) const
+{
+    return impl_->get_topic_qos_from_xml(xml, qos);
+}
+
+ReturnCode_t DomainParticipant::get_topic_qos_from_xml(
+        const std::string& xml,
+        TopicQos& qos,
+        std::string& topic_name,
+        std::string& topic_data_type) const
+{
+    return impl_->get_topic_qos_from_xml(xml, qos, topic_name, topic_data_type);
+}
+
+ReturnCode_t DomainParticipant::get_topic_qos_from_xml(
+        const std::string& xml,
         TopicQos& qos,
         const std::string& profile_name) const
 {
@@ -429,6 +473,22 @@ ReturnCode_t DomainParticipant::get_topic_qos_from_xml(
     return impl_->get_topic_qos_from_xml(xml, qos, topic_name, topic_data_type, profile_name);
 }
 
+ReturnCode_t DomainParticipant::get_default_topic_qos_from_xml(
+        const std::string& xml,
+        TopicQos& qos) const
+{
+    return impl_->get_default_topic_qos_from_xml(xml, qos);
+}
+
+ReturnCode_t DomainParticipant::get_default_topic_qos_from_xml(
+        const std::string& xml,
+        TopicQos& qos,
+        std::string& topic_name,
+        std::string& topic_data_type) const
+{
+    return impl_->get_default_topic_qos_from_xml(xml, qos, topic_name, topic_data_type);
+}
+
 ReturnCode_t DomainParticipant::get_requester_qos_from_profile(
         const std::string& profile_name,
         RequesterQos& qos) const
@@ -438,10 +498,24 @@ ReturnCode_t DomainParticipant::get_requester_qos_from_profile(
 
 ReturnCode_t DomainParticipant::get_requester_qos_from_xml(
         const std::string& xml,
+        RequesterQos& qos) const
+{
+    return impl_->get_requester_qos_from_xml(xml, qos);
+}
+
+ReturnCode_t DomainParticipant::get_requester_qos_from_xml(
+        const std::string& xml,
         RequesterQos& qos,
         const std::string& profile_name) const
 {
     return impl_->get_requester_qos_from_xml(xml, qos, profile_name);
+}
+
+ReturnCode_t DomainParticipant::get_default_requester_qos_from_xml(
+        const std::string& xml,
+        RequesterQos& qos) const
+{
+    return impl_->get_default_requester_qos_from_xml(xml, qos);
 }
 
 ReturnCode_t DomainParticipant::get_replier_qos_from_profile(
@@ -453,10 +527,24 @@ ReturnCode_t DomainParticipant::get_replier_qos_from_profile(
 
 ReturnCode_t DomainParticipant::get_replier_qos_from_xml(
         const std::string& xml,
+        ReplierQos& qos) const
+{
+    return impl_->get_replier_qos_from_xml(xml, qos);
+}
+
+ReturnCode_t DomainParticipant::get_replier_qos_from_xml(
+        const std::string& xml,
         ReplierQos& qos,
         const std::string& profile_name) const
 {
     return impl_->get_replier_qos_from_xml(xml, qos, profile_name);
+}
+
+ReturnCode_t DomainParticipant::get_default_replier_qos_from_xml(
+        const std::string& xml,
+        ReplierQos& qos) const
+{
+    return impl_->get_default_replier_qos_from_xml(xml, qos);
 }
 
 ReturnCode_t DomainParticipant::get_discovered_participants(

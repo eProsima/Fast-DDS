@@ -228,6 +228,21 @@ ReturnCode_t Subscriber::get_datareader_qos_from_profile(
 
 ReturnCode_t Subscriber::get_datareader_qos_from_xml(
         const std::string& xml,
+        DataReaderQos& qos) const
+{
+    return impl_->get_datareader_qos_from_xml(xml, qos);
+}
+
+ReturnCode_t Subscriber::get_datareader_qos_from_xml(
+        const std::string& xml,
+        DataReaderQos& qos,
+        std::string& topic_name) const
+{
+    return impl_->get_datareader_qos_from_xml(xml, qos, topic_name);
+}
+
+ReturnCode_t Subscriber::get_datareader_qos_from_xml(
+        const std::string& xml,
         DataReaderQos& qos,
         const std::string& profile_name) const
 {
@@ -241,6 +256,21 @@ ReturnCode_t Subscriber::get_datareader_qos_from_xml(
         const std::string& profile_name) const
 {
     return impl_->get_datareader_qos_from_xml(xml, qos, topic_name, profile_name);
+}
+
+ReturnCode_t Subscriber::get_default_datareader_qos_from_xml(
+        const std::string& xml,
+        DataReaderQos& qos) const
+{
+    return impl_->get_default_datareader_qos_from_xml(xml, qos);
+}
+
+ReturnCode_t Subscriber::get_default_datareader_qos_from_xml(
+        const std::string& xml,
+        DataReaderQos& qos,
+        std::string& topic_name) const
+{
+    return impl_->get_default_datareader_qos_from_xml(xml, qos, topic_name);
 }
 
 ReturnCode_t Subscriber::copy_from_topic_qos(

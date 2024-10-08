@@ -230,17 +230,39 @@ public:
             DomainParticipantQos& qos) const;
 
     /**
-     * Fills the DomainParticipantQos with the first DomainParticipant profile found in the given XML (or the one specified).
+     * Fills the DomainParticipantQos with the first DomainParticipant profile found in the provided XML.
      *
      * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
      * @param qos DomainParticipantQos object where the qos is returned.
-     * @param profile_name DomainParticipant profile name. Empty by default (first one found).
+     * @return RETCODE_OK on success. RETCODE_BAD_PARAMETER otherwise.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t get_participant_qos_from_xml(
+            const std::string& xml,
+            DomainParticipantQos& qos) const;
+
+    /**
+     * Fills the DomainParticipantQos with the DomainParticipant profile with \c profile_name to be found in the provided XML.
+     *
+     * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
+     * @param qos DomainParticipantQos object where the qos is returned.
+     * @param profile_name DomainParticipant profile name.
      * @return RETCODE_OK on success. RETCODE_BAD_PARAMETER otherwise.
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_participant_qos_from_xml(
             const std::string& xml,
             DomainParticipantQos& qos,
-            const std::string& profile_name = "") const;
+            const std::string& profile_name) const;
+
+    /**
+     * Fills the DomainParticipantQos with the default DomainParticipant profile found in the provided XML (if there is).
+     *
+     * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
+     * @param qos DomainParticipantQos object where the qos is returned.
+     * @return RETCODE_OK on success. RETCODE_BAD_PARAMETER otherwise.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t get_default_participant_qos_from_xml(
+            const std::string& xml,
+            DomainParticipantQos& qos) const;
 
     /**
      * Fills the DomainParticipantExtendedQos with the values of the XML profile.
@@ -254,17 +276,39 @@ public:
             DomainParticipantExtendedQos& extended_qos) const;
 
     /**
-     * Fills the DomainParticipantExtendedQos with the first DomainParticipant profile found in the given XML (or the one specified).
+     * Fills the DomainParticipantExtendedQos with the first DomainParticipant profile found in the provided XML.
      *
-     * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
+     * @param xml Raw XML string containing the profile to be used to fill the \c extended_qos structure.
      * @param extended_qos DomainParticipantExtendedQos object where the qos is returned.
-     * @param profile_name DomainParticipant profile name. Empty by default (first one found).
+     * @return RETCODE_OK on success. RETCODE_BAD_PARAMETER otherwise.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t get_participant_extended_qos_from_xml(
+            const std::string& xml,
+            DomainParticipantExtendedQos& extended_qos) const;
+
+    /**
+     * Fills the DomainParticipantExtendedQos with the DomainParticipant profile with \c profile_name to be found in the provided XML.
+     *
+     * @param xml Raw XML string containing the profile to be used to fill the \c extended_qos structure.
+     * @param extended_qos DomainParticipantExtendedQos object where the qos is returned.
+     * @param profile_name DomainParticipant profile name.
      * @return RETCODE_OK on success. RETCODE_BAD_PARAMETER otherwise.
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_participant_extended_qos_from_xml(
             const std::string& xml,
             DomainParticipantExtendedQos& extended_qos,
-            const std::string& profile_name = "") const;
+            const std::string& profile_name) const;
+
+    /**
+     * Fills the DomainParticipantExtendedQos with the default DomainParticipant profile found in the provided XML (if there is).
+     *
+     * @param xml Raw XML string containing the profile to be used to fill the \c extended_qos structure.
+     * @param qos DomainParticipantExtendedQos object where the qos is returned.
+     * @return RETCODE_OK on success. RETCODE_BAD_PARAMETER otherwise.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t get_default_participant_extended_qos_from_xml(
+            const std::string& xml,
+            DomainParticipantExtendedQos& extended_qos) const;
 
     /**
      * Fills the DomainParticipantExtendedQos with the values of the default XML profile.

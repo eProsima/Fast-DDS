@@ -481,8 +481,22 @@ public:
 
     ReturnCode_t get_publisher_qos_from_xml(
             const std::string& /*xml*/,
+            PublisherQos& /*qos*/) const
+    {
+        return RETCODE_OK;
+    }
+
+    ReturnCode_t get_publisher_qos_from_xml(
+            const std::string& /*xml*/,
             PublisherQos& /*qos*/,
             const std::string& /*profile_name*/) const
+    {
+        return RETCODE_OK;
+    }
+
+    ReturnCode_t get_default_publisher_qos_from_xml(
+            const std::string& /*xml*/,
+            PublisherQos& /*qos*/) const
     {
         return RETCODE_OK;
     }
@@ -507,8 +521,22 @@ public:
 
     ReturnCode_t get_subscriber_qos_from_xml(
             const std::string& /*xml*/,
+            SubscriberQos& /*qos*/) const
+    {
+        return RETCODE_OK;
+    }
+
+    ReturnCode_t get_subscriber_qos_from_xml(
+            const std::string& /*xml*/,
             SubscriberQos& /*qos*/,
             const std::string& /*profile_name*/) const
+    {
+        return RETCODE_OK;
+    }
+
+    ReturnCode_t get_default_subscriber_qos_from_xml(
+            const std::string& /*xml*/,
+            SubscriberQos& /*qos*/) const
     {
         return RETCODE_OK;
     }
@@ -542,6 +570,22 @@ public:
 
     ReturnCode_t get_topic_qos_from_xml(
             const std::string& /*xml*/,
+            TopicQos& /*qos*/) const
+    {
+        return RETCODE_OK;
+    }
+
+    ReturnCode_t get_topic_qos_from_xml(
+            const std::string& /*xml*/,
+            TopicQos& /*qos*/,
+            std::string& /*topic_name*/,
+            std::string& /*topic_data_type*/) const
+    {
+        return RETCODE_OK;
+    }
+
+    ReturnCode_t get_topic_qos_from_xml(
+            const std::string& /*xml*/,
             TopicQos& /*qos*/,
             const std::string& /*profile_name*/) const
     {
@@ -558,8 +602,31 @@ public:
         return RETCODE_OK;
     }
 
+    ReturnCode_t get_default_topic_qos_from_xml(
+            const std::string& /*xml*/,
+            TopicQos& /*qos*/) const
+    {
+        return RETCODE_OK;
+    }
+
+    ReturnCode_t get_default_topic_qos_from_xml(
+            const std::string& /*xml*/,
+            TopicQos& /*qos*/,
+            std::string& /*topic_name*/,
+            std::string& /*topic_data_type*/) const
+    {
+        return RETCODE_OK;
+    }
+
     ReturnCode_t get_replier_qos_from_profile(
             const std::string& /*profile_name*/,
+            ReplierQos& /*qos*/) const
+    {
+        return RETCODE_OK;
+    }
+
+    ReturnCode_t get_replier_qos_from_xml(
+            const std::string& /*xml*/,
             ReplierQos& /*qos*/) const
     {
         return RETCODE_OK;
@@ -573,6 +640,13 @@ public:
         return RETCODE_OK;
     }
 
+    ReturnCode_t get_default_replier_qos_from_xml(
+            const std::string& /*xml*/,
+            ReplierQos& /*qos*/) const
+    {
+        return RETCODE_OK;
+    }
+
     ReturnCode_t get_requester_qos_from_profile(
             const std::string& /*profile_name*/,
             RequesterQos& /*qos*/) const
@@ -582,8 +656,22 @@ public:
 
     ReturnCode_t get_requester_qos_from_xml(
             const std::string& /*xml*/,
+            RequesterQos& /*qos*/) const
+    {
+        return RETCODE_OK;
+    }
+
+    ReturnCode_t get_requester_qos_from_xml(
+            const std::string& /*xml*/,
             RequesterQos& /*qos*/,
             const std::string& /*profile_name*/) const
+    {
+        return RETCODE_OK;
+    }
+
+    ReturnCode_t get_default_requester_qos_from_xml(
+            const std::string& /*xml*/,
+            RequesterQos& /*qos*/) const
     {
         return RETCODE_OK;
     }

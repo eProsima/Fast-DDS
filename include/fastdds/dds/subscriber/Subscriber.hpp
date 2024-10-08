@@ -369,32 +369,80 @@ public:
             std::string& topic_name) const;
 
     /**
-     * Fills the DataReaderQos with the first DataReader profile found in the given XML (or the one specified).
+     * Fills the DataReaderQos with the first DataReader profile found in the provided XML.
      *
      * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
      * @param qos DataReaderQos object where the qos is returned.
-     * @param profile_name DataReader profile name. Empty by default (first one found).
+     * @return RETCODE_OK on success. RETCODE_BAD_PARAMETER otherwise.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t get_datareader_qos_from_xml(
+            const std::string& xml,
+            DataReaderQos& qos) const;
+
+    /**
+     * Fills the DataReaderQos with the first DataReader profile found in the provided XML, and also its corresponding topic name (if specified).
+     *
+     * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
+     * @param qos DataReaderQos object where the qos is returned.
+     * @param topic_name String where the name of the topic associated to this profile is returned (if specified).
      * @return RETCODE_OK on success. RETCODE_BAD_PARAMETER otherwise.
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_datareader_qos_from_xml(
             const std::string& xml,
             DataReaderQos& qos,
-            const std::string& profile_name = "") const;
+            std::string& topic_name) const;
 
     /**
-     * Fills the DataReaderQos with the first DataReader profile found in the given XML (or the one specified), and also its corresponding topic name (if specified).
+     * Fills the DataReaderQos with the DataReader profile with \c profile_name to be found in the provided XML.
+     *
+     * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
+     * @param qos DataReaderQos object where the qos is returned.
+     * @param profile_name DataReader profile name.
+     * @return RETCODE_OK on success. RETCODE_BAD_PARAMETER otherwise.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t get_datareader_qos_from_xml(
+            const std::string& xml,
+            DataReaderQos& qos,
+            const std::string& profile_name) const;
+
+    /**
+     * Fills the DataReaderQos with the DataReader profile with \c profile_name to be found in the provided XML, and also its corresponding topic name (if specified).
      *
      * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
      * @param qos DataReaderQos object where the qos is returned.
      * @param topic_name String where the name of the topic associated to this profile is returned (if specified).
-     * @param profile_name DataReader profile name. Empty by default (first one found).
+     * @param profile_name DataReader profile name.
      * @return RETCODE_OK on success. RETCODE_BAD_PARAMETER otherwise.
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_datareader_qos_from_xml(
             const std::string& xml,
             DataReaderQos& qos,
             std::string& topic_name,
-            const std::string& profile_name = "") const;
+            const std::string& profile_name) const;
+
+    /**
+     * Fills the DataReaderQos with the default DataReader profile found in the provided XML (if there is).
+     *
+     * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
+     * @param qos DataReaderQos object where the qos is returned.
+     * @return RETCODE_OK on success. RETCODE_BAD_PARAMETER otherwise.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t get_default_datareader_qos_from_xml(
+            const std::string& xml,
+            DataReaderQos& qos) const;
+
+    /**
+     * Fills the DataReaderQos with the default DataReader profile found in the provided XML (if there is), and also its corresponding topic name (if specified).
+     *
+     * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
+     * @param qos DataReaderQos object where the qos is returned.
+     * @param topic_name String where the name of the topic associated to this profile is returned (if specified).
+     * @return RETCODE_OK on success. RETCODE_BAD_PARAMETER otherwise.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t get_default_datareader_qos_from_xml(
+            const std::string& xml,
+            DataReaderQos& qos,
+            std::string& topic_name) const;
 
     /**
      * @brief Copies TopicQos into the corresponding DataReaderQos

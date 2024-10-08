@@ -448,6 +448,31 @@ ReturnCode_t SubscriberImpl::get_datareader_qos_from_profile(
 
 ReturnCode_t SubscriberImpl::get_datareader_qos_from_xml(
         const std::string& xml,
+        DataReaderQos& qos) const
+{
+    std::string _topic_name;
+    return get_datareader_qos_from_xml(xml, qos, _topic_name);
+}
+
+ReturnCode_t SubscriberImpl::get_datareader_qos_from_xml(
+        const std::string& xml,
+        DataReaderQos& qos,
+        std::string& topic_name) const
+{
+    xmlparser::SubscriberAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_subscriber_attributes_from_xml(xml, attr, false))
+    {
+        qos = default_datareader_qos_;
+        utils::set_qos_from_attributes(qos, attr);
+        topic_name = attr.topic.getTopicName();
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t SubscriberImpl::get_datareader_qos_from_xml(
+        const std::string& xml,
         DataReaderQos& qos,
         const std::string& profile_name) const
 {
@@ -461,8 +486,39 @@ ReturnCode_t SubscriberImpl::get_datareader_qos_from_xml(
         std::string& topic_name,
         const std::string& profile_name) const
 {
+    if (profile_name.empty())
+    {
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "Provided profile name must be non-empty");
+        return RETCODE_BAD_PARAMETER;
+    }
+
     xmlparser::SubscriberAttributes attr;
-    if (XMLP_ret::XML_OK == XMLProfileManager::fill_subscriber_attributes_from_xml(xml, attr, profile_name))
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_subscriber_attributes_from_xml(xml, attr, true, profile_name))
+    {
+        qos = default_datareader_qos_;
+        utils::set_qos_from_attributes(qos, attr);
+        topic_name = attr.topic.getTopicName();
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t SubscriberImpl::get_default_datareader_qos_from_xml(
+        const std::string& xml,
+        DataReaderQos& qos) const
+{
+    std::string _topic_name;
+    return get_default_datareader_qos_from_xml(xml, qos, _topic_name);
+}
+
+ReturnCode_t SubscriberImpl::get_default_datareader_qos_from_xml(
+        const std::string& xml,
+        DataReaderQos& qos,
+        std::string& topic_name) const
+{
+    xmlparser::SubscriberAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_default_subscriber_attributes_from_xml(xml, attr, true))
     {
         qos = default_datareader_qos_;
         utils::set_qos_from_attributes(qos, attr);

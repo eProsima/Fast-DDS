@@ -135,7 +135,8 @@ template <typename AttributesType>
 XMLP_ret fill_attributes_from_xml(
         const std::string& xml,
         AttributesType& atts,
-        const std::string& profile_name)
+        const std::function<bool(typename AttributesTraits<AttributesType>::NodePtrType)>& node_filter,
+        bool fulfill_xsd)
 {
     using Traits = AttributesTraits<AttributesType>;
 
@@ -149,7 +150,7 @@ XMLP_ret fill_attributes_from_xml(
     }
 
     // Process node function
-    auto process_node = [](const up_base_node_t& node_to_process, AttributesType& atts, const std::string& profile_name)
+    auto process_node = [&](const up_base_node_t& node_to_process, AttributesType& atts)
             {
                 // If node type doesn't match, skip
                 if (Traits::node_type != node_to_process->getType())
@@ -165,15 +166,10 @@ XMLP_ret fill_attributes_from_xml(
                     return XMLP_ret::XML_ERROR;
                 }
 
-                // Check profile name, if provided
-                if (profile_name != "")
+                // If node doesn't match the filter, skip
+                if (!node_filter(node))
                 {
-                    node_att_map_cit_t it = node->getAttributes().find(PROFILE_NAME);
-                    if (it == node->getAttributes().end() || it->second != profile_name)
-                    {
-                        // No profile name in this node, or different than the one requested
-                        return XMLP_ret::XML_NOK;
-                    }
+                    return XMLP_ret::XML_NOK;
                 }
 
                 // Retrieve node data
@@ -190,12 +186,11 @@ XMLP_ret fill_attributes_from_xml(
             };
 
     // Recursive function to process the root node and its children
-    std::function<XMLP_ret(const up_base_node_t&, AttributesType&, const std::string&)> process_node_recursive;
+    std::function<XMLP_ret(const up_base_node_t&, AttributesType&)> process_node_recursive;
     process_node_recursive =
-            [&process_node, &process_node_recursive](const up_base_node_t& node_to_process, AttributesType& atts,
-                    const std::string& profile_name)
+            [&process_node, &process_node_recursive](const up_base_node_t& node_to_process, AttributesType& atts)
             {
-                XMLP_ret ret = process_node(node_to_process, atts, profile_name);
+                XMLP_ret ret = process_node(node_to_process, atts);
                 if (XMLP_ret::XML_OK == ret || XMLP_ret::XML_ERROR == ret)
                 {
                     return ret;
@@ -203,7 +198,7 @@ XMLP_ret fill_attributes_from_xml(
 
                 for (auto&& child: node_to_process->getChildren())
                 {
-                    ret = process_node_recursive(child, atts, profile_name);
+                    ret = process_node_recursive(child, atts);
                     if (XMLP_ret::XML_OK == ret || XMLP_ret::XML_ERROR == ret)
                     {
                         return ret;
@@ -212,13 +207,67 @@ XMLP_ret fill_attributes_from_xml(
                 return XMLP_ret::XML_NOK;
             };
 
-    if (XMLP_ret::XML_OK == process_node_recursive(root_node, atts, profile_name))
+    std::reference_wrapper<up_base_node_t> node_to_process = root_node;
+    if (fulfill_xsd)
+    {
+        if (NodeType::ROOT == root_node ->getType())
+        {
+            for (auto&& child: root_node->getChildren())
+            {
+                if (NodeType::PROFILES == child ->getType())
+                {
+                    node_to_process = child;
+                    break;
+                }
+            }
+        }
+
+        // Abort if profiles tag is not found according to XSD
+        if (NodeType::PROFILES != node_to_process.get()->getType())
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Provided XML literal does not contain profiles");
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+
+    if (XMLP_ret::XML_OK == process_node_recursive(node_to_process, atts))
     {
         return XMLP_ret::XML_OK;
     }
 
     EPROSIMA_LOG_ERROR(XMLPARSER, Traits::name() << " profile not found");
     return XMLP_ret::XML_ERROR;
+}
+
+template <typename AttributesType>
+XMLP_ret fill_attributes_from_xml(
+        const std::string& xml,
+        AttributesType& atts,
+        bool fulfill_xsd,
+        const std::string& profile_name)
+{
+    auto node_filter = [&profile_name](typename AttributesTraits<AttributesType>::NodePtrType node) -> bool {
+        if (!profile_name.empty())
+        {
+            auto it = node->getAttributes().find(PROFILE_NAME);
+            return (it != node->getAttributes().end() && it->second == profile_name);
+        }
+        return true;
+    };
+    return fill_attributes_from_xml(xml, atts, node_filter, fulfill_xsd);
+}
+
+template <typename AttributesType>
+XMLP_ret fill_default_attributes_from_xml(
+        const std::string& xml,
+        AttributesType& atts,
+        bool fulfill_xsd)
+{
+    auto node_filter = [](typename AttributesTraits<AttributesType>::NodePtrType node) -> bool {
+        auto it = node->getAttributes().find(DEFAULT_PROF);
+        return (it != node->getAttributes().end() && it->second == "true");
+    };
+    return fill_attributes_from_xml(xml, atts, node_filter, fulfill_xsd);
 }
 
 XMLP_ret XMLProfileManager::fillParticipantAttributes(
@@ -242,9 +291,18 @@ XMLP_ret XMLProfileManager::fillParticipantAttributes(
 XMLP_ret XMLProfileManager::fill_participant_attributes_from_xml(
         const std::string& xml,
         ParticipantAttributes& atts,
+        bool fulfill_xsd,
         const std::string& profile_name)
 {
-    return fill_attributes_from_xml<ParticipantAttributes>(xml, atts, profile_name);
+    return fill_attributes_from_xml<ParticipantAttributes>(xml, atts, fulfill_xsd, profile_name);
+}
+
+XMLP_ret XMLProfileManager::fill_default_participant_attributes_from_xml(
+        const std::string& xml,
+        ParticipantAttributes& atts,
+        bool fulfill_xsd)
+{
+    return fill_default_attributes_from_xml<ParticipantAttributes>(xml, atts, fulfill_xsd);
 }
 
 XMLP_ret XMLProfileManager::fillPublisherAttributes(
@@ -268,9 +326,18 @@ XMLP_ret XMLProfileManager::fillPublisherAttributes(
 XMLP_ret XMLProfileManager::fill_publisher_attributes_from_xml(
         const std::string& xml,
         PublisherAttributes& atts,
+        bool fulfill_xsd,
         const std::string& profile_name)
 {
-    return fill_attributes_from_xml<PublisherAttributes>(xml, atts, profile_name);
+    return fill_attributes_from_xml<PublisherAttributes>(xml, atts, fulfill_xsd, profile_name);
+}
+
+XMLP_ret XMLProfileManager::fill_default_publisher_attributes_from_xml(
+        const std::string& xml,
+        PublisherAttributes& atts,
+        bool fulfill_xsd)
+{
+    return fill_default_attributes_from_xml<PublisherAttributes>(xml, atts, fulfill_xsd);
 }
 
 XMLP_ret XMLProfileManager::fillSubscriberAttributes(
@@ -294,9 +361,18 @@ XMLP_ret XMLProfileManager::fillSubscriberAttributes(
 XMLP_ret XMLProfileManager::fill_subscriber_attributes_from_xml(
         const std::string& xml,
         SubscriberAttributes& atts,
+        bool fulfill_xsd,
         const std::string& profile_name)
 {
-    return fill_attributes_from_xml<SubscriberAttributes>(xml, atts, profile_name);
+    return fill_attributes_from_xml<SubscriberAttributes>(xml, atts, fulfill_xsd, profile_name);
+}
+
+XMLP_ret XMLProfileManager::fill_default_subscriber_attributes_from_xml(
+        const std::string& xml,
+        SubscriberAttributes& atts,
+        bool fulfill_xsd)
+{
+    return fill_default_attributes_from_xml<SubscriberAttributes>(xml, atts, fulfill_xsd);
 }
 
 XMLP_ret XMLProfileManager::fillTopicAttributes(
@@ -316,9 +392,18 @@ XMLP_ret XMLProfileManager::fillTopicAttributes(
 XMLP_ret XMLProfileManager::fill_topic_attributes_from_xml(
         const std::string& xml,
         TopicAttributes& atts,
+        bool fulfill_xsd,
         const std::string& profile_name)
 {
-    return fill_attributes_from_xml<TopicAttributes>(xml, atts, profile_name);
+    return fill_attributes_from_xml<TopicAttributes>(xml, atts, fulfill_xsd, profile_name);
+}
+
+XMLP_ret XMLProfileManager::fill_default_topic_attributes_from_xml(
+        const std::string& xml,
+        TopicAttributes& atts,
+        bool fulfill_xsd)
+{
+    return fill_default_attributes_from_xml<TopicAttributes>(xml, atts, fulfill_xsd);
 }
 
 XMLP_ret XMLProfileManager::fillRequesterAttributes(
@@ -338,9 +423,18 @@ XMLP_ret XMLProfileManager::fillRequesterAttributes(
 XMLP_ret XMLProfileManager::fill_requester_attributes_from_xml(
         const std::string& xml,
         RequesterAttributes& atts,
+        bool fulfill_xsd,
         const std::string& profile_name)
 {
-    return fill_attributes_from_xml<RequesterAttributes>(xml, atts, profile_name);
+    return fill_attributes_from_xml<RequesterAttributes>(xml, atts, fulfill_xsd, profile_name);
+}
+
+XMLP_ret XMLProfileManager::fill_default_requester_attributes_from_xml(
+        const std::string& xml,
+        RequesterAttributes& atts,
+        bool fulfill_xsd)
+{
+    return fill_default_attributes_from_xml<RequesterAttributes>(xml, atts, fulfill_xsd);
 }
 
 XMLP_ret XMLProfileManager::fillReplierAttributes(
@@ -360,9 +454,18 @@ XMLP_ret XMLProfileManager::fillReplierAttributes(
 XMLP_ret XMLProfileManager::fill_replier_attributes_from_xml(
         const std::string& xml,
         ReplierAttributes& atts,
+        bool fulfill_xsd,
         const std::string& profile_name)
 {
-    return fill_attributes_from_xml<ReplierAttributes>(xml, atts, profile_name);
+    return fill_attributes_from_xml<ReplierAttributes>(xml, atts, fulfill_xsd, profile_name);
+}
+
+XMLP_ret XMLProfileManager::fill_default_replier_attributes_from_xml(
+        const std::string& xml,
+        ReplierAttributes& atts,
+        bool fulfill_xsd)
+{
+    return fill_default_attributes_from_xml<ReplierAttributes>(xml, atts, fulfill_xsd);
 }
 
 void XMLProfileManager::getDefaultParticipantAttributes(

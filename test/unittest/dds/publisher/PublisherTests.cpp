@@ -590,10 +590,10 @@ TEST(PublisherTests, GetDataWriterQosFromXml)
         publisher->get_datawriter_qos_from_xml(complete_xml, qos, profile_name),
         RETCODE_OK);
 
-    // Get QoS given profile name with empty profile name (gets first one found)
+    // Get QoS without providing profile name (gets first one found)
     DataWriterQos qos_empty_profile;
     EXPECT_EQ(
-        publisher->get_datawriter_qos_from_xml(complete_xml, qos_empty_profile, ""),
+        publisher->get_datawriter_qos_from_xml(complete_xml, qos_empty_profile),
         RETCODE_OK);
 
     // Check they correspond to the same profile
