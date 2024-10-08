@@ -16,7 +16,8 @@ message(STATUS "Configuring dynamic network interfaces tests")
 # Find docker
 find_program(DOCKER_EXECUTABLE docker)
 if(NOT DOCKER_EXECUTABLE)
-    message(FATAL_ERROR "Docker not found")
+    message(WARNING "Docker executable not found. dds.communication.dynamic_interfaces test won't be compiled.")
+    return()
 endif()
 
 set(SHELL_EXECUTABLE "")
