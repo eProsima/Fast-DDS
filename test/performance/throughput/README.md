@@ -105,6 +105,7 @@ The utility offers several options:
 | --certs=\<directory>                | Directory with the certificates. Used when security is enable                                                                              |
 
 
+
 **Publication options**
 
 | Option                          | Description                                                                      |
@@ -141,6 +142,10 @@ The file with the demands has the format of each line the data size separated of
 This examples will execute four tests: one sending bursts of 100 samples of 16 bytes, other test sending bursts of 1000 samples of 16 bytes,
 , other sending bursts of 100 samples of 32 bytes and the last one sending bursts of 1000 samples of 32 bytes.
 
+**Container Tips**
+Shared_memory and data_sharing technologies have pre-allocated memory pools underneath. This memory value occupies the system's free memory segment. To put it simply, the size of 
+the sent data packet will affect the amount of allocated memory, which is probably shm: 1:5 data_sharing 1:31. If the data packet size is 100MB data, in data_sharing mode
+At least 3.1g of memory is required. docker run -it --shm-size=3.1g my-image.
 
 ### Examples
 
@@ -185,3 +190,8 @@ The python scripts offers several options:
 | -t \<seconds>                       | Test time in seconds. Default is *1 second*                                                                                                |
 | -r \<file>                          | A CSV file with recovery time                                                                                                              |
 | -f \<file>                          | A file containing the demands                                                                                                              |
+
+**Container Tips**
+Shared_memory and data_sharing technologies have pre-allocated memory pools underneath. This memory value occupies the system's free memory segment. To put it simply, the size of 
+the sent data packet will affect the amount of allocated memory, which is probably shm: 1:5 data_sharing 1:31. If the data packet size is 100MB data, in data_sharing mode
+At least 3.1g of memory is required. docker run -it --shm-size=3.1g my-image.
