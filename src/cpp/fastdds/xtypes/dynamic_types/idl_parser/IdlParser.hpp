@@ -188,50 +188,70 @@ struct action<identifier>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
+        std::string identifier_name = in.string();
+
         if (state.count("enum_name"))
         {
             if (state["enum_name"].empty())
             {
-                state["enum_name"] = in.string();
+                state["enum_name"] = identifier_name;
             }
             else
             {
-                state["enum_member_names"] += in.string() + ";";
+                state["enum_member_names"] += identifier_name + ";";
             }
         }
         else if (state.count("struct_name"))
         {
             if (state["struct_name"].empty())
             {
-                state["struct_name"] = in.string();
+                state["struct_name"] = identifier_name;
             }
             else
             {
-                state["struct_member_types"] += state["type"] + ";";
-                state["struct_member_names"] += in.string() + ";";
+                if (state["expecting_type"] == "true")
+                {
+                    if (!state["type"].empty())
+                    {
+                        // Already matched a primitive type
+                        state["expecting_type"] = "false";
+                    }
+                    else
+                    {
+                        state["type"] = identifier_name;
+                        state["expecting_type"] = "false";
+                    }
+                }
+                if (state["expecting_type"] == "false")
+                {
+                    state["struct_member_types"] += state["type"] + ";";
+                    state["struct_member_names"] += identifier_name + ";";
+                    state["expecting_type"] = "true";
+                    state["type"] = "";
+                }
             }
         }
         else if (state.count("union_name"))
         {
             if (state["union_name"].empty())
             {
-                state["union_name"] = in.string();
+                state["union_name"] = identifier_name;
             }
             else
             {
                 state["union_member_types"] += state["type"];
-                state["union_member_names"] += in.string();
+                state["union_member_names"] += identifier_name;
             }
         }
         else if (state.count("alias"))
         {
             // save alias type and alias name into state["alias"]
-            state["alias"] += state["alias"].empty() ? in.string() : "," + in.string();
+            state["alias"] += state["alias"].empty() ? identifier_name : "," + identifier_name;
         }
         else
         {
             // Keep the identifier for super-expression use
-            state["identifier"] = in.string();
+            state["identifier"] = identifier_name;
         }
     }
 
@@ -986,9 +1006,11 @@ struct action<kw_struct>
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         // Create empty struct states to indicate the start of parsing struct
+        state["type"] = "";
         state["struct_name"] = "";
         state["struct_member_types"] = "";
         state["struct_member_names"] = "";
+        state["expecting_type"] = "true";  // Initially expect a type
     }
 
 };
@@ -1003,6 +1025,7 @@ struct action<struct_def>
         state.erase("struct_name");
         state.erase("struct_member_types");
         state.erase("struct_member_names");
+        state.erase("expecting_type");
     }
 
     template<typename Input>
