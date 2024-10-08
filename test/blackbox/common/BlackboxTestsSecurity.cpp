@@ -2706,7 +2706,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_user_data)
     pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
     writer.history_depth(100).
-            userData({ 'a', 'b', 'c', 'd', 'e' }).
+            user_data({ 'a', 'b', 'c', 'd', 'e' }).
             property_policy(pub_part_property_policy).
             entity_property_policy(pub_property_policy).init();
 

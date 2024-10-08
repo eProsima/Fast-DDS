@@ -385,7 +385,7 @@ TEST_P(PubSubBasic, ReceivedDynamicDataWithNoSizeLimit)
 
     writer.history_depth(100)
             .partition("A").partition("B").partition("C")
-            .userData({'a', 'b', 'c', 'd'}).init();
+            .user_data({'a', 'b', 'c', 'd'}).init();
 
 
     ASSERT_TRUE(writer.isInitialized());
@@ -418,7 +418,7 @@ TEST_P(PubSubBasic, ReceivedDynamicDataWithinSizeLimit)
 
     writer.history_depth(100)
             .partition("A").partition("B").partition("C")
-            .userData({'a', 'b', 'c', 'd'}).init();
+            .user_data({'a', 'b', 'c', 'd'}).init();
 
 
     ASSERT_TRUE(writer.isInitialized());
@@ -452,7 +452,7 @@ TEST_P(PubSubBasic, ReceivedUserDataExceedsSizeLimit)
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     writer.history_depth(100)
-            .userData({'a', 'b', 'c', 'd', 'e', 'f'}).init();
+            .user_data({'a', 'b', 'c', 'd', 'e', 'f'}).init();
 
     ASSERT_TRUE(writer.isInitialized());
 

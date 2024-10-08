@@ -318,6 +318,15 @@ public:
     }
 
     /**
+     * @brief Fills the provided vector with the GUIDs of the matched readers.
+     *
+     * @param[out] guids Vector to be filled with the GUIDs of the matched readers.
+     * @return True if the operation was successful.
+     */
+    RTPS_DllAPI bool matched_readers_guids(
+            std::vector<GUID_t>& guids) const;
+
+    /**
      * Tries to remove a change waiting a maximum of the provided microseconds.
      * @param max_blocking_time_point Maximum time to wait for.
      * @param lock Lock of the Change list.

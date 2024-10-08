@@ -46,6 +46,18 @@
 #include <list>
 #include <functional>
 
+namespace eprosima {
+namespace fastdds {
+namespace dds {
+namespace builtin {
+
+struct BuiltinTopicKey_t;
+
+} // namespace builtin
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
+
 #if HAVE_SECURITY
 extern void blackbox_security_init();
 #endif // if HAVE_SECURITY
@@ -201,5 +213,16 @@ void print_non_received_messages(
 }
 
 /***** End auxiliary lambda function *****/
+
+/****** Auxiliary conversion helpers *******/
+void entity_id_to_builtin_topic_key(
+        eprosima::fastdds::dds::builtin::BuiltinTopicKey_t& bt_key,
+        const eprosima::fastrtps::rtps::EntityId_t& entity_id);
+
+void guid_prefix_to_builtin_topic_key(
+        eprosima::fastdds::dds::builtin::BuiltinTopicKey_t& bt_key,
+        const eprosima::fastrtps::rtps::GuidPrefix_t& guid_prefix);
+
+/****** End Auxiliary conversion helpers *******/
 
 #endif // __BLACKBOX_BLACKBOXTESTS_HPP__

@@ -54,6 +54,8 @@ namespace dds {
 namespace builtin {
 
 class TypeLookupManager;
+struct PublicationBuiltinTopicData;
+struct SubscriptionBuiltinTopicData;
 
 } // namespace builtin
 } // namespace dds
@@ -305,6 +307,30 @@ public:
      * @return A vector with all registered transports' netmask filter information.
      */
     std::vector<fastdds::rtps::TransportNetmaskFilterInfo> get_netmask_filter_info() const;
+
+    /**
+     * @brief Fills the provided fastdds::dds::builtin::PublicationBuiltinTopicData with the information of the
+     * writer identified by writer_guid.
+     *
+     * @param[out] data fastdds::dds::builtin::PublicationBuiltinTopicData to fill.
+     * @param[in] writer_guid GUID of the writer to get the information from.
+     * @return True if the writer was found and the data was filled.
+     */
+    bool get_publication_info(
+            fastdds::dds::builtin::PublicationBuiltinTopicData& data,
+            const GUID_t& writer_guid) const;
+
+    /**
+     * @brief Fills the provided fastdds::dds::builtin::SubscriptionBuiltinTopicData with the information of the
+     * reader identified by reader_guid.
+     *
+     * @param[out] data fastdds::dds::builtin::SubscriptionBuiltinTopicData to fill.
+     * @param[in] reader_guid GUID of the reader to get the information from.
+     * @return True if the reader was found and the data was filled.
+     */
+    bool get_subscription_info(
+            fastdds::dds::builtin::SubscriptionBuiltinTopicData& data,
+            const GUID_t& reader_guid) const;
 
 #if HAVE_SECURITY
 

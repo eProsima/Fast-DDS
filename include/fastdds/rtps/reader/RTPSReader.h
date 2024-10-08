@@ -276,6 +276,15 @@ public:
         data_filter_ = filter;
     }
 
+    /**
+     * @brief Fills the provided vector with the GUIDs of the matched writers.
+     *
+     * @param[out] guids Vector to be filled with the GUIDs of the matched writers.
+     * @return True if the operation was successful.
+     */
+    RTPS_DllAPI bool matched_writers_guids(
+            std::vector<GUID_t>& guids) const;
+
     /*!
      * @brief Returns there is a clean state with all Writers.
      * It occurs when the Reader received all samples sent by Writers. In other words,
