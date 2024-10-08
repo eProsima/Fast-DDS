@@ -256,6 +256,8 @@ public:
     /**
      * Fills the DomainParticipantQos with the default DomainParticipant profile found in the provided XML (if there is).
      *
+     * @note This method does not update the default participant qos (returned by \c get_default_participant_qos).
+     *
      * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
      * @param qos DomainParticipantQos object where the qos is returned.
      * @return RETCODE_OK on success. RETCODE_BAD_PARAMETER otherwise.
@@ -301,6 +303,8 @@ public:
 
     /**
      * Fills the DomainParticipantExtendedQos with the default DomainParticipant profile found in the provided XML (if there is).
+     *
+     * @note This method does not update the default participant extended qos.
      *
      * @param xml Raw XML string containing the profile to be used to fill the \c extended_qos structure.
      * @param qos DomainParticipantExtendedQos object where the qos is returned.

@@ -574,6 +574,8 @@ public:
     /**
      * Fills the PublisherQos with the default publisher profile found in the provided XML (if there is).
      *
+     * @note This method does not update the default publisher qos (returned by \c get_default_publisher_qos).
+     *
      * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
      * @param qos PublisherQos object where the qos is returned.
      * @return RETCODE_OK on success. RETCODE_BAD_PARAMETER otherwise.
@@ -662,6 +664,8 @@ public:
 
     /**
      * Fills the SubscriberQos with the default subscriber profile found in the provided XML (if there is).
+     *
+     * @note This method does not update the default subscriber qos (returned by \c get_default_subscriber_qos).
      *
      * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
      * @param qos SubscriberQos object where the qos is returned.
@@ -799,6 +803,8 @@ public:
     /**
      * Fills the TopicQos with the default topic profile found in the provided XML (if there is).
      *
+     * @note This method does not update the default topic qos (returned by \c get_default_topic_qos).
+     *
      * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
      * @param qos TopicQos object where the qos is returned.
      * @return RETCODE_OK on success. RETCODE_BAD_PARAMETER otherwise.
@@ -809,6 +815,8 @@ public:
 
     /**
      * Fills the TopicQos with the default topic profile found in the provided XML (if there is), and also its corresponding topic and data type names (if specified).
+     *
+     * @note This method does not update the default topic qos (returned by \c get_default_topic_qos).
      *
      * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
      * @param qos TopicQos object where the qos is returned.
@@ -860,6 +868,8 @@ public:
     /**
      * Fills the ReplierQos with the default replier profile found in the provided XML (if there is).
      *
+     * @note This method does not update the default replier qos.
+     *
      * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
      * @param qos ReplierQos object where the qos is returned.
      * @return RETCODE_OK on success. RETCODE_BAD_PARAMETER otherwise.
@@ -905,6 +915,8 @@ public:
 
     /**
      * Fills the RequesterQos with the default requester profile found in the provided XML (if there is).
+     *
+     * @note This method does not update the default requester qos.
      *
      * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
      * @param qos RequesterQos object where the qos is returned.

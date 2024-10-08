@@ -410,6 +410,8 @@ public:
     /**
      * Fills the DataWriterQos with the default DataWriter profile found in the provided XML (if there is).
      *
+     * @note This method does not update the default datawriter qos (returned by \c get_default_datawriter_qos).
+     *
      * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
      * @param qos DataWriterQos object where the qos is returned.
      * @return RETCODE_OK on success. RETCODE_BAD_PARAMETER otherwise.
@@ -420,6 +422,8 @@ public:
 
     /**
      * Fills the DataWriterQos with the default DataWriter profile found in the provided XML (if there is), and also its corresponding topic name (if specified).
+     *
+     * @note This method does not update the default datawriter qos (returned by \c get_default_datawriter_qos).
      *
      * @param xml Raw XML string containing the profile to be used to fill the \c qos structure.
      * @param qos DataWriterQos object where the qos is returned.
