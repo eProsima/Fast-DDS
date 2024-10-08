@@ -397,10 +397,10 @@ ReturnCode_t DomainParticipantFactory::get_participant_extended_qos_from_profile
         const std::string& profile_name,
         DomainParticipantExtendedQos& extended_qos) const
 {
-    extended_qos = default_participant_qos_;
     ParticipantAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillParticipantAttributes(profile_name, attr, false))
     {
+        extended_qos = default_participant_qos_;
         utils::set_extended_qos_from_attributes(extended_qos, attr);
         return RETCODE_OK;
     }
@@ -412,10 +412,10 @@ ReturnCode_t DomainParticipantFactory::get_participant_extended_qos_from_xml(
         const std::string& xml,
         DomainParticipantExtendedQos& extended_qos) const
 {
-    extended_qos = default_participant_qos_;
     ParticipantAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fill_participant_attributes_from_xml(xml, attr, false))
     {
+        extended_qos = default_participant_qos_;
         utils::set_extended_qos_from_attributes(extended_qos, attr);
         return RETCODE_OK;
     }
@@ -434,10 +434,10 @@ ReturnCode_t DomainParticipantFactory::get_participant_extended_qos_from_xml(
         return RETCODE_BAD_PARAMETER;
     }
 
-    extended_qos = default_participant_qos_;
     ParticipantAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fill_participant_attributes_from_xml(xml, attr, true, profile_name))
     {
+        extended_qos = default_participant_qos_;
         utils::set_extended_qos_from_attributes(extended_qos, attr);
         return RETCODE_OK;
     }
@@ -449,10 +449,10 @@ ReturnCode_t DomainParticipantFactory::get_default_participant_extended_qos_from
         const std::string& xml,
         DomainParticipantExtendedQos& extended_qos) const
 {
-    extended_qos = default_participant_qos_;
     ParticipantAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fill_default_participant_attributes_from_xml(xml, attr, true))
     {
+        extended_qos = default_participant_qos_;
         utils::set_extended_qos_from_attributes(extended_qos, attr);
         return RETCODE_OK;
     }

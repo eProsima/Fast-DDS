@@ -140,7 +140,7 @@ public:
      * Search for the profile specified and fill the structure.
      * @param profile_name Name for the profile to be used to fill the structure.
      * @param atts Structure to be filled.
-     * @param log_error Flag to log an error if the profile_name is not found. Defaults true.
+     * @param log_error Flag to log an error if the profile_name is not found. Defaults @c true.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
     static XMLP_ret fillParticipantAttributes(
@@ -182,7 +182,7 @@ public:
      * Search for the profile specified and fill the structure.
      * @param profile_name Name for the profile to be used to fill the structure.
      * @param qos Structure to be filled.
-     * @param log_error Flag to log an error if the profile_name is not found. Defaults true.
+     * @param log_error Flag to log an error if the profile_name is not found. Defaults @c true.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
     static XMLP_ret fillDomainParticipantFactoryQos(
@@ -201,7 +201,7 @@ public:
      * Search for the profile specified and fill the structure.
      * @param profile_name Name for the profile to be used to fill the structure.
      * @param atts Structure to be filled.
-     * @param log_error Flag to log an error if the profile_name is not found. Defaults true.
+     * @param log_error Flag to log an error if the profile_name is not found. Defaults @c true.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
     static XMLP_ret fillPublisherAttributes(
@@ -243,7 +243,7 @@ public:
      * Search for the profile specified and fill the structure.
      * @param profile_name Name for the profile to be used to fill the structure.
      * @param atts Structure to be filled.
-     * @param log_error Flag to log an error if the profile_name is not found. Defaults true.
+     * @param log_error Flag to log an error if the profile_name is not found. Defaults @c true.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
     static XMLP_ret fillSubscriberAttributes(
