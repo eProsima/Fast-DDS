@@ -492,15 +492,24 @@ public:
     {
         bool ret_value {false};
 
-        if (m__d == x.m__d &&
-                selected_member_ == x.selected_member_)
+        if (x.selected_member_ == selected_member_)
         {
-            switch (selected_member_)
+            if (0x0FFFFFFFu != selected_member_)
             {
-                                case 0x00000001:
-                                    ret_value = (m_result == x.m_result);
-                                    break;
+                if (x.m__d == m__d)
+                {
+                    switch (selected_member_)
+                    {
+                                                    case 0x00000001:
+                                                        ret_value = (x.m_result == m_result);
+                                                        break;
 
+                    }
+                }
+            }
+            else
+            {
+                ret_value = true;
             }
         }
 
@@ -1122,15 +1131,24 @@ public:
     {
         bool ret_value {false};
 
-        if (m__d == x.m__d &&
-                selected_member_ == x.selected_member_)
+        if (x.selected_member_ == selected_member_)
         {
-            switch (selected_member_)
+            if (0x0FFFFFFFu != selected_member_)
             {
-                                case 0x00000001:
-                                    ret_value = (m_result == x.m_result);
-                                    break;
+                if (x.m__d == m__d)
+                {
+                    switch (selected_member_)
+                    {
+                                                    case 0x00000001:
+                                                        ret_value = (x.m_result == m_result);
+                                                        break;
 
+                    }
+                }
+            }
+            else
+            {
+                ret_value = true;
             }
         }
 
@@ -1408,19 +1426,28 @@ public:
     {
         bool ret_value {false};
 
-        if (m__d == x.m__d &&
-                selected_member_ == x.selected_member_)
+        if (x.selected_member_ == selected_member_)
         {
-            switch (selected_member_)
+            if (0x0FFFFFFFu != selected_member_)
             {
-                                case 0x00000001:
-                                    ret_value = (m_getTypes == x.m_getTypes);
-                                    break;
+                if (x.m__d == m__d)
+                {
+                    switch (selected_member_)
+                    {
+                                                    case 0x00000001:
+                                                        ret_value = (x.m_getTypes == m_getTypes);
+                                                        break;
 
-                                case 0x00000002:
-                                    ret_value = (m_getTypeDependencies == x.m_getTypeDependencies);
-                                    break;
+                                                    case 0x00000002:
+                                                        ret_value = (x.m_getTypeDependencies == m_getTypeDependencies);
+                                                        break;
 
+                    }
+                }
+            }
+            else
+            {
+                ret_value = true;
             }
         }
 
@@ -1957,19 +1984,28 @@ public:
     {
         bool ret_value {false};
 
-        if (m__d == x.m__d &&
-                selected_member_ == x.selected_member_)
+        if (x.selected_member_ == selected_member_)
         {
-            switch (selected_member_)
+            if (0x0FFFFFFFu != selected_member_)
             {
-                                case 0x00000001:
-                                    ret_value = (m_getType == x.m_getType);
-                                    break;
+                if (x.m__d == m__d)
+                {
+                    switch (selected_member_)
+                    {
+                                                    case 0x00000001:
+                                                        ret_value = (x.m_getType == m_getType);
+                                                        break;
 
-                                case 0x00000002:
-                                    ret_value = (m_getTypeDependencies == x.m_getTypeDependencies);
-                                    break;
+                                                    case 0x00000002:
+                                                        ret_value = (x.m_getTypeDependencies == m_getTypeDependencies);
+                                                        break;
 
+                    }
+                }
+            }
+            else
+            {
+                ret_value = true;
             }
         }
 

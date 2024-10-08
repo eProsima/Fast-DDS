@@ -185,19 +185,28 @@ public:
     {
         bool ret_value {false};
 
-        if (m__d == x.m__d &&
-                selected_member_ == x.selected_member_)
+        if (x.selected_member_ == selected_member_)
         {
-            switch (selected_member_)
+            if (0x0FFFFFFFu != selected_member_)
             {
-                                case 0x00000001:
-                                    ret_value = (m_first == x.m_first);
-                                    break;
+                if (x.m__d == m__d)
+                {
+                    switch (selected_member_)
+                    {
+                                                    case 0x00000001:
+                                                        ret_value = (x.m_first == m_first);
+                                                        break;
 
-                                case 0x00000002:
-                                    ret_value = (m_second == x.m_second);
-                                    break;
+                                                    case 0x00000002:
+                                                        ret_value = (x.m_second == m_second);
+                                                        break;
 
+                    }
+                }
+            }
+            else
+            {
+                ret_value = true;
             }
         }
 
@@ -538,19 +547,28 @@ public:
     {
         bool ret_value {false};
 
-        if (m__d == x.m__d &&
-                selected_member_ == x.selected_member_)
+        if (x.selected_member_ == selected_member_)
         {
-            switch (selected_member_)
+            if (0x0FFFFFFFu != selected_member_)
             {
-                                case 0x00000001:
-                                    ret_value = (m_third == x.m_third);
-                                    break;
+                if (x.m__d == m__d)
+                {
+                    switch (selected_member_)
+                    {
+                                                    case 0x00000001:
+                                                        ret_value = (x.m_third == m_third);
+                                                        break;
 
-                                case 0x00000002:
-                                    ret_value = (m_fourth == x.m_fourth);
-                                    break;
+                                                    case 0x00000002:
+                                                        ret_value = (x.m_fourth == m_fourth);
+                                                        break;
 
+                    }
+                }
+            }
+            else
+            {
+                ret_value = true;
             }
         }
 

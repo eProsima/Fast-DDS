@@ -3472,23 +3472,32 @@ public:
     {
         bool ret_value {false};
 
-        if (m__d == x.m__d &&
-                selected_member_ == x.selected_member_)
+        if (x.selected_member_ == selected_member_)
         {
-            switch (selected_member_)
+            if (0x0FFFFFFFu != selected_member_)
             {
-                                case 0x00000001:
-                                    ret_value = (m_l == x.m_l);
-                                    break;
+                if (x.m__d == m__d)
+                {
+                    switch (selected_member_)
+                    {
+                                                    case 0x00000001:
+                                                        ret_value = (x.m_l == m_l);
+                                                        break;
 
-                                case 0x00000002:
-                                    ret_value = (m_c == x.m_c);
-                                    break;
+                                                    case 0x00000002:
+                                                        ret_value = (x.m_c == m_c);
+                                                        break;
 
-                                case 0x00000003:
-                                    ret_value = (m_s == x.m_s);
-                                    break;
+                                                    case 0x00000003:
+                                                        ret_value = (x.m_s == m_s);
+                                                        break;
 
+                    }
+                }
+            }
+            else
+            {
+                ret_value = true;
             }
         }
 
@@ -4090,23 +4099,32 @@ public:
     {
         bool ret_value {false};
 
-        if (m__d == x.m__d &&
-                selected_member_ == x.selected_member_)
+        if (x.selected_member_ == selected_member_)
         {
-            switch (selected_member_)
+            if (0x0FFFFFFFu != selected_member_)
             {
-                                case 0x00000001:
-                                    ret_value = (m_l == x.m_l);
-                                    break;
+                if (x.m__d == m__d)
+                {
+                    switch (selected_member_)
+                    {
+                                                    case 0x00000001:
+                                                        ret_value = (x.m_l == m_l);
+                                                        break;
 
-                                case 0x00000002:
-                                    ret_value = (m_ext == x.m_ext);
-                                    break;
+                                                    case 0x00000002:
+                                                        ret_value = (x.m_ext == m_ext);
+                                                        break;
 
-                                case 0x00000003:
-                                    ret_value = (m_s == x.m_s);
-                                    break;
+                                                    case 0x00000003:
+                                                        ret_value = (x.m_s == m_s);
+                                                        break;
 
+                    }
+                }
+            }
+            else
+            {
+                ret_value = true;
             }
         }
 

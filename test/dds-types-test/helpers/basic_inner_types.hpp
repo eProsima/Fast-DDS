@@ -496,23 +496,32 @@ public:
     {
         bool ret_value {false};
 
-        if (m__d == x.m__d &&
-                selected_member_ == x.selected_member_)
+        if (x.selected_member_ == selected_member_)
         {
-            switch (selected_member_)
+            if (0x0FFFFFFFu != selected_member_)
             {
-                                case 0x00000001:
-                                    ret_value = (m_longValue == x.m_longValue);
-                                    break;
+                if (x.m__d == m__d)
+                {
+                    switch (selected_member_)
+                    {
+                                                    case 0x00000001:
+                                                        ret_value = (x.m_longValue == m_longValue);
+                                                        break;
 
-                                case 0x00000002:
-                                    ret_value = (m_floatValue == x.m_floatValue);
-                                    break;
+                                                    case 0x00000002:
+                                                        ret_value = (x.m_floatValue == m_floatValue);
+                                                        break;
 
-                                case 0x00000003:
-                                    ret_value = (m_shortValue == x.m_shortValue);
-                                    break;
+                                                    case 0x00000003:
+                                                        ret_value = (x.m_shortValue == m_shortValue);
+                                                        break;
 
+                    }
+                }
+            }
+            else
+            {
+                ret_value = true;
             }
         }
 

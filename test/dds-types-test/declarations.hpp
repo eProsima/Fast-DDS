@@ -470,19 +470,28 @@ public:
     {
         bool ret_value {false};
 
-        if (m__d == x.m__d &&
-                selected_member_ == x.selected_member_)
+        if (x.selected_member_ == selected_member_)
         {
-            switch (selected_member_)
+            if (0x0FFFFFFFu != selected_member_)
             {
-                                case 0x00000001:
-                                    ret_value = (m_case_zero == x.m_case_zero);
-                                    break;
+                if (x.m__d == m__d)
+                {
+                    switch (selected_member_)
+                    {
+                                                    case 0x00000001:
+                                                        ret_value = (x.m_case_zero == m_case_zero);
+                                                        break;
 
-                                case 0x00000002:
-                                    ret_value = (m_case_one == x.m_case_one);
-                                    break;
+                                                    case 0x00000002:
+                                                        ret_value = (x.m_case_one == m_case_one);
+                                                        break;
 
+                    }
+                }
+            }
+            else
+            {
+                ret_value = true;
             }
         }
 
@@ -1553,19 +1562,28 @@ public:
     {
         bool ret_value {false};
 
-        if (m__d == x.m__d &&
-                selected_member_ == x.selected_member_)
+        if (x.selected_member_ == selected_member_)
         {
-            switch (selected_member_)
+            if (0x0FFFFFFFu != selected_member_)
             {
-                                case 0x00000001:
-                                    ret_value = (m_case_zero == x.m_case_zero);
-                                    break;
+                if (x.m__d == m__d)
+                {
+                    switch (selected_member_)
+                    {
+                                                    case 0x00000001:
+                                                        ret_value = (x.m_case_zero == m_case_zero);
+                                                        break;
 
-                                case 0x00000002:
-                                    ret_value = (m_case_one == x.m_case_one);
-                                    break;
+                                                    case 0x00000002:
+                                                        ret_value = (x.m_case_one == m_case_one);
+                                                        break;
 
+                    }
+                }
+            }
+            else
+            {
+                ret_value = true;
             }
         }
 

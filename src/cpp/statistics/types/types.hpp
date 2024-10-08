@@ -3169,43 +3169,52 @@ public:
     {
         bool ret_value {false};
 
-        if (m__d == x.m__d &&
-                selected_member_ == x.selected_member_)
+        if (x.selected_member_ == selected_member_)
         {
-            switch (selected_member_)
+            if (0x0FFFFFFFu != selected_member_)
             {
-                                case 0x00000001:
-                                    ret_value = (m_writer_reader_data == x.m_writer_reader_data);
-                                    break;
+                if (x.m__d == m__d)
+                {
+                    switch (selected_member_)
+                    {
+                                                    case 0x00000001:
+                                                        ret_value = (x.m_writer_reader_data == m_writer_reader_data);
+                                                        break;
 
-                                case 0x00000002:
-                                    ret_value = (m_locator2locator_data == x.m_locator2locator_data);
-                                    break;
+                                                    case 0x00000002:
+                                                        ret_value = (x.m_locator2locator_data == m_locator2locator_data);
+                                                        break;
 
-                                case 0x00000003:
-                                    ret_value = (m_entity_data == x.m_entity_data);
-                                    break;
+                                                    case 0x00000003:
+                                                        ret_value = (x.m_entity_data == m_entity_data);
+                                                        break;
 
-                                case 0x00000004:
-                                    ret_value = (m_entity2locator_traffic == x.m_entity2locator_traffic);
-                                    break;
+                                                    case 0x00000004:
+                                                        ret_value = (x.m_entity2locator_traffic == m_entity2locator_traffic);
+                                                        break;
 
-                                case 0x00000005:
-                                    ret_value = (m_entity_count == x.m_entity_count);
-                                    break;
+                                                    case 0x00000005:
+                                                        ret_value = (x.m_entity_count == m_entity_count);
+                                                        break;
 
-                                case 0x00000006:
-                                    ret_value = (m_discovery_time == x.m_discovery_time);
-                                    break;
+                                                    case 0x00000006:
+                                                        ret_value = (x.m_discovery_time == m_discovery_time);
+                                                        break;
 
-                                case 0x00000007:
-                                    ret_value = (m_sample_identity_count == x.m_sample_identity_count);
-                                    break;
+                                                    case 0x00000007:
+                                                        ret_value = (x.m_sample_identity_count == m_sample_identity_count);
+                                                        break;
 
-                                case 0x00000008:
-                                    ret_value = (m_physical_data == x.m_physical_data);
-                                    break;
+                                                    case 0x00000008:
+                                                        ret_value = (x.m_physical_data == m_physical_data);
+                                                        break;
 
+                    }
+                }
+            }
+            else
+            {
+                ret_value = true;
             }
         }
 
