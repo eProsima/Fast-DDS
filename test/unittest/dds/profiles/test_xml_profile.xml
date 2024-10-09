@@ -730,7 +730,7 @@
             </matchedPublishersAllocation>
         </data_reader>
 
-        <topic profile_name = "test_topic_profile">
+        <topic profile_name = "test_topic_profile" is_default_profile="true">
             <historyQos>
                 <kind>KEEP_LAST</kind>
                 <depth>20</depth>
@@ -746,7 +746,8 @@
         <replier profile_name="test_replier_profile"
                 service_name="service_name"
                 request_type="request_type"
-                reply_type="reply_type">
+                reply_type="reply_type"
+                is_default_profile="true">
             <request_topic_name>request_topic_name</request_topic_name>
             <reply_topic_name>reply_topic_name</reply_topic_name>
             <data_writer>
@@ -768,7 +769,8 @@
         <requester profile_name="test_requester_profile"
                 service_name="service_name"
                 request_type="request_type"
-                reply_type="reply_type">
+                reply_type="reply_type"
+                is_default_profile="true">
             <request_topic_name>request_topic_name</request_topic_name>
             <reply_topic_name>reply_topic_name</reply_topic_name>
             <data_writer>

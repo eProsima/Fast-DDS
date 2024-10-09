@@ -147,6 +147,40 @@ public:
             const std::string& profile_name,
             DataReaderQos& qos) const;
 
+    ReturnCode_t get_datareader_qos_from_profile(
+            const std::string& profile_name,
+            DataReaderQos& qos,
+            std::string& topic_name) const;
+
+    ReturnCode_t get_datareader_qos_from_xml(
+            const std::string& xml,
+            DataReaderQos& qos) const;
+
+    ReturnCode_t get_datareader_qos_from_xml(
+            const std::string& xml,
+            DataReaderQos& qos,
+            std::string& topic_name) const;
+
+    ReturnCode_t get_datareader_qos_from_xml(
+            const std::string& xml,
+            DataReaderQos& qos,
+            const std::string& profile_name) const;
+
+    ReturnCode_t get_datareader_qos_from_xml(
+            const std::string& xml,
+            DataReaderQos& qos,
+            std::string& topic_name,
+            const std::string& profile_name) const;
+
+    ReturnCode_t get_default_datareader_qos_from_xml(
+            const std::string& xml,
+            DataReaderQos& qos) const;
+
+    ReturnCode_t get_default_datareader_qos_from_xml(
+            const std::string& xml,
+            DataReaderQos& qos,
+            std::string& topic_name) const;
+
     ReturnCode_t static copy_from_topic_qos(
             DataReaderQos& reader_qos,
             const TopicQos& topic_qos);

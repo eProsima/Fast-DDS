@@ -1044,6 +1044,58 @@ ReturnCode_t DomainParticipantImpl::get_publisher_qos_from_profile(
     return RETCODE_BAD_PARAMETER;
 }
 
+ReturnCode_t DomainParticipantImpl::get_publisher_qos_from_xml(
+        const std::string& xml,
+        PublisherQos& qos) const
+{
+    xmlparser::PublisherAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_publisher_attributes_from_xml(xml, attr, false))
+    {
+        qos = default_pub_qos_;
+        utils::set_qos_from_attributes(qos, attr);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantImpl::get_publisher_qos_from_xml(
+        const std::string& xml,
+        PublisherQos& qos,
+        const std::string& profile_name) const
+{
+    if (profile_name.empty())
+    {
+        EPROSIMA_LOG_ERROR(DOMAIN_PARTICIPANT, "Provided profile name must be non-empty");
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    xmlparser::PublisherAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_publisher_attributes_from_xml(xml, attr, true, profile_name))
+    {
+        qos = default_pub_qos_;
+        utils::set_qos_from_attributes(qos, attr);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantImpl::get_default_publisher_qos_from_xml(
+        const std::string& xml,
+        PublisherQos& qos) const
+{
+    xmlparser::PublisherAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_default_publisher_attributes_from_xml(xml, attr, true))
+    {
+        qos = default_pub_qos_;
+        utils::set_qos_from_attributes(qos, attr);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
 ReturnCode_t DomainParticipantImpl::set_default_subscriber_qos(
         const SubscriberQos& qos)
 {
@@ -1092,6 +1144,58 @@ ReturnCode_t DomainParticipantImpl::get_subscriber_qos_from_profile(
     return RETCODE_BAD_PARAMETER;
 }
 
+ReturnCode_t DomainParticipantImpl::get_subscriber_qos_from_xml(
+        const std::string& xml,
+        SubscriberQos& qos) const
+{
+    xmlparser::SubscriberAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_subscriber_attributes_from_xml(xml, attr, false))
+    {
+        qos = default_sub_qos_;
+        utils::set_qos_from_attributes(qos, attr);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantImpl::get_subscriber_qos_from_xml(
+        const std::string& xml,
+        SubscriberQos& qos,
+        const std::string& profile_name) const
+{
+    if (profile_name.empty())
+    {
+        EPROSIMA_LOG_ERROR(DOMAIN_PARTICIPANT, "Provided profile name must be non-empty");
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    xmlparser::SubscriberAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_subscriber_attributes_from_xml(xml, attr, true, profile_name))
+    {
+        qos = default_sub_qos_;
+        utils::set_qos_from_attributes(qos, attr);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantImpl::get_default_subscriber_qos_from_xml(
+        const std::string& xml,
+        SubscriberQos& qos) const
+{
+    xmlparser::SubscriberAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_default_subscriber_attributes_from_xml(xml, attr, true))
+    {
+        qos = default_sub_qos_;
+        utils::set_qos_from_attributes(qos, attr);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
 ReturnCode_t DomainParticipantImpl::set_default_topic_qos(
         const TopicQos& qos)
 {
@@ -1129,11 +1233,112 @@ ReturnCode_t DomainParticipantImpl::get_topic_qos_from_profile(
         const std::string& profile_name,
         TopicQos& qos) const
 {
+    std::string _topic_name, _topic_data_type;
+    return get_topic_qos_from_profile(profile_name, qos, _topic_name, _topic_data_type);
+}
+
+ReturnCode_t DomainParticipantImpl::get_topic_qos_from_profile(
+        const std::string& profile_name,
+        TopicQos& qos,
+        std::string& topic_name,
+        std::string& topic_data_type) const
+{
     xmlparser::TopicAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillTopicAttributes(profile_name, attr))
     {
         qos = default_topic_qos_;
         utils::set_qos_from_attributes(qos, attr);
+        topic_name = attr.getTopicName();
+        topic_data_type = attr.getTopicDataType();
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantImpl::get_topic_qos_from_xml(
+        const std::string& xml,
+        TopicQos& qos) const
+{
+    std::string _topic_name, _topic_data_type;
+    return get_topic_qos_from_xml(xml, qos, _topic_name, _topic_data_type);
+}
+
+ReturnCode_t DomainParticipantImpl::get_topic_qos_from_xml(
+        const std::string& xml,
+        TopicQos& qos,
+        std::string& topic_name,
+        std::string& topic_data_type) const
+{
+    xmlparser::TopicAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_topic_attributes_from_xml(xml, attr, false))
+    {
+        qos = default_topic_qos_;
+        utils::set_qos_from_attributes(qos, attr);
+        topic_name = attr.getTopicName();
+        topic_data_type = attr.getTopicDataType();
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantImpl::get_topic_qos_from_xml(
+        const std::string& xml,
+        TopicQos& qos,
+        const std::string& profile_name) const
+{
+    std::string _topic_name, _topic_data_type;
+    return get_topic_qos_from_xml(xml, qos, _topic_name, _topic_data_type, profile_name);
+}
+
+ReturnCode_t DomainParticipantImpl::get_topic_qos_from_xml(
+        const std::string& xml,
+        TopicQos& qos,
+        std::string& topic_name,
+        std::string& topic_data_type,
+        const std::string& profile_name) const
+{
+    if (profile_name.empty())
+    {
+        EPROSIMA_LOG_ERROR(DOMAIN_PARTICIPANT, "Provided profile name must be non-empty");
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    xmlparser::TopicAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_topic_attributes_from_xml(xml, attr, true, profile_name))
+    {
+        qos = default_topic_qos_;
+        utils::set_qos_from_attributes(qos, attr);
+        topic_name = attr.getTopicName();
+        topic_data_type = attr.getTopicDataType();
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantImpl::get_default_topic_qos_from_xml(
+        const std::string& xml,
+        TopicQos& qos) const
+{
+    std::string _topic_name, _topic_data_type;
+    return get_default_topic_qos_from_xml(xml, qos, _topic_name, _topic_data_type);
+}
+
+ReturnCode_t DomainParticipantImpl::get_default_topic_qos_from_xml(
+        const std::string& xml,
+        TopicQos& qos,
+        std::string& topic_name,
+        std::string& topic_data_type) const
+{
+    xmlparser::TopicAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_default_topic_attributes_from_xml(xml, attr, true))
+    {
+        qos = default_topic_qos_;
+        utils::set_qos_from_attributes(qos, attr);
+        topic_name = attr.getTopicName();
+        topic_data_type = attr.getTopicDataType();
         return RETCODE_OK;
     }
 
@@ -1154,12 +1359,110 @@ ReturnCode_t DomainParticipantImpl::get_replier_qos_from_profile(
     return RETCODE_BAD_PARAMETER;
 }
 
+ReturnCode_t DomainParticipantImpl::get_replier_qos_from_xml(
+        const std::string& xml,
+        ReplierQos& qos) const
+{
+    xmlparser::ReplierAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_replier_attributes_from_xml(xml, attr, false))
+    {
+        utils::set_qos_from_attributes(qos, attr);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantImpl::get_replier_qos_from_xml(
+        const std::string& xml,
+        ReplierQos& qos,
+        const std::string& profile_name) const
+{
+    if (profile_name.empty())
+    {
+        EPROSIMA_LOG_ERROR(DOMAIN_PARTICIPANT, "Provided profile name must be non-empty");
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    xmlparser::ReplierAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_replier_attributes_from_xml(xml, attr, true, profile_name))
+    {
+        utils::set_qos_from_attributes(qos, attr);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantImpl::get_default_replier_qos_from_xml(
+        const std::string& xml,
+        ReplierQos& qos) const
+{
+    xmlparser::ReplierAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_default_replier_attributes_from_xml(xml, attr, true))
+    {
+        utils::set_qos_from_attributes(qos, attr);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
 ReturnCode_t DomainParticipantImpl::get_requester_qos_from_profile(
         const std::string& profile_name,
         RequesterQos& qos) const
 {
     xmlparser::RequesterAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillRequesterAttributes(profile_name, attr))
+    {
+        utils::set_qos_from_attributes(qos, attr);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantImpl::get_requester_qos_from_xml(
+        const std::string& xml,
+        RequesterQos& qos) const
+{
+    xmlparser::RequesterAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_requester_attributes_from_xml(xml, attr, false))
+    {
+        utils::set_qos_from_attributes(qos, attr);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantImpl::get_requester_qos_from_xml(
+        const std::string& xml,
+        RequesterQos& qos,
+        const std::string& profile_name) const
+{
+    if (profile_name.empty())
+    {
+        EPROSIMA_LOG_ERROR(DOMAIN_PARTICIPANT, "Provided profile name must be non-empty");
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    xmlparser::RequesterAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_requester_attributes_from_xml(xml, attr, true, profile_name))
+    {
+        utils::set_qos_from_attributes(qos, attr);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantImpl::get_default_requester_qos_from_xml(
+        const std::string& xml,
+        RequesterQos& qos) const
+{
+    xmlparser::RequesterAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_default_requester_attributes_from_xml(xml, attr, true))
     {
         utils::set_qos_from_attributes(qos, attr);
         return RETCODE_OK;

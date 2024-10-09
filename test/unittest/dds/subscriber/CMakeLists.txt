@@ -73,6 +73,7 @@ target_compile_definitions(SubscriberTests PRIVATE
 target_include_directories(SubscriberTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
+    ${PROJECT_SOURCE_DIR}/test/utils
     )
 target_link_libraries(SubscriberTests fastdds fastcdr foonathan_memory
     GTest::gmock

@@ -30,6 +30,8 @@
 #include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 
+#include <FileUtils.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -590,6 +592,103 @@ TEST(SubscriberTests, GetDataReaderProfileQos)
     ASSERT_EQ(subscriber->delete_datareader(datareader), RETCODE_OK);
     ASSERT_EQ(participant->delete_subscriber(subscriber), RETCODE_OK);
     ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
+}
+
+TEST(SubscriberTests, GetDataReaderQosFromXml)
+{
+    const std::string xml_filename("test_xml_profile.xml");
+    const std::string profile_name("test_subscriber_profile");
+
+    std::string complete_xml = testing::load_file(xml_filename);
+
+    // Disable created auxiliar entities to avoid polluting traffic
+    DomainParticipantFactoryQos factory_qos;
+    DomainParticipantFactory::get_instance()->get_qos(factory_qos);
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    // Get QoS given profile name
+    DataReaderQos qos;
+    EXPECT_EQ(
+        subscriber->get_datareader_qos_from_xml(complete_xml, qos, profile_name),
+        RETCODE_OK);
+
+    // Get QoS without providing profile name (gets first one found)
+    DataReaderQos qos_empty_profile;
+    EXPECT_EQ(
+        subscriber->get_datareader_qos_from_xml(complete_xml, qos_empty_profile),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    // NOTE: test_subscriber_profile is assumed to be the first subscriber profile in the XML file
+    EXPECT_EQ(qos, qos_empty_profile);
+
+    // Load profiles from XML file and get QoS given profile name
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_filename);
+    DataReaderQos qos_from_profile;
+    EXPECT_EQ(
+        subscriber->get_datareader_qos_from_profile(profile_name, qos_from_profile),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    EXPECT_EQ(qos, qos_from_profile);
+
+    // Test return when a non-existent profile is used
+    EXPECT_EQ(
+        subscriber->get_datareader_qos_from_xml(complete_xml, qos, "incorrect_profile_name"),
+        RETCODE_BAD_PARAMETER);
+
+    // Clean up
+    ASSERT_EQ(participant->delete_subscriber(subscriber), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
+}
+
+TEST(PublisherTests, GetDefaultDataReaderQosFromXml)
+{
+    const std::string xml_filename("test_xml_profile.xml");
+
+    std::string complete_xml = testing::load_file(xml_filename);
+
+    // Disable created auxiliar entities to avoid polluting traffic
+    DomainParticipantFactoryQos factory_qos;
+    DomainParticipantFactory::get_instance()->get_qos(factory_qos);
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    // Get default QoS from XML
+    DataReaderQos default_qos;
+    EXPECT_EQ(
+        subscriber->get_default_datareader_qos_from_xml(complete_xml, default_qos),
+        RETCODE_OK);
+
+    // Load profiles from XML file and get default QoS after resetting its value
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_filename);
+    // NOTE: At the time of this writing, the only way to reset the default qos after loading an XML is to do as follows
+    DomainParticipantFactory::get_instance()->load_profiles();
+    subscriber->set_default_datareader_qos(DATAREADER_QOS_DEFAULT);
+    DataReaderQos default_qos_from_profile;
+    EXPECT_EQ(
+        subscriber->get_default_datareader_qos(default_qos_from_profile),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    EXPECT_EQ(default_qos, default_qos_from_profile);
+
+    // Clean up
+    ASSERT_EQ(participant->delete_subscriber(subscriber), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
