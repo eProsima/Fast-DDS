@@ -2623,11 +2623,9 @@ public:
 /*
  * This test checks that the DataReader methods defined in the standard not yet implemented in FastDDS return
  * RETCODE_UNSUPPORTED. The following methods are checked:
- * 1. get_matched_publication_data
- * 2. create_querycondition
- * 3. get_matched_publications
- * 4. get_key_value
- * 5. wait_for_historical_data
+ * 1. create_querycondition
+ * 2. get_key_value
+ * 3. wait_for_historical_data
  */
 TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
 {
@@ -2648,12 +2646,6 @@ TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
     DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
     ASSERT_NE(data_reader, nullptr);
 
-    PublicationBuiltinTopicData publication_data;
-    InstanceHandle_t publication_handle;
-    EXPECT_EQ(
-        RETCODE_UNSUPPORTED,
-        data_reader->get_matched_publication_data(publication_data, publication_handle));
-
     {
         SampleStateMask sample_states = ANY_SAMPLE_STATE;
         ViewStateMask view_states = ANY_VIEW_STATE;
@@ -2669,9 +2661,6 @@ TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
                 query_expression,
                 query_parameters));
     }
-
-    std::vector<InstanceHandle_t> publication_handles;
-    EXPECT_EQ(RETCODE_UNSUPPORTED, data_reader->get_matched_publications(publication_handles));
 
     InstanceHandle_t key_handle;
     EXPECT_EQ(RETCODE_UNSUPPORTED, data_reader->get_key_value(nullptr, key_handle));
