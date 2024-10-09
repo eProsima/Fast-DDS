@@ -541,7 +541,7 @@ public:
      *
      * @param profile_name Publisher profile name.
      * @param qos @ref PublisherQos object where the qos is returned.
-     * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
+     * @return @ref RETCODE_OK if the profile exists. @ref RETCODE_BAD_PARAMETER otherwise.
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_publisher_qos_from_profile(
             const std::string& profile_name,
@@ -632,7 +632,7 @@ public:
      *
      * @param profile_name Subscriber profile name.
      * @param qos @ref SubscriberQos object where the qos is returned.
-     * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
+     * @return @ref RETCODE_OK if the profile exists. @ref RETCODE_BAD_PARAMETER otherwise.
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_subscriber_qos_from_profile(
             const std::string& profile_name,
@@ -723,7 +723,7 @@ public:
      *
      * @param profile_name Topic profile name.
      * @param qos @ref TopicQos object where the qos is returned.
-     * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
+     * @return @ref RETCODE_OK if the profile exists. @ref RETCODE_BAD_PARAMETER otherwise.
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_topic_qos_from_profile(
             const std::string& profile_name,
@@ -736,7 +736,7 @@ public:
      * @param qos @ref TopicQos object where the qos is returned.
      * @param topic_name String where the name of the topic associated to this profile is returned (if specified).
      * @param topic_data_type String where the name of the topic data type associated to this profile is returned (if specified).
-     * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
+     * @return @ref RETCODE_OK if the profile exists. @ref RETCODE_BAD_PARAMETER otherwise.
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_topic_qos_from_profile(
             const std::string& profile_name,
@@ -835,7 +835,7 @@ public:
      *
      * @param profile_name Replier profile name.
      * @param qos @ref ReplierQos object where the qos is returned.
-     * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
+     * @return @ref RETCODE_OK if the profile exists. @ref RETCODE_BAD_PARAMETER otherwise.
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_replier_qos_from_profile(
             const std::string& profile_name,
@@ -883,7 +883,7 @@ public:
      *
      * @param profile_name Requester profile name.
      * @param qos @ref RequesterQos object where the qos is returned.
-     * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
+     * @return @ref RETCODE_OK if the profile exists. @ref RETCODE_BAD_PARAMETER otherwise.
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_requester_qos_from_profile(
             const std::string& profile_name,

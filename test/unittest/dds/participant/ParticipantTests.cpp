@@ -874,7 +874,19 @@ TEST(ParticipantTests, GetDefaultParticipantExtendedQosFromXml)
         RETCODE_OK);
 
     // NOTE: cannot load profiles file and compare with default value as
-    // DomainParticipantFactory::get_default_participant_extended_qos is currently unavailable
+    // DomainParticipantFactory::get_default_participant_extended_qos is currently unavailable. However, we will
+    // instead load the profile we know is the default one and compare with it.
+
+    // Load profiles from XML file and get default QoS (knowing its profile name)
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_filename);
+    DomainParticipantExtendedQos default_qos_from_profile;
+    EXPECT_EQ(
+        DomainParticipantFactory::get_instance()->get_participant_extended_qos_from_profile("test_default_participant_profile",
+        default_qos_from_profile),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    EXPECT_EQ(default_qos, default_qos_from_profile);
 }
 
 TEST(ParticipantTests, DeleteDomainParticipant)
@@ -2123,6 +2135,12 @@ TEST(ParticipantTests, GetSubscriberQosFromXml)
 
     std::string complete_xml = testing::load_file(xml_filename);
 
+    // Disable created auxiliar entities to avoid polluting traffic
+    DomainParticipantFactoryQos factory_qos;
+    DomainParticipantFactory::get_instance()->get_qos(factory_qos);
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
@@ -2168,6 +2186,12 @@ TEST(ParticipantTests, GetDefaultSubscriberQosFromXml)
     const std::string xml_filename("test_xml_profile.xml");
 
     std::string complete_xml = testing::load_file(xml_filename);
+
+    // Disable created auxiliar entities to avoid polluting traffic
+    DomainParticipantFactoryQos factory_qos;
+    DomainParticipantFactory::get_instance()->get_qos(factory_qos);
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
 
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(
@@ -2255,6 +2279,12 @@ TEST(ParticipantTests, GetPublisherQosFromXml)
 
     std::string complete_xml = testing::load_file(xml_filename);
 
+    // Disable created auxiliar entities to avoid polluting traffic
+    DomainParticipantFactoryQos factory_qos;
+    DomainParticipantFactory::get_instance()->get_qos(factory_qos);
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
@@ -2300,6 +2330,12 @@ TEST(ParticipantTests, GetDefaultPublisherQosFromXml)
     const std::string xml_filename("test_xml_profile.xml");
 
     std::string complete_xml = testing::load_file(xml_filename);
+
+    // Disable created auxiliar entities to avoid polluting traffic
+    DomainParticipantFactoryQos factory_qos;
+    DomainParticipantFactory::get_instance()->get_qos(factory_qos);
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
 
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(
@@ -2359,6 +2395,12 @@ TEST(ParticipantTests, GetReplierQosFromXml)
 
     std::string complete_xml = testing::load_file(xml_filename);
 
+    // Disable created auxiliar entities to avoid polluting traffic
+    DomainParticipantFactoryQos factory_qos;
+    DomainParticipantFactory::get_instance()->get_qos(factory_qos);
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
@@ -2405,6 +2447,12 @@ TEST(ParticipantTests, GetDefaultReplierQosFromXml)
 
     std::string complete_xml = testing::load_file(xml_filename);
 
+    // Disable created auxiliar entities to avoid polluting traffic
+    DomainParticipantFactoryQos factory_qos;
+    DomainParticipantFactory::get_instance()->get_qos(factory_qos);
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
@@ -2417,7 +2465,19 @@ TEST(ParticipantTests, GetDefaultReplierQosFromXml)
         RETCODE_OK);
 
     // NOTE: cannot load profiles file and compare with default value as
-    // DomainParticipant::get_default_replier_qos is currently unavailable
+    // DomainParticipant::get_default_replier_qos is currently unavailable. However, we will
+    // instead load the profile we know is the default one and compare with it.
+
+    // Load profiles from XML file and get default QoS (knowing its profile name)
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_filename);
+    ReplierQos default_qos_from_profile;
+    EXPECT_EQ(
+        participant->get_replier_qos_from_profile("test_replier_profile",
+        default_qos_from_profile),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    EXPECT_EQ(default_qos, default_qos_from_profile);
 
     // Clean up
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
@@ -2452,6 +2512,12 @@ TEST(ParticipantTests, GetRequesterQosFromXml)
     const std::string profile_name("test_requester_profile");
 
     std::string complete_xml = testing::load_file(xml_filename);
+
+    // Disable created auxiliar entities to avoid polluting traffic
+    DomainParticipantFactoryQos factory_qos;
+    DomainParticipantFactory::get_instance()->get_qos(factory_qos);
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
 
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(
@@ -2499,6 +2565,12 @@ TEST(ParticipantTests, GetDefaultRequesterQosFromXml)
 
     std::string complete_xml = testing::load_file(xml_filename);
 
+    // Disable created auxiliar entities to avoid polluting traffic
+    DomainParticipantFactoryQos factory_qos;
+    DomainParticipantFactory::get_instance()->get_qos(factory_qos);
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
@@ -2511,7 +2583,19 @@ TEST(ParticipantTests, GetDefaultRequesterQosFromXml)
         RETCODE_OK);
 
     // NOTE: cannot load profiles file and compare with default value as
-    // DomainParticipant::get_default_requester_qos is currently unavailable
+    // DomainParticipant::get_default_requester_qos is currently unavailable. However, we will
+    // instead load the profile we know is the default one and compare with it.
+
+    // Load profiles from XML file and get default QoS (knowing its profile name)
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_filename);
+    RequesterQos default_qos_from_profile;
+    EXPECT_EQ(
+        participant->get_requester_qos_from_profile("test_requester_profile",
+        default_qos_from_profile),
+        RETCODE_OK);
+
+    // Check they correspond to the same profile
+    EXPECT_EQ(default_qos, default_qos_from_profile);
 
     // Clean up
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
@@ -2650,6 +2734,12 @@ TEST(ParticipantTests, GetTopicQosFromXml)
 
     std::string complete_xml = testing::load_file(xml_filename);
 
+    // Disable created auxiliar entities to avoid polluting traffic
+    DomainParticipantFactoryQos factory_qos;
+    DomainParticipantFactory::get_instance()->get_qos(factory_qos);
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
@@ -2695,6 +2785,12 @@ TEST(ParticipantTests, GetDefaultTopicQosFromXml)
     const std::string xml_filename("test_xml_profile.xml");
 
     std::string complete_xml = testing::load_file(xml_filename);
+
+    // Disable created auxiliar entities to avoid polluting traffic
+    DomainParticipantFactoryQos factory_qos;
+    DomainParticipantFactory::get_instance()->get_qos(factory_qos);
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
 
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(

@@ -578,6 +578,12 @@ TEST(PublisherTests, GetDataWriterQosFromXml)
 
     std::string complete_xml = testing::load_file(xml_filename);
 
+    // Disable created auxiliar entities to avoid polluting traffic
+    DomainParticipantFactoryQos factory_qos;
+    DomainParticipantFactory::get_instance()->get_qos(factory_qos);
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
@@ -625,6 +631,12 @@ TEST(PublisherTests, GetDefaultDataWriterQosFromXml)
     const std::string xml_filename("test_xml_profile.xml");
 
     std::string complete_xml = testing::load_file(xml_filename);
+
+    // Disable created auxiliar entities to avoid polluting traffic
+    DomainParticipantFactoryQos factory_qos;
+    DomainParticipantFactory::get_instance()->get_qos(factory_qos);
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
 
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);

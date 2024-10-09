@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-#ifndef _TEST_UTILS_FILEUTILS_HPP_
-#define _TEST_UTILS_FILEUTILS_HPP_
+#ifndef TEST_UTILS__FILEUTILS_HPP
+#define TEST_UTILS__FILEUTILS_HPP
 
 #include <fstream>
 #include <iostream>
@@ -48,4 +48,4 @@ std::string load_file(const std::string& file_path)
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _TEST_UTILS_FILEUTILS_HPP_
+#endif // TEST_UTILS__FILEUTILS_HPP
