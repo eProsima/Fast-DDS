@@ -3,6 +3,11 @@ Forthcoming
 
 * Allow `PERSISTENT_DURABILITY` behaving as `TRANSIENT_DURABILITY`. Fallback to `TRANSIENT_LOCAL_DURABILITY` if no persistence guid is set.
 * Fix DomainParticipantQos equality operator by using the new `DomainParticipantQos::compare_flow_controllers`.
+* Added implementation for:
+  * `DataWriter::get_matched_subscription_data()`
+  * `DataWriter::get_matched_subscriptions()`
+  * `DataReader::get_matched_publication_data()`
+  * `DataReader::get_matched_publications()`
 
 Version v3.0.0
 --------------
