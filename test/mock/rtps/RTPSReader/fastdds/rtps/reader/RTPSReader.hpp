@@ -68,6 +68,12 @@ public:
     virtual void assert_writer_liveliness(
             const GUID_t& wguid) = 0;
 
+    virtual bool matched_writers_guids(
+            std::vector<GUID_t>&) const
+    {
+        return false;
+    }
+
     virtual bool is_in_clean_state() = 0;
 
     virtual ReaderListener* get_listener() const = 0;

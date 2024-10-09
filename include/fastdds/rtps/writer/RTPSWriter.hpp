@@ -183,6 +183,15 @@ public:
      */
     FASTDDS_EXPORTED_API virtual bool get_disable_positive_acks() const = 0;
 
+    /**
+     * @brief Fills the provided vector with the GUIDs of the matched readers.
+     *
+     * @param[out] guids Vector to be filled with the GUIDs of the matched readers.
+     * @return True if the operation was successful.
+     */
+    FASTDDS_EXPORTED_API virtual bool matched_readers_guids(
+            std::vector<GUID_t>& guids) const = 0;
+
 #ifdef FASTDDS_STATISTICS
 
     /**

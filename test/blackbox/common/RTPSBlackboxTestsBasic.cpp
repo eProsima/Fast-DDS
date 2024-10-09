@@ -1470,6 +1470,170 @@ TEST(RTPS, endpoint_creation_fails_with_incoherent_entity_id)
     ASSERT_FALSE(wrong_keyed_reader.isInitialized());
 }
 
+bool validate_publication_builtin_topic_data(
+        const eprosima::fastdds::rtps::PublicationBuiltinTopicData& pubdata,
+        const EntityId_t& writer_id,
+        const dds::WriterQos& writer_qos,
+        const TopicDescription& topic_desc,
+        const GUID_t& participant_guid)
+{
+    bool ret = true;
+
+    eprosima::fastdds::rtps::BuiltinTopicKey_t w_key, part_key;
+
+    entity_id_to_builtin_topic_key(w_key, writer_id);
+    guid_prefix_to_builtin_topic_key(part_key, participant_guid.guidPrefix);
+
+    ret &= (0 == memcmp(pubdata.key.value, w_key.value, sizeof(eprosima::fastdds::rtps::BuiltinTopicKey_t)));
+    ret &=
+            (0 ==
+            memcmp(pubdata.participant_key.value, part_key.value,
+            sizeof(eprosima::fastdds::rtps::BuiltinTopicKey_t)));
+    ret &= (pubdata.topic_name == topic_desc.topic_name);
+    ret &= (pubdata.type_name == topic_desc.type_name);
+
+    // Writer Qos
+    ret &= (pubdata.durability == writer_qos.m_durability);
+    ret &= (pubdata.durability_service == writer_qos.m_durabilityService);
+    ret &= (pubdata.deadline == writer_qos.m_deadline);
+    ret &= (pubdata.latency_budget == writer_qos.m_latencyBudget);
+    ret &= (pubdata.liveliness == writer_qos.m_liveliness);
+    ret &= (pubdata.reliability == writer_qos.m_reliability);
+    ret &= (pubdata.lifespan == writer_qos.m_lifespan);
+    ret &= (
+        (pubdata.user_data.size() == writer_qos.m_userData.size()) &&
+        (0 == memcmp(pubdata.user_data.data(), writer_qos.m_userData.data(), pubdata.user_data.size())));
+    ret &= (pubdata.ownership == writer_qos.m_ownership);
+    ret &= (pubdata.ownership_strength == writer_qos.m_ownershipStrength);
+    ret &= (pubdata.destination_order == writer_qos.m_destinationOrder);
+
+    // Publisher Qos
+    ret &= (pubdata.presentation == writer_qos.m_presentation);
+    ret &= (pubdata.partition.getNames() == writer_qos.m_partition.getNames());
+    // ignore topic_data not implemented
+    // ignore group_data
+
+    return ret;
+}
+
+bool validate_subscription_builtin_topic_data(
+        const eprosima::fastdds::rtps::SubscriptionBuiltinTopicData& subdata,
+        const EntityId_t& reader_id,
+        const dds::ReaderQos& reader_qos,
+        const TopicDescription& topic_desc,
+        const GUID_t& participant_guid)
+{
+    bool ret = true;
+
+    eprosima::fastdds::rtps::BuiltinTopicKey_t r_key, part_key;
+
+    entity_id_to_builtin_topic_key(r_key, reader_id);
+    guid_prefix_to_builtin_topic_key(part_key, participant_guid.guidPrefix);
+
+    ret &= (0 == memcmp(subdata.key.value, r_key.value, sizeof(eprosima::fastdds::rtps::BuiltinTopicKey_t)));
+    ret &=
+            (0 ==
+            memcmp(subdata.participant_key.value, part_key.value,
+            sizeof(eprosima::fastdds::rtps::BuiltinTopicKey_t)));
+    ret &= (subdata.topic_name == topic_desc.topic_name);
+    ret &= (subdata.type_name == topic_desc.type_name);
+
+    // RTPS Reader
+    ret &= (subdata.durability == reader_qos.m_durability);
+    ret &= (subdata.deadline == reader_qos.m_deadline);
+    ret &= (subdata.latency_budget == reader_qos.m_latencyBudget);
+    ret &= (subdata.liveliness == reader_qos.m_liveliness);
+    ret &= (subdata.reliability == reader_qos.m_reliability);
+    ret &= (subdata.ownership == reader_qos.m_ownership);
+    ret &= (subdata.destination_order == reader_qos.m_destinationOrder);
+    ret &= (
+        (subdata.user_data.size() == reader_qos.m_userData.size()) &&
+        (0 == memcmp(subdata.user_data.data(), reader_qos.m_userData.data(), subdata.user_data.size())));
+    // time based filter not implemented
+
+    // Subscriber Qos
+    ret &= (subdata.presentation == reader_qos.m_presentation);
+    ret &= (subdata.partition.getNames() == reader_qos.m_partition.getNames());
+    // ignore topic_data not implemented
+    // ignore group_data
+
+    return ret;
+}
+
+/**
+ * @test RTPS-PART-API-GSI-GPI-01
+ *
+ * get_subscription/publication_info() must return false if the entity is not found.
+ */
+TEST(RTPS, rtps_participant_get_pubsub_info_negative)
+{
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    writer.init();
+    reader.init();
+
+    ASSERT_TRUE(writer.isInitialized());
+    ASSERT_TRUE(reader.isInitialized());
+
+    eprosima::fastdds::rtps::PublicationBuiltinTopicData pubdata;
+    eprosima::fastdds::rtps::SubscriptionBuiltinTopicData subdata;
+
+    // Get publication info from the reader participant and validate it
+    GUID_t unknown_writer_guid = writer.guid();
+    unknown_writer_guid.entityId.value[3] = 0x44;
+    bool ret = reader.get_rtps_participant()->get_publication_info(pubdata, unknown_writer_guid);
+    ASSERT_FALSE(ret);
+
+    GUID_t unknown_reader_guid = reader.guid();
+    unknown_reader_guid.entityId.value[3] = 0x44;
+    // Get subscription info from the reader participant and validate it
+    ret = writer.get_rtps_participant()->get_subscription_info(subdata, unknown_reader_guid);
+    ASSERT_FALSE(ret);
+}
+
+/**
+ * @test RTPS-PART-API-GSI-GPI-02
+ *
+ * get_subscription/publication_info() must succeed when the guid is known and correctly retrieve the publication/subscription data.
+ * Parameterize the test for different transports (Transport, Datasharing and Intraprocess).
+ */
+TEST_P(RTPS, rtps_participant_get_pubsub_info)
+{
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    std::vector<std::string> partitions{"*"};
+
+    writer.user_data({'u', 's', 'e', 'r', 'd', 'a', 't', 'a'})
+            .partitions(partitions)
+            .init();
+    reader.user_data({'u', 's', 'e', 'r', 'd', 'a', 't', 'a'})
+            .partitions(partitions)
+            .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    eprosima::fastdds::rtps::PublicationBuiltinTopicData pubdata;
+    eprosima::fastdds::rtps::SubscriptionBuiltinTopicData subdata;
+
+    // Get publication info from the reader participant and validate it
+    bool ret = reader.get_rtps_participant()->get_publication_info(pubdata, writer.guid());
+    ASSERT_TRUE(ret);
+    ASSERT_TRUE(validate_publication_builtin_topic_data(pubdata, writer.guid().entityId,
+            writer.get_writer_qos(), writer.get_topic_description(),  writer.get_rtps_participant()->getGuid()));
+
+    // Get subscription info from the reader participant and validate it
+    ret = writer.get_rtps_participant()->get_subscription_info(subdata, reader.guid());
+    ASSERT_TRUE(ret);
+    ASSERT_TRUE(validate_subscription_builtin_topic_data(subdata, reader.guid().entityId,
+            reader.get_reader_qos(), reader.get_topic_description(), reader.get_rtps_participant()->getGuid()));
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
