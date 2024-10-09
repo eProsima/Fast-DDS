@@ -837,7 +837,8 @@ TEST(ParticipantTests, GetParticipantExtendedQosFromXml)
     // Get QoS without providing profile name (gets first one found)
     DomainParticipantExtendedQos qos_empty_profile;
     EXPECT_EQ(
-        DomainParticipantFactory::get_instance()->get_participant_extended_qos_from_xml(complete_xml, qos_empty_profile), RETCODE_OK);
+        DomainParticipantFactory::get_instance()->get_participant_extended_qos_from_xml(complete_xml,
+        qos_empty_profile), RETCODE_OK);
 
     // Check they correspond to the same profile
     // NOTE: test_participant_profile is assumed to be the first participant profile in the XML file
@@ -870,7 +871,8 @@ TEST(ParticipantTests, GetDefaultParticipantExtendedQosFromXml)
     // Get default QoS from XML
     DomainParticipantExtendedQos default_qos;
     EXPECT_EQ(
-        DomainParticipantFactory::get_instance()->get_default_participant_extended_qos_from_xml(complete_xml, default_qos),
+        DomainParticipantFactory::get_instance()->get_default_participant_extended_qos_from_xml(complete_xml,
+        default_qos),
         RETCODE_OK);
 
     // NOTE: cannot load profiles file and compare with default value as
@@ -881,8 +883,9 @@ TEST(ParticipantTests, GetDefaultParticipantExtendedQosFromXml)
     DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_filename);
     DomainParticipantExtendedQos default_qos_from_profile;
     EXPECT_EQ(
-        DomainParticipantFactory::get_instance()->get_participant_extended_qos_from_profile("test_default_participant_profile",
-        default_qos_from_profile),
+        DomainParticipantFactory::get_instance()->get_participant_extended_qos_from_profile(
+            "test_default_participant_profile",
+            default_qos_from_profile),
         RETCODE_OK);
 
     // Check they correspond to the same profile

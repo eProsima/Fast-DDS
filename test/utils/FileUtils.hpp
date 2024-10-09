@@ -24,12 +24,14 @@ namespace eprosima {
 namespace fastdds {
 namespace testing {
 
-std::string load_file(const std::string& file_path)
+std::string load_file(
+        const std::string& file_path)
 {
     std::ifstream file(file_path);
 
     // Check if the file was opened successfully
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         throw std::runtime_error("Could not open file " + file_path);
     }
 

@@ -64,6 +64,7 @@ struct AttributesTraits<ParticipantAttributes>
     {
         return "Participant";
     }
+
 };
 
 template<>
@@ -77,6 +78,7 @@ struct AttributesTraits<PublisherAttributes>
     {
         return "Publisher";
     }
+
 };
 
 template<>
@@ -90,6 +92,7 @@ struct AttributesTraits<SubscriberAttributes>
     {
         return "Subscriber";
     }
+
 };
 
 template<>
@@ -103,6 +106,7 @@ struct AttributesTraits<TopicAttributes>
     {
         return "Topic";
     }
+
 };
 
 template<>
@@ -116,6 +120,7 @@ struct AttributesTraits<RequesterAttributes>
     {
         return "Requester";
     }
+
 };
 
 template<>
@@ -129,6 +134,7 @@ struct AttributesTraits<ReplierAttributes>
     {
         return "Replier";
     }
+
 };
 
 template <typename AttributesType>
@@ -210,11 +216,11 @@ XMLP_ret fill_attributes_from_xml(
     std::reference_wrapper<up_base_node_t> node_to_process = root_node;
     if (fulfill_xsd)
     {
-        if (NodeType::ROOT == root_node ->getType())
+        if (NodeType::ROOT == root_node->getType())
         {
             for (auto&& child: root_node->getChildren())
             {
-                if (NodeType::PROFILES == child ->getType())
+                if (NodeType::PROFILES == child->getType())
                 {
                     node_to_process = child;
                     break;
@@ -246,14 +252,15 @@ XMLP_ret fill_attributes_from_xml(
         bool fulfill_xsd,
         const std::string& profile_name)
 {
-    auto node_filter = [&profile_name](typename AttributesTraits<AttributesType>::NodePtrType node) -> bool {
-        if (!profile_name.empty())
-        {
-            auto it = node->getAttributes().find(PROFILE_NAME);
-            return (it != node->getAttributes().end() && it->second == profile_name);
-        }
-        return true;
-    };
+    auto node_filter = [&profile_name](typename AttributesTraits<AttributesType>::NodePtrType node) -> bool
+            {
+                if (!profile_name.empty())
+                {
+                    auto it = node->getAttributes().find(PROFILE_NAME);
+                    return (it != node->getAttributes().end() && it->second == profile_name);
+                }
+                return true;
+            };
     return fill_attributes_from_xml(xml, atts, node_filter, fulfill_xsd);
 }
 
@@ -263,10 +270,11 @@ XMLP_ret fill_default_attributes_from_xml(
         AttributesType& atts,
         bool fulfill_xsd)
 {
-    auto node_filter = [](typename AttributesTraits<AttributesType>::NodePtrType node) -> bool {
-        auto it = node->getAttributes().find(DEFAULT_PROF);
-        return (it != node->getAttributes().end() && it->second == "true");
-    };
+    auto node_filter = [](typename AttributesTraits<AttributesType>::NodePtrType node) -> bool
+            {
+                auto it = node->getAttributes().find(DEFAULT_PROF);
+                return (it != node->getAttributes().end() && it->second == "true");
+            };
     return fill_attributes_from_xml(xml, atts, node_filter, fulfill_xsd);
 }
 
