@@ -2335,6 +2335,48 @@ void DataWriterImpl::filter_is_being_removed(
     }
 }
 
+ReturnCode_t DataWriterImpl::get_matched_subscription_data(
+        SubscriptionBuiltinTopicData& subscription_data,
+        const InstanceHandle_t& subscription_handle) const
+{
+    ReturnCode_t ret = RETCODE_BAD_PARAMETER;
+    fastdds::rtps::GUID_t reader_guid = iHandle2GUID(subscription_handle);
+
+    if (writer_ && writer_->matched_reader_is_matched(reader_guid))
+    {
+        if (publisher_)
+        {
+            RTPSParticipant* rtps_participant = publisher_->rtps_participant();
+            if (rtps_participant &&
+                    rtps_participant->get_subscription_info(subscription_data, reader_guid))
+            {
+                ret = RETCODE_OK;
+            }
+        }
+    }
+
+    return ret;
+}
+
+ReturnCode_t DataWriterImpl::get_matched_subscriptions(
+        std::vector<InstanceHandle_t>& subscription_handles) const
+{
+    ReturnCode_t ret = RETCODE_ERROR;
+    std::vector<rtps::GUID_t> matched_reader_guids;
+    subscription_handles.clear();
+
+    if (writer_ && writer_->matched_readers_guids(matched_reader_guids))
+    {
+        for (const rtps::GUID_t& guid : matched_reader_guids)
+        {
+            subscription_handles.emplace_back(InstanceHandle_t(guid));
+        }
+        ret = RETCODE_OK;
+    }
+
+    return ret;
+}
+
 bool DataWriterImpl::is_relevant(
         const fastdds::rtps::CacheChange_t& change,
         const fastdds::rtps::GUID_t& reader_guid) const
