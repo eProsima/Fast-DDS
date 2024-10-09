@@ -49,6 +49,7 @@ namespace rtps {
 
 struct CacheChange_t;
 class IDataSharingListener;
+class LocalReaderView;
 struct ReaderHistoryState;
 class ReaderListener;
 class RTPSParticipantImpl;
@@ -296,6 +297,13 @@ public:
             const fastdds::rtps::SequenceNumberSet_t& gapList,
             VendorId_t origin_vendor_id = c_VendorId_Unknown) = 0;
 
+    inline std::shared_ptr<LocalReaderView> get_local_view()
+    {
+        return local_view_;
+    }
+
+    void local_actions_on_reader_removed();
+
 #ifdef FASTDDS_STATISTICS
 
     bool add_statistics_listener(
@@ -454,6 +462,9 @@ protected:
 
     /// Trusted writer (for Builtin)
     fastdds::rtps::EntityId_t trusted_writer_entity_id_;
+
+    // View of this reader for other local entities.
+    std::shared_ptr<LocalReaderView> local_view_;
 
 private:
 

@@ -102,6 +102,8 @@ StatefulReader::~StatefulReader()
 {
     EPROSIMA_LOG_INFO(RTPS_READER, "StatefulReader destructor.");
 
+    local_actions_on_reader_removed();
+
     // Only is_alive_ assignment needs to be protected, as
     // matched_writers_ and matched_writers_pool_ are only used
     // when is_alive_ is true
