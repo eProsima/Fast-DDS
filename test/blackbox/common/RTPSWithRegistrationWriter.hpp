@@ -612,6 +612,29 @@ public:
         return writer_->getGuid();
     }
 
+    eprosima::fastdds::rtps::RTPSWriter& get_native_writer() const
+    {
+        return *writer_;
+    }
+
+    const eprosima::fastdds::dds::WriterQos& get_writer_qos() const
+    {
+        return writer_qos_;
+    }
+
+    eprosima::fastdds::rtps::TopicDescription get_topic_description() const
+    {
+        eprosima::fastdds::rtps::TopicDescription topic_desc;
+        topic_desc.topic_name = pub_builtin_data_.topic_name;
+        topic_desc.type_name = pub_builtin_data_.type_name;
+        return topic_desc;
+    }
+
+    const eprosima::fastdds::rtps::RTPSParticipant* get_rtps_participant() const
+    {
+        return participant_;
+    }
+
 private:
 
     void on_reader_discovery(
