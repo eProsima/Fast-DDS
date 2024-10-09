@@ -933,7 +933,7 @@ TEST_P(Discovery, PubSubAsReliableHelloworldUserData)
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     writer.history_depth(100).
-            userData({'a', 'b', 'c', 'd'}).init();
+            user_data({'a', 'b', 'c', 'd'}).init();
 
     ASSERT_TRUE(writer.isInitialized());
 

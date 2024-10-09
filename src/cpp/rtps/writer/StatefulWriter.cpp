@@ -1604,6 +1604,22 @@ void StatefulWriter::update_attributes(
     }
 }
 
+bool StatefulWriter::matched_readers_guids(
+        std::vector<GUID_t>& guids) const
+{
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    guids.clear();
+    for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
+            [&guids](const ReaderProxy* reader)
+            {
+                guids.push_back(reader->guid());
+                return false;
+            }
+            );
+
+    return true;
+}
+
 void StatefulWriter::update_positive_acks_times(
         const WriterAttributes& att)
 {

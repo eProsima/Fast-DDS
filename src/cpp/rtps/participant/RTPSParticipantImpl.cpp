@@ -2791,6 +2791,40 @@ std::vector<TransportNetmaskFilterInfo> RTPSParticipantImpl::get_netmask_filter_
     return m_network_Factory.netmask_filter_info();
 }
 
+bool RTPSParticipantImpl::get_publication_info(
+        PublicationBuiltinTopicData& data,
+        const GUID_t& writer_guid) const
+{
+    bool ret = false;
+    WriterProxyData wproxy_data(m_att.allocation.locators.max_unicast_locators,
+            m_att.allocation.locators.max_multicast_locators);
+
+    if (mp_builtinProtocols->mp_PDP->lookupWriterProxyData(writer_guid, wproxy_data))
+    {
+        from_proxy_to_builtin(wproxy_data, data);
+        ret = true;
+    }
+
+    return ret;
+}
+
+bool RTPSParticipantImpl::get_subscription_info(
+        SubscriptionBuiltinTopicData& data,
+        const GUID_t& reader_guid) const
+{
+    bool ret = false;
+    ReaderProxyData rproxy_data(m_att.allocation.locators.max_unicast_locators,
+            m_att.allocation.locators.max_multicast_locators);
+
+    if (mp_builtinProtocols->mp_PDP->lookupReaderProxyData(reader_guid, rproxy_data))
+    {
+        from_proxy_to_builtin(rproxy_data, data);
+        ret = true;
+    }
+
+    return ret;
+}
+
 #ifdef FASTDDS_STATISTICS
 
 bool RTPSParticipantImpl::register_in_writer(
