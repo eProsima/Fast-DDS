@@ -1499,6 +1499,19 @@ void StatefulReader::change_read_by_user(
     }
 }
 
+bool StatefulReader::matched_writers_guids(
+        std::vector<GUID_t>& guids) const
+{
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    guids.clear();
+    guids.reserve(matched_writers_.size());
+    for (WriterProxy* writer : matched_writers_)
+    {
+        guids.push_back(writer->guid());
+    }
+    return true;
+}
+
 #ifdef FASTDDS_STATISTICS
 
 bool StatefulReader::get_connections(

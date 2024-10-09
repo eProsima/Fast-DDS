@@ -517,9 +517,9 @@ public:
      *
      * @param[out] subscription_data subscription data struct
      * @param subscription_handle InstanceHandle_t of the subscription
-     * @return RETCODE_OK
+     * @return RETCODE_BAD_PARAMETER if the DataWriter is not matched with
+     * the given subscription handle, RETCODE_OK otherwise.
      *
-     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI ReturnCode_t get_matched_subscription_data(
             builtin::SubscriptionBuiltinTopicData& subscription_data,
@@ -529,9 +529,10 @@ public:
      * @brief Fills the given vector with the InstanceHandle_t of matched DataReaders
      *
      * @param[out] subscription_handles Vector where the InstanceHandle_t are returned
-     * @return RETCODE_OK
+     * @return RETCODE_OK if the operation succeeds.
      *
-     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
+     * @note Returning an empty list is not an error, it returns RETCODE_OK.
+     *
      */
     RTPS_DllAPI ReturnCode_t get_matched_subscriptions(
             std::vector<InstanceHandle_t>& subscription_handles) const;
@@ -539,6 +540,9 @@ public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds:DataWriter::get_matched_subscriptions()",
             "In favor of version using std::vector<fastrtps::rtps::InstanceHandle_t>.")
+    /**
+     * @note User is responsible for the memory deallocation of the returned vector.
+     */
     RTPS_DllAPI ReturnCode_t get_matched_subscriptions(
             std::vector<InstanceHandle_t*>& subscription_handles) const;
 #endif // DOXYGEN_SHOULD_SKIP_THIS

@@ -912,6 +912,21 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
     return ret_code;
 }
 
+bool StatelessWriter::matched_readers_guids(
+        std::vector<GUID_t>& guids) const
+{
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    guids.clear();
+    for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
+            [&guids](const ReaderLocator& reader)
+            {
+                guids.push_back(reader.remote_guid());
+                return false;
+            }
+            );
+    return true;
+}
+
 #ifdef FASTDDS_STATISTICS
 
 bool StatelessWriter::get_connections(

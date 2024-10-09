@@ -395,22 +395,13 @@ ReturnCode_t DataReader::get_matched_publication_data(
         builtin::PublicationBuiltinTopicData& publication_data,
         const fastrtps::rtps::InstanceHandle_t& publication_handle) const
 {
-    static_cast<void> (publication_data);
-    static_cast<void> (publication_handle);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
-    /*
-       return impl_->get_matched_publication_data(publication_data, publication_handle);
-     */
+    return impl_->get_matched_publication_data(publication_data, publication_handle);
 }
 
 ReturnCode_t DataReader::get_matched_publications(
         std::vector<InstanceHandle_t>& publication_handles) const
 {
-    static_cast<void> (publication_handles);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
-    /*
-       return impl_->get_matched_publication_data(publication_handles);
-     */
+    return impl_->get_matched_publications(publication_handles);
 }
 
 ReadCondition* DataReader::create_readcondition(

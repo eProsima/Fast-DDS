@@ -429,6 +429,25 @@ public:
 
     }
 
+    ReturnCode_t get_matched_subscription_data(
+            builtin::SubscriptionBuiltinTopicData&,
+            const InstanceHandle_t& ) const
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    ReturnCode_t get_matched_subscriptions(
+            std::vector<InstanceHandle_t>&) const
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    ReturnCode_t get_matched_subscriptions(
+            std::vector<InstanceHandle_t*>&) const
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+
     //! Pointer to the associated Data Writer.
     fastrtps::rtps::RTPSWriter* writer_ = nullptr;
     Topic* topic_ = nullptr;

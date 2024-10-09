@@ -282,8 +282,8 @@ public:
      * @param[out] guids Vector to be filled with the GUIDs of the matched writers.
      * @return True if the operation was successful.
      */
-    RTPS_DllAPI bool matched_writers_guids(
-            std::vector<GUID_t>& guids) const;
+    RTPS_DllAPI virtual bool matched_writers_guids(
+            std::vector<GUID_t>& guids) const = 0;
 
     /*!
      * @brief Returns there is a clean state with all Writers.

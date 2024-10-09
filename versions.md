@@ -1,6 +1,12 @@
 Forthcoming
 -----------
 
+* Implementation for:
+  * `DataWriter::get_matched_subscription_data()`
+  * `DataWriter::get_matched_subscriptions()`
+  * `DataReader::get_matched_publication_data()`
+  * `DataReader::get_matched_publications()`
+
 Version 2.14.3
 --------------
 

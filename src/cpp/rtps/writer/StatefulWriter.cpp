@@ -2202,6 +2202,22 @@ DeliveryRetCode StatefulWriter::deliver_sample_nts(
     return ret_code;
 }
 
+bool StatefulWriter::matched_readers_guids(
+        std::vector<GUID_t>& guids) const
+{
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    guids.clear();
+    for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
+            [&guids](const ReaderProxy* reader)
+            {
+                guids.push_back(reader->guid());
+                return false;
+            }
+            );
+
+    return true;
+}
+
 #ifdef FASTDDS_STATISTICS
 
 bool StatefulWriter::get_connections(

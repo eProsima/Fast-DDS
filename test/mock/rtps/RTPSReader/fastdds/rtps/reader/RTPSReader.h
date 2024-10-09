@@ -177,6 +177,12 @@ public:
         return true;
     }
 
+    virtual bool matched_writers_guids(
+            std::vector<GUID_t>&) const
+    {
+        return false;
+    }
+
     virtual bool isInCleanState()
     {
         return true;

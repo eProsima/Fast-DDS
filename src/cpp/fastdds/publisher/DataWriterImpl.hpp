@@ -389,6 +389,34 @@ public:
     void filter_is_being_removed(
             const char* filter_class_name);
 
+    /**
+     * @brief Retrieves in a subscription associated with the DataWriter
+     *
+     * @param[out] subscription_data subscription data struct
+     * @param subscription_handle InstanceHandle_t of the subscription
+     * @return RETCODE_BAD_PARAMETER if the DataWriter is not matched with
+     * the given subscription handle, RETCODE_OK otherwise.
+     *
+     */
+    ReturnCode_t get_matched_subscription_data(
+            builtin::SubscriptionBuiltinTopicData& subscription_data,
+            const InstanceHandle_t& subscription_handle) const;
+
+    /**
+     * @brief Fills the given vector with the InstanceHandle_t of matched DataReaders
+     *
+     * @param[out] subscription_handles Vector where the InstanceHandle_t are returned
+     * @return RETCODE_OK if the operation succeeds.
+     *
+     * @note Returning an empty list is not an error, it returns RETCODE_OK.
+     *
+     */
+    ReturnCode_t get_matched_subscriptions(
+            std::vector<InstanceHandle_t>& subscription_handles) const;
+
+    ReturnCode_t get_matched_subscriptions(
+            std::vector<InstanceHandle_t*>& subscription_handles) const;
+
 protected:
 
     using IChangePool = eprosima::fastrtps::rtps::IChangePool;

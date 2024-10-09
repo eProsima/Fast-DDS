@@ -1174,7 +1174,7 @@ public:
         return *this;
     }
 
-    PubSubWriter& userData(
+    PubSubWriter& user_data(
             std::vector<eprosima::fastrtps::rtps::octet> user_data)
     {
         participant_attr_.rtps.userData = user_data;

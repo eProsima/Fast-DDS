@@ -202,17 +202,17 @@ std::vector<fastdds::rtps::TransportNetmaskFilterInfo> RTPSParticipant::get_netm
 }
 
 bool RTPSParticipant::get_publication_info(
-        fastdds::dds::builtin::PublicationBuiltinTopicData&,
-        const GUID_t&) const
+        fastdds::dds::builtin::PublicationBuiltinTopicData& data,
+        const GUID_t& writer_guid) const
 {
-    return false;
+    return mp_impl->get_publication_info(data, writer_guid);
 }
 
 bool RTPSParticipant::get_subscription_info(
-        fastdds::dds::builtin::SubscriptionBuiltinTopicData&,
-        const GUID_t&) const
+        fastdds::dds::builtin::SubscriptionBuiltinTopicData& data,
+        const GUID_t& reader_guid) const
 {
-    return false;
+    return mp_impl->get_subscription_info(data, reader_guid);
 }
 
 #if HAVE_SECURITY
