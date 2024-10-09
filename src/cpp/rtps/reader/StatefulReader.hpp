@@ -304,6 +304,15 @@ public:
             WriterProxy*& writer,
             bool mark_as_read) override;
 
+    /**
+     * @brief Fills the provided vector with the GUIDs of the matched writers.
+     *
+     * @param[out] guids Vector to be filled with the GUIDs of the matched writers.
+     * @return True if the operation was successful.
+     */
+    bool matched_writers_guids(
+            std::vector<GUID_t>& guids) const final;
+
 #ifdef FASTDDS_STATISTICS
     bool get_connections(
             fastdds::statistics::rtps::ConnectionList& connection_list) override;

@@ -398,6 +398,21 @@ bool StatelessWriter::get_disable_positive_acks() const
     return false;
 }
 
+bool StatelessWriter::matched_readers_guids(
+        std::vector<GUID_t>& guids) const
+{
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    guids.clear();
+    for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
+            [&guids](const ReaderLocator& reader)
+            {
+                guids.push_back(reader.remote_guid());
+                return false;
+            }
+            );
+    return true;
+}
+
 bool StatelessWriter::try_remove_change(
         const std::chrono::steady_clock::time_point&,
         std::unique_lock<RecursiveTimedMutex>&)

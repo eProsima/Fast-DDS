@@ -97,6 +97,15 @@ public:
 
     bool get_disable_positive_acks() const final;
 
+    /**
+     * @brief Fills the provided vector with the GUIDs of the matched readers.
+     *
+     * @param[out] guids Vector to be filled with the GUIDs of the matched readers.
+     * @return True if the operation was successful.
+     */
+    bool matched_readers_guids(
+            std::vector<GUID_t>& guids) const final;
+
 #ifdef FASTDDS_STATISTICS
     bool get_connections(
             fastdds::statistics::rtps::ConnectionList& connection_list) final;

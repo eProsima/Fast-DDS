@@ -382,6 +382,31 @@ public:
             const char* filter_class_name);
 
     /**
+     * @brief Retrieves in a subscription associated with the DataWriter
+     *
+     * @param[out] subscription_data subscription data struct
+     * @param subscription_handle InstanceHandle_t of the subscription
+     * @return RETCODE_BAD_PARAMETER if the DataWriter is not matched with
+     * the given subscription handle, RETCODE_OK otherwise.
+     *
+     */
+    ReturnCode_t get_matched_subscription_data(
+            SubscriptionBuiltinTopicData& subscription_data,
+            const InstanceHandle_t& subscription_handle) const;
+
+    /**
+     * @brief Fills the given vector with the InstanceHandle_t of matched DataReaders
+     *
+     * @param[out] subscription_handles Vector where the InstanceHandle_t are returned
+     * @return RETCODE_OK if the operation succeeds.
+     *
+     * @note Returning an empty list is not an error, it returns RETCODE_OK.
+     *
+     */
+    ReturnCode_t get_matched_subscriptions(
+            std::vector<InstanceHandle_t>& subscription_handles) const;
+
+    /**
      * Retrieve the publication data discovery information.
      *
      * @param [out] publication_data The publication data discovery information.
