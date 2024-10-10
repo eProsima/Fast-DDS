@@ -11,6 +11,7 @@ Version v3.1.0
   * ``get_X_qos_from_xml`` (without profile name)
   * ``get_X_qos_from_xml`` (profile name given)
   * ``get_default_X_qos_from_xml``
+* Add complete support for dynamic network interfaces.
 
 Version v3.0.0
 --------------
