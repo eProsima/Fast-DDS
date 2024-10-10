@@ -13,3 +13,4 @@
 # limitations under the License.
 
 add_subdirectory(dynamic_types)
+add_subdirectory(idl_parser)
