@@ -270,40 +270,40 @@ TEST_F(IdlParserTests, structures)
     DynamicType::_ref_type type11 = builder11->build();
     ASSERT_TRUE(type11);
 
-    // DynamicTypeBuilder::_ref_type builder12 = factory->create_type_w_document("IDL/structures.idl", "StructChar8", include_paths);
-    // EXPECT_TRUE(builder12);
-    // DynamicType::_ref_type type12 = builder12->build();
-    // ASSERT_TRUE(type12);
+    DynamicTypeBuilder::_ref_type builder12 = factory->create_type_w_document("IDL/structures.idl", "StructChar8", include_paths);
+    EXPECT_TRUE(builder12);
+    DynamicType::_ref_type type12 = builder12->build();
+    ASSERT_TRUE(type12);
 
-    // DynamicTypeBuilder::_ref_type builder13 = factory->create_type_w_document("IDL/structures.idl", "StructChar16", include_paths);
-    // EXPECT_TRUE(builder13);
-    // DynamicType::_ref_type type13 = builder13->build();
-    // ASSERT_TRUE(type13);
+    DynamicTypeBuilder::_ref_type builder13 = factory->create_type_w_document("IDL/structures.idl", "StructChar16", include_paths);
+    EXPECT_TRUE(builder13);
+    DynamicType::_ref_type type13 = builder13->build();
+    ASSERT_TRUE(type13);
 
-    // DynamicTypeBuilder::_ref_type builder14 = factory->create_type_w_document("IDL/structures.idl", "StructString", include_paths);
-    // EXPECT_TRUE(builder14);
-    // DynamicType::_ref_type type14 = builder14->build();
-    // ASSERT_TRUE(type14);
+    DynamicTypeBuilder::_ref_type builder14 = factory->create_type_w_document("IDL/structures.idl", "StructString", include_paths);
+    EXPECT_TRUE(builder14);
+    DynamicType::_ref_type type14 = builder14->build();
+    ASSERT_TRUE(type14);
 
-    // DynamicTypeBuilder::_ref_type builder15 = factory->create_type_w_document("IDL/structures.idl", "StructWString", include_paths);
-    // EXPECT_TRUE(builder15);
-    // DynamicType::_ref_type type15 = builder15->build();
-    // ASSERT_TRUE(type15);
+    DynamicTypeBuilder::_ref_type builder15 = factory->create_type_w_document("IDL/structures.idl", "StructWString", include_paths);
+    EXPECT_TRUE(builder15);
+    DynamicType::_ref_type type15 = builder15->build();
+    ASSERT_TRUE(type15);
 
-    // DynamicTypeBuilder::_ref_type builder16 = factory->create_type_w_document("IDL/structures.idl", "StructBoundedString", include_paths);
-    // EXPECT_TRUE(builder16);
-    // DynamicType::_ref_type type16 = builder16->build();
-    // ASSERT_TRUE(type16);
+    DynamicTypeBuilder::_ref_type builder16 = factory->create_type_w_document("IDL/structures.idl", "StructBoundedString", include_paths);
+    EXPECT_TRUE(builder16);
+    DynamicType::_ref_type type16 = builder16->build();
+    ASSERT_TRUE(type16);
 
-    // DynamicTypeBuilder::_ref_type builder17 = factory->create_type_w_document("IDL/structures.idl", "StructBoundedWString", include_paths);
-    // EXPECT_TRUE(builder17);
-    // DynamicType::_ref_type type17 = builder17->build();
-    // ASSERT_TRUE(type17);
+    DynamicTypeBuilder::_ref_type builder17 = factory->create_type_w_document("IDL/structures.idl", "StructBoundedWString", include_paths);
+    EXPECT_TRUE(builder17);
+    DynamicType::_ref_type type17 = builder17->build();
+    ASSERT_TRUE(type17);
 
-    // DynamicTypeBuilder::_ref_type builder18 = factory->create_type_w_document("IDL/structures.idl", "StructEnum", include_paths);
-    // EXPECT_TRUE(builder18);
-    // DynamicType::_ref_type type18 = builder18->build();
-    // ASSERT_TRUE(type18);
+    DynamicTypeBuilder::_ref_type builder18 = factory->create_type_w_document("IDL/structures.idl", "StructEnum", include_paths);
+    EXPECT_TRUE(builder18);
+    DynamicType::_ref_type type18 = builder18->build();
+    ASSERT_TRUE(type18);
 
     // TODO StructBitMask is skipped since bitmask parsing is not supported.
     // DynamicTypeBuilder::_ref_type builder19 = factory->create_type_w_document("IDL/structures.idl", "StructBitMask", include_paths);
@@ -311,10 +311,10 @@ TEST_F(IdlParserTests, structures)
     // DynamicType::_ref_type type19 = builder19->build();
     // ASSERT_TRUE(type19);
 
-    // DynamicTypeBuilder::_ref_type builder20 = factory->create_type_w_document("IDL/structures.idl", "StructAlias", include_paths);
-    // EXPECT_TRUE(builder20);
-    // DynamicType::_ref_type type20 = builder20->build();
-    // ASSERT_TRUE(type20);
+    DynamicTypeBuilder::_ref_type builder20 = factory->create_type_w_document("IDL/structures.idl", "StructAlias", include_paths);
+    EXPECT_TRUE(builder20);
+    DynamicType::_ref_type type20 = builder20->build();
+    ASSERT_TRUE(type20);
 }
 
 int main(
