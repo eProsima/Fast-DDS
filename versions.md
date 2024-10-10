@@ -7,9 +7,9 @@ Version v3.1.0
 
 * Allow `PERSISTENT_DURABILITY` behaving as `TRANSIENT_DURABILITY`. Fallback to `TRANSIENT_LOCAL_DURABILITY` if no persistence guid is set.
 * Fix DomainParticipantQos equality operator by using the new `DomainParticipantQos::compare_flow_controllers`.
-* Added new xml qos overloads for domainparticipant, datawriter and datareader:
-  * ``get_X_qos_from_xml``
-  * ``get_X_qos_from_xml``
+* Add new XML QoS overloads for ``DomainParticipant``, ``DataWriter`` and ``DataReader``:
+  * ``get_X_qos_from_xml`` (without profile name)
+  * ``get_X_qos_from_xml`` (profile name given)
   * ``get_default_X_qos_from_xml``
 
 Version v3.0.0

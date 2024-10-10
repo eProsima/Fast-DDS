@@ -15,7 +15,6 @@ Disclaimer:
 The following list of features are planned to be addressed in the short term, and incorporated into the following release of the product (v3.2.0):
 
 * Ignore local endpoints configured at endpoint level
-* Complete support for dynamic network interfaces
 
 ## Medium term
 
