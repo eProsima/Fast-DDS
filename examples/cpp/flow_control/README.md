@@ -78,7 +78,7 @@ One of them will run the publisher example application, and the other will run t
 Regardless of which application is run first, since the publisher will not start sending data until a subscriber is discovered, the expected output both for publishers and subscribers is a first displayed message acknowledging the match, followed by the amount of samples sent or received until Ctrl+C is pressed.
 The samples are sent every 2s. The Slow DataWriter sends a sample before the Fast DataWriter, but the sample is always received later according with the FlowControllerQos settings in the Flow Controller.
 
-### Hello world publisher
+### Flow Control publisher
 
 ```shell
 Publisher running. Please press Ctrl+C to stop the Publisher at any time.
@@ -92,7 +92,7 @@ Message SENT from FAST WRITER, count=3
 ...
 ```
 
-### Hello world subscriber
+### Flow Control subscriber
 
 ```shell
 Subscriber running. Please press Ctrl+C to stop the Subscriber at any time.
