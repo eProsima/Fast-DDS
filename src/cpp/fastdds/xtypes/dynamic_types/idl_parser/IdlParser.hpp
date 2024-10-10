@@ -209,25 +209,15 @@ struct action<identifier>
             }
             else
             {
-                if (state["expecting_type"] == "true")
-                {
-                    if (!state["type"].empty())
-                    {
-                        // Already matched a primitive type
-                        state["expecting_type"] = "false";
-                    }
-                    else
-                    {
-                        state["type"] = identifier_name;
-                        state["expecting_type"] = "false";
-                    }
-                }
-                if (state["expecting_type"] == "false")
+                if (!state["type"].empty())
                 {
                     state["struct_member_types"] += state["type"] + ";";
                     state["struct_member_names"] += identifier_name + ";";
-                    state["expecting_type"] = "true";
                     state["type"] = "";
+                }
+                else
+                {
+                    state["type"] = identifier_name;
                 }
             }
         }
@@ -457,7 +447,10 @@ struct action<boolean_literal>
         std::cout << "boolean_literal: " << typeid(boolean_literal).name()
                   << " " << in.string() << std::endl;
 
-        state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"bool"};
+        if (state.count("evaluated_expr"))
+        {
+            state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"bool"};
+        }
 
         // Interpret boolean values from strings
         struct custom_tf : std::numpunct<char>
@@ -483,7 +476,10 @@ struct action<boolean_literal>
         DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)};
         xdata->set_boolean_value(MEMBER_ID_INVALID, value);
 
-        operands.push_back(xdata);
+        if (state.count("evaluated_expr"))
+        {
+            operands.push_back(xdata);
+        }
     }
 
 };
@@ -502,7 +498,10 @@ struct action<boolean_literal>
             std::cout << "load_literal_action: " << typeid(Rule).name() << " " \
                       << in.string() << std::endl; \
  \
-            state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{#id}; \
+            if (state.count("evaluated_expr")) \
+            { \
+                state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{#id}; \
+            } \
  \
             std::istringstream ss(in.string()); \
             type value; \
@@ -523,7 +522,10 @@ struct action<boolean_literal>
             DynamicType::_ref_type xtype {factory->get_primitive_type(type_kind)}; \
             DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)}; \
             xdata->set_value(MEMBER_ID_INVALID, value); \
-            operands.push_back(xdata); \
+            if (state.count("evaluated_expr")) \
+            { \
+                operands.push_back(xdata); \
+            } \
         } \
     };
 
@@ -547,7 +549,10 @@ load_literal_action(fixed_pt_literal, fixed, long double, TK_FLOAT128, set_float
             std::cout << "float_op_action: " << typeid(Rule).name() << " " \
                       << in.string() << std::endl; \
  \
-            state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{#id}; \
+            if (state.count("evaluated_expr")) \
+            { \
+                state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{#id}; \
+            } \
  \
             /* calculate the result */ \
             auto it = operands.rbegin(); \
@@ -579,10 +584,13 @@ load_literal_action(fixed_pt_literal, fixed, long double, TK_FLOAT128, set_float
                 throw std::runtime_error("invalid arguments for the operation " #operation ); \
             } \
  \
-            /* update the stack */ \
-            operands.pop_back(); \
-            operands.pop_back(); \
-            operands.push_back(xdata); \
+            if (state.count("evaluated_expr")) \
+            { \
+                /* update the stack */ \
+                operands.pop_back(); \
+                operands.pop_back(); \
+                operands.push_back(xdata); \
+            } \
  \
         } \
     };
@@ -601,7 +609,10 @@ load_literal_action(fixed_pt_literal, fixed, long double, TK_FLOAT128, set_float
             std::cout << "int_op_action: " << typeid(Rule).name() << " " \
                       << in.string() << std::endl; \
  \
-            state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{#id}; \
+            if (state.count("evaluated_expr")) \
+            { \
+                state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{#id}; \
+            } \
  \
             /* calculate the result */ \
             auto it = operands.rbegin(); \
@@ -625,10 +636,13 @@ load_literal_action(fixed_pt_literal, fixed, long double, TK_FLOAT128, set_float
                 throw std::runtime_error("invalid arguments for the operation " #operation ); \
             } \
  \
-            /* update the stack */ \
-            operands.pop_back(); \
-            operands.pop_back(); \
-            operands.push_back(xdata); \
+            if (state.count("evaluated_expr")) \
+            { \
+                /* update the stack */ \
+                operands.pop_back(); \
+                operands.pop_back(); \
+                operands.push_back(xdata); \
+            } \
  \
         } \
     };
@@ -647,7 +661,10 @@ load_literal_action(fixed_pt_literal, fixed, long double, TK_FLOAT128, set_float
             std::cout << "bool_op_action: " << typeid(Rule).name() << " " \
                       << in.string() << std::endl; \
  \
-            state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{#id}; \
+            if (state.count("evaluated_expr")) \
+            { \
+                state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{#id}; \
+            } \
  \
             /* calculate the result */ \
             auto it = operands.rbegin(); \
@@ -679,10 +696,13 @@ load_literal_action(fixed_pt_literal, fixed, long double, TK_FLOAT128, set_float
                 throw std::runtime_error("invalid arguments for the operation " #operation ); \
             } \
  \
-            /* update the stack */ \
-            operands.pop_back(); \
-            operands.pop_back(); \
-            operands.push_back(xdata); \
+            if (state.count("evaluated_expr")) \
+            { \
+                /* update the stack */ \
+                operands.pop_back(); \
+                operands.pop_back(); \
+                operands.push_back(xdata); \
+            } \
  \
         } \
     };
@@ -711,7 +731,10 @@ struct action<minus_exec>
         std::cout << "minus_exec: " << typeid(minus_exec).name() << " "
                   << in.string() << std::endl;
 
-        state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"minus"};
+        if (state.count("evaluated_expr"))
+        {
+            state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"minus"};
+        }
 
         DynamicData::_ref_type xdata = operands.back();
         DynamicType::_ref_type xtype = xdata->type();
@@ -748,7 +771,10 @@ struct action<plus_exec>
         // noop
         std::cout << "plus_exec: " << typeid(plus_exec).name() << " "
                   << in.string() << std::endl;
-        state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"plus"};
+        if (state.count("evaluated_expr"))
+        {
+            state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"plus"};
+        }
     }
 
 };
@@ -766,7 +792,10 @@ struct action<inv_exec>
         std::cout << "inv_exec: " << typeid(inv_exec).name() << " "
                   << in.string() << std::endl;
 
-        state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"inv"};
+        if (state.count("evaluated_expr"))
+        {
+            state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"inv"};
+        }
 
         DynamicData::_ref_type xdata = operands.back();
         DynamicType::_ref_type xtype = xdata->type();
@@ -906,6 +935,22 @@ struct action<union_forward_dcl>
 };
 
 template<>
+struct action<kw_const>
+{
+    template<typename Input>
+    static void apply(
+            const Input& /*in*/,
+            Context* /*ctx*/,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
+    {
+        // Create empty evaluated_expr state to indicate the start of parsing const
+        state["evaluated_expr"] = "";
+    }
+
+};
+
+template<>
 struct action<const_dcl>
 {
     template<typename Input>
@@ -922,10 +967,12 @@ struct action<const_dcl>
 
         module.create_constant(const_name, operands.back());
         operands.pop_back();
-        if (operands.empty())
+        if (!operands.empty())
         {
-            state["evaluated_expr"].clear();
+            // TODO
+            // throw std::runtime_error("Finished const parsing with non-empty operands stack.");
         }
+        state["evaluated_expr"].erase();
     }
 
 };
@@ -1006,11 +1053,10 @@ struct action<kw_struct>
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         // Create empty struct states to indicate the start of parsing struct
-        state["type"] = "";
         state["struct_name"] = "";
         state["struct_member_types"] = "";
         state["struct_member_names"] = "";
-        state["expecting_type"] = "true";  // Initially expect a type
+        state["type"] = "";
     }
 
 };
@@ -1025,7 +1071,7 @@ struct action<struct_def>
         state.erase("struct_name");
         state.erase("struct_member_types");
         state.erase("struct_member_names");
-        state.erase("expecting_type");
+        state["type"] = "";
     }
 
     template<typename Input>
@@ -1535,7 +1581,6 @@ public:
 
         std::map<std::string, std::string> parsing_state;
         std::vector<traits<DynamicData>::ref_type> operands;
-        parsing_state["evaluated_expr"] = "";
 
         if (tao::TAO_PEGTL_NAMESPACE::parse<document, action>(input_mem, context_, parsing_state,
                 operands) && input_mem.empty())
