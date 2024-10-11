@@ -160,6 +160,7 @@ bool DataWriterHistory::prepare_change(
         // Notify if change has been removed unacknowledged
         if (ret && !is_acked)
         {
+            EPROSIMA_LOG_ERROR(RTPS_HISTORY, "Unacknowledged change removed: " << topic_att_.getTopicDataType());
             unacknowledged_sample_removed_functor_(instance);
         }
         else if (!ret)
@@ -203,6 +204,7 @@ bool DataWriterHistory::prepare_change(
                     // Notify if removed unacknowledged
                     if (add && !is_acked)
                     {
+                        EPROSIMA_LOG_ERROR(RTPS_HISTORY, "Unacknowledged change removed: " << topic_att_.getTopicDataType());
                         unacknowledged_sample_removed_functor_(instance);
                     }
                 }
