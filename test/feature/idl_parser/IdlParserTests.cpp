@@ -315,6 +315,11 @@ TEST_F(IdlParserTests, structures)
     EXPECT_TRUE(builder20);
     DynamicType::_ref_type type20 = builder20->build();
     ASSERT_TRUE(type20);
+
+    DynamicTypeBuilder::_ref_type builder21 = factory->create_type_w_document("IDL/structures.idl", "StructShortArray", include_paths);
+    EXPECT_TRUE(builder21);
+    DynamicType::_ref_type type21 = builder21->build();
+    ASSERT_TRUE(type21);
 }
 
 int main(

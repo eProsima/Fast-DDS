@@ -211,12 +211,12 @@ struct action<identifier>
             {
                 if (!state["type"].empty())
                 {
-                    state["struct_member_types"] += state["type"] + ";";
-                    state["struct_member_names"] += identifier_name + ";";
-                    state["type"] = "";
+                    // The identifier is a member name
+                    state["current_struct_member_name"] = identifier_name;
                 }
                 else
                 {
+                    // The identifier is a type
                     state["type"] = identifier_name;
                 }
             }
@@ -242,6 +242,42 @@ struct action<identifier>
         {
             // Keep the identifier for super-expression use
             state["identifier"] = identifier_name;
+        }
+    }
+
+};
+
+template<>
+struct action<semicolon>
+{
+    template<typename Input>
+    static void apply(
+            const Input& /*in*/,
+            Context* /*ctx*/,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
+    {
+        if (!state["type"].empty() && state.count("current_struct_member_name") && !state["current_struct_member_name"].empty())
+        {
+            // Add the type and name to the member lists
+            state["struct_member_types"] += state["type"] + ";";
+            state["struct_member_names"] += state["current_struct_member_name"] + ";";
+
+            // Add the array dimensions for this member to `all_array_sizes`
+            std::string current_array_sizes = state["current_array_sizes"].empty() ? "0" : state["current_array_sizes"];
+            if (!state["all_array_sizes"].empty())
+            {
+                state["all_array_sizes"] += ";" + current_array_sizes;
+            }
+            else
+            {
+                state["all_array_sizes"] = current_array_sizes;
+            }
+
+            // Clear the temporary states for the next member
+            state["type"].clear();
+            state["current_struct_member_name"].clear();
+            state["current_array_sizes"].clear();
         }
     }
 
@@ -348,6 +384,32 @@ struct action<positive_int_const>
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         state["positive_int_const"] = in.string();
+    }
+
+};
+
+template<>
+struct action<fixed_array_size>
+{
+    template<typename Input>
+    static void apply(
+            const Input& /*in*/,
+            Context* /*ctx*/,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
+    {
+        if (state.count("positive_int_const"))
+        {
+            // Append the current array size to `current_array_sizes`, separating multiple dimensions with commas
+            if (state["current_array_sizes"].empty())
+            {
+                state["current_array_sizes"] = state["positive_int_const"];
+            }
+            else
+            {
+                state["current_array_sizes"] += "," + state["positive_int_const"];
+            }
+        }
     }
 
 };
@@ -1056,7 +1118,10 @@ struct action<kw_struct>
         state["struct_name"] = "";
         state["struct_member_types"] = "";
         state["struct_member_names"] = "";
+        state["current_struct_member_name"] = "";
         state["type"] = "";
+        state["all_array_sizes"] = "";
+        state["current_array_sizes"] = "";
     }
 
 };
@@ -1071,7 +1136,10 @@ struct action<struct_def>
         state.erase("struct_name");
         state.erase("struct_member_types");
         state.erase("struct_member_names");
+        state.erase("current_struct_member_name");
         state["type"] = "";
+        state["all_array_sizes"] = "";
+        state["current_array_sizes"] = "";
     }
 
     template<typename Input>
@@ -1104,6 +1172,7 @@ struct action<struct_def>
 
         std::vector<std::string> types = ctx->split_string(state["struct_member_types"], ';');
         std::vector<std::string> names = ctx->split_string(state["struct_member_names"], ';');
+        std::vector<std::string> all_array_sizes = ctx->split_string(state["all_array_sizes"], ';');
 
         for (size_t i = 0; i < types.size(); i++)
         {
@@ -1113,6 +1182,22 @@ struct action<struct_def>
                 EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] member type not supported: " << types[i]);
                 return;
             }
+
+            // If array sizes are specified for this member, create an array type
+            if (i < all_array_sizes.size() && all_array_sizes[i] != "0")
+            {
+                std::vector<std::string> array_sizes = ctx->split_string(all_array_sizes[i], ',');
+                std::vector<uint32_t> sizes;
+                for (const auto& size : array_sizes)
+                {
+                    sizes.push_back(static_cast<uint32_t>(std::stoul(size)));
+                }
+
+                // Create the multi-dimensional array type
+                DynamicTypeBuilder::_ref_type array_builder {factory->create_array_type(member_type, sizes)};
+                member_type = array_builder->build();
+            }
+
             MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
             member_descriptor->name(names[i]);
             member_descriptor->type(member_type);
@@ -1346,36 +1431,7 @@ struct action<kw_typedef>
     {
         // Create empty alias states to indicate the start of parsing alias
         state["alias"] = "";
-        state["alias_sizes"] = "";
-    }
-
-};
-
-template<>
-struct action<fixed_array_size>
-{
-    template<typename Input>
-    static void apply(
-            const Input& in,
-            Context* /*ctx*/,
-            std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
-    {
-        if (state.count("alias") && !state["alias"].empty())
-        {
-            std::string str = in.string();
-
-            // Find the opening and closing brackets
-            size_t start_pos = str.find('[');
-            size_t end_pos = str.find(']');
-
-            // Extract the substring between the brackets and trim spaces
-            std::string size = str.substr(start_pos + 1, end_pos - start_pos - 1);
-            size.erase(0, size.find_first_not_of(" \t\n\r"));
-            size.erase(size.find_last_not_of(" \t\n\r") + 1);
-
-            state["alias_sizes"] += size + ";";
-        }
+        state["current_array_sizes"] = "";
     }
 
 };
@@ -1388,7 +1444,7 @@ struct action<typedef_dcl>
             std::map<std::string, std::string>& state)
     {
         state.erase("alias");
-        state.erase("alias_sizes");
+        state["current_array_sizes"] = "";
     }
 
     template<typename Input>
@@ -1413,7 +1469,7 @@ struct action<typedef_dcl>
         Module& module = ctx->module();
 
         std::string alias_name;
-        std::vector<std::string> sizes_str = ctx->split_string(state["alias_sizes"], ';');
+        std::vector<std::string> array_sizes = ctx->split_string(state["current_array_sizes"], ',');
 
         // state["alias"] is supposed to contain up to two fields, alias type (optional) and name
         std::ptrdiff_t comma_count = std::count(state["alias"].begin(), state["alias"].end(), ',');
@@ -1445,14 +1501,14 @@ struct action<typedef_dcl>
         TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
         type_descriptor->kind(TK_ALIAS);
         type_descriptor->name(alias_name);
-        if (sizes_str.empty())
+        if (array_sizes.empty())
         {
             type_descriptor->base_type(alias_type);
         }
         else
         {
             std::vector<uint32_t> sizes;
-            for (const auto& size : sizes_str)
+            for (const auto& size : array_sizes)
             {
                 sizes.push_back(static_cast<uint32_t>(std::stoul(size)));
             }
