@@ -320,6 +320,18 @@ TEST_F(IdlParserTests, structures)
     EXPECT_TRUE(builder21);
     DynamicType::_ref_type type21 = builder21->build();
     ASSERT_TRUE(type21);
+
+    // TODO StructSequence is skipped since sequence parsing is not supported.
+    // DynamicTypeBuilder::_ref_type builder22 = factory->create_type_w_document("IDL/structures.idl", "StructSequence", include_paths);
+    // EXPECT_TRUE(builder22);
+    // DynamicType::_ref_type type22 = builder22->build();
+    // ASSERT_TRUE(type22);
+
+    // TODO StructMap is skipped since map parsing is not supported.
+    // DynamicTypeBuilder::_ref_type builder23 = factory->create_type_w_document("IDL/structures.idl", "StructMap", include_paths);
+    // EXPECT_TRUE(builder23);
+    // DynamicType::_ref_type type23 = builder23->build();
+    // ASSERT_TRUE(type23);
 }
 
 int main(

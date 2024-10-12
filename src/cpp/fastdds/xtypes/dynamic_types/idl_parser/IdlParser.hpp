@@ -438,7 +438,38 @@ struct action<fixed_array_size>
 load_stringsize_action(string_size, string_size)
 load_stringsize_action(wstring_size, wstring_size)
 
-// // TODO sequence type, map type
+template<>
+struct action<sequence_type>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* /*ctx*/,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
+    {
+        state["type"] = in.string();
+        EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] sequence_type parsing not supported: " << state["type"]);
+    }
+
+};
+
+template<>
+struct action<map_type>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* /*ctx*/,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
+    {
+        state["type"] = in.string();
+        EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] map_type parsing not supported: " << state["type"]);
+    }
+
+};
+
 
 template<typename T> T promote(
         DynamicData::_ref_type xdata)
