@@ -1567,11 +1567,11 @@ struct action<annotation_appl>
     static void apply(
             const Input& in,
             Context* /*ctx*/,
-            std::map<std::string, std::string>& /*state*/,
+            std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
-        const std::string type = in.string();
-        EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] annotation_appl parsing not supported: " << type);
+        state["type"] = in.string();
+        EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] annotation_appl parsing not supported: " << state["type"]);
     }
 
 };
@@ -1583,11 +1583,11 @@ struct action<bitmask_dcl>
     static void apply(
             const Input& in,
             Context* /*ctx*/,
-            std::map<std::string, std::string>& /*state*/,
+            std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
-        const std::string type = in.string();
-        EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] bitmask_dcl parsing not supported: " << type);
+        state["type"] = in.string();
+        EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] bitmask_dcl parsing not supported: " << state["type"]);
     }
 
 };
@@ -1599,11 +1599,27 @@ struct action<bitset_dcl>
     static void apply(
             const Input& in,
             Context* /*ctx*/,
-            std::map<std::string, std::string>& /*state*/,
+            std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
-        const std::string type = in.string();
-        EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] bitset_dcl parsing not supported: " << type);
+        state["type"] = in.string();
+        EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] bitset_dcl parsing not supported: " << state["type"]);
+    }
+
+};
+
+template<>
+struct action<module_dcl>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* /*ctx*/,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
+    {
+        state["type"] = in.string();
+        EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] module_dcl parsing not supported: " << state["type"]);
     }
 
 };

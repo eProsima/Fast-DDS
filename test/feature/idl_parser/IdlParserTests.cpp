@@ -332,6 +332,35 @@ TEST_F(IdlParserTests, structures)
     // EXPECT_TRUE(builder23);
     // DynamicType::_ref_type type23 = builder23->build();
     // ASSERT_TRUE(type23);
+
+    DynamicTypeBuilder::_ref_type builder24 = factory->create_type_w_document("IDL/structures.idl", "StructUnion", include_paths);
+    EXPECT_TRUE(builder24);
+    DynamicType::_ref_type type24 = builder24->build();
+    ASSERT_TRUE(type24);
+
+    DynamicTypeBuilder::_ref_type builder25 = factory->create_type_w_document("IDL/structures.idl", "StructStructure", include_paths);
+    EXPECT_TRUE(builder25);
+    DynamicType::_ref_type type25 = builder25->build();
+    ASSERT_TRUE(type25);
+
+    // TODO StruStructBitsettMap is skipped since bitset parsing is not supported.
+    // DynamicTypeBuilder::_ref_type builder26 = factory->create_type_w_document("IDL/structures.idl", "StructBitset", include_paths);
+    // EXPECT_TRUE(builder26);
+    // DynamicType::_ref_type type26 = builder26->build();
+    // ASSERT_TRUE(type26);
+
+    DynamicTypeBuilder::_ref_type builder27 = factory->create_type_w_document("IDL/structures.idl", "StructEmpty", include_paths);
+    EXPECT_TRUE(builder27);
+    DynamicType::_ref_type type27 = builder27->build();
+    ASSERT_TRUE(type27);
+
+    // TODO Structures is skipped since some members parsing is not supported.
+    // DynamicTypeBuilder::_ref_type builder28 = factory->create_type_w_document("IDL/structures.idl", "Structures", include_paths);
+    // EXPECT_TRUE(builder28);
+    // DynamicType::_ref_type type28 = builder28->build();
+    // ASSERT_TRUE(type28);
+
+    // TODO The rest types are skipped since module parsing is not supported.
 }
 
 int main(
