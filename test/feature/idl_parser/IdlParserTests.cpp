@@ -363,6 +363,148 @@ TEST_F(IdlParserTests, structures)
     // TODO The rest types are skipped since module parsing is not supported.
 }
 
+TEST_F(IdlParserTests, aliases)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    std::vector<std::string> include_paths;
+    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+
+    DynamicTypeBuilder::_ref_type builder1 = factory->create_type_w_document("IDL/aliases.idl", "AliasInt16", include_paths);
+    EXPECT_TRUE(builder1);
+    DynamicType::_ref_type type1 = builder1->build();
+    ASSERT_TRUE(type1);
+    DynamicData::_ref_type data1 {DynamicDataFactory::get_instance()->create_data(type1)};
+    ASSERT_TRUE(data1);
+    int16_t test1 {0};
+    EXPECT_EQ(data1->set_int16_value(0, 100), RETCODE_OK);
+    EXPECT_EQ(data1->get_int16_value(test1, 0), RETCODE_OK);
+    EXPECT_EQ(test1, 100);
+
+    DynamicTypeBuilder::_ref_type builder2 = factory->create_type_w_document("IDL/aliases.idl", "AliasUint16", include_paths);
+    EXPECT_TRUE(builder2);
+    DynamicType::_ref_type type2 = builder2->build();
+    ASSERT_TRUE(type2);
+
+    DynamicTypeBuilder::_ref_type builder3 = factory->create_type_w_document("IDL/aliases.idl", "AliasInt32", include_paths);
+    EXPECT_TRUE(builder3);
+    DynamicType::_ref_type type3 = builder3->build();
+    ASSERT_TRUE(type3);
+
+    DynamicTypeBuilder::_ref_type builder4 = factory->create_type_w_document("IDL/aliases.idl", "AliasUInt32", include_paths);
+    EXPECT_TRUE(builder4);
+    DynamicType::_ref_type type4 = builder4->build();
+    ASSERT_TRUE(type4);
+
+    DynamicTypeBuilder::_ref_type builder5 = factory->create_type_w_document("IDL/aliases.idl", "AliasInt64", include_paths);
+    EXPECT_TRUE(builder5);
+    DynamicType::_ref_type type5 = builder5->build();
+    ASSERT_TRUE(type5);
+
+    DynamicTypeBuilder::_ref_type builder6 = factory->create_type_w_document("IDL/aliases.idl", "AliasUInt64", include_paths);
+    EXPECT_TRUE(builder6);
+    DynamicType::_ref_type type6 = builder6->build();
+    ASSERT_TRUE(type6);
+
+    DynamicTypeBuilder::_ref_type builder7 = factory->create_type_w_document("IDL/aliases.idl", "AliasFloat32", include_paths);
+    EXPECT_TRUE(builder7);
+    DynamicType::_ref_type type7 = builder7->build();
+    ASSERT_TRUE(type7);
+
+    DynamicTypeBuilder::_ref_type builder8 = factory->create_type_w_document("IDL/aliases.idl", "AliasFloat64", include_paths);
+    EXPECT_TRUE(builder8);
+    DynamicType::_ref_type type8 = builder8->build();
+    ASSERT_TRUE(type8);
+
+    DynamicTypeBuilder::_ref_type builder9 = factory->create_type_w_document("IDL/aliases.idl", "AliasFloat128", include_paths);
+    EXPECT_TRUE(builder9);
+    DynamicType::_ref_type type9 = builder9->build();
+    ASSERT_TRUE(type9);
+
+    DynamicTypeBuilder::_ref_type builder10 = factory->create_type_w_document("IDL/aliases.idl", "AliasBool", include_paths);
+    EXPECT_TRUE(builder10);
+    DynamicType::_ref_type type10 = builder10->build();
+    ASSERT_TRUE(type10);
+
+    DynamicTypeBuilder::_ref_type builder11 = factory->create_type_w_document("IDL/aliases.idl", "AliasOctet", include_paths);
+    EXPECT_TRUE(builder11);
+    DynamicType::_ref_type type11 = builder11->build();
+    ASSERT_TRUE(type11);
+
+    DynamicTypeBuilder::_ref_type builder12 = factory->create_type_w_document("IDL/aliases.idl", "AliasChar8", include_paths);
+    EXPECT_TRUE(builder12);
+    DynamicType::_ref_type type12 = builder12->build();
+    ASSERT_TRUE(type12);
+
+    DynamicTypeBuilder::_ref_type builder13 = factory->create_type_w_document("IDL/aliases.idl", "AliasChar16", include_paths);
+    EXPECT_TRUE(builder13);
+    DynamicType::_ref_type type13 = builder13->build();
+    ASSERT_TRUE(type13);
+
+    DynamicTypeBuilder::_ref_type builder14 = factory->create_type_w_document("IDL/aliases.idl", "AliasString8", include_paths);
+    EXPECT_TRUE(builder14);
+    DynamicType::_ref_type type14 = builder14->build();
+    ASSERT_TRUE(type14);
+
+    DynamicTypeBuilder::_ref_type builder15 = factory->create_type_w_document("IDL/aliases.idl", "AliasString16", include_paths);
+    EXPECT_TRUE(builder15);
+    DynamicType::_ref_type type15 = builder15->build();
+    ASSERT_TRUE(type15);
+
+    DynamicTypeBuilder::_ref_type builder16 = factory->create_type_w_document("IDL/aliases.idl", "AliasEnum", include_paths);
+    EXPECT_TRUE(builder16);
+    DynamicType::_ref_type type16 = builder16->build();
+    ASSERT_TRUE(type16);
+
+    // TODO AliasBitmask is skipped since bitmask parsing is not supported.
+    // DynamicTypeBuilder::_ref_type builder17 = factory->create_type_w_document("IDL/aliases.idl", "AliasBitmask", include_paths);
+    // EXPECT_TRUE(builder17);
+    // DynamicType::_ref_type type17 = builder17->build();
+    // ASSERT_TRUE(type17);
+
+    DynamicTypeBuilder::_ref_type builder18 = factory->create_type_w_document("IDL/aliases.idl", "AliasAlias", include_paths);
+    EXPECT_TRUE(builder18);
+    DynamicType::_ref_type type18 = builder18->build();
+    ASSERT_TRUE(type18);
+
+    DynamicTypeBuilder::_ref_type builder19 = factory->create_type_w_document("IDL/aliases.idl", "AliasArray", include_paths);
+    EXPECT_TRUE(builder19);
+    DynamicType::_ref_type type19 = builder19->build();
+    ASSERT_TRUE(type19);
+
+    DynamicTypeBuilder::_ref_type builder20 = factory->create_type_w_document("IDL/aliases.idl", "AliasMultiArray", include_paths);
+    EXPECT_TRUE(builder20);
+    DynamicType::_ref_type type20 = builder20->build();
+    ASSERT_TRUE(type20);
+
+    // TODO AliasSequence is skipped since sequence parsing is not supported.
+    // DynamicTypeBuilder::_ref_type builder21 = factory->create_type_w_document("IDL/aliases.idl", "AliasSequence", include_paths);
+    // EXPECT_TRUE(builder21);
+    // DynamicType::_ref_type type21 = builder21->build();
+    // ASSERT_TRUE(type21);
+
+    // TODO AliasMap is skipped since map parsing is not supported.
+    // DynamicTypeBuilder::_ref_type builder22 = factory->create_type_w_document("IDL/aliases.idl", "AliasMap", include_paths);
+    // EXPECT_TRUE(builder22);
+    // DynamicType::_ref_type type22 = builder22->build();
+    // ASSERT_TRUE(type22);
+
+    DynamicTypeBuilder::_ref_type builder23 = factory->create_type_w_document("IDL/aliases.idl", "AliasUnion", include_paths);
+    EXPECT_TRUE(builder23);
+    DynamicType::_ref_type type23 = builder23->build();
+    ASSERT_TRUE(type23);
+
+    DynamicTypeBuilder::_ref_type builder24 = factory->create_type_w_document("IDL/aliases.idl", "AliasStruct", include_paths);
+    EXPECT_TRUE(builder24);
+    DynamicType::_ref_type type24 = builder24->build();
+    ASSERT_TRUE(type24);
+
+    // TODO AliasBitset is skipped since bitset parsing is not supported.
+    // DynamicTypeBuilder::_ref_type builder25 = factory->create_type_w_document("IDL/aliases.idl", "AliasBitset", include_paths);
+    // EXPECT_TRUE(builder25);
+    // DynamicType::_ref_type type25 = builder25->build();
+    // ASSERT_TRUE(type25);
+}
+
 int main(
         int argc,
         char** argv)
