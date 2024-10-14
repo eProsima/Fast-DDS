@@ -354,7 +354,7 @@ protected:
     void init(
             const WriterAttributes& att);
 
-    void deinit();
+    void deinit() override;
 
     void add_guid(
             LocatorSelectorSender& locator_selector,

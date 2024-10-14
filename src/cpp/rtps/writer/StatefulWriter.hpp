@@ -57,6 +57,8 @@ public:
 
     virtual ~StatefulWriter();
 
+    void deinit() override;
+
     //vvvvvvvvvvvvvvvvvvvvv [Exported API] vvvvvvvvvvvvvvvvvvvvv
 
     bool matched_reader_add_edp(
