@@ -91,6 +91,8 @@ protected:
             const SequenceNumber_t& max_requested_sequence_number,
             const SequenceNumber_t& next_sequence_number);
 
+    void deinit() override;
+
 private:
 
     void init(

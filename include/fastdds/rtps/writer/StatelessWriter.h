@@ -76,6 +76,8 @@ protected:
             WriterHistory* hist,
             WriterListener* listen = nullptr);
 
+    void deinit() override;
+
 public:
 
     virtual ~StatelessWriter();

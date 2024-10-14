@@ -70,7 +70,6 @@ StatelessPersistentWriter::StatelessPersistentWriter(
 
 StatelessPersistentWriter::~StatelessPersistentWriter()
 {
-    deinit();
 }
 
 /*

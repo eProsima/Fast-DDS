@@ -638,7 +638,7 @@ protected:
             CacheChange_t* change,
             size_t num_locators);
 
-    void deinit();
+    void deinit() override;
 
 private:
 

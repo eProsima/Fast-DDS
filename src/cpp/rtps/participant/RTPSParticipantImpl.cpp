@@ -2201,6 +2201,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
 #endif // if HAVE_SECURITY
     }
 
+    p_endpoint->deinit();
     delete(p_endpoint);
     return true;
 }
