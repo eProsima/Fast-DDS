@@ -315,7 +315,7 @@ bool StatelessWriter::intraprocess_delivery(
 {
     LocalReaderPointer local_reader_pointer = reader_locator.local_reader();
 
-    if (local_reader_pointer.is_valid() &&
+    if (local_reader_pointer &&
             (!reader_data_filter_ || reader_data_filter_->is_relevant(*change, reader_locator.remote_guid())))
     {
         if (change->write_params.related_sample_identity() != SampleIdentity::unknown())

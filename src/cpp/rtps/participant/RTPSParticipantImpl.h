@@ -94,6 +94,7 @@ namespace rtps {
 
 class BaseReader;
 class BaseWriter;
+class LocalReaderPointer;
 
 } // namespace rtps
 
@@ -477,7 +478,7 @@ public:
     /***
      * @returns A pointer to a local reader given its endpoint guid, or nullptr if not found.
      */
-    BaseReader* find_local_reader(
+    LocalReaderPointer find_local_reader(
             const GUID_t& reader_guid);
 
     /***

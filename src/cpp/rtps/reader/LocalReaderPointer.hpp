@@ -20,22 +20,113 @@
 
 #include <memory>
 
+#include <fastdds/rtps/Endpoint.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
 class BaseReader;
 class LocalReaderView;
+class WeakLocalReaderPointer;
+
+/**
+ * @brief Class representing a pointer to a local reader.
+ *
+ * This class simply encapsulates a pointer to a BaseReader and a
+ * shared pointer to its associated LocalReaderView.
+ *
+ * @ingroup READER_MODULE
+ */
+class WeakLocalReaderPointer
+{
+    friend class LocalReaderPointer;
+
+public:
+
+    /**
+     * @brief Default constructor for WeakLocalReaderPointer.
+     *
+     * Initializes an empty WeakLocalReaderPointer.
+     */
+    WeakLocalReaderPointer();
+
+    /**
+     * @brief Constructs a WeakLocalReaderPointer with a specified reader and view.
+     *
+     * @param reader Pointer to a BaseReader instance.
+     * @param view Shared pointer to a LocalReaderView.
+     */
+    WeakLocalReaderPointer(
+            BaseReader* reader,
+            std::shared_ptr<LocalReaderView> view);
+
+    /**
+     * @brief WeakLocalpointers cannot be copied.
+     */
+    WeakLocalReaderPointer(
+            const WeakLocalReaderPointer&) = default;
+
+    /**
+     * @brief Destructor for WeakLocalReaderPointer.
+     *
+     * Cleans up the resources held by the WeakLocalReaderPointer.
+     */
+    ~WeakLocalReaderPointer() = default;
+
+    /**
+     * @brief Overloaded operator-> to access members of BaseReader.
+     *
+     * @return Pointer to the associated BaseReader, enabling member access.
+     */
+    BaseReader* operator ->();
+
+    /**
+     * @brief Overloaded assignment operator.
+     *
+     * @param other WeakLocalReaderPointer to assign.
+     * @return Reference to the assigned WeakLocalReaderPointer.
+     */
+    WeakLocalReaderPointer& operator =(
+            const WeakLocalReaderPointer& other) = default;
+
+    /**
+     * @brief Overloaded operator bool to check the status of the reader.
+     *
+     * @return True if the reader is active.
+     */
+    explicit operator bool() const;
+
+    /**
+     * @brief Resets the WeakLocalReaderPointer.
+     */
+    void reset();
+
+protected:
+
+    BaseReader* local_reader_{nullptr};
+    std::shared_ptr<LocalReaderView> view_;
+};
+
 
 /**
  * @brief Class representing a pointer to a local reader.
  *
  * This class encapsulates a pointer to a BaseReader and manages
- * the associated LocalReaderView of it.
- * This permits to query the entity status before accessing the reader.
+ * the associated LocalReaderView of it by increasing the reference counter
+ * on construction and copy, and dereferencing upon destruction.
+ *
+ * The difference with the WeakLocalReaderPointer is that this
+ * class manages the reference counter of the reader's view.
+ *
+ * This class is meant to be used before as a temporal stack variable
+ * before accessing any of the methods of the contained reader i.e
+ * holding an instance of this class as a member is discouraged, instead
+ * use a WeakLocalReaderPointer in that case.
+ *
  * @ingroup READER_MODULE
  */
-class LocalReaderPointer
+class LocalReaderPointer : public WeakLocalReaderPointer
 {
 public:
 
@@ -57,18 +148,23 @@ public:
             std::shared_ptr<LocalReaderView> view);
 
     /**
+     * @brief copy constructor
+     */
+    LocalReaderPointer(
+            const LocalReaderPointer&);
+
+    /**
+     * @brief Construction from a WeakLocalReaderPointer.
+     */
+    LocalReaderPointer(
+            const WeakLocalReaderPointer&);
+
+    /**
      * @brief Destructor for LocalReaderPointer.
      *
      * Cleans up the resources held by the LocalReaderPointer.
      */
     ~LocalReaderPointer();
-
-    /**
-     * @brief Retrieves the associated BaseReader pointer.
-     *
-     * @return Pointer to the associated BaseReader.
-     */
-    BaseReader* reader();
 
     /**
      * @brief Overloaded operator-> to access members of BaseReader.
@@ -78,39 +174,29 @@ public:
     BaseReader* operator ->();
 
     /**
-     * @brief Sets the local reader pointer.
+     * @brief Overloaded assignment operator.
      *
-     * @param reader Pointer to a BaseReader instance.
+     * @param other LocalReaderPointer to assign.
+     * @return Reference to the assigned LocalReaderPointer.
      */
-    inline void local_reader(
-            BaseReader* reader)
-    {
-        local_reader_ = reader;
-    }
+    LocalReaderPointer& operator =(
+            const LocalReaderPointer& other);
 
     /**
-     * @brief Sets the local reader view.
+     * @brief Overloaded assignment operator.
      *
-     * @param view Shared pointer to a LocalReaderView.
+     * @param other WeakLocalReaderPointer to assign.
+     * @return Reference to the assigned LocalReaderPointer.
      */
-    inline void local_reader_view(
-            std::shared_ptr<LocalReaderView> view)
-    {
-        view_ = view;
-    }
+    LocalReaderPointer& operator =(
+            const WeakLocalReaderPointer& other);
 
     /**
-     * @brief Checks if the local reader pointer is valid.
+     * @brief Overloaded operator bool to check the status of the reader.
      *
-     * @return True if the different from INACTIVE.
+     * @return True if the reader is active.
      */
-    bool is_valid();
-
-protected:
-
-    BaseReader* local_reader_{nullptr};
-    std::weak_ptr<LocalReaderView> view_;
-    bool already_referenced_{false};
+    explicit operator bool() const;
 };
 
 } // namespace rtps

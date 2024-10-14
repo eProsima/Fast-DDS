@@ -43,6 +43,7 @@
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/LocalReaderPointer.hpp>
 #include <rtps/reader/LocalReaderView.hpp>
 #include <rtps/reader/ReaderHistoryState.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
@@ -110,7 +111,7 @@ BaseReader::BaseReader(
 
 void BaseReader::local_actions_on_reader_removed()
 {
-    local_view_->wait_for_references_and_set_status(0, LocalReaderViewStatus::INACTIVE);
+    local_view_->deactivate();
 }
 
 BaseReader::~BaseReader()
@@ -276,6 +277,11 @@ void BaseReader::allow_unknown_writers()
 {
     assert(fastdds::rtps::EntityId_t::unknown() != trusted_writer_entity_id_);
     accept_messages_from_unkown_writers_ = true;
+}
+
+LocalReaderPointer BaseReader::get_local_pointer()
+{
+    return LocalReaderPointer(this, local_view_);
 }
 
 bool BaseReader::reserve_cache(

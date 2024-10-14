@@ -53,19 +53,16 @@ void LocalReaderView::dereference()
     cv.notify_one();
 }
 
-void LocalReaderView::wait_for_references_and_set_status(
-        size_t n_references,
-        LocalReaderViewStatus new_status)
+void LocalReaderView::deactivate()
 {
     std::unique_lock<std::mutex> lock(mutex);
-    if (this->references.load() != n_references)
-    {
-        cv.wait(lock, [&]()
-                {
-                    return this->references.load() == n_references;
-                });
-    }
-    status = new_status;
+
+    cv.wait(lock, [&]()
+            {
+                return this->references.load() == 0u;
+            });
+
+    status = LocalReaderViewStatus::INACTIVE;
 }
 
 } // namespace rtps

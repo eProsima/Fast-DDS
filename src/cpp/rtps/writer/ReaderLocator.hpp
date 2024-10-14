@@ -73,7 +73,7 @@ public:
     LocalReaderPointer local_reader();
 
     void local_reader(
-            BaseReader* local_reader)
+            LocalReaderPointer local_reader)
     {
         local_reader_ = local_reader;
     }
@@ -263,11 +263,10 @@ private:
     LocatorSelectorEntry async_locator_info_;
     bool expects_inline_qos_;
     bool is_local_reader_;
-    BaseReader* local_reader_;
+    WeakLocalReaderPointer local_reader_;
     std::vector<GuidPrefix_t> guid_prefix_as_vector_;
     std::vector<GUID_t> guid_as_vector_;
     IDataSharingNotifier* datasharing_notifier_;
-    std::shared_ptr<LocalReaderView> local_reader_view_;
 };
 
 } /* namespace rtps */

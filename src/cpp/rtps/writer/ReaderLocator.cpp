@@ -45,11 +45,9 @@ ReaderLocator::ReaderLocator(
     , async_locator_info_(max_unicast_locators, max_multicast_locators)
     , expects_inline_qos_(false)
     , is_local_reader_(false)
-    , local_reader_(nullptr)
     , guid_prefix_as_vector_(1u)
     , guid_as_vector_(1u)
     , datasharing_notifier_(nullptr)
-    , local_reader_view_(nullptr)
 {
     if (owner->is_datasharing_compatible())
     {
@@ -85,7 +83,7 @@ bool ReaderLocator::start(
 
         is_local_reader_ = RTPSDomainImpl::should_intraprocess_between(owner_->getGuid(), remote_guid);
         is_datasharing &= !is_local_reader_;
-        local_reader_ = nullptr;
+        local_reader_.reset();
 
         if (!is_local_reader_ && !is_datasharing)
         {
@@ -178,7 +176,7 @@ void ReaderLocator::stop()
     guid_prefix_as_vector_.at(0) = c_GuidPrefix_Unknown;
     expects_inline_qos_ = false;
     is_local_reader_ = false;
-    local_reader_ = nullptr;
+    local_reader_.reset();
 }
 
 bool ReaderLocator::send(
@@ -209,25 +207,12 @@ bool ReaderLocator::send(
 
 LocalReaderPointer ReaderLocator::local_reader()
 {
-    LocalReaderPointer local_reader_pointer;
-
     if (!local_reader_)
     {
         local_reader_ = RTPSDomainImpl::find_local_reader(general_locator_info_.remote_guid);
-
-        if (local_reader_)
-        {
-            local_reader_view_ = local_reader_->get_local_view();
-        }
     }
 
-    if (local_reader_)
-    {
-        local_reader_pointer.local_reader(local_reader_);
-        local_reader_pointer.local_reader_view(local_reader_view_);
-    }
-
-    return local_reader_pointer;
+    return local_reader_;
 }
 
 bool ReaderLocator::is_datasharing_reader() const
@@ -237,15 +222,16 @@ bool ReaderLocator::is_datasharing_reader() const
 
 void ReaderLocator::datasharing_notify()
 {
-    RTPSReader* reader = nullptr;
+    LocalReaderPointer reader;
+
     if (is_local_reader())
     {
-        reader = local_reader().reader();
+        reader = local_reader();
     }
 
     if (reader)
     {
-        BaseReader::downcast(reader)->datasharing_listener()->notify(true);
+        reader->datasharing_listener()->notify(true);
     }
     else
     {

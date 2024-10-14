@@ -37,7 +37,7 @@ enum class LocalReaderViewStatus
 /**
  * @brief Class LocalReaderView, contains the status of a
  * LocalReaderView (local to the process) tracking the number
- * of references to it.
+ * of references.
  * @ingroup READER_MODULE
  */
 class LocalReaderView
@@ -60,18 +60,10 @@ public:
     LocalReaderViewStatus get_status();
 
     /**
-     * @brief Waits for a specified number of references and sets the new status.
-     *
-     * This method will block until the specified number of references,
-     * then it sets the status of the local reader view
-     * to the new status.
-     *
-     * @param references The number of references to wait for before setting the status.
-     * @param new_status The new status to set after waiting.
+     * @brief This method will block until the number of references is 0,
+     * then it sets the status of the local reader view to INACTIVE
      */
-    void wait_for_references_and_set_status(
-            size_t references,
-            LocalReaderViewStatus new_status);
+    void deactivate();
 
     /**
      * @brief Increments the reference count of the local reader view.
@@ -92,6 +84,10 @@ public:
 protected:
 
     LocalReaderViewStatus status{LocalReaderViewStatus::ACTIVE};
+
+    // This member indends to express how many
+    // external references are currently using
+    // the local reader.
     std::atomic<size_t> references{0};
     std::mutex mutex;
     std::condition_variable cv;

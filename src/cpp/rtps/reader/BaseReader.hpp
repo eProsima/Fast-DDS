@@ -50,6 +50,7 @@ namespace rtps {
 struct CacheChange_t;
 class IDataSharingListener;
 class LocalReaderView;
+class LocalReaderPointer;
 struct ReaderHistoryState;
 class ReaderListener;
 class RTPSParticipantImpl;
@@ -163,6 +164,14 @@ public:
     {
         return datasharing_listener_;
     }
+
+    /**
+     * @brief Retrieves the local pointer to this reader
+     * to be used by other local entities.
+     *
+     * @return Local pointer to this reader.
+     */
+    LocalReaderPointer get_local_pointer();
 
     /**
      * @brief Reserve a CacheChange_t.
@@ -296,11 +305,6 @@ public:
             const fastdds::rtps::SequenceNumber_t& gapStart,
             const fastdds::rtps::SequenceNumberSet_t& gapList,
             VendorId_t origin_vendor_id = c_VendorId_Unknown) = 0;
-
-    inline std::shared_ptr<LocalReaderView> get_local_view()
-    {
-        return local_view_;
-    }
 
     void local_actions_on_reader_removed();
 

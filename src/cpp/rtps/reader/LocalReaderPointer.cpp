@@ -16,7 +16,10 @@
  * @file LocalReaderPointer.cpp
  */
 
+#include <rtps/reader/BaseReader.hpp>
 #include <rtps/reader/LocalReaderPointer.hpp>
+
+#include <cassert>
 
 #include <rtps/reader/LocalReaderView.hpp>
 
@@ -24,63 +27,131 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+WeakLocalReaderPointer::WeakLocalReaderPointer()
+    : local_reader_(nullptr)
+    , view_(nullptr)
+{
+}
+
+WeakLocalReaderPointer::WeakLocalReaderPointer(
+        BaseReader* reader,
+        std::shared_ptr<LocalReaderView> view)
+    : local_reader_(reader)
+    , view_(view)
+{
+}
+
+BaseReader* WeakLocalReaderPointer::operator ->()
+{
+    assert(nullptr != local_reader_);
+    return local_reader_;
+}
+
+WeakLocalReaderPointer::operator bool() const
+{
+    bool ret = false;
+
+    if (nullptr != local_reader_ &&
+            nullptr != view_)
+    {
+        ret = true;
+    }
+    return ret;
+}
+
+void WeakLocalReaderPointer::reset()
+{
+    local_reader_ = nullptr;
+    view_.reset();
+}
 
 LocalReaderPointer::LocalReaderPointer()
-    : local_reader_(nullptr)
-    , already_referenced_(false)
+    : WeakLocalReaderPointer()
 {
 }
 
 LocalReaderPointer::LocalReaderPointer(
         BaseReader* reader,
         std::shared_ptr<LocalReaderView> view)
-    : local_reader_(reader)
-    , view_(view)
-    , already_referenced_(false)
+    : WeakLocalReaderPointer(reader, view)
 {
+    if (nullptr != view_)
+    {
+        view_->add_reference();
+    }
+}
 
+LocalReaderPointer::LocalReaderPointer(
+        const LocalReaderPointer& other)
+    : WeakLocalReaderPointer(other.local_reader_, other.view_)
+{
+    if (nullptr != view_)
+    {
+        view_->add_reference();
+    }
+}
+
+LocalReaderPointer::LocalReaderPointer(
+        const WeakLocalReaderPointer& weak_local_reader_ptr)
+    : WeakLocalReaderPointer(weak_local_reader_ptr.local_reader_, weak_local_reader_ptr.view_)
+{
+    if (nullptr != view_)
+    {
+        view_->add_reference();
+    }
 }
 
 LocalReaderPointer::~LocalReaderPointer()
 {
-    auto view = view_.lock();
-    if (already_referenced_ && view)
+    if (nullptr != view_)
     {
-        view->dereference();
+        view_->dereference();
     }
-}
-
-BaseReader* LocalReaderPointer::reader()
-{
-    BaseReader* ret = nullptr;
-    auto view = view_.lock();
-    if (!already_referenced_ && view)
-    {
-        view->add_reference();
-        ret = local_reader_;
-        already_referenced_ = true;
-    }
-
-    return ret;
 }
 
 BaseReader* LocalReaderPointer::operator ->()
 {
-    return reader();
+    assert(nullptr != local_reader_);
+    return local_reader_;
 }
 
-bool LocalReaderPointer::is_valid()
+LocalReaderPointer& LocalReaderPointer::operator =(
+        const LocalReaderPointer& other)
+{
+    local_reader_ = other.local_reader_;
+    view_ = other.view_;
+
+    if (nullptr != view_)
+    {
+        view_->add_reference();
+    }
+
+    return *this;
+}
+
+LocalReaderPointer& LocalReaderPointer::operator =(
+        const WeakLocalReaderPointer& other)
+{
+    local_reader_ = other.local_reader_;
+    view_ = other.view_;
+
+    if (nullptr != view_)
+    {
+        view_->add_reference();
+    }
+
+    return *this;
+}
+
+LocalReaderPointer::operator bool() const
 {
     bool ret = false;
 
-    if (local_reader_)
+    if (nullptr != local_reader_ &&
+            nullptr != view_ &&
+            view_->get_status() != LocalReaderViewStatus::INACTIVE)
     {
-        auto view = view_.lock();
-
-        if (view && view->get_status() != LocalReaderViewStatus::INACTIVE)
-        {
-            ret = true;
-        }
+        ret = true;
     }
 
     return ret;

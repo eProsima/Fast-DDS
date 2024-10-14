@@ -408,7 +408,7 @@ bool StatefulWriter::intraprocess_delivery(
     bool ret = false;
     LocalReaderPointer local_reader_pointer = reader_proxy->local_reader();
 
-    if (local_reader_pointer.is_valid())
+    if (local_reader_pointer)
     {
         if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
         {
@@ -429,7 +429,7 @@ bool StatefulWriter::intraprocess_gap(
 
     LocalReaderPointer local_reader_pt = reader_proxy->local_reader();
 
-    if (local_reader_pt.is_valid())
+    if (local_reader_pt)
     {
         ret = local_reader_pt->process_gap_msg(
             m_guid, first_seq, SequenceNumberSet_t(last_seq), c_VendorId_eProsima);
@@ -445,7 +445,7 @@ bool StatefulWriter::intraprocess_heartbeat(
     bool returned_value = false;
     LocalReaderPointer local_reader_pt = reader_proxy->local_reader();
 
-    if (local_reader_pt.is_valid())
+    if (local_reader_pt)
     {
         std::lock_guard<RecursiveTimedMutex> guardW(mp_mutex);
         SequenceNumber_t first_seq = get_seq_num_min();

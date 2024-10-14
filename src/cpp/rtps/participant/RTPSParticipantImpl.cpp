@@ -1350,7 +1350,7 @@ bool RTPSParticipantImpl::createReader(
     return create_reader(ReaderOut, param, entityId, isBuiltin, enable, callback);
 }
 
-BaseReader* RTPSParticipantImpl::find_local_reader(
+LocalReaderPointer RTPSParticipantImpl::find_local_reader(
         const GUID_t& reader_guid)
 {
     shared_lock<shared_mutex> _(endpoints_list_mutex);
@@ -1359,11 +1359,11 @@ BaseReader* RTPSParticipantImpl::find_local_reader(
     {
         if (reader->getGuid() == reader_guid)
         {
-            return reader;
+            return reader->get_local_pointer();
         }
     }
 
-    return nullptr;
+    return LocalReaderPointer();
 }
 
 BaseWriter* RTPSParticipantImpl::find_local_writer(
@@ -2840,8 +2840,11 @@ bool RTPSParticipantImpl::register_in_reader(
     }
     else if (!fastdds::statistics::is_statistics_builtin(reader_guid.entityId))
     {
-        BaseReader* reader = find_local_reader(reader_guid);
-        res = reader->add_statistics_listener(listener);
+        LocalReaderPointer reader = find_local_reader(reader_guid);
+        if (reader)
+        {
+            res = reader->add_statistics_listener(listener);
+        }
     }
 
     return res;
