@@ -37,12 +37,8 @@ target_link_libraries(IdlParserTests
 )
 gtest_discover_tests(IdlParserTests)
 
-if(EXISTS "${PROJECT_SOURCE_DIR}/thirdparty/dds-types-test/IDL")
-    message(STATUS "Copying IDL directory from ${PROJECT_SOURCE_DIR}/thirdparty/dds-types-test/IDL for idl_parser testing")
-    add_custom_command(
-        TARGET IdlParserTests POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/thirdparty/dds-types-test/IDL $<TARGET_FILE_DIR:IdlParserTests>/IDL
-    )
-else()
-    message(WARNING "The folder thirdparty/dds-types-test/IDL does not exist. The git submodule might not have been initialized.")
-endif()
+message(STATUS "Copying IDL directory from ${PROJECT_SOURCE_DIR}/thirdparty/dds-types-test/IDL for idl_parser testing")
+add_custom_command(
+    TARGET IdlParserTests POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/thirdparty/dds-types-test/IDL $<TARGET_FILE_DIR:IdlParserTests>/IDL
+)
