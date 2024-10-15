@@ -62,6 +62,12 @@ system input/output channel combination for each deployment.
 This project is part of [FIWARE](https://www.fiware.org/). For more information check the FIWARE Catalogue entry for
 [Robotics](https://github.com/Fiware/catalogue/tree/master/robotics).
 
+## Commercial support
+
+Looking for commercial support? Write us to info@eprosima.com
+
+Find more about us at [eProsima’s webpage](https://eprosima.com/).
+
 ## Want us to share your project with the community?
 
 Write to evaluation.support@eprosima.com or mention @EProsima on Twitter.
@@ -204,14 +210,6 @@ On the publisher side, run:
     $ goToExamples
     $ cd dds/Benchmark/bin
     $ ./Benchmark publisher udp
-
-
-## Getting Help
-
-If you need support you can reach us by mail at `support@eProsima.com` or by phone at `+34 91 804 34 48`.
-
-
-
 
 ---
 
