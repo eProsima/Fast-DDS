@@ -36,9 +36,19 @@ WeakLocalReaderPointer::WeakLocalReaderPointer()
 WeakLocalReaderPointer::WeakLocalReaderPointer(
         BaseReader* reader,
         std::shared_ptr<LocalReaderView> view)
-    : local_reader_(reader)
-    , view_(view)
 {
+    std::lock_guard<std::mutex> lock(this->mutex_);
+    local_reader_ = reader;
+    view_ = view;
+}
+
+WeakLocalReaderPointer::WeakLocalReaderPointer(
+        const WeakLocalReaderPointer& other)
+{
+    std::lock_guard<std::mutex> lock_other(other.mutex_);
+    std::lock_guard<std::mutex> lock(this->mutex_);
+    local_reader_ = other.local_reader_;
+    view_ = other.view_;
 }
 
 BaseReader* WeakLocalReaderPointer::operator ->()
@@ -51,16 +61,29 @@ WeakLocalReaderPointer::operator bool() const
 {
     bool ret = false;
 
+    std::lock_guard<std::mutex> lock(mutex_);
     if (nullptr != local_reader_ &&
             nullptr != view_)
     {
         ret = true;
     }
+
     return ret;
+}
+
+WeakLocalReaderPointer& WeakLocalReaderPointer::operator =(
+        const WeakLocalReaderPointer& other)
+{
+    std::lock_guard<std::mutex> lock_other(other.mutex_);
+    std::lock_guard<std::mutex> lock(this->mutex_);
+    local_reader_ = other.local_reader_;
+    view_ = other.view_;
+    return *this;
 }
 
 void WeakLocalReaderPointer::reset()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     local_reader_ = nullptr;
     view_.reset();
 }
@@ -75,6 +98,7 @@ LocalReaderPointer::LocalReaderPointer(
         std::shared_ptr<LocalReaderView> view)
     : WeakLocalReaderPointer(reader, view)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (nullptr != view_)
     {
         view_->add_reference();
@@ -83,8 +107,14 @@ LocalReaderPointer::LocalReaderPointer(
 
 LocalReaderPointer::LocalReaderPointer(
         const LocalReaderPointer& other)
-    : WeakLocalReaderPointer(other.local_reader_, other.view_)
+    : WeakLocalReaderPointer()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<std::mutex> lock_other(other.mutex_);
+
+    local_reader_ = other.local_reader_;
+    view_ = other.view_;
+
     if (nullptr != view_)
     {
         view_->add_reference();
@@ -93,8 +123,14 @@ LocalReaderPointer::LocalReaderPointer(
 
 LocalReaderPointer::LocalReaderPointer(
         const WeakLocalReaderPointer& weak_local_reader_ptr)
-    : WeakLocalReaderPointer(weak_local_reader_ptr.local_reader_, weak_local_reader_ptr.view_)
+    : WeakLocalReaderPointer()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<std::mutex> lock_other(weak_local_reader_ptr.mutex_);
+
+    local_reader_ = weak_local_reader_ptr.local_reader_;
+    view_ = weak_local_reader_ptr.view_;
+
     if (nullptr != view_)
     {
         view_->add_reference();
@@ -103,6 +139,7 @@ LocalReaderPointer::LocalReaderPointer(
 
 LocalReaderPointer::~LocalReaderPointer()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (nullptr != view_)
     {
         view_->dereference();
@@ -118,6 +155,8 @@ BaseReader* LocalReaderPointer::operator ->()
 LocalReaderPointer& LocalReaderPointer::operator =(
         const LocalReaderPointer& other)
 {
+    std::lock_guard<std::mutex> lock_other(other.mutex_);
+    std::lock_guard<std::mutex> lock(this->mutex_);
     local_reader_ = other.local_reader_;
     view_ = other.view_;
 
@@ -132,6 +171,9 @@ LocalReaderPointer& LocalReaderPointer::operator =(
 LocalReaderPointer& LocalReaderPointer::operator =(
         const WeakLocalReaderPointer& other)
 {
+    std::lock_guard<std::mutex> lock_other(other.mutex_);
+    std::lock_guard<std::mutex> lock(this->mutex_);
+
     local_reader_ = other.local_reader_;
     view_ = other.view_;
 
@@ -146,6 +188,8 @@ LocalReaderPointer& LocalReaderPointer::operator =(
 LocalReaderPointer::operator bool() const
 {
     bool ret = false;
+
+    std::lock_guard<std::mutex> lock(mutex_);
 
     if (nullptr != local_reader_ &&
             nullptr != view_ &&

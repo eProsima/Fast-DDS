@@ -34,7 +34,7 @@ class WeakLocalReaderPointer;
  * @brief Class representing a pointer to a local reader.
  *
  * This class simply encapsulates a pointer to a BaseReader and a
- * shared pointer to its associated LocalReaderView.
+ * shared pointer to its associated LocalReaderView in a thread-safe manner.
  *
  * @ingroup READER_MODULE
  */
@@ -65,7 +65,7 @@ public:
      * @brief WeakLocalpointers cannot be copied.
      */
     WeakLocalReaderPointer(
-            const WeakLocalReaderPointer&) = default;
+            const WeakLocalReaderPointer&);
 
     /**
      * @brief Destructor for WeakLocalReaderPointer.
@@ -88,7 +88,7 @@ public:
      * @return Reference to the assigned WeakLocalReaderPointer.
      */
     WeakLocalReaderPointer& operator =(
-            const WeakLocalReaderPointer& other) = default;
+            const WeakLocalReaderPointer& other);
 
     /**
      * @brief Overloaded operator bool to check the status of the reader.
@@ -104,6 +104,7 @@ public:
 
 protected:
 
+    mutable std::mutex mutex_;
     BaseReader* local_reader_{nullptr};
     std::shared_ptr<LocalReaderView> view_;
 };
