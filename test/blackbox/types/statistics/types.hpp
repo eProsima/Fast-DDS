@@ -3774,7 +3774,10 @@ private:
                     }
 
                     selected_member_ = 0x00000001;
-                    member_destructor_ = [&]() {m_writer_reader_data.~WriterReaderData();};
+                    member_destructor_ = [&]()
+                    {
+                        m_writer_reader_data.~WriterReaderData();\
+                    };
                     new(&m_writer_reader_data) WriterReaderData();
 
                 }
@@ -3792,7 +3795,10 @@ private:
                     }
 
                     selected_member_ = 0x00000002;
-                    member_destructor_ = [&]() {m_locator2locator_data.~Locator2LocatorData();};
+                    member_destructor_ = [&]()
+                    {
+                        m_locator2locator_data.~Locator2LocatorData();\
+                    };
                     new(&m_locator2locator_data) Locator2LocatorData();
 
                 }
@@ -3810,7 +3816,10 @@ private:
                     }
 
                     selected_member_ = 0x00000003;
-                    member_destructor_ = [&]() {m_entity_data.~EntityData();};
+                    member_destructor_ = [&]()
+                    {
+                        m_entity_data.~EntityData();\
+                    };
                     new(&m_entity_data) EntityData();
 
                 }
@@ -3828,7 +3837,10 @@ private:
                     }
 
                     selected_member_ = 0x00000004;
-                    member_destructor_ = [&]() {m_entity2locator_traffic.~Entity2LocatorTraffic();};
+                    member_destructor_ = [&]()
+                    {
+                        m_entity2locator_traffic.~Entity2LocatorTraffic();\
+                    };
                     new(&m_entity2locator_traffic) Entity2LocatorTraffic();
 
                 }
@@ -3846,7 +3858,10 @@ private:
                     }
 
                     selected_member_ = 0x00000005;
-                    member_destructor_ = [&]() {m_entity_count.~EntityCount();};
+                    member_destructor_ = [&]()
+                    {
+                        m_entity_count.~EntityCount();\
+                    };
                     new(&m_entity_count) EntityCount();
 
                 }
@@ -3864,7 +3879,10 @@ private:
                     }
 
                     selected_member_ = 0x00000006;
-                    member_destructor_ = [&]() {m_discovery_time.~DiscoveryTime();};
+                    member_destructor_ = [&]()
+                    {
+                        m_discovery_time.~DiscoveryTime();\
+                    };
                     new(&m_discovery_time) DiscoveryTime();
 
                 }
@@ -3882,7 +3900,10 @@ private:
                     }
 
                     selected_member_ = 0x00000007;
-                    member_destructor_ = [&]() {m_sample_identity_count.~SampleIdentityCount();};
+                    member_destructor_ = [&]()
+                    {
+                        m_sample_identity_count.~SampleIdentityCount();\
+                    };
                     new(&m_sample_identity_count) SampleIdentityCount();
 
                 }
@@ -3900,7 +3921,10 @@ private:
                     }
 
                     selected_member_ = 0x00000008;
-                    member_destructor_ = [&]() {m_physical_data.~PhysicalData();};
+                    member_destructor_ = [&]()
+                    {
+                        m_physical_data.~PhysicalData();\
+                    };
                     new(&m_physical_data) PhysicalData();
 
                 }

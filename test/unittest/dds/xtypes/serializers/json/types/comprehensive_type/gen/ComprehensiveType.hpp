@@ -1052,7 +1052,10 @@ private:
                     }
 
                     selected_member_ = 0x00000010;
-                    member_destructor_ = [&]() {m_first.~PrimitivesStruct();};
+                    member_destructor_ = [&]()
+                    {
+                        m_first.~PrimitivesStruct();\
+                    };
                     new(&m_first) PrimitivesStruct();
 
                 }
@@ -1105,7 +1108,10 @@ public:
     eProsima_user_DllExport ComplexUnion()
     {
         selected_member_ = 0x00000002;
-        member_destructor_ = [&]() {m_fourth.~InnerUnion();};
+        member_destructor_ = [&]()
+        {
+            m_fourth.~InnerUnion();\
+        };
         new(&m_fourth) InnerUnion();
 
     }
@@ -1432,7 +1438,10 @@ private:
                     }
 
                     selected_member_ = 0x00000002;
-                    member_destructor_ = [&]() {m_fourth.~InnerUnion();};
+                    member_destructor_ = [&]()
+                    {
+                        m_fourth.~InnerUnion();\
+                    };
                     new(&m_fourth) InnerUnion();
 
                 }
