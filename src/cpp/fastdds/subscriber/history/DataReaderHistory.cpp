@@ -862,7 +862,7 @@ bool DataReaderHistory::update_instance_nts(
     change->reader_info.no_writers_generation_count = vit->second->no_writers_generation_count;
 
     auto current_owner = vit->second->current_owner.first;
-    if ( (current_owner != previous_owner) && (current_owner == change->writerGUID) )
+    if ((current_owner != previous_owner) && (current_owner == change->writerGUID))
     {
         // Remove all changes from different owners after the change.
         DataReaderInstance::ChangeCollection& changes = vit->second->cache_changes;
