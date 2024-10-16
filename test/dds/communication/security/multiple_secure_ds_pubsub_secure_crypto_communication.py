@@ -112,6 +112,12 @@ class ParseOptions():
             type=str,
             help='Validation method to use [server, subscriber].'
         )
+        parser.add_argument(
+            '-edr',
+            '--exit-on-disposal-received',
+            action='store_true',
+            help='Let the publisher finish the process if receives a disposal.'
+        )
 
         return parser.parse_args()
 
@@ -246,6 +252,9 @@ def run(args):
     if args.wait:
         pub_command.extend(['--wait', str(args.wait)])
 
+    if args.exit_on_disposal_received:
+        pub_command.extend(['--exit_on_disposal_received'])
+
     if args.samples:
         pub_command.extend(['--samples', str(args.samples)])
         sub_command.extend(['--samples', str(args.samples)])
@@ -286,8 +295,13 @@ def run(args):
         try:
             for sub_proc in sub_procs:
                 outs, errs = sub_proc.communicate(timeout=15)
+
+            if args.exit_on_disposal_received:
+                for pub_proc in pub_procs:
+                    outs, errs = pub_proc.communicate(timeout=5)
+
         except subprocess.TimeoutExpired:
-            print('Subscriber process timed out, terminating...')
+            print('Target process timed out, terminating...')
             terminate_ok = False
 
     cleanup(pub_procs, sub_procs, ds_procs)

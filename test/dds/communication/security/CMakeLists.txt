@@ -18,7 +18,7 @@ add_definitions(
     -DBOOST_ASIO_STANDALONE
     -DASIO_STANDALONE
     )
-    
+
 include_directories(${Asio_INCLUDE_DIR})
 
 ###############################################################################
@@ -412,6 +412,26 @@ if(SECURITY)
         if(WIN32)
             string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
             set_property(TEST SecureDiscoverServerMultipleClientsHandShakeAssertion APPEND PROPERTY ENVIRONMENT
+                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+        endif()
+
+        add_test(NAME SecureDiscoverServerMultipleClientsDisposalsReceived
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_secure_ds_pubsub_secure_crypto_communication.py
+            --pub $<TARGET_FILE:CommunicationPublisher>
+            --xml-pub secure_ds_simple_secure_msg_crypto_pub_profile.xml
+            --sub $<TARGET_FILE:CommunicationSubscriber>
+            --xml-sub secure_ds_simple_secure_msg_crypto_sub_profile.xml
+            --samples 5
+            --servers $<TARGET_FILE:fast-discovery-server>
+            --xml-servers secure_simple_ds_server_profile.xml
+            --exit-on-disposal-received)
+
+        # Set test with label NoMemoryCheck
+        set_property(TEST SecureDiscoverServerMultipleClientsDisposalsReceived PROPERTY LABELS "NoMemoryCheck")
+
+        if(WIN32)
+            string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+            set_property(TEST SecureDiscoverServerMultipleClientsDisposalsReceived APPEND PROPERTY ENVIRONMENT
                 "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
         endif()
 
