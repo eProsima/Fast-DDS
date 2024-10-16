@@ -1391,9 +1391,14 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
                                                                  length)};
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            member = factory->create_array_type(
+            DynamicTypeBuilder::_ref_type builder = factory->create_array_type(
                 inner_builder->build(),
-                bounds)->build();
+                bounds);
+            member = nullptr;
+            if (nullptr != builder)
+            {
+                member = builder->build();
+            }
         }
     }
     else if (strncmp(memberType, BOOLEAN, BOOLEAN_len) == 0)
@@ -1406,9 +1411,14 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
         {
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            member = factory->create_array_type(
+            DynamicTypeBuilder::_ref_type builder = factory->create_array_type(
                 factory->get_primitive_type(TK_BOOLEAN),
-                bounds)->build();
+                bounds);
+            member = nullptr;
+            if (nullptr != builder)
+            {
+                member = builder->build();
+            }
         }
     }
     else if (strncmp(memberType, CHAR, CHAR_len) == 0)
@@ -1421,9 +1431,14 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
         {
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            member = factory->create_array_type(
+            DynamicTypeBuilder::_ref_type builder = factory->create_array_type(
                 factory->get_primitive_type(TK_CHAR8),
-                bounds)->build();
+                bounds);
+            member = nullptr;
+            if (nullptr != builder)
+            {
+                member = builder->build();
+            }
         }
     }
     else if (strncmp(memberType, WCHAR, WCHAR_len) == 0)
@@ -1436,9 +1451,14 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
         {
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            member = factory->create_array_type(
+            DynamicTypeBuilder::_ref_type builder = factory->create_array_type(
                 factory->get_primitive_type(TK_CHAR16),
-                bounds)->build();
+                bounds);
+            member = nullptr;
+            if (nullptr != builder)
+            {
+                member = builder->build();
+            }
         }
     }
     else if (strncmp(memberType, TBYTE, TBYTE_len) == 0
@@ -1452,9 +1472,14 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
         {
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            member = factory->create_array_type(
+            DynamicTypeBuilder::_ref_type builder = factory->create_array_type(
                 factory->get_primitive_type(TK_BYTE),
-                bounds)->build();
+                bounds);
+            member = nullptr;
+            if (nullptr != builder)
+            {
+                member = builder->build();
+            }
         }
     }
     else if (strncmp(memberType, UINT8, UINT8_len) == 0)
@@ -1467,9 +1492,15 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
         {
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            member = factory->create_array_type(
+            DynamicTypeBuilder::_ref_type builder = factory->create_array_type(
                 factory->get_primitive_type(TK_UINT8),
-                bounds)->build();
+                bounds);
+
+            member = nullptr;
+            if (nullptr != builder)
+            {
+                member = builder->build();
+            }
         }
     }
     else if (strncmp(memberType, INT8, INT8_len) == 0)
@@ -1482,9 +1513,15 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
         {
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            member = factory->create_array_type(
+            DynamicTypeBuilder::_ref_type builder = factory->create_array_type(
                 factory->get_primitive_type(TK_INT8),
-                bounds)->build();
+                bounds);
+
+            member = nullptr;
+            if (nullptr != builder)
+            {
+                member = builder->build();
+            }
         }
     }
     else if (strncmp(memberType, SHORT, SHORT_len) == 0)
@@ -1497,9 +1534,15 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
         {
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            member = factory->create_array_type(
+            DynamicTypeBuilder::_ref_type builder = factory->create_array_type(
                 factory->get_primitive_type(TK_INT16),
-                bounds)->build();
+                bounds);
+
+            member = nullptr;
+            if (nullptr != builder)
+            {
+                member = builder->build();
+            }
         }
     }
     else if (strncmp(memberType, LONG, LONG_len) == 0)
@@ -1512,9 +1555,15 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
         {
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            member = factory->create_array_type(
+            DynamicTypeBuilder::_ref_type builder = factory->create_array_type(
                 factory->get_primitive_type(TK_INT32),
-                bounds)->build();
+                bounds);
+
+            member = nullptr;
+            if (nullptr != builder)
+            {
+                member = builder->build();
+            }
         }
     }
     else if (strncmp(memberType, ULONG, ULONG_len) == 0)
@@ -1527,9 +1576,15 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
         {
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            member = factory->create_array_type(
+            DynamicTypeBuilder::_ref_type builder = factory->create_array_type(
                 factory->get_primitive_type(TK_UINT32),
-                bounds)->build();
+                bounds);
+
+            member = nullptr;
+            if (nullptr != builder)
+            {
+                member = builder->build();
+            }
         }
     }
     else if (strncmp(memberType, USHORT, USHORT_len) == 0)
@@ -1542,9 +1597,15 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
         {
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            member = factory->create_array_type(
+            DynamicTypeBuilder::_ref_type builder = factory->create_array_type(
                 factory->get_primitive_type(TK_UINT16),
-                bounds)->build();
+                bounds);
+
+            member = nullptr;
+            if (nullptr != builder)
+            {
+                member = builder->build();
+            }
         }
     }
     else if (strncmp(memberType, LONGLONG, LONGLONG_len) == 0)
@@ -1557,9 +1618,15 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
         {
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            member = factory->create_array_type(
+            DynamicTypeBuilder::_ref_type builder = factory->create_array_type(
                 factory->get_primitive_type(TK_INT64),
-                bounds)->build();
+                bounds);
+
+            member = nullptr;
+            if (nullptr != builder)
+            {
+                member = builder->build();
+            }
         }
     }
     else if (strncmp(memberType, ULONGLONG, ULONGLONG_len) == 0)
@@ -1572,9 +1639,18 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
         {
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            member = factory->create_array_type(
+            DynamicTypeBuilder::_ref_type builder = factory->create_array_type(
                 factory->get_primitive_type(TK_UINT64),
-                bounds)->build();
+                bounds);
+
+            if (nullptr != builder)
+            {
+                member = builder->build();
+            }
+            else
+            {
+                member = nullptr;
+            }
         }
     }
     else if (strncmp(memberType, FLOAT, FLOAT_len) == 0)
@@ -1587,9 +1663,15 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
         {
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            member = factory->create_array_type(
+            DynamicTypeBuilder::_ref_type builder = factory->create_array_type(
                 factory->get_primitive_type(TK_FLOAT32),
-                bounds)->build();
+                bounds);
+
+            member = nullptr;
+            if (nullptr != builder)
+            {
+                member = builder->build();
+            }
         }
     }
     else if (strncmp(memberType, DOUBLE, DOUBLE_len) == 0)
@@ -1602,9 +1684,15 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
         {
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            member = factory->create_array_type(
+            DynamicTypeBuilder::_ref_type builder = factory->create_array_type(
                 factory->get_primitive_type(TK_FLOAT64),
-                bounds)->build();
+                bounds);
+
+            member = nullptr;
+            if (nullptr != builder)
+            {
+                member = builder->build();
+            }
         }
     }
     else if (strncmp(memberType, LONGDOUBLE, LONGDOUBLE_len) == 0)
@@ -1617,9 +1705,15 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
         {
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            member = factory->create_array_type(
+            DynamicTypeBuilder::_ref_type builder = factory->create_array_type(
                 factory->get_primitive_type(TK_FLOAT128),
-                bounds)->build();
+                bounds);
+
+            member = nullptr;
+            if (nullptr != builder)
+            {
+                member = builder->build();
+            }
         }
     }
     else if (strncmp(memberType, STRING, STRING_len) == 0)
@@ -1691,9 +1785,14 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
         {
             std::vector<uint32_t> boundsArray;
             dimensionsToArrayBounds(memberArray, boundsArray);
-            member = factory->create_array_type(
+            DynamicTypeBuilder::_ref_type builder = factory->create_array_type(
                 wstring_builder->build(),
-                boundsArray)->build();
+                boundsArray);
+            member = nullptr;
+            if (nullptr != builder)
+            {
+                member = builder->build();
+            }
         }
     }
     else // Complex type?
@@ -1718,9 +1817,14 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
         {
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            member = factory->create_array_type(
+            DynamicTypeBuilder::_ref_type builder = factory->create_array_type(
                 type,
-                bounds)->build();
+                bounds);
+            member = nullptr;
+            if (nullptr != builder)
+            {
+                member = builder->build();
+            }
         }
     }
 
