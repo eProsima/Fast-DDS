@@ -21,7 +21,7 @@ class IDLProcessor:
 
     def extract_structures(self, idl_text):
         # Regular expressions for module and struct extraction
-        module_regexp = r'module\s+(\w+)\s*{((?:.|[\r\n])*?)\};\s*\};'
+        module_regexp = r'module\s+(\w+)\s*{((?:.|[\r\n])*?)\};'
         struct_regexp = r'struct\s+(\w+)(\s*:\s*\w+)?\s*\{([^}]+)'
 
         # Extract structures within modules
@@ -34,7 +34,7 @@ class IDLProcessor:
 
         # Find structures outside modules
         outside_structures = re.findall(struct_regexp, idl_text)
-        
+
         # Remove duplicate structures
         for module_name, structures in module_structures.items():
             for structure in structures:
@@ -57,12 +57,12 @@ class IDLProcessor:
                     with open(file_path, 'r') as file:
                         content = file.read()
                         module_structures, outside_structures = self.extract_structures(content)
-                        
+
                         # Store struct information along with the IDL file name and module name
                         for module_name, structures in module_structures.items():
                             for structure in structures:
                                 self.structs_info.add((structure[0], idl_file_name, module_name, idls_path))
-                        
+
                         # Store struct information for structures outside modules
                         for structure in outside_structures:
                             self.structs_info.add((structure[0], idl_file_name, "", idls_path))
@@ -119,7 +119,7 @@ def create_case_files(structs_info, struct_names_to_ignore):
             json.dump(case_data, f, indent=4)
         print(f"Created case file: {file_path}")
 
-        
+
 def update_types_header_file(structs_info, typecode_path):
     # Update types header file with necessary includes
     header_file_path = os.path.join(os.path.dirname(__file__), 'TypeLookupServiceTestsTypes.h')
@@ -181,7 +181,7 @@ def insert_macros(func_declaration, macro_name, structs_info, struct_names_to_ig
     lines = func_declaration.split('\n')
     lines = [line for line in lines if not re.match(rf'\s*{macro_name}\((\w+|\w+::\w+)\);', line)]  # Remove existing macro lines
     updated_func = '\n'.join(lines)
-    
+
     idx = updated_func.rfind('    }')
     if idx != -1:
         structs_info = sorted(list(structs_info), key=lambda x: (x[1], x[2], x[0]), reverse=True)  # Sort structs_info alphabetically
