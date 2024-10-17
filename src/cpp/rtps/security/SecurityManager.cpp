@@ -935,6 +935,10 @@ bool SecurityManager::on_process_handshake(
                 }
                 else
                 {
+                    // Return the handshake handle
+                    authentication_plugin_->return_handshake_handle(remote_participant_info->handshake_handle_,
+                            exception);
+                    remote_participant_info->handshake_handle_ = nullptr;
                     EPROSIMA_LOG_ERROR(SECURITY, "WriterHistory cannot add the CacheChange_t");
                 }
             }
@@ -946,6 +950,9 @@ bool SecurityManager::on_process_handshake(
         }
         else
         {
+            // Return the handshake handle
+            authentication_plugin_->return_handshake_handle(remote_participant_info->handshake_handle_, exception);
+            remote_participant_info->handshake_handle_ = nullptr;
             EPROSIMA_LOG_ERROR(SECURITY, "WriterHistory cannot retrieve a CacheChange_t");
         }
     }

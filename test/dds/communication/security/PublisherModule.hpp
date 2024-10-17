@@ -41,9 +41,11 @@ public:
 
     PublisherModule(
             bool exit_on_lost_liveliness,
+            bool exit_on_disposal_received,
             bool fixed_type = false,
             bool zero_copy = false)
         : exit_on_lost_liveliness_(exit_on_lost_liveliness)
+        , exit_on_disposal_received_(exit_on_disposal_received)
         , fixed_type_(zero_copy || fixed_type) // If zero copy active, fixed type is required
         , zero_copy_(zero_copy)
     {
@@ -91,6 +93,7 @@ private:
     std::condition_variable cv_;
     unsigned int matched_ = 0;
     bool exit_on_lost_liveliness_ = false;
+    bool exit_on_disposal_received_ = false;
     bool fixed_type_ = false;
     bool zero_copy_ = false;
     bool run_ = true;

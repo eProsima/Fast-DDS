@@ -230,6 +230,10 @@ void PublisherModule::on_participant_discovery(
     {
         std::cout << "Publisher participant " << // participant->getGuid() <<
             " removed participant " << info.info.m_guid << std::endl;
+        if (exit_on_disposal_received_)
+        {
+            run_ = false;
+        }
     }
     else if (info.status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
     {
