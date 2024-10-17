@@ -41,6 +41,7 @@ namespace fastdds {
 namespace rtps {
 
 class BaseReader;
+class BaseReaderView;
 class StatefulWriter;
 class TimedEvent;
 class RTPSReader;
@@ -290,7 +291,7 @@ public:
      * Get the local reader on the same process (if any).
      * @return The local reader on the same process.
      */
-    inline BaseReader* local_reader()
+    inline LocalReaderPointer local_reader()
     {
         return locator_info_.local_reader();
     }

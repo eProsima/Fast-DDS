@@ -405,16 +405,19 @@ bool StatefulWriter::intraprocess_delivery(
         CacheChange_t* change,
         ReaderProxy* reader_proxy)
 {
-    BaseReader* reader = reader_proxy->local_reader();
-    if (reader)
+    bool ret = false;
+    LocalReaderPointer local_reader_pointer = reader_proxy->local_reader();
+
+    if (local_reader_pointer)
     {
         if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
         {
             change->write_params.sample_identity(change->write_params.related_sample_identity());
         }
-        return reader->process_data_msg(change);
+        ret = local_reader_pointer->process_data_msg(change);
     }
-    return false;
+
+    return ret;
 }
 
 bool StatefulWriter::intraprocess_gap(
@@ -422,14 +425,17 @@ bool StatefulWriter::intraprocess_gap(
         const SequenceNumber_t& first_seq,
         const SequenceNumber_t& last_seq)
 {
-    RTPSReader* reader = reader_proxy->local_reader();
-    if (reader)
+    bool ret = false;
+
+    LocalReaderPointer local_reader_pt = reader_proxy->local_reader();
+
+    if (local_reader_pt)
     {
-        return BaseReader::downcast(reader)->process_gap_msg(
+        ret = local_reader_pt->process_gap_msg(
             m_guid, first_seq, SequenceNumberSet_t(last_seq), c_VendorId_eProsima);
     }
 
-    return false;
+    return ret;
 }
 
 bool StatefulWriter::intraprocess_heartbeat(
@@ -437,12 +443,11 @@ bool StatefulWriter::intraprocess_heartbeat(
         bool liveliness)
 {
     bool returned_value = false;
+    LocalReaderPointer local_reader_pt = reader_proxy->local_reader();
 
-    std::lock_guard<RecursiveTimedMutex> guardW(mp_mutex);
-    RTPSReader* reader = RTPSDomainImpl::find_local_reader(reader_proxy->guid());
-
-    if (reader)
+    if (local_reader_pt)
     {
+        std::lock_guard<RecursiveTimedMutex> guardW(mp_mutex);
         SequenceNumber_t first_seq = get_seq_num_min();
         SequenceNumber_t last_seq = get_seq_num_max();
 
@@ -459,7 +464,7 @@ bool StatefulWriter::intraprocess_heartbeat(
                 (liveliness || reader_proxy->has_changes()))
         {
             increment_hb_count();
-            returned_value = BaseReader::downcast(reader)->process_heartbeat_msg(
+            returned_value = local_reader_pt->process_heartbeat_msg(
                 m_guid, heartbeat_count_, first_seq, last_seq, true, liveliness, c_VendorId_eProsima);
         }
     }

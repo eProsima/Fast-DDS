@@ -242,6 +242,8 @@ set(STATEFUL_READER_TESTS_SOURCE StatefulReaderTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/sqlite3.c
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/SQLite3PersistenceService.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader/BaseReader.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader/LocalReaderPointer.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader/LocalReaderView.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader/reader_utils.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader/RTPSReader.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader/StatefulPersistentReader.cpp
