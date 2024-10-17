@@ -230,6 +230,25 @@ static bool get_unique_flows_parameters(
     return true;
 }
 
+/**
+ * @brief This method checks if the maximum message size is equal or higher than the PDP package size.
+ * @return true if the maximum message size is equal or higher than the PDP package size, false otherwise.
+ */
+static bool is_max_message_size_big_enough(
+        const uint32_t max_message_size)
+{
+    constexpr uint32_t info_dst_message_length = 16;
+    constexpr uint32_t info_ts_message_length = 12;
+    uint32_t statistics_message_length = 0;
+#ifdef FASTDDS_STATISTICS
+    statistics_message_length = eprosima::fastdds::statistics::rtps::statistics_submessage_length;
+#endif // FASTDDS_STATISTICS
+
+    return max_message_size >=
+           (RTPSMESSAGE_HEADER_SIZE + BUILTIN_DATA_MAX_SIZE + info_dst_message_length +
+           info_ts_message_length + statistics_message_length);
+}
+
 Locator_t& RTPSParticipantImpl::applyLocatorAdaptRule(
         Locator_t& loc)
 {
@@ -488,6 +507,14 @@ bool RTPSParticipantImpl::setup_transports()
         {
             // Restore original netmask filter value prior to unlock
             socket_descriptor->netmask_filter = socket_descriptor_netmask_filter;
+        }
+
+        if (!is_max_message_size_big_enough(transportDescriptor->max_message_size()))
+        {
+            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
+                    "User transport failed to register. Maximum message size needs to be equal or higher than "
+                    "the PDP package size.");
+            register_transport = false;
         }
 
         transportDescriptor->unlock();
