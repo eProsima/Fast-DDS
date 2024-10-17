@@ -492,15 +492,24 @@ bool RTPSParticipantImpl::setup_transports()
 
         transportDescriptor->unlock();
 
+        auto shm_transport_descriptor = dynamic_cast<SharedMemTransportDescriptor*>(transportDescriptor.get());
         if (transport_registered)
         {
-            has_shm_transport_ |=
-                    (dynamic_cast<SharedMemTransportDescriptor*>(transportDescriptor.get()) != nullptr);
+            has_shm_transport_ |= (nullptr != shm_transport_descriptor);
+            if (nullptr != shm_transport_descriptor)
+            {
+                if (shm_transport_descriptor->max_message_size() > 572u)
+                {
+                    EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
+                            "Unable to Register SHM Transport. Maximum message size needs to be"
+                            "equal or higher than the PDP package size.");
+                }
+            }
         }
         else
         {
             // SHM transport could be disabled
-            if ((dynamic_cast<SharedMemTransportDescriptor*>(transportDescriptor.get()) != nullptr))
+            if (nullptr != shm_transport_descriptor)
             {
                 EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
                         "Unable to Register SHM Transport. SHM Transport is not supported in"
