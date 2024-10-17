@@ -568,7 +568,7 @@ option(INSTALL_EXAMPLES "Install example" OFF)
 if(INSTALL_EXAMPLES)
   # Install examples
   install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples/cpp
-      DESTINATION examples/
+      DESTINATION examples
       COMPONENT examples
       PATTERN "examples/CMakeLists.txt" EXCLUDE
       )
@@ -579,7 +579,7 @@ option(INSTALL_TOOLS "Install tools" OFF)
 if(INSTALL_TOOLS)
   # Install tools
   install(DIRECTORY ${PROJECT_SOURCE_DIR}/tools
-      DESTINATION tools/
+      DESTINATION tools
       COMPONENT tools
       PATTERN "tools/CMakeLists.txt" EXCLUDE
       )
