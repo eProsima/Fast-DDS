@@ -103,6 +103,10 @@ The utility offers several options:
 | --security=[true/false]             | Enable/disable DDS security                                                                                                                |
 | --certs=\<directory>                | Directory with the certificates. Used when security is enable                                                                              |
 
+**Container Tips**
+Shared_memory and data_sharing technologies have pre-allocated memory pools underneath. This memory value occupies the system's free memory segment. To put it simply, the size of 
+the sent data packet will affect the amount of allocated memory, which is probably shm: 1:5 data_sharing 1:31. If the data packet size is 100MB data, in data_sharing mode
+At least 3.1g of memory is required. docker run -it --shm-size=3.1g my-image.
 
 **Publication options**
 
