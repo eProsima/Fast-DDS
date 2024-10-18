@@ -1733,9 +1733,7 @@ public:
 /*
  * This test checks that the DataWriter methods defined in the standard not yet implemented in FastDDS return
  * RETCODE_UNSUPPORTED. The following methods are checked:
- * 1. get_matched_subscription_data
- * 2. get_matched_subscriptions
- * 3. lookup_instance
+ * 1. lookup_instance
  */
 TEST_F(DataWriterUnsupportedTests, UnsupportedDataWriterMethods)
 {
@@ -1754,15 +1752,6 @@ TEST_F(DataWriterUnsupportedTests, UnsupportedDataWriterMethods)
 
     DataWriter* data_writer = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
     ASSERT_NE(publisher, nullptr);
-
-    SubscriptionBuiltinTopicData subscription_data;
-    fastdds::rtps::InstanceHandle_t subscription_handle;
-    EXPECT_EQ(
-        RETCODE_UNSUPPORTED,
-        data_writer->get_matched_subscription_data(subscription_data, subscription_handle));
-
-    std::vector<InstanceHandle_t> subscription_handles;
-    EXPECT_EQ(RETCODE_UNSUPPORTED, data_writer->get_matched_subscriptions(subscription_handles));
 
     EXPECT_EQ(HANDLE_NIL, data_writer->lookup_instance(nullptr /* instance */));
 

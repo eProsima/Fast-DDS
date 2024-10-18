@@ -340,6 +340,12 @@ public:
             return false;
         }
 
+        if (publisher_topicname_.empty())
+        {
+            EPROSIMA_LOG_ERROR(PUBSUBPARTICIPANT, "Publisher topic name not set");
+            return false;
+        }
+
         eprosima::fastdds::dds::Topic* topic =
                 dynamic_cast<eprosima::fastdds::dds::Topic*>(participant_->lookup_topicdescription(
                     publisher_topicname_));
@@ -374,6 +380,12 @@ public:
         }
         if (index >= num_subscribers_)
         {
+            return false;
+        }
+
+        if (subscriber_topicname_.empty())
+        {
+            EPROSIMA_LOG_ERROR(PUBSUBPARTICIPANT, "Subscriber topic name not set");
             return false;
         }
 
