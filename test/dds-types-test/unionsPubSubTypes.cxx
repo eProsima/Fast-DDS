@@ -34,48 +34,6 @@ using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 namespace Fixed_String_Module {
 } // namespace Fixed_String_Module
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 UnionShortPubSubType::UnionShortPubSubType()
 {
     set_name("UnionShort");
@@ -7496,8 +7454,6 @@ void UnionSeveralFieldsWithDefaultPubSubType::register_type_object_representatio
 {
     register_UnionSeveralFieldsWithDefault_type_identifier(type_identifiers_);
 }
-
-
 
 UnionShortExtraMemberPubSubType::UnionShortExtraMemberPubSubType()
 {

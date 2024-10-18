@@ -1298,9 +1298,6 @@ void StructuresInheritanceStructPubSubType::register_type_object_representation(
     register_StructuresInheritanceStruct_type_identifier(type_identifiers_);
 }
 
-
-
-
 BitsetsChildInheritanceStructPubSubType::BitsetsChildInheritanceStructPubSubType()
 {
     set_name("BitsetsChildInheritanceStruct");

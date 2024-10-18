@@ -34,7 +34,6 @@ using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 namespace Test {
 } // namespace Test
 
-
 EnumStructurePubSubType::EnumStructurePubSubType()
 {
     set_name("EnumStructure");

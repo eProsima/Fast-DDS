@@ -379,7 +379,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]()
                     {
-                        m_first.~basic_string();\
+                        m_first.~basic_string();
                     };
                     new(&m_first) std::string();
 
@@ -435,7 +435,7 @@ public:
         selected_member_ = 0x00000002;
         member_destructor_ = [&]()
         {
-            m_fourth.~BasicUnion();\
+            m_fourth.~BasicUnion();
         };
         new(&m_fourth) BasicUnion();
 
@@ -765,7 +765,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = [&]()
                     {
-                        m_fourth.~BasicUnion();\
+                        m_fourth.~BasicUnion();
                     };
                     new(&m_fourth) BasicUnion();
 

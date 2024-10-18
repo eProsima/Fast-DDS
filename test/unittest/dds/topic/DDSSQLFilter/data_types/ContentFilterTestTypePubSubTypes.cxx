@@ -212,8 +212,6 @@ void StructTypePubSubType::register_type_object_representation()
     register_StructType_type_identifier(type_identifiers_);
 }
 
-
-
 ContentFilterTestTypePubSubType::ContentFilterTestTypePubSubType()
 {
     set_name("ContentFilterTestType");

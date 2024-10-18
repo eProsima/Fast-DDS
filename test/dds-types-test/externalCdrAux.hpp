@@ -220,17 +220,13 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const struct_external_optional& data);
 
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const recursive_union_container& data);
 
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const recursive_test_1& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,

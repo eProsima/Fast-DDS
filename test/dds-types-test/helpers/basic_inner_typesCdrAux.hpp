@@ -59,18 +59,6 @@ eProsima_user_DllExport void serialize_key(
         const InnerEmptyStructureHelper& data);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 } // namespace fastcdr
 } // namespace eprosima
 

@@ -3809,7 +3809,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]()
                     {
-                        m_n.~basic_string();\
+                        m_n.~basic_string();
                     };
                     new(&m_n) std::string();
 
@@ -4091,7 +4091,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]()
                     {
-                        m_o.~basic_string();\
+                        m_o.~basic_string();
                     };
                     new(&m_o) std::wstring();
 
@@ -4373,7 +4373,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]()
                     {
-                        m_bn.~Inner_alias_bounded_string_helper();\
+                        m_bn.~Inner_alias_bounded_string_helper();
                     };
                     new(&m_bn) Inner_alias_bounded_string_helper();
 
@@ -4655,7 +4655,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]()
                     {
-                        m_bo.~Inner_alias_bounded_wstring_helper();\
+                        m_bo.~Inner_alias_bounded_wstring_helper();
                     };
                     new(&m_bo) Inner_alias_bounded_wstring_helper();
 
@@ -5205,7 +5205,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]()
                     {
-                        m_q.~InnerBitMaskHelper();\
+                        m_q.~InnerBitMaskHelper();
                     };
                     new(&m_q) InnerBitMaskHelper();
 
@@ -5755,7 +5755,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]()
                     {
-                        m_s.~Inner_alias_array_helper();\
+                        m_s.~Inner_alias_array_helper();
                     };
                     new(&m_s) Inner_alias_array_helper();
 
@@ -6037,7 +6037,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]()
                     {
-                        m_t.~vector();\
+                        m_t.~vector();
                     };
                     new(&m_t) std::vector<int16_t>();
 
@@ -6319,7 +6319,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]()
                     {
-                        m_u.~map();\
+                        m_u.~map();
                     };
                     new(&m_u) std::map<int32_t, int32_t>();
 
@@ -6601,7 +6601,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]()
                     {
-                        m_v.~InnerUnionHelper();\
+                        m_v.~InnerUnionHelper();
                     };
                     new(&m_v) InnerUnionHelper();
 
@@ -6883,7 +6883,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]()
                     {
-                        m_w.~InnerStructureHelper();\
+                        m_w.~InnerStructureHelper();
                     };
                     new(&m_w) InnerStructureHelper();
 
@@ -7165,7 +7165,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]()
                     {
-                        m_x.~InnerBitsetHelper();\
+                        m_x.~InnerBitsetHelper();
                     };
                     new(&m_x) InnerBitsetHelper();
 
@@ -12476,7 +12476,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]()
                     {
-                        m_a.~InnerStructureHelper();\
+                        m_a.~InnerStructureHelper();
                     };
                     new(&m_a) InnerStructureHelper();
 
@@ -12497,7 +12497,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = [&]()
                     {
-                        m_b.~InnerEmptyStructureHelper();\
+                        m_b.~InnerEmptyStructureHelper();
                     };
                     new(&m_b) InnerEmptyStructureHelper();
 
@@ -12518,7 +12518,7 @@ private:
                     selected_member_ = 0x00000003;
                     member_destructor_ = [&]()
                     {
-                        m_c.~Inner_alias_bounded_string_helper();\
+                        m_c.~Inner_alias_bounded_string_helper();
                     };
                     new(&m_c) Inner_alias_bounded_string_helper();
 
@@ -12539,7 +12539,7 @@ private:
                     selected_member_ = 0x00000004;
                     member_destructor_ = [&]()
                     {
-                        m_d.~Inner_alias_array_helper();\
+                        m_d.~Inner_alias_array_helper();
                     };
                     new(&m_d) Inner_alias_array_helper();
 
@@ -12560,7 +12560,7 @@ private:
                     selected_member_ = 0x00000005;
                     member_destructor_ = [&]()
                     {
-                        m_e.~Inner_alias_sequence_helper();\
+                        m_e.~Inner_alias_sequence_helper();
                     };
                     new(&m_e) Inner_alias_sequence_helper();
 
@@ -12601,7 +12601,7 @@ public:
         selected_member_ = 0x00000006;
         member_destructor_ = [&]()
         {
-            m_f.~vector();\
+            m_f.~vector();
         };
         new(&m_f) std::vector<int16_t>();
 
@@ -13243,7 +13243,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]()
                     {
-                        m_a.~InnerStructureHelper();\
+                        m_a.~InnerStructureHelper();
                     };
                     new(&m_a) InnerStructureHelper();
 
@@ -13264,7 +13264,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = [&]()
                     {
-                        m_b.~InnerEmptyStructureHelper();\
+                        m_b.~InnerEmptyStructureHelper();
                     };
                     new(&m_b) InnerEmptyStructureHelper();
 
@@ -13285,7 +13285,7 @@ private:
                     selected_member_ = 0x00000003;
                     member_destructor_ = [&]()
                     {
-                        m_c.~Inner_alias_bounded_string_helper();\
+                        m_c.~Inner_alias_bounded_string_helper();
                     };
                     new(&m_c) Inner_alias_bounded_string_helper();
 
@@ -13306,7 +13306,7 @@ private:
                     selected_member_ = 0x00000004;
                     member_destructor_ = [&]()
                     {
-                        m_d.~Inner_alias_array_helper();\
+                        m_d.~Inner_alias_array_helper();
                     };
                     new(&m_d) Inner_alias_array_helper();
 
@@ -13327,7 +13327,7 @@ private:
                     selected_member_ = 0x00000005;
                     member_destructor_ = [&]()
                     {
-                        m_e.~Inner_alias_sequence_helper();\
+                        m_e.~Inner_alias_sequence_helper();
                     };
                     new(&m_e) Inner_alias_sequence_helper();
 
@@ -13348,7 +13348,7 @@ private:
                     selected_member_ = 0x00000006;
                     member_destructor_ = [&]()
                     {
-                        m_f.~vector();\
+                        m_f.~vector();
                     };
                     new(&m_f) std::vector<int16_t>();
 
@@ -13636,7 +13636,7 @@ private:
                     member_destructor_ = [&]()
                     {
                         using namespace Fixed_String_Module;
-                        m_a.~fixed_string_in_module();\
+                        m_a.~fixed_string_in_module();
                     };
                     new(&m_a) Fixed_String_Module::fixed_string_in_module();
 

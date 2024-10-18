@@ -2116,7 +2116,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]()
                     {
-                        m_entity_proxy.~vector();\
+                        m_entity_proxy.~vector();
                     };
                     new(&m_entity_proxy) std::vector<uint8_t>();
 
@@ -2137,7 +2137,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = [&]()
                     {
-                        m_connection_list.~vector();\
+                        m_connection_list.~vector();
                     };
                     new(&m_connection_list) std::vector<Connection>();
 
@@ -2158,7 +2158,7 @@ private:
                     selected_member_ = 0x00000003;
                     member_destructor_ = [&]()
                     {
-                        m_incompatible_qos_status.~IncompatibleQoSStatus_s();\
+                        m_incompatible_qos_status.~IncompatibleQoSStatus_s();
                     };
                     new(&m_incompatible_qos_status) IncompatibleQoSStatus_s();
 
@@ -2180,7 +2180,7 @@ private:
                     member_destructor_ = [&]()
                     {
                         using namespace eprosima::fastdds::statistics;
-                        m_inconsistent_topic_status.~InconsistentTopicStatus_s();\
+                        m_inconsistent_topic_status.~InconsistentTopicStatus_s();
                     };
                     new(&m_inconsistent_topic_status) InconsistentTopicStatus_s();
 
@@ -2202,7 +2202,7 @@ private:
                     member_destructor_ = [&]()
                     {
                         using namespace eprosima::fastdds::statistics;
-                        m_liveliness_lost_status.~LivelinessLostStatus_s();\
+                        m_liveliness_lost_status.~LivelinessLostStatus_s();
                     };
                     new(&m_liveliness_lost_status) LivelinessLostStatus_s();
 
@@ -2223,7 +2223,7 @@ private:
                     selected_member_ = 0x00000006;
                     member_destructor_ = [&]()
                     {
-                        m_liveliness_changed_status.~LivelinessChangedStatus_s();\
+                        m_liveliness_changed_status.~LivelinessChangedStatus_s();
                     };
                     new(&m_liveliness_changed_status) LivelinessChangedStatus_s();
 
@@ -2244,7 +2244,7 @@ private:
                     selected_member_ = 0x00000007;
                     member_destructor_ = [&]()
                     {
-                        m_deadline_missed_status.~DeadlineMissedStatus_s();\
+                        m_deadline_missed_status.~DeadlineMissedStatus_s();
                     };
                     new(&m_deadline_missed_status) DeadlineMissedStatus_s();
 
@@ -2266,7 +2266,7 @@ private:
                     member_destructor_ = [&]()
                     {
                         using namespace eprosima::fastdds::statistics;
-                        m_sample_lost_status.~SampleLostStatus_s();\
+                        m_sample_lost_status.~SampleLostStatus_s();
                     };
                     new(&m_sample_lost_status) SampleLostStatus_s();
 

@@ -402,7 +402,7 @@ private:
                     member_destructor_ = [&]()
                     {
                         using namespace eprosima::fastdds::dds::xtypes;
-                        m_hash.~EquivalenceHash();\
+                        m_hash.~EquivalenceHash();
                     };
                     new(&m_hash) EquivalenceHash();
 
@@ -2828,7 +2828,7 @@ public:
         selected_member_ = 0x00000001;
         member_destructor_ = [&]()
         {
-            m_no_value.~Dummy();\
+            m_no_value.~Dummy();
         };
         new(&m_no_value) Dummy();
 
@@ -3968,7 +3968,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]()
                     {
-                        m_no_value.~Dummy();\
+                        m_no_value.~Dummy();
                     };
                     new(&m_no_value) Dummy();
 
@@ -3989,7 +3989,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = [&]()
                     {
-                        m_string_sdefn.~StringSTypeDefn();\
+                        m_string_sdefn.~StringSTypeDefn();
                     };
                     new(&m_string_sdefn) StringSTypeDefn();
 
@@ -4010,7 +4010,7 @@ private:
                     selected_member_ = 0x00000003;
                     member_destructor_ = [&]()
                     {
-                        m_string_ldefn.~StringLTypeDefn();\
+                        m_string_ldefn.~StringLTypeDefn();
                     };
                     new(&m_string_ldefn) StringLTypeDefn();
 
@@ -4031,7 +4031,7 @@ private:
                     selected_member_ = 0x00000004;
                     member_destructor_ = [&]()
                     {
-                        m_seq_sdefn.~PlainSequenceSElemDefn();\
+                        m_seq_sdefn.~PlainSequenceSElemDefn();
                     };
                     new(&m_seq_sdefn) PlainSequenceSElemDefn();
 
@@ -4052,7 +4052,7 @@ private:
                     selected_member_ = 0x00000005;
                     member_destructor_ = [&]()
                     {
-                        m_seq_ldefn.~PlainSequenceLElemDefn();\
+                        m_seq_ldefn.~PlainSequenceLElemDefn();
                     };
                     new(&m_seq_ldefn) PlainSequenceLElemDefn();
 
@@ -4073,7 +4073,7 @@ private:
                     selected_member_ = 0x00000006;
                     member_destructor_ = [&]()
                     {
-                        m_array_sdefn.~PlainArraySElemDefn();\
+                        m_array_sdefn.~PlainArraySElemDefn();
                     };
                     new(&m_array_sdefn) PlainArraySElemDefn();
 
@@ -4094,7 +4094,7 @@ private:
                     selected_member_ = 0x00000007;
                     member_destructor_ = [&]()
                     {
-                        m_array_ldefn.~PlainArrayLElemDefn();\
+                        m_array_ldefn.~PlainArrayLElemDefn();
                     };
                     new(&m_array_ldefn) PlainArrayLElemDefn();
 
@@ -4115,7 +4115,7 @@ private:
                     selected_member_ = 0x00000008;
                     member_destructor_ = [&]()
                     {
-                        m_map_sdefn.~PlainMapSTypeDefn();\
+                        m_map_sdefn.~PlainMapSTypeDefn();
                     };
                     new(&m_map_sdefn) PlainMapSTypeDefn();
 
@@ -4136,7 +4136,7 @@ private:
                     selected_member_ = 0x00000009;
                     member_destructor_ = [&]()
                     {
-                        m_map_ldefn.~PlainMapLTypeDefn();\
+                        m_map_ldefn.~PlainMapLTypeDefn();
                     };
                     new(&m_map_ldefn) PlainMapLTypeDefn();
 
@@ -4157,7 +4157,7 @@ private:
                     selected_member_ = 0x0000000a;
                     member_destructor_ = [&]()
                     {
-                        m_sc_component_id.~StronglyConnectedComponentId();\
+                        m_sc_component_id.~StronglyConnectedComponentId();
                     };
                     new(&m_sc_component_id) StronglyConnectedComponentId();
 
@@ -4179,7 +4179,7 @@ private:
                     member_destructor_ = [&]()
                     {
                         using namespace eprosima::fastdds::dds::xtypes;
-                        m_equivalence_hash.~EquivalenceHash();\
+                        m_equivalence_hash.~EquivalenceHash();
                     };
                     new(&m_equivalence_hash) EquivalenceHash();
 
@@ -4200,7 +4200,7 @@ private:
                     selected_member_ = 0x0000000c;
                     member_destructor_ = [&]()
                     {
-                        m_extended_defn.~ExtendedTypeDefn();\
+                        m_extended_defn.~ExtendedTypeDefn();
                     };
                     new(&m_extended_defn) ExtendedTypeDefn();
 
@@ -4349,7 +4349,7 @@ public:
         selected_member_ = 0x00000013;
         member_destructor_ = [&]()
         {
-            m_extended_value.~ExtendedAnnotationParameterValue();\
+            m_extended_value.~ExtendedAnnotationParameterValue();
         };
         new(&m_extended_value) ExtendedAnnotationParameterValue();
 
@@ -6143,7 +6143,7 @@ private:
                     selected_member_ = 0x00000011;
                     member_destructor_ = [&]()
                     {
-                        m_string8_value.~fixed_string();\
+                        m_string8_value.~fixed_string();
                     };
                     new(&m_string8_value) eprosima::fastcdr::fixed_string<ANNOTATION_STR_VALUE_MAX_LEN>();
 
@@ -6164,7 +6164,7 @@ private:
                     selected_member_ = 0x00000012;
                     member_destructor_ = [&]()
                     {
-                        m_string16_value.~basic_string();\
+                        m_string16_value.~basic_string();
                     };
                     new(&m_string16_value) std::wstring();
 
@@ -6185,7 +6185,7 @@ private:
                     selected_member_ = 0x00000013;
                     member_destructor_ = [&]()
                     {
-                        m_extended_value.~ExtendedAnnotationParameterValue();\
+                        m_extended_value.~ExtendedAnnotationParameterValue();
                     };
                     new(&m_extended_value) ExtendedAnnotationParameterValue();
 
@@ -20778,7 +20778,7 @@ public:
         selected_member_ = 0x0000000b;
         member_destructor_ = [&]()
         {
-            m_extended_type.~CompleteExtendedType();\
+            m_extended_type.~CompleteExtendedType();
         };
         new(&m_extended_type) CompleteExtendedType();
 
@@ -21820,7 +21820,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]()
                     {
-                        m_alias_type.~CompleteAliasType();\
+                        m_alias_type.~CompleteAliasType();
                     };
                     new(&m_alias_type) CompleteAliasType();
 
@@ -21841,7 +21841,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = [&]()
                     {
-                        m_annotation_type.~CompleteAnnotationType();\
+                        m_annotation_type.~CompleteAnnotationType();
                     };
                     new(&m_annotation_type) CompleteAnnotationType();
 
@@ -21862,7 +21862,7 @@ private:
                     selected_member_ = 0x00000003;
                     member_destructor_ = [&]()
                     {
-                        m_struct_type.~CompleteStructType();\
+                        m_struct_type.~CompleteStructType();
                     };
                     new(&m_struct_type) CompleteStructType();
 
@@ -21883,7 +21883,7 @@ private:
                     selected_member_ = 0x00000004;
                     member_destructor_ = [&]()
                     {
-                        m_union_type.~CompleteUnionType();\
+                        m_union_type.~CompleteUnionType();
                     };
                     new(&m_union_type) CompleteUnionType();
 
@@ -21904,7 +21904,7 @@ private:
                     selected_member_ = 0x00000005;
                     member_destructor_ = [&]()
                     {
-                        m_bitset_type.~CompleteBitsetType();\
+                        m_bitset_type.~CompleteBitsetType();
                     };
                     new(&m_bitset_type) CompleteBitsetType();
 
@@ -21925,7 +21925,7 @@ private:
                     selected_member_ = 0x00000006;
                     member_destructor_ = [&]()
                     {
-                        m_sequence_type.~CompleteSequenceType();\
+                        m_sequence_type.~CompleteSequenceType();
                     };
                     new(&m_sequence_type) CompleteSequenceType();
 
@@ -21946,7 +21946,7 @@ private:
                     selected_member_ = 0x00000007;
                     member_destructor_ = [&]()
                     {
-                        m_array_type.~CompleteArrayType();\
+                        m_array_type.~CompleteArrayType();
                     };
                     new(&m_array_type) CompleteArrayType();
 
@@ -21967,7 +21967,7 @@ private:
                     selected_member_ = 0x00000008;
                     member_destructor_ = [&]()
                     {
-                        m_map_type.~CompleteMapType();\
+                        m_map_type.~CompleteMapType();
                     };
                     new(&m_map_type) CompleteMapType();
 
@@ -21988,7 +21988,7 @@ private:
                     selected_member_ = 0x00000009;
                     member_destructor_ = [&]()
                     {
-                        m_enumerated_type.~CompleteEnumeratedType();\
+                        m_enumerated_type.~CompleteEnumeratedType();
                     };
                     new(&m_enumerated_type) CompleteEnumeratedType();
 
@@ -22009,7 +22009,7 @@ private:
                     selected_member_ = 0x0000000a;
                     member_destructor_ = [&]()
                     {
-                        m_bitmask_type.~CompleteBitmaskType();\
+                        m_bitmask_type.~CompleteBitmaskType();
                     };
                     new(&m_bitmask_type) CompleteBitmaskType();
 
@@ -22030,7 +22030,7 @@ private:
                     selected_member_ = 0x0000000b;
                     member_destructor_ = [&]()
                     {
-                        m_extended_type.~CompleteExtendedType();\
+                        m_extended_type.~CompleteExtendedType();
                     };
                     new(&m_extended_type) CompleteExtendedType();
 
@@ -22172,7 +22172,7 @@ public:
         selected_member_ = 0x0000000b;
         member_destructor_ = [&]()
         {
-            m_extended_type.~MinimalExtendedType();\
+            m_extended_type.~MinimalExtendedType();
         };
         new(&m_extended_type) MinimalExtendedType();
 
@@ -23214,7 +23214,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]()
                     {
-                        m_alias_type.~MinimalAliasType();\
+                        m_alias_type.~MinimalAliasType();
                     };
                     new(&m_alias_type) MinimalAliasType();
 
@@ -23235,7 +23235,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = [&]()
                     {
-                        m_annotation_type.~MinimalAnnotationType();\
+                        m_annotation_type.~MinimalAnnotationType();
                     };
                     new(&m_annotation_type) MinimalAnnotationType();
 
@@ -23256,7 +23256,7 @@ private:
                     selected_member_ = 0x00000003;
                     member_destructor_ = [&]()
                     {
-                        m_struct_type.~MinimalStructType();\
+                        m_struct_type.~MinimalStructType();
                     };
                     new(&m_struct_type) MinimalStructType();
 
@@ -23277,7 +23277,7 @@ private:
                     selected_member_ = 0x00000004;
                     member_destructor_ = [&]()
                     {
-                        m_union_type.~MinimalUnionType();\
+                        m_union_type.~MinimalUnionType();
                     };
                     new(&m_union_type) MinimalUnionType();
 
@@ -23298,7 +23298,7 @@ private:
                     selected_member_ = 0x00000005;
                     member_destructor_ = [&]()
                     {
-                        m_bitset_type.~MinimalBitsetType();\
+                        m_bitset_type.~MinimalBitsetType();
                     };
                     new(&m_bitset_type) MinimalBitsetType();
 
@@ -23319,7 +23319,7 @@ private:
                     selected_member_ = 0x00000006;
                     member_destructor_ = [&]()
                     {
-                        m_sequence_type.~MinimalSequenceType();\
+                        m_sequence_type.~MinimalSequenceType();
                     };
                     new(&m_sequence_type) MinimalSequenceType();
 
@@ -23340,7 +23340,7 @@ private:
                     selected_member_ = 0x00000007;
                     member_destructor_ = [&]()
                     {
-                        m_array_type.~MinimalArrayType();\
+                        m_array_type.~MinimalArrayType();
                     };
                     new(&m_array_type) MinimalArrayType();
 
@@ -23361,7 +23361,7 @@ private:
                     selected_member_ = 0x00000008;
                     member_destructor_ = [&]()
                     {
-                        m_map_type.~MinimalMapType();\
+                        m_map_type.~MinimalMapType();
                     };
                     new(&m_map_type) MinimalMapType();
 
@@ -23382,7 +23382,7 @@ private:
                     selected_member_ = 0x00000009;
                     member_destructor_ = [&]()
                     {
-                        m_enumerated_type.~MinimalEnumeratedType();\
+                        m_enumerated_type.~MinimalEnumeratedType();
                     };
                     new(&m_enumerated_type) MinimalEnumeratedType();
 
@@ -23403,7 +23403,7 @@ private:
                     selected_member_ = 0x0000000a;
                     member_destructor_ = [&]()
                     {
-                        m_bitmask_type.~MinimalBitmaskType();\
+                        m_bitmask_type.~MinimalBitmaskType();
                     };
                     new(&m_bitmask_type) MinimalBitmaskType();
 
@@ -23424,7 +23424,7 @@ private:
                     selected_member_ = 0x0000000b;
                     member_destructor_ = [&]()
                     {
-                        m_extended_type.~MinimalExtendedType();\
+                        m_extended_type.~MinimalExtendedType();
                     };
                     new(&m_extended_type) MinimalExtendedType();
 
@@ -23796,7 +23796,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]()
                     {
-                        m_complete.~CompleteTypeObject();\
+                        m_complete.~CompleteTypeObject();
                     };
                     new(&m_complete) CompleteTypeObject();
 
@@ -23817,7 +23817,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = [&]()
                     {
-                        m_minimal.~MinimalTypeObject();\
+                        m_minimal.~MinimalTypeObject();
                     };
                     new(&m_minimal) MinimalTypeObject();
 

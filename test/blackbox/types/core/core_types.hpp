@@ -4105,7 +4105,7 @@ public:
         selected_member_ = 0x00000005;
         member_destructor_ = [&]()
         {
-            m_unknown_submsg.~SubmessageHeader();\
+            m_unknown_submsg.~SubmessageHeader();
         };
         new(&m_unknown_submsg) SubmessageHeader();
 
@@ -4667,7 +4667,7 @@ private:
                     selected_member_ = 0x00000001;
                     member_destructor_ = [&]()
                     {
-                        m_heartbeat_submsg.~HeartBeatSubmessage();\
+                        m_heartbeat_submsg.~HeartBeatSubmessage();
                     };
                     new(&m_heartbeat_submsg) HeartBeatSubmessage();
 
@@ -4688,7 +4688,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = [&]()
                     {
-                        m_info_ts_submsg.~InfoTimestampSubmessage();\
+                        m_info_ts_submsg.~InfoTimestampSubmessage();
                     };
                     new(&m_info_ts_submsg) InfoTimestampSubmessage();
 
@@ -4709,7 +4709,7 @@ private:
                     selected_member_ = 0x00000003;
                     member_destructor_ = [&]()
                     {
-                        m_info_src_submsg.~InfoSourceSubmessage();\
+                        m_info_src_submsg.~InfoSourceSubmessage();
                     };
                     new(&m_info_src_submsg) InfoSourceSubmessage();
 
@@ -4730,7 +4730,7 @@ private:
                     selected_member_ = 0x00000004;
                     member_destructor_ = [&]()
                     {
-                        m_info_dst_submsg.~InfoDestinationSubmessage();\
+                        m_info_dst_submsg.~InfoDestinationSubmessage();
                     };
                     new(&m_info_dst_submsg) InfoDestinationSubmessage();
 
@@ -4751,7 +4751,7 @@ private:
                     selected_member_ = 0x00000005;
                     member_destructor_ = [&]()
                     {
-                        m_unknown_submsg.~SubmessageHeader();\
+                        m_unknown_submsg.~SubmessageHeader();
                     };
                     new(&m_unknown_submsg) SubmessageHeader();
 

@@ -43,48 +43,6 @@ namespace Fixed_String_Module
     typedef eprosima::fastcdr::fixed_string<20> fixed_string_in_module;
 } // namespace Fixed_String_Module
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*!
  * @brief This class represents the TopicDataType of the type UnionShort defined by the user in the IDL file.
  * @ingroup unions
@@ -3405,8 +3363,6 @@ private:
     unsigned char* key_buffer_;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type UnionShortExtraMember defined by the user in the IDL file.

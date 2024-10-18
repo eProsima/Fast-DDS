@@ -1054,7 +1054,7 @@ private:
                     selected_member_ = 0x00000010;
                     member_destructor_ = [&]()
                     {
-                        m_first.~PrimitivesStruct();\
+                        m_first.~PrimitivesStruct();
                     };
                     new(&m_first) PrimitivesStruct();
 
@@ -1110,7 +1110,7 @@ public:
         selected_member_ = 0x00000002;
         member_destructor_ = [&]()
         {
-            m_fourth.~InnerUnion();\
+            m_fourth.~InnerUnion();
         };
         new(&m_fourth) InnerUnion();
 
@@ -1440,7 +1440,7 @@ private:
                     selected_member_ = 0x00000002;
                     member_destructor_ = [&]()
                     {
-                        m_fourth.~InnerUnion();\
+                        m_fourth.~InnerUnion();
                     };
                     new(&m_fourth) InnerUnion();
 
