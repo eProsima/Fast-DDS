@@ -27,6 +27,8 @@
 #include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
 
+#include <rtps/reader/LocalReaderPointer.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -202,9 +204,9 @@ public:
         return false;
     }
 
-    BaseReader* local_reader()
+    LocalReaderPointer::Instance local_reader()
     {
-        return nullptr;
+        return LocalReaderPointer::Instance(std::shared_ptr<LocalReaderPointer>());
     }
 
     bool is_datasharing_reader() const
