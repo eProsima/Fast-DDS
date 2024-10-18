@@ -1484,7 +1484,6 @@ namespace eprosima {
                         register_Time_t_type_identifier(type_identifiers_);
                     }
 
-
                     SequenceNumberSetPubSubType::SequenceNumberSetPubSubType()
                     {
                         set_name("eprosima::fastdds::rtps::core::detail::SequenceNumberSet");
@@ -2027,8 +2026,6 @@ namespace eprosima {
                     {
                         register_Duration_t_type_identifier(type_identifiers_);
                     }
-
-
 
                     StatusInfo_tPubSubType::StatusInfo_tPubSubType()
                     {
@@ -3844,7 +3841,6 @@ namespace eprosima {
                 {
                     register_InfoTimestampSubmessage_type_identifier(type_identifiers_);
                 }
-
 
                 RTPSMessagePubSubType::RTPSMessagePubSubType()
                 {

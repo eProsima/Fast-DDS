@@ -68,7 +68,6 @@ eProsima_user_DllExport void register_alias_short_moduled_type_identifier(
 
 
 
-
 /**
  * @brief Register ModuleConstsLiteralsStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.

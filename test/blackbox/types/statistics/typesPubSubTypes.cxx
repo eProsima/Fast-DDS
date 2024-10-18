@@ -2574,7 +2574,6 @@ namespace eprosima {
             namespace EventKind {
             } // namespace EventKind
 
-
         } // namespace statistics
 
     } // namespace fastdds

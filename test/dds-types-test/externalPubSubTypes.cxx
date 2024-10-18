@@ -4215,7 +4215,6 @@ void struct_external_optionalPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 recursive_union_containerPubSubType::recursive_union_containerPubSubType()
 {
     set_name("recursive_union_container");
@@ -4398,7 +4397,6 @@ void recursive_union_containerPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 recursive_test_1PubSubType::recursive_test_1PubSubType()
 {
     set_name("recursive_test_1");
@@ -4580,8 +4578,6 @@ void recursive_test_1PubSubType::register_type_object_representation()
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
 }
-
-
 
 recursive_structurePubSubType::recursive_structurePubSubType()
 {

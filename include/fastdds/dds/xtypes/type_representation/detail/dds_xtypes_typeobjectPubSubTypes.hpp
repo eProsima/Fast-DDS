@@ -48,65 +48,17 @@ namespace xtypes {
 
 
 typedef uint8_t EquivalenceKind;
-
-
-
 typedef uint8_t TypeKind;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 typedef uint8_t TypeIdentiferKind;
-
-
-
-
-
-
-
-
-
-
-
-
 typedef eprosima::fastcdr::fixed_string<MEMBER_NAME_MAX_LENGTH> MemberName;
-
 typedef eprosima::fastcdr::fixed_string<TYPE_NAME_MAX_LENGTH> QualifiedTypeName;
 typedef uint8_t PrimitiveTypeId;
 typedef std::array<uint8_t, 14> EquivalenceHash;
 typedef std::array<uint8_t, 4> NameHash;
 typedef uint32_t LBound;
 typedef std::vector<eprosima::fastdds::dds::xtypes::LBound> LBoundSeq;
-
 typedef uint8_t SBound;
 typedef std::vector<eprosima::fastdds::dds::xtypes::SBound> SBoundSeq;
-
-
-
 typedef eprosima::fastdds::dds::xtypes::MemberFlag CollectionElementFlag;
 typedef eprosima::fastdds::dds::xtypes::MemberFlag StructMemberFlag;
 typedef eprosima::fastdds::dds::xtypes::MemberFlag UnionMemberFlag;
@@ -116,8 +68,6 @@ typedef eprosima::fastdds::dds::xtypes::MemberFlag AnnotationParameterFlag;
 typedef eprosima::fastdds::dds::xtypes::MemberFlag AliasMemberFlag;
 typedef eprosima::fastdds::dds::xtypes::MemberFlag BitflagFlag;
 typedef eprosima::fastdds::dds::xtypes::MemberFlag BitsetMemberFlag;
-
-
 typedef eprosima::fastdds::dds::xtypes::TypeFlag StructTypeFlag;
 typedef eprosima::fastdds::dds::xtypes::TypeFlag UnionTypeFlag;
 typedef eprosima::fastdds::dds::xtypes::TypeFlag CollectionTypeFlag;
@@ -126,8 +76,6 @@ typedef eprosima::fastdds::dds::xtypes::TypeFlag AliasTypeFlag;
 typedef eprosima::fastdds::dds::xtypes::TypeFlag EnumTypeFlag;
 typedef eprosima::fastdds::dds::xtypes::TypeFlag BitmaskTypeFlag;
 typedef eprosima::fastdds::dds::xtypes::TypeFlag BitsetTypeFlag;
-
-
 
 #ifndef SWIG
 namespace detail {
@@ -1225,11 +1173,8 @@ private:
     }
 
 };
-
 typedef std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifier> TypeIdentifierSeq;
 typedef uint32_t MemberId;
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type ExtendedAnnotationParameterValue defined by the user in the IDL file.
@@ -1311,7 +1256,6 @@ private:
     unsigned char* key_buffer_;
 
 };
-
 
 /*!
  * @brief This class represents the TopicDataType of the type AppliedAnnotationParameter defined by the user in the IDL file.
@@ -7882,7 +7826,6 @@ private:
 
 };
 
-
 /*!
  * @brief This class represents the TopicDataType of the type MinimalExtendedType defined by the user in the IDL file.
  * @ingroup dds_xtypes_typeobject
@@ -7963,8 +7906,6 @@ private:
     unsigned char* key_buffer_;
 
 };
-
-
 typedef std::vector<eprosima::fastdds::dds::xtypes::TypeObject> TypeObjectSeq;
 typedef eprosima::fastdds::dds::xtypes::TypeObjectSeq StronglyConnectedComponent;
 
