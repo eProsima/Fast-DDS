@@ -133,7 +133,7 @@ public:
         bool has_it = structs_.count(ident) > 0
                 || unions_.count(ident) > 0
                 || aliases_.count(ident) > 0
-                //|| constants_.count(ident) > 0
+                || constants_.count(ident) > 0
                 || enumerations_32_.count(ident) > 0
                 || inner_.count(ident) > 0;
 
@@ -357,11 +357,40 @@ public:
     //     return result.second;
     // }
 
-    // bool is_const_from_enum(
-    //         const std::string& name) const
-    // {
-    //     return std::find(from_enum_.begin(), from_enum_.end(), name) != from_enum_.end();
-    // }
+    DynamicData::_ref_type constant(
+            const std::string& name) const
+    {
+        DynamicData::_ref_type xdata;
+
+        // Solve scope
+        PairModuleSymbol module = resolve_scope(name);
+        if (module.first == nullptr)
+        {
+            return xdata;
+        }
+
+        auto it = module.first->constants_.find(module.second);
+        if (it != module.first->constants_.end())
+        {
+            return it->second;
+        }
+
+        return xdata;
+    }
+
+    bool has_constant(
+            const std::string& name) const
+    {
+        // Solve scope
+        PairModuleSymbol module = resolve_scope(name);
+        if (module.first == nullptr)
+        {
+            return false;
+        }
+
+        auto it = module.first->constants_.find(module.second);
+        return it != module.first->constants_.end();
+    }
 
     bool create_constant(
             const std::string& name,

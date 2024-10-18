@@ -211,8 +211,13 @@ struct action<identifier>
             {
                 if (!state["type"].empty())
                 {
-                    // The identifier is a member name
-                    state["current_struct_member_name"] = identifier_name;
+                    // In case a struct member is an array and the array size is an identifier,
+                    // use below check to avoid overwriting the member name with the size identifier.
+                    if (state["current_struct_member_name"].empty())
+                    {
+                        // The identifier is a member name
+                        state["current_struct_member_name"] = identifier_name;
+                    }
                 }
                 else
                 {
@@ -1221,7 +1226,17 @@ struct action<struct_def>
                 std::vector<uint32_t> sizes;
                 for (const auto& size : array_sizes)
                 {
-                    sizes.push_back(static_cast<uint32_t>(std::stoul(size)));
+                    if (module.has_constant(size))
+                    {
+                        DynamicData::_ref_type xdata = module.constant(size);
+                        int64_t size_val = 0;
+                        xdata->get_int64_value(size_val, MEMBER_ID_INVALID);
+                        sizes.push_back(static_cast<uint32_t>(size_val));
+                    }
+                    else
+                    {
+                        sizes.push_back(static_cast<uint32_t>(std::stoul(size)));
+                    }
                 }
 
                 // Create the multi-dimensional array type
