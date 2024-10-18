@@ -38,7 +38,8 @@ struct EntityMock
         return local_pointer;
     }
 
-    void dummy_process_data(void*)
+    void dummy_process_data(
+            void*)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         ++n_times_data_processed;
@@ -72,18 +73,18 @@ struct EntityOwner
     void spawn_routine()
     {
         th = std::thread([&]()
-        {
-            RefCountedPointer<EntityMock>::Instance entity_instance(entity_ptr);
-            if (entity_instance)
-            {
-                entity_instance->dummy_process_data(nullptr);
-                routine_status = RoutineStatus::SUCCESS;
-            }
-            else
-            {
-                routine_status = RoutineStatus::FAILURE;
-            }
-        });
+                        {
+                            RefCountedPointer<EntityMock>::Instance entity_instance(entity_ptr);
+                            if (entity_instance)
+                            {
+                                entity_instance->dummy_process_data(nullptr);
+                                routine_status = RoutineStatus::SUCCESS;
+                            }
+                            else
+                            {
+                                routine_status = RoutineStatus::FAILURE;
+                            }
+                        });
     }
 
     void join()
