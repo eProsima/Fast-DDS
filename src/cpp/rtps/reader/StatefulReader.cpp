@@ -1500,7 +1500,7 @@ bool StatefulReader::matched_writers_guids(
     guids.reserve(matched_writers_.size());
     for (WriterProxy* writer : matched_writers_)
     {
-        guids.push_back(writer->guid());
+        guids.emplace_back(writer->guid());
     }
     return true;
 }
