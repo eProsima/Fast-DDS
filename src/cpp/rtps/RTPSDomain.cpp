@@ -690,7 +690,7 @@ RTPSParticipantImpl* RTPSDomainImpl::find_local_participant(
     return nullptr;
 }
 
-BaseReader* RTPSDomainImpl::find_local_reader(
+std::shared_ptr<LocalReaderPointer> RTPSDomainImpl::find_local_reader(
         const GUID_t& reader_guid)
 {
     auto instance = get_instance();
@@ -704,7 +704,7 @@ BaseReader* RTPSDomainImpl::find_local_reader(
         }
     }
 
-    return nullptr;
+    return std::shared_ptr<LocalReaderPointer>(nullptr);
 }
 
 BaseWriter* RTPSDomainImpl::find_local_writer(
