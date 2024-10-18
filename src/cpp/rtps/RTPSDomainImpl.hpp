@@ -175,7 +175,7 @@ public:
      *
      * @returns A pointer to a local reader given its endpoint guid, or nullptr if not found.
      */
-    static BaseReader* find_local_reader(
+    static std::shared_ptr<LocalReaderPointer> find_local_reader(
             const GUID_t& reader_guid);
 
     /**
