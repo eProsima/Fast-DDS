@@ -873,12 +873,12 @@ bool EDP::pairingReader(
                 {
                     reader->get_listener()->on_requested_incompatible_qos(reader, incompatible_qos);
 #ifdef FASTDDS_STATISTICS
-                auto proxy_observer = mp_PDP->get_proxy_observer();
-                // notify monitor service of a qos incompatibility
-                if (nullptr != proxy_observer)
-                {
-                    proxy_observer->on_incompatible_qos_matching(R->getGuid(), wdatait->guid(), incompatible_qos);
-                }
+                    auto proxy_observer = mp_PDP->get_proxy_observer();
+                    // notify monitor service of a qos incompatibility
+                    if (nullptr != proxy_observer)
+                    {
+                        proxy_observer->on_incompatible_qos_matching(R->getGuid(), wdatait->guid(), incompatible_qos);
+                    }
 #endif // ifdef FASTDDS_STATISTICS
                 }
 
@@ -973,12 +973,12 @@ bool EDP::pairingWriter(
                 {
                     writer->get_listener()->on_offered_incompatible_qos(writer, incompatible_qos);
 #ifdef FASTDDS_STATISTICS
-                auto proxy_observer = mp_PDP->get_proxy_observer();
-                // notify monitor service of a qos incompatibility
-                if (nullptr != proxy_observer)
-                {
-                    proxy_observer->on_incompatible_qos_matching(W->getGuid(), rdatait->guid(), incompatible_qos);
-                }
+                    auto proxy_observer = mp_PDP->get_proxy_observer();
+                    // notify monitor service of a qos incompatibility
+                    if (nullptr != proxy_observer)
+                    {
+                        proxy_observer->on_incompatible_qos_matching(W->getGuid(), rdatait->guid(), incompatible_qos);
+                    }
 #endif // ifdef FASTDDS_STATISTICS
                 }
 
@@ -1060,7 +1060,8 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
                             // notify monitor service of a qos incompatibility
                             if (nullptr != proxy_observer)
                             {
-                                proxy_observer->on_incompatible_qos_matching(w.getGuid(), rdata->guid(), incompatible_qos);
+                                proxy_observer->on_incompatible_qos_matching(w.getGuid(), rdata->guid(),
+                                incompatible_qos);
                             }
 #endif // ifdef FASTDDS_STATISTICS
                         }
@@ -1136,7 +1137,8 @@ bool EDP::pairing_reader_proxy_with_local_writer(
                                 // notify monitor service of a qos incompatibility
                                 if (nullptr != proxy_observer)
                                 {
-                                    proxy_observer->on_incompatible_qos_matching(local_writer, rdata.guid(), incompatible_qos);
+                                    proxy_observer->on_incompatible_qos_matching(local_writer, rdata.guid(),
+                                    incompatible_qos);
                                 }
 #endif // ifdef FASTDDS_STATISTICS
                             }
@@ -1267,7 +1269,8 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
                             // notify monitor service of a qos incompatibility
                             if (nullptr != proxy_observer)
                             {
-                                proxy_observer->on_incompatible_qos_matching(r.getGuid(), wdata->guid(), incompatible_qos);
+                                proxy_observer->on_incompatible_qos_matching(r.getGuid(), wdata->guid(),
+                                incompatible_qos);
                             }
 #endif // ifdef FASTDDS_STATISTICS
                         }
@@ -1343,7 +1346,8 @@ bool EDP::pairing_writer_proxy_with_local_reader(
                                 // notify monitor service of a qos incompatibility
                                 if (nullptr != proxy_observer)
                                 {
-                                    proxy_observer->on_incompatible_qos_matching(local_reader, wdata.guid(), incompatible_qos);
+                                    proxy_observer->on_incompatible_qos_matching(local_reader, wdata.guid(),
+                                    incompatible_qos);
                                 }
 #endif // ifdef FASTDDS_STATISTICS
                             }
