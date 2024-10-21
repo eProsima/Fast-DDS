@@ -974,10 +974,10 @@ TEST(DDSBasic, successful_destruction_among_intraprocess_participants)
             ASSERT_TRUE(reception_participants.back()->init_publisher(0u));
         }
 
-        participant_1->wait_discovery(std::chrono::seconds::zero(), num_reception_participants, true);
+        participant_1->wait_discovery(std::chrono::seconds::zero(), (uint8_t)num_reception_participants, true);
 
-        participant_1->pub_wait_discovery(num_reception_participants);
-        participant_1->sub_wait_discovery(num_reception_participants);
+        participant_1->pub_wait_discovery((unsigned int)num_reception_participants);
+        participant_1->sub_wait_discovery((unsigned int)num_reception_participants);
 
         auto data_12 = default_helloworld_data_generator();
 
