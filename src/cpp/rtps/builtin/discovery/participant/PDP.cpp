@@ -808,6 +808,15 @@ bool PDP::removeReaderProxyData(
                     listener->on_reader_discovery(participant, reason, info, should_be_ignored);
                 }
 
+#ifdef FASTDDS_STATISTICS
+                auto proxy_observer = get_proxy_observer();
+                // notify monitor service
+                if (nullptr != proxy_observer)
+                {
+                    proxy_observer->on_remote_proxy_data_removed(pR->guid());
+                }
+#endif // ifdef FASTDDS_STATISTICS
+
                 // Clear reader proxy data and move to pool in order to allow reuse
                 pR->clear();
                 pit->m_readers->erase(rit);
@@ -847,6 +856,15 @@ bool PDP::removeWriterProxyData(
                     from_proxy_to_builtin(*pW, info);
                     listener->on_writer_discovery(participant, status, info, should_be_ignored);
                 }
+
+#ifdef FASTDDS_STATISTICS
+                auto proxy_observer = get_proxy_observer();
+                // notify monitor service
+                if (nullptr != get_proxy_observer())
+                {
+                    proxy_observer->on_remote_proxy_data_removed(pW->guid());
+                }
+#endif // ifdef FASTDDS_STATISTICS
 
                 // Clear writer proxy data and move to pool in order to allow reuse
                 pW->clear();
