@@ -265,7 +265,7 @@ private:
     MonitorServiceStatusDataPubSubType type_;
 
     std::map<fastdds::rtps::GUID_t, ExtendedIncompatibleQoSStatusSeq_s>
-        extended_incompatible_qos_collection_;
+    extended_incompatible_qos_collection_;
 
     std::mutex extended_incompatible_qos_mtx_;
 };
