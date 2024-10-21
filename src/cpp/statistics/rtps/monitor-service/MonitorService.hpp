@@ -71,6 +71,8 @@ class MonitorService
 {
     static constexpr int MIN_TIME_BETWEEN_PUBS_MS = 500;
 
+    friend class MonitorServiceListener;
+
 public:
 
     using endpoint_creator_t = std::function<bool (fastdds::rtps::RTPSWriter**,
@@ -257,6 +259,13 @@ private:
     endpoint_registrator_t endpoint_registrator_;
 
     MonitorServiceStatusDataPubSubType type_;
+
+    // Stores the current extended incompatible qos status
+    // of local entities with remote entities and their policies.
+    std::map<fastdds::rtps::GUID_t, ExtendedIncompatibleQoSStatusSeq_s>
+        extended_incompatible_qos_collection_;
+
+    std::mutex extended_incompatible_qos_mtx_;
 };
 
 #endif // FASTDDS_STATISTICS

@@ -159,6 +159,14 @@ bool MonitorService::disable_monitor_service()
 bool MonitorService::remove_local_entity(
         const fastdds::rtps::EntityId_t& entity_id)
 {
+    // Remove the entity from the extended incompatible QoS collection
+    {
+        std::lock_guard<std::mutex> lock(extended_incompatible_qos_mtx_);
+        GUID_t entity_guid = {local_participant_guid_.guidPrefix, entity_id};
+        extended_incompatible_qos_collection_.erase(entity_guid);
+    }
+
+    // Remove the entity from the local entities
     {
         std::lock_guard<std::mutex> lock (mtx_);
 
@@ -166,6 +174,11 @@ bool MonitorService::remove_local_entity(
         if (!local_entities_[entity_id].second)
         {
             changed_entities_.push_back(entity_id);
+            if (!timer_active_.load())
+            {
+                event_->restart_timer();
+                timer_active_.store(true);
+            }
         }
 
         //! But remove it from the collection of entities
@@ -324,6 +337,12 @@ bool MonitorService::write_status(
                     {
                         data.sample_lost_status(SampleLostStatus_s{});
                         status_retrieved = status_queryable_.get_monitoring_status(local_entity_guid, data);
+                        break;
+                    }
+                    case StatusKind::EXTENDED_INCOMPATIBLE_QOS:
+                    {
+                        std::lock_guard<std::mutex> lock(extended_incompatible_qos_mtx_);
+                        data.extended_incompatible_qos_status(extended_incompatible_qos_collection_[local_entity_guid]);
                         break;
                     }
                     default:
