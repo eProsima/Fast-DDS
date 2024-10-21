@@ -503,6 +503,28 @@ struct SampleValidator
     {
     }
 
+    void update_processed_msgs(
+            std::list<MonitorServiceType::type>::iterator& it,
+            std::list<MonitorServiceType::type>& expected_msgs,
+            std::atomic<size_t>& processed_count,
+            std::condition_variable& cv,
+            bool& was_expected)
+    {
+        was_expected = false;
+
+        if (it != expected_msgs.end())
+        {
+            was_expected = true;
+            expected_msgs.erase(it);
+            ++processed_count;
+            cv.notify_one();
+        }
+        else if (assert_on_non_expected_msgs_)
+        {
+            ASSERT_TRUE(false);
+        }
+    }
+
     std::bitset<statistics::StatusKind::STATUSES_SIZE> validation_mask;
     bool assert_on_non_expected_msgs_;
 
@@ -688,7 +710,10 @@ struct ProxySampleValidator : public SampleValidator
                                 data.local_entity() == elem.local_entity();
                             });
 
-            if (it == total_msgs.end())
+            bool msgs_was_expected = false;
+            update_processed_msgs(it, total_msgs, processed_count, cv, msgs_was_expected);
+            // If this proxy is not expected, avoid further processing and return
+            if (!msgs_was_expected)
             {
                 std::cout << "Unexpected proxy " << statistics::to_fastdds_type(data.local_entity()) <<
                     data.status_kind() << std::endl;
@@ -696,8 +721,6 @@ struct ProxySampleValidator : public SampleValidator
             }
 
             GUID_t guid = statistics::to_fastdds_type(data.local_entity());
-
-            bool valid_entity = true;
 
             if (!data.value().entity_proxy().empty())
             {
@@ -736,7 +759,6 @@ struct ProxySampleValidator : public SampleValidator
                 }
                 else
                 {
-                    valid_entity = false;
                     EPROSIMA_LOG_ERROR(BBTestsMonitorService, "Invalid entity guid " << guid);
                 }
             }
@@ -744,13 +766,6 @@ struct ProxySampleValidator : public SampleValidator
             {
                 std::cout << "Received Entity disposal of entity "
                           << statistics::to_fastdds_type(data.local_entity()) << std::endl;
-            }
-
-            if (valid_entity)
-            {
-                total_msgs.erase(it);
-                ++processed_count;
-                cv.notify_one();
             }
         }
         else if (validation_mask[statistics::StatusKind::PROXY])
@@ -765,13 +780,8 @@ struct ProxySampleValidator : public SampleValidator
             std::cout << "Received unregistration of instance "
                       << info.instance_handle << std::endl;
 
-            if (assert_on_non_expected_msgs_)
-            {
-                ASSERT_NE(it, total_msgs.end());
-                total_msgs.erase(it);
-                ++processed_count;
-                cv.notify_one();
-            }
+            bool msg_was_expected = false;
+            update_processed_msgs(it, total_msgs, processed_count, cv, msg_was_expected);
         }
     }
 
@@ -877,13 +887,8 @@ struct ConnectionListSampleValidator : public SampleValidator
                                 return false;
                             });
 
-            if (assert_on_non_expected_msgs_)
-            {
-                ASSERT_NE(it, total_msgs.end());
-                total_msgs.erase(it);
-                ++processed_count;
-                cv.notify_one();
-            }
+            bool msg_was_expected = false;
+            update_processed_msgs(it, total_msgs, processed_count, cv, msg_was_expected);
         }
     }
 
@@ -911,13 +916,8 @@ struct IncompatibleQoSSampleValidator : public SampleValidator
                                 == elem.value().incompatible_qos_status().last_policy_id());
                             });
 
-            if (assert_on_non_expected_msgs_)
-            {
-                ASSERT_NE(it, total_msgs.end());
-                total_msgs.erase(it);
-                ++processed_count;
-                cv.notify_one();
-            }
+            bool msg_was_expected = false;
+            update_processed_msgs(it, total_msgs, processed_count, cv, msg_was_expected);
 
             std::cout << "Received QoS Incompatibility on local_entity "
                       << statistics::to_fastdds_type(data.local_entity())
@@ -953,10 +953,10 @@ struct LivelinessLostSampleValidator : public SampleValidator
             if (assert_on_non_expected_msgs_)
             {
                 ASSERT_NE(it, total_msgs.end());
-                total_msgs.erase(it);
-                ++processed_count;
-                cv.notify_one();
             }
+
+            bool msg_was_expected = false;
+            update_processed_msgs(it, total_msgs, processed_count, cv, msg_was_expected);
 
             std::cout << "Received QoS Incompatibility on local_entity "
                       << statistics::to_fastdds_type(data.local_entity())
@@ -994,13 +994,8 @@ struct LivelinessChangedSampleValidator : public SampleValidator
                       << "\n\tNot Alive Count: " << data.value().liveliness_changed_status().not_alive_count()
                       << std::endl;
 
-            if (assert_on_non_expected_msgs_)
-            {
-                ASSERT_NE(it, total_msgs.end());
-                total_msgs.erase(it);
-                ++processed_count;
-                cv.notify_one();
-            }
+            bool msg_was_expected = false;
+            update_processed_msgs(it, total_msgs, processed_count, cv, msg_was_expected);
         }
     }
 
@@ -1038,13 +1033,8 @@ struct DeadlineMissedSampleValidator : public SampleValidator
                       << "\n\tTotal Count: " << data.value().deadline_missed_status().total_count()
                       << std::endl;
 
-            if (assert_on_non_expected_msgs_)
-            {
-                ASSERT_NE(it, total_msgs.end());
-                total_msgs.erase(it);
-                ++processed_count;
-                cv.notify_one();
-            }
+            bool msg_was_expected = false;
+            update_processed_msgs(it, total_msgs, processed_count, cv, msg_was_expected);
         }
     }
 
@@ -1077,13 +1067,8 @@ struct SampleLostSampleValidator : public SampleValidator
                       << std::endl;
 
 
-            if (assert_on_non_expected_msgs_)
-            {
-                ASSERT_NE(it, total_msgs.end());
-                total_msgs.erase(it);
-                ++processed_count;
-                cv.notify_one();
-            }
+            bool msg_was_expected = false;
+            update_processed_msgs(it, total_msgs, processed_count, cv, msg_was_expected);
         }
     }
 
@@ -1117,18 +1102,17 @@ struct ExtendedIncompatibleQoSValidator : public SampleValidator
             for (auto& incompatibility : data.value().extended_incompatible_qos_status())
             {
                 std::cout << "\n\tAgainst remote GUID: " << statistics::to_fastdds_type(incompatibility.remote_guid())
-                          << "\n\tIncom. policies size: " << incompatibility.current_incompatible_policies().size();
+                          << "\n\tIncom. policies: ";
+                for (auto& policy : incompatibility.current_incompatible_policies())
+                {
+                    std::cout << "\n\t\tPolicy: " << policy;
+                }
             }
 
             std::cout << std::endl;
 
-            if (assert_on_non_expected_msgs_)
-            {
-                ASSERT_NE(it, total_msgs.end());
-                total_msgs.erase(it);
-                ++processed_count;
-                cv.notify_one();
-            }
+            bool msg_was_expected = false;
+            update_processed_msgs(it, total_msgs, processed_count, cv, msg_was_expected);
         }
     }
 
