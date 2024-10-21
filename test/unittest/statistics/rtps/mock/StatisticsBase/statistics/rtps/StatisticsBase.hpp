@@ -25,6 +25,8 @@
 #include <set>
 
 #include <fastdds/config.hpp>
+#include <fastdds/rtps/common/Guid.hpp>
+#include <fastdds/rtps/common/Locator.hpp>
 
 #include <statistics/types/types.hpp>
 
@@ -35,25 +37,25 @@ namespace statistics {
 #ifdef FASTDDS_STATISTICS
 
 // auxiliary conversion functions
-detail::Locator_s to_statistics_type(
+inline detail::Locator_s to_statistics_type(
         fastdds::rtps::Locator_t locator)
 {
     return *reinterpret_cast<detail::Locator_s*>(&locator);
 }
 
-fastdds::rtps::Locator_t to_fastdds_type(
+inline fastdds::rtps::Locator_t to_fastdds_type(
         detail::Locator_s locator)
 {
     return *reinterpret_cast<fastdds::rtps::Locator_t*>(&locator);
 }
 
-detail::GUID_s to_statistics_type(
+inline detail::GUID_s to_statistics_type(
         fastdds::rtps::GUID_t guid)
 {
     return *reinterpret_cast<detail::GUID_s*>(&guid);
 }
 
-fastdds::rtps::GUID_t to_fastdds_type(
+inline fastdds::rtps::GUID_t to_fastdds_type(
         detail::GUID_s guid)
 {
     return *reinterpret_cast<fastdds::rtps::GUID_t*>(&guid);
