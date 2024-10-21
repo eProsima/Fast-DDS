@@ -71,6 +71,9 @@ set(SYSTEMINFOTESTS_SOURCE
 set(TREETESTS_SOURCE
     TreeNodeTests.cpp)
 
+set(REF_COUNTED_POINTER_TESTS_SOURCE
+    RefCountedPointerTests.cpp)
+
 include_directories(mock/)
 
 add_executable(StringMatchingTests ${STRINGMATCHINGTESTS_SOURCE})
@@ -177,6 +180,11 @@ add_executable(TreeNodeTests ${TREETESTS_SOURCE})
 target_include_directories(TreeNodeTests PRIVATE ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(TreeNodeTests PUBLIC GTest::gtest)
 gtest_discover_tests(TreeNodeTests)
+
+add_executable(RefCountedPointerTests ${REF_COUNTED_POINTER_TESTS_SOURCE})
+target_include_directories(RefCountedPointerTests PRIVATE ${PROJECT_SOURCE_DIR}/src/cpp)
+target_link_libraries(RefCountedPointerTests PUBLIC GTest::gtest)
+gtest_discover_tests(RefCountedPointerTests)
 
 ###############################################################################
 # Necessary files

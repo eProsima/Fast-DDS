@@ -56,6 +56,7 @@
 #include <rtps/messages/SendBuffersManager.hpp>
 #include <rtps/network/NetworkFactory.hpp>
 #include <rtps/network/ReceiverResource.h>
+#include <rtps/reader/LocalReaderPointer.hpp>
 #include <rtps/resources/ResourceEvent.h>
 #include <statistics/rtps/monitor-service/interfaces/IConnectionsObserver.hpp>
 #include <statistics/rtps/monitor-service/interfaces/IConnectionsQueryable.hpp>
@@ -477,7 +478,7 @@ public:
     /***
      * @returns A pointer to a local reader given its endpoint guid, or nullptr if not found.
      */
-    BaseReader* find_local_reader(
+    std::shared_ptr<LocalReaderPointer> find_local_reader(
             const GUID_t& reader_guid);
 
     /***
