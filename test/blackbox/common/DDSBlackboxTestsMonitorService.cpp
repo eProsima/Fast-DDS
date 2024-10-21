@@ -228,6 +228,7 @@ public:
     {
         if (!writers_.empty())
         {
+            writer_stat_guids_.pop_back();
             return (eprosima::fastdds::dds::RETCODE_OK == publisher_->delete_datawriter(writers_.back()));
         }
 
@@ -238,6 +239,7 @@ public:
     {
         if (!readers_.empty())
         {
+            reader_stat_guids_.pop_back();
             return (eprosima::fastdds::dds::RETCODE_OK == subscriber_->delete_datareader(readers_.back()));
         }
 
