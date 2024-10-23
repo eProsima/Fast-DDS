@@ -24,6 +24,7 @@
 #include <memory>
 #include <mutex>
 #include <regex>
+#include <string>
 #include <thread>
 #include <type_traits>
 #include <unordered_set>
@@ -379,16 +380,66 @@ struct action<wide_char_type>
 };
 
 template<>
+struct action<open_bracket>
+{
+    template<typename Input>
+    static void apply(
+            const Input& /*in*/,
+            Context* /*ctx*/,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
+    {
+        state["evaluated_expr"] = "";
+    }
+
+};
+
+template<>
 struct action<positive_int_const>
 {
     template<typename Input>
     static void apply(
             const Input& in,
-            Context* /*ctx*/,
+            Context* ctx,
             std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
+            std::vector<traits<DynamicData>::ref_type>& operands)
     {
-        state["positive_int_const"] = in.string();
+        Module& module = ctx->module();
+        std::string const_value = in.string();
+
+        if (state.count("evaluated_expr"))
+        {
+            DynamicData::_ref_type xdata;
+            if (!operands.empty())
+            {
+                xdata = operands.back();
+                operands.pop_back();
+                if (!operands.empty())
+                {
+                    throw std::runtime_error("Finished const expression parsing with non-empty operands stack.");
+                }
+            }
+            else if (module.has_constant(const_value))
+            {
+                xdata = module.constant(const_value);
+            }
+            else
+            {
+                throw std::runtime_error("Unknown const expression: " + const_value);
+            }
+
+            int64_t value;
+            xdata->get_int64_value(value, MEMBER_ID_INVALID);
+            if (value < 0)
+            {
+                throw std::runtime_error("Size value is negative: " + std::to_string(value));
+            }
+            state["positive_int_const"] = std::to_string(value);
+        }
+        else
+        {
+            state["positive_int_const"] = const_value;
+        }
     }
 
 };
@@ -415,6 +466,7 @@ struct action<fixed_array_size>
                 state["current_array_sizes"] += "," + state["positive_int_const"];
             }
         }
+        state["evaluated_expr"].erase();
     }
 
 };
@@ -617,9 +669,18 @@ struct action<boolean_literal>
             } \
  \
             DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()}; \
-            DynamicType::_ref_type xtype {factory->get_primitive_type(type_kind)}; \
+            DynamicType::_ref_type xtype; \
+            if (std::string{#id} != "string") \
+            { \
+                xtype = factory->get_primitive_type(type_kind); \
+            } \
+            else \
+            { \
+                xtype = factory->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))->build(); \
+            } \
             DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)}; \
             xdata->set_value(MEMBER_ID_INVALID, value); \
+ \
             if (state.count("evaluated_expr")) \
             { \
                 operands.push_back(xdata); \
@@ -632,6 +693,79 @@ load_literal_action(oct_literal, octal, int64_t, TK_INT64, set_int64_value)
 load_literal_action(hex_literal, hexa, int64_t, TK_INT64, set_int64_value)
 load_literal_action(float_literal, float, long double, TK_FLOAT128, set_float128_value)
 load_literal_action(fixed_pt_literal, fixed, long double, TK_FLOAT128, set_float128_value)
+load_literal_action(character_literal, char8, char, TK_CHAR8, set_char8_value)
+load_literal_action(string_literal, string, std::string, TK_STRING8, set_string_value)
+
+template<>
+struct action<wide_character_literal>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* /*ctx*/,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& operands)
+    {
+        std::cout << "wide_character_literal: " << typeid(wide_character_literal).name()
+                  << " " << in.string() << std::endl;
+
+        if (state.count("evaluated_expr"))
+        {
+            state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"wchar"};
+        }
+
+        wchar_t value = L'\0';
+        std::string content = in.string().substr(2, in.string().size() - 3);
+        if (!content.empty()) {
+            value = static_cast<wchar_t>(content[0]);
+        }
+
+        DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+        DynamicType::_ref_type xtype {factory->get_primitive_type(TK_CHAR16)};
+        DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)};
+        xdata->set_char16_value(MEMBER_ID_INVALID, value);
+
+        if (state.count("evaluated_expr"))
+        {
+            operands.push_back(xdata);
+        }
+    }
+
+};
+
+template<>
+struct action<wide_string_literal>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* /*ctx*/,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& operands)
+    {
+        std::cout << "wide_string_literal: " << typeid(wide_string_literal).name()
+                  << " " << in.string() << std::endl;
+
+        if (state.count("evaluated_expr"))
+        {
+            state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"wstring"};
+        }
+
+        std::string content = in.string().substr(2, in.string().size() - 3);
+        std::wstring value(content.begin(), content.end());
+
+        DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+        DynamicType::_ref_type xtype {factory->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))->build()};
+        DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)};
+        xdata->set_wstring_value(MEMBER_ID_INVALID, value);
+
+        if (state.count("evaluated_expr"))
+        {
+            operands.push_back(xdata);
+        }
+    }
+
+};
 
 #define float_op_action(Rule, id, operation) \
     template<> \
