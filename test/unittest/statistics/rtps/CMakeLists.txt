@@ -138,6 +138,7 @@ target_include_directories(MonitorServiceTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
+    ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     ${Asio_INCLUDE_DIR}
     )
 
