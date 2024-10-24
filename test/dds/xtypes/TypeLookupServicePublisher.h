@@ -818,6 +818,7 @@ private:
         PUBLISHER_TYPE_CREATOR_FUNCTION(SequenceWChar);
         PUBLISHER_TYPE_CREATOR_FUNCTION(SequenceWString);
         PUBLISHER_TYPE_CREATOR_FUNCTION(SequenceWStringBounded);
+        PUBLISHER_TYPE_CREATOR_FUNCTION(NoCommon_Module::My_Structure);
         PUBLISHER_TYPE_CREATOR_FUNCTION(LargeStringStruct);
         PUBLISHER_TYPE_CREATOR_FUNCTION(LargeWStringStruct);
         PUBLISHER_TYPE_CREATOR_FUNCTION(SmallStringStruct);

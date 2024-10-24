@@ -43,6 +43,27 @@
             ]
         },
         {
+            "TestCase": "Case_sequences_My_Structure",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "NoCommon_Module::My_Structure"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
             "TestCase": "Case_sequences_SequenceAlias",
             "participants": [
                 {
