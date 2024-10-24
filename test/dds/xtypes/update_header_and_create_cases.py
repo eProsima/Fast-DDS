@@ -21,11 +21,11 @@ class IDLProcessor:
 
     def extract_structures(self, idl_text):
         # Regular expressions for module and struct extraction
-        module_regexp = r'module\s+(\w+)\s*{((?:.|[\r\n])*?)\};\s*\};'
+        module_regexp = r'module\s+(\w+)\s*{((?:.|[\r\n])*?)\};'
         struct_regexp = r'struct\s+(\w+)(\s*:\s*\w+)?\s*\{([^}]+)'
 
         # Extract structures within modules
-        modules = re.findall(module_regexp, idl_text, re.DOTALL)        
+        modules = re.findall(module_regexp, idl_text, re.DOTALL)
         module_structures = {}
         for module_match in modules:
             module_name, module_content = module_match
