@@ -54,6 +54,8 @@ namespace dds {
 namespace builtin {
 
 class TypeLookupManager;
+struct PublicationBuiltinTopicData;
+struct SubscriptionBuiltinTopicData;
 
 } // namespace builtin
 } // namespace dds
@@ -218,6 +220,14 @@ public:
     {
         return attributes_;
     }
+
+    MOCK_METHOD(bool, get_publication_info,
+            (fastdds::rtps::PublicationBuiltinTopicData&,
+            const GUID_t&), (const));
+
+    MOCK_METHOD(bool, get_subscription_info,
+            (fastdds::rtps::SubscriptionBuiltinTopicData&,
+            const GUID_t&), (const));
 
     bool update_attributes(
             const RTPSParticipantAttributes& patt)
