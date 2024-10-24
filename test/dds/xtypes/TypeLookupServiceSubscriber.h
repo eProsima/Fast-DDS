@@ -830,6 +830,7 @@ private:
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(SequenceWChar);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(SequenceWString);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(SequenceWStringBounded);
+        SUBSCRIBER_TYPE_CREATOR_FUNCTION(NoCommon_Module::My_Structure);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(LargeStringStruct);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(LargeWStringStruct);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(SmallStringStruct);
