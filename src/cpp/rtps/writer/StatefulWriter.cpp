@@ -1609,7 +1609,7 @@ bool StatefulWriter::matched_readers_guids(
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     guids.clear();
-    guids.reserve(guids.size() + matched_local_readers_.size() + matched_datasharing_readers_.size() +
+    guids.reserve(matched_local_readers_.size() + matched_datasharing_readers_.size() +
             matched_remote_readers_.size());
     for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
             [&guids](const ReaderProxy* reader)
