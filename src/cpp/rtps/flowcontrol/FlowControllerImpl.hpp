@@ -14,7 +14,7 @@
 #include <fastdds/utils/TimedMutex.hpp>
 
 #include <rtps/messages/RTPSMessageGroup.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/writer/BaseWriter.hpp>
 #include <utils/thread.hpp>
 #include <utils/threading.hpp>

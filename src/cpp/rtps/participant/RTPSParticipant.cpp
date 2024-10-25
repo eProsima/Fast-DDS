@@ -19,7 +19,7 @@
 
 #include <fastdds/rtps/Endpoint.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 
 namespace eprosima {
 namespace fastdds {

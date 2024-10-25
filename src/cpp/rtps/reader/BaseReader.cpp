@@ -42,7 +42,7 @@
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/history/CacheChangePool.h>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/reader/ReaderHistoryState.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
 

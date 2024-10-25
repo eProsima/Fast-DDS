@@ -47,7 +47,7 @@
 #include <rtps/DataSharing/WriterPool.hpp>
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/resources/ResourceEvent.h>
 #include <rtps/resources/TimedEvent.h>
 #include <rtps/RTPSDomainImpl.hpp>
