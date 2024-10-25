@@ -119,8 +119,6 @@ private:
 
 };
 
-
-
 /*!
  * @brief This class represents the TopicDataType of the type ContentFilterTestType defined by the user in the IDL file.
  * @ingroup ContentFilterTestType

@@ -537,17 +537,7 @@ namespace eprosima
             namespace StatusKind
             {
                 typedef uint32_t StatusKind;
-
-
-
-
-
-
-
-
-
             } // namespace StatusKind
-
 
             /*!
              * @brief This class represents the TopicDataType of the type MonitorServiceStatusData defined by the user in the IDL file.

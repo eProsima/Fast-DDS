@@ -100,9 +100,6 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const StructuresInheritanceStruct& data);
 
-
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const BitsetsChildInheritanceStruct& data);

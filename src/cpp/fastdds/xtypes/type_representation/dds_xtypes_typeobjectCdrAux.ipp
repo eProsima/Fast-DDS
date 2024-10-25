@@ -153,28 +153,6 @@ eProsima_user_DllExport void deserialize(
             });
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -1818,10 +1796,6 @@ eProsima_user_DllExport void deserialize(
             });
 }
 
-
-
-
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -2474,7 +2448,6 @@ void serialize_key(
 }
 
 
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -2572,7 +2545,6 @@ void serialize_key(
                         }
 
 }
-
 
 
 template<>
@@ -3222,7 +3194,6 @@ void serialize_key(
 }
 
 
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -3325,7 +3296,6 @@ void serialize_key(
                         serialize_key(scdr, data.detail());
 
 }
-
 
 
 template<>
@@ -4033,7 +4003,6 @@ void serialize_key(
 }
 
 
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -4254,7 +4223,6 @@ void serialize_key(
 }
 
 
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -4357,7 +4325,6 @@ void serialize_key(
                         serialize_key(scdr, data.detail());
 
 }
-
 
 
 template<>
@@ -5305,7 +5272,6 @@ void serialize_key(
 }
 
 
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -5416,7 +5382,6 @@ void serialize_key(
                         scdr << data.default_value();
 
 }
-
 
 
 template<>
@@ -8168,7 +8133,6 @@ void serialize_key(
 }
 
 
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -8369,7 +8333,6 @@ void serialize_key(
 }
 
 
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -8472,7 +8435,6 @@ void serialize_key(
                         serialize_key(scdr, data.detail());
 
 }
-
 
 
 template<>
@@ -9177,7 +9139,6 @@ void serialize_key(
 }
 
 
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -9282,7 +9243,6 @@ void serialize_key(
 }
 
 
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -9367,8 +9327,6 @@ void serialize_key(
                         scdr << data.bit_bound();
 
 }
-
-
 
 
 template<>
@@ -9803,7 +9761,6 @@ void serialize_key(
 }
 
 
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -9903,7 +9860,6 @@ void serialize_key(
                         scdr << data.name_hash();
 
 }
-
 
 
 template<>
@@ -11202,8 +11158,6 @@ eProsima_user_DllExport void deserialize(
             });
 }
 
-
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -11298,7 +11252,6 @@ void serialize_key(
                         scdr << data.type_object();
 
 }
-
 
 
 template<>
@@ -11397,7 +11350,6 @@ void serialize_key(
 }
 
 
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -11492,7 +11444,6 @@ void serialize_key(
                         scdr << data.typeobject_serialized_size();
 
 }
-
 
 
 template<>
@@ -11607,7 +11558,6 @@ void serialize_key(
 }
 
 
-
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -11710,7 +11660,6 @@ void serialize_key(
                         serialize_key(scdr, data.complete());
 
 }
-
 
 
 

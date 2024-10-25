@@ -39,12 +39,9 @@
 #endif  // FASTDDS_GEN_API_VER
 
 typedef int16_t alias_short;
-
-
 namespace const_module1
 {
     typedef int16_t alias_short_moduled;
-
 
     /*!
      * @brief This class represents the TopicDataType of the type ModuleConstsLiteralsStruct defined by the user in the IDL file.
