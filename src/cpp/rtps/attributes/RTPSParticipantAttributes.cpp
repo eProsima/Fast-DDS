@@ -224,8 +224,7 @@ static void setup_transports_large_data(
 {
     if (!intraprocess_only)
     {
-        auto shm_transport = create_shm_transport(att, options);
-        att.userTransports.push_back(shm_transport);
+        setup_transports_shm(att, options);
 
         auto shm_loc = fastdds::rtps::SHMLocator::create_locator(0, fastdds::rtps::SHMLocator::Type::UNICAST);
         att.defaultUnicastLocatorList.push_back(shm_loc);
@@ -261,8 +260,7 @@ static void setup_transports_large_datav6(
 {
     if (!intraprocess_only)
     {
-        auto shm_transport = create_shm_transport(att, options);
-        att.userTransports.push_back(shm_transport);
+        setup_transports_shm(att, options);
 
         auto shm_loc = fastdds::rtps::SHMLocator::create_locator(0, fastdds::rtps::SHMLocator::Type::UNICAST);
         att.defaultUnicastLocatorList.push_back(shm_loc);
