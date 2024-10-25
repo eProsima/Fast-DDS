@@ -34,7 +34,7 @@ def test_hello_world():
 
             if 'RECEIVED' in line:
                 received += 1
-                
+
         if sent != 0 and received != 0 and sent * 2 == received:
             ret = True
         else:
@@ -42,7 +42,7 @@ def test_hello_world():
                   ' (expected: ' + str(sent * 2) + ')')
             raise subprocess.CalledProcessError(1, '')
 
-    except subprocess.CalledProcessError:
+    except subprocess.CalledProcessError as e:
           print ('ERROR %s', e.output)
     except subprocess.TimeoutExpired:
         print('TIMEOUT')
