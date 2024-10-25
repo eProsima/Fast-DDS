@@ -85,6 +85,12 @@ public:
         return false;
     }
 
+    virtual bool matched_readers_guids(
+            std::vector<GUID_t>&) const
+    {
+        return false;
+    }
+
     virtual bool has_been_fully_delivered(
             const SequenceNumber_t& /*seq_num*/) const
     {

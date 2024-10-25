@@ -142,6 +142,15 @@ public:
             eprosima::fastdds::rtps::IReaderDataFilter* filter) = 0;
 
     /**
+     * @brief Fills the provided vector with the GUIDs of the matched writers.
+     *
+     * @param[out] guids Vector to be filled with the GUIDs of the matched writers.
+     * @return True if the operation was successful.
+     */
+    FASTDDS_EXPORTED_API virtual bool matched_writers_guids(
+            std::vector<GUID_t>& guids) const = 0;
+
+    /**
      * @brief Read the next unread CacheChange_t from the history.
      *
      * @return A pointer to the first unread CacheChange_t from the history.

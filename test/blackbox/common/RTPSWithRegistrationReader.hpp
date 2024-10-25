@@ -602,6 +602,24 @@ public:
         return *reader_;
     }
 
+    const eprosima::fastdds::dds::ReaderQos& get_reader_qos() const
+    {
+        return reader_qos_;
+    }
+
+    eprosima::fastdds::rtps::TopicDescription get_topic_description() const
+    {
+        eprosima::fastdds::rtps::TopicDescription topic_desc;
+        topic_desc.topic_name = sub_builtin_data_.topic_name;
+        topic_desc.type_name = sub_builtin_data_.type_name;
+        return topic_desc;
+    }
+
+    const eprosima::fastdds::rtps::RTPSParticipant* get_rtps_participant() const
+    {
+        return participant_;
+    }
+
 private:
 
     void receive_one(

@@ -234,6 +234,31 @@ public:
     ReturnCode_t get_subscription_matched_status(
             SubscriptionMatchedStatus& status);
 
+    /**
+     * @brief Retrieves in a publication associated with the DataWriter
+     *
+     * @param[out] publication_data publication data struct
+     * @param publication_handle @ref InstanceHandle_t of the publication
+     * @return @ref RETCODE_BAD_PARAMETER if the DataReader is not matched with
+     * the given publication handle, @ref RETCODE_OK otherwise.
+     *
+     */
+    ReturnCode_t get_matched_publication_data(
+            rtps::PublicationBuiltinTopicData& publication_data,
+            const InstanceHandle_t& publication_handle) const;
+
+    /**
+     * @brief Fills the given vector with the @ref InstanceHandle_t of matched DataReaders
+     *
+     * @param[out] publication_handles Vector where the @ref InstanceHandle_t are returned
+     * @return @ref RETCODE_OK if the operation succeeds.
+     *
+     * @note Returning an empty list is not an error, it returns @ref RETCODE_OK.
+     *
+     */
+    ReturnCode_t get_matched_publications(
+            std::vector<InstanceHandle_t>& publication_handles) const;
+
     ReturnCode_t get_requested_deadline_missed_status(
             RequestedDeadlineMissedStatus& status);
 
