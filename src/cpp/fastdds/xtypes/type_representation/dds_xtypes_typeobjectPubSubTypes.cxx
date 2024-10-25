@@ -2223,11 +2223,6 @@ void DummyPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
-
-
-
-
 ExtendedAnnotationParameterValuePubSubType::ExtendedAnnotationParameterValuePubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue");
@@ -2409,7 +2404,6 @@ void ExtendedAnnotationParameterValuePubSubType::register_type_object_representa
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
 }
-
 
 AppliedAnnotationParameterPubSubType::AppliedAnnotationParameterPubSubType()
 {
@@ -2593,7 +2587,6 @@ void AppliedAnnotationParameterPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 AppliedAnnotationPubSubType::AppliedAnnotationPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::AppliedAnnotation");
@@ -2775,7 +2768,6 @@ void AppliedAnnotationPubSubType::register_type_object_representation()
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
 }
-
 
 AppliedVerbatimAnnotationPubSubType::AppliedVerbatimAnnotationPubSubType()
 {
@@ -3869,7 +3861,6 @@ void CompleteStructMemberPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 MinimalStructMemberPubSubType::MinimalStructMemberPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::MinimalStructMember");
@@ -4051,7 +4042,6 @@ void MinimalStructMemberPubSubType::register_type_object_representation()
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
 }
-
 
 AppliedBuiltinTypeAnnotationsPubSubType::AppliedBuiltinTypeAnnotationsPubSubType()
 {
@@ -5327,7 +5317,6 @@ void MinimalStructTypePubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 CommonUnionMemberPubSubType::CommonUnionMemberPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::CommonUnionMember");
@@ -5692,7 +5681,6 @@ void CompleteUnionMemberPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 MinimalUnionMemberPubSubType::MinimalUnionMemberPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::MinimalUnionMember");
@@ -5874,7 +5862,6 @@ void MinimalUnionMemberPubSubType::register_type_object_representation()
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
 }
-
 
 CommonDiscriminatorMemberPubSubType::CommonDiscriminatorMemberPubSubType()
 {
@@ -7514,7 +7501,6 @@ void CompleteAnnotationParameterPubSubType::register_type_object_representation(
         "TypeObject type representation support disabled in generated code");
 }
 
-
 MinimalAnnotationParameterPubSubType::MinimalAnnotationParameterPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter");
@@ -7696,7 +7682,6 @@ void MinimalAnnotationParameterPubSubType::register_type_object_representation()
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
 }
-
 
 CompleteAnnotationHeaderPubSubType::CompleteAnnotationHeaderPubSubType()
 {
@@ -12612,7 +12597,6 @@ void MinimalMapTypePubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 CommonEnumeratedLiteralPubSubType::CommonEnumeratedLiteralPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral");
@@ -12977,7 +12961,6 @@ void CompleteEnumeratedLiteralPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 MinimalEnumeratedLiteralPubSubType::MinimalEnumeratedLiteralPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral");
@@ -13159,7 +13142,6 @@ void MinimalEnumeratedLiteralPubSubType::register_type_object_representation()
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
 }
-
 
 CommonEnumeratedHeaderPubSubType::CommonEnumeratedHeaderPubSubType()
 {
@@ -14435,7 +14417,6 @@ void CompleteBitflagPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 MinimalBitflagPubSubType::MinimalBitflagPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::MinimalBitflag");
@@ -14618,7 +14599,6 @@ void MinimalBitflagPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 CommonBitmaskHeaderPubSubType::CommonBitmaskHeaderPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::CommonBitmaskHeader");
@@ -14800,8 +14780,6 @@ void CommonBitmaskHeaderPubSubType::register_type_object_representation()
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
 }
-
-
 
 CompleteBitmaskTypePubSubType::CompleteBitmaskTypePubSubType()
 {
@@ -15531,7 +15509,6 @@ void CompleteBitfieldPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 MinimalBitfieldPubSubType::MinimalBitfieldPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::MinimalBitfield");
@@ -15713,7 +15690,6 @@ void MinimalBitfieldPubSubType::register_type_object_representation()
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
 }
-
 
 CompleteBitsetHeaderPubSubType::CompleteBitsetHeaderPubSubType()
 {
@@ -16625,7 +16601,6 @@ void CompleteExtendedTypePubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 MinimalExtendedTypePubSubType::MinimalExtendedTypePubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::MinimalExtendedType");
@@ -16807,10 +16782,6 @@ void MinimalExtendedTypePubSubType::register_type_object_representation()
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
 }
-
-
-
-
 
 TypeIdentifierTypeObjectPairPubSubType::TypeIdentifierTypeObjectPairPubSubType()
 {
@@ -16994,7 +16965,6 @@ void TypeIdentifierTypeObjectPairPubSubType::register_type_object_representation
         "TypeObject type representation support disabled in generated code");
 }
 
-
 TypeIdentifierPairPubSubType::TypeIdentifierPairPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::TypeIdentifierPair");
@@ -17176,7 +17146,6 @@ void TypeIdentifierPairPubSubType::register_type_object_representation()
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
 }
-
 
 TypeIdentfierWithSizePubSubType::TypeIdentfierWithSizePubSubType()
 {
@@ -17360,7 +17329,6 @@ void TypeIdentfierWithSizePubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 TypeIdentifierWithDependenciesPubSubType::TypeIdentifierWithDependenciesPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies");
@@ -17543,7 +17511,6 @@ void TypeIdentifierWithDependenciesPubSubType::register_type_object_representati
         "TypeObject type representation support disabled in generated code");
 }
 
-
 TypeInformationPubSubType::TypeInformationPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::TypeInformation");
@@ -17725,7 +17692,6 @@ void TypeInformationPubSubType::register_type_object_representation()
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
 }
-
 
 
 } // namespace xtypes

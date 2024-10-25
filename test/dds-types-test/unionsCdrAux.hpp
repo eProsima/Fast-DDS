@@ -97,6 +97,9 @@ constexpr uint32_t UnionInnerAliasHelper_max_cdr_typesize {16UL};
 constexpr uint32_t UnionInnerAliasHelper_max_key_cdr_typesize {0UL};
 
 
+constexpr uint32_t UnionFixedStringAlias_max_cdr_typesize {37UL};
+constexpr uint32_t UnionFixedStringAlias_max_key_cdr_typesize {0UL};
+
 constexpr uint32_t UnionWChar_max_cdr_typesize {14UL};
 constexpr uint32_t UnionWChar_max_key_cdr_typesize {0UL};
 
@@ -153,6 +156,7 @@ constexpr uint32_t UnionInnerEnumHelper_max_key_cdr_typesize {0UL};
 
 
 
+
 constexpr uint32_t UnionInnerStructureHelper_max_cdr_typesize {24UL};
 constexpr uint32_t UnionInnerStructureHelper_max_key_cdr_typesize {0UL};
 
@@ -196,6 +200,7 @@ constexpr uint32_t UnionInnerBitMaskHelper_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t UnionLongLong_max_cdr_typesize {24UL};
 constexpr uint32_t UnionLongLong_max_key_cdr_typesize {0UL};
+
 
 
 
@@ -379,11 +384,13 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionSeveralFieldsWithDefault& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionShortExtraMember& data);
+
+eProsima_user_DllExport void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const UnionFixedStringAlias& data);
 
 
 } // namespace fastcdr

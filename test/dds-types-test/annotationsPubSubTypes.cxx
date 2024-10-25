@@ -393,7 +393,6 @@ void EmptyAnnotatedStructPubSubType::register_type_object_representation()
     register_EmptyAnnotatedStruct_type_identifier(type_identifiers_);
 }
 
-
 BasicAnnotationsStructPubSubType::BasicAnnotationsStructPubSubType()
 {
     set_name("BasicAnnotationsStruct");

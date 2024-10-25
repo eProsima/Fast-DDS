@@ -201,7 +201,6 @@ private:
 
 };
 
-
 /*!
  * @brief This class represents the TopicDataType of the type BasicAnnotationsStruct defined by the user in the IDL file.
  * @ingroup annotations
