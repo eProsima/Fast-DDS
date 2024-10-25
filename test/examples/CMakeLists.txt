@@ -47,12 +47,26 @@ elseif(WIN32)
         message(FATAL_ERROR "pwsh not found")
     endif()
 
-    set(PWSH_EXECUTABLE ${BASH_EXECUTABLE})
+    # Temporary, in the is installed here
+    set(SHELL_EXECUTABLE "C:/Program Files/PowerShell/latest/pwsh.exe")
+    
     set(FILE_EXTENSION ".exe")
+    set(DOCKER_IMAGE_NAME "windows-testing")
+    
+    cmake_path(GET fastcdr_LIB_DIR PARENT_PATH fastcdr_INSTALL_DIR)
 
-    # We don't know which docker image to use for Windows yet
-    message(FATAL_ERROR "Windows not supported yet")
-
+    set(WIN_DOCKERFILE ${CMAKE_CURRENT_LIST_DIR}/windows/Dockerfile)
+    # Generate image for testing
+    add_custom_target(
+        windows_docker_image_testing_generation
+        ALL
+        # Launch the docker build command using the build context.
+        COMMAND ${DOCKER_EXECUTABLE} build 
+            --tag ${DOCKER_IMAGE_NAME}
+            --file ${WIN_DOCKERFILE}
+            ${CMAKE_CURRENT_LIST_DIR}
+        COMMENT "Creating windows image for testing..." VERBATIM
+        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 # Unsupported platform
 else()
     message(FATAL_ERROR "Unsupported platform")
@@ -60,13 +74,21 @@ endif()
 
 # Configure TinyXML2 library path if installed in user library path
 if(NOT (TINYXML2_FROM_SOURCE OR TINYXML2_FROM_THIRDPARTY))
-    get_filename_component(TINYXML2_LIB_DIR ${TINYXML2_LIBRARY} DIRECTORY)
-    set(TINYXML2_LIB_DIR_COMPOSE_VOLUME "- ${TINYXML2_LIB_DIR}:${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/fastdds:ro")
-    set(TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH ":${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/fastdds")
+    message(STATUS "TINYXML2_LIBRARY " ${TINYXML2_LIBRARY})
+    file(GLOB TINYXML2_LIBRARY_DIRS LIST_DIRECTORIES false ${TINYXML2_LIBRARY})
+    if (TINYXML2_LIBRARY_DIRS)
+        list (GET TINYXML2_LIBRARY_DIRS 0 TINYXML2_LIBRARY_HEAD_DIR)
+        get_filename_component(TINYXML2_LIB_DIR ${TINYXML2_LIBRARY_HEAD_DIR} DIRECTORY)
+        message(STATUS "TINYXML2_LIB_DIR " ${TINYXML2_LIB_DIR})
+        set(TINYXML2_LIB_DIR_COMPOSE_VOLUME "- ${TINYXML2_LIB_DIR}:${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/fastdds:ro")
+        set(TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH ":${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/fastdds")
+    else()
+        message(FATAL_ERROR "Could not find a valid TinyXML 2 lirbary path.")
+    endif()
 endif()
 
 # Find all pytest files for testing
-file(GLOB examples_python_tests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.py)
+file(GLOB examples_python_tests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*world.py)
 
 # Add security test only if security is enabled
 if (NOT SECURITY)
