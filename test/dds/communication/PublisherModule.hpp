@@ -19,15 +19,11 @@
 #ifndef TEST_DDS_COMMUNICATION_PUBLISHERMODULE_HPP
 #define TEST_DDS_COMMUNICATION_PUBLISHERMODULE_HPP
 
-<<<<<<< HEAD
-=======
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
 #include <mutex>
 
-#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
->>>>>>> 91bd7c857 (Fix issues in Dynamic Network Interfaces (#5282))
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
@@ -35,9 +31,6 @@
 
 #include "types/FixedSizedPubSubTypes.h"
 #include "types/HelloWorldPubSubTypes.h"
-
-#include <mutex>
-#include <condition_variable>
 
 namespace eprosima {
 namespace fastdds {

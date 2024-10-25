@@ -19,7 +19,12 @@
 #ifndef TEST_COMMUNICATION_SUBSCRIBER_HPP
 #define TEST_COMMUNICATION_SUBSCRIBER_HPP
 
-<<<<<<< HEAD
+#include <atomic>
+#include <chrono>
+#include <condition_variable>
+#include <map>
+#include <mutex>
+
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
@@ -27,15 +32,6 @@
 
 #include "types/FixedSizedPubSubTypes.h"
 #include "types/HelloWorldPubSubTypes.h"
-
-#include <mutex>
-=======
-#include <atomic>
-#include <chrono>
->>>>>>> 91bd7c857 (Fix issues in Dynamic Network Interfaces (#5282))
-#include <condition_variable>
-#include <map>
-#include <mutex>
 
 namespace eprosima {
 namespace fastdds {
