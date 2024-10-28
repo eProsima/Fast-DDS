@@ -59,6 +59,9 @@ public:
     /**
      * @brief Explicit constructor.
      * @param ptr Pointer to manage.
+     *
+     * @pre nullptr != ptr. We must ensure that the pointer we
+     * are manaing is valid.
      */
     explicit RefCountedPointer(
             T* ptr)
@@ -66,6 +69,7 @@ public:
         , is_active_(true)
         , instances_(0)
     {
+        assert(nullptr != ptr);
     }
 
     ~RefCountedPointer() = default;
