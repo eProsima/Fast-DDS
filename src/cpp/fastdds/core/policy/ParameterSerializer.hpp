@@ -434,61 +434,6 @@ inline bool ParameterSerializer<ParameterVendorId_t>::read_content_from_cdr_mess
 }
 
 template<>
-<<<<<<< HEAD
-=======
-inline bool ParameterSerializer<ParameterProductVersion_t>::add_content_to_cdr_message(
-        const ParameterProductVersion_t& parameter,
-        rtps::CDRMessage_t* cdr_message)
-{
-    bool valid = rtps::CDRMessage::addOctet(cdr_message, parameter.version.major);
-    valid &= rtps::CDRMessage::addOctet(cdr_message, parameter.version.minor);
-    valid &= rtps::CDRMessage::addOctet(cdr_message, parameter.version.patch);
-    valid &= rtps::CDRMessage::addOctet(cdr_message, parameter.version.tweak);
-    return valid;
-}
-
-template<>
-inline bool ParameterSerializer<ParameterProductVersion_t>::read_content_from_cdr_message(
-        ParameterProductVersion_t& parameter,
-        rtps::CDRMessage_t* cdr_message,
-        const uint16_t parameter_length)
-{
-    if (parameter_length < PARAMETER_PRODUCT_VERSION_LENGTH)
-    {
-        return false;
-    }
-    parameter.length = parameter_length;
-    bool valid = rtps::CDRMessage::readOctet(cdr_message, &parameter.version.major);
-    valid &= rtps::CDRMessage::readOctet(cdr_message, &parameter.version.minor);
-    valid &= rtps::CDRMessage::readOctet(cdr_message, &parameter.version.patch);
-    valid &= rtps::CDRMessage::readOctet(cdr_message, &parameter.version.tweak);
-    return valid;
-}
-
-template<>
-inline bool ParameterSerializer<ParameterDomainId_t>::add_content_to_cdr_message(
-        const ParameterDomainId_t& parameter,
-        fastdds::rtps::CDRMessage_t* cdr_message)
-{
-    return fastdds::rtps::CDRMessage::addUInt32(cdr_message, parameter.domain_id);
-}
-
-template<>
-inline bool ParameterSerializer<ParameterDomainId_t>::read_content_from_cdr_message(
-        ParameterDomainId_t& parameter,
-        fastdds::rtps::CDRMessage_t* cdr_message,
-        const uint16_t parameter_length)
-{
-    if (parameter_length < PARAMETER_DOMAINID_LENGTH)
-    {
-        return false;
-    }
-    parameter.length = parameter_length;
-    return fastdds::rtps::CDRMessage::readUInt32(cdr_message, &parameter.domain_id);
-}
-
-template<>
->>>>>>> 7b111f911 (Be less strict with parameter lengths (#5225))
 inline bool ParameterSerializer<ParameterIP4Address_t>::add_content_to_cdr_message(
         const ParameterIP4Address_t& parameter,
         fastrtps::rtps::CDRMessage_t* cdr_message)
@@ -664,33 +609,7 @@ inline bool ParameterSerializer<ParameterBuiltinEndpointSet_t>::read_content_fro
         return false;
     }
     parameter.length = parameter_length;
-<<<<<<< HEAD
     return fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &parameter.endpointSet);
-=======
-    return rtps::CDRMessage::readUInt32(cdr_message, &parameter.endpointSet);
-}
-
-template<>
-inline bool ParameterSerializer<ParameterNetworkConfigSet_t>::add_content_to_cdr_message(
-        const ParameterNetworkConfigSet_t& parameter,
-        rtps::CDRMessage_t* cdr_message)
-{
-    return rtps::CDRMessage::addUInt32(cdr_message, parameter.netconfigSet);
-}
-
-template<>
-inline bool ParameterSerializer<ParameterNetworkConfigSet_t>::read_content_from_cdr_message(
-        ParameterNetworkConfigSet_t& parameter,
-        rtps::CDRMessage_t* cdr_message,
-        const uint16_t parameter_length)
-{
-    if (parameter_length < PARAMETER_NETWORKCONFIGSET_LENGTH)
-    {
-        return false;
-    }
-    parameter.length = parameter_length;
-    return rtps::CDRMessage::readUInt32(cdr_message, &parameter.netconfigSet);
->>>>>>> 7b111f911 (Be less strict with parameter lengths (#5225))
 }
 
 template<>

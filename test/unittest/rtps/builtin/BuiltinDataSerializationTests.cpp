@@ -12,15 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-<<<<<<< HEAD
 #include "fastdds/rtps/messages/CDRMessage.h"
-=======
+
 #include <array>
 #include <cstdint>
 #include <iostream>
 #include <set>
 
->>>>>>> 7b111f911 (Be less strict with parameter lengths (#5225))
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -1416,8 +1414,6 @@ TEST(BuiltinDataSerializationTests, null_checks)
  */
 TEST(BuiltinDataSerializationTests, interoperability_with_intercomdds)
 {
-    const VendorId_t intercom_vendor_id = { 1, 5 };
-
     // DATA(p)
     {
         // This was captured with wireshark from intercom_dds-3.16.2.0_shape_main_linux taken from
@@ -1491,7 +1487,7 @@ TEST(BuiltinDataSerializationTests, interoperability_with_intercomdds)
         msg.length = msg.max_size;
 
         ParticipantProxyData out({});
-        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, true, network, false, intercom_vendor_id)));
+        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, true, network, false)));
     }
 
     // DATA(w)
@@ -1555,7 +1551,7 @@ TEST(BuiltinDataSerializationTests, interoperability_with_intercomdds)
         msg.length = msg.max_size;
 
         WriterProxyData out(max_unicast_locators, max_multicast_locators);
-        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true, intercom_vendor_id)));
+        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true)));
     }
 
     // DATA(r)
@@ -1622,7 +1618,7 @@ TEST(BuiltinDataSerializationTests, interoperability_with_intercomdds)
         msg.length = msg.max_size;
 
         ReaderProxyData out(max_unicast_locators, max_multicast_locators);
-        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true, intercom_vendor_id)));
+        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true)));
     }
 }
 
