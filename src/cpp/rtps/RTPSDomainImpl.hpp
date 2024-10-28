@@ -30,6 +30,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
 #include <rtps/reader/BaseReader.hpp>
+#include <rtps/reader/LocalReaderPointer.hpp>
 #include <rtps/writer/BaseWriter.hpp>
 #include <utils/shared_memory/BoostAtExitRegistry.hpp>
 #include <utils/SystemInfo.hpp>

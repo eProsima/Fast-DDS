@@ -48,6 +48,7 @@
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/reader/BaseReader.hpp>
+#include <rtps/reader/LocalReaderPointer.hpp>
 #include <rtps/resources/ResourceEvent.h>
 #include <rtps/resources/TimedEvent.h>
 #include <rtps/RTPSDomainImpl.hpp>
@@ -441,7 +442,7 @@ bool StatefulWriter::intraprocess_heartbeat(
 
     if (local_reader)
     {
-        std::lock_guard<RecursiveTimedMutex> guardW(mp_mutex);
+        std::unique_lock<RecursiveTimedMutex> lockW(mp_mutex);
         SequenceNumber_t first_seq = get_seq_num_min();
         SequenceNumber_t last_seq = get_seq_num_max();
 
@@ -458,8 +459,10 @@ bool StatefulWriter::intraprocess_heartbeat(
                 (liveliness || reader_proxy->has_changes()))
         {
             increment_hb_count();
+            Count_t hb_count = heartbeat_count_;
+            lockW.unlock();
             returned_value = local_reader->process_heartbeat_msg(
-                m_guid, heartbeat_count_, first_seq, last_seq, true, liveliness, c_VendorId_eProsima);
+                m_guid, hb_count, first_seq, last_seq, true, liveliness, c_VendorId_eProsima);
         }
     }
 

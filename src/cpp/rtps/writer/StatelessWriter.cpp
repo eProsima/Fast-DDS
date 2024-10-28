@@ -963,13 +963,9 @@ bool StatelessWriter::get_connections(
         //! intraprocess
         for_matched_readers(matched_local_readers_, [&connection, &connection_list](ReaderLocator& reader)
                 {
-                    LocalReaderPointer::Instance local_reader = reader.local_reader();
-                    if (local_reader)
-                    {
-                        connection.guid(fastdds::statistics::to_statistics_type(local_reader->getGuid()));
-                        connection.mode(fastdds::statistics::ConnectionMode::INTRAPROCESS);
-                        connection_list.push_back(connection);
-                    }
+                    connection.guid(fastdds::statistics::to_statistics_type(reader.remote_guid()));
+                    connection.mode(fastdds::statistics::ConnectionMode::INTRAPROCESS);
+                    connection_list.push_back(connection);
 
                     return false;
                 });

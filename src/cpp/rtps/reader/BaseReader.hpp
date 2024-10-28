@@ -309,7 +309,7 @@ public:
     /**
      * @brief Waits for not being referenced/used by any other entity.
      */
-    void local_actions_on_reader_removed();
+    virtual void local_actions_on_reader_removed();
 
 #ifdef FASTDDS_STATISTICS
 

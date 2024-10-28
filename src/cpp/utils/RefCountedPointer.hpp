@@ -56,6 +56,10 @@ public:
 
     class Instance;
 
+    /**
+     * @brief Explicit constructor.
+     * @param ptr Pointer to manage.
+     */
     explicit RefCountedPointer(
             T* ptr)
         : ptr_(ptr)
@@ -76,10 +80,19 @@ public:
     RefCountedPointer& operator =(
             RefCountedPointer&&) = delete;
 
+    /**
+     * @brief Class to manage the local pointer instance.
+     * It will increase the reference count on construction and decrease
+     * it on destruction. Provides a facade to access the pointee.
+     */
     class Instance
     {
     public:
 
+        /**
+         * @brief Constructor.
+         * @param parent Shared pointer reference to its RefCountedPointer.
+         */
         explicit Instance(
                 const std::shared_ptr<RefCountedPointer<T>>& parent)
             : parent_(parent)
@@ -91,6 +104,9 @@ public:
             }
         }
 
+        /**
+         * @brief Destructor.
+         */
         ~Instance()
         {
             if (parent_)
@@ -147,12 +163,18 @@ public:
 
 private:
 
+    /**
+     * @brief Increase the reference count.
+     */
     void inc_instances()
     {
         std::unique_lock<std::mutex> lock(mutex_);
         ++instances_;
     }
 
+    /**
+     * @brief Decrease the reference count.
+     */
     void dec_instances()
     {
         std::unique_lock<std::mutex> lock(mutex_);
@@ -163,12 +185,26 @@ private:
         }
     }
 
+    /**
+     * Pointer to the managed object.
+     */
     T* const ptr_;
 
+    /**
+     * Indicates whether the pointee is still alive
+     * and the accessing the pointer is valid.
+     */
     std::atomic<bool> is_active_;
 
+    /**
+     * Protections for the number of instances.
+     */
     mutable std::mutex mutex_;
     std::condition_variable cv_;
+
+    /**
+     * Number of active instances (currently using the pointee).
+     */
     size_t instances_;
 };
 
