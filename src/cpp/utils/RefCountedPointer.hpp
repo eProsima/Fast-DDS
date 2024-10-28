@@ -196,7 +196,7 @@ private:
 
     /**
      * Indicates whether the pointee is still alive
-     * and the accessing the pointer is valid.
+     * and accessing the pointer is valid.
      */
     std::atomic<bool> is_active_;
 
