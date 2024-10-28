@@ -32,7 +32,7 @@
 #include <rtps/history/ITopicPayloadPool.h>
 #include <rtps/history/PoolConfig.h>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
 

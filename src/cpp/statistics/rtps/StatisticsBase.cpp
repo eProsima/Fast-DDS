@@ -25,7 +25,7 @@
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 
 namespace eprosima {
 namespace fastdds {

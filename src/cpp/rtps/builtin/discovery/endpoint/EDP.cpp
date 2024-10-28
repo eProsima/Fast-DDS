@@ -42,7 +42,7 @@
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/network/utils/external_locators.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/reader/BaseReader.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 #if HAVE_SECURITY

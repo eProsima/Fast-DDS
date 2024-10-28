@@ -23,7 +23,7 @@
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 
 
 namespace eprosima {

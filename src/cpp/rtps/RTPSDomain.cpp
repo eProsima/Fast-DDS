@@ -39,7 +39,7 @@
 #include <rtps/attributes/ServerAttributes.hpp>
 #include <rtps/common/GuidUtils.hpp>
 #include <rtps/network/utils/external_locators.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/reader/BaseReader.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 #include <rtps/transport/TCPv4Transport.h>

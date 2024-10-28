@@ -35,7 +35,7 @@
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/DataSharing/DataSharingListener.hpp>
 #include <rtps/DataSharing/ReaderPool.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/reader/StatelessReader.hpp>
 #include <rtps/writer/LivelinessManager.hpp>
 #ifdef FASTDDS_STATISTICS

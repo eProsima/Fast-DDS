@@ -23,7 +23,7 @@
 
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/discovery/participant/PDPServer.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/resources/ResourceEvent.h>
 
 namespace eprosima {
