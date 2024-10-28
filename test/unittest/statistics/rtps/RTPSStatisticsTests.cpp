@@ -43,7 +43,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/statistics/IListeners.hpp>
 
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/transport/test_UDPv4Transport.h>
 #include <rtps/writer/BaseWriter.hpp>
 #include <statistics/rtps/monitor-service/Interfaces.hpp>

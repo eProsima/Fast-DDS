@@ -17,7 +17,7 @@
  *
  */
 
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 
 #include <algorithm>
 #include <functional>
@@ -58,7 +58,7 @@
 #include <rtps/messages/MessageReceiver.h>
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/network/utils/netmask_filter.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/persistence/PersistenceService.h>
 #include <rtps/reader/StatefulPersistentReader.hpp>
 #include <rtps/reader/StatefulReader.hpp>

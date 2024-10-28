@@ -21,7 +21,7 @@
 
 #include <fastdds/rtps/common/Types.hpp>
 
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 
 namespace eprosima {
 namespace fastdds {
