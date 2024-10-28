@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file RTPSParticipantImpl.h
+ * @file RTPSParticipantImpl.hpp
  */
 
 #ifndef FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANTIMPL_H

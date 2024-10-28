@@ -34,7 +34,7 @@
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/builtin/discovery/participant/PDPEndpoints.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
 

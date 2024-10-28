@@ -27,7 +27,7 @@
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/builtin/discovery/endpoint/EDPSimple.h>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 
 namespace eprosima {
 namespace fastdds {

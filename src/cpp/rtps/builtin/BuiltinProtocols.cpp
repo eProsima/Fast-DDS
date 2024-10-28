@@ -34,7 +34,7 @@
 #include <rtps/builtin/discovery/participant/PDPServer.hpp>
 #include <rtps/builtin/discovery/participant/PDPSimple.h>
 #include <rtps/builtin/liveliness/WLP.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 
 namespace eprosima {
 namespace fastdds {

@@ -54,7 +54,7 @@
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/DataSharing/WriterPool.hpp>
 #include <rtps/flowcontrol/FlowController.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/writer/LocatorSelectorSender.hpp>
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 

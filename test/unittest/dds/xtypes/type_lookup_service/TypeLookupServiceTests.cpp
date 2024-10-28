@@ -27,7 +27,7 @@
 #include <fastdds/builtin/type_lookup_service/TypeLookupRequestListener.hpp>
 #include <fastdds/xtypes/type_representation/TypeObjectRegistry.hpp>
 
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
 #include <rtps/RTPSDomainImpl.hpp>

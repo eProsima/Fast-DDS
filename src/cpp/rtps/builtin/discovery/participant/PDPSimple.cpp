@@ -42,7 +42,7 @@
 #include <rtps/builtin/discovery/participant/simple/SimplePDPEndpointsSecure.hpp>
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/reader/BaseReader.hpp>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/reader/StatelessReader.hpp>
