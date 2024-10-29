@@ -35,7 +35,7 @@
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/builtin/discovery/participant/PDPEndpoints.hpp>
 #include <rtps/network/utils/external_locators.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/resources/TimedEvent.h>
 #ifdef FASTDDS_STATISTICS
 #include <statistics/rtps/monitor-service/interfaces/IConnectionsObserver.hpp>

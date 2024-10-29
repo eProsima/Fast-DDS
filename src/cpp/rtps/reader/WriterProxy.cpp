@@ -27,8 +27,8 @@
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/messages/RTPSMessageCreator.hpp>
 #include <rtps/network/utils/external_locators.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/resources/TimedEvent.h>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/writer/BaseWriter.hpp>

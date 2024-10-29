@@ -22,7 +22,7 @@
 
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/discovery/participant/PDP.h>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/reader/StatelessReader.hpp>
 #include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
