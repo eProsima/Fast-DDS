@@ -1447,27 +1447,39 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_My_Structure)
     alias_descriptor->kind(TK_ALIAS);
     alias_descriptor->name(alias_my_char_name);
     alias_descriptor->base_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR8));
-    DynamicType::_ref_type alias_type {DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor)->build()};
+    DynamicTypeBuilder::_ref_type alias_builder {DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor)};
+    ASSERT_TRUE(alias_builder);
+    DynamicType::_ref_type alias_type {alias_builder->build()};
+    ASSERT_TRUE(alias_type);
 
     alias_descriptor = traits<TypeDescriptor>::make_shared();
     alias_descriptor->kind(TK_ALIAS);
     alias_descriptor->name(alias_my_string_name);
     alias_descriptor->base_type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(alias_type,
             20)->build());
-    alias_type = DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor)->build();
+    alias_builder = DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor);
+    ASSERT_TRUE(alias_builder);
+    alias_type = alias_builder->build();
+    ASSERT_TRUE(alias_type);
 
     alias_descriptor = traits<TypeDescriptor>::make_shared();
     alias_descriptor->kind(TK_ALIAS);
     alias_descriptor->name(alias_my_aliasstring_name);
     alias_descriptor->base_type(alias_type);
-    alias_type = DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor)->build();
+    alias_builder = DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor);
+    ASSERT_TRUE(alias_builder);
+    alias_type = alias_builder->build();
+    ASSERT_TRUE(alias_type);
 
     alias_descriptor = traits<TypeDescriptor>::make_shared();
     alias_descriptor->kind(TK_ALIAS);
     alias_descriptor->name(alias_my_sequencestring_name);
     alias_descriptor->base_type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(alias_type,
             LENGTH_UNLIMITED)->build());
-    alias_type = DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor)->build();
+    alias_builder = DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor);
+    ASSERT_TRUE(alias_builder);
+    alias_type = alias_builder->build();
+    ASSERT_TRUE(alias_type);
 
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
