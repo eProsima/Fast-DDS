@@ -39,7 +39,7 @@
 #include <rtps/DataSharing/ReaderPool.hpp>
 #include <rtps/history/HistoryAttributesExtension.hpp>
 #include <rtps/messages/RTPSMessageGroup.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/reader/WriterProxy.h>
 #include <rtps/writer/LivelinessManager.hpp>
 #ifdef FASTDDS_STATISTICS

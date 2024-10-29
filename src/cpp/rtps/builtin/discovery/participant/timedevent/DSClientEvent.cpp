@@ -25,7 +25,7 @@
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/discovery/endpoint/EDPClient.h>
 #include <rtps/builtin/discovery/participant/PDPClient.h>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/resources/ResourceEvent.h>
 #include <utils/shared_mutex.hpp>
 
