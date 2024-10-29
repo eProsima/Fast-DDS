@@ -1475,7 +1475,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_My_Structure)
     alias_descriptor->kind(TK_ALIAS);
     alias_descriptor->name(alias_my_sequencestring_name);
     alias_descriptor->base_type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(alias_type,
-            LENGTH_UNLIMITED)->build());
+            static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     alias_builder = DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor);
     ASSERT_TRUE(alias_builder);
     alias_type = alias_builder->build();
