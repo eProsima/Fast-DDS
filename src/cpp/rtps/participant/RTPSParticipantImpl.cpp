@@ -1565,7 +1565,7 @@ void RTPSParticipantImpl::update_attributes(
             local_interfaces_changed = true;
             EPROSIMA_LOG_INFO(RTPS_PARTICIPANT,
                     temp_atts.getName() << " updated default unicast locator list, current locators: "
-                                    << temp_atts.defaultUnicastLocatorList);
+                                        << temp_atts.defaultUnicastLocatorList);
         }
     }
 
@@ -1672,7 +1672,8 @@ void RTPSParticipantImpl::update_attributes(
                 {
                     participant_data->metatraffic_locators.add_unicast_locator(locator);
                 }
-                if (!temp_atts.builtin.avoid_builtin_multicast || participant_data->metatraffic_locators.unicast.empty())
+                if (!temp_atts.builtin.avoid_builtin_multicast ||
+                        participant_data->metatraffic_locators.unicast.empty())
                 {
                     for (const auto& locator : temp_atts.builtin.metatrafficMulticastLocatorList)
                     {
@@ -1717,7 +1718,8 @@ void RTPSParticipantImpl::update_attributes(
                         WriterProxyData* wdata = nullptr;
                         GUID_t participant_guid;
                         wdata = pdp->addWriterProxyData(writer->getGuid(), participant_guid,
-                                        [](WriterProxyData* proxy, bool is_update, const ParticipantProxyData& participant)
+                                        [](WriterProxyData* proxy, bool is_update,
+                                        const ParticipantProxyData& participant)
                                         {
                                             static_cast<void>(is_update);
                                             assert(is_update);
@@ -1739,7 +1741,8 @@ void RTPSParticipantImpl::update_attributes(
                         ReaderProxyData* rdata = nullptr;
                         GUID_t participant_guid;
                         rdata = pdp->addReaderProxyData(reader->getGuid(), participant_guid,
-                                        [](ReaderProxyData* proxy, bool is_update, const ParticipantProxyData& participant)
+                                        [](ReaderProxyData* proxy, bool is_update,
+                                        const ParticipantProxyData& participant)
                                         {
                                             static_cast<void>(is_update);
                                             assert(is_update);
