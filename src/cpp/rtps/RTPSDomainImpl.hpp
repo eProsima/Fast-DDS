@@ -29,6 +29,13 @@
 #include <fastrtps/rtps/RTPSDomain.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 
+<<<<<<< HEAD
+=======
+#include <rtps/reader/BaseReader.hpp>
+#include <rtps/reader/LocalReaderPointer.hpp>
+#include <rtps/writer/BaseWriter.hpp>
+#include <utils/shared_memory/BoostAtExitRegistry.hpp>
+>>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034))
 #include <utils/SystemInfo.hpp>
 
 #include <utils/shared_memory/BoostAtExitRegistry.hpp>
@@ -173,7 +180,11 @@ public:
      *
      * @returns A pointer to a local reader given its endpoint guid, or nullptr if not found.
      */
+<<<<<<< HEAD
     static RTPSReader* find_local_reader(
+=======
+    static std::shared_ptr<LocalReaderPointer> find_local_reader(
+>>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034))
             const GUID_t& reader_guid);
 
     /**

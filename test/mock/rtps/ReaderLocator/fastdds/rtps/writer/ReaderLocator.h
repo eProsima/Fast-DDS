@@ -31,6 +31,8 @@
 #include <fastrtps/rtps/messages/RTPSMessageSenderInterface.hpp>
 
 
+#include <rtps/reader/LocalReaderPointer.hpp>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -204,9 +206,13 @@ public:
         return false;
     }
 
+<<<<<<< HEAD:test/mock/rtps/ReaderLocator/fastdds/rtps/writer/ReaderLocator.h
     RTPSReader* local_reader()
+=======
+    LocalReaderPointer::Instance local_reader()
+>>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034)):test/mock/rtps/ReaderLocator/rtps/writer/ReaderLocator.hpp
     {
-        return nullptr;
+        return LocalReaderPointer::Instance(std::shared_ptr<LocalReaderPointer>());
     }
 
     bool is_datasharing_reader() const

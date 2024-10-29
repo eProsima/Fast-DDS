@@ -80,6 +80,15 @@ set(SYSTEMINFOTESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp)
 
+<<<<<<< HEAD
+=======
+set(TREETESTS_SOURCE
+    TreeNodeTests.cpp)
+
+set(REF_COUNTED_POINTER_TESTS_SOURCE
+    RefCountedPointerTests.cpp)
+
+>>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034))
 include_directories(mock/)
 
 add_executable(StringMatchingTests ${STRINGMATCHINGTESTS_SOURCE})
@@ -179,6 +188,19 @@ target_include_directories(SharedMutexTests PUBLIC ${PROJECT_SOURCE_DIR}/include
 target_link_libraries(SharedMutexTests PUBLIC GTest::gtest)
 gtest_discover_tests(SharedMutexTests)
 
+<<<<<<< HEAD
+=======
+add_executable(TreeNodeTests ${TREETESTS_SOURCE})
+target_include_directories(TreeNodeTests PRIVATE ${PROJECT_SOURCE_DIR}/src/cpp)
+target_link_libraries(TreeNodeTests PUBLIC GTest::gtest)
+gtest_discover_tests(TreeNodeTests)
+
+add_executable(RefCountedPointerTests ${REF_COUNTED_POINTER_TESTS_SOURCE})
+target_include_directories(RefCountedPointerTests PRIVATE ${PROJECT_SOURCE_DIR}/src/cpp)
+target_link_libraries(RefCountedPointerTests PUBLIC GTest::gtest)
+gtest_discover_tests(RefCountedPointerTests)
+
+>>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034))
 ###############################################################################
 # Necessary files
 ###############################################################################

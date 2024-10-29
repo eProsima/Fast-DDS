@@ -344,16 +344,20 @@ bool StatelessWriter::intraprocess_delivery(
         CacheChange_t* change,
         ReaderLocator& reader_locator)
 {
-    RTPSReader* reader = reader_locator.local_reader();
+    LocalReaderPointer::Instance local_reader = reader_locator.local_reader();
 
-    if (reader &&
+    if (local_reader &&
             (!reader_data_filter_ || reader_data_filter_->is_relevant(*change, reader_locator.remote_guid())))
     {
         if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
         {
             change->write_params.sample_identity(change->write_params.related_sample_identity());
         }
+<<<<<<< HEAD
         return reader->processDataMsg(change);
+=======
+        return local_reader->process_data_msg(change);
+>>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034))
     }
 
     return false;
@@ -929,8 +933,13 @@ bool StatelessWriter::get_connections(
         //! intraprocess
         for_matched_readers(matched_local_readers_, [&connection, &connection_list](ReaderLocator& reader)
                 {
+<<<<<<< HEAD
                     connection.guid(fastdds::statistics::to_statistics_type(reader.local_reader()->getGuid()));
                     connection.mode(fastdds::statistics::INTRAPROCESS);
+=======
+                    connection.guid(fastdds::statistics::to_statistics_type(reader.remote_guid()));
+                    connection.mode(fastdds::statistics::ConnectionMode::INTRAPROCESS);
+>>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034))
                     connection_list.push_back(connection);
 
                     return false;

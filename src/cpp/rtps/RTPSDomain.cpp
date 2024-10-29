@@ -32,6 +32,19 @@
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
+<<<<<<< HEAD
+=======
+#include <rtps/attributes/ServerAttributes.hpp>
+#include <rtps/common/GuidUtils.hpp>
+#include <rtps/network/utils/external_locators.hpp>
+#include <rtps/participant/RTPSParticipantImpl.hpp>
+#include <rtps/reader/BaseReader.hpp>
+#include <rtps/reader/LocalReaderPointer.hpp>
+#include <rtps/RTPSDomainImpl.hpp>
+#include <rtps/transport/TCPv4Transport.h>
+#include <rtps/transport/TCPv6Transport.h>
+#include <rtps/transport/test_UDPv4Transport.h>
+>>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034))
 #include <rtps/transport/UDPv4Transport.h>
 #include <rtps/transport/UDPv6Transport.h>
 #include <rtps/transport/test_UDPv4Transport.h>
@@ -777,7 +790,11 @@ RTPSParticipantImpl* RTPSDomainImpl::find_local_participant(
     return nullptr;
 }
 
+<<<<<<< HEAD
 RTPSReader* RTPSDomainImpl::find_local_reader(
+=======
+std::shared_ptr<LocalReaderPointer> RTPSDomainImpl::find_local_reader(
+>>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034))
         const GUID_t& reader_guid)
 {
     auto instance = get_instance();
@@ -791,7 +808,7 @@ RTPSReader* RTPSDomainImpl::find_local_reader(
         }
     }
 
-    return nullptr;
+    return std::shared_ptr<LocalReaderPointer>(nullptr);
 }
 
 RTPSWriter* RTPSDomainImpl::find_local_writer(
