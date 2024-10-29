@@ -14,6 +14,8 @@ public:
 
     OpenSSLInit()
     {
+        uint64_t opts = OPENSSL_INIT_NO_ATEXIT;
+        OPENSSL_init_crypto(opts, NULL);
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
         OpenSSL_add_all_algorithms();
 #endif // if OPENSSL_VERSION_NUMBER < 0x10100000L

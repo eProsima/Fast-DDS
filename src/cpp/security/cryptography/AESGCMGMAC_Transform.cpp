@@ -976,10 +976,10 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
         CDRMessage_t& plain_rtps_submessage,
         CDRMessage_t& encoded_rtps_submessage,
         DatareaderCryptoHandle& /*receiving_datareader_crypto*/,
-        DatawriterCryptoHandle& sending_datawriter_cryupto,
+        DatawriterCryptoHandle& sending_datawriter_crypto,
         SecurityException& /*exception*/)
 {
-    AESGCMGMAC_WriterCryptoHandle& sending_writer = AESGCMGMAC_WriterCryptoHandle::narrow(sending_datawriter_cryupto);
+    AESGCMGMAC_WriterCryptoHandle& sending_writer = AESGCMGMAC_WriterCryptoHandle::narrow(sending_datawriter_crypto);
 
     if (sending_writer.nil())
     {
