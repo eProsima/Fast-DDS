@@ -1350,7 +1350,7 @@ bool RTPSParticipantImpl::createReader(
     return create_reader(ReaderOut, param, entityId, isBuiltin, enable, callback);
 }
 
-BaseReader* RTPSParticipantImpl::find_local_reader(
+std::shared_ptr<LocalReaderPointer> RTPSParticipantImpl::find_local_reader(
         const GUID_t& reader_guid)
 {
     shared_lock<shared_mutex> _(endpoints_list_mutex);
@@ -1359,11 +1359,11 @@ BaseReader* RTPSParticipantImpl::find_local_reader(
     {
         if (reader->getGuid() == reader_guid)
         {
-            return reader;
+            return reader->get_local_pointer();
         }
     }
 
-    return nullptr;
+    return std::shared_ptr<LocalReaderPointer>();
 }
 
 BaseWriter* RTPSParticipantImpl::find_local_writer(
@@ -1960,6 +1960,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
 
     bool found = false, found_in_users = false;
     Endpoint* p_endpoint = nullptr;
+    BaseReader* reader = nullptr;
 
     if (endpoint.entityId.is_writer())
     {
@@ -1994,6 +1995,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
         {
             if ((*rit)->getGuid().entityId == endpoint.entityId) //Found it
             {
+                reader = *rit;
                 m_userReaderList.erase(rit);
                 found_in_users = true;
                 break;
@@ -2004,6 +2006,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
         {
             if ((*rit)->getGuid().entityId == endpoint.entityId) //Found it
             {
+                reader = *rit;
                 p_endpoint = *rit;
                 m_allReaderList.erase(rit);
                 found = true;
@@ -2062,6 +2065,10 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
 #endif // if HAVE_SECURITY
     }
 
+    if (reader)
+    {
+        reader->local_actions_on_reader_removed();
+    }
     delete(p_endpoint);
     return true;
 }
@@ -2148,6 +2155,11 @@ void RTPSParticipantImpl::deleteAllUserEndpoints()
             (m_security_manager.*unregister_endpoint[kind])(endpoint->getGuid());
         }
 #endif // if HAVE_SECURITY
+
+        if (kind == READER)
+        {
+            static_cast<BaseReader*>(endpoint)->local_actions_on_reader_removed();
+        }
 
         // remove the endpoints
         delete(endpoint);
@@ -2840,8 +2852,11 @@ bool RTPSParticipantImpl::register_in_reader(
     }
     else if (!fastdds::statistics::is_statistics_builtin(reader_guid.entityId))
     {
-        BaseReader* reader = find_local_reader(reader_guid);
-        res = reader->add_statistics_listener(listener);
+        LocalReaderPointer::Instance local_reader(find_local_reader(reader_guid));
+        if (local_reader)
+        {
+            res = local_reader->add_statistics_listener(listener);
+        }
     }
 
     return res;

@@ -41,6 +41,7 @@
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/reader/BaseReader.hpp>
+#include <rtps/reader/LocalReaderPointer.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 #include <rtps/transport/TCPv4Transport.h>
 #include <rtps/transport/TCPv6Transport.h>
@@ -690,7 +691,7 @@ RTPSParticipantImpl* RTPSDomainImpl::find_local_participant(
     return nullptr;
 }
 
-BaseReader* RTPSDomainImpl::find_local_reader(
+std::shared_ptr<LocalReaderPointer> RTPSDomainImpl::find_local_reader(
         const GUID_t& reader_guid)
 {
     auto instance = get_instance();
@@ -704,7 +705,7 @@ BaseReader* RTPSDomainImpl::find_local_reader(
         }
     }
 
-    return nullptr;
+    return std::shared_ptr<LocalReaderPointer>(nullptr);
 }
 
 BaseWriter* RTPSDomainImpl::find_local_writer(

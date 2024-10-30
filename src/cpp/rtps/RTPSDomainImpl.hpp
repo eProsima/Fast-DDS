@@ -30,6 +30,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
 #include <rtps/reader/BaseReader.hpp>
+#include <rtps/reader/LocalReaderPointer.hpp>
 #include <rtps/writer/BaseWriter.hpp>
 #include <utils/shared_memory/BoostAtExitRegistry.hpp>
 #include <utils/SystemInfo.hpp>
@@ -175,7 +176,7 @@ public:
      *
      * @returns A pointer to a local reader given its endpoint guid, or nullptr if not found.
      */
-    static BaseReader* find_local_reader(
+    static std::shared_ptr<LocalReaderPointer> find_local_reader(
             const GUID_t& reader_guid);
 
     /**
