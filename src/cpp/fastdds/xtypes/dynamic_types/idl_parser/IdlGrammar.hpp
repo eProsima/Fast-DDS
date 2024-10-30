@@ -207,7 +207,8 @@ struct mod_op : pad<one<'%'>, ws> {};
 struct neg_op : pad<one<'~'>, ws> {};
 
 // const expressions
-struct scoped_or_literal : sor<literal, plus<alnum>> {}; // TODO
+struct scoped_name;
+struct scoped_or_literal : sor<literal, scoped_name> {};
 struct const_expr;
 struct primary_expr : sor<seq<open_parentheses, const_expr, close_parentheses>, scoped_or_literal> {};
 

@@ -254,6 +254,35 @@ struct action<identifier>
 };
 
 template<>
+struct action<scoped_name>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& operands)
+    {
+        Module& module = ctx->module();
+        std::string identifier_name = in.string();
+
+        if (state.count("arithmetic_expr"))
+        {
+            if (module.has_constant(identifier_name))
+            {
+                DynamicData::_ref_type xdata = module.constant(identifier_name);
+                operands.push_back(xdata);
+            }
+            else
+            {
+                throw std::runtime_error("Unknown constant or identifier: " + identifier_name);
+            }
+        }
+    }
+
+};
+
+template<>
 struct action<semicolon>
 {
     template<typename Input>
@@ -389,7 +418,7 @@ struct action<open_bracket>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
-        state["evaluated_expr"] = "";
+        state["arithmetic_expr"] = "";
     }
 
 };
@@ -407,7 +436,7 @@ struct action<positive_int_const>
         Module& module = ctx->module();
         std::string const_value = in.string();
 
-        if (state.count("evaluated_expr"))
+        if (state.count("arithmetic_expr"))
         {
             DynamicData::_ref_type xdata;
             if (!operands.empty())
@@ -466,7 +495,7 @@ struct action<fixed_array_size>
                 state["current_array_sizes"] += "," + state["positive_int_const"];
             }
         }
-        state["evaluated_expr"].erase();
+        state.erase("arithmetic_expr");
     }
 
 };
@@ -597,9 +626,9 @@ struct action<boolean_literal>
         std::cout << "boolean_literal: " << typeid(boolean_literal).name()
                   << " " << in.string() << std::endl;
 
-        if (state.count("evaluated_expr"))
+        if (state.count("arithmetic_expr"))
         {
-            state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"bool"};
+            state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{"bool"};
         }
 
         // Interpret boolean values from strings
@@ -626,7 +655,7 @@ struct action<boolean_literal>
         DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)};
         xdata->set_boolean_value(MEMBER_ID_INVALID, value);
 
-        if (state.count("evaluated_expr"))
+        if (state.count("arithmetic_expr"))
         {
             operands.push_back(xdata);
         }
@@ -648,9 +677,9 @@ struct action<boolean_literal>
             std::cout << "load_literal_action: " << typeid(Rule).name() << " " \
                       << in.string() << std::endl; \
  \
-            if (state.count("evaluated_expr")) \
+            if (state.count("arithmetic_expr")) \
             { \
-                state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{#id}; \
+                state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{#id}; \
             } \
  \
             std::istringstream ss(in.string()); \
@@ -681,7 +710,7 @@ struct action<boolean_literal>
             DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)}; \
             xdata->set_value(MEMBER_ID_INVALID, value); \
  \
-            if (state.count("evaluated_expr")) \
+            if (state.count("arithmetic_expr")) \
             { \
                 operands.push_back(xdata); \
             } \
@@ -709,9 +738,9 @@ struct action<wide_character_literal>
         std::cout << "wide_character_literal: " << typeid(wide_character_literal).name()
                   << " " << in.string() << std::endl;
 
-        if (state.count("evaluated_expr"))
+        if (state.count("arithmetic_expr"))
         {
-            state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"wchar"};
+            state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{"wchar"};
         }
 
         wchar_t value = L'\0';
@@ -725,7 +754,7 @@ struct action<wide_character_literal>
         DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)};
         xdata->set_char16_value(MEMBER_ID_INVALID, value);
 
-        if (state.count("evaluated_expr"))
+        if (state.count("arithmetic_expr"))
         {
             operands.push_back(xdata);
         }
@@ -746,9 +775,9 @@ struct action<wide_string_literal>
         std::cout << "wide_string_literal: " << typeid(wide_string_literal).name()
                   << " " << in.string() << std::endl;
 
-        if (state.count("evaluated_expr"))
+        if (state.count("arithmetic_expr"))
         {
-            state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"wstring"};
+            state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{"wstring"};
         }
 
         std::string content = in.string().substr(2, in.string().size() - 3);
@@ -759,7 +788,7 @@ struct action<wide_string_literal>
         DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)};
         xdata->set_wstring_value(MEMBER_ID_INVALID, value);
 
-        if (state.count("evaluated_expr"))
+        if (state.count("arithmetic_expr"))
         {
             operands.push_back(xdata);
         }
@@ -781,9 +810,9 @@ struct action<wide_string_literal>
             std::cout << "float_op_action: " << typeid(Rule).name() << " " \
                       << in.string() << std::endl; \
  \
-            if (state.count("evaluated_expr")) \
+            if (state.count("arithmetic_expr")) \
             { \
-                state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{#id}; \
+                state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{#id}; \
             } \
  \
             /* calculate the result */ \
@@ -816,7 +845,7 @@ struct action<wide_string_literal>
                 throw std::runtime_error("invalid arguments for the operation " #operation ); \
             } \
  \
-            if (state.count("evaluated_expr")) \
+            if (state.count("arithmetic_expr")) \
             { \
                 /* update the stack */ \
                 operands.pop_back(); \
@@ -841,9 +870,9 @@ struct action<wide_string_literal>
             std::cout << "int_op_action: " << typeid(Rule).name() << " " \
                       << in.string() << std::endl; \
  \
-            if (state.count("evaluated_expr")) \
+            if (state.count("arithmetic_expr")) \
             { \
-                state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{#id}; \
+                state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{#id}; \
             } \
  \
             /* calculate the result */ \
@@ -868,7 +897,7 @@ struct action<wide_string_literal>
                 throw std::runtime_error("invalid arguments for the operation " #operation ); \
             } \
  \
-            if (state.count("evaluated_expr")) \
+            if (state.count("arithmetic_expr")) \
             { \
                 /* update the stack */ \
                 operands.pop_back(); \
@@ -893,9 +922,9 @@ struct action<wide_string_literal>
             std::cout << "bool_op_action: " << typeid(Rule).name() << " " \
                       << in.string() << std::endl; \
  \
-            if (state.count("evaluated_expr")) \
+            if (state.count("arithmetic_expr")) \
             { \
-                state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{#id}; \
+                state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{#id}; \
             } \
  \
             /* calculate the result */ \
@@ -928,7 +957,7 @@ struct action<wide_string_literal>
                 throw std::runtime_error("invalid arguments for the operation " #operation ); \
             } \
  \
-            if (state.count("evaluated_expr")) \
+            if (state.count("arithmetic_expr")) \
             { \
                 /* update the stack */ \
                 operands.pop_back(); \
@@ -963,9 +992,9 @@ struct action<minus_exec>
         std::cout << "minus_exec: " << typeid(minus_exec).name() << " "
                   << in.string() << std::endl;
 
-        if (state.count("evaluated_expr"))
+        if (state.count("arithmetic_expr"))
         {
-            state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"minus"};
+            state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{"minus"};
         }
 
         DynamicData::_ref_type xdata = operands.back();
@@ -1003,9 +1032,9 @@ struct action<plus_exec>
         // noop
         std::cout << "plus_exec: " << typeid(plus_exec).name() << " "
                   << in.string() << std::endl;
-        if (state.count("evaluated_expr"))
+        if (state.count("arithmetic_expr"))
         {
-            state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"plus"};
+            state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{"plus"};
         }
     }
 
@@ -1024,9 +1053,9 @@ struct action<inv_exec>
         std::cout << "inv_exec: " << typeid(inv_exec).name() << " "
                   << in.string() << std::endl;
 
-        if (state.count("evaluated_expr"))
+        if (state.count("arithmetic_expr"))
         {
-            state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"inv"};
+            state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{"inv"};
         }
 
         DynamicData::_ref_type xdata = operands.back();
@@ -1176,8 +1205,8 @@ struct action<kw_const>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
-        // Create empty evaluated_expr state to indicate the start of parsing const
-        state["evaluated_expr"] = "";
+        // Create empty arithmetic_expr state to indicate the start of parsing const
+        state["arithmetic_expr"] = "";
     }
 
 };
@@ -1204,7 +1233,7 @@ struct action<const_dcl>
             // TODO
             // throw std::runtime_error("Finished const parsing with non-empty operands stack.");
         }
-        state["evaluated_expr"].erase();
+        state.erase("arithmetic_expr");
     }
 
 };
