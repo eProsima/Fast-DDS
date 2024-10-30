@@ -1961,6 +1961,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
     bool found = false, found_in_users = false;
     Endpoint* p_endpoint = nullptr;
     BaseReader* reader = nullptr;
+    BaseWriter* writer {nullptr};
 
     if (endpoint.entityId.is_writer())
     {
@@ -1970,6 +1971,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
         {
             if ((*wit)->getGuid().entityId == endpoint.entityId) //Found it
             {
+                writer = *wit;
                 m_userWriterList.erase(wit);
                 found_in_users = true;
                 break;
@@ -1980,6 +1982,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
         {
             if ((*wit)->getGuid().entityId == endpoint.entityId) //Found it
             {
+                writer = *wit;
                 p_endpoint = *wit;
                 m_allWriterList.erase(wit);
                 found = true;
@@ -2068,6 +2071,10 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
     if (reader)
     {
         reader->local_actions_on_reader_removed();
+    }
+    else if (writer)
+    {
+        writer->local_actions_on_writer_removed();
     }
     delete(p_endpoint);
     return true;
@@ -2159,6 +2166,10 @@ void RTPSParticipantImpl::deleteAllUserEndpoints()
         if (kind == READER)
         {
             static_cast<BaseReader*>(endpoint)->local_actions_on_reader_removed();
+        }
+        else if (WRITER == kind)
+        {
+            dynamic_cast<BaseWriter*>(endpoint)->local_actions_on_writer_removed();
         }
 
         // remove the endpoints

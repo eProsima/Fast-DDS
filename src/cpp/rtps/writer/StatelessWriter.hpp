@@ -57,7 +57,7 @@ public:
 
     virtual ~StatelessWriter();
 
-    void deinit() override;
+    void local_actions_on_writer_removed() override;
 
     //vvvvvvvvvvvvvvvvvvvvv [Exported API] vvvvvvvvvvvvvvvvvvvvv
 

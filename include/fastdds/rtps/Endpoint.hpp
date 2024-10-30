@@ -103,9 +103,6 @@ public:
 
 protected:
 
-    virtual void deinit() {
-    };
-
     //!Pointer to the RTPSParticipant containing this endpoint.
     RTPSParticipantImpl* mp_RTPSParticipant;
 

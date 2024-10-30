@@ -392,7 +392,7 @@ void BaseWriter::init(
     }
 }
 
-void BaseWriter::deinit()
+void BaseWriter::local_actions_on_writer_removed()
 {
     // First, unregister changes from FlowController. This action must be protected.
     {
