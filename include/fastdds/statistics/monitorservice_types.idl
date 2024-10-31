@@ -74,19 +74,28 @@ module statistics {
     typedef BaseStatus_s InconsistentTopicStatus_s;
     typedef BaseStatus_s SampleLostStatus_s;
 
+    struct ExtendedIncompatibleQoSStatus_s
+    {
+        detail::GUID_s remote_guid;
+        sequence<unsigned long> current_incompatible_policies;
+    };
+
+    typedef sequence<ExtendedIncompatibleQoSStatus_s> ExtendedIncompatibleQoSStatusSeq_s;
+
     module StatusKind
     {
         typedef unsigned long StatusKind;
 
-        const StatusKind PROXY              = 0;
-        const StatusKind CONNECTION_LIST    = 1;
-        const StatusKind INCOMPATIBLE_QOS   = 2;
-        const StatusKind INCONSISTENT_TOPIC = 3;
-        const StatusKind LIVELINESS_LOST    = 4;
-        const StatusKind LIVELINESS_CHANGED = 5;
-        const StatusKind DEADLINE_MISSED    = 6;
-        const StatusKind SAMPLE_LOST        = 7;
-        const StatusKind STATUSES_SIZE      = 8;
+        const StatusKind PROXY                     = 0;
+        const StatusKind CONNECTION_LIST           = 1;
+        const StatusKind INCOMPATIBLE_QOS          = 2;
+        const StatusKind INCONSISTENT_TOPIC        = 3;
+        const StatusKind LIVELINESS_LOST           = 4;
+        const StatusKind LIVELINESS_CHANGED        = 5;
+        const StatusKind DEADLINE_MISSED           = 6;
+        const StatusKind SAMPLE_LOST               = 7;
+        const StatusKind EXTENDED_INCOMPATIBLE_QOS = 8;
+        const StatusKind STATUSES_SIZE             = 9;
     }; // module StatusKind
 
     union MonitorServiceData switch(StatusKind::StatusKind)
@@ -107,6 +116,8 @@ module statistics {
             DeadlineMissedStatus_s deadline_missed_status;
         case StatusKind::SAMPLE_LOST:
             SampleLostStatus_s sample_lost_status;
+        case StatusKind::EXTENDED_INCOMPATIBLE_QOS:
+            ExtendedIncompatibleQoSStatusSeq_s extended_incompatible_qos_status;
         case StatusKind::STATUSES_SIZE:
             octet statuses_size;
     };
