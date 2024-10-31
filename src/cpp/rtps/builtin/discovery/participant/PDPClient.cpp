@@ -769,9 +769,16 @@ void PDPClient::announceParticipantState(
                         // if we are matched to a server report demise
                         if (svr.is_connected)
                         {
-                            //locators.push_back(svr.metatrafficMulticastLocatorList);
+                            GuidPrefix_t srv_guid_prefix = svr.guidPrefix;
+#if HAVE_SECURITY
+                            if (getRTPSParticipant()->is_secure())
+                            {
+                                // Need the mangled guid prefix in this case
+                                srv_guid_prefix = get_participant_proxy_data(svr.guidPrefix)->m_guid.guidPrefix;
+                            }
+#endif  // HAVE_SECURITY
                             locators.push_back(svr.metatrafficUnicastLocatorList);
-                            remote_readers.emplace_back(svr.guidPrefix,
+                            remote_readers.emplace_back(srv_guid_prefix,
                                     endpoints->reader.reader_->getGuid().entityId);
                         }
                     }
