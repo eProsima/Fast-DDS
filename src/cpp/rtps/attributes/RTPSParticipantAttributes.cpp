@@ -224,7 +224,8 @@ static void setup_large_data_shm_transport(
 #ifdef FASTDDS_SHM_TRANSPORT_DISABLED
     static_cast<void>(att);
     EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Trying to configure Large Data transport, " <<
-            "but Fast DDS was built without SHM transport support.");
+            "but Fast DDS was built without SHM transport support. Will use " <<
+            "TCP for communications on the same host.");
 #else
     auto descriptor = create_shm_transport(att, options);
     att.userTransports.push_back(descriptor);
