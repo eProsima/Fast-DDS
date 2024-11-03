@@ -800,6 +800,264 @@ TEST_F(IdlParserTests, arrays)
     EXPECT_TRUE(builder55);
     DynamicType::_ref_type type55 = builder55->build();
     ASSERT_TRUE(type55);
+
+    DynamicTypeBuilder::_ref_type builder56 = factory->create_type_w_document("IDL/arrays.idl", "ArraySingleDimensionLiteralsUnsignedLong", include_paths);
+    EXPECT_TRUE(builder56);
+    DynamicType::_ref_type type56 = builder56->build();
+    ASSERT_TRUE(type56);
+
+    DynamicTypeBuilder::_ref_type builder57 = factory->create_type_w_document("IDL/arrays.idl", "ArraySingleDimensionLiteralsLongLong", include_paths);
+    EXPECT_TRUE(builder57);
+    DynamicType::_ref_type type57 = builder57->build();
+    ASSERT_TRUE(type57);
+
+    DynamicTypeBuilder::_ref_type builder58 = factory->create_type_w_document("IDL/arrays.idl", "ArraySingleDimensionLiteralsUnsignedLongLong", include_paths);
+    EXPECT_TRUE(builder58);
+    DynamicType::_ref_type type58 = builder58->build();
+    ASSERT_TRUE(type58);
+
+    DynamicTypeBuilder::_ref_type builder59 = factory->create_type_w_document("IDL/arrays.idl", "ArraySingleDimensionLiteralsFloat", include_paths);
+    EXPECT_TRUE(builder59);
+    DynamicType::_ref_type type59 = builder59->build();
+    ASSERT_TRUE(type59);
+
+    DynamicTypeBuilder::_ref_type builder60 = factory->create_type_w_document("IDL/arrays.idl", "ArraySingleDimensionLiteralsDouble", include_paths);
+    EXPECT_TRUE(builder60);
+    DynamicType::_ref_type type60 = builder60->build();
+    ASSERT_TRUE(type60);
+
+    DynamicTypeBuilder::_ref_type builder61 = factory->create_type_w_document("IDL/arrays.idl", "ArraySingleDimensionLiteralsLongDouble", include_paths);
+    EXPECT_TRUE(builder61);
+    DynamicType::_ref_type type61 = builder61->build();
+    ASSERT_TRUE(type61);
+
+    DynamicTypeBuilder::_ref_type builder62 = factory->create_type_w_document("IDL/arrays.idl", "ArraySingleDimensionLiteralsBoolean", include_paths);
+    EXPECT_TRUE(builder62);
+    DynamicType::_ref_type type62 = builder62->build();
+    ASSERT_TRUE(type62);
+
+    DynamicTypeBuilder::_ref_type builder63 = factory->create_type_w_document("IDL/arrays.idl", "ArraySingleDimensionLiteralsOctet", include_paths);
+    EXPECT_TRUE(builder63);
+    DynamicType::_ref_type type63 = builder63->build();
+    ASSERT_TRUE(type63);
+
+    DynamicTypeBuilder::_ref_type builder64 = factory->create_type_w_document("IDL/arrays.idl", "ArraySingleDimensionLiteralsChar", include_paths);
+    EXPECT_TRUE(builder64);
+    DynamicType::_ref_type type64 = builder64->build();
+    ASSERT_TRUE(type64);
+
+    DynamicTypeBuilder::_ref_type builder65 = factory->create_type_w_document("IDL/arrays.idl", "ArraySingleDimensionLiteralsWChar", include_paths);
+    EXPECT_TRUE(builder65);
+    DynamicType::_ref_type type65 = builder65->build();
+    ASSERT_TRUE(type65);
+
+    DynamicTypeBuilder::_ref_type builder66 = factory->create_type_w_document("IDL/arrays.idl", "ArraySingleDimensionLiteralsString", include_paths);
+    EXPECT_TRUE(builder66);
+    DynamicType::_ref_type type66 = builder66->build();
+    ASSERT_TRUE(type66);
+
+    DynamicTypeBuilder::_ref_type builder67 = factory->create_type_w_document("IDL/arrays.idl", "ArraySingleDimensionLiteralsWString", include_paths);
+    EXPECT_TRUE(builder67);
+    DynamicType::_ref_type type67 = builder67->build();
+    ASSERT_TRUE(type67);
+
+    DynamicTypeBuilder::_ref_type builder68 = factory->create_type_w_document("IDL/arrays.idl", "ArraySingleDimensionLiteralsBoundedString", include_paths);
+    EXPECT_TRUE(builder68);
+    DynamicType::_ref_type type68 = builder68->build();
+    ASSERT_TRUE(type68);
+
+    DynamicTypeBuilder::_ref_type builder69 = factory->create_type_w_document("IDL/arrays.idl", "ArraySingleDimensionLiteralsBoundedWString", include_paths);
+    EXPECT_TRUE(builder69);
+    DynamicType::_ref_type type69 = builder69->build();
+    ASSERT_TRUE(type69);
+
+    DynamicTypeBuilder::_ref_type builder70 = factory->create_type_w_document("IDL/arrays.idl", "ArraySingleDimensionLiteralsEnum", include_paths);
+    EXPECT_TRUE(builder70);
+    DynamicType::_ref_type type70 = builder70->build();
+    ASSERT_TRUE(type70);
+
+    // TODO ArraySingleDimensionLiteralsBitMask is skipped since bitmask parsing is not supported.
+    // DynamicTypeBuilder::_ref_type builder71 = factory->create_type_w_document("IDL/arrays.idl", "ArraySingleDimensionLiteralsBitMask", include_paths);
+    // EXPECT_TRUE(builder71);
+    // DynamicType::_ref_type type71 = builder71->build();
+    // ASSERT_TRUE(type71);
+
+    DynamicTypeBuilder::_ref_type builder72 = factory->create_type_w_document("IDL/arrays.idl", "ArraySingleDimensionLiteralsAlias", include_paths);
+    EXPECT_TRUE(builder72);
+    DynamicType::_ref_type type72 = builder72->build();
+    ASSERT_TRUE(type72);
+
+    DynamicTypeBuilder::_ref_type builder73 = factory->create_type_w_document("IDL/arrays.idl", "ArraySingleDimensionLiteralsShortArray", include_paths);
+    EXPECT_TRUE(builder73);
+    DynamicType::_ref_type type73 = builder73->build();
+    ASSERT_TRUE(type73);
+
+    // TODO ArraySingleDimensionLiteralsSequence is skipped since sequence parsing is not supported.
+    // DynamicTypeBuilder::_ref_type builder74 = factory->create_type_w_document("IDL/arrays.idl", "ArraySingleDimensionLiteralsSequence", include_paths);
+    // EXPECT_TRUE(builder74);
+    // DynamicType::_ref_type type74 = builder74->build();
+    // ASSERT_TRUE(type74);
+
+    // TODO ArraySingleDimensionLiteralsMap is skipped since map parsing is not supported.
+    // DynamicTypeBuilder::_ref_type builder75 = factory->create_type_w_document("IDL/arrays.idl", "ArraySingleDimensionLiteralsMap", include_paths);
+    // EXPECT_TRUE(builder75);
+    // DynamicType::_ref_type type75 = builder75->build();
+    // ASSERT_TRUE(type75);
+
+    DynamicTypeBuilder::_ref_type builder76 = factory->create_type_w_document("IDL/arrays.idl", "ArraySingleDimensionLiteralsUnion", include_paths);
+    EXPECT_TRUE(builder76);
+    DynamicType::_ref_type type76 = builder76->build();
+    ASSERT_TRUE(type76);
+
+    DynamicTypeBuilder::_ref_type builder77 = factory->create_type_w_document("IDL/arrays.idl", "ArraySingleDimensionLiteralsStructure", include_paths);
+    EXPECT_TRUE(builder77);
+    DynamicType::_ref_type type77 = builder77->build();
+    ASSERT_TRUE(type77);
+
+    // TODO ArraySingleDimensionLiteralsBitset is skipped since bitset parsing is not supported.
+    // DynamicTypeBuilder::_ref_type builder78 = factory->create_type_w_document("IDL/arrays.idl", "ArraySingleDimensionLiteralsBitset", include_paths);
+    // EXPECT_TRUE(builder78);
+    // DynamicType::_ref_type type78 = builder78->build();
+    // ASSERT_TRUE(type78);
+
+    DynamicTypeBuilder::_ref_type builder79 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsShort", include_paths);
+    EXPECT_TRUE(builder79);
+    DynamicType::_ref_type type79 = builder79->build();
+    ASSERT_TRUE(type79);
+
+    DynamicTypeBuilder::_ref_type builder80 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsUShort", include_paths);
+    EXPECT_TRUE(builder80);
+    DynamicType::_ref_type type80 = builder80->build();
+    ASSERT_TRUE(type80);
+
+    DynamicTypeBuilder::_ref_type builder81 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsLong", include_paths);
+    EXPECT_TRUE(builder81);
+    DynamicType::_ref_type type81 = builder81->build();
+    ASSERT_TRUE(type81);
+
+    DynamicTypeBuilder::_ref_type builder82 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsULong", include_paths);
+    EXPECT_TRUE(builder82);
+    DynamicType::_ref_type type82 = builder82->build();
+    ASSERT_TRUE(type82);
+
+    DynamicTypeBuilder::_ref_type builder83 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsLongLong", include_paths);
+    EXPECT_TRUE(builder83);
+    DynamicType::_ref_type type83 = builder83->build();
+    ASSERT_TRUE(type83);
+
+    DynamicTypeBuilder::_ref_type builder84 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsULongLong", include_paths);
+    EXPECT_TRUE(builder84);
+    DynamicType::_ref_type type84 = builder84->build();
+    ASSERT_TRUE(type84);
+
+    DynamicTypeBuilder::_ref_type builder85 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsFloat", include_paths);
+    EXPECT_TRUE(builder85);
+    DynamicType::_ref_type type85 = builder85->build();
+    ASSERT_TRUE(type85);
+
+    DynamicTypeBuilder::_ref_type builder86 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsDouble", include_paths);
+    EXPECT_TRUE(builder86);
+    DynamicType::_ref_type type86 = builder86->build();
+    ASSERT_TRUE(type86);
+
+    DynamicTypeBuilder::_ref_type builder87 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsLongDouble", include_paths);
+    EXPECT_TRUE(builder87);
+    DynamicType::_ref_type type87 = builder87->build();
+    ASSERT_TRUE(type87);
+
+    DynamicTypeBuilder::_ref_type builder88 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsBoolean", include_paths);
+    EXPECT_TRUE(builder88);
+    DynamicType::_ref_type type88 = builder88->build();
+    ASSERT_TRUE(type88);
+
+    DynamicTypeBuilder::_ref_type builder89 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsOctet", include_paths);
+    EXPECT_TRUE(builder89);
+    DynamicType::_ref_type type89 = builder89->build();
+    ASSERT_TRUE(type89);
+
+    DynamicTypeBuilder::_ref_type builder90 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsChar", include_paths);
+    EXPECT_TRUE(builder90);
+    DynamicType::_ref_type type90 = builder90->build();
+    ASSERT_TRUE(type90);
+
+    DynamicTypeBuilder::_ref_type builder91 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsWChar", include_paths);
+    EXPECT_TRUE(builder91);
+    DynamicType::_ref_type type91 = builder91->build();
+    ASSERT_TRUE(type91);
+
+    DynamicTypeBuilder::_ref_type builder92 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsString", include_paths);
+    EXPECT_TRUE(builder92);
+    DynamicType::_ref_type type92 = builder92->build();
+    ASSERT_TRUE(type92);
+
+    DynamicTypeBuilder::_ref_type builder93 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsWString", include_paths);
+    EXPECT_TRUE(builder93);
+    DynamicType::_ref_type type93 = builder93->build();
+    ASSERT_TRUE(type93);
+
+    DynamicTypeBuilder::_ref_type builder94 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsBoundedString", include_paths);
+    EXPECT_TRUE(builder94);
+    DynamicType::_ref_type type94 = builder94->build();
+    ASSERT_TRUE(type94);
+
+    DynamicTypeBuilder::_ref_type builder95 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsBoundedWString", include_paths);
+    EXPECT_TRUE(builder95);
+    DynamicType::_ref_type type95 = builder95->build();
+    ASSERT_TRUE(type95);
+
+    DynamicTypeBuilder::_ref_type builder96 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsEnum", include_paths);
+    EXPECT_TRUE(builder96);
+    DynamicType::_ref_type type96 = builder96->build();
+    ASSERT_TRUE(type96);
+
+    // TODO ArrayMultiDimensionLiteralsBitMask is skipped since bitmask parsing is not supported.
+    // DynamicTypeBuilder::_ref_type builder97 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsBitMask", include_paths);
+    // EXPECT_TRUE(builder97);
+    // DynamicType::_ref_type type97 = builder97->build();
+    // ASSERT_TRUE(type97);
+
+    DynamicTypeBuilder::_ref_type builder98 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsAlias", include_paths);
+    EXPECT_TRUE(builder98);
+    DynamicType::_ref_type type98 = builder98->build();
+    ASSERT_TRUE(type98);
+
+    // TODO ArrayMultiDimensionLiteralsSequence is skipped since sequence parsing is not supported.
+    // DynamicTypeBuilder::_ref_type builder99 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsSequence", include_paths);
+    // EXPECT_TRUE(builder99);
+    // DynamicType::_ref_type type99 = builder99->build();
+    // ASSERT_TRUE(type99);
+
+    // TODO ArrayMultiDimensionLiteralsMap is skipped since map parsing is not supported.
+    // DynamicTypeBuilder::_ref_type builder100 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsMap", include_paths);
+    // EXPECT_TRUE(builder100);
+    // DynamicType::_ref_type type100 = builder100->build();
+    // ASSERT_TRUE(type100);
+
+    DynamicTypeBuilder::_ref_type builder101 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsUnion", include_paths);
+    EXPECT_TRUE(builder101);
+    DynamicType::_ref_type type101 = builder101->build();
+    ASSERT_TRUE(type101);
+
+    DynamicTypeBuilder::_ref_type builder102 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsStructure", include_paths);
+    EXPECT_TRUE(builder102);
+    DynamicType::_ref_type type102 = builder102->build();
+    ASSERT_TRUE(type102);
+
+    // TODO ArrayMultiDimensionLiteralsBitSet is skipped since bitset parsing is not supported.
+    // DynamicTypeBuilder::_ref_type builder103 = factory->create_type_w_document("IDL/arrays.idl", "ArrayMultiDimensionLiteralsBitSet", include_paths);
+    // EXPECT_TRUE(builder103);
+    // DynamicType::_ref_type type103 = builder103->build();
+    // ASSERT_TRUE(type103);
+
+    DynamicTypeBuilder::_ref_type builder104 = factory->create_type_w_document("IDL/arrays.idl", "BoundedSmallArrays", include_paths);
+    EXPECT_TRUE(builder104);
+    DynamicType::_ref_type type104 = builder104->build();
+    ASSERT_TRUE(type104);
+
+    DynamicTypeBuilder::_ref_type builder105 = factory->create_type_w_document("IDL/arrays.idl", "BoundedBigArrays", include_paths);
+    EXPECT_TRUE(builder105);
+    DynamicType::_ref_type type105 = builder105->build();
+    ASSERT_TRUE(type105);
 }
 
 int main(

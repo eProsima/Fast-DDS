@@ -331,7 +331,12 @@ struct action<semicolon>
         { \
             std::cout << "load_type_action: " << typeid(Rule).name() << " " \
                       << in.string() << std::endl; \
+ \
             state["type"] = std::string(#id); \
+            if (state["type"] == "string" || state["type"] == "wstring") \
+            { \
+                state.erase("parsing_string"); \
+            } \
         } \
     };
 
@@ -424,57 +429,53 @@ struct action<open_bracket>
 };
 
 template<>
-struct action<positive_int_const>
+struct action<fixed_array_size>
 {
     template<typename Input>
     static void apply(
-            const Input& in,
-            Context* ctx,
+            const Input& /*in*/,
+            Context* /*ctx*/,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& operands)
     {
-        Module& module = ctx->module();
-        std::string const_value = in.string();
-
-        if (state.count("arithmetic_expr"))
+        DynamicData::_ref_type xdata;
+        if (!operands.empty())
         {
-            DynamicData::_ref_type xdata;
+            xdata = operands.back();
+            operands.pop_back();
             if (!operands.empty())
             {
-                xdata = operands.back();
-                operands.pop_back();
-                if (!operands.empty())
-                {
-                    throw std::runtime_error("Finished const expression parsing with non-empty operands stack.");
-                }
-            }
-            else if (module.has_constant(const_value))
-            {
-                xdata = module.constant(const_value);
-            }
-            else
-            {
-                throw std::runtime_error("Unknown const expression: " + const_value);
+                throw std::runtime_error("Finished array size parsing with non-empty operands stack.");
             }
 
             int64_t value;
             xdata->get_int64_value(value, MEMBER_ID_INVALID);
-            if (value < 0)
+            if (value <= 0)
             {
-                throw std::runtime_error("Size value is negative: " + std::to_string(value));
+                throw std::runtime_error("Array size is non-positive: " + std::to_string(value));
             }
-            state["positive_int_const"] = std::to_string(value);
+
+            // Append the current array size to `current_array_sizes`, separating multiple dimensions with commas
+            if (state["current_array_sizes"].empty())
+            {
+                state["current_array_sizes"] = std::to_string(value);
+            }
+            else
+            {
+                state["current_array_sizes"] += "," + std::to_string(value);
+            }
         }
         else
         {
-            state["positive_int_const"] = const_value;
+            throw std::runtime_error("Empty operands stack while parsing fixed_array_size");
         }
+        state.erase("arithmetic_expr");
     }
 
 };
 
 template<>
-struct action<fixed_array_size>
+struct action<kw_string>
 {
     template<typename Input>
     static void apply(
@@ -483,19 +484,40 @@ struct action<fixed_array_size>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
-        if (state.count("positive_int_const"))
+        state["parsing_string"] = "true";
+    }
+
+};
+
+template<>
+struct action<kw_wstring>
+{
+    template<typename Input>
+    static void apply(
+            const Input& /*in*/,
+            Context* /*ctx*/,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
+    {
+        state["parsing_string"] = "true";
+    }
+
+};
+
+template<>
+struct action<open_ang_bracket>
+{
+    template<typename Input>
+    static void apply(
+            const Input& /*in*/,
+            Context* /*ctx*/,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
+    {
+        if (state.count("parsing_string") && state["parsing_string"] == "true")
         {
-            // Append the current array size to `current_array_sizes`, separating multiple dimensions with commas
-            if (state["current_array_sizes"].empty())
-            {
-                state["current_array_sizes"] = state["positive_int_const"];
-            }
-            else
-            {
-                state["current_array_sizes"] += "," + state["positive_int_const"];
-            }
+            state["arithmetic_expr"] = "";
         }
-        state.erase("arithmetic_expr");
     }
 
 };
@@ -509,14 +531,32 @@ struct action<fixed_array_size>
             const Input& in, \
             Context* /*ctx*/, \
             std::map<std::string, std::string>& state, \
-            std::vector<traits<DynamicData>::ref_type>& /*operands*/) \
+            std::vector<traits<DynamicData>::ref_type>& operands) \
         { \
             std::cout << "load_stringsize_action: " << typeid(Rule).name() << " " \
                       << in.string() << std::endl; \
-            if (state.count("positive_int_const")) \
+ \
+            DynamicData::_ref_type xdata; \
+            if (!operands.empty()) \
             { \
-                state[#id] = state["positive_int_const"]; \
-                state.erase("positive_int_const"); \
+                xdata = operands.back(); \
+                operands.pop_back(); \
+                if (!operands.empty()) \
+                { \
+                    throw std::runtime_error("Finished string size parsing with non-empty operands stack."); \
+                } \
+ \
+                int64_t value; \
+                xdata->get_int64_value(value, MEMBER_ID_INVALID); \
+                if (value <= 0) \
+                { \
+                    throw std::runtime_error("String size is non-positive: " + std::to_string(value)); \
+                } \
+                state[#id] = std::to_string(value); \
+            } \
+            else \
+            { \
+                throw std::runtime_error("Empty operands stack while parsing string size"); \
             } \
         } \
     };

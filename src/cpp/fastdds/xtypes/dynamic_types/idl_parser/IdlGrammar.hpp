@@ -272,10 +272,10 @@ struct fixed_pt_const_type : kw_fixed {};
 
 struct scoped_name_tail : seq<double_colon, identifier> {};
 struct scoped_name : seq<opt<double_colon>, identifier, star<scoped_name_tail>> {};
-struct positive_int_const : sor<scoped_name, const_expr> {};
+struct positive_int_const : const_expr {};
 struct fixed_pt_type : seq<kw_fixed, open_ang_bracket, positive_int_const, comma, positive_int_const, close_ang_bracket> {};
-struct string_size : seq<one<'<'>, positive_int_const, one<'>'>> {};
-struct wstring_size : seq<one<'<'>, positive_int_const, one<'>'>> {};
+struct string_size : seq<open_ang_bracket, positive_int_const, close_ang_bracket> {};
+struct wstring_size : seq<open_ang_bracket, positive_int_const, close_ang_bracket> {};
 struct collection_size : seq<comma, positive_int_const> {};
 struct string_type : seq<kw_string, opt<string_size>> {};
 struct wide_string_type : seq<kw_wstring, opt<wstring_size>> {};
