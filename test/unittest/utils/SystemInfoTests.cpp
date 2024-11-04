@@ -32,6 +32,7 @@
 #include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
 
+#include <fastcdr/cdr/fixed_size_string.hpp>
 #include <rtps/attributes/ServerAttributes.hpp>
 #include <utils/SystemInfo.hpp>
 
@@ -158,6 +159,12 @@ TEST_F(SystemInfoTests, GetUsernameTest)
     std::string username;
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, eprosima::SystemInfo::get_username(username));
     EXPECT_FALSE(username.empty());
+}
+
+TEST_F(SystemInfoTests, GetMachineId)
+{
+    eprosima::fastcdr::string_255 machine_id = eprosima::SystemInfo::instance().machine_id();
+    EXPECT_GT(machine_id.size(), 0u);
 }
 
 /**
