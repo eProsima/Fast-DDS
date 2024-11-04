@@ -32,6 +32,8 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+constexpr ParameterId_t PID_HOST_ID = static_cast<ParameterId_t>(0x8003);
+
 /**
  * ParameterList class has static methods to update or read a list of Parameter_t
  * @ingroup PARAMETER_MODULE
