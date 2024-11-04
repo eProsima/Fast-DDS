@@ -13,6 +13,12 @@
 // limitations under the License.
 
 #include "fastdds/rtps/messages/CDRMessage.h"
+
+#include <array>
+#include <cstdint>
+#include <iostream>
+#include <set>
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -1398,6 +1404,509 @@ TEST(BuiltinDataSerializationTests, null_checks)
         ASSERT_FALSE(CDRMessage::readData(nullptr, (octet*) &msg, msg_size));
         ASSERT_FALSE(CDRMessage::readData(&msg, nullptr, msg_size));
         ASSERT_TRUE(CDRMessage::readData(&msg, nullptr, 0));
+    }
+}
+
+/*!
+ * This is a regression test for redmine issue #21537
+ *
+ * It checks that Fast DDS can deserialize DATA(p), DATA(w), and DATA(r) messages captured from InterCom DDS.
+ */
+TEST(BuiltinDataSerializationTests, interoperability_with_intercomdds)
+{
+    // DATA(p)
+    {
+        // This was captured with wireshark from intercom_dds-3.16.2.0_shape_main_linux taken from
+        // https://github.com/omg-dds/dds-rtps/releases/tag/v1.2.2024
+        octet data_p_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            // Participant GUID
+            0x50, 0x00, 0x10, 0x00,
+            0x01, 0x05, 0xfa, 0xd5, 0x7a, 0x09, 0x6a, 0x22, 0x84, 0xfb, 0x23, 0xa2, 0x00, 0x00, 0x01, 0xc1,
+            // Custom (0x8005)
+            0x05, 0x80, 0x18, 0x00,
+            0x12, 0x00, 0x00, 0x00, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x43, 0x4f, 0x4d, 0x20, 0x33, 0x5f, 0x31,
+            0x36, 0x5f, 0x32, 0x5f, 0x30, 0x00, 0x00, 0x00,
+            // Custom (0x8006)
+            0x06, 0x80, 0x04, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            // Custom (0x8007)
+            0x07, 0x80, 0x0c, 0x00,
+            0x01, 0x00, 0x06, 0x00, 0x01, 0x00, 0x00, 0x00, 0x17, 0x00, 0x00, 0x00,
+            // Custom (0x8008)
+            0x08, 0x80, 0x08, 0x00,
+            0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            // Custom (0x8009)
+            0x09, 0x80, 0x34, 0x00,
+            0x2e, 0x00, 0x00, 0x00, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x63, 0x6f, 0x6d, 0x5f, 0x64, 0x64, 0x73,
+            0x2d, 0x33, 0x2e, 0x31, 0x36, 0x2e, 0x32, 0x2e, 0x30, 0x5f, 0x73, 0x68, 0x61, 0x70, 0x65, 0x5f,
+            0x6d, 0x61, 0x69, 0x6e, 0x5f, 0x6c, 0x69, 0x6e, 0x75, 0x78, 0x20, 0x28, 0x37, 0x30, 0x34, 0x35,
+            0x29, 0x00, 0x00, 0x00,
+            // Domain ID
+            0x0f, 0x00, 0x04, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            // Builtin endpoint QoS
+            0x77, 0x00, 0x04, 0x00,
+            0x01, 0x00, 0x00, 0x00,
+            // Builtin endpoint set
+            0x58, 0x00, 0x04, 0x00,
+            0x3f, 0xfc, 0x00, 0x00,
+            // Protocol version
+            0x15, 0x00, 0x04, 0x00,
+            0x02, 0x05, 0x00, 0x00,
+            // Vendor ID
+            0x16, 0x00, 0x04, 0x00,
+            0x01, 0x05, 0x00, 0x00,
+            // Default Unicast Locator
+            0x31, 0x00, 0x18, 0x00,
+            0x01, 0x00, 0x00, 0x00, 0xf5, 0x1c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0xac, 0x1a, 0x9f, 0xd5,
+            // Default Multicast Locator
+            0x48, 0x00, 0x18, 0x00,
+            0x01, 0x00, 0x00, 0x00, 0xe9, 0x1c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0xef, 0xff, 0x00, 0x01,
+            // Metatraffic unicast locator
+            0x32, 0x00, 0x18, 0x00,
+            0x01, 0x00, 0x00, 0x00, 0xf4, 0x1c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0xac, 0x1a, 0x9f, 0xd5,
+            // Metatraffic multicast locator
+            0x33, 0x00, 0x18, 0x00,
+            0x01, 0x00, 0x00, 0x00, 0xe8, 0x1c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0xef, 0xff, 0x00, 0x01,
+            // Participant lease duration
+            0x02, 0x00, 0x08, 0x00,
+            0x2c, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            // Sentinel
+            0x01, 0x00, 0x00, 0x00
+        };
+
+        CDRMessage_t msg(0);
+        msg.init(data_p_buffer, static_cast<uint32_t>(sizeof(data_p_buffer)));
+        msg.length = msg.max_size;
+
+        ParticipantProxyData out({});
+        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, true, network, false)));
+    }
+
+    // DATA(w)
+    {
+        // This was captured with wireshark from intercom_dds-3.16.2.0_shape_main_linux taken from
+        // https://github.com/omg-dds/dds-rtps/releases/tag/v1.2.2024
+        octet data_w_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            // Writer GUID
+            0x5a, 0x00, 0x10, 0x00,
+            0x01, 0x05, 0xfa, 0xd5, 0x7a, 0x09, 0x6a, 0x22, 0x84, 0xfb, 0x23, 0xa2, 0x00, 0x00, 0x01, 0x02,
+            // Participant GUID
+            0x50, 0x00, 0x10, 0x00,
+            0x01, 0x05, 0xfa, 0xd5, 0x7a, 0x09, 0x6a, 0x22, 0x84, 0xfb, 0x23, 0xa2, 0x00, 0x00, 0x01, 0xc1,
+            // Topic name
+            0x05, 0x00, 0x0c, 0x00,
+            0x07, 0x00, 0x00, 0x00, 0x53, 0x71, 0x75, 0x61, 0x72, 0x65, 0x00, 0x00,
+            // Type name
+            0x07, 0x00, 0x10, 0x00,
+            0x0a, 0x00, 0x00, 0x00, 0x53, 0x68, 0x61, 0x70, 0x65, 0x54, 0x79, 0x70, 0x65, 0x00, 0x00, 0x00,
+            // Type information
+            0x75, 0x00, 0x5c, 0x00,
+            0x58, 0x00, 0x00, 0x00, 0x01, 0x10, 0x00, 0x50, 0x24, 0x00, 0x00, 0x00, 0x14, 0x00, 0x00, 0x00,
+            0xf1, 0xa5, 0x12, 0xf3, 0x95, 0xe2, 0xba, 0xb0, 0xb9, 0xfc, 0x83, 0x8e, 0x08, 0x6e, 0x2c, 0x00,
+            0x57, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x02, 0x10, 0x00, 0x50, 0x24, 0x00, 0x00, 0x00, 0x14, 0x00, 0x00, 0x00, 0xf2, 0x77, 0x32, 0x07,
+            0xfb, 0x72, 0x38, 0x6e, 0x0d, 0xdb, 0x0e, 0x1a, 0x2b, 0x4f, 0xbe, 0x00, 0x84, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            // Topic data
+            0x2e, 0x00, 0x04, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            // Data representation
+            0x73, 0x00, 0x08, 0x00,
+            0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            // Property list
+            0x59, 0x00, 0x08, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            // Data tags
+            0x03, 0x10, 0x04, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            // Service instance name
+            0x80, 0x00, 0x04, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            // Related entity GUID
+            0x81, 0x00, 0x10, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            // History
+            0x40, 0x00, 0x08, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
+            // Custom (0x8030)
+            0x30, 0x80, 0x04, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            // Sentinel
+            0x01, 0x00, 0x00, 0x00
+        };
+
+        CDRMessage_t msg(0);
+        msg.init(data_w_buffer, static_cast<uint32_t>(sizeof(data_w_buffer)));
+        msg.length = msg.max_size;
+
+        WriterProxyData out(max_unicast_locators, max_multicast_locators);
+        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true)));
+    }
+
+    // DATA(r)
+    {
+        // This was captured with wireshark from intercom_dds-3.16.2.0_shape_main_linux taken from
+        // https://github.com/omg-dds/dds-rtps/releases/tag/v1.2.2024
+        uint8_t data_r_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            // Reader GUID
+            0x5a, 0x00, 0x10, 0x00,
+            0x01, 0x05, 0x0f, 0xda, 0x14, 0xdd, 0x32, 0x62, 0x74, 0xef, 0x08, 0xeb, 0x00, 0x00, 0x01, 0x07,
+            // Participant GUID
+            0x50, 0x00, 0x10, 0x00,
+            0x01, 0x05, 0x0f, 0xda, 0x14, 0xdd, 0x32, 0x62, 0x74, 0xef, 0x08, 0xeb, 0x00, 0x00, 0x01, 0xc1,
+            // Topic name
+            0x05, 0x00, 0x0c, 0x00,
+            0x07, 0x00, 0x00, 0x00, 0x53, 0x71, 0x75, 0x61, 0x72, 0x65, 0x00, 0x00,
+            // Type name
+            0x07, 0x00, 0x10, 0x00,
+            0x0a, 0x00, 0x00, 0x00, 0x53, 0x68, 0x61, 0x70, 0x65, 0x54, 0x79, 0x70, 0x65, 0x00, 0x00, 0x00,
+            // Type information
+            0x75, 0x00, 0x5c, 0x00,
+            0x58, 0x00, 0x00, 0x00, 0x01, 0x10, 0x00, 0x50, 0x24, 0x00, 0x00, 0x00, 0x14, 0x00, 0x00, 0x00,
+            0xf1, 0xa5, 0x12, 0xf3, 0x95, 0xe2, 0xba, 0xb0, 0xb9, 0xfc, 0x83, 0x8e, 0x08, 0x6e, 0x2c, 0x00,
+            0x57, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x02, 0x10, 0x00, 0x50, 0x24, 0x00, 0x00, 0x00, 0x14, 0x00, 0x00, 0x00, 0xf2, 0x77, 0x32, 0x07,
+            0xfb, 0x72, 0x38, 0x6e, 0x0d, 0xdb, 0x0e, 0x1a, 0x2b, 0x4f, 0xbe, 0x00, 0x84, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            // Reliability
+            0x1a, 0x00, 0x10, 0x00,
+            0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x9a, 0x99, 0x99, 0x19, 0x00, 0x00, 0x00, 0x00,
+            // Topic data
+            0x2e, 0x00, 0x04, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            // Data representation
+            0x73, 0x00, 0x08, 0x00,
+            0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            // Type consistency
+            0x74, 0x00, 0x08, 0x00,
+            0x01, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00,
+            // Property list
+            0x59, 0x00, 0x08, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            // Data tags
+            0x03, 0x10, 0x04, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            // Service instance name
+            0x80, 0x00, 0x04, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            // Related entity GUID
+            0x81, 0x00, 0x10, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            // History
+            0x40, 0x00, 0x08, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
+            // Sentinel
+            0x01, 0x00, 0x00, 0x00
+        };
+
+        CDRMessage_t msg(0);
+        msg.init(data_r_buffer, static_cast<uint32_t>(sizeof(data_r_buffer)));
+        msg.length = msg.max_size;
+
+        ReaderProxyData out(max_unicast_locators, max_multicast_locators);
+        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true)));
+    }
+}
+
+/*!
+ * This is a regression test for redmine issue #21537
+ *
+ * It checks deserialization of builtin data with big parameters.
+ */
+TEST(BuiltinDataSerializationTests, deserialization_of_big_parameters)
+{
+    constexpr size_t encapsulation_length = 4;
+    constexpr size_t guid_length = 20;
+    constexpr size_t topic_name_length = 16;
+    constexpr size_t type_name_length = 16;
+    constexpr size_t parameter_length = 65536;
+    constexpr size_t sentinel_length = 4;
+    constexpr size_t total_length =
+            encapsulation_length + // encapsulation
+            parameter_length +   // Big parameter
+            guid_length +        // Participant GUID
+            guid_length +        // Endpoint GUID
+            topic_name_length +  // Topic name
+            type_name_length +   // Type name
+            sentinel_length;     // Sentinel
+    std::array<octet, total_length> buffer{{0}};
+
+    // Encapsulation (PL_CDR_LE)
+    size_t pos = 0;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x03;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x00;
+
+    // Room for the big parameter
+    pos += parameter_length;
+
+    // Participant GUID
+    buffer[pos++] = 0x50;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x10;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x01;
+    buffer[pos++] = 0x05;
+    buffer[pos++] = 0x0f;
+    buffer[pos++] = 0xda;
+    buffer[pos++] = 0x14;
+    buffer[pos++] = 0xdd;
+    buffer[pos++] = 0x32;
+    buffer[pos++] = 0x62;
+    buffer[pos++] = 0x74;
+    buffer[pos++] = 0xef;
+    buffer[pos++] = 0x08;
+    buffer[pos++] = 0xeb;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x01;
+    buffer[pos++] = 0xc1;
+
+    // Endpoint GUID
+    buffer[pos++] = 0x5a;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x10;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x01;
+    buffer[pos++] = 0x05;
+    buffer[pos++] = 0x0f;
+    buffer[pos++] = 0xda;
+    buffer[pos++] = 0x14;
+    buffer[pos++] = 0xdd;
+    buffer[pos++] = 0x32;
+    buffer[pos++] = 0x62;
+    buffer[pos++] = 0x74;
+    buffer[pos++] = 0xef;
+    buffer[pos++] = 0x08;
+    buffer[pos++] = 0xeb;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x01;
+    buffer[pos++] = 0x07;
+
+    // Topic name ("Square")
+    buffer[pos++] = 0x05;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x0c;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x07;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x53;
+    buffer[pos++] = 0x71;
+    buffer[pos++] = 0x75;
+    buffer[pos++] = 0x61;
+    buffer[pos++] = 0x72;
+    buffer[pos++] = 0x65;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x00;
+
+    // Type name ("MyType")
+    buffer[pos++] = 0x07;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x0c;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x07;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x4d;
+    buffer[pos++] = 0x79;
+    buffer[pos++] = 0x54;
+    buffer[pos++] = 0x79;
+    buffer[pos++] = 0x70;
+    buffer[pos++] = 0x65;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x00;
+
+    // Sentinel
+    buffer[pos++] = 0x01;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x00;
+    buffer[pos++] = 0x00;
+
+    ASSERT_EQ(total_length, pos);
+
+    std::set<uint16_t> failed_for_data_p;
+    std::set<uint16_t> failed_for_data_w;
+    std::set<uint16_t> failed_for_data_r;
+
+    // Loop all parameter IDs in the standard range
+    for (uint16_t pid = 0x2; pid <= 0x7FFF; ++pid)
+    {
+        // Clear big parameter
+        octet zero = 0u;
+        auto param_begin = buffer.begin() + encapsulation_length;
+        std::fill(param_begin, param_begin + parameter_length, zero);
+
+        // Set the parameter ID of the big parameter
+        constexpr uint16_t big_parameter_plength = parameter_length - 4;
+        buffer[encapsulation_length] = static_cast<octet>(pid & 0xFF);
+        buffer[encapsulation_length + 1] = static_cast<octet>((pid >> 8) & 0xFF);
+        buffer[encapsulation_length + 2] = static_cast<octet>(big_parameter_plength & 0xFF);
+        buffer[encapsulation_length + 3] = static_cast<octet>((big_parameter_plength >> 8) & 0xFF);
+
+        // Beware of semantically incorrect parameters
+        switch (pid)
+        {
+            // The protocol version should be 2
+            case eprosima::fastdds::dds::PID_PROTOCOL_VERSION:
+            {
+                buffer[encapsulation_length + 4] = 0x02;
+            }
+            break;
+
+            // The length of some string parameters should be lower than 256
+            case eprosima::fastdds::dds::PID_ENTITY_NAME:
+            case eprosima::fastdds::dds::PID_TYPE_NAME:
+            case eprosima::fastdds::dds::PID_TOPIC_NAME:
+            {
+                buffer[encapsulation_length + 2] = 0xFF;
+                buffer[encapsulation_length + 3] = 0x00;
+            }
+            break;
+
+            // Data parameters should fill the whole parameter
+            case eprosima::fastdds::dds::PID_USER_DATA:
+            case eprosima::fastdds::dds::PID_TOPIC_DATA:
+            case eprosima::fastdds::dds::PID_GROUP_DATA:
+            {
+                constexpr uint16_t inner_data_length = big_parameter_plength - 4;
+                buffer[encapsulation_length + 4] = static_cast<octet>(inner_data_length & 0xFF);
+                buffer[encapsulation_length + 5] = static_cast<octet>((inner_data_length >> 8) & 0xFF);
+            }
+            break;
+
+            // Custom content for partition
+            case eprosima::fastdds::dds::PID_PARTITION:
+            {
+                // Number of partitions (1)
+                buffer[encapsulation_length + 4] = 0x01;
+                buffer[encapsulation_length + 5] = 0x00;
+                buffer[encapsulation_length + 6] = 0x00;
+                buffer[encapsulation_length + 7] = 0x00;
+                // Partition name length (fills the rest of the parameter)
+                constexpr uint16_t partition_length = big_parameter_plength - 4 - 4;
+                buffer[encapsulation_length + 8] = static_cast<octet>(partition_length & 0xFF);
+                buffer[encapsulation_length + 9] = static_cast<octet>((partition_length >> 8) & 0xFF);
+                buffer[encapsulation_length + 10] = 0x00;
+                buffer[encapsulation_length + 11] = 0x00;
+            }
+            break;
+
+            // Custom content for security tokens
+            case eprosima::fastdds::dds::PID_IDENTITY_TOKEN:
+            case eprosima::fastdds::dds::PID_PERMISSIONS_TOKEN:
+            {
+                // Content is a string + properties (0) + binary properties (0)
+                // Should fill the whole parameter
+                constexpr uint16_t token_string_length = big_parameter_plength - 4 - 4 - 4;
+                buffer[encapsulation_length + 4] = static_cast<octet>(token_string_length & 0xFF);
+                buffer[encapsulation_length + 5] = static_cast<octet>((token_string_length >> 8) & 0xFF);
+            }
+            break;
+        }
+
+        // Deserialize a DATA(p)
+        {
+            CDRMessage_t msg(0);
+            msg.init(buffer.data(), static_cast<uint32_t>(buffer.size()));
+            msg.length = msg.max_size;
+
+            RTPSParticipantAllocationAttributes att;
+            att.data_limits.max_user_data = parameter_length;
+            ParticipantProxyData out({});
+            EXPECT_NO_THROW(
+                if (!out.readFromCDRMessage(&msg, true, network, false))
+                        {
+                            failed_for_data_p.insert(pid);
+                        }
+                );
+        }
+
+        // Deserialize a DATA(w)
+        {
+            CDRMessage_t msg(0);
+            msg.init(buffer.data(), static_cast<uint32_t>(buffer.size()));
+            msg.length = msg.max_size;
+
+            VariableLengthDataLimits limits;
+            limits.max_user_data = parameter_length;
+            WriterProxyData out(max_unicast_locators, max_multicast_locators, limits);
+            EXPECT_NO_THROW(
+                if (!out.readFromCDRMessage(&msg, network, true))
+                        {
+                            failed_for_data_w.insert(pid);
+                        }
+                );
+        }
+
+        // Deserialize a DATA(r)
+        {
+            CDRMessage_t msg(0);
+            msg.init(buffer.data(), static_cast<uint32_t>(buffer.size()));
+            msg.length = msg.max_size;
+
+            VariableLengthDataLimits limits;
+            limits.max_user_data = parameter_length;
+            ReaderProxyData out(max_unicast_locators, max_multicast_locators, limits);
+            EXPECT_NO_THROW(
+                if (!out.readFromCDRMessage(&msg, network, true))
+                        {
+                            failed_for_data_r.insert(pid);
+                        }
+                );
+        }
+    }
+
+    // Check if any parameter ID failed
+    EXPECT_EQ(failed_for_data_p.size(), 0u);
+    EXPECT_EQ(failed_for_data_w.size(), 0u);
+    EXPECT_EQ(failed_for_data_r.size(), 0u);
+
+    // Print the failed parameter IDs
+    if (!failed_for_data_p.empty())
+    {
+        std::cout << "Failed for DATA(p): ";
+        for (uint16_t pid : failed_for_data_p)
+        {
+            std::cout << std::hex << std::setfill('0') << std::setw(4) << pid << " ";
+        }
+        std::cout << std::endl;
+    }
+    if (!failed_for_data_w.empty())
+    {
+        std::cout << "Failed for DATA(w): ";
+        for (uint16_t pid : failed_for_data_w)
+        {
+            std::cout << std::hex << std::setfill('0') << std::setw(4) << pid << " ";
+        }
+        std::cout << std::endl;
+    }
+    if (!failed_for_data_r.empty())
+    {
+        std::cout << "Failed for DATA(r): ";
+        for (uint16_t pid : failed_for_data_r)
+        {
+            std::cout << std::hex << std::setfill('0') << std::setw(4) << pid << " ";
+        }
+        std::cout << std::endl;
     }
 }
 
