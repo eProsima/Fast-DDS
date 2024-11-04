@@ -156,7 +156,7 @@ private:
         if (machine_id_ == "")
         {
             EPROSIMA_LOG_WARNING(UTILS, "Cannot get machine id. Failing back to IP based ID");
-            machine_id_ = std::to_string(id_);
+            machine_id_ = "";
         }
     }
 
@@ -179,7 +179,7 @@ private:
         CFStringGetCString(uuidCf, buf, 255, kCFStringEncodingMacRoman);
         CFRelease(uuidCf);
         return std::string(buf, 255);
-    #else
+    #elif defined(_POSIX_SOURCE)
         int fd = open("/etc/machine-id", O_RDONLY);
         if (fd == -1) {
             return "";
@@ -194,6 +194,8 @@ private:
         }
 
         return std::string(buffer, 32);
+    #else
+        return "";
     #endif // if defined(_WIN32)
     }
 
