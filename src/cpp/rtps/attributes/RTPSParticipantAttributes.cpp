@@ -187,8 +187,7 @@ static void setup_transports_udpv6(
 }
 
 static void setup_large_data_shm_transport(
-        RTPSParticipantAttributes& att,
-        const fastdds::rtps::BuiltinTransportsOptions& options)
+        RTPSParticipantAttributes& att)
 {
 #ifdef FASTDDS_SHM_TRANSPORT_DISABLED
     static_cast<void>(att);
@@ -196,7 +195,7 @@ static void setup_large_data_shm_transport(
             "but Fast DDS was built without SHM transport support. Will use " <<
             "TCP for communications on the same host.");
 #else
-    auto descriptor = create_shm_transport(att, options);
+    auto descriptor = create_shm_transport(att);
     att.userTransports.push_back(descriptor);
 
     auto shm_loc = fastdds::rtps::SHMLocator::create_locator(0, fastdds::rtps::SHMLocator::Type::UNICAST);
@@ -210,15 +209,7 @@ static void setup_transports_large_data(
 {
     if (!intraprocess_only)
     {
-<<<<<<< HEAD
-        auto shm_transport = create_shm_transport(att);
-        att.userTransports.push_back(shm_transport);
-
-        auto shm_loc = fastdds::rtps::SHMLocator::create_locator(0, fastdds::rtps::SHMLocator::Type::UNICAST);
-        att.defaultUnicastLocatorList.push_back(shm_loc);
-=======
-        setup_large_data_shm_transport(att, options);
->>>>>>> a7dfdf5b4 (Check if `SHM` transport is disabled in `LARGE_DATA` modes (#5355))
+        setup_large_data_shm_transport(att);
 
         auto tcp_transport = create_tcpv4_transport(att);
         att.userTransports.push_back(tcp_transport);
@@ -251,15 +242,7 @@ static void setup_transports_large_datav6(
 {
     if (!intraprocess_only)
     {
-<<<<<<< HEAD
-        auto shm_transport = create_shm_transport(att);
-        att.userTransports.push_back(shm_transport);
-
-        auto shm_loc = fastdds::rtps::SHMLocator::create_locator(0, fastdds::rtps::SHMLocator::Type::UNICAST);
-        att.defaultUnicastLocatorList.push_back(shm_loc);
-=======
-        setup_large_data_shm_transport(att, options);
->>>>>>> a7dfdf5b4 (Check if `SHM` transport is disabled in `LARGE_DATA` modes (#5355))
+        setup_large_data_shm_transport(att);
 
         auto tcp_transport = create_tcpv6_transport(att);
         att.userTransports.push_back(tcp_transport);
