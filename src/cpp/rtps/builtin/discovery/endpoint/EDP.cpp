@@ -36,6 +36,7 @@
 #include <fastdds/rtps/writer/WriterListener.hpp>
 
 #include <fastdds/utils/TypePropagation.hpp>
+#include <fastdds/xtypes/type_representation/TypeAssignability.hpp>
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/ProxyHashTables.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
@@ -70,16 +71,6 @@ static bool is_partition_empty(
         const fastdds::dds::Partition_t& partition)
 {
     return partition.size() <= 1 && 0 == strlen(partition.name());
-}
-
-static bool is_same_type(
-        const dds::xtypes::TypeInformation& t1,
-        const dds::xtypes::TypeInformation& t2)
-{
-    return (dds::xtypes::TK_NONE != t1.complete().typeid_with_size().type_id()._d()
-           && t1.complete().typeid_with_size() == t2.complete().typeid_with_size())
-           || (dds::xtypes::TK_NONE != t1.minimal().typeid_with_size().type_id()._d()
-           && t1.minimal().typeid_with_size() == t2.minimal().typeid_with_size());
 }
 
 EDP::EDP(
@@ -579,22 +570,77 @@ bool EDP::valid_matching(
         return false;
     }
 
-    if ((wdata->has_type_information() && wdata->type_information().assigned()) &&
-            (rdata->has_type_information() && rdata->type_information().assigned()))
+    const dds::xtypes::TypeIdentifier* t1 {nullptr};
+    const dds::xtypes::TypeIdentifier* t2 {nullptr};
+    dds::xtypes::TypeIdentifierPair t1_pair;
+    dds::xtypes::TypeIdentifierPair t2_pair;
+
+    if ((wdata->has_type_information() && wdata->type_information().assigned()))
     {
-        if (!is_same_type(wdata->type_information().type_information, rdata->type_information().type_information))
+        if (dds::xtypes::TK_NONE !=
+                wdata->type_information().type_information.minimal().typeid_with_size().type_id()._d())
+        {
+            t2 = &wdata->type_information().type_information.minimal().typeid_with_size().type_id();
+        }
+        else if (dds::xtypes::TK_NONE !=
+                wdata->type_information().type_information.complete().typeid_with_size().type_id()._d())
+        {
+            t2 = &wdata->type_information().type_information.complete().typeid_with_size().type_id();
+        }
+    }
+    else if (dds::RETCODE_OK ==
+            RTPSDomainImpl::type_object_registry_observer().get_type_identifiers(wdata->typeName().to_string(),
+            t2_pair))
+    {
+        if (dds::xtypes::EK_MINIMAL == t2_pair.type_identifier2()._d())
+        {
+            t2 = &t2_pair.type_identifier2();
+        }
+        else
+        {
+            t2 = &t2_pair.type_identifier1();
+        }
+    }
+
+    if ((rdata->has_type_information() && rdata->type_information().assigned()))
+    {
+        if (dds::xtypes::TK_NONE !=
+                rdata->type_information().type_information.minimal().typeid_with_size().type_id()._d())
+        {
+            t1 = &rdata->type_information().type_information.minimal().typeid_with_size().type_id();
+        }
+        else if (dds::xtypes::TK_NONE !=
+                rdata->type_information().type_information.complete().typeid_with_size().type_id()._d())
+        {
+            t1 = &rdata->type_information().type_information.complete().typeid_with_size().type_id();
+        }
+    }
+    else if (dds::RETCODE_OK ==
+            RTPSDomainImpl::type_object_registry_observer().get_type_identifiers(rdata->typeName().to_string(),
+            t1_pair))
+    {
+        if (dds::xtypes::EK_MINIMAL == t1_pair.type_identifier2()._d())
+        {
+            t1 = &t1_pair.type_identifier2();
+        }
+        else
+        {
+            t1 = &t1_pair.type_identifier1();
+        }
+    }
+
+    if (nullptr != t1 && nullptr != t2)
+    {
+        if (!dds::xtypes::TypeAssignability::type_assignable_from(*t1, *t2))
         {
             reason.set(MatchingFailureMask::different_typeinfo);
             return false;
         }
     }
-    else
+    else if (wdata->typeName() != rdata->typeName())
     {
-        if (wdata->typeName() != rdata->typeName())
-        {
-            reason.set(MatchingFailureMask::inconsistent_topic);
-            return false;
-        }
+        reason.set(MatchingFailureMask::inconsistent_topic);
+        return false;
     }
 
     if (wdata->topicKind() != rdata->topicKind())
