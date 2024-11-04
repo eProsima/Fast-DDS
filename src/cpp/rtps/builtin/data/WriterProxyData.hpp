@@ -455,10 +455,20 @@ public:
             bool should_filter_locators,
             fastdds::rtps::VendorId_t source_vendor_id = c_VendorId_eProsima);
 
+    /**
+     * Check if the host is the same as the one that sent the data.
+     * It tries to use the m_host_id. If it is not available, it will compare GUIDs.
+     * @return True if the host is the same
+     */
+    bool check_same_host();
+
 private:
 
     //!GUID
     GUID_t m_guid;
+
+    //!HOST ID
+    fastcdr::string_255 m_host_id;
 
     //!Network configuration
     NetworkConfigSet_t m_networkConfiguration;

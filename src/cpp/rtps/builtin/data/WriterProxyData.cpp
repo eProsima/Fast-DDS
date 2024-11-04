@@ -24,6 +24,7 @@
 
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/network/NetworkFactory.hpp>
+#include <utils/SystemInfo.hpp>
 
 #include "ProxyDataFilters.hpp"
 
@@ -182,6 +183,13 @@ uint32_t WriterProxyData::get_serialized_size(
 
     // PID_NETWORK_CONFIGURATION_SET
     ret_val += 4 + PARAMETER_NETWORKCONFIGSET_LENGTH;
+
+    if (m_host_id.size() > 0)
+    {
+        // PID_HOST_ID
+        ret_val +=
+                fastdds::dds::ParameterSerializer<Parameter_t>::cdr_serialized_size(m_host_id);
+    }
 
     // PID_UNICAST_LOCATOR
     ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * remote_locators_.unicast.size());
@@ -358,6 +366,15 @@ bool WriterProxyData::writeToCDRMessage(
         ParameterNetworkConfigSet_t p(fastdds::dds::PID_NETWORK_CONFIGURATION_SET, PARAMETER_NETWORKCONFIGSET_LENGTH);
         p.netconfigSet = m_networkConfiguration;
         if (!dds::ParameterSerializer<ParameterNetworkConfigSet_t>::add_to_cdr_message(p, msg))
+        {
+            return false;
+        }
+    }
+
+    if (m_host_id.size() > 0)
+    {
+        ParameterString_t p(fastdds::dds::PID_HOST_ID, 0, m_host_id);
+        if (!fastdds::dds::ParameterSerializer<ParameterString_t>::add_to_cdr_message(p, msg))
         {
             return false;
         }
@@ -894,7 +911,7 @@ bool WriterProxyData::readFromCDRMessage(
                         {
                             Locator_t temp_locator;
                             if (network.transform_remote_locator(p.locator, temp_locator, m_networkConfiguration,
-                                    m_guid.is_from_this_host()))
+                                    check_same_host()))
                             {
                                 ProxyDataFilters::filter_locators(
                                     network,
@@ -921,7 +938,7 @@ bool WriterProxyData::readFromCDRMessage(
                         {
                             Locator_t temp_locator;
                             if (network.transform_remote_locator(p.locator, temp_locator, m_networkConfiguration,
-                                    m_guid.is_from_this_host()))
+                                    check_same_host()))
                             {
                                 ProxyDataFilters::filter_locators(
                                     network,
@@ -1117,6 +1134,20 @@ bool WriterProxyData::readFromCDRMessage(
     return false;
 }
 
+bool WriterProxyData::check_same_host()
+{
+    bool same_host = false;
+    if (m_host_id.size() > 0)
+    {
+        same_host = m_host_id == SystemInfo::instance().machine_id();
+    }
+    else
+    {
+        same_host = m_guid.is_from_this_host();
+    }
+    return same_host;
+}
+
 void WriterProxyData::clear()
 {
 #if HAVE_SECURITY
@@ -1124,6 +1155,7 @@ void WriterProxyData::clear()
     plugin_security_attributes_ = 0UL;
 #endif // if HAVE_SECURITY
     m_guid = c_Guid_Unknown;
+    m_host_id = "";
     m_networkConfiguration = 0;
     remote_locators_.unicast.clear();
     remote_locators_.multicast.clear();
@@ -1157,6 +1189,7 @@ void WriterProxyData::copy(
         WriterProxyData* wdata)
 {
     m_guid = wdata->m_guid;
+    m_host_id = wdata->m_host_id;
     m_networkConfiguration = wdata->m_networkConfiguration;
     remote_locators_ = wdata->remote_locators_;
     m_key = wdata->m_key;
@@ -1250,7 +1283,7 @@ void WriterProxyData::set_remote_unicast_locators(
     remote_locators_.unicast.clear();
     for (const Locator_t& locator : locators)
     {
-        if (network.is_locator_remote_or_allowed(locator, m_guid.is_from_this_host()))
+        if (network.is_locator_remote_or_allowed(locator, check_same_host()))
         {
             remote_locators_.add_unicast_locator(locator);
         }
@@ -1270,7 +1303,7 @@ void WriterProxyData::set_multicast_locators(
     remote_locators_.multicast.clear();
     for (const Locator_t& locator : locators)
     {
-        if (network.is_locator_remote_or_allowed(locator, m_guid.is_from_this_host()))
+        if (network.is_locator_remote_or_allowed(locator, check_same_host()))
         {
             remote_locators_.add_multicast_locator(locator);
         }
@@ -1293,7 +1326,7 @@ void WriterProxyData::set_remote_locators(
 
     for (const Locator_t& locator : locators.unicast)
     {
-        if (network.is_locator_remote_or_allowed(locator, m_guid.is_from_this_host()))
+        if (network.is_locator_remote_or_allowed(locator, check_same_host()))
         {
             remote_locators_.add_unicast_locator(locator);
         }
@@ -1303,7 +1336,7 @@ void WriterProxyData::set_remote_locators(
     {
         for (const Locator_t& locator : locators.multicast)
         {
-            if (network.is_locator_remote_or_allowed(locator, m_guid.is_from_this_host()))
+            if (network.is_locator_remote_or_allowed(locator, check_same_host()))
             {
                 remote_locators_.add_multicast_locator(locator);
             }
