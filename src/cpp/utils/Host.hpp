@@ -160,13 +160,13 @@ private:
         }
     }
 
-
     static std::string compute_machine_id()
     {
     #ifdef _WIN32
         char machine_id[255];
         DWORD BufferSize = sizeof(machine_id);
-        LONG res = RegGetValueA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Cryptography", "MachineGuid", RRF_RT_REG_SZ, NULL, machine_id, &BufferSize);
+        LONG res = RegGetValueA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Cryptography", "MachineGuid", RRF_RT_REG_SZ,
+                        NULL, machine_id, &BufferSize);
         if (res == 0)
         {
             return std::string(machine_id);
@@ -174,14 +174,16 @@ private:
         return "";
     #elif defined(__APPLE__)
         io_registry_entry_t ioRegistryRoot = IORegistryEntryFromPath(kIOMasterPortDefault, "IOService:/");
-        CFStringRef uuidCf = (CFStringRef) IORegistryEntryCreateCFProperty(ioRegistryRoot, CFSTR(kIOPlatformUUIDKey), kCFAllocatorDefault, 0);
+        CFStringRef uuidCf = (CFStringRef) IORegistryEntryCreateCFProperty(ioRegistryRoot, CFSTR(
+                            kIOPlatformUUIDKey), kCFAllocatorDefault, 0);
         IOObjectRelease(ioRegistryRoot);
         CFStringGetCString(uuidCf, buf, 255, kCFStringEncodingMacRoman);
         CFRelease(uuidCf);
         return std::string(buf, 255);
     #elif defined(_POSIX_SOURCE)
         int fd = open("/etc/machine-id", O_RDONLY);
-        if (fd == -1) {
+        if (fd == -1)
+        {
             return "";
         }
 
@@ -189,7 +191,8 @@ private:
         ssize_t bytes_read = read(fd, buffer, 32);
         close(fd);
 
-        if (bytes_read < 32) {
+        if (bytes_read < 32)
+        {
             return "";
         }
 
