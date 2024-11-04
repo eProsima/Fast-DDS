@@ -78,6 +78,26 @@ public:
     }
 
     /**
+     * Get the identifier of the current machine.
+     *
+     * @return the identifier of the current host.
+     */
+    inline fastcdr::string_255 machine_id() const
+    {
+        return Host::instance().machine_id();
+    }
+
+    /**
+     * Get the identifier of the current machine.
+     *
+     * @return the identifier of the current host.
+     */
+    inline fastcdr::string_255 check_machine_id() const
+    {
+        return Host::instance().machine_id();
+    }
+
+    /**
      * Get a reference to the singleton instance.
      *
      * @return reference to the singleton instance.
