@@ -168,6 +168,7 @@ enum ParameterId_t : uint16_t
     /* eProsima Fast DDS extensions */
     PID_PRODUCT_VERSION                     = 0x8000,
     PID_PERSISTENCE_GUID                    = 0x8002,
+    PID_HOST_ID                             = 0x8003,
     PID_DISABLE_POSITIVE_ACKS               = 0x8005,
     PID_DATASHARING                         = 0x8006,
     PID_NETWORK_CONFIGURATION_SET           = 0x8007,

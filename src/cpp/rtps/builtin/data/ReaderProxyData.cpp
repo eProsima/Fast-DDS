@@ -897,6 +897,33 @@ bool ReaderProxyData::readFromCDRMessage(
                         m_networkConfiguration = p.netconfigSet;
                         break;
                     }
+                    case fastdds::dds::PID_HOST_ID:
+                    {
+                        VendorId_t local_vendor_id = source_vendor_id;
+                        if (c_VendorId_Unknown == local_vendor_id)
+                        {
+                            local_vendor_id = ((c_VendorId_Unknown == vendor_id) ? c_VendorId_eProsima : vendor_id);
+                        }
+
+                        // Ignore custom PID when coming from other vendors
+                        if (c_VendorId_eProsima != local_vendor_id)
+                        {
+                            EPROSIMA_LOG_INFO(RTPS_PROXY_DATA,
+                                    "Ignoring custom PID" << pid << " from vendor " << local_vendor_id);
+                            return true;
+                        }
+
+                        ParameterString_t p(pid, plength);
+                        if (!fastdds::dds::ParameterSerializer<ParameterString_t>::read_from_cdr_message(
+                                    p, msg,
+                                    plength))
+                        {
+                            return false;
+                        }
+
+                        m_host_id = p.getName();
+                        break;
+                    }
                     case fastdds::dds::PID_UNICAST_LOCATOR:
                     {
                         ParameterLocator_t p(pid, plength);
@@ -1121,32 +1148,6 @@ bool ReaderProxyData::readFromCDRMessage(
 
                     default:
                     {
-                        if (pid == fastdds::dds::PID_HOST_ID)
-                        {
-                            VendorId_t local_vendor_id = source_vendor_id;
-                            if (c_VendorId_Unknown == local_vendor_id)
-                            {
-                                local_vendor_id = ((c_VendorId_Unknown == vendor_id) ? c_VendorId_eProsima : vendor_id);
-                            }
-
-                            // Ignore custom PID when coming from other vendors
-                            if (c_VendorId_eProsima != local_vendor_id)
-                            {
-                                EPROSIMA_LOG_INFO(RTPS_PROXY_DATA,
-                                        "Ignoring custom PID" << pid << " from vendor " << local_vendor_id);
-                                return true;
-                            }
-
-                            ParameterString_t p(pid, plength);
-                            if (!fastdds::dds::ParameterSerializer<ParameterString_t>::read_from_cdr_message(
-                                        p, msg,
-                                        plength))
-                            {
-                                return false;
-                            }
-
-                            m_host_id = p.getName();
-                        }
                         break;
                     }
                 }

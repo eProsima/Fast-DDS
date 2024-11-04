@@ -606,6 +606,28 @@ bool ParticipantProxyData::readFromCDRMessage(
                         m_networkConfiguration = p.netconfigSet;
                         break;
                     }
+                    case fastdds::dds::PID_HOST_ID:
+                    {
+                        // Ignore custom PID when coming from other vendors
+                        if (c_VendorId_eProsima != m_VendorId)
+                        {
+                            EPROSIMA_LOG_INFO(
+                                RTPS_PROXY_DATA,
+                                "Ignoring custom PID" << pid << " from vendor " << source_vendor_id);
+                            return true;
+                        }
+
+                        ParameterString_t p(pid, plength);
+                        if (!fastdds::dds::ParameterSerializer<ParameterString_t>::read_from_cdr_message(
+                                    p, msg,
+                                    plength))
+                        {
+                            return false;
+                        }
+
+                        m_host_id = p.getName();
+                        break;
+                    }
                     case fastdds::dds::PID_METATRAFFIC_MULTICAST_LOCATOR:
                     {
                         ParameterLocator_t p(pid, plength);
@@ -849,27 +871,6 @@ bool ParticipantProxyData::readFromCDRMessage(
                     }
                     default:
                     {
-                        if (pid == fastdds::dds::PID_HOST_ID)
-                        {
-                            // Ignore custom PID when coming from other vendors
-                            if (c_VendorId_eProsima != m_VendorId)
-                            {
-                                EPROSIMA_LOG_INFO(
-                                    RTPS_PROXY_DATA,
-                                    "Ignoring custom PID" << pid << " from vendor " << source_vendor_id);
-                                return true;
-                            }
-
-                            ParameterString_t p(pid, plength);
-                            if (!fastdds::dds::ParameterSerializer<ParameterString_t>::read_from_cdr_message(
-                                        p, msg,
-                                        plength))
-                            {
-                                return false;
-                            }
-
-                            m_host_id = p.getName();
-                        }
                         break;
                     }
                 }
