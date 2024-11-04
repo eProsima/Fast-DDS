@@ -216,6 +216,24 @@ static void setup_transports_udpv6(
     att.userTransports.push_back(descriptor);
 }
 
+static void setup_large_data_shm_transport(
+        RTPSParticipantAttributes& att,
+        const fastdds::rtps::BuiltinTransportsOptions& options)
+{
+#ifdef FASTDDS_SHM_TRANSPORT_DISABLED
+    static_cast<void>(att);
+    EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Trying to configure Large Data transport, " <<
+            "but Fast DDS was built without SHM transport support. Will use " <<
+            "TCP for communications on the same host.");
+#else
+    auto descriptor = create_shm_transport(att, options);
+    att.userTransports.push_back(descriptor);
+
+    auto shm_loc = fastdds::rtps::SHMLocator::create_locator(0, fastdds::rtps::SHMLocator::Type::UNICAST);
+    att.defaultUnicastLocatorList.push_back(shm_loc);
+#endif  // FASTDDS_SHM_TRANSPORT_DISABLED
+}
+
 static void setup_transports_large_data(
         RTPSParticipantAttributes& att,
         bool intraprocess_only,
@@ -223,11 +241,7 @@ static void setup_transports_large_data(
 {
     if (!intraprocess_only)
     {
-        auto shm_transport = create_shm_transport(att, options);
-        att.userTransports.push_back(shm_transport);
-
-        auto shm_loc = fastdds::rtps::SHMLocator::create_locator(0, fastdds::rtps::SHMLocator::Type::UNICAST);
-        att.defaultUnicastLocatorList.push_back(shm_loc);
+        setup_large_data_shm_transport(att, options);
 
         auto tcp_transport = create_tcpv4_transport(att, options);
         att.userTransports.push_back(tcp_transport);
@@ -260,11 +274,7 @@ static void setup_transports_large_datav6(
 {
     if (!intraprocess_only)
     {
-        auto shm_transport = create_shm_transport(att, options);
-        att.userTransports.push_back(shm_transport);
-
-        auto shm_loc = fastdds::rtps::SHMLocator::create_locator(0, fastdds::rtps::SHMLocator::Type::UNICAST);
-        att.defaultUnicastLocatorList.push_back(shm_loc);
+        setup_large_data_shm_transport(att, options);
 
         auto tcp_transport = create_tcpv6_transport(att, options);
         att.userTransports.push_back(tcp_transport);
