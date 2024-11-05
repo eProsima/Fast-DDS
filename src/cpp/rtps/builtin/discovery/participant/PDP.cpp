@@ -1261,19 +1261,6 @@ void PDP::set_proxy_observer(
     proxy_observer_.store(proxy_observer);
 }
 
-void PDP::notify_incompatible_qos_matching(
-        const GUID_t& local_guid,
-        const GUID_t& remote_guid,
-        const fastdds::dds::PolicyMask& incompatible_qos) const
-{
-    auto proxy_observer = get_proxy_observer();
-    // Notify the IProxyObserver implementor of a qos incompatibility
-    if (nullptr != proxy_observer)
-    {
-        proxy_observer->on_incompatible_qos_matching(local_guid, remote_guid, incompatible_qos);
-    }
-}
-
 #endif // FASTDDS_STATISTICS
 
 bool PDP::remove_remote_participant(
@@ -1775,6 +1762,25 @@ void PDP::local_participant_attributes_update_nts(
                 new_atts.builtin.metatraffic_external_unicast_locators,
                 new_atts.default_external_unicast_locators);
     }
+}
+
+void PDP::notify_incompatible_qos_matching(
+        const GUID_t& local_guid,
+        const GUID_t& remote_guid,
+        const fastdds::dds::PolicyMask& incompatible_qos) const
+{
+#ifdef FASTDDS_STATISTICS
+    auto proxy_observer = get_proxy_observer();
+    // Notify the IProxyObserver implementor of a qos incompatibility
+    if (nullptr != proxy_observer)
+    {
+        proxy_observer->on_incompatible_qos_matching(local_guid, remote_guid, incompatible_qos);
+    }
+#else
+    static_cast<void>(local_guid);
+    static_cast<void>(remote_guid);
+    static_cast<void>(incompatible_qos);
+#endif // FASTDDS_STATISTICS
 }
 
 void PDP::update_endpoint_locators_if_default_nts(

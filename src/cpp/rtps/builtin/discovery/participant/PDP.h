@@ -475,19 +475,6 @@ public:
         return proxy_observer_.load();
     }
 
-    /**
-     * @brief Notify monitor the IProxyObserver implementor about
-     * any incompatible QoS matching between a local and a remote entity.
-     *
-     * @param local_guid GUID of the local entity.
-     * @param remote_guid GUID of the remote entity.
-     * @param incompatible_qos The PolicyMask with the incompatible QoS.
-     */
-    void notify_incompatible_qos_matching(
-            const GUID_t& local_guid,
-            const GUID_t& remote_guid,
-            const fastdds::dds::PolicyMask& incompatible_qos) const;
-
 #else
     bool get_all_local_proxies(
             std::vector<GUID_t>&) override
@@ -512,6 +499,19 @@ public:
             const std::vector<BaseReader*>& readers,
             const RTPSParticipantAttributes& old_atts,
             const RTPSParticipantAttributes& new_atts);
+
+    /**
+     * @brief Notify monitor the IProxyObserver implementor about
+     * any incompatible QoS matching between a local and a remote entity.
+     *
+     * @param local_guid GUID of the local entity.
+     * @param remote_guid GUID of the remote entity.
+     * @param incompatible_qos The PolicyMask with the incompatible QoS.
+     */
+    void notify_incompatible_qos_matching(
+            const GUID_t& local_guid,
+            const GUID_t& remote_guid,
+            const fastdds::dds::PolicyMask& incompatible_qos) const;
 
 protected:
 

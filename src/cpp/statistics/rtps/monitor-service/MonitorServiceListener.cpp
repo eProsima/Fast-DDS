@@ -87,32 +87,24 @@ void MonitorServiceListener::on_writer_change_received_by_all(
     static_cast<void>(change);
 }
 
-bool MonitorServiceListener::on_incompatible_qos_matching(
+void MonitorServiceListener::on_incompatible_qos_matching(
         const fastdds::rtps::GUID_t& local_guid,
         const fastdds::rtps::GUID_t& remote_guid,
         const fastdds::dds::PolicyMask& incompatible_qos_policies) const
 {
-    bool ret = false;
-
     if (monitor_srv_)
     {
-        ret = monitor_srv_->on_incompatible_qos_matching(local_guid, remote_guid, incompatible_qos_policies);
+        monitor_srv_->on_incompatible_qos_matching(local_guid, remote_guid, incompatible_qos_policies);
     }
-
-    return ret;
 }
 
-bool MonitorServiceListener::on_remote_proxy_data_removed(
+void MonitorServiceListener::on_remote_proxy_data_removed(
         const fastdds::rtps::GUID_t& removed_proxy_guid) const
 {
-    bool ret = false;
-
     if (monitor_srv_)
     {
-        ret = monitor_srv_->on_remote_proxy_data_removed(removed_proxy_guid);
+        monitor_srv_->on_remote_proxy_data_removed(removed_proxy_guid);
     }
-
-    return ret;
 }
 
 } // namespace rtps

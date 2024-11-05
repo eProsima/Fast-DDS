@@ -589,13 +589,11 @@ bool MonitorService::spin_queue()
     return re_schedule;
 }
 
-bool MonitorService::on_incompatible_qos_matching(
+void MonitorService::on_incompatible_qos_matching(
         const fastdds::rtps::GUID_t& local_guid,
         const fastdds::rtps::GUID_t& remote_guid,
         const fastdds::dds::PolicyMask& incompatible_qos_policies)
 {
-    bool ret = true;
-
     // Convert the PolicyMask to a vector of policy ids
     std::vector<uint32_t> incompatible_policies;
     for (uint32_t id = 1; id < dds::NEXT_QOS_POLICY_ID; ++id)
@@ -678,10 +676,9 @@ bool MonitorService::on_incompatible_qos_matching(
             }
         }
     }
-    return ret;
 }
 
-bool MonitorService::on_remote_proxy_data_removed(
+void MonitorService::on_remote_proxy_data_removed(
         const fastdds::rtps::GUID_t& removed_proxy_guid)
 {
     auto& ext_incompatible_qos_collection = extended_incompatible_qos_collection_;
@@ -703,7 +700,6 @@ bool MonitorService::on_remote_proxy_data_removed(
             push_entity_update(local_entity.first.entityId, StatusKind::EXTENDED_INCOMPATIBLE_QOS);
         }
     }
-    return false;
 }
 
 } // namespace rtps
