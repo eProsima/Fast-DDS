@@ -25,14 +25,13 @@
 
 namespace eprosima {
 namespace fastdds {
-
 namespace statistics {
 namespace rtps {
 
 struct IProxyObserver
 {
     /**
-     * @brief Interface use to notify about any updates
+     * @brief Interface used to notify about any updates
      * on the local entities (updates in the proxy,
      * new matches, unpairs,...)
      *
@@ -45,8 +44,8 @@ struct IProxyObserver
             bool is_alive) const = 0;
 
     /**
-     * @brief Interface use to notify about any updates
-     * against remote entities incompatible qos matching.
+     * @brief Interface used to notify about any updates
+     * regarding remote entities incompatible QoS matching.
      *
      * @param local_guid The GUID_t identifying the local entity
      * @param remote_guid The GUID_t identifying the remote entity
