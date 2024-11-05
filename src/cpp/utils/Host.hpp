@@ -22,17 +22,6 @@
 #include <fastdds/utils/IPFinder.hpp>
 #include <fastdds/utils/md5.hpp>
 
-#if defined(_WIN32)
-#include <WinSock2.h> // Avoid conflicts with WinSock of Windows.h
-#include <windows.h>
-#include <process.h>
-#elif defined(__APPLE__)
-#include <IOKit/IOKitLib.h>
-#else
-#include <unistd.h>
-#include <fcntl.h>
-#endif // if defined(_WIN32)
-
 
 namespace eprosima {
 
@@ -160,47 +149,7 @@ private:
         }
     }
 
-    static std::string compute_machine_id()
-    {
-    #ifdef _WIN32
-        char machine_id[255];
-        DWORD BufferSize = sizeof(machine_id);
-        LONG res = RegGetValueA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Cryptography", "MachineGuid", RRF_RT_REG_SZ,
-                        NULL, machine_id, &BufferSize);
-        if (res == 0)
-        {
-            return std::string(machine_id);
-        }
-        return "";
-    #elif defined(__APPLE__)
-        io_registry_entry_t ioRegistryRoot = IORegistryEntryFromPath(kIOMasterPortDefault, "IOService:/");
-        CFStringRef uuidCf = (CFStringRef) IORegistryEntryCreateCFProperty(ioRegistryRoot, CFSTR(
-                            kIOPlatformUUIDKey), kCFAllocatorDefault, 0);
-        IOObjectRelease(ioRegistryRoot);
-        CFStringGetCString(uuidCf, buf, 255, kCFStringEncodingMacRoman);
-        CFRelease(uuidCf);
-        return std::string(buf, 255);
-    #elif defined(_POSIX_SOURCE)
-        int fd = open("/etc/machine-id", O_RDONLY);
-        if (fd == -1)
-        {
-            return "";
-        }
-
-        char buffer[33] = {0};
-        ssize_t bytes_read = read(fd, buffer, 32);
-        close(fd);
-
-        if (bytes_read < 32)
-        {
-            return "";
-        }
-
-        return std::string(buffer, 32);
-    #else
-        return "";
-    #endif // if defined(_WIN32)
-    }
+    static std::string compute_machine_id();
 
     uint16_t id_;
     uint48 mac_id_;
