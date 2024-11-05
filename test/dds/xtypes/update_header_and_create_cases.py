@@ -25,7 +25,7 @@ class IDLProcessor:
         struct_regexp = r'struct\s+(\w+)(\s*:\s*\w+)?\s*\{([^}]+)'
 
         # Extract structures within modules
-        modules = re.findall(module_regexp, idl_text, re.DOTALL)        
+        modules = re.findall(module_regexp, idl_text, re.DOTALL)
         module_structures = {}
         for module_match in modules:
             module_name, module_content = module_match

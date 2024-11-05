@@ -59,6 +59,7 @@ constexpr const char* struct_seq_struct_name = "SequenceStructure";
 constexpr const char* bitset_seq_struct_name = "SequenceBitset";
 constexpr const char* small_bounded_seq_struct_name = "BoundedSmallSequences";
 constexpr const char* large_bounded_seq_struct_name = "BoundedBigSequences";
+constexpr const char* my_structure_struct_name = "NoCommon_Module::My_Structure";
 
 constexpr const char* var_short_seq = "var_sequence_short";
 constexpr const char* var_ushort_seq = "var_sequence_ushort";
@@ -90,6 +91,12 @@ constexpr const char* var_small_bounded_short_seq = "var_sequence_small";
 constexpr const char* var_small_bounded_string_seq = "var_unbounded_string_small_bounded_sequence";
 constexpr const char* var_large_bounded_short_seq = "var_sequence_big";
 constexpr const char* var_large_bounded_string_seq = "var_unbounded_string_large_bounded_sequence";
+constexpr const char* var_list = "list";
+
+constexpr const char* alias_my_char_name = "Common_Module::My_Char";
+constexpr const char* alias_my_string_name = "Common_Module::My_String";
+constexpr const char* alias_my_aliasstring_name = "NoCommon_Module::My_AliasString";
+constexpr const char* alias_my_sequencestring_name = "NoCommon_Module::My_SequenceString";
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceShort)
 {
@@ -1429,6 +1436,88 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedBigSequences)
 
     xtypes::TypeIdentifierPair static_type_ids;
     register_BoundedBigSequences_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
+
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
+}
+
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_My_Structure)
+{
+    TypeDescriptor::_ref_type alias_descriptor {traits<TypeDescriptor>::make_shared()};
+    alias_descriptor->kind(TK_ALIAS);
+    alias_descriptor->name(alias_my_char_name);
+    alias_descriptor->base_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR8));
+    DynamicTypeBuilder::_ref_type alias_builder {DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor)};
+    ASSERT_TRUE(alias_builder);
+    DynamicType::_ref_type alias_type {alias_builder->build()};
+    ASSERT_TRUE(alias_type);
+
+    alias_descriptor = traits<TypeDescriptor>::make_shared();
+    alias_descriptor->kind(TK_ALIAS);
+    alias_descriptor->name(alias_my_string_name);
+    alias_descriptor->base_type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(alias_type,
+            20)->build());
+    alias_builder = DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor);
+    ASSERT_TRUE(alias_builder);
+    alias_type = alias_builder->build();
+    ASSERT_TRUE(alias_type);
+
+    alias_descriptor = traits<TypeDescriptor>::make_shared();
+    alias_descriptor->kind(TK_ALIAS);
+    alias_descriptor->name(alias_my_aliasstring_name);
+    alias_descriptor->base_type(alias_type);
+    alias_builder = DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor);
+    ASSERT_TRUE(alias_builder);
+    alias_type = alias_builder->build();
+    ASSERT_TRUE(alias_type);
+
+    alias_descriptor = traits<TypeDescriptor>::make_shared();
+    alias_descriptor->kind(TK_ALIAS);
+    alias_descriptor->name(alias_my_sequencestring_name);
+    alias_descriptor->base_type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(alias_type,
+            static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
+    alias_builder = DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor);
+    ASSERT_TRUE(alias_builder);
+    alias_type = alias_builder->build();
+    ASSERT_TRUE(alias_type);
+
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_STRUCTURE);
+    type_descriptor->name(my_structure_struct_name);
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->name(var_list);
+    member_descriptor->type(alias_type);
+    struct_builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type struct_type {struct_builder->build()};
+    DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
+    ASSERT_TRUE(data);
+
+    DynamicData::_ref_type element_data{data->loan_value(0)};
+    ASSERT_TRUE(element_data);
+    CharSeq char_value = {'a', 'b', 'y', 'z'};
+    EXPECT_EQ(element_data->set_char8_values(0, char_value), RETCODE_OK);
+    data->return_loaned_value(element_data);
+
+    element_data = data->loan_value(0);
+    CharSeq test_char_value;
+    EXPECT_EQ(element_data->get_char8_values(test_char_value, 0), RETCODE_OK);
+    EXPECT_EQ(char_value, test_char_value);
+    data->return_loaned_value(element_data);
+
+    for (auto encoding : encodings)
+    {
+        NoCommon_Module::My_Structure struct_data;
+        TypeSupport static_pubsubType {new NoCommon_Module::My_StructurePubSubType()};
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+        EXPECT_EQ(1, struct_data.list().size());
+        EXPECT_EQ(struct_data.list().at(0), test_char_value);
+    }
+
+    xtypes::TypeIdentifierPair static_type_ids;
+    NoCommon_Module::register_My_Structure_type_identifier(static_type_ids);
     check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
