@@ -166,6 +166,17 @@ public:
             const fastdds::rtps::EntityId_t& entity_id,
             const uint32_t& status_id);
 
+    inline std::map<fastdds::rtps::GUID_t,
+            ExtendedIncompatibleQoSStatusSeq_s>& get_extended_incompatible_qos_collection()
+    {
+        return extended_incompatible_qos_collection_;
+    }
+
+    inline std::mutex& get_extended_incompatible_qos_mtx()
+    {
+        return extended_incompatible_qos_mtx_;
+    }
+
 private:
 
     /**
