@@ -2169,7 +2169,7 @@ void RTPSParticipantImpl::deleteAllUserEndpoints()
         }
         else if (WRITER == kind)
         {
-            dynamic_cast<BaseWriter*>(endpoint)->local_actions_on_writer_removed();
+            static_cast<BaseWriter*>(endpoint)->local_actions_on_writer_removed();
         }
 
         // remove the endpoints
