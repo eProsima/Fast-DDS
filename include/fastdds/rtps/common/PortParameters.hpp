@@ -42,6 +42,7 @@ public:
         , offsetd1(10)
         , offsetd2(1)
         , offsetd3(11)
+        , offsetd4(2)
     {
     }
 
@@ -58,7 +59,8 @@ public:
                (this->offsetd0 == b.offsetd0) &&
                (this->offsetd1 == b.offsetd1) &&
                (this->offsetd2 == b.offsetd2) &&
-               (this->offsetd3 == b.offsetd3);
+               (this->offsetd3 == b.offsetd3) &&
+               (this->offsetd4 == b.offsetd4);
     }
 
     /**
@@ -127,6 +129,8 @@ public:
     uint16_t offsetd2;
     //!Offset d3, default value 11.
     uint16_t offsetd3;
+    //!Offset d4, default value 2.
+    uint16_t offsetd4;
 };
 
 } // namespace rtps
