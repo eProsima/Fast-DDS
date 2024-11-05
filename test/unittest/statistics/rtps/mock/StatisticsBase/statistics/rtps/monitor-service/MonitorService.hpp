@@ -166,16 +166,30 @@ public:
             const fastdds::rtps::EntityId_t& entity_id,
             const uint32_t& status_id);
 
-    inline std::map<fastdds::rtps::GUID_t,
-            ExtendedIncompatibleQoSStatusSeq_s>& get_extended_incompatible_qos_collection()
-    {
-        return extended_incompatible_qos_collection_;
-    }
+    /**
+     * @brief Process any updates regarding
+     * remote entities incompatible QoS matching.
+     *
+     * @param local_guid The GUID_t identifying the local entity
+     * @param remote_guid The GUID_t identifying the remote entity
+     * @param incompatible_qos The PolicyMask with the incompatible QoS
+     *
+     * @return Whether processing was successful.
+     */
+    bool on_incompatible_qos_matching(
+            const fastdds::rtps::GUID_t& local_guid,
+            const fastdds::rtps::GUID_t& remote_guid,
+            const fastdds::dds::PolicyMask& incompatible_qos_policies);
 
-    inline std::mutex& get_extended_incompatible_qos_mtx()
-    {
-        return extended_incompatible_qos_mtx_;
-    }
+    /**
+     * @brief Notifies that a remote proxy
+     * data has been removed. This is interesting to notify proxy removals
+     * independently of the the remote entity being matched or not.
+     *
+     * @return Wheter the operation was successful.
+     */
+    bool on_remote_proxy_data_removed(
+            const fastdds::rtps::GUID_t& removed_proxy_guid);
 
 private:
 

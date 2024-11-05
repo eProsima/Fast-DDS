@@ -92,93 +92,11 @@ bool MonitorServiceListener::on_incompatible_qos_matching(
         const fastdds::rtps::GUID_t& remote_guid,
         const fastdds::dds::PolicyMask& incompatible_qos_policies) const
 {
-    bool ret = true;
-
-    // Convert the PolicyMask to a vector of policy ids
-    std::vector<uint32_t> incompatible_policies;
-    for (uint32_t id = 1; id < dds::NEXT_QOS_POLICY_ID; ++id)
-    {
-        if (incompatible_qos_policies.test(id))
-        {
-            incompatible_policies.push_back(id);
-        }
-    }
+    bool ret = false;
 
     if (monitor_srv_)
     {
-        auto& ext_incompatible_qos_collection = monitor_srv_->get_extended_incompatible_qos_collection();
-        std::lock_guard<std::mutex> lock(monitor_srv_->get_extended_incompatible_qos_mtx());
-
-        if (!incompatible_policies.empty())
-        {
-            // Check if the local_guid is already in the collection. If not, create a new entry
-            auto local_entity_incompatibilites =
-                    ext_incompatible_qos_collection.insert({local_guid, {}});
-
-            bool first_incompatibility_with_remote = false;
-
-            // Local entity already in the collection (has any incompatible QoS with any remote entity)
-            if (!local_entity_incompatibilites.second)
-            {
-                // Check if the local entitiy already had an incompatibility with this remote entity
-                auto it = std::find_if(
-                    local_entity_incompatibilites.first->second.begin(),
-                    local_entity_incompatibilites.first->second.end(),
-                    [&remote_guid](const ExtendedIncompatibleQoSStatus_s& status)
-                    {
-                        return to_fastdds_type(status.remote_guid()) == remote_guid;
-                    });
-
-                if (it == local_entity_incompatibilites.first->second.end())
-                {
-                    // First incompatibility with that remote entity
-                    first_incompatibility_with_remote = true;
-                }
-                else
-                {
-                    // Already had an incompatibility with that remote entity.
-                    // Update them
-                    it->current_incompatible_policies(incompatible_policies);
-                    monitor_srv_->push_entity_update(local_guid.entityId, StatusKind::EXTENDED_INCOMPATIBLE_QOS);
-                }
-            }
-            else
-            {
-                // This will be the first incompatibility of this entity
-                first_incompatibility_with_remote = true;
-            }
-
-            if (first_incompatibility_with_remote)
-            {
-                ExtendedIncompatibleQoSStatus_s status;
-                status.remote_guid(to_statistics_type(remote_guid));
-                status.current_incompatible_policies(incompatible_policies);
-                local_entity_incompatibilites.first->second.emplace_back(status);
-                monitor_srv_->push_entity_update(local_guid.entityId, StatusKind::EXTENDED_INCOMPATIBLE_QOS);
-            }
-        }
-        else
-        {
-            // Remove remote guid from the local guid incompatibilities collection
-            auto it = ext_incompatible_qos_collection.find(local_guid);
-
-            if (it != ext_incompatible_qos_collection.end())
-            {
-                auto it_remote = std::find_if(
-                    it->second.begin(),
-                    it->second.end(),
-                    [&remote_guid](const ExtendedIncompatibleQoSStatus_s& status)
-                    {
-                        return to_fastdds_type(status.remote_guid()) == remote_guid;
-                    });
-
-                if (it_remote != it->second.end())
-                {
-                    it->second.erase(it_remote);
-                    monitor_srv_->push_entity_update(local_guid.entityId, StatusKind::EXTENDED_INCOMPATIBLE_QOS);
-                }
-            }
-        }
+        ret = monitor_srv_->on_incompatible_qos_matching(local_guid, remote_guid, incompatible_qos_policies);
     }
 
     return ret;
@@ -187,26 +105,14 @@ bool MonitorServiceListener::on_incompatible_qos_matching(
 bool MonitorServiceListener::on_remote_proxy_data_removed(
         const fastdds::rtps::GUID_t& removed_proxy_guid) const
 {
-    auto& ext_incompatible_qos_collection = monitor_srv_->get_extended_incompatible_qos_collection();
-    std::lock_guard<std::mutex> lock(monitor_srv_->get_extended_incompatible_qos_mtx());
+    bool ret = false;
 
-    for (auto& local_entity : ext_incompatible_qos_collection)
+    if (monitor_srv_)
     {
-        auto it = std::find_if(
-            local_entity.second.begin(),
-            local_entity.second.end(),
-            [&removed_proxy_guid](const ExtendedIncompatibleQoSStatus_s& status)
-            {
-                return to_fastdds_type(status.remote_guid()) == removed_proxy_guid;
-            });
-
-        if (it != local_entity.second.end())
-        {
-            local_entity.second.erase(it);
-            monitor_srv_->push_entity_update(local_entity.first.entityId, StatusKind::EXTENDED_INCOMPATIBLE_QOS);
-        }
+        ret = monitor_srv_->on_remote_proxy_data_removed(removed_proxy_guid);
     }
-    return false;
+
+    return ret;
 }
 
 } // namespace rtps

@@ -1261,6 +1261,19 @@ void PDP::set_proxy_observer(
     proxy_observer_.store(proxy_observer);
 }
 
+void PDP::notify_incompatible_qos_matching(
+        const GUID_t& local_guid,
+        const GUID_t& remote_guid,
+        const fastdds::dds::PolicyMask& incompatible_qos) const
+{
+    auto proxy_observer = get_proxy_observer();
+    // Notify the IProxyObserver implementor of a qos incompatibility
+    if (nullptr != proxy_observer)
+    {
+        proxy_observer->on_incompatible_qos_matching(local_guid, remote_guid, incompatible_qos);
+    }
+}
+
 #endif // FASTDDS_STATISTICS
 
 bool PDP::remove_remote_participant(
