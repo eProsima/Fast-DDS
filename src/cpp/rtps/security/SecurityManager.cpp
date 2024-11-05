@@ -106,7 +106,6 @@ SecurityManager::SecurityManager(
                 participant->get_attributes().allocation.data_limits})
 {
     assert(participant != nullptr);
-    static OpenSSLInit openssl_init;
 }
 
 SecurityManager::~SecurityManager()
