@@ -298,6 +298,7 @@ const char* OFFSETD0 = "offsetd0";
 const char* OFFSETD1 = "offsetd1";
 const char* OFFSETD2 = "offsetd2";
 const char* OFFSETD3 = "offsetd3";
+const char* OFFSETD4 = "offsetd4";
 const char* RTPS_PDP_TYPE = "discoveryProtocol";
 const char* NONE = "NONE";
 const char* CLIENT = "CLIENT";
