@@ -288,6 +288,23 @@ void TCPTransportInterface::bind_socket(
     auto it_remove = std::find(unbound_channel_resources_.begin(), unbound_channel_resources_.end(), channel);
     assert(it_remove != unbound_channel_resources_.end());
     unbound_channel_resources_.erase(it_remove);
+    if (!IPLocator::isLocal(channel->locator()))
+    {
+        // Check if the locator is from an owned interface to link localhost to this channel
+        if (is_own_interface(channel->locator()))
+        {
+            Locator local_locator(channel->locator());
+            if (IPLocator::isIPv4(IPLocator::ip_to_string(local_locator)))
+            {
+                IPLocator::setIPv4(local_locator, "127.0.0.1");
+            }
+            else if (IPLocator::isIPv6(IPLocator::ip_to_string(local_locator)))
+            {
+                IPLocator::setIPv6(local_locator, "::1");
+            }
+            channel_resources_[local_locator] = channel;
+        }
+    }
     channel_resources_[channel->locator()] = channel;
 }
 
@@ -986,6 +1003,25 @@ bool TCPTransportInterface::CreateInitialConnect(
     statistics_info_.add_entry(locator);
     send_resource_list.emplace_back(
         static_cast<SenderResource*>(new TCPSenderResource(*this, physical_locator)));
+
+    if (!IPLocator::isLocal(physical_locator))
+    {
+        // Check if the locator is from an owned interface to link localhost to this channel
+        if (is_own_interface(physical_locator))
+        {
+            Locator local_locator(physical_locator);
+            if (IPLocator::isIPv4(IPLocator::ip_to_string(local_locator)))
+            {
+                IPLocator::setIPv4(local_locator, "127.0.0.1");
+            }
+            else if (IPLocator::isIPv6(IPLocator::ip_to_string(local_locator)))
+            {
+                IPLocator::setIPv6(local_locator, "::1");
+            }
+            EPROSIMA_LOG_ERROR(RTCP, "Add localhost also to initial channel resource: " << local_locator);
+            channel_resources_[local_locator] = channel;
+        }
+    }
 
     return true;
 }
@@ -2077,6 +2113,27 @@ void TCPTransportInterface::send_channel_pending_logical_ports(
         }
         channel_pending_logical_ports_.erase(channel->locator());
     }
+}
+
+bool TCPTransportInterface::is_own_interface(
+        const Locator& locator) const
+{
+    if (IPLocator::isLocal(locator))
+    {
+        return true;
+    }
+    std::vector<fastdds::rtps::IPFinder::info_IP> local_interfaces;
+    bool ret = false;
+    get_ips(local_interfaces, false, false);
+    for (const auto& interface_it : local_interfaces)
+    {
+        if (IPLocator::compareAddress(locator, interface_it.locator))
+        {
+            ret = true;
+            break;
+        }
+    }
+    return ret;
 }
 
 } // namespace rtps

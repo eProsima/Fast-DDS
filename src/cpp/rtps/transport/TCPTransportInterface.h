@@ -525,6 +525,13 @@ public:
      */
     void send_channel_pending_logical_ports(
             std::shared_ptr<TCPChannelResource>& channel);
+
+    /**
+     * Method to check if a locator contains an interface that belongs to the same host.
+     * @param locator Locator to check.
+     */
+    bool is_own_interface(
+            const Locator& locator) const;
 };
 
 } // namespace rtps
