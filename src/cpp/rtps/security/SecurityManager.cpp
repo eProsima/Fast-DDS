@@ -1738,6 +1738,7 @@ void SecurityManager::process_participant_volatile_message_secure(
         const GUID_t remote_participant_key(message.message_identity().source_guid().guidPrefix,
                 c_EntityId_RTPSParticipant);
         std::shared_ptr<ParticipantCryptoHandle> remote_participant_crypto;
+        DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info;
 
         // Search remote participant crypto handle.
         {
@@ -1753,6 +1754,7 @@ void SecurityManager::process_participant_volatile_message_secure(
                 }
 
                 remote_participant_crypto = dp_it->second->get_participant_crypto();
+                remote_participant_info = dp_it->second->get_auth();
             }
             else
             {
@@ -1774,11 +1776,29 @@ void SecurityManager::process_participant_volatile_message_secure(
                 EPROSIMA_LOG_ERROR(SECURITY, "Cannot set remote participant crypto tokens ("
                         << remote_participant_key << ") - (" << exception.what() << ")");
             }
+            else
+            {
+                // Release the change from the participant_stateless_message_writer_pool_
+                // As both participants have already authorized each other
+
+                if (remote_participant_info &&
+                        remote_participant_info->change_sequence_number_ != SequenceNumber_t::unknown())
+                {
+                    participant_stateless_message_writer_history_->remove_change(
+                        remote_participant_info->change_sequence_number_);
+                    remote_participant_info->change_sequence_number_ = SequenceNumber_t::unknown();
+                }
+            }
         }
         else
         {
             std::lock_guard<shared_mutex> _(mutex_);
             remote_participant_pending_messages_.emplace(remote_participant_key, std::move(message.message_data()));
+        }
+
+        if (remote_participant_info)
+        {
+            restore_discovered_participant_info(remote_participant_key, remote_participant_info);
         }
     }
     else if (message.message_class_id().compare(GMCLASSID_SECURITY_READER_CRYPTO_TOKENS) == 0)
