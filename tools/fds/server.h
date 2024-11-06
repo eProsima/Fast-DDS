@@ -57,8 +57,9 @@ struct Arg : public option::Arg
 const option::Descriptor usage[] = {
 
     { UNKNOWN,   0, "",   "",             Arg::None,
-      "\neProsima Server-Client discovery auxiliary generator tool version " FAST_SERVER_VERSION "\n"
-      "\nUsage: " FAST_SERVER_BINARY " [optional parameters] \nGeneral options:" },
+      "\neProsima Discovery Server auxiliary generator tool. Version " FAST_SERVER_VERSION "\n"
+      "\nIt can be used for both deploying Servers and inspecting active ones. \n"
+      "\nUsage: " FAST_SERVER_BINARY " [optional parameters] \n\nGeneral options:" },
 
     { HELP,      0, "h",  "help",         Arg::None,
       "  -h  \t--help        Produce help message.\n" },

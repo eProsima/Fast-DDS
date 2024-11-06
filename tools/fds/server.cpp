@@ -47,6 +47,20 @@ void sigint_handler(
     g_signal_cv.notify_one();
 }
 
+namespace fds {
+enum ToolCommand : uint16_t
+{
+    AUTO = 0,
+    START = 1,
+    STOP = 2,
+    ADD = 3,
+    SET = 4,
+    LIST = 5,
+    INFO = 6,
+    SERVER = 42
+};
+}
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -60,7 +74,7 @@ int fastdds_discovery_server(
     using DiscoveryProtocol = fastdds::rtps::DiscoveryProtocol;
     using IPLocator = fastdds::rtps::IPLocator;
 
-    // Skip program name argv[0] if present
+    // Skip command index argv[0] if present
     argc -= (argc > 0);
     argv += (argc > 0);
     option::Stats stats(usage, argc, argv);
@@ -210,7 +224,7 @@ int fastdds_discovery_server(
     }
     else if (pOp->count() != 1)
     {
-        std::cout << "Only one server can be created, thus, only one server id can be specified." << std::endl;
+        std::cout << "Only one server participant can be created, thus, only one server id can be specified." << std::endl;
         return 1;
     }
     else
@@ -272,8 +286,8 @@ int fastdds_discovery_server(
      * The UDP CLI has priority over the XML file configuration.
      */
 
-    // If the number of specify ports doesn't match the number of IPs the last port is used.
-    // If at least one port specified replace the default one
+    // If the number of specified ports doesn't match the number of IPs the last port is used.
+    // If at least one port is specified, it will replace the default one
     Locator locator4(rtps::DEFAULT_ROS2_SERVER_PORT);
     Locator locator6(LOCATOR_KIND_UDPv6, rtps::DEFAULT_ROS2_SERVER_PORT);
 
@@ -642,6 +656,97 @@ int fastdds_discovery_server(
     return return_value;
 }
 
+int fastdds_discovery_auto(
+        int argc,
+        char* argv[])
+{
+    static_cast<void>(argc);
+    static_cast<void>(argv);
+    // Auto mode should check if there is a server created for the domain specified, if not, create one
+    int return_value = 0;
+    std::cout << "Auto mode not implemented yet." << std::endl;
+
+    return return_value;
+}
+
+int fastdds_discovery_start(
+        int argc,
+        char* argv[])
+{
+    static_cast<void>(argc);
+    static_cast<void>(argv);
+    // Start a server for the domain specified
+    int return_value = 0;
+    std::cout << "Start mode not implemented yet." << std::endl;
+
+    return return_value;
+}
+
+int fastdds_discovery_stop(
+        int argc,
+        char* argv[])
+{
+    static_cast<void>(argc);
+    static_cast<void>(argv);
+    // Stop a server for the domain specified
+    int return_value = 0;
+    std::cout << "Stop mode not implemented yet." << std::endl;
+
+    return return_value;
+}
+
+int fastdds_discovery_add(
+        int argc,
+        char* argv[])
+{
+    static_cast<void>(argc);
+    static_cast<void>(argv);
+    // Add a server for the domain specified
+    int return_value = 0;
+    std::cout << "Add mode not implemented yet." << std::endl;
+
+    return return_value;
+}
+
+int fastdds_discovery_set(
+        int argc,
+        char* argv[])
+{
+    static_cast<void>(argc);
+    static_cast<void>(argv);
+    // Set a server for the domain specified
+    int return_value = 0;
+    std::cout << "Set mode not implemented yet." << std::endl;
+
+    return return_value;
+}
+
+int fastdds_discovery_list(
+        int argc,
+        char* argv[])
+{
+    static_cast<void>(argc);
+    static_cast<void>(argv);
+    // List all servers
+    int return_value = 0;
+    std::cout << "List mode not implemented yet." << std::endl;
+
+    return return_value;
+}
+
+int fastdds_discovery_info(
+        int argc,
+        char* argv[])
+{
+    static_cast<void>(argc);
+    static_cast<void>(argv);
+    // Get info from a server for the domain specified
+    int return_value = 0;
+    std::cout << "Info mode not implemented yet." << std::endl;
+
+    return return_value;
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
@@ -650,7 +755,45 @@ int main (
         int argc,
         char* argv[])
 {
-    return eprosima::fastdds::dds::fastdds_discovery_server(argc, argv);
+    using ToolCommand = fds::ToolCommand;
+
+    // Skip program name if present
+    argc -= (argc > 0);
+    argv += (argc > 0);
+
+    // Command index is provided by python tool, so no need to check limits
+    uint16_t command_int = std::stoi(argv[0]);
+
+    switch (command_int)
+    {
+    case ToolCommand::AUTO:
+        return eprosima::fastdds::dds::fastdds_discovery_auto(argc, argv);
+        break;
+    case ToolCommand::START:
+        return eprosima::fastdds::dds::fastdds_discovery_start(argc, argv);
+        break;
+    case ToolCommand::STOP:
+        return eprosima::fastdds::dds::fastdds_discovery_stop(argc, argv);
+        break;
+    case ToolCommand::ADD:
+        return eprosima::fastdds::dds::fastdds_discovery_add(argc, argv);
+        break;
+    case ToolCommand::SET:
+        return eprosima::fastdds::dds::fastdds_discovery_set(argc, argv);
+        break;
+    case ToolCommand::LIST:
+        return eprosima::fastdds::dds::fastdds_discovery_list(argc, argv);
+        break;
+    case ToolCommand::INFO:
+        return eprosima::fastdds::dds::fastdds_discovery_info(argc, argv);
+        break;
+    case ToolCommand::SERVER:
+        return eprosima::fastdds::dds::fastdds_discovery_server(argc, argv);
+        break;
+
+    default:
+        break;
+    }
 }
 
 // Argument validation function definitions
