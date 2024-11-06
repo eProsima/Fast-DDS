@@ -1669,7 +1669,7 @@ void RTPSParticipantImpl::update_attributes(
     {
         LocatorList_t metatraffic_unicast_locator_list = temp_atts.builtin.metatrafficUnicastLocatorList;
         temp_atts.builtin.metatrafficUnicastLocatorList.clear();
-        get_default_metatraffic_locators();
+        get_default_metatraffic_locators(temp_atts);
         if (!(metatraffic_unicast_locator_list == temp_atts.builtin.metatrafficUnicastLocatorList))
         {
             local_interfaces_changed = true;
@@ -1680,7 +1680,7 @@ void RTPSParticipantImpl::update_attributes(
     {
         LocatorList_t default_unicast_locator_list = temp_atts.defaultUnicastLocatorList;
         temp_atts.defaultUnicastLocatorList.clear();
-        get_default_unicast_locators();
+        get_default_unicast_locators(temp_atts);
         if (!(default_unicast_locator_list == temp_atts.defaultUnicastLocatorList))
         {
             local_interfaces_changed = true;
@@ -2976,22 +2976,34 @@ void RTPSParticipantImpl::environment_file_has_changed()
 
 void RTPSParticipantImpl::get_default_metatraffic_locators()
 {
-    uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(domain_id_);
+    get_default_metatraffic_locators(m_att);
+}
 
-    m_network_Factory.getDefaultMetatrafficMulticastLocators(m_att.builtin.metatrafficMulticastLocatorList,
+void RTPSParticipantImpl::get_default_metatraffic_locators(
+        RTPSParticipantAttributes& att)
+{
+    uint32_t metatraffic_multicast_port = att.port.getMulticastPort(domain_id_);
+
+    m_network_Factory.getDefaultMetatrafficMulticastLocators(att.builtin.metatrafficMulticastLocatorList,
             metatraffic_multicast_port);
-    m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficMulticastLocatorList);
+    m_network_Factory.NormalizeLocators(att.builtin.metatrafficMulticastLocatorList);
 
-    m_network_Factory.getDefaultMetatrafficUnicastLocators(m_att.builtin.metatrafficUnicastLocatorList,
+    m_network_Factory.getDefaultMetatrafficUnicastLocators(att.builtin.metatrafficUnicastLocatorList,
             metatraffic_unicast_port_);
-    m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
+    m_network_Factory.NormalizeLocators(att.builtin.metatrafficUnicastLocatorList);
 }
 
 void RTPSParticipantImpl::get_default_unicast_locators()
 {
-    uint32_t unicast_port = metatraffic_unicast_port_ + m_att.port.offsetd3 - m_att.port.offsetd1;
-    m_network_Factory.getDefaultUnicastLocators(m_att.defaultUnicastLocatorList, unicast_port);
-    m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
+    get_default_unicast_locators(m_att);
+}
+
+void RTPSParticipantImpl::get_default_unicast_locators(
+        RTPSParticipantAttributes& att)
+{
+    uint32_t unicast_port = metatraffic_unicast_port_ + att.port.offsetd3 - att.port.offsetd1;
+    m_network_Factory.getDefaultUnicastLocators(att.defaultUnicastLocatorList, unicast_port);
+    m_network_Factory.NormalizeLocators(att.defaultUnicastLocatorList);
 }
 
 bool RTPSParticipantImpl::is_participant_ignored(
