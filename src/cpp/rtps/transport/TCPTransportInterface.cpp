@@ -1018,7 +1018,6 @@ bool TCPTransportInterface::CreateInitialConnect(
             {
                 IPLocator::setIPv6(local_locator, "::1");
             }
-            EPROSIMA_LOG_ERROR(RTCP, "Add localhost also to initial channel resource: " << local_locator);
             channel_resources_[local_locator] = channel;
         }
     }
@@ -2127,7 +2126,7 @@ bool TCPTransportInterface::is_own_interface(
     get_ips(local_interfaces, false, false);
     for (const auto& interface_it : local_interfaces)
     {
-        if (IPLocator::compareAddress(locator, interface_it.locator))
+        if (IPLocator::compareAddress(locator, interface_it.locator) && is_interface_allowed(interface_it.name))
         {
             ret = true;
             break;
