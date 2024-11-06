@@ -89,6 +89,11 @@ public:
             GUID_t& participant_guid,
             std::function<bool(WriterProxyData*, bool, const ParticipantProxyData&)> initializer_func));
 
+    MOCK_METHOD3(notify_incompatible_qos_matching,
+            void (const GUID_t&,
+            const GUID_t&,
+            const fastdds::dds::PolicyMask&));
+
     MOCK_METHOD2(lookupReaderProxyData, bool(
             const GUID_t& reader,
             ReaderProxyData& rdata));

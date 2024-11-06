@@ -808,6 +808,15 @@ bool PDP::removeReaderProxyData(
                     listener->on_reader_discovery(participant, reason, info, should_be_ignored);
                 }
 
+#ifdef FASTDDS_STATISTICS
+                auto proxy_observer = get_proxy_observer();
+                // notify monitor service
+                if (nullptr != proxy_observer)
+                {
+                    proxy_observer->on_remote_proxy_data_removed(pR->guid());
+                }
+#endif // ifdef FASTDDS_STATISTICS
+
                 // Clear reader proxy data and move to pool in order to allow reuse
                 pR->clear();
                 pit->m_readers->erase(rit);
@@ -847,6 +856,15 @@ bool PDP::removeWriterProxyData(
                     from_proxy_to_builtin(*pW, info);
                     listener->on_writer_discovery(participant, status, info, should_be_ignored);
                 }
+
+#ifdef FASTDDS_STATISTICS
+                auto proxy_observer = get_proxy_observer();
+                // notify monitor service
+                if (nullptr != get_proxy_observer())
+                {
+                    proxy_observer->on_remote_proxy_data_removed(pW->guid());
+                }
+#endif // ifdef FASTDDS_STATISTICS
 
                 // Clear writer proxy data and move to pool in order to allow reuse
                 pW->clear();
@@ -1744,6 +1762,25 @@ void PDP::local_participant_attributes_update_nts(
                 new_atts.builtin.metatraffic_external_unicast_locators,
                 new_atts.default_external_unicast_locators);
     }
+}
+
+void PDP::notify_incompatible_qos_matching(
+        const GUID_t& local_guid,
+        const GUID_t& remote_guid,
+        const fastdds::dds::PolicyMask& incompatible_qos) const
+{
+#ifdef FASTDDS_STATISTICS
+    auto proxy_observer = get_proxy_observer();
+    // Notify the IProxyObserver implementor of a qos incompatibility
+    if (nullptr != proxy_observer)
+    {
+        proxy_observer->on_incompatible_qos_matching(local_guid, remote_guid, incompatible_qos);
+    }
+#else
+    static_cast<void>(local_guid);
+    static_cast<void>(remote_guid);
+    static_cast<void>(incompatible_qos);
+#endif // FASTDDS_STATISTICS
 }
 
 void PDP::update_endpoint_locators_if_default_nts(

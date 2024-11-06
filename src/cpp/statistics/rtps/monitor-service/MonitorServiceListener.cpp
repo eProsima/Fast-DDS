@@ -19,6 +19,7 @@
 #include <statistics/rtps/monitor-service/MonitorServiceListener.hpp>
 
 #include <statistics/rtps/monitor-service/MonitorService.hpp>
+#include <statistics/rtps/StatisticsBase.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -84,6 +85,26 @@ void MonitorServiceListener::on_writer_change_received_by_all(
     //! Do nothing for the moment, no relevant info
     static_cast<void>(writer);
     static_cast<void>(change);
+}
+
+void MonitorServiceListener::on_incompatible_qos_matching(
+        const fastdds::rtps::GUID_t& local_guid,
+        const fastdds::rtps::GUID_t& remote_guid,
+        const fastdds::dds::PolicyMask& incompatible_qos_policies) const
+{
+    if (monitor_srv_)
+    {
+        monitor_srv_->on_incompatible_qos_matching(local_guid, remote_guid, incompatible_qos_policies);
+    }
+}
+
+void MonitorServiceListener::on_remote_proxy_data_removed(
+        const fastdds::rtps::GUID_t& removed_proxy_guid) const
+{
+    if (monitor_srv_)
+    {
+        monitor_srv_->on_remote_proxy_data_removed(removed_proxy_guid);
+    }
 }
 
 } // namespace rtps
