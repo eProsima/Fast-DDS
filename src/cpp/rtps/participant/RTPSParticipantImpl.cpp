@@ -1801,6 +1801,7 @@ void RTPSParticipantImpl::update_attributes(
             }
         }
 
+        // Update discovery information
         {
             std::lock_guard<std::recursive_mutex> lock(*pdp->getMutex());
             local_participant_attributes_update_nts(temp_atts, pdp, this);
@@ -1888,12 +1889,12 @@ void RTPSParticipantImpl::update_attributes(
                 }
             }
         }
-    }
 
-    // Update the attributes data member
-    {
-        std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-        m_att = temp_atts;
+        // Update the attributes data member
+        {
+            std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+            m_att = temp_atts;
+        }
     }
 
     if (update_pdp)
