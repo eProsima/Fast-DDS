@@ -20,12 +20,35 @@ tool application.
 
 """
 
+from enum import Enum
+from pathlib import Path
 import os
 import re
 import subprocess
 import sys
-from pathlib import Path
 
+class Command(Enum):
+    SERVER = "server" # Does not need to be specified
+    AUTO = "auto"
+    START = "start"
+    STOP = "stop"
+    ADD = "add"
+    SET = "set"
+    LIST = "list"
+    INFO = "info"
+    UNKNOWN = "unknown"
+
+# This map is used to convert the string command to an integer used in the cpp tool
+command_to_int = {
+    Command.AUTO: 0,
+    Command.START: 1,
+    Command.STOP: 2,
+    Command.ADD: 3,
+    Command.SET: 4,
+    Command.LIST: 5,
+    Command.INFO: 6,
+    Command.SERVER: 42
+}
 
 class Parser:
     """Discovery server tool parser."""
@@ -34,14 +57,14 @@ class Parser:
         """
         Parse the sub-command and dispatch to the appropriate handler.
 
-        Shows usage if no sub-command is specified.
+        Creates a default UDP server if no sub-command is specified.
 
         """
         tool_path = str(self.__find_tool_path().resolve())
 
         try:
             result = subprocess.run(
-                [tool_path, '-h'],
+                [tool_path, str(command_to_int[Command.SERVER]), '-h'],
                 stdout=subprocess.PIPE,
                 universal_newlines=True
             )
@@ -49,26 +72,38 @@ class Parser:
             if result.returncode != 0:
                 sys.exit(result.returncode)
 
+            for arg in argv:
+                if arg in ['-h', '--help']:
+                    print(self.__edit_tool_help(result.stdout))
+                    sys.exit(0)
+
             if (
-                    (len(argv) == 1 and argv[0] == '-h') or
-                    (len(argv) == 1 and argv[0] == '--help')
-               ):
-                print(self.__edit_tool_help(result.stdout))
-            elif (
-                (len(argv) == 1 and argv[0] == '-v') or 
+                (len(argv) == 1 and argv[0] == '-v') or
                 (len(argv) == 1 and argv[0] == '--version')
                 ):
                 result = subprocess.run([tool_path, '-v'])
                 if result.returncode != 0:
                     sys.exit(result.returncode)
+
+            try:
+                command_int = command_to_int[Command(sys.argv[2].lower())]
+            except ValueError:
+                command_int = command_to_int[Command.SERVER]
+
+            # Prepare arguments for the C++ program
+            args_for_cpp = []
+            if command_int == command_to_int[Command.SERVER]:
+                args_for_cpp = [str(command_int)] + sys.argv[2:]
             else:
-                # Call the tool
-                result = subprocess.run([tool_path] + argv)
-                if result.returncode != 0:
-                    sys.exit(result.returncode)
+                args_for_cpp = [str(command_int)] + sys.argv[3:]
+
+            # Call the tool
+            result = subprocess.run([tool_path] + args_for_cpp)
+            if result.returncode != 0:
+                sys.exit(result.returncode)
 
         except KeyboardInterrupt:
-            # it lets the subprocess to handle the exception
+            # It lets the subprocess to handle the exception
             pass
 
         except BaseException as e:
