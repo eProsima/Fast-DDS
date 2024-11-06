@@ -232,6 +232,127 @@ static bool get_unique_flows_parameters(
     return true;
 }
 
+// -- The following is a backport from 3.x of a PDP method
+static void local_participant_attributes_update_nts(
+        const RTPSParticipantAttributes& new_atts,
+        PDP* pdp,
+        RTPSParticipantImpl* participant)
+{
+    auto participant_data = pdp->getLocalParticipantProxyData();
+    participant_data->m_userData.data_vec(new_atts.userData);
+
+    // If we are intraprocess only, we do not need to update locators
+    bool announce_locators = !participant->is_intraprocess_only();
+    if (announce_locators)
+    {
+        // Clear all locators
+        participant_data->metatraffic_locators.unicast.clear();
+        participant_data->metatraffic_locators.multicast.clear();
+        participant_data->default_locators.unicast.clear();
+        participant_data->default_locators.multicast.clear();
+
+        // Update default locators
+        for (const Locator_t& loc : new_atts.defaultUnicastLocatorList)
+        {
+            participant_data->default_locators.add_unicast_locator(loc);
+        }
+        for (const Locator_t& loc : new_atts.defaultMulticastLocatorList)
+        {
+            participant_data->default_locators.add_multicast_locator(loc);
+        }
+
+        // Update metatraffic locators
+        for (const auto& locator : new_atts.builtin.metatrafficUnicastLocatorList)
+        {
+            participant_data->metatraffic_locators.add_unicast_locator(locator);
+        }
+        if (!new_atts.builtin.avoid_builtin_multicast ||
+                participant_data->metatraffic_locators.unicast.empty())
+        {
+            for (const auto& locator : new_atts.builtin.metatrafficMulticastLocatorList)
+            {
+                participant_data->metatraffic_locators.add_multicast_locator(locator);
+            }
+        }
+
+        fastdds::rtps::network::external_locators::add_external_locators(*participant_data,
+                new_atts.builtin.metatraffic_external_unicast_locators,
+                new_atts.default_external_unicast_locators);
+    }
+}
+
+// -- The following is a backport from 3.x of a PDP method
+static void update_endpoint_locators_if_default_nts(
+        const std::vector<RTPSWriter*>& writers,
+        const std::vector<RTPSReader*>& readers,
+        const RTPSParticipantAttributes& old_atts,
+        const RTPSParticipantAttributes& new_atts,
+        PDP* pdp)
+{
+    // Check if default locators have changed
+    const auto& old_default_unicast = old_atts.defaultUnicastLocatorList;
+    const auto& old_default_multicast = old_atts.defaultMulticastLocatorList;
+    const auto& new_default_unicast = new_atts.defaultUnicastLocatorList;
+    const auto& new_default_multicast = new_atts.defaultMulticastLocatorList;
+
+    // Early return if there is no change in default unicast locators
+    if ((old_default_unicast == new_default_unicast) &&
+            (old_default_multicast == new_default_multicast))
+    {
+        return;
+    }
+
+    // Update proxies of endpoints with default configured locators
+    EDP* edp = pdp->getEDP();
+    for (RTPSWriter* writer : writers)
+    {
+        if ((old_default_multicast == writer->getAttributes().multicastLocatorList) &&
+                (old_default_unicast == writer->getAttributes().unicastLocatorList))
+        {
+            writer->getAttributes().multicastLocatorList = new_default_multicast;
+            writer->getAttributes().unicastLocatorList = new_default_unicast;
+
+            WriterProxyData* wdata = nullptr;
+            GUID_t participant_guid;
+            wdata = pdp->addWriterProxyData(writer->getGuid(), participant_guid,
+                            [](WriterProxyData* proxy, bool is_update,
+                            const ParticipantProxyData& participant)
+                            {
+                                static_cast<void>(is_update);
+                                assert(is_update);
+                                proxy->set_locators(participant.default_locators);
+                                return true;
+                            });
+            assert(wdata != nullptr);
+            edp->processLocalWriterProxyData(writer, wdata);
+        }
+    }
+    for (RTPSReader* reader : readers)
+    {
+        if ((old_default_multicast == reader->getAttributes().multicastLocatorList) &&
+                (old_default_unicast == reader->getAttributes().unicastLocatorList))
+        {
+            reader->getAttributes().multicastLocatorList = new_default_multicast;
+            reader->getAttributes().unicastLocatorList = new_default_unicast;
+
+            ReaderProxyData* rdata = nullptr;
+            GUID_t participant_guid;
+            rdata = pdp->addReaderProxyData(reader->getGuid(), participant_guid,
+                            [](ReaderProxyData* proxy, bool is_update,
+                            const ParticipantProxyData& participant)
+                            {
+                                static_cast<void>(is_update);
+                                assert(is_update);
+
+                                proxy->set_locators(participant.default_locators);
+                                return true;
+                            });
+            assert(rdata != nullptr);
+            edp->processLocalReaderProxyData(reader, rdata);
+        }
+    }
+}
+
 Locator_t& RTPSParticipantImpl::applyLocatorAdaptRule(
         Locator_t& loc)
 {
@@ -1682,121 +1803,13 @@ void RTPSParticipantImpl::update_attributes(
 
         {
             std::lock_guard<std::recursive_mutex> lock(*pdp->getMutex());
-
-            // -- The following section corresponds to the 3.x backport of the PDP method
-            //    local_participant_attributes_update_nts
-            auto participant_data = pdp->getLocalParticipantProxyData();
-            participant_data->m_userData.data_vec(temp_atts.userData);
-
-            // If we are intraprocess only, we do not need to update locators
-            bool announce_locators = !is_intraprocess_only();
-            if (announce_locators)
-            {
-                // Clear all locators
-                participant_data->metatraffic_locators.unicast.clear();
-                participant_data->metatraffic_locators.multicast.clear();
-                participant_data->default_locators.unicast.clear();
-                participant_data->default_locators.multicast.clear();
-
-                // Update default locators
-                for (const Locator_t& loc : temp_atts.defaultUnicastLocatorList)
-                {
-                    participant_data->default_locators.add_unicast_locator(loc);
-                }
-                for (const Locator_t& loc : temp_atts.defaultMulticastLocatorList)
-                {
-                    participant_data->default_locators.add_multicast_locator(loc);
-                }
-
-                // Update metatraffic locators
-                for (const auto& locator : temp_atts.builtin.metatrafficUnicastLocatorList)
-                {
-                    participant_data->metatraffic_locators.add_unicast_locator(locator);
-                }
-                if (!temp_atts.builtin.avoid_builtin_multicast ||
-                        participant_data->metatraffic_locators.unicast.empty())
-                {
-                    for (const auto& locator : temp_atts.builtin.metatrafficMulticastLocatorList)
-                    {
-                        participant_data->metatraffic_locators.add_multicast_locator(locator);
-                    }
-                }
-
-                fastdds::rtps::network::external_locators::add_external_locators(*participant_data,
-                        temp_atts.builtin.metatraffic_external_unicast_locators,
-                        temp_atts.default_external_unicast_locators);
-            }
-
-            // -- The following section corresponds to the 3.x backport of the PDP method
-            //    update_endpoint_locators_if_default_nts
+            local_participant_attributes_update_nts(temp_atts, pdp, this);
 
             if (local_interfaces_changed && internal_default_locators_)
             {
                 std::lock_guard<shared_mutex> _(endpoints_list_mutex);
-                // Check if default locators have changed
-                const auto& old_default_unicast = m_att.defaultUnicastLocatorList;
-                const auto& old_default_multicast = m_att.defaultMulticastLocatorList;
-                const auto& new_default_unicast = temp_atts.defaultUnicastLocatorList;
-                const auto& new_default_multicast = temp_atts.defaultMulticastLocatorList;
-
-                // Early return if there is no change in default unicast locators
-                if ((old_default_unicast == new_default_unicast) &&
-                        (old_default_multicast == new_default_multicast))
-                {
-                    return;
-                }
-
-                // Update proxies of endpoints with default configured locators
-                EDP* edp = pdp->getEDP();
-                for (RTPSWriter* writer : m_userWriterList)
-                {
-                    if ((old_default_multicast == writer->getAttributes().multicastLocatorList) &&
-                            (old_default_unicast == writer->getAttributes().unicastLocatorList))
-                    {
-                        writer->getAttributes().multicastLocatorList = new_default_multicast;
-                        writer->getAttributes().unicastLocatorList = new_default_unicast;
-
-                        WriterProxyData* wdata = nullptr;
-                        GUID_t participant_guid;
-                        wdata = pdp->addWriterProxyData(writer->getGuid(), participant_guid,
-                                        [](WriterProxyData* proxy, bool is_update,
-                                        const ParticipantProxyData& participant)
-                                        {
-                                            static_cast<void>(is_update);
-                                            assert(is_update);
-                                            proxy->set_locators(participant.default_locators);
-                                            return true;
-                                        });
-                        assert(wdata != nullptr);
-                        edp->processLocalWriterProxyData(writer, wdata);
-                    }
-                }
-                for (RTPSReader* reader : m_userReaderList)
-                {
-                    if ((old_default_multicast == reader->getAttributes().multicastLocatorList) &&
-                            (old_default_unicast == reader->getAttributes().unicastLocatorList))
-                    {
-                        reader->getAttributes().multicastLocatorList = new_default_multicast;
-                        reader->getAttributes().unicastLocatorList = new_default_unicast;
-
-                        ReaderProxyData* rdata = nullptr;
-                        GUID_t participant_guid;
-                        rdata = pdp->addReaderProxyData(reader->getGuid(), participant_guid,
-                                        [](ReaderProxyData* proxy, bool is_update,
-                                        const ParticipantProxyData& participant)
-                                        {
-                                            static_cast<void>(is_update);
-                                            assert(is_update);
-
-                                            proxy->set_locators(participant.default_locators);
-                                            return true;
-                                        });
-                        assert(rdata != nullptr);
-                        edp->processLocalReaderProxyData(reader, rdata);
-                    }
-                }
+                update_endpoint_locators_if_default_nts(m_userWriterList, m_userReaderList, m_att, temp_atts, pdp);
             }
-            // -- end of 3.x backport
 
             if (local_interfaces_changed)
             {
