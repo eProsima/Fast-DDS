@@ -477,7 +477,7 @@ RTPSWriter* RTPSDomainImpl::create_rtps_writer(
         WriterHistory* hist,
         WriterListener* listen)
 {
-    RTPSParticipantImpl* impl = RTPSDomainImpl::find_local_participant(p->getGuid());
+    RTPSParticipantImpl* impl = p->mp_impl;
     if (impl)
     {
         RTPSWriter* ret_val = nullptr;
