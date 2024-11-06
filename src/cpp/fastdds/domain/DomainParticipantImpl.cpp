@@ -1583,23 +1583,23 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantAuthenticati
 
 void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
         RTPSParticipant*,
-        ReaderDiscoveryInfo&& info)
+        ReaderDiscoveryInfo&&)
 {
     Sentry sentinel(this);
     if (sentinel)
     {
-        participant_->listener_->on_subscriber_discovery(participant_->participant_, std::move(info));
+        //participant_->listener_->on_subscriber_discovery(participant_->participant_, std::move(info));
     }
 }
 
 void DomainParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
         RTPSParticipant*,
-        WriterDiscoveryInfo&& info)
+        WriterDiscoveryInfo&& )
 {
     Sentry sentinel(this);
     if (sentinel)
     {
-        participant_->listener_->on_publisher_discovery(participant_->participant_, std::move(info));
+        //participant_->listener_->on_publisher_discovery(participant_->participant_, std::move(info));
     }
 }
 
