@@ -19,6 +19,12 @@
 #ifndef TEST_COMMUNICATION_SUBSCRIBER_HPP
 #define TEST_COMMUNICATION_SUBSCRIBER_HPP
 
+#include <atomic>
+#include <chrono>
+#include <condition_variable>
+#include <map>
+#include <mutex>
+
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
@@ -26,11 +32,6 @@
 
 #include "types/FixedSizedPubSubTypes.h"
 #include "types/HelloWorldPubSubTypes.h"
-
-#include <mutex>
-#include <condition_variable>
-#include <map>
-#include <chrono>
 
 namespace eprosima {
 namespace fastdds {
@@ -44,9 +45,9 @@ public:
     SubscriberModule(
             const uint32_t publishers,
             const uint32_t max_number_samples,
-            bool fixed_type = false,
-            bool zero_copy = false,
-            bool die_on_data_received = false)
+            bool fixed_type,
+            bool zero_copy,
+            bool die_on_data_received)
         : publishers_(publishers)
         , max_number_samples_(max_number_samples)
         , fixed_type_(zero_copy || fixed_type) // If zero copy active, fixed type is required
@@ -83,10 +84,12 @@ public:
             const std::string& magic);
 
     bool run(
-            bool notexit);
+            bool notexit,
+            const uint32_t rescan_interval);
 
     bool run_for(
             bool notexit,
+            const uint32_t rescan_interval,
             const std::chrono::milliseconds& timeout);
 
 private:
@@ -100,7 +103,7 @@ private:
     std::map<eprosima::fastrtps::rtps::GUID_t, uint32_t> number_samples_;
     bool fixed_type_ = false;
     bool zero_copy_ = false;
-    bool run_ = true;
+    std::atomic_bool run_{true};
     DomainParticipant* participant_ = nullptr;
     TypeSupport type_;
     Subscriber* subscriber_ = nullptr;

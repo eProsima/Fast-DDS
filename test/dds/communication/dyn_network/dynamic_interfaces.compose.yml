@@ -1,0 +1,42 @@
+# Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+version: "3"
+
+services:
+  publisher:
+    image: ubuntu:22.04
+    volumes:
+      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
+      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+    environment:
+      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
+      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/test/dds/communication
+    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/DDSCommunicationPublisher --xmlfile $${EXAMPLE_DIR}/simple_reliable_profile.xml --wait 1 --samples 10 --loops 1 --seed 0 --magic T"
+
+  subscriber:
+    build: .
+    image: ubuntu-net-tools:22.04
+    privileged: true
+    volumes:
+      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
+      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+    environment:
+      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
+      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/test/dds/communication
+    working_dir: @PROJECT_BINARY_DIR@/test/dds/communication
+    command: @SHELL_EXECUTABLE@ "dyn_network/launch_subscriber.bash"
+    depends_on:
+      - publisher

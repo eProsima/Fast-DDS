@@ -52,7 +52,7 @@ void publisher_run(
         publisher->wait_discovery(wait);
     }
 
-    publisher->run(samples, loops, interval);
+    publisher->run(samples, 0, loops, interval);
 }
 
 int main(
@@ -197,7 +197,7 @@ int main(
         DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file);
     }
 
-    SubscriberModule subscriber(publishers, samples, fixed_type, zero_copy);
+    SubscriberModule subscriber(publishers, samples, fixed_type, zero_copy, false, false);
     PublisherModule publisher(exit_on_lost_liveliness, fixed_type, zero_copy);
 
     uint32_t result = 1;
@@ -208,7 +208,7 @@ int main(
 
         if (subscriber.init(seed, magic))
         {
-            result = subscriber.run(notexit, timeout) ? 0 : -1;
+            result = subscriber.run(notexit, 0, timeout) ? 0 : -1;
         }
 
         publisher_thread.join();
