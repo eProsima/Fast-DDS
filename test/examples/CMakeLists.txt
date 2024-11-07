@@ -49,11 +49,16 @@ elseif(WIN32)
 
     # Temporary, in the is installed here
     set(SHELL_EXECUTABLE "C:/Program Files/PowerShell/latest/pwsh.exe")
-    
+
     set(FILE_EXTENSION ".exe")
     set(DOCKER_IMAGE_NAME "windows-testing")
-    
+
     cmake_path(GET fastcdr_LIB_DIR PARENT_PATH fastcdr_INSTALL_DIR)
+
+    # Ensure drives in docker are mounted in C: drive
+    string(REGEX REPLACE ".:" "C:" CMAKE_INSTALL_PREFIX_C ${CMAKE_INSTALL_PREFIX})
+    string(REGEX REPLACE ".:" "C:" PROJECT_BINARY_DIR_C ${PROJECT_BINARY_DIR})
+    string(REGEX REPLACE ".:" "C:" fastcdr_INSTALL_DIR_C ${fastcdr_INSTALL_DIR})
 
     set(WIN_DOCKERFILE ${CMAKE_CURRENT_LIST_DIR}/windows/Dockerfile)
     # Generate image for testing
@@ -61,7 +66,7 @@ elseif(WIN32)
         windows_docker_image_testing_generation
         ALL
         # Launch the docker build command using the build context.
-        COMMAND ${DOCKER_EXECUTABLE} build 
+        COMMAND ${DOCKER_EXECUTABLE} build
             --tag ${DOCKER_IMAGE_NAME}
             --file ${WIN_DOCKERFILE}
             ${CMAKE_CURRENT_LIST_DIR}
