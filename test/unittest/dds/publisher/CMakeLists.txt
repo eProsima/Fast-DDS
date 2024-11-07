@@ -381,5 +381,10 @@ if(MSVC OR MSVC_IDE)
         iphlpapi Shlwapi
         )
 endif()
+if (APPLE)
+    target_link_libraries(DataWriterTests ${PRIVACY}
+    "-framework CoreFoundation" "-framework IOKit"
+    )
+endif()
 gtest_discover_tests(DataWriterTests
     PROPERTIES ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")

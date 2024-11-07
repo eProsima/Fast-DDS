@@ -90,6 +90,10 @@ else()
     target_link_libraries(${SERVER_ATTRIBUTES_TESTS_EXEC} ${PRIVACY} fastcdr fastdds::log)
 endif()
 
+if (APPLE)
+    target_link_libraries(${SERVER_ATTRIBUTES_TESTS_EXEC} ${PRIVACY} "-framework CoreFoundation" "-framework IOKit")
+endif()
+
 gtest_discover_tests(${SERVER_ATTRIBUTES_TESTS_EXEC}
     TEST_PREFIX "ServerAttributesTests."
     TEST_FILTER ${SERVER_ATTRIBUTES_IGNORED_TESTS}

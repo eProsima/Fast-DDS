@@ -161,6 +161,10 @@ if(WIN32)
     target_link_libraries(NetworkFactoryTests IPHLPAPI shlwapi) # Later so mocks have precedence
     target_link_libraries(ExternalLocatorsTests IPHLPAPI shlwapi) # Later so mocks have precedence
 endif()
+if (APPLE)
+    target_link_libraries(NetworkFactoryTests "-framework CoreFoundation" "-framework IOKit")
+    target_link_libraries(ExternalLocatorsTests "-framework CoreFoundation" "-framework IOKit")
+endif()
 
 gtest_discover_tests(NetworkFactoryTests)
 gtest_discover_tests(ExternalLocatorsTests)

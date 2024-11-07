@@ -598,6 +598,9 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
             iphlpapi Shlwapi
             )
     endif()
+    if (APPLE)
+        target_link_libraries(StatisticsDomainParticipantMockTests ${PRIVACY} "-framework CoreFoundation" "-framework IOKit")
+    endif()
 
     gtest_discover_tests(StatisticsDomainParticipantMockTests)
 
@@ -647,6 +650,10 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
             iphlpapi Shlwapi
             )
     endif()
+    if (APPLE)
+        target_link_libraries(StatisticsDomainParticipantStatusQueryableTests ${PRIVACY} "-framework CoreFoundation" "-framework IOKit")
+    endif()
+
     gtest_discover_tests(StatisticsDomainParticipantStatusQueryableTests)
 
 endif (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)

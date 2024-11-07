@@ -85,5 +85,8 @@ target_link_libraries(BuiltinPKIDH
 if(QNX)
     target_link_libraries(BuiltinPKIDH socket)
 endif()
+if (APPLE)
+    target_link_libraries(BuiltinPKIDH "-framework CoreFoundation" "-framework IOKit")
+endif()
 gtest_discover_tests(BuiltinPKIDH
     PROPERTIES ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
