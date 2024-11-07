@@ -57,6 +57,8 @@ public:
 
     virtual ~StatelessWriter();
 
+    void local_actions_on_writer_removed() override;
+
     //vvvvvvvvvvvvvvvvvvvvv [Exported API] vvvvvvvvvvvvvvvvvvvvv
 
     bool matched_reader_add_edp(

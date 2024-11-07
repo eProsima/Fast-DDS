@@ -186,7 +186,12 @@ void StatelessWriter::init(
 StatelessWriter::~StatelessWriter()
 {
     EPROSIMA_LOG_INFO(RTPS_WRITER, "StatelessWriter destructor"; );
-    deinit();
+}
+
+void StatelessWriter::local_actions_on_writer_removed()
+{
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "StatelessWriter local_actions_on_writer_removed"; );
+    BaseWriter::local_actions_on_writer_removed();
 }
 
 void StatelessWriter::get_builtin_guid()

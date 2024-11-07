@@ -79,6 +79,8 @@ public:
 
     bool is_async() const final;
 
+    virtual void local_actions_on_writer_removed();
+
 #ifdef FASTDDS_STATISTICS
 
     bool add_statistics_listener(
@@ -353,8 +355,6 @@ protected:
 
     void init(
             const WriterAttributes& att);
-
-    void deinit();
 
     void add_guid(
             LocatorSelectorSender& locator_selector,
