@@ -288,20 +288,16 @@ void TCPTransportInterface::bind_socket(
     auto it_remove = std::find(unbound_channel_resources_.begin(), unbound_channel_resources_.end(), channel);
     assert(it_remove != unbound_channel_resources_.end());
     unbound_channel_resources_.erase(it_remove);
-    if (!IPLocator::isLocal(channel->locator()))
+
+    std::vector<fastdds::rtps::IPFinder::info_IP> local_interfaces;
+    // Check if the locator is from an owned interface to link all local interfaces to the channel
+    is_own_interface(channel->locator(), local_interfaces);
+    if (!local_interfaces.empty())
     {
-        // Check if the locator is from an owned interface to link localhost to this channel
-        if (is_own_interface(channel->locator()))
+        Locator local_locator(channel->locator());
+        for (auto& interface_it : local_interfaces)
         {
-            Locator local_locator(channel->locator());
-            if (IPLocator::isIPv4(IPLocator::ip_to_string(local_locator)))
-            {
-                IPLocator::setIPv4(local_locator, "127.0.0.1");
-            }
-            else if (IPLocator::isIPv6(IPLocator::ip_to_string(local_locator)))
-            {
-                IPLocator::setIPv6(local_locator, "::1");
-            }
+            IPLocator::setIPv4(local_locator, interface_it.locator);
             channel_resources_[local_locator] = channel;
         }
     }
@@ -1004,20 +1000,15 @@ bool TCPTransportInterface::CreateInitialConnect(
     send_resource_list.emplace_back(
         static_cast<SenderResource*>(new TCPSenderResource(*this, physical_locator)));
 
-    if (!IPLocator::isLocal(physical_locator))
+    std::vector<fastdds::rtps::IPFinder::info_IP> local_interfaces;
+    // Check if the locator is from an owned interface to link all local interfaces to the channel
+    is_own_interface(physical_locator, local_interfaces);
+    if (!local_interfaces.empty())
     {
-        // Check if the locator is from an owned interface to link localhost to this channel
-        if (is_own_interface(physical_locator))
+        Locator local_locator(physical_locator);
+        for (auto& interface_it : local_interfaces)
         {
-            Locator local_locator(physical_locator);
-            if (IPLocator::isIPv4(IPLocator::ip_to_string(local_locator)))
-            {
-                IPLocator::setIPv4(local_locator, "127.0.0.1");
-            }
-            else if (IPLocator::isIPv6(IPLocator::ip_to_string(local_locator)))
-            {
-                IPLocator::setIPv6(local_locator, "::1");
-            }
+            IPLocator::setIPv4(local_locator, interface_it.locator);
             channel_resources_[local_locator] = channel;
         }
     }
@@ -2114,25 +2105,26 @@ void TCPTransportInterface::send_channel_pending_logical_ports(
     }
 }
 
-bool TCPTransportInterface::is_own_interface(
-        const Locator& locator) const
+void TCPTransportInterface::is_own_interface(
+        const Locator& locator,
+        std::vector<fastdds::rtps::IPFinder::info_IP>& locNames) const
 {
-    if (IPLocator::isLocal(locator))
-    {
-        return true;
-    }
     std::vector<fastdds::rtps::IPFinder::info_IP> local_interfaces;
-    bool ret = false;
-    get_ips(local_interfaces, false, false);
+    get_ips(local_interfaces, true, false);
     for (const auto& interface_it : local_interfaces)
     {
         if (IPLocator::compareAddress(locator, interface_it.locator) && is_interface_allowed(interface_it.name))
         {
-            ret = true;
+            locNames = local_interfaces;
+            // Remove interface of original locator from the list
+            locNames.erase(std::remove_if(locNames.begin(), locNames.end(),
+                    [&interface_it](const fastdds::rtps::IPFinder::info_IP& locInterface)
+                    {
+                        return locInterface.locator == interface_it.locator;
+                    }), locNames.end());
             break;
         }
     }
-    return ret;
 }
 
 } // namespace rtps

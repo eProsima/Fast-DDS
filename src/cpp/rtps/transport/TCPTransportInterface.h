@@ -528,10 +528,13 @@ public:
 
     /**
      * Method to check if a locator contains an interface that belongs to the same host.
-     * @param locator Locator to check.
+     * If it occurs, @c locNames will be updated with the list of interfaces of the host.
+     * @param [in]     locator Locator to check.
+     * @param [in,out] locNames Vector of interfaces to be updated.
      */
-    bool is_own_interface(
-            const Locator& locator) const;
+    void is_own_interface(
+            const Locator& locator,
+            std::vector<fastdds::rtps::IPFinder::info_IP>& locNames) const;
 };
 
 } // namespace rtps
