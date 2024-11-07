@@ -191,6 +191,7 @@ void TCPTransportInterface::clean()
 
     {
         std::vector<std::shared_ptr<TCPChannelResource>> channels;
+        std::vector<eprosima::fastdds::rtps::Locator> delete_channels;
 
         {
             std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
@@ -200,8 +201,20 @@ void TCPTransportInterface::clean()
 
             for (auto& channel : channel_resources_)
             {
-                channels.push_back(channel.second);
+                if (std::find(channels.begin(), channels.end(), channel.second) == channels.end())
+                {
+                    channels.push_back(channel.second);
+                }
+                else
+                {
+                    delete_channels.push_back(channel.first);
+                }
             }
+        }
+
+        for (auto& delete_channel : delete_channels)
+        {
+            channel_resources_.erase(delete_channel);
         }
 
         for (auto& channel : channels)
