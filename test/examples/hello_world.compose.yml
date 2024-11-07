@@ -22,7 +22,7 @@ services:
       @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
     environment:
       PATH: C:/Program Files/OpenSSL-Win64;@CMAKE_INSTALL_PREFIX_C@/bin;@fastcdr_INSTALL_DIR_C@/bin;C:/Windows/System32;C:/Windows/System32/downlevel;
-      EXAMPLE_DIR: @PROJECT_BINARY_DIR_C@/examples/cpp/hello_world/Release
+      EXAMPLE_DIR: @PROJECT_BINARY_DIR_C@/examples/cpp/hello_world/RelWithDebInfo
       FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR_C@/examples/cpp/hello_world/hello_world_profile.xml
     command: @SHELL_EXECUTABLE@ -c "& $$Env:EXAMPLE_DIR/hello_world@FILE_EXTENSION@ subscriber --waitset --samples 30"
 
@@ -35,7 +35,7 @@ services:
       @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
     environment:
       PATH: C:/Program Files/OpenSSL-Win64;@CMAKE_INSTALL_PREFIX_C@/bin;@fastcdr_INSTALL_DIR_C@/bin;C:/Windows/System32;C:/Windows/System32/downlevel;
-      EXAMPLE_DIR: @PROJECT_BINARY_DIR_C@/examples/cpp/hello_world/Release
+      EXAMPLE_DIR: @PROJECT_BINARY_DIR_C@/examples/cpp/hello_world/RelWithDebInfo
       FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR_C@/examples/cpp/hello_world/hello_world_profile.xml
     command: @SHELL_EXECUTABLE@ -c "& $$Env:EXAMPLE_DIR/hello_world@FILE_EXTENSION@ publisher --samples 30 &" "& $$Env:EXAMPLE_DIR/hello_world@FILE_EXTENSION@ subscriber --samples 30; Receive-Job 1 -Wait"
     depends_on:
