@@ -31,10 +31,13 @@
 
 #include <rtps/reader/BaseReader.hpp>
 #include <rtps/reader/LocalReaderPointer.hpp>
-#include <security/OpenSSLInit.hpp>
 #include <rtps/writer/BaseWriter.hpp>
 #include <utils/shared_memory/BoostAtExitRegistry.hpp>
 #include <utils/SystemInfo.hpp>
+
+#if HAVE_SECURITY
+#include <security/OpenSSLInit.hpp>
+#endif // HAVE_SECURITY
 
 #include <fastdds/xtypes/type_representation/TypeObjectRegistry.hpp>
 
@@ -286,8 +289,9 @@ private:
     std::shared_ptr<eprosima::detail::BoostAtExitRegistry> boost_singleton_handler_ { eprosima::detail::
                                                                                               BoostAtExitRegistry::
                                                                                               get_instance() };
-
+#if HAVE_SECURITY
     std::shared_ptr<security::OpenSSLInit> openssl_singleton_handler_{ security::OpenSSLInit::get_instance() };
+#endif // HAVE_SECURITY
 
     std::mutex m_mutex;
 
