@@ -130,16 +130,34 @@ bool SubscriberModule::init(
 
 bool SubscriberModule::run(
         bool notexit,
+        const uint32_t rescan_interval,
         uint32_t timeout)
 {
-    return run_for(notexit, std::chrono::milliseconds(timeout));
+    return run_for(notexit, rescan_interval, std::chrono::milliseconds(timeout));
 }
 
 bool SubscriberModule::run_for(
         bool notexit,
+        const uint32_t rescan_interval,
         const std::chrono::milliseconds& timeout)
 {
     bool returned_value = false;
+
+    std::thread net_rescan_thread([this, rescan_interval]()
+            {
+                if (rescan_interval > 0)
+                {
+                    auto interval = std::chrono::seconds(rescan_interval);
+                    while (run_)
+                    {
+                        std::this_thread::sleep_for(interval);
+                        if (run_)
+                        {
+                            participant_->set_qos(participant_->get_qos());
+                        }
+                    }
+                }
+            });
 
     while (notexit && run_)
     {
@@ -152,7 +170,7 @@ bool SubscriberModule::run_for(
         std::unique_lock<std::mutex> lock(mutex_);
         returned_value = cv_.wait_for(lock, timeout, [&]
                         {
-                            if (succeeed_on_timeout_ && (std::chrono::steady_clock::now() - t0) > timeout)
+                            if (succeed_on_timeout_ && (std::chrono::steady_clock::now() - t0) > timeout)
                             {
                                 return true;
                             }
@@ -189,6 +207,9 @@ bool SubscriberModule::run_for(
         EPROSIMA_LOG_INFO(SUBSCRIBER_MODULE, "ERROR: detected more than " << publishers_ << " publishers");
         returned_value = false;
     }
+
+    run_ = false;
+    net_rescan_thread.join();
 
     return returned_value;
 }

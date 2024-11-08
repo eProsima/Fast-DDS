@@ -762,10 +762,16 @@ private:
      */
     void get_default_metatraffic_locators();
 
+    void get_default_metatraffic_locators(
+            RTPSParticipantAttributes& att);
+
     /**
      * Get default unicast locators when not provided by the user.
      */
     void get_default_unicast_locators();
+
+    void get_default_unicast_locators(
+            RTPSParticipantAttributes& att);
 
     bool match_local_endpoints_ = true;
 

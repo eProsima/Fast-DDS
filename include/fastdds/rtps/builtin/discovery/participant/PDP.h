@@ -22,9 +22,12 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <atomic>
+#include <cstdint>
 #include <functional>
 #include <memory>
 #include <mutex>
+#include <string>
+#include <vector>
 
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
@@ -61,6 +64,7 @@ class RTPSWriter;
 class RTPSReader;
 class WriterHistory;
 class ReaderHistory;
+struct RTPSParticipantAllocationAttributes;
 class RTPSParticipantImpl;
 class RTPSParticipantListener;
 class BuiltinProtocols;
@@ -70,6 +74,7 @@ class ReaderProxyData;
 class WriterProxyData;
 class ParticipantProxyData;
 class ReaderListener;
+class PDPEndpoints;
 class PDPListener;
 class PDPServerListener;
 class ITopicPayloadPool;
