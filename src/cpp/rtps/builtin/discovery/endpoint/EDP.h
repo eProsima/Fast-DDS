@@ -364,7 +364,6 @@ private:
     bool checkDataRepresentationQos(
             const WriterProxyData* wdata,
             const ReaderProxyData* rdata) const;
-
 };
 
 } // namespace rtps

@@ -534,6 +534,88 @@ namespace eprosima
             typedef eprosima::fastdds::statistics::BaseStatus_s LivelinessLostStatus_s;
             typedef eprosima::fastdds::statistics::BaseStatus_s InconsistentTopicStatus_s;
             typedef eprosima::fastdds::statistics::BaseStatus_s SampleLostStatus_s;
+
+            /*!
+             * @brief This class represents the TopicDataType of the type ExtendedIncompatibleQoSStatus_s defined by the user in the IDL file.
+             * @ingroup monitorservice_types
+             */
+            class ExtendedIncompatibleQoSStatus_sPubSubType : public eprosima::fastdds::dds::TopicDataType
+            {
+            public:
+
+                typedef ExtendedIncompatibleQoSStatus_s type;
+
+                eProsima_user_DllExport ExtendedIncompatibleQoSStatus_sPubSubType();
+
+                eProsima_user_DllExport ~ExtendedIncompatibleQoSStatus_sPubSubType() override;
+
+                eProsima_user_DllExport bool serialize(
+                        const void* const data,
+                        eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+                eProsima_user_DllExport bool deserialize(
+                        eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                        void* data) override;
+
+                eProsima_user_DllExport uint32_t calculate_serialized_size(
+                        const void* const data,
+                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+                eProsima_user_DllExport bool compute_key(
+                        eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                        eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                        bool force_md5 = false) override;
+
+                eProsima_user_DllExport bool compute_key(
+                        const void* const data,
+                        eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                        bool force_md5 = false) override;
+
+                eProsima_user_DllExport void* create_data() override;
+
+                eProsima_user_DllExport void delete_data(
+                        void* data) override;
+
+                //Register TypeObject representation in Fast DDS TypeObjectRegistry
+                eProsima_user_DllExport void register_type_object_representation() override;
+
+            #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+                eProsima_user_DllExport inline bool is_bounded() const override
+                {
+                    return false;
+                }
+
+            #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+            #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                eProsima_user_DllExport inline bool is_plain(
+                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+                {
+                    static_cast<void>(data_representation);
+                    return false;
+                }
+
+            #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+            #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+                eProsima_user_DllExport inline bool construct_sample(
+                        void* memory) const override
+                {
+                    static_cast<void>(memory);
+                    return false;
+                }
+
+            #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+            private:
+
+                eprosima::fastdds::MD5 md5_;
+                unsigned char* key_buffer_;
+
+            };
+            typedef std::vector<eprosima::fastdds::statistics::ExtendedIncompatibleQoSStatus_s> ExtendedIncompatibleQoSStatusSeq_s;
             namespace StatusKind
             {
                 typedef uint32_t StatusKind;

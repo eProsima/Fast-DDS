@@ -6,6 +6,7 @@ Forthcoming
   * `DataWriter::get_matched_subscriptions()`
   * `DataReader::get_matched_publication_data()`
   * `DataReader::get_matched_publications()`
+* Added ``Extended Incompatible QoS`` feature for monitor service.
 
 Version v3.1.0
 --------------

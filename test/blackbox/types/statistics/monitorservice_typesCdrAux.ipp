@@ -649,6 +649,107 @@ void serialize_key(
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastdds::statistics::ExtendedIncompatibleQoSStatus_s& data,
+        size_t& current_alignment)
+{
+    using namespace eprosima::fastdds::statistics;
+
+    static_cast<void>(data);
+
+    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
+                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+                                current_alignment)};
+
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
+                data.remote_guid(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
+                data.current_incompatible_policies(), current_alignment);
+
+
+    calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
+
+    return calculated_size;
+}
+
+template<>
+eProsima_user_DllExport void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastdds::statistics::ExtendedIncompatibleQoSStatus_s& data)
+{
+    using namespace eprosima::fastdds::statistics;
+
+    eprosima::fastcdr::Cdr::state current_state(scdr);
+    scdr.begin_serialize_type(current_state,
+            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+
+    scdr
+        << eprosima::fastcdr::MemberId(0) << data.remote_guid()
+        << eprosima::fastcdr::MemberId(1) << data.current_incompatible_policies()
+;
+    scdr.end_serialize_type(current_state);
+}
+
+template<>
+eProsima_user_DllExport void deserialize(
+        eprosima::fastcdr::Cdr& cdr,
+        eprosima::fastdds::statistics::ExtendedIncompatibleQoSStatus_s& data)
+{
+    using namespace eprosima::fastdds::statistics;
+
+    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+            [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
+            {
+                bool ret_value = true;
+                switch (mid.id)
+                {
+                                        case 0:
+                                                dcdr >> data.remote_guid();
+                                            break;
+
+                                        case 1:
+                                                dcdr >> data.current_incompatible_policies();
+                                            break;
+
+                    default:
+                        ret_value = false;
+                        break;
+                }
+                return ret_value;
+            });
+}
+
+void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastdds::statistics::ExtendedIncompatibleQoSStatus_s& data)
+{
+    using namespace eprosima::fastdds::statistics;
+            extern void serialize_key(
+                    Cdr& scdr,
+                    const eprosima::fastdds::statistics::detail::GUID_s& data);
+
+
+
+    static_cast<void>(scdr);
+    static_cast<void>(data);
+                        serialize_key(scdr, data.remote_guid());
+
+                        scdr << data.current_incompatible_policies();
+
+}
+
+
+template<>
+eProsima_user_DllExport size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::statistics::MonitorServiceData& data,
         size_t& current_alignment)
 {
@@ -708,8 +809,13 @@ eProsima_user_DllExport size_t calculate_serialized_size(
                                 data.sample_lost_status(), current_alignment);
                     break;
 
-                case StatusKind::STATUSES_SIZE:
+                case StatusKind::EXTENDED_INCOMPATIBLE_QOS:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(9),
+                                data.extended_incompatible_qos_status(), current_alignment);
+                    break;
+
+                case StatusKind::STATUSES_SIZE:
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(10),
                                 data.statuses_size(), current_alignment);
                     break;
 
@@ -772,8 +878,12 @@ eProsima_user_DllExport void serialize(
                     scdr << eprosima::fastcdr::MemberId(8) << data.sample_lost_status();
                     break;
 
+                case StatusKind::EXTENDED_INCOMPATIBLE_QOS:
+                    scdr << eprosima::fastcdr::MemberId(9) << data.extended_incompatible_qos_status();
+                    break;
+
                 case StatusKind::STATUSES_SIZE:
-                    scdr << eprosima::fastcdr::MemberId(9) << data.statuses_size();
+                    scdr << eprosima::fastcdr::MemberId(10) << data.statuses_size();
                     break;
 
         default:
@@ -867,6 +977,14 @@ eProsima_user_DllExport void deserialize(
                                                         break;
                                                     }
 
+                                                case StatusKind::EXTENDED_INCOMPATIBLE_QOS:
+                                                    {
+                                                        eprosima::fastdds::statistics::ExtendedIncompatibleQoSStatusSeq_s extended_incompatible_qos_status_value;
+                                                        data.extended_incompatible_qos_status(std::move(extended_incompatible_qos_status_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
                                                 case StatusKind::STATUSES_SIZE:
                                                     {
                                                         uint8_t statuses_size_value{0};
@@ -914,6 +1032,10 @@ eProsima_user_DllExport void deserialize(
 
                                                 case StatusKind::SAMPLE_LOST:
                                                     dcdr >> data.sample_lost_status();
+                                                    break;
+
+                                                case StatusKind::EXTENDED_INCOMPATIBLE_QOS:
+                                                    dcdr >> data.extended_incompatible_qos_status();
                                                     break;
 
                                                 case StatusKind::STATUSES_SIZE:

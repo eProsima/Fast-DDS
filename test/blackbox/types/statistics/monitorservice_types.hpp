@@ -1211,6 +1211,188 @@ typedef BaseStatus_s InconsistentTopicStatus_s;
 
 typedef BaseStatus_s SampleLostStatus_s;
 
+/*!
+ * @brief This class represents the structure ExtendedIncompatibleQoSStatus_s defined by the user in the IDL file.
+ * @ingroup monitorservice_types
+ */
+class ExtendedIncompatibleQoSStatus_s
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport ExtendedIncompatibleQoSStatus_s()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~ExtendedIncompatibleQoSStatus_s()
+    {
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object ExtendedIncompatibleQoSStatus_s that will be copied.
+     */
+    eProsima_user_DllExport ExtendedIncompatibleQoSStatus_s(
+            const ExtendedIncompatibleQoSStatus_s& x)
+    {
+                    m_remote_guid = x.m_remote_guid;
+
+                    m_current_incompatible_policies = x.m_current_incompatible_policies;
+
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object ExtendedIncompatibleQoSStatus_s that will be copied.
+     */
+    eProsima_user_DllExport ExtendedIncompatibleQoSStatus_s(
+            ExtendedIncompatibleQoSStatus_s&& x) noexcept
+    {
+        m_remote_guid = std::move(x.m_remote_guid);
+        m_current_incompatible_policies = std::move(x.m_current_incompatible_policies);
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object ExtendedIncompatibleQoSStatus_s that will be copied.
+     */
+    eProsima_user_DllExport ExtendedIncompatibleQoSStatus_s& operator =(
+            const ExtendedIncompatibleQoSStatus_s& x)
+    {
+
+                    m_remote_guid = x.m_remote_guid;
+
+                    m_current_incompatible_policies = x.m_current_incompatible_policies;
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object ExtendedIncompatibleQoSStatus_s that will be copied.
+     */
+    eProsima_user_DllExport ExtendedIncompatibleQoSStatus_s& operator =(
+            ExtendedIncompatibleQoSStatus_s&& x) noexcept
+    {
+
+        m_remote_guid = std::move(x.m_remote_guid);
+        m_current_incompatible_policies = std::move(x.m_current_incompatible_policies);
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x ExtendedIncompatibleQoSStatus_s object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const ExtendedIncompatibleQoSStatus_s& x) const
+    {
+        return (m_remote_guid == x.m_remote_guid &&
+           m_current_incompatible_policies == x.m_current_incompatible_policies);
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x ExtendedIncompatibleQoSStatus_s object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const ExtendedIncompatibleQoSStatus_s& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function copies the value in member remote_guid
+     * @param _remote_guid New value to be copied in member remote_guid
+     */
+    eProsima_user_DllExport void remote_guid(
+            const detail::GUID_s& _remote_guid)
+    {
+        m_remote_guid = _remote_guid;
+    }
+
+    /*!
+     * @brief This function moves the value in member remote_guid
+     * @param _remote_guid New value to be moved in member remote_guid
+     */
+    eProsima_user_DllExport void remote_guid(
+            detail::GUID_s&& _remote_guid)
+    {
+        m_remote_guid = std::move(_remote_guid);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member remote_guid
+     * @return Constant reference to member remote_guid
+     */
+    eProsima_user_DllExport const detail::GUID_s& remote_guid() const
+    {
+        return m_remote_guid;
+    }
+
+    /*!
+     * @brief This function returns a reference to member remote_guid
+     * @return Reference to member remote_guid
+     */
+    eProsima_user_DllExport detail::GUID_s& remote_guid()
+    {
+        return m_remote_guid;
+    }
+
+
+    /*!
+     * @brief This function copies the value in member current_incompatible_policies
+     * @param _current_incompatible_policies New value to be copied in member current_incompatible_policies
+     */
+    eProsima_user_DllExport void current_incompatible_policies(
+            const std::vector<uint32_t>& _current_incompatible_policies)
+    {
+        m_current_incompatible_policies = _current_incompatible_policies;
+    }
+
+    /*!
+     * @brief This function moves the value in member current_incompatible_policies
+     * @param _current_incompatible_policies New value to be moved in member current_incompatible_policies
+     */
+    eProsima_user_DllExport void current_incompatible_policies(
+            std::vector<uint32_t>&& _current_incompatible_policies)
+    {
+        m_current_incompatible_policies = std::move(_current_incompatible_policies);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member current_incompatible_policies
+     * @return Constant reference to member current_incompatible_policies
+     */
+    eProsima_user_DllExport const std::vector<uint32_t>& current_incompatible_policies() const
+    {
+        return m_current_incompatible_policies;
+    }
+
+    /*!
+     * @brief This function returns a reference to member current_incompatible_policies
+     * @return Reference to member current_incompatible_policies
+     */
+    eProsima_user_DllExport std::vector<uint32_t>& current_incompatible_policies()
+    {
+        return m_current_incompatible_policies;
+    }
+
+
+
+private:
+
+    detail::GUID_s m_remote_guid;
+    std::vector<uint32_t> m_current_incompatible_policies;
+
+};
+typedef std::vector<ExtendedIncompatibleQoSStatus_s> ExtendedIncompatibleQoSStatusSeq_s;
+
 namespace StatusKind {
 
 typedef uint32_t StatusKind;
@@ -1223,7 +1405,8 @@ const StatusKind LIVELINESS_LOST = 4;
 const StatusKind LIVELINESS_CHANGED = 5;
 const StatusKind DEADLINE_MISSED = 6;
 const StatusKind SAMPLE_LOST = 7;
-const StatusKind STATUSES_SIZE = 8;
+const StatusKind EXTENDED_INCOMPATIBLE_QOS = 8;
+const StatusKind STATUSES_SIZE = 9;
 
 } // namespace StatusKind
 /*!
@@ -1296,6 +1479,10 @@ public:
                             break;
 
                         case 0x00000009:
+                            extended_incompatible_qos_status_() = x.m_extended_incompatible_qos_status;
+                            break;
+
+                        case 0x0000000a:
                             statuses_size_() = x.m_statuses_size;
                             break;
 
@@ -1346,6 +1533,10 @@ public:
                             break;
 
                         case 0x00000009:
+                            extended_incompatible_qos_status_() = std::move(x.m_extended_incompatible_qos_status);
+                            break;
+
+                        case 0x0000000a:
                             statuses_size_() = std::move(x.m_statuses_size);
                             break;
 
@@ -1396,6 +1587,10 @@ public:
                             break;
 
                         case 0x00000009:
+                            extended_incompatible_qos_status_() = x.m_extended_incompatible_qos_status;
+                            break;
+
+                        case 0x0000000a:
                             statuses_size_() = x.m_statuses_size;
                             break;
 
@@ -1448,6 +1643,10 @@ public:
                             break;
 
                         case 0x00000009:
+                            extended_incompatible_qos_status_() = std::move(x.m_extended_incompatible_qos_status);
+                            break;
+
+                        case 0x0000000a:
                             statuses_size_() = std::move(x.m_statuses_size);
                             break;
 
@@ -1506,6 +1705,10 @@ public:
                                                         break;
 
                                                     case 0x00000009:
+                                                        ret_value = (x.m_extended_incompatible_qos_status == m_extended_incompatible_qos_status);
+                                                        break;
+
+                                                    case 0x0000000a:
                                                         ret_value = (x.m_statuses_size == m_statuses_size);
                                                         break;
 
@@ -1599,8 +1802,15 @@ public:
                             }
                             break;
 
-                        case StatusKind::STATUSES_SIZE:
+                        case StatusKind::EXTENDED_INCOMPATIBLE_QOS:
                             if (0x00000009 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
+
+                        case StatusKind::STATUSES_SIZE:
+                            if (0x0000000a == selected_member_)
                             {
                                 valid_discriminator = true;
                             }
@@ -2050,6 +2260,59 @@ public:
 
 
     /*!
+     * @brief This function copies the value in member extended_incompatible_qos_status
+     * @param _extended_incompatible_qos_status New value to be copied in member extended_incompatible_qos_status
+     */
+    eProsima_user_DllExport void extended_incompatible_qos_status(
+            const ExtendedIncompatibleQoSStatusSeq_s& _extended_incompatible_qos_status)
+    {
+        extended_incompatible_qos_status_() = _extended_incompatible_qos_status;
+        m__d = StatusKind::EXTENDED_INCOMPATIBLE_QOS;
+    }
+
+    /*!
+     * @brief This function moves the value in member extended_incompatible_qos_status
+     * @param _extended_incompatible_qos_status New value to be moved in member extended_incompatible_qos_status
+     */
+    eProsima_user_DllExport void extended_incompatible_qos_status(
+            ExtendedIncompatibleQoSStatusSeq_s&& _extended_incompatible_qos_status)
+    {
+        extended_incompatible_qos_status_() = _extended_incompatible_qos_status;
+        m__d = StatusKind::EXTENDED_INCOMPATIBLE_QOS;
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member extended_incompatible_qos_status
+     * @return Constant reference to member extended_incompatible_qos_status
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport const ExtendedIncompatibleQoSStatusSeq_s& extended_incompatible_qos_status() const
+    {
+        if (0x00000009 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_extended_incompatible_qos_status;
+    }
+
+    /*!
+     * @brief This function returns a reference to member extended_incompatible_qos_status
+     * @return Reference to member extended_incompatible_qos_status
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport ExtendedIncompatibleQoSStatusSeq_s& extended_incompatible_qos_status()
+    {
+        if (0x00000009 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_extended_incompatible_qos_status;
+    }
+
+
+    /*!
      * @brief This function sets a value in member statuses_size
      * @param _statuses_size New value for member statuses_size
      */
@@ -2067,7 +2330,7 @@ public:
      */
     eProsima_user_DllExport uint8_t statuses_size() const
     {
-        if (0x00000009 != selected_member_)
+        if (0x0000000a != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -2082,7 +2345,7 @@ public:
      */
     eProsima_user_DllExport uint8_t& statuses_size()
     {
-        if (0x00000009 != selected_member_)
+        if (0x0000000a != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -2275,7 +2538,7 @@ private:
                 return m_sample_lost_status;
             }
 
-            uint8_t& statuses_size_()
+            ExtendedIncompatibleQoSStatusSeq_s& extended_incompatible_qos_status_()
             {
                 if (0x00000009 != selected_member_)
                 {
@@ -2285,6 +2548,28 @@ private:
                     }
 
                     selected_member_ = 0x00000009;
+                    member_destructor_ = [&]()
+                    {
+                        using namespace eprosima::fastdds::statistics;
+                        m_extended_incompatible_qos_status.~ExtendedIncompatibleQoSStatusSeq_s();
+                    };
+                    new(&m_extended_incompatible_qos_status) ExtendedIncompatibleQoSStatusSeq_s();
+
+                }
+
+                return m_extended_incompatible_qos_status;
+            }
+
+            uint8_t& statuses_size_()
+            {
+                if (0x0000000a != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x0000000a;
                     member_destructor_ = nullptr;
                     m_statuses_size = {0};
 
@@ -2306,6 +2591,7 @@ private:
         LivelinessChangedStatus_s m_liveliness_changed_status;
         DeadlineMissedStatus_s m_deadline_missed_status;
         SampleLostStatus_s m_sample_lost_status;
+        ExtendedIncompatibleQoSStatusSeq_s m_extended_incompatible_qos_status;
         uint8_t m_statuses_size;
     };
 

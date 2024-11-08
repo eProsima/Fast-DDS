@@ -872,6 +872,7 @@ bool EDP::pairingReader(
                 if (no_match_reason.test(MatchingFailureMask::incompatible_qos) && reader->get_listener() != nullptr)
                 {
                     reader->get_listener()->on_requested_incompatible_qos(reader, incompatible_qos);
+                    mp_PDP->notify_incompatible_qos_matching(R->getGuid(), wdatait->guid(), incompatible_qos);
                 }
 
                 //EPROSIMA_LOG_INFO(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<wdatait->m_guid<<RTPS_DEF<<endl);
@@ -964,6 +965,7 @@ bool EDP::pairingWriter(
                 if (no_match_reason.test(MatchingFailureMask::incompatible_qos) && writer->get_listener() != nullptr)
                 {
                     writer->get_listener()->on_offered_incompatible_qos(writer, incompatible_qos);
+                    mp_PDP->notify_incompatible_qos_matching(W->getGuid(), rdatait->guid(), incompatible_qos);
                 }
 
                 //EPROSIMA_LOG_INFO(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<wdatait->m_guid<<RTPS_DEF<<endl);
@@ -1039,6 +1041,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
                         if (no_match_reason.test(MatchingFailureMask::incompatible_qos) && w.get_listener() != nullptr)
                         {
                             w.get_listener()->on_offered_incompatible_qos(&w, incompatible_qos);
+                            mp_PDP->notify_incompatible_qos_matching(w.getGuid(), rdata->guid(), incompatible_qos);
                         }
 
                         if (w.matched_reader_is_matched(reader_guid)
@@ -1107,6 +1110,7 @@ bool EDP::pairing_reader_proxy_with_local_writer(
                             w.get_listener() != nullptr)
                             {
                                 w.get_listener()->on_offered_incompatible_qos(&w, incompatible_qos);
+                                mp_PDP->notify_incompatible_qos_matching(local_writer, rdata.guid(), incompatible_qos);
                             }
 
                             if (w.matched_reader_is_matched(reader_guid)
@@ -1230,6 +1234,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
                         if (no_match_reason.test(MatchingFailureMask::incompatible_qos) && r.get_listener() != nullptr)
                         {
                             r.get_listener()->on_requested_incompatible_qos(&r, incompatible_qos);
+                            mp_PDP->notify_incompatible_qos_matching(r.getGuid(), wdata->guid(), incompatible_qos);
                         }
 
                         if (r.matched_writer_is_matched(writer_guid)
@@ -1298,6 +1303,7 @@ bool EDP::pairing_writer_proxy_with_local_reader(
                             r.get_listener() != nullptr)
                             {
                                 r.get_listener()->on_requested_incompatible_qos(&r, incompatible_qos);
+                                mp_PDP->notify_incompatible_qos_matching(local_reader, wdata.guid(), incompatible_qos);
                             }
 
                             if (r.matched_writer_is_matched(writer_guid)

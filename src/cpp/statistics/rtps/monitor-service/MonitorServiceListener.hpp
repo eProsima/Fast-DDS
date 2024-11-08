@@ -64,6 +64,14 @@ public:
             fastdds::rtps::RTPSWriter* writer,
             fastdds::rtps::CacheChange_t* change) override;
 
+    void on_incompatible_qos_matching(
+            const fastdds::rtps::GUID_t& local_guid,
+            const fastdds::rtps::GUID_t& remote_guid,
+            const fastdds::dds::PolicyMask& incompatible_qos) const override;
+
+    void on_remote_proxy_data_removed(
+            const fastdds::rtps::GUID_t& removed_proxy_guid) const override;
+
 protected:
 
     MonitorService* monitor_srv_;

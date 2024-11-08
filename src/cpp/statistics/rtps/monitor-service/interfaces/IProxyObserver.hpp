@@ -20,6 +20,7 @@
 #ifndef _FASTDDS_STATISTICS_MONITOR_SERVICE_INTERFACES_IPROXYOBSERVER_HPP_
 #define _FASTDDS_STATISTICS_MONITOR_SERVICE_INTERFACES_IPROXYOBSERVER_HPP_
 
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 
 namespace eprosima {
@@ -30,7 +31,7 @@ namespace rtps {
 struct IProxyObserver
 {
     /**
-     * @brief Interface use to notify about any updates
+     * @brief Interface used to notify about any updates
      * on the local entities (updates in the proxy,
      * new matches, unpairs,...)
      *
@@ -41,6 +42,30 @@ struct IProxyObserver
     virtual bool on_local_entity_change(
             const fastdds::rtps::GUID_t& guid,
             bool is_alive) const = 0;
+
+    /**
+     * @brief Interface used to notify about any updates
+     * regarding remote entities incompatible QoS matching.
+     *
+     * @param local_guid The GUID_t identifying the local entity
+     * @param remote_guid The GUID_t identifying the remote entity
+     * @param incompatible_qos The PolicyMask with the incompatible QoS
+     *
+     */
+    virtual void on_incompatible_qos_matching(
+            const fastdds::rtps::GUID_t& local_guid,
+            const fastdds::rtps::GUID_t& remote_guid,
+            const fastdds::dds::PolicyMask& incompatible_qos) const = 0;
+
+    /**
+     * @brief Method to notify the implementor that a remote proxy
+     * data has been removed. This is interesting to notify proxy removals
+     * independently of the the remote entity being matched or not.
+     *
+     * @param removed_proxy_guid GUID of the removed proxy.
+     */
+    virtual void on_remote_proxy_data_removed(
+            const fastdds::rtps::GUID_t& removed_proxy_guid) const = 0;
 };
 
 } // rtps
