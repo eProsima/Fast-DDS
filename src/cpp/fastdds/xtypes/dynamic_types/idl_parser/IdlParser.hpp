@@ -456,10 +456,9 @@ struct action<fixed_array_size>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& operands)
     {
-        DynamicData::_ref_type xdata;
         if (!operands.empty())
         {
-            xdata = operands.back();
+            DynamicData::_ref_type xdata = operands.back();
             operands.pop_back();
             if (!operands.empty())
             {
@@ -490,6 +489,7 @@ struct action<fixed_array_size>
             EPROSIMA_LOG_ERROR(IDLPARSER, "Empty operands stack while parsing fixed_array_size");
             throw std::runtime_error("Empty operands stack while parsing fixed_array_size");
         }
+
         state.erase("arithmetic_expr");
     }
 
@@ -1519,6 +1519,22 @@ struct action<kw_union>
 };
 
 template<>
+struct action<kw_case>
+{
+    template<typename Input>
+    static void apply(
+            const Input& /*in*/,
+            Context* /*ctx*/,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
+    {
+        // Create empty arithmetic_expr state to indicate the start of parsing case label
+        state["arithmetic_expr"] = "";
+    }
+
+};
+
+template<>
 struct action<case_label>
 {
     template<typename Input>
@@ -1526,18 +1542,32 @@ struct action<case_label>
             const Input& in,
             Context* /*ctx*/,
             std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
+            std::vector<traits<DynamicData>::ref_type>& operands)
     {
-        std::string label;
-
-        for (char c : in.string())
+        if (!operands.empty())
         {
-            if (std::isdigit(c))
+            DynamicData::_ref_type xdata = operands.back();
+            operands.pop_back();
+            if (!operands.empty())
             {
-                label += c;
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Finished case label parsing with non-empty operands stack.");
+                throw std::runtime_error("Finished case label parsing with non-empty operands stack.");
+            }
+
+            int64_t value;
+            xdata->get_int64_value(value, MEMBER_ID_INVALID);
+
+            std::string label = std::to_string(value);
+            if (state["union_labels"].empty() || state["union_labels"].back() == ';')
+            {
+                state["union_labels"] += label;
+            }
+            else
+            {
+                state["union_labels"] += "," + label;
             }
         }
-        if (label.empty() && in.string().find("default") != std::string::npos)
+        else if (in.string().find("default") != std::string::npos)
         {
             if (state["union_labels"].empty() || state["union_labels"].back() == ';')
             {
@@ -1550,22 +1580,18 @@ struct action<case_label>
         }
         else
         {
-            if (state["union_labels"].empty() || state["union_labels"].back() == ';')
-            {
-                state["union_labels"] += label;
-            }
-            else
-            {
-                state["union_labels"] += "," + label;
-            }
+            EPROSIMA_LOG_ERROR(IDLPARSER, "Case label is neither const expression nor default.");
+            throw std::runtime_error("Case label is neither const expression nor default.");
         }
 
         if (state["union_discriminant"].empty())
         {
             state["union_discriminant"] = state["type"];
         }
+
         // Reset state["type"] helps parsing union member types and names
         state["type"] = "";
+        state.erase("arithmetic_expr");
     }
 
 };
