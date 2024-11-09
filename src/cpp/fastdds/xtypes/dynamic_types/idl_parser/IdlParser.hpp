@@ -235,8 +235,25 @@ struct action<identifier>
             }
             else
             {
-                state["union_member_types"] += state["type"];
-                state["union_member_names"] += identifier_name;
+                if (!state["type"].empty())
+                {
+                    // Union member type is primitive type
+                    state["union_member_types"] += state["type"];
+                    state["union_member_names"] += identifier_name;
+                }
+                else
+                {
+                    if (state["union_expecting_member_name"] == "true")
+                    {
+                        state["union_member_names"] += identifier_name;
+                        state["union_expecting_member_name"] = "";
+                    }
+                    else
+                    {
+                        state["union_member_types"] += identifier_name;
+                        state["union_expecting_member_name"] = "true";
+                    }
+                }
             }
         }
         else if (state.count("alias"))
@@ -275,6 +292,7 @@ struct action<scoped_name>
             }
             else
             {
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Unknown constant or identifier: " << identifier_name);
                 throw std::runtime_error("Unknown constant or identifier: " + identifier_name);
             }
         }
@@ -445,6 +463,7 @@ struct action<fixed_array_size>
             operands.pop_back();
             if (!operands.empty())
             {
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Finished array size parsing with non-empty operands stack.");
                 throw std::runtime_error("Finished array size parsing with non-empty operands stack.");
             }
 
@@ -452,6 +471,7 @@ struct action<fixed_array_size>
             xdata->get_int64_value(value, MEMBER_ID_INVALID);
             if (value <= 0)
             {
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Array size is non-positive: " << value);
                 throw std::runtime_error("Array size is non-positive: " + std::to_string(value));
             }
 
@@ -467,6 +487,7 @@ struct action<fixed_array_size>
         }
         else
         {
+            EPROSIMA_LOG_ERROR(IDLPARSER, "Empty operands stack while parsing fixed_array_size");
             throw std::runtime_error("Empty operands stack while parsing fixed_array_size");
         }
         state.erase("arithmetic_expr");
@@ -543,6 +564,7 @@ struct action<open_ang_bracket>
                 operands.pop_back(); \
                 if (!operands.empty()) \
                 { \
+                    EPROSIMA_LOG_ERROR(IDLPARSER, "Finished string size parsing with non-empty operands stack."); \
                     throw std::runtime_error("Finished string size parsing with non-empty operands stack."); \
                 } \
  \
@@ -550,14 +572,18 @@ struct action<open_ang_bracket>
                 xdata->get_int64_value(value, MEMBER_ID_INVALID); \
                 if (value <= 0) \
                 { \
+                    EPROSIMA_LOG_ERROR(IDLPARSER, "String size is non-positive: " << value); \
                     throw std::runtime_error("String size is non-positive: " + std::to_string(value)); \
                 } \
                 state[#id] = std::to_string(value); \
             } \
             else \
             { \
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Empty operands stack while parsing string size"); \
                 throw std::runtime_error("Empty operands stack while parsing string size"); \
             } \
+ \
+            state.erase("arithmetic_expr"); \
         } \
     };
 
@@ -621,7 +647,8 @@ template<typename T> T promote(
     }
     else
     {
-        throw std::runtime_error("bad promote");
+        EPROSIMA_LOG_ERROR(IDLPARSER, "Bad promote");
+        throw std::runtime_error("Bad promote");
     }
 }
 
@@ -882,7 +909,8 @@ struct action<wide_string_literal>
             } \
             else \
             { \
-                throw std::runtime_error("invalid arguments for the operation " #operation ); \
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid arguments for operation " << #operation); \
+                throw std::runtime_error("Invalid arguments for operation " #operation ); \
             } \
  \
             if (state.count("arithmetic_expr")) \
@@ -934,7 +962,8 @@ struct action<wide_string_literal>
             } \
             else \
             { \
-                throw std::runtime_error("invalid arguments for the operation " #operation ); \
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid arguments for operation " << #operation); \
+                throw std::runtime_error("Invalid arguments for operation " #operation ); \
             } \
  \
             if (state.count("arithmetic_expr")) \
@@ -994,7 +1023,8 @@ struct action<wide_string_literal>
             } \
             else \
             { \
-                throw std::runtime_error("invalid arguments for the operation " #operation ); \
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid arguments for operation " << #operation); \
+                throw std::runtime_error("Invalid arguments for operation " #operation ); \
             } \
  \
             if (state.count("arithmetic_expr")) \
@@ -1053,7 +1083,8 @@ struct action<minus_exec>
         }
         else
         {
-            throw std::runtime_error("invalid argument for the minus unary operator");
+            EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid argument for the minus unary operator");
+            throw std::runtime_error("Invalid argument for the minus unary operator");
         }
     }
 
@@ -1114,7 +1145,8 @@ struct action<inv_exec>
         }
         else
         {
-            throw std::runtime_error("invalid argument for the inverse unary operator");
+            EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid argument for the inverse unary operator");
+            throw std::runtime_error("Invalid argument for the inverse unary operator");
         }
     }
 
@@ -1188,6 +1220,7 @@ struct action<union_forward_dcl>
         state.erase("union_labels");
         state.erase("union_member_types");
         state.erase("union_member_names");
+        state.erase("union_expecting_member_name");
     }
 
     template<typename Input>
@@ -1270,8 +1303,8 @@ struct action<const_dcl>
         operands.pop_back();
         if (!operands.empty())
         {
-            // TODO
-            // throw std::runtime_error("Finished const parsing with non-empty operands stack.");
+            EPROSIMA_LOG_ERROR(IDLPARSER, "Finished const parsing with non-empty operands stack.");
+            throw std::runtime_error("Finished const parsing with non-empty operands stack.");
         }
         state.erase("arithmetic_expr");
     }
@@ -1480,6 +1513,7 @@ struct action<kw_union>
         state["union_labels"] = "";
         state["union_member_names"] = "";
         state["union_member_types"] = "";
+        state["union_expecting_member_name"] = "";
     }
 
 };
@@ -1530,6 +1564,8 @@ struct action<case_label>
         {
             state["union_discriminant"] = state["type"];
         }
+        // Reset state["type"] helps parsing union member types and names
+        state["type"] = "";
     }
 
 };
@@ -1563,6 +1599,7 @@ struct action<union_def>
         state.erase("union_labels");
         state.erase("union_member_types");
         state.erase("union_member_names");
+        state.erase("union_expecting_member_name");
     }
 
     template<typename Input>
@@ -1724,6 +1761,7 @@ struct action<typedef_dcl>
         std::ptrdiff_t comma_count = std::count(state["alias"].begin(), state["alias"].end(), ',');
         if (comma_count > 1)
         {
+            EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid state[\"alias\"]: " << state["alias"]);
             throw std::runtime_error("Invalid state[\"alias\"]: " + state["alias"]);
         }
 

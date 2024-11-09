@@ -1079,6 +1079,24 @@ TEST_F(IdlParserTests, relative_path_include)
     EXPECT_EQ(data1->set_string_value(0, ""), RETCODE_BAD_PARAMETER);
 }
 
+TEST_F(IdlParserTests, unions)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    std::vector<std::string> include_paths;
+    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+
+    DynamicTypeBuilder::_ref_type builder1 = factory->create_type_w_document("IDL/unions.idl", "Union_Short", include_paths);
+    EXPECT_TRUE(builder1);
+    DynamicType::_ref_type type1 = builder1->build();
+    ASSERT_TRUE(type1);
+    DynamicData::_ref_type data1 {DynamicDataFactory::get_instance()->create_data(type1)};
+    ASSERT_TRUE(data1);
+    int32_t test1 {0};
+    EXPECT_EQ(data1->set_int32_value(0, 100), RETCODE_OK);
+    EXPECT_EQ(data1->get_int32_value(test1, 0), RETCODE_OK);
+    EXPECT_EQ(test1, 100);
+}
+
 int main(
         int argc,
         char** argv)
