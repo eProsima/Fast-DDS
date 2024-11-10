@@ -1085,16 +1085,605 @@ TEST_F(IdlParserTests, unions)
     std::vector<std::string> include_paths;
     include_paths.push_back("IDL/helpers/basic_inner_types.idl");
 
-    DynamicTypeBuilder::_ref_type builder1 = factory->create_type_w_document("IDL/unions.idl", "Union_Short", include_paths);
-    EXPECT_TRUE(builder1);
-    DynamicType::_ref_type type1 = builder1->build();
-    ASSERT_TRUE(type1);
-    DynamicData::_ref_type data1 {DynamicDataFactory::get_instance()->create_data(type1)};
-    ASSERT_TRUE(data1);
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_document("IDL/unions.idl", "Union_Short", include_paths);
+    EXPECT_TRUE(builder);
+    DynamicType::_ref_type type = builder->build();
+    ASSERT_TRUE(type);
+    DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(type)};
+    ASSERT_TRUE(data);
     int32_t test1 {0};
-    EXPECT_EQ(data1->set_int32_value(0, 100), RETCODE_OK);
-    EXPECT_EQ(data1->get_int32_value(test1, 0), RETCODE_OK);
+    EXPECT_EQ(data->set_int32_value(0, 100), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(test1, 0), RETCODE_OK);
     EXPECT_EQ(test1, 100);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_UShort", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_Long", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_ULong", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_LongLong", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_ULongLOng", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_Float", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_Double", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_LongDouble", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_Boolean", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_Octet", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_Char", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_WChar", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_String", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_WString", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_BoundedString", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_BoundedWString", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_InnerEnumHelper", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    // TODO Union_InnerBitMaskHelper is skipped since bitmask parsing is not supported.
+    // builder = factory->create_type_w_document("IDL/unions.idl", "Union_InnerBitMaskHelper", include_paths);
+    // EXPECT_TRUE(builder);
+    // type = builder->build();
+    // ASSERT_TRUE(type);
+    // data = DynamicDataFactory::get_instance()->create_data(type);
+    // ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_InnerAliasHelper", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_Array", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    // TODO Union_Sequence is skipped since sequence parsing is not supported.
+    // builder = factory->create_type_w_document("IDL/unions.idl", "Union_Sequence", include_paths);
+    // EXPECT_TRUE(builder);
+    // type = builder->build();
+    // ASSERT_TRUE(type);
+    // data = DynamicDataFactory::get_instance()->create_data(type);
+    // ASSERT_TRUE(data);
+
+    // TODO Union_Map is skipped since map parsing is not supported.
+    // builder = factory->create_type_w_document("IDL/unions.idl", "Union_Map", include_paths);
+    // EXPECT_TRUE(builder);
+    // type = builder->build();
+    // ASSERT_TRUE(type);
+    // data = DynamicDataFactory::get_instance()->create_data(type);
+    // ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_InnerUnionHelper", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_InnerStructureHelper", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    // TODO Union_InnerBitsetHelper is skipped since bitset parsing is not supported.
+    // builder = factory->create_type_w_document("IDL/unions.idl", "Union_InnerBitsetHelper", include_paths);
+    // EXPECT_TRUE(builder);
+    // type = builder->build();
+    // ASSERT_TRUE(type);
+    // data = DynamicDataFactory::get_instance()->create_data(type);
+    // ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_Discriminator_short", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_Discriminator_unsigned_short", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_Discriminator_long", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_Discriminator_unsigned_long", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_Discriminator_long_long", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_Discriminator_unsigned_long_long", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_Discriminator_boolean", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_Discriminator_octet", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_Discriminator_char", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_Discriminator_wchar", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_Discriminator_enum", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_Discriminator_enum_labels", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "Union_Discriminator_alias", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    // TODO Union_Several_Fields is skipped since sequence parsing is not supported.
+    // builder = factory->create_type_w_document("IDL/unions.idl", "Union_Several_Fields", include_paths);
+    // EXPECT_TRUE(builder);
+    // type = builder->build();
+    // ASSERT_TRUE(type);
+    // data = DynamicDataFactory::get_instance()->create_data(type);
+    // ASSERT_TRUE(data);
+
+    // TODO Union_Several_Fields_With_Default is skipped since sequence parsing is not supported.
+    // builder = factory->create_type_w_document("IDL/unions.idl", "Union_Several_Fields_With_Default", include_paths);
+    // EXPECT_TRUE(builder);
+    // type = builder->build();
+    // ASSERT_TRUE(type);
+    // data = DynamicDataFactory::get_instance()->create_data(type);
+    // ASSERT_TRUE(data);
+
+    // TODO Union_Fixed_String_In_Module_Alias is skipped since module parsing is not supported.
+    // builder = factory->create_type_w_document("IDL/unions.idl", "Union_Fixed_String_In_Module_Alias", include_paths);
+    // EXPECT_TRUE(builder);
+    // type = builder->build();
+    // ASSERT_TRUE(type);
+    // data = DynamicDataFactory::get_instance()->create_data(type);
+    // ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionShort", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionUShort", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionLong", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionULong", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionLongLong", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionULongLong", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionFloat", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionDouble", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionLongDouble", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionBoolean", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionOctet", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionChar", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionWChar", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionString", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionWString", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionBoundedString", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionBoundedWString", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionInnerEnumHelper", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    // TODO UnionInnerBitMaskHelper is skipped since bitmask parsing is not supported.
+    // builder = factory->create_type_w_document("IDL/unions.idl", "UnionInnerBitMaskHelper", include_paths);
+    // EXPECT_TRUE(builder);
+    // type = builder->build();
+    // ASSERT_TRUE(type);
+    // data = DynamicDataFactory::get_instance()->create_data(type);
+    // ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionInnerAliasHelper", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionArray", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    // TODO UnionSequence is skipped since sequence parsing is not supported.
+    // builder = factory->create_type_w_document("IDL/unions.idl", "UnionSequence", include_paths);
+    // EXPECT_TRUE(builder);
+    // type = builder->build();
+    // ASSERT_TRUE(type);
+    // data = DynamicDataFactory::get_instance()->create_data(type);
+    // ASSERT_TRUE(data);
+
+    // TODO UnionMap is skipped since map parsing is not supported.
+    // builder = factory->create_type_w_document("IDL/unions.idl", "UnionMap", include_paths);
+    // EXPECT_TRUE(builder);
+    // type = builder->build();
+    // ASSERT_TRUE(type);
+    // data = DynamicDataFactory::get_instance()->create_data(type);
+    // ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionInnerUnionHelper", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionInnerStructureHelper", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    // TODO UnionInnerBitsetHelper is skipped since bitset parsing is not supported.
+    // builder = factory->create_type_w_document("IDL/unions.idl", "UnionInnerBitsetHelper", include_paths);
+    // EXPECT_TRUE(builder);
+    // type = builder->build();
+    // ASSERT_TRUE(type);
+    // data = DynamicDataFactory::get_instance()->create_data(type);
+    // ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionDiscriminatorShort", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionDiscriminatorUShort", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionDiscriminatorLong", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionDiscriminatorULong", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionDiscriminatorLongLong", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionDiscriminatorULongLong", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionDiscriminatorBoolean", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionDiscriminatorOctet", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionDiscriminatorChar", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionDiscriminatorWChar", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionDiscriminatorEnum", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionDiscriminatorEnumLabel", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_document("IDL/unions.idl", "UnionDiscriminatorAlias", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    // TODO UnionSeveralFields is skipped since sequence parsing is not supported.
+    // builder = factory->create_type_w_document("IDL/unions.idl", "UnionSeveralFields", include_paths);
+    // EXPECT_TRUE(builder);
+    // type = builder->build();
+    // ASSERT_TRUE(type);
+    // data = DynamicDataFactory::get_instance()->create_data(type);
+    // ASSERT_TRUE(data);
+
+    // TODO UnionSeveralFieldsWithDefault is skipped since sequence parsing is not supported.
+    // builder = factory->create_type_w_document("IDL/unions.idl", "UnionSeveralFieldsWithDefault", include_paths);
+    // EXPECT_TRUE(builder);
+    // type = builder->build();
+    // ASSERT_TRUE(type);
+    // data = DynamicDataFactory::get_instance()->create_data(type);
+    // ASSERT_TRUE(data);
+
+    // TODO The rest types are skipped since annotation/module parsing are not supported.
 }
 
 int main(

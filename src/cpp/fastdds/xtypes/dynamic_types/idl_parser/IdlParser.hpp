@@ -111,24 +111,6 @@ public:
         return tokens;
     }
 
-    //std::map<std::string, DynamicType::Ptr> get_all_types(
-    //        bool scope = false)
-    //{
-    //    std::map<std::string, DynamicType::Ptr> result;
-
-    //    if(module_)
-    //    {
-    //        module_->fill_all_types(result, scope);
-    //    }
-
-    //    return result;
-    //}
-
-    //std::map<std::string, DynamicType::Ptr> get_all_scoped_types()
-    //{
-    //    return get_all_types(true);
-    //}
-
     DynamicTypeBuilder::_ref_type builder;
 
     Module& module()
@@ -235,7 +217,16 @@ struct action<identifier>
             }
             else
             {
-                if (!state["type"].empty())
+                if (state["union_discriminant"].empty())
+                {
+                    state["union_discriminant"] = identifier_name;
+                }
+                else if (state.count("arithmetic_expr"))
+                {
+                    // Identifier is part of case label. Handle it in scoped_name action.
+                    return;
+                }
+                else if (!state["type"].empty())
                 {
                     // Union member type is primitive type
                     state["union_member_types"] += state["type"];
@@ -1514,6 +1505,7 @@ struct action<kw_union>
         state["union_member_names"] = "";
         state["union_member_types"] = "";
         state["union_expecting_member_name"] = "";
+        state["type"] = "";
     }
 
 };
@@ -1528,7 +1520,12 @@ struct action<kw_case>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
-        // Create empty arithmetic_expr state to indicate the start of parsing case label
+        if (state["union_discriminant"].empty())
+        {
+            state["union_discriminant"] = state["type"];
+        }
+
+        state["type"] = "";
         state["arithmetic_expr"] = "";
     }
 
@@ -1582,11 +1579,6 @@ struct action<case_label>
         {
             EPROSIMA_LOG_ERROR(IDLPARSER, "Case label is neither const expression nor default.");
             throw std::runtime_error("Case label is neither const expression nor default.");
-        }
-
-        if (state["union_discriminant"].empty())
-        {
-            state["union_discriminant"] = state["type"];
         }
 
         // Reset state["type"] helps parsing union member types and names
@@ -2047,15 +2039,6 @@ public:
         return context;
     }
 
-    //void get_all_types(
-    //    std::map<std::string, DynamicType::Ptr>& types_map)
-    //{
-    //    if (context_)
-    //    {
-    //        context_->module().fill_all_types(types_map);
-    //    }
-    //}
-
     static std::string preprocess(
             const std::string& idl_file,
             const std::vector<std::string>& includes)
@@ -2068,9 +2051,7 @@ public:
 private:
 
     friend class Context;
-    //using LabelsCaseMemberPair = std::pair<std::vector<std::string>, Member>;
 
-    //peg::parser parser_;
     Context* context_;
 
     traits<DynamicType>::ref_type type_spec(
