@@ -60,47 +60,52 @@ const option::Descriptor usage[] = {
 
     { UNKNOWN,   0, "",   "",             Arg::None,
       "\neProsima Discovery Server auxiliary generator tool. Version " FAST_SERVER_VERSION "\n"
-      "\nIt can be used for both deploying Servers and inspecting active ones. \n"
+      "It can be used for both deploying Servers and inspecting active ones. \n"
       "\nUsage: " FAST_SERVER_BINARY " [optional parameters] \n\nGeneral options:" },
 
     { HELP,      0, "h",  "help",         Arg::None,
-      "  -h  \t--help        Produce help message.\n" },
+      "  -h\t --help        Produce help message.\n" },
 
     { VERSION,   0, "v",  "version",      Arg::None,
       "  -v  \t--version     Show Fast DDS version information.\n" },
 
     { UDPADDRESS, 0, "l", "udp-address",   Arg::OptionalAny,
-      "  -l \t--udp-address IPv4/IPv6 address chosen to listen the clients. Defaults\n"
-      "\t              to any (0.0.0.0/::0). Instead of an address, a name can\n"
-      "\t              be specified.\n"},
+      "  -l\t --udp-address IPv4/IPv6 address chosen to listen the clients. \n"
+      "\t               Defaults to any (0.0.0.0/::0). Instead of an \n"
+      "\t               address, a name can be specified.\n"},
 
     { UDP_PORT,  0, "p",  "udp-port",       Arg::check_udp_port,
-      "  -p  \t--udp-port    UDP port chosen to listen the clients. Defaults to 11811.\n" },
+      "  -p\t --udp-port    UDP port chosen to listen the clients. Defaults to \n"
+      "\t               11811.\n"},
 
     { TCPADDRESS, 0, "t", "tcp-address",   Arg::OptionalAny,
-      "  -t \t--tcp-address IPv4/IPv6 address chosen to listen the clients using\n"
-      "\t              TCP transport. Defaults to any (0.0.0.0/::0). Instead of an \n"
-      "\t              address, a name can be specified.\n"},
+      "  -t\t --tcp-address IPv4/IPv6 address chosen to listen the clients \n"
+      "\t               using TCP transport. Defaults to any\n"
+      "\t               (0.0.0.0/::0). Instead of an address, a name\n"
+      "\t               can be specified.\n"},
 
     { TCP_PORT,  0, "q",  "tcp-port",         Arg::check_tcp_port,
-      "  -q  \t--tcp-port    TCP port chosen to listen the clients. Defaults to 42100.\n" },
+      "  -q\t --tcp-port    TCP port chosen to listen the clients. Defaults to\n"
+      "\t               42100.\n"},
 
     { BACKUP,    0, "b",  "backup",       Arg::None,
-      "  -b  \t--backup      Creates a server with a backup file associated.\n" },
+      "  -b\t --backup      Creates a server with a backup file associated.\n" },
 
     { XML_FILE,  0, "x",  "xml-file",     Arg::required,
-      "  -x  \t--xml-file    Gets config from XML file. If there is any argument in \n"
-      "\t              common with the config of the XML, the XML argument will \n"
-      "\t              be overriden. A XML file with several profiles will take\n"
-      "\t              the profile with \"is_default_profile=\"true\"\" unless \n"
-      "\t              another profile using uri with \"@\" character is defined.\n"},
+      "  -x\t --xml-file    Gets config from XML file. If there is any \n"
+      "\t               argument in common with the config of the XML, the \n"
+      "\t               XML argument will be overriden. A XML file with \n"
+      "\t               several profiles will take the profile with \n"
+      "\t               \"is_default_profile=\"true\"\" unless another \n"
+      "\t               profile using uri with \"@\" character is defined.\n"},
 
     { SERVERID,  0, "i", "server-id",    Arg::check_server_id,
-      "  -i \t--server-id   Unique server identifier. Its functionality its\n"
-      "\t              deprecated. It can be used to select a fixed GUID.\n" },
+      "  -i\t --server-id   Unique server identifier. Its functionality its\n"
+      "\t               deprecated. It can be used to select a fixed GUID.\n" },
 
     { EXAMPLES_OPT,  0, "e", "examples",    Arg::None,
-      "  -e \t--examples    List usage examples of eProsima Discovery Server tool. \n"},
+      "  -e \t--examples     List usage examples of eProsima Discovery Server \n"
+      "\t               tool.\n"},
 
     { UNKNOWN,   0, "",   "",             Arg::None,
       "\n\nDaemon options:\n  auto\t Handles the daemon start-up automatically." },
@@ -114,18 +119,19 @@ const option::Descriptor usage[] = {
     { UNKNOWN,   0, "",   "",             Arg::None,
       "\n  add\t Adds new remotes Discovery Servers to the local server. This\n"
       "\t will connect both servers and their sub-networks without\n"
-      "\t modifying existing remote servers.\n"},
+      "\t modifying existing remote servers."},
 
     { UNKNOWN,   0, "",   "",             Arg::None,
       "\n  set\t Rewrite the remotes Discovery Servers connected to the local \n"
       "\t server. This will replace existing remote servers with the new \n"
-      "\t connections.\n"},
+      "\t connections."},
 
     { UNKNOWN,   0, "",   "",             Arg::None,
       "\n  list\t List active discovery servers." },
 
     { UNKNOWN,   0, "",   "",             Arg::None,
-      "\n  info <domain>\t Inspect the Discovery Server in the specified domain.\n" },
+      "\n  info         \t Inspect the Discovery Server in the specified domain.\n\n"
+      "  Daemon parameters: \n "},
 
     { DOMAIN,  0, "d", "domain",    Arg::check_server_id,
       "  -d \t--domain       Selects the domain of the server to target for \n"
