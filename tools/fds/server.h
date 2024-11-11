@@ -32,7 +32,8 @@ enum  optionIndex
     TCPADDRESS,
     TCP_PORT,
     BACKUP,
-    XML_FILE
+    XML_FILE,
+    EXAMPLES_OPT,
 };
 
 struct Arg : public option::Arg
@@ -96,6 +97,35 @@ const option::Descriptor usage[] = {
     { SERVERID,  0, "i", "server-id",    Arg::check_server_id,
       "  -i \t--server-id   Unique server identifier. Its functionality its\n"
       "\t              deprecated. It can be used to select a fixed GUID.\n" },
+
+    { EXAMPLES_OPT,  0, "e", "examples",    Arg::None,
+      "  -e \t--examples    List usage examples of eProsima Discovery Server tool. \n"},
+
+    { UNKNOWN,   0, "",   "",             Arg::None,
+      "\n\nDaemon options:\n  auto\t Handles the daemon start-up automatically." },
+
+    { UNKNOWN,   0, "",   "",             Arg::None,
+      "\n  start\t Starts the Discovery Server daemon if it is not active yet." },
+
+    { UNKNOWN,   0, "",   "",             Arg::None,
+      "\n  stop\t Stops the Discovery Server daemon if it is active." },
+
+    { UNKNOWN,   0, "",   "",             Arg::None,
+      "\n  add\t Adds new remotes Discovery Servers to the local server. This\n"
+      "\t will connect both servers and their sub-networks without\n"
+      "\t modifying existing remote servers.\n"},
+
+    { UNKNOWN,   0, "",   "",             Arg::None,
+      "\n  set\t Rewrite the remotes Discovery Servers connected to the local \n"
+      "\t server. This will replace existing remote servers with the new \n"
+      "\t connections.\n"},
+
+    { UNKNOWN,   0, "",   "",             Arg::None,
+      "\n  list\t List active discovery servers." },
+
+    { UNKNOWN,   0, "",   "",             Arg::None,
+      "\n  info <domain>\t Inspect the Discovery Server in the specified domain.\n" },
+
 
     { 0, 0, 0, 0, 0, 0 }
 };
