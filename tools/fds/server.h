@@ -34,6 +34,7 @@ enum  optionIndex
     BACKUP,
     XML_FILE,
     EXAMPLES_OPT,
+    DOMAIN,
 };
 
 struct Arg : public option::Arg
@@ -126,6 +127,9 @@ const option::Descriptor usage[] = {
     { UNKNOWN,   0, "",   "",             Arg::None,
       "\n  info <domain>\t Inspect the Discovery Server in the specified domain.\n" },
 
+    { DOMAIN,  0, "d", "domain",    Arg::check_server_id,
+      "  -d \t--domain       Selects the domain of the server to target for \n"
+      "\t               this action.\n"},
 
     { 0, 0, 0, 0, 0, 0 }
 };
