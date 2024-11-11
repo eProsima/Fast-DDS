@@ -113,6 +113,30 @@ public:
         return port;
     }
 
+    /**
+     * Get a discovery server port based on the domain ID.
+     *
+     * @param domainId Domain ID.
+     * @return Discovery server port
+     */
+    inline uint16_t getDiscoveryServerPort(
+            uint32_t domainId) const
+    {
+        uint32_t port = portBase + domainIDGain * domainId + offsetd4;
+
+        if (port > 65535)
+        {
+            EPROSIMA_LOG_ERROR(RTPS, "Calculated port number is too high. Probably the domainId is over 232 "
+                    << "or portBase is too high.");
+            std::cout << "Calculated port number is too high. Probably the domainId is over 232 "
+                      << "or portBase is too high." << std::endl;
+            std::cout.flush();
+            exit(EXIT_FAILURE);
+        }
+
+        return static_cast<uint16_t>(port);
+    }
+
 public:
 
     //!PortBase, default value 7400.
