@@ -120,6 +120,11 @@ int fastdds_discovery_server(
     if (options[HELP])
     {
         option::printUsage(std::cout, usage);
+        return 0;
+    }
+
+    if (options[EXAMPLES_OPT])
+    {
         std::cout << EXAMPLES << std::endl;
         return 0;
     }
@@ -761,7 +766,7 @@ int main (
     argc -= (argc > 0);
     argv += (argc > 0);
 
-    // Command index is provided by python tool, so no need to check limits
+    // Command index is provided by python tool, so no need to check uint16_t limits
     uint16_t command_int = std::stoi(argv[0]);
 
     switch (command_int)
