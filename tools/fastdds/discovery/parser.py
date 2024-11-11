@@ -63,31 +63,54 @@ class Parser:
         tool_path = str(self.__find_tool_path().resolve())
 
         try:
-            result = subprocess.run(
+            result_help = subprocess.run(
                 [tool_path, str(command_to_int[Command.SERVER]), '-h'],
                 stdout=subprocess.PIPE,
                 universal_newlines=True
             )
 
-            if result.returncode != 0:
+            # Check if the tool is available
+            if result_help.returncode != 0:
                 sys.exit(result.returncode)
 
+            m = re.search('Usage: ([a-zA-Z0-9-\\.]*)\\s', result_help.stdout)
+            tool_name = ''
+            if m:
+                tool_name = m.group(1)
+
+            help_or_examples = False
+            # Check for help and/or examples arguments
             for arg in argv:
                 if arg in ['-h', '--help']:
-                    print(self.__edit_tool_help(result.stdout))
-                    sys.exit(0)
+                    print(self.__edit_tool_text(result_help.stdout, tool_name))
+                    help_or_examples = True
+            for arg in argv:
+                if arg in ['-e', '--examples']:
+                    result_ex = subprocess.run(
+                        [tool_path, str(command_to_int[Command.SERVER]), '-e'],
+                        stdout=subprocess.PIPE,
+                        universal_newlines=True
+                    )
+                    print(self.__edit_tool_text(result_ex.stdout, tool_name))
+                    help_or_examples = True
+            if help_or_examples:
+                sys.exit(0)
 
             if (
                 (len(argv) == 1 and argv[0] == '-v') or
                 (len(argv) == 1 and argv[0] == '--version')
                 ):
-                result = subprocess.run([tool_path, '-v'])
-                if result.returncode != 0:
-                    sys.exit(result.returncode)
+                result = subprocess.run([tool_path, str(command_to_int[Command.SERVER]), '-v'])
+                sys.exit(result.returncode)
+
+            #  Check for multiple keywords error
+            if self.__check_for_duplicate_commands(argv):
+                sys.exit(1)
 
             try:
                 command_int = command_to_int[Command(sys.argv[2].lower())]
-            except ValueError:
+            except:
+                # Default value
                 command_int = command_to_int[Command.SERVER]
 
             # Prepare arguments for the C++ program
@@ -106,6 +129,9 @@ class Parser:
             # It lets the subprocess to handle the exception
             pass
 
+        except SystemExit as e:
+            sys.exit(e.code)
+
         except BaseException as e:
             print('\n fast-discovery-server tool not found!')
             sys.exit(1)
@@ -119,7 +145,7 @@ class Parser:
 
         """
         tool_path = Path(os.path.dirname(os.path.realpath(__file__)))
-        # We asume the installion path is relative to our installation path
+        # We asume the installation path is relative to Fast DDS' installation path
         tool_path = tool_path / '../../../bin'
         if os.name == 'posix':
             ret = tool_path / 'fast-discovery-server'
@@ -143,11 +169,22 @@ class Parser:
 
         return ret
 
-    def __edit_tool_help(self, usage_text):
+    def __edit_tool_text(self, usage_text, tool_name):
         """Find and replace the tool-name by fastdds discovery."""
-        m = re.search('Usage: ([a-zA-Z0-9-\\.]*)\\s', usage_text)
-        if m:
-            tool_name = m.group(1)
+        if tool_name != '':
             return re.sub(tool_name, 'fastdds discovery', usage_text)
-
         return usage_text
+
+    def __check_for_duplicate_commands(self, args):
+        """Check for multiple commands (@Command.values) in the arguments."""
+        valid_commands = {cmd.value for cmd in Command}
+        found_command = ''
+
+        for arg in args:
+            if arg in valid_commands:
+                if found_command != '':
+                    print(f"Error: Cannot use more than one command at the same time: '{arg}' - '{found_command}'")
+                    return True
+                found_command = arg
+        return False
+
