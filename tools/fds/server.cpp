@@ -47,6 +47,29 @@ void sigint_handler(
     g_signal_cv.notify_one();
 }
 
+eprosima::fastdds::dds::DomainId_t get_domain_id(
+        const eprosima::option::Option* domain_id)
+{
+    eprosima::fastdds::dds::DomainId_t id = 0;
+
+    // Domain provided by CLI has priority over environment variable
+    if (domain_id != nullptr)
+    {
+        std::stringstream domain_stream;
+
+        domain_stream << domain_id->arg;
+        domain_stream >> id;
+    }
+    else
+    {
+        // Retrieve domain from environment variable
+        // Or maybe delegate to Fast DDS the parsing of the environment variable
+        // id = std::stoi(domain_id);
+    }
+
+    return id;
+}
+
 namespace fds {
 enum ToolCommand : uint16_t
 {
@@ -676,6 +699,11 @@ int fastdds_discovery_auto(
 
     // Auto mode should check if there is a server created for the domain specified, if not, create one.
     int return_value = 0;
+
+    option::Option* pOp = options[DOMAIN];
+    eprosima::fastdds::dds::DomainId_t id = get_domain_id(pOp);
+    std::cout << "Domain ID from -d param is: " << id << std::endl;
+
     std::cout << "Auto mode not implemented yet." << std::endl;
 
     return return_value;
@@ -859,8 +887,16 @@ option::ArgStatus Arg::check_server_id(
 
     if (msg)
     {
-        std::cout << "\nOption '" << option.name
-                  << "' is optional. Should be a key identifier between 0 and 255." << std::endl;
+        if (strcmp(option.name, "i") == 0)
+        {
+            std::cout << "\nError in option '" << option.name << "' value. Remember it "
+                      << "is optional. It should be a key identifier between 0 and 255." << std::endl;
+        }
+        else if (strcmp(option.name, "d") == 0)
+        {
+            std::cout << "\nError in option '" << option.name << "' value. "
+                      << "It should be a key identifier between 0 and 255." << std::endl;
+        }
     }
 
     return option::ARG_ILLEGAL;
