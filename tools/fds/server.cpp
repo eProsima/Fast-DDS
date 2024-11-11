@@ -65,38 +65,22 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-int fastdds_discovery_server(
-        int argc,
-        char* argv[])
+bool initial_options_fail(
+        std::vector<option::Option>& options,
+        option::Parser& parse)
 {
-    // Convenience aliases
-    using Locator = fastdds::rtps::Locator_t;
-    using DiscoveryProtocol = fastdds::rtps::DiscoveryProtocol;
-    using IPLocator = fastdds::rtps::IPLocator;
-
-    // Skip command index argv[0] if present
-    argc -= (argc > 0);
-    argv += (argc > 0);
-    option::Stats stats(usage, argc, argv);
-    std::vector<option::Option> options(stats.options_max);
-    std::vector<option::Option> buffer(stats.buffer_max);
-    option::Parser parse(usage, argc, argv, &options[0], &buffer[0]);
-    constexpr const char* delimiter = "@";
-    std::string sXMLConfigFile = "";
-    std::string profile = "";
-
     // Check the command line options
     if (parse.error())
     {
         option::printUsage(std::cout, usage);
-        return 1;
+        return true;
     }
 
     if (options[UNKNOWN])
     {
         EPROSIMA_LOG_ERROR(CLI, "Unknown option: " << options[UNKNOWN].name);
         option::printUsage(std::cout, usage);
-        return 1;
+        return true;
     }
 
     // No arguments beyond options
@@ -113,6 +97,26 @@ int fastdds_discovery_server(
         }
 
         std::cout << std::endl;
+        return true;
+    }
+    return false;
+}
+
+int fastdds_discovery_server(
+        std::vector<option::Option>& options,
+        option::Parser& parse)
+{
+    // Convenience aliases
+    using Locator = fastdds::rtps::Locator_t;
+    using DiscoveryProtocol = fastdds::rtps::DiscoveryProtocol;
+    using IPLocator = fastdds::rtps::IPLocator;
+
+    constexpr const char* delimiter = "@";
+    std::string sXMLConfigFile = "";
+    std::string profile = "";
+
+    if (eprosima::fastdds::dds::initial_options_fail(options, parse))
+    {
         return 1;
     }
 
@@ -662,12 +666,15 @@ int fastdds_discovery_server(
 }
 
 int fastdds_discovery_auto(
-        int argc,
-        char* argv[])
+    std::vector<option::Option>& options,
+    option::Parser& parse)
 {
-    static_cast<void>(argc);
-    static_cast<void>(argv);
-    // Auto mode should check if there is a server created for the domain specified, if not, create one
+    if (eprosima::fastdds::dds::initial_options_fail(options, parse))
+    {
+        return 1;
+    }
+
+    // Auto mode should check if there is a server created for the domain specified, if not, create one.
     int return_value = 0;
     std::cout << "Auto mode not implemented yet." << std::endl;
 
@@ -675,11 +682,13 @@ int fastdds_discovery_auto(
 }
 
 int fastdds_discovery_start(
-        int argc,
-        char* argv[])
+    std::vector<option::Option>& options,
+    option::Parser& parse)
 {
-    static_cast<void>(argc);
-    static_cast<void>(argv);
+    if (eprosima::fastdds::dds::initial_options_fail(options, parse))
+    {
+        return 1;
+    }
     // Start a server for the domain specified
     int return_value = 0;
     std::cout << "Start mode not implemented yet." << std::endl;
@@ -688,11 +697,14 @@ int fastdds_discovery_start(
 }
 
 int fastdds_discovery_stop(
-        int argc,
-        char* argv[])
+    std::vector<option::Option>& options,
+    option::Parser& parse)
 {
-    static_cast<void>(argc);
-    static_cast<void>(argv);
+    if (eprosima::fastdds::dds::initial_options_fail(options, parse))
+    {
+        return 1;
+    }
+
     // Stop a server for the domain specified
     int return_value = 0;
     std::cout << "Stop mode not implemented yet." << std::endl;
@@ -701,11 +713,14 @@ int fastdds_discovery_stop(
 }
 
 int fastdds_discovery_add(
-        int argc,
-        char* argv[])
+    std::vector<option::Option>& options,
+    option::Parser& parse)
 {
-    static_cast<void>(argc);
-    static_cast<void>(argv);
+    if (eprosima::fastdds::dds::initial_options_fail(options, parse))
+    {
+        return 1;
+    }
+
     // Add a server for the domain specified
     int return_value = 0;
     std::cout << "Add mode not implemented yet." << std::endl;
@@ -714,11 +729,14 @@ int fastdds_discovery_add(
 }
 
 int fastdds_discovery_set(
-        int argc,
-        char* argv[])
+    std::vector<option::Option>& options,
+    option::Parser& parse)
 {
-    static_cast<void>(argc);
-    static_cast<void>(argv);
+    if (eprosima::fastdds::dds::initial_options_fail(options, parse))
+    {
+        return 1;
+    }
+
     // Set a server for the domain specified
     int return_value = 0;
     std::cout << "Set mode not implemented yet." << std::endl;
@@ -727,11 +745,14 @@ int fastdds_discovery_set(
 }
 
 int fastdds_discovery_list(
-        int argc,
-        char* argv[])
+    std::vector<option::Option>& options,
+    option::Parser& parse)
 {
-    static_cast<void>(argc);
-    static_cast<void>(argv);
+    if (eprosima::fastdds::dds::initial_options_fail(options, parse))
+    {
+        return 1;
+    }
+
     // List all servers
     int return_value = 0;
     std::cout << "List mode not implemented yet." << std::endl;
@@ -740,11 +761,14 @@ int fastdds_discovery_list(
 }
 
 int fastdds_discovery_info(
-        int argc,
-        char* argv[])
+    std::vector<option::Option>& options,
+    option::Parser& parse)
 {
-    static_cast<void>(argc);
-    static_cast<void>(argv);
+    if (eprosima::fastdds::dds::initial_options_fail(options, parse))
+    {
+        return 1;
+    }
+
     // Get info from a server for the domain specified
     int return_value = 0;
     std::cout << "Info mode not implemented yet." << std::endl;
@@ -769,31 +793,40 @@ int main (
     // Command index is provided by python tool, so no need to check uint16_t limits
     uint16_t command_int = std::stoi(argv[0]);
 
+    // Skip command index argv[0] if present
+    argc -= (argc > 0);
+    argv += (argc > 0);
+
+    option::Stats stats(usage, argc, argv);
+    std::vector<option::Option> options(stats.options_max);
+    std::vector<option::Option> buffer(stats.buffer_max);
+    option::Parser parse(usage, argc, argv, &options[0], &buffer[0]);
+
     switch (command_int)
     {
     case ToolCommand::AUTO:
-        return eprosima::fastdds::dds::fastdds_discovery_auto(argc, argv);
+        return eprosima::fastdds::dds::fastdds_discovery_auto(options, parse);
         break;
     case ToolCommand::START:
-        return eprosima::fastdds::dds::fastdds_discovery_start(argc, argv);
+        return eprosima::fastdds::dds::fastdds_discovery_start(options, parse);
         break;
     case ToolCommand::STOP:
-        return eprosima::fastdds::dds::fastdds_discovery_stop(argc, argv);
+        return eprosima::fastdds::dds::fastdds_discovery_stop(options, parse);
         break;
     case ToolCommand::ADD:
-        return eprosima::fastdds::dds::fastdds_discovery_add(argc, argv);
+        return eprosima::fastdds::dds::fastdds_discovery_add(options, parse);
         break;
     case ToolCommand::SET:
-        return eprosima::fastdds::dds::fastdds_discovery_set(argc, argv);
+        return eprosima::fastdds::dds::fastdds_discovery_set(options, parse);
         break;
     case ToolCommand::LIST:
-        return eprosima::fastdds::dds::fastdds_discovery_list(argc, argv);
+        return eprosima::fastdds::dds::fastdds_discovery_list(options, parse);
         break;
     case ToolCommand::INFO:
-        return eprosima::fastdds::dds::fastdds_discovery_info(argc, argv);
+        return eprosima::fastdds::dds::fastdds_discovery_info(options, parse);
         break;
     case ToolCommand::SERVER:
-        return eprosima::fastdds::dds::fastdds_discovery_server(argc, argv);
+        return eprosima::fastdds::dds::fastdds_discovery_server(options, parse);
         break;
 
     default:
