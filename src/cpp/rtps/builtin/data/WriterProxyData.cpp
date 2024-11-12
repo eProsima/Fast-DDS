@@ -22,6 +22,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/network/NetworkFactory.hpp>
 #include <utils/SystemInfo.hpp>
@@ -183,13 +184,6 @@ uint32_t WriterProxyData::get_serialized_size(
 
     // PID_NETWORK_CONFIGURATION_SET
     ret_val += 4 + PARAMETER_NETWORKCONFIGSET_LENGTH;
-
-    if (m_host_id.size() > 0)
-    {
-        // PID_HOST_ID
-        ret_val +=
-                fastdds::dds::ParameterSerializer<Parameter_t>::cdr_serialized_size(m_host_id);
-    }
 
     // PID_UNICAST_LOCATOR
     ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * remote_locators_.unicast.size());
@@ -366,15 +360,6 @@ bool WriterProxyData::writeToCDRMessage(
         ParameterNetworkConfigSet_t p(fastdds::dds::PID_NETWORK_CONFIGURATION_SET, PARAMETER_NETWORKCONFIGSET_LENGTH);
         p.netconfigSet = m_networkConfiguration;
         if (!dds::ParameterSerializer<ParameterNetworkConfigSet_t>::add_to_cdr_message(p, msg))
-        {
-            return false;
-        }
-    }
-
-    if (m_host_id.size() > 0)
-    {
-        ParameterString_t p(fastdds::dds::PID_HOST_ID, 0, m_host_id);
-        if (!fastdds::dds::ParameterSerializer<ParameterString_t>::add_to_cdr_message(p, msg))
         {
             return false;
         }
@@ -903,23 +888,7 @@ bool WriterProxyData::readFromCDRMessage(
                             return false;
                         }
 
-                        if (!should_filter_locators)
-                        {
-                            remote_locators_.add_unicast_locator(p.locator);
-                        }
-                        else
-                        {
-                            Locator_t temp_locator;
-                            if (network.transform_remote_locator(p.locator, temp_locator, m_networkConfiguration,
-                                    check_same_host()))
-                            {
-                                ProxyDataFilters::filter_locators(
-                                    network,
-                                    remote_locators_,
-                                    temp_locator,
-                                    true);
-                            }
-                        }
+                        remote_locators_.add_unicast_locator(p.locator);
                         break;
                     }
                     case fastdds::dds::PID_MULTICAST_LOCATOR:
@@ -930,23 +899,7 @@ bool WriterProxyData::readFromCDRMessage(
                             return false;
                         }
 
-                        if (!should_filter_locators)
-                        {
-                            remote_locators_.add_multicast_locator(p.locator);
-                        }
-                        else
-                        {
-                            Locator_t temp_locator;
-                            if (network.transform_remote_locator(p.locator, temp_locator, m_networkConfiguration,
-                                    check_same_host()))
-                            {
-                                ProxyDataFilters::filter_locators(
-                                    network,
-                                    remote_locators_,
-                                    temp_locator,
-                                    false);
-                            }
-                        }
+                        remote_locators_.add_multicast_locator(p.locator);
                         break;
                     }
                     case fastdds::dds::PID_KEY_HASH:
@@ -1134,7 +1087,53 @@ bool WriterProxyData::readFromCDRMessage(
     return false;
 }
 
-bool WriterProxyData::check_same_host()
+void WriterProxyData::setup_locators(
+        const WriterProxyData* wdata,
+        NetworkFactory& network,
+        const ParticipantProxyData& participant_data)
+{
+    if (this == wdata)
+    {
+        return;
+    }
+
+    machine_id = participant_data.machine_id;
+
+    if (has_locators())
+    {
+        // Get the transformed remote locators for the WriterProxyData received
+        remote_locators_.unicast.clear();
+        remote_locators_.multicast.clear();
+        for (const Locator_t& locator : wdata->remote_locators_.unicast)
+        {
+            Locator_t temp_locator;
+            if (network.transform_remote_locator(locator, temp_locator, m_networkConfiguration,
+                    is_from_this_host()))
+            {
+                ProxyDataFilters::filter_locators(network, remote_locators_, temp_locator, true);
+            }
+        }
+        for (const Locator_t& locator : wdata->remote_locators_.multicast)
+        {
+            Locator_t temp_locator;
+            if (network.transform_remote_locator(locator, temp_locator, m_networkConfiguration,
+                    is_from_this_host()))
+            {
+                ProxyDataFilters::filter_locators(network, remote_locators_, temp_locator, true);
+            }
+        }
+        auto locators = remote_locators_;
+        set_remote_locators(locators, network, true);
+    }
+    else
+    {
+        // Get the remote locators from the participant_data
+        set_remote_locators(participant_data.default_locators, network, true);
+    }
+
+}
+
+bool WriterProxyData::is_from_this_host()
 {
     bool same_host = false;
     if (machine_id.size() > 0)

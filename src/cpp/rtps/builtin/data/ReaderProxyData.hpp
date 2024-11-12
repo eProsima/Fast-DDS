@@ -35,6 +35,7 @@ namespace rtps {
 
 struct CDRMessage_t;
 class NetworkFactory;
+class ParticipantProxyData;
 
 /**
  * Class ReaderProxyData, used to represent all the information on a Reader (both local and remote) with the purpose of
@@ -433,6 +434,19 @@ public:
             NetworkFactory& network,
             bool should_filter_locators,
             fastdds::rtps::VendorId_t source_vendor_id = c_VendorId_eProsima);
+
+    /**
+     * Transform and set the remote locators from the remote_locators_ of another ReaderProxyData.
+     * If the received WriterProxyData has no locators, remote locators will be extracted from the
+     * ParticipantProxyData.
+     * @param rdata ReaderProxyData to get the locators from
+     * @param network NetworkFactory to transform locators
+     * @param participant_data ParticipantProxyData to get the locators from
+     */
+    void setup_locators(
+            const ReaderProxyData* wdata,
+            NetworkFactory& network,
+            const ParticipantProxyData& participant_data);
 
     /**
      * Check if the host is the same as the one that sent the data.
