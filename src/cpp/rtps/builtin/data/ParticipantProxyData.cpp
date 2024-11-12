@@ -81,7 +81,7 @@ ParticipantProxyData::ParticipantProxyData(
         const ParticipantProxyData& pdata)
     : m_protocolVersion(pdata.m_protocolVersion)
     , m_guid(pdata.m_guid)
-    , m_host_id(pdata.m_host_id)
+    , machine_id(pdata.machine_id)
     , m_VendorId(pdata.m_VendorId)
     , product_version(pdata.product_version)
     , m_domain_id(pdata.m_domain_id)
@@ -176,11 +176,11 @@ uint32_t ParticipantProxyData::get_serialized_size(
     // PID_NETWORK_CONFIGURATION_SET
     ret_val += 4 + PARAMETER_NETWORKCONFIGSET_LENGTH;
 
-    if (m_host_id.size() > 0)
+    if (machine_id.size() > 0)
     {
-        // PID_HOST_ID
+        // PID_MACHINE_ID
         ret_val +=
-                fastdds::dds::ParameterSerializer<Parameter_t>::cdr_serialized_size(m_host_id);
+                fastdds::dds::ParameterSerializer<Parameter_t>::cdr_serialized_size(machine_id);
     }
 
     // PID_METATRAFFIC_MULTICAST_LOCATOR
@@ -331,9 +331,9 @@ bool ParticipantProxyData::writeToCDRMessage(
             return false;
         }
     }
-    if (m_host_id.size() > 0)
+    if (machine_id.size() > 0)
     {
-        ParameterString_t p(fastdds::dds::PID_HOST_ID, 0, m_host_id);
+        ParameterString_t p(fastdds::dds::PID_MACHINE_ID, 0, machine_id);
         if (!fastdds::dds::ParameterSerializer<ParameterString_t>::add_to_cdr_message(p, msg))
         {
             return false;
@@ -606,7 +606,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                         m_networkConfiguration = p.netconfigSet;
                         break;
                     }
-                    case fastdds::dds::PID_HOST_ID:
+                    case fastdds::dds::PID_MACHINE_ID:
                     {
                         // Ignore custom PID when coming from other vendors
                         if (c_VendorId_eProsima != m_VendorId)
@@ -625,7 +625,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                             return false;
                         }
 
-                        m_host_id = p.getName();
+                        machine_id = p.getName();
                         break;
                     }
                     case fastdds::dds::PID_METATRAFFIC_MULTICAST_LOCATOR:
@@ -647,7 +647,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                             Locator_t temp_locator;
                             if (network.transform_remote_locator(
                                         p.locator, temp_locator, m_networkConfiguration,
-                                        check_same_host()))
+                                        is_from_this_host()))
                             {
                                 ProxyDataFilters::filter_locators(
                                     network,
@@ -677,7 +677,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                             Locator_t temp_locator;
                             if (network.transform_remote_locator(
                                         p.locator, temp_locator, m_networkConfiguration,
-                                        check_same_host()))
+                                        is_from_this_host()))
                             {
                                 ProxyDataFilters::filter_locators(
                                     network,
@@ -707,7 +707,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                             Locator_t temp_locator;
                             if (network.transform_remote_locator(
                                         p.locator, temp_locator, m_networkConfiguration,
-                                        check_same_host()))
+                                        is_from_this_host()))
                             {
                                 ProxyDataFilters::filter_locators(
                                     network,
@@ -737,7 +737,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                             Locator_t temp_locator;
                             if (network.transform_remote_locator(
                                         p.locator, temp_locator, m_networkConfiguration,
-                                        check_same_host()))
+                                        is_from_this_host()))
                             {
                                 ProxyDataFilters::filter_locators(
                                     network,
@@ -893,12 +893,12 @@ bool ParticipantProxyData::readFromCDRMessage(
     }
 }
 
-bool ParticipantProxyData::check_same_host()
+bool ParticipantProxyData::is_from_this_host() const
 {
     bool same_host = false;
-    if (m_host_id.size() > 0)
+    if (machine_id.size() > 0)
     {
-        same_host = m_host_id == SystemInfo::instance().machine_id();
+        same_host = machine_id == SystemInfo::instance().machine_id();
     }
     else
     {
@@ -911,7 +911,7 @@ void ParticipantProxyData::clear()
 {
     m_protocolVersion = ProtocolVersion_t();
     m_guid = GUID_t();
-    m_host_id = "";
+    machine_id = "";
     //set_VendorId_Unknown(m_VendorId);
     m_VendorId = c_VendorId_Unknown;
     product_version = {};
@@ -945,7 +945,7 @@ void ParticipantProxyData::copy(
 {
     m_protocolVersion = pdata.m_protocolVersion;
     m_guid = pdata.m_guid;
-    m_host_id = pdata.m_host_id;
+    machine_id = pdata.machine_id;
     m_VendorId[0] = pdata.m_VendorId[0];
     m_VendorId[1] = pdata.m_VendorId[1];
     product_version = pdata.product_version;

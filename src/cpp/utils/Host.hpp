@@ -145,7 +145,6 @@ private:
         if (machine_id_ == "")
         {
             EPROSIMA_LOG_WARNING(UTILS, "Cannot get machine id. Failing back to IP based ID");
-            machine_id_ = "";
         }
     }
 

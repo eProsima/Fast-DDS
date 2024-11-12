@@ -572,7 +572,7 @@ int fastdds_discovery_server(
     }
 
     fastdds::rtps::GuidPrefix_t guid_prefix = participantQos.wire_protocol().prefix;
-    participantQos.transport().use_builtin_transports = true ? udp_server_initialized : false;
+    participantQos.transport().use_builtin_transports = udp_server_initialized;
 
     // Create the server
     int return_value = 0;
