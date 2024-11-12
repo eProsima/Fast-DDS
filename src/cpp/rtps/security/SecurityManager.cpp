@@ -2133,7 +2133,8 @@ void SecurityManager::match_builtin_endpoints(
         temp_stateless_writer_proxy_data_->guid().guidPrefix = participant_data.m_guid.guidPrefix;
         temp_stateless_writer_proxy_data_->guid().entityId = participant_stateless_message_writer_entity_id;
         temp_stateless_writer_proxy_data_->persistence_guid(temp_stateless_writer_proxy_data_->guid());
-        temp_stateless_writer_proxy_data_->set_remote_locators(participant_data.metatraffic_locators, network, false);
+        temp_stateless_writer_proxy_data_->set_remote_locators(participant_data.metatraffic_locators, network, false,
+                participant_data.is_from_this_host());
         temp_stateless_writer_proxy_data_->topicKind(NO_KEY);
         temp_stateless_writer_proxy_data_->m_qos.m_reliability.kind =
                 eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
@@ -2150,7 +2151,8 @@ void SecurityManager::match_builtin_endpoints(
         temp_stateless_reader_proxy_data_->m_expectsInlineQos = false;
         temp_stateless_reader_proxy_data_->guid().guidPrefix = participant_data.m_guid.guidPrefix;
         temp_stateless_reader_proxy_data_->guid().entityId = participant_stateless_message_reader_entity_id;
-        temp_stateless_reader_proxy_data_->set_remote_locators(participant_data.metatraffic_locators, network, false);
+        temp_stateless_reader_proxy_data_->set_remote_locators(participant_data.metatraffic_locators, network, false,
+                participant_data.is_from_this_host());
         temp_stateless_reader_proxy_data_->topicKind(NO_KEY);
         temp_stateless_reader_proxy_data_->m_qos.m_reliability.kind =
                 eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
@@ -2174,7 +2176,8 @@ void SecurityManager::match_builtin_key_exchange_endpoints(
         temp_volatile_writer_proxy_data_->guid().guidPrefix = participant_data.m_guid.guidPrefix;
         temp_volatile_writer_proxy_data_->guid().entityId = participant_volatile_message_secure_writer_entity_id;
         temp_volatile_writer_proxy_data_->persistence_guid(temp_volatile_writer_proxy_data_->guid());
-        temp_volatile_writer_proxy_data_->set_remote_locators(participant_data.metatraffic_locators, network, false);
+        temp_volatile_writer_proxy_data_->set_remote_locators(participant_data.metatraffic_locators, network, false,
+                participant_data.is_from_this_host());
         temp_volatile_writer_proxy_data_->topicKind(NO_KEY);
         temp_volatile_writer_proxy_data_->m_qos.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
         temp_volatile_writer_proxy_data_->m_qos.m_durability.kind = eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS;
@@ -2190,7 +2193,8 @@ void SecurityManager::match_builtin_key_exchange_endpoints(
         temp_volatile_reader_proxy_data_->m_expectsInlineQos = false;
         temp_volatile_reader_proxy_data_->guid().guidPrefix = participant_data.m_guid.guidPrefix;
         temp_volatile_reader_proxy_data_->guid().entityId = participant_volatile_message_secure_reader_entity_id;
-        temp_volatile_reader_proxy_data_->set_remote_locators(participant_data.metatraffic_locators, network, false);
+        temp_volatile_reader_proxy_data_->set_remote_locators(participant_data.metatraffic_locators, network, false,
+                participant_data.is_from_this_host());
         temp_volatile_reader_proxy_data_->topicKind(NO_KEY);
         temp_volatile_reader_proxy_data_->m_qos.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
         temp_volatile_reader_proxy_data_->m_qos.m_durability.kind = eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS;

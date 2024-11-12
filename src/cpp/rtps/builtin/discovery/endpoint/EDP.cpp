@@ -131,7 +131,8 @@ bool EDP::new_reader_proxy_data(
                 }
                 else
                 {
-                    rpd->set_multicast_locators(ratt.multicastLocatorList, network);
+                    rpd->set_multicast_locators(ratt.multicastLocatorList, network,
+                            participant_data.is_from_this_host());
                     rpd->set_announced_unicast_locators(ratt.unicastLocatorList);
                     fastdds::rtps::network::external_locators::add_external_locators(*rpd,
                             ratt.external_unicast_locators);
@@ -271,7 +272,8 @@ bool EDP::new_writer_proxy_data(
                 }
                 else
                 {
-                    wpd->set_multicast_locators(watt.multicastLocatorList, network);
+                    wpd->set_multicast_locators(watt.multicastLocatorList, network,
+                            participant_data.is_from_this_host());
                     wpd->set_announced_unicast_locators(watt.unicastLocatorList);
                     fastdds::rtps::network::external_locators::add_external_locators(*wpd,
                             watt.external_unicast_locators);
@@ -388,7 +390,9 @@ bool EDP::update_reader(
                 }
                 else
                 {
-                    rdata->set_multicast_locators(rtps_reader->getAttributes().multicastLocatorList, network);
+                    rdata->set_multicast_locators(
+                        rtps_reader->getAttributes().multicastLocatorList, network,
+                        participant_data.is_from_this_host());
                     rdata->set_announced_unicast_locators(rtps_reader->getAttributes().unicastLocatorList);
                 }
                 rdata->m_qos.setQos(rqos, false);
@@ -460,7 +464,9 @@ bool EDP::update_writer(
                 }
                 else
                 {
-                    wdata->set_multicast_locators(writer->getAttributes().multicastLocatorList, network);
+                    wdata->set_multicast_locators(
+                        writer->getAttributes().multicastLocatorList, network,
+                        participant_data.is_from_this_host());
                     wdata->set_announced_unicast_locators(writer->getAttributes().unicastLocatorList);
                 }
                 wdata->m_qos.setQos(wqos, false);

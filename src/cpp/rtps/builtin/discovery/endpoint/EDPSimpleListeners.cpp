@@ -95,7 +95,6 @@ void EDPBasePUBListener::add_writer_from_change(
                         bool updating,
                         const ParticipantProxyData& participant_data)
                             {
-
                                 if (updating && !data->is_update_allowed(*temp_writer_data))
                                 {
                                     EPROSIMA_LOG_WARNING(RTPS_EDP,
@@ -103,7 +102,7 @@ void EDPBasePUBListener::add_writer_from_change(
                                             data->guid());
                                 }
                                 *data = *temp_writer_data;
-                                data->setup_locators(temp_writer_data, network, participant_data);
+                                data->setup_locators(*temp_writer_data, network, participant_data);
 
                                 if (request_ret_status != fastdds::dds::RETCODE_OK)
                                 {
@@ -241,12 +240,6 @@ void EDPBaseSUBListener::add_reader_from_change(
                         bool updating,
                         const ParticipantProxyData& participant_data)
                             {
-                                if (!temp_reader_data->has_locators())
-                                {
-                                    temp_reader_data->set_remote_locators(participant_data.default_locators, network,
-                                            true);
-                                }
-
                                 if (updating && !data->is_update_allowed(*temp_reader_data))
                                 {
                                     EPROSIMA_LOG_WARNING(RTPS_EDP,
@@ -254,6 +247,7 @@ void EDPBaseSUBListener::add_reader_from_change(
                                             data->guid());
                                 }
                                 *data = *temp_reader_data;
+                                data->setup_locators(*temp_reader_data, network, participant_data);
 
                                 if (request_ret_status != fastdds::dds::RETCODE_OK)
                                 {

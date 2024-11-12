@@ -127,14 +127,16 @@ public:
 
     void set_remote_unicast_locators(
             const LocatorList_t& locators,
-            const NetworkFactory& network);
+            const NetworkFactory& network,
+            bool from_this_host);
 
     void add_multicast_locator(
             const Locator_t& locator);
 
     void set_multicast_locators(
             const LocatorList_t& locators,
-            const NetworkFactory& network);
+            const NetworkFactory& network,
+            bool from_this_host);
 
     void set_locators(
             const RemoteLocatorList& locators);
@@ -142,7 +144,8 @@ public:
     void set_remote_locators(
             const RemoteLocatorList& locators,
             const NetworkFactory& network,
-            bool use_multicast_locators);
+            bool use_multicast_locators,
+            bool from_this_host);
 
     void key(
             const InstanceHandle_t& key)
@@ -440,16 +443,9 @@ public:
      * @param participant_data ParticipantProxyData to get the locators from
      */
     void setup_locators(
-            const ReaderProxyData* wdata,
+            const ReaderProxyData& rdata,
             NetworkFactory& network,
             const ParticipantProxyData& participant_data);
-
-    /**
-     * Check if the host is the same as the one that sent the data.
-     * It tries to use the machine_id. If it is not available, it will compare GUIDs.
-     * @return True if the host is the same
-     */
-    bool is_from_this_host();
 
     //!
     bool m_expectsInlineQos;

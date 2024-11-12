@@ -169,7 +169,8 @@ protected:
      * temp_data_lock_
      */
     void match_pdp_writer_nts_(
-            const eprosima::fastdds::rtps::RemoteServerAttributes& server_att);
+            const eprosima::fastdds::rtps::RemoteServerAttributes& server_att,
+            bool from_this_host);
 
     /**
      * Manually match the local PDP writer with the PDP reader of a given server. The function is
@@ -177,7 +178,8 @@ protected:
      * temp_data_lock_
      */
     void match_pdp_reader_nts_(
-            const eprosima::fastdds::rtps::RemoteServerAttributes& server_att);
+            const eprosima::fastdds::rtps::RemoteServerAttributes& server_att,
+            bool from_this_host);
 
 private:
 
@@ -190,7 +192,8 @@ private:
      */
     void match_pdp_writer_nts_(
             const eprosima::fastdds::rtps::RemoteServerAttributes& server_att,
-            const eprosima::fastdds::rtps::GuidPrefix_t& prefix_override);
+            const eprosima::fastdds::rtps::GuidPrefix_t& prefix_override,
+            bool from_this_host);
 
     /**
      * Manually match the local PDP writer with the PDP reader of a given server. The function is
@@ -199,7 +202,8 @@ private:
      */
     void match_pdp_reader_nts_(
             const eprosima::fastdds::rtps::RemoteServerAttributes& server_att,
-            const eprosima::fastdds::rtps::GuidPrefix_t& prefix_override);
+            const eprosima::fastdds::rtps::GuidPrefix_t& prefix_override,
+            bool from_this_host);
 
 #if HAVE_SECURITY
     /**
