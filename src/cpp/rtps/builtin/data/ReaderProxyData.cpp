@@ -1166,7 +1166,6 @@ void ReaderProxyData::clear()
     plugin_security_attributes_ = 0UL;
 #endif // if HAVE_SECURITY
     m_guid = c_Guid_Unknown;
-    machine_id = "";
     m_networkConfiguration = 0;
     remote_locators_.unicast.clear();
     remote_locators_.multicast.clear();
@@ -1231,7 +1230,6 @@ void ReaderProxyData::copy(
         ReaderProxyData* rdata)
 {
     m_guid = rdata->m_guid;
-    machine_id = rdata->machine_id;
     m_networkConfiguration = rdata->m_networkConfiguration;
     remote_locators_ = rdata->remote_locators_;
     m_key = rdata->m_key;

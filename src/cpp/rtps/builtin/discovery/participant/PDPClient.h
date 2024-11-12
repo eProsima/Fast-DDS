@@ -167,6 +167,8 @@ protected:
      * Manually match the local PDP reader with the PDP writer of a given server. The function is
      * not thread safe (nts) in the sense that it does not take the PDP mutex. It does however take
      * temp_data_lock_
+     * @param server_att Remote server attributes
+     * @param from_this_host Whether the server is from this host or not
      */
     void match_pdp_writer_nts_(
             const eprosima::fastdds::rtps::RemoteServerAttributes& server_att,
@@ -176,6 +178,8 @@ protected:
      * Manually match the local PDP writer with the PDP reader of a given server. The function is
      * not thread safe (nts) in the sense that it does not take the PDP mutex. It does however take
      * temp_data_lock_
+     * @param server_att Remote server attributes
+     * @param from_this_host Whether the server is from this host or not
      */
     void match_pdp_reader_nts_(
             const eprosima::fastdds::rtps::RemoteServerAttributes& server_att,
@@ -189,6 +193,9 @@ private:
      * Manually match the local PDP reader with the PDP writer of a given server. The function is
      * not thread safe (nts) in the sense that it does not take the PDP mutex. It does however take
      * temp_data_lock_
+     * @param server_att Remote server attributes
+     * @param prefix_override GUID prefix of the server
+     * @param from_this_host Whether the server is from this host or not
      */
     void match_pdp_writer_nts_(
             const eprosima::fastdds::rtps::RemoteServerAttributes& server_att,
@@ -199,6 +206,9 @@ private:
      * Manually match the local PDP writer with the PDP reader of a given server. The function is
      * not thread safe (nts) in the sense that it does not take the PDP mutex. It does however take
      * temp_data_lock_
+     * @param server_att Remote server attributes
+     * @param prefix_override GUID prefix of the server
+     * @param from_this_host Whether the server is from this host or not
      */
     void match_pdp_reader_nts_(
             const eprosima::fastdds::rtps::RemoteServerAttributes& server_att,

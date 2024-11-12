@@ -42,7 +42,7 @@ fastcdr::string_255 Host::compute_machine_id()
                     NULL, machine_id, &BufferSize);
     if (res == 0)
     {
-        return std::string(machine_id);
+        return machine_id;
     }
     return "";
     #elif defined(__APPLE__)
@@ -65,7 +65,7 @@ fastcdr::string_255 Host::compute_machine_id()
         return "";
     }
     CFRelease(uuidCf);
-    return std::string(buf, sizeof(buf));
+    return static_cast<fastcdr::string_255>(std::string(buf, sizeof(buf)));
     #elif defined(_POSIX_SOURCE)
     int fd = open("/etc/machine-id", O_RDONLY);
     if (fd == -1)
@@ -82,7 +82,7 @@ fastcdr::string_255 Host::compute_machine_id()
         return "";
     }
 
-    return std::string(buffer, 32);
+    return static_cast<fastcdr::string_255>(std::string(buffer, 32));
     #else
     return "";
     #endif // if defined(_WIN32)

@@ -1099,7 +1099,7 @@ void WriterProxyData::setup_locators(
 
     if (wdata.has_locators())
     {
-        // Get the transformed remote locators for the ReaderProxyData received
+        // Get the transformed remote locators for the WriterProxyData received
         remote_locators_.unicast.clear();
         remote_locators_.multicast.clear();
         for (const Locator_t& locator : wdata.remote_locators_.unicast)
@@ -1133,7 +1133,6 @@ void WriterProxyData::clear()
     plugin_security_attributes_ = 0UL;
 #endif // if HAVE_SECURITY
     m_guid = c_Guid_Unknown;
-    machine_id = "";
     m_networkConfiguration = 0;
     remote_locators_.unicast.clear();
     remote_locators_.multicast.clear();
@@ -1167,7 +1166,6 @@ void WriterProxyData::copy(
         WriterProxyData* wdata)
 {
     m_guid = wdata->m_guid;
-    machine_id = wdata->machine_id;
     m_networkConfiguration = wdata->m_networkConfiguration;
     remote_locators_ = wdata->remote_locators_;
     m_key = wdata->m_key;

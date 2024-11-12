@@ -125,6 +125,12 @@ public:
     void set_announced_unicast_locators(
             const LocatorList_t& locators);
 
+    /**
+     * Set the remote unicast locators from @param locators.
+     * @param locators List of locators to be used
+     * @param network NetworkFactory to check if the locators are allowed
+     * @param from_this_host Whether the server is from this host or not
+     */
     void set_remote_unicast_locators(
             const LocatorList_t& locators,
             const NetworkFactory& network,
@@ -133,6 +139,12 @@ public:
     void add_multicast_locator(
             const Locator_t& locator);
 
+    /**
+     * Set the remote multicast locators from @param locators.
+     * @param locators List of locators to be used
+     * @param network NetworkFactory to check if the locators are allowed
+     * @param from_this_host Whether the server is from this host or not
+     */
     void set_multicast_locators(
             const LocatorList_t& locators,
             const NetworkFactory& network,
@@ -141,6 +153,13 @@ public:
     void set_locators(
             const RemoteLocatorList& locators);
 
+    /**
+     * Set the remote multicast and unicast locators from @param locators.
+     * @param locators List of locators to be used
+     * @param network NetworkFactory to check if the locators are allowed
+     * @param use_multicast_locators Whether to set multicast locators or not
+     * @param from_this_host Whether the server is from this host or not
+     */
     void set_remote_locators(
             const RemoteLocatorList& locators,
             const NetworkFactory& network,
@@ -436,7 +455,7 @@ public:
 
     /**
      * Transform and set the remote locators from the remote_locators_ of another ReaderProxyData.
-     * If the received WriterProxyData has no locators, remote locators will be extracted from the
+     * If the received ReaderProxyData has no locators, remote locators will be extracted from the
      * ParticipantProxyData.
      * @param rdata ReaderProxyData to get the locators from
      * @param network NetworkFactory to transform locators
@@ -491,8 +510,6 @@ private:
 
     //!GUID
     GUID_t m_guid;
-    //!HOST ID
-    fastcdr::string_255 machine_id;
     //!Network configuration
     NetworkConfigSet_t m_networkConfiguration;
     //!Holds locator information
