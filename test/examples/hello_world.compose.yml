@@ -16,27 +16,27 @@ services:
   waitset-subscriber:
     image: @DOCKER_IMAGE_NAME@
     volumes:
-      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR_C@
-      - @fastcdr_INSTALL_DIR@/bin:@fastcdr_INSTALL_DIR_C@/bin
-      - @CMAKE_INSTALL_PREFIX@/bin:@CMAKE_INSTALL_PREFIX_C@/bin
+      - @PROJECT_BINATY_DIR_COMPOSE_VOLUME@
+      - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
+      - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
       @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
     environment:
-      PATH: C:/Program Files/OpenSSL-Win64;@CMAKE_INSTALL_PREFIX_C@/bin;@fastcdr_INSTALL_DIR_C@/bin;C:/Windows/System32;C:/Windows/System32/downlevel;
-      EXAMPLE_DIR: @PROJECT_BINARY_DIR_C@/examples/cpp/hello_world/RelWithDebInfo
-      FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR_C@/examples/cpp/hello_world/hello_world_profile.xml
-    command: @SHELL_EXECUTABLE@ -c "& $$Env:EXAMPLE_DIR/hello_world@FILE_EXTENSION@ subscriber --waitset --samples 30"
+      @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
+      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/hello_world/@EXAMPLE_SUFFIX_DIR_COMPOSE@
+      FASTDDS_DEFAULT_PROFILES_FILE: @FASTDDS_DEFAULT_PROFILES_FILE_PREFIX_COMPOSE@/hello_world/hello_world_profile.xml
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/hello_world@FILE_EXTENSION@ subscriber --waitset --samples 10"
 
   subscriber-publisher:
     image: @DOCKER_IMAGE_NAME@
     volumes:
-      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR_C@
-      - @fastcdr_INSTALL_DIR@/bin:@fastcdr_INSTALL_DIR_C@/bin
-      - @CMAKE_INSTALL_PREFIX@/bin:@CMAKE_INSTALL_PREFIX_C@/bin
+      - @PROJECT_BINATY_DIR_COMPOSE_VOLUME@
+      - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
+      - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
       @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
     environment:
-      PATH: C:/Program Files/OpenSSL-Win64;@CMAKE_INSTALL_PREFIX_C@/bin;@fastcdr_INSTALL_DIR_C@/bin;C:/Windows/System32;C:/Windows/System32/downlevel;
-      EXAMPLE_DIR: @PROJECT_BINARY_DIR_C@/examples/cpp/hello_world/RelWithDebInfo
-      FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR_C@/examples/cpp/hello_world/hello_world_profile.xml
-    command: @SHELL_EXECUTABLE@ -c "& $$Env:EXAMPLE_DIR/hello_world@FILE_EXTENSION@ publisher --samples 30 &" "& $$Env:EXAMPLE_DIR/hello_world@FILE_EXTENSION@ subscriber --samples 30; Receive-Job 1 -Wait"
+      @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
+      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/hello_world/@EXAMPLE_SUFFIX_DIR_COMPOSE@
+      FASTDDS_DEFAULT_PROFILES_FILE: @FASTDDS_DEFAULT_PROFILES_FILE_PREFIX_COMPOSE@/hello_world/hello_world_profile.xml
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/hello_world@FILE_EXTENSION@ publisher --samples 10 --matched 2 @COMMAND_CONCATENATE_COMPOSE@ @COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/hello_world@FILE_EXTENSION@ subscriber --samples 10@COMMAND_BACKGROUND_JOB_COMPOSE@"
     depends_on:
       - waitset-subscriber
