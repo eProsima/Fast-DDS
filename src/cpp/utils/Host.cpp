@@ -33,7 +33,7 @@
 
 namespace eprosima {
 
-std::string Host::compute_machine_id()
+fastcdr::string_255 Host::compute_machine_id()
 {
     #ifdef _WIN32
     char machine_id[255];

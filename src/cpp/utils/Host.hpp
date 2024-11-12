@@ -148,7 +148,7 @@ private:
         }
     }
 
-    static std::string compute_machine_id();
+    static fastcdr::string_255 compute_machine_id();
 
     uint16_t id_;
     uint48 mac_id_;
