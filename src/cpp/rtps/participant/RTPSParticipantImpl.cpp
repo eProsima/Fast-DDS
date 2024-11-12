@@ -3086,11 +3086,7 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
         alloc_limits.locators.max_multicast_locators,
         alloc_limits.data_limits);
 
-    ret = writer_data.readFromCDRMessage(
-        &serialized_msg,
-        network_factory(),
-        false,
-        c_VendorId_eProsima);
+    ret = writer_data.readFromCDRMessage(&serialized_msg, c_VendorId_eProsima);
 
     if (ret)
     {
@@ -3121,11 +3117,7 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
         alloc_limits.locators.max_unicast_locators,
         alloc_limits.locators.max_multicast_locators,
         alloc_limits.data_limits);
-    ret = reader_data.readFromCDRMessage(
-        &serialized_msg,
-        network_factory(),
-        false,
-        c_VendorId_eProsima);
+    ret = reader_data.readFromCDRMessage(&serialized_msg, c_VendorId_eProsima);
 
     if (ret)
     {

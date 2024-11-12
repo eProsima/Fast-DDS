@@ -649,11 +649,9 @@ bool ReaderProxyData::writeToCDRMessage(
 
 bool ReaderProxyData::readFromCDRMessage(
         CDRMessage_t* msg,
-        NetworkFactory& network,
-        bool should_filter_locators,
         fastdds::rtps::VendorId_t source_vendor_id)
 {
-    auto param_process = [this, &network, &should_filter_locators, source_vendor_id](
+    auto param_process = [this, source_vendor_id](
         CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
             {
                 VendorId_t vendor_id = source_vendor_id;
