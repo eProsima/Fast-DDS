@@ -122,6 +122,7 @@ target_include_directories(MonitorServiceTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/external_locators
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ExternalLocatorsProcessor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderHistory
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl

@@ -149,6 +149,7 @@ target_include_directories(ListenerTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/DataSharingPayloadPool
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/NetworkFactory
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/PDP
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/PDPSimple
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderHistory

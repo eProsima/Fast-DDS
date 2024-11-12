@@ -51,23 +51,24 @@ target_compile_definitions(EdpTests PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(EdpTests PRIVATE
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/PDP
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/external_locators
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/NetworkFactory
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantImpl
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderProxyData
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulReader
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/PDP
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderHistory
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyData
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSWriter
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulWriter
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterHistory
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TimedEvent
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderProxyData
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ResourceEvent
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/SecurityManager
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantImpl
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSWriter
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/SecurityManager
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulReader
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulWriter
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TimedEvent
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterHistory
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyData
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${Asio_INCLUDE_DIR}

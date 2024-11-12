@@ -115,7 +115,8 @@ public:
     void set_remote_locators(
             const RemoteLocatorList& /*locators*/,
             const NetworkFactory& /*network*/,
-            bool /*use_multicast*/)
+            bool /*use_multicast*/,
+            bool /*from_this_host*/)
     {
     }
 
@@ -133,7 +134,8 @@ public:
 
     void set_multicast_locators(
             const LocatorList_t& /*locators*/,
-            const NetworkFactory& /*network*/)
+            const NetworkFactory& /*network*/,
+            bool /*from_this_host*/)
     {
 
     }

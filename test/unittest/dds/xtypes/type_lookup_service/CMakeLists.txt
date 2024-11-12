@@ -62,6 +62,7 @@ target_compile_definitions(TypeLookupServiceTests PRIVATE
 target_include_directories(TypeLookupServiceTests PUBLIC
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/NetworkFactory
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderHistory
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ResourceEvent
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomain
@@ -71,8 +72,8 @@ target_include_directories(TypeLookupServiceTests PUBLIC
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSWriter
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulReader
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulWriter
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterHistory
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TypeLookupManager
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterHistory
     ${PROJECT_SOURCE_DIR}/test/mock/xtypes/TypeObjectRegistry
     ${PROJECT_SOURCE_DIR}/test/mock/xtypes/TypeObjectUtils
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
