@@ -292,7 +292,7 @@ Locator TCPTransportInterface::local_endpoint_to_locator(
     return locator;
 }
 
-void TCPTransportInterface::bind_socket(
+ResponseCode TCPTransportInterface::bind_socket(
         std::shared_ptr<TCPChannelResource>& channel)
 {
     std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
@@ -301,6 +301,17 @@ void TCPTransportInterface::bind_socket(
     auto it_remove = std::find(unbound_channel_resources_.begin(), unbound_channel_resources_.end(), channel);
     assert(it_remove != unbound_channel_resources_.end());
     unbound_channel_resources_.erase(it_remove);
+
+    ResponseCode ret = RETCODE_OK;
+    if (channel_resources_.find(channel->locator()) == channel_resources_.end())
+    {
+        channel_resources_[channel->locator()] = channel;
+    }
+    else
+    {
+        // There is an existing channel that can be used. Force the Client to close unnecessary socket
+        ret = RETCODE_SERVER_ERROR;
+    }
 
     std::vector<fastdds::rtps::IPFinder::info_IP> local_interfaces;
     // Check if the locator is from an owned interface to link all local interfaces to the channel
@@ -311,10 +322,13 @@ void TCPTransportInterface::bind_socket(
         for (auto& interface_it : local_interfaces)
         {
             IPLocator::setIPv4(local_locator, interface_it.locator);
-            channel_resources_[local_locator] = channel;
+            if (channel_resources_.find(local_locator) == channel_resources_.end())
+            {
+                channel_resources_[local_locator] = channel;
+            }
         }
     }
-    channel_resources_[channel->locator()] = channel;
+    return ret;
 }
 
 bool TCPTransportInterface::check_crc(
@@ -949,7 +963,7 @@ bool TCPTransportInterface::CreateInitialConnect(
     std::lock_guard<std::mutex> socketsLock(sockets_map_mutex_);
 
     // We try to find a SenderResource that has this locator.
-    // Note: This is done in this level because if we do in NetworkFactory level, we have to mantain what transport
+    // Note: This is done in this level because if we do it at NetworkFactory level, we have to mantain what transport
     // already reuses a SenderResource.
     for (auto& sender_resource : send_resource_list)
     {

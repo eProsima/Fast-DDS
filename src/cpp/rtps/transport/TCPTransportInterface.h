@@ -239,7 +239,7 @@ public:
     virtual ~TCPTransportInterface();
 
     //! Stores the binding between the given locator and the given TCP socket. Server side.
-    void bind_socket(
+    ResponseCode bind_socket(
             std::shared_ptr<TCPChannelResource>&);
 
     //! Removes the listening socket for the specified port.
