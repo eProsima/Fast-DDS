@@ -304,7 +304,7 @@ int fastdds_discovery_server(
     // Retrieve first TCP port
     option::Option* pO_tcp_port = options[TCP_PORT];
 
-    bool udp_server_initialized = true ? (pOp != nullptr || pO_port != nullptr) : false;
+    bool udp_server_initialized = (pOp != nullptr) || (pO_port != nullptr);
 
     /**
      * A locator has been initialized previously in [0.0.0.0] address using either the DEFAULT_ROS2_SERVER_PORT or the
