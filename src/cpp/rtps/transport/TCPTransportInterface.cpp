@@ -303,11 +303,9 @@ ResponseCode TCPTransportInterface::bind_socket(
     unbound_channel_resources_.erase(it_remove);
 
     ResponseCode ret = RETCODE_OK;
-    if (channel_resources_.find(channel->locator()) == channel_resources_.end())
-    {
-        channel_resources_[channel->locator()] = channel;
-    }
-    else
+    const auto insert_ret = channel_resources_.insert(
+        decltype(channel_resources_)::value_type{channel->locator(), channel});
+    if (false == insert_ret.second)
     {
         // There is an existing channel that can be used. Force the Client to close unnecessary socket
         ret = RETCODE_SERVER_ERROR;
@@ -322,10 +320,7 @@ ResponseCode TCPTransportInterface::bind_socket(
         for (auto& interface_it : local_interfaces)
         {
             IPLocator::setIPv4(local_locator, interface_it.locator);
-            if (channel_resources_.find(local_locator) == channel_resources_.end())
-            {
-                channel_resources_[local_locator] = channel;
-            }
+            channel_resources_.insert(decltype(channel_resources_)::value_type{local_locator, channel});
         }
     }
     return ret;
