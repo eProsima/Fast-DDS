@@ -33,7 +33,7 @@ if (MSVC)
     # For isolated builds provide some IDE aids
     if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 
-        # add fast headers to enable class view on visual studio IDE
+        # Add fast headers to enable class view on visual studio IDE
         get_target_property(FAST_INCLUDE_DIR fastdds INTERFACE_INCLUDE_DIRECTORIES)
         list(GET FAST_INCLUDE_DIR 0 FAST_INCLUDE_DIR)
 
@@ -47,17 +47,19 @@ if (MSVC)
 
     endif()
 
-    # add project headers to enable class view on visual studio IDE
-    set(FAST_SERVER_HEADERS server.h)
+    # Add project headers to enable class view on visual studio IDE
+    set(FAST_CLI_DISCOVERY_HEADERS CliDiscoveryParser.hpp CliDiscoveryManager.hpp)
 
 endif(MSVC)
 
+
 add_executable(${PROJECT_NAME}
-    server.cpp
-    ${FAST_SERVER_HEADERS}
+    CliDiscoveryEntrypoint.cpp
+    CliDiscoveryManager.cpp
+    ${FAST_CLI_DISCOVERY_HEADERS}
     ${ALL_FAST_HEADERS})
 
-# we pass the version as a preprocessor definition
+# Pass the version as a preprocessor definition
 target_compile_definitions(${PROJECT_NAME}
     PRIVATE FAST_SERVER_VERSION=\"${PROJECT_VERSION}\"
     PRIVATE FAST_SERVER_BINARY=\"$<TARGET_FILE_NAME:${PROJECT_NAME}>\" )
