@@ -44,6 +44,7 @@ optional arguments:
 import argparse
 import pathlib
 import sys
+import textwrap
 import xml.etree.ElementTree as ET
 
 from discovery.parser import Parser as DiscoveryParser
@@ -91,15 +92,15 @@ class FastDDSParser:
                 getattr(self, args.command)()
         elif args.version:
             parents_path = list(pathlib.Path(__file__).parent.resolve().parents)
-            matching_paths = [p for p in parents_path if p.name == 'fastdds'][0]
-            p = matching_paths / 'package.xml'
-            tree = ET.parse(p)
+            path_to_package_xml = [p for p in parents_path if p.name == 'fastdds'][0] / 'package.xml'
+            tree = ET.parse(path_to_package_xml)
             root = tree.getroot()
             name = 'Fast DDS'
             version = root.find('version').text
-            description = root.find('description').text.strip('*')
-            print('{} version: {}'.format(name, version))
-            print(description)
+            description = root.find('description').text.replace('*', '')
+            print(f"\n\033[1m{name} version: {version}\033[0m\n")
+            print("\033[1mDescription:\033[0m\n")
+            print(textwrap.fill(description, width=120, subsequent_indent="    ") + "\n")
         else:
             parser.print_help()
 
