@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "server.h"
-#include <fastdds/config.hpp>
+#include "CliDiscoveryManager.hpp"
+#include "CliDiscoveryParser.hpp"
 
 #include <condition_variable>
 #include <csignal>
@@ -22,7 +22,6 @@
 #include <regex>
 #include <sstream>
 #include <stdlib.h>
-#include <vector>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -34,6 +33,8 @@
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
 #include <fastdds/utils/IPLocator.hpp>
+#include <utils/SystemInfo.hpp>
+
 
 volatile sig_atomic_t g_signal_status = 0;
 std::mutex g_signal_mutex;
@@ -47,7 +48,11 @@ void sigint_handler(
     g_signal_cv.notify_one();
 }
 
-eprosima::fastdds::dds::DomainId_t get_domain_id(
+namespace eprosima {
+namespace fastdds {
+namespace dds {
+
+eprosima::fastdds::dds::DomainId_t CliDiscoveryManager::get_domain_id(
         const eprosima::option::Option* domain_id)
 {
     eprosima::fastdds::dds::DomainId_t id = 0;
@@ -63,32 +68,30 @@ eprosima::fastdds::dds::DomainId_t get_domain_id(
     else
     {
         // Retrieve domain from environment variable
-        // Or maybe delegate to Fast DDS the parsing of the environment variable
-        // id = std::stoi(domain_id);
+        std::string env_value;
+        if (eprosima::SystemInfo::get_env(domain_env_var, env_value) == eprosima::fastdds::dds::RETCODE_OK)
+        {
+            std::stringstream domain_stream;
+
+            domain_stream << env_value;
+
+            if (domain_stream >> id
+                    && domain_stream.eof()
+                    && id <  256 )
+            {
+                domain_stream >> id;
+            }
+            else
+            {
+                std::cout << "Found Invalid Domain ID in environment variable: " << env_value << std::endl;
+            }
+        }
     }
 
     return id;
 }
 
-namespace fds {
-enum ToolCommand : uint16_t
-{
-    AUTO = 0,
-    START = 1,
-    STOP = 2,
-    ADD = 3,
-    SET = 4,
-    LIST = 5,
-    INFO = 6,
-    SERVER = 42
-};
-}
-
-namespace eprosima {
-namespace fastdds {
-namespace dds {
-
-bool initial_options_fail(
+bool CliDiscoveryManager::initial_options_fail(
         std::vector<option::Option>& options,
         option::Parser& parse)
 {
@@ -125,7 +128,55 @@ bool initial_options_fail(
     return false;
 }
 
-int fastdds_discovery_server(
+inline uint32_t CliDiscoveryManager::getDiscoveryServerPort(
+            const uint32_t domainId)
+{
+    uint32_t port = port_params_.portBase + port_params_.domainIDGain * domainId + port_params_.offsetd4;
+
+    if (port > 65535)
+    {
+        std::cout << "Discovery server port is too high. Domain ID is too high: " << domainId << std::endl;
+    }
+    return port;
+}
+
+std::string CliDiscoveryManager::execCommand(const std::string& command) {
+    std::array<char, 128> buffer;
+    std::string result;
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(command.c_str(), "r"), pclose);
+    if (!pipe)
+    {
+        std::cerr << "Error processing command:" << command << std::endl;
+        return "";
+    }
+    while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe.get()) != nullptr)
+    {
+        result += buffer.data();
+    }
+    return result;
+}
+
+std::vector<uint16_t> CliDiscoveryManager::getListeningPorts()
+{
+    std::vector<uint16_t> ports;
+    const std::string& command = "netstat -at | grep LISTEN";
+    std::string result = execCommand(command);
+    std::regex port_regex(R"(0\.0\.0\.0:(\d+))");
+    std::smatch match;
+    std::string line;
+    std::istringstream result_stream(result);
+    while (std::getline(result_stream, line))
+    {
+        if (std::regex_search(line, match, port_regex))
+        {
+            ports.push_back(static_cast<uint16_t>(std::stoi(match[1].str())));
+        }
+    }
+    std::sort(ports.begin(), ports.end());
+    return ports;
+}
+
+int CliDiscoveryManager::fastdds_discovery_server(
         std::vector<option::Option>& options,
         option::Parser& parse)
 {
@@ -138,7 +189,7 @@ int fastdds_discovery_server(
     std::string sXMLConfigFile = "";
     std::string profile = "";
 
-    if (eprosima::fastdds::dds::initial_options_fail(options, parse))
+    if (initial_options_fail(options, parse))
     {
         return 1;
     }
@@ -688,11 +739,11 @@ int fastdds_discovery_server(
     return return_value;
 }
 
-int fastdds_discovery_auto(
+int CliDiscoveryManager::fastdds_discovery_auto(
     std::vector<option::Option>& options,
     option::Parser& parse)
 {
-    if (eprosima::fastdds::dds::initial_options_fail(options, parse))
+    if (initial_options_fail(options, parse))
     {
         return 1;
     }
@@ -701,19 +752,24 @@ int fastdds_discovery_auto(
     int return_value = 0;
 
     option::Option* pOp = options[DOMAIN];
-    eprosima::fastdds::dds::DomainId_t id = get_domain_id(pOp);
-    std::cout << "Domain ID from -d param is: " << id << std::endl;
+    DomainId_t id = get_domain_id(pOp);
+    uint32_t port = getDiscoveryServerPort(id);
+
+
+    std::cout << "Port for Domain ID [" << id << "] is: " << port << std::endl;
+
+    // Where do we parse the environment variable ROS_STATIC_PEERS?
 
     std::cout << "Auto mode not implemented yet." << std::endl;
 
     return return_value;
 }
 
-int fastdds_discovery_start(
+int CliDiscoveryManager::fastdds_discovery_start(
     std::vector<option::Option>& options,
     option::Parser& parse)
 {
-    if (eprosima::fastdds::dds::initial_options_fail(options, parse))
+    if (initial_options_fail(options, parse))
     {
         return 1;
     }
@@ -724,11 +780,11 @@ int fastdds_discovery_start(
     return return_value;
 }
 
-int fastdds_discovery_stop(
+int CliDiscoveryManager::fastdds_discovery_stop(
     std::vector<option::Option>& options,
     option::Parser& parse)
 {
-    if (eprosima::fastdds::dds::initial_options_fail(options, parse))
+    if (initial_options_fail(options, parse))
     {
         return 1;
     }
@@ -740,11 +796,11 @@ int fastdds_discovery_stop(
     return return_value;
 }
 
-int fastdds_discovery_add(
+int CliDiscoveryManager::fastdds_discovery_add(
     std::vector<option::Option>& options,
     option::Parser& parse)
 {
-    if (eprosima::fastdds::dds::initial_options_fail(options, parse))
+    if (initial_options_fail(options, parse))
     {
         return 1;
     }
@@ -756,11 +812,11 @@ int fastdds_discovery_add(
     return return_value;
 }
 
-int fastdds_discovery_set(
+int CliDiscoveryManager::fastdds_discovery_set(
     std::vector<option::Option>& options,
     option::Parser& parse)
 {
-    if (eprosima::fastdds::dds::initial_options_fail(options, parse))
+    if (initial_options_fail(options, parse))
     {
         return 1;
     }
@@ -772,27 +828,34 @@ int fastdds_discovery_set(
     return return_value;
 }
 
-int fastdds_discovery_list(
+int CliDiscoveryManager::fastdds_discovery_list(
     std::vector<option::Option>& options,
     option::Parser& parse)
 {
-    if (eprosima::fastdds::dds::initial_options_fail(options, parse))
+    if (initial_options_fail(options, parse))
     {
         return 1;
     }
 
     // List all servers
     int return_value = 0;
+
+    option::Option* pOp = options[DOMAIN];
+    DomainId_t id = get_domain_id(pOp);
+    rtps::PortParameters port_default;
+    uint32_t port = getDiscoveryServerPort(id, port_default);
+
+    std::cout << "Port for Domain ID [" << id << "] is: " << port << std::endl;
     std::cout << "List mode not implemented yet." << std::endl;
 
     return return_value;
 }
 
-int fastdds_discovery_info(
+int CliDiscoveryManager::fastdds_discovery_info(
     std::vector<option::Option>& options,
     option::Parser& parse)
 {
-    if (eprosima::fastdds::dds::initial_options_fail(options, parse))
+    if (initial_options_fail(options, parse))
     {
         return 1;
     }
@@ -807,175 +870,3 @@ int fastdds_discovery_info(
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
-
-int main (
-        int argc,
-        char* argv[])
-{
-    using ToolCommand = fds::ToolCommand;
-
-    // Skip program name if present
-    argc -= (argc > 0);
-    argv += (argc > 0);
-
-    // Command index is provided by python tool, so no need to check uint16_t limits
-    uint16_t command_int = std::stoi(argv[0]);
-
-    // Skip command index argv[0] if present
-    argc -= (argc > 0);
-    argv += (argc > 0);
-
-    option::Stats stats(usage, argc, argv);
-    std::vector<option::Option> options(stats.options_max);
-    std::vector<option::Option> buffer(stats.buffer_max);
-    option::Parser parse(usage, argc, argv, &options[0], &buffer[0]);
-
-    switch (command_int)
-    {
-    case ToolCommand::AUTO:
-        return eprosima::fastdds::dds::fastdds_discovery_auto(options, parse);
-        break;
-    case ToolCommand::START:
-        return eprosima::fastdds::dds::fastdds_discovery_start(options, parse);
-        break;
-    case ToolCommand::STOP:
-        return eprosima::fastdds::dds::fastdds_discovery_stop(options, parse);
-        break;
-    case ToolCommand::ADD:
-        return eprosima::fastdds::dds::fastdds_discovery_add(options, parse);
-        break;
-    case ToolCommand::SET:
-        return eprosima::fastdds::dds::fastdds_discovery_set(options, parse);
-        break;
-    case ToolCommand::LIST:
-        return eprosima::fastdds::dds::fastdds_discovery_list(options, parse);
-        break;
-    case ToolCommand::INFO:
-        return eprosima::fastdds::dds::fastdds_discovery_info(options, parse);
-        break;
-    case ToolCommand::SERVER:
-        return eprosima::fastdds::dds::fastdds_discovery_server(options, parse);
-        break;
-
-    default:
-        break;
-    }
-}
-
-// Argument validation function definitions
-/* Static */
-option::ArgStatus Arg::check_server_id(
-        const option::Option& option,
-        bool msg)
-{
-    // The argument is required
-    if (nullptr != option.arg)
-    {
-        // It must be a number within 0 and 255
-        std::stringstream is;
-        is << option.arg;
-        int id;
-
-        if (is >> id
-                && is.eof()
-                && id >= 0
-                && id <  256 )
-        {
-            return option::ARG_OK;
-        }
-    }
-
-    if (msg)
-    {
-        if (strcmp(option.name, "i") == 0)
-        {
-            std::cout << "\nError in option '" << option.name << "' value. Remember it "
-                      << "is optional. It should be a key identifier between 0 and 255." << std::endl;
-        }
-        else if (strcmp(option.name, "d") == 0)
-        {
-            std::cout << "\nError in option '" << option.name << "' value. "
-                      << "It should be a key identifier between 0 and 255." << std::endl;
-        }
-    }
-
-    return option::ARG_ILLEGAL;
-}
-
-/* Static */
-option::ArgStatus Arg::required(
-        const option::Option& option,
-        bool msg)
-{
-    if (nullptr != option.arg)
-    {
-        return option::ARG_OK;
-    }
-
-    if (msg)
-    {
-        std::cout << "\nOption '" << option.desc->longopt << "' requires an argument." << std::endl;
-    }
-    return option::ARG_ILLEGAL;
-}
-
-/* Static */
-option::ArgStatus Arg::check_udp_port(
-        const option::Option& option,
-        bool msg)
-{
-    // The argument is required
-    if (nullptr != option.arg)
-    {
-        // It must be in an ephemeral port range
-        std::stringstream is;
-        is << option.arg;
-        int id;
-
-        if (is >> id
-                && is.eof()
-                && id > 1024
-                && id < 65536)
-        {
-            return option::ARG_OK;
-        }
-    }
-
-    if (msg)
-    {
-        std::cout << "\nOption '" << option.name
-                  << "' value should be an UDP port between 1025 and 65535." << std::endl;
-    }
-
-    return option::ARG_ILLEGAL;
-}
-
-option::ArgStatus Arg::check_tcp_port(
-        const option::Option& option,
-        bool msg)
-{
-    // The argument is required
-    if (nullptr != option.arg)
-    {
-        // It must be in an ephemeral port range
-        std::stringstream is;
-        is << option.arg;
-        int id;
-
-        if (is >> id
-                && is.eof()
-                && id > 1024
-                && id < 65536)
-        {
-            return option::ARG_OK;
-        }
-    }
-
-    if (msg)
-    {
-        std::cout << "\nOption '" << option.name
-                  << "' value should be an TCP port between 1025 and 65535." << std::endl;
-    }
-
-    return option::ARG_ILLEGAL;
-}
