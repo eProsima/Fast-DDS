@@ -136,6 +136,13 @@ public:
     bool isServerRunning(DomainId_t& domain);
 
     /**
+     * @brief Get the PID of the Discovery Server running in the specified port.
+     * @param port The port of the Discovery Server
+     * @return The PID of the Discovery Server
+     */
+    pid_t getPidOfServer(uint16_t& port);
+
+    /**
      * @brief Starts a new Discovery Server in the specified @param port running
      * in the background.
      * @param port The port of the Discovery Server

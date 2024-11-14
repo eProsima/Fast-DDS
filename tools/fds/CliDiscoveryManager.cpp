@@ -52,10 +52,10 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-eprosima::fastdds::dds::DomainId_t CliDiscoveryManager::get_domain_id(
+DomainId_t CliDiscoveryManager::get_domain_id(
         const eprosima::option::Option* domain_id)
 {
-    eprosima::fastdds::dds::DomainId_t id = 0;
+    DomainId_t id = 0;
 
     // Domain provided by CLI has priority over environment variable
     if (domain_id != nullptr)
@@ -69,7 +69,7 @@ eprosima::fastdds::dds::DomainId_t CliDiscoveryManager::get_domain_id(
     {
         // Retrieve domain from environment variable
         std::string env_value;
-        if (eprosima::SystemInfo::get_env(domain_env_var, env_value) == eprosima::fastdds::dds::RETCODE_OK)
+        if (eprosima::SystemInfo::get_env(domain_env_var, env_value) == RETCODE_OK)
         {
             std::stringstream domain_stream;
 
@@ -200,11 +200,24 @@ bool CliDiscoveryManager::isServerRunning(DomainId_t& domain)
     {
         if (server.domain_id == domain)
         {
-            std::cout << "Server for Domain ID [" << domain << "] is already running." << std::endl;
             return true;
         }
     }
     return false;
+}
+
+pid_t CliDiscoveryManager::getPidOfServer(uint16_t& port)
+{
+    std::string command = "lsof -i :";
+    command += std::to_string(port);
+    command += " -t";
+    std::string result = execCommand(command);
+    if (result.empty())
+    {
+        std::cout << "Error getting PID: No server found on port " << port << std::endl;
+        return 0;
+    }
+    return std::stoi(result);
 }
 
 void CliDiscoveryManager::startServerInBackground(uint16_t& port)
@@ -855,6 +868,7 @@ int CliDiscoveryManager::fastdds_discovery_auto(
 
     if (isServerRunning(id))
     {
+        std::cout << "Server for Domain ID [" << id << "] is already running." << std::endl;
         return return_value;
     }
 
@@ -895,7 +909,32 @@ int CliDiscoveryManager::fastdds_discovery_stop(
 
     // Stop a server for the domain specified
     int return_value = 0;
-    std::cout << "Stop mode not implemented yet." << std::endl;
+
+    option::Option* pOp = options[DOMAIN];
+    DomainId_t id = get_domain_id(pOp);
+
+    if (!isServerRunning(id))
+    {
+        std::cout << "There is no running Server for Domain ID [" << id << "]." << std::endl;
+        return return_value;
+    }
+
+    // Create a server for the domain specified
+    uint16_t port = getDiscoveryServerPort(id);
+    pid_t server_pid = getPidOfServer(port);
+    if (server_pid == 0)
+    {
+        return 1;
+    }
+    if (kill(server_pid, SIGINT) == 0)
+    {
+        std::cout << "Server for Domain ID [" << id << "] stopped." << std::endl;
+    }
+    else
+    {
+        std::cout << "Could not stop server for Domain ID [" << id << "]." << std::endl;
+        return_value = 1;
+    }
 
     return return_value;
 }
