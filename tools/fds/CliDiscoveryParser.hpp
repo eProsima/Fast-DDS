@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FASTDDS_SERVER_SERVER_H_
-#define FASTDDS_SERVER_SERVER_H_
+#ifndef FASTDDS_CLI_DISCOVERY_PARSER_HPP
+#define FASTDDS_CLI_DISCOVERY_PARSER_HPP
 
 // Parsing setup
+#include <iostream>
 #include <optionparser.hpp>
+#include <sstream>
 #include <string>
 
 namespace option = eprosima::option;
@@ -41,19 +43,117 @@ struct Arg : public option::Arg
 {
     static option::ArgStatus check_server_id(
             const option::Option& option,
-            bool msg);
+            bool msg)
+    {
+        // The argument is required
+        if (nullptr != option.arg)
+        {
+            // It must be a number within 0 and 255
+            std::stringstream is;
+            is << option.arg;
+            int id;
+
+            if (is >> id
+                    && is.eof()
+                    && id >= 0
+                    && id <  256 )
+            {
+                return option::ARG_OK;
+            }
+        }
+
+        if (msg)
+        {
+            if (strcmp(option.name, "i") == 0)
+            {
+                std::cout << "\nError in option '" << option.name << "' value. Remember it "
+                            << "is optional. It should be a key identifier between 0 and 255." << std::endl;
+            }
+            else if (strcmp(option.name, "d") == 0)
+            {
+                std::cout << "\nError in option '" << option.name << "' value. "
+                            << "It should be a key identifier between 0 and 255." << std::endl;
+            }
+        }
+
+      return option::ARG_ILLEGAL;
+    }
 
     static option::ArgStatus required(
             const option::Option& option,
-            bool msg);
+            bool msg)
+    {
+        if (nullptr != option.arg)
+        {
+            return option::ARG_OK;
+        }
+
+        if (msg)
+        {
+            std::cout << "\nOption '" << option.desc->longopt << "' requires an argument." << std::endl;
+        }
+        return option::ARG_ILLEGAL;
+    }
 
     static option::ArgStatus check_udp_port(
             const option::Option& option,
-            bool msg);
+            bool msg)
+    {
+        // The argument is required
+        if (nullptr != option.arg)
+        {
+            // It must be in an ephemeral port range
+            std::stringstream is;
+            is << option.arg;
+            int id;
+
+            if (is >> id
+                    && is.eof()
+                    && id > 1024
+                    && id < 65536)
+            {
+                return option::ARG_OK;
+            }
+        }
+
+        if (msg)
+        {
+            std::cout << "\nOption '" << option.name
+                        << "' value should be an UDP port between 1025 and 65535." << std::endl;
+        }
+
+        return option::ARG_ILLEGAL;
+    }
 
     static option::ArgStatus check_tcp_port(
             const option::Option& option,
-            bool msg);
+            bool msg)
+    {
+        // The argument is required
+        if (nullptr != option.arg)
+        {
+            // It must be in an ephemeral port range
+            std::stringstream is;
+            is << option.arg;
+            int id;
+
+            if (is >> id
+                    && is.eof()
+                    && id > 1024
+                    && id < 65536)
+            {
+                return option::ARG_OK;
+            }
+        }
+
+        if (msg)
+        {
+            std::cout << "\nOption '" << option.name
+                    << "' value should be an TCP port between 1025 and 65535." << std::endl;
+        }
+
+        return option::ARG_ILLEGAL;
+    }
 };
 
 const option::Descriptor usage[] = {
@@ -187,4 +287,6 @@ const std::string EXAMPLES =
         "\t    $ " FAST_SERVER_BINARY " -t 127.0.0.1 -q 42100 -t 192.163.6.34 \n"
         "\t    -q 42101";
 
-#endif // FASTDDS_SERVER_SERVER_H_
+        //TODO (Carlos): Add daemon examples
+
+#endif // FASTDDS_CLI_DISCOVERY_PARSER_HPP
