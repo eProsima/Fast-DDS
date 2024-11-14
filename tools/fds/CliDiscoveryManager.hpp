@@ -47,6 +47,32 @@ struct MetaInfo_DS
     uint32_t domain_id;
     uint16_t port;
     std::string address;
+
+    MetaInfo_DS()
+        : domain_id(0)
+        , port(0)
+        , address("0.0.0.0")
+    {
+    }
+
+    MetaInfo_DS(
+            uint32_t domain_id,
+            uint32_t port)
+        : domain_id(domain_id)
+        , port(port)
+        , address("0.0.0.0")
+    {
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const MetaInfo_DS& meta)
+    {
+        os << "- Server:\n"
+           << "   Domain ID: " << meta.domain_id
+           << "\n   Port: " << meta.port
+           << "\n   Address: " << meta.address << std::endl;
+        return os;
+    }
+
 };
 
 class CliDiscoveryManager
@@ -72,8 +98,13 @@ public:
             std::vector<option::Option>& options,
             option::Parser& parse);
 
-    inline uint32_t getDiscoveryServerPort(
-            const uint32_t domainId);
+    /**
+     * @brief Get the port of the Discovery Server running in the specified domain.
+     * @param domainId The domain id of the Discovery Server
+     * @return The port of the Discovery Server
+     */
+    uint16_t getDiscoveryServerPort(
+            const uint32_t& domainId);
 
     /**
      * @brief Execute the command provided by the user.
@@ -83,7 +114,17 @@ public:
     std::string execCommand(
             const std::string& command);
 
+    /**
+     * @brief Get the listening TCP ports of the machine.
+     * @return An ordered vector with the listening ports
+     */
     std::vector<uint16_t> getListeningPorts();
+
+    /**
+     * @brief Get the local Discovery Servers running in the machine.
+     * @return A vector with the info of local servers
+     */
+    std::vector<MetaInfo_DS> getLocalServers();
 
     /**
      * @brief Create a Discovery Server with the configuration options received.
