@@ -70,6 +70,9 @@ struct EndpointSecurityAttributes;
  */
 class SecurityManager : private WriterListener
 {
+    static constexpr std::size_t PARTICIPANT_STATELESS_MESSAGE_PAYLOAD_DEFAULT_SIZE = 8192;
+    static constexpr std::size_t PARTICIPANT_VOLATILE_MESSAGE_PAYLOAD_DEFAULT_SIZE = 1024;
+
 public:
 
     /**
@@ -403,7 +406,7 @@ private:
             }
 
             AuthenticationInfo(
-                    AuthenticationInfo&& auth)
+                    AuthenticationInfo&& auth) noexcept
                 : identity_handle_(std::move(auth.identity_handle_))
                 , handshake_handle_(std::move(auth.handshake_handle_))
                 , auth_status_(auth.auth_status_)
@@ -411,6 +414,11 @@ private:
                 , change_sequence_number_(std::move(auth.change_sequence_number_))
                 , event_(std::move(auth.event_))
             {
+                auth.identity_handle_ = nullptr;
+                auth.handshake_handle_ = nullptr;
+                auth.auth_status_ = AUTHENTICATION_NOT_AVAILABLE;
+                auth.expected_sequence_number_ = 0;
+                auth.change_sequence_number_ = SequenceNumber_t::unknown();
             }
 
             int32_t handshake_requests_sent_;
