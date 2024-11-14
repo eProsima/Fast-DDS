@@ -512,15 +512,23 @@ bool TCPTransportInterface::init(
         return false;
     }
 
+    socket_base::send_buffer_size send_buffer_size_conf;
+    initial_peer_local_locator_socket_->get_option(send_buffer_size_conf);
+    send_size = static_cast<uint32_t>(send_buffer_size_conf.value());
+
     if (cfg_send_size > 0 && send_size != cfg_send_size)
     {
-        EPROSIMA_LOG_WARNING(TRANSPORT_TCP, "UDPTransport sendBufferSize could not be set to the desired value. "
+        EPROSIMA_LOG_WARNING(TRANSPORT_TCP, "TCPTransport sendBufferSize could not be set to the desired value. "
                 << "Using " << send_size << " instead of " << cfg_send_size);
     }
 
+    socket_base::receive_buffer_size recv_buffer_size_conf;
+    initial_peer_local_locator_socket_->get_option(recv_buffer_size_conf);
+    recv_size = static_cast<uint32_t>(recv_buffer_size_conf.value());
+
     if (cfg_recv_size > 0 && recv_size != cfg_recv_size)
     {
-        EPROSIMA_LOG_WARNING(TRANSPORT_TCP, "UDPTransport receiveBufferSize could not be set to the desired value. "
+        EPROSIMA_LOG_WARNING(TRANSPORT_TCP, "TCPTransport receiveBufferSize could not be set to the desired value. "
                 << "Using " << recv_size << " instead of " << cfg_recv_size);
     }
 
