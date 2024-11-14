@@ -13,9 +13,13 @@ jobs:
         security:
           - 'ON'
           - 'OFF'
+        cmake_build_type:
+          - 'Debug'
+          - 'RelWithDebInfo'
     uses: eProsima/Fast-DDS/.github/workflows/reusable-windows-ci.yml@master
     with:
       label: 'nightly-sec-${{ matrix.security }}-windows-ci-master'
+      cmake-config: ${{ matrix.cmake_build_type }}
       cmake-args: "-DSECURITY=${{ matrix.security }}"
       ctest-args: "-LE xfail"
       fastdds_branch: 'master'
