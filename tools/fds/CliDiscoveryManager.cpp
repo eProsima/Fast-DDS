@@ -193,6 +193,88 @@ std::vector<MetaInfo_DS> CliDiscoveryManager::getLocalServers()
     return servers;
 }
 
+bool CliDiscoveryManager::isServerRunning(DomainId_t& domain)
+{
+    std::vector<MetaInfo_DS> servers = getLocalServers();
+    for (const MetaInfo_DS& server : servers)
+    {
+        if (server.domain_id == domain)
+        {
+            std::cout << "Server for Domain ID [" << domain << "] is already running." << std::endl;
+            return true;
+        }
+    }
+    return false;
+}
+
+void CliDiscoveryManager::startServerInBackground(uint16_t& port)
+{
+    DomainParticipantQos serverQos;
+    setServerQos(serverQos, port);
+
+    pid_t pid = fork();
+    if (pid == -1)
+    {
+        std::cout << "Error starting background process." << std::endl;
+        return;
+    }
+    else if (pid == 0)
+    {
+        // Create the server in the child process
+        DomainParticipant* pServer = DomainParticipantFactory::get_instance()->create_participant(0, serverQos);
+
+        if (nullptr == pServer)
+        {
+            std::cout << "Server creation failed with the given settings." << std::endl;
+            return;
+        }
+
+        std::cout << "Server for Domain ID started on port " << port << std::endl;
+
+        std::unique_lock<std::mutex> lock(g_signal_mutex);
+        // Handle signal SIGINT for every thread
+        signal(SIGINT, sigint_handler);
+        signal(SIGTERM, sigint_handler);
+#ifndef _WIN32
+        signal(SIGQUIT, sigint_handler);
+        signal(SIGHUP, sigint_handler);
+#endif // ifndef _WIN32
+
+        chdir("/");
+        close(STDIN_FILENO);
+        close(STDOUT_FILENO);
+        close(STDERR_FILENO);
+
+        g_signal_cv.wait(lock, []
+                {
+                    return 0 != g_signal_status;
+                });
+
+        DomainParticipantFactory::get_instance()->delete_participant(pServer);
+    }
+    else
+    {
+        // TODO (Carlos): If the server creation takes longer than this sleep, the ERROR output will be shown
+        // in the same terminal as the user input but without waiting to return.
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    }
+}
+
+void CliDiscoveryManager::setServerQos(DomainParticipantQos& qos, uint16_t port)
+{
+    rtps::Locator_t locator;
+    locator.kind = LOCATOR_KIND_TCPv4;
+    rtps::IPLocator::setPhysicalPort(locator, port);
+    rtps::IPLocator::setLogicalPort(locator, port);
+    rtps::IPLocator::setIPv4(locator, "0.0.0.0");
+    qos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator);
+    auto tcp_descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+    tcp_descriptor->add_listener_port(port);
+    qos.transport().user_transports.push_back(tcp_descriptor);
+    qos.transport().use_builtin_transports = false;
+    qos.wire_protocol().builtin.discovery_config.discoveryProtocol = rtps::DiscoveryProtocol::SERVER;
+}
+
 int CliDiscoveryManager::fastdds_discovery_server(
         std::vector<option::Option>& options,
         option::Parser& parse)
@@ -770,14 +852,19 @@ int CliDiscoveryManager::fastdds_discovery_auto(
 
     option::Option* pOp = options[DOMAIN];
     DomainId_t id = get_domain_id(pOp);
+
+    if (isServerRunning(id))
+    {
+        return return_value;
+    }
+
+    // Create a server for the domain specified
     uint16_t port = getDiscoveryServerPort(id);
-
-
-    std::cout << "Port for Domain ID [" << id << "] is: " << port << std::endl;
-
-    // Where do we parse the environment variable ROS_STATIC_PEERS?
-
-    std::cout << "Auto mode not implemented yet." << std::endl;
+    if (port == 0)
+    {
+        return 1;
+    }
+    startServerInBackground(port);
 
     return return_value;
 }

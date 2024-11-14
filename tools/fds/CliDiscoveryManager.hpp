@@ -42,6 +42,8 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+class DomainParticipantQos;
+
 struct MetaInfo_DS
 {
     uint32_t domain_id;
@@ -125,6 +127,29 @@ public:
      * @return A vector with the info of local servers
      */
     std::vector<MetaInfo_DS> getLocalServers();
+
+    /**
+     * @brief Check if a Discovery Server is running in the specified domain.
+     * @param domain The domain id of the Discovery Server
+     * @return True if the server is running, false otherwise
+     */
+    bool isServerRunning(DomainId_t& domain);
+
+    /**
+     * @brief Starts a new Discovery Server in the specified @param port running
+     * in the background.
+     * @param port The port of the Discovery Server
+     */
+    void startServerInBackground(uint16_t& port);
+
+    /**
+     * @brief Set the QoS of the Discovery Server.
+     * @param [in, out] qos  The QoS to be set
+     * @param [in] port      The port of the Discovery Server
+     */
+    void setServerQos(
+        DomainParticipantQos& qos,
+        uint16_t port);
 
     /**
      * @brief Create a Discovery Server with the configuration options received.
