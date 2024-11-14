@@ -610,6 +610,8 @@ if(INSTALL_TOOLS)
       )
 endif()
 
+install(FILES "${CMAKE_SOURCE_DIR}/package.xml" DESTINATION "${CMAKE_INSTALL_PREFIX}")
+
 if(BUILD_DOCUMENTATION)
 
     # Instalation of doxygen files

@@ -42,7 +42,9 @@ optional arguments:
 """
 
 import argparse
+import pathlib
 import sys
+import xml.etree.ElementTree as ET
 
 from discovery.parser import Parser as DiscoveryParser
 
@@ -78,6 +80,7 @@ class FastDDSParser:
         parser.add_argument('command',
                             nargs='?',
                             help='Command to run')
+        parser.add_argument('-v', '--version', action='store_true', help='Print Fast DDS version')
 
         args = parser.parse_args(sys.argv[1:2])
 
@@ -86,6 +89,17 @@ class FastDDSParser:
                 print('Invalid command')
             else:
                 getattr(self, args.command)()
+        elif args.version:
+            parents_path = list(pathlib.Path(__file__).parent.resolve().parents)
+            matching_paths = [p for p in parents_path if p.name == 'fastdds'][0]
+            p = matching_paths / 'package.xml'
+            tree = ET.parse(p)
+            root = tree.getroot()
+            name = 'Fast DDS'
+            version = root.find('version').text
+            description = root.find('description').text.strip('*')
+            print('{} version: {}'.format(name, version))
+            print(description)
         else:
             parser.print_help()
 
@@ -121,7 +135,6 @@ class FastDDSParser:
             XMLParser(sys.argv[2:])
         except ImportError:
             sys.exit(1)
-
 
 if __name__ == '__main__':
 
