@@ -128,15 +128,16 @@ bool CliDiscoveryManager::initial_options_fail(
     return false;
 }
 
-inline uint32_t CliDiscoveryManager::getDiscoveryServerPort(
-            const uint32_t domainId)
+uint16_t CliDiscoveryManager::getDiscoveryServerPort(
+        const uint32_t& domainId)
 {
-    uint32_t port = port_params_.portBase + port_params_.domainIDGain * domainId + port_params_.offsetd4;
-
-    if (port > 65535)
+    if (domainId > 232)
     {
-        std::cout << "Discovery server port is too high. Domain ID is too high: " << domainId << std::endl;
+        std::cout << "Domain ID " << domainId << " is too high and cannot run in an unreachable port." << std::endl;
+        return 0;
     }
+    uint16_t port = port_params_.getDiscoveryServerPort(domainId);
+
     return port;
 }
 
@@ -174,6 +175,22 @@ std::vector<uint16_t> CliDiscoveryManager::getListeningPorts()
     }
     std::sort(ports.begin(), ports.end());
     return ports;
+}
+
+std::vector<MetaInfo_DS> CliDiscoveryManager::getLocalServers()
+{
+    std::vector<MetaInfo_DS> servers;
+    std::vector<uint16_t> ports = getListeningPorts();
+    for (const uint16_t& port : ports)
+    {
+        // Check if the port is a Discovery Server port
+        double domain = double(port - port_params_.portBase - port_params_.offsetd4) / port_params_.domainIDGain;
+        if (domain >= 0 && std::floor(domain) == domain)
+        {
+            servers.push_back(MetaInfo_DS(static_cast<uint32_t>(domain), port));
+        }
+    }
+    return servers;
 }
 
 int CliDiscoveryManager::fastdds_discovery_server(
@@ -753,7 +770,7 @@ int CliDiscoveryManager::fastdds_discovery_auto(
 
     option::Option* pOp = options[DOMAIN];
     DomainId_t id = get_domain_id(pOp);
-    uint32_t port = getDiscoveryServerPort(id);
+    uint16_t port = getDiscoveryServerPort(id);
 
 
     std::cout << "Port for Domain ID [" << id << "] is: " << port << std::endl;
@@ -838,17 +855,16 @@ int CliDiscoveryManager::fastdds_discovery_list(
     }
 
     // List all servers
-    int return_value = 0;
+    std::vector<MetaInfo_DS> servers = getLocalServers();
 
-    option::Option* pOp = options[DOMAIN];
-    DomainId_t id = get_domain_id(pOp);
-    rtps::PortParameters port_default;
-    uint32_t port = getDiscoveryServerPort(id, port_default);
+    std::cout << "### Servers running ###" << std::endl;
+    for (const MetaInfo_DS& server : servers)
+    {
+        std::cout << server << std::endl;
+    }
+    std::cout << "#######################" << std::endl;
 
-    std::cout << "Port for Domain ID [" << id << "] is: " << port << std::endl;
-    std::cout << "List mode not implemented yet." << std::endl;
-
-    return return_value;
+    return 0;
 }
 
 int CliDiscoveryManager::fastdds_discovery_info(
