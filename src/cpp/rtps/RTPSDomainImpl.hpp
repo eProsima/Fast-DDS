@@ -29,17 +29,12 @@
 #include <fastrtps/rtps/RTPSDomain.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 
+#include <utils/shared_memory/BoostAtExitRegistry.hpp>
 #include <utils/SystemInfo.hpp>
 
-<<<<<<< HEAD
-#include <utils/shared_memory/BoostAtExitRegistry.hpp>
-=======
 #if HAVE_SECURITY
 #include <security/OpenSSLInit.hpp>
 #endif // HAVE_SECURITY
-
-#include <fastdds/xtypes/type_representation/TypeObjectRegistry.hpp>
->>>>>>> 44310c4f8 ([22024] Improve `OpenSSL` lifecycle handling (#5384))
 
 namespace eprosima {
 namespace fastrtps {
