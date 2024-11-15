@@ -24,7 +24,6 @@
 #include <fastrtps/utils/RefCountedPointer.hpp>
 
 namespace eprosima {
-
 namespace fastrtps {
 namespace rtps {
 
