@@ -900,33 +900,6 @@ TEST(DDSBasic, max_output_message_size_writer)
 
 }
 
-<<<<<<< HEAD
-=======
-/**
- * @test This test checks that it is possible to register two TypeSupport instances of the same type
- *       under the same DomainParticipant.
- */
-TEST(DDSBasic, register_two_identical_typesupports)
-{
-    // Set DomainParticipantFactory to create disabled entities
-    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
-    ASSERT_NE(nullptr, factory);
-
-    // Create a disabled DomainParticipant, setting it to in turn create disable entities
-    DomainParticipant* participant = factory->create_participant((uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(nullptr, participant);
-
-    // Register a type support
-    TypeSupport type_support_1;
-    type_support_1.reset(new HelloWorldPubSubType());
-    EXPECT_EQ(RETCODE_OK, participant->register_type(type_support_1));
-
-    // Register a second instance of the type support with the same TopicDataType
-    TypeSupport type_support_2;
-    type_support_2.reset(new HelloWorldPubSubType());
-    EXPECT_EQ(RETCODE_OK, participant->register_type(type_support_2));
-}
-
 /**
  * @test This is a regression test for Redmine Issue 21293.
  * The destruction among intra-process participants should be correctly performed.
@@ -935,15 +908,12 @@ TEST(DDSBasic, register_two_identical_typesupports)
  */
 TEST(DDSBasic, successful_destruction_among_intraprocess_participants)
 {
-    namespace dds = eprosima::fastdds::dds;
-    auto factory = dds::DomainParticipantFactory::get_instance();
-
     // Set intraprocess delivery to full
-    LibrarySettings library_settings;
-    factory->get_library_settings(library_settings);
+    fastrtps::LibrarySettingsAttributes library_settings;
+    library_settings = fastrtps::xmlparser::XMLProfileManager::library_settings();
     auto old_library_settings = library_settings;
-    library_settings.intraprocess_delivery = INTRAPROCESS_FULL;
-    factory->set_library_settings(library_settings);
+    library_settings.intraprocess_delivery = fastrtps::INTRAPROCESS_FULL;
+    fastrtps::xmlparser::XMLProfileManager::library_settings(library_settings);
 
     {
         auto participant_1 = std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(1u, 1u, 1u, 1u);
@@ -1007,9 +977,11 @@ TEST(DDSBasic, successful_destruction_among_intraprocess_participants)
             rec_thread.join();
         }
     }
+
+    // Restore library settings
+    fastrtps::xmlparser::XMLProfileManager::library_settings(old_library_settings);
 }
 
->>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034))
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima

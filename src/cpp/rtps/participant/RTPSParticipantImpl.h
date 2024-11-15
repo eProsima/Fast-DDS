@@ -45,6 +45,7 @@
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/messages/MessageReceiver.h>
+#include <fastdds/rtps/reader/LocalReaderPointer.hpp>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/transport/SenderResource.h>
 #include <fastrtps/utils/Semaphore.h>
@@ -55,11 +56,6 @@
 #include <rtps/messages/SendBuffersManager.hpp>
 #include <rtps/network/NetworkFactory.h>
 #include <rtps/network/ReceiverResource.h>
-<<<<<<< HEAD:src/cpp/rtps/participant/RTPSParticipantImpl.h
-=======
-#include <rtps/reader/LocalReaderPointer.hpp>
-#include <rtps/resources/ResourceEvent.h>
->>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034)):src/cpp/rtps/participant/RTPSParticipantImpl.hpp
 #include <statistics/rtps/monitor-service/interfaces/IConnectionsObserver.hpp>
 #include <statistics/rtps/monitor-service/interfaces/IConnectionsQueryable.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
@@ -484,11 +480,7 @@ public:
     /***
      * @returns A pointer to a local reader given its endpoint guid, or nullptr if not found.
      */
-<<<<<<< HEAD:src/cpp/rtps/participant/RTPSParticipantImpl.h
-    RTPSReader* find_local_reader(
-=======
     std::shared_ptr<LocalReaderPointer> find_local_reader(
->>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034)):src/cpp/rtps/participant/RTPSParticipantImpl.hpp
             const GUID_t& reader_guid);
 
     /***

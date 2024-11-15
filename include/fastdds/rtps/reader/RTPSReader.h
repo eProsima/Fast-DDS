@@ -29,6 +29,7 @@
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
+#include <fastdds/rtps/reader/LocalReaderPointer.hpp>
 #include <fastdds/statistics/rtps/monitor_service/connections_fwd.hpp>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 #include <fastrtps/qos/LivelinessChangedStatus.h>
@@ -176,6 +177,11 @@ public:
             fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown) = 0;
 
     /**
+     * @brief Waits for not being referenced/used by any other entity.
+     */
+    virtual void local_actions_on_reader_removed();
+
+    /**
      * Method to indicate the reader that some change has been removed due to HistoryQos requirements.
      * @param change Pointer to the CacheChange_t.
      * @param prox Pointer to the WriterProxy.
@@ -201,6 +207,14 @@ public:
      */
     RTPS_DllAPI bool setListener(
             ReaderListener* target);
+
+    /**
+     * @brief Retrieves the local pointer to this reader
+     * to be used by other local entities.
+     *
+     * @return Local pointer to this reader.
+     */
+    RTPS_DllAPI std::shared_ptr<LocalReaderPointer> get_local_pointer();
 
     /**
      * Reserve a CacheChange_t.
@@ -495,6 +509,10 @@ protected:
     bool m_acceptMessagesFromUnkownWriters;
     //!Trusted writer (for Builtin)
     EntityId_t m_trustedWriterEntityId;
+
+    /// RefCountedPointer of this instance.
+    std::shared_ptr<LocalReaderPointer> local_ptr_;
+
     //!Expects Inline Qos.
     bool m_expectsInlineQos;
 

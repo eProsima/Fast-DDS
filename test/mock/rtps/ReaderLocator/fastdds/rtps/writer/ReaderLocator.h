@@ -22,16 +22,14 @@
 #define _FASTDDS_RTPS_READERLOCATOR_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <vector>
-#include <fastrtps/rtps/common/Locator.h>
+#include <fastdds/rtps/reader/LocalReaderPointer.hpp>
 #include <fastrtps/rtps/common/Guid.h>
+#include <fastrtps/rtps/common/Locator.h>
+#include <fastrtps/rtps/common/LocatorSelectorEntry.hpp>
 #include <fastrtps/rtps/common/SequenceNumber.h>
 #include <fastrtps/rtps/messages/RTPSMessageGroup.h>
-#include <fastrtps/rtps/common/LocatorSelectorEntry.hpp>
 #include <fastrtps/rtps/messages/RTPSMessageSenderInterface.hpp>
-
-
-#include <rtps/reader/LocalReaderPointer.hpp>
+#include <vector>
 
 namespace eprosima {
 namespace fastrtps {
@@ -206,11 +204,7 @@ public:
         return false;
     }
 
-<<<<<<< HEAD:test/mock/rtps/ReaderLocator/fastdds/rtps/writer/ReaderLocator.h
-    RTPSReader* local_reader()
-=======
     LocalReaderPointer::Instance local_reader()
->>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034)):test/mock/rtps/ReaderLocator/rtps/writer/ReaderLocator.hpp
     {
         return LocalReaderPointer::Instance(std::shared_ptr<LocalReaderPointer>());
     }

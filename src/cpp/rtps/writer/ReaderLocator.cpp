@@ -202,11 +202,7 @@ bool ReaderLocator::send(
     return true;
 }
 
-<<<<<<< HEAD
-RTPSReader* ReaderLocator::local_reader()
-=======
 LocalReaderPointer::Instance ReaderLocator::local_reader()
->>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034))
 {
     if (!local_reader_)
     {
@@ -224,20 +220,11 @@ void ReaderLocator::datasharing_notify()
 {
     if (is_local_reader())
     {
-<<<<<<< HEAD
-        reader = local_reader();
-    }
-
-    if (reader)
-    {
-        reader->datasharing_listener()->notify(true);
-=======
         LocalReaderPointer::Instance reader = local_reader();
         if (reader)
         {
             reader->datasharing_listener()->notify(true);
         }
->>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034))
     }
     else
     {

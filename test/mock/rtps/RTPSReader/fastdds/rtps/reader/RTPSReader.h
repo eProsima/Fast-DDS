@@ -156,6 +156,10 @@ public:
         return true;
     }
 
+    virtual void local_actions_on_reader_removed()
+    {
+    }
+
     virtual bool change_removed_by_history(
             CacheChange_t*,
             WriterProxy*)

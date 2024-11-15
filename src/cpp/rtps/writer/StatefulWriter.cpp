@@ -31,6 +31,7 @@
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/reader/LocalReaderPointer.hpp>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/writer/ReaderProxy.h>
@@ -45,15 +46,7 @@
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/messages/RTPSGapBuilder.hpp>
 #include <rtps/network/utils/external_locators.hpp>
-<<<<<<< HEAD
 #include <rtps/participant/RTPSParticipantImpl.h>
-=======
-#include <rtps/participant/RTPSParticipantImpl.hpp>
-#include <rtps/reader/BaseReader.hpp>
-#include <rtps/reader/LocalReaderPointer.hpp>
-#include <rtps/resources/ResourceEvent.h>
-#include <rtps/resources/TimedEvent.h>
->>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034))
 #include <rtps/RTPSDomainImpl.hpp>
 
 #include "../builtin/discovery/database/DiscoveryDataBase.hpp"
@@ -473,23 +466,14 @@ bool StatefulWriter::intraprocess_delivery(
         CacheChange_t* change,
         ReaderProxy* reader_proxy)
 {
-<<<<<<< HEAD
-    RTPSReader* reader = reader_proxy->local_reader();
-    if (reader)
-=======
     LocalReaderPointer::Instance local_reader = reader_proxy->local_reader();
     if (local_reader)
->>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034))
     {
         if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
         {
             change->write_params.sample_identity(change->write_params.related_sample_identity());
         }
-<<<<<<< HEAD
-        return reader->processDataMsg(change);
-=======
-        return local_reader->process_data_msg(change);
->>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034))
+        return local_reader->processDataMsg(change);
     }
     return false;
 }
@@ -502,12 +486,8 @@ bool StatefulWriter::intraprocess_gap(
     LocalReaderPointer::Instance local_reader = reader_proxy->local_reader();
     if (local_reader)
     {
-<<<<<<< HEAD
-        return reader->processGapMsg(m_guid, first_seq, SequenceNumberSet_t(last_seq), c_VendorId_eProsima);
-=======
-        return local_reader->process_gap_msg(
+        return local_reader->processGapMsg(
             m_guid, first_seq, SequenceNumberSet_t(last_seq), c_VendorId_eProsima);
->>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034))
     }
 
     return false;
@@ -538,18 +518,11 @@ bool StatefulWriter::intraprocess_heartbeat(
         if ((first_seq != c_SequenceNumber_Unknown && last_seq != c_SequenceNumber_Unknown) &&
                 (liveliness || reader_proxy->has_changes()))
         {
-<<<<<<< HEAD
             incrementHBCount();
-            returned_value =
-                    reader->processHeartbeatMsg(m_guid, m_heartbeatCount, first_seq, last_seq, true, liveliness,
-                            c_VendorId_eProsima);
-=======
-            increment_hb_count();
-            Count_t hb_count = heartbeat_count_;
+            Count_t hb_count = m_heartbeatCount;
             lockW.unlock();
-            returned_value = local_reader->process_heartbeat_msg(
+            returned_value = local_reader->processHeartbeatMsg(
                 m_guid, hb_count, first_seq, last_seq, true, liveliness, c_VendorId_eProsima);
->>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034))
         }
     }
 

@@ -294,11 +294,7 @@ public:
      * Get the local reader on the same process (if any).
      * @return The local reader on the same process.
      */
-<<<<<<< HEAD:include/fastdds/rtps/writer/ReaderProxy.h
-    inline RTPSReader* local_reader()
-=======
     inline LocalReaderPointer::Instance local_reader()
->>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034)):src/cpp/rtps/writer/ReaderProxy.hpp
     {
         return locator_info_.local_reader();
     }

@@ -19,15 +19,16 @@
 #ifndef FASTDDS_RTPS_READER__LOCALREADERPOINTER_HPP
 #define FASTDDS_RTPS_READER__LOCALREADERPOINTER_HPP
 
-#include <utils/RefCountedPointer.hpp>
+#include <fastrtps/utils/RefCountedPointer.hpp>
 
 namespace eprosima {
-namespace fastdds {
+
+namespace fastrtps {
 namespace rtps {
 
-class BaseReader;
+class RTPSReader;
 
-using LocalReaderPointer = RefCountedPointer<BaseReader>;
+using LocalReaderPointer = RefCountedPointer<RTPSReader>;
 
 }  // namespace rtps
 }  // namespace fastdds

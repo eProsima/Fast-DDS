@@ -21,13 +21,12 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <vector>
-#include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
-#include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
-
-#include <rtps/reader/LocalReaderPointer.hpp>
+#include <fastdds/rtps/reader/LocalReaderPointer.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -71,17 +70,10 @@ public:
         return is_local_reader_;
     }
 
-<<<<<<< HEAD:include/fastdds/rtps/writer/ReaderLocator.h
-    RTPSReader* local_reader();
-
-    void local_reader(
-            RTPSReader* local_reader)
-=======
     LocalReaderPointer::Instance local_reader();
 
     void local_reader(
             std::shared_ptr<LocalReaderPointer> local_reader)
->>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034)):src/cpp/rtps/writer/ReaderLocator.hpp
     {
         local_reader_ = local_reader;
     }
@@ -269,11 +261,7 @@ private:
     LocatorSelectorEntry async_locator_info_;
     bool expects_inline_qos_;
     bool is_local_reader_;
-<<<<<<< HEAD:include/fastdds/rtps/writer/ReaderLocator.h
-    RTPSReader* local_reader_;
-=======
     std::shared_ptr<LocalReaderPointer> local_reader_;
->>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034)):src/cpp/rtps/writer/ReaderLocator.hpp
     std::vector<GuidPrefix_t> guid_prefix_as_vector_;
     std::vector<GUID_t> guid_as_vector_;
     IDataSharingNotifier* datasharing_notifier_;

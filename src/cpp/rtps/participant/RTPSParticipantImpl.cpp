@@ -27,29 +27,30 @@
 #include <fastdds/rtps/attributes/BuiltinTransports.hpp>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/common/EntityId_t.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/messages/MessageReceiver.h>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
-#include <fastdds/rtps/reader/StatelessReader.h>
+#include <fastdds/rtps/reader/LocalReaderPointer.hpp>
+#include <fastdds/rtps/reader/StatefulPersistentReader.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/reader/StatelessPersistentReader.h>
-#include <fastdds/rtps/reader/StatefulPersistentReader.h>
+#include <fastdds/rtps/reader/StatelessReader.h>
 #include <fastdds/rtps/RTPSDomain.h>
-#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
-#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
-#include <fastdds/rtps/writer/StatelessWriter.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/writer/StatefulPersistentWriter.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/writer/StatelessPersistentWriter.h>
-#include <fastdds/rtps/writer/StatefulPersistentWriter.h>
+#include <fastdds/rtps/writer/StatelessWriter.h>
 #include <fastrtps/utils/UnitsParser.hpp>
 
 #include <fastdds/rtps/common/LocatorList.hpp>
@@ -1452,11 +1453,7 @@ bool RTPSParticipantImpl::createReader(
     return create_reader(ReaderOut, param, entityId, isBuiltin, enable, callback);
 }
 
-<<<<<<< HEAD
-RTPSReader* RTPSParticipantImpl::find_local_reader(
-=======
 std::shared_ptr<LocalReaderPointer> RTPSParticipantImpl::find_local_reader(
->>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034))
         const GUID_t& reader_guid)
 {
     shared_lock<shared_mutex> _(endpoints_list_mutex);
@@ -2103,7 +2100,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
 
     bool found = false, found_in_users = false;
     Endpoint* p_endpoint = nullptr;
-    BaseReader* reader = nullptr;
+    RTPSReader* reader = nullptr;
 
     if (endpoint.entityId.is_writer())
     {
@@ -2301,7 +2298,7 @@ void RTPSParticipantImpl::deleteAllUserEndpoints()
 
         if (kind == READER)
         {
-            static_cast<BaseReader*>(endpoint)->local_actions_on_reader_removed();
+            static_cast<RTPSReader*>(endpoint)->local_actions_on_reader_removed();
         }
 
         // remove the endpoints
@@ -3004,16 +3001,11 @@ bool RTPSParticipantImpl::register_in_reader(
     }
     else if (!fastdds::statistics::is_statistics_builtin(reader_guid.entityId))
     {
-<<<<<<< HEAD
-        RTPSReader* reader = find_local_reader(reader_guid);
-        res = reader->add_statistics_listener(listener);
-=======
         LocalReaderPointer::Instance local_reader(find_local_reader(reader_guid));
         if (local_reader)
         {
             res = local_reader->add_statistics_listener(listener);
         }
->>>>>>> 456e45f25 (Fix destruction data-race on participant removal in intra-process (#5034))
     }
 
     return res;

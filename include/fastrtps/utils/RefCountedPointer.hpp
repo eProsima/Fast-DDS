@@ -27,7 +27,7 @@
 #include <mutex>
 
 namespace eprosima {
-namespace fastdds {
+namespace fastrtps {
 
 /**
  * @brief Class to manage a local pointer with reference counting.
