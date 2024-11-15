@@ -29,7 +29,6 @@
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
-#include <fastdds/rtps/reader/LocalReaderPointer.hpp>
 #include <fastdds/statistics/rtps/monitor_service/connections_fwd.hpp>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 #include <fastrtps/qos/LivelinessChangedStatus.h>
@@ -47,6 +46,7 @@ struct CacheChange_t;
 struct ReaderHistoryState;
 class WriterProxyData;
 class IDataSharingListener;
+struct LocalReaderPointer;
 
 /**
  * Class RTPSReader, manages the reception of data from its matched writers.
@@ -207,14 +207,6 @@ public:
      */
     RTPS_DllAPI bool setListener(
             ReaderListener* target);
-
-    /**
-     * @brief Retrieves the local pointer to this reader
-     * to be used by other local entities.
-     *
-     * @return Local pointer to this reader.
-     */
-    RTPS_DllAPI std::shared_ptr<LocalReaderPointer> get_local_pointer();
 
     /**
      * Reserve a CacheChange_t.
@@ -498,6 +490,14 @@ protected:
 
     bool is_datasharing_compatible_with(
             const WriterProxyData& wdata);
+
+    /**
+     * @brief Retrieves the local pointer to this reader
+     * to be used by other local entities.
+     *
+     * @return Local pointer to this reader.
+     */
+    std::shared_ptr<LocalReaderPointer> get_local_pointer();
 
     //!ReaderHistory
     ReaderHistory* mp_history;

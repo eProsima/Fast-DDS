@@ -19,6 +19,8 @@
 #ifndef UTILS__REFCOUNTEDPOINTER_HPP
 #define UTILS__REFCOUNTEDPOINTER_HPP
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 #include <atomic>
 #include <cassert>
 #include <condition_variable>
@@ -214,5 +216,7 @@ private:
 
 }  // namespace fastdds
 }  // namespace eprosima
+
+#endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #endif // UTILS__REFCOUNTEDPOINTER_HPP

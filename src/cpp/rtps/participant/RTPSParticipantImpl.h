@@ -45,7 +45,6 @@
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/messages/MessageReceiver.h>
-#include <fastdds/rtps/reader/LocalReaderPointer.hpp>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/transport/SenderResource.h>
 #include <fastrtps/utils/Semaphore.h>
@@ -122,6 +121,7 @@ class PDP;
 class PDPSimple;
 class IPersistenceService;
 class WLP;
+struct LocalReaderPointer;
 
 /**
  * @brief Class RTPSParticipantImpl, it contains the private implementation of the RTPSParticipant functions and

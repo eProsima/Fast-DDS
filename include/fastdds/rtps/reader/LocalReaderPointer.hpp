@@ -19,6 +19,8 @@
 #ifndef FASTDDS_RTPS_READER__LOCALREADERPOINTER_HPP
 #define FASTDDS_RTPS_READER__LOCALREADERPOINTER_HPP
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 #include <fastrtps/utils/RefCountedPointer.hpp>
 
 namespace eprosima {
@@ -28,10 +30,15 @@ namespace rtps {
 
 class RTPSReader;
 
-using LocalReaderPointer = RefCountedPointer<RTPSReader>;
+struct LocalReaderPointer : public RefCountedPointer<RTPSReader>
+{
+
+};
 
 }  // namespace rtps
 }  // namespace fastdds
 }  // namespace eprosima
+
+#endif  // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #endif // FASTDDS_RTPS_READER__LOCALREADERPOINTER_HPP
