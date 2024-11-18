@@ -191,6 +191,7 @@ void TCPTransportInterface::clean()
 
     {
         std::vector<std::shared_ptr<TCPChannelResource>> channels;
+        std::vector<eprosima::fastdds::rtps::Locator> delete_channels;
 
         {
             std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
@@ -200,8 +201,20 @@ void TCPTransportInterface::clean()
 
             for (auto& channel : channel_resources_)
             {
-                channels.push_back(channel.second);
+                if (std::find(channels.begin(), channels.end(), channel.second) == channels.end())
+                {
+                    channels.push_back(channel.second);
+                }
+                else
+                {
+                    delete_channels.push_back(channel.first);
+                }
             }
+        }
+
+        for (auto& delete_channel : delete_channels)
+        {
+            channel_resources_.erase(delete_channel);
         }
 
         for (auto& channel : channels)
@@ -279,7 +292,7 @@ Locator TCPTransportInterface::local_endpoint_to_locator(
     return locator;
 }
 
-void TCPTransportInterface::bind_socket(
+ResponseCode TCPTransportInterface::bind_socket(
         std::shared_ptr<TCPChannelResource>& channel)
 {
     std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
@@ -288,7 +301,29 @@ void TCPTransportInterface::bind_socket(
     auto it_remove = std::find(unbound_channel_resources_.begin(), unbound_channel_resources_.end(), channel);
     assert(it_remove != unbound_channel_resources_.end());
     unbound_channel_resources_.erase(it_remove);
-    channel_resources_[channel->locator()] = channel;
+
+    ResponseCode ret = RETCODE_OK;
+    const auto insert_ret = channel_resources_.insert(
+        decltype(channel_resources_)::value_type{channel->locator(), channel});
+    if (false == insert_ret.second)
+    {
+        // There is an existing channel that can be used. Force the Client to close unnecessary socket
+        ret = RETCODE_SERVER_ERROR;
+    }
+
+    std::vector<fastdds::rtps::IPFinder::info_IP> local_interfaces;
+    // Check if the locator is from an owned interface to link all local interfaces to the channel
+    is_own_interface(channel->locator(), local_interfaces);
+    if (!local_interfaces.empty())
+    {
+        Locator local_locator(channel->locator());
+        for (auto& interface_it : local_interfaces)
+        {
+            IPLocator::setIPv4(local_locator, interface_it.locator);
+            channel_resources_.insert(decltype(channel_resources_)::value_type{local_locator, channel});
+        }
+    }
+    return ret;
 }
 
 bool TCPTransportInterface::check_crc(
@@ -923,7 +958,7 @@ bool TCPTransportInterface::CreateInitialConnect(
     std::lock_guard<std::mutex> socketsLock(sockets_map_mutex_);
 
     // We try to find a SenderResource that has this locator.
-    // Note: This is done in this level because if we do in NetworkFactory level, we have to mantain what transport
+    // Note: This is done in this level because if we do it at NetworkFactory level, we have to mantain what transport
     // already reuses a SenderResource.
     for (auto& sender_resource : send_resource_list)
     {
@@ -986,6 +1021,19 @@ bool TCPTransportInterface::CreateInitialConnect(
     statistics_info_.add_entry(locator);
     send_resource_list.emplace_back(
         static_cast<SenderResource*>(new TCPSenderResource(*this, physical_locator)));
+
+    std::vector<fastdds::rtps::IPFinder::info_IP> local_interfaces;
+    // Check if the locator is from an owned interface to link all local interfaces to the channel
+    is_own_interface(physical_locator, local_interfaces);
+    if (!local_interfaces.empty())
+    {
+        Locator local_locator(physical_locator);
+        for (auto& interface_it : local_interfaces)
+        {
+            IPLocator::setIPv4(local_locator, interface_it.locator);
+            channel_resources_[local_locator] = channel;
+        }
+    }
 
     return true;
 }
@@ -2076,6 +2124,28 @@ void TCPTransportInterface::send_channel_pending_logical_ports(
             channel->add_logical_port(logical_port, rtcp_message_manager_.get());
         }
         channel_pending_logical_ports_.erase(channel->locator());
+    }
+}
+
+void TCPTransportInterface::is_own_interface(
+        const Locator& locator,
+        std::vector<fastdds::rtps::IPFinder::info_IP>& locNames) const
+{
+    std::vector<fastdds::rtps::IPFinder::info_IP> local_interfaces;
+    get_ips(local_interfaces, true, false);
+    for (const auto& interface_it : local_interfaces)
+    {
+        if (IPLocator::compareAddress(locator, interface_it.locator) && is_interface_allowed(interface_it.name))
+        {
+            locNames = local_interfaces;
+            // Remove interface of original locator from the list
+            locNames.erase(std::remove_if(locNames.begin(), locNames.end(),
+                    [&interface_it](const fastdds::rtps::IPFinder::info_IP& locInterface)
+                    {
+                        return locInterface.locator == interface_it.locator;
+                    }), locNames.end());
+            break;
+        }
     }
 }
 
