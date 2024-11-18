@@ -21,8 +21,10 @@
 #include <optionparser.hpp>
 #include <fastdds/rtps/common/PortParameters.hpp>
 #include <fastdds/dds/core/Types.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 
 constexpr const char* domain_env_var = "ROS_DOMAIN_ID";
+constexpr const char* default_ip = "0.0.0.0";
 
 namespace fds {
 enum ToolCommand : uint16_t
@@ -41,8 +43,6 @@ enum ToolCommand : uint16_t
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-
-class DomainParticipantQos;
 
 struct MetaInfo_DS
 {
@@ -80,6 +80,8 @@ struct MetaInfo_DS
 class CliDiscoveryManager
 {
 public:
+    using Locator_t = fastdds::rtps::Locator_t;
+    using IPLocator = fastdds::rtps::IPLocator;
 
     /**
      * @brief Get the domain id from the environment variable or the CLI argument. If none of the two is
@@ -87,18 +89,26 @@ public:
      * @param domain_id The domain id argument
      * @return The domain id
      */
-    eprosima::fastdds::dds::DomainId_t get_domain_id(
+    DomainId_t get_domain_id(
             const eprosima::option::Option* domain_id);
 
     /**
      * @brief Check if the options received by the CLI are free of errors.
-     * @param options The options received by the CLI
+     * @param options The options received from the CLI
      * @param parse The parser object to be used
      * @return True if the options are incorrect, false otherwise
      */
     bool initial_options_fail(
             std::vector<option::Option>& options,
             option::Parser& parse);
+
+    /**
+     * @brief Get the port of the Discovery Server from the CLI.
+     * @param portArg The port argument received by the CLI
+     * @return The port of the Discovery Server
+     */
+    uint16_t getDiscoveryServerPort(
+            const eprosima::option::Option* portArg);
 
     /**
      * @brief Get the port of the Discovery Server running in the specified domain.
@@ -151,16 +161,65 @@ public:
 
     /**
      * @brief Set the QoS of the Discovery Server.
-     * @param [in, out] qos  The QoS to be set
-     * @param [in] port      The port of the Discovery Server
+     * @param port The port of the Discovery Server
      */
-    void setServerQos(
-        DomainParticipantQos& qos,
-        uint16_t port);
+    void setServerQos(uint16_t port);
+
+    /**
+     * @brief Load the XML configuration into the serverQos.
+     * @param xmlArg The XML file argument
+     * @return True if the XML file is loaded, false otherwise
+     */
+    bool loadXMLFile(const eprosima::option::Option* xmlArg);
+
+    /**
+     * @brief Get the UDP and TCP ports and addresses from the CLI arguments.
+     * @param udpPort The UDP port argument
+     * @param udpIp The UDP address argument
+     * @param tcpPort The TCP port argument
+     * @param tcpIp The TCP address argument
+     */
+    void getCliPortsAndIps(
+            const eprosima::option::Option* udpPort,
+            const eprosima::option::Option* udpIp,
+            const eprosima::option::Option* tcpPort,
+            const eprosima::option::Option* tcpIp);
+
+    /**
+     * @brief Set the address and kind of the locator.
+     * @param [in]      address The address of the locator
+     * @param [in, out] locator The locator to be set
+     * @param [in]      is_tcp True if the locator is TCP, false otherwise
+     * @return True if the address and kind are set, false otherwise
+     */
+    bool setAddressAndKind(
+        const std::string& address,
+        Locator_t& locator,
+        bool is_tcp);
+
+    /**
+     * @brief Set the metatrafficUnicastLocatorList for UDP servers.
+     * @return True if the metatrafficUnicastLocatorList is set, false otherwise
+     */
+    bool addUdpServers();
+
+    /**
+     * @brief Set the metatrafficUnicastLocatorList for TCP servers.
+     * @return True if the metatrafficUnicastLocatorList is set, false otherwise
+     */
+    bool addTcpServers();
+
+    /**
+     * @brief Configure the transports of the Discovery Server participant. If UDPv6 is enabled, it
+     * adds an UDPv6 transport. If TCPv4 or TCPv6 are enabled, it adds a TCPv4 or TCPv6
+     * transport for each listening port provided. Builtin transports are disabled if no UDPv4 locator
+     * is provided.
+     */
+    void configureTransports();
 
     /**
      * @brief Create a Discovery Server with the configuration options received.
-     * @param options The options received by the CLI
+     * @param options The options received from the CLI
      * @param parse The parser object to be used
      */
     int fastdds_discovery_server(
@@ -170,7 +229,7 @@ public:
     /**
      * @brief Launch the AUTO mode of the CLI. It checks if a new Discovery Server exists in the
      * specified domain. It it does not exist, it creates a new one. If it exists, it does nothing.
-     * @param options The options received by the CLI
+     * @param options The options received from the CLI
      * @param parse The parser object to be used
      */
     int fastdds_discovery_auto(
@@ -180,7 +239,7 @@ public:
     /**
      * @brief Starts a new Discovery Server in the specified domain if there is not an active server
      * already running. It does nothing if there is an active server.
-     * @param options The options received by the CLI
+     * @param options The options received from the CLI
      * @param parse The parser object to be used
      */
     int fastdds_discovery_start(
@@ -189,7 +248,7 @@ public:
 
     /**
      * @brief Stops the active Discovery Server running in the specified domain.
-     * @param options The options received by the CLI
+     * @param options The options received from the CLI
      * @param parse The parser object to be used
      */
     int fastdds_discovery_stop(
@@ -198,7 +257,7 @@ public:
 
     /**
      * @brief Adds new remote servers to the Discovery Server running in the specified domain.
-     * @param options The options received by the CLI
+     * @param options The options received from the CLI
      * @param parse The parser object to be used
      */
     int fastdds_discovery_add(
@@ -208,7 +267,7 @@ public:
     /**
      * @brief Repalce the remote servers list of the Discovery Server running in the specified domain
      * with a new list.
-     * @param options The options received by the CLI
+     * @param options The options received from the CLI
      * @param parse The parser object to be used
      */
     int fastdds_discovery_set(
@@ -217,7 +276,7 @@ public:
 
     /**
      * @brief Lists all the local running Discovery Servers.
-     * @param options The options received by the CLI
+     * @param options The options received from the CLI
      * @param parse The parser object to be used
      */
     int fastdds_discovery_list(
@@ -226,7 +285,7 @@ public:
 
     /**
      * @brief Provides detailed information of the Discovery Server running in the specified domain.
-     * @param options The options received by the CLI
+     * @param options The options received from the CLI
      * @param parse The parser object to be used
      */
     int fastdds_discovery_info(
@@ -234,9 +293,18 @@ public:
             option::Parser& parse);
 
 private:
+    //! QoS of the Discovery Server that will be initialized
+    DomainParticipantQos serverQos;
     //! Default port parameters used to calculate Discovery Server ports
     rtps::PortParameters port_params_;
-
+    //! UDP ports received from the CLI
+    std::list<uint16_t> udp_ports_;
+    //! UDP addresses received from the CLI
+    std::list<std::string> udp_ips_;
+    //! TCP ports received from the CLI
+    std::list<uint16_t> tcp_ports_;
+    //! TCP addresses received from the CLI
+    std::list<std::string> tcp_ips_;
 };
 
 } // namespace dds
