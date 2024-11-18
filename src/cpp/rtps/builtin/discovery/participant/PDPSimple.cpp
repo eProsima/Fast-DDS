@@ -677,7 +677,8 @@ void PDPSimple::match_pdp_remote_endpoints(
         temp_writer_data->guid().entityId = writer_entity_id;
         temp_writer_data->persistence_guid(pdata.get_persistence_guid());
         temp_writer_data->set_persistence_entity_id(writer_entity_id);
-        temp_writer_data->set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators);
+        temp_writer_data->set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators,
+                pdata.is_from_this_host());
         temp_writer_data->m_qos.m_reliability.kind = reliability_kind;
         temp_writer_data->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
 #if HAVE_SECURITY
@@ -706,7 +707,8 @@ void PDPSimple::match_pdp_remote_endpoints(
         temp_reader_data->m_expectsInlineQos = false;
         temp_reader_data->guid().guidPrefix = pdata.m_guid.guidPrefix;
         temp_reader_data->guid().entityId = reader_entity_id;
-        temp_reader_data->set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators);
+        temp_reader_data->set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators,
+                pdata.is_from_this_host());
         temp_reader_data->m_qos.m_reliability.kind = reliability_kind;
         temp_reader_data->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
 #if HAVE_SECURITY

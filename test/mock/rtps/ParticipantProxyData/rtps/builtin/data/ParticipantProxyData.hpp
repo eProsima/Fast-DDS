@@ -18,6 +18,7 @@
 #ifndef RTPS_BUILTIN_DATA__PARTICIPANTPROXYDATA_HPP
 #define RTPS_BUILTIN_DATA__PARTICIPANTPROXYDATA_HPP
 
+#include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
@@ -32,6 +33,13 @@
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
+
+class ReaderProxyData;
+class WriterProxyData;
+
+// proxy specific declarations
+template<class Proxy>
+class ProxyHashTable;
 
 class ParticipantProxyData
 {
@@ -64,11 +72,24 @@ public:
         return true;
     }
 
+    bool is_from_this_host() const
+    {
+        return true;
+    }
+
     GUID_t m_guid;
     uint32_t m_availableBuiltinEndpoints;
     RemoteLocatorList metatraffic_locators;
     RemoteLocatorList default_locators;
     fastdds::rtps::VendorId_t m_VendorId;
+    fastdds::dds::DomainId_t m_domain_id;
+    dds::Duration_t m_leaseDuration;
+    fastcdr::string_255 m_participantName;
+    fastdds::rtps::ProductVersion_t product_version;
+    fastdds::dds::ParameterPropertyList_t m_properties;
+    fastdds::dds::UserDataQosPolicy m_userData;
+    ProxyHashTable<ReaderProxyData>* m_readers = nullptr;
+    ProxyHashTable<WriterProxyData>* m_writers = nullptr;
 #if HAVE_SECURITY
     IdentityToken identity_token_;
     PermissionsToken permissions_token_;

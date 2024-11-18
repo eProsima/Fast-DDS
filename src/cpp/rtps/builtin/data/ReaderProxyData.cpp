@@ -24,7 +24,9 @@
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/network/NetworkFactory.hpp>
+#include <utils/SystemInfo.hpp>
 
 #include "ProxyDataFilters.hpp"
 
@@ -647,11 +649,9 @@ bool ReaderProxyData::writeToCDRMessage(
 
 bool ReaderProxyData::readFromCDRMessage(
         CDRMessage_t* msg,
-        NetworkFactory& network,
-        bool should_filter_locators,
         fastdds::rtps::VendorId_t source_vendor_id)
 {
-    auto param_process = [this, &network, &should_filter_locators, source_vendor_id](
+    auto param_process = [this, source_vendor_id](
         CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
             {
                 VendorId_t vendor_id = source_vendor_id;
@@ -889,23 +889,7 @@ bool ReaderProxyData::readFromCDRMessage(
                             return false;
                         }
 
-                        if (!should_filter_locators)
-                        {
-                            remote_locators_.add_unicast_locator(p.locator);
-                        }
-                        else
-                        {
-                            Locator_t temp_locator;
-                            if (network.transform_remote_locator(p.locator, temp_locator, m_networkConfiguration,
-                                    m_guid.is_from_this_host()))
-                            {
-                                ProxyDataFilters::filter_locators(
-                                    network,
-                                    remote_locators_,
-                                    temp_locator,
-                                    true);
-                            }
-                        }
+                        remote_locators_.add_unicast_locator(p.locator);
                         break;
                     }
                     case fastdds::dds::PID_MULTICAST_LOCATOR:
@@ -917,23 +901,7 @@ bool ReaderProxyData::readFromCDRMessage(
                             return false;
                         }
 
-                        if (!should_filter_locators)
-                        {
-                            remote_locators_.add_multicast_locator(p.locator);
-                        }
-                        else
-                        {
-                            Locator_t temp_locator;
-                            if (network.transform_remote_locator(p.locator, temp_locator, m_networkConfiguration,
-                                    m_guid.is_from_this_host()))
-                            {
-                                ProxyDataFilters::filter_locators(
-                                    network,
-                                    remote_locators_,
-                                    temp_locator,
-                                    false);
-                            }
-                        }
+                        remote_locators_.add_unicast_locator(p.locator);
                         break;
                     }
                     case fastdds::dds::PID_EXPECTS_INLINE_QOS:
@@ -1149,6 +1117,47 @@ bool ReaderProxyData::readFromCDRMessage(
     return false;
 }
 
+void ReaderProxyData::setup_locators(
+        const ReaderProxyData& rdata,
+        NetworkFactory& network,
+        const ParticipantProxyData& participant_data)
+{
+    if (this == &rdata)
+    {
+        return;
+    }
+
+    bool from_this_host = participant_data.is_from_this_host();
+
+    if (rdata.has_locators())
+    {
+        // Get the transformed remote locators for the ReaderProxyData received
+        remote_locators_.unicast.clear();
+        remote_locators_.multicast.clear();
+        for (const Locator_t& locator : rdata.remote_locators_.unicast)
+        {
+            Locator_t temp_locator;
+            if (network.transform_remote_locator(locator, temp_locator, m_networkConfiguration, from_this_host))
+            {
+                ProxyDataFilters::filter_locators(network, remote_locators_, temp_locator, true);
+            }
+        }
+        for (const Locator_t& locator : rdata.remote_locators_.multicast)
+        {
+            Locator_t temp_locator;
+            if (network.transform_remote_locator(locator, temp_locator, m_networkConfiguration, from_this_host))
+            {
+                ProxyDataFilters::filter_locators(network, remote_locators_, temp_locator, false);
+            }
+        }
+    }
+    else
+    {
+        // Get the remote locators from the participant_data
+        set_remote_locators(participant_data.default_locators, network, true, from_this_host);
+    }
+}
+
 void ReaderProxyData::clear()
 {
     m_expectsInlineQos = false;
@@ -1284,12 +1293,13 @@ void ReaderProxyData::set_announced_unicast_locators(
 
 void ReaderProxyData::set_remote_unicast_locators(
         const LocatorList_t& locators,
-        const NetworkFactory& network)
+        const NetworkFactory& network,
+        bool from_this_host)
 {
     remote_locators_.unicast.clear();
     for (const Locator_t& locator : locators)
     {
-        if (network.is_locator_remote_or_allowed(locator, m_guid.is_from_this_host()))
+        if (network.is_locator_remote_or_allowed(locator, from_this_host))
         {
             remote_locators_.add_unicast_locator(locator);
         }
@@ -1304,12 +1314,13 @@ void ReaderProxyData::add_multicast_locator(
 
 void ReaderProxyData::set_multicast_locators(
         const LocatorList_t& locators,
-        const NetworkFactory& network)
+        const NetworkFactory& network,
+        bool from_this_host)
 {
     remote_locators_.multicast.clear();
     for (const Locator_t& locator : locators)
     {
-        if (network.is_locator_remote_or_allowed(locator, m_guid.is_from_this_host()))
+        if (network.is_locator_remote_or_allowed(locator, from_this_host))
         {
             remote_locators_.add_multicast_locator(locator);
         }
@@ -1325,14 +1336,15 @@ void ReaderProxyData::set_locators(
 void ReaderProxyData::set_remote_locators(
         const RemoteLocatorList& locators,
         const NetworkFactory& network,
-        bool use_multicast_locators)
+        bool use_multicast_locators,
+        bool from_this_host)
 {
     remote_locators_.unicast.clear();
     remote_locators_.multicast.clear();
 
     for (const Locator_t& locator : locators.unicast)
     {
-        if (network.is_locator_remote_or_allowed(locator, m_guid.is_from_this_host()))
+        if (network.is_locator_remote_or_allowed(locator, from_this_host))
         {
             remote_locators_.add_unicast_locator(locator);
         }
@@ -1342,7 +1354,7 @@ void ReaderProxyData::set_remote_locators(
     {
         for (const Locator_t& locator : locators.multicast)
         {
-            if (network.is_locator_remote_or_allowed(locator, m_guid.is_from_this_host()))
+            if (network.is_locator_remote_or_allowed(locator, from_this_host))
             {
                 remote_locators_.add_multicast_locator(locator);
             }

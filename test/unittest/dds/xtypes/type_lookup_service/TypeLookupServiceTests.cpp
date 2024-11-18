@@ -388,7 +388,7 @@ TEST_F(TypeLookupServiceTests, ReaderProxyData_PID_TYPE_IDV1)
     msg.init(typeid_msg_buffer, static_cast<uint32_t>(sizeof(typeid_msg_buffer)));
     msg.length = msg.max_size;
 
-    ASSERT_TRUE(reader_proxy_.readFromCDRMessage(&msg, network_factory_, true, c_VendorId_eProsima));
+    ASSERT_TRUE(reader_proxy_.readFromCDRMessage(&msg, c_VendorId_eProsima));
 
     Log::Flush();
     EXPECT_EQ(log_consumer->wait_for_entries(1, 1), 1);
@@ -404,7 +404,7 @@ TEST_F(TypeLookupServiceTests, WriterProxyData_PID_TYPE_IDV1)
     msg.init(typeid_msg_buffer, static_cast<uint32_t>(sizeof(typeid_msg_buffer)));
     msg.length = msg.max_size;
 
-    ASSERT_TRUE(writer_proxy_.readFromCDRMessage(&msg, network_factory_, true, c_VendorId_eProsima));
+    ASSERT_TRUE(writer_proxy_.readFromCDRMessage(&msg, c_VendorId_eProsima));
 
     Log::Flush();
     EXPECT_EQ(log_consumer->wait_for_entries(1, 1), 1);
@@ -419,7 +419,7 @@ TEST_F(TypeLookupServiceTests, ReaderProxyData_PID_TYPE_OBJECTV1)
     msg.init(typeobject_msg_buffer, static_cast<uint32_t>(sizeof(typeobject_msg_buffer)));
     msg.length = msg.max_size;
 
-    ASSERT_TRUE(reader_proxy_.readFromCDRMessage(&msg, network_factory_, true, c_VendorId_eProsima));
+    ASSERT_TRUE(reader_proxy_.readFromCDRMessage(&msg, c_VendorId_eProsima));
 
     Log::Flush();
     EXPECT_EQ(log_consumer->wait_for_entries(1, 1), 1);
@@ -434,7 +434,7 @@ TEST_F(TypeLookupServiceTests, WriterProxyData_PID_TYPE_OBJECTV1)
     msg.init(typeobject_msg_buffer, static_cast<uint32_t>(sizeof(typeobject_msg_buffer)));
     msg.length = msg.max_size;
 
-    ASSERT_TRUE(writer_proxy_.readFromCDRMessage(&msg, network_factory_, true, c_VendorId_eProsima));
+    ASSERT_TRUE(writer_proxy_.readFromCDRMessage(&msg, c_VendorId_eProsima));
 
     Log::Flush();
     EXPECT_EQ(log_consumer->wait_for_entries(1, 1), 1);

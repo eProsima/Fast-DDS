@@ -58,6 +58,7 @@ set(SERVER_ATTRIBUTES_TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/network.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/Host.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
@@ -87,6 +88,10 @@ if(MSVC OR MSVC_IDE)
     target_link_libraries(${SERVER_ATTRIBUTES_TESTS_EXEC} ${PRIVACY} fastcdr iphlpapi Shlwapi ws2_32 fastdds::log)
 else()
     target_link_libraries(${SERVER_ATTRIBUTES_TESTS_EXEC} ${PRIVACY} fastcdr fastdds::log)
+endif()
+
+if (APPLE)
+    target_link_libraries(${SERVER_ATTRIBUTES_TESTS_EXEC} ${PRIVACY} "-framework CoreFoundation" "-framework IOKit")
 endif()
 
 gtest_discover_tests(${SERVER_ATTRIBUTES_TESTS_EXEC}

@@ -752,7 +752,8 @@ void EDPSimple::assignRemoteEndpoints(
     temp_reader_proxy_data->clear();
     temp_reader_proxy_data->m_expectsInlineQos = false;
     temp_reader_proxy_data->guid().guidPrefix = pdata.m_guid.guidPrefix;
-    temp_reader_proxy_data->set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators);
+    temp_reader_proxy_data->set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators,
+            pdata.is_from_this_host());
     temp_reader_proxy_data->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
     temp_reader_proxy_data->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
 
@@ -761,7 +762,8 @@ void EDPSimple::assignRemoteEndpoints(
     temp_writer_proxy_data->clear();
     temp_writer_proxy_data->guid().guidPrefix = pdata.m_guid.guidPrefix;
     temp_writer_proxy_data->persistence_guid(pdata.get_persistence_guid());
-    temp_writer_proxy_data->set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators);
+    temp_writer_proxy_data->set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators,
+            pdata.is_from_this_host());
     temp_writer_proxy_data->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
     temp_writer_proxy_data->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
 

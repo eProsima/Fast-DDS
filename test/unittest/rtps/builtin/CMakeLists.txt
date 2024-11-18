@@ -38,6 +38,7 @@ set(BUILTIN_DATA_SERIALIZATION_TESTS_SOURCE BuiltinDataSerializationTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetmaskFilterKind.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterfaceWithFilter.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/Host.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
@@ -87,6 +88,10 @@ if(MSVC OR MSVC_IDE)
     target_link_libraries(BuiltinDataSerializationTests ${PRIVACY} fastcdr iphlpapi Shlwapi ws2_32)
 else()
     target_link_libraries(BuiltinDataSerializationTests ${PRIVACY} fastcdr)
+endif()
+
+if (APPLE)
+    target_link_libraries(BuiltinDataSerializationTests ${PRIVACY} "-framework CoreFoundation" "-framework IOKit")
 endif()
 
 gtest_discover_tests(BuiltinDataSerializationTests)

@@ -37,6 +37,7 @@ namespace rtps {
 
 struct CDRMessage_t;
 class NetworkFactory;
+class ParticipantProxyData;
 
 /**
  **@ingroup BUILTIN_MODULE
@@ -150,24 +151,46 @@ public:
     void set_announced_unicast_locators(
             const LocatorList_t& locators);
 
+    /**
+     * Set the remote unicast locators from @param locators.
+     * @param locators List of locators to be used
+     * @param network NetworkFactory to check if the locators are allowed
+     * @param from_this_host Whether the server is from this host or not
+     */
     void set_remote_unicast_locators(
             const LocatorList_t& locators,
-            const NetworkFactory& network);
+            const NetworkFactory& network,
+            bool from_this_host);
 
     void add_multicast_locator(
             const Locator_t& locator);
 
+    /**
+     * Set the remote multicast locators from @param locators.
+     * @param locators List of locators to be used
+     * @param network NetworkFactory to check if the locators are allowed
+     * @param from_this_host Whether the server is from this host or not
+     */
     void set_multicast_locators(
             const LocatorList_t& locators,
-            const NetworkFactory& network);
+            const NetworkFactory& network,
+            bool from_this_host);
 
     void set_locators(
             const RemoteLocatorList& locators);
 
+    /**
+     * Set the remote multicast and unicast locators from @param locators.
+     * @param locators List of locators to be used
+     * @param network NetworkFactory to check if the locators are allowed
+     * @param use_multicast_locators Whether to set multicast locators or not
+     * @param from_this_host Whether the server is from this host or not
+     */
     void set_remote_locators(
             const RemoteLocatorList& remote_locators,
             const NetworkFactory& network,
-            bool use_multicast_locators);
+            bool use_multicast_locators,
+            bool from_this_host);
 
     void key(
             const InstanceHandle_t& key)
@@ -448,12 +471,29 @@ public:
             CDRMessage_t* msg,
             bool write_encapsulation) const;
 
-    //!Read a parameter list from a CDRMessage_t.
+    /**
+     * Read the information from a CDRMessage_t. The position of the message must be in the beginning on the
+     * parameter list.
+     * @param msg Pointer to the message.
+     * @param source_vendor_id VendorId of the source participant from which the message was received
+     * @return true on success
+     */
     bool readFromCDRMessage(
             CDRMessage_t* msg,
-            NetworkFactory& network,
-            bool should_filter_locators,
             fastdds::rtps::VendorId_t source_vendor_id = c_VendorId_eProsima);
+
+    /**
+     * Transform and set the remote locators from the remote_locators_ of another WriterProxyData.
+     * If the received WriterProxyData has no locators, remote locators will be extracted from the
+     * ParticipantProxyData.
+     * @param wdata WriterProxyData to get the locators from
+     * @param network NetworkFactory to transform locators
+     * @param participant_data ParticipantProxyData to get the locators from
+     */
+    void setup_locators(
+            const WriterProxyData& wdata,
+            NetworkFactory& network,
+            const ParticipantProxyData& participant_data);
 
 private:
 

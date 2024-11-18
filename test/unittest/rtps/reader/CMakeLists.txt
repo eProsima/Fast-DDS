@@ -295,6 +295,7 @@ set(STATEFUL_READER_TESTS_SOURCE StatefulReaderTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/qos/ReaderQos.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/utils/TypePropagation.cpp
 
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/Host.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
@@ -427,5 +428,8 @@ if(MSVC OR MSVC_IDE)
     target_link_libraries(StatefulReaderTests ${PRIVACY}
         iphlpapi Shlwapi
         )
+endif()
+if (APPLE)
+    target_link_libraries(StatefulReaderTests ${PRIVACY} "-framework CoreFoundation" "-framework IOKit")
 endif()
 gtest_discover_tests(StatefulReaderTests)

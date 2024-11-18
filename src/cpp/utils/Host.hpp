@@ -15,17 +15,20 @@
 #ifndef UTILS_HOST_HPP_
 #define UTILS_HOST_HPP_
 
+#include <fastcdr/cdr/fixed_size_string.hpp>
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/utils/IPFinder.hpp>
 #include <fastdds/utils/md5.hpp>
+
 
 namespace eprosima {
 
 
 /**
  * This singleton generates a host_id based on system interfaces
- * ip addresses or mac addresses
+ * ip addresses, mac addresses or the machine UUID.
  */
 class Host
 {
@@ -51,6 +54,11 @@ public:
     inline uint48 mac_id() const
     {
         return mac_id_;
+    }
+
+    inline fastcdr::string_255 machine_id() const
+    {
+        return machine_id_;
     }
 
     static Host& instance()
@@ -131,10 +139,20 @@ private:
                 mac_id_.value[i + 1] = (id_ & 0xFF);
             }
         }
+
+        // Compute the machine id hash
+        machine_id_ = compute_machine_id();
+        if (machine_id_ == "")
+        {
+            EPROSIMA_LOG_WARNING(UTILS, "Cannot get machine id. Failing back to IP based ID");
+        }
     }
+
+    static fastcdr::string_255 compute_machine_id();
 
     uint16_t id_;
     uint48 mac_id_;
+    fastcdr::string_255 machine_id_;
 };
 
 } // eprosima

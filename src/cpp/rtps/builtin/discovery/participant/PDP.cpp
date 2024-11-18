@@ -61,6 +61,7 @@
 #include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #endif // if HAVE_SECURITY
 #include <utils/shared_mutex.hpp>
+#include <utils/SystemInfo.hpp>
 #include <utils/TimeConversion.hpp>
 #include <rtps/writer/BaseWriter.hpp>
 #include <rtps/reader/BaseReader.hpp>
@@ -312,6 +313,7 @@ void PDP::initializeParticipantProxyData(
     participant_data->product_version.major = FASTDDS_VERSION_MAJOR;
     participant_data->product_version.minor = FASTDDS_VERSION_MINOR;
     participant_data->product_version.patch = FASTDDS_VERSION_MICRO;
+    participant_data->machine_id = SystemInfo::instance().machine_id();
 
     // TODO: participant_data->m_availableBuiltinEndpoints |= mp_builtin->available_builtin_endpoints();
 

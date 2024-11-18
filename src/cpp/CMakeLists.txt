@@ -229,6 +229,7 @@ set(${PROJECT_NAME}_source_files
     statistics/fastdds/domain/DomainParticipant.cpp
     statistics/fastdds/publisher/qos/DataWriterQos.cpp
     statistics/fastdds/subscriber/qos/DataReaderQos.cpp
+    utils/Host.cpp
     utils/IPFinder.cpp
     utils/IPLocator.cpp
     utils/md5.cpp
@@ -506,6 +507,14 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE
     eProsima_atomic
     )
+
+if (APPLE)
+    target_link_libraries(${PROJECT_NAME}
+    ${PRIVACY}
+    "-framework CoreFoundation"
+    "-framework IOKit"
+    )
+endif()
 
 if(MSVC OR MSVC_IDE)
     # On installed binaries use manifest to specify dependencies

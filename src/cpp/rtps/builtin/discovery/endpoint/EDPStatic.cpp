@@ -523,7 +523,8 @@ bool EDPStatic::newRemoteReader(
                     if (!newRPD->has_locators())
                     {
                         const NetworkFactory& network = mp_RTPSParticipant->network_factory();
-                        newRPD->set_remote_locators(participant_data.default_locators, network, true);
+                        newRPD->set_remote_locators(participant_data.default_locators, network, true,
+                                participant_data.is_from_this_host());
                     }
 
                     return true;
@@ -575,7 +576,8 @@ bool EDPStatic::newRemoteWriter(
                     if (!newWPD->has_locators())
                     {
                         const NetworkFactory& network = mp_RTPSParticipant->network_factory();
-                        newWPD->set_remote_locators(participant_data.default_locators, network, true);
+                        newWPD->set_remote_locators(participant_data.default_locators, network, true,
+                                participant_data.is_from_this_host());
                     }
                     newWPD->persistence_guid(persistence_guid);
 

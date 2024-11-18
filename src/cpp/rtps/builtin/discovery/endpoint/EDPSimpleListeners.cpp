@@ -75,7 +75,7 @@ void EDPBasePUBListener::add_writer_from_change(
     auto temp_writer_data = edp->get_temporary_writer_proxies_pool().get();
     const auto type_server = change->writerGUID;
 
-    if (temp_writer_data->readFromCDRMessage(&tempMsg, network, true, change->vendor_id))
+    if (temp_writer_data->readFromCDRMessage(&tempMsg, change->vendor_id))
     {
         if (temp_writer_data->guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
         {
@@ -95,12 +95,6 @@ void EDPBasePUBListener::add_writer_from_change(
                         bool updating,
                         const ParticipantProxyData& participant_data)
                             {
-                                if (!temp_writer_data->has_locators())
-                                {
-                                    temp_writer_data->set_remote_locators(participant_data.default_locators, network,
-                                            true);
-                                }
-
                                 if (updating && !data->is_update_allowed(*temp_writer_data))
                                 {
                                     EPROSIMA_LOG_WARNING(RTPS_EDP,
@@ -108,6 +102,7 @@ void EDPBasePUBListener::add_writer_from_change(
                                             data->guid());
                                 }
                                 *data = *temp_writer_data;
+                                data->setup_locators(*temp_writer_data, network, participant_data);
 
                                 if (request_ret_status != fastdds::dds::RETCODE_OK)
                                 {
@@ -225,7 +220,7 @@ void EDPBaseSUBListener::add_reader_from_change(
     auto temp_reader_data = edp->get_temporary_reader_proxies_pool().get();
     const auto type_server = change->writerGUID;
 
-    if (temp_reader_data->readFromCDRMessage(&tempMsg, network, true, change->vendor_id))
+    if (temp_reader_data->readFromCDRMessage(&tempMsg, change->vendor_id))
     {
         if (temp_reader_data->guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
         {
@@ -245,12 +240,6 @@ void EDPBaseSUBListener::add_reader_from_change(
                         bool updating,
                         const ParticipantProxyData& participant_data)
                             {
-                                if (!temp_reader_data->has_locators())
-                                {
-                                    temp_reader_data->set_remote_locators(participant_data.default_locators, network,
-                                            true);
-                                }
-
                                 if (updating && !data->is_update_allowed(*temp_reader_data))
                                 {
                                     EPROSIMA_LOG_WARNING(RTPS_EDP,
@@ -258,6 +247,7 @@ void EDPBaseSUBListener::add_reader_from_change(
                                             data->guid());
                                 }
                                 *data = *temp_reader_data;
+                                data->setup_locators(*temp_reader_data, network, participant_data);
 
                                 if (request_ret_status != fastdds::dds::RETCODE_OK)
                                 {
