@@ -22,6 +22,7 @@
 #include <regex>
 #include <sstream>
 #include <stdlib.h>
+#include <fstream>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -32,6 +33,7 @@
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
 #include <fastdds/utils/IPLocator.hpp>
+#include <rtps/attributes/ServerAttributes.hpp>
 #include <utils/SystemInfo.hpp>
 
 
@@ -45,6 +47,33 @@ void sigint_handler(
     // Locking here is counterproductive
     g_signal_status = signum;
     g_signal_cv.notify_one();
+}
+
+static std::string read_servers_from_file(const std::string& file)
+{
+    std::ifstream ifs(file);
+    if (!ifs.is_open())
+    {
+        std::cout << "Error opening file: " << file << std::endl;
+        return "";
+    }
+    std::string line;
+    std::getline(ifs, line);
+    ifs.close();
+    return line;
+}
+
+static bool write_servers_to_file(const std::string& file, const std::string& servers)
+{
+    std::ofstream ofs(file);
+    if (!ofs.is_open())
+    {
+        std::cout << "Error opening file: " << file << std::endl;
+        return false;
+    }
+    ofs << servers;
+    ofs.close();
+    return true;
 }
 
 namespace eprosima {
@@ -92,7 +121,8 @@ DomainId_t CliDiscoveryManager::get_domain_id(
 
 bool CliDiscoveryManager::initial_options_fail(
         std::vector<option::Option>& options,
-        option::Parser& parse)
+        option::Parser& parse,
+        bool check_nonOpts)
 {
     // Check the command line options
     if (parse.error())
@@ -109,20 +139,23 @@ bool CliDiscoveryManager::initial_options_fail(
     }
 
     // No arguments beyond options
-    int noopts = parse.nonOptionsCount();
-    if (noopts)
+    if (check_nonOpts)
     {
-        std::string sep(noopts == 1 ? "argument: " : "arguments: ");
-        std::cout << "Unknown ";
-
-        while (noopts--)
+        int noopts = parse.nonOptionsCount();
+        if (noopts)
         {
-            std::cout << sep << parse.nonOption(noopts);
-            sep = ", ";
-        }
+            std::string sep(noopts == 1 ? "argument: " : "arguments: ");
+            std::cout << "Unknown ";
 
-        std::cout << std::endl;
-        return true;
+            while (noopts--)
+            {
+                std::cout << sep << parse.nonOption(noopts);
+                sep = ", ";
+            }
+
+            std::cout << std::endl;
+            return true;
+        }
     }
     return false;
 }
@@ -263,6 +296,7 @@ void CliDiscoveryManager::startServerInBackground(uint16_t& port)
 
         std::unique_lock<std::mutex> lock(g_signal_mutex);
         // Handle signal SIGINT for every thread
+        signal(SIGUSR1, sigint_handler);
         signal(SIGINT, sigint_handler);
         signal(SIGTERM, sigint_handler);
 #ifndef _WIN32
@@ -275,11 +309,35 @@ void CliDiscoveryManager::startServerInBackground(uint16_t& port)
         close(STDOUT_FILENO);
         close(STDERR_FILENO);
 
-        g_signal_cv.wait(lock, []
+        bool should_break = false;
+        while (!should_break)
+        {
+            g_signal_cv.wait(lock, []
+                    {
+                        return 0 != g_signal_status;
+                    });
+            if (SIGUSR1 == g_signal_status)
+            {
+                // Update Qos
+                std::stringstream file_name;
+                // TODO (Carlos): Check file location
+                file_name << "/tmp/" << port << "_servers.txt";
+                rtps::LocatorList_t serverList;
+                load_environment_server_info(read_servers_from_file(file_name.str()), serverList);
+                for (rtps::Locator_t& locator : serverList)
                 {
-                    return 0 != g_signal_status;
-                });
-
+                    locator.kind = LOCATOR_KIND_TCPv4;
+                }
+                pServer->get_qos(serverQos);
+                serverQos.wire_protocol().builtin.discovery_config.m_DiscoveryServers = serverList;
+                pServer->set_qos(serverQos);
+                g_signal_status = 0;
+            }
+            else
+            {
+                should_break = true;
+            }
+        }
         DomainParticipantFactory::get_instance()->delete_participant(pServer);
     }
     else
@@ -849,14 +907,40 @@ int CliDiscoveryManager::fastdds_discovery_add(
     std::vector<option::Option>& options,
     option::Parser& parse)
 {
-    if (initial_options_fail(options, parse))
+    if (initial_options_fail(options, parse, false))
     {
         return 1;
     }
 
-    // Add a server for the domain specified
+    // Add new remote servers for the domain specified
     int return_value = 0;
-    std::cout << "Add mode not implemented yet." << std::endl;
+
+    option::Option* pOp = options[DOMAIN];
+    DomainId_t id = get_domain_id(pOp);
+    if (!isServerRunning(id))
+    {
+        std::cout << "There is no running Server for Domain ID [" << id << "]." << std::endl;
+        return return_value;
+    }
+
+    uint16_t port = getDiscoveryServerPort(id);
+    pid_t server_pid = getPidOfServer(port);
+    std::stringstream file_name;
+    file_name << "/tmp/" << port << "_servers.txt";
+    // Servers are added directly to the CLI
+    int noservs = parse.nonOptionsCount();
+    std::stringstream servers;
+    if (noservs)
+    {
+        while (noservs--)
+        {
+            std::string server = parse.nonOption(noservs);
+            servers << server << ";";
+        }
+    }
+    std::cout << "Adding servers: " << servers.str() << " to Server with Domain ID[" << id << "]" << std::endl;
+    kill(server_pid, SIGUSR1);
+    write_servers_to_file(file_name.str(), servers.str());
 
     return return_value;
 }
