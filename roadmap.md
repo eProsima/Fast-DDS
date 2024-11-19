@@ -7,13 +7,15 @@ All information is provided as a general guidelines only, and this section may b
 
 Disclaimer:
 
-* This section has been last updated in August 2024.
+* This section has been last updated in November 2024.
   Please take into account its content could be obsolete.
 
 ## Short term
 
 The following list of features are planned to be addressed in the short term, and incorporated into the following release of the product (v3.2.0):
 
+* Transmission on discovery of all QoS policies
+* SHM permissions override
 * Ignore local endpoints configured at endpoint level
 
 ## Medium term
@@ -22,14 +24,34 @@ The following list of features are planned to be addressed in the medium term, t
 
 * Tier 1 support for QNX platforms
 * Tier 1 support for Android platforms
-* Support for Time-based filter QoS
-* Service aware DataWriter
+* Full support for DESTINATION_ORDER QoS
+* Support DURABILITY_SERVICE QoS
+* Set default log level through XML
 
 ## Long term
 
 The following list of features are proposals regarding the longer-term evolution of the product even though development of these features has not yet been scheduled for a release in the near future.
 Please feel free to contact us if you wish to get involved in the implementation or influence the roadmap.
 
+* Full DDS QOS compliance
+    * Support for TIME_BASED_FILTER QoS
+	* Support for TRANSPORT_PRIORITY QoS
+	* Support for READER_DATA_LIFECYCLE QoS
+	* Support for LATENCY_BUDGET QoS
+	* Support for PRESENTATION QoS
 * Full DDS API compliance
+* Batching (allow small samples to be grouped in a single datagram)
+* Allow user to inject system dependencies:
+    * Getting current timestamp
+    * Getting Host ID / process info / etc
+    * Query network interfaces
+    * Thread factory
+    * Security plugin factory
+* Allow user to configure when samples are acknowledged:
+    * When available on reader
+    * When processed (return_loan / take without loan)
+    * On demand (new API on DataReader)
+* New DEBUG log level
+* Service aware DataWriter
 * Compliance with DDS-XML
 * Low bandwidth transports
