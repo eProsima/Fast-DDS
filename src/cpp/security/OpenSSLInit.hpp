@@ -14,10 +14,7 @@
 
 #include <memory>
 
-#include <openssl/evp.h>
-#include <openssl/engine.h>
-#include <openssl/rand.h>
-#include <openssl/err.h>
+#include <openssl/crypto.h>
 
 namespace eprosima {
 namespace fastrtps {
