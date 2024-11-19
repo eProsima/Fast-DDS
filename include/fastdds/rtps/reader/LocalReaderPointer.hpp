@@ -31,6 +31,13 @@ class RTPSReader;
 
 struct LocalReaderPointer : public RefCountedPointer<RTPSReader>
 {
+    LocalReaderPointer(
+            RTPSReader* ptr)
+        : RefCountedPointer<RTPSReader>(ptr)
+    {
+    }
+
+    virtual ~LocalReaderPointer() = default;
 
 };
 

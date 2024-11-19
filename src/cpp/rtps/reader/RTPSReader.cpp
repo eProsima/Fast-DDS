@@ -147,6 +147,8 @@ void RTPSReader::init(
     mp_history->mp_reader = this;
     mp_history->mp_mutex = &mp_mutex;
 
+    local_ptr_ = std::make_shared<LocalReaderPointer>(this);
+
     EPROSIMA_LOG_INFO(RTPS_READER, "RTPSReader created correctly");
 }
 
