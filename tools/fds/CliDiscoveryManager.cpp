@@ -119,6 +119,22 @@ DomainId_t CliDiscoveryManager::get_domain_id(
     return id;
 }
 
+void CliDiscoveryManager::addRemoteServersFromEnv()
+{
+    // Retrieve servers from ROS_STATIC_PEERS
+    std::string env_value;
+    rtps::LocatorList_t servers_list;
+    if (eprosima::SystemInfo::get_env(remote_servers_env_var, env_value) == RETCODE_OK)
+    {
+        load_environment_server_info(env_value, servers_list);
+    }
+    for (rtps::Locator_t& server : servers_list)
+    {
+        server.kind = LOCATOR_KIND_TCPv4;
+        serverQos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server);
+    }
+}
+
 bool CliDiscoveryManager::initial_options_fail(
         std::vector<option::Option>& options,
         option::Parser& parse,
@@ -274,6 +290,7 @@ pid_t CliDiscoveryManager::getPidOfServer(uint16_t& port)
 void CliDiscoveryManager::startServerInBackground(uint16_t& port)
 {
     setServerQos(port);
+    addRemoteServersFromEnv();
 
     pid_t pid = fork();
     if (pid == -1)
@@ -937,6 +954,10 @@ int CliDiscoveryManager::fastdds_discovery_add(
             std::string server = parse.nonOption(noservs);
             servers << server << ";";
         }
+    }
+    else
+    {
+        addRemoteServersFromEnv();
     }
     std::cout << "Adding servers: " << servers.str() << " to Server with Domain ID[" << id << "]" << std::endl;
     kill(server_pid, SIGUSR1);
