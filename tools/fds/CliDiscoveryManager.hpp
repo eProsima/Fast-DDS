@@ -24,6 +24,7 @@
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 
 constexpr const char* domain_env_var = "ROS_DOMAIN_ID";
+constexpr const char* remote_servers_env_var = "ROS_STATIC_PEERS";
 constexpr const char* default_ip = "0.0.0.0";
 
 namespace fds {
@@ -91,6 +92,12 @@ public:
      */
     DomainId_t get_domain_id(
             const eprosima::option::Option* domain_id);
+
+    /**
+     * @brief Set the remote servers list from the environment variable.
+     * Previously set servers are not cleared.
+     */
+    void addRemoteServersFromEnv();
 
     /**
      * @brief Check if the options received by the CLI are free of errors.
