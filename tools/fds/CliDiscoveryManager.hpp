@@ -96,11 +96,13 @@ public:
      * @brief Check if the options received by the CLI are free of errors.
      * @param options The options received from the CLI
      * @param parse The parser object to be used
+     * @param check_nonOpts True if the nonOpts should be checked, false otherwise
      * @return True if the options are incorrect, false otherwise
      */
     bool initial_options_fail(
             std::vector<option::Option>& options,
-            option::Parser& parse);
+            option::Parser& parse,
+            bool check_nonOpts=true);
 
     /**
      * @brief Get the port of the Discovery Server from the CLI.
