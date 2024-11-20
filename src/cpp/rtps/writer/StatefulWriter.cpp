@@ -31,6 +31,7 @@
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/reader/LocalReaderPointer.hpp>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/writer/ReaderProxy.h>
@@ -465,14 +466,14 @@ bool StatefulWriter::intraprocess_delivery(
         CacheChange_t* change,
         ReaderProxy* reader_proxy)
 {
-    RTPSReader* reader = reader_proxy->local_reader();
-    if (reader)
+    LocalReaderPointer::Instance local_reader = reader_proxy->local_reader();
+    if (local_reader)
     {
         if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
         {
             change->write_params.sample_identity(change->write_params.related_sample_identity());
         }
-        return reader->processDataMsg(change);
+        return local_reader->processDataMsg(change);
     }
     return false;
 }
@@ -482,10 +483,11 @@ bool StatefulWriter::intraprocess_gap(
         const SequenceNumber_t& first_seq,
         const SequenceNumber_t& last_seq)
 {
-    RTPSReader* reader = reader_proxy->local_reader();
-    if (reader)
+    LocalReaderPointer::Instance local_reader = reader_proxy->local_reader();
+    if (local_reader)
     {
-        return reader->processGapMsg(m_guid, first_seq, SequenceNumberSet_t(last_seq), c_VendorId_eProsima);
+        return local_reader->processGapMsg(
+            m_guid, first_seq, SequenceNumberSet_t(last_seq), c_VendorId_eProsima);
     }
 
     return false;
@@ -496,12 +498,11 @@ bool StatefulWriter::intraprocess_heartbeat(
         bool liveliness)
 {
     bool returned_value = false;
+    LocalReaderPointer::Instance local_reader = reader_proxy->local_reader();
 
-    std::lock_guard<RecursiveTimedMutex> guardW(mp_mutex);
-    RTPSReader* reader = RTPSDomainImpl::find_local_reader(reader_proxy->guid());
-
-    if (reader)
+    if (local_reader)
     {
+        std::unique_lock<RecursiveTimedMutex> lockW(mp_mutex);
         SequenceNumber_t first_seq = get_seq_num_min();
         SequenceNumber_t last_seq = get_seq_num_max();
 
@@ -518,9 +519,10 @@ bool StatefulWriter::intraprocess_heartbeat(
                 (liveliness || reader_proxy->has_changes()))
         {
             incrementHBCount();
-            returned_value =
-                    reader->processHeartbeatMsg(m_guid, m_heartbeatCount, first_seq, last_seq, true, liveliness,
-                            c_VendorId_eProsima);
+            Count_t hb_count = m_heartbeatCount;
+            lockW.unlock();
+            returned_value = local_reader->processHeartbeatMsg(
+                m_guid, hb_count, first_seq, last_seq, true, liveliness, c_VendorId_eProsima);
         }
     }
 

@@ -294,7 +294,7 @@ public:
      * Get the local reader on the same process (if any).
      * @return The local reader on the same process.
      */
-    inline RTPSReader* local_reader()
+    inline LocalReaderPointer::Instance local_reader()
     {
         return locator_info_.local_reader();
     }

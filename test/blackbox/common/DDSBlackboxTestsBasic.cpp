@@ -46,6 +46,7 @@
 #include "BlackboxTests.hpp"
 #include "mock/BlackboxMockConsumer.h"
 #include "../api/dds-pim/CustomPayloadPool.hpp"
+#include "../api/dds-pim/PubSubParticipant.hpp"
 #include "../api/dds-pim/PubSubReader.hpp"
 #include "../api/dds-pim/PubSubWriter.hpp"
 #include "../api/dds-pim/PubSubWriterReader.hpp"
@@ -897,6 +898,88 @@ TEST(DDSBasic, max_output_message_size_writer)
     reader.block_for_all(std::chrono::seconds(1));
     EXPECT_EQ(reader.getReceivedCount(), 1u);
 
+}
+
+/**
+ * @test This is a regression test for Redmine Issue 21293.
+ * The destruction among intra-process participants should be correctly performed.
+ * local_reader() has to return a valid pointer.
+ *
+ */
+TEST(DDSBasic, successful_destruction_among_intraprocess_participants)
+{
+    // Set intraprocess delivery to full
+    fastrtps::LibrarySettingsAttributes library_settings;
+    library_settings = fastrtps::xmlparser::XMLProfileManager::library_settings();
+    auto old_library_settings = library_settings;
+    library_settings.intraprocess_delivery = fastrtps::INTRAPROCESS_FULL;
+    fastrtps::xmlparser::XMLProfileManager::library_settings(library_settings);
+
+    {
+        auto participant_1 = std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(1u, 1u, 1u, 1u);
+
+        ASSERT_TRUE(participant_1->init_participant());
+        participant_1->pub_topic_name(TEST_TOPIC_NAME);
+        ASSERT_TRUE(participant_1->init_publisher(0u));
+        participant_1->sub_topic_name(TEST_TOPIC_NAME + "_Return");
+        ASSERT_TRUE(participant_1->init_subscriber(0u));
+
+        std::vector<std::shared_ptr<PubSubParticipant<HelloWorldPubSubType>>> reception_participants;
+
+        size_t num_reception_participants = 50;
+
+        for (size_t i = 0; i < num_reception_participants; i++)
+        {
+            reception_participants.push_back(std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(1u, 1u, 1u, 1u));
+            ASSERT_TRUE(reception_participants.back()->init_participant());
+            reception_participants.back()->sub_topic_name(TEST_TOPIC_NAME);
+            ASSERT_TRUE(reception_participants.back()->init_subscriber(0u));
+            reception_participants.back()->pub_topic_name(TEST_TOPIC_NAME + "_Return");
+            ASSERT_TRUE(reception_participants.back()->init_publisher(0u));
+        }
+
+        participant_1->wait_discovery(std::chrono::seconds::zero(), (uint8_t)num_reception_participants, true);
+
+        participant_1->pub_wait_discovery((unsigned int)num_reception_participants);
+        participant_1->sub_wait_discovery((unsigned int)num_reception_participants);
+
+        auto data_12 = default_helloworld_data_generator();
+
+        std::thread p1_thread([&participant_1, &data_12]()
+                {
+                    auto data_size = data_12.size();
+                    for (size_t i = 0; i < data_size; i++)
+                    {
+                        participant_1->send_sample(data_12.back());
+                        data_12.pop_back();
+                    }
+                });
+
+        std::vector<std::thread> reception_threads;
+        reception_threads.reserve(num_reception_participants);
+        for (auto& reception_participant : reception_participants)
+        {
+            reception_threads.emplace_back([&reception_participant]()
+                    {
+                        auto data_21 = default_helloworld_data_generator();
+                        for (auto& data : data_21)
+                        {
+                            reception_participant->send_sample(data);
+                        }
+
+                        reception_participant.reset();
+                    });
+        }
+
+        p1_thread.join();
+        for (auto& rec_thread : reception_threads)
+        {
+            rec_thread.join();
+        }
+    }
+
+    // Restore library settings
+    fastrtps::xmlparser::XMLProfileManager::library_settings(old_library_settings);
 }
 
 } // namespace dds

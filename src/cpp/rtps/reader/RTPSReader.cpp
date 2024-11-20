@@ -21,25 +21,23 @@
 #include <algorithm>
 #include <chrono>
 
-#include <rtps/history/BasicPayloadPool.hpp>
-#include <rtps/history/CacheChangePool.h>
-
-#include <rtps/DataSharing/DataSharingListener.hpp>
-
-#include <rtps/participant/RTPSParticipantImpl.h>
-
-#include <rtps/reader/ReaderHistoryState.hpp>
+#include <fastdds/rtps/reader/RTPSReader.h>
 
 #include <fastdds/dds/log/Log.hpp>
-
-#include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/reader/LocalReaderPointer.hpp>
 #include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 
 #include <foonathan/memory/namespace_alias.hpp>
 
 #include <statistics/rtps/StatisticsBase.hpp>
+
+#include <rtps/DataSharing/DataSharingListener.hpp>
+#include <rtps/history/BasicPayloadPool.hpp>
+#include <rtps/history/CacheChangePool.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/ReaderHistoryState.hpp>
 
 
 namespace eprosima {
@@ -105,6 +103,11 @@ RTPSReader::RTPSReader(
     init(payload_pool, change_pool, att);
 }
 
+void RTPSReader::local_actions_on_reader_removed()
+{
+    local_ptr_->deactivate();
+}
+
 void RTPSReader::init(
         const std::shared_ptr<IPayloadPool>& payload_pool,
         const std::shared_ptr<IChangePool>& change_pool,
@@ -143,6 +146,8 @@ void RTPSReader::init(
 
     mp_history->mp_reader = this;
     mp_history->mp_mutex = &mp_mutex;
+
+    local_ptr_ = std::make_shared<LocalReaderPointer>(this);
 
     EPROSIMA_LOG_INFO(RTPS_READER, "RTPSReader created correctly");
 }
@@ -212,6 +217,11 @@ bool RTPSReader::setListener(
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     mp_listener = target;
     return true;
+}
+
+std::shared_ptr<LocalReaderPointer> RTPSReader::get_local_pointer()
+{
+    return local_ptr_;
 }
 
 History::const_iterator RTPSReader::findCacheInFragmentedProcess(

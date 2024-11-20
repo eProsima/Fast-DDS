@@ -22,14 +22,14 @@
 #define _FASTDDS_RTPS_READERLOCATOR_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <vector>
-#include <fastrtps/rtps/common/Locator.h>
+#include <fastdds/rtps/reader/LocalReaderPointer.hpp>
 #include <fastrtps/rtps/common/Guid.h>
+#include <fastrtps/rtps/common/Locator.h>
+#include <fastrtps/rtps/common/LocatorSelectorEntry.hpp>
 #include <fastrtps/rtps/common/SequenceNumber.h>
 #include <fastrtps/rtps/messages/RTPSMessageGroup.h>
-#include <fastrtps/rtps/common/LocatorSelectorEntry.hpp>
 #include <fastrtps/rtps/messages/RTPSMessageSenderInterface.hpp>
-
+#include <vector>
 
 namespace eprosima {
 namespace fastrtps {
@@ -204,9 +204,9 @@ public:
         return false;
     }
 
-    RTPSReader* local_reader()
+    LocalReaderPointer::Instance local_reader()
     {
-        return nullptr;
+        return LocalReaderPointer::Instance(std::shared_ptr<LocalReaderPointer>());
     }
 
     bool is_datasharing_reader() const

@@ -25,6 +25,7 @@
 #endif // defined(_WIN32) || defined(__unix__)
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
+#include <fastdds/rtps/reader/LocalReaderPointer.hpp>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/RTPSDomain.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
@@ -176,7 +177,7 @@ public:
      *
      * @returns A pointer to a local reader given its endpoint guid, or nullptr if not found.
      */
-    static RTPSReader* find_local_reader(
+    static std::shared_ptr<LocalReaderPointer> find_local_reader(
             const GUID_t& reader_guid);
 
     /**

@@ -121,6 +121,7 @@ class PDP;
 class PDPSimple;
 class IPersistenceService;
 class WLP;
+struct LocalReaderPointer;
 
 /**
  * @brief Class RTPSParticipantImpl, it contains the private implementation of the RTPSParticipant functions and
@@ -479,7 +480,7 @@ public:
     /***
      * @returns A pointer to a local reader given its endpoint guid, or nullptr if not found.
      */
-    RTPSReader* find_local_reader(
+    std::shared_ptr<LocalReaderPointer> find_local_reader(
             const GUID_t& reader_guid);
 
     /***
