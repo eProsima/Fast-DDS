@@ -96,6 +96,13 @@ def test_fastdds_installed(install_path):
         print('test_fastdds_installed FAILED')
         sys.exit(ret)
 
+def test_fastdds_version(install_path):
+    """Test that fastdds version is printed correctly."""
+    args = ' -v'
+    ret = subprocess.call(cmd(install_path, args=args), shell=True)
+    if 0 != ret:
+        print('test_fastdds_version FAILED')
+        sys.exit(ret)
 
 def test_fastdds_shm(install_path):
     """Test that shm command runs."""

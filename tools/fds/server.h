@@ -62,7 +62,7 @@ const option::Descriptor usage[] = {
 
     { HELP,      0, "h",  "help",         Arg::None,
       "  -h  \t--help        Produce help message.\n" },
-    
+
     { VERSION,   0, "v",  "version",      Arg::None,
       "  -v  \t--version     Show FastDDS version information.\n" },
 
