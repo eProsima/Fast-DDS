@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "server.h"
+#include <fastdds/config.hpp>
 
 #include <condition_variable>
 #include <csignal>
@@ -106,6 +107,13 @@ int fastdds_discovery_server(
     {
         option::printUsage(std::cout, usage);
         std::cout << EXAMPLES << std::endl;
+        return 0;
+    }
+
+    // Show version if asked to
+    if (options[VERSION])
+    {
+        std::cout <<  "FastDDS version: " << FASTDDS_VERSION_STR << std::endl;
         return 0;
     }
 

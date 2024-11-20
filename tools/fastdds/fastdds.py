@@ -91,16 +91,7 @@ class FastDDSParser:
             else:
                 getattr(self, args.command)()
         elif args.version:
-            parents_path = list(pathlib.Path(__file__).parent.resolve().parents)
-            path_to_package_xml = [p for p in parents_path if p.name == 'fastdds'][0] / 'package.xml'
-            tree = ET.parse(path_to_package_xml)
-            root = tree.getroot()
-            name = 'Fast DDS'
-            version = root.find('version').text
-            description = root.find('description').text.replace('*', '')
-            print(f"\n\033[1m{name} version: {version}\033[0m\n")
-            print("\033[1mDescription:\033[0m\n")
-            print(textwrap.fill(description, width=120, subsequent_indent="    ") + "\n")
+            DiscoveryParser(['-v'])
         else:
             parser.print_help()
 

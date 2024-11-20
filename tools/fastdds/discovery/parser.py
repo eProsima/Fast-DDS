@@ -54,6 +54,14 @@ class Parser:
                     (len(argv) == 1 and argv[0] == '--help')
                ):
                 print(self.__edit_tool_help(result.stdout))
+                
+            elif (
+                (len(argv) == 1 and argv[0] == '-v') or 
+                (len(argv) == 1 and argv[0] == '--version')
+                ):
+                result = subprocess.run([tool_path, '-v'])
+                if result.returncode != 0:
+                    sys.exit(result.returncode)
             else:
                 # Call the tool
                 result = subprocess.run([tool_path] + argv)
