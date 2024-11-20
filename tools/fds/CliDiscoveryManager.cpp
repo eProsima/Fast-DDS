@@ -24,7 +24,6 @@
 #include <stdlib.h>
 #include <fstream>
 
-#include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
@@ -119,7 +118,7 @@ DomainId_t CliDiscoveryManager::get_domain_id(
     return id;
 }
 
-void CliDiscoveryManager::addRemoteServersFromEnv()
+void CliDiscoveryManager::addRemoteServersFromEnv(rtps::LocatorList_t& target_list)
 {
     // Retrieve servers from ROS_STATIC_PEERS
     std::string env_value;
@@ -131,8 +130,27 @@ void CliDiscoveryManager::addRemoteServersFromEnv()
     for (rtps::Locator_t& server : servers_list)
     {
         server.kind = LOCATOR_KIND_TCPv4;
-        serverQos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server);
+        target_list.push_back(server);
     }
+}
+
+std::string CliDiscoveryManager::getRemoteServers(option::Parser& parse, int numServs)
+{
+    std::string servers;
+    if (numServs)
+    {
+        servers = parse.nonOption(0);
+    }
+    else
+    {
+        rtps::LocatorList_t serverList;
+        addRemoteServersFromEnv(serverList);
+        for (rtps::Locator_t& locator : serverList)
+        {
+            servers += IPLocator::to_string(locator);
+        }
+    }
+    return servers;
 }
 
 bool CliDiscoveryManager::initial_options_fail(
@@ -277,7 +295,7 @@ pid_t CliDiscoveryManager::getPidOfServer(uint16_t& port)
 {
     std::string command = "lsof -i :";
     command += std::to_string(port);
-    command += " -t";
+    command += " | grep LISTEN | awk '{print $2}'";
     std::string result = execCommand(command);
     if (result.empty())
     {
@@ -287,10 +305,13 @@ pid_t CliDiscoveryManager::getPidOfServer(uint16_t& port)
     return std::stoi(result);
 }
 
-void CliDiscoveryManager::startServerInBackground(uint16_t& port)
+void CliDiscoveryManager::startServerInBackground(uint16_t& port, bool use_env_var)
 {
     setServerQos(port);
-    addRemoteServersFromEnv();
+    if (use_env_var)
+    {
+        addRemoteServersFromEnv(serverQos.wire_protocol().builtin.discovery_config.m_DiscoveryServers);
+    }
 
     pid_t pid = fork();
     if (pid == -1)
@@ -301,7 +322,7 @@ void CliDiscoveryManager::startServerInBackground(uint16_t& port)
     else if (pid == 0)
     {
         // Create the server in the child process
-        DomainParticipant* pServer = DomainParticipantFactory::get_instance()->create_participant(0, serverQos);
+        pServer = DomainParticipantFactory::get_instance()->create_participant(0, serverQos);
 
         if (nullptr == pServer)
         {
@@ -314,6 +335,7 @@ void CliDiscoveryManager::startServerInBackground(uint16_t& port)
         std::unique_lock<std::mutex> lock(g_signal_mutex);
         // Handle signal SIGINT for every thread
         signal(SIGUSR1, sigint_handler);
+        signal(SIGUSR2, sigint_handler);
         signal(SIGINT, sigint_handler);
         signal(SIGTERM, sigint_handler);
 #ifndef _WIN32
@@ -348,6 +370,22 @@ void CliDiscoveryManager::startServerInBackground(uint16_t& port)
                 pServer->get_qos(serverQos);
                 serverQos.wire_protocol().builtin.discovery_config.m_DiscoveryServers = serverList;
                 pServer->set_qos(serverQos);
+                g_signal_status = 0;
+            }
+            else if (SIGUSR2 == g_signal_status)
+            {
+                DomainParticipantFactory::get_instance()->delete_participant(pServer);
+                std::stringstream file_name;
+                // TODO (Carlos): Check file location
+                file_name << "/tmp/" << port << "_servers.txt";
+                rtps::LocatorList_t serverList;
+                load_environment_server_info(read_servers_from_file(file_name.str()), serverList);
+                for (rtps::Locator_t& locator : serverList)
+                {
+                    locator.kind = LOCATOR_KIND_TCPv4;
+                }
+                serverQos.wire_protocol().builtin.discovery_config.m_DiscoveryServers = serverList;
+                pServer = DomainParticipantFactory::get_instance()->create_participant(0, serverQos);
                 g_signal_status = 0;
             }
             else
@@ -931,6 +969,13 @@ int CliDiscoveryManager::fastdds_discovery_add(
 
     // Add new remote servers for the domain specified
     int return_value = 0;
+    // Servers are added directly to the CLI with no arg associated
+    int numServs = parse.nonOptionsCount();
+    if (numServs > 1)
+    {
+        std::cout << "Too many arguments specified. Expected format is: add -d <domain> <ip:domain;ip:domain...>" << std::endl;
+        return 1;
+    }
 
     option::Option* pOp = options[DOMAIN];
     DomainId_t id = get_domain_id(pOp);
@@ -944,24 +989,9 @@ int CliDiscoveryManager::fastdds_discovery_add(
     pid_t server_pid = getPidOfServer(port);
     std::stringstream file_name;
     file_name << "/tmp/" << port << "_servers.txt";
-    // Servers are added directly to the CLI
-    int noservs = parse.nonOptionsCount();
-    std::stringstream servers;
-    if (noservs)
-    {
-        while (noservs--)
-        {
-            std::string server = parse.nonOption(noservs);
-            servers << server << ";";
-        }
-    }
-    else
-    {
-        addRemoteServersFromEnv();
-    }
-    std::cout << "Adding servers: " << servers.str() << " to Server with Domain ID[" << id << "]" << std::endl;
+    std::string servers = getRemoteServers(parse, numServs);
     kill(server_pid, SIGUSR1);
-    write_servers_to_file(file_name.str(), servers.str());
+    write_servers_to_file(file_name.str(), servers);
 
     return return_value;
 }
@@ -970,14 +1000,40 @@ int CliDiscoveryManager::fastdds_discovery_set(
     std::vector<option::Option>& options,
     option::Parser& parse)
 {
-    if (initial_options_fail(options, parse))
+    if (initial_options_fail(options, parse, false))
     {
         return 1;
     }
 
     // Set a server for the domain specified
     int return_value = 0;
-    std::cout << "Set mode not implemented yet." << std::endl;
+    // Servers are added directly to the CLI with no arg associated
+    int numServs = parse.nonOptionsCount();
+    if (numServs > 1)
+    {
+        std::cout << "Too many arguments specified. Expected format is: set -d <domain> <ip:domain;ip:domain...>" << std::endl;
+        return 1;
+    }
+
+    option::Option* pOp = options[DOMAIN];
+    DomainId_t id = get_domain_id(pOp);
+    if (!isServerRunning(id))
+    {
+        std::cout << "There is no running Server for Domain ID [" << id << "]." << std::endl;
+        return return_value;
+    }
+
+    uint16_t port = getDiscoveryServerPort(id);
+    pid_t server_pid = getPidOfServer(port);
+    if (server_pid == 0)
+    {
+        return 1;
+    }
+    std::stringstream file_name;
+    file_name << "/tmp/" << port << "_servers.txt";
+    std::string servers = getRemoteServers(parse, numServs);
+    kill(server_pid, SIGUSR2);
+    write_servers_to_file(file_name.str(), servers);
 
     return return_value;
 }
