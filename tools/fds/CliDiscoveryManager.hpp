@@ -68,7 +68,9 @@ struct MetaInfo_DS
     {
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const MetaInfo_DS& meta)
+    friend std::ostream& operator <<(
+            std::ostream& os,
+            const MetaInfo_DS& meta)
     {
         os << "- Server:\n"
            << "   Domain ID: " << meta.domain_id
@@ -82,6 +84,7 @@ struct MetaInfo_DS
 class CliDiscoveryManager
 {
 public:
+
     using Locator_t = fastdds::rtps::Locator_t;
     using IPLocator = fastdds::rtps::IPLocator;
 
@@ -99,7 +102,8 @@ public:
      * Previously set servers are not cleared.
      * @param target_list The list to be set
      */
-    void addRemoteServersFromEnv(rtps::LocatorList_t& target_list);
+    void addRemoteServersFromEnv(
+            rtps::LocatorList_t& target_list);
 
     /**
      * @brief Load the remote servers information from the CLI or the environment variable.
@@ -107,7 +111,9 @@ public:
      * @param numServs Number of nonOpts, which are meant to be servers
      * @return The servers locators in string format
      */
-    std::string getRemoteServers(option::Parser& parse, int numServs);
+    std::string getRemoteServers(
+            option::Parser& parse,
+            int numServs);
 
     /**
      * @brief Check if the options received by the CLI are free of errors.
@@ -119,7 +125,7 @@ public:
     bool initial_options_fail(
             std::vector<option::Option>& options,
             option::Parser& parse,
-            bool check_nonOpts=true);
+            bool check_nonOpts = true);
 
     /**
      * @brief Get the port of the Discovery Server from the CLI.
@@ -162,34 +168,40 @@ public:
      * @param domain The domain id of the Discovery Server
      * @return True if the server is running, false otherwise
      */
-    bool isServerRunning(DomainId_t& domain);
+    bool isServerRunning(
+            DomainId_t& domain);
 
     /**
      * @brief Get the PID of the Discovery Server running in the specified port.
      * @param port The port of the Discovery Server
      * @return The PID of the Discovery Server
      */
-    pid_t getPidOfServer(uint16_t& port);
+    pid_t getPidOfServer(
+            uint16_t& port);
 
     /**
      * @brief Starts a new Discovery Server in the specified @param port running
      * in the background.
      * @param port The port of the Discovery Server
      */
-    void startServerInBackground(uint16_t& port, bool use_env_var=true);
+    void startServerInBackground(
+            uint16_t& port,
+            bool use_env_var = true);
 
     /**
      * @brief Set the QoS of the Discovery Server.
      * @param port The port of the Discovery Server
      */
-    void setServerQos(uint16_t port);
+    void setServerQos(
+            uint16_t port);
 
     /**
      * @brief Load the XML configuration into the serverQos.
      * @param xmlArg The XML file argument
      * @return True if the XML file is loaded, false otherwise
      */
-    bool loadXMLFile(const eprosima::option::Option* xmlArg);
+    bool loadXMLFile(
+            const eprosima::option::Option* xmlArg);
 
     /**
      * @brief Get the UDP and TCP ports and addresses from the CLI arguments.
@@ -212,9 +224,9 @@ public:
      * @return True if the address and kind are set, false otherwise
      */
     bool setAddressAndKind(
-        const std::string& address,
-        Locator_t& locator,
-        bool is_tcp);
+            const std::string& address,
+            Locator_t& locator,
+            bool is_tcp);
 
     /**
      * @brief Set the metatrafficUnicastLocatorList for UDP servers.
@@ -312,6 +324,7 @@ public:
             option::Parser& parse);
 
 private:
+
     //! QoS of the Discovery Server that will be initialized
     DomainParticipantQos serverQos;
     //! DomainParticipant of the Discovery Server
