@@ -29,9 +29,12 @@
 #include <fastrtps/rtps/RTPSDomain.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 
+#include <utils/shared_memory/BoostAtExitRegistry.hpp>
 #include <utils/SystemInfo.hpp>
 
-#include <utils/shared_memory/BoostAtExitRegistry.hpp>
+#if HAVE_SECURITY
+#include <security/OpenSSLInit.hpp>
+#endif // HAVE_SECURITY
 
 namespace eprosima {
 namespace fastrtps {
@@ -249,6 +252,9 @@ private:
     std::shared_ptr<eprosima::detail::BoostAtExitRegistry> boost_singleton_handler_ { eprosima::detail::
                                                                                               BoostAtExitRegistry::
                                                                                               get_instance() };
+#if HAVE_SECURITY
+    std::shared_ptr<security::OpenSSLInit> openssl_singleton_handler_{ security::OpenSSLInit::get_instance() };
+#endif // HAVE_SECURITY
 
     std::mutex m_mutex;
 
