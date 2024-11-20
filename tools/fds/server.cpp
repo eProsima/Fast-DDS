@@ -113,7 +113,7 @@ int fastdds_discovery_server(
     // Show version if asked to
     if (options[VERSION])
     {
-        std::cout <<  "Fast DDS version: " << FASTDDS_VERSION_STR << std::endl;
+        std::cout << "Fast DDS version: " << FASTDDS_VERSION_STR << std::endl;
         return 0;
     }
 

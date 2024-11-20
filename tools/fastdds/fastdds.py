@@ -42,10 +42,7 @@ optional arguments:
 """
 
 import argparse
-import pathlib
 import sys
-import textwrap
-import xml.etree.ElementTree as ET
 
 from discovery.parser import Parser as DiscoveryParser
 

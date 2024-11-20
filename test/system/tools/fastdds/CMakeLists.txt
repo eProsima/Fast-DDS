@@ -26,6 +26,7 @@ if(Python3_Interpreter_FOUND)
 
     set(TESTS
         test_fastdds_installed
+        test_fastdds_version
         test_fastdds_discovery
         test_ros_discovery
         test_fastdds_shm

@@ -54,7 +54,6 @@ class Parser:
                     (len(argv) == 1 and argv[0] == '--help')
                ):
                 print(self.__edit_tool_help(result.stdout))
-                
             elif (
                 (len(argv) == 1 and argv[0] == '-v') or 
                 (len(argv) == 1 and argv[0] == '--version')

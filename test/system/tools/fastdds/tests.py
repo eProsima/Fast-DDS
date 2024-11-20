@@ -98,7 +98,7 @@ def test_fastdds_installed(install_path):
 
 def test_fastdds_version(install_path):
     """Test that fastdds version is printed correctly."""
-    args = ' -v'
+    args = '-v'
     ret = subprocess.call(cmd(install_path, args=args), shell=True)
     if 0 != ret:
         print('test_fastdds_version FAILED')
@@ -205,6 +205,8 @@ if __name__ == '__main__':
     tests = {
         'test_fastdds_installed':
         lambda: test_fastdds_installed(fastdds_tool_path),
+        'test_fastdds_version':
+        lambda: test_fastdds_version(fastdds_tool_path),
         'test_fastdds_discovery': lambda: test_fastdds_discovery(
             fastdds_tool_path, setup_script_path),
         'test_ros_discovery':
