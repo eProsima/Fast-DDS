@@ -40,32 +40,32 @@ int main (
 
     switch (command_int)
     {
-    case ToolCommand::AUTO:
-        return cli_manager.fastdds_discovery_auto(options, parse);
-        break;
-    case ToolCommand::START:
-        return cli_manager.fastdds_discovery_start(options, parse);
-        break;
-    case ToolCommand::STOP:
-        return cli_manager.fastdds_discovery_stop(options, parse);
-        break;
-    case ToolCommand::ADD:
-        return cli_manager.fastdds_discovery_add(options, parse);
-        break;
-    case ToolCommand::SET:
-        return cli_manager.fastdds_discovery_set(options, parse);
-        break;
-    case ToolCommand::LIST:
-        return cli_manager.fastdds_discovery_list(options, parse);
-        break;
-    case ToolCommand::INFO:
-        return cli_manager.fastdds_discovery_info(options, parse);
-        break;
-    case ToolCommand::SERVER:
-        return cli_manager.fastdds_discovery_server(options, parse);
-        break;
+        case ToolCommand::AUTO:
+            return cli_manager.fastdds_discovery_auto(options, parse);
+            break;
+        case ToolCommand::START:
+            return cli_manager.fastdds_discovery_start(options, parse);
+            break;
+        case ToolCommand::STOP:
+            return cli_manager.fastdds_discovery_stop(options, parse);
+            break;
+        case ToolCommand::ADD:
+            return cli_manager.fastdds_discovery_add(options, parse);
+            break;
+        case ToolCommand::SET:
+            return cli_manager.fastdds_discovery_set(options, parse);
+            break;
+        case ToolCommand::LIST:
+            return cli_manager.fastdds_discovery_list(options, parse);
+            break;
+        case ToolCommand::INFO:
+            return cli_manager.fastdds_discovery_info(options, parse);
+            break;
+        case ToolCommand::SERVER:
+            return cli_manager.fastdds_discovery_server(options, parse);
+            break;
 
-    default:
-        break;
+        default:
+            break;
     }
 }
