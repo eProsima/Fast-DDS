@@ -120,8 +120,6 @@ class Parser:
             else:
                 args_for_cpp = [str(command_int)] + sys.argv[3:]
 
-            print(argv) # TODO (Carlos): Remove this line
-            print('Args for cpp:', args_for_cpp) # TODO (Carlos): Remove this line
             # Call the tool
             result = subprocess.run([tool_path] + args_for_cpp)
             if result.returncode != 0:
