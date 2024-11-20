@@ -1941,7 +1941,7 @@ TEST(BuiltinDataSerializationTests, interoperability_with_intercomdds)
         msg.length = msg.max_size;
 
         ParticipantProxyData out({});
-        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, true, network, false, intercom_vendor_id)));
+        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, true, network, false, true, intercom_vendor_id)));
     }
 
     // DATA(w)
@@ -2005,7 +2005,7 @@ TEST(BuiltinDataSerializationTests, interoperability_with_intercomdds)
         msg.length = msg.max_size;
 
         WriterProxyData out(max_unicast_locators, max_multicast_locators);
-        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true, intercom_vendor_id)));
+        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true, true, intercom_vendor_id)));
     }
 
     // DATA(r)
@@ -2072,7 +2072,7 @@ TEST(BuiltinDataSerializationTests, interoperability_with_intercomdds)
         msg.length = msg.max_size;
 
         ReaderProxyData out(max_unicast_locators, max_multicast_locators);
-        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true, intercom_vendor_id)));
+        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true, true, intercom_vendor_id)));
     }
 }
 
@@ -2287,7 +2287,7 @@ TEST(BuiltinDataSerializationTests, deserialization_of_big_parameters)
             att.data_limits.max_user_data = parameter_length;
             ParticipantProxyData out({});
             EXPECT_NO_THROW(
-                if (!out.readFromCDRMessage(&msg, true, network, false))
+                if (!out.readFromCDRMessage(&msg, true, network, false, false))
                         {
                             failed_for_data_p.insert(pid);
                         }
@@ -2304,7 +2304,7 @@ TEST(BuiltinDataSerializationTests, deserialization_of_big_parameters)
             limits.max_user_data = parameter_length;
             WriterProxyData out(max_unicast_locators, max_multicast_locators, limits);
             EXPECT_NO_THROW(
-                if (!out.readFromCDRMessage(&msg, network, true))
+                if (!out.readFromCDRMessage(&msg, network, true, false))
                         {
                             failed_for_data_w.insert(pid);
                         }
@@ -2321,7 +2321,7 @@ TEST(BuiltinDataSerializationTests, deserialization_of_big_parameters)
             limits.max_user_data = parameter_length;
             ReaderProxyData out(max_unicast_locators, max_multicast_locators, limits);
             EXPECT_NO_THROW(
-                if (!out.readFromCDRMessage(&msg, network, true))
+                if (!out.readFromCDRMessage(&msg, network, true, false))
                         {
                             failed_for_data_r.insert(pid);
                         }
