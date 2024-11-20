@@ -21,6 +21,7 @@
 #include <optionparser.hpp>
 #include <fastdds/rtps/common/PortParameters.hpp>
 #include <fastdds/dds/core/Types.hpp>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 
 constexpr const char* domain_env_var = "ROS_DOMAIN_ID";
@@ -96,8 +97,17 @@ public:
     /**
      * @brief Set the remote servers list from the environment variable.
      * Previously set servers are not cleared.
+     * @param target_list The list to be set
      */
-    void addRemoteServersFromEnv();
+    void addRemoteServersFromEnv(rtps::LocatorList_t& target_list);
+
+    /**
+     * @brief Load the remote servers information from the CLI or the environment variable.
+     * @param parse The parser object to be used
+     * @param numServs Number of nonOpts, which are meant to be servers
+     * @return The servers locators in string format
+     */
+    std::string getRemoteServers(option::Parser& parse, int numServs);
 
     /**
      * @brief Check if the options received by the CLI are free of errors.
@@ -166,7 +176,7 @@ public:
      * in the background.
      * @param port The port of the Discovery Server
      */
-    void startServerInBackground(uint16_t& port);
+    void startServerInBackground(uint16_t& port, bool use_env_var=true);
 
     /**
      * @brief Set the QoS of the Discovery Server.
@@ -304,6 +314,8 @@ public:
 private:
     //! QoS of the Discovery Server that will be initialized
     DomainParticipantQos serverQos;
+    //! DomainParticipant of the Discovery Server
+    DomainParticipant* pServer;
     //! Default port parameters used to calculate Discovery Server ports
     rtps::PortParameters port_params_;
     //! UDP ports received from the CLI
