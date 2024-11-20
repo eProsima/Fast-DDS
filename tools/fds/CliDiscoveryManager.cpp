@@ -48,7 +48,8 @@ void sigint_handler(
     g_signal_cv.notify_one();
 }
 
-static std::string read_servers_from_file(const std::string& file)
+static std::string read_servers_from_file(
+        const std::string& file)
 {
     std::ifstream ifs(file);
     if (!ifs.is_open())
@@ -62,7 +63,9 @@ static std::string read_servers_from_file(const std::string& file)
     return line;
 }
 
-static bool write_servers_to_file(const std::string& file, const std::string& servers)
+static bool write_servers_to_file(
+        const std::string& file,
+        const std::string& servers)
 {
     std::ofstream ofs(file);
     if (!ofs.is_open())
@@ -118,7 +121,8 @@ DomainId_t CliDiscoveryManager::get_domain_id(
     return id;
 }
 
-void CliDiscoveryManager::addRemoteServersFromEnv(rtps::LocatorList_t& target_list)
+void CliDiscoveryManager::addRemoteServersFromEnv(
+        rtps::LocatorList_t& target_list)
 {
     // Retrieve servers from ROS_STATIC_PEERS
     std::string env_value;
@@ -134,7 +138,9 @@ void CliDiscoveryManager::addRemoteServersFromEnv(rtps::LocatorList_t& target_li
     }
 }
 
-std::string CliDiscoveryManager::getRemoteServers(option::Parser& parse, int numServs)
+std::string CliDiscoveryManager::getRemoteServers(
+        option::Parser& parse,
+        int numServs)
 {
     std::string servers;
     if (numServs)
@@ -226,10 +232,12 @@ uint16_t CliDiscoveryManager::getDiscoveryServerPort(
     return port;
 }
 
-std::string CliDiscoveryManager::execCommand(const std::string& command) {
+std::string CliDiscoveryManager::execCommand(
+        const std::string& command)
+{
     std::array<char, 128> buffer;
     std::string result;
-    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(command.c_str(), "r"), pclose);
+    std::unique_ptr<FILE, decltype(& pclose)> pipe(popen(command.c_str(), "r"), pclose);
     if (!pipe)
     {
         std::cerr << "Error processing command:" << command << std::endl;
@@ -278,7 +286,8 @@ std::vector<MetaInfo_DS> CliDiscoveryManager::getLocalServers()
     return servers;
 }
 
-bool CliDiscoveryManager::isServerRunning(DomainId_t& domain)
+bool CliDiscoveryManager::isServerRunning(
+        DomainId_t& domain)
 {
     std::vector<MetaInfo_DS> servers = getLocalServers();
     for (const MetaInfo_DS& server : servers)
@@ -291,7 +300,8 @@ bool CliDiscoveryManager::isServerRunning(DomainId_t& domain)
     return false;
 }
 
-pid_t CliDiscoveryManager::getPidOfServer(uint16_t& port)
+pid_t CliDiscoveryManager::getPidOfServer(
+        uint16_t& port)
 {
     std::string command = "lsof -i :";
     command += std::to_string(port);
@@ -305,7 +315,9 @@ pid_t CliDiscoveryManager::getPidOfServer(uint16_t& port)
     return std::stoi(result);
 }
 
-void CliDiscoveryManager::startServerInBackground(uint16_t& port, bool use_env_var)
+void CliDiscoveryManager::startServerInBackground(
+        uint16_t& port,
+        bool use_env_var)
 {
     setServerQos(port);
     if (use_env_var)
@@ -403,7 +415,8 @@ void CliDiscoveryManager::startServerInBackground(uint16_t& port, bool use_env_v
     }
 }
 
-void CliDiscoveryManager::setServerQos(uint16_t port)
+void CliDiscoveryManager::setServerQos(
+        uint16_t port)
 {
     rtps::Locator_t locator;
     locator.kind = LOCATOR_KIND_TCPv4;
@@ -418,7 +431,8 @@ void CliDiscoveryManager::setServerQos(uint16_t port)
     serverQos.wire_protocol().builtin.discovery_config.discoveryProtocol = rtps::DiscoveryProtocol::SERVER;
 }
 
-bool CliDiscoveryManager::loadXMLFile(const eprosima::option::Option* xmlArg)
+bool CliDiscoveryManager::loadXMLFile(
+        const eprosima::option::Option* xmlArg)
 {
     constexpr const char* delimiter = "@";
     std::string sXMLConfigFile = "";
@@ -438,7 +452,7 @@ bool CliDiscoveryManager::loadXMLFile(const eprosima::option::Option* xmlArg)
                     sXMLConfigFile))
         {
             std::cout << "Cannot open XML file " << sXMLConfigFile << ". Please, check the path of this "
-                        << "XML file." << std::endl;
+                      << "XML file." << std::endl;
             return false;
         }
         if (profile.empty())
@@ -492,7 +506,8 @@ bool CliDiscoveryManager::addUdpServers()
     }
     auto it_p = udp_ports_.begin();
     auto it_i = udp_ips_.begin();
-    while (it_p != udp_ports_.end() || it_i != udp_ips_.end()) {
+    while (it_p != udp_ports_.end() || it_i != udp_ips_.end())
+    {
         uint16_t port = (it_p != udp_ports_.end()) ? *it_p : rtps::DEFAULT_ROS2_SERVER_PORT;
         std::string ip = (it_i != udp_ips_.end()) ? *it_i : "";
 
@@ -503,8 +518,14 @@ bool CliDiscoveryManager::addUdpServers()
         }
         serverQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(loc);
 
-        if (it_p != udp_ports_.end()) ++it_p;
-        if (it_i != udp_ips_.end()) ++it_i;
+        if (it_p != udp_ports_.end())
+        {
+            ++it_p;
+        }
+        if (it_i != udp_ips_.end())
+        {
+            ++it_i;
+        }
     }
     return true;
 }
@@ -519,7 +540,8 @@ bool CliDiscoveryManager::addTcpServers()
     }
     auto it_p = tcp_ports_.begin();
     auto it_i = tcp_ips_.begin();
-    while (it_p != tcp_ports_.end() || it_i != tcp_ips_.end()) {
+    while (it_p != tcp_ports_.end() || it_i != tcp_ips_.end())
+    {
         uint16_t port = (it_p != tcp_ports_.end()) ? *it_p : rtps::DEFAULT_TCP_SERVER_PORT;
         std::string ip = (it_i != tcp_ips_.end()) ? *it_i : "";
 
@@ -531,8 +553,14 @@ bool CliDiscoveryManager::addTcpServers()
         }
         serverQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(loc);
 
-        if (it_p != tcp_ports_.end()) ++it_p;
-        if (it_i != tcp_ips_.end()) ++it_i;
+        if (it_p != tcp_ports_.end())
+        {
+            ++it_p;
+        }
+        if (it_i != tcp_ips_.end())
+        {
+            ++it_i;
+        }
     }
     return true;
 }
@@ -581,7 +609,7 @@ void CliDiscoveryManager::getCliPortsAndIps(
         udp_ports_.push_back(getDiscoveryServerPort(udpPort));
         udpPort = udpPort->next();
     }
-    while(udpIp)
+    while (udpIp)
     {
         udp_ips_.push_back(std::string(udpIp->arg));
         udpIp = udpIp->next();
@@ -591,7 +619,7 @@ void CliDiscoveryManager::getCliPortsAndIps(
         tcp_ports_.push_back(getDiscoveryServerPort(tcpPort));
         tcpPort = tcpPort->next();
     }
-    while(tcpIp)
+    while (tcpIp)
     {
         tcp_ips_.push_back(std::string(tcpIp->arg));
         tcpIp = tcpIp->next();
@@ -734,7 +762,8 @@ int CliDiscoveryManager::fastdds_discovery_server(
     }
     else if (pOp->count() != 1)
     {
-        std::cout << "Only one server participant can be created, thus, only one server id can be specified." << std::endl;
+        std::cout << "Only one server participant can be created, thus, only one server id can be specified." <<
+                            std::endl;
         return 1;
     }
     else
@@ -871,8 +900,8 @@ int CliDiscoveryManager::fastdds_discovery_server(
 }
 
 int CliDiscoveryManager::fastdds_discovery_auto(
-    std::vector<option::Option>& options,
-    option::Parser& parse)
+        std::vector<option::Option>& options,
+        option::Parser& parse)
 {
     if (initial_options_fail(options, parse))
     {
@@ -903,8 +932,8 @@ int CliDiscoveryManager::fastdds_discovery_auto(
 }
 
 int CliDiscoveryManager::fastdds_discovery_start(
-    std::vector<option::Option>& options,
-    option::Parser& parse)
+        std::vector<option::Option>& options,
+        option::Parser& parse)
 {
     if (initial_options_fail(options, parse))
     {
@@ -918,8 +947,8 @@ int CliDiscoveryManager::fastdds_discovery_start(
 }
 
 int CliDiscoveryManager::fastdds_discovery_stop(
-    std::vector<option::Option>& options,
-    option::Parser& parse)
+        std::vector<option::Option>& options,
+        option::Parser& parse)
 {
     if (initial_options_fail(options, parse))
     {
@@ -959,8 +988,8 @@ int CliDiscoveryManager::fastdds_discovery_stop(
 }
 
 int CliDiscoveryManager::fastdds_discovery_add(
-    std::vector<option::Option>& options,
-    option::Parser& parse)
+        std::vector<option::Option>& options,
+        option::Parser& parse)
 {
     if (initial_options_fail(options, parse, false))
     {
@@ -973,7 +1002,8 @@ int CliDiscoveryManager::fastdds_discovery_add(
     int numServs = parse.nonOptionsCount();
     if (numServs > 1)
     {
-        std::cout << "Too many arguments specified. Expected format is: add -d <domain> <ip:domain;ip:domain...>" << std::endl;
+        std::cout << "Too many arguments specified. Expected format is: add -d <domain> <ip:domain;ip:domain...>" <<
+                            std::endl;
         return 1;
     }
 
@@ -997,8 +1027,8 @@ int CliDiscoveryManager::fastdds_discovery_add(
 }
 
 int CliDiscoveryManager::fastdds_discovery_set(
-    std::vector<option::Option>& options,
-    option::Parser& parse)
+        std::vector<option::Option>& options,
+        option::Parser& parse)
 {
     if (initial_options_fail(options, parse, false))
     {
@@ -1011,7 +1041,8 @@ int CliDiscoveryManager::fastdds_discovery_set(
     int numServs = parse.nonOptionsCount();
     if (numServs > 1)
     {
-        std::cout << "Too many arguments specified. Expected format is: set -d <domain> <ip:domain;ip:domain...>" << std::endl;
+        std::cout << "Too many arguments specified. Expected format is: set -d <domain> <ip:domain;ip:domain...>" <<
+                            std::endl;
         return 1;
     }
 
@@ -1039,8 +1070,8 @@ int CliDiscoveryManager::fastdds_discovery_set(
 }
 
 int CliDiscoveryManager::fastdds_discovery_list(
-    std::vector<option::Option>& options,
-    option::Parser& parse)
+        std::vector<option::Option>& options,
+        option::Parser& parse)
 {
     if (initial_options_fail(options, parse))
     {
@@ -1061,8 +1092,8 @@ int CliDiscoveryManager::fastdds_discovery_list(
 }
 
 int CliDiscoveryManager::fastdds_discovery_info(
-    std::vector<option::Option>& options,
-    option::Parser& parse)
+        std::vector<option::Option>& options,
+        option::Parser& parse)
 {
     if (initial_options_fail(options, parse))
     {
