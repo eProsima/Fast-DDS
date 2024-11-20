@@ -64,7 +64,7 @@ const option::Descriptor usage[] = {
       "  -h  \t--help        Produce help message.\n" },
 
     { VERSION,   0, "v",  "version",      Arg::None,
-      "  -v  \t--version     Show FastDDS version information.\n" },
+      "  -v  \t--version     Show Fast DDS version information.\n" },
 
     { UDPADDRESS, 0, "l", "udp-address",   Arg::OptionalAny,
       "  -l \t--udp-address IPv4/IPv6 address chosen to listen the clients. Defaults\n"
