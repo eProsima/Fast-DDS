@@ -55,6 +55,7 @@
 
 #include <cassert>
 #include <algorithm>
+#include <utility>
 
 #define S1(x) #x
 #define S2(x) S1(x)
@@ -1051,8 +1052,39 @@ ValidationResult_t PKIDH::validate_local_identity(
         password = &empty_password;
     }
 
+    std::string key_agreement_algorithm = DH_2048_256;
+    std::string* key_agreement_property =
+            PropertyPolicyHelper::find_property(auth_properties, "preferred_key_agreement");
+    if (nullptr != key_agreement_property)
+    {
+        const std::pair<std::string, std::string> key_agreement_allowed_values[] = {
+            {DH_2048_256, DH_2048_256},
+            {ECDH_prime256v1, ECDH_prime256v1},
+            {"ECDH", ECDH_prime256v1},
+            {"RSA", DH_2048_256}
+        };
+
+        key_agreement_algorithm = "";
+        for (const auto& allowed_value : key_agreement_allowed_values)
+        {
+            if (key_agreement_property->compare(allowed_value.first) == 0)
+            {
+                key_agreement_algorithm = allowed_value.second;
+                break;
+            }
+        }
+
+        if (key_agreement_algorithm.empty())
+        {
+            exception = _SecurityException_("Invalid key agreement algorithm '" + *key_agreement_property + "'");
+            EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
+            return ValidationResult_t::VALIDATION_FAILED;
+        }
+    }
+
     PKIIdentityHandle* ih = &PKIIdentityHandle::narrow(*get_identity_handle(exception));
 
+    (*ih)->kagree_alg_ = key_agreement_algorithm;
     (*ih)->store_ = load_identity_ca(*identity_ca, (*ih)->there_are_crls_, (*ih)->sn, (*ih)->algo,
                     exception);
 
@@ -1266,7 +1298,6 @@ ValidationResult_t PKIDH::begin_handshake_request(
     bproperty.propagate(true);
     (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
-    // TODO(Ricardo) Only support right now DH+MODP-2048-256
     // c.kagree_algo.
     bproperty.name("c.kagree_algo");
     bproperty.value().assign(lih->kagree_alg_.begin(),
@@ -1636,7 +1667,6 @@ ValidationResult_t PKIDH::begin_handshake_reply(
     bproperty.propagate(true);
     (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
-    // TODO(Ricardo) Only support right now DH+MODP-2048-256
     // c.kagree_algo.
     bproperty.name("c.kagree_algo");
     bproperty.value().assign((*handshake_handle_aux)->kagree_alg_.begin(),
