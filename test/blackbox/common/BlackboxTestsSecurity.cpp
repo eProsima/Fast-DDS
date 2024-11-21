@@ -136,6 +136,22 @@ public:
         }
     }
 
+    void fill_sub_auth(
+            PropertyPolicy& policy)
+    {
+        fill_basic_sub_auth(policy);
+        switch (std::get<1>(GetParam()))
+        {
+            case key_agree_alg::RSA:
+                policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "RSA");
+                break;
+            case key_agree_alg::ECDH:
+            default:
+                policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "ECDH");
+                break;
+        }
+    }
+
 };
 
 class SecurityPkcs : public ::testing::Test
@@ -289,7 +305,7 @@ TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_validation_ok)
 
     PropertyPolicy pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_property_policy);
+    fill_sub_auth(sub_property_policy);
 
     reader.history_depth(10).
             reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
@@ -382,7 +398,7 @@ TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_validation_fail)
         PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
         PropertyPolicy sub_property_policy;
-        fill_basic_sub_auth(sub_property_policy);
+        fill_sub_auth(sub_property_policy);
 
         reader.history_depth(10).
                 reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
@@ -406,7 +422,7 @@ TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_lossy_conditions)
 
     PropertyPolicy pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_property_policy);
+    fill_sub_auth(sub_property_policy);
 
     reader.history_depth(10).
             reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
@@ -652,7 +668,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_rtps_ok)
 
     PropertyPolicy pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_property_policy);
+    fill_sub_auth(sub_property_policy);
     sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
@@ -710,7 +726,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_shm_transport_ok)
 
     PropertyPolicy pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_property_policy);
+    fill_sub_auth(sub_property_policy);
     sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
@@ -770,7 +786,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_shm_udp_transport_ok)
 
     PropertyPolicy pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_property_policy);
+    fill_sub_auth(sub_property_policy);
     sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
@@ -900,7 +916,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_large_string)
 
     PropertyPolicy pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_property_policy);
+    fill_sub_auth(sub_property_policy);
     sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
@@ -948,7 +964,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_large_string
 
     PropertyPolicy pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_property_policy);
+    fill_sub_auth(sub_property_policy);
     sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
@@ -996,7 +1012,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_rtps_data300kb)
 
     PropertyPolicy pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_property_policy);
+    fill_sub_auth(sub_property_policy);
     sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
@@ -1052,7 +1068,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_data300kb)
 
     PropertyPolicy pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_property_policy);
+    fill_sub_auth(sub_property_policy);
     sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
@@ -1109,7 +1125,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessage_ok)
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_part_property_policy);
+    fill_sub_auth(sub_part_property_policy);
     sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
@@ -1160,7 +1176,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_ok)
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_part_property_policy);
+    fill_sub_auth(sub_part_property_policy);
     sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
@@ -1248,7 +1264,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessage_larg
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_part_property_policy);
+    fill_sub_auth(sub_part_property_policy);
     sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
@@ -1299,7 +1315,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_large_
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_part_property_policy);
+    fill_sub_auth(sub_part_property_policy);
     sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
@@ -1350,7 +1366,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessage_data
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_part_property_policy);
+    fill_sub_auth(sub_part_property_policy);
     sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
@@ -1409,7 +1425,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_data30
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_part_property_policy);
+    fill_sub_auth(sub_part_property_policy);
     sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
@@ -1468,7 +1484,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_ok)
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_part_property_policy);
+    fill_sub_auth(sub_part_property_policy);
     sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
@@ -1519,7 +1535,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_ok)
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_part_property_policy);
+    fill_sub_auth(sub_part_property_policy);
     sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
@@ -1642,7 +1658,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_large_s
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_part_property_policy);
+    fill_sub_auth(sub_part_property_policy);
     sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
@@ -1693,7 +1709,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_large_str
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_part_property_policy);
+    fill_sub_auth(sub_part_property_policy);
     sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
@@ -1744,7 +1760,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_data300
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_part_property_policy);
+    fill_sub_auth(sub_part_property_policy);
     sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
@@ -1803,7 +1819,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_data300kb
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_part_property_policy);
+    fill_sub_auth(sub_part_property_policy);
     sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
@@ -1862,7 +1878,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_ok)
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_part_property_policy);
+    fill_sub_auth(sub_part_property_policy);
     sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
@@ -1917,7 +1933,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_all_ok)
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_part_property_policy);
+    fill_sub_auth(sub_part_property_policy);
     sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
@@ -1972,7 +1988,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_large_strin
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_part_property_policy);
+    fill_sub_auth(sub_part_property_policy);
     sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
@@ -2027,7 +2043,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_all_large_string)
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_part_property_policy);
+    fill_sub_auth(sub_part_property_policy);
     sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
@@ -2082,7 +2098,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_data300kb)
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_part_property_policy);
+    fill_sub_auth(sub_part_property_policy);
     sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
@@ -2145,7 +2161,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_all_data300kb)
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_part_property_policy);
+    fill_sub_auth(sub_part_property_policy);
     sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
@@ -2209,7 +2225,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_all_data300kb_mix
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_part_property_policy);
+    fill_sub_auth(sub_part_property_policy);
     sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
@@ -2286,7 +2302,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_user_data)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    fill_basic_sub_auth(sub_part_property_policy);
+    fill_sub_auth(sub_part_property_policy);
     sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
@@ -2339,7 +2355,7 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_governance_rule_o
 
         PropertyPolicy pub_property_policy, sub_property_policy;
 
-        fill_basic_sub_auth(sub_property_policy);
+        fill_sub_auth(sub_property_policy);
         sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
                 "builtin.AES-GCM-GMAC"));
         sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
@@ -2407,7 +2423,7 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_governance_rule_o
 
         PropertyPolicy pub_property_policy, sub_property_policy;
 
-        fill_basic_sub_auth(sub_property_policy);
+        fill_sub_auth(sub_property_policy);
         sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
                 "builtin.AES-GCM-GMAC"));
         sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
@@ -2473,7 +2489,7 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_multiple_endpoint
         ASSERT_TRUE(publishers.init_publisher(1u));
 
         PropertyPolicy sub_property_policy;
-        fill_basic_sub_auth(sub_property_policy);
+        fill_sub_auth(sub_property_policy);
         sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
                 "builtin.AES-GCM-GMAC"));
         sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
@@ -2520,7 +2536,7 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_valid
 
         PropertyPolicy pub_property_policy, sub_property_policy;
 
-        fill_basic_sub_auth(sub_property_policy);
+        fill_sub_auth(sub_property_policy);
         sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
                 "builtin.AES-GCM-GMAC"));
         sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
@@ -2564,7 +2580,7 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_valid
 
         PropertyPolicy pub_property_policy, sub_property_policy;
 
-        fill_basic_sub_auth(sub_property_policy);
+        fill_sub_auth(sub_property_policy);
         sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
                 "builtin.AES-GCM-GMAC"));
         sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
@@ -2633,7 +2649,7 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_valid
 
         PropertyPolicy pub_property_policy, sub_property_policy;
 
-        fill_basic_sub_auth(sub_property_policy);
+        fill_sub_auth(sub_property_policy);
         sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
                 "builtin.AES-GCM-GMAC"));
         sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
@@ -2677,7 +2693,7 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_valid
 
         PropertyPolicy pub_property_policy, sub_property_policy;
 
-        fill_basic_sub_auth(sub_property_policy);
+        fill_sub_auth(sub_property_policy);
         sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
                 "builtin.AES-GCM-GMAC"));
         sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
@@ -2748,7 +2764,7 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_valid
 
     // Prepare subscriptions security properties
     PropertyPolicy sub_property_policy;
-    fill_basic_sub_auth(sub_property_policy);
+    fill_sub_auth(sub_property_policy);
     sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
@@ -3111,7 +3127,7 @@ TEST_P(Security, RemoveParticipantProxyDataonSecurityManagerLeaseExpired_validat
 
             };
     //!Lambda for configuring subscriber participant qos and security properties
-    auto secure_participant_sub_configurator = [&governance_file,
+    auto secure_participant_sub_configurator = [this, &governance_file,
                     &permissions_file](const std::shared_ptr<PubSubReader<HelloWorldPubSubType>>& part,
             const std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface>& transport_interface)
             {
@@ -3120,7 +3136,7 @@ TEST_P(Security, RemoveParticipantProxyDataonSecurityManagerLeaseExpired_validat
 
                 PropertyPolicy property_policy;
 
-                fill_basic_sub_auth(property_policy);
+                fill_sub_auth(property_policy);
                 property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
                         "builtin.AES-GCM-GMAC"));
                 property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
