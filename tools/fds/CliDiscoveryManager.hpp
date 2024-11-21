@@ -180,9 +180,10 @@ public:
             uint16_t& port);
 
     /**
-     * @brief Starts a new Discovery Server in the specified @param port running
+     * @brief Starts a new Discovery Server in the specified @c port running
      * in the background.
      * @param port The port of the Discovery Server
+     * @param use_env_var True if the environment variable should be used, false otherwise
      */
     void startServerInBackground(
             uint16_t& port,
