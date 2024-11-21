@@ -317,6 +317,7 @@ pid_t CliDiscoveryManager::getPidOfServer(
 
 void CliDiscoveryManager::startServerInBackground(
         uint16_t& port,
+        DomainId_t& domain,
         bool use_env_var)
 {
     setServerQos(port);
@@ -338,11 +339,11 @@ void CliDiscoveryManager::startServerInBackground(
 
         if (nullptr == pServer)
         {
-            std::cout << "Server creation failed with the given settings." << std::endl;
+            std::cout << "Server creation for Domain ID [" << domain << "] failed with the given settings." << std::endl;
             return;
         }
 
-        std::cout << "Server for Domain ID started on port " << port << std::endl;
+        std::cout << "Server for Domain ID [" << domain << "] started on port " << port << std::endl;
 
         std::unique_lock<std::mutex> lock(g_signal_mutex);
         // Handle signal SIGINT for every thread
@@ -926,7 +927,7 @@ int CliDiscoveryManager::fastdds_discovery_auto(
     {
         return 1;
     }
-    startServerInBackground(port);
+    startServerInBackground(port, id, true);
 
     return return_value;
 }
@@ -972,7 +973,7 @@ int CliDiscoveryManager::fastdds_discovery_start(
         locator.kind = LOCATOR_KIND_TCPv4;
     }
     serverQos.wire_protocol().builtin.discovery_config.m_DiscoveryServers = serverList;
-    startServerInBackground(port, false);
+    startServerInBackground(port, id, false);
 
     return return_value;
 }

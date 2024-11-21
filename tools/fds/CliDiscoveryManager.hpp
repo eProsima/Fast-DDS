@@ -183,11 +183,13 @@ public:
      * @brief Starts a new Discovery Server in the specified @c port running
      * in the background.
      * @param port The port of the Discovery Server
+     * @param domain The domain id of the Discovery Server
      * @param use_env_var True if the environment variable should be used, false otherwise
      */
     void startServerInBackground(
             uint16_t& port,
-            bool use_env_var = true);
+            DomainId_t& domain,
+            bool use_env_var);
 
     /**
      * @brief Set the QoS of the Discovery Server.
