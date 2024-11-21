@@ -935,13 +935,44 @@ int CliDiscoveryManager::fastdds_discovery_start(
         std::vector<option::Option>& options,
         option::Parser& parse)
 {
-    if (initial_options_fail(options, parse))
+    if (initial_options_fail(options, parse, false))
     {
         return 1;
     }
     // Start a server for the domain specified
     int return_value = 0;
-    std::cout << "Start mode not implemented yet." << std::endl;
+    // Servers are added directly to the CLI with no arg associated
+    int numServs = parse.nonOptionsCount();
+    if (numServs > 1)
+    {
+        std::cout << "Too many arguments specified. Expected format is: start -d <domain> <ip:domain;ip:domain...>" <<
+                            std::endl;
+        return 1;
+    }
+
+    option::Option* pOp = options[DOMAIN];
+    DomainId_t id = get_domain_id(pOp);
+    if (isServerRunning(id))
+    {
+        std::cout << "Server for Domain ID [" << id << "] is already running." << std::endl;
+        return return_value;
+    }
+
+    // Create a server for the domain specified
+    uint16_t port = getDiscoveryServerPort(id);
+    if (port == 0)
+    {
+        return 1;
+    }
+    std::string servers = getRemoteServers(parse, numServs);
+    rtps::LocatorList_t serverList;
+    load_environment_server_info(servers, serverList);
+    for (rtps::Locator_t& locator : serverList)
+    {
+        locator.kind = LOCATOR_KIND_TCPv4;
+    }
+    serverQos.wire_protocol().builtin.discovery_config.m_DiscoveryServers = serverList;
+    startServerInBackground(port, false);
 
     return return_value;
 }
