@@ -425,40 +425,40 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_kagree_algo)
     auto test_fn = [this](
         const std::string& alg,
         ValidationResult_t expected_result) -> void
-    {
-        IdentityHandle* local_identity_handle = nullptr;
-        GUID_t adjusted_participant_key;
-        uint32_t domain_id = 0;
-        RTPSParticipantAttributes participant_attr;
-        GUID_t candidate_participant_key;
-        SecurityException exception;
-        ValidationResult_t result = ValidationResult_t::VALIDATION_FAILED;
+            {
+                IdentityHandle* local_identity_handle = nullptr;
+                GUID_t adjusted_participant_key;
+                uint32_t domain_id = 0;
+                RTPSParticipantAttributes participant_attr;
+                GUID_t candidate_participant_key;
+                SecurityException exception;
+                ValidationResult_t result = ValidationResult_t::VALIDATION_FAILED;
 
-        fill_candidate_participant_key(candidate_participant_key);
-        participant_attr.properties = get_valid_policy();
-        participant_attr.properties.properties().emplace_back(
-            Property("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", alg));
-        result = plugin.validate_local_identity(&local_identity_handle,
-            adjusted_participant_key,
-            domain_id,
-            participant_attr,
-            candidate_participant_key,
-            exception);
+                fill_candidate_participant_key(candidate_participant_key);
+                participant_attr.properties = get_valid_policy();
+                participant_attr.properties.properties().emplace_back(
+                    Property("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", alg));
+                result = plugin.validate_local_identity(&local_identity_handle,
+                                adjusted_participant_key,
+                                domain_id,
+                                participant_attr,
+                                candidate_participant_key,
+                                exception);
 
-        ASSERT_TRUE(result == expected_result);
-        if (ValidationResult_t::VALIDATION_OK == result)
-        {
-            ASSERT_TRUE(local_identity_handle != nullptr);
-            check_local_identity_handle(*local_identity_handle);
-            ASSERT_TRUE(adjusted_participant_key != GUID_t::unknown());
-            ASSERT_TRUE(plugin.return_identity_handle(local_identity_handle, exception));
-        }
-        else
-        {
-            ASSERT_TRUE(local_identity_handle == nullptr);
-            ASSERT_TRUE(adjusted_participant_key == GUID_t::unknown());
-        }
-    };
+                ASSERT_TRUE(result == expected_result);
+                if (ValidationResult_t::VALIDATION_OK == result)
+                {
+                    ASSERT_TRUE(local_identity_handle != nullptr);
+                    check_local_identity_handle(*local_identity_handle);
+                    ASSERT_TRUE(adjusted_participant_key != GUID_t::unknown());
+                    ASSERT_TRUE(plugin.return_identity_handle(local_identity_handle, exception));
+                }
+                else
+                {
+                    ASSERT_TRUE(local_identity_handle == nullptr);
+                    ASSERT_TRUE(adjusted_participant_key == GUID_t::unknown());
+                }
+            };
 
     for (const std::string& value : correct_values)
     {
