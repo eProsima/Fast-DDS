@@ -1052,7 +1052,7 @@ ValidationResult_t PKIDH::validate_local_identity(
         password = &empty_password;
     }
 
-    std::string key_agreement_algorithm = DH_2048_256;
+    std::string key_agreement_algorithm = ECDH_prime256v1;
     std::string* key_agreement_property =
             PropertyPolicyHelper::find_property(auth_properties, "preferred_key_agreement");
     if (nullptr != key_agreement_property)
