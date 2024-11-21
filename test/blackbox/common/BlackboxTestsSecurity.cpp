@@ -20,6 +20,9 @@
 #include <atomic>
 #include <fstream>
 #include <map>
+#include <tuple>
+
+#include <gtest/gtest.h>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
@@ -28,7 +31,6 @@
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
 #include <fastdds/utils/IPFinder.hpp>
-#include <gtest/gtest.h>
 
 #include "../utils/filter_helpers.hpp"
 #include "PubSubParticipant.hpp"
@@ -45,6 +47,12 @@ enum communication_type
     TRANSPORT,
     INTRAPROCESS,
     DATASHARING
+};
+
+enum class key_agree_alg
+{
+    RSA,
+    ECDH
 };
 
 static void fill_basic_pub_auth(
@@ -71,14 +79,14 @@ static void fill_basic_sub_auth(
             "file://" + std::string(certs_path) + "/mainsubkey.pem"));
 }
 
-class Security : public testing::TestWithParam<communication_type>
+class Security : public testing::TestWithParam<std::tuple<communication_type, key_agree_alg>>
 {
 public:
 
     void SetUp() override
     {
         eprosima::fastdds::LibrarySettings library_settings;
-        switch (GetParam())
+        switch (std::get<0>(GetParam()))
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
@@ -96,7 +104,7 @@ public:
     void TearDown() override
     {
         eprosima::fastdds::LibrarySettings library_settings;
-        switch (GetParam())
+        switch (std::get<0>(GetParam()))
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
@@ -4613,20 +4621,25 @@ void blackbox_security_init()
 
 GTEST_INSTANTIATE_TEST_MACRO(Security,
         Security,
-        testing::Values(TRANSPORT, INTRAPROCESS, DATASHARING),
+        testing::Combine(
+            testing::Values(TRANSPORT, INTRAPROCESS, DATASHARING),
+            testing::Values(key_agree_alg::RSA, key_agree_alg::ECDH)),
         [](const testing::TestParamInfo<Security::ParamType>& info)
         {
-            switch (info.param)
+            std::string alg;
+            alg = std::get<1>(info.param) == key_agree_alg::RSA ? "RSA_" : "ECDH_";
+
+            switch (std::get<0>(info.param))
             {
                 case INTRAPROCESS:
-                    return "Intraprocess";
+                    return alg + "Intraprocess";
                     break;
                 case DATASHARING:
-                    return "Datasharing";
+                    return alg + "Datasharing";
                     break;
                 case TRANSPORT:
                 default:
-                    return "Transport";
+                    return alg + "Transport";
             }
 
         });
