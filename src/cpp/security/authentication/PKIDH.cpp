@@ -1061,7 +1061,7 @@ ValidationResult_t PKIDH::validate_local_identity(
             {DH_2048_256, DH_2048_256},
             {ECDH_prime256v1, ECDH_prime256v1},
             {"ECDH", ECDH_prime256v1},
-            {"RSA", DH_2048_256}
+            {"DH", DH_2048_256}
         };
 
         key_agreement_algorithm = "";

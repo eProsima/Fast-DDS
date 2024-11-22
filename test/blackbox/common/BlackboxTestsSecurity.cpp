@@ -51,7 +51,7 @@ enum communication_type
 
 enum class key_agree_alg
 {
-    RSA,
+    DH,
     ECDH
 };
 
@@ -125,8 +125,8 @@ public:
         fill_basic_pub_auth(policy);
         switch (std::get<1>(GetParam()))
         {
-            case key_agree_alg::RSA:
-                policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "RSA");
+            case key_agree_alg::DH:
+                policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "DH");
                 break;
 
             case key_agree_alg::ECDH:
@@ -142,8 +142,8 @@ public:
         fill_basic_sub_auth(policy);
         switch (std::get<1>(GetParam()))
         {
-            case key_agree_alg::RSA:
-                policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "RSA");
+            case key_agree_alg::DH:
+                policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "DH");
                 break;
             case key_agree_alg::ECDH:
             default:
@@ -4568,11 +4568,11 @@ GTEST_INSTANTIATE_TEST_MACRO(Security,
         Security,
         testing::Combine(
             testing::Values(TRANSPORT, INTRAPROCESS, DATASHARING),
-            testing::Values(key_agree_alg::RSA, key_agree_alg::ECDH)),
+            testing::Values(key_agree_alg::DH, key_agree_alg::ECDH)),
         [](const testing::TestParamInfo<Security::ParamType>& info)
         {
             std::string alg;
-            alg = std::get<1>(info.param) == key_agree_alg::RSA ? "RSA_" : "ECDH_";
+            alg = (std::get<1>(info.param) == key_agree_alg::DH) ? "DH_" : "ECDH_";
 
             switch (std::get<0>(info.param))
             {

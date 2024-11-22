@@ -406,7 +406,7 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_kagree_algo)
 {
     const std::string correct_values[] =
     {
-        "RSA",
+        "DH",
         "ECDH",
         "DH+MODP-2048-256",
         "ECDH+prime256v1-CEUM"
@@ -416,7 +416,7 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_kagree_algo)
     {
         "RSA+MODP-2048-256",
         "ECDH+MODP-2048-256",
-        "DH",
+        "RSA",
         "ECDH+prime256v1",
         "unknown",
         ""
