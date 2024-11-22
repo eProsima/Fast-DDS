@@ -150,7 +150,8 @@ def run(args):
             f'{args.ds_server}')
         sys.exit(1)
 
-    ds_command.append(args.ds_server)
+    # Call tool with the SERVER option
+    ds_command.extend([args.ds_server, '42'])
 
     if args.xml_pub and args.xml_sub and args.xml_ds:
         if args.xml_pub:

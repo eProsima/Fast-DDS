@@ -287,7 +287,7 @@ std::vector<MetaInfo_DS> CliDiscoveryManager::getLocalServers()
 }
 
 bool CliDiscoveryManager::isServerRunning(
-        DomainId_t& domain)
+        const DomainId_t& domain)
 {
     std::vector<MetaInfo_DS> servers = getLocalServers();
     for (const MetaInfo_DS& server : servers)
@@ -301,7 +301,7 @@ bool CliDiscoveryManager::isServerRunning(
 }
 
 pid_t CliDiscoveryManager::getPidOfServer(
-        uint16_t& port)
+        const uint16_t& port)
 {
     std::string command = "lsof -i :";
     command += std::to_string(port);
@@ -315,7 +315,7 @@ pid_t CliDiscoveryManager::getPidOfServer(
     return std::stoi(result);
 }
 
-void CliDiscoveryManager::startServerInBackground(
+pid_t CliDiscoveryManager::startServerInBackground(
         uint16_t& port,
         DomainId_t& domain,
         bool use_env_var)
@@ -330,7 +330,7 @@ void CliDiscoveryManager::startServerInBackground(
     if (pid == -1)
     {
         std::cout << "Error starting background process." << std::endl;
-        return;
+        return 0;
     }
     else if (pid == 0)
     {
@@ -340,7 +340,7 @@ void CliDiscoveryManager::startServerInBackground(
         if (nullptr == pServer)
         {
             std::cout << "Server creation for Domain ID [" << domain << "] failed with the given settings." << std::endl;
-            return;
+            return 0;
         }
 
         std::cout << "Server for Domain ID [" << domain << "] started on port " << port << std::endl;
@@ -407,6 +407,7 @@ void CliDiscoveryManager::startServerInBackground(
             }
         }
         DomainParticipantFactory::get_instance()->delete_participant(pServer);
+        exit(0);
     }
     else
     {
@@ -414,6 +415,7 @@ void CliDiscoveryManager::startServerInBackground(
         // in the same terminal as the user input but without waiting to return.
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
+    return pid;
 }
 
 void CliDiscoveryManager::setServerQos(
@@ -842,7 +844,7 @@ int CliDiscoveryManager::fastdds_discovery_server(
 
     // Create the server
     int return_value = 0;
-    DomainParticipant* pServer = DomainParticipantFactory::get_instance()->create_participant(0, serverQos);
+    pServer = DomainParticipantFactory::get_instance()->create_participant(0, serverQos);
 
     if (nullptr == pServer)
     {
