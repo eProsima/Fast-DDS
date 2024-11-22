@@ -47,14 +47,12 @@
 import argparse
 import subprocess
 import sys
-from tabnanny import check
 import time
 import signal
 import os
 from enum import Enum
 
 from xml.dom import minidom
-from xml.etree.ElementTree import XML
 
 class Command_test(Enum):
     SERVER = "server" # Does not need to be specified
@@ -92,6 +90,7 @@ def send_command(command):
     #  it receives
     proc = subprocess.Popen(command,
                             stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
                             universal_newlines=True
                             )
 
@@ -155,11 +154,20 @@ def XML_parse_profile(XMLfile, profile_name):
     return participant_profile
 
 
-def check_output(output, err, output_to_check, override):
+def check_output(output, err, output_to_check, override, expect_error):
+    """
+    Check if the output is as expected.
+    @output: Output of the command.
+    @err: Error output of the command. Includes Logs of Fast DDS.
+    @output_to_check: Expected output.
+    @override: .
+    @expect_error: True if the output_to_check is an error message in @err.
+    """
 
     EXPECTED_CLOSURE = "### Server shut down ###"
     if EXPECTED_CLOSURE in output or override:
-        if output_to_check in output:
+        check_output = err if expect_error else output
+        if output_to_check in check_output:
             # Success
             exit_code = 0
         else:
@@ -188,7 +196,7 @@ def test_fast_discovery_closure(fast_discovery_tool):
 
     EXPECTED_CLOSURE = "### Server shut down ###"
 
-    exit_code = check_output(output, err, EXPECTED_CLOSURE, False)
+    exit_code = check_output(output, err, EXPECTED_CLOSURE, False, False)
 
     sys.exit(exit_code)
 
@@ -212,7 +220,7 @@ def test_fast_discovery_udpv6_address(fast_discovery_tool):
     ]
 
     for pattern in EXPECTED_OUTPUTS:
-        exit_code = check_output(output, err, pattern, False)
+        exit_code = check_output(output, err, pattern, False, False)
         if exit_code != 0:
             break
 
@@ -243,12 +251,12 @@ def test_fast_discovery_parse_XML_file_default_profile(fast_discovery_tool):
     EXPECTED_SERVER_ID = "Server GUID prefix: " + PREFIX.lower()
     print(EXPECTED_SERVER_ID)
 
-    exit_code = check_output(output, err, EXPECTED_SERVER_ID, False)
+    exit_code = check_output(output, err, EXPECTED_SERVER_ID, False, False)
     if exit_code != 0:
         sys.exit(exit_code)
 
     for add in EXPECTED_SERVER_ADDRESS:
-        exit_code = check_output(output, err, add, False)
+        exit_code = check_output(output, err, add, False, False)
         if exit_code != 0:
             sys.exit(exit_code)
 
@@ -280,12 +288,12 @@ def test_fast_discovery_parse_XML_file_URI_profile(fast_discovery_tool):
     EXPECTED_SERVER_ID = "Server GUID prefix: " + PREFIX.lower()
     print(EXPECTED_SERVER_ID)
 
-    exit_code = check_output(output, err, EXPECTED_SERVER_ID, False)
+    exit_code = check_output(output, err, EXPECTED_SERVER_ID, False, False)
     if exit_code != 0:
         sys.exit(exit_code)
 
     for add in EXPECTED_SERVER_ADDRESS:
-        exit_code = check_output(output, err, add, False)
+        exit_code = check_output(output, err, add, False, False)
         if exit_code != 0:
             sys.exit(exit_code)
     sys.exit(exit_code)
@@ -310,12 +318,12 @@ def test_fast_discovery_prefix_override(fast_discovery_tool):
     command = [fast_discovery_tool, str(command_to_int_test[Command_test.SERVER]), '-i', '0', '-x', XML_file_path]
     output, err, exit_code = send_command(command)
 
-    exit_code = check_output(output, err, EXPECTED_SERVER_ID, False)
+    exit_code = check_output(output, err, EXPECTED_SERVER_ID, False, False)
     if exit_code != 0:
         sys.exit(exit_code)
 
     for add in EXPECTED_SERVER_ADDRESS:
-        exit_code = check_output(output, err, add, False)
+        exit_code = check_output(output, err, add, False, False)
         if exit_code != 0:
             sys.exit(exit_code)
 
@@ -345,16 +353,16 @@ def test_fast_discovery_locator_address_override(fast_discovery_tool):
     command = [fast_discovery_tool, str(command_to_int_test[Command_test.SERVER]), '-x', XML_file_path, '-l', '172.168.43.125']
     output, err, exit_code = send_command(command)
 
-    exit_code = check_output(output, err, EXPECTED_SERVER_ID, False)
+    exit_code = check_output(output, err, EXPECTED_SERVER_ID, False, False)
     if exit_code != 0:
         sys.exit(exit_code)
 
     for add in EXPECTED_SERVER_ADDRESS:
-        exit_code = check_output(output, err, add, False)
+        exit_code = check_output(output, err, add, False, False)
         if exit_code != 0:
             sys.exit(exit_code)
     for add in XML_SERVER_ADDRESS:
-        exit_code = check_output(output, err, add, False)
+        exit_code = check_output(output, err, add, False, False)
         if exit_code != 3:
             sys.exit(3)
 
@@ -384,16 +392,16 @@ def test_fast_discovery_locator_override_same_address(fast_discovery_tool):
     command = [fast_discovery_tool, str(command_to_int_test[Command_test.SERVER]), '-x', XML_file_path, '-l', '127.0.0.9']
     output, err, exit_code = send_command(command)
 
-    exit_code = check_output(output, err, EXPECTED_SERVER_ID, False)
+    exit_code = check_output(output, err, EXPECTED_SERVER_ID, False, False)
     if exit_code != 0:
         sys.exit(exit_code)
 
     for add in EXPECTED_SERVER_ADDRESS:
-        exit_code = check_output(output, err, add, False)
+        exit_code = check_output(output, err, add, False, False)
         if exit_code != 0:
             sys.exit(exit_code)
     for add in XML_SERVER_ADDRESS:
-        exit_code = check_output(output, err, add, False)
+        exit_code = check_output(output, err, add, False, False)
         if exit_code != 3:
             sys.exit(3)
 
@@ -423,16 +431,16 @@ def test_fast_discovery_locator_port_override(fast_discovery_tool):
     command = [fast_discovery_tool, str(command_to_int_test[Command_test.SERVER]), '-x', XML_file_path, '-p', '1234']
     output, err, exit_code = send_command(command)
 
-    exit_code = check_output(output, err, EXPECTED_SERVER_ID, False)
+    exit_code = check_output(output, err, EXPECTED_SERVER_ID, False, False)
     if exit_code != 0:
         sys.exit(exit_code)
 
     for add in EXPECTED_SERVER_ADDRESS:
-        exit_code = check_output(output, err, add, False)
+        exit_code = check_output(output, err, add, False, False)
         if exit_code != 0:
             sys.exit(exit_code)
     for add in XML_SERVER_ADDRESS:
-        exit_code = check_output(output, err, add, False)
+        exit_code = check_output(output, err, add, False, False)
         if exit_code != 3:
             sys.exit(3)
 
@@ -462,16 +470,16 @@ def test_fast_discovery_locator_override_same_port(fast_discovery_tool):
     command = [fast_discovery_tool, str(command_to_int_test[Command_test.SERVER]), '-x', XML_file_path, '-p', '2811']
     output, err, exit_code = send_command(command)
 
-    exit_code = check_output(output, err, EXPECTED_SERVER_ID, False)
+    exit_code = check_output(output, err, EXPECTED_SERVER_ID, False, False)
     if exit_code != 0:
         sys.exit(exit_code)
 
     for add in EXPECTED_SERVER_ADDRESS:
-        exit_code = check_output(output, err, add, False)
+        exit_code = check_output(output, err, add, False, False)
         if exit_code != 0:
             sys.exit(exit_code)
     for add in XML_SERVER_ADDRESS:
-        exit_code = check_output(output, err, add, False)
+        exit_code = check_output(output, err, add, False, False)
         if exit_code != 3:
             sys.exit(3)
 
@@ -490,14 +498,14 @@ def test_fast_discovery_backup(fast_discovery_tool):
     command = [fast_discovery_tool, str(command_to_int_test[Command_test.SERVER]), '-b', '-i', '0']
     output, err, exit_code = send_command(command)
 
-    exit_code = check_output(output, err, EXPECTED_PARTICIPANT_TYPE, False)
+    exit_code = check_output(output, err, EXPECTED_PARTICIPANT_TYPE, False, False)
     if exit_code != 0:
         sys.exit(exit_code)
-    exit_code = check_output(output, err, EXPECTED_SERVER_ID, False)
+    exit_code = check_output(output, err, EXPECTED_SERVER_ID, False, False)
     if exit_code != 0:
         sys.exit(exit_code)
     for add in EXPECTED_SERVER_ADDRESS:
-        exit_code = check_output(output, err, add, False)
+        exit_code = check_output(output, err, add, False, False)
         if exit_code != 0:
             sys.exit(exit_code)
 
@@ -508,14 +516,14 @@ def test_fast_discovery_backup(fast_discovery_tool):
     command = [fast_discovery_tool, str(command_to_int_test[Command_test.SERVER]), '-x', 'UDP_backup@' + XML_file_path]
     output, err, exit_code = send_command(command)
 
-    exit_code = check_output(output, err, EXPECTED_PARTICIPANT_TYPE, False)
+    exit_code = check_output(output, err, EXPECTED_PARTICIPANT_TYPE, False, False)
     if exit_code != 0:
         sys.exit(exit_code)
-    exit_code = check_output(output, err, EXPECTED_XML_SERVER_ID, False)
+    exit_code = check_output(output, err, EXPECTED_XML_SERVER_ID, False, False)
     if exit_code != 0:
         sys.exit(exit_code)
     for add in EXPECTED_XML_SERVER_ADDRESS:
-        exit_code = check_output(output, err, add, False)
+        exit_code = check_output(output, err, add, False, False)
         if exit_code != 0:
             sys.exit(exit_code)
 
@@ -529,7 +537,7 @@ def test_fast_discovery_no_prefix(fast_discovery_tool):
     command = [fast_discovery_tool, str(command_to_int_test[Command_test.SERVER]), '-x', 'UDP_no_prefix@' + XML_file_path]
     output, err, exit_code = send_command(command)
     EXPECTED_OUTPUT = "UDPv4:[127.0.0.5]:11817"
-    exit_code = check_output(output, err, EXPECTED_OUTPUT, False)
+    exit_code = check_output(output, err, EXPECTED_OUTPUT, False, False)
     sys.exit(exit_code)
 
 
@@ -540,7 +548,13 @@ def test_fast_discovery_no_XML(fast_discovery_tool):
     command = [fast_discovery_tool, str(command_to_int_test[Command_test.SERVER]), '-x', XML_file_path]
     output, err, exit_code = send_command(command)
 
-    exit_code = check_output(output, err, "Cannot open XML file", True)
+    print("Stats of test:")
+    print("STDOUT:")
+    print(output)
+    print("STDERR:")
+    print(err)
+
+    exit_code = check_output(output, err, "Cannot open XML file", True, True)
     sys.exit(exit_code)
 
 
@@ -551,14 +565,14 @@ def test_fast_discovery_incorrect_participant(fast_discovery_tool):
     command = [fast_discovery_tool, str(command_to_int_test[Command_test.SERVER]), '-x', 'UDP_simple@' + XML_file_path]
     output, err, exit_code = send_command(command)
 
-    exit_code = check_output(output, err, "The provided configuration is not valid", True)
+    exit_code = check_output(output, err, "The provided configuration is not valid", True, True)
     if exit_code != 0:
         sys.exit(exit_code)
 
     command = [fast_discovery_tool, str(command_to_int_test[Command_test.SERVER]), '-x', 'UDP_client@' + XML_file_path]
     output, err, exit_code = send_command(command)
 
-    exit_code = check_output(output, err, "The provided configuration is not valid", True)
+    exit_code = check_output(output, err, "The provided configuration is not valid", True, True)
     sys.exit(exit_code)
 
 
@@ -567,7 +581,7 @@ def test_fast_discovery_several_server_ids(fast_discovery_tool):
 
     command = [fast_discovery_tool, str(command_to_int_test[Command_test.SERVER]), '-i', '0', '-i', '1']
     output, err, exit_code = send_command(command)
-    exit_code = check_output(output, err, "only one server id can be specified", True)
+    exit_code = check_output(output, err, "only one server id can be specified", True, True)
     sys.exit(exit_code)
 
 
@@ -576,7 +590,7 @@ def test_fast_discovery_invalid_locator(fast_discovery_tool):
 
     command = [fast_discovery_tool, str(command_to_int_test[Command_test.SERVER]), '-i', '0', '-l', '256.0.0.1']
     output, err, exit_code = send_command(command)
-    exit_code = check_output(output, err, "Invalid listening locator address specified", True)
+    exit_code = check_output(output, err, "Invalid listening locator address specified", True, True)
     sys.exit(exit_code)
 
 
@@ -586,7 +600,7 @@ def test_fast_discovery_non_existent_profile(fast_discovery_tool):
     XML_file_path = "test_xml_discovery_server_profile.xml"
     command = [fast_discovery_tool, str(command_to_int_test[Command_test.SERVER]), '-x', 'non_existent_profile@' + XML_file_path]
     output, err, exit_code = send_command(command)
-    exit_code = check_output(output, err, "Error loading specified profile from XML file", True)
+    exit_code = check_output(output, err, "Error loading specified profile from XML file", True, True)
     sys.exit(exit_code)
 
 def test_fast_discovery_security_disabled(fast_discovery_tool):
@@ -598,7 +612,7 @@ def test_fast_discovery_security_disabled(fast_discovery_tool):
         print(output)
         sys.exit(exit_code)
 
-    exit_code = check_output(output, err, "Security:           NO", True)
+    exit_code = check_output(output, err, "Security:           NO", True, False)
     sys.exit(exit_code)
 
 def test_fast_discovery_security_enabled_xml_prefix(fast_discovery_tool):
@@ -615,7 +629,7 @@ def test_fast_discovery_security_enabled_xml_prefix(fast_discovery_tool):
         "UDPv4:[127.0.0.1]:32823",
     ]
     for pattern in EXPECTED_OUTPUTS:
-        exit_code = check_output(output, err, pattern, False)
+        exit_code = check_output(output, err, pattern, False, False)
         if exit_code != 0:
             break
 
@@ -635,7 +649,7 @@ def test_fast_discovery_security_enabled_cli_prefix(fast_discovery_tool):
         "UDPv4:[127.0.0.1]:32823",
     ]
     for pattern in EXPECTED_OUTPUTS:
-        exit_code = check_output(output, err, pattern, False)
+        exit_code = check_output(output, err, pattern, False, False)
         if exit_code != 0:
             break
 

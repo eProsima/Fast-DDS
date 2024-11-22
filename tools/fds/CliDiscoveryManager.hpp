@@ -169,7 +169,7 @@ public:
      * @return True if the server is running, false otherwise
      */
     bool isServerRunning(
-            DomainId_t& domain);
+            const DomainId_t& domain);
 
     /**
      * @brief Get the PID of the Discovery Server running in the specified port.
@@ -177,7 +177,7 @@ public:
      * @return The PID of the Discovery Server
      */
     pid_t getPidOfServer(
-            uint16_t& port);
+            const uint16_t& port);
 
     /**
      * @brief Starts a new Discovery Server in the specified @c port running
@@ -185,8 +185,9 @@ public:
      * @param port The port of the Discovery Server
      * @param domain The domain id of the Discovery Server
      * @param use_env_var True if the environment variable should be used, false otherwise
+     * @return The PID of the Discovery Server in the background
      */
-    void startServerInBackground(
+    pid_t startServerInBackground(
             uint16_t& port,
             DomainId_t& domain,
             bool use_env_var);
@@ -326,7 +327,7 @@ public:
             std::vector<option::Option>& options,
             option::Parser& parse);
 
-private:
+protected:
 
     //! QoS of the Discovery Server that will be initialized
     DomainParticipantQos serverQos;
