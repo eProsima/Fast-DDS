@@ -132,7 +132,8 @@ def launch_discovery_server_processes(servers, xml_servers):
                 f'{servers[i]}')
             sys.exit(1)
 
-        server_cmd.append(servers[i])
+        # Call tool with the SERVER option
+        server_cmd.extend([servers[i], '42'])
         server_cmd.extend(['--xml-file', xml_servers[i]])
         server_cmd.extend(['--server-id', str(i)])
 
