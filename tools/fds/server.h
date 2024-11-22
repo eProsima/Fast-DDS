@@ -25,6 +25,7 @@ enum  optionIndex
 {
     UNKNOWN,
     HELP,
+    VERSION,
     SERVERID,
     UDPADDRESS,
     UDP_PORT,
@@ -61,6 +62,9 @@ const option::Descriptor usage[] = {
 
     { HELP,      0, "h",  "help",         Arg::None,
       "  -h  \t--help        Produce help message.\n" },
+
+    { VERSION,   0, "v",  "version",      Arg::None,
+      "  -v  \t--version     Show Fast DDS version information.\n" },
 
     { UDPADDRESS, 0, "l", "udp-address",   Arg::OptionalAny,
       "  -l \t--udp-address IPv4/IPv6 address chosen to listen the clients. Defaults\n"
