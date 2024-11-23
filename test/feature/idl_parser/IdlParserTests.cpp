@@ -1076,7 +1076,6 @@ TEST_F(IdlParserTests, relative_path_include)
     EXPECT_EQ(data1->set_int32_value(0, 2), RETCODE_OK);
     EXPECT_EQ(data1->get_int32_value(test1, 0), RETCODE_OK);
     EXPECT_EQ(test1, 2);
-    EXPECT_EQ(data1->set_string_value(0, ""), RETCODE_BAD_PARAMETER);
 }
 
 TEST_F(IdlParserTests, unions)

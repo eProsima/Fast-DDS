@@ -301,7 +301,8 @@ struct action<semicolon>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
-        if (!state["type"].empty() && state.count("current_struct_member_name") && !state["current_struct_member_name"].empty())
+        if (!state["type"].empty() && state.count("current_struct_member_name") &&
+                !state["current_struct_member_name"].empty())
         {
             // Add the type and name to the member lists
             state["struct_member_types"] += state["type"] + ";";
@@ -780,45 +781,49 @@ load_literal_action(oct_literal, octal, int64_t, TK_INT64, set_int64_value)
 load_literal_action(hex_literal, hexa, int64_t, TK_INT64, set_int64_value)
 load_literal_action(float_literal, float, long double, TK_FLOAT128, set_float128_value)
 load_literal_action(fixed_pt_literal, fixed, long double, TK_FLOAT128, set_float128_value)
-load_literal_action(character_literal, char8, char, TK_CHAR8, set_char8_value)
 load_literal_action(string_literal, string, std::string, TK_STRING8, set_string_value)
 
-template<>
-struct action<wide_character_literal>
-{
-    template<typename Input>
-    static void apply(
-            const Input& in,
-            Context* /*ctx*/,
-            std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& operands)
-    {
-        std::cout << "wide_character_literal: " << typeid(wide_character_literal).name()
-                  << " " << in.string() << std::endl;
+#define load_character_action(Rule, id, type, type_kind, set_value, offset) \
+    template<> \
+    struct action<Rule> \
+    { \
+        template<typename Input> \
+        static void apply( \
+            const Input& in, \
+            Context* /*ctx*/, \
+            std::map<std::string, std::string>& state, \
+            std::vector<traits<DynamicData>::ref_type>& operands) \
+        { \
+            std::cout << #Rule << ": " << typeid(Rule).name() << " " << in.string() << std::endl; \
+ \
+            if (state.count("arithmetic_expr")) \
+            { \
+                state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{#id}; \
+            } \
+ \
+            const std::string content = in.string().substr(offset, in.string().size() - (offset + 1)); \
+            if (content.empty() || (content.size() < 1)) \
+            { \
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid character literal: " << content); \
+                throw std::runtime_error("Invalid character literal: " + content); \
+            } \
+ \
+            type value = static_cast<type>(content[0]); \
+ \
+            DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()}; \
+            DynamicType::_ref_type xtype = factory->get_primitive_type(type_kind); \
+            DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)}; \
+            xdata->set_value(MEMBER_ID_INVALID, value); \
+ \
+            if (state.count("arithmetic_expr")) \
+            { \
+                operands.push_back(xdata); \
+            } \
+        } \
+    };
 
-        if (state.count("arithmetic_expr"))
-        {
-            state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{"wchar"};
-        }
-
-        wchar_t value = L'\0';
-        std::string content = in.string().substr(2, in.string().size() - 3);
-        if (!content.empty()) {
-            value = static_cast<wchar_t>(content[0]);
-        }
-
-        DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
-        DynamicType::_ref_type xtype {factory->get_primitive_type(TK_CHAR16)};
-        DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)};
-        xdata->set_char16_value(MEMBER_ID_INVALID, value);
-
-        if (state.count("arithmetic_expr"))
-        {
-            operands.push_back(xdata);
-        }
-    }
-
-};
+load_character_action(character_literal, char8, char, TK_CHAR8, set_char8_value, 1)
+load_character_action(wide_character_literal, char16, wchar_t, TK_CHAR16, set_char16_value, 2)
 
 template<>
 struct action<wide_string_literal>
@@ -1349,6 +1354,7 @@ struct action<enum_dcl>
 
             DynamicType::_ref_type member_type {factory->get_primitive_type(TK_INT32)};
             DynamicData::_ref_type member_data {DynamicDataFactory::get_instance()->create_data(member_type)};
+            member_data->set_int32_value(MEMBER_ID_INVALID, (int32_t)i);
 
             module.create_constant(tokens[i], member_data, false, true); // Mark it as "from_enum"
         }
@@ -1551,10 +1557,38 @@ struct action<case_label>
                 throw std::runtime_error("Finished case label parsing with non-empty operands stack.");
             }
 
-            int64_t value;
-            xdata->get_int64_value(value, MEMBER_ID_INVALID);
+            std::string label;
+            DynamicType::_ref_type xtype = xdata->type();
+            if (TK_INT64 == xtype->get_kind() || TK_INT32 == xtype->get_kind())
+            {
+                int64_t value = 0;
+                xdata->get_int64_value(value, MEMBER_ID_INVALID);
+                label = std::to_string(value);
+            }
+            else if (TK_BOOLEAN == xtype->get_kind())
+            {
+                bool value = false;
+                xdata->get_boolean_value(value, MEMBER_ID_INVALID);
+                label = value ? "1" : "0";
+            }
+            else if (TK_CHAR8 == xtype->get_kind())
+            {
+                char value = '0';
+                xdata->get_char8_value(value, MEMBER_ID_INVALID);
+                label = value;
+            }
+            else if (TK_CHAR16 == xtype->get_kind())
+            {
+                wchar_t value = L'0';
+                xdata->get_char16_value(value, MEMBER_ID_INVALID);
+                label = static_cast<char>(value);
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Unsupported case label data type: " << xtype->get_kind());
+                throw std::runtime_error("Unsupported case label data type: " + xtype->get_kind());
+            }
 
-            std::string label = std::to_string(value);
             if (state["union_labels"].empty() || state["union_labels"].back() == ';')
             {
                 state["union_labels"] += label;
@@ -1677,7 +1711,14 @@ struct action<union_def>
                 }
                 else
                 {
-                    labels[i].push_back(std::stoi(num_str));
+                    if (std::all_of(num_str.begin(), num_str.end(), ::isdigit))
+                    {
+                        labels[i].push_back(std::stoi(num_str));
+                    }
+                    else
+                    {
+                        labels[i].push_back(static_cast<int32_t>(num_str[0]));
+                    }
                 }
             }
         }
@@ -1693,7 +1734,6 @@ struct action<union_def>
             MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
             member_descriptor->name(names[i]);
             member_descriptor->type(member_type);
-            member_descriptor->id(i);
 
             if (default_label_index == static_cast<int>(i))
             {
