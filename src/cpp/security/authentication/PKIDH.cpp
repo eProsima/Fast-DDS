@@ -896,6 +896,45 @@ static bool generate_challenge(
     return returnedValue;
 }
 
+static std::string convert_to_token_algo(
+        const std::string& algorithm,
+        bool use_legacy)
+{
+    // Leave as internal format when legacy is used
+    if (use_legacy)
+    {
+        return algorithm;
+    }
+
+    // Convert to token format
+    if (algorithm == RSA_SHA256)
+    {
+        return RSA_SHA256_FOR_TOKENS;
+    }
+    else if (algorithm == ECDSA_SHA256)
+    {
+        return ECDSA_SHA256_FOR_TOKENS;
+    }
+
+    return algorithm;
+}
+
+static std::string parse_token_algo(
+        const std::string& algorithm)
+{
+    // Convert to internal format, allowing both legacy and new formats
+    if (algorithm == RSA_SHA256_FOR_TOKENS)
+    {
+        return RSA_SHA256;
+    }
+    else if (algorithm == ECDSA_SHA256_FOR_TOKENS)
+    {
+        return ECDSA_SHA256;
+    }
+
+    return algorithm;
+}
+
 std::shared_ptr<SecretHandle> PKIDH::generate_sharedsecret(
         EVP_PKEY* private_key,
         EVP_PKEY* public_key,
@@ -978,7 +1017,8 @@ static bool generate_identity_token(
     token.properties().push_back(std::move(property));
 
     property.name("dds.cert.algo");
-    property.value() = handle->sign_alg_;
+    // TODO (MiguelCompany): Convert according to the spec, depending on the use_legacy flag.
+    property.value() = convert_to_token_algo(handle->sign_alg_, true);
     property.propagate(true);
     token.properties().push_back(std::move(property));
 
@@ -988,7 +1028,8 @@ static bool generate_identity_token(
     token.properties().push_back(std::move(property));
 
     property.name("dds.ca.algo");
-    property.value() = handle->algo;
+    // TODO (MiguelCompany): Convert according to the spec, depending on the use_legacy flag.
+    property.value() = convert_to_token_algo(handle->algo, true);
     property.propagate(true);
     token.properties().push_back(std::move(property));
 
@@ -1213,7 +1254,7 @@ ValidationResult_t PKIDH::validate_remote_identity(
 
         (*rih)->sn = ca_sn ? *ca_sn : "";
         (*rih)->cert_sn_ = ""; // cert_sn ? *cert_sn : "";
-        (*rih)->algo = cert_algo ? *cert_algo : "";
+        (*rih)->algo = cert_algo ? parse_token_algo(*cert_algo) : "";
         (*rih)->participant_key_ = remote_participant_key;
         *remote_identity_handle = rih;
 

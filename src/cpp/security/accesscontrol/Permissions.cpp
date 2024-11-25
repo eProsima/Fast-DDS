@@ -59,6 +59,45 @@ namespace rtps {
 
 using namespace security;
 
+static std::string convert_to_token_algo(
+        const std::string& algorithm,
+        bool use_legacy)
+{
+    // Leave as internal format when legacy is used
+    if (use_legacy)
+    {
+        return algorithm;
+    }
+
+    // Convert to token format
+    if (algorithm == RSA_SHA256)
+    {
+        return RSA_SHA256_FOR_TOKENS;
+    }
+    else if (algorithm == ECDSA_SHA256)
+    {
+        return ECDSA_SHA256_FOR_TOKENS;
+    }
+
+    return algorithm;
+}
+
+static std::string parse_token_algo(
+        const std::string& algorithm)
+{
+    // Convert to internal format, allowing both legacy and new formats
+    if (algorithm == RSA_SHA256_FOR_TOKENS)
+    {
+        return RSA_SHA256;
+    }
+    else if (algorithm == ECDSA_SHA256_FOR_TOKENS)
+    {
+        return ECDSA_SHA256;
+    }
+
+    return algorithm;
+}
+
 static bool is_domain_in_set(
         const uint32_t domain_id,
         const Domains& domains)
@@ -706,7 +745,7 @@ static bool generate_permissions_token(
     token.properties().push_back(std::move(property));
 
     property.name("dds.perm_ca.algo");
-    property.value() = handle->algo;
+    property.value() = convert_to_token_algo(handle->algo, true);
     property.propagate(true);
     token.properties().push_back(std::move(property));
 
@@ -942,7 +981,8 @@ PermissionsHandle* Permissions::validate_remote_permissions(
 
     if (algo != nullptr)
     {
-        if (algo->compare(lph->algo) != 0)
+        std::string used_algo = parse_token_algo(*algo);
+        if (used_algo.compare(lph->algo) != 0)
         {
             exception = _SecurityException_("Remote participant PermissionsCA algorithm differs from local");
             EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
