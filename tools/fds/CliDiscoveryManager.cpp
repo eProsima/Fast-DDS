@@ -161,7 +161,7 @@ std::string CliDiscoveryManager::getRemoteServers(
 }
 
 bool CliDiscoveryManager::initial_options_fail(
-        std::vector<option::Option>& options,
+        const std::vector<option::Option>& options,
         option::Parser& parse,
         bool check_nonOpts)
 {
@@ -317,8 +317,8 @@ pid_t CliDiscoveryManager::getPidOfServer(
 }
 
 pid_t CliDiscoveryManager::startServerInBackground(
-        uint16_t& port,
-        DomainId_t& domain,
+        const uint16_t& port,
+        const DomainId_t& domain,
         bool use_env_var)
 {
     setServerQos(port);
@@ -420,7 +420,7 @@ pid_t CliDiscoveryManager::startServerInBackground(
 }
 
 void CliDiscoveryManager::setServerQos(
-        uint16_t port)
+        const uint16_t port)
 {
     rtps::Locator_t locator;
     locator.kind = LOCATOR_KIND_TCPv4;
@@ -693,7 +693,7 @@ bool CliDiscoveryManager::setAddressAndKind(
 }
 
 int CliDiscoveryManager::fastdds_discovery_server(
-        std::vector<option::Option>& options,
+        const std::vector<option::Option>& options,
         option::Parser& parse)
 {
     // Convenience aliases
@@ -739,7 +739,7 @@ int CliDiscoveryManager::fastdds_discovery_server(
 
     // Retrieve server ID: is optional and only specified once
     // Note there is a specific cast to pointer if the Option is valid
-    option::Option* pOp = options[SERVERID];
+    const option::Option* pOp = options[SERVERID];
     int server_id = -1;
     std::stringstream server_stream;
 
@@ -905,7 +905,7 @@ int CliDiscoveryManager::fastdds_discovery_server(
 }
 
 int CliDiscoveryManager::fastdds_discovery_auto(
-        std::vector<option::Option>& options,
+        const std::vector<option::Option>& options,
         option::Parser& parse)
 {
     if (initial_options_fail(options, parse))
@@ -916,7 +916,7 @@ int CliDiscoveryManager::fastdds_discovery_auto(
     // Auto mode should check if there is a server created for the domain specified, if not, create one.
     int return_value = 0;
 
-    option::Option* pOp = options[DOMAIN];
+    const option::Option* pOp = options[DOMAIN];
     DomainId_t id = get_domain_id(pOp);
 
     if (isServerRunning(id))
@@ -937,7 +937,7 @@ int CliDiscoveryManager::fastdds_discovery_auto(
 }
 
 int CliDiscoveryManager::fastdds_discovery_start(
-        std::vector<option::Option>& options,
+        const std::vector<option::Option>& options,
         option::Parser& parse)
 {
     if (initial_options_fail(options, parse, false))
@@ -955,7 +955,7 @@ int CliDiscoveryManager::fastdds_discovery_start(
         return 1;
     }
 
-    option::Option* pOp = options[DOMAIN];
+    const option::Option* pOp = options[DOMAIN];
     DomainId_t id = get_domain_id(pOp);
     if (isServerRunning(id))
     {
@@ -983,7 +983,7 @@ int CliDiscoveryManager::fastdds_discovery_start(
 }
 
 int CliDiscoveryManager::fastdds_discovery_stop(
-        std::vector<option::Option>& options,
+        const std::vector<option::Option>& options,
         option::Parser& parse)
 {
     if (initial_options_fail(options, parse))
@@ -994,7 +994,7 @@ int CliDiscoveryManager::fastdds_discovery_stop(
     // Stop a server for the domain specified
     int return_value = 0;
 
-    option::Option* pOp = options[DOMAIN];
+    const option::Option* pOp = options[DOMAIN];
     DomainId_t id = get_domain_id(pOp);
 
     if (!isServerRunning(id))
@@ -1024,7 +1024,7 @@ int CliDiscoveryManager::fastdds_discovery_stop(
 }
 
 int CliDiscoveryManager::fastdds_discovery_add(
-        std::vector<option::Option>& options,
+        const std::vector<option::Option>& options,
         option::Parser& parse)
 {
     if (initial_options_fail(options, parse, false))
@@ -1043,7 +1043,7 @@ int CliDiscoveryManager::fastdds_discovery_add(
         return 1;
     }
 
-    option::Option* pOp = options[DOMAIN];
+    const option::Option* pOp = options[DOMAIN];
     DomainId_t id = get_domain_id(pOp);
     if (!isServerRunning(id))
     {
@@ -1063,7 +1063,7 @@ int CliDiscoveryManager::fastdds_discovery_add(
 }
 
 int CliDiscoveryManager::fastdds_discovery_set(
-        std::vector<option::Option>& options,
+        const std::vector<option::Option>& options,
         option::Parser& parse)
 {
     if (initial_options_fail(options, parse, false))
@@ -1082,7 +1082,7 @@ int CliDiscoveryManager::fastdds_discovery_set(
         return 1;
     }
 
-    option::Option* pOp = options[DOMAIN];
+    const option::Option* pOp = options[DOMAIN];
     DomainId_t id = get_domain_id(pOp);
     if (!isServerRunning(id))
     {
@@ -1106,7 +1106,7 @@ int CliDiscoveryManager::fastdds_discovery_set(
 }
 
 int CliDiscoveryManager::fastdds_discovery_list(
-        std::vector<option::Option>& options,
+        const std::vector<option::Option>& options,
         option::Parser& parse)
 {
     if (initial_options_fail(options, parse))
@@ -1128,7 +1128,7 @@ int CliDiscoveryManager::fastdds_discovery_list(
 }
 
 int CliDiscoveryManager::fastdds_discovery_info(
-        std::vector<option::Option>& options,
+        const std::vector<option::Option>& options,
         option::Parser& parse)
 {
     if (initial_options_fail(options, parse))
