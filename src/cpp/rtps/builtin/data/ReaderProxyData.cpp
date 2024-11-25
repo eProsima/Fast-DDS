@@ -1187,7 +1187,7 @@ bool ReaderProxyData::is_update_allowed(
     if ((m_guid != rdata.m_guid) ||
 #if HAVE_SECURITY
             (security_attributes_ != rdata.security_attributes_) ||
-            (plugin_security_attributes_ != rdata.security_attributes_) ||
+            (plugin_security_attributes_ != rdata.plugin_security_attributes_) ||
 #endif // if HAVE_SECURITY
             (m_typeName != rdata.m_typeName) ||
             (m_topicName != rdata.m_topicName))

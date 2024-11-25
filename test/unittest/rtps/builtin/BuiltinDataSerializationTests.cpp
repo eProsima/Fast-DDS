@@ -2364,6 +2364,71 @@ TEST(BuiltinDataSerializationTests, deserialization_of_big_parameters)
     }
 }
 
+/*!
+ * This is a regression test for redmine issue #19927
+ *
+ * It checks that proxy data for readers and writers can only be updated if the security attributes are equal.
+ */
+TEST(BuiltinDataSerializationTests, security_attributes_update)
+{
+    // Only if security is enabled
+#if HAVE_SECURITY
+
+    // Test for ReaderProxyData
+    {
+        ReaderProxyData original(max_unicast_locators, max_multicast_locators);
+        original.security_attributes_ = 0x01;
+        original.plugin_security_attributes_ = 0x02;
+
+        ReaderProxyData updated(original);
+        EXPECT_TRUE(original.is_update_allowed(updated));
+
+        updated.security_attributes_ = original.security_attributes_ + 10;
+        updated.plugin_security_attributes_ = original.plugin_security_attributes_;
+        EXPECT_FALSE(original.is_update_allowed(updated));
+
+        updated.security_attributes_ = original.security_attributes_;
+        updated.plugin_security_attributes_ = original.plugin_security_attributes_ + 10;
+        EXPECT_FALSE(original.is_update_allowed(updated));
+
+        updated.security_attributes_ = original.plugin_security_attributes_;
+        updated.plugin_security_attributes_ = original.plugin_security_attributes_;
+        EXPECT_FALSE(original.is_update_allowed(updated));
+
+        updated.security_attributes_ = original.security_attributes_;
+        updated.plugin_security_attributes_ = original.security_attributes_;
+        EXPECT_FALSE(original.is_update_allowed(updated));
+    }
+
+    // Test for WriterProxyData
+    {
+        WriterProxyData original(max_unicast_locators, max_multicast_locators);
+        original.security_attributes_ = 0x01;
+        original.plugin_security_attributes_ = 0x02;
+
+        WriterProxyData updated(original);
+        EXPECT_TRUE(original.is_update_allowed(updated));
+
+        updated.security_attributes_ = original.security_attributes_ + 10;
+        updated.plugin_security_attributes_ = original.plugin_security_attributes_;
+        EXPECT_FALSE(original.is_update_allowed(updated));
+
+        updated.security_attributes_ = original.security_attributes_;
+        updated.plugin_security_attributes_ = original.plugin_security_attributes_ + 10;
+        EXPECT_FALSE(original.is_update_allowed(updated));
+
+        updated.security_attributes_ = original.plugin_security_attributes_;
+        updated.plugin_security_attributes_ = original.plugin_security_attributes_;
+        EXPECT_FALSE(original.is_update_allowed(updated));
+
+        updated.security_attributes_ = original.security_attributes_;
+        updated.plugin_security_attributes_ = original.security_attributes_;
+        EXPECT_FALSE(original.is_update_allowed(updated));
+    }
+
+#endif  // HAVE_SECURITY
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
