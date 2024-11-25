@@ -89,6 +89,17 @@ public:
     using IPLocator = fastdds::rtps::IPLocator;
 
     /**
+     * @brief Constructor
+     */
+    CliDiscoveryManager();
+
+    /**
+     * @brief Get the default shared directory used to communicate servers' info between processes.
+     * @return The default shared directory
+     */
+    std::string get_default_shared_dir();
+
+    /**
      * @brief Get the domain id from the environment variable or the CLI argument. If none of the two is
      * provided, the default domain id is 0.
      * @param domain_id The domain id argument
@@ -343,6 +354,8 @@ protected:
     std::list<uint16_t> tcp_ports_;
     //! TCP addresses received from the CLI
     std::list<std::string> tcp_ips_;
+    //! Endpoint QoS to get data_sharing directory
+    std::string intraprocess_dir_;
 };
 
 } // namespace dds
