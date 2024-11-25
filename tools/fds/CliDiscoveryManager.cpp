@@ -31,6 +31,7 @@
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
 #include <fastdds/utils/IPLocator.hpp>
 #include <rtps/attributes/ServerAttributes.hpp>
 #include <utils/SystemInfo.hpp>
@@ -570,10 +571,11 @@ bool CliDiscoveryManager::addTcpServers()
 
 void CliDiscoveryManager::configureTransports()
 {
-    // TODO (Carlos): Should we keep SHM for TCP?
     if (!serverQos.wire_protocol().builtin.metatrafficUnicastLocatorList.has_kind<LOCATOR_KIND_UDPv4>())
     {
         serverQos.transport().use_builtin_transports = false;
+        std::shared_ptr<rtps::SharedMemTransportDescriptor> shm_transport = std::make_shared<rtps::SharedMemTransportDescriptor>();
+        serverQos.transport().user_transports.push_back(shm_transport);
     }
     // Add UDPv6 transport if required
     if (serverQos.wire_protocol().builtin.metatrafficUnicastLocatorList.has_kind<LOCATOR_KIND_UDPv6>())
