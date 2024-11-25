@@ -123,7 +123,7 @@ public:
      * @return True if the options are incorrect, false otherwise
      */
     bool initial_options_fail(
-            std::vector<option::Option>& options,
+            const std::vector<option::Option>& options,
             option::Parser& parse,
             bool check_nonOpts = true);
 
@@ -188,8 +188,8 @@ public:
      * @return The PID of the Discovery Server in the background
      */
     pid_t startServerInBackground(
-            uint16_t& port,
-            DomainId_t& domain,
+            const uint16_t& port,
+            const DomainId_t& domain,
             bool use_env_var);
 
     /**
@@ -197,7 +197,7 @@ public:
      * @param port The port of the Discovery Server
      */
     void setServerQos(
-            uint16_t port);
+            const uint16_t port);
 
     /**
      * @brief Load the XML configuration into the serverQos.
@@ -258,7 +258,7 @@ public:
      * @param parse The parser object to be used
      */
     int fastdds_discovery_server(
-            std::vector<option::Option>& options,
+            const std::vector<option::Option>& options,
             option::Parser& parse);
 
     /**
@@ -268,7 +268,7 @@ public:
      * @param parse The parser object to be used
      */
     int fastdds_discovery_auto(
-            std::vector<option::Option>& options,
+            const std::vector<option::Option>& options,
             option::Parser& parse);
 
     /**
@@ -278,7 +278,7 @@ public:
      * @param parse The parser object to be used
      */
     int fastdds_discovery_start(
-            std::vector<option::Option>& options,
+            const std::vector<option::Option>& options,
             option::Parser& parse);
 
     /**
@@ -287,7 +287,7 @@ public:
      * @param parse The parser object to be used
      */
     int fastdds_discovery_stop(
-            std::vector<option::Option>& options,
+            const std::vector<option::Option>& options,
             option::Parser& parse);
 
     /**
@@ -296,7 +296,7 @@ public:
      * @param parse The parser object to be used
      */
     int fastdds_discovery_add(
-            std::vector<option::Option>& options,
+            const std::vector<option::Option>& options,
             option::Parser& parse);
 
     /**
@@ -306,7 +306,7 @@ public:
      * @param parse The parser object to be used
      */
     int fastdds_discovery_set(
-            std::vector<option::Option>& options,
+            const std::vector<option::Option>& options,
             option::Parser& parse);
 
     /**
@@ -315,7 +315,7 @@ public:
      * @param parse The parser object to be used
      */
     int fastdds_discovery_list(
-            std::vector<option::Option>& options,
+            const std::vector<option::Option>& options,
             option::Parser& parse);
 
     /**
@@ -324,7 +324,7 @@ public:
      * @param parse The parser object to be used
      */
     int fastdds_discovery_info(
-            std::vector<option::Option>& options,
+            const std::vector<option::Option>& options,
             option::Parser& parse);
 
 protected:
