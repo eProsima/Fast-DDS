@@ -1130,7 +1130,7 @@ bool DataReaderImpl::on_new_cache_change_added(
 
     // The new change could have expired if it arrived too late
     // If so, remove it from the history and return false to avoid notifying the listener
-    if (expiration_ts < current_ts)
+    if (expiration_ts <= current_ts)
     {
         history_.remove_change_sub(new_change);
         return false;
