@@ -83,6 +83,36 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+CliDiscoveryManager::CliDiscoveryManager()
+        : pServer(nullptr)
+{
+    try
+    {
+        intraprocess_dir_ = get_default_shared_dir();
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "Error getting default shared directory: " << e.what() << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Warning);
+}
+
+std::string CliDiscoveryManager::get_default_shared_dir()
+{
+    std::string shm_path;
+#ifdef _WIN32
+    shm_path = "c:\\programdata\\eprosima\\fastdds_interprocess\\";
+#elif __APPLE__
+    shm_path = "/private/tmp/boost_interprocess/";
+#elif __linux__
+    shm_path = "/dev/shm/";
+#else
+    throw std::runtime_error(std::string("Platform not supported"));
+#endif
+    return shm_path;
+}
+
 DomainId_t CliDiscoveryManager::get_domain_id(
         const eprosima::option::Option* domain_id)
 {
@@ -373,8 +403,7 @@ pid_t CliDiscoveryManager::startServerInBackground(
             {
                 // Update Qos
                 std::stringstream file_name;
-                // TODO (Carlos): Check file location
-                file_name << "/tmp/" << port << "_servers.txt";
+                file_name << intraprocess_dir_ << "/" << port << "_servers.txt";
                 rtps::LocatorList_t serverList;
                 load_environment_server_info(read_servers_from_file(file_name.str()), serverList);
                 for (rtps::Locator_t& locator : serverList)
@@ -390,8 +419,7 @@ pid_t CliDiscoveryManager::startServerInBackground(
             {
                 DomainParticipantFactory::get_instance()->delete_participant(pServer);
                 std::stringstream file_name;
-                // TODO (Carlos): Check file location
-                file_name << "/tmp/" << port << "_servers.txt";
+                file_name << intraprocess_dir_ << "/" << port << "_servers.txt";
                 rtps::LocatorList_t serverList;
                 load_environment_server_info(read_servers_from_file(file_name.str()), serverList);
                 for (rtps::Locator_t& locator : serverList)
@@ -1054,10 +1082,10 @@ int CliDiscoveryManager::fastdds_discovery_add(
     uint16_t port = getDiscoveryServerPort(id);
     pid_t server_pid = getPidOfServer(port);
     std::stringstream file_name;
-    file_name << "/tmp/" << port << "_servers.txt";
+    file_name << intraprocess_dir_ << "/" << port << "_servers.txt";
     std::string servers = getRemoteServers(parse, numServs);
-    kill(server_pid, SIGUSR1);
     write_servers_to_file(file_name.str(), servers);
+    kill(server_pid, SIGUSR1);
 
     return return_value;
 }
@@ -1097,10 +1125,10 @@ int CliDiscoveryManager::fastdds_discovery_set(
         return 1;
     }
     std::stringstream file_name;
-    file_name << "/tmp/" << port << "_servers.txt";
+    file_name << intraprocess_dir_ << "/" << port << "_servers.txt";
     std::string servers = getRemoteServers(parse, numServs);
-    kill(server_pid, SIGUSR2);
     write_servers_to_file(file_name.str(), servers);
+    kill(server_pid, SIGUSR2);
 
     return return_value;
 }
