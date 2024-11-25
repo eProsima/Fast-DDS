@@ -55,7 +55,7 @@ static std::string read_servers_from_file(
     std::ifstream ifs(file);
     if (!ifs.is_open())
     {
-        std::cout << "Error opening file: " << file << std::endl;
+        EPROSIMA_LOG_ERROR(CLI, "Error opening file: " << file);
         return "";
     }
     std::string line;
@@ -71,7 +71,7 @@ static bool write_servers_to_file(
     std::ofstream ofs(file);
     if (!ofs.is_open())
     {
-        std::cout << "Error opening file: " << file << std::endl;
+        EPROSIMA_LOG_ERROR(CLI, "Error opening file: " << file);
         return false;
     }
     ofs << servers;
@@ -143,7 +143,7 @@ DomainId_t CliDiscoveryManager::get_domain_id(
             }
             else
             {
-                std::cout << "Found Invalid Domain ID in environment variable: " << env_value << std::endl;
+                EPROSIMA_LOG_ERROR(CLI, "Found Invalid Domain ID in environment variable: " << env_value);
             }
         }
     }
@@ -242,7 +242,7 @@ uint16_t CliDiscoveryManager::getDiscoveryServerPort(
         port_stream >> port;
         if (!port_stream.eof())
         {
-            std::cout << "Invalid listening locator port specified:" << port << std::endl;
+            EPROSIMA_LOG_WARNING(CLI, "Invalid listening locator port specified:" << port);
             return 0;
         }
     }
@@ -254,7 +254,7 @@ uint16_t CliDiscoveryManager::getDiscoveryServerPort(
 {
     if (domainId > 232)
     {
-        std::cout << "Domain ID " << domainId << " is too high and cannot run in an unreachable port." << std::endl;
+        EPROSIMA_LOG_WARNING(CLI, "Domain ID " << domainId << " is too high and cannot run in an unreachable port.");
         return 0;
     }
     uint16_t port = port_params_.getDiscoveryServerPort(domainId);
@@ -270,7 +270,7 @@ std::string CliDiscoveryManager::execCommand(
     std::unique_ptr<FILE, decltype(& pclose)> pipe(popen(command.c_str(), "r"), pclose);
     if (!pipe)
     {
-        std::cerr << "Error processing command:" << command << std::endl;
+        EPROSIMA_LOG_ERROR(CLI, "Error processing command:" << command);
         return "";
     }
     while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe.get()) != nullptr)
@@ -339,7 +339,7 @@ pid_t CliDiscoveryManager::getPidOfServer(
     std::string result = execCommand(command);
     if (result.empty())
     {
-        std::cout << "Error getting PID: No server found on port " << port << std::endl;
+        EPROSIMA_LOG_ERROR(CLI, "Error getting PID. No server found on port " << port);
         return 0;
     }
     return std::stoi(result);
@@ -359,7 +359,7 @@ pid_t CliDiscoveryManager::startServerInBackground(
     pid_t pid = fork();
     if (pid == -1)
     {
-        std::cout << "Error starting background process." << std::endl;
+        EPROSIMA_LOG_ERROR(CLI, "Error starting background process.");
         return 0;
     }
     else if (pid == 0)
@@ -369,7 +369,7 @@ pid_t CliDiscoveryManager::startServerInBackground(
 
         if (nullptr == pServer)
         {
-            std::cout << "Server creation for Domain ID [" << domain << "] failed with the given settings." << std::endl;
+            EPROSIMA_LOG_ERROR(CLI, "Server creation for Domain ID [" << domain << "] failed with the given settings.");
             return 0;
         }
 
@@ -482,8 +482,8 @@ bool CliDiscoveryManager::loadXMLFile(
         if (RETCODE_OK != DomainParticipantFactory::get_instance()->load_XML_profiles_file(
                     sXMLConfigFile))
         {
-            std::cout << "Cannot open XML file " << sXMLConfigFile << ". Please, check the path of this "
-                      << "XML file." << std::endl;
+            EPROSIMA_LOG_ERROR(CLI, "Cannot open XML file " << sXMLConfigFile << ". Please, check the path of this "
+                            << "XML file.");
             return false;
         }
         if (profile.empty())
@@ -495,21 +495,21 @@ bool CliDiscoveryManager::loadXMLFile(
             {
                 char errmsg[1024];
                 strerror_s(errmsg, sizeof(errmsg), errno);
-                std::cout << "Error setting environment variables: " << errmsg << std::endl;
+                EPROSIMA_LOG_ERROR(CLI, "Error setting environment variables: " << errmsg);
                 return false;
             }
 #else
             if (0 != unsetenv("FASTDDS_DEFAULT_PROFILES_FILE") ||
                     0 != setenv("SKIP_DEFAULT_XML_FILE", "1", 1))
             {
-                std::cout << "Error setting environment variables: " << std::strerror(errno) << std::endl;
+                EPROSIMA_LOG_ERROR(CLI, "Error setting environment variables: " << std::strerror(errno));
                 return false;
             }
 #endif // ifdef _WIN32
             // Set default participant QoS from XML file
             if (RETCODE_OK != DomainParticipantFactory::get_instance()->load_profiles())
             {
-                std::cout << "Error setting default DomainParticipantQos from XML default profile." << std::endl;
+                EPROSIMA_LOG_ERROR(CLI, "Error setting default DomainParticipantQos from XML default profile.");
                 return false;
             }
             serverQos = DomainParticipantFactory::get_instance()->get_default_participant_qos();
@@ -520,7 +520,7 @@ bool CliDiscoveryManager::loadXMLFile(
                     DomainParticipantFactory::get_instance()->get_participant_qos_from_profile(
                         profile, serverQos))
             {
-                std::cout << "Error loading specified profile from XML file." << std::endl;
+                EPROSIMA_LOG_ERROR(CLI, "Error loading specified profile from XML file.");
                 return false;
             }
         }
@@ -532,8 +532,8 @@ bool CliDiscoveryManager::addUdpServers()
 {
     if (udp_ports_.size() < udp_ips_.size() && udp_ips_.size() != 1)
     {
-        std::cout << "WARNING: the number of specified ports doesn't match the ip" << std::endl
-                  << "         addresses provided. Locators might share their port number." << std::endl;
+        EPROSIMA_LOG_WARNING(CLI, "The number of specified ports doesn't match the ip addresses provided. Locators might share their port number.");
+        std::cout << "Where is the warning" << std::endl;
     }
     auto it_p = udp_ports_.begin();
     auto it_i = udp_ips_.begin();
@@ -565,8 +565,7 @@ bool CliDiscoveryManager::addTcpServers()
 {
     if (tcp_ports_.size() < tcp_ips_.size() && tcp_ips_.size() != 1)
     {
-        std::cout << "ERROR: the number of specified TCP ports is lower than the ip" << std::endl
-                  << "       addresses provided. TCP transports cannot share listening port." << std::endl;
+        EPROSIMA_LOG_ERROR(CLI, "The number of specified TCP ports is lower than the ip addresses provided. TCP transports cannot share listening port.");
         return false;
     }
     auto it_p = tcp_ports_.begin();
@@ -708,7 +707,7 @@ bool CliDiscoveryManager::setAddressAndKind(
     }
     if (type == LOCATOR_PORT_INVALID)
     {
-        std::cout << "Invalid listening locator address specified: " << address << std::endl;
+        EPROSIMA_LOG_ERROR(CLI, "Invalid listening locator address specified: " << address);
         return false;
     }
     if (is_tcp)
@@ -779,8 +778,7 @@ int CliDiscoveryManager::fastdds_discovery_server(
                 eprosima::fastdds::rtps::DiscoveryProtocol::BACKUP))
         {
             // Discovery protocol specified in XML file is not SERVER nor BACKUP
-            std::cout << "The provided configuration is not valid. Participant must be either SERVER or BACKUP. " <<
-                std::endl;
+            EPROSIMA_LOG_ERROR(CLI, "The provided configuration is not valid. Participant must be either SERVER or BACKUP.");
             return 1;
         }
         else if (serverQos.wire_protocol().prefix == prefix_cero &&
@@ -788,14 +786,13 @@ int CliDiscoveryManager::fastdds_discovery_server(
                 eprosima::fastdds::rtps::DiscoveryProtocol::BACKUP)
         {
             // Discovery protocol specified in XML is BACKUP, but no GUID was specified
-            std::cout << "Specifying a GUID prefix is mandatory for BACKUP Discovery Servers." <<
-                "Update the XML file or use the -i argument." << std::endl;
+            EPROSIMA_LOG_ERROR(CLI, "Specifying a GUID prefix is mandatory for BACKUP Discovery Servers." <<
+                                    "Update the XML file or use the -i argument.");
         }
     }
     else if (pOp->count() != 1)
     {
-        std::cout << "Only one server participant can be created, thus, only one server id can be specified." <<
-                            std::endl;
+        EPROSIMA_LOG_ERROR(CLI, "Only one server participant can be created, thus, only one server id can be specified.");
         return 1;
     }
     else
@@ -806,7 +803,7 @@ int CliDiscoveryManager::fastdds_discovery_server(
         if (!eprosima::fastdds::rtps::get_server_client_default_guidPrefix(server_id,
                 serverQos.wire_protocol().prefix))
         {
-            std::cout << "Failed to set the GUID with the server identifier provided." << std::endl;
+            EPROSIMA_LOG_ERROR(CLI, "Failed to set the GUID with the server identifier provided.");
             return 1;
         }
     }
@@ -830,8 +827,7 @@ int CliDiscoveryManager::fastdds_discovery_server(
         if (serverQos.wire_protocol().prefix == prefix_cero)
         {
             // BACKUP argument used, but no GUID was specified either in the XML nor in the CLI
-            std::cout << "Specifying a GUID prefix is mandatory for BACKUP Discovery Servers. Use the -i argument." <<
-                std::endl;
+            EPROSIMA_LOG_ERROR(CLI, "Specifying a GUID prefix is mandatory for BACKUP Discovery Servers. Use the -i argument.");
             return 1;
         }
         serverQos.wire_protocol().builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::BACKUP;
@@ -857,12 +853,12 @@ int CliDiscoveryManager::fastdds_discovery_server(
         serverQos.wire_protocol().builtin.metatrafficUnicastLocatorList.clear();
         if (!addUdpServers())
         {
-            std::cout << "Error creating UDP server." << std::endl;
+            EPROSIMA_LOG_ERROR(CLI, "Error creating UDP server.");
             return 1;
         }
         if (!addTcpServers())
         {
-            std::cout << "Error creating TCP server." << std::endl;
+            EPROSIMA_LOG_ERROR(CLI, "Error creating TCP server.");
             return 1;
         }
     }
@@ -877,7 +873,7 @@ int CliDiscoveryManager::fastdds_discovery_server(
 
     if (nullptr == pServer)
     {
-        std::cout << "Server creation failed with the given settings. Please review locators setup." << std::endl;
+        EPROSIMA_LOG_ERROR(CLI, "Server creation failed with the given settings. Please review locators setup.");
         return_value = 1;
     }
     else
@@ -977,8 +973,7 @@ int CliDiscoveryManager::fastdds_discovery_start(
     int numServs = parse.nonOptionsCount();
     if (numServs > 1)
     {
-        std::cout << "Too many arguments specified. Expected format is: start -d <domain> <ip:domain;ip:domain...>" <<
-                            std::endl;
+        EPROSIMA_LOG_ERROR(CLI_START, "Too many arguments specified. Expected format is: start -d <domain> <ip:domain;ip:domain...>");
         return 1;
     }
 
@@ -1043,7 +1038,7 @@ int CliDiscoveryManager::fastdds_discovery_stop(
     }
     else
     {
-        std::cout << "Could not stop server for Domain ID [" << id << "]." << std::endl;
+        EPROSIMA_LOG_ERROR(CLI_STOP, "Could not stop server for Domain ID [" << id << "].");
         return_value = 1;
     }
 
@@ -1065,8 +1060,7 @@ int CliDiscoveryManager::fastdds_discovery_add(
     int numServs = parse.nonOptionsCount();
     if (numServs > 1)
     {
-        std::cout << "Too many arguments specified. Expected format is: add -d <domain> <ip:domain;ip:domain...>" <<
-                            std::endl;
+        EPROSIMA_LOG_ERROR(CLI_ADD, "Too many arguments specified. Expected format is: add -d <domain> <ip:domain;ip:domain...>");
         return 1;
     }
 
@@ -1104,8 +1098,7 @@ int CliDiscoveryManager::fastdds_discovery_set(
     int numServs = parse.nonOptionsCount();
     if (numServs > 1)
     {
-        std::cout << "Too many arguments specified. Expected format is: set -d <domain> <ip:domain;ip:domain...>" <<
-                            std::endl;
+        EPROSIMA_LOG_ERROR(CLI_SET, "Too many arguments specified. Expected format is: set -d <domain> <ip:domain;ip:domain...>");
         return 1;
     }
 
