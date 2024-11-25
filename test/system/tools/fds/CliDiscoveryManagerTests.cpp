@@ -683,6 +683,7 @@ TEST_F(CliDiscoveryManagerTest, AddTcpServers)
     }
 }
 
+// Note that a SHM transport is added when builtin transports are not used
 TEST_F(CliDiscoveryManagerTest, ConfigureTransports)
 {
     // UDPv4 Server use builtin transports
@@ -692,21 +693,21 @@ TEST_F(CliDiscoveryManagerTest, ConfigureTransports)
 
     // UDPv6 Server adds one UDPv6 transport
     addServers(test_case_map.at("udp_v6"));
-    testTransportSetup(0, 0, 1, 0, 0);
+    testTransportSetup(1, 0, 1, 0, 0);
     EXPECT_FALSE(manager.getServerQos().transport().use_builtin_transports);
 
     // TCPv4 Server adds one TCPv4 transport per listening port
     addServers(test_case_map.at("tcp_1_ip_1_port"));
-    testTransportSetup(0, 0, 0, 1, 0);
+    testTransportSetup(1, 0, 0, 1, 0);
     EXPECT_FALSE(manager.getServerQos().transport().use_builtin_transports);
 
     addServers(test_case_map.at("tcp_2_ip_2_port"));
-    testTransportSetup(0, 0, 0, 2, 0);
+    testTransportSetup(1, 0, 0, 2, 0);
     EXPECT_FALSE(manager.getServerQos().transport().use_builtin_transports);
 
     // TCPv6 Server adds one TCPv6 transport per listening port
     addServers(test_case_map.at("tcp_v6"));
-    testTransportSetup(0, 0, 0, 0, 1);
+    testTransportSetup(1, 0, 0, 0, 1);
     EXPECT_FALSE(manager.getServerQos().transport().use_builtin_transports);
 
     // UDPv4 and TCPv4 Server uses builtin transports with an additional transport for TCPv4
