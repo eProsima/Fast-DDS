@@ -21,6 +21,8 @@
 #include <sstream>
 #include <string>
 
+#include <fastdds/dds/log/Log.hpp>
+
 namespace option = eprosima::option;
 
 enum  optionIndex
@@ -66,13 +68,13 @@ struct Arg : public option::Arg
         {
             if (strcmp(option.name, "i") == 0)
             {
-                std::cout << "\nError in option '" << option.name << "' value. Remember it "
-                            << "is optional. It should be a key identifier between 0 and 255." << std::endl;
+                EPROSIMA_LOG_ERROR(CLI, "Error in option '" << option.name << "' value. Remember it "
+                            << "is optional. It should be a key identifier between 0 and 255.");
             }
             else if (strcmp(option.name, "d") == 0)
             {
-                std::cout << "\nError in option '" << option.name << "' value. "
-                            << "It should be a key identifier between 0 and 255." << std::endl;
+                EPROSIMA_LOG_ERROR(CLI, "Error in option '" << option.name << "' value. "
+                            << "It should be a key identifier between 0 and 255.");
             }
         }
 
@@ -90,7 +92,7 @@ struct Arg : public option::Arg
 
         if (msg)
         {
-            std::cout << "\nOption '" << option.desc->longopt << "' requires an argument." << std::endl;
+            EPROSIMA_LOG_ERROR(CLI, "Option: '" << option.desc->longopt << "' requires an argument.");
         }
         return option::ARG_ILLEGAL;
     }
@@ -118,8 +120,7 @@ struct Arg : public option::Arg
 
         if (msg)
         {
-            std::cout << "\nOption '" << option.name
-                        << "' value should be an UDP port between 1025 and 65535." << std::endl;
+            EPROSIMA_LOG_ERROR(CLI, "Option: '" << option.name << "' value should be an UDP port between 1025 and 65535.");
         }
 
         return option::ARG_ILLEGAL;
@@ -148,8 +149,7 @@ struct Arg : public option::Arg
 
         if (msg)
         {
-            std::cout << "\nOption '" << option.name
-                    << "' value should be an TCP port between 1025 and 65535." << std::endl;
+            EPROSIMA_LOG_ERROR(CLI, "Option: '" << option.name << "' value should be an TCP port between 1025 and 65535.");
         }
 
         return option::ARG_ILLEGAL;
