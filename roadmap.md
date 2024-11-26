@@ -14,6 +14,7 @@ Disclaimer:
 
 The following list of features are planned to be addressed in the short term, and incorporated into the following release of the product (v3.2.0):
 
+* Support creating a `DynamicTypeBuilder` from an IDL string
 * Consolidation of some [properties](https://fast-dds.docs.eprosima.com/en/latest/fastdds/property_policies/property_policies.html) into QoS policies
 * Transmission on discovery of all QoS policies
 * SHM permissions override
@@ -23,6 +24,9 @@ The following list of features are planned to be addressed in the short term, an
 
 The following list of features are planned to be addressed in the medium term, typically within the subsequent release(s) generated in the next **9 months** after next planned release:
 
+* Support for custom interface selection for statistics traffic
+* Full support for DDS X-TYPES assignability checks
+* ChainingTransport configuration through XML
 * Tier 1 support for QNX platforms
 * Tier 1 support for Android platforms
 * Full support for DESTINATION_ORDER QoS
