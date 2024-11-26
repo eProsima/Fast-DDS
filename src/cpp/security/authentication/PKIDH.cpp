@@ -1005,7 +1005,8 @@ std::shared_ptr<SecretHandle> PKIDH::generate_sharedsecret(
 }
 
 static bool generate_identity_token(
-        PKIIdentityHandle& handle)
+        PKIIdentityHandle& handle,
+        bool transmit_legacy_algorithms)
 {
     Property property;
     IdentityToken& token = handle->identity_token_;
@@ -1017,8 +1018,7 @@ static bool generate_identity_token(
     token.properties().push_back(std::move(property));
 
     property.name("dds.cert.algo");
-    // TODO (MiguelCompany): Convert according to the spec, depending on the use_legacy flag.
-    property.value() = convert_to_token_algo(handle->sign_alg_, true);
+    property.value() = convert_to_token_algo(handle->sign_alg_, transmit_legacy_algorithms);
     property.propagate(true);
     token.properties().push_back(std::move(property));
 
@@ -1028,8 +1028,7 @@ static bool generate_identity_token(
     token.properties().push_back(std::move(property));
 
     property.name("dds.ca.algo");
-    // TODO (MiguelCompany): Convert according to the spec, depending on the use_legacy flag.
-    property.value() = convert_to_token_algo(handle->algo, true);
+    property.value() = convert_to_token_algo(handle->algo, transmit_legacy_algorithms);
     property.propagate(true);
     token.properties().push_back(std::move(property));
 
@@ -1054,6 +1053,13 @@ ValidationResult_t PKIDH::validate_local_identity(
         exception = _SecurityException_("Not found any dds.sec.auth.builtin.PKI-DH property");
         EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    bool transmit_legacy_algorithms = false;
+    std::string* legacy = PropertyPolicyHelper::find_property(auth_properties, "transmit_algorithms_as_legacy");
+    if (legacy != nullptr)
+    {
+        transmit_legacy_algorithms = (*legacy == "true");
     }
 
     std::string* identity_ca = PropertyPolicyHelper::find_property(auth_properties, "identity_ca");
@@ -1201,7 +1207,7 @@ ValidationResult_t PKIDH::validate_local_identity(
                                     adjusted_participant_key, exception))
                             {
                                 // Generate IdentityToken.
-                                if (generate_identity_token(*ih))
+                                if (generate_identity_token(*ih, transmit_legacy_algorithms))
                                 {
                                     (*ih)->participant_key_ = adjusted_participant_key;
                                     *local_identity_handle = ih;
