@@ -72,6 +72,7 @@ public:
         tcp_ips_.clear();
         serverQos = DomainParticipantQos();
     }
+
 };
 } // namespace dds
 } // namespace fastdds
