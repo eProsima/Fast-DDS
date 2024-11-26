@@ -69,16 +69,16 @@ struct Arg : public option::Arg
             if (strcmp(option.name, "i") == 0)
             {
                 EPROSIMA_LOG_ERROR(CLI, "Error in option '" << option.name << "' value. Remember it "
-                            << "is optional. It should be a key identifier between 0 and 255.");
+                                                            << "is optional. It should be a key identifier between 0 and 255.");
             }
             else if (strcmp(option.name, "d") == 0)
             {
                 EPROSIMA_LOG_ERROR(CLI, "Error in option '" << option.name << "' value. "
-                            << "It should be a key identifier between 0 and 255.");
+                                                            << "It should be a key identifier between 0 and 255.");
             }
         }
 
-      return option::ARG_ILLEGAL;
+        return option::ARG_ILLEGAL;
     }
 
     static option::ArgStatus required(
@@ -120,7 +120,8 @@ struct Arg : public option::Arg
 
         if (msg)
         {
-            EPROSIMA_LOG_ERROR(CLI, "Option: '" << option.name << "' value should be an UDP port between 1025 and 65535.");
+            EPROSIMA_LOG_ERROR(CLI,
+                    "Option: '" << option.name << "' value should be an UDP port between 1025 and 65535.");
         }
 
         return option::ARG_ILLEGAL;
@@ -149,11 +150,13 @@ struct Arg : public option::Arg
 
         if (msg)
         {
-            EPROSIMA_LOG_ERROR(CLI, "Option: '" << option.name << "' value should be an TCP port between 1025 and 65535.");
+            EPROSIMA_LOG_ERROR(CLI,
+                    "Option: '" << option.name << "' value should be an TCP port between 1025 and 65535.");
         }
 
         return option::ARG_ILLEGAL;
     }
+
 };
 
 const option::Descriptor usage[] = {
@@ -287,6 +290,6 @@ const std::string EXAMPLES =
         "\t    $ " FAST_SERVER_BINARY " -t 127.0.0.1 -q 42100 -t 192.163.6.34 \n"
         "\t    -q 42101";
 
-        //TODO (Carlos): Add daemon examples
+//TODO (Carlos): Add daemon examples
 
 #endif // FASTDDS_CLI_DISCOVERY_PARSER_HPP
