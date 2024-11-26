@@ -35,13 +35,16 @@ using namespace eprosima::option;
 
 // TestCase uses the following format:
 // {argv, udp_ips, udp_ports, tcp_ips, tcp_ports}
-using TestCase = std::tuple<std::vector<const char*>, std::vector<std::string>, std::vector<uint16_t>, std::vector<std::string>, std::vector<uint16_t>>;
+using TestCase = std::tuple<std::vector<const char*>, std::vector<std::string>, std::vector<uint16_t>,
+                std::vector<std::string>, std::vector<uint16_t>>;
 
 class CliDiscoveryManagerTest : public ::testing::Test
 {
 public:
 
-    void createOptionsAndParser(int argc, const char* argv[])
+    void createOptionsAndParser(
+            int argc,
+            const char* argv[])
     {
         Stats stats(usage, argc, argv);
         options = std::vector<Option>(stats.options_max);
@@ -49,12 +52,15 @@ public:
         parse = Parser(usage, argc, argv, &options[0], &buffer[0]);
     }
 
-    Option* getOption(optionIndex idx)
+    Option* getOption(
+            optionIndex idx)
     {
         return options[idx];
     }
 
-    void setTestEnv(std::string env_var_name_, std::string env_var_value)
+    void setTestEnv(
+            std::string env_var_name_,
+            std::string env_var_value)
     {
 #ifdef _WIN32
         _putenv_s(env_var_name_.c_str(), env_var_value.c_str());
@@ -63,7 +69,12 @@ public:
 #endif // _WIN32
     }
 
-    void compareLocator(const Locator_t& loc, const std::string& ip, uint16_t port, bool is_tcp, bool is_ipv6)
+    void compareLocator(
+            const Locator_t& loc,
+            const std::string& ip,
+            uint16_t port,
+            bool is_tcp,
+            bool is_ipv6)
     {
         // Build reference locator
         Locator_t locator_ref(port);
@@ -90,9 +101,9 @@ public:
     }
 
     void testServerLocatorsSetup(
-        TestCase test_case,
-        bool is_tcp,
-        bool should_fail = false)
+            TestCase test_case,
+            bool is_tcp,
+            bool should_fail = false)
     {
         const auto& argv = std::get<0>(test_case);
         const auto& ips = is_tcp ? std::get<3>(test_case) : std::get<1>(test_case);
@@ -109,7 +120,7 @@ public:
             getOption(UDPADDRESS),
             getOption(TCP_PORT),
             getOption(TCPADDRESS)
-        );
+            );
         // Only fails if there is an error setting address and kind
         if (is_tcp)
         {
@@ -132,14 +143,14 @@ public:
                     ports[i],
                     is_tcp,
                     false
-                );
+                    );
                 ++i;
             }
         }
     }
 
     void addServers(
-        TestCase test_case)
+            TestCase test_case)
     {
         const auto& argv = std::get<0>(test_case);
         createOptionsAndParser(argv.size(), const_cast<const char**>(argv.data()));
@@ -149,15 +160,15 @@ public:
             getOption(UDPADDRESS),
             getOption(TCP_PORT),
             getOption(TCPADDRESS)
-        );
+            );
         EXPECT_TRUE(manager.addTcpServers());
         EXPECT_TRUE(manager.addUdpServers());
     }
 
     template<typename TransportDescriptorType>
     void transport_check(
-        std::vector<std::shared_ptr<TransportDescriptorInterface>>& transports,
-        uint8_t expected_count)
+            std::vector<std::shared_ptr<TransportDescriptorInterface>>& transports,
+            uint8_t expected_count)
     {
         uint8_t count = 0;
         for (const auto& transportDescriptor : transports)
@@ -170,7 +181,12 @@ public:
         EXPECT_EQ(count, expected_count);
     }
 
-    void testTransportSetup(uint8_t shm, uint8_t udp4, uint8_t udp6, uint8_t tcp4, uint8_t tcp6)
+    void testTransportSetup(
+            uint8_t shm,
+            uint8_t udp4,
+            uint8_t udp6,
+            uint8_t tcp4,
+            uint8_t tcp6)
     {
         manager.configureTransports();
         transport_check<SharedMemTransportDescriptor>(manager.getServerQos().transport().user_transports, shm);
@@ -181,6 +197,7 @@ public:
     }
 
 protected:
+
     void SetUp() override
     {
     }
@@ -555,13 +572,13 @@ TEST_F(CliDiscoveryManagerTest, SetServerQos)
 TEST_F(CliDiscoveryManagerTest, GetCliPortsAndIps)
 {
     std::vector<std::string> test_cases =
-        {
-            {"udp_2_ip_2_port"},
-            {"tcp_2_ip_2_port"},
-            {"udp_1_ip_1_port_tcp_1_ip_1_port"},
-            {"OPT:udp_1_ip_0_port_tcp_0_ip_1_port"},
-            {"OPT:udp_0_ip_1_port_tcp_1_ip_0_port"},
-        };
+    {
+        {"udp_2_ip_2_port"},
+        {"tcp_2_ip_2_port"},
+        {"udp_1_ip_1_port_tcp_1_ip_1_port"},
+        {"OPT:udp_1_ip_0_port_tcp_0_ip_1_port"},
+        {"OPT:udp_0_ip_1_port_tcp_1_ip_0_port"},
+    };
 
     for (const auto& key_case : test_cases)
     {
@@ -573,7 +590,7 @@ TEST_F(CliDiscoveryManagerTest, GetCliPortsAndIps)
             getOption(UDPADDRESS),
             getOption(TCP_PORT),
             getOption(TCPADDRESS)
-        );
+            );
 
         EXPECT_EQ(manager.getUdpIps().size(), std::get<1>(test_case).size());
         EXPECT_EQ(manager.getUdpPorts().size(), std::get<2>(test_case).size());
@@ -640,15 +657,15 @@ TEST_F(CliDiscoveryManagerTest, AddUdpServers)
 {
     // Test cases: {argv, IPs_expected, ports_expected}
     std::vector<std::string> test_cases =
-        {
-            {"udp_1_ip_1_port"},
-            {"udp_0_ip_1_port"},
-            {"udp_1_ip_0_port"},
-            {"udp_2_ip_2_port"},
-            {"udp_1_ip_2_port"},
-            {"udp_2_ip_1_port"},
-            {"tcp_1_ip_0_port"},
-        };
+    {
+        {"udp_1_ip_1_port"},
+        {"udp_0_ip_1_port"},
+        {"udp_1_ip_0_port"},
+        {"udp_2_ip_2_port"},
+        {"udp_1_ip_2_port"},
+        {"udp_2_ip_1_port"},
+        {"tcp_1_ip_0_port"},
+    };
     for (const auto& key_case : test_cases)
     {
         const auto& test_case = test_case_map.at(key_case);
@@ -659,18 +676,18 @@ TEST_F(CliDiscoveryManagerTest, AddUdpServers)
 TEST_F(CliDiscoveryManagerTest, AddTcpServers)
 {
     std::vector<std::string> test_cases =
-        {
-            {"tcp_1_ip_1_port"},
-            {"tcp_0_ip_1_port"},
-            {"tcp_1_ip_0_port"},
-            {"tcp_2_ip_2_port"},
-            {"tcp_1_ip_2_port"},
-            {"udp_1_ip_0_port"},
-        };
+    {
+        {"tcp_1_ip_1_port"},
+        {"tcp_0_ip_1_port"},
+        {"tcp_1_ip_0_port"},
+        {"tcp_2_ip_2_port"},
+        {"tcp_1_ip_2_port"},
+        {"udp_1_ip_0_port"},
+    };
     std::vector<std::string> test_cases_fail =
-        {
-            {"tcp_2_ip_1_port"},
-        };
+    {
+        {"tcp_2_ip_1_port"},
+    };
     for (const auto& key_case : test_cases)
     {
         const auto& test_case = test_case_map.at(key_case);
@@ -734,7 +751,8 @@ TEST_F(CliDiscoveryManagerTest, GetLocalServers)
         EXPECT_EQ(manager.getPidOfServer(port), 0);
         addServers(test_case_map.at("tcp_1_ip_1_port"));
         manager.configureTransports();
-        DomainParticipant* server = DomainParticipantFactory::get_instance()->create_participant(0, manager.getServerQos());
+        DomainParticipant* server = DomainParticipantFactory::get_instance()->create_participant(0,
+                        manager.getServerQos());
         servers = manager.getLocalServers();
         EXPECT_EQ(servers.size(), 1);
         for (const MetaInfo_DS& server : servers)
@@ -761,7 +779,8 @@ TEST_F(CliDiscoveryManagerTest, GetLocalServers)
         EXPECT_EQ(manager.getPidOfServer(p1), 0);
         addServers(test_case_map.at("tcp_2_ip_2_port"));
         manager.configureTransports();
-        DomainParticipant* server = DomainParticipantFactory::get_instance()->create_participant(0, manager.getServerQos());
+        DomainParticipant* server = DomainParticipantFactory::get_instance()->create_participant(0,
+                        manager.getServerQos());
         servers = manager.getLocalServers();
         EXPECT_EQ(servers.size(), 2);
         std::vector<uint16_t> expected_ports({p0, p1});
@@ -833,7 +852,9 @@ TEST_F(CliDiscoveryManagerTest, StartAndStopServers)
     EXPECT_EQ(manager.getPidOfServer(p0), 0);
 }
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
