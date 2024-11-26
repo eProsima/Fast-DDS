@@ -156,45 +156,29 @@ These examples' path can be accessed from a terminal by typing
 
     $ goToExamples
 
-From this folder you can access all examples, both for DDS and RTPS.
-We detail the steps to launch two such examples below.
+From this folder you can access all examples.
+We detail the steps to launch one of these examples below.
 
 To launch the Hello World example (a minimal example that will perform a Publisher/Subscriber match and start sending samples) you could run:
 
     $ goToExamples
-    $ cd dds/HelloWorldExample/bin
-    $ tmux new-session "./HelloWorldExample publisher 0 1000" \; \
-    split-window "./HelloWorldExample subscriber" \; \
+    $ cd dds/hello_world/bin
+    $ tmux new-session "./hello_world publisher" \; \
+    split-window "./hello_world subscriber" \; \
     select-layout even-vertical
 
 This example is not constrained to the current instance.
 It is possible to run several instances of this container to check the communication between them by running the following from each container.
 
     $ goToExamples
-    $ cd dds/HelloWorldExample/bin
-    $ ./HelloWorldExample publisher
+    $ cd dds/hello_world/bin
+    $ ./hello_world publisher
 
 or
 
     $ goToExamples
-    $ cd dds/HelloWorldExample/bin
-    $ ./HelloWorldExample subscriber
-
-Another example you could launch is the Benchmark example.
-This example creates either a Publisher or a Subscriber and on a successful match starts sending samples.
-After a few seconds the process that launched the Publisher will show a report with the number of samples transmitted.
-
-On the subscriber side, run:
-
-    $ goToExamples
-    $ cd dds/Benchmark/bin
-    $ ./Benchmark subscriber udp
-
-On the publisher side, run:
-
-    $ goToExamples
-    $ cd dds/Benchmark/bin
-    $ ./Benchmark publisher udp
+    $ cd dds/hello_world/bin
+    $ ./hello_world subscriber
 
 ---
 
