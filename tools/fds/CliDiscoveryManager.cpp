@@ -84,7 +84,7 @@ namespace fastdds {
 namespace dds {
 
 CliDiscoveryManager::CliDiscoveryManager()
-        : pServer(nullptr)
+    : pServer(nullptr)
 {
     try
     {
@@ -109,7 +109,7 @@ std::string CliDiscoveryManager::get_default_shared_dir()
     shm_path = "/dev/shm/";
 #else
     throw std::runtime_error(std::string("Platform not supported"));
-#endif
+#endif // ifdef _WIN32
     return shm_path;
 }
 
@@ -251,7 +251,7 @@ uint16_t CliDiscoveryManager::getDiscoveryServerPort(
 }
 
 uint16_t CliDiscoveryManager::getDiscoveryServerPort(
-            const uint32_t& domainId)
+        const uint32_t& domainId)
 {
     if (domainId > 232)
     {
@@ -493,7 +493,7 @@ bool CliDiscoveryManager::loadXMLFile(
                     sXMLConfigFile))
         {
             EPROSIMA_LOG_ERROR(CLI, "Cannot open XML file " << sXMLConfigFile << ". Please, check the path of this "
-                            << "XML file.");
+                                                            << "XML file.");
             return false;
         }
         if (profile.empty())
@@ -542,7 +542,8 @@ bool CliDiscoveryManager::addUdpServers()
 {
     if (udp_ports_.size() < udp_ips_.size() && udp_ips_.size() != 1)
     {
-        EPROSIMA_LOG_WARNING(CLI, "The number of specified ports doesn't match the ip addresses provided. Locators might share their port number.");
+        EPROSIMA_LOG_WARNING(CLI,
+                "The number of specified ports doesn't match the ip addresses provided. Locators might share their port number.");
         std::cout << "Where is the warning" << std::endl;
     }
     auto it_p = udp_ports_.begin();
@@ -575,7 +576,8 @@ bool CliDiscoveryManager::addTcpServers()
 {
     if (tcp_ports_.size() < tcp_ips_.size() && tcp_ips_.size() != 1)
     {
-        EPROSIMA_LOG_ERROR(CLI, "The number of specified TCP ports is lower than the ip addresses provided. TCP transports cannot share listening port.");
+        EPROSIMA_LOG_ERROR(CLI,
+                "The number of specified TCP ports is lower than the ip addresses provided. TCP transports cannot share listening port.");
         return false;
     }
     auto it_p = tcp_ports_.begin();
@@ -610,7 +612,8 @@ void CliDiscoveryManager::configureTransports()
     if (!serverQos.wire_protocol().builtin.metatrafficUnicastLocatorList.has_kind<LOCATOR_KIND_UDPv4>())
     {
         serverQos.transport().use_builtin_transports = false;
-        std::shared_ptr<rtps::SharedMemTransportDescriptor> shm_transport = std::make_shared<rtps::SharedMemTransportDescriptor>();
+        std::shared_ptr<rtps::SharedMemTransportDescriptor> shm_transport =
+                std::make_shared<rtps::SharedMemTransportDescriptor>();
         serverQos.transport().user_transports.push_back(shm_transport);
     }
     // Add UDPv6 transport if required
@@ -788,7 +791,8 @@ int CliDiscoveryManager::fastdds_discovery_server(
                 eprosima::fastdds::rtps::DiscoveryProtocol::BACKUP))
         {
             // Discovery protocol specified in XML file is not SERVER nor BACKUP
-            EPROSIMA_LOG_ERROR(CLI, "The provided configuration is not valid. Participant must be either SERVER or BACKUP.");
+            EPROSIMA_LOG_ERROR(CLI,
+                    "The provided configuration is not valid. Participant must be either SERVER or BACKUP.");
             return 1;
         }
         else if (serverQos.wire_protocol().prefix == prefix_cero &&
@@ -797,12 +801,13 @@ int CliDiscoveryManager::fastdds_discovery_server(
         {
             // Discovery protocol specified in XML is BACKUP, but no GUID was specified
             EPROSIMA_LOG_ERROR(CLI, "Specifying a GUID prefix is mandatory for BACKUP Discovery Servers." <<
-                                    "Update the XML file or use the -i argument.");
+                    "Update the XML file or use the -i argument.");
         }
     }
     else if (pOp->count() != 1)
     {
-        EPROSIMA_LOG_ERROR(CLI, "Only one server participant can be created, thus, only one server id can be specified.");
+        EPROSIMA_LOG_ERROR(CLI,
+                "Only one server participant can be created, thus, only one server id can be specified.");
         return 1;
     }
     else
@@ -837,7 +842,8 @@ int CliDiscoveryManager::fastdds_discovery_server(
         if (serverQos.wire_protocol().prefix == prefix_cero)
         {
             // BACKUP argument used, but no GUID was specified either in the XML nor in the CLI
-            EPROSIMA_LOG_ERROR(CLI, "Specifying a GUID prefix is mandatory for BACKUP Discovery Servers. Use the -i argument.");
+            EPROSIMA_LOG_ERROR(CLI,
+                    "Specifying a GUID prefix is mandatory for BACKUP Discovery Servers. Use the -i argument.");
             return 1;
         }
         serverQos.wire_protocol().builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::BACKUP;
@@ -983,7 +989,8 @@ int CliDiscoveryManager::fastdds_discovery_start(
     int numServs = parse.nonOptionsCount();
     if (numServs > 1)
     {
-        EPROSIMA_LOG_ERROR(CLI_START, "Too many arguments specified. Expected format is: start -d <domain> <ip:domain;ip:domain...>");
+        EPROSIMA_LOG_ERROR(CLI_START,
+                "Too many arguments specified. Expected format is: start -d <domain> <ip:domain;ip:domain...>");
         return 1;
     }
 
@@ -1070,7 +1077,8 @@ int CliDiscoveryManager::fastdds_discovery_add(
     int numServs = parse.nonOptionsCount();
     if (numServs > 1)
     {
-        EPROSIMA_LOG_ERROR(CLI_ADD, "Too many arguments specified. Expected format is: add -d <domain> <ip:domain;ip:domain...>");
+        EPROSIMA_LOG_ERROR(CLI_ADD,
+                "Too many arguments specified. Expected format is: add -d <domain> <ip:domain;ip:domain...>");
         return 1;
     }
 
@@ -1108,7 +1116,8 @@ int CliDiscoveryManager::fastdds_discovery_set(
     int numServs = parse.nonOptionsCount();
     if (numServs > 1)
     {
-        EPROSIMA_LOG_ERROR(CLI_SET, "Too many arguments specified. Expected format is: set -d <domain> <ip:domain;ip:domain...>");
+        EPROSIMA_LOG_ERROR(CLI_SET,
+                "Too many arguments specified. Expected format is: set -d <domain> <ip:domain;ip:domain...>");
         return 1;
     }
 
