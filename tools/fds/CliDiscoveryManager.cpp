@@ -283,9 +283,18 @@ std::string CliDiscoveryManager::execCommand(
 std::vector<uint16_t> CliDiscoveryManager::getListeningPorts()
 {
     std::vector<uint16_t> ports;
-    const std::string& command = "netstat -at | grep LISTEN";
-    std::string result = execCommand(command);
+    std::string command;
+#ifdef _WIN32
+    command = "netstat -an | findstr LISTENING";
+    std::regex port_regex(R"(0\.0\.0\.0:([123456789]+))");
+#elif __APPLE__
+    command = "netstat -an | grep LISTEN";
+    std::regex port_regex(R"(\*.([\d+]+))");
+#else
+    command = "ss -ltn";
     std::regex port_regex(R"(0\.0\.0\.0:(\d+))");
+#endif // ifdef _WIN32
+    std::string result = execCommand(command);
     std::smatch match;
     std::string line;
     std::istringstream result_stream(result);
