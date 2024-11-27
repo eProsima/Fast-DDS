@@ -11,34 +11,33 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-version: "3"
 
 services:
   xtypes-subscriber:
     image: @DOCKER_IMAGE_NAME@
     volumes:
-      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
-      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
+      - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
+      - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
       @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
     environment:
-      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
-      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
-      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/xtypes@FILE_EXTENSION@
-      FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/xtypes/xtypes_minimal_profile.xml
-    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/xtypes@FILE_EXTENSION@ subscriber --samples 30"
+      @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
+      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/xtypes/@EXAMPLE_SUFFIX_DIR_COMPOSE@
+      FASTDDS_DEFAULT_PROFILES_FILE: @FASTDDS_DEFAULT_PROFILES_FILE_PREFIX_COMPOSE@/xtypes/xtypes_minimal_profile.xml
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/xtypes@FILE_EXTENSION@ subscriber --samples 30"
 
   xtypes-subscriber-publisher:
     image: @DOCKER_IMAGE_NAME@
     volumes:
-      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
-      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
+      - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
+      - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
       @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
     environment:
-      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
-      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
-      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/xtypes
-      FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/xtypes/xtypes_minimal_profile.xml
-    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/xtypes@FILE_EXTENSION@ subscriber --samples 30 & $${EXAMPLE_DIR}/xtypes@FILE_EXTENSION@ publisher --samples 10"
+      @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
+      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/xtypes/@EXAMPLE_SUFFIX_DIR_COMPOSE@
+      FASTDDS_DEFAULT_PROFILES_FILE: @FASTDDS_DEFAULT_PROFILES_FILE_PREFIX_COMPOSE@/xtypes/xtypes_minimal_profile.xml
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/xtypes@FILE_EXTENSION@ subscriber --samples 30 @COMMAND_CONCATENATE_COMPOSE@ @COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/xtypes@FILE_EXTENSION@ publisher --samples 10@COMMAND_BACKGROUND_JOB_COMPOSE@"
     depends_on:
       - xtypes-subscriber
       - helloworld-subscriber
@@ -46,28 +45,28 @@ services:
   helloworld-subscriber:
     image: @DOCKER_IMAGE_NAME@
     volumes:
-      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
-      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
+      - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
+      - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
       @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
     environment:
-      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
-      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
-      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/hello_world@FILE_EXTENSION@
-      FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/hello_world/hello_world_profile.xml
-    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/hello_world@FILE_EXTENSION@ subscriber --samples 30"
+      @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
+      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/hello_world/@EXAMPLE_SUFFIX_DIR_COMPOSE@
+      FASTDDS_DEFAULT_PROFILES_FILE: @FASTDDS_DEFAULT_PROFILES_FILE_PREFIX_COMPOSE@/hello_world/hello_world_profile.xml
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/hello_world@FILE_EXTENSION@ subscriber --samples 30"
 
   helloworld-publisher:
     image: @DOCKER_IMAGE_NAME@
     volumes:
-      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
-      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
+      - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
+      - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
       @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
     environment:
-      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
-      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
-      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/hello_world@FILE_EXTENSION@
-      FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/hello_world/hello_world_profile.xml
-    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/hello_world@FILE_EXTENSION@ publisher --samples 10"
+      @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
+      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/hello_world/@EXAMPLE_SUFFIX_DIR_COMPOSE@
+      FASTDDS_DEFAULT_PROFILES_FILE: @FASTDDS_DEFAULT_PROFILES_FILE_PREFIX_COMPOSE@/hello_world/hello_world_profile.xml
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/hello_world@FILE_EXTENSION@ publisher --samples 10"
     depends_on:
       - xtypes-subscriber
       - helloworld-subscriber
@@ -75,15 +74,15 @@ services:
   xtypes-publisher:
     image: @DOCKER_IMAGE_NAME@
     volumes:
-      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
-      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
+      - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
+      - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
       @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
     environment:
-      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
-      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
-      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/xtypes@FILE_EXTENSION@
-      FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/xtypes/xtypes_minimal_profile.xml
-    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/xtypes@FILE_EXTENSION@ publisher --samples 10 --xml-type"
+      @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
+      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/xtypes/@EXAMPLE_SUFFIX_DIR_COMPOSE@
+      FASTDDS_DEFAULT_PROFILES_FILE: @FASTDDS_DEFAULT_PROFILES_FILE_PREFIX_COMPOSE@/xtypes/xtypes_minimal_profile.xml
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/xtypes@FILE_EXTENSION@ publisher --samples 10 --xml-type"
     depends_on:
       - xtypes-subscriber
       - helloworld-subscriber

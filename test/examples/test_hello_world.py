@@ -20,7 +20,7 @@ def test_hello_world():
     out = ''
     try:
         out = subprocess.check_output(
-            '@DOCKER_EXECUTABLE@ compose -f hello_world.compose.yml up',
+            '"@DOCKER_EXECUTABLE@" compose -f hello_world.compose.yml up',
             stderr=subprocess.STDOUT,
             shell=True,
             timeout=20
@@ -42,9 +42,8 @@ def test_hello_world():
                   ' (expected: ' + str(sent * 2) + ')')
             raise subprocess.CalledProcessError(1, '')
 
-    except subprocess.CalledProcessError:
-        for l in out:
-            print(l)
+    except subprocess.CalledProcessError as e:
+          print ('ERROR %s', e.output)
     except subprocess.TimeoutExpired:
         print('TIMEOUT')
         print(out)
