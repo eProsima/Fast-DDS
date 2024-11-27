@@ -254,6 +254,10 @@ target_link_libraries(XMLParserTests
 if(QNX)
     target_link_libraries(XMLParserTests socket)
 endif()
+if(EPROSIMA_TEST_DNS_NOT_SET_UP)
+    message(STATUS "Ignoring 'getXMLLocatorDNS*'")
+    set(IGNORE_COMMAND "-getXMLLocatorDNS*")
+endif()
 gtest_discover_tests(XMLParserTests)
 ######################################  XMLParserTests  ########################################################
 
