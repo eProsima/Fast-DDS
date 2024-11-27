@@ -162,7 +162,7 @@ We detail the steps to launch one of these examples below.
 To launch the Hello World example (a minimal example that will perform a Publisher/Subscriber match and start sending samples) you could run:
 
     $ goToExamples
-    $ cd dds/hello_world/bin
+    $ cd hello_world/bin
     $ tmux new-session "./hello_world publisher" \; \
     split-window "./hello_world subscriber" \; \
     select-layout even-vertical
@@ -171,13 +171,13 @@ This example is not constrained to the current instance.
 It is possible to run several instances of this container to check the communication between them by running the following from each container.
 
     $ goToExamples
-    $ cd dds/hello_world/bin
+    $ cd hello_world/bin
     $ ./hello_world publisher
 
 or
 
     $ goToExamples
-    $ cd dds/hello_world/bin
+    $ cd hello_world/bin
     $ ./hello_world subscriber
 
 ---
