@@ -57,6 +57,7 @@ Please feel free to contact us if you wish to get involved in the implementation
     * When processed (return_loan / take without loan)
     * On demand (new API on DataReader)
 * New DEBUG log level
+* Compliance with DDS-TSN
 * Service aware DataWriter
 * Compliance with DDS-XML
 * Low bandwidth transports
