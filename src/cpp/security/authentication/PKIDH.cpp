@@ -1052,7 +1052,7 @@ ValidationResult_t PKIDH::validate_local_identity(
         password = &empty_password;
     }
 
-    std::string key_agreement_algorithm = ECDH_prime256v1;
+    std::string key_agreement_algorithm = "AUTO";
     std::string* key_agreement_property =
             PropertyPolicyHelper::find_property(auth_properties, "preferred_key_agreement");
     if (nullptr != key_agreement_property)
@@ -1061,7 +1061,8 @@ ValidationResult_t PKIDH::validate_local_identity(
             {DH_2048_256, DH_2048_256},
             {ECDH_prime256v1, ECDH_prime256v1},
             {"ECDH", ECDH_prime256v1},
-            {"DH", DH_2048_256}
+            {"DH", DH_2048_256},
+            {"AUTO", "AUTO"}
         };
 
         key_agreement_algorithm = "";
@@ -1084,13 +1085,26 @@ ValidationResult_t PKIDH::validate_local_identity(
 
     PKIIdentityHandle* ih = &PKIIdentityHandle::narrow(*get_identity_handle(exception));
 
-    (*ih)->kagree_alg_ = key_agreement_algorithm;
     (*ih)->store_ = load_identity_ca(*identity_ca, (*ih)->there_are_crls_, (*ih)->sn, (*ih)->algo,
                     exception);
 
     if ((*ih)->store_ != nullptr)
     {
         ERR_clear_error();
+
+        if (key_agreement_algorithm == "AUTO")
+        {
+            if ((*ih)->algo == RSA_SHA256)
+            {
+                key_agreement_algorithm = DH_2048_256;
+            }
+            else
+            {
+                key_agreement_algorithm = ECDH_prime256v1;
+            }
+        }
+
+        (*ih)->kagree_alg_ = key_agreement_algorithm;
 
         if (identity_crl != nullptr)
         {
