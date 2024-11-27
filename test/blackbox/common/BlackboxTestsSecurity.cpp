@@ -60,14 +60,18 @@ static void fill_pub_auth(
             "file://" + std::string(certs_path) + "/mainpubkey.pem");
 
     // Select the key agreement algorithm based on process id
-    switch (static_cast<uint32_t>(GET_PID()) % 3u)
+    switch (static_cast<uint32_t>(GET_PID()) % 4u)
     {
-        // Force DH
+        // Automatic selection
         case 1u:
+            policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "AUTO");
+            break;
+        // Force DH
+        case 2u:
             policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "DH");
             break;
         // Force ECDH
-        case 2u:
+        case 3u:
             policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "ECDH");
             break;
         // Leave default
@@ -89,14 +93,18 @@ static void fill_sub_auth(
             "file://" + std::string(certs_path) + "/mainsubkey.pem");
 
     // Select the key agreement algorithm based on process id
-    switch (static_cast<uint32_t>(GET_PID()) % 3u)
+    switch (static_cast<uint32_t>(GET_PID()) % 4u)
     {
-        // Force DH
+        // Automatic selection
         case 1u:
+            policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "AUTO");
+            break;
+        // Force DH
+        case 2u:
             policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "DH");
             break;
         // Force ECDH
-        case 2u:
+        case 3u:
             policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "ECDH");
             break;
         // Leave default
