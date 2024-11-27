@@ -57,7 +57,7 @@ Some of the main features of this library are:
 This project is part of [FIWARE](https://www.fiware.org/).
 For more information check the FIWARE Catalogue entry for [Robotics](https://github.com/Fiware/catalogue/tree/master/robotics).
 
-## Commercial support
+## <a id="getting-help"></a>Commercial support
 
 Looking for commercial support? Write us to info@eprosima.com
 
