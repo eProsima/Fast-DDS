@@ -12,21 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-version: "3"
-
 services:
   subscriber:
     image: @DOCKER_IMAGE_NAME@
     volumes:
-      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
-      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
+      - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
+      - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
       @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
     environment:
-      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
-      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
-      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/discovery_server@FILE_EXTENSION@
+      @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
+      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/discovery_server/@EXAMPLE_SUFFIX_DIR_COMPOSE@
       SUBSCRIBER_ADDITIONAL_ARGUMENTS: ${SUB_ARGS}
-    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/discovery_server@FILE_EXTENSION@ subscriber --reliable --transient-local $${SUBSCRIBER_ADDITIONAL_ARGUMENTS}"
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/discovery_server@FILE_EXTENSION@ subscriber --reliable --transient-local $${SUBSCRIBER_ADDITIONAL_ARGUMENTS}"
     network_mode: host
     ipc: host
     depends_on:
@@ -35,15 +33,15 @@ services:
   publisher:
     image: @DOCKER_IMAGE_NAME@
     volumes:
-      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
-      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
+      - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
+      - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
       @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
     environment:
-      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
-      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
-      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/discovery_server@FILE_EXTENSION@
+      @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
+      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/discovery_server/@EXAMPLE_SUFFIX_DIR_COMPOSE@
       PUBLISHER_ADDITIONAL_ARGUMENTS: ${PUB_ARGS}
-    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/discovery_server@FILE_EXTENSION@ publisher --reliable --transient-local $${PUBLISHER_ADDITIONAL_ARGUMENTS}"
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/discovery_server@FILE_EXTENSION@ publisher --reliable --transient-local $${PUBLISHER_ADDITIONAL_ARGUMENTS}"
     network_mode: host
     ipc: host
     depends_on:
@@ -52,29 +50,29 @@ services:
   server_1:
     image: @DOCKER_IMAGE_NAME@
     volumes:
-      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
-      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
+      - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
+      - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
       @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
     environment:
-      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
-      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
-      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/discovery_server@FILE_EXTENSION@
+      @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
+      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/discovery_server/@EXAMPLE_SUFFIX_DIR_COMPOSE@
       SERVER1_ADDITIONAL_ARGUMENTS: ${SERVER1_ARGS}
     network_mode: host
     ipc: host
-    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/discovery_server@FILE_EXTENSION@ server $${SERVER1_ADDITIONAL_ARGUMENTS}"
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/discovery_server@FILE_EXTENSION@ server $${SERVER1_ADDITIONAL_ARGUMENTS}"
 
   server_2:
     image: @DOCKER_IMAGE_NAME@
     volumes:
-      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
-      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
+      - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
+      - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
       @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
     environment:
-      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
-      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
-      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/discovery_server@FILE_EXTENSION@
+      @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
+      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/discovery_server/@EXAMPLE_SUFFIX_DIR_COMPOSE@
       SERVER2_ADDITIONAL_ARGUMENTS: ${SERVER2_ARGS}
     network_mode: host
     ipc: host
-    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/discovery_server@FILE_EXTENSION@ server $${SERVER2_ADDITIONAL_ARGUMENTS}"
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/discovery_server@FILE_EXTENSION@ server $${SERVER2_ADDITIONAL_ARGUMENTS}"
