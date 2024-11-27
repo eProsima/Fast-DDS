@@ -20,7 +20,6 @@
 #include <atomic>
 #include <fstream>
 #include <map>
-#include <tuple>
 
 #include <gtest/gtest.h>
 
@@ -49,13 +48,7 @@ enum communication_type
     DATASHARING
 };
 
-enum class key_agree_alg
-{
-    DH,
-    ECDH
-};
-
-static void fill_basic_pub_auth(
+static void fill_pub_auth(
         PropertyPolicy& policy)
 {
     policy.properties().emplace_back("dds.sec.auth.plugin", "builtin.PKI-DH");
@@ -65,9 +58,26 @@ static void fill_basic_pub_auth(
             "file://" + std::string(certs_path) + "/mainpubcert.pem");
     policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.private_key",
             "file://" + std::string(certs_path) + "/mainpubkey.pem");
+
+    // Select the key agreement algorithm based on process id
+    switch (static_cast<uint32_t>(GET_PID()) % 3u)
+    {
+        // Force DH
+        case 1u:
+            policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "DH");
+            break;
+        // Force ECDH
+        case 2u:
+            policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "ECDH");
+            break;
+        // Leave default
+        case 0u:
+        default:
+            break;
+    }
 }
 
-static void fill_basic_sub_auth(
+static void fill_sub_auth(
         PropertyPolicy& policy)
 {
     policy.properties().emplace_back("dds.sec.auth.plugin", "builtin.PKI-DH");
@@ -77,16 +87,33 @@ static void fill_basic_sub_auth(
             "file://" + std::string(certs_path) + "/mainsubcert.pem");
     policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.private_key",
             "file://" + std::string(certs_path) + "/mainsubkey.pem");
+
+    // Select the key agreement algorithm based on process id
+    switch (static_cast<uint32_t>(GET_PID()) % 3u)
+    {
+        // Force DH
+        case 1u:
+            policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "DH");
+            break;
+        // Force ECDH
+        case 2u:
+            policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "ECDH");
+            break;
+        // Leave default
+        case 0u:
+        default:
+            break;
+    }
 }
 
-class Security : public testing::TestWithParam<std::tuple<communication_type, key_agree_alg>>
+class Security : public testing::TestWithParam<communication_type>
 {
 public:
 
     void SetUp() override
     {
         eprosima::fastdds::LibrarySettings library_settings;
-        switch (std::get<0>(GetParam()))
+        switch (GetParam())
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
@@ -104,7 +131,7 @@ public:
     void TearDown() override
     {
         eprosima::fastdds::LibrarySettings library_settings;
-        switch (std::get<0>(GetParam()))
+        switch (GetParam())
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
@@ -115,39 +142,6 @@ public:
                 break;
             case TRANSPORT:
             default:
-                break;
-        }
-    }
-
-    void fill_pub_auth(
-            PropertyPolicy& policy)
-    {
-        fill_basic_pub_auth(policy);
-        switch (std::get<1>(GetParam()))
-        {
-            case key_agree_alg::DH:
-                policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "DH");
-                break;
-
-            case key_agree_alg::ECDH:
-            default:
-                policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "ECDH");
-                break;
-        }
-    }
-
-    void fill_sub_auth(
-            PropertyPolicy& policy)
-    {
-        fill_basic_sub_auth(policy);
-        switch (std::get<1>(GetParam()))
-        {
-            case key_agree_alg::DH:
-                policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "DH");
-                break;
-            case key_agree_alg::ECDH:
-            default:
-                policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "ECDH");
                 break;
         }
     }
@@ -552,7 +546,7 @@ TEST(Security, BuiltinAuthenticationPlugin_second_participant_creation_loop)
 
     // Prepare participant properties
     PropertyPolicy property_policy;
-    fill_basic_pub_auth(property_policy);
+    fill_pub_auth(property_policy);
 
     // Create the participant being checked
     PubSubReader<HelloWorldPubSubType> main_participant("HelloWorldTopic");
@@ -828,7 +822,7 @@ TEST(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_ok)
 
     PropertyPolicy pub_property_policy, sub_property_policy;
 
-    fill_basic_sub_auth(sub_property_policy);
+    fill_sub_auth(sub_property_policy);
     sub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
     sub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
 
@@ -838,7 +832,7 @@ TEST(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_ok)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    fill_basic_pub_auth(pub_property_policy);
+    fill_pub_auth(pub_property_policy);
     pub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
     pub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
 
@@ -2929,7 +2923,7 @@ static void CommonPermissionsConfigure(
         const PropertyPolicy& extra_properties)
 {
     PropertyPolicy sub_property_policy(extra_properties);
-    fill_basic_sub_auth(sub_property_policy);
+    fill_sub_auth(sub_property_policy);
     sub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
     sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
             "builtin.Access-Permissions"));
@@ -2951,7 +2945,7 @@ static void CommonPermissionsConfigure(
 {
     PropertyPolicy pub_property_policy(extra_properties);
 
-    fill_basic_pub_auth(pub_property_policy);
+    fill_pub_auth(pub_property_policy);
     pub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
     pub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
             "builtin.Access-Permissions"));
@@ -3140,7 +3134,7 @@ TEST(Security, AllowUnauthenticatedParticipants_EntityCreationFailsIfRTPSProtect
 
     PropertyPolicy property_policy;
 
-    fill_basic_sub_auth(property_policy);
+    fill_sub_auth(property_policy);
     property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
     property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
             "builtin.Access-Permissions"));
@@ -3192,7 +3186,7 @@ TEST(Security, AllowUnauthenticatedParticipants_TwoSecureParticipantsWithDiffere
 
     ASSERT_TRUE(reader.isInitialized());
 
-    fill_basic_pub_auth(pub_property_policy);
+    fill_pub_auth(pub_property_policy);
     pub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
     pub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
             "builtin.Access-Permissions"));
@@ -3266,7 +3260,7 @@ TEST(Security, AllowUnauthenticatedParticipants_TwoParticipantsDifferentCertific
 
     ASSERT_TRUE(reader.isInitialized());
 
-    fill_basic_pub_auth(pub_property_policy);
+    fill_pub_auth(pub_property_policy);
     pub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
     pub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
             "builtin.Access-Permissions"));
@@ -4270,7 +4264,7 @@ TEST(Security, ValidateAuthenticationHandshakePropertiesParsing)
 
     PropertyPolicy property_policy;
 
-    fill_basic_sub_auth(property_policy);
+    fill_sub_auth(property_policy);
     property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
 
     // max_handshake_requests out of bounds
@@ -4566,25 +4560,20 @@ void blackbox_security_init()
 
 GTEST_INSTANTIATE_TEST_MACRO(Security,
         Security,
-        testing::Combine(
-            testing::Values(TRANSPORT, INTRAPROCESS, DATASHARING),
-            testing::Values(key_agree_alg::DH, key_agree_alg::ECDH)),
+        testing::Values(TRANSPORT, INTRAPROCESS, DATASHARING),
         [](const testing::TestParamInfo<Security::ParamType>& info)
         {
-            std::string alg;
-            alg = (std::get<1>(info.param) == key_agree_alg::DH) ? "DH_" : "ECDH_";
-
-            switch (std::get<0>(info.param))
+            switch (info.param)
             {
                 case INTRAPROCESS:
-                    return alg + "Intraprocess";
+                    return "Intraprocess";
                     break;
                 case DATASHARING:
-                    return alg + "Datasharing";
+                    return "Datasharing";
                     break;
                 case TRANSPORT:
                 default:
-                    return alg + "Transport";
+                    return "Transport";
             }
 
         });
