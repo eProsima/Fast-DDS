@@ -874,8 +874,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_rtps_ok_same_participant)
 {
     PubSubWriterReader<HelloWorldPubSubType> wreader(TEST_TOPIC_NAME);
 
-    PropertyPolicy pub_property_policy, sub_property_policy,
-            property_policy;
+    PropertyPolicy property_policy;
 
     fill_pub_auth(property_policy);
     property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
@@ -1120,7 +1119,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessage_ok)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    fill_pub_auth(pub_property_policy);
+    fill_pub_auth(pub_part_property_policy);
     pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
     pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
 
@@ -1170,7 +1169,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_ok)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    fill_pub_auth(pub_property_policy);
+    fill_pub_auth(pub_part_property_policy);
     pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
     pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
 
@@ -1254,7 +1253,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessage_larg
 
     ASSERT_TRUE(reader.isInitialized());
 
-    fill_pub_auth(pub_property_policy);
+    fill_pub_auth(pub_part_property_policy);
     pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
     pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
 
@@ -1304,7 +1303,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_large_
 
     ASSERT_TRUE(reader.isInitialized());
 
-    fill_pub_auth(pub_property_policy);
+    fill_pub_auth(pub_part_property_policy);
     pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
     pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
 
@@ -1352,7 +1351,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessage_data
 
     ASSERT_TRUE(reader.isInitialized());
 
-    fill_pub_auth(pub_property_policy);
+    fill_pub_auth(pub_part_property_policy);
     pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
     pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
 
@@ -1410,7 +1409,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_data30
 
     ASSERT_TRUE(reader.isInitialized());
 
-    fill_pub_auth(pub_property_policy);
+    fill_pub_auth(pub_part_property_policy);
     pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
     pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
 
@@ -1466,7 +1465,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_ok)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    fill_pub_auth(pub_property_policy);
+    fill_pub_auth(pub_part_property_policy);
     pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
     pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
@@ -1516,7 +1515,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_ok)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    fill_pub_auth(pub_property_policy);
+    fill_pub_auth(pub_part_property_policy);
     pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
     pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
