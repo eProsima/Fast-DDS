@@ -774,7 +774,15 @@ void PDPClient::announceParticipantState(
                             if (getRTPSParticipant()->is_secure())
                             {
                                 // Need the mangled guid prefix in this case
-                                srv_guid_prefix = get_participant_proxy_data(svr.guidPrefix)->m_guid.guidPrefix;
+                                auto pdata = get_participant_proxy_data(svr.guidPrefix);
+                                if (nullptr != pdata)
+                                {
+                                    srv_guid_prefix = pdata->m_guid.guidPrefix;
+                                }
+                                else
+                                {
+                                    continue;
+                                }
                             }
 #endif  // HAVE_SECURITY
                             locators.push_back(svr.metatrafficUnicastLocatorList);
