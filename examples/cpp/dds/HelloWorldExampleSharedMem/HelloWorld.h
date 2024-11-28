@@ -212,7 +212,7 @@ private:
 
     uint32_t m_index{0};
     std::string m_message;
-    std::array<char, 1024*1024> m_data;
+    std::array<char, 1024*1024> m_data{0};
 
 };
 

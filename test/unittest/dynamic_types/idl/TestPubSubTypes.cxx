@@ -89,6 +89,11 @@ bool BasicStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+#if FASTCDR_VERSION_MAJOR > 1
+        ser.set_dds_cdr_options({0,0});
+#else
+        ser.setDDSCdrOptions(0);
+#endif // FASTCDR_VERSION_MAJOR > 1
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -291,6 +296,11 @@ bool ComplexStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+#if FASTCDR_VERSION_MAJOR > 1
+        ser.set_dds_cdr_options({0,0});
+#else
+        ser.setDDSCdrOptions(0);
+#endif // FASTCDR_VERSION_MAJOR > 1
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -489,6 +499,11 @@ bool CompleteStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+#if FASTCDR_VERSION_MAJOR > 1
+        ser.set_dds_cdr_options({0,0});
+#else
+        ser.setDDSCdrOptions(0);
+#endif // FASTCDR_VERSION_MAJOR > 1
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -679,6 +694,11 @@ bool KeyedStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+#if FASTCDR_VERSION_MAJOR > 1
+        ser.set_dds_cdr_options({0,0});
+#else
+        ser.setDDSCdrOptions(0);
+#endif // FASTCDR_VERSION_MAJOR > 1
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
