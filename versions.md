@@ -1,18 +1,7 @@
 Forthcoming
 -----------
 
-<<<<<<< HEAD
-=======
-* Added implementation for:
-  * `DataWriter::get_matched_subscription_data()`
-  * `DataWriter::get_matched_subscriptions()`
-  * `DataReader::get_matched_publication_data()`
-  * `DataReader::get_matched_publications()`
-* Added ``Extended Incompatible QoS`` feature for monitor service.
-* Machine UUID added to the Data(p) to check Participants in same host, instead of using GUIDs.
-* Windows ci example testing infrastructure and `hello world` example.
 * New property to configure the preferred key agreement algorithm.
->>>>>>> 8a99a0759 (New property to select preferred key agreement algorithm (#5413))
 
 Version v3.1.0
 --------------
