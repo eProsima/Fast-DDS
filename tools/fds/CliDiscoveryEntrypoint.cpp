@@ -26,7 +26,16 @@ int main (
     argv += (argc > 0);
 
     // Command index is provided by python tool, so no need to check uint16_t limits
-    uint16_t command_int = std::stoi(argv[0]);
+    uint16_t command_int = 0;
+    try
+    {
+        command_int = std::stoi(argv[0]);
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "Invalid command index: " << argv[0] << ". Use 'fastdds discovery' tool." << std::endl;
+        return 1;
+    }
 
     // Skip command index argv[0] if present
     argc -= (argc > 0);
@@ -64,8 +73,8 @@ int main (
         case ToolCommand::SERVER:
             return cli_manager.fastdds_discovery_server(options, parse);
             break;
-
         default:
+            std::cerr << "Unknown index: " << command_int << ". Use 'fastdds discovery' tool." << std::endl;
             break;
     }
 }
