@@ -258,7 +258,7 @@ if(EPROSIMA_TEST_DNS_NOT_SET_UP)
     message(STATUS "Ignoring 'getXMLLocatorDNS*'")
     set(IGNORE_COMMAND "-getXMLLocatorDNS*")
 endif()
-gtest_discover_tests(XMLParserTests)
+gtest_discover_tests(XMLParserTests TEST_FILTER ${IGNORE_COMMAND})
 ######################################  XMLParserTests  ########################################################
 
 #######################################  XMLTreeTests  #########################################################

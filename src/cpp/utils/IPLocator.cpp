@@ -29,8 +29,8 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-static const std::regex IPv4_REGEX("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}"
-        "(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
+static const std::regex IPv4_REGEX("^(?:(?:0*25[0-5]|0*2[0-4][0-9]|0*[01]?[0-9][0-9]?)\\.){3}"
+        "(?:0*25[0-5]|0*2[0-4][0-9]|0*[01]?[0-9][0-9]?)$");
 static const std::regex IPv6_QUARTET_REGEX("^(?:[A-Fa-f0-9]){0,4}$");
 
 // Factory
@@ -112,23 +112,22 @@ bool IPLocator::setIPv4(
         // Attempt DNS resolution
         auto response = IPLocator::resolveNameDNS(s);
 
-        // Add the first valid IPv4 address that we can find
+        // Use the first valid IPv4 address that we can find
         if (response.first.size() > 0)
         {
             s = response.first.begin()->data();
+            // Redundant check for extra security (here a custom regex is used instead of asio's verification)
+            if (!IPLocator::isIPv4(s))
+            {
+                EPROSIMA_LOG_WARNING(IP_LOCATOR, "DNS name [" << ipv4 << "] resolved into wrong IPv4 format: " << s);
+                return false;
+            }
         }
         else
         {
             EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv4 " << s << " error format. Expected X.X.X.X or valid DNS name");
             return false;
         }
-    }
-
-    // Redundant check for extra security (here a custom regex is used instead of asio's verification)
-    if (!IPLocator::isIPv4(s))
-    {
-        EPROSIMA_LOG_WARNING(IP_LOCATOR, "Resolved IPv4 " << s << " error format. Expected X.X.X.X");
-        return false;
     }
 
     std::stringstream ss(s);
@@ -285,10 +284,16 @@ bool IPLocator::setIPv6(
         // Attempt DNS resolution
         auto response = IPLocator::resolveNameDNS(s);
 
-        // Add the first valid IPv6 address that we can find
+        // Use the first valid IPv6 address that we can find
         if (response.second.size() > 0)
         {
             s = response.second.begin()->data();
+            // Redundant check for extra security (here a custom regex is used instead of asio's verification)
+            if (!IPLocator::isIPv6(s))
+            {
+                EPROSIMA_LOG_WARNING(IP_LOCATOR, "DNS name [" << ipv6 << "] resolved into wrong IPv6 format: " << s);
+                return false;
+            }
         }
         else
         {
@@ -296,13 +301,6 @@ bool IPLocator::setIPv6(
                     "IPv6 " << s << " error format. Expected well defined address or valid DNS name");
             return false;
         }
-    }
-
-    // Redundant check for extra security (here a custom regex is used instead of asio's verification)
-    if (!IPLocator::isIPv6(s))
-    {
-        EPROSIMA_LOG_WARNING(IP_LOCATOR, "Resolved IPv6 " << s << " error format.");
-        return false;
     }
 
     LOCATOR_ADDRESS_INVALID(locator.address);
@@ -728,23 +726,22 @@ bool IPLocator::setWan(
         // Attempt DNS resolution
         auto response = IPLocator::resolveNameDNS(s);
 
-        // Add the first valid IPv4 address that we can find
+        // Use the first valid IPv4 address that we can find
         if (response.first.size() > 0)
         {
             s = response.first.begin()->data();
+            // Redundant check for extra security (here a custom regex is used instead of asio's verification)
+            if (!IPLocator::isIPv4(s))
+            {
+                EPROSIMA_LOG_WARNING(IP_LOCATOR, "DNS name [" << wan << "] resolved into wrong IPv4 format: " << s);
+                return false;
+            }
         }
         else
         {
             EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv4 " << s << " error format. Expected X.X.X.X or valid DNS name");
             return false;
         }
-    }
-
-    // Redundant check for extra security (here a custom regex is used instead of asio's verification)
-    if (!IPLocator::isIPv4(s))
-    {
-        EPROSIMA_LOG_WARNING(IP_LOCATOR, "Resolved IPv4 " << s << " error format. Expected X.X.X.X");
-        return false;
     }
 
     std::stringstream ss(s);
