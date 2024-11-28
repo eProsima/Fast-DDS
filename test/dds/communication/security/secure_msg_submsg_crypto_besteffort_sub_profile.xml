@@ -33,6 +33,10 @@
                             <name>dds.sec.auth.builtin.PKI-DH.private_key</name>
                             <value>file://mainsubkey.pem</value>
                         </property>
+                        <property>
+                            <name>dds.sec.auth.builtin.PKI-DH.preferred_key_agreement</name>
+                            <value>ECDH</value>
+                        </property>
                         <!-- Activate DDS:Crypto:AES-GCM-GMAC plugin -->
                         <property>
                             <name>dds.sec.crypto.plugin</name>
