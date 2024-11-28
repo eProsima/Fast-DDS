@@ -302,7 +302,14 @@ std::vector<uint16_t> CliDiscoveryManager::getListeningPorts()
     {
         if (std::regex_search(line, match, port_regex))
         {
-            ports.push_back(static_cast<uint16_t>(std::stoi(match[1].str())));
+            try
+            {
+                ports.push_back(static_cast<uint16_t>(std::stoi(match[1].str())));
+            }
+            catch (const std::invalid_argument& e)
+            {
+                EPROSIMA_LOG_ERROR(CLI, "Error getting port from line: " << line);
+            }
         }
     }
     std::sort(ports.begin(), ports.end());
@@ -351,7 +358,16 @@ pid_t CliDiscoveryManager::getPidOfServer(
         EPROSIMA_LOG_ERROR(CLI, "Error getting PID. No server found on port " << port);
         return 0;
     }
-    return std::stoi(result);
+    pid_t ret_value = 0;
+    try
+    {
+        ret_value = std::stoi(result);
+    }
+    catch (const std::invalid_argument& e)
+    {
+        EPROSIMA_LOG_ERROR(CLI, "Error getting PID from: " << result);
+    }
+    return ret_value;
 }
 
 pid_t CliDiscoveryManager::startServerInBackground(
@@ -469,6 +485,7 @@ void CliDiscoveryManager::setServerQos(
     serverQos.transport().user_transports.push_back(tcp_descriptor);
     serverQos.transport().use_builtin_transports = false;
     serverQos.wire_protocol().builtin.discovery_config.discoveryProtocol = rtps::DiscoveryProtocol::SERVER;
+    serverQos.name("DiscoveryServerAuto");
 }
 
 bool CliDiscoveryManager::loadXMLFile(
