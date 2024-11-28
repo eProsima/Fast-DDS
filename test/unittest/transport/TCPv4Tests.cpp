@@ -1881,16 +1881,12 @@ TEST_F(TCPv4Tests, client_announced_local_port_uniqueness)
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-<<<<<<< HEAD
-    ASSERT_EQ(receiveTransportUnderTest.get_channel_resources().size(), 2);
-=======
     std::set<std::shared_ptr<TCPChannelResource>> channels_created;
     for (const auto& channel_resource : receiveTransportUnderTest.get_channel_resources())
     {
         channels_created.insert(channel_resource.second);
     }
     ASSERT_EQ(channels_created.size(), 2u);
->>>>>>> d71913b7a (Fix TCP discovery server locators translation (#5410))
 }
 
 #ifndef _WIN32

@@ -506,7 +506,7 @@ public:
      */
     void is_own_interface(
             const Locator& locator,
-            std::vector<fastdds::rtps::IPFinder::info_IP>& locNames) const;
+            std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames) const;
 };
 
 } // namespace rtps

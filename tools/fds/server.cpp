@@ -546,12 +546,8 @@ int fastdds_discovery_server(
         }
     }
 
-<<<<<<< HEAD
     fastrtps::rtps::GuidPrefix_t guid_prefix = participantQos.wire_protocol().prefix;
-=======
-    fastdds::rtps::GuidPrefix_t guid_prefix = participantQos.wire_protocol().prefix;
     participantQos.transport().use_builtin_transports = udp_server_initialized || options[XML_FILE] != nullptr;
->>>>>>> d71913b7a (Fix TCP discovery server locators translation (#5410))
 
     // Create the server
     int return_value = 0;
