@@ -282,6 +282,8 @@ int fastdds_discovery_server(
     // Retrieve first TCP port
     option::Option* pO_tcp_port = options[TCP_PORT];
 
+    bool udp_server_initialized = (pOp != nullptr) || (pO_port != nullptr);
+
     /**
      * A locator has been initialized previously in [0.0.0.0] address using either the DEFAULT_ROS2_SERVER_PORT or the
      * port number set in the CLI. This locator must be used:
@@ -296,6 +298,7 @@ int fastdds_discovery_server(
         // Add default locator in cases a) and b)
         participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.clear();
         participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator4);
+        udp_server_initialized = true;
     }
     else if (nullptr == pOp && nullptr != pO_port)
     {
@@ -543,7 +546,12 @@ int fastdds_discovery_server(
         }
     }
 
+<<<<<<< HEAD
     fastrtps::rtps::GuidPrefix_t guid_prefix = participantQos.wire_protocol().prefix;
+=======
+    fastdds::rtps::GuidPrefix_t guid_prefix = participantQos.wire_protocol().prefix;
+    participantQos.transport().use_builtin_transports = udp_server_initialized || options[XML_FILE] != nullptr;
+>>>>>>> d71913b7a (Fix TCP discovery server locators translation (#5410))
 
     // Create the server
     int return_value = 0;
