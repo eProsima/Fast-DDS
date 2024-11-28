@@ -151,7 +151,7 @@ bool IPLocator::setIPv4(
         // If there are more info to read, it fails
         return ss.rdbuf()->in_avail() == 0;
     }
-    EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv4 " << s << " error format. Expected X.X.X.X");
+    EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv4 " << s << " error format. Expected X.X.X.X or valid DNS name");
     return false;
 }
 
@@ -756,7 +756,7 @@ bool IPLocator::setWan(
         locator.address[11] = (octet)d;
         return true;
     }
-    EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv4 " << s << " error format. Expected X.X.X.X");
+    EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv4 " << s << " error format. Expected X.X.X.X or valid DNS name");
     return false;
 }
 
