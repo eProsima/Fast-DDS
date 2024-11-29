@@ -29,8 +29,8 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-static const std::regex IPv4_REGEX("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}"
-        "(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
+static const std::regex IPv4_REGEX("^(?:(?:0*25[0-5]|0*2[0-4][0-9]|0*[01]?[0-9][0-9]?)\\.){3}"
+        "(?:0*25[0-5]|0*2[0-4][0-9]|0*[01]?[0-9][0-9]?)$");
 static const std::regex IPv6_QUARTET_REGEX("^(?:[A-Fa-f0-9]){0,4}$");
 
 // Factory
@@ -106,7 +106,31 @@ bool IPLocator::setIPv4(
     // This function do not set address to 0 in case it fails
     // Be careful, do not set all IP to 0 because WAN and LAN could be set beforehand
 
-    std::stringstream ss(ipv4);
+    std::string s(ipv4);
+    if (!IPLocator::isIPv4(s))
+    {
+        // Attempt DNS resolution
+        auto response = IPLocator::resolveNameDNS(s);
+
+        // Use the first valid IPv4 address that we can find
+        if (response.first.size() > 0)
+        {
+            s = response.first.begin()->data();
+            // Redundant check for extra security (here a custom regex is used instead of asio's verification)
+            if (!IPLocator::isIPv4(s))
+            {
+                EPROSIMA_LOG_WARNING(IP_LOCATOR, "DNS name [" << ipv4 << "] resolved into wrong IPv4 format: " << s);
+                return false;
+            }
+        }
+        else
+        {
+            EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv4 " << s << " error format. Expected X.X.X.X or valid DNS name");
+            return false;
+        }
+    }
+
+    std::stringstream ss(s);
     uint32_t a;
     uint32_t b;
     uint32_t c;
@@ -127,7 +151,7 @@ bool IPLocator::setIPv4(
         // If there are more info to read, it fails
         return ss.rdbuf()->in_avail() == 0;
     }
-    EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv4 " << ipv4 << " error format. Expected X.X.X.X");
+    EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv4 " << s << " error format. Expected X.X.X.X or valid DNS name");
     return false;
 }
 
@@ -254,14 +278,33 @@ bool IPLocator::setIPv6(
         return false;
     }
 
-    if (!IPv6isCorrect(ipv6))
+    std::string s(ipv6);
+    if (!IPLocator::isIPv6(s))
     {
-        EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv6 " << ipv6 << " is not well defined");
-        return false;
+        // Attempt DNS resolution
+        auto response = IPLocator::resolveNameDNS(s);
+
+        // Use the first valid IPv6 address that we can find
+        if (response.second.size() > 0)
+        {
+            s = response.second.begin()->data();
+            // Redundant check for extra security (here a custom regex is used instead of asio's verification)
+            if (!IPLocator::isIPv6(s))
+            {
+                EPROSIMA_LOG_WARNING(IP_LOCATOR, "DNS name [" << ipv6 << "] resolved into wrong IPv6 format: " << s);
+                return false;
+            }
+        }
+        else
+        {
+            EPROSIMA_LOG_WARNING(IP_LOCATOR,
+                    "IPv6 " << s << " error format. Expected well defined address or valid DNS name");
+            return false;
+        }
     }
 
     LOCATOR_ADDRESS_INVALID(locator.address);
-    uint16_t count = (uint16_t) std::count_if( ipv6.begin(), ipv6.end(), []( char c )
+    uint16_t count = (uint16_t) std::count_if( s.begin(), s.end(), []( char c )
                     {
                         return c == ':';
                     }); // C type cast to avoid Windows warnings
@@ -274,10 +317,10 @@ bool IPLocator::setIPv6(
     size_t aux_prev; // This must be size_t as string::npos could change value depending on size_t size
 
     // Check whether is a zero block and where
-    if (ipv6.front() == ':')
+    if (s.front() == ':')
     {
         // First element equal : -> starts with zeros
-        if (ipv6.back() == ':')
+        if (s.back() == ':')
         {
             // Empty string (correct ipv6 format)
             initial_zeros = 16;
@@ -291,7 +334,7 @@ bool IPLocator::setIPv6(
             initial_zeros = (7 - (count - 2)) * 2;
         }
     }
-    else if (ipv6.back() == ':')
+    else if (s.back() == ':')
     {
         // Last element equal : -> ends with zeros
         // It does not start with :: (previous if)
@@ -300,8 +343,8 @@ bool IPLocator::setIPv6(
     else
     {
         // It does not starts or ends with zeros, but it could have :: in the middle or not have it
-        aux_prev = ipv6.size(); // Aux could be 1 so this number must be unreacheable
-        aux = ipv6.find(':'); // Index of first ':'
+        aux_prev = s.size(); // Aux could be 1 so this number must be unreacheable
+        aux = s.find(':'); // Index of first ':'
 
         // Look for "::" will loop string twice
         // Therefore, we use this loop that will go over less or equal once
@@ -317,13 +360,13 @@ bool IPLocator::setIPv6(
             // Not "::" found, keep searching in next ':'
             position_zeros += 2; // It stores the point where the 0 block is
             aux_prev = aux;
-            aux = ipv6.find(':', aux + 1);
+            aux = s.find(':', aux + 1);
         }
     }
 
     char punct;
     std::stringstream ss;
-    ss << std::hex << ipv6;
+    ss << std::hex << s;
     uint16_t i;
     uint32_t input_aux; // It cannot be uint16_t or we could not find whether the input number is bigger than allowed
 
@@ -343,7 +386,7 @@ bool IPLocator::setIPv6(
             ss >> punct >> input_aux;
             if (input_aux >= 65536)
             {
-                EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
+                EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv6 " << s << " has values higher than expected (65536)");
                 return false;
             }
             locator.address[i++] = octet(input_aux >> 8);
@@ -364,7 +407,7 @@ bool IPLocator::setIPv6(
             ss >> input_aux >> punct;
             if (input_aux >= 65536)
             {
-                EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
+                EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv6 " << s << " has values higher than expected (65536)");
                 return false;
             }
             locator.address[i++] = octet(input_aux >> 8);
@@ -386,7 +429,7 @@ bool IPLocator::setIPv6(
             ss >> input_aux >> punct;
             if (input_aux >= 65536)
             {
-                EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
+                EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv6 " << s << " has values higher than expected (65536)");
                 return false;
             }
             locator.address[i++] = octet(input_aux >> 8);
@@ -403,7 +446,7 @@ bool IPLocator::setIPv6(
             ss >> punct >> input_aux;
             if (input_aux >= 65536)
             {
-                EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
+                EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv6 " << s << " has values higher than expected (65536)");
                 return false;
             }
             locator.address[i++] = octet(input_aux >> 8);
@@ -421,7 +464,7 @@ bool IPLocator::setIPv6(
             ss >> punct >> input_aux;
             if (input_aux >= 65536)
             {
-                EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
+                EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv6 " << s << " has values higher than expected (65536)");
                 return false;
             }
             locator.address[i++] = octet(input_aux >> 8);
@@ -671,7 +714,37 @@ bool IPLocator::setWan(
         Locator_t& locator,
         const std::string& wan)
 {
-    std::stringstream ss(wan);
+    if (locator.kind != LOCATOR_KIND_TCPv4)
+    {
+        EPROSIMA_LOG_WARNING(IP_LOCATOR, "Trying to set WAN address in a non TCP-IPv4 Locator");
+        return false;
+    }
+
+    std::string s(wan);
+    if (!IPLocator::isIPv4(s))
+    {
+        // Attempt DNS resolution
+        auto response = IPLocator::resolveNameDNS(s);
+
+        // Use the first valid IPv4 address that we can find
+        if (response.first.size() > 0)
+        {
+            s = response.first.begin()->data();
+            // Redundant check for extra security (here a custom regex is used instead of asio's verification)
+            if (!IPLocator::isIPv4(s))
+            {
+                EPROSIMA_LOG_WARNING(IP_LOCATOR, "DNS name [" << wan << "] resolved into wrong IPv4 format: " << s);
+                return false;
+            }
+        }
+        else
+        {
+            EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv4 " << s << " error format. Expected X.X.X.X or valid DNS name");
+            return false;
+        }
+    }
+
+    std::stringstream ss(s);
     int a, b, c, d; //to store the 4 ints
     char ch; //to temporarily store the '.'
 
@@ -683,6 +756,7 @@ bool IPLocator::setWan(
         locator.address[11] = (octet)d;
         return true;
     }
+    EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv4 " << s << " error format. Expected X.X.X.X or valid DNS name");
     return false;
 }
 
