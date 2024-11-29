@@ -1,6 +1,7 @@
 Forthcoming
 -----------
 
+* New property to configure the preferred key agreement algorithm.
 
 Version v3.1.0
 --------------
