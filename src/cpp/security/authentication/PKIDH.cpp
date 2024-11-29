@@ -896,6 +896,18 @@ static bool generate_challenge(
     return returnedValue;
 }
 
+/**
+ * @brief Convert a signature algortihm before adding it to an IdentityToken.
+ *
+ * This methods converts the signature algorithm to the format used in the IdentityToken.
+ * Depending on the value of the use_legacy parameter, the algorithm will be converted to the legacy format or to the
+ * one specified in the DDS-SEC 1.1 specification.
+ *
+ * @param algorithm The algorithm to convert.
+ * @param use_legacy Whether to use the legacy format or not.
+ *
+ * @return The converted algorithm.
+ */
 static std::string convert_to_token_algo(
         const std::string& algorithm,
         bool use_legacy)
@@ -919,6 +931,16 @@ static std::string convert_to_token_algo(
     return algorithm;
 }
 
+/**
+ * @brief Parse a signature algorithm from an IdentityToken.
+ *
+ * This method parses the signature algorithm from an IdentityToken.
+ * It converts the algorithm to the internal (legacy) format used by the library.
+ *
+ * @param algorithm The algorithm to parse.
+ *
+ * @return The parsed algorithm.
+ */
 static std::string parse_token_algo(
         const std::string& algorithm)
 {
