@@ -461,6 +461,13 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
     $<$<BOOL:${SHM_TRANSPORT_DEFAULT}>:SHM_TRANSPORT_BUILTIN> # Enable SHM as built-in transport
     $<$<BOOL:${STDOUTERR_LOG_CONSUMER}>:STDOUTERR_LOG_CONSUMER> # Enable StdoutErrConsumer as default LogConsumer
+<<<<<<< HEAD
+=======
+    INTERFACE
+    $<$<BOOL:${WIN32}>:${PROJECT_NAME_UPPER}_NO_LIB>
+    PUBLIC
+    $<$<TARGET_EXISTS:${PROJECT_NAME}>:$<$<STREQUAL:$<TARGET_PROPERTY:${PROJECT_NAME},TYPE>,SHARED_LIBRARY>:${PROJECT_NAME_UPPER}_DYN_LINK>>
+>>>>>>> dbb87b7a3 (Fix cmake generator evaluation (#5435))
     )
 
 # Define public headers
