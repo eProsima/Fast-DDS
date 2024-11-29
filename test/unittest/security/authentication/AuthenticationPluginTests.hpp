@@ -166,6 +166,7 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
             ValidationResult_t::VALIDATION_FAILED;
 
     participant_attr.properties = get_valid_policy();
+    participant_attr.properties.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "DH");
 
     result = plugin.validate_local_identity(&local_identity_handle1,
                     adjusted_participant_key1,
