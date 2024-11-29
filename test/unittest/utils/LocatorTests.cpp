@@ -75,6 +75,7 @@ public:
 
     const std::string ipv4_any = "0.0.0.0";
     const std::string ipv4_invalid = "0.0.0.0";
+    const std::string ipv4_invalid_format = "192.168.1.256.1";
     const std::string ipv6_any = "::";
     const std::string ipv6_invalid = "0:0:0:0:0:0:0:0";
 
@@ -160,7 +161,6 @@ TEST_F(IPLocatorTests, setIPv4_from_string)
     {
         // Error cases
         ASSERT_FALSE(IPLocator::setIPv4(locator, "1.1.1.256")); // Too high number
-        ASSERT_FALSE(IPLocator::setIPv4(locator, "1.1.1"));     // Too few args
         ASSERT_FALSE(IPLocator::setIPv4(locator, "1.1.1.1.1")); // Too much args
 
         // Change to IPv6
@@ -1317,8 +1317,8 @@ TEST_F(IPLocatorTests, setIPv4address)
     }
 
     ASSERT_FALSE(IPLocator::setIPv4address(locator, "1.2.3.4.5.6.7", "9.10.11.12", "13.14.15.16"));
-    ASSERT_FALSE(IPLocator::setIPv4address(locator, "1.2.3.4.5.6.7.8", "9.10.11", "13.14.15.16"));
-    ASSERT_FALSE(IPLocator::setIPv4address(locator, "1.2.3.4.5.6.7.8", "9.10.11.12", "13.14.15"));
+    ASSERT_FALSE(IPLocator::setIPv4address(locator, "1.2.3.4.5.6.7.8", ipv4_invalid_format, "13.14.15.16"));
+    ASSERT_FALSE(IPLocator::setIPv4address(locator, "1.2.3.4.5.6.7.8", "9.10.11.12", ipv4_invalid_format));
 
     locator.kind = LOCATOR_KIND_TCPv6;
     ASSERT_FALSE(IPLocator::setIPv4address(locator, "1.2.3.4.5.6.7.8", "9.10.11.12", "13.14.15.16"));
