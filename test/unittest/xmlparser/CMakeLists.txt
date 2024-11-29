@@ -268,7 +268,15 @@ target_link_libraries(XMLParserTests GTest::gtest
 if(QNX)
     target_link_libraries(XMLParserTests socket)
 endif()
+<<<<<<< HEAD
 add_gtest(XMLParserTests SOURCES XMLParserTests.cpp XMLElementParserTests.cpp)
+=======
+if(EPROSIMA_TEST_DNS_NOT_SET_UP)
+    message(STATUS "Ignoring 'getXMLLocatorDNS*'")
+    set(IGNORE_COMMAND "-getXMLLocatorDNS*")
+endif()
+gtest_discover_tests(XMLParserTests TEST_FILTER ${IGNORE_COMMAND})
+>>>>>>> 50c5848e2 (Allow domain names (DNS) when parsing TCP locators XML elements (#5429))
 ######################################  XMLParserTests  ########################################################
 
 #######################################  XMLTreeTests  #########################################################
