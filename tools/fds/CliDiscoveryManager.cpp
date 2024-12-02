@@ -24,6 +24,10 @@
 #include <stdlib.h>
 #include <fstream>
 
+#if __APPLE__
+#include <signal.h>
+#endif // if __APPLE__
+
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
@@ -971,7 +975,7 @@ int CliDiscoveryManager::fastdds_discovery_auto(
     // Auto mode should check if there is a server created for the domain specified, if not, create one.
     int return_value = 0;
 
-    const option::Option* pOp = options[DOMAIN];
+    const option::Option* pOp = options[DOMAIN_OPT];
     DomainId_t id = get_domain_id(pOp);
 
     if (isServerRunning(id))
@@ -1010,7 +1014,7 @@ int CliDiscoveryManager::fastdds_discovery_start(
         return 1;
     }
 
-    const option::Option* pOp = options[DOMAIN];
+    const option::Option* pOp = options[DOMAIN_OPT];
     DomainId_t id = get_domain_id(pOp);
     if (isServerRunning(id))
     {
@@ -1049,7 +1053,7 @@ int CliDiscoveryManager::fastdds_discovery_stop(
     // Stop a server for the domain specified
     int return_value = 0;
 
-    const option::Option* pOp = options[DOMAIN];
+    const option::Option* pOp = options[DOMAIN_OPT];
     DomainId_t id = get_domain_id(pOp);
 
     if (!isServerRunning(id))
@@ -1098,7 +1102,7 @@ int CliDiscoveryManager::fastdds_discovery_add(
         return 1;
     }
 
-    const option::Option* pOp = options[DOMAIN];
+    const option::Option* pOp = options[DOMAIN_OPT];
     DomainId_t id = get_domain_id(pOp);
     if (!isServerRunning(id))
     {
@@ -1137,7 +1141,7 @@ int CliDiscoveryManager::fastdds_discovery_set(
         return 1;
     }
 
-    const option::Option* pOp = options[DOMAIN];
+    const option::Option* pOp = options[DOMAIN_OPT];
     DomainId_t id = get_domain_id(pOp);
     if (!isServerRunning(id))
     {
