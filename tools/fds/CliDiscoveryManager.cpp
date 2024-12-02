@@ -15,14 +15,16 @@
 #include "CliDiscoveryManager.hpp"
 #include "CliDiscoveryParser.hpp"
 
+#include <chrono>
 #include <condition_variable>
 #include <csignal>
+#include <fstream>
 #include <iostream>
 #include <mutex>
 #include <regex>
 #include <sstream>
 #include <stdlib.h>
-#include <fstream>
+#include <thread>
 
 #if __APPLE__
 #include <signal.h>
@@ -53,6 +55,7 @@ void sigint_handler(
     g_signal_cv.notify_one();
 }
 
+#ifndef _WIN32
 static std::string read_servers_from_file(
         const std::string& file)
 {
@@ -82,6 +85,8 @@ static bool write_servers_to_file(
     ofs.close();
     return true;
 }
+
+#endif // ifndef _WIN32
 
 namespace eprosima {
 namespace fastdds {
@@ -266,6 +271,7 @@ uint16_t CliDiscoveryManager::getDiscoveryServerPort(
     return port;
 }
 
+#ifndef _WIN32
 std::string CliDiscoveryManager::execCommand(
         const std::string& command)
 {
@@ -288,16 +294,13 @@ std::vector<uint16_t> CliDiscoveryManager::getListeningPorts()
 {
     std::vector<uint16_t> ports;
     std::string command;
-#ifdef _WIN32
-    command = "netstat -an | findstr LISTENING";
-    std::regex port_regex(R"(0\.0\.0\.0:([123456789]+))");
-#elif __APPLE__
+#ifdef __APPLE__
     command = "netstat -an | grep LISTEN";
     std::regex port_regex(R"(\*.([\d+]+))");
 #else
     command = "ss -ltn";
     std::regex port_regex(R"(0\.0\.0\.0:(\d+))");
-#endif // ifdef _WIN32
+#endif // ifdef __APPLE__
     std::string result = execCommand(command);
     std::smatch match;
     std::string line;
@@ -410,12 +413,13 @@ pid_t CliDiscoveryManager::startServerInBackground(
         signal(SIGUSR2, sigint_handler);
         signal(SIGINT, sigint_handler);
         signal(SIGTERM, sigint_handler);
-#ifndef _WIN32
         signal(SIGQUIT, sigint_handler);
         signal(SIGHUP, sigint_handler);
-#endif // ifndef _WIN32
 
-        chdir("/");
+        if (chdir("/") != 0)
+        {
+            EPROSIMA_LOG_WARNING(CLI, "Failed to change working directory of background process.");
+        }
         close(STDIN_FILENO);
         close(STDOUT_FILENO);
         close(STDERR_FILENO);
@@ -474,6 +478,8 @@ pid_t CliDiscoveryManager::startServerInBackground(
     }
     return pid;
 }
+
+#endif // ifndef _WIN32
 
 void CliDiscoveryManager::setServerQos(
         const uint16_t port)
@@ -963,6 +969,7 @@ int CliDiscoveryManager::fastdds_discovery_server(
     return return_value;
 }
 
+#ifndef _WIN32
 int CliDiscoveryManager::fastdds_discovery_auto(
         const std::vector<option::Option>& options,
         option::Parser& parse)
@@ -1201,6 +1208,8 @@ int CliDiscoveryManager::fastdds_discovery_info(
 
     return return_value;
 }
+
+#endif // ifndef _WIN32
 
 } // namespace dds
 } // namespace fastdds

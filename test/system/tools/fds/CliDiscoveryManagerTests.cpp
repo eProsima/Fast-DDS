@@ -116,7 +116,7 @@ public:
         ASSERT_EQ(ips.size(), ports.size());
         size_t num_servers = ips.size();
 
-        createOptionsAndParser(argv.size(), const_cast<const char**>(argv.data()));
+        createOptionsAndParser(static_cast<int>(argv.size()), const_cast<const char**>(argv.data()));
         manager.reset();
         manager.getCliPortsAndIps(
             getOption(UDP_PORT),
@@ -156,7 +156,7 @@ public:
             TestCase test_case)
     {
         const auto& argv = std::get<0>(test_case);
-        createOptionsAndParser(argv.size(), const_cast<const char**>(argv.data()));
+        createOptionsAndParser(static_cast<int>(argv.size()), const_cast<const char**>(argv.data()));
         manager.reset();
         manager.getCliPortsAndIps(
             getOption(UDP_PORT),
@@ -410,22 +410,22 @@ TEST_F(CliDiscoveryManagerTest, GetDomainIdFromCLI)
     createOptionsAndParser(2, argv);
     Option* domain_option = getOption(DOMAIN_OPT);
     DomainId_t domain_id = manager.get_domain_id(domain_option);
-    EXPECT_EQ(domain_id, 4);
+    EXPECT_EQ(domain_id, static_cast<DomainId_t>(4));
     const char* argv2[] = {"-d", "2"};
     createOptionsAndParser(2, argv2);
     Option* domain_option2 = getOption(DOMAIN_OPT);
     DomainId_t domain_id2 = manager.get_domain_id(domain_option2);
-    EXPECT_EQ(domain_id2, 2);
+    EXPECT_EQ(domain_id2, static_cast<DomainId_t>(2));
 }
 
 TEST_F(CliDiscoveryManagerTest, GetDomainIdFromEnv)
 {
     setTestEnv(domain_env_var, "4");
     DomainId_t domain_id = manager.get_domain_id(nullptr);
-    EXPECT_EQ(domain_id, 4);
+    EXPECT_EQ(domain_id, static_cast<DomainId_t>(4));
     setTestEnv(domain_env_var, "2");
     DomainId_t domain_id2 = manager.get_domain_id(nullptr);
-    EXPECT_EQ(domain_id2, 2);
+    EXPECT_EQ(domain_id2, static_cast<DomainId_t>(2));
 }
 
 TEST_F(CliDiscoveryManagerTest, GetDomainIdFromDefaultValue)
@@ -433,7 +433,7 @@ TEST_F(CliDiscoveryManagerTest, GetDomainIdFromDefaultValue)
     const char* argv[] = {"-q", "12345"};
     createOptionsAndParser(2, argv);
     DomainId_t domain_id = manager.get_domain_id(nullptr);
-    EXPECT_EQ(domain_id, 0);
+    EXPECT_EQ(domain_id, static_cast<DomainId_t>(0));
 }
 
 TEST_F(CliDiscoveryManagerTest, GetDomainIdFromCLIWithOverwrite)
@@ -443,7 +443,7 @@ TEST_F(CliDiscoveryManagerTest, GetDomainIdFromCLIWithOverwrite)
     createOptionsAndParser(2, argv);
     Option* domain_option = getOption(DOMAIN_OPT);
     DomainId_t domain_id = manager.get_domain_id(domain_option);
-    EXPECT_EQ(domain_id, 7);
+    EXPECT_EQ(domain_id, static_cast<DomainId_t>(7));
 }
 
 TEST_F(CliDiscoveryManagerTest, AddRemoteServersFromEnv)
@@ -551,11 +551,13 @@ TEST_F(CliDiscoveryManagerTest, GetDiscoveryServerPortFromDomainId)
     EXPECT_EQ(port_fail, 0);
 }
 
+#ifndef _WIN32
 TEST_F(CliDiscoveryManagerTest, ExecCommand)
 {
     std::string result = manager.execCommand("echo \"Hello CLI Tool\"");
     EXPECT_EQ(result, "Hello CLI Tool\n");
 }
+#endif // _WIN32
 
 TEST_F(CliDiscoveryManagerTest, SetServerQos)
 {
@@ -586,7 +588,8 @@ TEST_F(CliDiscoveryManagerTest, GetCliPortsAndIps)
     for (const auto& key_case : test_cases)
     {
         const auto& test_case = test_case_map.at(key_case);
-        createOptionsAndParser(std::get<0>(test_case).size(), const_cast<const char**>(std::get<0>(test_case).data()));
+        createOptionsAndParser(static_cast<int>(std::get<0>(test_case).size()),
+                const_cast<const char**>(std::get<0>(test_case).data()));
         manager.reset();
         manager.getCliPortsAndIps(
             getOption(UDP_PORT),
@@ -736,7 +739,7 @@ TEST_F(CliDiscoveryManagerTest, ConfigureTransports)
     EXPECT_TRUE(manager.getServerQos().transport().use_builtin_transports);
 }
 
-
+#ifndef _WIN32
 // This test also checks:
 // - getListeningPorts method, which is used in the getLocalServers method.
 // - isServerRunning method, which checks if a server is running in a specific domain.
@@ -854,6 +857,7 @@ TEST_F(CliDiscoveryManagerTest, StartAndStopServers)
     EXPECT_FALSE(manager.isServerRunning(d0));
     EXPECT_EQ(manager.getPidOfServer(p0), 0);
 }
+#endif // _WIN32
 
 int main(
         int argc,

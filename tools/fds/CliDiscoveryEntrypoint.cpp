@@ -29,9 +29,9 @@ int main (
     uint16_t command_int = 0;
     try
     {
-        command_int = std::stoi(argv[0]);
+        command_int = static_cast<uint16_t>(std::stoi(argv[0]));
     }
-    catch (const std::exception& e)
+    catch (const std::exception&)
     {
         std::cerr << "Invalid command index: " << argv[0] << ". Use 'fastdds discovery' tool." << std::endl;
         return 1;
@@ -47,6 +47,13 @@ int main (
     option::Parser parse(usage, argc, argv, &options[0], &buffer[0]);
     eprosima::fastdds::dds::CliDiscoveryManager cli_manager;
 
+#ifdef _WIN32
+    if (command_int != ToolCommand::SERVER)
+    {
+        std::cerr << "Fast DDS CLI AUTO mode not supported on Windows." << std::endl;
+        return 1;
+    }
+#else
     switch (command_int)
     {
         case ToolCommand::AUTO:
@@ -77,4 +84,5 @@ int main (
             std::cerr << "Unknown index: " << command_int << ". Use 'fastdds discovery' tool." << std::endl;
             break;
     }
+#endif // ifdef _WIN32
 }

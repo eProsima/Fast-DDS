@@ -24,6 +24,10 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 
+#ifdef WIN32
+#define pid_t int
+#endif // ifdef WIN32
+
 constexpr const char* domain_env_var = "ROS_DOMAIN_ID";
 constexpr const char* remote_servers_env_var = "ROS_STATIC_PEERS";
 constexpr const char* default_ip = "0.0.0.0";
@@ -61,7 +65,7 @@ struct MetaInfo_DS
 
     MetaInfo_DS(
             uint32_t domain_id,
-            uint32_t port)
+            uint16_t port)
         : domain_id(domain_id)
         , port(port)
         , address("0.0.0.0")
@@ -154,6 +158,7 @@ public:
     uint16_t getDiscoveryServerPort(
             const uint32_t& domainId);
 
+#ifndef _WIN32
     /**
      * @brief Execute the command provided by the user.
      * @param command The command to be executed
@@ -202,6 +207,7 @@ public:
             const uint16_t& port,
             const DomainId_t& domain,
             bool use_env_var);
+#endif // ifndef _WIN32
 
     /**
      * @brief Set the QoS of the Discovery Server.
@@ -282,6 +288,7 @@ public:
             const std::vector<option::Option>& options,
             option::Parser& parse);
 
+#ifndef _WIN32
     /**
      * @brief Starts a new Discovery Server in the specified domain if there is not an active server
      * already running. It does nothing if there is an active server.
@@ -337,6 +344,7 @@ public:
     int fastdds_discovery_info(
             const std::vector<option::Option>& options,
             option::Parser& parse);
+#endif // ifndef _WIN32
 
 protected:
 
