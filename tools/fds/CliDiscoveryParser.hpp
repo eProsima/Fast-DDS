@@ -38,7 +38,7 @@ enum  optionIndex
     BACKUP,
     XML_FILE,
     EXAMPLES_OPT,
-    DOMAIN,
+    DOMAIN_OPT,
 };
 
 struct Arg : public option::Arg
@@ -236,7 +236,7 @@ const option::Descriptor usage[] = {
       "\n  info         \t Inspect the Discovery Server in the specified domain.\n\n"
       "  Daemon parameters: \n "},
 
-    { DOMAIN,  0, "d", "domain",    Arg::check_server_id,
+    { DOMAIN_OPT,  0, "d", "domain",    Arg::check_server_id,
       "  -d \t--domain       Selects the domain of the server to target for \n"
       "\t               this action.\n"},
 

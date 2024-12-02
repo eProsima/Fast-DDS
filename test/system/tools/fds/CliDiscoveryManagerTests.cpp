@@ -20,6 +20,9 @@
 #include <fstream>
 #include <thread>
 #include <chrono>
+#if __APPLE__
+#include <signal.h>
+#endif // if __APPLE__
 
 #include <rtps/attributes/ServerAttributes.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
@@ -405,12 +408,12 @@ TEST_F(CliDiscoveryManagerTest, GetDomainIdFromCLI)
 {
     const char* argv[] = {"-d", "4"};
     createOptionsAndParser(2, argv);
-    Option* domain_option = getOption(DOMAIN);
+    Option* domain_option = getOption(DOMAIN_OPT);
     DomainId_t domain_id = manager.get_domain_id(domain_option);
     EXPECT_EQ(domain_id, 4);
     const char* argv2[] = {"-d", "2"};
     createOptionsAndParser(2, argv2);
-    Option* domain_option2 = getOption(DOMAIN);
+    Option* domain_option2 = getOption(DOMAIN_OPT);
     DomainId_t domain_id2 = manager.get_domain_id(domain_option2);
     EXPECT_EQ(domain_id2, 2);
 }
@@ -438,7 +441,7 @@ TEST_F(CliDiscoveryManagerTest, GetDomainIdFromCLIWithOverwrite)
     setTestEnv(domain_env_var, "3");
     const char* argv[] = {"-d", "7"};
     createOptionsAndParser(2, argv);
-    Option* domain_option = getOption(DOMAIN);
+    Option* domain_option = getOption(DOMAIN_OPT);
     DomainId_t domain_id = manager.get_domain_id(domain_option);
     EXPECT_EQ(domain_id, 7);
 }
