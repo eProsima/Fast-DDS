@@ -1174,7 +1174,6 @@ bool SecurityManager::create_participant_stateless_message_reader()
         ratt.endpoint.multicastLocatorList = pattr.builtin.metatrafficMulticastLocatorList;
     }
     ratt.endpoint.unicastLocatorList = pattr.builtin.metatrafficUnicastLocatorList;
-    ratt.endpoint.remoteLocatorList = pattr.builtin.initialPeersList;
     ratt.endpoint.external_unicast_locators = pattr.builtin.metatraffic_external_unicast_locators;
     ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
     ratt.matched_writers_allocation = pattr.allocation.participants;
@@ -1274,7 +1273,6 @@ bool SecurityManager::create_participant_volatile_message_secure_writer()
     watt.endpoint.unicastLocatorList = pattr.builtin.metatrafficUnicastLocatorList;
     watt.endpoint.external_unicast_locators = pattr.builtin.metatraffic_external_unicast_locators;
     watt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
-    watt.endpoint.remoteLocatorList = pattr.builtin.initialPeersList;
     watt.endpoint.security_attributes().is_submessage_protected = true;
     watt.endpoint.security_attributes().plugin_endpoint_attributes =
             PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
@@ -1327,7 +1325,6 @@ bool SecurityManager::create_participant_volatile_message_secure_reader()
     ratt.endpoint.unicastLocatorList = pattr.builtin.metatrafficUnicastLocatorList;
     ratt.endpoint.external_unicast_locators = pattr.builtin.metatraffic_external_unicast_locators;
     ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
-    ratt.endpoint.remoteLocatorList = pattr.builtin.initialPeersList;
     ratt.endpoint.security_attributes().is_submessage_protected = true;
     ratt.endpoint.security_attributes().plugin_endpoint_attributes =
             PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;

@@ -2001,6 +2001,9 @@ TEST_F(TCPv4Tests, autofill_port)
 // This test verifies server's channel resources mapping keys uniqueness, where keys are clients locators.
 // Clients typically communicated its PID as its locator port. When having several clients in the same
 // process this lead to overwriting server's channel resources map elements.
+// In order to ensure communication in TCP Discovery Server, a different entry is created in the server's
+// channel resources map for each IP interface found, all of them using the same TCP channel. Thus, two
+// clients will generate at least two entries in the server's channel resources map.
 TEST_F(TCPv4Tests, client_announced_local_port_uniqueness)
 {
     TCPv4TransportDescriptor recvDescriptor;
@@ -2032,7 +2035,12 @@ TEST_F(TCPv4Tests, client_announced_local_port_uniqueness)
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    ASSERT_EQ(receiveTransportUnderTest.get_channel_resources().size(), 2u);
+    std::set<std::shared_ptr<TCPChannelResource>> channels_created;
+    for (const auto& channel_resource : receiveTransportUnderTest.get_channel_resources())
+    {
+        channels_created.insert(channel_resource.second);
+    }
+    ASSERT_EQ(channels_created.size(), 2u);
 }
 
 #ifndef _WIN32
