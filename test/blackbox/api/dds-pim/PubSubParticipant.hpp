@@ -701,6 +701,13 @@ public:
         return false;
     }
 
+    PubSubParticipant& initial_peers(
+            const eprosima::fastdds::rtps::LocatorList& initial_peers)
+    {
+        participant_qos_.wire_protocol().builtin.initialPeersList = initial_peers;
+        return *this;
+    }
+
     PubSubParticipant& pub_property_policy(
             const eprosima::fastdds::rtps::PropertyPolicy property_policy)
     {
