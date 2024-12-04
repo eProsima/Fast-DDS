@@ -1053,38 +1053,68 @@ int CliDiscoveryManager::fastdds_discovery_stop(
         const std::vector<option::Option>& options,
         option::Parser& parse)
 {
-    if (initial_options_fail(options, parse))
+    if (initial_options_fail(options, parse, false))
     {
         return 1;
     }
 
     // Stop a server for the domain specified
     int return_value = 0;
-
-    const option::Option* pOp = options[DOMAIN_OPT];
-    DomainId_t id = get_domain_id(pOp);
-
-    if (!isServerRunning(id))
+    bool stop_all = false;
+    // Check for all argument
+    int unknown_opts = parse.nonOptionsCount();
+    if (unknown_opts > 1)
     {
-        std::cout << "There is no running Server for Domain ID [" << id << "]." << std::endl;
-        return return_value;
-    }
-
-    // Create a server for the domain specified
-    uint16_t port = getDiscoveryServerPort(id);
-    pid_t server_pid = getPidOfServer(port);
-    if (server_pid == 0)
-    {
+        EPROSIMA_LOG_ERROR(CLI_START,
+                "Too many arguments specified. Expected format is: stop -d <domain> or stop all");
         return 1;
     }
-    if (kill(server_pid, SIGINT) == 0)
+    else if (unknown_opts == 1)
     {
-        std::cout << "Server for Domain ID [" << id << "] stopped." << std::endl;
+        if ("all" != std::string(parse.nonOption(0)))
+        {
+            EPROSIMA_LOG_ERROR(CLI_START,
+                    "Invalid argument specified. Expected format is: stop -d <domain> or stop all");
+            return 1;
+        }
+        stop_all = true;
+    }
+
+    std::vector<MetaInfo_DS> stop_servers;
+    if (stop_all)
+    {
+        stop_servers = getLocalServers();
     }
     else
     {
-        EPROSIMA_LOG_ERROR(CLI_STOP, "Could not stop server for Domain ID [" << id << "].");
-        return_value = 1;
+        const option::Option* pOp = options[DOMAIN_OPT];
+        DomainId_t id = get_domain_id(pOp);
+
+        if (!isServerRunning(id))
+        {
+            std::cout << "There is no running Server for Domain ID [" << id << "]." << std::endl;
+            return return_value;
+        }
+        stop_servers.push_back(MetaInfo_DS(id, getDiscoveryServerPort(id)));
+    }
+
+    for (const MetaInfo_DS& server : stop_servers)
+    {
+        pid_t server_pid = getPidOfServer(server.port);
+        if (server_pid == 0)
+        {
+            EPROSIMA_LOG_ERROR(CLI_STOP, "Error getting PID of server for Domain ID [" << server.domain_id << "].");
+            return 1;
+        }
+        if (kill(server_pid, SIGINT) == 0)
+        {
+            std::cout << "Server for Domain ID [" << server.domain_id << "] stopped." << std::endl;
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(CLI_STOP, "Could not stop server for Domain ID [" << server.domain_id << "].");
+            return_value = 1;
+        }
     }
 
     return return_value;
