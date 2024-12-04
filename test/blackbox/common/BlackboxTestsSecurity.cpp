@@ -4521,6 +4521,33 @@ TEST(Security, participant_stateless_secure_writer_pool_change_is_removed_upon_p
     EXPECT_EQ(0u, n_logs);
 }
 
+// Regression test for Redmine issue #22024
+// OpenSSL assertion is not thrown when the library is abruptly finished.
+TEST(Security, openssl_correctly_finishes)
+{
+    // Create
+    PubSubWriter<HelloWorldPubSubType> writer("HelloWorldTopic_openssl_is_correctly_finished");
+    PubSubReader<HelloWorldPubSubType> reader("HelloWorldTopic_openssl_is_correctly_finished");
+
+    const std::string governance_file("governance_helloworld_all_enable.smime");
+    const std::string permissions_file("permissions_helloworld.smime");
+
+    CommonPermissionsConfigure(reader, writer, governance_file, permissions_file);
+
+    reader.init();
+    writer.init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+
+    // Here we force the atexit function from openssl to be abruptly called
+    // i.e in a disordered way
+    // If OpenSSL is not correctly finished, a SIGSEGV will be thrown
+    std::exit(0);
+}
+
 void blackbox_security_init()
 {
     certs_path = std::getenv("CERTS_PATH");
