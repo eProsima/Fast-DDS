@@ -192,7 +192,7 @@ ParticipantProxyData* PDPClient::createParticipantProxyData(
     ParticipantProxyData* pdata = add_participant_proxy_data(participant_data.m_guid, is_server, &participant_data);
     if (pdata != nullptr)
     {
-        // Clients only assert its server lifeliness, other clients liveliness is provided
+        // Clients only assert its server liveliness, other clients liveliness is provided
         // through server's PDP discovery data
         if (is_server)
         {
