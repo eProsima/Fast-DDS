@@ -207,7 +207,12 @@ protected:
 
     void TearDown() override
     {
-        // Clean up code here
+#ifndef _WIN32
+        // Make sure that no servers are running after a failing test
+        const char* argv_stop[] = {"all"};
+        createOptionsAndParser(1, argv_stop);
+        EXPECT_EQ(manager.fastdds_discovery_stop(options, parse), 0);
+#endif // ifndef _WIN32
     }
 
     const std::map<std::string, TestCase> test_case_map =
@@ -845,17 +850,38 @@ TEST_F(CliDiscoveryManagerTest, StartAndStopServers)
     manager.fastdds_discovery_auto(options, parse);
     std::this_thread::sleep_for(std::chrono::seconds(1));
     EXPECT_TRUE(manager.isServerRunning(d0));
-    ASSERT_GT(manager.getPidOfServer(p0), 0);
+    EXPECT_GT(manager.getPidOfServer(p0), 0);
     pid_t child_pid = manager.getPidOfServer(p0);
 
     // Manually stop the child process
     createOptionsAndParser(2, argv);
-    manager.fastdds_discovery_stop(options, parse);
+    EXPECT_EQ(manager.fastdds_discovery_stop(options, parse), 0);
 
     int status;
     waitpid(child_pid, &status, 0);
     EXPECT_FALSE(manager.isServerRunning(d0));
     EXPECT_EQ(manager.getPidOfServer(p0), 0);
+}
+
+// This test verify that the fastdds_discovery_stop is capable of parsing the 'all' argument.
+// The behavior of stopping all servers is tested in the discovery_server repo
+TEST_F(CliDiscoveryManagerTest, StopAllRunningServers)
+{
+    // Start server 1
+    DomainId_t d1 = 1;
+    ASSERT_FALSE(manager.isServerRunning(d1));
+    const char* argv_0[] = {"-d", "1"};
+    createOptionsAndParser(2, argv_0);
+    manager.fastdds_discovery_auto(options, parse);
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    ASSERT_TRUE(manager.isServerRunning(d1));
+
+    // Stop server with all
+    const char* argv_stop[] = {"all"};
+    createOptionsAndParser(1, argv_stop);
+    EXPECT_EQ(manager.fastdds_discovery_stop(options, parse), 0);
+    ASSERT_FALSE(manager.isServerRunning(d1));
 }
 #endif // _WIN32
 
