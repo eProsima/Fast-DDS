@@ -128,7 +128,8 @@ private:
     std::pair<std::ofstream, std::string> get_temporary_file() const
     {
         // Create a temporary filename template
-        std::vector<char> filename_template("/tmp/xtypes_XXXXXX", "/tmp/xtypes_XXXXXX" + 18);
+        const char* literal = "/tmp/xtypes_XXXXXX";
+        std::vector<char> filename_template(literal, literal + 18);
 
         // Create and open a temporary file securely
         int fd = mkstemp(filename_template.data());

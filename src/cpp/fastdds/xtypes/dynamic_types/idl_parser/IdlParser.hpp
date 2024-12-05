@@ -973,7 +973,7 @@ struct action<wide_string_literal>
         } \
     };
 
-#define bool_op_action(Rule, id, operation) \
+#define bool_op_action(Rule, id, operation, logical_op) \
     template<> \
     struct action<Rule> \
     { \
@@ -1011,10 +1011,10 @@ struct action<wide_string_literal>
             } \
             else if (TK_BOOLEAN == pt) \
             { \
-                bool value = promote<bool>(s2) operation promote<bool>(s1); \
+                bool value = promote<bool>(s2) logical_op promote<bool>(s1); \
                 xdata->set_boolean_value(MEMBER_ID_INVALID, value); \
                 std::cout << "=========" << std::endl; \
-                std::cout << #operation << ": " << value << std::endl; \
+                std::cout << #logical_op << ": " << value << std::endl; \
                 std::cout << "=========" << std::endl; \
             } \
             else \
@@ -1034,9 +1034,9 @@ struct action<wide_string_literal>
         } \
     };
 
-bool_op_action(or_exec, or, |)
-bool_op_action(xor_exec, xor, ^)
-bool_op_action(and_exec, and, &)
+bool_op_action(or_exec, or, |, ||)
+bool_op_action(xor_exec, xor, ^, !=)
+bool_op_action(and_exec, and, &, &&)
 int_op_action(rshift_exec, >>, >>)
 int_op_action(lshift_exec, <<, <<)
 int_op_action(mod_exec, mod, %)
@@ -1586,7 +1586,7 @@ struct action<case_label>
             else
             {
                 EPROSIMA_LOG_ERROR(IDLPARSER, "Unsupported case label data type: " << xtype->get_kind());
-                throw std::runtime_error("Unsupported case label data type: " + xtype->get_kind());
+                throw std::runtime_error("Unsupported case label data type: " + std::to_string(xtype->get_kind()));
             }
 
             if (state["union_labels"].empty() || state["union_labels"].back() == ';')
