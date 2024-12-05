@@ -612,6 +612,17 @@ TEST(ChainingTransportTests, builtin_transports_env_large_data)
     BuiltinTransportsTest::test_env("LARGE_DATA");
 }
 
+TEST(ChainingTransportTests, builtin_transports_env_ds_auto)
+{
+    /* DS Auto transport shall always be used along with ROS_DISCOVERY_SERVER=AUTO */
+#ifdef _WIN32
+    _putenv_s("ROS_DISCOVERY_SERVER", "AUTO");
+#else
+    setenv("ROS_DISCOVERY_SERVER", "AUTO", 1);
+#endif // _WIN32
+    BuiltinTransportsTest::test_env("DS_AUTO");
+}
+
 TEST(ChainingTransportTests, builtin_transports_env_large_data_with_max_msg_size)
 {
     BuiltinTransportsTest::test_env("LARGE_DATA?max_msg_size=70KB&sockets_size=70KB");
@@ -673,6 +684,17 @@ TEST(ChainingTransportTests, builtin_transports_xml_udpv6)
 TEST(ChainingTransportTests, builtin_transports_xml_large_data)
 {
     BuiltinTransportsTest::test_xml("builtin_transports_profile.xml", "participant_largedata");
+}
+
+TEST(ChainingTransportTests, builtin_transports_xml_ds_auto)
+{
+    /* DS Auto transport shall always be used along with ROS_DISCOVERY_SERVER=AUTO */
+#ifdef _WIN32
+    _putenv_s("ROS_DISCOVERY_SERVER", "AUTO");
+#else
+    setenv("ROS_DISCOVERY_SERVER", "AUTO", 1);
+#endif // _WIN32
+    BuiltinTransportsTest::test_xml("builtin_transports_profile.xml", "participant_ds_auto");
 }
 
 TEST(ChainingTransportTests, builtin_transports_xml_large_data_with_max_msg_size)
