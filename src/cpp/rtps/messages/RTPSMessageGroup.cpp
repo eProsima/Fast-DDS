@@ -34,6 +34,12 @@
 
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 
+#ifdef FASTDDS_STATISTICS
+const size_t max_boost_buffers = 61; // ... + SubMsg header + SubMsg body + Statistics message
+#else
+const size_t max_boost_buffers = 62; // ... + SubMsg header + SubMsg body
+#endif // ifdef FASTDDS_STATISTICS
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -455,7 +461,7 @@ bool RTPSMessageGroup::insert_submessage(
     }
 
     // Messages with a submessage bigger than 64KB cannot have more submessages and should be flushed
-    if (is_big_submessage)
+    if (is_big_submessage || max_boost_buffers < buffers_to_send_->size())
     {
         flush();
     }
