@@ -301,6 +301,28 @@ static void setup_transports_large_datav6(
     }
 }
 
+static void setup_transports_ds_auto(
+        RTPSParticipantAttributes& att,
+        bool intraprocess_only,
+        const fastdds::rtps::BuiltinTransportsOptions& options)
+{
+    if (!intraprocess_only)
+    {
+        setup_large_data_shm_transport(att, options);
+
+        auto tcp_transport = create_tcpv4_transport(att, options);
+        att.userTransports.push_back(tcp_transport);
+
+        Locator_t tcp_loc;
+        tcp_loc.kind = LOCATOR_KIND_TCPv4;
+        IPLocator::setIPv4(tcp_loc, "0.0.0.0");
+        IPLocator::setPhysicalPort(tcp_loc, 0);
+        IPLocator::setLogicalPort(tcp_loc, 0);
+        att.builtin.metatrafficUnicastLocatorList.push_back(tcp_loc);
+        att.defaultUnicastLocatorList.push_back(tcp_loc);
+    }
+}
+
 void RTPSParticipantAttributes::setup_transports(
         fastdds::rtps::BuiltinTransports transports,
         const fastdds::rtps::BuiltinTransportsOptions& options)
@@ -356,6 +378,12 @@ void RTPSParticipantAttributes::setup_transports(
             // This parameter will allow allow the initialization of UDP transports with maxMessageSize > 65500 KB (s_maximumMessageSize)
             max_msg_size_no_frag = options.maxMessageSize;
             setup_transports_large_datav6(*this, intraprocess_only, options);
+            break;
+
+        case fastdds::rtps::BuiltinTransports::DS_AUTO:
+            // This parameter will allow allow the initialization of UDP transports with maxMessageSize > 65500 KB (s_maximumMessageSize)
+            max_msg_size_no_frag = options.maxMessageSize;
+            setup_transports_ds_auto(*this, intraprocess_only, options);
             break;
 
         default:
