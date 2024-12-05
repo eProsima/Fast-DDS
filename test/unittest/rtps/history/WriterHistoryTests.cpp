@@ -33,7 +33,7 @@ using namespace testing;
 #define MAX_MESSAGE_SIZE 300
 
 void cache_change_fragment(
-    uint32_t inline_qos_length)
+        uint32_t inline_qos_length)
 {
     uint32_t domain_id = 0;
     uint32_t initial_reserved_caches = 10;
@@ -41,7 +41,7 @@ void cache_change_fragment(
     std::string max_message_size_str = std::to_string(max_message_size);
 
     RTPSParticipantAttributes p_attr;
-    p_attr.properties.properties().emplace_back("fastdds.max_message_size", max_message_size_str); 
+    p_attr.properties.properties().emplace_back("fastdds.max_message_size", max_message_size_str);
     RTPSParticipant* participant = RTPSDomain::createParticipant(
         domain_id, true, p_attr);
 
@@ -65,10 +65,10 @@ void cache_change_fragment(
     change.writerGUID = bwriter->getGuid();
     change.serializedPayload.length = 3 * max_allowed_payload_size; // Force to setFragmentSize
     change.inline_qos.length = inline_qos_length;
-    
+
     history->add_change(&change);
 
-    auto result = change.getFragmentSize(); 
+    auto result = change.getFragmentSize();
     std::cout << "Fragment size: " << result << std::endl;
     ASSERT_NE(result, 0); // Fragment size should always be greater than 0
 }

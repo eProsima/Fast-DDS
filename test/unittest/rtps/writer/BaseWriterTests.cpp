@@ -31,14 +31,14 @@ namespace rtps {
 using namespace testing;
 
 void max_allowed_payload_size(
-    uint32_t max_message_size)
+        uint32_t max_message_size)
 {
     uint32_t domain_id = 0;
     uint32_t initial_reserved_caches = 10;
     std::string max_message_size_str = std::to_string(max_message_size);
 
     RTPSParticipantAttributes p_attr;
-    p_attr.properties.properties().emplace_back("fastdds.max_message_size", max_message_size_str); 
+    p_attr.properties.properties().emplace_back("fastdds.max_message_size", max_message_size_str);
     RTPSParticipant* participant = RTPSDomain::createParticipant(
         domain_id, true, p_attr);
 
@@ -58,7 +58,8 @@ void max_allowed_payload_size(
     BaseWriter* bwriter = BaseWriter::downcast(writer);
 
     auto result = bwriter->get_max_allowed_payload_size();
-    std::cout << "For max_message_size: " << max_message_size << " the max allowed payload size is: " << result << std::endl;
+    std::cout << "For max_message_size: " << max_message_size << " the max allowed payload size is: " << result <<
+        std::endl;
 
     ASSERT_LE(result, max_message_size);
 }
@@ -66,7 +67,7 @@ void max_allowed_payload_size(
 /**
  * This test checks the get_max_allowed_payload_size() method of the BaseWriter.
  * The method is called within a loop with different values of max_message_size.
- * The test checks that the max_payload_size is always less than max_message_size, 
+ * The test checks that the max_payload_size is always less than max_message_size,
  * in other case it means an overflow has occurred.
  */
 TEST(BaseWriterTests, calculate_max_payload_size_overflow)
