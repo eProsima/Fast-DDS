@@ -595,7 +595,7 @@ bool UDPTransportInterface::send(
 
             if (bytesSent != total_bytes)
             {
-                EPROSIMA_LOG_WARNING(TRANSPORT_UDP, "boost send_to wasn't send all bytes");
+                EPROSIMA_LOG_WARNING(TRANSPORT_UDP, "Boost send_to wasn't able to send all bytes");
             }
         }
         catch (const std::exception& error)

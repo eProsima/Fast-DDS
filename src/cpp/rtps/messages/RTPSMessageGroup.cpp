@@ -460,7 +460,7 @@ bool RTPSMessageGroup::insert_submessage(
         return false;
     }
 
-    // Messages with a submessage bigger than 64KB cannot have more submessages and should be flushed
+    // Flush when the submessage is bigger than 64KB OR if the number of buffers to send is 64 (boost limit)
     if (is_big_submessage || max_boost_buffers < buffers_to_send_->size())
     {
         flush();
