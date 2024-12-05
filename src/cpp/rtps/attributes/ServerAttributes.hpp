@@ -136,13 +136,15 @@ std::basic_ostream<charT>& operator <<(
 // Default server base guidPrefix
 const char* const DEFAULT_ROS2_SERVER_GUIDPREFIX = "44.53.00.5f.45.50.52.4f.53.49.4d.41";
 
-/* Environment variable to specify a semicolon-separated list of locators ([transport]ip:port) that define remote server
- * locators. The [transport] specification is optional. The default transport is UDPv4.
- * For the variable to take any effect, the following pre-condition must be met:
- *    - The discovery protocol must be either SIMPLE or SERVER.
- *       a. In the case of SIMPLE, the participant is created as a CLIENT instead.
- *       b. In the case of SERVER, the participant is created as a SERVER, using the DEFAULT_ROS2_MASTER_URI list to
- *          expand the list of remote servers.
+/* Environment variable that can either serve to:
+ * - Specify the Discovery Server auto mode by setting its value to AUTO.
+ * - Specify a semicolon-separated list of locators ([transport]ip:port) that define remote server
+ *   locators. The [transport] specification is optional. The default transport is UDPv4.
+ *   For the variable to take any effect, the following pre-condition must be met:
+ *      - The discovery protocol must be either SIMPLE or SERVER.
+ *         a. In the case of SIMPLE, the participant is created as a CLIENT instead.
+ *         b. In the case of SERVER, the participant is created as a SERVER, using the DEFAULT_ROS2_MASTER_URI list to
+ *            expand the list of remote servers.
  */
 const char* const DEFAULT_ROS2_MASTER_URI = "ROS_DISCOVERY_SERVER";
 
