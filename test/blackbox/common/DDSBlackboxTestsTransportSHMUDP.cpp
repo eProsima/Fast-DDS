@@ -214,7 +214,7 @@ static void shm_metatraffic_test(
                 check_shm_locators(info, unicast, multicast);
                 return true;
             };
-    reader.setOnDiscoveryFunction(discovery_checker);
+    reader.set_on_discovery_function(discovery_checker);
     reader.max_multicast_locators_number(2);
     reader.init();
     ASSERT_TRUE(reader.isInitialized());

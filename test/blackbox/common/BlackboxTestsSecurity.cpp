@@ -2250,7 +2250,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_user_data)
     sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
     sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
-    reader.setOnDiscoveryFunction([&writer](const ParticipantBuiltinTopicData& info,
+    reader.set_on_discovery_function([&writer](const ParticipantBuiltinTopicData& info,
             ParticipantDiscoveryStatus /*status*/) -> bool
             {
                 if (info.guid == writer.participant_guid())
