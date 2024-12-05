@@ -485,9 +485,10 @@ void WriterHistory::set_fragments(
     if (0 < inline_qos_size)
     {
         uint32_t overhead = fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_SENTINEL_SIZE + inline_qos_size;
-        if (final_high_mark_for_frag < overhead)
+        constexpr uint32_t min_fragment_size = 4;
+        if (final_high_mark_for_frag < (overhead + min_fragment_size))
         {
-            final_high_mark_for_frag = 4;
+            final_high_mark_for_frag = min_fragment_size;
         }
         else
         {
