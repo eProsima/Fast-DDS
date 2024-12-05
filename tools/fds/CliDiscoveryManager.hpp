@@ -24,10 +24,6 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 
-#ifdef WIN32
-#define pid_t int
-#endif // ifdef WIN32
-
 constexpr const char* domain_env_var = "ROS_DOMAIN_ID";
 constexpr const char* remote_servers_env_var = "ROS_STATIC_PEERS";
 constexpr const char* default_ip = "0.0.0.0";
@@ -104,6 +100,35 @@ public:
     std::string get_default_shared_dir();
 
     /**
+     * @brief Check if the options received by the CLI are free of errors.
+     * @param options The options received from the CLI
+     * @param parse The parser object to be used
+     * @param check_nonOpts True if the nonOpts should be checked, false otherwise
+     * @return True if the options are incorrect, false otherwise
+     */
+    bool initial_options_fail(
+            const std::vector<option::Option>& options,
+            option::Parser& parse,
+            bool check_nonOpts = true);
+
+    /**
+     * @brief Get the port of the Discovery Server from the CLI.
+     * @param portArg The port argument received by the CLI
+     * @return The port of the Discovery Server
+     */
+    uint16_t getDiscoveryServerPort(
+            const eprosima::option::Option* portArg);
+
+#ifndef _WIN32
+    /**
+     * @brief Get the port of the Discovery Server running in the specified domain.
+     * @param domainId The domain id of the Discovery Server
+     * @return The port of the Discovery Server
+     */
+    uint16_t getDiscoveryServerPort(
+            const uint32_t& domainId);
+
+    /**
      * @brief Get the domain id from the environment variable or the CLI argument. If none of the two is
      * provided, the default domain id is 0.
      * @param domain_id The domain id argument
@@ -130,35 +155,6 @@ public:
             option::Parser& parse,
             int numServs);
 
-    /**
-     * @brief Check if the options received by the CLI are free of errors.
-     * @param options The options received from the CLI
-     * @param parse The parser object to be used
-     * @param check_nonOpts True if the nonOpts should be checked, false otherwise
-     * @return True if the options are incorrect, false otherwise
-     */
-    bool initial_options_fail(
-            const std::vector<option::Option>& options,
-            option::Parser& parse,
-            bool check_nonOpts = true);
-
-    /**
-     * @brief Get the port of the Discovery Server from the CLI.
-     * @param portArg The port argument received by the CLI
-     * @return The port of the Discovery Server
-     */
-    uint16_t getDiscoveryServerPort(
-            const eprosima::option::Option* portArg);
-
-    /**
-     * @brief Get the port of the Discovery Server running in the specified domain.
-     * @param domainId The domain id of the Discovery Server
-     * @return The port of the Discovery Server
-     */
-    uint16_t getDiscoveryServerPort(
-            const uint32_t& domainId);
-
-#ifndef _WIN32
     /**
      * @brief Execute the command provided by the user.
      * @param command The command to be executed
@@ -278,6 +274,7 @@ public:
             const std::vector<option::Option>& options,
             option::Parser& parse);
 
+#ifndef _WIN32
     /**
      * @brief Launch the AUTO mode of the CLI. It checks if a new Discovery Server exists in the
      * specified domain. It it does not exist, it creates a new one. If it exists, it does nothing.
@@ -288,7 +285,6 @@ public:
             const std::vector<option::Option>& options,
             option::Parser& parse);
 
-#ifndef _WIN32
     /**
      * @brief Starts a new Discovery Server in the specified domain if there is not an active server
      * already running. It does nothing if there is an active server.
