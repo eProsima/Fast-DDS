@@ -1669,6 +1669,11 @@ public:
         return matched_;
     }
 
+    unsigned int get_participants_matched() const
+    {
+        return participant_matched_;
+    }
+
     unsigned int missed_deadlines() const
     {
         return listener_.missed_deadlines();
