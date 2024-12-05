@@ -64,9 +64,9 @@ bool ros_super_client_env()
 
 const std::string& ros_discovery_server_env()
 {
-    static std::string servers;
-    SystemInfo::get_env(DEFAULT_ROS2_MASTER_URI, servers);
-    return servers;
+    static std::string value;
+    SystemInfo::get_env(DEFAULT_ROS2_MASTER_URI, value);
+    return value;
 }
 
 bool load_environment_server_info(
