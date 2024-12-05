@@ -210,11 +210,12 @@ uint32_t BaseWriter::calculate_max_payload_size(
     overhead += eprosima::fastdds::statistics::rtps::statistics_submessage_length;
 #endif // FASTDDS_STATISTICS
 
-    if (overhead > max_data_size)
+    constexpr uint32_t min_fragment_size = 4;
+    if ((overhead + min_fragment_size) > max_data_size)
     {
         EPROSIMA_LOG_ERROR(RTPS_WRITER, "Datagram length '" << datagram_length << "' is too small." <<
-                "At least " << overhead << " bytes are needed to send a message. Fixing fragments to 4 bytes.");
-        return 4;
+                "At least " << overhead << " bytes are needed to send a message. Fixing fragments to " << min_fragment_size << " bytes.");
+        return min_fragment_size;
     }
 
     max_data_size -= overhead;

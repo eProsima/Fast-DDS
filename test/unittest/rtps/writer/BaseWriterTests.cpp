@@ -71,7 +71,7 @@ void max_allowed_payload_size(
  */
 TEST(BaseWriterTests, calculate_max_payload_size_overflow)
 {
-    for (uint32_t max_message_size = 200; max_message_size > 150; max_message_size -= 12)
+    for (uint32_t max_message_size = 200; max_message_size > 150; max_message_size -= 4)
     {
         max_allowed_payload_size(max_message_size);
     }
