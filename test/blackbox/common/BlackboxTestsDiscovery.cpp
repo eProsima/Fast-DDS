@@ -891,7 +891,7 @@ TEST_P(Discovery, PubSubAsReliableHelloworldParticipantDiscovery)
     ASSERT_TRUE(writer.isInitialized());
 
     int count = 0;
-    reader.setOnDiscoveryFunction([&writer, &count](const ParticipantBuiltinTopicData& info,
+    reader.set_on_discovery_function([&writer, &count](const ParticipantBuiltinTopicData& info,
             ParticipantDiscoveryStatus status) -> bool
             {
                 if (info.guid == writer.participant_guid())
@@ -937,7 +937,7 @@ TEST_P(Discovery, PubSubAsReliableHelloworldUserData)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    reader.setOnDiscoveryFunction([&writer](const ParticipantBuiltinTopicData& info,
+    reader.set_on_discovery_function([&writer](const ParticipantBuiltinTopicData& info,
             ParticipantDiscoveryStatus /*status*/) -> bool
             {
                 if (info.guid == writer.participant_guid())
