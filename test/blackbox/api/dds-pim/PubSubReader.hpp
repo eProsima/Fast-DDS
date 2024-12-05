@@ -336,6 +336,8 @@ public:
         , message_receive_count_(0)
         , filter_expression_("")
         , expression_parameters_({})
+        , use_preferred_domain_id_(false)
+        , preferred_domain_id_(0)
     {
         // Load default QoS to permit testing with external XML profile files.
         DomainParticipantFactory::get_instance()->load_profiles();
@@ -427,10 +429,11 @@ public:
                 ASSERT_TRUE(participant_->is_enabled());
             }
         }
+
         if (participant_ == nullptr)
         {
             participant_ = DomainParticipantFactory::get_instance()->create_participant(
-                (uint32_t)GET_PID() % 230,
+                (use_preferred_domain_id_ ? preferred_domain_id_ : (uint32_t)GET_PID() % 230),
                 participant_qos_,
                 &participant_listener_,
                 eprosima::fastdds::dds::StatusMask::none());
@@ -949,6 +952,14 @@ public:
             std::placeholders::_1,
             std::placeholders::_2);
 
+        return *this;
+    }
+
+    PubSubReader& set_domain_id(
+            const uint32_t& domain_id)
+    {
+        use_preferred_domain_id_ = true;
+        preferred_domain_id_ = domain_id;
         return *this;
     }
 
@@ -2223,6 +2234,10 @@ protected:
     std::string filter_expression_;
     //! Parameters for CFT expression
     std::vector<std::string> expression_parameters_;
+
+    //! Preferred domain ID
+    bool use_preferred_domain_id_;
+    uint32_t preferred_domain_id_;
 };
 
 template<class TypeSupport>

@@ -303,7 +303,8 @@ public:
         , times_liveliness_lost_(0)
         , times_incompatible_qos_(0)
         , last_incompatible_qos_(eprosima::fastdds::dds::INVALID_QOS_POLICY_ID)
-
+        , use_preferred_domain_id_(false)
+        , preferred_domain_id_(0)
 #if HAVE_SECURITY
         , authorized_(0)
         , unauthorized_(0)
@@ -392,7 +393,7 @@ public:
         if (participant_ == nullptr)
         {
             participant_ = DomainParticipantFactory::get_instance()->create_participant(
-                (uint32_t)GET_PID() % 230,
+                (use_preferred_domain_id_ ? preferred_domain_id_ : (uint32_t)GET_PID() % 230),
                 participant_qos_,
                 &participant_listener_,
                 eprosima::fastdds::dds::StatusMask::none());
@@ -867,6 +868,15 @@ public:
         status_mask_ = eprosima::fastdds::dds::StatusMask::all();
         return *this;
     }
+
+    PubSubWriter& set_domain_id(
+            const uint32_t& domain_id)
+    {
+        use_preferred_domain_id_ = true;
+        preferred_domain_id_ = domain_id;
+        return *this;
+    }
+
 
     /*** Function to change QoS ***/
     PubSubWriter& reliability(
@@ -2073,6 +2083,9 @@ protected:
     unsigned int times_incompatible_qos_;
     //! Latest conflicting PolicyId
     eprosima::fastdds::dds::QosPolicyId_t last_incompatible_qos_;
+    //! Preferred domain ID
+    bool use_preferred_domain_id_;
+    uint32_t preferred_domain_id_;
 
 #if HAVE_SECURITY
     std::mutex mutexAuthentication_;
