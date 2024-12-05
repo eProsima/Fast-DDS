@@ -108,6 +108,22 @@ target_link_libraries(LivelinessManagerTests PRIVATE
     )
 gtest_discover_tests(LivelinessManagerTests)
 
+set(BASEWRITERTESTS_SOURCE BaseWriterTests.cpp)
+
+add_executable(BaseWriterTests ${BASEWRITERTESTS_SOURCE})
+target_compile_definitions(BaseWriterTests PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_include_directories(BaseWriterTests PRIVATE
+    ${Asio_INCLUDE_DIR})
+target_link_libraries(BaseWriterTests fastcdr fastdds foonathan_memory
+    GTest::gmock
+    ${CMAKE_DL_LIBS})
+gtest_discover_tests(BaseWriterTests)
+
 if(NOT QNX)
     set(RTPSWRITERTESTS_SOURCE RTPSWriterTests.cpp)
 
