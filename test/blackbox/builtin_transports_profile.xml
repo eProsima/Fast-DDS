@@ -111,5 +111,13 @@
             </rtps>
         </participant>
 
+        <participant profile_name="participant_ds_auto">
+            <domainId>0</domainId>
+            <rtps>
+                <name>Participant.builtin_transports_ds_auto</name>
+                <builtinTransports>DS_AUTO</builtinTransports>
+            </rtps>
+        </participant>
+
     </profiles>
 </dds>
