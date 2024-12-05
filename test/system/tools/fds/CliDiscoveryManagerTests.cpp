@@ -404,6 +404,64 @@ public:
     Parser parse;
 };
 
+TEST_F(CliDiscoveryManagerTest, InitialOptionsFail)
+{
+    // Domain with Locator list should fail if check_nonOpts is true
+    const char* argv[] = {"-d", "4", "127.0.0.1:0;192.168.1.42:1"};
+    createOptionsAndParser(3, argv);
+    bool result = manager.initial_options_fail(options, parse, true);
+    EXPECT_TRUE(result);
+    // Domain with Locator list should fail if check_nonOpts is false
+    result = manager.initial_options_fail(options, parse, false);
+    EXPECT_FALSE(result);
+
+    // Locator list with domain should fail if check_nonOpts is true
+    const char* argv2[] = {"127.0.0.1:0;192.168.1.42:1", "-d", "4"};
+    createOptionsAndParser(3, argv2);
+    result = manager.initial_options_fail(options, parse, true);
+    EXPECT_TRUE(result);
+
+    // Correct options
+    const char* argv3[] = {"-d", "4"};
+    createOptionsAndParser(2, argv3);
+    result = manager.initial_options_fail(options, parse, true);
+    EXPECT_FALSE(result);
+
+    // Unknown option
+    const char* argv4[] = {"-z", "4"};
+    createOptionsAndParser(2, argv4);
+    result = manager.initial_options_fail(options, parse, true);
+    EXPECT_TRUE(result);
+}
+
+TEST_F(CliDiscoveryManagerTest, GetDiscoveryServerPortFromCLI)
+{
+    // Port directly received from CLI
+    const char* argv_udp[] = {"-p", "11811"};
+    createOptionsAndParser(2, argv_udp);
+    Option* udp_port_opt = getOption(UDP_PORT);
+    uint16_t udp_port = manager.getDiscoveryServerPort(udp_port_opt);
+    EXPECT_EQ(udp_port, 11811);
+    const char* argv_tcp[] = {"-q", "42100"};
+    createOptionsAndParser(2, argv_tcp);
+    Option* tcp_port_opt = getOption(TCP_PORT);
+    uint16_t tcp_port = manager.getDiscoveryServerPort(tcp_port_opt);
+    EXPECT_EQ(tcp_port, 42100);
+}
+
+#ifndef _WIN32
+TEST_F(CliDiscoveryManagerTest, GetDiscoveryServerPortFromDomainId)
+{
+    PortParameters port_params;
+    uint16_t port_1 = manager.getDiscoveryServerPort(1);
+    EXPECT_EQ(port_1, port_params.getDiscoveryServerPort(1));
+    uint16_t port_232 = manager.getDiscoveryServerPort(232);
+    EXPECT_EQ(port_232, port_params.getDiscoveryServerPort(232));
+
+    uint16_t port_fail = manager.getDiscoveryServerPort(233);
+    EXPECT_EQ(port_fail, 0);
+}
+
 TEST_F(CliDiscoveryManagerTest, GetDomainIdFromCLI)
 {
     const char* argv[] = {"-d", "4"};
@@ -494,64 +552,6 @@ TEST_F(CliDiscoveryManagerTest, GetRemoteServersWithDomainParam)
     EXPECT_TRUE(expected_ports.empty());
 }
 
-TEST_F(CliDiscoveryManagerTest, InitialOptionsFail)
-{
-    // Domain with Locator list should fail if check_nonOpts is true
-    const char* argv[] = {"-d", "4", "127.0.0.1:0;192.168.1.42:1"};
-    createOptionsAndParser(3, argv);
-    bool result = manager.initial_options_fail(options, parse, true);
-    EXPECT_TRUE(result);
-    // Domain with Locator list should fail if check_nonOpts is false
-    result = manager.initial_options_fail(options, parse, false);
-    EXPECT_FALSE(result);
-
-    // Locator list with domain should fail if check_nonOpts is true
-    const char* argv2[] = {"127.0.0.1:0;192.168.1.42:1", "-d", "4"};
-    createOptionsAndParser(3, argv2);
-    result = manager.initial_options_fail(options, parse, true);
-    EXPECT_TRUE(result);
-
-    // Correct options
-    const char* argv3[] = {"-d", "4"};
-    createOptionsAndParser(2, argv3);
-    result = manager.initial_options_fail(options, parse, true);
-    EXPECT_FALSE(result);
-
-    // Unknown option
-    const char* argv4[] = {"-z", "4"};
-    createOptionsAndParser(2, argv4);
-    result = manager.initial_options_fail(options, parse, true);
-    EXPECT_TRUE(result);
-}
-
-TEST_F(CliDiscoveryManagerTest, GetDiscoveryServerPortFromCLI)
-{
-    // Port directly received from CLI
-    const char* argv_udp[] = {"-p", "11811"};
-    createOptionsAndParser(2, argv_udp);
-    Option* udp_port_opt = getOption(UDP_PORT);
-    uint16_t udp_port = manager.getDiscoveryServerPort(udp_port_opt);
-    EXPECT_EQ(udp_port, 11811);
-    const char* argv_tcp[] = {"-q", "42100"};
-    createOptionsAndParser(2, argv_tcp);
-    Option* tcp_port_opt = getOption(TCP_PORT);
-    uint16_t tcp_port = manager.getDiscoveryServerPort(tcp_port_opt);
-    EXPECT_EQ(tcp_port, 42100);
-}
-
-TEST_F(CliDiscoveryManagerTest, GetDiscoveryServerPortFromDomainId)
-{
-    PortParameters port_params;
-    uint16_t port_1 = manager.getDiscoveryServerPort(1);
-    EXPECT_EQ(port_1, port_params.getDiscoveryServerPort(1));
-    uint16_t port_232 = manager.getDiscoveryServerPort(232);
-    EXPECT_EQ(port_232, port_params.getDiscoveryServerPort(232));
-
-    uint16_t port_fail = manager.getDiscoveryServerPort(233);
-    EXPECT_EQ(port_fail, 0);
-}
-
-#ifndef _WIN32
 TEST_F(CliDiscoveryManagerTest, ExecCommand)
 {
     std::string result = manager.execCommand("echo \"Hello CLI Tool\"");
