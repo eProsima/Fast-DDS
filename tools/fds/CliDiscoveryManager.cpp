@@ -122,6 +122,80 @@ std::string CliDiscoveryManager::get_default_shared_dir()
     return shm_path;
 }
 
+bool CliDiscoveryManager::initial_options_fail(
+        const std::vector<option::Option>& options,
+        option::Parser& parse,
+        bool check_nonOpts)
+{
+    // Check the command line options
+    if (parse.error())
+    {
+        option::printUsage(std::cout, usage);
+        return true;
+    }
+
+    if (options[UNKNOWN])
+    {
+        EPROSIMA_LOG_ERROR(CLI, "Unknown option: " << options[UNKNOWN].name);
+        option::printUsage(std::cout, usage);
+        return true;
+    }
+
+    // No arguments beyond options
+    if (check_nonOpts)
+    {
+        int noopts = parse.nonOptionsCount();
+        if (noopts)
+        {
+            std::string sep(noopts == 1 ? "argument: " : "arguments: ");
+            std::cout << "Unknown ";
+
+            while (noopts--)
+            {
+                std::cout << sep << parse.nonOption(noopts);
+                sep = ", ";
+            }
+
+            std::cout << std::endl;
+            return true;
+        }
+    }
+    return false;
+}
+
+uint16_t CliDiscoveryManager::getDiscoveryServerPort(
+        const eprosima::option::Option* portArg)
+{
+    uint16_t port = 0;
+    if (nullptr != portArg)
+    {
+        std::stringstream port_stream;
+
+        port_stream << portArg->arg;
+        port_stream >> port;
+        if (!port_stream.eof())
+        {
+            EPROSIMA_LOG_WARNING(CLI, "Invalid listening locator port specified:" << port);
+            return 0;
+        }
+    }
+    return port;
+}
+
+#ifndef _WIN32
+uint16_t CliDiscoveryManager::getDiscoveryServerPort(
+        const uint32_t& domainId)
+{
+    if (domainId > 232)
+    {
+        EPROSIMA_LOG_WARNING(CLI, "Domain ID " << domainId << " is too high and cannot run in an unreachable port.");
+        return 0;
+    }
+    uint16_t port = port_params_.getDiscoveryServerPort(domainId);
+
+    return port;
+}
+
 DomainId_t CliDiscoveryManager::get_domain_id(
         const eprosima::option::Option* domain_id)
 {
@@ -199,80 +273,6 @@ std::string CliDiscoveryManager::getRemoteServers(
     return servers;
 }
 
-bool CliDiscoveryManager::initial_options_fail(
-        const std::vector<option::Option>& options,
-        option::Parser& parse,
-        bool check_nonOpts)
-{
-    // Check the command line options
-    if (parse.error())
-    {
-        option::printUsage(std::cout, usage);
-        return true;
-    }
-
-    if (options[UNKNOWN])
-    {
-        EPROSIMA_LOG_ERROR(CLI, "Unknown option: " << options[UNKNOWN].name);
-        option::printUsage(std::cout, usage);
-        return true;
-    }
-
-    // No arguments beyond options
-    if (check_nonOpts)
-    {
-        int noopts = parse.nonOptionsCount();
-        if (noopts)
-        {
-            std::string sep(noopts == 1 ? "argument: " : "arguments: ");
-            std::cout << "Unknown ";
-
-            while (noopts--)
-            {
-                std::cout << sep << parse.nonOption(noopts);
-                sep = ", ";
-            }
-
-            std::cout << std::endl;
-            return true;
-        }
-    }
-    return false;
-}
-
-uint16_t CliDiscoveryManager::getDiscoveryServerPort(
-        const eprosima::option::Option* portArg)
-{
-    uint16_t port = 0;
-    if (nullptr != portArg)
-    {
-        std::stringstream port_stream;
-
-        port_stream << portArg->arg;
-        port_stream >> port;
-        if (!port_stream.eof())
-        {
-            EPROSIMA_LOG_WARNING(CLI, "Invalid listening locator port specified:" << port);
-            return 0;
-        }
-    }
-    return port;
-}
-
-uint16_t CliDiscoveryManager::getDiscoveryServerPort(
-        const uint32_t& domainId)
-{
-    if (domainId > 232)
-    {
-        EPROSIMA_LOG_WARNING(CLI, "Domain ID " << domainId << " is too high and cannot run in an unreachable port.");
-        return 0;
-    }
-    uint16_t port = port_params_.getDiscoveryServerPort(domainId);
-
-    return port;
-}
-
-#ifndef _WIN32
 std::string CliDiscoveryManager::execCommand(
         const std::string& command)
 {
