@@ -23,6 +23,7 @@
 #include "dynamic_types/DynamicDataImpl.hpp"
 #include "serializers/idl/dynamic_type_idl.hpp"
 #include "serializers/json/dynamic_data_json.hpp"
+#include "serializers/json/json_dynamic_data.hpp"
 #include "utils/collections/TreeNode.hpp"
 
 #include <iostream>
@@ -77,6 +78,33 @@ ReturnCode_t json_serialize(
     {
         EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                 "Error encountered while performing DynamicData to JSON serialization.");
+    }
+    return ret;
+}
+
+ReturnCode_t json_deserialize(
+        const std::string& input,
+        const DynamicType::_ref_type& dynamic_type,
+        DynamicDataJsonFormat format,
+        DynamicData::_ref_type& data) noexcept
+{
+    nlohmann::json j;
+    try
+    {
+        j = nlohmann::json::parse(input);
+    }
+    catch (const nlohmann::json::parse_error& e)
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                "Error encountered while parsing JSON input: " << e.what());
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    ReturnCode_t ret;
+    if (RETCODE_OK != (ret = json_deserialize(j, dynamic_type, format, data)))
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                "Error encountered while performing JSON to DynamicData deserialization.");
     }
     return ret;
 }

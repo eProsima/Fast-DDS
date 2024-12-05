@@ -60,6 +60,20 @@ FASTDDS_EXPORTED_API ReturnCode_t json_serialize(
         DynamicDataJsonFormat format,
         std::ostream& output) noexcept;
 
+/*!
+ * Deserializes a JSON object string into a @ref DynamicData.
+ * @param[in] input JSON object string to be deserialized.
+ * @param[in] dynamic_type @ref DynamicType corresponding to the @ref DynamicData where the JSON string is deserialized.
+ * @param[in] format @ref DynamicDataJsonFormat JSON serialization format.
+ * @param[in,out] data @ref DynamicData reference where the JSON string is deserialized. Must be null.
+ * @retval RETCODE_OK when deserialization fully succeeds, RETCODE_BAD_PARAMETER when parsing fails or preconditions are not met, and inner (member deserialization) failing code otherwise.
+ */
+FASTDDS_EXPORTED_API ReturnCode_t json_deserialize(
+        const std::string& input,
+        const DynamicType::_ref_type& dynamic_type,
+        DynamicDataJsonFormat format,
+        DynamicData::_ref_type& data) noexcept;
+
 } // dds
 } // fastdds
 } // eprosima
