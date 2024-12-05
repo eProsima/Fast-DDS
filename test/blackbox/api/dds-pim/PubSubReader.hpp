@@ -1872,6 +1872,11 @@ public:
         return matched_;
     }
 
+    unsigned int get_participants_matched() const
+    {
+        return participant_matched_;
+    }
+
     void set_xml_filename(
             const std::string& name)
     {
