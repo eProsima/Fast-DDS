@@ -112,6 +112,7 @@ set(${PROJECT_NAME}_source_files
     fastdds/xtypes/exception/Exception.cpp
     fastdds/xtypes/serializers/idl/dynamic_type_idl.cpp
     fastdds/xtypes/serializers/json/dynamic_data_json.cpp
+    fastdds/xtypes/serializers/json/json_dynamic_data.cpp
     fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
     fastdds/xtypes/type_representation/TypeObjectRegistry.cpp
     fastdds/xtypes/type_representation/TypeObjectUtils.cpp
