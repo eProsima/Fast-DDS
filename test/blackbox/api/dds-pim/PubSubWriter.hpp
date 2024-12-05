@@ -88,7 +88,7 @@ class PubSubWriter
             static_cast<void>(should_be_ignored);
             if (writer_.onDiscovery_ != nullptr)
             {
-                writer_.discovery_result_ = writer_.onDiscovery_(info);
+                writer_.discovery_result_ = writer_.onDiscovery_(info, status);
             }
 
             if (status == eprosima::fastdds::rtps::ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT)
@@ -877,6 +877,12 @@ public:
         return *this;
     }
 
+    void set_on_discovery_function(
+            std::function<bool(const eprosima::fastdds::rtps::ParticipantBuiltinTopicData&,
+            eprosima::fastdds::rtps::ParticipantDiscoveryStatus)> f)
+    {
+        onDiscovery_ = f;
+    }
 
     /*** Function to change QoS ***/
     PubSubWriter& reliability(
@@ -2066,7 +2072,8 @@ protected:
     std::string participant_profile_ = "";
     std::string datawriter_profile_ = "";
 
-    std::function<bool(const eprosima::fastdds::dds::ParticipantBuiltinTopicData& info)> onDiscovery_;
+    std::function<bool(const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& info,
+            eprosima::fastdds::rtps::ParticipantDiscoveryStatus status)> onDiscovery_;
 
     //! A mutex for liveliness
     std::mutex liveliness_mutex_;

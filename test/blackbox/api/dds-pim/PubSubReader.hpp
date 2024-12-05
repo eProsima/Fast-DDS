@@ -1736,7 +1736,7 @@ public:
         std::cout << "Reader gets discovery result..." << std::endl;
     }
 
-    void setOnDiscoveryFunction(
+    void set_on_discovery_function(
             std::function<bool(const eprosima::fastdds::rtps::ParticipantBuiltinTopicData&,
             eprosima::fastdds::rtps::ParticipantDiscoveryStatus)> f)
     {
