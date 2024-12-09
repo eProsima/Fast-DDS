@@ -1394,9 +1394,8 @@ TEST_P(TransportTCP, tcp_unique_network_flows_init)
         PropertyPolicy properties;
         properties.properties().emplace_back("fastdds.unique_network_flows", "");
 
-        auto transport_desc = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
-        transport_desc->add_listener_port(global_port);
-        writer.disable_builtin_transport().add_user_transport_to_pparams(transport_desc);
+        test_transport_->add_listener_port(global_port);
+        writer.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
 
         writer.entity_property_policy(properties).init();
 
@@ -1409,7 +1408,6 @@ TEST_P(TransportTCP, tcp_unique_network_flows_init)
 
         participant.sub_topic_name(TEST_TOPIC_NAME);
 
-        test_transport_->add_listener_port(global_port);
         participant.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
 
         ASSERT_TRUE(participant.init_participant());
@@ -1423,8 +1421,9 @@ TEST_P(TransportTCP, tcp_unique_network_flows_init)
         participant.get_native_reader(1).get_listening_locators(locators2);
 
         EXPECT_TRUE(locators == locators2);
-        ASSERT_EQ(locators.size(), 1);
-        ASSERT_EQ(locators2.size(), 1);
+        // LocatorList size depends on the number of interfaces. Different address but same port.
+        ASSERT_GT(locators.size(), 0);
+        ASSERT_GT(locators2.size(), 0);
         auto locator1 = locators.begin();
         auto locator2 = locators2.begin();
         EXPECT_EQ(IPLocator::getPhysicalPort(*locator1), IPLocator::getPhysicalPort(*locator2));
@@ -1439,7 +1438,6 @@ TEST_P(TransportTCP, tcp_unique_network_flows_init)
         properties.properties().emplace_back("fastdds.unique_network_flows", "");
         participant.sub_topic_name(TEST_TOPIC_NAME).sub_property_policy(properties);
 
-        test_transport_->add_listener_port(global_port);
         participant.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
 
         ASSERT_TRUE(participant.init_participant());
@@ -1453,8 +1451,9 @@ TEST_P(TransportTCP, tcp_unique_network_flows_init)
         participant.get_native_reader(1).get_listening_locators(locators2);
 
         EXPECT_FALSE(locators == locators2);
-        ASSERT_EQ(locators.size(), 1);
-        ASSERT_EQ(locators2.size(), 1);
+        // LocatorList size depends on the number of interfaces. Different address but same port.
+        ASSERT_GT(locators.size(), 0);
+        ASSERT_GT(locators2.size(), 0);
         auto locator1 = locators.begin();
         auto locator2 = locators2.begin();
         EXPECT_EQ(IPLocator::getPhysicalPort(*locator1), IPLocator::getPhysicalPort(*locator2));
