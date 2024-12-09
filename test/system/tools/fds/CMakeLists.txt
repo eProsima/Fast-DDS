@@ -133,6 +133,7 @@ set(CLI_MANAGER_TESTS_EXEC CliDiscoveryManagerTests)
 
 set(CLI_MANAGER_TESTS_SOURCE
     CliDiscoveryManagerTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     ${PROJECT_SOURCE_DIR}/tools/fds/CliDiscoveryManager.cpp
     )
 
