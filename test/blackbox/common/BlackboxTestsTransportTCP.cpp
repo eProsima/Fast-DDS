@@ -593,24 +593,17 @@ TEST_P(TransportTCP, TCP_copy)
 }
 
 // Test get_WAN_address member function
-TEST_P(TransportTCP, TCPv4_get_WAN_address)
+TEST(TransportTCP, TCPv4_get_WAN_address)
 {
-    if (use_ipv6)
-    {
-        GTEST_SKIP() << "Test only for TCPv4";
-    }
-    else
-    {
-        // TCPv4TransportDescriptor
-        eprosima::fastdds::rtps::TCPv4TransportDescriptor tcpv4_transport;
-        tcpv4_transport.set_WAN_address("80.80.99.45");
-        ASSERT_EQ(tcpv4_transport.get_WAN_address(), "80.80.99.45");
-    }
+    // TCPv4TransportDescriptor
+    eprosima::fastdds::rtps::TCPv4TransportDescriptor tcpv4_transport;
+    tcpv4_transport.set_WAN_address("80.80.99.45");
+    ASSERT_EQ(tcpv4_transport.get_WAN_address(), "80.80.99.45");
 }
 
 // Test connection is successfully restablished after dropping and relaunching a TCP client (requester)
 // Issue -> https://github.com/eProsima/Fast-DDS/issues/2409
-TEST(TransportTCP, Client_reconnection)
+TEST_P(TransportTCP, Client_reconnection)
 {
     TCPReqRepHelloWorldReplier* replier;
     TCPReqRepHelloWorldRequester* requester;
