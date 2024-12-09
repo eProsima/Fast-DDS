@@ -167,8 +167,6 @@ target_link_libraries(TopicPayloadPoolTests
     ${CMAKE_DL_LIBS})
 gtest_discover_tests(TopicPayloadPoolTests)
 
-
-
 add_executable(WriterHistoryTests ${WRITERHISTORYTESTS_SOURCE})
 target_compile_definitions(WriterHistoryTests PRIVATE
     BOOST_ASIO_STANDALONE
