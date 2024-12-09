@@ -527,36 +527,42 @@ TEST_P(TransportTCP, TCPLocalhost)
 // Test == operator for TCPv4/v6
 TEST_P(TransportTCP, TCP_equal_operator)
 {
-    std::unique_ptr<TCPTransportDescriptor> transport1;
-    std::unique_ptr<TCPTransportDescriptor> transport2;
     if (use_ipv6)
     {
         // TCPv6TransportDescriptor
-        transport1 = std::make_unique<TCPv6TransportDescriptor>();
-        transport2 = std::make_unique<TCPv6TransportDescriptor>();
+        TCPv6TransportDescriptor transport1;
+        TCPv6TransportDescriptor transport2;
+        // Compare equal in defult values
+        ASSERT_EQ(transport1, transport2);
+
+        // Modify some default values in 1
+        transport1.enable_tcp_nodelay = !transport1.enable_tcp_nodelay; // change default value
+        transport1.max_logical_port = transport1.max_logical_port + 10; // change default value
+        transport1.add_listener_port(123u * 98u);
+        ASSERT_FALSE(transport1 == transport2); // operator== != operator!=, using operator== == false instead
+
+        // Modify some default values in 2
+        transport2.enable_tcp_nodelay = !transport2.enable_tcp_nodelay; // change default value
+        transport2.max_logical_port = transport2.max_logical_port + 10; // change default value
+        transport2.add_listener_port(123u * 98u);
+        ASSERT_EQ(transport1, transport2);
     }
     else
     {
         // TCPv4TransportDescriptor
-        transport1 = std::make_unique<TCPv4TransportDescriptor>();
-        transport2 = std::make_unique<TCPv4TransportDescriptor>();
+        TCPv4TransportDescriptor transport1;
+        TCPv4TransportDescriptor transport2;
+        // Compare equal in defult values
+        ASSERT_EQ(transport1, transport2);
+
+        // Modify default values in 1
+        transport1.set_WAN_address("80.80.99.45");
+        ASSERT_FALSE(transport1 == transport2); // operator== != operator!=, using operator== == false instead
+
+        // Modify default values in 2
+        transport2.set_WAN_address("80.80.99.45");
+        ASSERT_EQ(transport1, transport2);
     }
-    // Compare equal in defult values
-    ASSERT_EQ(*transport1, *transport2);
-
-    // Modify some default values in 1
-    transport1->enable_tcp_nodelay = !transport1->enable_tcp_nodelay; // change default value
-    transport1->max_logical_port = transport1->max_logical_port + 10; // change default value
-    transport1->add_listener_port(123u * 98u);
-
-    ASSERT_FALSE(*transport1 == *transport2); // operator== != operator!=, using operator== == false instead
-
-    // Modify some default values in 2
-    transport2->enable_tcp_nodelay = !transport2->enable_tcp_nodelay; // change default value
-    transport2->max_logical_port = transport2->max_logical_port + 10; // change default value
-    transport2->add_listener_port(123u * 98u);
-
-    ASSERT_EQ(*transport1, *transport2);
 }
 
 // Test copy constructor and copy assignment for TCPv4/v6
