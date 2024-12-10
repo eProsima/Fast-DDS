@@ -199,6 +199,7 @@ const char* DEFAULT_C = "DEFAULT";
 const char* DEFAULTv6 = "DEFAULTv6";
 const char* LARGE_DATA = "LARGE_DATA";
 const char* LARGE_DATAv6 = "LARGE_DATAv6";
+const char* DS_AUTO = "DS_AUTO";
 const char* INIT_ACKNACK_DELAY = "initial_acknack_delay";
 const char* HEARTB_RESP_DELAY = "heartbeat_response_delay";
 const char* INIT_HEARTB_DELAY = "initial_heartbeat_delay";

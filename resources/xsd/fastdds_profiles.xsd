@@ -1963,6 +1963,7 @@
             <xs:enumeration value="UDPv6" />
             <xs:enumeration value="LARGE_DATA" />
             <xs:enumeration value="LARGE_DATAv6" />
+            <xs:enumeration value="DS_AUTO" />
         </xs:restriction>
     </xs:simpleType>
 
