@@ -466,30 +466,57 @@ TEST_P(TransportTCP, TCPLocalhost)
 // Test for ==operator TCPTransportDescriptor is not required as it is an abstract class and in TCPv6 is same method
 // Test for copy TCPTransportDescriptor is not required as it is an abstract class and in TCPv6 is same method
 
-// Test == operator for TCPv4
-TEST_P(TransportTCP, TCPv4_equal_operator)
+// Test == operator for TCPv4/v6
+TEST_P(TransportTCP, TCP_equal_operator)
 {
+<<<<<<< HEAD
     // TCPv4TransportDescriptor
     TCPv4TransportDescriptor tcpv4_transport_1;
     TCPv4TransportDescriptor tcpv4_transport_2;
+=======
+    if (use_ipv6)
+    {
+        // TCPv6TransportDescriptor
+        TCPv6TransportDescriptor transport1;
+        TCPv6TransportDescriptor transport2;
+        // Compare equal in defult values
+        ASSERT_EQ(transport1, transport2);
+>>>>>>> 0c799f4ca (Improve Blackbox TCP tests suite (#5467))
 
-    // Compare equal in defult values
-    ASSERT_EQ(tcpv4_transport_1, tcpv4_transport_2);
+        // Modify some default values in 1
+        transport1.enable_tcp_nodelay = !transport1.enable_tcp_nodelay; // change default value
+        transport1.max_logical_port = transport1.max_logical_port + 10; // change default value
+        transport1.add_listener_port(123u * 98u);
+        ASSERT_FALSE(transport1 == transport2); // operator== != operator!=, using operator== == false instead
 
-    // Modify default values in 1
-    tcpv4_transport_1.set_WAN_address("80.80.99.45");
+        // Modify some default values in 2
+        transport2.enable_tcp_nodelay = !transport2.enable_tcp_nodelay; // change default value
+        transport2.max_logical_port = transport2.max_logical_port + 10; // change default value
+        transport2.add_listener_port(123u * 98u);
+        ASSERT_EQ(transport1, transport2);
+    }
+    else
+    {
+        // TCPv4TransportDescriptor
+        TCPv4TransportDescriptor transport1;
+        TCPv4TransportDescriptor transport2;
+        // Compare equal in defult values
+        ASSERT_EQ(transport1, transport2);
 
-    ASSERT_FALSE(tcpv4_transport_1 == tcpv4_transport_2); // operator== != operator!=, using operator== == false instead
+        // Modify default values in 1
+        transport1.set_WAN_address("80.80.99.45");
+        ASSERT_FALSE(transport1 == transport2); // operator== != operator!=, using operator== == false instead
 
-    // Modify default values in 2
-    tcpv4_transport_2.set_WAN_address("80.80.99.45");
-
-    ASSERT_EQ(tcpv4_transport_1, tcpv4_transport_2);
+        // Modify default values in 2
+        transport2.set_WAN_address("80.80.99.45");
+        ASSERT_EQ(transport1, transport2);
+    }
 }
 
-// Test copy constructor and copy assignment for TCPv4
-TEST_P(TransportTCP, TCPv4_copy)
+// Test copy constructor and copy assignment for TCPv4/v6
+TEST_P(TransportTCP, TCP_copy)
 {
+<<<<<<< HEAD
     TCPv4TransportDescriptor tcpv4_transport;
     tcpv4_transport.set_WAN_address("80.80.99.45");
 
@@ -544,11 +571,50 @@ TEST_P(TransportTCP, TCPv6_copy)
     // Copy assignment
     TCPv6TransportDescriptor tcpv6_transport_copy = tcpv6_transport;
     EXPECT_EQ(tcpv6_transport_copy, tcpv6_transport);
+=======
+    if (use_ipv6)
+    {
+        // Change some varibles in order to check the non default creation
+        TCPv6TransportDescriptor tcpv6_transport;
+        tcpv6_transport.enable_tcp_nodelay = !tcpv6_transport.enable_tcp_nodelay; // change default value
+        tcpv6_transport.max_logical_port = tcpv6_transport.max_logical_port + 10; // change default value
+        tcpv6_transport.add_listener_port(123u * 98u);
+        // Copy constructor
+        TCPv6TransportDescriptor tcpv6_transport_copy_constructor(tcpv6_transport);
+        EXPECT_EQ(tcpv6_transport, tcpv6_transport_copy_constructor);
+
+        // Copy assignment
+        TCPv6TransportDescriptor tcpv6_transport_copy = tcpv6_transport;
+        EXPECT_EQ(tcpv6_transport_copy, tcpv6_transport);
+    }
+    else
+    {
+        TCPv4TransportDescriptor tcpv4_transport;
+        tcpv4_transport.set_WAN_address("80.80.99.45");
+
+        // Copy constructor
+        TCPv4TransportDescriptor tcpv4_transport_copy_constructor(tcpv4_transport);
+        EXPECT_EQ(tcpv4_transport, tcpv4_transport_copy_constructor);
+
+        // Copy assignment
+        TCPv4TransportDescriptor tcpv4_transport_copy = tcpv4_transport;
+        EXPECT_EQ(tcpv4_transport_copy, tcpv4_transport);
+    }
+}
+
+// Test get_WAN_address member function
+TEST(TransportTCP, TCPv4_get_WAN_address)
+{
+    // TCPv4TransportDescriptor
+    eprosima::fastdds::rtps::TCPv4TransportDescriptor tcpv4_transport;
+    tcpv4_transport.set_WAN_address("80.80.99.45");
+    ASSERT_EQ(tcpv4_transport.get_WAN_address(), "80.80.99.45");
+>>>>>>> 0c799f4ca (Improve Blackbox TCP tests suite (#5467))
 }
 
 // Test connection is successfully restablished after dropping and relaunching a TCP client (requester)
 // Issue -> https://github.com/eProsima/Fast-DDS/issues/2409
-TEST(TransportTCP, Client_reconnection)
+TEST_P(TransportTCP, Client_reconnection)
 {
     TCPReqRepHelloWorldReplier* replier;
     TCPReqRepHelloWorldRequester* requester;
@@ -607,14 +673,32 @@ TEST(TransportTCP, Client_reconnection)
     delete requester;
 }
 
-// Test zero listening port for TCPv4
-TEST_P(TransportTCP, TCPv4_autofill_port)
+// Test zero listening port for TCPv4/v6
+TEST_P(TransportTCP, TCP_autofill_port)
 {
     PubSubReader<HelloWorldPubSubType> p1(TEST_TOPIC_NAME);
     PubSubReader<HelloWorldPubSubType> p2(TEST_TOPIC_NAME);
 
+    std::shared_ptr<TCPTransportDescriptor> p1_transport;
+    std::shared_ptr<TCPTransportDescriptor> p2_transport;
+    if (use_ipv6)
+    {
+        // TCPv6TransportDescriptor
+        p1_transport = std::make_shared<TCPv6TransportDescriptor>();
+        p2_transport = std::make_shared<TCPv6TransportDescriptor>();
+    }
+    else
+    {
+        // TCPv4TransportDescriptor
+        p1_transport = std::make_shared<TCPv4TransportDescriptor>();
+        p2_transport = std::make_shared<TCPv4TransportDescriptor>();
+    }
+
     // Add TCP Transport with listening port 0
+<<<<<<< HEAD
     auto p1_transport = std::make_shared<TCPv4TransportDescriptor>();
+=======
+>>>>>>> 0c799f4ca (Improve Blackbox TCP tests suite (#5467))
     p1_transport->add_listener_port(0);
     p1.disable_builtin_transport().add_user_transport_to_pparams(p1_transport);
     p1.init();
@@ -622,6 +706,7 @@ TEST_P(TransportTCP, TCPv4_autofill_port)
 
     // Add TCP Transport with listening port different from 0
     uint16_t port = 12345;
+<<<<<<< HEAD
     auto p2_transport = std::make_shared<TCPv4TransportDescriptor>();
     p2_transport->add_listener_port(port);
     p2.disable_builtin_transport().add_user_transport_to_pparams(p2_transport);
@@ -653,6 +738,8 @@ TEST_P(TransportTCP, TCPv6_autofill_port)
     // Add TCP Transport with listening port different from 0
     uint16_t port = 12345;
     auto p2_transport = std::make_shared<TCPv6TransportDescriptor>();
+=======
+>>>>>>> 0c799f4ca (Improve Blackbox TCP tests suite (#5467))
     p2_transport->add_listener_port(port);
     p2.disable_builtin_transport().add_user_transport_to_pparams(p2_transport);
     p2.init();
@@ -776,6 +863,377 @@ TEST_P(TransportTCP, large_data_topology)
     writers.clear();
 }
 
+<<<<<<< HEAD
+=======
+// This test verifies that if having a server with several listening ports, only the first one is used.
+TEST_P(TransportTCP, multiple_listening_ports)
+{
+    // Create a server with several listening ports
+    PubSubReader<HelloWorldPubSubType>* server = new PubSubReader<HelloWorldPubSubType>(TEST_TOPIC_NAME);
+    uint16_t server_port_1 = 10000;
+    uint16_t server_port_2 = 10001;
+
+    test_transport_->add_listener_port(server_port_1);
+    test_transport_->add_listener_port(server_port_2);
+    server->disable_builtin_transport().add_user_transport_to_pparams(test_transport_).init();
+    ASSERT_TRUE(server->isInitialized());
+
+    // Create two clients each one connecting to a different port
+    PubSubWriter<HelloWorldPubSubType>* client_1 = new PubSubWriter<HelloWorldPubSubType>(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType>* client_2 = new PubSubWriter<HelloWorldPubSubType>(TEST_TOPIC_NAME);
+    std::shared_ptr<eprosima::fastdds::rtps::TCPTransportDescriptor> client_transport_1;
+    std::shared_ptr<eprosima::fastdds::rtps::TCPTransportDescriptor> client_transport_2;
+    Locator_t initialPeerLocator_1;
+    Locator_t initialPeerLocator_2;
+    if (use_ipv6)
+    {
+        client_transport_1 = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
+        client_transport_2 = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
+        initialPeerLocator_1.kind = LOCATOR_KIND_TCPv6;
+        initialPeerLocator_2.kind = LOCATOR_KIND_TCPv6;
+        IPLocator::setIPv6(initialPeerLocator_1, "::1");
+        IPLocator::setIPv6(initialPeerLocator_2, "::1");
+    }
+    else
+    {
+        client_transport_1 = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+        client_transport_2 = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+        initialPeerLocator_1.kind = LOCATOR_KIND_TCPv4;
+        initialPeerLocator_2.kind = LOCATOR_KIND_TCPv4;
+        IPLocator::setIPv4(initialPeerLocator_1, 127, 0, 0, 1);
+        IPLocator::setIPv4(initialPeerLocator_2, 127, 0, 0, 1);
+    }
+    client_1->disable_builtin_transport().add_user_transport_to_pparams(client_transport_1);
+    client_2->disable_builtin_transport().add_user_transport_to_pparams(client_transport_2);
+    initialPeerLocator_1.port = server_port_1;
+    initialPeerLocator_2.port = server_port_2;
+    LocatorList_t initial_peer_list_1;
+    LocatorList_t initial_peer_list_2;
+    initial_peer_list_1.push_back(initialPeerLocator_1);
+    initial_peer_list_2.push_back(initialPeerLocator_2);
+    client_1->initial_peers(initial_peer_list_1);
+    client_2->initial_peers(initial_peer_list_2);
+    client_1->init();
+    client_2->init();
+    ASSERT_TRUE(client_1->isInitialized());
+    ASSERT_TRUE(client_2->isInitialized());
+
+    // Wait for discovery.
+    server->wait_discovery();
+    client_1->wait_discovery();
+    client_2->wait_discovery(std::chrono::seconds(1));
+    EXPECT_EQ(server->get_matched(), 1U);
+    EXPECT_EQ(client_1->get_matched(), 1U);
+    EXPECT_EQ(client_2->get_matched(), 0U);
+
+    // Send data
+    auto data = default_helloworld_data_generator();
+    server->startReception(data);
+    client_1->send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block server until reception finished.
+    server->block_for_all();
+    // Wait for all data to be acked.
+    EXPECT_TRUE(client_1->waitForAllAcked(std::chrono::milliseconds(100)));
+
+    // Release TCP client and server resources.
+    delete client_1;
+    delete client_2;
+    delete server;
+}
+
+// Test TCP send resource cleaning. This test matches a server with a client and then releases the
+// client resources. After PDP unbind message, the server removes the client
+// from the send resource list.
+TEST_P(TransportTCP, send_resource_cleanup)
+{
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
+
+    using eprosima::fastdds::rtps::DatagramInjectionTransportDescriptor;
+
+    std::unique_ptr<PubSubWriter<HelloWorldPubSubType>> client(new PubSubWriter<HelloWorldPubSubType>(TEST_TOPIC_NAME));
+    std::unique_ptr<PubSubWriter<HelloWorldPubSubType>> udp_participant(new PubSubWriter<HelloWorldPubSubType>(
+                TEST_TOPIC_NAME));
+    std::unique_ptr<PubSubReader<HelloWorldPubSubType>> server(new PubSubReader<HelloWorldPubSubType>(TEST_TOPIC_NAME));
+
+    // Server
+    // Create a server with two transports, one of which uses a DatagramInjectionTransportDescriptor
+    // which heritates from ChainingTransportDescriptor. The low level transport of this chaining transport will be UDP.
+    // This will allow us to get send_resource_list_ from the server participant when UDP transport gets its OpenOutputChannel()
+    // method called. This should happen after TCP transports connection is established. We can then see how many TCP send
+    // resources exist.
+    // For the cleanup test we follow that same procedure. Firstly we destroy both participants and then instantiate a new
+    // UDP participant. The send resource list will get updated with no TCP send resource.
+    //  __________________________________________________________              _____________________
+    // |                   Server                                 |            |       Client        |
+    // |                                                          |            |                     |
+    // |    SendResourceList                                      |            |                     |
+    // |          |                                               |            |                     |
+    // |        Empty                                             |            |                     |
+    // |          |                                               |            |                     |
+    // |          |            - TCPv4 init()                     |            |                     |
+    // |          |                                               |            |                     |
+    // |          |            - ChainingTransport(UDP) init()    |            |                     |
+    // |          |                                               |            |                     |
+    // |        1 TCP            <------------------------------------------------- TCPv4 init()     |
+    // |          |                                               |            |                     |
+    // |    1 TCP + 1 UDP        <------------------------------------------------- UDPv4 init()     |
+    // |          |                                               |            |                     |
+    // |          |             - ChainingTransport->             |            |                     |
+    // | TCP SendResources == 1        get_send_resource_list()   |            |                     |
+    // |          |                                               |            |                     |
+    // |        Empty           <-------------------------------------------------- clean transports |
+    // |          |                                               |            |                     |
+    // |        1 UDP           - ChainingTransport(UDP)  <------------------------ UDPv4 init()     |
+    // |          |                                               |            |                     |
+    // |          |             - ChainingTransport->             |            |                     |
+    // | TCP SendResources == 0        get_send_resource_list()   |            |                     |
+    // |__________________________________________________________|            |_____________________|
+    //
+    uint16_t server_port = 10000;
+    test_transport_->add_listener_port(server_port);
+    auto low_level_transport = std::make_shared<UDPv4TransportDescriptor>();
+    auto server_chaining_transport = std::make_shared<DatagramInjectionTransportDescriptor>(low_level_transport);
+    server->disable_builtin_transport().add_user_transport_to_pparams(test_transport_).add_user_transport_to_pparams(
+        server_chaining_transport).init();
+    ASSERT_TRUE(server->isInitialized());
+
+    // Client
+    auto initialize_client = [&](PubSubWriter<HelloWorldPubSubType>* client)
+            {
+                std::shared_ptr<eprosima::fastdds::rtps::TCPTransportDescriptor> client_transport;
+                Locator_t initialPeerLocator;
+                if (use_ipv6)
+                {
+                    client_transport = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
+                    initialPeerLocator.kind = LOCATOR_KIND_TCPv6;
+                    IPLocator::setIPv6(initialPeerLocator, "::1");
+                }
+                else
+                {
+                    client_transport = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+                    initialPeerLocator.kind = LOCATOR_KIND_TCPv4;
+                    IPLocator::setIPv4(initialPeerLocator, 127, 0, 0, 1);
+                }
+                client->disable_builtin_transport().add_user_transport_to_pparams(client_transport);
+                initialPeerLocator.port = server_port;
+                LocatorList_t initial_peer_list;
+                initial_peer_list.push_back(initialPeerLocator);
+                client->initial_peers(initial_peer_list);
+                client->init();
+            };
+    auto initialize_udp_participant = [&](PubSubWriter<HelloWorldPubSubType>* udp_participant)
+            {
+                auto udp_participant_transport = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
+                udp_participant->disable_builtin_transport().add_user_transport_to_pparams(udp_participant_transport);
+                udp_participant->init();
+            };
+    initialize_client(client.get());
+    ASSERT_TRUE(client->isInitialized());
+
+    // Wait for discovery. OpenOutputChannel() is called. We create a udp participant after to guarantee
+    // that the TCP participants have been mutually discovered when OpenOutputChannel() is called.
+    server->wait_discovery(std::chrono::seconds(0), 1);
+    client->wait_discovery(1, std::chrono::seconds(0));
+
+    initialize_udp_participant(udp_participant.get());
+    ASSERT_TRUE(udp_participant->isInitialized());
+    server->wait_discovery(std::chrono::seconds(0), 2);
+    udp_participant->wait_discovery(1, std::chrono::seconds(0));
+
+    // We can only update the senders when OpenOutputChannel() is called. If the send resource
+    // is deleted later, senders obtained from get_send_resource_list() won't have changed.
+    auto send_resource_list = server_chaining_transport->get_send_resource_list();
+    auto tcp_send_resources = [](const std::set<SenderResource*>& send_resource_list) -> size_t
+            {
+                size_t tcp_send_resources = 0;
+                for (auto& sender_resource : send_resource_list)
+                {
+                    if (sender_resource->kind() == LOCATOR_KIND_TCPv4 || sender_resource->kind() == LOCATOR_KIND_TCPv6)
+                    {
+                        tcp_send_resources++;
+                    }
+                }
+                return tcp_send_resources;
+            };
+    EXPECT_EQ(tcp_send_resources(send_resource_list), 1);
+
+    // Release TCP client resources.
+    client.reset();
+    udp_participant.reset();
+
+    // Wait for undiscovery.
+    server->wait_writer_undiscovery();
+
+    // Create new udp client.
+    udp_participant.reset(new PubSubWriter<HelloWorldPubSubType>(TEST_TOPIC_NAME));
+
+    // Wait for discovery. OpenOutputChannel() is called and we can update the senders.
+    initialize_udp_participant(udp_participant.get());
+    ASSERT_TRUE(udp_participant->isInitialized());
+    server->wait_discovery(std::chrono::seconds(0), 1);
+    udp_participant->wait_discovery(1, std::chrono::seconds(0));
+
+    // Check that the send_resource_list has size 0. This means that the send resource
+    // for the  client has been removed.
+    send_resource_list = server_chaining_transport->get_send_resource_list();
+    EXPECT_EQ(tcp_send_resources(send_resource_list), 0);
+    send_resource_list.clear();
+}
+
+// Test TCP send resource cleaning. In this case, since the send resource has been created from an initial_peer,
+// the send resource should not be removed.
+TEST_P(TransportTCP, send_resource_cleanup_initial_peer)
+{
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
+
+    using eprosima::fastdds::rtps::DatagramInjectionTransportDescriptor;
+
+    std::unique_ptr<PubSubWriter<HelloWorldPubSubType>> client(new PubSubWriter<HelloWorldPubSubType>(TEST_TOPIC_NAME));
+    std::unique_ptr<PubSubReader<HelloWorldPubSubType>> udp_participant(new PubSubReader<HelloWorldPubSubType>(
+                TEST_TOPIC_NAME));
+    std::unique_ptr<PubSubReader<HelloWorldPubSubType>> server(new PubSubReader<HelloWorldPubSubType>(TEST_TOPIC_NAME));
+
+    // Client
+    // Create a client with two transports, one of which uses a DatagramInjectionTransportDescriptor
+    // which heritates from ChainingTransportDescriptor. This will allow us to get send_resource_list_
+    // from the client participant when its transport gets its OpenOutputChannel() method called.
+
+    //  __________________________________________________________              _____________________
+    // |                   Server                                 |            |       Client        |
+    // |                                                          |            |                     |
+    // |    SendResourceList                                      |            |                     |
+    // |          |                                               |            |                     |
+    // |        Empty                                             |            |                     |
+    // |          |                                               |            |                     |
+    // |          |            - TCPv4 init()                     |            |                     |
+    // |          |                                               |            |                     |
+    // |          |            - ChainingTransport(UDP) init()    |            |                     |
+    // |          |                                               |            |                     |
+    // |        1 TCP            <------------------------------------------------- TCPv4 init()     |
+    // |          |                                               |            |                     |
+    // |    1 TCP + 1 UDP        <------------------------------------------------- UDPv4 init()     |
+    // |          |                                               |            |                     |
+    // |          |             - ChainingTransport->             |            |                     |
+    // | TCP SendResources == 1        get_send_resource_list()   |            |                     |
+    // |          |                                               |            |                     |
+    // |  1 TCP (initial peer)  <-------------------------------------------------- clean transports |
+    // |          |                                               |            |                     |
+    // |    1 TCP + 1 UDP       - ChainingTransport(UDP)  <------------------------ UDPv4 init()     |
+    // |          |                                               |            |                     |
+    // |          |             - ChainingTransport->             |            |                     |
+    // | TCP SendResources == 1        get_send_resource_list()   |            |                     |
+    // |     (initial peer)                                       |            |                     |
+    // |__________________________________________________________|            |_____________________|
+    //
+
+    uint16_t server_port = 10000;
+    LocatorList_t initial_peer_list;
+    Locator_t initialPeerLocator;
+    if (use_ipv6)
+    {
+        initialPeerLocator.kind = LOCATOR_KIND_TCPv6;
+        IPLocator::setIPv6(initialPeerLocator, "::1");
+    }
+    else
+    {
+        initialPeerLocator.kind = LOCATOR_KIND_TCPv4;
+        IPLocator::setIPv4(initialPeerLocator, 127, 0, 0, 1);
+    }
+    initialPeerLocator.port = server_port;
+    initial_peer_list.push_back(initialPeerLocator);
+    client->initial_peers(initial_peer_list);
+
+    auto low_level_transport = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
+    auto client_chaining_transport = std::make_shared<DatagramInjectionTransportDescriptor>(low_level_transport);
+    client->disable_builtin_transport().add_user_transport_to_pparams(test_transport_).add_user_transport_to_pparams(
+        client_chaining_transport).init();
+    ASSERT_TRUE(client->isInitialized());
+
+    // Server
+    auto initialize_server = [&](PubSubReader<HelloWorldPubSubType>* server)
+            {
+                std::shared_ptr<eprosima::fastdds::rtps::TCPTransportDescriptor> server_transport;
+                if (use_ipv6)
+                {
+                    server_transport = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
+                }
+                else
+                {
+                    server_transport = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+                }
+                server_transport->add_listener_port(server_port);
+                server->disable_builtin_transport().add_user_transport_to_pparams(server_transport);
+                server->init();
+            };
+    auto initialize_udp_participant = [&](PubSubReader<HelloWorldPubSubType>* udp_participant)
+            {
+                auto udp_participant_transport = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
+                udp_participant->disable_builtin_transport().add_user_transport_to_pparams(udp_participant_transport);
+                udp_participant->init();
+            };
+    initialize_server(server.get());
+    ASSERT_TRUE(server->isInitialized());
+
+    // Wait for discovery. OpenOutputChannel() is called. We create a udp participant after to guarantee
+    // that the TCP participants have been mutually discovered when OpenOutputChannel() is called.
+    client->wait_discovery(1, std::chrono::seconds(0));
+    server->wait_discovery(std::chrono::seconds(0), 1);
+
+    initialize_udp_participant(udp_participant.get());
+    ASSERT_TRUE(udp_participant->isInitialized());
+    client->wait_discovery(2, std::chrono::seconds(0));
+    udp_participant->wait_discovery(std::chrono::seconds(0), 1);
+
+    // We can only update the senders when OpenOutputChannel() is called. If the send resource
+    // is deleted later, senders obtained from get_send_resource_list() won't have changed.
+    auto send_resource_list = client_chaining_transport->get_send_resource_list();
+    auto tcp_send_resources = [](const std::set<SenderResource*>& send_resource_list) -> size_t
+            {
+                size_t tcp_send_resources = 0;
+                for (auto& sender_resource : send_resource_list)
+                {
+                    if (sender_resource->kind() == LOCATOR_KIND_TCPv4 || sender_resource->kind() == LOCATOR_KIND_TCPv6)
+                    {
+                        tcp_send_resources++;
+                    }
+                }
+                return tcp_send_resources;
+            };
+    EXPECT_EQ(tcp_send_resources(send_resource_list), 1);
+
+    // Release TCP client resources.
+    server.reset();
+    udp_participant.reset();
+
+    // Wait for undiscovery.
+    client->wait_reader_undiscovery();
+
+    // Create new client instances.
+    udp_participant.reset(new PubSubReader<HelloWorldPubSubType>(TEST_TOPIC_NAME));
+
+    // Wait for discovery. OpenOutputChannel() is called and we can update the senders.
+    initialize_udp_participant(udp_participant.get());
+    ASSERT_TRUE(udp_participant->isInitialized());
+    client->wait_discovery(1, std::chrono::seconds(0));
+    udp_participant->wait_discovery(std::chrono::seconds(0), 1);
+
+    // Check that the send_resource_list has size 1. This means that the send resource
+    // for the first client hasn't been removed because it was created from an initial_peer.
+    send_resource_list = client_chaining_transport->get_send_resource_list();
+    EXPECT_EQ(tcp_send_resources(send_resource_list), 1);
+    send_resource_list.clear();
+
+    // If relaunching the server, the client should connect again.
+    server.reset(new PubSubReader<HelloWorldPubSubType>(TEST_TOPIC_NAME));
+    initialize_server(server.get());
+    ASSERT_TRUE(server->isInitialized());
+    server->wait_discovery(std::chrono::seconds(0), 1);
+    client->wait_discovery(2, std::chrono::seconds(0));
+}
+
+>>>>>>> 0c799f4ca (Improve Blackbox TCP tests suite (#5467))
 // Test TCP transport on large message with best effort reliability
 TEST_P(TransportTCP, large_message_send_receive)
 {
@@ -1196,18 +1654,40 @@ TEST_P(TransportTCP, TCP_initial_peers_connection)
     PubSubReader<HelloWorldPubSubType> p3(TEST_TOPIC_NAME);
 
     // Add TCP Transport with listening port
-    auto p1_transport = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+    std::shared_ptr<TCPTransportDescriptor> p1_transport;
+    std::shared_ptr<TCPTransportDescriptor> p2_transport;
+    std::shared_ptr<TCPTransportDescriptor> p3_transport;
+    if (use_ipv6)
+    {
+        // TCPv6TransportDescriptor
+        p1_transport = std::make_shared<TCPv6TransportDescriptor>();
+        p2_transport = std::make_shared<TCPv6TransportDescriptor>();
+        p3_transport = std::make_shared<TCPv6TransportDescriptor>();
+    }
+    else
+    {
+        // TCPv4TransportDescriptor
+        p1_transport = std::make_shared<TCPv4TransportDescriptor>();
+        p2_transport = std::make_shared<TCPv4TransportDescriptor>();
+        p3_transport = std::make_shared<TCPv4TransportDescriptor>();
+    }
     p1_transport->add_listener_port(global_port);
-    auto p2_transport = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
     p2_transport->add_listener_port(global_port + 1);
-    auto p3_transport = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
     p3_transport->add_listener_port(global_port - 1);
 
     // Add initial peer to client
     Locator_t initialPeerLocator;
-    initialPeerLocator.kind = LOCATOR_KIND_TCPv4;
-    IPLocator::setIPv4(initialPeerLocator, 127, 0, 0, 1);
     initialPeerLocator.port = global_port;
+    if (use_ipv6)
+    {
+        initialPeerLocator.kind = LOCATOR_KIND_TCPv6;
+        IPLocator::setIPv6(initialPeerLocator, "::1");
+    }
+    else
+    {
+        initialPeerLocator.kind = LOCATOR_KIND_TCPv4;
+        IPLocator::setIPv4(initialPeerLocator, 127, 0, 0, 1);
+    }
     LocatorList_t initial_peer_list;
     initial_peer_list.push_back(initialPeerLocator);
 
