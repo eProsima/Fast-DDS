@@ -125,7 +125,12 @@ endif()
 
 if(WIN32)
     # Temporarily, test hello world
-    file(GLOB examples_python_tests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*world.py)
+    file(GLOB examples_python_tests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_custom_payload_pool.py
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_hello_world.py
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_rtps.py
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_flow_control.py
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_content_filter.py)
 else()
     # Find all pytest files for testing
     file(GLOB examples_python_tests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.py)
