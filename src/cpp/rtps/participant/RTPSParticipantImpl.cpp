@@ -1737,7 +1737,15 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
             // Set port on unicast locators
             for (Locator_t& loc : attributes.unicastLocatorList)
             {
-                loc.port = port;
+                // Set logical port only TCP locators
+                if (LOCATOR_KIND_TCPv4 == loc.kind || LOCATOR_KIND_TCPv6 == loc.kind)
+                {
+                    IPLocator::setLogicalPort(loc, port);
+                }
+                else
+                {
+                    loc.port = port;
+                }
             }
 
             // Try creating receiver resources
