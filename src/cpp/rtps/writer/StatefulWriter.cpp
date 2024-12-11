@@ -1217,9 +1217,9 @@ bool StatefulWriter::matched_reader_remove(
         const GUID_t& reader_guid)
 {
     ReaderProxy* rproxy = nullptr;
+    std::lock_guard<RecursiveTimedMutex> lock(mp_mutex);
 
     {
-        std::lock_guard<RecursiveTimedMutex> lock(mp_mutex);
         std::lock_guard<LocatorSelectorSender> guard_locator_selector_general(locator_selector_general_);
         std::lock_guard<LocatorSelectorSender> guard_locator_selector_async(locator_selector_async_);
 
