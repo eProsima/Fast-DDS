@@ -421,8 +421,8 @@ void PublisherApp::run()
         {
             return;
         }
-        vSamples.push_back(count - prevCount);
-        prevCount = count;
+        vSamples.push_back(static_cast<uint16_t>(count) - prevCount);
+        prevCount = static_cast<uint16_t>(count);
         actualTime = std::chrono::steady_clock::now();
         elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(actualTime - startTime);
     }

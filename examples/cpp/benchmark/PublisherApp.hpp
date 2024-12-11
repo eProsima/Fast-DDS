@@ -122,7 +122,7 @@ private:
 
     std::atomic_uint count;
 
-    std::vector<int16_t> vSamples;
+    std::vector<uint16_t> vSamples;
 
     std::chrono::time_point<std::chrono::steady_clock> startTime;
 

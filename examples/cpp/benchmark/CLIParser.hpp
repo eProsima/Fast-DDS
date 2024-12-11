@@ -381,7 +381,7 @@ public:
                             }
                             else
                             {
-                                config.pub_config.interval = static_cast<uint32_t>(input);
+                                config.pub_config.interval = static_cast<uint16_t>(input);
                             }
                         }
                         catch (const std::invalid_argument& e)
@@ -469,7 +469,7 @@ public:
                             }
                             else
                             {
-                                config.pub_config.end = static_cast<uint32_t>(input);
+                                config.pub_config.end = static_cast<uint16_t>(input);
                             }
                         }
                         catch (const std::invalid_argument& e)
