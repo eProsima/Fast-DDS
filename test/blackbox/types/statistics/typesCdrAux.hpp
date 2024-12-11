@@ -131,8 +131,6 @@ eProsima_user_DllExport void serialize_key(
         const eprosima::fastdds::statistics::PhysicalData& data);
 
 
-
-
 } // namespace fastcdr
 } // namespace eprosima
 

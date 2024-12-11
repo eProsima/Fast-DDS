@@ -590,7 +590,6 @@ namespace rpc
     typedef uint8_t UnknownOperation;
     typedef uint8_t UnknownException;
     typedef uint8_t UnusedMember;
-
     typedef eprosima::fastcdr::fixed_string<255> InstanceName;
 
     /*!

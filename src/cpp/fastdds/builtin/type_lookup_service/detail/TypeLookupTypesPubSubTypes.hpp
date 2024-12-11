@@ -212,7 +212,6 @@ namespace builtin
 
     };
 
-
     /*!
      * @brief This class represents the TopicDataType of the type TypeLookup_getTypeDependencies_In defined by the user in the IDL file.
      * @ingroup TypeLookupTypes
@@ -375,8 +374,6 @@ namespace builtin
 
     };
 
-
-
     /*!
      * @brief This class represents the TopicDataType of the type TypeLookup_Request defined by the user in the IDL file.
      * @ingroup TypeLookupTypes
@@ -457,7 +454,6 @@ namespace builtin
         unsigned char* key_buffer_;
 
     };
-
 
     /*!
      * @brief This class represents the TopicDataType of the type TypeLookup_Reply defined by the user in the IDL file.

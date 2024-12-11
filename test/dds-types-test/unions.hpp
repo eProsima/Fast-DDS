@@ -58,6 +58,12 @@
 #define UNIONS_DllAPI
 #endif // _WIN32
 
+namespace Fixed_String_Module {
+
+typedef eprosima::fastcdr::fixed_string<20> fixed_string_in_module;
+
+
+} // namespace Fixed_String_Module
 /*!
  * @brief This class represents the union Union_Short defined by the user in the IDL file.
  * @ingroup unions
@@ -3801,7 +3807,10 @@ private:
                     }
 
                     selected_member_ = 0x00000001;
-                    member_destructor_ = [&]() {m_n.~basic_string();};
+                    member_destructor_ = [&]()
+                    {
+                        m_n.~basic_string();
+                    };
                     new(&m_n) std::string();
 
                 }
@@ -4080,7 +4089,10 @@ private:
                     }
 
                     selected_member_ = 0x00000001;
-                    member_destructor_ = [&]() {m_o.~basic_string();};
+                    member_destructor_ = [&]()
+                    {
+                        m_o.~basic_string();
+                    };
                     new(&m_o) std::wstring();
 
                 }
@@ -4359,7 +4371,10 @@ private:
                     }
 
                     selected_member_ = 0x00000001;
-                    member_destructor_ = [&]() {m_bn.~Inner_alias_bounded_string_helper();};
+                    member_destructor_ = [&]()
+                    {
+                        m_bn.~Inner_alias_bounded_string_helper();
+                    };
                     new(&m_bn) Inner_alias_bounded_string_helper();
 
                 }
@@ -4638,7 +4653,10 @@ private:
                     }
 
                     selected_member_ = 0x00000001;
-                    member_destructor_ = [&]() {m_bo.~Inner_alias_bounded_wstring_helper();};
+                    member_destructor_ = [&]()
+                    {
+                        m_bo.~Inner_alias_bounded_wstring_helper();
+                    };
                     new(&m_bo) Inner_alias_bounded_wstring_helper();
 
                 }
@@ -5185,7 +5203,10 @@ private:
                     }
 
                     selected_member_ = 0x00000001;
-                    member_destructor_ = [&]() {m_q.~InnerBitMaskHelper();};
+                    member_destructor_ = [&]()
+                    {
+                        m_q.~InnerBitMaskHelper();
+                    };
                     new(&m_q) InnerBitMaskHelper();
 
                 }
@@ -5732,7 +5753,10 @@ private:
                     }
 
                     selected_member_ = 0x00000001;
-                    member_destructor_ = [&]() {m_s.~Inner_alias_array_helper();};
+                    member_destructor_ = [&]()
+                    {
+                        m_s.~Inner_alias_array_helper();
+                    };
                     new(&m_s) Inner_alias_array_helper();
 
                 }
@@ -6011,7 +6035,10 @@ private:
                     }
 
                     selected_member_ = 0x00000001;
-                    member_destructor_ = [&]() {m_t.~vector();};
+                    member_destructor_ = [&]()
+                    {
+                        m_t.~vector();
+                    };
                     new(&m_t) std::vector<int16_t>();
 
                 }
@@ -6290,7 +6317,10 @@ private:
                     }
 
                     selected_member_ = 0x00000001;
-                    member_destructor_ = [&]() {m_u.~map();};
+                    member_destructor_ = [&]()
+                    {
+                        m_u.~map();
+                    };
                     new(&m_u) std::map<int32_t, int32_t>();
 
                 }
@@ -6569,7 +6599,10 @@ private:
                     }
 
                     selected_member_ = 0x00000001;
-                    member_destructor_ = [&]() {m_v.~InnerUnionHelper();};
+                    member_destructor_ = [&]()
+                    {
+                        m_v.~InnerUnionHelper();
+                    };
                     new(&m_v) InnerUnionHelper();
 
                 }
@@ -6848,7 +6881,10 @@ private:
                     }
 
                     selected_member_ = 0x00000001;
-                    member_destructor_ = [&]() {m_w.~InnerStructureHelper();};
+                    member_destructor_ = [&]()
+                    {
+                        m_w.~InnerStructureHelper();
+                    };
                     new(&m_w) InnerStructureHelper();
 
                 }
@@ -7127,7 +7163,10 @@ private:
                     }
 
                     selected_member_ = 0x00000001;
-                    member_destructor_ = [&]() {m_x.~InnerBitsetHelper();};
+                    member_destructor_ = [&]()
+                    {
+                        m_x.~InnerBitsetHelper();
+                    };
                     new(&m_x) InnerBitsetHelper();
 
                 }
@@ -12435,7 +12474,10 @@ private:
                     }
 
                     selected_member_ = 0x00000001;
-                    member_destructor_ = [&]() {m_a.~InnerStructureHelper();};
+                    member_destructor_ = [&]()
+                    {
+                        m_a.~InnerStructureHelper();
+                    };
                     new(&m_a) InnerStructureHelper();
 
                 }
@@ -12453,7 +12495,10 @@ private:
                     }
 
                     selected_member_ = 0x00000002;
-                    member_destructor_ = [&]() {m_b.~InnerEmptyStructureHelper();};
+                    member_destructor_ = [&]()
+                    {
+                        m_b.~InnerEmptyStructureHelper();
+                    };
                     new(&m_b) InnerEmptyStructureHelper();
 
                 }
@@ -12471,7 +12516,10 @@ private:
                     }
 
                     selected_member_ = 0x00000003;
-                    member_destructor_ = [&]() {m_c.~Inner_alias_bounded_string_helper();};
+                    member_destructor_ = [&]()
+                    {
+                        m_c.~Inner_alias_bounded_string_helper();
+                    };
                     new(&m_c) Inner_alias_bounded_string_helper();
 
                 }
@@ -12489,7 +12537,10 @@ private:
                     }
 
                     selected_member_ = 0x00000004;
-                    member_destructor_ = [&]() {m_d.~Inner_alias_array_helper();};
+                    member_destructor_ = [&]()
+                    {
+                        m_d.~Inner_alias_array_helper();
+                    };
                     new(&m_d) Inner_alias_array_helper();
 
                 }
@@ -12507,7 +12558,10 @@ private:
                     }
 
                     selected_member_ = 0x00000005;
-                    member_destructor_ = [&]() {m_e.~Inner_alias_sequence_helper();};
+                    member_destructor_ = [&]()
+                    {
+                        m_e.~Inner_alias_sequence_helper();
+                    };
                     new(&m_e) Inner_alias_sequence_helper();
 
                 }
@@ -12545,7 +12599,10 @@ public:
     eProsima_user_DllExport Union_Several_Fields_With_Default()
     {
         selected_member_ = 0x00000006;
-        member_destructor_ = [&]() {m_f.~vector();};
+        member_destructor_ = [&]()
+        {
+            m_f.~vector();
+        };
         new(&m_f) std::vector<int16_t>();
 
     }
@@ -13184,7 +13241,10 @@ private:
                     }
 
                     selected_member_ = 0x00000001;
-                    member_destructor_ = [&]() {m_a.~InnerStructureHelper();};
+                    member_destructor_ = [&]()
+                    {
+                        m_a.~InnerStructureHelper();
+                    };
                     new(&m_a) InnerStructureHelper();
 
                 }
@@ -13202,7 +13262,10 @@ private:
                     }
 
                     selected_member_ = 0x00000002;
-                    member_destructor_ = [&]() {m_b.~InnerEmptyStructureHelper();};
+                    member_destructor_ = [&]()
+                    {
+                        m_b.~InnerEmptyStructureHelper();
+                    };
                     new(&m_b) InnerEmptyStructureHelper();
 
                 }
@@ -13220,7 +13283,10 @@ private:
                     }
 
                     selected_member_ = 0x00000003;
-                    member_destructor_ = [&]() {m_c.~Inner_alias_bounded_string_helper();};
+                    member_destructor_ = [&]()
+                    {
+                        m_c.~Inner_alias_bounded_string_helper();
+                    };
                     new(&m_c) Inner_alias_bounded_string_helper();
 
                 }
@@ -13238,7 +13304,10 @@ private:
                     }
 
                     selected_member_ = 0x00000004;
-                    member_destructor_ = [&]() {m_d.~Inner_alias_array_helper();};
+                    member_destructor_ = [&]()
+                    {
+                        m_d.~Inner_alias_array_helper();
+                    };
                     new(&m_d) Inner_alias_array_helper();
 
                 }
@@ -13256,7 +13325,10 @@ private:
                     }
 
                     selected_member_ = 0x00000005;
-                    member_destructor_ = [&]() {m_e.~Inner_alias_sequence_helper();};
+                    member_destructor_ = [&]()
+                    {
+                        m_e.~Inner_alias_sequence_helper();
+                    };
                     new(&m_e) Inner_alias_sequence_helper();
 
                 }
@@ -13274,7 +13346,10 @@ private:
                     }
 
                     selected_member_ = 0x00000006;
-                    member_destructor_ = [&]() {m_f.~vector();};
+                    member_destructor_ = [&]()
+                    {
+                        m_f.~vector();
+                    };
                     new(&m_f) std::vector<int16_t>();
 
                 }
@@ -13293,6 +13368,289 @@ private:
         Inner_alias_array_helper m_d;
         Inner_alias_sequence_helper m_e;
         std::vector<int16_t> m_f;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
+};
+/*!
+ * @brief This class represents the union Union_Fixed_String_In_Module_Alias defined by the user in the IDL file.
+ * @ingroup unions
+ */
+class Union_Fixed_String_In_Module_Alias
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport Union_Fixed_String_In_Module_Alias()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~Union_Fixed_String_In_Module_Alias()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object Union_Fixed_String_In_Module_Alias that will be copied.
+     */
+    eProsima_user_DllExport Union_Fixed_String_In_Module_Alias(
+            const Union_Fixed_String_In_Module_Alias& x)
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            a_() = x.m_a;
+                            break;
+
+        }
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object Union_Fixed_String_In_Module_Alias that will be copied.
+     */
+    eProsima_user_DllExport Union_Fixed_String_In_Module_Alias(
+            Union_Fixed_String_In_Module_Alias&& x) noexcept
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            a_() = std::move(x.m_a);
+                            break;
+
+        }
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object Union_Fixed_String_In_Module_Alias that will be copied.
+     */
+    eProsima_user_DllExport Union_Fixed_String_In_Module_Alias& operator =(
+            const Union_Fixed_String_In_Module_Alias& x)
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            a_() = x.m_a;
+                            break;
+
+        }
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object Union_Fixed_String_In_Module_Alias that will be copied.
+     */
+    eProsima_user_DllExport Union_Fixed_String_In_Module_Alias& operator =(
+            Union_Fixed_String_In_Module_Alias&& x) noexcept
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            a_() = std::move(x.m_a);
+                            break;
+
+        }
+
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x Union_Fixed_String_In_Module_Alias object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const Union_Fixed_String_In_Module_Alias& x) const
+    {
+        bool ret_value {false};
+
+        if (x.selected_member_ == selected_member_)
+        {
+            if (0x0FFFFFFFu != selected_member_)
+            {
+                if (x.m__d == m__d)
+                {
+                    switch (selected_member_)
+                    {
+                                                    case 0x00000001:
+                                                        ret_value = (x.m_a == m_a);
+                                                        break;
+
+                    }
+                }
+            }
+            else
+            {
+                ret_value = true;
+            }
+        }
+
+        return ret_value;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x Union_Fixed_String_In_Module_Alias object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const Union_Fixed_String_In_Module_Alias& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function sets the discriminator value.
+     * @param __d New value for the discriminator.
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
+     */
+    eProsima_user_DllExport void _d(
+            int32_t __d)
+    {
+        bool valid_discriminator = false;
+
+        switch (__d)
+        {
+                        case 0:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
+
+        }
+
+        if (!valid_discriminator)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
+        }
+
+        m__d = __d;
+    }
+
+    /*!
+     * @brief This function returns the value of the discriminator.
+     * @return Value of the discriminator
+     */
+    eProsima_user_DllExport int32_t _d() const
+    {
+        return m__d;
+    }
+
+    /*!
+     * @brief This function copies the value in member a
+     * @param _a New value to be copied in member a
+     */
+    eProsima_user_DllExport void a(
+            const Fixed_String_Module::fixed_string_in_module& _a)
+    {
+        a_() = _a;
+        m__d = 0;
+    }
+
+    /*!
+     * @brief This function moves the value in member a
+     * @param _a New value to be moved in member a
+     */
+    eProsima_user_DllExport void a(
+            Fixed_String_Module::fixed_string_in_module&& _a)
+    {
+        a_() = _a;
+        m__d = 0;
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member a
+     * @return Constant reference to member a
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport const Fixed_String_Module::fixed_string_in_module& a() const
+    {
+        if (0x00000001 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_a;
+    }
+
+    /*!
+     * @brief This function returns a reference to member a
+     * @return Reference to member a
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport Fixed_String_Module::fixed_string_in_module& a()
+    {
+        if (0x00000001 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_a;
+    }
+
+
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
+
+private:
+
+            Fixed_String_Module::fixed_string_in_module& a_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]()
+                    {
+                        using namespace Fixed_String_Module;
+                        m_a.~fixed_string_in_module();
+                    };
+                    new(&m_a) Fixed_String_Module::fixed_string_in_module();
+
+                }
+
+                return m_a;
+            }
+
+
+    int32_t m__d {2147483647};
+
+    union
+    {
+        Fixed_String_Module::fixed_string_in_module m_a;
     };
 
     uint32_t selected_member_ {0x0FFFFFFFu};
@@ -19714,6 +20072,139 @@ private:
 
     Union_Short m_var_union_short;
     int32_t m_var_long{0};
+
+};
+/*!
+ * @brief This class represents the structure UnionFixedStringAlias defined by the user in the IDL file.
+ * @ingroup unions
+ */
+class UnionFixedStringAlias
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport UnionFixedStringAlias()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~UnionFixedStringAlias()
+    {
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object UnionFixedStringAlias that will be copied.
+     */
+    eProsima_user_DllExport UnionFixedStringAlias(
+            const UnionFixedStringAlias& x)
+    {
+                    m_var_union_fixed_string_in_module_alias = x.m_var_union_fixed_string_in_module_alias;
+
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object UnionFixedStringAlias that will be copied.
+     */
+    eProsima_user_DllExport UnionFixedStringAlias(
+            UnionFixedStringAlias&& x) noexcept
+    {
+        m_var_union_fixed_string_in_module_alias = std::move(x.m_var_union_fixed_string_in_module_alias);
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object UnionFixedStringAlias that will be copied.
+     */
+    eProsima_user_DllExport UnionFixedStringAlias& operator =(
+            const UnionFixedStringAlias& x)
+    {
+
+                    m_var_union_fixed_string_in_module_alias = x.m_var_union_fixed_string_in_module_alias;
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object UnionFixedStringAlias that will be copied.
+     */
+    eProsima_user_DllExport UnionFixedStringAlias& operator =(
+            UnionFixedStringAlias&& x) noexcept
+    {
+
+        m_var_union_fixed_string_in_module_alias = std::move(x.m_var_union_fixed_string_in_module_alias);
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x UnionFixedStringAlias object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const UnionFixedStringAlias& x) const
+    {
+        return (m_var_union_fixed_string_in_module_alias == x.m_var_union_fixed_string_in_module_alias);
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x UnionFixedStringAlias object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const UnionFixedStringAlias& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function copies the value in member var_union_fixed_string_in_module_alias
+     * @param _var_union_fixed_string_in_module_alias New value to be copied in member var_union_fixed_string_in_module_alias
+     */
+    eProsima_user_DllExport void var_union_fixed_string_in_module_alias(
+            const Union_Fixed_String_In_Module_Alias& _var_union_fixed_string_in_module_alias)
+    {
+        m_var_union_fixed_string_in_module_alias = _var_union_fixed_string_in_module_alias;
+    }
+
+    /*!
+     * @brief This function moves the value in member var_union_fixed_string_in_module_alias
+     * @param _var_union_fixed_string_in_module_alias New value to be moved in member var_union_fixed_string_in_module_alias
+     */
+    eProsima_user_DllExport void var_union_fixed_string_in_module_alias(
+            Union_Fixed_String_In_Module_Alias&& _var_union_fixed_string_in_module_alias)
+    {
+        m_var_union_fixed_string_in_module_alias = std::move(_var_union_fixed_string_in_module_alias);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member var_union_fixed_string_in_module_alias
+     * @return Constant reference to member var_union_fixed_string_in_module_alias
+     */
+    eProsima_user_DllExport const Union_Fixed_String_In_Module_Alias& var_union_fixed_string_in_module_alias() const
+    {
+        return m_var_union_fixed_string_in_module_alias;
+    }
+
+    /*!
+     * @brief This function returns a reference to member var_union_fixed_string_in_module_alias
+     * @return Reference to member var_union_fixed_string_in_module_alias
+     */
+    eProsima_user_DllExport Union_Fixed_String_In_Module_Alias& var_union_fixed_string_in_module_alias()
+    {
+        return m_var_union_fixed_string_in_module_alias;
+    }
+
+
+
+private:
+
+    Union_Fixed_String_In_Module_Alias m_var_union_fixed_string_in_module_alias;
 
 };
 

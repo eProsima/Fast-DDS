@@ -401,7 +401,6 @@ namespace builtin {
             "TypeObject type representation support disabled in generated code");
     }
 
-
     TypeLookup_getTypeDependencies_InPubSubType::TypeLookup_getTypeDependencies_InPubSubType()
     {
         set_name("eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In");
@@ -766,8 +765,6 @@ namespace builtin {
             "TypeObject type representation support disabled in generated code");
     }
 
-
-
     TypeLookup_RequestPubSubType::TypeLookup_RequestPubSubType()
     {
         set_name("eprosima::fastdds::dds::builtin::TypeLookup_Request");
@@ -949,7 +946,6 @@ namespace builtin {
         EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
             "TypeObject type representation support disabled in generated code");
     }
-
 
     TypeLookup_ReplyPubSubType::TypeLookup_ReplyPubSubType()
     {

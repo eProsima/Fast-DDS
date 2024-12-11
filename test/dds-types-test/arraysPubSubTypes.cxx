@@ -9443,8 +9443,6 @@ void ArrayMultiDimensionBitsetPubSubType::register_type_object_representation()
     register_ArrayMultiDimensionBitset_type_identifier(type_identifiers_);
 }
 
-
-
 ArraySingleDimensionLiteralsShortPubSubType::ArraySingleDimensionLiteralsShortPubSubType()
 {
     set_name("ArraySingleDimensionLiteralsShort");

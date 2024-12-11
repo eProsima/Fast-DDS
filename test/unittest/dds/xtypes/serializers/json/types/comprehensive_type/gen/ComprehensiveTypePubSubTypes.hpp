@@ -118,15 +118,10 @@ private:
     unsigned char* key_buffer_;
 
 };
-
-
 typedef PrimitivesStruct MyAliasedStruct;
 typedef MyEnum MyAliasedEnum;
 typedef eprosima::fastcdr::fixed_string<100> MyAliasedBoundedString;
 typedef MyAliasedEnum MyRecursiveAlias;
-
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type AllStruct defined by the user in the IDL file.

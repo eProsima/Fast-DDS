@@ -212,15 +212,6 @@ void PrimitivesStructPubSubType::register_type_object_representation()
     register_PrimitivesStruct_type_identifier(type_identifiers_);
 }
 
-
-
-
-
-
-
-
-
-
 AllStructPubSubType::AllStructPubSubType()
 {
     set_name("AllStruct");

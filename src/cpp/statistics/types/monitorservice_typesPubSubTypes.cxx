@@ -577,7 +577,6 @@ namespace eprosima {
                 register_BaseStatus_s_type_identifier(type_identifiers_);
             }
 
-
             IncompatibleQoSStatus_sPubSubType::IncompatibleQoSStatus_sPubSubType()
             {
                 set_name("eprosima::fastdds::statistics::IncompatibleQoSStatus_s");
@@ -1121,12 +1120,8 @@ namespace eprosima {
                 register_DeadlineMissedStatus_s_type_identifier(type_identifiers_);
             }
 
-
-
-
             namespace StatusKind {
             } // namespace StatusKind
-
 
             MonitorServiceStatusDataPubSubType::MonitorServiceStatusDataPubSubType()
             {
