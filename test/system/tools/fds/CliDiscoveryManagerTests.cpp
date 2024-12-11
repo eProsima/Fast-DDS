@@ -116,7 +116,13 @@ public:
         ASSERT_EQ(ips.size(), ports.size());
         size_t num_servers = ips.size();
 
-        createOptionsAndParser(static_cast<int>(argv.size()), const_cast<const char**>(argv.data()));
+        // CreateOptionsAndParser does not work in MacOS when multiple ports are used
+        option::Stats stats(usage, static_cast<int>(argv.size()), const_cast<const char**>(argv.data()));
+        options = std::vector<Option>(stats.options_max);
+        std::vector<Option> buffer(stats.buffer_max);
+        parse = option::Parser(usage, static_cast<int>(argv.size()),
+                        const_cast<const char**>(argv.data()), &options[0], &buffer[0]);
+
         manager.reset();
         manager.getCliPortsAndIps(
             getOption(UDP_PORT),
@@ -156,7 +162,12 @@ public:
             TestCase test_case)
     {
         const auto& argv = std::get<0>(test_case);
-        createOptionsAndParser(static_cast<int>(argv.size()), const_cast<const char**>(argv.data()));
+        // CreateOptionsAndParser does not work in MacOS when multiple ports are used
+        option::Stats stats(usage, static_cast<int>(argv.size()), const_cast<const char**>(argv.data()));
+        options = std::vector<Option>(stats.options_max);
+        std::vector<Option> buffer(stats.buffer_max);
+        parse = option::Parser(usage, static_cast<int>(argv.size()),
+                        const_cast<const char**>(argv.data()), &options[0], &buffer[0]);
         manager.reset();
         manager.getCliPortsAndIps(
             getOption(UDP_PORT),
@@ -593,8 +604,13 @@ TEST_F(CliDiscoveryManagerTest, GetCliPortsAndIps)
     for (const auto& key_case : test_cases)
     {
         const auto& test_case = test_case_map.at(key_case);
-        createOptionsAndParser(static_cast<int>(std::get<0>(test_case).size()),
+        // CreateOptionsAndParser does not work in MacOS when multiple ports are used
+        option::Stats stats(usage, static_cast<int>(std::get<0>(test_case).size()),
                 const_cast<const char**>(std::get<0>(test_case).data()));
+        options = std::vector<Option>(stats.options_max);
+        std::vector<Option> buffer(stats.buffer_max);
+        parse = option::Parser(usage, static_cast<int>(std::get<0>(test_case).size()),
+                        const_cast<const char**>(std::get<0>(test_case).data()), &options[0], &buffer[0]);
         manager.reset();
         manager.getCliPortsAndIps(
             getOption(UDP_PORT),
@@ -881,6 +897,7 @@ TEST_F(CliDiscoveryManagerTest, StopAllRunningServers)
     const char* argv_stop[] = {"all"};
     createOptionsAndParser(1, argv_stop);
     EXPECT_EQ(manager.fastdds_discovery_stop(options, parse), 0);
+    std::this_thread::sleep_for(std::chrono::seconds(1));
     ASSERT_FALSE(manager.isServerRunning(d1));
 }
 #endif // _WIN32
