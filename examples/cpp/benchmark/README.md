@@ -9,6 +9,7 @@ In this case, the *benchmark* example allows to select between different message
 * [Description of the example](#description-of-the-example)
 * [Run the example](#run-the-example)
 * [Configuration](#configuration)
+* [XML profile playground](#xml-profile-playground)
 
 ## Description of the example
 
@@ -61,28 +62,53 @@ All the example available flags can be queried running the executable with the `
 
 ### Expected output
 
-Regardless of which application is run first, since the publisher will not start sending data until a subscriber is discovered, the expected output both for publishers and subscribers is a first displayed message acknowledging the match, followed by the amount of samples sent or received until Ctrl+C is pressed.
+Regardless of which application is run first, since the publisher will not start sending data until a subscriber is discovered, the expected output both for publishers and subscribers is a first displayed message acknowledging the match, followed by the sent and received data in each application, and finishing showing in the publisher the amount of data shared in each sample time during the running time.
 
 ### Benchmark publisher
 
 ```shell
-Publisher running for 2792 milliseconds. Please press Ctrl+C to stop the Publisher at any time.
+Publisher running for 1000 milliseconds. Please press Ctrl+C to stop the Publisher at any time.
 Subscriber matched.
-Publisher matched. Test starts...
 Publisher matched.
-RESULTS after 2792 milliseconds:
-COUNT: 970
-SAMPLES: 0,51,54,52,52,54,52,52,54,54,54,56,54,54,54,54,54,56,
+First Sample with index: '0' (8388608 Bytes) SENT
+Sample with index: '1' (8388608 Bytes) RECEIVED
+Sample with index: '0' (8388608 Bytes) SENT
+Sample with index: '1' (8388608 Bytes) RECEIVED
+Sample with index: '0' (8388608 Bytes) SENT
+Sample with index: '1' (8388608 Bytes) RECEIVED
+Sample with index: '2' (8388608 Bytes) SENT
+Sample with index: '3' (8388608 Bytes) RECEIVED
+Sample with index: '4' (8388608 Bytes) SENT
+Sample with index: '5' (8388608 Bytes) RECEIVED
+...
+Sample with index: '646' (8388608 Bytes) SENT
+Sample with index: '647' (8388608 Bytes) RECEIVED
+RESULTS after 1014 milliseconds:
+COUNT: 647
+SAMPLES: 37,46,52,94,86,94,84,62,52,40,
 ...
 ```
 
 ### Benchmark subscriber
 
 ```shell
-Subscriber running. Please press Ctrl+C to stop the Subscriber at any time.
-Subscriber matched.
 Publisher matched.
-
+Subscriber matched.
+Subscriber running. Please press Ctrl+C to stop the Subscriber at any time.
+Sample with index: '0' (8388608 Bytes) RECEIVED
+Sample with index: '1' (8388608 Bytes) SENT
+Sample with index: '0' (8388608 Bytes) RECEIVED
+Sample with index: '1' (8388608 Bytes) SENT
+Sample with index: '0' (8388608 Bytes) RECEIVED
+Sample with index: '1' (8388608 Bytes) SENT
+Sample with index: '2' (8388608 Bytes) RECEIVED
+Sample with index: '3' (8388608 Bytes) SENT
+Sample with index: '4' (8388608 Bytes) RECEIVED
+Sample with index: '5' (8388608 Bytes) SENT
+...
+Sample with index: '646' (8388608 Bytes) RECEIVED
+Sample with index: '647' (8388608 Bytes) SENT
+Publisher unmatched.
 ...
 ```
 
@@ -93,7 +119,6 @@ The following is a possible output of the publisher application when stopping th
 ...
 Publisher running for 10000 milliseconds. Please press Ctrl+C to stop the Publisher at any time.
 Subscriber matched.
-Publisher matched. Test starts...
 Publisher matched.
 Publisher unmatched.
 Subscriber unmatched.
@@ -152,6 +177,40 @@ The following table represents the compatibility matrix (compatible ✔️ vs in
   </tr>
 </table>
 
+### Durability QoS
+
+Using argument **`--transient-local`** will configure the corresponding endpoint with **`TRANSIENT_LOCAL`** durability QoS.
+If the argument is not provided, by default it is configured as **`VOLATILE`**.
+
+Whereas **`VOLATILE`** does not store samples for late-joining subscribers, **`TRANSIENT_LOCAL`** ensures that samples are stored and delivered to any late-joining subscribers.
+
+**Note**: **`TRANSIENT_LOCAL`** option may require additional resources to store the samples until they are acknowledged by all subscribers.
+
+Moreover, there is a compatibility rule between data readers and data writers, where the durability QoS kind is checked to ensure the expected behavior.
+The following table represents the compatibility matrix (compatible ✔️ vs incompatible ✖️):
+
+<table>
+    <tr style="text-align:center">
+        <td colspan="2" rowspan="2"></td>
+        <th colspan="2" style="text-align:center">Data writer durability QoS kind</th>
+    </tr>
+    <tr style="text-align:center">
+        <td>Volatile</td>
+        <td>Transient Local</td>
+    </tr>
+    <tr style="text-align:center">
+        <th rowspan="2" style="text-align:center">Data reader<br>durability QoS kind</th>
+        <td>Volatile</td>
+        <td>✔️</td>
+        <td>✔️</td>
+    </tr>
+    <tr style="text-align:center">
+        <td>Transient Local</td>
+        <td>✖️</td>
+        <td>✔️</td>
+    </tr>
+</table>
+
 ### Message Size
 
 Using argument **`-m`** `<num>` or **`--msg-size`** `<num>` configures the size of the message payload.
@@ -200,3 +259,29 @@ This parameter controls how long the publisher or subscriber remains active.
 
 - **Range**: `[1 <= <num> <= 4294967]`
 - **Default**: `10000` (10 seconds)
+
+## XML profile playground
+
+The *eProsima Fast DDS* entities can be configured through an XML profile from the environment.
+This is accomplished by setting the environment variable ``FASTDDS_DEFAULT_PROFILES_FILE`` to path to the XML profiles file:
+
+* Ubuntu ( / MacOS )
+
+    ```shell
+    user@machine:example_path$ export FASTDDS_DEFAULT_PROFILES_FILE=hello_world_profile.xml
+    ```
+
+* Windows
+
+    ```powershell
+    example_path> set FASTDDS_DEFAULT_PROFILES_FILE=hello_world_profile.xml
+    ```
+
+The example provides with an XML profiles files with certain QoS:
+
+- Reliable reliability: avoid sample loss.
+- Transient local durability: enable late-join subscriber applications to receive previous samples.
+- Keep-last history with high depth: ensure certain amount of previous samples for late-joiners.
+
+Applying different configurations to the entities will change to a greater or lesser extent how the application behaves in relation to sample management.
+Even when these settings affect the behavior of the sample management, the applications' output will be the similar.

@@ -84,22 +84,22 @@ SubscriberApp::SubscriberApp(
     }
 
     // Register and set up the data type with initial values
-    if(msg_size_ == CLIParser::MsgSizeKind::NONE)
+    if (msg_size_ == CLIParser::MsgSizeKind::NONE)
     {
         benchmark_.index(0);
         type_ = TypeSupport(new BenchMarkPubSubType());
     }
-    else if(msg_size_ == CLIParser::MsgSizeKind::SMALL)
+    else if (msg_size_ == CLIParser::MsgSizeKind::SMALL)
     {
         benchmark_small_.index(0);
         type_ = TypeSupport(new BenchMarkSmallPubSubType());
     }
-    else if(msg_size_ == CLIParser::MsgSizeKind::MEDIUM)
+    else if (msg_size_ == CLIParser::MsgSizeKind::MEDIUM)
     {
         benchmark_medium_.index(0);
         type_ = TypeSupport(new BenchMarkMediumPubSubType());
     }
-    else if(msg_size_ == CLIParser::MsgSizeKind::BIG)
+    else if (msg_size_ == CLIParser::MsgSizeKind::BIG)
     {
         benchmark_big_.index(0);
         type_ = TypeSupport(new BenchMarkBigPubSubType());
@@ -132,6 +132,7 @@ SubscriberApp::SubscriberApp(
     // Create the data writer
     DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
     writer_qos.reliability().kind = config.reliability;
+    writer_qos.durability().kind = config.durability;
     publisher_->get_default_datawriter_qos(writer_qos);
     writer_ = publisher_->create_datawriter(topic_pub_, writer_qos, this, StatusMask::all());
     if (writer_ == nullptr)
@@ -152,6 +153,7 @@ SubscriberApp::SubscriberApp(
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
     subscriber_->get_default_datareader_qos(reader_qos);
     reader_qos.reliability().kind = config.reliability;
+    reader_qos.durability().kind = config.durability;
     reader_ = subscriber_->create_datareader(topic_sub_, reader_qos, this, StatusMask::all());
     if (reader_ == nullptr)
     {
@@ -185,6 +187,7 @@ void SubscriberApp::on_publication_matched(
     {
         matched_ = static_cast<int16_t>(info.current_count);
         std::cout << "Publisher unmatched." << std::endl;
+        stop();
     }
     else
     {
@@ -204,6 +207,7 @@ void SubscriberApp::on_subscription_matched(
     else if (info.current_count_change == -1)
     {
         std::cout << "Subscriber unmatched." << std::endl;
+        stop();
     }
     else
     {
@@ -223,8 +227,26 @@ void SubscriberApp::on_data_available(
             {
                 if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
                 {
+                    std::cout << "Sample with index: '" <<
+                        benchmark_.index() << "' (0 Bytes) RECEIVED" << std::endl;
                     benchmark_.index(benchmark_.index() + 1);
-                    writer_->write(&benchmark_);
+                    while (matched_ == 0)
+                    {
+                        std::unique_lock<std::mutex> initial_lock(mutex_);
+                        auto check = cv_.wait_for(initial_lock, std::chrono::milliseconds(1), [&]()
+                                        {
+                                            return is_stopped();
+                                        });
+                        if (check)
+                        {
+                            return;
+                        }
+                    }
+                    if ((RETCODE_OK == writer_->write(&benchmark_)) == true)
+                    {
+                        std::cout << "Sample with index: '" <<
+                            benchmark_.index() << "' (0 Bytes) SENT" << std::endl;
+                    }
                 }
             }
             break;
@@ -234,8 +256,28 @@ void SubscriberApp::on_data_available(
             {
                 if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
                 {
+                    std::cout << "Sample with index: '" <<
+                        benchmark_small_.index() << "' (" << static_cast<int>(benchmark_small_.array().size()) <<
+                        " Bytes) RECEIVED" << std::endl;
                     benchmark_small_.index(benchmark_small_.index() + 1);
-                    writer_->write(&benchmark_small_);
+                    while (matched_ == 0)
+                    {
+                        std::unique_lock<std::mutex> initial_lock(mutex_);
+                        auto check = cv_.wait_for(initial_lock, std::chrono::milliseconds(1), [&]()
+                                        {
+                                            return is_stopped();
+                                        });
+                        if (check)
+                        {
+                            return;
+                        }
+                    }
+                    if ((RETCODE_OK == writer_->write(&benchmark_small_)) == true)
+                    {
+                        std::cout << "Sample with index: '" <<
+                            benchmark_small_.index() << "' (" << static_cast<int>(benchmark_small_.array().size()) <<
+                            " Bytes) SENT" << std::endl;
+                    }
                 }
             }
             break;
@@ -245,8 +287,28 @@ void SubscriberApp::on_data_available(
             {
                 if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
                 {
+                    std::cout << "Sample with index: '" <<
+                        benchmark_medium_.index() << "' (" << static_cast<int>(benchmark_medium_.data().size()) <<
+                        " Bytes) RECEIVED" << std::endl;
                     benchmark_medium_.index(benchmark_medium_.index() + 1);
-                    writer_->write(&benchmark_medium_);
+                    while (matched_ == 0)
+                    {
+                        std::unique_lock<std::mutex> initial_lock(mutex_);
+                        auto check = cv_.wait_for(initial_lock, std::chrono::milliseconds(1), [&]()
+                                        {
+                                            return is_stopped();
+                                        });
+                        if (check)
+                        {
+                            return;
+                        }
+                    }
+                    if ((RETCODE_OK == writer_->write(&benchmark_medium_)) == true)
+                    {
+                        std::cout << "Sample with index: '" <<
+                            benchmark_medium_.index() << "' (" << static_cast<int>(benchmark_medium_.data().size()) <<
+                            " Bytes) SENT" << std::endl;
+                    }
                 }
             }
             break;
@@ -256,8 +318,28 @@ void SubscriberApp::on_data_available(
             {
                 if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
                 {
+                    std::cout << "Sample with index: '" <<
+                        benchmark_big_.index() << "' (" << static_cast<int>(benchmark_big_.data().size()) <<
+                        " Bytes) RECEIVED" << std::endl;
                     benchmark_big_.index(benchmark_big_.index() + 1);
-                    writer_->write(&benchmark_big_);
+                    while (matched_ == 0)
+                    {
+                        std::unique_lock<std::mutex> initial_lock(mutex_);
+                        auto check = cv_.wait_for(initial_lock, std::chrono::milliseconds(1), [&]()
+                                        {
+                                            return is_stopped();
+                                        });
+                        if (check)
+                        {
+                            return;
+                        }
+                    }
+                    if ((RETCODE_OK == writer_->write(&benchmark_big_)) == true)
+                    {
+                        std::cout << "Sample with index: '" <<
+                            benchmark_big_.index() << "' (" << static_cast<int>(benchmark_big_.data().size()) <<
+                            " Bytes) SENT" << std::endl;
+                    }
                 }
             }
             break;

@@ -42,6 +42,7 @@ class CLIParser
         std::string topic_name = "benchmark_topic";
         eprosima::fastdds::rtps::BuiltinTransports transport = eprosima::fastdds::rtps::BuiltinTransports::DEFAULT;
         ReliabilityQosPolicyKind reliability = ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
+        DurabilityQosPolicyKind durability = DurabilityQosPolicyKind::VOLATILE_DURABILITY_QOS;
     };
 
 public:
@@ -70,8 +71,8 @@ public:
     struct publisher_config : public entity_config
     {
         uint16_t wait = 1000;
-        uint32_t interval = 100;
-        uint32_t end = 10000;
+        uint16_t interval = 100;
+        uint16_t end = 10000;
         CLIParser::MsgSizeKind msg_size = CLIParser::MsgSizeKind::NONE;
     };
 
@@ -113,6 +114,8 @@ public:
         std::cout << "                                      (Default: benchmark_topic)"                 << std::endl;
         std::cout << "  -r, --reliable                      Set Reliability QoS as reliable"            << std::endl;
         std::cout << "                                      (Default: best effort)"                     << std::endl;
+        std::cout << "  --transient-local                   Set Durability QoS as transient local"      << std::endl;
+        std::cout << "                                      (Default: volatile)"                        << std::endl;
         std::cout << "  -m <num>, --msg-size <num>          Size of the message"                        << std::endl;
         std::cout << "                                       · NONE:    Only an int value"              << std::endl;
         std::cout << "                                       · SMALL:   int value + array of 16Kb"      << std::endl;
@@ -492,6 +495,12 @@ public:
                     EPROSIMA_LOG_ERROR(CLI_PARSER, "end argument is only valid for publisher entity");
                     print_help(EXIT_FAILURE);
                 }
+            }
+            else if (arg == "--transient-local")
+            {
+                config.pub_config.durability = DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS;
+                config.sub_config.durability = DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS;
+
             }
             else
             {

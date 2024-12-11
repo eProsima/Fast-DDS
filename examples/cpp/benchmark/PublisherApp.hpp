@@ -108,9 +108,9 @@ private:
 
     std::mutex mutex_;
 
-    uint32_t period_ms_;
+    uint16_t period_ms_;
 
-    int16_t wait_;
+    uint16_t wait_;
 
     uint16_t end_;
 
@@ -125,6 +125,8 @@ private:
     std::vector<int16_t> vSamples;
 
     std::chrono::time_point<std::chrono::steady_clock> startTime;
+
+    uint8_t sent;
 };
 
 } // namespace benchmark

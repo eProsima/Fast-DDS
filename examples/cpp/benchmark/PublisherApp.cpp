@@ -67,6 +67,7 @@ PublisherApp::PublisherApp(
     , count(0)
     , vSamples(0)
     , startTime(std::chrono::steady_clock::now())
+    , sent(0)
 {
 
     // Create the participant
@@ -90,22 +91,22 @@ PublisherApp::PublisherApp(
     }
 
     // Register and set up the data type with initial values
-    if(msg_size_ == CLIParser::MsgSizeKind::NONE)
+    if (msg_size_ == CLIParser::MsgSizeKind::NONE)
     {
         benchmark_.index(0);
         type_ = TypeSupport(new BenchMarkPubSubType());
     }
-    else if(msg_size_ == CLIParser::MsgSizeKind::SMALL)
+    else if (msg_size_ == CLIParser::MsgSizeKind::SMALL)
     {
         benchmark_small_.index(0);
         type_ = TypeSupport(new BenchMarkSmallPubSubType());
     }
-    else if(msg_size_ == CLIParser::MsgSizeKind::MEDIUM)
+    else if (msg_size_ == CLIParser::MsgSizeKind::MEDIUM)
     {
         benchmark_medium_.index(0);
         type_ = TypeSupport(new BenchMarkMediumPubSubType());
     }
-    else if(msg_size_ == CLIParser::MsgSizeKind::BIG)
+    else if (msg_size_ == CLIParser::MsgSizeKind::BIG)
     {
         benchmark_big_.index(0);
         type_ = TypeSupport(new BenchMarkBigPubSubType());
@@ -138,6 +139,7 @@ PublisherApp::PublisherApp(
     // Create the data writer
     DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
     writer_qos.reliability().kind = config.reliability;
+    writer_qos.durability().kind = config.durability;
     publisher_->get_default_datawriter_qos(writer_qos);
     writer_ = publisher_->create_datawriter(topic_pub_, writer_qos, this, StatusMask::all());
     if (writer_ == nullptr)
@@ -158,6 +160,7 @@ PublisherApp::PublisherApp(
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
     subscriber_->get_default_datareader_qos(reader_qos);
     reader_qos.reliability().kind = config.reliability;
+    reader_qos.durability().kind = config.durability;
     reader_ = subscriber_->create_datareader(topic_sub_, reader_qos, this, StatusMask::all());
     if (reader_ == nullptr)
     {
@@ -183,13 +186,9 @@ void PublisherApp::on_publication_matched(
 {
     if (info.current_count_change == 1)
     {
-        if(matched_ == 0)
-        {
-            std::cout << "Publisher matched. Test starts..." << std::endl;
-            startTime = std::chrono::steady_clock::now();
-        }
-        matched_ = static_cast<int16_t>(info.current_count);
+        startTime = std::chrono::steady_clock::now();
         std::cout << "Publisher matched." << std::endl;
+        matched_++;
         cv_.notify_one();
     }
     else if (info.current_count_change == -1)
@@ -211,6 +210,8 @@ void PublisherApp::on_subscription_matched(
     if (info.current_count_change == 1)
     {
         std::cout << "Subscriber matched." << std::endl;
+        matched_++;
+        cv_.notify_one();
     }
     else if (info.current_count_change == -1)
     {
@@ -224,139 +225,204 @@ void PublisherApp::on_subscription_matched(
 }
 
 void PublisherApp::on_data_available(
-    DataReader* reader)
+        DataReader* reader)
 {
     SampleInfo info;
+
+    auto actualTime = std::chrono::steady_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(actualTime - startTime);
+
     switch (msg_size_)
     {
-    case CLIParser::MsgSizeKind::NONE:
-        while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(&benchmark_, &info)))
-        {
-            if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
+        case CLIParser::MsgSizeKind::NONE:
+            while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(&benchmark_, &info)))
             {
-                if (benchmark_.index() > count)
+                if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
                 {
-                benchmark_.index(count);
-                }
-                else
-                {
-                benchmark_.index(benchmark_.index() + 1);
-                }
+                    std::cout << "Sample with index: '" <<
+                        benchmark_.index() << "' (0 Bytes) RECEIVED" << std::endl;
+                    sent = 0;
+                    if (elapsed.count() >= end_)
+                    {
+                        cv_.notify_one();
+                        return;
+                    }
+                    if (benchmark_.index() > count)
+                    {
+                        benchmark_.index(count);
+                    }
+                    else
+                    {
+                        benchmark_.index(benchmark_.index() + 1);
+                    }
 
-                count = benchmark_.index() + 1;
-                writer_->write(&benchmark_);
+                    count = benchmark_.index() + 1;
+                    if ((RETCODE_OK == writer_->write(&benchmark_)) == true)
+                    {
+                        sent = 1;
+                        std::cout << "Sample with index: '" <<
+                            benchmark_.index() << "' (0 Bytes) SENT" << std::endl;
+                    }
+                }
             }
-        }
-        break;
+            break;
 
-    case CLIParser::MsgSizeKind::SMALL:
-        while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(&benchmark_small_, &info)))
-        {
-            if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
+        case CLIParser::MsgSizeKind::SMALL:
+            while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(&benchmark_small_, &info)))
             {
-                if (benchmark_small_.index() > count)
+                if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
                 {
-                benchmark_small_.index(count);
-                }
-                else
-                {
-                benchmark_small_.index(benchmark_small_.index() + 1);
-                }
+                    std::cout << "Sample with index: '" <<
+                        benchmark_small_.index() << "' (" << static_cast<int>(benchmark_small_.array().size()) <<
+                        " Bytes) RECEIVED" << std::endl;
+                    sent = 0;
+                    if (elapsed.count() >= end_)
+                    {
+                        cv_.notify_one();
+                        return;
+                    }
+                    if (benchmark_small_.index() > count)
+                    {
+                        benchmark_small_.index(count);
+                    }
+                    else
+                    {
+                        benchmark_small_.index(benchmark_small_.index() + 1);
+                    }
 
-                count = benchmark_small_.index() + 1;
-                writer_->write(&benchmark_small_);
+                    count = benchmark_small_.index() + 1;
+                    if ((RETCODE_OK == writer_->write(&benchmark_small_)) == true)
+                    {
+                        sent = 1;
+                        std::cout << "Sample with index: '" <<
+                            benchmark_small_.index() << "' (" << static_cast<int>(benchmark_small_.array().size()) <<
+                            " Bytes) SENT" << std::endl;
+                    }
+                }
             }
-        }
-        break;
+            break;
 
-    case CLIParser::MsgSizeKind::MEDIUM:
-        while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(&benchmark_medium_, &info)))
-        {
-            if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
+        case CLIParser::MsgSizeKind::MEDIUM:
+            while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(&benchmark_medium_, &info)))
             {
-                if (benchmark_medium_.index() > count)
+                if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
                 {
-                benchmark_medium_.index(count);
-                }
-                else
-                {
-                benchmark_medium_.index(benchmark_medium_.index() + 1);
-                }
+                    std::cout << "Sample with index: '" <<
+                        benchmark_medium_.index() << "' (" << static_cast<int>(benchmark_medium_.data().size()) <<
+                        " Bytes) RECEIVED" << std::endl;
+                    sent = 0;
+                    if (elapsed.count() >= end_)
+                    {
+                        cv_.notify_one();
+                        return;
+                    }
+                    if (benchmark_medium_.index() > count)
+                    {
+                        benchmark_medium_.index(count);
+                    }
+                    else
+                    {
+                        benchmark_medium_.index(benchmark_medium_.index() + 1);
+                    }
 
-                count = benchmark_medium_.index() + 1;
-                writer_->write(&benchmark_medium_);
+                    count = benchmark_medium_.index() + 1;
+                    if ((RETCODE_OK == writer_->write(&benchmark_medium_)) == true)
+                    {
+                        sent = 1;
+                        std::cout << "Sample with index: '" <<
+                            benchmark_medium_.index() << "' (" << static_cast<int>(benchmark_medium_.data().size()) <<
+                            " Bytes) SENT" << std::endl;
+                    }
+                }
             }
-        }
-        break;
+            break;
 
-    case CLIParser::MsgSizeKind::BIG:
-        while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(&benchmark_big_, &info)))
-        {
-            if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
+        case CLIParser::MsgSizeKind::BIG:
+            while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(&benchmark_big_, &info)))
             {
-                if (benchmark_big_.index() > count)
+                if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
                 {
-                benchmark_big_.index(count);
-                }
-                else
-                {
-                benchmark_big_.index(benchmark_big_.index() + 1);
-                }
+                    std::cout << "Sample with index: '" <<
+                        benchmark_big_.index() << "' (" << static_cast<int>(benchmark_big_.data().size()) <<
+                        " Bytes) RECEIVED" << std::endl;
+                    sent = 0;
+                    if (elapsed.count() >= end_)
+                    {
+                        cv_.notify_one();
+                        return;
+                    }
+                    if (benchmark_big_.index() > count)
+                    {
+                        benchmark_big_.index(count);
+                    }
+                    else
+                    {
+                        benchmark_big_.index(benchmark_big_.index() + 1);
+                    }
 
-                count = benchmark_big_.index() + 1;
-                writer_->write(&benchmark_big_);
+                    count = benchmark_big_.index() + 1;
+                    if ((RETCODE_OK == writer_->write(&benchmark_big_)) == true)
+                    {
+                        sent = 1;
+                        std::cout << "Sample with index: '" <<
+                            benchmark_big_.index() << "' (" << static_cast<int>(benchmark_big_.data().size()) <<
+                            " Bytes) SENT" << std::endl;
+                    }
+                }
             }
-        }
-        break;
+            break;
 
-    default:
-        throw std::runtime_error("Type invalid");
+        default:
+            throw std::runtime_error("Type invalid");
     }
 }
 
 void PublisherApp::run()
 {
-    int prevCount = 0;
+    uint16_t prevCount = 0;
     while (!is_stopped() && !publish())
     {
         // Wait for period
         std::unique_lock<std::mutex> initial_lock(mutex_);
         auto check = cv_.wait_for(initial_lock, std::chrono::milliseconds(1), [&]()
-            {
-                return is_stopped();
-            });
-        if (check){
+                        {
+                            return is_stopped();
+                        });
+        if (check)
+        {
             return;
         }
     }
     {
-    // Wait for period
-    std::unique_lock<std::mutex> wait_lock(mutex_);
-    auto check = cv_.wait_for(wait_lock, std::chrono::milliseconds(wait_), [&]()
+        // Wait for period
+        std::unique_lock<std::mutex> wait_lock(mutex_);
+        auto check = cv_.wait_for(wait_lock, std::chrono::milliseconds(wait_), [&]()
+                        {
+                            return is_stopped();
+                        });
+        if (check)
         {
-            return is_stopped();
-        });
-    if (check){
-        return;
-    }
-    count = 0;
+            return;
+        }
+        count = 0;
     }
 
     auto actualTime = std::chrono::steady_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(actualTime - startTime);
     while (!is_stopped() && elapsed.count() < end_)
     {
-        vSamples.push_back(count - prevCount);
-        prevCount = count;
         // Wait for period or stop event
         std::unique_lock<std::mutex> periodic_lock(mutex_);
         auto check = cv_.wait_for(periodic_lock, std::chrono::milliseconds(period_ms_), [&]()
-            {
-                return is_stopped();
-            });
-        if (check){
+                        {
+                            return is_stopped();
+                        });
+        if (check)
+        {
             return;
         }
+        vSamples.push_back(count - prevCount);
+        prevCount = count;
         actualTime = std::chrono::steady_clock::now();
         elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(actualTime - startTime);
     }
@@ -389,6 +455,13 @@ void PublisherApp::run()
         std::cout << vSamples[i] << ",";
     }
     std::cout << std::endl;
+
+    // Wait in case a response is still nedded
+    std::unique_lock<std::mutex> final_lock(mutex_);
+    cv_.wait(final_lock, [&]()
+            {
+                return is_stopped() || (sent == 0);
+            });
 }
 
 bool PublisherApp::publish()
@@ -397,10 +470,10 @@ bool PublisherApp::publish()
     // Wait for the data endpoints discovery
     std::unique_lock<std::mutex> matched_lock(mutex_);
     cv_.wait(matched_lock, [&]()
-        {
-            // at least one has been discovered
-            return ((matched_ > 0) || is_stopped());
-        });
+            {
+                // at least one has been discovered
+                return ((matched_ == 2) || is_stopped());
+            });
     if (!is_stopped())
     {
         switch (msg_size_)
@@ -408,21 +481,44 @@ bool PublisherApp::publish()
             case CLIParser::MsgSizeKind::NONE:
                 benchmark_.index(0);
                 ret = (RETCODE_OK == writer_->write(&benchmark_));
+                if (ret == true)
+                {
+                    std::cout << "First Sample with index: '"
+                              << benchmark_.index() << "'(0 Bytes) SENT" << std::endl;
+                }
                 break;
 
             case CLIParser::MsgSizeKind::SMALL:
                 benchmark_small_.index(0);
                 ret = (RETCODE_OK == writer_->write(&benchmark_small_));
+                if (ret == true)
+                {
+                    std::cout << "First Sample with index: '"
+                              << benchmark_small_.index() << "' (" << static_cast<int>(benchmark_small_.array().size())
+                              << " Bytes) SENT" << std::endl;
+                }
                 break;
 
             case CLIParser::MsgSizeKind::MEDIUM:
                 benchmark_medium_.index(0);
                 ret = (RETCODE_OK == writer_->write(&benchmark_medium_));
+                if (ret == true)
+                {
+                    std::cout << "First Sample with index: '"
+                              << benchmark_medium_.index() << "' (" << static_cast<int>(benchmark_medium_.data().size())
+                              << " Bytes) SENT" << std::endl;
+                }
                 break;
 
             case CLIParser::MsgSizeKind::BIG:
                 benchmark_big_.index(0);
                 ret = (RETCODE_OK == writer_->write(&benchmark_big_));
+                if (ret == true)
+                {
+                    std::cout << "First Sample with index: '"
+                              << benchmark_big_.index() << "' (" << static_cast<int>(benchmark_big_.data().size())
+                              << " Bytes) SENT" << std::endl;
+                }
                 break;
 
             default:
