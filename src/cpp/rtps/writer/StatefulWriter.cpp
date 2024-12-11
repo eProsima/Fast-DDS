@@ -1217,7 +1217,7 @@ bool StatefulWriter::matched_reader_remove(
         const GUID_t& reader_guid)
 {
     ReaderProxy* rproxy = nullptr;
-    std::lock_guard<RecursiveTimedMutex> lock(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
 
     {
         std::lock_guard<LocatorSelectorSender> guard_locator_selector_general(locator_selector_general_);
@@ -1286,6 +1286,7 @@ bool StatefulWriter::matched_reader_remove(
         if (nullptr != listener_)
         {
             // listener is called without locks taken
+            lock.unlock();
             listener_->on_reader_discovery(this, ReaderDiscoveryStatus::REMOVED_READER, reader_guid, nullptr);
         }
 
