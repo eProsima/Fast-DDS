@@ -5189,6 +5189,100 @@ TEST(Security, participant_stateless_secure_writer_pool_change_is_removed_upon_p
     EXPECT_EQ(0u, n_logs);
 }
 
+<<<<<<< HEAD
+=======
+// Regression test for Redmine issue #22024
+// OpenSSL assertion is not thrown when the library is abruptly finished.
+TEST(Security, openssl_correctly_finishes)
+{
+    // Create
+    PubSubWriter<HelloWorldPubSubType> writer("HelloWorldTopic_openssl_is_correctly_finished");
+    PubSubReader<HelloWorldPubSubType> reader("HelloWorldTopic_openssl_is_correctly_finished");
+
+    const std::string governance_file("governance_helloworld_all_enable.smime");
+    const std::string permissions_file("permissions_helloworld.smime");
+
+    CommonPermissionsConfigure(reader, writer, governance_file, permissions_file);
+
+    reader.init();
+    writer.init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+
+    // Here we force the atexit function from openssl to be abruptly called
+    // i.e in a disordered way
+    // If OpenSSL is not correctly finished, a SIGSEGV will be thrown
+    std::exit(0);
+}
+
+// Regression test for Redmine issue #19925
+TEST(Security, legacy_token_algorithms_communicate)
+{
+    auto test_run = [](bool legacy_pub, bool legacy_sub) -> void
+            {
+                // Create
+                PubSubWriter<HelloWorldPubSubType> writer("HelloWorldTopic_legacy_token_algorithms_communicate");
+                PubSubReader<HelloWorldPubSubType> reader("HelloWorldTopic_legacy_token_algorithms_communicate");
+                const std::string governance_file("governance_helloworld_all_enable.smime");
+                const std::string permissions_file("permissions_helloworld.smime");
+
+                // Configure Writer
+                {
+                    PropertyPolicy extra_policy;
+                    const char* value = legacy_pub ? "true" : "false";
+                    auto& properties = extra_policy.properties();
+                    properties.emplace_back(
+                        "dds.sec.auth.builtin.PKI-DH.transmit_algorithms_as_legacy", value);
+                    properties.emplace_back(
+                        "dds.sec.access.builtin.Access-Permissions.transmit_algorithms_as_legacy", value);
+                    CommonPermissionsConfigure(writer, governance_file, permissions_file, extra_policy);
+                }
+
+                // Configure Reader
+                {
+                    PropertyPolicy extra_policy;
+                    const char* value = legacy_sub ? "true" : "false";
+                    auto& properties = extra_policy.properties();
+                    properties.emplace_back(
+                        "dds.sec.auth.builtin.PKI-DH.transmit_algorithms_as_legacy", value);
+                    properties.emplace_back(
+                        "dds.sec.access.builtin.Access-Permissions.transmit_algorithms_as_legacy", value);
+                    CommonPermissionsConfigure(reader, governance_file, permissions_file, extra_policy);
+                }
+
+                // Initialize
+                reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
+                ASSERT_TRUE(reader.isInitialized());
+                writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
+                ASSERT_TRUE(writer.isInitialized());
+
+                // Wait for discovery
+                reader.waitAuthorized();
+                writer.waitAuthorized();
+                reader.wait_discovery();
+                writer.wait_discovery();
+                ASSERT_TRUE(reader.is_matched());
+                ASSERT_TRUE(writer.is_matched());
+
+                // Perform communication
+                auto data = default_helloworld_data_generator(1);
+                reader.startReception(data);
+                writer.send(data);
+                ASSERT_TRUE(data.empty());
+                reader.block_for_all();
+            };
+
+    // Test all possible combinations
+    test_run(false, false);
+    test_run(false, true);
+    test_run(true, false);
+    test_run(true, true);
+}
+
+>>>>>>> 971f120a1 (Use correct algorithm strings on PermissionsToken and IdentityToken (#5450))
 void blackbox_security_init()
 {
     certs_path = std::getenv("CERTS_PATH");
