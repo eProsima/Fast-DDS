@@ -94,9 +94,14 @@ class Parser:
         elif os.name == 'nt':
             ret = tool_path / 'fast-discovery-server.exe'
             if not os.path.exists(ret):
-                ret = tool_path / 'fast-discovery-server.bat'
-                if not os.path.exists(ret):
-                    print('fast-discovery-server tool not installed')
+                exe_files = [f for f in tool_path.glob('*.exe') if re.match(r'fast-discovery-server.*\.exe$', f.name)]
+                if len(exe_files) == 0:
+                    print("Unable to find fast-discovery-server tool. Check installation")
+                elif len(exe_files) == 1:
+                    ret = exe_files[0]
+                    print(f'[PYTHON] Found executable: {ret}')
+                else:
+                    print('Multiple candidates for fast-discovery-server.exe. Check installation')
                     sys.exit(1)
         else:
             print(f'{os.name} not supported')
