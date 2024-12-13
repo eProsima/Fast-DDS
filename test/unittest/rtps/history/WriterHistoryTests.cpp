@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <fastdds/rtps/RTPSDomain.hpp>
@@ -20,8 +19,6 @@
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
-
-#include <rtps/writer/BaseWriter.hpp>
 
 
 namespace eprosima {
@@ -33,11 +30,12 @@ using namespace testing;
 #define MAX_MESSAGE_SIZE 300
 
 void cache_change_fragment(
-        uint32_t inline_qos_length)
+        uint32_t max_message_size,
+        uint32_t inline_qos_length,
+        bool expected_fragmentation)
 {
     uint32_t domain_id = 0;
     uint32_t initial_reserved_caches = 10;
-    uint32_t max_message_size = MAX_MESSAGE_SIZE;
     std::string max_message_size_str = std::to_string(max_message_size);
 
     RTPSParticipantAttributes p_attr;
@@ -58,19 +56,41 @@ void cache_change_fragment(
 
     ASSERT_NE(writer, nullptr);
 
-    BaseWriter* bwriter = BaseWriter::downcast(writer);
-    auto max_allowed_payload_size = bwriter->get_max_allowed_payload_size();
+    CacheChange_t* change = history->create_change(ALIVE);
+    if (expected_fragmentation)
+    {
+        change->serializedPayload.length = 3 * max_message_size;
+    }
+    else
+    {
+        change->serializedPayload.length = max_message_size / 3;
+    }
+    change->inline_qos.length = inline_qos_length;
+    history->add_change(change);
 
-    CacheChange_t change;
-    change.writerGUID = bwriter->getGuid();
-    change.serializedPayload.length = 3 * max_allowed_payload_size; // Force to setFragmentSize
-    change.inline_qos.length = inline_qos_length;
-
-    history->add_change(&change);
-
-    auto result = change.getFragmentSize();
+    auto result = change->getFragmentSize();
     std::cout << "Fragment size: " << result << std::endl;
-    ASSERT_NE(result, 0); // Fragment size should always be greater than 0
+    if (expected_fragmentation)
+    {
+        ASSERT_NE(result, 0);
+    }
+    else
+    {
+        ASSERT_EQ(result, 0);
+    }
+}
+
+/**
+ * This test checks the get_max_allowed_payload_size() method of the BaseWriter class.
+ * When setting the RTPS Participant Attribute property fastdds.max_message_size to a value lower than the
+ * message overhead, if the method does not overflow the fragment size will be set.
+ * If the max_message_size is big enough for the overhead, inline_qos and serializedPayload,
+ * then no fragmentation will occur.
+ */
+TEST(WriterHistoryTests, get_max_allowed_payload_size_overflow)
+{
+    cache_change_fragment(100, 0, true);
+    cache_change_fragment(MAX_MESSAGE_SIZE, 0, false);
 }
 
 /**
@@ -78,11 +98,11 @@ void cache_change_fragment(
  * The change.serializedPayload.length is set to 3 times the max_allowed_payload_size, so the fragment size should always be set.
  * In case of an overflow in the attribute high_mark_for_frag_ the fragment size will not be set, which is an error.
  */
-TEST(WriterHistoryTests, calculate_max_payload_size_overflow)
+TEST(WriterHistoryTests, final_high_mark_for_frag_overflow)
 {
     for (uint32_t inline_qos_length = 0; inline_qos_length < MAX_MESSAGE_SIZE; inline_qos_length += 40)
     {
-        cache_change_fragment(inline_qos_length);
+        cache_change_fragment(MAX_MESSAGE_SIZE, inline_qos_length, true);
     }
 }
 
@@ -94,6 +114,6 @@ int main(
         int argc,
         char** argv)
 {
-    testing::InitGoogleMock(&argc, argv);
+    testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

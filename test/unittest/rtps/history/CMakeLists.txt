@@ -177,11 +177,14 @@ target_compile_definitions(WriterHistoryTests PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(WriterHistoryTests PRIVATE
-    ${Asio_INCLUDE_DIR})
+    ${Asio_INCLUDE_DIR}
+    ${THIRDPARTY_BOOST_INCLUDE_DIR}
+    ${PROJECT_SOURCE_DIR}/src/cpp
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(WriterHistoryTests 
     fastcdr 
-    fastdds 
+    fastdds
     foonathan_memory
-    GTest::gmock
+    GTest::gtest
     ${CMAKE_DL_LIBS})
 gtest_discover_tests(WriterHistoryTests)
