@@ -777,6 +777,7 @@ XMLP_ret XMLParser::getXMLPortParameters(
                 <xs:element name="offsetd1" type="uint16Type" minOccurs="0"/>
                 <xs:element name="offsetd2" type="uint16Type" minOccurs="0"/>
                 <xs:element name="offsetd3" type="uint16Type" minOccurs="0"/>
+                <xs:element name="offsetd4" type="uint16Type" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
      */
@@ -838,6 +839,14 @@ XMLP_ret XMLParser::getXMLPortParameters(
         {
             // offsetd3 - uint16Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port.offsetd3, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, OFFSETD4) == 0)
+        {
+            // offsetd4 - uint16Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port.offsetd4, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }

@@ -311,6 +311,7 @@ extern const char* OFFSETD0;
 extern const char* OFFSETD1;
 extern const char* OFFSETD2;
 extern const char* OFFSETD3;
+extern const char* OFFSETD4;
 extern const char* RTPS_PDP_TYPE;
 extern const char* NONE;
 extern const char* CLIENT;

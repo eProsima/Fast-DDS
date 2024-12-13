@@ -127,3 +127,33 @@ if(Python3_Interpreter_FOUND)
     unset(TEST_ENVIRONMENT)
 
 endif()
+
+# C++ Unittests
+set(CLI_MANAGER_TESTS_EXEC CliDiscoveryManagerTests)
+
+set(CLI_MANAGER_TESTS_SOURCE
+    CliDiscoveryManagerTests.cpp
+    ${PROJECT_SOURCE_DIR}/tools/fds/CliDiscoveryManager.cpp
+    )
+
+add_executable(${CLI_MANAGER_TESTS_EXEC} ${CLI_MANAGER_TESTS_SOURCE})
+
+target_compile_definitions(${CLI_MANAGER_TESTS_EXEC}
+    PRIVATE FAST_SERVER_VERSION=\"${PROJECT_VERSION}\"
+    PRIVATE FAST_SERVER_BINARY=\"$<TARGET_FILE_NAME:${PROJECT_NAME}>\" )
+
+target_include_directories( ${CLI_MANAGER_TESTS_EXEC} PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/tools/fds
+    )
+
+target_link_libraries(
+    ${CLI_MANAGER_TESTS_EXEC}
+    fastdds
+    fastcdr
+    fastdds::optionparser
+    GTest::gtest
+    ${CMAKE_DL_LIBS})
+
+gtest_discover_tests(${CLI_MANAGER_TESTS_EXEC})
