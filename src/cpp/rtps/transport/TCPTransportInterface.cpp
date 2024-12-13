@@ -325,7 +325,7 @@ ResponseCode TCPTransportInterface::bind_socket(
         Locator local_locator(channel->locator());
         for (auto& interface_it : local_interfaces)
         {
-            IPLocator::setIPv4(local_locator, interface_it.locator);
+            IPLocator::copyAddress(interface_it.locator, local_locator);
             const auto insert_ret_local = channel_resources_.insert(
                 decltype(channel_resources_)::value_type{local_locator, channel});
             if (!insert_ret_local.first->second->connection_established())
@@ -1041,7 +1041,7 @@ bool TCPTransportInterface::CreateInitialConnect(
         Locator local_locator(physical_locator);
         for (auto& interface_it : local_interfaces)
         {
-            IPLocator::setIPv4(local_locator, interface_it.locator);
+            IPLocator::copyAddress(interface_it.locator, local_locator);
             channel_resources_[local_locator] = channel;
         }
     }
