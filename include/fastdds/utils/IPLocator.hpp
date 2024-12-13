@@ -252,7 +252,8 @@ public:
             const Locator_t& loc2,
             bool fullAddress = false);
 
-    /** Copies the whole address from one locator to another.
+    /**
+     * Copies the whole address from one locator to another.
      * @param loc1 Locator to copy from.
      * @param loc2 Locator to copy to.
      * @return True if the copy was successful.

@@ -790,6 +790,12 @@ TEST_F(IPLocatorTests, copyAddress)
     ASSERT_FALSE(IPLocator::compareAddress(locator1, locator2));
     ASSERT_TRUE(IPLocator::copyAddress(locator1, locator2));
     ASSERT_TRUE(IPLocator::compareAddress(locator1, locator2));
+
+    // Check cannot copy between SHM locators
+    locator1.kind = LOCATOR_KIND_SHM;
+    Locator_t locator3(LOCATOR_KIND_SHM);
+    ASSERT_FALSE(IPLocator::copyAddress(locator1, locator3));
+    ASSERT_FALSE(IPLocator::compareAddress(locator1, locator3));
 }
 
 /*
