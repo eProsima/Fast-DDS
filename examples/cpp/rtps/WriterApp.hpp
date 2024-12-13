@@ -86,6 +86,8 @@ private:
 
     int16_t matched_;
 
+    uint16_t expected_matches_;
+
     std::atomic<bool> stop_;
 
     mutable std::mutex terminate_cv_mtx_;
