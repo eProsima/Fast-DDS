@@ -268,13 +268,13 @@ This is accomplished by setting the environment variable ``FASTDDS_DEFAULT_PROFI
 * Ubuntu ( / MacOS )
 
     ```shell
-    user@machine:example_path$ export FASTDDS_DEFAULT_PROFILES_FILE=hello_world_profile.xml
+    user@machine:example_path$ export FASTDDS_DEFAULT_PROFILES_FILE=benchmark_profile.xml
     ```
 
 * Windows
 
     ```powershell
-    example_path> set FASTDDS_DEFAULT_PROFILES_FILE=hello_world_profile.xml
+    example_path> set FASTDDS_DEFAULT_PROFILES_FILE=benchmark_profile.xml
     ```
 
 The example provides with an XML profiles files with certain QoS:

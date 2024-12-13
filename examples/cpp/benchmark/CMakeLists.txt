@@ -44,7 +44,7 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 message(STATUS "Configuring benchmark example...")
-file(GLOB BENCHMARK_SOURCES_CXX "*.cxx")
+file(GLOB BENCHMARK_SOURCES_CXX "types/*.cxx")
 file(GLOB BENCHMARK_SOURCES_CPP "*.cpp")
 
 add_executable(benchmark ${BENCHMARK_SOURCES_CXX} ${BENCHMARK_SOURCES_CPP})

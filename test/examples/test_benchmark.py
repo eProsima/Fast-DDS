@@ -17,7 +17,7 @@ import pytest
 import re
 
 config_test_cases = [
-    ('--transport DEFAULT --msg-size NONE', '--transport DEFAULT --msg-size NONE'),           # Builtin transports
+    ('--transport DEFAULT --msg-size NONE', '--transport DEFAULT --msg-size NONE'),
     ('--transport DEFAULT --msg-size SMALL', '--transport DEFAULT --msg-size SMALL'),
     ('--transport DEFAULT --msg-size MEDIUM', '--transport DEFAULT --msg-size MEDIUM'),
     ('--transport DEFAULT --msg-size BIG', '--transport DEFAULT --msg-size BIG'),
@@ -44,8 +44,8 @@ def test_benchmark(pub_args, sub_args):
     """."""
     ret = False
     out = ''
-    pub_requirements = '--reliable --transient-local -w 0 -e 1000'
-    sub_requirements = '--reliable --transient-local'
+    pub_requirements = '--reliable --transient-local -s 1000'
+    sub_requirements = '--reliable --transient-local -s 1000'
 
     command_prerequisites = 'PUB_ARGS="' + pub_requirements + ' ' + pub_args + '" SUB_ARGS="' + sub_requirements + ' ' + sub_args + '" '
 

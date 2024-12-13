@@ -31,10 +31,10 @@
 
 #include "Application.hpp"
 #include "CLIParser.hpp"
-#include "Benchmark.hpp"
-#include "Benchmark_small.hpp"
-#include "Benchmark_medium.hpp"
-#include "Benchmark_big.hpp"
+#include "types/Benchmark.hpp"
+#include "types/Benchmark_small.hpp"
+#include "types/Benchmark_medium.hpp"
+#include "types/Benchmark_big.hpp"
 
 using namespace eprosima::fastdds::dds;
 
@@ -106,13 +106,13 @@ private:
 
     int16_t matched_;
 
+    uint16_t samples_;
+
     std::mutex mutex_;
 
     uint16_t period_ms_;
 
-    uint16_t wait_;
-
-    uint16_t end_;
+    uint16_t timeout_;
 
     std::condition_variable cv_;
 

@@ -30,10 +30,10 @@
 
 #include "Application.hpp"
 #include "CLIParser.hpp"
-#include "Benchmark.hpp"
-#include "Benchmark_small.hpp"
-#include "Benchmark_medium.hpp"
-#include "Benchmark_big.hpp"
+#include "types/Benchmark.hpp"
+#include "types/Benchmark_small.hpp"
+#include "types/Benchmark_medium.hpp"
+#include "types/Benchmark_big.hpp"
 
 using namespace eprosima::fastdds::dds;
 
@@ -99,6 +99,8 @@ private:
     DataReader* reader_;
 
     TypeSupport type_;
+
+    uint16_t samples_;
 
     int16_t matched_;
 

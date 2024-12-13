@@ -44,14 +44,14 @@ int main(
 {
     auto ret = EXIT_SUCCESS;
     CLIParser::benchmark_config config = CLIParser::parse_cli_options(argc, argv);
-    uint32_t end = 1;
+    uint32_t timeout = 1;
     switch (config.entity)
     {
         case CLIParser::EntityKind::PUBLISHER:
-            end = config.pub_config.end;
+            timeout = config.pub_config.timeout;
             break;
         case CLIParser::EntityKind::SUBSCRIBER:
-            end = 0;
+            timeout = 0;
             break;
         default:
             break;
@@ -74,14 +74,14 @@ int main(
     {
         std::thread thread(&Application::run, app);
 
-        if (end == 0)
+        if (timeout == 0)
         {
             std::cout << app_name << " running. Please press Ctrl+C to stop the "
                       << app_name << " at any time." << std::endl;
         }
         else
         {
-            std::cout << app_name << " running for " << end << " milliseconds. Please press Ctrl+C to stop the "
+            std::cout << app_name << " running for " << timeout << " milliseconds. Please press Ctrl+C to stop the "
                       << app_name << " at any time." << std::endl;
         }
 

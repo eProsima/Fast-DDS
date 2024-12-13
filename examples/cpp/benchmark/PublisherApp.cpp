@@ -35,10 +35,10 @@
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
 
-#include "BenchmarkPubSubTypes.hpp"
-#include "Benchmark_smallPubSubTypes.hpp"
-#include "Benchmark_mediumPubSubTypes.hpp"
-#include "Benchmark_bigPubSubTypes.hpp"
+#include "types/BenchmarkPubSubTypes.hpp"
+#include "types/Benchmark_smallPubSubTypes.hpp"
+#include "types/Benchmark_mediumPubSubTypes.hpp"
+#include "types/Benchmark_bigPubSubTypes.hpp"
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
@@ -59,9 +59,9 @@ PublisherApp::PublisherApp(
     , reader_(nullptr)
     , type_(nullptr)
     , matched_(0)
+    , samples_(config.samples)
     , period_ms_(config.interval)
-    , wait_(config.wait)
-    , end_(config.end)
+    , timeout_(config.timeout)
     , stop_(false)
     , msg_size_(config.msg_size)
     , count(0)
@@ -70,6 +70,10 @@ PublisherApp::PublisherApp(
     , sent(0)
 {
 
+    if (samples_ > 0)
+    {
+        timeout_ = 0;
+    }
     // Create the participant
     DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
     pqos.name("Benchmark_pub_participant");
@@ -240,28 +244,20 @@ void PublisherApp::on_data_available(
                 if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
                 {
                     std::cout << "Sample with index: '" <<
-                        benchmark_.index() << "' (0 Bytes) RECEIVED" << std::endl;
-                    sent = 0;
-                    if (elapsed.count() >= end_)
+                        benchmark_.index() << "' (Array 0 Bytes) RECEIVED" << std::endl;
+                    if ((elapsed.count() >= timeout_ && timeout_ != 0) || (count >= samples_ && samples_ != 0))
                     {
                         cv_.notify_one();
                         return;
                     }
-                    if (benchmark_.index() > count)
-                    {
-                        benchmark_.index(count);
-                    }
-                    else
-                    {
-                        benchmark_.index(benchmark_.index() + 1);
-                    }
 
+                    benchmark_.index(benchmark_.index() + 1);
                     count = benchmark_.index() + 1;
+
                     if ((RETCODE_OK == writer_->write(&benchmark_)) == true)
                     {
-                        sent = 1;
                         std::cout << "Sample with index: '" <<
-                            benchmark_.index() << "' (0 Bytes) SENT" << std::endl;
+                            benchmark_.index() << "' (Array 0 Bytes) SENT" << std::endl;
                     }
                 }
             }
@@ -273,29 +269,21 @@ void PublisherApp::on_data_available(
                 if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
                 {
                     std::cout << "Sample with index: '" <<
-                        benchmark_small_.index() << "' (" << static_cast<int>(benchmark_small_.array().size()) <<
+                        benchmark_small_.index() << "' (Array  " << static_cast<int>(benchmark_small_.array().size()) <<
                         " Bytes) RECEIVED" << std::endl;
-                    sent = 0;
-                    if (elapsed.count() >= end_)
+                    if ((elapsed.count() >= timeout_ && timeout_ != 0) || (count >= samples_ && samples_ != 0))
                     {
                         cv_.notify_one();
                         return;
                     }
-                    if (benchmark_small_.index() > count)
-                    {
-                        benchmark_small_.index(count);
-                    }
-                    else
-                    {
-                        benchmark_small_.index(benchmark_small_.index() + 1);
-                    }
 
+                    benchmark_small_.index(benchmark_small_.index() + 1);
                     count = benchmark_small_.index() + 1;
+
                     if ((RETCODE_OK == writer_->write(&benchmark_small_)) == true)
                     {
-                        sent = 1;
                         std::cout << "Sample with index: '" <<
-                            benchmark_small_.index() << "' (" << static_cast<int>(benchmark_small_.array().size()) <<
+                            benchmark_small_.index() << "' (Array  " << static_cast<int>(benchmark_small_.array().size()) <<
                             " Bytes) SENT" << std::endl;
                     }
                 }
@@ -308,29 +296,21 @@ void PublisherApp::on_data_available(
                 if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
                 {
                     std::cout << "Sample with index: '" <<
-                        benchmark_medium_.index() << "' (" << static_cast<int>(benchmark_medium_.data().size()) <<
+                        benchmark_medium_.index() << "' (Array  " << static_cast<int>(benchmark_medium_.data().size()) <<
                         " Bytes) RECEIVED" << std::endl;
-                    sent = 0;
-                    if (elapsed.count() >= end_)
+                    if ((elapsed.count() >= timeout_ && timeout_ != 0) || (count >= samples_ && samples_ != 0))
                     {
                         cv_.notify_one();
                         return;
                     }
-                    if (benchmark_medium_.index() > count)
-                    {
-                        benchmark_medium_.index(count);
-                    }
-                    else
-                    {
-                        benchmark_medium_.index(benchmark_medium_.index() + 1);
-                    }
 
+                    benchmark_medium_.index(benchmark_medium_.index() + 1);
                     count = benchmark_medium_.index() + 1;
+
                     if ((RETCODE_OK == writer_->write(&benchmark_medium_)) == true)
                     {
-                        sent = 1;
                         std::cout << "Sample with index: '" <<
-                            benchmark_medium_.index() << "' (" << static_cast<int>(benchmark_medium_.data().size()) <<
+                            benchmark_medium_.index() << "' (Array  " << static_cast<int>(benchmark_medium_.data().size()) <<
                             " Bytes) SENT" << std::endl;
                     }
                 }
@@ -343,29 +323,21 @@ void PublisherApp::on_data_available(
                 if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
                 {
                     std::cout << "Sample with index: '" <<
-                        benchmark_big_.index() << "' (" << static_cast<int>(benchmark_big_.data().size()) <<
+                        benchmark_big_.index() << "' (Array  " << static_cast<int>(benchmark_big_.data().size()) <<
                         " Bytes) RECEIVED" << std::endl;
-                    sent = 0;
-                    if (elapsed.count() >= end_)
+                    if ((elapsed.count() >= timeout_ && timeout_ != 0) || (count >= samples_ && samples_ != 0))
                     {
                         cv_.notify_one();
                         return;
                     }
-                    if (benchmark_big_.index() > count)
-                    {
-                        benchmark_big_.index(count);
-                    }
-                    else
-                    {
-                        benchmark_big_.index(benchmark_big_.index() + 1);
-                    }
 
+                    benchmark_big_.index(benchmark_big_.index() + 1);
                     count = benchmark_big_.index() + 1;
+
                     if ((RETCODE_OK == writer_->write(&benchmark_big_)) == true)
                     {
-                        sent = 1;
                         std::cout << "Sample with index: '" <<
-                            benchmark_big_.index() << "' (" << static_cast<int>(benchmark_big_.data().size()) <<
+                            benchmark_big_.index() << "' (Array  " << static_cast<int>(benchmark_big_.data().size()) <<
                             " Bytes) SENT" << std::endl;
                     }
                 }
@@ -379,48 +351,29 @@ void PublisherApp::on_data_available(
 
 void PublisherApp::run()
 {
+    {
+    // Wait for the data endpoints discovery
+    std::unique_lock<std::mutex> matched_lock(mutex_);
+    cv_.wait(matched_lock, [&]()
+            {
+                // at least one has been discovered
+                return ((matched_ >= 2) || is_stopped());
+            });
+    }
+    publish();
+
     uint16_t prevCount = 0;
-    while (!is_stopped() && !publish())
-    {
-        // Wait for period
-        std::unique_lock<std::mutex> initial_lock(mutex_);
-        auto check = cv_.wait_for(initial_lock, std::chrono::milliseconds(1), [&]()
-                        {
-                            return is_stopped();
-                        });
-        if (check)
-        {
-            return;
-        }
-    }
-    {
-        // Wait for period
-        std::unique_lock<std::mutex> wait_lock(mutex_);
-        auto check = cv_.wait_for(wait_lock, std::chrono::milliseconds(wait_), [&]()
-                        {
-                            return is_stopped();
-                        });
-        if (check)
-        {
-            return;
-        }
-        count = 0;
-    }
 
     auto actualTime = std::chrono::steady_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(actualTime - startTime);
-    while (!is_stopped() && elapsed.count() < end_)
+    while (!is_stopped() && (elapsed.count() < timeout_ || timeout_ == 0) && (samples_ == 0 || count < samples_))
     {
         // Wait for period or stop event
         std::unique_lock<std::mutex> periodic_lock(mutex_);
-        auto check = cv_.wait_for(periodic_lock, std::chrono::milliseconds(period_ms_), [&]()
-                        {
-                            return is_stopped();
-                        });
-        if (check)
-        {
-            return;
-        }
+        cv_.wait_for(periodic_lock, std::chrono::milliseconds(period_ms_), [&]()
+                {
+                    return is_stopped();
+                });
         vSamples.push_back(static_cast<uint16_t>(count) - prevCount);
         prevCount = static_cast<uint16_t>(count);
         actualTime = std::chrono::steady_clock::now();
@@ -449,31 +402,55 @@ void PublisherApp::run()
             throw std::runtime_error("Type invalid");
     }
     std::cout << "SAMPLES: ";
-
     for (uint16_t i = 0; i < vSamples.size(); ++i)
     {
         std::cout << vSamples[i] << ",";
     }
     std::cout << std::endl;
+    std::cout << "THROUGHTPUT BPS(Bytes per Second): ";
+    double mean_bps = static_cast<double>(count) / (elapsed.count() / 1000.0);
+    switch (msg_size_)
+    {
+        case CLIParser::MsgSizeKind::NONE:
+            mean_bps= mean_bps * 4;
+            break;
 
-    // Wait in case a response is still nedded
-    std::unique_lock<std::mutex> final_lock(mutex_);
-    cv_.wait(final_lock, [&]()
-            {
-                return is_stopped() || (sent == 0);
-            });
+        case CLIParser::MsgSizeKind::SMALL:
+            mean_bps= mean_bps * (4 + benchmark_small_.array().size());
+            break;
+
+        case CLIParser::MsgSizeKind::MEDIUM:
+            mean_bps= mean_bps * (4 + benchmark_medium_.data().size());
+            break;
+
+        case CLIParser::MsgSizeKind::BIG:
+            mean_bps= mean_bps * (4 + benchmark_big_.data().size());
+            break;
+
+        default:
+            throw std::runtime_error("Type invalid");
+    }
+    if (mean_bps >= 1e9)
+    {
+        std::cout << mean_bps / 1e9 << " Gbps" << std::endl;
+    }
+    else if (mean_bps >= 1e6)
+    {
+        std::cout << mean_bps / 1e6 << " Mbps" << std::endl;
+    }
+    else if (mean_bps >= 1e3)
+    {
+        std::cout << mean_bps / 1e3 << " Kbps" << std::endl;
+    }
+    else
+    {
+        std::cout << mean_bps << " bps" << std::endl;
+    }
 }
 
 bool PublisherApp::publish()
 {
     bool ret = false;
-    // Wait for the data endpoints discovery
-    std::unique_lock<std::mutex> matched_lock(mutex_);
-    cv_.wait(matched_lock, [&]()
-            {
-                // at least one has been discovered
-                return ((matched_ == 2) || is_stopped());
-            });
     if (!is_stopped())
     {
         switch (msg_size_)
@@ -484,7 +461,7 @@ bool PublisherApp::publish()
                 if (ret == true)
                 {
                     std::cout << "First Sample with index: '"
-                              << benchmark_.index() << "'(0 Bytes) SENT" << std::endl;
+                              << benchmark_.index() << "'(Array 0 Bytes) SENT" << std::endl;
                 }
                 break;
 
@@ -494,7 +471,7 @@ bool PublisherApp::publish()
                 if (ret == true)
                 {
                     std::cout << "First Sample with index: '"
-                              << benchmark_small_.index() << "' (" << static_cast<int>(benchmark_small_.array().size())
+                              << benchmark_small_.index() << "' (Array  " << static_cast<int>(benchmark_small_.array().size())
                               << " Bytes) SENT" << std::endl;
                 }
                 break;
@@ -505,7 +482,7 @@ bool PublisherApp::publish()
                 if (ret == true)
                 {
                     std::cout << "First Sample with index: '"
-                              << benchmark_medium_.index() << "' (" << static_cast<int>(benchmark_medium_.data().size())
+                              << benchmark_medium_.index() << "' (Array  " << static_cast<int>(benchmark_medium_.data().size())
                               << " Bytes) SENT" << std::endl;
                 }
                 break;
@@ -516,7 +493,7 @@ bool PublisherApp::publish()
                 if (ret == true)
                 {
                     std::cout << "First Sample with index: '"
-                              << benchmark_big_.index() << "' (" << static_cast<int>(benchmark_big_.data().size())
+                              << benchmark_big_.index() << "' (Array  " << static_cast<int>(benchmark_big_.data().size())
                               << " Bytes) SENT" << std::endl;
                 }
                 break;

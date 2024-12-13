@@ -35,10 +35,10 @@
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
 
-#include "BenchmarkPubSubTypes.hpp"
-#include "Benchmark_smallPubSubTypes.hpp"
-#include "Benchmark_mediumPubSubTypes.hpp"
-#include "Benchmark_bigPubSubTypes.hpp"
+#include "types/BenchmarkPubSubTypes.hpp"
+#include "types/Benchmark_smallPubSubTypes.hpp"
+#include "types/Benchmark_mediumPubSubTypes.hpp"
+#include "types/Benchmark_bigPubSubTypes.hpp"
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
@@ -58,6 +58,7 @@ SubscriberApp::SubscriberApp(
     , topic_sub_(nullptr)
     , reader_(nullptr)
     , type_(nullptr)
+    , samples_(config.samples)
     , matched_(0)
     , stop_(false)
     , msg_size_(config.msg_size)
@@ -228,7 +229,7 @@ void SubscriberApp::on_data_available(
                 if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
                 {
                     std::cout << "Sample with index: '" <<
-                        benchmark_.index() << "' (0 Bytes) RECEIVED" << std::endl;
+                        benchmark_.index() << "' (Array 0 Bytes) RECEIVED" << std::endl;
                     benchmark_.index(benchmark_.index() + 1);
                     while (matched_ == 0)
                     {
@@ -242,10 +243,15 @@ void SubscriberApp::on_data_available(
                             return;
                         }
                     }
+                    if(benchmark_.index() >= samples_)
+                    {
+                        stop();
+                        return;
+                    }
                     if ((RETCODE_OK == writer_->write(&benchmark_)) == true)
                     {
                         std::cout << "Sample with index: '" <<
-                            benchmark_.index() << "' (0 Bytes) SENT" << std::endl;
+                            benchmark_.index() << "' (Array 0 Bytes) SENT" << std::endl;
                     }
                 }
             }
@@ -257,7 +263,7 @@ void SubscriberApp::on_data_available(
                 if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
                 {
                     std::cout << "Sample with index: '" <<
-                        benchmark_small_.index() << "' (" << static_cast<int>(benchmark_small_.array().size()) <<
+                        benchmark_small_.index() << "' (Array  " << static_cast<int>(benchmark_small_.array().size()) <<
                         " Bytes) RECEIVED" << std::endl;
                     benchmark_small_.index(benchmark_small_.index() + 1);
                     while (matched_ == 0)
@@ -272,10 +278,15 @@ void SubscriberApp::on_data_available(
                             return;
                         }
                     }
+                    if(benchmark_small_.index() >= samples_)
+                    {
+                        stop();
+                        return;
+                    }
                     if ((RETCODE_OK == writer_->write(&benchmark_small_)) == true)
                     {
                         std::cout << "Sample with index: '" <<
-                            benchmark_small_.index() << "' (" << static_cast<int>(benchmark_small_.array().size()) <<
+                            benchmark_small_.index() << "' (Array  " << static_cast<int>(benchmark_small_.array().size()) <<
                             " Bytes) SENT" << std::endl;
                     }
                 }
@@ -288,7 +299,7 @@ void SubscriberApp::on_data_available(
                 if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
                 {
                     std::cout << "Sample with index: '" <<
-                        benchmark_medium_.index() << "' (" << static_cast<int>(benchmark_medium_.data().size()) <<
+                        benchmark_medium_.index() << "' (Array  " << static_cast<int>(benchmark_medium_.data().size()) <<
                         " Bytes) RECEIVED" << std::endl;
                     benchmark_medium_.index(benchmark_medium_.index() + 1);
                     while (matched_ == 0)
@@ -303,10 +314,15 @@ void SubscriberApp::on_data_available(
                             return;
                         }
                     }
+                    if(benchmark_medium_.index() >= samples_)
+                    {
+                        stop();
+                        return;
+                    }
                     if ((RETCODE_OK == writer_->write(&benchmark_medium_)) == true)
                     {
                         std::cout << "Sample with index: '" <<
-                            benchmark_medium_.index() << "' (" << static_cast<int>(benchmark_medium_.data().size()) <<
+                            benchmark_medium_.index() << "' (Array  " << static_cast<int>(benchmark_medium_.data().size()) <<
                             " Bytes) SENT" << std::endl;
                     }
                 }
@@ -319,7 +335,7 @@ void SubscriberApp::on_data_available(
                 if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
                 {
                     std::cout << "Sample with index: '" <<
-                        benchmark_big_.index() << "' (" << static_cast<int>(benchmark_big_.data().size()) <<
+                        benchmark_big_.index() << "' (Array  " << static_cast<int>(benchmark_big_.data().size()) <<
                         " Bytes) RECEIVED" << std::endl;
                     benchmark_big_.index(benchmark_big_.index() + 1);
                     while (matched_ == 0)
@@ -334,10 +350,15 @@ void SubscriberApp::on_data_available(
                             return;
                         }
                     }
+                    if(benchmark_big_.index() >= samples_)
+                    {
+                        stop();
+                        return;
+                    }
                     if ((RETCODE_OK == writer_->write(&benchmark_big_)) == true)
                     {
                         std::cout << "Sample with index: '" <<
-                            benchmark_big_.index() << "' (" << static_cast<int>(benchmark_big_.data().size()) <<
+                            benchmark_big_.index() << "' (Array  " << static_cast<int>(benchmark_big_.data().size()) <<
                             " Bytes) SENT" << std::endl;
                     }
                 }

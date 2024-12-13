@@ -17,9 +17,9 @@
 #include <iostream>
 #include <string>
 
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/BuiltinTransports.hpp>
-#include <fastdds/dds/core/policy/QosPolicies.hpp>
 
 #ifndef FASTDDS_EXAMPLES_CPP_BENCHMARK__CLIPARSER_HPP
 #define FASTDDS_EXAMPLES_CPP_BENCHMARK__CLIPARSER_HPP
@@ -34,16 +34,6 @@ using dds::Log;
 
 class CLIParser
 {
-    //! Entity benchmark structure (shared for both publisher and subscriber applications)
-    struct entity_config
-    {
-        uint8_t ttl = 1;
-        uint32_t domain = 0;
-        std::string topic_name = "benchmark_topic";
-        eprosima::fastdds::rtps::BuiltinTransports transport = eprosima::fastdds::rtps::BuiltinTransports::DEFAULT;
-        ReliabilityQosPolicyKind reliability = ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
-        DurabilityQosPolicyKind durability = DurabilityQosPolicyKind::VOLATILE_DURABILITY_QOS;
-    };
 
 public:
 
@@ -66,20 +56,29 @@ public:
         BIG
     };
 
+    //! Entity benchmark structure (shared for both publisher and subscriber applications)
+    struct entity_config
+    {
+        uint8_t ttl = 1;
+        uint32_t domain = 0;
+        std::string topic_name = "benchmark_topic";
+        uint16_t samples = 0;
+        eprosima::fastdds::rtps::BuiltinTransports transport = eprosima::fastdds::rtps::BuiltinTransports::DEFAULT;
+        ReliabilityQosPolicyKind reliability = ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
+        DurabilityQosPolicyKind durability = DurabilityQosPolicyKind::VOLATILE_DURABILITY_QOS;
+        CLIParser::MsgSizeKind msg_size = CLIParser::MsgSizeKind::NONE;
+    };
 
     //! Publisher application benchmark structure
     struct publisher_config : public entity_config
     {
-        uint16_t wait = 1000;
         uint16_t interval = 100;
-        uint16_t end = 10000;
-        CLIParser::MsgSizeKind msg_size = CLIParser::MsgSizeKind::NONE;
+        uint16_t timeout = 10000;
     };
 
     //! Subscriber application benchmark structure
     struct subscriber_config : public entity_config
     {
-        CLIParser::MsgSizeKind msg_size = CLIParser::MsgSizeKind::NONE;
     };
 
     //! Benchmark structure for the application
@@ -100,7 +99,7 @@ public:
     static void print_help(
             uint8_t return_code)
     {
-        std::cout << "Usage: benchmark <entity> [options]"                                          << std::endl;
+        std::cout << "Usage: benchmark <entity> [options]"                                              << std::endl;
         std::cout << ""                                                                                 << std::endl;
         std::cout << "Entities:"                                                                        << std::endl;
         std::cout << "  publisher                           Run a publisher entity"                     << std::endl;
@@ -122,6 +121,10 @@ public:
         std::cout << "                                       · MEDIUM:  int value + array of 512Kb"     << std::endl;
         std::cout << "                                       · BIG:     int value + array of 8Mb"       << std::endl;
         std::cout << "                                      (Default: NONE)"                            << std::endl;
+        std::cout << "  -s <num>, --samples <num>           Number of samples to send/receive"          << std::endl;
+        std::cout << "                                      If a value is given timeout is ignore"      << std::endl;
+        std::cout << "                                      [0 <= <num> <= 65535]"                      << std::endl;
+        std::cout << "                                      (Default: 0 [unlimited])"                   << std::endl;
         std::cout << "  -t <transp>, --transport <transp>   Select builtin transport <transp>:"         << std::endl;
         std::cout << "                                       · DEFAULT: SHM & UDPv4 (SHM prior UDP)"    << std::endl;
         std::cout << "                                       · SHM:     Shared Memory Transport only"   << std::endl;
@@ -137,10 +140,7 @@ public:
         std::cout << "  -i <num>, --interval <num>          Time between samples in milliseconds"       << std::endl;
         std::cout << "                                      [1 <= <num> <= 4294967]"                    << std::endl;
         std::cout << "                                      (Default: 100 [0.1s])"                      << std::endl;
-        std::cout << "  -w <num>, --wait <num>              Time before starting the sampling"          << std::endl;
-        std::cout << "                                      [0 <= <num> <= 4294967]"                    << std::endl;
-        std::cout << "                                      (Default: 1000 [1s])"                       << std::endl;
-        std::cout << "  -e <num>, --end <num>               Time running the test in milliseconds"      << std::endl;
+        std::cout << "  -to <num>, --timeout <num>          Time running the example in milliseconds"   << std::endl;
         std::cout << "                                      [1 <= <num> <= 4294967]"                    << std::endl;
         std::cout << "                                      (Default: 10000 [10s])"                     << std::endl;
         std::cout << ""                                                                                 << std::endl;
@@ -291,6 +291,52 @@ public:
                     print_help(EXIT_FAILURE);
                 }
             }
+            else if (arg == "-s" || arg == "--samples")
+            {
+                if (i + 1 < argc)
+                {
+                    try
+                    {
+                        int input = std::stoi(argv[++i]);
+                        if (input < std::numeric_limits<std::uint16_t>::min() ||
+                                input > std::numeric_limits<std::uint16_t>::max())
+                        {
+                            throw std::out_of_range("sample argument out of range");
+                        }
+                        else
+                        {
+                            if (config.entity == CLIParser::EntityKind::PUBLISHER)
+                            {
+                                config.pub_config.samples = static_cast<uint16_t>(input);
+                            }
+                            else if (config.entity == CLIParser::EntityKind::SUBSCRIBER)
+                            {
+                                config.sub_config.samples = static_cast<uint16_t>(input);
+                            }
+                            else
+                            {
+                                EPROSIMA_LOG_ERROR(CLI_PARSER, "entity not specified for --sample argument");
+                                print_help(EXIT_FAILURE);
+                            }
+                        }
+                    }
+                    catch (const std::invalid_argument& e)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid sample argument for " + arg + ": " + e.what());
+                        print_help(EXIT_FAILURE);
+                    }
+                    catch (const std::out_of_range& e)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "sample argument out of range for " + arg + ": " + e.what());
+                        print_help(EXIT_FAILURE);
+                    }
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "missing argument for " + arg);
+                    print_help(EXIT_FAILURE);
+                }
+            }
             else if (arg == "-t" || arg == "--transport")
             {
                 if (++i < argc)
@@ -337,7 +383,7 @@ public:
                         int input = std::stoi(argv[i]);
                         if (input < 0 || input > 255)
                         {
-                            throw std::out_of_range("domain argument " + std::string(
+                            throw std::out_of_range("ttl argument " + std::string(
                                               argv[i]) + " out of range [0, 255].");
                         }
                         else
@@ -348,7 +394,7 @@ public:
                     }
                     catch (const std::invalid_argument& e)
                     {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid domain argument " + std::string(
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid ttl argument " + std::string(
                                     argv[i]) + ": " + std::string(e.what()));
                         print_help(EXIT_FAILURE);
                     }
@@ -408,51 +454,7 @@ public:
                     print_help(EXIT_FAILURE);
                 }
             }
-            else if (arg == "-w" || arg == "--wait")
-            {
-                if (config.entity == CLIParser::EntityKind::PUBLISHER)
-                {
-                    if (++i < argc)
-                    {
-                        try
-                        {
-                            int input = std::stoi(argv[i]);
-                            if (input < 0 || static_cast<long>(input) > static_cast<long>(max_duration))
-                            {
-                                throw std::out_of_range("wait argument " + std::string(
-                                                  argv[i]) + " out of range [0, " + std::to_string(
-                                                  max_duration) + "].");
-                            }
-                            else
-                            {
-                                config.pub_config.wait = static_cast<uint16_t>(input);
-                            }
-                        }
-                        catch (const std::invalid_argument& e)
-                        {
-                            EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid wait argument " + std::string(
-                                        argv[i]) + ": " + std::string(e.what()));
-                            print_help(EXIT_FAILURE);
-                        }
-                        catch (const std::out_of_range& e)
-                        {
-                            EPROSIMA_LOG_ERROR(CLI_PARSER, std::string(e.what()));
-                            print_help(EXIT_FAILURE);
-                        }
-                    }
-                    else
-                    {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing wait argument");
-                        print_help(EXIT_FAILURE);
-                    }
-                }
-                else
-                {
-                    EPROSIMA_LOG_ERROR(CLI_PARSER, "wait argument is only valid for publisher entity");
-                    print_help(EXIT_FAILURE);
-                }
-            }
-            else if (arg == "-e" || arg == "--end")
+            else if (arg == "-to" || arg == "--timeout")
             {
                 if (config.entity == CLIParser::EntityKind::PUBLISHER)
                 {
@@ -469,7 +471,7 @@ public:
                             }
                             else
                             {
-                                config.pub_config.end = static_cast<uint16_t>(input);
+                                config.pub_config.timeout = static_cast<uint16_t>(input);
                             }
                         }
                         catch (const std::invalid_argument& e)
