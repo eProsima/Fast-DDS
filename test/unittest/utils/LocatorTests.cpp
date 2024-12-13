@@ -768,6 +768,31 @@ TEST_F(IPLocatorTests, copyIPv6)
 }
 
 /*
+ * Check to copy an address
+ */
+TEST_F(IPLocatorTests, copyAddress)
+{
+    // Copy IPv4
+    Locator_t locator1(LOCATOR_KIND_UDPv4);
+    Locator_t locator2(LOCATOR_KIND_UDPv4);
+    IPLocator::setIPv4(locator1, ipv4_lo_address);
+    ASSERT_FALSE(IPLocator::compareAddress(locator1, locator2));
+    ASSERT_TRUE(IPLocator::copyAddress(locator1, locator2));
+    ASSERT_TRUE(IPLocator::compareAddress(locator1, locator2));
+
+    // Check cannot copy between different kinds
+    locator1.kind = LOCATOR_KIND_UDPv6;
+    ASSERT_FALSE(IPLocator::copyAddress(locator1, locator2));
+
+    // Copy IPv6
+    locator2.kind = LOCATOR_KIND_UDPv6;
+    IPLocator::setIPv6(locator1, ipv6_lo_address);
+    ASSERT_FALSE(IPLocator::compareAddress(locator1, locator2));
+    ASSERT_TRUE(IPLocator::copyAddress(locator1, locator2));
+    ASSERT_TRUE(IPLocator::compareAddress(locator1, locator2));
+}
+
+/*
  * Check to set ip of any kind
  */
 TEST_F(IPLocatorTests, ip)

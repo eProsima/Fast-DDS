@@ -252,6 +252,15 @@ public:
             const Locator_t& loc2,
             bool fullAddress = false);
 
+    /** Copies the whole address from one locator to another.
+     * @param loc1 Locator to copy from.
+     * @param loc2 Locator to copy to.
+     * @return True if the copy was successful.
+     */
+    FASTDDS_EXPORTED_API static bool copyAddress(
+            const Locator_t& loc1,
+            Locator_t& loc2);
+
     //! Checks if a both locators has the same IP address and physical port  (as in RTCP protocol).
     FASTDDS_EXPORTED_API static bool compareAddressAndPhysicalPort(
             const Locator_t& loc1,
