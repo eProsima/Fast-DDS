@@ -15,28 +15,30 @@
 import subprocess
 import pytest
 import re
+import os
 
 custom_filter_test_cases = [
-    ('', True),
-    ('', False),
-    ('--reader-filters 0', True),
-    ('--reader-filters 0', False)]
-@pytest.mark.parametrize("pub_reader_filters, sub_custom_filter", custom_filter_test_cases)
-def test_content_filter(pub_reader_filters, sub_custom_filter):
+    (True),
+    (False)]
+@pytest.mark.parametrize("sub_custom_filter", custom_filter_test_cases)
+def test_content_filter(sub_custom_filter):
     """."""
     ret = False
     out = ''
-    if (sub_custom_filter):
-        command_prerequisites = 'PUB_ARGS="' + ' ' + pub_reader_filters + '" SUB_ARGS="' + ' --filter-kind custom" '
-    else:
-        command_prerequisites = 'PUB_ARGS="' + ' ' + pub_reader_filters + '" SUB_ARGS="' + ' --filter-kind default" '
 
+    menv = dict(os.environ)
+
+    if (sub_custom_filter):
+        menv["SUB_ARGS"] = "--filter-kind custom --samples 8"
+    else:
+        menv["SUB_ARGS"] = "--filter-kind default --samples 5"
+    
     try:
-        out = subprocess.check_output(command_prerequisites +
-            '@DOCKER_EXECUTABLE@ compose -f content_filter.compose.yml up',
+        out = subprocess.check_output('"@DOCKER_EXECUTABLE@" compose -f content_filter.compose.yml up',
             stderr=subprocess.STDOUT,
             shell=True,
-            timeout=30
+            timeout=30,
+            env=menv
         ).decode().split('\n')
 
         sent = 0

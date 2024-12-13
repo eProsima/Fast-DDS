@@ -87,6 +87,8 @@ private:
 
     TypeSupport type_;
 
+    uint16_t received_samples_;
+
     uint16_t samples_;
 
     //! DDS ContentFilteredTopic pointer

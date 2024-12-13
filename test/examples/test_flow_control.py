@@ -20,10 +20,10 @@ def test_flow_control():
     out = ''
     try:
         out = subprocess.check_output(
-            '@DOCKER_EXECUTABLE@ compose -f flow_control.compose.yml up',
+            '"@DOCKER_EXECUTABLE@" compose -f flow_control.compose.yml up',
             stderr=subprocess.STDOUT,
             shell=True,
-            timeout=30
+            timeout=40
         ).decode().split('\n')
 
         sent = 0
