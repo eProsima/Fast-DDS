@@ -16,10 +16,13 @@ jobs:
         cmake_build_type:
           - 'Debug'
           - 'RelWithDebInfo'
+        test_filter:
+          - 'blackbox'
+          - 'unittest'
     uses: eProsima/Fast-DDS/.github/workflows/reusable-windows-ci.yml@master
     with:
-      label: 'nightly-sec-${{ matrix.security }}-windows-ci-master'
+      label: nightly-sec-${{ matrix.security }}-${{ matrix.cmake_build_type }}-${{ matrix.test_filter }}-windows-ci-master
       cmake-config: ${{ matrix.cmake_build_type }}
       cmake-args: "-DSECURITY=${{ matrix.security }}"
-      ctest-args: "-LE xfail"
+      ctest-args: -LE xfail ${{ matrix.test_filter == 'blackbox' && '-R "BlackboxTests|example_tests"' || matrix.test_filter == 'unittest' && '-E "BlackboxTests|example_tests"' }}
       fastdds_branch: 'master'
