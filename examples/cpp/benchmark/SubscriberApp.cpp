@@ -243,7 +243,7 @@ void SubscriberApp::on_data_available(
                             return;
                         }
                     }
-                    if(benchmark_.index() >= samples_)
+                    if (benchmark_.index() >= samples_)
                     {
                         stop();
                         return;
@@ -278,7 +278,7 @@ void SubscriberApp::on_data_available(
                             return;
                         }
                     }
-                    if(benchmark_small_.index() >= samples_)
+                    if (benchmark_small_.index() >= samples_)
                     {
                         stop();
                         return;
@@ -286,7 +286,8 @@ void SubscriberApp::on_data_available(
                     if ((RETCODE_OK == writer_->write(&benchmark_small_)) == true)
                     {
                         std::cout << "Sample with index: '" <<
-                            benchmark_small_.index() << "' (Array  " << static_cast<int>(benchmark_small_.array().size()) <<
+                            benchmark_small_.index() << "' (Array  " <<
+                                            static_cast<int>(benchmark_small_.array().size()) <<
                             " Bytes) SENT" << std::endl;
                     }
                 }
@@ -299,7 +300,8 @@ void SubscriberApp::on_data_available(
                 if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
                 {
                     std::cout << "Sample with index: '" <<
-                        benchmark_medium_.index() << "' (Array  " << static_cast<int>(benchmark_medium_.data().size()) <<
+                        benchmark_medium_.index() << "' (Array  " <<
+                                        static_cast<int>(benchmark_medium_.data().size()) <<
                         " Bytes) RECEIVED" << std::endl;
                     benchmark_medium_.index(benchmark_medium_.index() + 1);
                     while (matched_ == 0)
@@ -314,7 +316,7 @@ void SubscriberApp::on_data_available(
                             return;
                         }
                     }
-                    if(benchmark_medium_.index() >= samples_)
+                    if (benchmark_medium_.index() >= samples_)
                     {
                         stop();
                         return;
@@ -322,7 +324,8 @@ void SubscriberApp::on_data_available(
                     if ((RETCODE_OK == writer_->write(&benchmark_medium_)) == true)
                     {
                         std::cout << "Sample with index: '" <<
-                            benchmark_medium_.index() << "' (Array  " << static_cast<int>(benchmark_medium_.data().size()) <<
+                            benchmark_medium_.index() << "' (Array  " <<
+                                            static_cast<int>(benchmark_medium_.data().size()) <<
                             " Bytes) SENT" << std::endl;
                     }
                 }
@@ -350,7 +353,7 @@ void SubscriberApp::on_data_available(
                             return;
                         }
                     }
-                    if(benchmark_big_.index() >= samples_)
+                    if (benchmark_big_.index() >= samples_)
                     {
                         stop();
                         return;
