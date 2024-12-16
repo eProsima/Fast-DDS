@@ -284,7 +284,7 @@ void PublisherApp::on_data_available(
                     {
                         std::cout << "Sample with index: '" <<
                             benchmark_small_.index() << "' (Array  " <<
-                                            static_cast<int>(benchmark_small_.array().size()) <<
+                            static_cast<int>(benchmark_small_.array().size()) <<
                             " Bytes) SENT" << std::endl;
                     }
                 }
@@ -298,7 +298,7 @@ void PublisherApp::on_data_available(
                 {
                     std::cout << "Sample with index: '" <<
                         benchmark_medium_.index() << "' (Array  " <<
-                                        static_cast<int>(benchmark_medium_.data().size()) <<
+                        static_cast<int>(benchmark_medium_.data().size()) <<
                         " Bytes) RECEIVED" << std::endl;
                     if ((elapsed.count() >= timeout_ && timeout_ != 0) || (count >= samples_ && samples_ != 0))
                     {
@@ -313,7 +313,7 @@ void PublisherApp::on_data_available(
                     {
                         std::cout << "Sample with index: '" <<
                             benchmark_medium_.index() << "' (Array  " <<
-                                            static_cast<int>(benchmark_medium_.data().size()) <<
+                            static_cast<int>(benchmark_medium_.data().size()) <<
                             " Bytes) SENT" << std::endl;
                     }
                 }
@@ -475,7 +475,7 @@ bool PublisherApp::publish()
                 {
                     std::cout << "First Sample with index: '"
                               << benchmark_small_.index() << "' (Array  " <<
-                                        static_cast<int>(benchmark_small_.array().size())
+                        static_cast<int>(benchmark_small_.array().size())
                               << " Bytes) SENT" << std::endl;
                 }
                 break;
@@ -487,7 +487,7 @@ bool PublisherApp::publish()
                 {
                     std::cout << "First Sample with index: '"
                               << benchmark_medium_.index() << "' (Array  " <<
-                                        static_cast<int>(benchmark_medium_.data().size())
+                        static_cast<int>(benchmark_medium_.data().size())
                               << " Bytes) SENT" << std::endl;
                 }
                 break;
@@ -499,7 +499,7 @@ bool PublisherApp::publish()
                 {
                     std::cout << "First Sample with index: '"
                               << benchmark_big_.index() << "' (Array  " <<
-                                        static_cast<int>(benchmark_big_.data().size())
+                        static_cast<int>(benchmark_big_.data().size())
                               << " Bytes) SENT" << std::endl;
                 }
                 break;

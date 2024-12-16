@@ -287,7 +287,7 @@ void SubscriberApp::on_data_available(
                     {
                         std::cout << "Sample with index: '" <<
                             benchmark_small_.index() << "' (Array  " <<
-                                            static_cast<int>(benchmark_small_.array().size()) <<
+                            static_cast<int>(benchmark_small_.array().size()) <<
                             " Bytes) SENT" << std::endl;
                     }
                 }
@@ -301,7 +301,7 @@ void SubscriberApp::on_data_available(
                 {
                     std::cout << "Sample with index: '" <<
                         benchmark_medium_.index() << "' (Array  " <<
-                                        static_cast<int>(benchmark_medium_.data().size()) <<
+                        static_cast<int>(benchmark_medium_.data().size()) <<
                         " Bytes) RECEIVED" << std::endl;
                     benchmark_medium_.index(benchmark_medium_.index() + 1);
                     while (matched_ == 0)
@@ -325,7 +325,7 @@ void SubscriberApp::on_data_available(
                     {
                         std::cout << "Sample with index: '" <<
                             benchmark_medium_.index() << "' (Array  " <<
-                                            static_cast<int>(benchmark_medium_.data().size()) <<
+                            static_cast<int>(benchmark_medium_.data().size()) <<
                             " Bytes) SENT" << std::endl;
                     }
                 }
