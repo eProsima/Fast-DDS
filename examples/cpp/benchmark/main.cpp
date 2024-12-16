@@ -81,8 +81,17 @@ int main(
         }
         else
         {
-            std::cout << app_name << " running for " << timeout << " milliseconds. Please press Ctrl+C to stop the "
-                      << app_name << " at any time." << std::endl;
+            if (config.pub_config.samples != 0)
+            {
+                std::cout << app_name << " running for " << config.pub_config.samples <<
+                    " samples. Please press Ctrl+C "
+                          << "to stop the " << app_name << " at any time." << std::endl;
+            }
+            else
+            {
+                std::cout << app_name << " running for " << timeout << " milliseconds. Please press Ctrl+C to stop the "
+                          << app_name << " at any time." << std::endl;
+            }
         }
 
         stop_app_handler = [&](int signum)

@@ -10,6 +10,7 @@ Forthcoming
 * Machine UUID added to the Data(p) to check Participants in same host, instead of using GUIDs.
 * Windows ci example testing infrastructure and `hello world` example.
 * New property to configure the preferred key agreement algorithm.
+* Refactor benchmark example.
 
 Version v3.1.0
 --------------

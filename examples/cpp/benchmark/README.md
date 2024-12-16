@@ -62,30 +62,30 @@ All the example available flags can be queried running the executable with the `
 
 ### Expected output
 
-Regardless of which application is run first, since the publisher will not start sending data until a subscriber is discovered, the expected output both for publishers and subscribers is a first displayed message acknowledging the match, followed by the sent and received data in each application, and finishing showing in the publisher the amount of data shared in each sample time during the running time.
+Regardless of which application is run first, since the publisher will not start sending data until a subscriber is discovered, the expected output both for publishers and subscribers is a first displayed message acknowledging the match, followed by the sent and received data in each application, and finishing showing in the publisher the amount of data shared in each sample time during the running time with additional throughput data.
 
 ### Benchmark publisher
 
 ```shell
-Publisher running for 1000 milliseconds. Please press Ctrl+C to stop the Publisher at any time.
+Publisher running for 500 samples. Please press Ctrl+C to stop the Publisher at any time.
 Subscriber matched.
 Publisher matched.
-First Sample with index: '0' (8388608 Bytes) SENT
-Sample with index: '1' (8388608 Bytes) RECEIVED
-Sample with index: '0' (8388608 Bytes) SENT
-Sample with index: '1' (8388608 Bytes) RECEIVED
-Sample with index: '0' (8388608 Bytes) SENT
-Sample with index: '1' (8388608 Bytes) RECEIVED
-Sample with index: '2' (8388608 Bytes) SENT
-Sample with index: '3' (8388608 Bytes) RECEIVED
-Sample with index: '4' (8388608 Bytes) SENT
-Sample with index: '5' (8388608 Bytes) RECEIVED
+First Sample with index: '0' (Array  8388608 Bytes) SENT
+Sample with index: '1' (Array  8388608 Bytes) RECEIVED
+Sample with index: '2' (Array  8388608 Bytes) SENT
+Sample with index: '3' (Array  8388608 Bytes) RECEIVED
+Sample with index: '4' (Array  8388608 Bytes) SENT
+Sample with index: '5' (Array  8388608 Bytes) RECEIVED
 ...
-Sample with index: '646' (8388608 Bytes) SENT
-Sample with index: '647' (8388608 Bytes) RECEIVED
-RESULTS after 1014 milliseconds:
-COUNT: 647
-SAMPLES: 37,46,52,94,86,94,84,62,52,40,
+Sample with index: '499' (Array  8388608 Bytes) RECEIVED
+Sample with index: '500' (Array  8388608 Bytes) SENT
+Publisher unmatched.
+Subscriber unmatched.
+RESULTS after 1206 milliseconds:
+COUNT: 500
+SAMPLES: 41,46,44,42,44,42,52,46,48,44,48,4,
+THROUGHPUT BPS(Bytes per Second): 3.48482 Gbps
+
 ...
 ```
 
@@ -95,20 +95,15 @@ SAMPLES: 37,46,52,94,86,94,84,62,52,40,
 Publisher matched.
 Subscriber matched.
 Subscriber running. Please press Ctrl+C to stop the Subscriber at any time.
-Sample with index: '0' (8388608 Bytes) RECEIVED
-Sample with index: '1' (8388608 Bytes) SENT
-Sample with index: '0' (8388608 Bytes) RECEIVED
-Sample with index: '1' (8388608 Bytes) SENT
-Sample with index: '0' (8388608 Bytes) RECEIVED
-Sample with index: '1' (8388608 Bytes) SENT
-Sample with index: '2' (8388608 Bytes) RECEIVED
-Sample with index: '3' (8388608 Bytes) SENT
-Sample with index: '4' (8388608 Bytes) RECEIVED
-Sample with index: '5' (8388608 Bytes) SENT
+Sample with index: '0' (Array  8388608 Bytes) RECEIVED
+Sample with index: '1' (Array  8388608 Bytes) SENT
+Sample with index: '2' (Array  8388608 Bytes) RECEIVED
+Sample with index: '3' (Array  8388608 Bytes) SENT
+Sample with index: '4' (Array  8388608 Bytes) RECEIVED
+Sample with index: '5' (Array  8388608 Bytes) SENT
 ...
-Sample with index: '646' (8388608 Bytes) RECEIVED
-Sample with index: '647' (8388608 Bytes) SENT
-Publisher unmatched.
+Sample with index: '499' (Array  8388608 Bytes) SENT
+Sample with index: '500' (Array  8388608 Bytes) RECEIVED
 ...
 ```
 
@@ -117,9 +112,14 @@ The following is a possible output of the publisher application when stopping th
 
 ```shell
 ...
-Publisher running for 10000 milliseconds. Please press Ctrl+C to stop the Publisher at any time.
+Publisher running for 500 samples. Please press Ctrl+C to stop the Publisher at any time.
 Subscriber matched.
 Publisher matched.
+First Sample with index: '0' (Array  8388608 Bytes) SENT
+Sample with index: '1' (Array  8388608 Bytes) RECEIVED
+Sample with index: '2' (Array  8388608 Bytes) SENT
+Sample with index: '3' (Array  8388608 Bytes) RECEIVED
+Sample with index: '4' (Array  8388608 Bytes) SENT
 Publisher unmatched.
 Subscriber unmatched.
 ```
@@ -221,6 +221,15 @@ Using argument **`-m`** `<num>` or **`--msg-size`** `<num>` configures the size 
   - `MEDIUM`: An integer value + an array of 512 KB.
   - `BIG`: An integer value + an array of 8 MB.
 - **Default**: `NONE`
+
+### Number of Samples
+
+Using argument **`-s`** `<num>` or **`--samples`** `<num>` configures the number of samples to send or receive during the test.
+
+- **Range**: `[0 <= <num> <= 65535]`
+- **Default**: `0` (until timeout)
+
+If a value is given, the timeout parameter is ignored, and the application will run until the specified number of samples is sent or received.
 
 ### Builtin transports
 

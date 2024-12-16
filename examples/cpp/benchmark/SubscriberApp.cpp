@@ -180,13 +180,13 @@ void SubscriberApp::on_publication_matched(
 {
     if (info.current_count_change == 1)
     {
-        matched_ = static_cast<int16_t>(info.current_count);
+        matched_++;
         std::cout << "Publisher matched." << std::endl;
         cv_.notify_one();
     }
     else if (info.current_count_change == -1)
     {
-        matched_ = static_cast<int16_t>(info.current_count);
+        matched_--;
         std::cout << "Publisher unmatched." << std::endl;
         stop();
     }
@@ -203,10 +203,12 @@ void SubscriberApp::on_subscription_matched(
 {
     if (info.current_count_change == 1)
     {
+        matched_++;
         std::cout << "Subscriber matched." << std::endl;
     }
     else if (info.current_count_change == -1)
     {
+        matched_--;
         std::cout << "Subscriber unmatched." << std::endl;
         stop();
     }
@@ -231,19 +233,7 @@ void SubscriberApp::on_data_available(
                     std::cout << "Sample with index: '" <<
                         benchmark_.index() << "' (Array 0 Bytes) RECEIVED" << std::endl;
                     benchmark_.index(benchmark_.index() + 1);
-                    while (matched_ == 0)
-                    {
-                        std::unique_lock<std::mutex> initial_lock(mutex_);
-                        auto check = cv_.wait_for(initial_lock, std::chrono::milliseconds(1), [&]()
-                                        {
-                                            return is_stopped();
-                                        });
-                        if (check)
-                        {
-                            return;
-                        }
-                    }
-                    if (benchmark_.index() >= samples_)
+                    if (samples_ != 0 && benchmark_.index() >= samples_)
                     {
                         stop();
                         return;
@@ -266,19 +256,7 @@ void SubscriberApp::on_data_available(
                         benchmark_small_.index() << "' (Array  " << static_cast<int>(benchmark_small_.array().size()) <<
                         " Bytes) RECEIVED" << std::endl;
                     benchmark_small_.index(benchmark_small_.index() + 1);
-                    while (matched_ == 0)
-                    {
-                        std::unique_lock<std::mutex> initial_lock(mutex_);
-                        auto check = cv_.wait_for(initial_lock, std::chrono::milliseconds(1), [&]()
-                                        {
-                                            return is_stopped();
-                                        });
-                        if (check)
-                        {
-                            return;
-                        }
-                    }
-                    if (benchmark_small_.index() >= samples_)
+                    if (samples_ != 0 && benchmark_small_.index() >= samples_)
                     {
                         stop();
                         return;
@@ -304,19 +282,7 @@ void SubscriberApp::on_data_available(
                         static_cast<int>(benchmark_medium_.data().size()) <<
                         " Bytes) RECEIVED" << std::endl;
                     benchmark_medium_.index(benchmark_medium_.index() + 1);
-                    while (matched_ == 0)
-                    {
-                        std::unique_lock<std::mutex> initial_lock(mutex_);
-                        auto check = cv_.wait_for(initial_lock, std::chrono::milliseconds(1), [&]()
-                                        {
-                                            return is_stopped();
-                                        });
-                        if (check)
-                        {
-                            return;
-                        }
-                    }
-                    if (benchmark_medium_.index() >= samples_)
+                    if (samples_ != 0 && benchmark_medium_.index() >= samples_)
                     {
                         stop();
                         return;
@@ -341,19 +307,7 @@ void SubscriberApp::on_data_available(
                         benchmark_big_.index() << "' (Array  " << static_cast<int>(benchmark_big_.data().size()) <<
                         " Bytes) RECEIVED" << std::endl;
                     benchmark_big_.index(benchmark_big_.index() + 1);
-                    while (matched_ == 0)
-                    {
-                        std::unique_lock<std::mutex> initial_lock(mutex_);
-                        auto check = cv_.wait_for(initial_lock, std::chrono::milliseconds(1), [&]()
-                                        {
-                                            return is_stopped();
-                                        });
-                        if (check)
-                        {
-                            return;
-                        }
-                    }
-                    if (benchmark_big_.index() >= samples_)
+                    if (samples_ != 0 && benchmark_big_.index() >= samples_)
                     {
                         stop();
                         return;

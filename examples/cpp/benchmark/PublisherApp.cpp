@@ -409,7 +409,7 @@ void PublisherApp::run()
         std::cout << vSamples[i] << ",";
     }
     std::cout << std::endl;
-    std::cout << "THROUGHTPUT BPS(Bytes per Second): ";
+    std::cout << "THROUGHPUT BPS(Bytes per Second): ";
     double mean_bps = static_cast<double>(count) / (elapsed.count() / 1000.0);
     switch (msg_size_)
     {
