@@ -44,10 +44,8 @@ def test_benchmark(pub_args, sub_args):
     """."""
     ret = False
     out = ''
-    pub_requirements = '--reliable --transient-local -s 1000'
-    sub_requirements = '--reliable --transient-local -s 1000'
 
-    command_prerequisites = 'PUB_ARGS="' + pub_requirements + ' ' + pub_args + '" SUB_ARGS="' + sub_requirements + ' ' + sub_args + '" '
+    command_prerequisites = 'PUB_ARGS="' + pub_args + '" SUB_ARGS="' + sub_args + '" '
 
     try:
         out = subprocess.check_output(command_prerequisites + '@DOCKER_EXECUTABLE@ compose -f benchmark.compose.yml up',
