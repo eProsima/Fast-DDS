@@ -67,7 +67,6 @@ PublisherApp::PublisherApp(
     , count(0)
     , vSamples(0)
     , startTime(std::chrono::steady_clock::now())
-    , sent(0)
 {
 
     if (samples_ > 0)
