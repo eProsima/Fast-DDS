@@ -22,7 +22,7 @@
 #ifndef FAST_DDS_GENERATED__BENCHMARK_BIG_HPP
 #define FAST_DDS_GENERATED__BENCHMARK_BIG_HPP
 
-#include  <array>
+#include <array>
 #include <cstdint>
 #include <utility>
 
@@ -79,9 +79,9 @@ public:
     eProsima_user_DllExport BenchMarkBig(
             const BenchMarkBig& x)
     {
-        m_data = x.m_data;
+                    m_data = x.m_data;
 
-        m_index = x.m_index;
+                    m_index = x.m_index;
 
     }
 
@@ -104,9 +104,9 @@ public:
             const BenchMarkBig& x)
     {
 
-        m_data = x.m_data;
+                    m_data = x.m_data;
 
-        m_index = x.m_index;
+                    m_index = x.m_index;
 
         return *this;
     }
@@ -132,7 +132,7 @@ public:
             const BenchMarkBig& x) const
     {
         return (m_data == x.m_data &&
-               m_index == x.m_index);
+           m_index == x.m_index);
     }
 
     /*!
@@ -183,6 +183,7 @@ public:
         return m_data;
     }
 
+
     /*!
      * @brief This function sets a value in member index
      * @param _index New value for member index
@@ -210,6 +211,8 @@ public:
     {
         return m_index;
     }
+
+
 
 private:
 

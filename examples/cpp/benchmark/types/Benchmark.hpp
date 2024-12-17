@@ -22,7 +22,7 @@
 #ifndef FAST_DDS_GENERATED__BENCHMARK_HPP
 #define FAST_DDS_GENERATED__BENCHMARK_HPP
 
-#include  <cstdint>
+#include <cstdint>
 #include <utility>
 
 #if defined(_WIN32)
@@ -78,7 +78,7 @@ public:
     eProsima_user_DllExport BenchMark(
             const BenchMark& x)
     {
-        m_index = x.m_index;
+                    m_index = x.m_index;
 
     }
 
@@ -100,7 +100,7 @@ public:
             const BenchMark& x)
     {
 
-        m_index = x.m_index;
+                    m_index = x.m_index;
 
         return *this;
     }
@@ -164,6 +164,8 @@ public:
     {
         return m_index;
     }
+
+
 
 private:
 
