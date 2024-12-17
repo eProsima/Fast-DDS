@@ -55,7 +55,7 @@ class Parser:
                ):
                 print(self.__edit_tool_help(result.stdout))
             elif (
-                (len(argv) == 1 and argv[0] == '-v') or 
+                (len(argv) == 1 and argv[0] == '-v') or
                 (len(argv) == 1 and argv[0] == '--version')
                 ):
                 result = subprocess.run([tool_path, '-v'])
@@ -99,7 +99,6 @@ class Parser:
                     print("Unable to find fast-discovery-server tool. Check installation")
                 elif len(exe_files) == 1:
                     ret = exe_files[0]
-                    print(f'[PYTHON] Found executable: {ret}')
                 else:
                     print('Multiple candidates for fast-discovery-server.exe. Check installation')
                     sys.exit(1)
