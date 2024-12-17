@@ -437,6 +437,13 @@ public:
         return *this;
     }
 
+    PubSubParticipant& initial_peers(
+            const eprosima::fastrtps::rtps::LocatorList_t& initial_peers)
+    {
+        participant_attr_.rtps.builtin.initialPeersList = initial_peers;
+        return *this;
+    }
+
     PubSubParticipant& pub_property_policy(
             const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
     {

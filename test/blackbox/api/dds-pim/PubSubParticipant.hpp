@@ -685,7 +685,7 @@ public:
     }
 
     PubSubParticipant& initial_peers(
-            const eprosima::fastdds::rtps::LocatorList& initial_peers)
+            const eprosima::fastrtps::rtps::LocatorList_t& initial_peers)
     {
         participant_qos_.wire_protocol().builtin.initialPeersList = initial_peers;
         return *this;

@@ -1470,19 +1470,19 @@ TEST_P(TransportTCP, tcp_unique_network_flows_communication)
     properties.properties().emplace_back("fastdds.unique_network_flows", "");
     readers.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
 
-    eprosima::fastdds::rtps::Locator_t initial_peer_locator;
+    Locator_t initial_peer_locator;
     if (use_ipv6)
     {
         initial_peer_locator.kind = LOCATOR_KIND_TCPv6;
-        eprosima::fastdds::rtps::IPLocator::setIPv6(initial_peer_locator, "::1");
+        IPLocator::setIPv6(initial_peer_locator, "::1");
     }
     else
     {
         initial_peer_locator.kind = LOCATOR_KIND_TCPv4;
-        eprosima::fastdds::rtps::IPLocator::setIPv4(initial_peer_locator, "127.0.0.1");
+        IPLocator::setIPv4(initial_peer_locator, "127.0.0.1");
     }
-    eprosima::fastdds::rtps::IPLocator::setPhysicalPort(initial_peer_locator, global_port);
-    eprosima::fastdds::rtps::LocatorList_t initial_peer_list;
+    IPLocator::setPhysicalPort(initial_peer_locator, global_port);
+    LocatorList_t initial_peer_list;
     initial_peer_list.push_back(initial_peer_locator);
 
     readers.sub_topic_name(TEST_TOPIC_NAME)
