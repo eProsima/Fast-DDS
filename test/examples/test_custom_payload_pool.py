@@ -20,7 +20,7 @@ def test_custom_payload_pool():
     out = ''
     try:
         out = subprocess.check_output(
-            '@DOCKER_EXECUTABLE@ compose -f custom_payload_pool.compose.yml up',
+            '"@DOCKER_EXECUTABLE@" compose -f custom_payload_pool.compose.yml up',
             stderr=subprocess.STDOUT,
             shell=True,
             timeout=30

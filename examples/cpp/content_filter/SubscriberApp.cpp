@@ -46,6 +46,8 @@ SubscriberApp::SubscriberApp(
     , topic_(nullptr)
     , reader_(nullptr)
     , type_(new HelloWorldPubSubType())
+    , received_samples_(0)
+    , samples_(config.samples)
     , filter_topic_(nullptr)
     , stop_(false)
 {
@@ -180,6 +182,11 @@ void SubscriberApp::on_subscription_matched(
     else if (info.current_count_change == -1)
     {
         std::cout << "Subscriber unmatched." << std::endl;
+
+        if (received_samples_ > 0 && (received_samples_ >= samples_))
+        {
+            stop();
+        }
     }
     // Non-valid option
     else
@@ -199,7 +206,7 @@ void SubscriberApp::on_data_available(
         // Some samples only update the instance state. Only if it is a valid sample (with data)
         if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
         {
-            samples_++;
+            received_samples_++;
             // Print structure data
             std::cout << "Message: '" << hello_.message() << "' with index: '" << hello_.index()
                       << "' RECEIVED" << std::endl;

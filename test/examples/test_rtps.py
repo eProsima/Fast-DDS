@@ -20,7 +20,7 @@ def test_rtps():
     out = ''
     try:
         out = subprocess.check_output(
-            '@DOCKER_EXECUTABLE@ compose -f rtps.compose.yml up',
+            '"@DOCKER_EXECUTABLE@" compose -f rtps.compose.yml up',
             stderr=subprocess.STDOUT,
             shell=True,
             timeout=20
