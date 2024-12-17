@@ -2,6 +2,7 @@ Forthcoming
 -----------
 
 * New property to configure the preferred key agreement algorithm.
+* Refactor benchmark example.
 
 
 Version v3.0.0

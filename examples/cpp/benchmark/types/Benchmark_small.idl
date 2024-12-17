@@ -1,0 +1,5 @@
+struct BenchMarkSmall
+{
+	char array[16384];
+	unsigned long index;
+};
