@@ -2,11 +2,8 @@ Forthcoming
 -----------
 
 * New property to configure the preferred key agreement algorithm.
-<<<<<<< HEAD
 * Windows ci example testing infrastructure and `hello world` example.
-=======
 * Refactor benchmark example.
->>>>>>> e99d6f3f (Benchmark example updated (#5460))
 
 Version v3.1.0
 --------------
