@@ -14,6 +14,7 @@
 
 set(fastdds_FOUND TRUE)
 
+add_subdirectory(cpp/benchmark)
 add_subdirectory(cpp/configuration)
 add_subdirectory(cpp/content_filter)
 add_subdirectory(cpp/custom_payload_pool)
