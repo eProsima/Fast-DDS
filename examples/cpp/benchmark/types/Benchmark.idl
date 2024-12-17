@@ -1,0 +1,6 @@
+@extensibility(APPENDABLE)
+struct BenchMark
+{
+	unsigned long index;
+};
+
