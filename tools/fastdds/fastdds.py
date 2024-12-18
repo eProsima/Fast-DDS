@@ -84,7 +84,7 @@ class FastDDSParser:
 
         if args.command is not None:
             if not hasattr(self, args.command):
-                print('Invalid command')
+                print(f"Invalid command: '{args.command}'. Use 'fastdds -h' for help.")
             else:
                 getattr(self, args.command)()
         elif args.version:
