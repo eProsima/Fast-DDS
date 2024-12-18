@@ -76,6 +76,7 @@ bool StructTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -212,8 +213,6 @@ void StructTypePubSubType::register_type_object_representation()
     register_StructType_type_identifier(type_identifiers_);
 }
 
-
-
 ContentFilterTestTypePubSubType::ContentFilterTestTypePubSubType()
 {
     set_name("ContentFilterTestType");
@@ -259,6 +258,7 @@ bool ContentFilterTestTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {

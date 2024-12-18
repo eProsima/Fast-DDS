@@ -82,6 +82,7 @@ namespace builtin {
             ser.serialize_encapsulation();
             // Serialize the object.
             ser << *p_type;
+            ser.set_dds_cdr_options({0,0});
         }
         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
         {
@@ -264,6 +265,7 @@ namespace builtin {
             ser.serialize_encapsulation();
             // Serialize the object.
             ser << *p_type;
+            ser.set_dds_cdr_options({0,0});
         }
         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
         {
@@ -401,7 +403,6 @@ namespace builtin {
             "TypeObject type representation support disabled in generated code");
     }
 
-
     TypeLookup_getTypeDependencies_InPubSubType::TypeLookup_getTypeDependencies_InPubSubType()
     {
         set_name("eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In");
@@ -447,6 +448,7 @@ namespace builtin {
             ser.serialize_encapsulation();
             // Serialize the object.
             ser << *p_type;
+            ser.set_dds_cdr_options({0,0});
         }
         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
         {
@@ -629,6 +631,7 @@ namespace builtin {
             ser.serialize_encapsulation();
             // Serialize the object.
             ser << *p_type;
+            ser.set_dds_cdr_options({0,0});
         }
         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
         {
@@ -766,8 +769,6 @@ namespace builtin {
             "TypeObject type representation support disabled in generated code");
     }
 
-
-
     TypeLookup_RequestPubSubType::TypeLookup_RequestPubSubType()
     {
         set_name("eprosima::fastdds::dds::builtin::TypeLookup_Request");
@@ -813,6 +814,7 @@ namespace builtin {
             ser.serialize_encapsulation();
             // Serialize the object.
             ser << *p_type;
+            ser.set_dds_cdr_options({0,0});
         }
         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
         {
@@ -950,7 +952,6 @@ namespace builtin {
             "TypeObject type representation support disabled in generated code");
     }
 
-
     TypeLookup_ReplyPubSubType::TypeLookup_ReplyPubSubType()
     {
         set_name("eprosima::fastdds::dds::builtin::TypeLookup_Reply");
@@ -996,6 +997,7 @@ namespace builtin {
             ser.serialize_encapsulation();
             // Serialize the object.
             ser << *p_type;
+            ser.set_dds_cdr_options({0,0});
         }
         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
         {

@@ -79,6 +79,7 @@ namespace eprosima {
                     ser.serialize_encapsulation();
                     // Serialize the object.
                     ser << *p_type;
+                    ser.set_dds_cdr_options({0,0});
                 }
                 catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                 {
@@ -260,6 +261,7 @@ namespace eprosima {
                     ser.serialize_encapsulation();
                     // Serialize the object.
                     ser << *p_type;
+                    ser.set_dds_cdr_options({0,0});
                 }
                 catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                 {
@@ -441,6 +443,7 @@ namespace eprosima {
                     ser.serialize_encapsulation();
                     // Serialize the object.
                     ser << *p_type;
+                    ser.set_dds_cdr_options({0,0});
                 }
                 catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                 {
@@ -577,7 +580,6 @@ namespace eprosima {
                 register_BaseStatus_s_type_identifier(type_identifiers_);
             }
 
-
             IncompatibleQoSStatus_sPubSubType::IncompatibleQoSStatus_sPubSubType()
             {
                 set_name("eprosima::fastdds::statistics::IncompatibleQoSStatus_s");
@@ -623,6 +625,7 @@ namespace eprosima {
                     ser.serialize_encapsulation();
                     // Serialize the object.
                     ser << *p_type;
+                    ser.set_dds_cdr_options({0,0});
                 }
                 catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                 {
@@ -804,6 +807,7 @@ namespace eprosima {
                     ser.serialize_encapsulation();
                     // Serialize the object.
                     ser << *p_type;
+                    ser.set_dds_cdr_options({0,0});
                 }
                 catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                 {
@@ -985,6 +989,7 @@ namespace eprosima {
                     ser.serialize_encapsulation();
                     // Serialize the object.
                     ser << *p_type;
+                    ser.set_dds_cdr_options({0,0});
                 }
                 catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                 {
@@ -1121,12 +1126,8 @@ namespace eprosima {
                 register_DeadlineMissedStatus_s_type_identifier(type_identifiers_);
             }
 
-
-
-
             namespace StatusKind {
             } // namespace StatusKind
-
 
             MonitorServiceStatusDataPubSubType::MonitorServiceStatusDataPubSubType()
             {
@@ -1173,6 +1174,7 @@ namespace eprosima {
                     ser.serialize_encapsulation();
                     // Serialize the object.
                     ser << *p_type;
+                    ser.set_dds_cdr_options({0,0});
                 }
                 catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                 {

@@ -76,6 +76,7 @@ bool PrimitivesStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -212,15 +213,6 @@ void PrimitivesStructPubSubType::register_type_object_representation()
     register_PrimitivesStruct_type_identifier(type_identifiers_);
 }
 
-
-
-
-
-
-
-
-
-
 AllStructPubSubType::AllStructPubSubType()
 {
     set_name("AllStruct");
@@ -266,6 +258,7 @@ bool AllStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -447,6 +440,7 @@ bool ComprehensiveTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {

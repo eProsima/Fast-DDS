@@ -84,6 +84,7 @@ bool StringSTypeDefnPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -266,6 +267,7 @@ bool StringLTypeDefnPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -448,6 +450,7 @@ bool PlainCollectionHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -630,6 +633,7 @@ bool PlainSequenceSElemDefnPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -812,6 +816,7 @@ bool PlainSequenceLElemDefnPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -994,6 +999,7 @@ bool PlainArraySElemDefnPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1176,6 +1182,7 @@ bool PlainArrayLElemDefnPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1358,6 +1365,7 @@ bool PlainMapSTypeDefnPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1540,6 +1548,7 @@ bool PlainMapLTypeDefnPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1722,6 +1731,7 @@ bool StronglyConnectedComponentIdPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1904,6 +1914,7 @@ bool ExtendedTypeDefnPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2086,6 +2097,7 @@ bool DummyPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2223,11 +2235,6 @@ void DummyPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
-
-
-
-
 ExtendedAnnotationParameterValuePubSubType::ExtendedAnnotationParameterValuePubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue");
@@ -2273,6 +2280,7 @@ bool ExtendedAnnotationParameterValuePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2410,7 +2418,6 @@ void ExtendedAnnotationParameterValuePubSubType::register_type_object_representa
         "TypeObject type representation support disabled in generated code");
 }
 
-
 AppliedAnnotationParameterPubSubType::AppliedAnnotationParameterPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter");
@@ -2456,6 +2463,7 @@ bool AppliedAnnotationParameterPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2593,7 +2601,6 @@ void AppliedAnnotationParameterPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 AppliedAnnotationPubSubType::AppliedAnnotationPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::AppliedAnnotation");
@@ -2639,6 +2646,7 @@ bool AppliedAnnotationPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2776,7 +2784,6 @@ void AppliedAnnotationPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 AppliedVerbatimAnnotationPubSubType::AppliedVerbatimAnnotationPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation");
@@ -2822,6 +2829,7 @@ bool AppliedVerbatimAnnotationPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3004,6 +3012,7 @@ bool AppliedBuiltinMemberAnnotationsPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3186,6 +3195,7 @@ bool CommonStructMemberPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3368,6 +3378,7 @@ bool CompleteMemberDetailPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3550,6 +3561,7 @@ bool MinimalMemberDetailPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3732,6 +3744,7 @@ bool CompleteStructMemberPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3869,7 +3882,6 @@ void CompleteStructMemberPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 MinimalStructMemberPubSubType::MinimalStructMemberPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::MinimalStructMember");
@@ -3915,6 +3927,7 @@ bool MinimalStructMemberPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4052,7 +4065,6 @@ void MinimalStructMemberPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 AppliedBuiltinTypeAnnotationsPubSubType::AppliedBuiltinTypeAnnotationsPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::AppliedBuiltinTypeAnnotations");
@@ -4098,6 +4110,7 @@ bool AppliedBuiltinTypeAnnotationsPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4280,6 +4293,7 @@ bool MinimalTypeDetailPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4462,6 +4476,7 @@ bool CompleteTypeDetailPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4644,6 +4659,7 @@ bool CompleteStructHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4826,6 +4842,7 @@ bool MinimalStructHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5008,6 +5025,7 @@ bool CompleteStructTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5190,6 +5208,7 @@ bool MinimalStructTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5327,7 +5346,6 @@ void MinimalStructTypePubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 CommonUnionMemberPubSubType::CommonUnionMemberPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::CommonUnionMember");
@@ -5373,6 +5391,7 @@ bool CommonUnionMemberPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5555,6 +5574,7 @@ bool CompleteUnionMemberPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5692,7 +5712,6 @@ void CompleteUnionMemberPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 MinimalUnionMemberPubSubType::MinimalUnionMemberPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::MinimalUnionMember");
@@ -5738,6 +5757,7 @@ bool MinimalUnionMemberPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5875,7 +5895,6 @@ void MinimalUnionMemberPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 CommonDiscriminatorMemberPubSubType::CommonDiscriminatorMemberPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember");
@@ -5921,6 +5940,7 @@ bool CommonDiscriminatorMemberPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6103,6 +6123,7 @@ bool CompleteDiscriminatorMemberPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6285,6 +6306,7 @@ bool MinimalDiscriminatorMemberPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6467,6 +6489,7 @@ bool CompleteUnionHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6649,6 +6672,7 @@ bool MinimalUnionHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6831,6 +6855,7 @@ bool CompleteUnionTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7013,6 +7038,7 @@ bool MinimalUnionTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7195,6 +7221,7 @@ bool CommonAnnotationParameterPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7377,6 +7404,7 @@ bool CompleteAnnotationParameterPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7514,7 +7542,6 @@ void CompleteAnnotationParameterPubSubType::register_type_object_representation(
         "TypeObject type representation support disabled in generated code");
 }
 
-
 MinimalAnnotationParameterPubSubType::MinimalAnnotationParameterPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter");
@@ -7560,6 +7587,7 @@ bool MinimalAnnotationParameterPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7697,7 +7725,6 @@ void MinimalAnnotationParameterPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 CompleteAnnotationHeaderPubSubType::CompleteAnnotationHeaderPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::CompleteAnnotationHeader");
@@ -7743,6 +7770,7 @@ bool CompleteAnnotationHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7925,6 +7953,7 @@ bool MinimalAnnotationHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8107,6 +8136,7 @@ bool CompleteAnnotationTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8289,6 +8319,7 @@ bool MinimalAnnotationTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8471,6 +8502,7 @@ bool CommonAliasBodyPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8653,6 +8685,7 @@ bool CompleteAliasBodyPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8835,6 +8868,7 @@ bool MinimalAliasBodyPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9017,6 +9051,7 @@ bool CompleteAliasHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9199,6 +9234,7 @@ bool MinimalAliasHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9381,6 +9417,7 @@ bool CompleteAliasTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9563,6 +9600,7 @@ bool MinimalAliasTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9745,6 +9783,7 @@ bool CompleteElementDetailPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9927,6 +9966,7 @@ bool CommonCollectionElementPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10109,6 +10149,7 @@ bool CompleteCollectionElementPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10291,6 +10332,7 @@ bool MinimalCollectionElementPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10473,6 +10515,7 @@ bool CommonCollectionHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10655,6 +10698,7 @@ bool CompleteCollectionHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10837,6 +10881,7 @@ bool MinimalCollectionHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11019,6 +11064,7 @@ bool CompleteSequenceTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11201,6 +11247,7 @@ bool MinimalSequenceTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11383,6 +11430,7 @@ bool CommonArrayHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11565,6 +11613,7 @@ bool CompleteArrayHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11747,6 +11796,7 @@ bool MinimalArrayHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11929,6 +11979,7 @@ bool CompleteArrayTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12111,6 +12162,7 @@ bool MinimalArrayTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12293,6 +12345,7 @@ bool CompleteMapTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12475,6 +12528,7 @@ bool MinimalMapTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12612,7 +12666,6 @@ void MinimalMapTypePubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 CommonEnumeratedLiteralPubSubType::CommonEnumeratedLiteralPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral");
@@ -12658,6 +12711,7 @@ bool CommonEnumeratedLiteralPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12840,6 +12894,7 @@ bool CompleteEnumeratedLiteralPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12977,7 +13032,6 @@ void CompleteEnumeratedLiteralPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 MinimalEnumeratedLiteralPubSubType::MinimalEnumeratedLiteralPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral");
@@ -13023,6 +13077,7 @@ bool MinimalEnumeratedLiteralPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13160,7 +13215,6 @@ void MinimalEnumeratedLiteralPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 CommonEnumeratedHeaderPubSubType::CommonEnumeratedHeaderPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader");
@@ -13206,6 +13260,7 @@ bool CommonEnumeratedHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13388,6 +13443,7 @@ bool CompleteEnumeratedHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13570,6 +13626,7 @@ bool MinimalEnumeratedHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13752,6 +13809,7 @@ bool CompleteEnumeratedTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13934,6 +13992,7 @@ bool MinimalEnumeratedTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14116,6 +14175,7 @@ bool CommonBitflagPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14298,6 +14358,7 @@ bool CompleteBitflagPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14435,7 +14496,6 @@ void CompleteBitflagPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 MinimalBitflagPubSubType::MinimalBitflagPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::MinimalBitflag");
@@ -14481,6 +14541,7 @@ bool MinimalBitflagPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14618,7 +14679,6 @@ void MinimalBitflagPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 CommonBitmaskHeaderPubSubType::CommonBitmaskHeaderPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::CommonBitmaskHeader");
@@ -14664,6 +14724,7 @@ bool CommonBitmaskHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14801,8 +14862,6 @@ void CommonBitmaskHeaderPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
-
 CompleteBitmaskTypePubSubType::CompleteBitmaskTypePubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::CompleteBitmaskType");
@@ -14848,6 +14907,7 @@ bool CompleteBitmaskTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15030,6 +15090,7 @@ bool MinimalBitmaskTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15212,6 +15273,7 @@ bool CommonBitfieldPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15394,6 +15456,7 @@ bool CompleteBitfieldPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15531,7 +15594,6 @@ void CompleteBitfieldPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 MinimalBitfieldPubSubType::MinimalBitfieldPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::MinimalBitfield");
@@ -15577,6 +15639,7 @@ bool MinimalBitfieldPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15714,7 +15777,6 @@ void MinimalBitfieldPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 CompleteBitsetHeaderPubSubType::CompleteBitsetHeaderPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::CompleteBitsetHeader");
@@ -15760,6 +15822,7 @@ bool CompleteBitsetHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15942,6 +16005,7 @@ bool MinimalBitsetHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16124,6 +16188,7 @@ bool CompleteBitsetTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16306,6 +16371,7 @@ bool MinimalBitsetTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16488,6 +16554,7 @@ bool CompleteExtendedTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16625,7 +16692,6 @@ void CompleteExtendedTypePubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 MinimalExtendedTypePubSubType::MinimalExtendedTypePubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::MinimalExtendedType");
@@ -16671,6 +16737,7 @@ bool MinimalExtendedTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16808,10 +16875,6 @@ void MinimalExtendedTypePubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
-
-
-
 TypeIdentifierTypeObjectPairPubSubType::TypeIdentifierTypeObjectPairPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair");
@@ -16857,6 +16920,7 @@ bool TypeIdentifierTypeObjectPairPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16994,7 +17058,6 @@ void TypeIdentifierTypeObjectPairPubSubType::register_type_object_representation
         "TypeObject type representation support disabled in generated code");
 }
 
-
 TypeIdentifierPairPubSubType::TypeIdentifierPairPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::TypeIdentifierPair");
@@ -17040,6 +17103,7 @@ bool TypeIdentifierPairPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17177,7 +17241,6 @@ void TypeIdentifierPairPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 TypeIdentfierWithSizePubSubType::TypeIdentfierWithSizePubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize");
@@ -17223,6 +17286,7 @@ bool TypeIdentfierWithSizePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17360,7 +17424,6 @@ void TypeIdentfierWithSizePubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 TypeIdentifierWithDependenciesPubSubType::TypeIdentifierWithDependenciesPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies");
@@ -17406,6 +17469,7 @@ bool TypeIdentifierWithDependenciesPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17543,7 +17607,6 @@ void TypeIdentifierWithDependenciesPubSubType::register_type_object_representati
         "TypeObject type representation support disabled in generated code");
 }
 
-
 TypeInformationPubSubType::TypeInformationPubSubType()
 {
     set_name("eprosima::fastdds::dds::xtypes::TypeInformation");
@@ -17589,6 +17652,7 @@ bool TypeInformationPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17725,7 +17789,6 @@ void TypeInformationPubSubType::register_type_object_representation()
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
 }
-
 
 
 } // namespace xtypes

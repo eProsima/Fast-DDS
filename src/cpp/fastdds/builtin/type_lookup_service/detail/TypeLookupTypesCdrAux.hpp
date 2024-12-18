@@ -180,7 +180,6 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out& data);
 
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In& data);
@@ -189,12 +188,9 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::builtin::TypeLookup_Request& data);
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,

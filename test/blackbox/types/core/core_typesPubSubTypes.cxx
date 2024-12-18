@@ -81,6 +81,7 @@ namespace eprosima {
                             ser.serialize_encapsulation();
                             // Serialize the object.
                             ser << *p_type;
+                            ser.set_dds_cdr_options({0,0});
                         }
                         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                         {
@@ -262,6 +263,7 @@ namespace eprosima {
                             ser.serialize_encapsulation();
                             // Serialize the object.
                             ser << *p_type;
+                            ser.set_dds_cdr_options({0,0});
                         }
                         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                         {
@@ -443,6 +445,7 @@ namespace eprosima {
                             ser.serialize_encapsulation();
                             // Serialize the object.
                             ser << *p_type;
+                            ser.set_dds_cdr_options({0,0});
                         }
                         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                         {
@@ -624,6 +627,7 @@ namespace eprosima {
                             ser.serialize_encapsulation();
                             // Serialize the object.
                             ser << *p_type;
+                            ser.set_dds_cdr_options({0,0});
                         }
                         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                         {
@@ -805,6 +809,7 @@ namespace eprosima {
                             ser.serialize_encapsulation();
                             // Serialize the object.
                             ser << *p_type;
+                            ser.set_dds_cdr_options({0,0});
                         }
                         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                         {
@@ -986,6 +991,7 @@ namespace eprosima {
                             ser.serialize_encapsulation();
                             // Serialize the object.
                             ser << *p_type;
+                            ser.set_dds_cdr_options({0,0});
                         }
                         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                         {
@@ -1167,6 +1173,7 @@ namespace eprosima {
                             ser.serialize_encapsulation();
                             // Serialize the object.
                             ser << *p_type;
+                            ser.set_dds_cdr_options({0,0});
                         }
                         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                         {
@@ -1348,6 +1355,7 @@ namespace eprosima {
                             ser.serialize_encapsulation();
                             // Serialize the object.
                             ser << *p_type;
+                            ser.set_dds_cdr_options({0,0});
                         }
                         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                         {
@@ -1484,7 +1492,6 @@ namespace eprosima {
                         register_Time_t_type_identifier(type_identifiers_);
                     }
 
-
                     SequenceNumberSetPubSubType::SequenceNumberSetPubSubType()
                     {
                         set_name("eprosima::fastdds::rtps::core::detail::SequenceNumberSet");
@@ -1530,6 +1537,7 @@ namespace eprosima {
                             ser.serialize_encapsulation();
                             // Serialize the object.
                             ser << *p_type;
+                            ser.set_dds_cdr_options({0,0});
                         }
                         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                         {
@@ -1711,6 +1719,7 @@ namespace eprosima {
                             ser.serialize_encapsulation();
                             // Serialize the object.
                             ser << *p_type;
+                            ser.set_dds_cdr_options({0,0});
                         }
                         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                         {
@@ -1892,6 +1901,7 @@ namespace eprosima {
                             ser.serialize_encapsulation();
                             // Serialize the object.
                             ser << *p_type;
+                            ser.set_dds_cdr_options({0,0});
                         }
                         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                         {
@@ -2028,8 +2038,6 @@ namespace eprosima {
                         register_Duration_t_type_identifier(type_identifiers_);
                     }
 
-
-
                     StatusInfo_tPubSubType::StatusInfo_tPubSubType()
                     {
                         set_name("eprosima::fastdds::rtps::core::detail::StatusInfo_t");
@@ -2075,6 +2083,7 @@ namespace eprosima {
                             ser.serialize_encapsulation();
                             // Serialize the object.
                             ser << *p_type;
+                            ser.set_dds_cdr_options({0,0});
                         }
                         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                         {
@@ -2256,6 +2265,7 @@ namespace eprosima {
                             ser.serialize_encapsulation();
                             // Serialize the object.
                             ser << *p_type;
+                            ser.set_dds_cdr_options({0,0});
                         }
                         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                         {
@@ -2437,6 +2447,7 @@ namespace eprosima {
                             ser.serialize_encapsulation();
                             // Serialize the object.
                             ser << *p_type;
+                            ser.set_dds_cdr_options({0,0});
                         }
                         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                         {
@@ -2620,6 +2631,7 @@ namespace eprosima {
                         ser.serialize_encapsulation();
                         // Serialize the object.
                         ser << *p_type;
+                        ser.set_dds_cdr_options({0,0});
                     }
                     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                     {
@@ -2801,6 +2813,7 @@ namespace eprosima {
                         ser.serialize_encapsulation();
                         // Serialize the object.
                         ser << *p_type;
+                        ser.set_dds_cdr_options({0,0});
                     }
                     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                     {
@@ -2985,6 +2998,7 @@ namespace eprosima {
                         ser.serialize_encapsulation();
                         // Serialize the object.
                         ser << *p_type;
+                        ser.set_dds_cdr_options({0,0});
                     }
                     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                     {
@@ -3166,6 +3180,7 @@ namespace eprosima {
                         ser.serialize_encapsulation();
                         // Serialize the object.
                         ser << *p_type;
+                        ser.set_dds_cdr_options({0,0});
                     }
                     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                     {
@@ -3347,6 +3362,7 @@ namespace eprosima {
                         ser.serialize_encapsulation();
                         // Serialize the object.
                         ser << *p_type;
+                        ser.set_dds_cdr_options({0,0});
                     }
                     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                     {
@@ -3528,6 +3544,7 @@ namespace eprosima {
                         ser.serialize_encapsulation();
                         // Serialize the object.
                         ser << *p_type;
+                        ser.set_dds_cdr_options({0,0});
                     }
                     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                     {
@@ -3709,6 +3726,7 @@ namespace eprosima {
                         ser.serialize_encapsulation();
                         // Serialize the object.
                         ser << *p_type;
+                        ser.set_dds_cdr_options({0,0});
                     }
                     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                     {
@@ -3845,7 +3863,6 @@ namespace eprosima {
                     register_InfoTimestampSubmessage_type_identifier(type_identifiers_);
                 }
 
-
                 RTPSMessagePubSubType::RTPSMessagePubSubType()
                 {
                     set_name("eprosima::fastdds::rtps::core::RTPSMessage");
@@ -3891,6 +3908,7 @@ namespace eprosima {
                         ser.serialize_encapsulation();
                         // Serialize the object.
                         ser << *p_type;
+                        ser.set_dds_cdr_options({0,0});
                     }
                     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                     {

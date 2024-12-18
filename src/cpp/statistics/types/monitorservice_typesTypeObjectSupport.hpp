@@ -208,15 +208,6 @@ eProsima_user_DllExport void register_StatusKind_type_identifier(
 
 
 
-
-
-
-
-
-
-
-
-
 } // namespace StatusKind
 
 /**
