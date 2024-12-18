@@ -214,7 +214,8 @@ const option::Descriptor usage[] = {
       "\n\nDaemon options:\n  auto\t Handles the daemon start-up automatically." },
 
     { UNKNOWN,   0, "",   "",             Arg::None,
-      "\n  start\t Starts the Discovery Server daemon if it is not active yet." },
+      "\n  start\t Starts the Discovery Server daemon with the remote connections\n"
+      "\t specified."},
 
     { UNKNOWN,   0, "",   "",             Arg::None,
       "\n  stop\t Stops the Discovery Server daemon if it is active." },
@@ -230,7 +231,7 @@ const option::Descriptor usage[] = {
       "\t connections."},
 
     { UNKNOWN,   0, "",   "",             Arg::None,
-      "\n  list\t List active discovery servers." },
+      "\n  list\t List local active discovery servers created with the CLI Tool." },
 
     { UNKNOWN,   0, "",   "",             Arg::None,
       "\n  info         \t Inspect the Discovery Server in the specified domain.\n\n"
@@ -238,7 +239,8 @@ const option::Descriptor usage[] = {
 
     { DOMAIN_OPT,  0, "d", "domain",    Arg::check_server_id,
       "  -d \t--domain       Selects the domain of the server to target for \n"
-      "\t               this action.\n"},
+      "\t               this action. It defaults to 0 if arg is missing\n"
+      "\t               and no value is found in ROS_DOMAIN_ID env. var.\n"},
 
     { 0, 0, 0, 0, 0, 0 }
 };
@@ -288,7 +290,31 @@ const std::string EXAMPLES =
         "\t    Two TCP ports need to be specified because TCP Transports cannot\n"
         "\t    share ports.\n\n"
         "\t    $ " FAST_SERVER_BINARY " -t 127.0.0.1 -q 42100 -t 192.163.6.34 \n"
-        "\t    -q 42101";
+        "\t    -q 42101\n\n"
+
+        "Daemon Examples:\n"
+
+        "\t1.  Start a DS in the default domain 0:\n\n"
+        "\t    $ " FAST_SERVER_BINARY " auto\n\n"
+
+        "\t2.  Start a DS in the domain 42:\n\n"
+        "\t    $ " FAST_SERVER_BINARY " auto -d 42\n"
+        "\t    $ ROS_DOMAIN_ID=42 " FAST_SERVER_BINARY " auto\n\n"
+
+        "\t3.  Start a DS in domain 4 pointing to local DS in domain 2:\n"
+        "\t    $ " FAST_SERVER_BINARY " start -d 4 127.0.0.1:2\n\n"
+
+        "\t4.  List all servers running locally:\n\n"
+        "\t    $ " FAST_SERVER_BINARY " list\n\n"
+
+        "\t5.  Add a new remote server to DS running in domain 4 :\n\n"
+        "\t    $ " FAST_SERVER_BINARY " add -d 4 127.0.0.1:2\n\n"
+
+        "\t6.  Starts a DS in domain 3 pointing to local DS in domain 6:\n\n"
+        "\t    $ " FAST_SERVER_BINARY " start -d 3 127.0.0.1:6\n\n"
+
+
+;
 
 //TODO (Carlos): Add daemon examples
 

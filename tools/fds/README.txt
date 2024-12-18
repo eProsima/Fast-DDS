@@ -1,49 +1,63 @@
-eProsima Server-Client discovery auxiliary generator tool version 1.0.0
+eProsima Discovery Server auxiliary generator tool. Version 1.0.1
+It can be used for both deploying Servers and inspecting active ones.
 
-Usage: fast-discovery-server -i {0-255} [optional parameters]
+Usage: fastdds discovery [optional parameters]
+
 General options:
-  -h  --help       Produce help message.
+  -h  --help        Produce help message.
 
-  -i  --server-id  Mandatory unique server identifier. Specifies zero based
-                   server position in ROS_DISCOVERY_SERVER environment variable.
+  -v  --version     Show Fast DDS version information.
 
-  -l  --ip-address IPv4 address chosen to listen the clients. Defaults
-                   to any (0.0.0.0). Instead of an address, a name can
-                   be specified.
+  -l  --udp-address IPv4/IPv6 address chosen to listen the clients.
+                    Defaults to any (0.0.0.0/::0). Instead of an
+                    address, a name can be specified.
 
-  -p  --port       UDP port chosen to listen the clients. Defaults to 11811
+  -p  --udp-port    UDP port chosen to listen the clients. Defaults to
+                    11811.
 
-  -b  --backup     Creates a server with a backup file associated.
+  -t  --tcp-address IPv4/IPv6 address chosen to listen the clients
+                    using TCP transport. Defaults to any
+                    (0.0.0.0/::0). Instead of an address, a name
+                    can be specified.
 
-Examples:
-      1. Launch a default server with id 0 (first on ROS_DISCOVERY_SERVER)
-         listening on all available interfaces on UDP port 11811. Only one
-         server can use default values per machine.
+  -q  --tcp-port    TCP port chosen to listen the clients. Defaults to
+                    42100.
 
-      $ fast-discovery-server -i 0
+  -b  --backup      Creates a server with a backup file associated.
 
-      2. Launch a default server with id 1 (second on ROS_DISCOVERY_SERVER)
-         listening on localhost with UDP port 14520. Only localhost clients
-         can reach the server using as ROS_DISCOVERY_SERVER=;127.0.0.1:14520
+  -x  --xml-file    Gets config from XML file. If there is any
+                    argument in common with the config of the XML, the
+                    XML argument will be overriden. A XML file with
+                    several profiles will take the profile with
+                    "is_default_profile="true"" unless another
+                    profile using uri with "@" character is defined.
 
-      $ fast-discovery-server -i 1 -l 127.0.0.1 -p 14520
+  -i  --server-id   Unique server identifier. Its functionality its
+                    deprecated. It can be used to select a fixed GUID.
 
-      3. Launch a default server with id 2 (third on ROS_DISCOVERY_SERVER)
-         listening on Wi-Fi (192.168.36.34) and Ethernet (172.20.96.1) local
-         interfaces with UDP ports 8783 and 51083 respectively
-         (addresses and ports are made up for the example).
+  -e  --examples    List usage examples of eProsima Discovery Server
+                    tool.
 
-      $ fast-discovery-server -i 2 -l 192.168.36.34 -p 8783 -l 172.20.96.1 -p 51083
+Daemon options:
+  auto          Handles the daemon start-up automatically.
 
-      4. Launch a default server with id 3 (fourth on ROS_DISCOVERY_SERVER)
-         listening on 172.30.144.1 with UDP port 12345 and provided with a
-         backup file. If the server crashes it will automatically restore its
-         previous state when reenacted.
+  start         Starts the Discovery Server daemon with the remote connections
+                specified. Example: "start -d 2 127.0.0.1:3"
 
-      $ fast-discovery-server -i 3 -l 172.30.144.1 -p 12345 -b
+  stop          Stops the Discovery Server daemon if it is active.
 
-      5. Launch a default server with id 0 (first on ROS_DISCOVERY_SERVER)
-         listening on localhost with UDP port 14520. Only localhost clients
-         can reach the server defining as `ROS_DISCOVERY_SERVER=localhost:14520`.
+  add           Adds new remotes Discovery Servers to the local server. This
+                will connect both servers and their sub-networks without
+                modifying existing remote servers.
 
-      $ fastdds discovery -i 0 -l localhost -p 14520
+  set           Rewrite the remotes Discovery Servers connected to the local
+                server. This will replace existing remote servers with the new
+                connections.
+
+  list          List local active discovery servers created with the CLI Tool.
+
+  Daemon parameters:
+
+  -d  --domain      Selects the domain of the server to target for this action.
+                    It is equivalent to specify the domain with the ROS_DOMAIN_ID
+                    environment variable.
