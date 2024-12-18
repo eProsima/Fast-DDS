@@ -82,6 +82,8 @@ private:
 
     uint16_t samples_;
 
+    uint16_t expected_matches_;
+
     std::mutex mutex_;
 
     std::condition_variable cv_;

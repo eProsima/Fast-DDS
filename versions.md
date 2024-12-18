@@ -2,7 +2,7 @@ Forthcoming
 -----------
 
 * New property to configure the preferred key agreement algorithm.
-
+* Windows ci example testing infrastructure and `hello world` example.
 
 Version v3.0.0
 --------------

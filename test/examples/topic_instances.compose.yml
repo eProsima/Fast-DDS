@@ -11,32 +11,31 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-version: "3"
 
 services:
   late-joiner-subscriber:
     image: @DOCKER_IMAGE_NAME@
     volumes:
-      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
-      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
+      - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
+      - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
       @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
     environment:
-      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
-      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
-      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/topic_instances
+      @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
+      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/topic_instances/@EXAMPLE_SUFFIX_DIR_COMPOSE@
       SUBSCRIBER_ADDITIONAL_ARGUMENTS: ${SUB_ARGS}
-    command: @SHELL_EXECUTABLE@ -c "sleep 5 && $${EXAMPLE_DIR}/topic_instances@FILE_EXTENSION@ subscriber --samples 10 $${SUBSCRIBER_ADDITIONAL_ARGUMENTS}"
+    command: @SHELL_EXECUTABLE@ -c "sleep 5 && @COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/topic_instances@FILE_EXTENSION@ subscriber --samples 10 $${SUBSCRIBER_ADDITIONAL_ARGUMENTS}"
 
   publisher-subscriber:
     image: @DOCKER_IMAGE_NAME@
     volumes:
-      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
-      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
+      - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
+      - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
       @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
     environment:
-      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
-      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
-      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/topic_instances
+      @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
+      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/topic_instances/@EXAMPLE_SUFFIX_DIR_COMPOSE@
       PUBLISHER_ADDITIONAL_ARGUMENTS: ${PUB_ARGS}
       SUBSCRIBER_ADDITIONAL_ARGUMENTS: ${SUB_ARGS}
-    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/topic_instances@FILE_EXTENSION@ subscriber --samples 10 $${SUBSCRIBER_ADDITIONAL_ARGUMENTS} & $${EXAMPLE_DIR}/topic_instances@FILE_EXTENSION@ publisher --samples 10 $${PUBLISHER_ADDITIONAL_ARGUMENTS}"
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/topic_instances@FILE_EXTENSION@ subscriber --samples 10 $${SUBSCRIBER_ADDITIONAL_ARGUMENTS} @COMMAND_CONCATENATE_COMPOSE@ @COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/topic_instances@FILE_EXTENSION@ publisher --samples 10 $${PUBLISHER_ADDITIONAL_ARGUMENTS}@COMMAND_BACKGROUND_JOB_COMPOSE@"
