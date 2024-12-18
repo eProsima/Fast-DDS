@@ -189,30 +189,38 @@ uint32_t BaseWriter::calculate_max_payload_size(
     constexpr uint32_t heartbeat_message_length = 32;
 
     uint32_t max_data_size = mp_RTPSParticipant->calculateMaxDataSize(datagram_length);
-
-    max_data_size -= info_dst_message_length +
+    uint32_t overhead = info_dst_message_length +
             info_ts_message_length +
             data_frag_submessage_header_length +
             heartbeat_message_length;
 
-    //TODO(Ricardo) inlineqos in future.
-
 #if HAVE_SECURITY
     if (getAttributes().security_attributes().is_submessage_protected)
     {
-        max_data_size -= mp_RTPSParticipant->security_manager().calculate_extra_size_for_rtps_submessage(m_guid);
+        overhead += mp_RTPSParticipant->security_manager().calculate_extra_size_for_rtps_submessage(m_guid);
     }
 
     if (getAttributes().security_attributes().is_payload_protected)
     {
-        max_data_size -= mp_RTPSParticipant->security_manager().calculate_extra_size_for_encoded_payload(m_guid);
+        overhead += mp_RTPSParticipant->security_manager().calculate_extra_size_for_encoded_payload(m_guid);
     }
 #endif // if HAVE_SECURITY
 
 #ifdef FASTDDS_STATISTICS
-    max_data_size -= eprosima::fastdds::statistics::rtps::statistics_submessage_length;
+    overhead += eprosima::fastdds::statistics::rtps::statistics_submessage_length;
 #endif // FASTDDS_STATISTICS
 
+    constexpr uint32_t min_fragment_size = 4;
+    if ((overhead + min_fragment_size) > max_data_size)
+    {
+        auto min_datagram_length = overhead + min_fragment_size + 1 + (datagram_length - max_data_size);
+        EPROSIMA_LOG_ERROR(RTPS_WRITER, "Datagram length '" << datagram_length << "' is too small." <<
+                "At least " << min_datagram_length << " bytes are needed to send a message. Fixing fragments to " <<
+                min_fragment_size << " bytes.");
+        return min_fragment_size;
+    }
+
+    max_data_size -= overhead;
     return max_data_size;
 }
 
