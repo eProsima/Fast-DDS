@@ -77,7 +77,7 @@ jobs:
       - name: Install Python dependencies
         uses: eProsima/eProsima-CI/multiplatform/install_python_packages@v0
         with:
-          packages: vcstool xmlschema
+          packages: vcstool xmlschema psutil
           upgrade: false
 
       - name: Setup CCache

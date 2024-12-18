@@ -88,7 +88,7 @@ jobs:
       - name: Install Python dependencies
         uses: eProsima/eProsima-CI/windows/install_python_packages@v0
         with:
-          packages: vcstool xmlschema
+          packages: vcstool xmlschema psutil
 
       - name: Update known hosts file for DNS resolver testing
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}

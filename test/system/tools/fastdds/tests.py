@@ -26,16 +26,28 @@ test_name: Test to run.
 Available tests:
 
     test_fastdds_installed
+    test_fastdds_version
     test_fastdds_discovery
+    test_fastdds_discovery_run
     test_fastdds_shm
+    test_fastdds_xml_validate
+    test_ros_discovery
 
 """
 
 import argparse
 import os
 import subprocess
+import signal
 import sys
 from pathlib import Path
+try: # Try catch for new python dependency
+    import psutil
+except ImportError:
+    print(
+        'psutil module not found. '
+        'Try to install running "pip install psutil"')
+    sys.exit(1)
 
 
 def setup_script_name():
@@ -121,6 +133,36 @@ def test_fastdds_discovery(install_path, setup_script_path):
         sys.exit(ret)
 
 
+def test_fastdds_discovery_run(install_path, setup_script_path):
+    """Test that discovery command runs."""
+    args = ' discovery -l 127.0.0.1'
+    try:
+        test_timeout = 10
+        process = subprocess.Popen(
+            cmd(install_path=install_path,
+                setup_script_path=setup_script_path,
+                args=args),
+            shell=True)
+        ret = process.wait(timeout=test_timeout)
+        # Manually set the error return code because we need the process to timeout
+        ret = 3
+    except subprocess.TimeoutExpired:
+        print(f'Timeout {test_timeout} expired. Test successful')
+        try:
+            # Need to kill all child processes to properly end the test 
+            parent = psutil.Process(process.pid)
+            for child in parent.children(recursive=True):
+                child.terminate()
+            parent.terminate()
+            ret = 0
+        except Exception as e:
+            print(f"Error while ending child processes: {e}")
+
+    if 0 != ret:
+        print('test_fastdds_discovery_run FAILED')
+        sys.exit(ret)
+
+
 def test_ros_discovery(install_path, setup_script_path):
     """Test that discovery command runs."""
     args = ' -h'
@@ -199,6 +241,8 @@ if __name__ == '__main__':
         'test_fastdds_installed':
         lambda: test_fastdds_installed(fastdds_tool_path),
         'test_fastdds_discovery': lambda: test_fastdds_discovery(
+            fastdds_tool_path, setup_script_path),
+        'test_fastdds_discovery_run': lambda: test_fastdds_discovery_run(
             fastdds_tool_path, setup_script_path),
         'test_ros_discovery':
         lambda: test_ros_discovery(ros_disc_tool_path, setup_script_path),
