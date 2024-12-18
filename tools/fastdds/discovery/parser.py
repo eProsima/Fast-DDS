@@ -54,6 +54,16 @@ class Parser:
                     (len(argv) == 1 and argv[0] == '--help')
                ):
                 print(self.__edit_tool_help(result.stdout))
+<<<<<<< HEAD
+=======
+            elif (
+                (len(argv) == 1 and argv[0] == '-v') or
+                (len(argv) == 1 and argv[0] == '--version')
+                ):
+                result = subprocess.run([tool_path, '-v'])
+                if result.returncode != 0:
+                    sys.exit(result.returncode)
+>>>>>>> 2cdc2d96 (Fix Discovery CLI Tool in Windows (#5493))
             else:
                 # Call the tool
                 result = subprocess.run([tool_path] + argv)
@@ -87,9 +97,13 @@ class Parser:
         elif os.name == 'nt':
             ret = tool_path / 'fast-discovery-server.exe'
             if not os.path.exists(ret):
-                ret = tool_path / 'fast-discovery-server.bat'
-                if not os.path.exists(ret):
-                    print('fast-discovery-server tool not installed')
+                exe_files = [f for f in tool_path.glob('*.exe') if re.match(r'fast-discovery-server.*\.exe$', f.name)]
+                if len(exe_files) == 0:
+                    print("Unable to find fast-discovery-server tool. Check installation")
+                elif len(exe_files) == 1:
+                    ret = exe_files[0]
+                else:
+                    print('Multiple candidates for fast-discovery-server.exe. Check installation')
                     sys.exit(1)
         else:
             print(f'{os.name} not supported')
