@@ -656,12 +656,14 @@ void CliDiscoveryManager::configureTransports()
         if ( LOCATOR_KIND_TCPv4 == loc.kind )
         {
             auto tcp_descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+            tcp_descriptor->non_blocking_send = true;
             tcp_descriptor->add_listener_port(static_cast<uint16_t>(loc.port));
             serverQos.transport().user_transports.push_back(tcp_descriptor);
         }
         if ( LOCATOR_KIND_TCPv6 == loc.kind )
         {
             auto tcp_descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
+            tcp_descriptor->non_blocking_send = true;
             tcp_descriptor->add_listener_port(static_cast<uint16_t>(loc.port));
             serverQos.transport().user_transports.push_back(tcp_descriptor);
         }
@@ -681,7 +683,15 @@ void CliDiscoveryManager::getCliPortsAndIps(
     }
     while (udpIp)
     {
-        udp_ips_.push_back(std::string(udpIp->arg));
+        if (udpIp->arg == nullptr)
+        {
+            // Listen on 'any' interface by default
+            udp_ips_.push_back("0.0.0.0");
+        }
+        else
+        {
+            udp_ips_.push_back(std::string(udpIp->arg));
+        }
         udpIp = udpIp->next();
     }
     while (tcpPort)
@@ -691,7 +701,15 @@ void CliDiscoveryManager::getCliPortsAndIps(
     }
     while (tcpIp)
     {
-        tcp_ips_.push_back(std::string(tcpIp->arg));
+        if (tcpIp->arg == nullptr)
+        {
+            // Listen on 'any' interface by default
+            tcp_ips_.push_back("0.0.0.0");
+        }
+        else
+        {
+            tcp_ips_.push_back(std::string(tcpIp->arg));
+        }
         tcpIp = tcpIp->next();
     }
 }
@@ -1122,6 +1140,12 @@ int CliDiscoveryManager::fastdds_discovery_add(
     std::stringstream file_name;
     file_name << intraprocess_dir_ << "/" << port << "_servers.txt";
     std::string servers = getRemoteServers(parse, numServs);
+    if (servers.empty())
+    {
+        EPROSIMA_LOG_ERROR(CLI_ADD, "No servers specified to add. Use ROS_STATIC_PEERS or format: add -d <domain> <ip:domain;ip:domain...>");
+        return 1;
+    }
+    std::cout << "Adding remote servers: " << servers << " to Server for Domain ID [" << id << "]." << std::endl;
     write_servers_to_file(file_name.str(), servers);
     kill(server_pid, SIGUSR1);
 
