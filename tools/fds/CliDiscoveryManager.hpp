@@ -73,9 +73,9 @@ struct MetaInfo_DS
             const MetaInfo_DS& meta)
     {
         os << "- Server:\n"
-           << "   Domain ID: " << meta.domain_id
-           << "\n   Port: " << meta.port
-           << "\n   Address: " << meta.address << std::endl;
+           << "    Domain ID: " << meta.domain_id
+           << "\n    Port: " << meta.port
+           << "\n    Address: " << meta.address << std::endl;
         return os;
     }
 
