@@ -650,7 +650,7 @@ jobs:
       - name: Install Python dependencies
         uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
         with:
-          packages: vcstool xmlschema xmltodict==0.13.0 jsondiff==2.0.0 pandas==1.5.2
+          packages: vcstool xmlschema xmltodict==0.13.0 jsondiff==2.0.0 pandas==1.5.2 psutil
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
