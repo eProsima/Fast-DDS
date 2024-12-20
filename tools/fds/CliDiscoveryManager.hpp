@@ -129,21 +129,12 @@ public:
             const uint32_t& domainId);
 
     /**
-     * @brief Get the domain id from the environment variable or the CLI argument. If none of the two is
-     * provided, the default domain id is 0.
+     * @brief Get the domain id the CLI argument. If not provided, the default domain id is 0.
      * @param domain_id The domain id argument
      * @return The domain id
      */
     DomainId_t get_domain_id(
             const eprosima::option::Option* domain_id);
-
-    /**
-     * @brief Set the remote servers list from the environment variable.
-     * Previously set servers are not cleared.
-     * @param target_list The list to be set
-     */
-    void addRemoteServersFromEnv(
-            rtps::LocatorList_t& target_list);
 
     /**
      * @brief Load the remote servers information from the CLI or the environment variable.
@@ -192,17 +183,14 @@ public:
             const uint16_t& port);
 
     /**
-     * @brief Starts a new Discovery Server in the specified @c port running
-     * in the background.
+     * @brief Starts a new Discovery Server in the specified @c port .
      * @param port The port of the Discovery Server
      * @param domain The domain id of the Discovery Server
      * @param use_env_var True if the environment variable should be used, false otherwise
-     * @return The PID of the Discovery Server in the background
      */
-    pid_t startServerInBackground(
+    void startServerAutoMode(
             const uint16_t& port,
-            const DomainId_t& domain,
-            bool use_env_var);
+            const DomainId_t& domain);
 #endif // ifndef _WIN32
 
     /**
@@ -278,20 +266,11 @@ public:
     /**
      * @brief Launch the AUTO mode of the CLI. It checks if a new Discovery Server exists in the
      * specified domain. It it does not exist, it creates a new one. If it exists, it does nothing.
+     * Remote servers are added with the ROS_STATIC_PEERS environment variable or directly from the CLI.
      * @param options The options received from the CLI
      * @param parse The parser object to be used
      */
-    int fastdds_discovery_auto(
-            const std::vector<option::Option>& options,
-            option::Parser& parse);
-
-    /**
-     * @brief Starts a new Discovery Server in the specified domain if there is not an active server
-     * already running. It does nothing if there is an active server.
-     * @param options The options received from the CLI
-     * @param parse The parser object to be used
-     */
-    int fastdds_discovery_start(
+    int fastdds_discovery_auto_start(
             const std::vector<option::Option>& options,
             option::Parser& parse);
 
