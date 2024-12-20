@@ -467,7 +467,7 @@ ResponseCode RTCPMessageManager::processBindConnectionRequest(
 
     if (RETCODE_OK == code)
     {
-        mTransport->bind_socket(channel);
+        code = mTransport->bind_socket(channel);
     }
 
     sendData(channel, BIND_CONNECTION_RESPONSE, transaction_id, &payload, code);
