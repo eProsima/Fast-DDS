@@ -40,7 +40,6 @@
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
 #include <fastdds/utils/IPLocator.hpp>
 #include <rtps/attributes/ServerAttributes.hpp>
-#include <utils/SystemInfo.hpp>
 
 
 volatile sig_atomic_t g_signal_status = 0;
@@ -200,7 +199,7 @@ DomainId_t CliDiscoveryManager::get_domain_id(
 {
     DomainId_t id = 0;
 
-    // Domain provided by CLI has priority over environment variable
+    // Python parser always adds the domain_id option, so it is always present
     if (domain_id != nullptr)
     {
         std::stringstream domain_stream;
@@ -208,47 +207,8 @@ DomainId_t CliDiscoveryManager::get_domain_id(
         domain_stream << domain_id->arg;
         domain_stream >> id;
     }
-    else
-    {
-        // Retrieve domain from environment variable
-        std::string env_value;
-        if (eprosima::SystemInfo::get_env(domain_env_var, env_value) == RETCODE_OK)
-        {
-            std::stringstream domain_stream;
-
-            domain_stream << env_value;
-
-            if (domain_stream >> id
-                    && domain_stream.eof()
-                    && id <  256 )
-            {
-                domain_stream >> id;
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(CLI, "Found Invalid Domain ID in environment variable: " << env_value);
-            }
-        }
-    }
 
     return id;
-}
-
-void CliDiscoveryManager::addRemoteServersFromEnv(
-        rtps::LocatorList_t& target_list)
-{
-    // Retrieve servers from ROS_STATIC_PEERS
-    std::string env_value;
-    rtps::LocatorList_t servers_list;
-    if (eprosima::SystemInfo::get_env(remote_servers_env_var, env_value) == RETCODE_OK)
-    {
-        load_environment_server_info(env_value, servers_list);
-    }
-    for (rtps::Locator_t& server : servers_list)
-    {
-        server.kind = LOCATOR_KIND_TCPv4;
-        target_list.push_back(server);
-    }
 }
 
 std::string CliDiscoveryManager::getRemoteServers(
@@ -259,15 +219,6 @@ std::string CliDiscoveryManager::getRemoteServers(
     if (numServs)
     {
         servers = parse.nonOption(0);
-    }
-    else
-    {
-        rtps::LocatorList_t serverList;
-        addRemoteServersFromEnv(serverList);
-        for (rtps::Locator_t& locator : serverList)
-        {
-            servers += IPLocator::to_string(locator);
-        }
     }
     return servers;
 }
@@ -377,106 +328,79 @@ pid_t CliDiscoveryManager::getPidOfServer(
     return ret_value;
 }
 
-pid_t CliDiscoveryManager::startServerInBackground(
+void CliDiscoveryManager::startServerAutoMode(
         const uint16_t& port,
-        const DomainId_t& domain,
-        bool use_env_var)
+        const DomainId_t& domain)
 {
     setServerQos(port);
-    if (use_env_var)
+
+    // Create the server in the child process
+    pServer = DomainParticipantFactory::get_instance()->create_participant(0, serverQos);
+
+    if (nullptr == pServer)
     {
-        addRemoteServersFromEnv(serverQos.wire_protocol().builtin.discovery_config.m_DiscoveryServers);
+        EPROSIMA_LOG_ERROR(CLI, "Server creation for Domain ID [" << domain << "] failed with the given settings.");
+        return;
     }
 
-    pid_t pid = fork();
-    if (pid == -1)
+    std::cout << "Server for Domain ID [" << domain << "] started on port " << port << std::endl;
+
+    std::unique_lock<std::mutex> lock(g_signal_mutex);
+    // Handle signal SIGINT for every thread
+    signal(SIGUSR1, sigint_handler);
+    signal(SIGUSR2, sigint_handler);
+    signal(SIGINT, sigint_handler);
+    signal(SIGTERM, sigint_handler);
+    signal(SIGQUIT, sigint_handler);
+    signal(SIGHUP, sigint_handler);
+
+
+    bool should_break = false;
+    while (!should_break)
     {
-        EPROSIMA_LOG_ERROR(CLI, "Error starting background process.");
-        return 0;
-    }
-    else if (pid == 0)
-    {
-        // Create the server in the child process
-        pServer = DomainParticipantFactory::get_instance()->create_participant(0, serverQos);
-
-        if (nullptr == pServer)
-        {
-            EPROSIMA_LOG_ERROR(CLI, "Server creation for Domain ID [" << domain << "] failed with the given settings.");
-            return 0;
-        }
-
-        std::cout << "Server for Domain ID [" << domain << "] started on port " << port << std::endl;
-
-        std::unique_lock<std::mutex> lock(g_signal_mutex);
-        // Handle signal SIGINT for every thread
-        signal(SIGUSR1, sigint_handler);
-        signal(SIGUSR2, sigint_handler);
-        signal(SIGINT, sigint_handler);
-        signal(SIGTERM, sigint_handler);
-        signal(SIGQUIT, sigint_handler);
-        signal(SIGHUP, sigint_handler);
-
-        if (chdir("/") != 0)
-        {
-            EPROSIMA_LOG_WARNING(CLI, "Failed to change working directory of background process.");
-        }
-        close(STDIN_FILENO);
-        close(STDOUT_FILENO);
-        close(STDERR_FILENO);
-
-        bool should_break = false;
-        while (!should_break)
-        {
-            g_signal_cv.wait(lock, []
-                    {
-                        return 0 != g_signal_status;
-                    });
-            if (SIGUSR1 == g_signal_status)
-            {
-                // Update Qos
-                std::stringstream file_name;
-                file_name << intraprocess_dir_ << "/" << port << "_servers.txt";
-                rtps::LocatorList_t serverList;
-                load_environment_server_info(read_servers_from_file(file_name.str()), serverList);
-                for (rtps::Locator_t& locator : serverList)
+        g_signal_cv.wait(lock, []
                 {
-                    locator.kind = LOCATOR_KIND_TCPv4;
-                }
-                pServer->get_qos(serverQos);
-                serverQos.wire_protocol().builtin.discovery_config.m_DiscoveryServers = serverList;
-                pServer->set_qos(serverQos);
-                g_signal_status = 0;
-            }
-            else if (SIGUSR2 == g_signal_status)
+                    return 0 != g_signal_status;
+                });
+        if (SIGUSR1 == g_signal_status)
+        {
+            // Update Qos
+            std::stringstream file_name;
+            file_name << intraprocess_dir_ << "/" << port << "_servers.txt";
+            rtps::LocatorList_t serverList;
+            load_environment_server_info(read_servers_from_file(file_name.str()), serverList);
+            for (rtps::Locator_t& locator : serverList)
             {
-                DomainParticipantFactory::get_instance()->delete_participant(pServer);
-                std::stringstream file_name;
-                file_name << intraprocess_dir_ << "/" << port << "_servers.txt";
-                rtps::LocatorList_t serverList;
-                load_environment_server_info(read_servers_from_file(file_name.str()), serverList);
-                for (rtps::Locator_t& locator : serverList)
-                {
-                    locator.kind = LOCATOR_KIND_TCPv4;
-                }
-                serverQos.wire_protocol().builtin.discovery_config.m_DiscoveryServers = serverList;
-                pServer = DomainParticipantFactory::get_instance()->create_participant(0, serverQos);
-                g_signal_status = 0;
+                locator.kind = LOCATOR_KIND_TCPv4;
             }
-            else
-            {
-                should_break = true;
-            }
+            pServer->get_qos(serverQos);
+            serverQos.wire_protocol().builtin.discovery_config.m_DiscoveryServers = serverList;
+            pServer->set_qos(serverQos);
+            g_signal_status = 0;
         }
-        DomainParticipantFactory::get_instance()->delete_participant(pServer);
-        exit(0);
+        else if (SIGUSR2 == g_signal_status)
+        {
+            DomainParticipantFactory::get_instance()->delete_participant(pServer);
+            std::stringstream file_name;
+            file_name << intraprocess_dir_ << "/" << port << "_servers.txt";
+            rtps::LocatorList_t serverList;
+            load_environment_server_info(read_servers_from_file(file_name.str()), serverList);
+            for (rtps::Locator_t& locator : serverList)
+            {
+                locator.kind = LOCATOR_KIND_TCPv4;
+            }
+            serverQos.wire_protocol().builtin.discovery_config.m_DiscoveryServers = serverList;
+            pServer = DomainParticipantFactory::get_instance()->create_participant(0, serverQos);
+            g_signal_status = 0;
+        }
+        else
+        {
+            should_break = true;
+        }
     }
-    else
-    {
-        // TODO (Carlos): If the server creation takes longer than this sleep, the ERROR output will be shown
-        // in the same terminal as the user input but without waiting to return.
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
-    }
-    return pid;
+    DomainParticipantFactory::get_instance()->delete_participant(pServer);
+    exit(0);
+    return;
 }
 
 #endif // ifndef _WIN32
@@ -492,6 +416,7 @@ void CliDiscoveryManager::setServerQos(
     serverQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator);
     auto tcp_descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
     tcp_descriptor->add_listener_port(port);
+    tcp_descriptor->non_blocking_send = true;
     serverQos.transport().user_transports.push_back(tcp_descriptor);
     serverQos.transport().use_builtin_transports = false;
     serverQos.wire_protocol().builtin.discovery_config.discoveryProtocol = rtps::DiscoveryProtocol::SERVER;
@@ -809,6 +734,12 @@ int CliDiscoveryManager::fastdds_discovery_server(
         return 0;
     }
 
+    if (options[DOMAIN_OPT])
+    {
+        EPROSIMA_LOG_WARNING(CLI,
+                "Argument '-d' is only used in AUTO mode. Use -h to see more information.");
+    }
+
     //////////////////////////////////
     /// Load XML file if specified ///
     //////////////////////////////////
@@ -988,39 +919,7 @@ int CliDiscoveryManager::fastdds_discovery_server(
 }
 
 #ifndef _WIN32
-int CliDiscoveryManager::fastdds_discovery_auto(
-        const std::vector<option::Option>& options,
-        option::Parser& parse)
-{
-    if (initial_options_fail(options, parse))
-    {
-        return 1;
-    }
-
-    // Auto mode should check if there is a server created for the domain specified, if not, create one.
-    int return_value = 0;
-
-    const option::Option* pOp = options[DOMAIN_OPT];
-    DomainId_t id = get_domain_id(pOp);
-
-    if (isServerRunning(id))
-    {
-        std::cout << "Server for Domain ID [" << id << "] is already running." << std::endl;
-        return return_value;
-    }
-
-    // Create a server for the domain specified
-    uint16_t port = getDiscoveryServerPort(id);
-    if (port == 0)
-    {
-        return 1;
-    }
-    startServerInBackground(port, id, true);
-
-    return return_value;
-}
-
-int CliDiscoveryManager::fastdds_discovery_start(
+int CliDiscoveryManager::fastdds_discovery_auto_start(
         const std::vector<option::Option>& options,
         option::Parser& parse)
 {
@@ -1061,7 +960,7 @@ int CliDiscoveryManager::fastdds_discovery_start(
         locator.kind = LOCATOR_KIND_TCPv4;
     }
     serverQos.wire_protocol().builtin.discovery_config.m_DiscoveryServers = serverList;
-    startServerInBackground(port, id, false);
+    startServerAutoMode(port, id);
 
     return return_value;
 }

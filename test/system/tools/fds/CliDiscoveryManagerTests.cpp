@@ -829,50 +829,6 @@ TEST_F(CliDiscoveryManagerTest, GetLocalServers)
         ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(server), RETCODE_OK);
     }
 }
-
-TEST_F(CliDiscoveryManagerTest, StartServerInBackground)
-{
-    DomainId_t d0 = 0;
-    ASSERT_FALSE(manager.isServerRunning(d0));
-    uint16_t p0 = manager.getDiscoveryServerPort(d0);
-    pid_t child_pid = manager.startServerInBackground(p0, d0, false);
-    EXPECT_GT(child_pid, 0);
-    EXPECT_TRUE(manager.isServerRunning(d0));
-    EXPECT_EQ(manager.getPidOfServer(p0), child_pid);
-
-    // Manually stop the child process
-    kill(child_pid, SIGTERM);
-    int status;
-    waitpid(child_pid, &status, 0);
-    EXPECT_FALSE(manager.isServerRunning(d0));
-    EXPECT_EQ(manager.getPidOfServer(p0), 0);
-}
-
-// This test verify that the fastdds_discovery_auto and fastdds_discovery_stop functions work as expected
-// Other methods are not tested here, but in the discovery_server repo as their functionality is not critical
-TEST_F(CliDiscoveryManagerTest, StartAndStopServers)
-{
-    DomainId_t d0 = 0;
-    uint16_t p0 = manager.getDiscoveryServerPort(d0);
-    ASSERT_FALSE(manager.isServerRunning(d0));
-
-    const char* argv[] = {"-d", "0"};
-    createOptionsAndParser(2, argv);
-    manager.fastdds_discovery_auto(options, parse);
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    EXPECT_TRUE(manager.isServerRunning(d0));
-    ASSERT_GT(manager.getPidOfServer(p0), 0);
-    pid_t child_pid = manager.getPidOfServer(p0);
-
-    // Manually stop the child process
-    createOptionsAndParser(2, argv);
-    manager.fastdds_discovery_stop(options, parse);
-
-    int status;
-    waitpid(child_pid, &status, 0);
-    EXPECT_FALSE(manager.isServerRunning(d0));
-    EXPECT_EQ(manager.getPidOfServer(p0), 0);
-}
 #endif // _WIN32
 
 int main(
