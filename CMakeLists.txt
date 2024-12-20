@@ -603,7 +603,7 @@ option(INSTALL_TOOLS "Install tools" OFF)
 
 if(INSTALL_TOOLS)
   # Install tools
-  install(DIRECTORY ${PROJECT_SOURCE_DIR}/tools
+  install(DIRECTORY ${PROJECT_SOURCE_DIR}/tools/
       DESTINATION tools
       COMPONENT tools
       PATTERN "tools/CMakeLists.txt" EXCLUDE
