@@ -1142,7 +1142,8 @@ int CliDiscoveryManager::fastdds_discovery_add(
     std::string servers = getRemoteServers(parse, numServs);
     if (servers.empty())
     {
-        EPROSIMA_LOG_ERROR(CLI_ADD, "No servers specified to add. Use ROS_STATIC_PEERS or format: add -d <domain> <ip:domain;ip:domain...>");
+        EPROSIMA_LOG_ERROR(CLI_ADD,
+                "No servers specified to add. Use ROS_STATIC_PEERS or format: add -d <domain> <ip:domain;ip:domain...>");
         return 1;
     }
     std::cout << "Adding remote servers: " << servers << " to Server for Domain ID [" << id << "]." << std::endl;
