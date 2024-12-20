@@ -2390,20 +2390,22 @@ uint32_t RTPSParticipantImpl::getMaxDataSize()
 uint32_t RTPSParticipantImpl::calculateMaxDataSize(
         uint32_t length)
 {
-    uint32_t maxDataSize = length;
-
+    // RTPS header
+    uint32_t overhead = RTPSMESSAGE_HEADER_SIZE;
 #if HAVE_SECURITY
     // If there is rtps messsage protection, reduce max size for messages,
     // because extra data is added on encryption.
     if (security_attributes_.is_rtps_protected)
     {
-        maxDataSize -= m_security_manager.calculate_extra_size_for_rtps_message();
+        overhead += m_security_manager.calculate_extra_size_for_rtps_message();
     }
 #endif // if HAVE_SECURITY
 
-    // RTPS header
-    maxDataSize -= RTPSMESSAGE_HEADER_SIZE;
-    return maxDataSize;
+    if (length <= overhead)
+    {
+        return 0;
+    }
+    return length - overhead;
 }
 
 bool RTPSParticipantImpl::networkFactoryHasRegisteredTransports() const
