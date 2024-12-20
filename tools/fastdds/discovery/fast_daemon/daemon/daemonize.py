@@ -116,7 +116,7 @@ def daemonize(callable_, tags={}, timeout=None, debug=False):
     # Spawn child process
     env = os.environ.copy()
     env['PYTHONPATH'] = ':'.join(sys.path)
-    process = subprocess.Popen(cmd, env=env, **kwargs)
+    process = subprocess.Popen(cmd, env=env, **kwargs, preexec_fn=os.setsid)
 
     # Send serialized callable object through stdin pipe
     pickler = PicklerForProcess(process)
