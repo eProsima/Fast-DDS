@@ -17,6 +17,17 @@ if(WIN32)
         -D_WIN32_WINNT=0x0601
         -D_CRT_SECURE_NO_WARNINGS
     )
+
+    find_program(PREPROCESSOR_EXEC cl.exe)
+    if(PREPROCESSOR_EXEC)
+        message(STATUS "Found preprocessor: ${PREPROCESSOR_EXEC}")
+        get_filename_component(PREPROCESSOR_DIR ${PREPROCESSOR_EXEC} DIRECTORY)
+        set(TEST_ENVIRONMENT_PATH "${PREPROCESSOR_DIR};$ENV{PATH}")
+        message(STATUS "Added preprocessor directory to test environment PATH: ${TEST_ENVIRONMENT_PATH}")
+        set(IDLPARSERTESTS_ENV_PROPERTIES ENVIRONMENT "PATH=${TEST_ENVIRONMENT_PATH}")
+    else()
+        message(FATAL_ERROR "Preprocessor not found. Some of IdlParserTests will fail.")
+    endif()
 endif()
 
 add_executable(IdlParserTests IdlParserTests.cpp)
@@ -35,7 +46,7 @@ target_link_libraries(IdlParserTests
     fastcdr
     fastdds
 )
-gtest_discover_tests(IdlParserTests)
+gtest_discover_tests(IdlParserTests PROPERTIES ${IDLPARSERTESTS_ENV_PROPERTIES})
 
 message(STATUS "Copying IDL directory from ${PROJECT_SOURCE_DIR}/thirdparty/dds-types-test/IDL for idl_parser testing")
 add_custom_command(

@@ -334,14 +334,11 @@ struct action<semicolon>
     { \
         template<typename Input> \
         static void apply( \
-            const Input& in, \
+            const Input& /*in*/, \
             Context* /*ctx*/, \
             std::map<std::string, std::string>& state, \
             std::vector<traits<DynamicData>::ref_type>& /*operands*/) \
         { \
-            std::cout << "load_type_action: " << typeid(Rule).name() << " " \
-                      << in.string() << std::endl; \
- \
             state["type"] = std::string(#id); \
             if (state["type"] == "string" || state["type"] == "wstring") \
             { \
@@ -541,14 +538,11 @@ struct action<open_ang_bracket>
     { \
         template<typename Input> \
         static void apply( \
-            const Input& in, \
+            const Input& /*in*/, \
             Context* /*ctx*/, \
             std::map<std::string, std::string>& state, \
             std::vector<traits<DynamicData>::ref_type>& operands) \
         { \
-            std::cout << "load_stringsize_action: " << typeid(Rule).name() << " " \
-                      << in.string() << std::endl; \
- \
             DynamicData::_ref_type xdata; \
             if (!operands.empty()) \
             { \
@@ -682,9 +676,6 @@ struct action<boolean_literal>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& operands)
     {
-        std::cout << "boolean_literal: " << typeid(boolean_literal).name()
-                  << " " << in.string() << std::endl;
-
         if (state.count("arithmetic_expr"))
         {
             state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{"bool"};
@@ -733,9 +724,6 @@ struct action<boolean_literal>
             std::map<std::string, std::string>& state, \
             std::vector<traits<DynamicData>::ref_type>& operands) \
         { \
-            std::cout << "load_literal_action: " << typeid(Rule).name() << " " \
-                      << in.string() << std::endl; \
- \
             if (state.count("arithmetic_expr")) \
             { \
                 state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{#id}; \
@@ -794,8 +782,6 @@ load_literal_action(string_literal, string, std::string, TK_STRING8, set_string_
             std::map<std::string, std::string>& state, \
             std::vector<traits<DynamicData>::ref_type>& operands) \
         { \
-            std::cout << #Rule << ": " << typeid(Rule).name() << " " << in.string() << std::endl; \
- \
             if (state.count("arithmetic_expr")) \
             { \
                 state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{#id}; \
@@ -835,9 +821,6 @@ struct action<wide_string_literal>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& operands)
     {
-        std::cout << "wide_string_literal: " << typeid(wide_string_literal).name()
-                  << " " << in.string() << std::endl;
-
         if (state.count("arithmetic_expr"))
         {
             state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{"wstring"};
@@ -865,14 +848,11 @@ struct action<wide_string_literal>
     { \
         template<typename Input> \
         static void apply( \
-            const Input& in, \
+            const Input& /*in*/, \
             Context* /*ctx*/, \
             std::map<std::string, std::string>& state, \
             std::vector<traits<DynamicData>::ref_type>& operands) \
         { \
-            std::cout << "float_op_action: " << typeid(Rule).name() << " " \
-                      << in.string() << std::endl; \
- \
             if (state.count("arithmetic_expr")) \
             { \
                 state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{#id}; \
@@ -891,17 +871,11 @@ struct action<wide_string_literal>
             { \
                 int64_t value = promote<int64_t>(s2) operation promote<int64_t>(s1); \
                 xdata->set_int64_value(MEMBER_ID_INVALID, value); \
-                std::cout << "=========" << std::endl; \
-                std::cout << #operation << ": " << value << std::endl; \
-                std::cout << "=========" << std::endl; \
             } \
             else if (TK_FLOAT128 == pt) \
             { \
                 long double value = promote<long double>(s2) operation promote<long double>(s1); \
                 xdata->set_float128_value(MEMBER_ID_INVALID, value); \
-                std::cout << "=========" << std::endl; \
-                std::cout << #operation << ": " << value << std::endl; \
-                std::cout << "=========" << std::endl; \
             } \
             else \
             { \
@@ -926,14 +900,11 @@ struct action<wide_string_literal>
     { \
         template<typename Input> \
         static void apply( \
-            const Input& in, \
+            const Input& /*in*/, \
             Context* /*ctx*/, \
             std::map<std::string, std::string>& state, \
             std::vector<traits<DynamicData>::ref_type>& operands) \
         { \
-            std::cout << "int_op_action: " << typeid(Rule).name() << " " \
-                      << in.string() << std::endl; \
- \
             if (state.count("arithmetic_expr")) \
             { \
                 state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{#id}; \
@@ -952,9 +923,6 @@ struct action<wide_string_literal>
             { \
                 int64_t value = promote<int64_t>(s2) operation promote<int64_t>(s1); \
                 xdata->set_int64_value(MEMBER_ID_INVALID, value); \
-                std::cout << "=========" << std::endl; \
-                std::cout << #operation << ": " << value << std::endl; \
-                std::cout << "=========" << std::endl; \
             } \
             else \
             { \
@@ -979,14 +947,11 @@ struct action<wide_string_literal>
     { \
         template<typename Input> \
         static void apply( \
-            const Input& in, \
+            const Input& /*in*/, \
             Context* /*ctx*/, \
             std::map<std::string, std::string>& state, \
             std::vector<traits<DynamicData>::ref_type>& operands) \
         { \
-            std::cout << "bool_op_action: " << typeid(Rule).name() << " " \
-                      << in.string() << std::endl; \
- \
             if (state.count("arithmetic_expr")) \
             { \
                 state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{#id}; \
@@ -1005,17 +970,11 @@ struct action<wide_string_literal>
             { \
                 int64_t value = promote<int64_t>(s2) operation promote<int64_t>(s1); \
                 xdata->set_int64_value(MEMBER_ID_INVALID, value); \
-                std::cout << "=========" << std::endl; \
-                std::cout << #operation << ": " << value << std::endl; \
-                std::cout << "=========" << std::endl; \
             } \
             else if (TK_BOOLEAN == pt) \
             { \
                 bool value = promote<bool>(s2) logical_op promote<bool>(s1); \
                 xdata->set_boolean_value(MEMBER_ID_INVALID, value); \
-                std::cout << "=========" << std::endl; \
-                std::cout << #logical_op << ": " << value << std::endl; \
-                std::cout << "=========" << std::endl; \
             } \
             else \
             { \
@@ -1050,14 +1009,11 @@ struct action<minus_exec>
 {
     template<typename Input>
     static void apply(
-            const Input& in,
+            const Input& /*in*/,
             Context* /*ctx*/,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& operands)
     {
-        std::cout << "minus_exec: " << typeid(minus_exec).name() << " "
-                  << in.string() << std::endl;
-
         if (state.count("arithmetic_expr"))
         {
             state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{"minus"};
@@ -1091,14 +1047,12 @@ struct action<plus_exec>
 {
     template<typename Input>
     static void apply(
-            const Input& in,
+            const Input& /*in*/,
             Context* /*ctx*/,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         // noop
-        std::cout << "plus_exec: " << typeid(plus_exec).name() << " "
-                  << in.string() << std::endl;
         if (state.count("arithmetic_expr"))
         {
             state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{"plus"};
@@ -1112,14 +1066,11 @@ struct action<inv_exec>
 {
     template<typename Input>
     static void apply(
-            const Input& in,
+            const Input& /*in*/,
             Context* /*ctx*/,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& operands)
     {
-        std::cout << "inv_exec: " << typeid(inv_exec).name() << " "
-                  << in.string() << std::endl;
-
         if (state.count("arithmetic_expr"))
         {
             state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{"inv"};
