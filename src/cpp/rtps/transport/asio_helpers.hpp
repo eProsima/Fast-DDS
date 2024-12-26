@@ -51,7 +51,7 @@ struct asio_helpers
         asio::error_code ec;
 
         final_buffer_value = initial_buffer_value;
-        while (final_buffer_value >= minimum_buffer_value)
+        while (final_buffer_value > minimum_buffer_value)
         {
             int32_t value_to_set = static_cast<int32_t>(final_buffer_value);
             socket.set_option(BufferOptionType(value_to_set), ec);
