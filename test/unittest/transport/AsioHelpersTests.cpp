@@ -48,7 +48,7 @@ TEST(AsioHelpersTests, udp_buffer_size)
 
         uint32_t final_buffer_value = 0;
         ASSERT_TRUE(asio_helpers::try_setting_buffer_size<asio::socket_base::send_buffer_size>(
-                *socket, initial_buffer_value, minimum_buffer_value, final_buffer_value));
+                    *socket, initial_buffer_value, minimum_buffer_value, final_buffer_value));
 
         asio::socket_base::send_buffer_size option;
         asio::error_code ec;
@@ -70,10 +70,10 @@ TEST(AsioHelpersTests, tcp_buffer_size)
         asio::io_service io_service;
         auto socket = std::unique_ptr<asio::ip::tcp::socket>(new asio::ip::tcp::socket(io_service));
         socket->open(asio::ip::tcp::v4());
-        
+
         uint32_t final_buffer_value = 0;
         ASSERT_TRUE(asio_helpers::try_setting_buffer_size<asio::socket_base::send_buffer_size>(
-                *socket, initial_buffer_value, minimum_buffer_value, final_buffer_value));
+                    *socket, initial_buffer_value, minimum_buffer_value, final_buffer_value));
 
         asio::socket_base::send_buffer_size option;
         asio::error_code ec;
