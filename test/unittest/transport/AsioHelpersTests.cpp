@@ -34,24 +34,50 @@ using namespace eprosima::fastdds::rtps;
 
 
 // Regression tests for redmine issue #22210
-// Test that the buffer size is set actually to the value stored as the final value
-TEST(AsioHelpersTests, try_setting_buffer_size)
+
+// Test that the UDP buffer size is set actually to the value stored as the final value
+TEST(AsioHelpersTests, udp_buffer_size)
 {
+    uint32_t minimum_buffer_value = 0;
     for (uint32_t initial_buffer_value = std::numeric_limits<uint32_t>::max(); initial_buffer_value > 0;
-            initial_buffer_value /= 2)
+            initial_buffer_value /= 4)
     {
         asio::io_service io_service;
-        eProsimaUDPSocket socket = createUDPSocket(io_service);
-        getSocketPtr(socket)->open(asio::ip::udp::v4());
+        auto socket = std::unique_ptr<asio::ip::udp::socket>(new asio::ip::udp::socket(io_service));
+        socket->open(asio::ip::udp::v4());
 
-        uint32_t minimum_buffer_value = 0;
         uint32_t final_buffer_value = 0;
         ASSERT_TRUE(asio_helpers::try_setting_buffer_size<asio::socket_base::send_buffer_size>(
-                socket, initial_buffer_value, minimum_buffer_value, final_buffer_value));
+                *socket, initial_buffer_value, minimum_buffer_value, final_buffer_value));
 
         asio::socket_base::send_buffer_size option;
         asio::error_code ec;
-        socket.get_option(option, ec);
+        socket->get_option(option, ec);
+        if (!ec)
+        {
+            ASSERT_EQ(option.value(), final_buffer_value);
+        }
+    }
+}
+
+// Test that the TCP buffer size is set actually to the value stored as the final value
+TEST(AsioHelpersTests, tcp_buffer_size)
+{
+    uint32_t minimum_buffer_value = 0;
+    for (uint32_t initial_buffer_value = std::numeric_limits<uint32_t>::max(); initial_buffer_value > 0;
+            initial_buffer_value /= 4)
+    {
+        asio::io_service io_service;
+        auto socket = std::unique_ptr<asio::ip::tcp::socket>(new asio::ip::tcp::socket(io_service));
+        socket->open(asio::ip::tcp::v4());
+        
+        uint32_t final_buffer_value = 0;
+        ASSERT_TRUE(asio_helpers::try_setting_buffer_size<asio::socket_base::send_buffer_size>(
+                *socket, initial_buffer_value, minimum_buffer_value, final_buffer_value));
+
+        asio::socket_base::send_buffer_size option;
+        asio::error_code ec;
+        socket->get_option(option, ec);
         if (!ec)
         {
             ASSERT_EQ(option.value(), final_buffer_value);
