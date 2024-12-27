@@ -55,7 +55,7 @@ TEST(AsioHelpersTests, udp_buffer_size)
         socket->get_option(option, ec);
         if (!ec)
         {
-            ASSERT_EQ(option.value(), final_buffer_value);
+            ASSERT_EQ(static_cast<uint32_t>(option.value()), final_buffer_value);
         }
     }
 }
@@ -80,7 +80,7 @@ TEST(AsioHelpersTests, tcp_buffer_size)
         socket->get_option(option, ec);
         if (!ec)
         {
-            ASSERT_EQ(option.value(), final_buffer_value);
+            ASSERT_EQ(static_cast<uint32_t>(option.value()), final_buffer_value);
         }
     }
 }
