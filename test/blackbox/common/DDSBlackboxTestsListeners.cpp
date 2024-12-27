@@ -2942,7 +2942,7 @@ TEST(DDSStatus, sample_rejected_waitset)
             .disable_heartbeat_piggyback(true)
             .asynchronously(eprosima::fastdds::dds::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE)
             .add_throughput_controller_descriptor_to_pparams( // Be sure are sent in separate submessage each DATA.
-        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 100, 50)
+        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, 300, 300)
             .init();
 
     reader.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
