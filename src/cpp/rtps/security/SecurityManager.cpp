@@ -398,7 +398,10 @@ bool SecurityManager::init(
         {
             // Unexpected code path. Let's log any errors
             logError(SECURITY, "Error while configuring security plugin.")
-            if (strlen(exception.what())) logError(SECURITY, exception.what())
+            if (strlen(exception.what()))
+            {
+                logError(SECURITY, exception.what())
+            }
 
             cancel_init();
             return false;
