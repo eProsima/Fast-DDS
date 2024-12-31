@@ -1222,7 +1222,7 @@ bool WriterProxyData::is_update_allowed(
             (persistence_guid_ != wdata.persistence_guid_) ||
 #if HAVE_SECURITY
             (security_attributes_ != wdata.security_attributes_) ||
-            (plugin_security_attributes_ != wdata.security_attributes_) ||
+            (plugin_security_attributes_ != wdata.plugin_security_attributes_) ||
 #endif // if HAVE_SECURITY
             (m_typeName != wdata.m_typeName) ||
             (m_topicName != wdata.m_topicName))
