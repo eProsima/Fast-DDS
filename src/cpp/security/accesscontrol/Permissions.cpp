@@ -58,6 +58,67 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;
 
+/**
+ * @brief Convert a signature algortihm before adding it to a PermissionsToken.
+ *
+ * This methods converts the signature algorithm to the format used in the PermissionsToken.
+ * Depending on the value of the use_legacy parameter, the algorithm will be converted to the legacy format or to the
+ * one specified in the DDS-SEC 1.1 specification.
+ *
+ * @param algorithm The algorithm to convert.
+ * @param use_legacy Whether to use the legacy format or not.
+ *
+ * @return The converted algorithm.
+ */
+static std::string convert_to_token_algo(
+        const std::string& algorithm,
+        bool use_legacy)
+{
+    // Leave as internal format when legacy is used
+    if (use_legacy)
+    {
+        return algorithm;
+    }
+
+    // Convert to token format
+    if (algorithm == RSA_SHA256)
+    {
+        return RSA_SHA256_FOR_TOKENS;
+    }
+    else if (algorithm == ECDSA_SHA256)
+    {
+        return ECDSA_SHA256_FOR_TOKENS;
+    }
+
+    return algorithm;
+}
+
+/**
+ * @brief Parse a signature algorithm from a PermissionsToken.
+ *
+ * This method parses a signature algorithm from a PermissionsToken.
+ * It converts the algorithm to the internal (legacy) format used by the library.
+ *
+ * @param algorithm The algorithm to parse.
+ *
+ * @return The parsed algorithm.
+ */
+static std::string parse_token_algo(
+        const std::string& algorithm)
+{
+    // Convert to internal format, allowing both legacy and new formats
+    if (algorithm == RSA_SHA256_FOR_TOKENS)
+    {
+        return RSA_SHA256;
+    }
+    else if (algorithm == ECDSA_SHA256_FOR_TOKENS)
+    {
+        return ECDSA_SHA256;
+    }
+
+    return algorithm;
+}
+
 static bool is_domain_in_set(
         const uint32_t domain_id,
         const Domains& domains)
@@ -693,7 +754,8 @@ static bool check_subject_name(
 }
 
 static bool generate_permissions_token(
-        AccessPermissionsHandle& handle)
+        AccessPermissionsHandle& handle,
+        bool transmit_legacy_algorithms)
 {
     Property property;
     PermissionsToken& token = handle->permissions_token_;
@@ -705,7 +767,7 @@ static bool generate_permissions_token(
     token.properties().push_back(std::move(property));
 
     property.name("dds.perm_ca.algo");
-    property.value() = handle->algo;
+    property.value() = convert_to_token_algo(handle->algo, transmit_legacy_algorithms);
     property.propagate(true);
     token.properties().push_back(std::move(property));
 
@@ -765,6 +827,13 @@ PermissionsHandle* Permissions::validate_local_permissions(
         return nullptr;
     }
 
+    bool transmit_legacy_algorithms = false;
+    std::string* legacy = PropertyPolicyHelper::find_property(access_properties, "transmit_algorithms_as_legacy");
+    if (legacy != nullptr)
+    {
+        transmit_legacy_algorithms = (*legacy == "true");
+    }
+
     std::string* permissions_ca = PropertyPolicyHelper::find_property(access_properties, "permissions_ca");
 
     if (permissions_ca == nullptr)
@@ -807,7 +876,7 @@ PermissionsHandle* Permissions::validate_local_permissions(
                 // Check subject name.
                 if (check_subject_name(identity, *ah, domain_id, rules, permissions_data, exception))
                 {
-                    if (generate_permissions_token(*ah))
+                    if (generate_permissions_token(*ah, transmit_legacy_algorithms))
                     {
                         if (generate_credentials_token(*ah, *permissions, exception))
                         {
@@ -941,7 +1010,8 @@ PermissionsHandle* Permissions::validate_remote_permissions(
 
     if (algo != nullptr)
     {
-        if (algo->compare(lph->algo) != 0)
+        std::string used_algo = parse_token_algo(*algo);
+        if (used_algo.compare(lph->algo) != 0)
         {
             exception = _SecurityException_("Remote participant PermissionsCA algorithm differs from local");
             EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
