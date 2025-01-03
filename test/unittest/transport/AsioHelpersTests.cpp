@@ -35,6 +35,38 @@ using namespace eprosima::fastdds::rtps;
 
 // Regression tests for redmine issue #22210
 
+template <typename BufferOption, typename SocketType, typename Protocol>
+void test_buffer_setting(
+    int initial_buffer_value,
+    int minimum_buffer_value)
+{
+    asio::io_service io_service;
+    auto socket = std::make_unique<SocketType>(io_service);
+
+    // Open the socket with the provided protocol
+    socket->open(Protocol::v4());
+
+    uint32_t final_buffer_value = 0;
+
+    // Replace this with your actual implementation of try_setting_buffer_size
+    ASSERT_TRUE(asio_helpers::try_setting_buffer_size<BufferOption>(
+        *socket, initial_buffer_value, minimum_buffer_value, final_buffer_value));
+
+    
+
+    BufferOption option;
+    asio::error_code ec;
+    socket->get_option(option, ec);
+    if (!ec)
+    {
+        ASSERT_EQ(static_cast<uint32_t>(option.value()), final_buffer_value);
+    }
+    else
+    {
+        throw std::runtime_error("Failed to get buffer option");
+    }
+}
+
 // Test that the UDP buffer size is set actually to the value stored as the final value
 TEST(AsioHelpersTests, udp_buffer_size)
 {
@@ -42,21 +74,10 @@ TEST(AsioHelpersTests, udp_buffer_size)
     for (uint32_t initial_buffer_value = std::numeric_limits<uint32_t>::max(); initial_buffer_value > 0;
             initial_buffer_value /= 4)
     {
-        asio::io_service io_service;
-        auto socket = std::unique_ptr<asio::ip::udp::socket>(new asio::ip::udp::socket(io_service));
-        socket->open(asio::ip::udp::v4());
-
-        uint32_t final_buffer_value = 0;
-        ASSERT_TRUE(asio_helpers::try_setting_buffer_size<asio::socket_base::send_buffer_size>(
-                    *socket, initial_buffer_value, minimum_buffer_value, final_buffer_value));
-
-        asio::socket_base::send_buffer_size option;
-        asio::error_code ec;
-        socket->get_option(option, ec);
-        if (!ec)
-        {
-            ASSERT_EQ(static_cast<uint32_t>(option.value()), final_buffer_value);
-        }
+        test_buffer_setting<asio::socket_base::send_buffer_size, asio::ip::udp::socket, asio::ip::udp>(
+            initial_buffer_value, minimum_buffer_value);
+        test_buffer_setting<asio::socket_base::receive_buffer_size, asio::ip::udp::socket, asio::ip::udp>(
+            initial_buffer_value, minimum_buffer_value);
     }
 }
 
@@ -67,21 +88,10 @@ TEST(AsioHelpersTests, tcp_buffer_size)
     for (uint32_t initial_buffer_value = std::numeric_limits<uint32_t>::max(); initial_buffer_value > 0;
             initial_buffer_value /= 4)
     {
-        asio::io_service io_service;
-        auto socket = std::unique_ptr<asio::ip::tcp::socket>(new asio::ip::tcp::socket(io_service));
-        socket->open(asio::ip::tcp::v4());
-
-        uint32_t final_buffer_value = 0;
-        ASSERT_TRUE(asio_helpers::try_setting_buffer_size<asio::socket_base::send_buffer_size>(
-                    *socket, initial_buffer_value, minimum_buffer_value, final_buffer_value));
-
-        asio::socket_base::send_buffer_size option;
-        asio::error_code ec;
-        socket->get_option(option, ec);
-        if (!ec)
-        {
-            ASSERT_EQ(static_cast<uint32_t>(option.value()), final_buffer_value);
-        }
+        test_buffer_setting<asio::socket_base::send_buffer_size, asio::ip::tcp::socket, asio::ip::tcp>(
+            initial_buffer_value, minimum_buffer_value);
+        test_buffer_setting<asio::socket_base::receive_buffer_size, asio::ip::tcp::socket, asio::ip::tcp>(
+            initial_buffer_value, minimum_buffer_value);
     }
 }
 
