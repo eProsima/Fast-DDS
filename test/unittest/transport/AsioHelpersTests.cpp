@@ -37,8 +37,8 @@ using namespace eprosima::fastdds::rtps;
 
 template <typename BufferOption, typename SocketType, typename Protocol>
 void test_buffer_setting(
-    int initial_buffer_value,
-    int minimum_buffer_value)
+        int initial_buffer_value,
+        int minimum_buffer_value)
 {
     asio::io_service io_service;
     auto socket = std::make_unique<SocketType>(io_service);
@@ -50,9 +50,9 @@ void test_buffer_setting(
 
     // Replace this with your actual implementation of try_setting_buffer_size
     ASSERT_TRUE(asio_helpers::try_setting_buffer_size<BufferOption>(
-        *socket, initial_buffer_value, minimum_buffer_value, final_buffer_value));
+                *socket, initial_buffer_value, minimum_buffer_value, final_buffer_value));
 
-    
+
 
     BufferOption option;
     asio::error_code ec;
