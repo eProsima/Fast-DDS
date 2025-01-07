@@ -46,13 +46,15 @@ namespace idlparser {
 
 // define preprocessor strategy
 #ifdef _MSC_VER
-#   define EPROSIMA_PLATFORM_PREPROCESSOR "cl /EP /I."
+#   define EPROSIMA_PLATFORM_PREPROCESSOR "cl"
+#   define EPROSIMA_PLATFORM_PREPROCESSOR_FLAGS " /EP /I."
 #   define EPROSIMA_PLATFORM_PREPROCESSOR_STRATEGY preprocess_strategy::temporary_file
 #   define EPROSIMA_PLATFORM_PREPROCESSOR_INCLUDES "/I"
 #   define EPROSIMA_PLATFORM_PREPROCESSOR_ERRORREDIR " 2>nul"
 #   define EPROSIMA_PLATFORM_PIPE_OPEN_FLAGS "rt"
 #else
-#   define EPROSIMA_PLATFORM_PREPROCESSOR "cpp -H"
+#   define EPROSIMA_PLATFORM_PREPROCESSOR "cpp"
+#   define EPROSIMA_PLATFORM_PREPROCESSOR_FLAGS " -H"
 #   define EPROSIMA_PLATFORM_PREPROCESSOR_STRATEGY preprocess_strategy::pipe_stdin
 #   define EPROSIMA_PLATFORM_PREPROCESSOR_INCLUDES "-I"
 #   define EPROSIMA_PLATFORM_PREPROCESSOR_ERRORREDIR " 2>/dev/null"
@@ -74,6 +76,7 @@ public:
     // there are include paths to be preprocessed.
     bool preprocess = false;
     std::string preprocessor_exec = EPROSIMA_PLATFORM_PREPROCESSOR;
+    std::string preprocessor_flags = EPROSIMA_PLATFORM_PREPROCESSOR_FLAGS;
     std::string error_redir = EPROSIMA_PLATFORM_PREPROCESSOR_ERRORREDIR;
     preprocess_strategy strategy = EPROSIMA_PLATFORM_PREPROCESSOR_STRATEGY;
     std::string include_flag = EPROSIMA_PLATFORM_PREPROCESSOR_INCLUDES;
@@ -88,7 +91,7 @@ public:
             args += include_flag + inc_path + " ";
         }
 
-        std::string cmd = preprocessor_exec + " " + args + idl_file + error_redir;
+        std::string cmd = preprocessor_exec + preprocessor_flags + " " + args + idl_file + error_redir;
 
         EPROSIMA_LOG_INFO(IDLPARSER, "Calling preprocessor with command: " << cmd);
         std::string output = exec(cmd);
