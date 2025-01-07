@@ -1993,7 +1993,8 @@ public:
     Context parse_file(
             const std::string& idl_file,
             const std::string& type_name,
-            const IncludePathSeq& include_paths)
+            const IncludePathSeq& include_paths,
+            const std::string& preprocessor)
     {
         Context context;
         context.target_type_name = type_name;
@@ -2001,6 +2002,11 @@ public:
         {
             context.include_paths = include_paths;
             context.preprocess = true;
+            context.preprocessor_exec = preprocessor;
+            if (context.preprocessor_exec.empty())
+            {
+                context.preprocessor_exec = EPROSIMA_PLATFORM_PREPROCESSOR;
+            }
         }
         parse_file(idl_file, context);
         return context;

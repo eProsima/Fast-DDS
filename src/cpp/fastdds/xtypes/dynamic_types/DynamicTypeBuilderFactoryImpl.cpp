@@ -81,7 +81,7 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type_
 
     try
     {
-        idlparser::Context context = idlparser::parse_file(document, type_name, include_paths);
+        idlparser::Context context = idlparser::parse_file(document, type_name, include_paths, preprocessor_);
         ret_val = context.builder;
     }
     catch (const std::exception& e)

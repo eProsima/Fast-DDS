@@ -75,9 +75,10 @@ inline Context& parse_file(
 inline Context parse_file(
         const std::string& idl_file,
         const std::string& type_name,
-        const IncludePathSeq& include_paths)
+        const IncludePathSeq& include_paths,
+        const std::string& preprocessor)
 {
-    return Parser::instance()->parse_file(idl_file, type_name, include_paths);
+    return Parser::instance()->parse_file(idl_file, type_name, include_paths, preprocessor);
 }
 
 /// \brief Preprocess IDL file.
