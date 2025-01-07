@@ -41,6 +41,13 @@ class DynamicTypeBuilderFactoryImpl : public traits<DynamicTypeBuilderFactory>::
 {
 public:
 
+    //{{{ Utility functions
+    
+    void set_preprocessor(
+            const std::string& preprocessor) override;
+
+    //}}}
+
     //{{{ Functions to create types
 
     traits<DynamicTypeBuilder>::ref_type create_type(
@@ -197,6 +204,9 @@ private:
     traits<DynamicTypeImpl>::ref_type char16_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_CHAR16,
                                                                                                          ""})};
     //}}}
+
+    //! Path to the preprocessor executable to be used when parsing type descriptions.
+    std::string preprocessor_{};
 };
 
 } // namespace dds

@@ -39,6 +39,16 @@ namespace dds {
 
 traits<DynamicTypeBuilderFactoryImpl>::ref_type DynamicTypeBuilderFactoryImpl::instance_;
 
+//{{{ Utility functions
+
+void DynamicTypeBuilderFactoryImpl::set_preprocessor(
+        const std::string& preprocessor)
+{
+    preprocessor_ = preprocessor;
+}
+
+//}}}
+
 //{{{ Functions to create types
 
 traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type(
