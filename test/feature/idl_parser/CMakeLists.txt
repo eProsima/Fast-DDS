@@ -21,16 +21,14 @@ if(WIN32)
     find_program(PREPROCESSOR_EXEC cl.exe)
     if(PREPROCESSOR_EXEC)
         message(STATUS "Found preprocessor: ${PREPROCESSOR_EXEC}")
-        get_filename_component(PREPROCESSOR_DIR ${PREPROCESSOR_EXEC} DIRECTORY)
-        string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
-        set(TEST_ENVIRONMENT_PATH "${PREPROCESSOR_DIR}\\;${WIN_PATH}")
-        message(STATUS "Added preprocessor directory to test environment PATH: ${TEST_ENVIRONMENT_PATH}")
-        set(IDLPARSERTESTS_ENV_PROPERTIES ENVIRONMENT "PATH=${TEST_ENVIRONMENT_PATH}")
+        # Add quotes to handle spaces in the path
+        set(PREPROCESSOR_EXEC "\\\"${PREPROCESSOR_EXEC}\\\"")
     else()
-        message(FATAL_ERROR "Preprocessor not found. Some of IdlParserTests will fail.")
+        message(FATAL_ERROR "Preprocessor not found. Some of IdlParserTests might fail.")
     endif()
 endif()
 
+configure_file(IdlParserTests.hpp.in config/IdlParserTests.hpp @ONLY)
 add_executable(IdlParserTests IdlParserTests.cpp)
 target_compile_definitions(IdlParserTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
@@ -38,6 +36,7 @@ target_compile_definitions(IdlParserTests PRIVATE
 )
 target_include_directories(IdlParserTests
     PRIVATE
+    ${CMAKE_CURRENT_BINARY_DIR}/config
     ${PROJECT_SOURCE_DIR}/test/utils/
 )
 target_link_libraries(IdlParserTests

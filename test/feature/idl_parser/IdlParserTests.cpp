@@ -18,6 +18,7 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
 #include <ScopedLogs.hpp>
+#include "IDLParserTests.hpp"
 
 using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastdds::dds;
@@ -34,7 +35,12 @@ public:
         Log::Flush();
     }
 
-    virtual void TearDown()
+    void SetUp() override
+    {
+        DynamicTypeBuilderFactory::get_instance()->set_preprocessor(IDL_PARSER_PREPROCESSOR_EXEC);
+    }
+
+    void TearDown() override
     {
         DynamicDataFactory::delete_instance();
         DynamicTypeBuilderFactory::delete_instance();
