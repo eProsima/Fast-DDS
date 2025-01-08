@@ -125,6 +125,22 @@ def test_fastdds_shm(install_path):
         print('test_fastdds_shm FAILED')
         sys.exit(ret)
 
+def test_fastdds_shm_force(install_path):
+    """Test that shm command runs."""
+    args = ' shm clean -f'
+    ret = subprocess.call(cmd(
+        install_path=install_path, args=args), shell=True)
+    if 0 != ret:
+        print('test_fastdds_shm FAILED')
+        sys.exit(ret)
+
+    args = ' shm clean --force'
+    ret = subprocess.call(cmd(
+        install_path=install_path, args=args), shell=True)
+    if 0 != ret:
+        print('test_fastdds_shm FAILED')
+        sys.exit(ret)
+
 
 def test_fastdds_discovery(install_path, setup_script_path):
     """Test that discovery command runs."""
@@ -156,7 +172,7 @@ def test_fastdds_discovery_run(install_path, setup_script_path):
     except subprocess.TimeoutExpired:
         print(f'Timeout {test_timeout} expired. Test successful')
         try:
-            # Need to kill all child processes to properly end the test 
+            # Need to kill all child processes to properly end the test
             parent = psutil.Process(process.pid)
             for child in parent.children(recursive=True):
                 child.terminate()
@@ -256,6 +272,7 @@ if __name__ == '__main__':
         'test_ros_discovery':
         lambda: test_ros_discovery(ros_disc_tool_path, setup_script_path),
         'test_fastdds_shm': lambda: test_fastdds_shm(fastdds_tool_path),
+        'test_fastdds_shm_force': lambda: test_fastdds_shm_force(fastdds_tool_path),
         'test_fastdds_xml_validate':
         lambda: test_fastdds_xml_validate(fastdds_tool_path)
     }
