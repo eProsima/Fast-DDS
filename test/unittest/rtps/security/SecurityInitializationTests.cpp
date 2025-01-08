@@ -226,7 +226,7 @@ TEST_F(SecurityTest, initialization_logging_error)
             register_local_participant(Ref(local_identity_handle_), _, _, _, _)).Times(1).
             WillOnce(Return(nullptr));
 
-    eprosima::fastdds::dds::MockConsumer* mockConsumer= new eprosima::fastdds::dds::MockConsumer();
+    eprosima::fastdds::dds::MockConsumer* mockConsumer = new eprosima::fastdds::dds::MockConsumer();
     eprosima::fastdds::dds::Log::RegisterConsumer(std::unique_ptr<eprosima::fastdds::dds::LogConsumer>(mockConsumer));
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Error);
 
@@ -234,11 +234,11 @@ TEST_F(SecurityTest, initialization_logging_error)
 
     // Check that the error message was logged.
     auto log_entries = mockConsumer->ConsumedEntries();
-    ASSERT_GE(log_entries.size(),1);
+    ASSERT_GE(log_entries.size(), 1);
     bool found = false;
-    for(auto entry : log_entries)
+    for (auto entry : log_entries)
     {
-        if(entry.message.find("Error while configuring security plugin.") != std::string::npos)
+        if (entry.message.find("Error while configuring security plugin.") != std::string::npos)
         {
             found = true;
             break;
