@@ -63,12 +63,13 @@ class Parser:
         )
 
         parser.add_argument('command', nargs='?', help='shm-command to run')
+        parser.add_argument('-f', '--force', action='store_true', help='Force the clean of data sharing segments')
 
         args = parser.parse_args(argv)
 
         if args.command is not None:
             if args.command == 'clean':
-                Clean().run()
+                Clean().run(args.force)
             else:
                 print('shm-command ' + args.shm_command + ' is not valid')
         else:
