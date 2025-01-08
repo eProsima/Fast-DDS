@@ -53,6 +53,10 @@ int main (
         std::cerr << "Fast DDS CLI AUTO mode not supported on Windows." << std::endl;
         return 1;
     }
+    else
+    {
+        return cli_manager.fastdds_discovery_server(options, parse);
+    }
 #else
     switch (command_int)
     {

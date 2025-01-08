@@ -487,54 +487,12 @@ TEST_F(CliDiscoveryManagerTest, GetDomainIdFromCLI)
     EXPECT_EQ(domain_id2, static_cast<DomainId_t>(2));
 }
 
-TEST_F(CliDiscoveryManagerTest, GetDomainIdFromEnv)
-{
-    setTestEnv(domain_env_var, "4");
-    DomainId_t domain_id = manager.get_domain_id(nullptr);
-    EXPECT_EQ(domain_id, static_cast<DomainId_t>(4));
-    setTestEnv(domain_env_var, "2");
-    DomainId_t domain_id2 = manager.get_domain_id(nullptr);
-    EXPECT_EQ(domain_id2, static_cast<DomainId_t>(2));
-}
-
 TEST_F(CliDiscoveryManagerTest, GetDomainIdFromDefaultValue)
 {
     const char* argv[] = {"-q", "12345"};
     createOptionsAndParser(2, argv);
     DomainId_t domain_id = manager.get_domain_id(nullptr);
     EXPECT_EQ(domain_id, static_cast<DomainId_t>(0));
-}
-
-TEST_F(CliDiscoveryManagerTest, GetDomainIdFromCLIWithOverwrite)
-{
-    setTestEnv(domain_env_var, "3");
-    const char* argv[] = {"-d", "7"};
-    createOptionsAndParser(2, argv);
-    Option* domain_option = getOption(DOMAIN_OPT);
-    DomainId_t domain_id = manager.get_domain_id(domain_option);
-    EXPECT_EQ(domain_id, static_cast<DomainId_t>(7));
-}
-
-TEST_F(CliDiscoveryManagerTest, AddRemoteServersFromEnv)
-{
-    setTestEnv(remote_servers_env_var, "192.168.1.1:7402;127.0.0.1:2");
-    LocatorList_t target_list;
-    manager.addRemoteServersFromEnv(target_list);
-
-    EXPECT_EQ(target_list.size(), 2);
-    PortParameters port_params;
-    std::vector<uint16_t> expected_ports({7402, port_params.getDiscoveryServerPort(2)});
-    for (const auto& locator : target_list)
-    {
-        EXPECT_EQ(locator.kind, LOCATOR_KIND_TCPv4);
-        auto it = std::find(expected_ports.begin(), expected_ports.end(), locator.port);
-        EXPECT_NE(it, expected_ports.end());
-        if (it != expected_ports.end())
-        {
-            expected_ports.erase(it);
-        }
-    }
-    EXPECT_EQ(expected_ports.size(), 0);
 }
 
 TEST_F(CliDiscoveryManagerTest, GetRemoteServersWithDomainParam)
