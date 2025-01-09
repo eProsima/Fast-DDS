@@ -6,6 +6,7 @@ Forthcoming
   * `DataWriter::get_matched_subscriptions()`
   * `DataReader::get_matched_publication_data()`
   * `DataReader::get_matched_publications()`
+  * `DynamicTypeBuilderFactory::create_type_w_uri`
 * Added ``Extended Incompatible QoS`` feature for monitor service.
 * Machine UUID added to the Data(p) to check Participants in same host, instead of using GUIDs.
 * Windows ci example testing infrastructure and `hello world` example.
