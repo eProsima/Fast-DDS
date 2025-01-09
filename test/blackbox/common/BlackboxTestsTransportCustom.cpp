@@ -612,9 +612,14 @@ TEST(ChainingTransportTests, builtin_transports_env_large_data)
     BuiltinTransportsTest::test_env("LARGE_DATA");
 }
 
+/**
+ * DS Auto transport shall always be used along with ROS_DISCOVERY_SERVER=AUTO.
+ * This is due to the working principle of the mode. If it is not specified,
+ * the background discovery server will not be launched and the test will never
+ * finish since both clients will keep waiting for it.
+ */
 TEST(ChainingTransportTests, builtin_transports_env_ds_auto)
 {
-    /* DS Auto transport shall always be used along with ROS_DISCOVERY_SERVER=AUTO */
 #ifdef _WIN32
     _putenv_s("ROS_DISCOVERY_SERVER", "AUTO");
 #else
@@ -686,9 +691,16 @@ TEST(ChainingTransportTests, builtin_transports_xml_large_data)
     BuiltinTransportsTest::test_xml("builtin_transports_profile.xml", "participant_largedata");
 }
 
+/**
+ * DS Auto transport shall always be used along with ROS_DISCOVERY_SERVER=AUTO.
+ * This is due to the working principle of the mode. If it is not specified,
+ * the background discovery server will not be launched and the test will never
+ * finish since both clients will keep waiting for it.
+ * On the other hand, defining the environment variable somehow shadows the
+ * xml parsing, but it is assumed in this case.
+ */
 TEST(ChainingTransportTests, builtin_transports_xml_ds_auto)
 {
-    /* DS Auto transport shall always be used along with ROS_DISCOVERY_SERVER=AUTO */
 #ifdef _WIN32
     _putenv_s("ROS_DISCOVERY_SERVER", "AUTO");
 #else

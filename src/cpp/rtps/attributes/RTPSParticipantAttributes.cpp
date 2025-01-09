@@ -331,7 +331,8 @@ void RTPSParticipantAttributes::setup_transports(
             (transports != fastdds::rtps::BuiltinTransports::NONE &&
             transports != fastdds::rtps::BuiltinTransports::SHM &&
             transports != fastdds::rtps::BuiltinTransports::LARGE_DATA &&
-            transports != fastdds::rtps::BuiltinTransports::LARGE_DATAv6))
+            transports != fastdds::rtps::BuiltinTransports::LARGE_DATAv6 &&
+            transports != fastdds::rtps::BuiltinTransports::DS_AUTO))
     {
         EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
                 "Max message size of UDP cannot be greater than " << std::to_string(
