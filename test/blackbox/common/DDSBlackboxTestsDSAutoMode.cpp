@@ -215,8 +215,7 @@ TEST(DSAutoMode, ros_discovery_server_auto_env_discovery_info)
         wire_protocol_qos.builtin.discovery_config.m_DiscoveryServers.push_back(locator);
 
         writers.back()->set_wire_protocol_qos(wire_protocol_qos)
-                .disable_builtin_transport()
-                .setup_large_data_tcp()
+                .setup_ds_auto_transports()
                 .init();
 
         ASSERT_TRUE(writers.back()->isInitialized());
@@ -281,6 +280,9 @@ TEST(DSAutoMode, ros_discovery_server_auto_env_multiple_clients_multiple_domains
     {
         writers[i]->wait_discovery();
         readers[i]->wait_discovery();
+
+        ASSERT_EQ(writers[i]->get_matched(), 1u);
+        ASSERT_EQ(readers[i]->get_matched(), 1u);
 
         auto data = default_helloworld_data_generator();
 
