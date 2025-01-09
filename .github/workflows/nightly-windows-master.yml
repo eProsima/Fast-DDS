@@ -4,9 +4,10 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '0 22 * * *' # At 22:00 GMT
-    
+
 jobs:
   nightly-windows-ci-master:
+    name: nightly-windows-ci-master (SEC=${{ matrix.security }}, ${{ matrix.cmake_build_type }}, ${{ matrix.test_filter }})
     strategy:
       fail-fast: false
       matrix:
