@@ -1094,6 +1094,12 @@ public:
         return *this;
     }
 
+    PubSubWriter& setup_ds_auto_transports()
+    {
+        participant_qos_.setup_transports(eprosima::fastdds::rtps::BuiltinTransports::DS_AUTO);
+        return *this;
+    }
+
     PubSubWriter& disable_builtin_transport()
     {
         participant_qos_.transport().use_builtin_transports = false;
