@@ -31,11 +31,23 @@
 #include <fastdds/xtypes/type_representation/TypeObjectRegistry.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 
+#include "idl_parser/Idl.hpp"
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
 traits<DynamicTypeBuilderFactoryImpl>::ref_type DynamicTypeBuilderFactoryImpl::instance_;
+
+//{{{ Utility functions
+
+void DynamicTypeBuilderFactoryImpl::set_preprocessor(
+        const std::string& preprocessor)
+{
+    preprocessor_ = preprocessor;
+}
+
+//}}}
 
 //{{{ Functions to create types
 
@@ -175,11 +187,20 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type_
         const std::string& type_name,
         const IncludePathSeq& include_paths) noexcept
 {
-    traits<DynamicTypeBuilder>::ref_type nil;
-    static_cast<void>(document_url);
-    static_cast<void>(type_name);
-    static_cast<void>(include_paths);
-    return nil;
+    traits<DynamicTypeBuilder>::ref_type ret_val;
+
+    try
+    {
+        idlparser::Context context = idlparser::parse_file(document_url, type_name, include_paths, preprocessor_);
+        ret_val = context.builder;
+    }
+    catch (const std::exception& e)
+    {
+        EPROSIMA_LOG_ERROR(IDLPARSER, e.what());
+        ret_val.reset();
+    }
+
+    return ret_val;
 }
 
 //}}}

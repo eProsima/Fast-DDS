@@ -145,6 +145,7 @@ target_include_directories(ExternalLocatorsTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyData
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
+    ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     )
 target_link_libraries(ExternalLocatorsTests
     fastcdr

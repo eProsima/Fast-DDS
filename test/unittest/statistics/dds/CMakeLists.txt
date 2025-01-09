@@ -110,7 +110,8 @@ if (FASTDDS_STATISTICS)
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl/
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_BINARY_DIR}/include
-        ${PROJECT_SOURCE_DIR}/src/cpp)
+        ${PROJECT_SOURCE_DIR}/src/cpp
+        ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl)
     target_link_libraries(DomainParticipantStatisticsListenerTests
         ${TINYXML2_LIBRARY}
         fastcdr
@@ -578,6 +579,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_BINARY_DIR}/include
         ${Asio_INCLUDE_DIR}
         ${PROJECT_SOURCE_DIR}/src/cpp
+        ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
         ${THIRDPARTY_BOOST_INCLUDE_DIR})
     target_link_libraries(StatisticsDomainParticipantMockTests ${PRIVACY}
         fastcdr
@@ -630,6 +632,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_BINARY_DIR}/include
         ${Asio_INCLUDE_DIR}
         ${PROJECT_SOURCE_DIR}/src/cpp
+        ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
         ${THIRDPARTY_BOOST_INCLUDE_DIR})
     target_link_libraries(StatisticsDomainParticipantStatusQueryableTests ${PRIVACY}
         fastcdr

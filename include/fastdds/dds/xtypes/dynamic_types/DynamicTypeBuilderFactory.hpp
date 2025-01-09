@@ -146,8 +146,14 @@ public:
             uint32_t bound) = 0;
 
     /*!
+     * Sets the path to the preprocessor executable to be used when parsing type descriptions.
+     * @param [in] preprocessor path to the preprocessor executable.
+     */
+    FASTDDS_EXPORTED_API virtual void set_preprocessor(
+            const std::string& preprocessor) = 0;
+
+    /*!
      * Creates a new @ref DynamicTypeBuilder reference by parsing the type description at the given URL.
-     * @remark Not implemented yet.
      * @param [in] document_url pointing to the url containing the type description.
      * @param [in] type_name Fully qualified name of the type to be loaded from the document.
      * @param [in] include_paths A collection of URLs to directories to be searched for additional type description
