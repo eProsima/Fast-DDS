@@ -762,8 +762,8 @@ TEST(DDSStatistics, correct_deletion_upon_delete_contained_entities)
                 {
                     writer->init();
                     ASSERT_TRUE(writer->isInitialized());
-                    writer->wait_discovery(std::chrono::seconds(3));
-                    writer->send(*data, 10);
+                    writer->wait_discovery();
+                    writer->send(*data, 200);
                     writer->destroy();
                 }));
 
