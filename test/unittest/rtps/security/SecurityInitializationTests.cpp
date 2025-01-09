@@ -233,6 +233,9 @@ TEST_F(SecurityTest, initialization_logging_error)
     security_activated_ = manager_.init(security_attributes_, participant_properties_);
 
     // Check that the error message was logged.
+    // First flush the log to make sure the message is there.
+    eprosima::fastdds::dds::Log::Flush();
+
     auto log_entries = mockConsumer->ConsumedEntries();
     ASSERT_GE(log_entries.size(), 1);
     bool found = false;
