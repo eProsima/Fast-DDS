@@ -1309,14 +1309,46 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
 
         if (!isArray)
         {
-            member = factory->create_sequence_type(content_type, length)->build();
+            DynamicTypeBuilder::_ref_type inner_builder{factory->create_sequence_type(content_type, length)};
+            if (nullptr != inner_builder)
+            {
+                member = inner_builder->build();
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Error parsing sequence element type: Cannot recognize inner content of member: " <<
+                        memberType);
+                return {};
+            }
         }
         else
         {
-            DynamicTypeBuilder::_ref_type inner_builder {factory->create_sequence_type(content_type, length)};
-            std::vector<uint32_t> bounds;
-            dimensionsToArrayBounds(memberArray, bounds);
-            member = factory->create_array_type(inner_builder->build(), bounds)->build();
+            DynamicTypeBuilder::_ref_type inner_builder{factory->create_sequence_type(content_type, length)};
+            if (nullptr != inner_builder)
+            {
+                std::vector<uint32_t> bounds;
+                dimensionsToArrayBounds(memberArray, bounds);
+                DynamicTypeBuilder::_ref_type sub_builder{factory->create_array_type(inner_builder->build(), bounds)};
+                if (nullptr != sub_builder)
+                {
+                    member = sub_builder->build();
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER,
+                            "Error parsing sequence element type: Cannot recognize inner content of member: " <<
+                            memberType);
+                    return {};
+                }
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Error parsing sequence element type: Cannot recognize inner content of member: " <<
+                        memberType);
+                return {};
+            }
         }
     }
     else if (p_root->Attribute(MAP_MAXLENGTH) != nullptr)
