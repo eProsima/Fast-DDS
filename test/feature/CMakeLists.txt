@@ -13,9 +13,4 @@
 # limitations under the License.
 
 add_subdirectory(dynamic_types)
-
-if(EXISTS "${PROJECT_SOURCE_DIR}/thirdparty/dds-types-test/IDL")
-    add_subdirectory(idl_parser)
-else()
-    message(FATAL_ERROR "Folder thirdparty/dds-types-test/IDL does not exist. Submodule thirdparty/dds-types-test might not have been initialized.")
-endif()
+add_subdirectory(idl_parser)
