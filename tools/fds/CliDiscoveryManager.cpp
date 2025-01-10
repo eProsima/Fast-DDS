@@ -1,4 +1,4 @@
-// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2025 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -162,7 +162,7 @@ bool CliDiscoveryManager::initial_options_fail(
     return false;
 }
 
-uint16_t CliDiscoveryManager::getDiscoveryServerPort(
+uint16_t CliDiscoveryManager::get_discovery_server_port(
         const eprosima::option::Option* portArg)
 {
     uint16_t port = 0;
@@ -182,7 +182,7 @@ uint16_t CliDiscoveryManager::getDiscoveryServerPort(
 }
 
 #ifndef _WIN32
-uint16_t CliDiscoveryManager::getDiscoveryServerPort(
+uint16_t CliDiscoveryManager::get_discovery_server_port(
         const uint32_t& domainId)
 {
     if (domainId > 232)
@@ -190,7 +190,7 @@ uint16_t CliDiscoveryManager::getDiscoveryServerPort(
         EPROSIMA_LOG_WARNING(CLI, "Domain ID " << domainId << " is too high and cannot run in an unreachable port.");
         return 0;
     }
-    uint16_t port = port_params_.getDiscoveryServerPort(domainId);
+    uint16_t port = port_params_.get_discovery_server_port(domainId);
 
     return port;
 }
@@ -212,7 +212,7 @@ DomainId_t CliDiscoveryManager::get_domain_id(
     return id;
 }
 
-std::string CliDiscoveryManager::getRemoteServers(
+std::string CliDiscoveryManager::get_remote_servers(
         option::Parser& parse,
         int numServs)
 {
@@ -224,7 +224,7 @@ std::string CliDiscoveryManager::getRemoteServers(
     return servers;
 }
 
-std::string CliDiscoveryManager::execCommand(
+std::string CliDiscoveryManager::exec_command(
         const std::string& command)
 {
     std::array<char, 128> buffer;
@@ -242,7 +242,7 @@ std::string CliDiscoveryManager::execCommand(
     return result;
 }
 
-std::vector<uint16_t> CliDiscoveryManager::getListeningPorts()
+std::vector<uint16_t> CliDiscoveryManager::get_listening_ports()
 {
     std::vector<uint16_t> ports;
     std::string command;
@@ -253,7 +253,7 @@ std::vector<uint16_t> CliDiscoveryManager::getListeningPorts()
     command = "ss -ltn";
     std::regex port_regex(R"(0\.0\.0\.0:(\d+))");
 #endif // ifdef __APPLE__
-    std::string result = execCommand(command);
+    std::string result = exec_command(command);
     std::smatch match;
     std::string line;
     std::istringstream result_stream(result);
@@ -275,10 +275,10 @@ std::vector<uint16_t> CliDiscoveryManager::getListeningPorts()
     return ports;
 }
 
-std::vector<MetaInfo_DS> CliDiscoveryManager::getLocalServers()
+std::vector<MetaInfo_DS> CliDiscoveryManager::get_local_servers()
 {
     std::vector<MetaInfo_DS> servers;
-    std::vector<uint16_t> ports = getListeningPorts();
+    std::vector<uint16_t> ports = get_listening_ports();
     for (const uint16_t& port : ports)
     {
         // Check if the port is a Discovery Server port
@@ -291,10 +291,10 @@ std::vector<MetaInfo_DS> CliDiscoveryManager::getLocalServers()
     return servers;
 }
 
-bool CliDiscoveryManager::isServerRunning(
+bool CliDiscoveryManager::is_server_running(
         const DomainId_t& domain)
 {
-    std::vector<MetaInfo_DS> servers = getLocalServers();
+    std::vector<MetaInfo_DS> servers = get_local_servers();
     for (const MetaInfo_DS& server : servers)
     {
         if (server.domain_id == domain)
@@ -305,13 +305,13 @@ bool CliDiscoveryManager::isServerRunning(
     return false;
 }
 
-pid_t CliDiscoveryManager::getPidOfServer(
+pid_t CliDiscoveryManager::get_pid_of_server(
         const uint16_t& port)
 {
     std::string command = "lsof -i :";
     command += std::to_string(port);
     command += " | grep LISTEN | awk '{print $2}'";
-    std::string result = execCommand(command);
+    std::string result = exec_command(command);
     if (result.empty())
     {
         EPROSIMA_LOG_ERROR(CLI, "Error getting PID. No server found on port " << port);
@@ -329,11 +329,11 @@ pid_t CliDiscoveryManager::getPidOfServer(
     return ret_value;
 }
 
-void CliDiscoveryManager::startServerAutoMode(
+void CliDiscoveryManager::start_server_auto_mode(
         const uint16_t& port,
         const DomainId_t& domain)
 {
-    setServerQos(port);
+    set_server_qos(port);
 
     // Create the server in the child process
     pServer = DomainParticipantFactory::get_instance()->create_participant(0, serverQos);
@@ -406,7 +406,7 @@ void CliDiscoveryManager::startServerAutoMode(
 
 #endif // ifndef _WIN32
 
-void CliDiscoveryManager::setServerQos(
+void CliDiscoveryManager::set_server_qos(
         const uint16_t port)
 {
     rtps::Locator_t locator;
@@ -424,7 +424,7 @@ void CliDiscoveryManager::setServerQos(
     serverQos.name("DiscoveryServerAuto");
 }
 
-bool CliDiscoveryManager::loadXMLFile(
+bool CliDiscoveryManager::load_XML_file(
         const eprosima::option::Option* xmlArg)
 {
     constexpr const char* delimiter = "@";
@@ -490,7 +490,7 @@ bool CliDiscoveryManager::loadXMLFile(
     return true;
 }
 
-bool CliDiscoveryManager::addUdpServers()
+bool CliDiscoveryManager::add_udp_servers()
 {
     if (udp_ports_.size() < udp_ips_.size() && udp_ips_.size() != 1)
     {
@@ -506,7 +506,7 @@ bool CliDiscoveryManager::addUdpServers()
         std::string ip = (it_i != udp_ips_.end()) ? *it_i : "";
 
         Locator_t loc(port);
-        if (!setAddressAndKind(ip, loc, false))
+        if (!set_address_and_kind(ip, loc, false))
         {
             return false;
         }
@@ -524,7 +524,7 @@ bool CliDiscoveryManager::addUdpServers()
     return true;
 }
 
-bool CliDiscoveryManager::addTcpServers()
+bool CliDiscoveryManager::add_tcp_servers()
 {
     if (tcp_ports_.size() < tcp_ips_.size() && tcp_ips_.size() != 1)
     {
@@ -541,7 +541,7 @@ bool CliDiscoveryManager::addTcpServers()
 
         Locator_t loc(port);
         IPLocator::setLogicalPort(loc, port);
-        if (!setAddressAndKind(ip, loc, true))
+        if (!set_address_and_kind(ip, loc, true))
         {
             return false;
         }
@@ -559,7 +559,7 @@ bool CliDiscoveryManager::addTcpServers()
     return true;
 }
 
-void CliDiscoveryManager::configureTransports()
+void CliDiscoveryManager::configure_transports()
 {
     if (!serverQos.wire_protocol().builtin.metatrafficUnicastLocatorList.has_kind<LOCATOR_KIND_UDPv4>())
     {
@@ -596,7 +596,7 @@ void CliDiscoveryManager::configureTransports()
     }
 }
 
-void CliDiscoveryManager::getCliPortsAndIps(
+void CliDiscoveryManager::get_cli_ports_and_ips(
         const eprosima::option::Option* udpPort,
         const eprosima::option::Option* udpIp,
         const eprosima::option::Option* tcpPort,
@@ -604,7 +604,7 @@ void CliDiscoveryManager::getCliPortsAndIps(
 {
     while (udpPort)
     {
-        udp_ports_.push_back(getDiscoveryServerPort(udpPort));
+        udp_ports_.push_back(get_discovery_server_port(udpPort));
         udpPort = udpPort->next();
     }
     while (udpIp)
@@ -622,7 +622,7 @@ void CliDiscoveryManager::getCliPortsAndIps(
     }
     while (tcpPort)
     {
-        tcp_ports_.push_back(getDiscoveryServerPort(tcpPort));
+        tcp_ports_.push_back(get_discovery_server_port(tcpPort));
         tcpPort = tcpPort->next();
     }
     while (tcpIp)
@@ -640,7 +640,7 @@ void CliDiscoveryManager::getCliPortsAndIps(
     }
 }
 
-bool CliDiscoveryManager::setAddressAndKind(
+bool CliDiscoveryManager::set_address_and_kind(
         const std::string& address,
         Locator_t& locator,
         bool is_tcp)
@@ -746,7 +746,7 @@ int CliDiscoveryManager::fastdds_discovery_server(
     //////////////////////////////////
     if (nullptr != options[XML_FILE])
     {
-        if (!loadXMLFile(options[XML_FILE]))
+        if (!load_XML_file(options[XML_FILE]))
         {
             return 1;
         }
@@ -829,7 +829,7 @@ int CliDiscoveryManager::fastdds_discovery_server(
         serverQos.wire_protocol().builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SERVER;
     }
 
-    getCliPortsAndIps(options[UDP_PORT], options[UDPADDRESS], options[TCP_PORT], options[TCPADDRESS]);
+    get_cli_ports_and_ips(options[UDP_PORT], options[UDPADDRESS], options[TCP_PORT], options[TCPADDRESS]);
     if (udp_ports_.empty() && udp_ips_.empty() && tcp_ports_.empty() && tcp_ips_.empty())
     {
         if (options[XML_FILE] == nullptr)
@@ -843,19 +843,19 @@ int CliDiscoveryManager::fastdds_discovery_server(
     else
     {
         serverQos.wire_protocol().builtin.metatrafficUnicastLocatorList.clear();
-        if (!addUdpServers())
+        if (!add_udp_servers())
         {
             EPROSIMA_LOG_ERROR(CLI, "Error creating UDP server.");
             return 1;
         }
-        if (!addTcpServers())
+        if (!add_tcp_servers())
         {
             EPROSIMA_LOG_ERROR(CLI, "Error creating TCP server.");
             return 1;
         }
     }
 
-    configureTransports();
+    configure_transports();
 
     fastdds::rtps::GuidPrefix_t guid_prefix = serverQos.wire_protocol().prefix;
 
@@ -941,19 +941,19 @@ int CliDiscoveryManager::fastdds_discovery_auto_start(
 
     const option::Option* pOp = options[DOMAIN_OPT];
     DomainId_t id = get_domain_id(pOp);
-    if (isServerRunning(id))
+    if (is_server_running(id))
     {
         std::cout << "Server for Domain ID [" << id << "] is already running." << std::endl;
         return return_value;
     }
 
     // Create a server for the domain specified
-    uint16_t port = getDiscoveryServerPort(id);
+    uint16_t port = get_discovery_server_port(id);
     if (port == 0)
     {
         return 1;
     }
-    std::string servers = getRemoteServers(parse, numServs);
+    std::string servers = get_remote_servers(parse, numServs);
     rtps::LocatorList_t serverList;
     load_environment_server_info(servers, serverList);
     for (rtps::Locator_t& locator : serverList)
@@ -961,7 +961,7 @@ int CliDiscoveryManager::fastdds_discovery_auto_start(
         locator.kind = LOCATOR_KIND_TCPv4;
     }
     serverQos.wire_protocol().builtin.discovery_config.m_DiscoveryServers = serverList;
-    startServerAutoMode(port, id);
+    start_server_auto_mode(port, id);
 
     return return_value;
 }
@@ -981,15 +981,15 @@ int CliDiscoveryManager::fastdds_discovery_stop(
     const option::Option* pOp = options[DOMAIN_OPT];
     DomainId_t id = get_domain_id(pOp);
 
-    if (!isServerRunning(id))
+    if (!is_server_running(id))
     {
         std::cout << "There is no running Server for Domain ID [" << id << "]." << std::endl;
         return return_value;
     }
 
     // Create a server for the domain specified
-    uint16_t port = getDiscoveryServerPort(id);
-    pid_t server_pid = getPidOfServer(port);
+    uint16_t port = get_discovery_server_port(id);
+    pid_t server_pid = get_pid_of_server(port);
     if (server_pid == 0)
     {
         return 1;
@@ -1029,17 +1029,17 @@ int CliDiscoveryManager::fastdds_discovery_add(
 
     const option::Option* pOp = options[DOMAIN_OPT];
     DomainId_t id = get_domain_id(pOp);
-    if (!isServerRunning(id))
+    if (!is_server_running(id))
     {
         std::cout << "There is no running Server for Domain ID [" << id << "]." << std::endl;
         return return_value;
     }
 
-    uint16_t port = getDiscoveryServerPort(id);
-    pid_t server_pid = getPidOfServer(port);
+    uint16_t port = get_discovery_server_port(id);
+    pid_t server_pid = get_pid_of_server(port);
     std::stringstream file_name;
     file_name << intraprocess_dir_ << "/" << port << "_servers.txt";
-    std::string servers = getRemoteServers(parse, numServs);
+    std::string servers = get_remote_servers(parse, numServs);
     if (servers.empty())
     {
         EPROSIMA_LOG_ERROR(CLI_ADD,
@@ -1075,21 +1075,21 @@ int CliDiscoveryManager::fastdds_discovery_set(
 
     const option::Option* pOp = options[DOMAIN_OPT];
     DomainId_t id = get_domain_id(pOp);
-    if (!isServerRunning(id))
+    if (!is_server_running(id))
     {
         std::cout << "There is no running Server for Domain ID [" << id << "]." << std::endl;
         return return_value;
     }
 
-    uint16_t port = getDiscoveryServerPort(id);
-    pid_t server_pid = getPidOfServer(port);
+    uint16_t port = get_discovery_server_port(id);
+    pid_t server_pid = get_pid_of_server(port);
     if (server_pid == 0)
     {
         return 1;
     }
     std::stringstream file_name;
     file_name << intraprocess_dir_ << "/" << port << "_servers.txt";
-    std::string servers = getRemoteServers(parse, numServs);
+    std::string servers = get_remote_servers(parse, numServs);
     write_servers_to_file(file_name.str(), servers);
     kill(server_pid, SIGUSR2);
 
@@ -1106,7 +1106,7 @@ int CliDiscoveryManager::fastdds_discovery_list(
     }
 
     // List all servers
-    std::vector<MetaInfo_DS> servers = getLocalServers();
+    std::vector<MetaInfo_DS> servers = get_local_servers();
 
     std::cout << "### Servers running ###" << std::endl;
     for (const MetaInfo_DS& server : servers)
