@@ -129,9 +129,6 @@ if(Python3_Interpreter_FOUND)
 endif()
 
 # C++ Unittests
-find_package(GTest CONFIG REQUIRED)
-include(${PROJECT_SOURCE_DIR}/cmake/testing/GoogleTest.cmake)
-
 set(CLI_MANAGER_TESTS_EXEC CliDiscoveryManagerTests)
 
 set(CLI_MANAGER_TESTS_SOURCE
