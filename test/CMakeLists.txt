@@ -93,6 +93,9 @@ endif()
 # System tests
 ###############################################################################
 if(SYSTEM_TESTS)
+    find_package(GTest CONFIG REQUIRED)
+    include(${PROJECT_SOURCE_DIR}/cmake/testing/GoogleTest.cmake)
+
     add_subdirectory(system/tools/fastdds)
     add_subdirectory(system/tools/fds)
 endif()
