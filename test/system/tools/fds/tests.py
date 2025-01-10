@@ -63,7 +63,6 @@ class Command_test(Enum):
     SET = "set"
     LIST = "list"
     INFO = "info"
-    SHUTDOWN = "shutdown"
     UNKNOWN = "unknown"
 
 # This map is used to convert the string command to an integer used in the cpp tool
@@ -75,7 +74,6 @@ command_to_int_test = {
     Command_test.SET: 4,
     Command_test.LIST: 5,
     Command_test.INFO: 6,
-    Command_test.SHUTDOWN: 7,
     Command_test.SERVER: 42
 }
 
