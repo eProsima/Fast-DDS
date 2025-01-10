@@ -50,7 +50,6 @@ class Command(Enum):
     SET = "set"
     LIST = "list"
     INFO = "info"
-    SHUTDOWN = "shutdown"
     UNKNOWN = "unknown"
 
 # This map is used to convert the string command to an integer used in the cpp tool
@@ -62,7 +61,6 @@ command_to_int = {
     Command.SET: 4,
     Command.LIST: 5,
     Command.INFO: 6,
-    Command.SHUTDOWN: 7,
     Command.SERVER: 42
 }
 
@@ -176,7 +174,8 @@ class Parser:
             for unknown_arg in unknown_args:
                 args_for_cpp.append(unknown_arg)
 
-            if command_int == command_to_int[Command.SHUTDOWN]:
+            # Use the 'stop' command without domain to stop all servers and shutdown the daemon
+            if command_int == command_to_int[Command.STOP] and daemon_args.domain is None:
                 if not self.__is_daemon_running():
                     print('The Fast DDS daemon is not running.')
                     raise SystemExit(0)
