@@ -127,6 +127,7 @@ private:
 
         return std::make_pair(std::move(tmp_file), std::string(filename_buffer.data()));
     }
+
 #else
     std::pair<std::ofstream, std::string> get_temporary_file() const
     {
@@ -156,6 +157,7 @@ private:
         // Return the file stream and the file name
         return std::make_pair(std::move(tmp_file), std::string(filename_template.begin(), filename_template.end() - 1));
     }
+
 #endif // _MSC_VER
 
     void replace_all_string(
@@ -184,7 +186,10 @@ private:
     std::string exec(
             const std::string& cmd) const
     {
-        auto deleter = [](FILE* f) { pclose(f); };
+        auto deleter = [](FILE* f)
+                {
+                    pclose(f);
+                };
         std::unique_ptr<FILE, decltype(deleter)> pipe(
             popen(cmd.c_str(), EPROSIMA_PLATFORM_PIPE_OPEN_FLAGS), deleter);
         if (!pipe)
