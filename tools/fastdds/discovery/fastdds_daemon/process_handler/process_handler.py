@@ -1,5 +1,19 @@
+# Copyright 2025 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import os
-import select
+import re
 import signal
 import subprocess
 import threading
@@ -40,18 +54,18 @@ class ProcessHandler:
                                        preexec_fn=os.setsid)
             # Check output to see if the process started correctly or it issued an error
             try:
-                streams, _, _ = select.select([process.stdout, process.stderr], [], [], 0.3)
-                output = ''
-                if streams:
-                    for stream in streams:
-                        output = os.read(stream.fileno(), 1024).decode('utf-8')
+                output = os.read(process.stdout.fileno(), 1024).decode('utf-8')
             except Exception as e:
                 output = f"Error reading initial log: {e}"
 
             if 'started' in output:
                 self.processes[domain] = process
             else:
-                output = f"Error starting Server: {output}"
+                # Strip ANSI colors from the error message
+                stderr = os.read(process.stderr.fileno(), 1024).decode('utf-8')
+                ansi_escape = re.compile(r'\x1b[^m]*m')
+                stripped_output = ansi_escape.sub('', stderr)
+                output = f"Error starting Server: {stripped_output}"
             return output
 
     def run_process_b(self, domain: int, command: list, check_server: bool):

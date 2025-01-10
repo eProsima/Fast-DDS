@@ -111,7 +111,7 @@ bool load_environment_server_info(
                 {
                     // This is a domain id, not a port. Translate it to a port
                     PortParameters port_params;
-                    uint16_t port_from_domain = port_params.getDiscoveryServerPort(port);
+                    uint16_t port_from_domain = port_params.get_discovery_server_port(port);
                     port = port_from_domain;
                 }
 
