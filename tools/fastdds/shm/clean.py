@@ -45,7 +45,7 @@ class Clean:
         zombie_ports = self.__clean_zombie_ports()
         if force:
             zombie_datasharing_segments = self.__clean_zombie_datasharing_segments()
-            print(f'Datasharing segment: {zombie_datasharing_segments}')
+            print(f'Datasharing segments: {zombie_datasharing_segments}')
 
         print('shm.clean:')
         print(self.__ports_in_use, 'ports in use')
