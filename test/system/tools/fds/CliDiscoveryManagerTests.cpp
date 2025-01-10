@@ -1,4 +1,4 @@
-// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2025 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -124,7 +124,7 @@ public:
                         const_cast<const char**>(argv.data()), &options[0], &buffer[0]);
 
         manager.reset();
-        manager.getCliPortsAndIps(
+        manager.get_cli_ports_and_ips(
             getOption(UDP_PORT),
             getOption(UDPADDRESS),
             getOption(TCP_PORT),
@@ -133,11 +133,11 @@ public:
         // Only fails if there is an error setting address and kind
         if (is_tcp)
         {
-            EXPECT_EQ(manager.addTcpServers(), !should_fail);
+            EXPECT_EQ(manager.add_tcp_servers(), !should_fail);
         }
         else
         {
-            EXPECT_EQ(manager.addUdpServers(), !should_fail);
+            EXPECT_EQ(manager.add_udp_servers(), !should_fail);
         }
         if (!should_fail)
         {
@@ -169,14 +169,14 @@ public:
         parse = option::Parser(usage, static_cast<int>(argv.size()),
                         const_cast<const char**>(argv.data()), &options[0], &buffer[0]);
         manager.reset();
-        manager.getCliPortsAndIps(
+        manager.get_cli_ports_and_ips(
             getOption(UDP_PORT),
             getOption(UDPADDRESS),
             getOption(TCP_PORT),
             getOption(TCPADDRESS)
             );
-        EXPECT_TRUE(manager.addTcpServers());
-        EXPECT_TRUE(manager.addUdpServers());
+        EXPECT_TRUE(manager.add_tcp_servers());
+        EXPECT_TRUE(manager.add_udp_servers());
     }
 
     template<typename TransportDescriptorType>
@@ -202,7 +202,7 @@ public:
             uint8_t tcp4,
             uint8_t tcp6)
     {
-        manager.configureTransports();
+        manager.configure_transports();
         transport_check<SharedMemTransportDescriptor>(manager.getServerQos().transport().user_transports, shm);
         transport_check<UDPv4TransportDescriptor>(manager.getServerQos().transport().user_transports, udp4);
         transport_check<UDPv6TransportDescriptor>(manager.getServerQos().transport().user_transports, udp6);
@@ -451,12 +451,12 @@ TEST_F(CliDiscoveryManagerTest, GetDiscoveryServerPortFromCLI)
     const char* argv_udp[] = {"-p", "11811"};
     createOptionsAndParser(2, argv_udp);
     Option* udp_port_opt = getOption(UDP_PORT);
-    uint16_t udp_port = manager.getDiscoveryServerPort(udp_port_opt);
+    uint16_t udp_port = manager.get_discovery_server_port(udp_port_opt);
     EXPECT_EQ(udp_port, 11811);
     const char* argv_tcp[] = {"-q", "42100"};
     createOptionsAndParser(2, argv_tcp);
     Option* tcp_port_opt = getOption(TCP_PORT);
-    uint16_t tcp_port = manager.getDiscoveryServerPort(tcp_port_opt);
+    uint16_t tcp_port = manager.get_discovery_server_port(tcp_port_opt);
     EXPECT_EQ(tcp_port, 42100);
 }
 
@@ -464,12 +464,12 @@ TEST_F(CliDiscoveryManagerTest, GetDiscoveryServerPortFromCLI)
 TEST_F(CliDiscoveryManagerTest, GetDiscoveryServerPortFromDomainId)
 {
     PortParameters port_params;
-    uint16_t port_1 = manager.getDiscoveryServerPort(1);
-    EXPECT_EQ(port_1, port_params.getDiscoveryServerPort(1));
-    uint16_t port_232 = manager.getDiscoveryServerPort(232);
-    EXPECT_EQ(port_232, port_params.getDiscoveryServerPort(232));
+    uint16_t port_1 = manager.get_discovery_server_port(1);
+    EXPECT_EQ(port_1, port_params.get_discovery_server_port(1));
+    uint16_t port_232 = manager.get_discovery_server_port(232);
+    EXPECT_EQ(port_232, port_params.get_discovery_server_port(232));
 
-    uint16_t port_fail = manager.getDiscoveryServerPort(233);
+    uint16_t port_fail = manager.get_discovery_server_port(233);
     EXPECT_EQ(port_fail, 0);
 }
 
@@ -499,7 +499,7 @@ TEST_F(CliDiscoveryManagerTest, GetRemoteServersWithDomainParam)
 {
     const char* argv[] = {"-d", "4", "127.0.0.1:0;192.168.1.42:1"};
     createOptionsAndParser(3, argv);
-    std::string servers = manager.getRemoteServers(parse, parse.nonOptionsCount());
+    std::string servers = manager.get_remote_servers(parse, parse.nonOptionsCount());
 
     // Use regex to check the string correctness
     LocatorList_t serverList;
@@ -507,7 +507,7 @@ TEST_F(CliDiscoveryManagerTest, GetRemoteServersWithDomainParam)
 
     EXPECT_EQ(serverList.size(), 2);
     PortParameters port_params;
-    std::vector<uint16_t> expected_ports({7402, port_params.getDiscoveryServerPort(1)});
+    std::vector<uint16_t> expected_ports({7402, port_params.get_discovery_server_port(1)});
     for (Locator_t& locator : serverList)
     {
         // Do NOT check kind, as it is not set in this case. We are using a string
@@ -523,14 +523,14 @@ TEST_F(CliDiscoveryManagerTest, GetRemoteServersWithDomainParam)
 
 TEST_F(CliDiscoveryManagerTest, ExecCommand)
 {
-    std::string result = manager.execCommand("echo \"Hello CLI Tool\"");
+    std::string result = manager.exec_command("echo \"Hello CLI Tool\"");
     EXPECT_EQ(result, "Hello CLI Tool\n");
 }
 #endif // _WIN32
 
 TEST_F(CliDiscoveryManagerTest, SetServerQos)
 {
-    manager.setServerQos(7402);
+    manager.set_server_qos(7402);
     DomainParticipantQos qos = manager.getServerQos();
     EXPECT_EQ(qos.wire_protocol().builtin.metatrafficUnicastLocatorList.size(), 1);
     for (const Locator_t& locator : qos.wire_protocol().builtin.metatrafficUnicastLocatorList)
@@ -565,7 +565,7 @@ TEST_F(CliDiscoveryManagerTest, GetCliPortsAndIps)
         parse = option::Parser(usage, static_cast<int>(std::get<0>(test_case).size()),
                         const_cast<const char**>(std::get<0>(test_case).data()), &options[0], &buffer[0]);
         manager.reset();
-        manager.getCliPortsAndIps(
+        manager.get_cli_ports_and_ips(
             getOption(UDP_PORT),
             getOption(UDPADDRESS),
             getOption(TCP_PORT),
@@ -589,46 +589,46 @@ TEST_F(CliDiscoveryManagerTest, SetAddressAndKind)
     {
         // UDPv4 address
         Locator_t locator(7402);
-        EXPECT_TRUE(manager.setAddressAndKind(ipv4_address, locator, false));
+        EXPECT_TRUE(manager.set_address_and_kind(ipv4_address, locator, false));
         compareLocator(locator, ipv4_address, 7402, false, false);
     }
     {
         // UDPv6 address
         Locator_t locator(7402);
-        EXPECT_TRUE(manager.setAddressAndKind(ipv6_address, locator, false));
+        EXPECT_TRUE(manager.set_address_and_kind(ipv6_address, locator, false));
         compareLocator(locator, ipv6_address, 7402, false, true);
     }
     {
         // TCPv4 address
         Locator_t locator(7402);
         IPLocator::setLogicalPort(locator, 7402);
-        EXPECT_TRUE(manager.setAddressAndKind(ipv4_address, locator, true));
+        EXPECT_TRUE(manager.set_address_and_kind(ipv4_address, locator, true));
         compareLocator(locator, ipv4_address, 7402, true, false);
     }
     {
         // TCPv6 address
         Locator_t locator(7402);
         IPLocator::setLogicalPort(locator, 7402);
-        EXPECT_TRUE(manager.setAddressAndKind(ipv6_address, locator, true));
+        EXPECT_TRUE(manager.set_address_and_kind(ipv6_address, locator, true));
         compareLocator(locator, ipv6_address, 7402, true, true);
     }
     {
         // UDPv4 DNS address
         Locator_t locator(7402);
-        EXPECT_TRUE(manager.setAddressAndKind(dns_address, locator, false));
+        EXPECT_TRUE(manager.set_address_and_kind(dns_address, locator, false));
         compareLocator(locator, ipv4_address, 7402, false, false);
     }
     {
         // TCPv4 DNS address
         Locator_t locator(7402);
         IPLocator::setLogicalPort(locator, 7402);
-        EXPECT_TRUE(manager.setAddressAndKind(dns_address, locator, true));
+        EXPECT_TRUE(manager.set_address_and_kind(dns_address, locator, true));
         compareLocator(locator, ipv4_address, 7402, true, false);
     }
     {
         // UDPv4 empty address
         Locator_t locator(7402);
-        EXPECT_TRUE(manager.setAddressAndKind("", locator, false));
+        EXPECT_TRUE(manager.set_address_and_kind("", locator, false));
         compareLocator(locator, default_ip, 7402, false, false);
     }
 }
@@ -715,35 +715,35 @@ TEST_F(CliDiscoveryManagerTest, ConfigureTransports)
 
 #ifndef _WIN32
 // This test also checks:
-// - getListeningPorts method, which is used in the getLocalServers method.
-// - isServerRunning method, which checks if a server is running in a specific domain.
-// - getPidOfServer method, which returns the pid of the running server in the specified port.
+// - get_listening_ports method, which is used in the get_local_servers method.
+// - is_server_running method, which checks if a server is running in a specific domain.
+// - get_pid_of_server method, which returns the pid of the running server in the specified port.
 TEST_F(CliDiscoveryManagerTest, GetLocalServers)
 {
-    std::vector<MetaInfo_DS> servers = manager.getLocalServers();
+    std::vector<MetaInfo_DS> servers = manager.get_local_servers();
     EXPECT_TRUE(servers.empty());
 
     {
         DomainId_t domain = 0;
         PortParameters port_params;
-        uint16_t port = port_params.getDiscoveryServerPort(domain);
-        ASSERT_FALSE(manager.isServerRunning(domain));
-        EXPECT_EQ(manager.getPidOfServer(port), 0);
+        uint16_t port = port_params.get_discovery_server_port(domain);
+        ASSERT_FALSE(manager.is_server_running(domain));
+        EXPECT_EQ(manager.get_pid_of_server(port), 0);
         addServers(test_case_map.at("tcp_1_ip_1_port"));
-        manager.configureTransports();
+        manager.configure_transports();
         DomainParticipant* server = DomainParticipantFactory::get_instance()->create_participant(0,
                         manager.getServerQos());
-        servers = manager.getLocalServers();
+        servers = manager.get_local_servers();
         EXPECT_EQ(servers.size(), 1);
         for (const MetaInfo_DS& server : servers)
         {
             EXPECT_EQ(server.domain_id, domain);
             EXPECT_EQ(server.port, port);
         }
-        EXPECT_TRUE(manager.isServerRunning(domain));
-        EXPECT_GT(manager.getPidOfServer(port), 0);
+        EXPECT_TRUE(manager.is_server_running(domain));
+        EXPECT_GT(manager.get_pid_of_server(port), 0);
         ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(server), RETCODE_OK);
-        EXPECT_FALSE(manager.isServerRunning(domain));
+        EXPECT_FALSE(manager.is_server_running(domain));
     }
 
     // Multiple servers
@@ -751,17 +751,17 @@ TEST_F(CliDiscoveryManagerTest, GetLocalServers)
         DomainId_t d0 = 0;
         DomainId_t d1 = 1;
         PortParameters port_params;
-        uint16_t p0 = port_params.getDiscoveryServerPort(d0);
-        uint16_t p1 = port_params.getDiscoveryServerPort(d1);
-        ASSERT_FALSE(manager.isServerRunning(d0));
-        ASSERT_FALSE(manager.isServerRunning(d1));
-        EXPECT_EQ(manager.getPidOfServer(p0), 0);
-        EXPECT_EQ(manager.getPidOfServer(p1), 0);
+        uint16_t p0 = port_params.get_discovery_server_port(d0);
+        uint16_t p1 = port_params.get_discovery_server_port(d1);
+        ASSERT_FALSE(manager.is_server_running(d0));
+        ASSERT_FALSE(manager.is_server_running(d1));
+        EXPECT_EQ(manager.get_pid_of_server(p0), 0);
+        EXPECT_EQ(manager.get_pid_of_server(p1), 0);
         addServers(test_case_map.at("tcp_2_ip_2_port"));
-        manager.configureTransports();
+        manager.configure_transports();
         DomainParticipant* server = DomainParticipantFactory::get_instance()->create_participant(0,
                         manager.getServerQos());
-        servers = manager.getLocalServers();
+        servers = manager.get_local_servers();
         EXPECT_EQ(servers.size(), 2);
         std::vector<uint16_t> expected_ports({p0, p1});
         std::vector<uint32_t> expected_domains({d0, d1});
@@ -779,8 +779,8 @@ TEST_F(CliDiscoveryManagerTest, GetLocalServers)
             {
                 expected_domains.erase(it_d);
             }
-            EXPECT_TRUE(manager.isServerRunning(server.domain_id));
-            EXPECT_GT(manager.getPidOfServer(server.port), 0);
+            EXPECT_TRUE(manager.is_server_running(server.domain_id));
+            EXPECT_GT(manager.get_pid_of_server(server.port), 0);
         }
         EXPECT_EQ(expected_ports.size(), 0);
         EXPECT_EQ(expected_domains.size(), 0);

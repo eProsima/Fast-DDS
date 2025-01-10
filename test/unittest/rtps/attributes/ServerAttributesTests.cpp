@@ -470,11 +470,11 @@ TEST(ServerAttributesTests, ServerClientEnvironmentSetUpDNS)
 
     IPLocator::setIPv4(loc, string("192.168.36.34"));
     PortParameters port_params;
-    IPLocator::setPhysicalPort(loc, port_params.getDiscoveryServerPort(0));
+    IPLocator::setPhysicalPort(loc, port_params.get_discovery_server_port(0));
     standard.push_back(loc);
 
     IPLocator::setIPv4(loc, string("172.30.80.1"));
-    IPLocator::setPhysicalPort(loc, port_params.getDiscoveryServerPort(7));
+    IPLocator::setPhysicalPort(loc, port_params.get_discovery_server_port(7));
     standard.push_back(loc);
 
     ASSERT_TRUE(load_environment_server_info(text, output));

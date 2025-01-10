@@ -119,7 +119,7 @@ public:
      * @param domainId Domain ID.
      * @return Discovery server port
      */
-    inline uint16_t getDiscoveryServerPort(
+    inline uint16_t get_discovery_server_port(
             uint32_t domainId) const
     {
         uint32_t port = portBase + domainIDGain * domainId + offsetd4;

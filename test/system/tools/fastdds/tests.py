@@ -112,10 +112,24 @@ def test_fastdds_installed(install_path):
 def test_fastdds_version(install_path):
     """Test that fastdds version is printed correctly."""
     args = '-v'
-    ret = subprocess.call(cmd(install_path, args=args), shell=True)
-    if 0 != ret:
-        print('test_fastdds_version FAILED')
-        sys.exit(ret)
+    try:
+        ret = subprocess.run(cmd(install_path, args=args),
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE,
+                             text=True,
+                             shell=True,
+                             timeout=5)
+    except subprocess.TimeoutExpired:
+        print('test_fastdds_version FAILED due to timeout')
+        sys.exit(1)
+
+    if 0 != ret.returncode:
+        print('test_fastdds_version FAILED due to return code')
+        sys.exit(ret.returncode)
+
+    if 'Fast DDS version:' not in ret.stdout:
+        print('test_fastdds_version FAILED due to unexpected output')
+        sys.exit(ret.returncode)
 
 def test_fastdds_shm(install_path):
     """Test that shm command runs."""

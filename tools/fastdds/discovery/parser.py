@@ -30,13 +30,13 @@ import subprocess
 import sys
 import signal
 
-from discovery.fast_daemon.node.daemon_node import (
+from discovery.fastdds_daemon.node.daemon_node import (
     spawn_daemon,
     shutdown_daemon,
     is_daemon_running
     )
 
-from discovery.fast_daemon.xmlrpc_local import local_client as client_cli
+from discovery.fastdds_daemon.xmlrpc_local import local_client as client_cli
 
 DOMAIN_ENV_VAR = "ROS_DOMAIN_ID"
 REMOTE_SERVERS_ENV_VAR = "ROS_STATIC_PEERS"
@@ -138,11 +138,12 @@ class Parser:
                 aux_argument = True
             # Check for version argument
             if aux_args.version:
-                result = subprocess.run(
+                result_ver = subprocess.run(
                     [tool_path, str(command_to_int[Command.SERVER]), '-v'],
                     stdout=subprocess.PIPE,
                     universal_newlines=True
                 )
+                print(result_ver.stdout)
                 aux_argument = True
             if aux_argument:
                 raise SystemExit(0)
@@ -186,12 +187,15 @@ class Parser:
             elif command_int == command_to_int[Command.AUTO] or command_int == command_to_int[Command.START]:
                 self.__start_daemon(tool_path)
                 self.__add_remote_servers_to_args(args_for_cpp)
-                print(client_cli.run_request_nb(domain, args_for_cpp))
+                output = client_cli.run_request_nb(domain, args_for_cpp)
+                print(output)
+                if 'Error starting Server' in output:
+                    raise SystemExit(1)  # Exit with error code
             elif command_int == command_to_int[Command.STOP]:
                 if not self.__is_daemon_running():
                     print('The Fast DDS daemon is not running.')
                     raise SystemExit(0)
-                print(client_cli.stop_request(domain, get_sig_idx(signal.SIGINT)))
+                print(client_cli.stop_request(domain, get_sig_idx(signal.SIGTERM)))
             elif command_int == command_to_int[Command.ADD]:
                 if not self.__is_daemon_running():
                     print('The Fast DDS daemon is not running.')
