@@ -184,8 +184,9 @@ private:
     std::string exec(
             const std::string& cmd) const
     {
-        std::unique_ptr<FILE, decltype(& pclose)> pipe(
-            popen(cmd.c_str(), EPROSIMA_PLATFORM_PIPE_OPEN_FLAGS), pclose);
+        auto deleter = [](FILE* f) { pclose(f); };
+        std::unique_ptr<FILE, decltype(deleter)> pipe(
+            popen(cmd.c_str(), EPROSIMA_PLATFORM_PIPE_OPEN_FLAGS), deleter);
         if (!pipe)
         {
             throw std::runtime_error("popen() failed!");
