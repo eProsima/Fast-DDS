@@ -59,7 +59,7 @@ class TestDiscoveryParser(unittest.TestCase):
         mock_shutdown.return_value = True
         mock_is_running.return_value = True
 
-        argv = ['shutdown']
+        argv = ['stop']
         parser = Parser(argv)
 
         mock_is_running.assert_called_once()
@@ -82,7 +82,7 @@ class TestDiscoveryParser(unittest.TestCase):
         mock_shutdown.return_value = False
         mock_is_running.return_value = False
 
-        argv = ['shutdown']
+        argv = ['stop']
         try:
             parser = Parser(argv)
         except SystemExit as e:
@@ -293,7 +293,7 @@ class TestDiscoveryParser(unittest.TestCase):
         self.check_command = [str(command_to_int[Command.STOP]), '-d', '0']
         mock_rpc_brequest.side_effect = self.side_effect_rpc
 
-        argv = ['stop']
+        argv = ['stop', '-d', '0']
         try:
             parser = Parser(argv)
         except SystemExit as e:
@@ -323,7 +323,7 @@ class TestDiscoveryParser(unittest.TestCase):
         self.check_command = [str(command_to_int[Command.STOP]), '-d', '0']
         mock_rpc_brequest.side_effect = self.side_effect_rpc
 
-        argv = ['stop']
+        argv = ['stop', '-d', '0']
         parser = Parser(argv)
 
         mock_is_running.assert_called_once()
