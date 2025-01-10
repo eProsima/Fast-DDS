@@ -1,16 +1,41 @@
+# Copyright 2025 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Modifications:
+# - Adapted to work with Fast DDS CLI
+#
+# Original copyright retained below:
+#
+# Copyright 2017-2021 Open Source Robotics Foundation, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+
 import argparse
-import os
 import time
-import uuid
 
-from discovery.fast_daemon.helpers import before_invocation
-from discovery.fast_daemon.helpers import get_ros_domain_id
-from discovery.fast_daemon.helpers import pretty_print_call
+from discovery.fastdds_daemon.helpers import before_invocation
+from discovery.fastdds_daemon.helpers import get_ros_domain_id
+from discovery.fastdds_daemon.helpers import pretty_print_call
 
-from discovery.fast_daemon.process_handler.process_handler import ProcessHandler
+from discovery.fastdds_daemon.process_handler.process_handler import ProcessHandler
 
-from discovery.fast_daemon.xmlrpc_local.local_server import LocalXMLRPCServer
-from discovery.fast_daemon.xmlrpc_local.local_server import SimpleXMLRPCRequestHandler
+from discovery.fastdds_daemon.xmlrpc_local.local_server import LocalXMLRPCServer
+from discovery.fastdds_daemon.xmlrpc_local.local_server import SimpleXMLRPCRequestHandler
 
 
 def get_port():
