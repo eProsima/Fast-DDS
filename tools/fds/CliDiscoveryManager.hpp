@@ -1,4 +1,4 @@
-// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2025 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FASTDDS_CLI_DISCOVERY_HPP
-#define FASTDDS_CLI_DISCOVERY_HPP
+#ifndef FASTDDS_TOOLS_FDS_CLI_DISCOVERY_MANAGER_HPP
+#define FASTDDS_TOOLS_FDS_CLI_DISCOVERY_MANAGER_HPP
 
 #include <string>
 #include <vector>
@@ -116,7 +116,7 @@ public:
      * @param portArg The port argument received by the CLI
      * @return The port of the Discovery Server
      */
-    uint16_t getDiscoveryServerPort(
+    uint16_t get_discovery_server_port(
             const eprosima::option::Option* portArg);
 
 #ifndef _WIN32
@@ -125,7 +125,7 @@ public:
      * @param domainId The domain id of the Discovery Server
      * @return The port of the Discovery Server
      */
-    uint16_t getDiscoveryServerPort(
+    uint16_t get_discovery_server_port(
             const uint32_t& domainId);
 
     /**
@@ -142,7 +142,7 @@ public:
      * @param numServs Number of nonOpts, which are meant to be servers
      * @return The servers locators in string format
      */
-    std::string getRemoteServers(
+    std::string get_remote_servers(
             option::Parser& parse,
             int numServs);
 
@@ -151,27 +151,27 @@ public:
      * @param command The command to be executed
      * @return The output of the command
      */
-    std::string execCommand(
+    std::string exec_command(
             const std::string& command);
 
     /**
      * @brief Get the listening TCP ports of the machine.
      * @return An ordered vector with the listening ports
      */
-    std::vector<uint16_t> getListeningPorts();
+    std::vector<uint16_t> get_listening_ports();
 
     /**
      * @brief Get the local Discovery Servers running in the machine.
      * @return A vector with the info of local servers
      */
-    std::vector<MetaInfo_DS> getLocalServers();
+    std::vector<MetaInfo_DS> get_local_servers();
 
     /**
      * @brief Check if a Discovery Server is running in the specified domain.
      * @param domain The domain id of the Discovery Server
      * @return True if the server is running, false otherwise
      */
-    bool isServerRunning(
+    bool is_server_running(
             const DomainId_t& domain);
 
     /**
@@ -179,7 +179,7 @@ public:
      * @param port The port of the Discovery Server
      * @return The PID of the Discovery Server
      */
-    pid_t getPidOfServer(
+    pid_t get_pid_of_server(
             const uint16_t& port);
 
     /**
@@ -188,7 +188,7 @@ public:
      * @param domain The domain id of the Discovery Server
      * @param use_env_var True if the environment variable should be used, false otherwise
      */
-    void startServerAutoMode(
+    void start_server_auto_mode(
             const uint16_t& port,
             const DomainId_t& domain);
 #endif // ifndef _WIN32
@@ -197,7 +197,7 @@ public:
      * @brief Set the QoS of the Discovery Server.
      * @param port The port of the Discovery Server
      */
-    void setServerQos(
+    void set_server_qos(
             const uint16_t port);
 
     /**
@@ -205,7 +205,7 @@ public:
      * @param xmlArg The XML file argument
      * @return True if the XML file is loaded, false otherwise
      */
-    bool loadXMLFile(
+    bool load_XML_file(
             const eprosima::option::Option* xmlArg);
 
     /**
@@ -215,7 +215,7 @@ public:
      * @param tcpPort The TCP port argument
      * @param tcpIp The TCP address argument
      */
-    void getCliPortsAndIps(
+    void get_cli_ports_and_ips(
             const eprosima::option::Option* udpPort,
             const eprosima::option::Option* udpIp,
             const eprosima::option::Option* tcpPort,
@@ -228,7 +228,7 @@ public:
      * @param [in]      is_tcp True if the locator is TCP, false otherwise
      * @return True if the address and kind are set, false otherwise
      */
-    bool setAddressAndKind(
+    bool set_address_and_kind(
             const std::string& address,
             Locator_t& locator,
             bool is_tcp);
@@ -237,13 +237,13 @@ public:
      * @brief Set the metatrafficUnicastLocatorList for UDP servers.
      * @return True if the metatrafficUnicastLocatorList is set, false otherwise
      */
-    bool addUdpServers();
+    bool add_udp_servers();
 
     /**
      * @brief Set the metatrafficUnicastLocatorList for TCP servers.
      * @return True if the metatrafficUnicastLocatorList is set, false otherwise
      */
-    bool addTcpServers();
+    bool add_tcp_servers();
 
     /**
      * @brief Configure the transports of the Discovery Server participant. If UDPv6 is enabled, it
@@ -251,7 +251,7 @@ public:
      * transport for each listening port provided. Builtin transports are disabled if no UDPv4 locator
      * is provided.
      */
-    void configureTransports();
+    void configure_transports();
 
     /**
      * @brief Create a Discovery Server with the configuration options received.
@@ -345,7 +345,7 @@ protected:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_CLI_DISCOVERY_HPP
+#endif // FASTDDS_TOOLS_FDS_CLI_DISCOVERY_MANAGER_HPP
 
 
 

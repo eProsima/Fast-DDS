@@ -96,7 +96,7 @@ TEST(PortParametersDeathTest, Limit_Multicast_Domain_FAIL)
 TEST(PortParameters, Limit_DiscoveryServer_Domain_OK)
 {
     PortParameters params;
-    uint32_t port = params.getDiscoveryServerPort(232);
+    uint32_t port = params.get_discovery_server_port(232);
 
     ASSERT_TRUE(port > 0);
 }
@@ -108,7 +108,7 @@ TEST(PortParameters, Limit_DiscoveryServer_Domain_OK)
 TEST(PortParametersDeathTest, Limit_DiscoveryServer_Domain_FAIL)
 {
     PortParameters params;
-    ASSERT_EXIT( { params.getDiscoveryServerPort(233); }, ::testing::ExitedWithCode(EXIT_FAILURE), "");
+    ASSERT_EXIT( { params.get_discovery_server_port(233); }, ::testing::ExitedWithCode(EXIT_FAILURE), "");
 }
 
 
