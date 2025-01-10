@@ -18,7 +18,7 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
 #include <ScopedLogs.hpp>
-#include "IDLParserTests.hpp"
+#include "IdlParserTests.hpp"
 
 using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastdds::dds;
