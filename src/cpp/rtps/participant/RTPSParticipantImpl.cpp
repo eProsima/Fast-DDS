@@ -2738,9 +2738,13 @@ void RTPSParticipantImpl::get_default_metatraffic_locators(
 {
     uint32_t metatraffic_multicast_port = att.port.getMulticastPort(domain_id_);
 
-    m_network_Factory.getDefaultMetatrafficMulticastLocators(att.builtin.metatrafficMulticastLocatorList,
-            metatraffic_multicast_port);
-    m_network_Factory.NormalizeLocators(att.builtin.metatrafficMulticastLocatorList);
+    if (m_att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol::CLIENT &&
+            m_att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol::SUPER_CLIENT)
+    {
+        m_network_Factory.getDefaultMetatrafficMulticastLocators(att.builtin.metatrafficMulticastLocatorList,
+                metatraffic_multicast_port);
+        m_network_Factory.NormalizeLocators(att.builtin.metatrafficMulticastLocatorList);
+    }
 
     m_network_Factory.getDefaultMetatrafficUnicastLocators(att.builtin.metatrafficUnicastLocatorList,
             metatraffic_unicast_port_);
