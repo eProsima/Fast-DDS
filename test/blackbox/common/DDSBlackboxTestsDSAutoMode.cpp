@@ -39,7 +39,7 @@ void set_ros_discovery_server_auto_env()
 void stop_background_servers()
 {
     // Stop server(s)
-    int res = std::system("fastdds discovery stop all");
+    int res = std::system("fastdds discovery stop");
     ASSERT_EQ(res, 0);
 }
 
