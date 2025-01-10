@@ -1,0 +1,5 @@
+struct BenchMarkMedium
+{
+	char data[524288];
+	unsigned long index;
+};
