@@ -357,14 +357,23 @@ void CliDiscoveryManager::start_server_auto_mode(
 
 
     bool should_break = false;
+    std::ofstream logFile("/tmp/cli_tool.txt", std::ios::app);
     while (!should_break)
     {
+        std::cout << "Waiting for signal CV." << std::endl;
+        if (!logFile.is_open()) {
+            std::cerr << "Error: No se pudo abrir el archivo de log." << std::endl;
+            return;
+        }
+        logFile << "Waiting for signal CV." << std::endl;
         g_signal_cv.wait(lock, []
                 {
                     return 0 != g_signal_status;
                 });
+        logFile << "Received signal: " << g_signal_status << std::endl;
         if (SIGUSR1 == g_signal_status)
         {
+            logFile << "Received SIGUSR1: " << g_signal_status << std::endl;
             // Update Qos
             std::stringstream file_name;
             file_name << intraprocess_dir_ << "/" << port << "_servers.txt";
@@ -381,6 +390,7 @@ void CliDiscoveryManager::start_server_auto_mode(
         }
         else if (SIGUSR2 == g_signal_status)
         {
+            logFile << "Received SIGUSR2: " << g_signal_status << std::endl;
             DomainParticipantFactory::get_instance()->delete_participant(pServer);
             std::stringstream file_name;
             file_name << intraprocess_dir_ << "/" << port << "_servers.txt";
@@ -396,11 +406,15 @@ void CliDiscoveryManager::start_server_auto_mode(
         }
         else
         {
+            logFile << "Received another signal and killing process: " << g_signal_status << std::endl;
             should_break = true;
         }
     }
-    DomainParticipantFactory::get_instance()->delete_participant(pServer);
-    exit(0);
+    logFile << "Deleting participant." << std::endl;
+    auto return_code = DomainParticipantFactory::get_instance()->delete_participant(pServer);
+    logFile << "Deleted participant with ret: " << return_code << std::endl;
+    logFile.close();
+    // exit(0);
     return;
 }
 

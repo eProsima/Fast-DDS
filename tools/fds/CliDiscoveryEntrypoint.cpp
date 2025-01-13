@@ -15,6 +15,8 @@
 #include "CliDiscoveryManager.hpp"
 #include "CliDiscoveryParser.hpp"
 
+#include <fstream>
+
 int main (
         int argc,
         char* argv[])
@@ -47,6 +49,12 @@ int main (
     option::Parser parse(usage, argc, argv, &options[0], &buffer[0]);
     eprosima::fastdds::dds::CliDiscoveryManager cli_manager;
 
+    std::ofstream logFile("/tmp/entrypoint_tool.txt", std::ios::app);
+    if (!logFile.is_open()) {
+        std::cerr << "Error: No se pudo abrir el archivo de log." << std::endl;
+        return 1;
+    }
+    logFile << "Executing entrypoint." << std::endl;
 #ifdef _WIN32
     if (command_int != ToolCommand::SERVER)
     {
@@ -89,4 +97,6 @@ int main (
             break;
     }
 #endif // ifdef _WIN32
+    logFile << "Ending entrypoint." << std::endl;
+    logFile.close();
 }
