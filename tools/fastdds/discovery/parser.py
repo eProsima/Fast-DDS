@@ -180,7 +180,7 @@ class Parser:
                 if not self.__is_daemon_running():
                     print('The Fast DDS daemon is not running.')
                     raise SystemExit(0)
-                print(client_cli.stop_all_request(get_sig_idx(signal.SIGTERM)))
+                print(client_cli.stop_all_request(get_sig_idx(signal.SIGINT)))
                 for p in Path(self.__shm_dir()).glob("*_servers.txt"):
                     p.unlink()
                 self.__stop_daemon()
@@ -195,7 +195,7 @@ class Parser:
                 if not self.__is_daemon_running():
                     print('The Fast DDS daemon is not running.')
                     raise SystemExit(0)
-                print(client_cli.stop_request(domain, get_sig_idx(signal.SIGTERM)))
+                print(client_cli.stop_request(domain, get_sig_idx(signal.SIGINT)))
             elif command_int == command_to_int[Command.ADD]:
                 if not self.__is_daemon_running():
                     print('The Fast DDS daemon is not running.')
