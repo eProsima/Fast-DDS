@@ -384,10 +384,10 @@ bool SecurityManager::init(
         if (!e)
         {
             // Unexpected code path. Let's log any errors
-            logError(SECURITY, "Error while configuring security plugin.")
+            EPROSIMA_LOG_ERROR(SECURITY, "Error while configuring security plugin.");
             if (0 != strlen(exception.what()))
             {
-                logError(SECURITY, exception.what())
+                EPROSIMA_LOG_ERROR(SECURITY, exception.what());
             }
 
             cancel_init();

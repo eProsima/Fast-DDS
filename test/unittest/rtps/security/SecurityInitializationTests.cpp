@@ -14,6 +14,8 @@
 
 #include "SecurityTests.hpp"
 
+#include "../../logging/mock/MockConsumer.h"
+
 const char* const MockIdentity::class_id_ = "MockIdentityHandle";
 const char* const MockHandshake::class_id_ = "MockHandshakeHandle";
 const char* const SharedSecret::class_id_ = "SharedSecretHandle";
@@ -206,5 +208,45 @@ TEST_F(SecurityTest, initialization_ok)
 
     initialization_ok();
 
+}
+
+/* Regression test for Redmine 22545.
+ *
+ * Triggering a throw false in SecurityManager::init() should be logged properly as
+ * the error: "Error while configuring security plugin.".
+ */
+TEST_F(SecurityTest, initialization_logging_error)
+{
+    DefaultValue<const GUID_t&>::Set(guid);
+    DefaultValue<const ParticipantSecurityAttributes&>::Set(security_attributes_);
+
+    EXPECT_CALL(*auth_plugin_, validate_local_identity(_, _, _, _, _, _)).Times(1).
+            WillOnce(DoAll(SetArgPointee<0>(&local_identity_handle_), Return(ValidationResult_t::VALIDATION_OK)));
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_,
+            register_local_participant(Ref(local_identity_handle_), _, _, _, _)).Times(1).
+            WillOnce(Return(nullptr));
+
+    eprosima::fastdds::dds::MockConsumer* mockConsumer = new eprosima::fastdds::dds::MockConsumer();
+    eprosima::fastdds::dds::Log::RegisterConsumer(std::unique_ptr<eprosima::fastdds::dds::LogConsumer>(mockConsumer));
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Error);
+
+    security_activated_ = manager_.init(security_attributes_, participant_properties_);
+
+    // Check that the error message was logged.
+    // First flush the log to make sure the message is there.
+    eprosima::fastdds::dds::Log::Flush();
+
+    auto log_entries = mockConsumer->ConsumedEntries();
+    ASSERT_GE(log_entries.size(), 1);
+    bool found = false;
+    for (auto entry : log_entries)
+    {
+        if (entry.message.find("Error while configuring security plugin.") != std::string::npos)
+        {
+            found = true;
+            break;
+        }
+    }
+    ASSERT_TRUE(found);
 }
 
