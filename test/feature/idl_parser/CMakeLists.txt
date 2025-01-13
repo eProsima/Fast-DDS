@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+if(NOT EXISTS "${PROJECT_SOURCE_DIR}/thirdparty/dds-types-test/IDL")
+    message(FATAL_ERROR "Folder thirdparty/dds-types-test/IDL does not exist. Submodule thirdparty/dds-types-test might not have been initialized.")
+endif()
+
 if(WIN32)
     add_definitions(
         -D_WIN32_WINNT=0x0601
