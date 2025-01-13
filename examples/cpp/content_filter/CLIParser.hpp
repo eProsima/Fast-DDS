@@ -64,6 +64,7 @@ public:
     //! Subscriber application configuration structure
     struct subscriber_config
     {
+        uint16_t samples = 0;
         CLIParser::FilterKind filter_kind = CLIParser::FilterKind::DEFAULT;
         std::string filter_expression = "index between %0 and %1";
         std::string upper_bound = "9";
@@ -102,8 +103,8 @@ public:
         std::cout << "                                      (Default: Best effort)"                     << std::endl;
         std::cout << "     --transient-local                Set Durability QoS as transient local"      << std::endl;
         std::cout << "                                      (Default: Volatile)"                        << std::endl;
+        std::cout << " -s <num>, --samples <num>            Number of samples to send/receive"          << std::endl;
         std::cout << "Publisher options:"                                                               << std::endl;
-        std::cout << " -s <num>, --samples <num>            Number of samples to send"                  << std::endl;
         std::cout << "                                      (Default: 0 [unlimited])"                   << std::endl;
         std::cout << " -i <num>, --interval <num>           Time between samples in milliseconds"       << std::endl;
         std::cout << "           --reader-filters <num>     Set the maximum number of readers that the" << std::endl;
@@ -191,9 +192,7 @@ public:
                             }
                             else if (config.entity == CLIParser::EntityKind::SUBSCRIBER)
                             {
-                                EPROSIMA_LOG_ERROR(CLI_PARSER,
-                                        "samples option option can only be used with the Publisher");
-                                print_help(EXIT_FAILURE);
+                                config.sub_config.samples = static_cast<uint16_t>(input);
                             }
                             else
                             {

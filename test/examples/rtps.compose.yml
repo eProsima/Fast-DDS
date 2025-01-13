@@ -48,7 +48,7 @@ services:
     environment:
       @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
       EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/rtps/@EXAMPLE_SUFFIX_DIR_COMPOSE@
-    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/rtps@FILE_EXTENSION@ writer --samples 10"
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/rtps@FILE_EXTENSION@ writer --samples 10 --matched 2"
     depends_on:
     - sub-rtps
     - sub-dds
@@ -64,7 +64,7 @@ services:
       @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
       EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/hello_world/@EXAMPLE_SUFFIX_DIR_COMPOSE@
       FASTDDS_DEFAULT_PROFILES_FILE: @FASTDDS_DEFAULT_PROFILES_FILE_PREFIX_COMPOSE@/rtps/hello_world_profile.xml
-    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/hello_world@FILE_EXTENSION@ publisher --samples 10"
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/hello_world@FILE_EXTENSION@ publisher --samples 10 --matched 2"
     depends_on:
     - sub-rtps
     - sub-dds

@@ -61,6 +61,10 @@ if(UNIX AND NOT(APPLE) AND NOT(QNXNTO) AND NOT(ANDROID))
     set(COMMAND_CONCATENATE_COMPOSE "&")
     set(COMMAND_BACKGROUND_JOB_COMPOSE "")
 
+    set(SUB_ADDITIONAL_ARGS_COMPOSE "$\${SUB_ADDITIONAL_ARGS_COMPOSE}")
+    set(PUB_ADDITIONAL_ARGS_COMPOSE "$\${PUB_ADDITIONAL_ARGS_COMPOSE}")
+    set(SPLIT_ARGS_COMPOSE "")
+
 # Windows configurations
 elseif(WIN32)
     # Find pwsh
@@ -98,6 +102,10 @@ elseif(WIN32)
     set(COMMAND_CONCATENATE_COMPOSE "&\" \"")
     set(COMMAND_BACKGROUND_JOB_COMPOSE "; Receive-Job 1 -Wait")
 
+    set(SUB_ADDITIONAL_ARGS_COMPOSE "$\$Env:SUB_ADDITIONAL_ARGS_COMPOSE")
+    set(PUB_ADDITIONAL_ARGS_COMPOSE "$\$Env:PUB_ADDITIONAL_ARGS_COMPOSE")
+    set(SPLIT_ARGS_COMPOSE ".split(' ')")
+
     set(WIN_DOCKERFILE ${CMAKE_CURRENT_LIST_DIR}/windows/Dockerfile)
     # Generate image for testing
     add_custom_target(
@@ -117,7 +125,12 @@ endif()
 
 if(WIN32)
     # Temporarily, test hello world
-    file(GLOB examples_python_tests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*world.py)
+    file(GLOB examples_python_tests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_custom_payload_pool.py
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_hello_world.py
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_rtps.py
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_flow_control.py
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_content_filter.py)
 else()
     # Find all pytest files for testing
     file(GLOB examples_python_tests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.py)

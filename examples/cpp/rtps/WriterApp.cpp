@@ -71,6 +71,7 @@ WriterApp::WriterApp(
     , rtps_writer_(nullptr)
     , writer_history_(nullptr)
     , matched_(0)
+    , expected_matches_(config.matched)
     , stop_(false)
     , data_(new HelloWorld)
 {
@@ -210,7 +211,7 @@ bool WriterApp::add_change_to_history()
     terminate_cv_.wait(matched_lock, [&]()
             {
                 // at least one has been discovered
-                return ((matched_ > 0) || is_stopped());
+                return ((matched_ >= expected_matches_) || is_stopped());
             });
 
     bool ret =  false;

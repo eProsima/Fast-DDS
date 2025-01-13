@@ -23,5 +23,5 @@ services:
     environment:
       @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
       EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/content_filter/@EXAMPLE_SUFFIX_DIR_COMPOSE@
-      SUBSCRIBER_ADDITIONAL_ARGUMENTS: ${SUB_ARGS}
-    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/content_filter@FILE_EXTENSION@ subscriber $${SUBSCRIBER_ADDITIONAL_ARGUMENTS} --lower-bound 4 --upper-bound 8 --reliable --transient-local @COMMAND_CONCATENATE_COMPOSE@ @COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/content_filter@FILE_EXTENSION@ publisher --samples 15 --interval 100 --reliable --transient-local@COMMAND_BACKGROUND_JOB_COMPOSE@"
+      SUB_ADDITIONAL_ARGS_COMPOSE: ${SUB_ARGS}
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/content_filter@FILE_EXTENSION@ subscriber @SUB_ADDITIONAL_ARGS_COMPOSE@@SPLIT_ARGS_COMPOSE@ --lower-bound 4 --upper-bound 8 --reliable --transient-local @COMMAND_CONCATENATE_COMPOSE@ @COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/content_filter@FILE_EXTENSION@ publisher --samples 15 --interval 100 --reliable --transient-local@COMMAND_BACKGROUND_JOB_COMPOSE@"

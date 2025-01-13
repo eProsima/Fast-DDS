@@ -47,6 +47,7 @@ public:
     {
         CLIParser::EntityKind entity = CLIParser::EntityKind::UNDEFINED;
         uint16_t samples = 0;
+        uint16_t matched = 1;
     };
 
     /**
@@ -59,7 +60,7 @@ public:
     static void print_help(
             uint8_t return_code)
     {
-        std::cout << "Usage: rtps <entity> [options]"                                  << std::endl;
+        std::cout << "Usage: rtps <entity> [options]"                                           << std::endl;
         std::cout << ""                                                                         << std::endl;
         std::cout << "Entities:"                                                                << std::endl;
         std::cout << "  writer                          Run a RTPS Writer entity"               << std::endl;
@@ -70,6 +71,9 @@ public:
         std::cout << "  -s <num>, --samples <num>       Number of samples to send or receive"   << std::endl;
         std::cout << "                                  [0 <= <num> <= 65535]"                  << std::endl;
         std::cout << "                                  (Default: 0 [unlimited])"               << std::endl;
+        std::cout << "Writer options:"                                                          << std::endl;
+        std::cout << "  -m, --matched                   Number of readers to match"             << std::endl;
+        std::cout << "                                  before start publishing (Default: 1)"   << std::endl;
         std::exit(return_code);
     }
 
@@ -149,6 +153,40 @@ public:
                 else
                 {
                     EPROSIMA_LOG_ERROR(CLI_PARSER, "missing argument for " + arg);
+                    print_help(EXIT_FAILURE);
+                }
+            }
+            else if (arg == "-m" || arg == "--matched")
+            {
+                try
+                {
+                    int input = std::stoi(argv[++i]);
+                    if (input < std::numeric_limits<std::uint16_t>::min() ||
+                            input > std::numeric_limits<std::uint16_t>::max())
+                    {
+                        throw std::out_of_range("matched argument out of range");
+                    }
+                    else
+                    {
+                        if (config.entity == CLIParser::EntityKind::WRITER)
+                        {
+                            config.matched = static_cast<uint16_t>(input);
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(CLI_PARSER, "matched can only be used with the writer entity");
+                            print_help(EXIT_FAILURE);
+                        }
+                    }
+                }
+                catch (const std::invalid_argument& e)
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid sample argument for " + arg + ": " + e.what());
+                    print_help(EXIT_FAILURE);
+                }
+                catch (const std::out_of_range& e)
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "sample argument out of range for " + arg + ": " + e.what());
                     print_help(EXIT_FAILURE);
                 }
             }
