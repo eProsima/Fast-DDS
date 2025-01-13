@@ -94,7 +94,7 @@ class ProcessHandler:
 
             # Send signal to terminate the process group
             os.killpg(os.getpgid(process.pid), self._get_signal(sig))
-            process.wait()
+            process.communicate(5)
             del self.processes[domain]
             return f"Discovery Server for Domain ID '{domain}' stopped."
 
