@@ -985,6 +985,27 @@ bool IPLocator::compareAddress(
     }
 }
 
+bool IPLocator::copyAddress(
+        const Locator_t& loc1,
+        Locator_t& loc2)
+{
+    if (loc1.kind != loc2.kind)
+    {
+        return false;
+    }
+
+    if (loc1.kind == LOCATOR_KIND_UDPv4 || loc1.kind == LOCATOR_KIND_TCPv4)
+    {
+        memcpy(loc2.address, loc1.address, 16 * sizeof(char));
+        return true;
+    }
+    else if (loc1.kind == LOCATOR_KIND_UDPv6 || loc1.kind == LOCATOR_KIND_TCPv6)
+    {
+        return copyIPv6(loc1, loc2.address);
+    }
+    return false;
+}
+
 bool IPLocator::compareAddressAndPhysicalPort(
         const Locator_t& loc1,
         const Locator_t& loc2)
