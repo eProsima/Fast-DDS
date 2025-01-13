@@ -86,7 +86,12 @@ jobs:
       - name: Sync eProsima/Fast-DDS repository
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
+<<<<<<< HEAD
           path: src/fastrtps
+=======
+          path: src/fastdds
+          submodules: true
+>>>>>>> 490e80b0 (Update submodules when cloning Fast DDS on CI (#5558))
           ref: ${{ inputs.fastdds-branch }}
 
       - name: Install Fix Python version
