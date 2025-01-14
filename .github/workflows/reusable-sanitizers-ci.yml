@@ -59,6 +59,7 @@ jobs:
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
           path: src/fastdds
+          submodules: true
           ref: ${{ inputs.fastdds_ref }}
 
       - name: Install Fix Python version
@@ -338,6 +339,7 @@ jobs:
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
           path: src/fastdds
+          submodules: true
           ref: ${{ inputs.fastdds_ref }}
 
       - name: Install Fix Python version
