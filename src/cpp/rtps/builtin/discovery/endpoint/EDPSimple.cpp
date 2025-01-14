@@ -56,9 +56,9 @@ namespace rtps {
 
 // Default configuration values for EDP entities.
 static const dds::Duration_t edp_heartbeat_period{1, 0}; // 1 second
-static const dds::Duration_t edp_nack_response_delay{0, 100 * 1000 }; // 100 milliseconds
-static const dds::Duration_t edp_nack_supression_duration{0, 10 * 1000}; // 10 milliseconds
-static const dds::Duration_t edp_heartbeat_response_delay{0, 10 * 1000}; // 10 milliseconds
+static const dds::Duration_t edp_nack_response_delay{0, 100 * 1000 * 1000 }; // 100 milliseconds
+static const dds::Duration_t edp_nack_supression_duration{0, 10 * 1000 * 1000}; // 10 milliseconds
+static const dds::Duration_t edp_heartbeat_response_delay{0, 10 * 1000 * 1000}; // 10 milliseconds
 
 static const int32_t edp_reader_initial_reserved_caches = 1;
 static const int32_t edp_writer_initial_reserved_caches = 20;
