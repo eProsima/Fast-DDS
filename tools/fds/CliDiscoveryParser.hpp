@@ -211,17 +211,20 @@ const option::Descriptor usage[] = {
       "\t               tool.\n"},
 
     { UNKNOWN,   0, "",   "",             Arg::None,
-      "\n\nDaemon options:\n  auto\t Handles the daemon start-up automatically." },
+      "\nDaemon options:\n  auto\t Handle the daemon start-up automatically. It will create\n"
+      "\t a Discovery Server in the specified domain."},
 
     { UNKNOWN,   0, "",   "",             Arg::None,
-      "\n  start\t Starts the Discovery Server daemon with the remote connections\n"
-      "\t specified."},
+      "\n  start\t Start the Discovery Server daemon with the remote connections\n"
+      "\t specified. (Example: start -d 1 \"127.0.0.1:2;10.0.0.3:42\")."},
 
     { UNKNOWN,   0, "",   "",             Arg::None,
-      "\n  stop\t Stops the Discovery Server daemon if it is active." },
+      "\n  stop\t Stop the Discovery Server daemon if it is active. If a domain\n"
+      "\t is specified with the '-d' arg it will only stop the\n"
+      "\t corresponding server and the daemon will remain alive."},
 
     { UNKNOWN,   0, "",   "",             Arg::None,
-      "\n  add\t Adds new remotes Discovery Servers to the local server. This\n"
+      "\n  add\t Add new remote Discovery Servers to the local server. This\n"
       "\t will connect both servers and their sub-networks without\n"
       "\t modifying existing remote servers."},
 
@@ -234,7 +237,8 @@ const option::Descriptor usage[] = {
       "\n  list\t List local active discovery servers created with the CLI Tool." },
 
     { UNKNOWN,   0, "",   "",             Arg::None,
-      "\n  info         \t Inspect the Discovery Server in the specified domain.\n\n"
+      "\n  info         \t Inspect the Discovery Server in the specified domain. Feature\n"
+      "\t not implemented yet.\n\n "
       "  Daemon parameters: \n "},
 
     { DOMAIN_OPT,  0, "d", "domain",    Arg::check_server_id,
