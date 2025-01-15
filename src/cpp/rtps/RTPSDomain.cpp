@@ -585,21 +585,20 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
 
         // DS_AUTO transport. Similar to LARGE_DATA, but without UDPv4
         client_att.useBuiltinTransports = false;
-        client_att.setup_transports(BuiltinTransports::DS_AUTO);
+        client_att.setup_transports(BuiltinTransports::DEFAULT);
 
         // Ignore initialpeers
         client_att.builtin.initialPeersList = LocatorList();
 
         // Add remote DS based on port
         eprosima::fastdds::rtps::Locator_t locator;
-        locator.kind = LOCATOR_KIND_TCPv4;
+        locator.kind = LOCATOR_KIND_UDPv4;
 
         eprosima::fastdds::rtps::PortParameters port_params;
 
         auto ds_auto_port = port_params.get_discovery_server_port(domain_id);
 
         IPLocator::setPhysicalPort(locator, ds_auto_port);
-        IPLocator::setLogicalPort(locator, ds_auto_port);
         IPLocator::setIPv4(locator, 127, 0, 0, 1);
 
         // Point to the well known DS port in the corresponding domain

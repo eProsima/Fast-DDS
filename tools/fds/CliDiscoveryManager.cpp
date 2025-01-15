@@ -34,6 +34,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
@@ -410,15 +411,12 @@ void CliDiscoveryManager::set_server_qos(
         const uint16_t port)
 {
     rtps::Locator_t locator;
-    locator.kind = LOCATOR_KIND_TCPv4;
+    locator.kind = LOCATOR_KIND_UDPv4;
     rtps::IPLocator::setPhysicalPort(locator, port);
-    rtps::IPLocator::setLogicalPort(locator, port);
     rtps::IPLocator::setIPv4(locator, "0.0.0.0");
     serverQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator);
-    auto tcp_descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
-    tcp_descriptor->add_listener_port(port);
-    tcp_descriptor->non_blocking_send = true;
-    serverQos.transport().user_transports.push_back(tcp_descriptor);
+    auto udp_descriptor = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
+    serverQos.transport().user_transports.push_back(udp_descriptor);
     serverQos.transport().use_builtin_transports = false;
     serverQos.wire_protocol().builtin.discovery_config.discoveryProtocol = rtps::DiscoveryProtocol::SERVER;
     serverQos.name("DiscoveryServerAuto");
