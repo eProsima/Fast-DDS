@@ -373,7 +373,7 @@ void CliDiscoveryManager::start_server_auto_mode(
             load_environment_server_info(read_servers_from_file(file_name.str()), serverList);
             for (rtps::Locator_t& locator : serverList)
             {
-                locator.kind = LOCATOR_KIND_TCPv4;
+                locator.kind = LOCATOR_KIND_UDPv4;
             }
             pServer->get_qos(serverQos);
             serverQos.wire_protocol().builtin.discovery_config.m_DiscoveryServers = serverList;
@@ -389,7 +389,7 @@ void CliDiscoveryManager::start_server_auto_mode(
             load_environment_server_info(read_servers_from_file(file_name.str()), serverList);
             for (rtps::Locator_t& locator : serverList)
             {
-                locator.kind = LOCATOR_KIND_TCPv4;
+                locator.kind = LOCATOR_KIND_UDPv4;
             }
             serverQos.wire_protocol().builtin.discovery_config.m_DiscoveryServers = serverList;
             pServer = DomainParticipantFactory::get_instance()->create_participant(0, serverQos);
@@ -956,7 +956,7 @@ int CliDiscoveryManager::fastdds_discovery_auto_start(
     load_environment_server_info(servers, serverList);
     for (rtps::Locator_t& locator : serverList)
     {
-        locator.kind = LOCATOR_KIND_TCPv4;
+        locator.kind = LOCATOR_KIND_UDPv4;
     }
     serverQos.wire_protocol().builtin.discovery_config.m_DiscoveryServers = serverList;
     start_server_auto_mode(port, id);
