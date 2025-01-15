@@ -251,7 +251,7 @@ std::vector<uint16_t> CliDiscoveryManager::get_listening_ports()
     command = "netstat -an | grep LISTEN";
     std::regex port_regex(R"(\*.([\d+]+))");
 #else
-    command = "ss -ltn";
+    command = "ss -lun";
     std::regex port_regex(R"(0\.0\.0\.0:(\d+))");
 #endif // ifdef __APPLE__
     std::string result = exec_command(command);
