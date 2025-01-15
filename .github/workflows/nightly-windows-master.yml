@@ -7,16 +7,16 @@ on:
 
 jobs:
   nightly-windows-ci-master:
-    name: nightly-windows-ci-master (SEC=${{ matrix.security }}, ${{ matrix.cmake_build_type }}, ${{ matrix.test_filter }})
+    name: nightly-windows-ci-master (${{ matrix.cmake_build_type }}, SEC=${{ matrix.security }}, ${{ matrix.test_filter }})
     strategy:
       fail-fast: false
       matrix:
+        cmake_build_type:
+          - 'RelWithDebInfo'
+          - 'Debug'
         security:
           - 'ON'
           - 'OFF'
-        cmake_build_type:
-          - 'Debug'
-          - 'RelWithDebInfo'
         test_filter:
           - 'blackbox'
           - 'unittest'
