@@ -311,7 +311,7 @@ pid_t CliDiscoveryManager::get_pid_of_server(
 {
     std::string command = "lsof -i :";
     command += std::to_string(port);
-    command += " | grep LISTEN | awk '{print $2}'";
+    command += " | grep UDP | awk '{print $2}'";
     std::string result = exec_command(command);
     if (result.empty())
     {
