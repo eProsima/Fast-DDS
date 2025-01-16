@@ -67,19 +67,16 @@ PDPServer::PDPServer(
     // Add remote servers from environment variable
     LocatorList_t env_servers;
     {
-        if (ros_discovery_server_env() != "AUTO")
+        std::lock_guard<std::recursive_mutex> lock(*getMutex());
+        if (load_environment_server_info(env_servers))
         {
-            std::lock_guard<std::recursive_mutex> lock(*getMutex());
-            if (load_environment_server_info(env_servers))
+            for (auto server : env_servers)
             {
-                for (auto server : env_servers)
                 {
-                    {
-                        std::unique_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
-                        mp_builtin->m_DiscoveryServers.push_back(server);
-                    }
-                    m_discovery.discovery_config.m_DiscoveryServers.push_back(server);
+                    std::unique_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
+                    mp_builtin->m_DiscoveryServers.push_back(server);
                 }
+                m_discovery.discovery_config.m_DiscoveryServers.push_back(server);
             }
         }
     }
