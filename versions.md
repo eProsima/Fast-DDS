@@ -12,6 +12,7 @@ Forthcoming
 * Windows ci example testing infrastructure and `hello world` example.
 * New property to configure the preferred key agreement algorithm.
 * Refactor benchmark example.
+* Extended CLI ``shm`` command with ``-f`` param to clean Data Sharing segments.
 
 Version v3.1.0
 --------------

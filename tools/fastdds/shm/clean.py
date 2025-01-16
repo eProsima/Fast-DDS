@@ -36,13 +36,16 @@ elif os.name == 'nt':
 class Clean:
     """This command searches and deletes zombie SHM ports / segments."""
 
-    def run(self):
+    def run(self, force: bool):
         """Execute the clean."""
         self.__ports_in_use = 0
         self.__segments_in_use = 0
 
         zombie_segments = self.__clean_zombie_segments()
         zombie_ports = self.__clean_zombie_ports()
+        if force:
+            zombie_datasharing_segments = self.__clean_zombie_datasharing_segments()
+            print(f'Datasharing segments: {zombie_datasharing_segments}')
 
         print('shm.clean:')
         print(self.__ports_in_use, 'ports in use')
@@ -51,6 +54,8 @@ class Clean:
         print(int(len(zombie_ports) / 3), 'zombie ports cleaned')
         # each segment has 2 files
         print(int(len(zombie_segments) / 2), 'zombie segments cleaned')
+        if force:
+            print(int(len(zombie_datasharing_segments)), 'datasharing segments cleaned')
 
     def __shm_dir(self):
         """
@@ -165,6 +170,28 @@ class Clean:
             return ''.join(['sem.', port_file_name, '_mutex'])
         else:
             return ''.join([port_file_name, '_mutex'])
+
+    def __clean_zombie_datasharing_segments(self):
+        """
+        Find & delete datasharing segments in the default SHM dir.
+
+        returns list(str):
+            the deleted file names
+
+        """
+        segment_lock_re = re.compile('fast_datasharing_([0-9a-f\.]){35}_([\d\.]{7})')
+        segments_locks = [
+            file_name for file_name in self.__list_dir() if segment_lock_re.match(
+                file_name)]
+        zombie_files = []
+
+        # Check is_file_locked for each lock file
+        for file in segments_locks:
+            file_name = self.__shm_dir() / file
+            self.__remove_file(file_name)
+            zombie_files.append(file)
+
+        return [file_name for file_name in zombie_files]
 
     def __remove_file(self, file):
         """

@@ -31,6 +31,7 @@ if(Python3_Interpreter_FOUND)
         test_fastdds_discovery_run
         test_ros_discovery
         test_fastdds_shm
+        test_fastdds_shm_force
         test_fastdds_xml_validate
     )
 
