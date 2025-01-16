@@ -930,7 +930,7 @@ TEST_F(XMLParserTests, getXMLbuiltinTransports)
     bt_list.push_back("UDPv6");
     bt_list.push_back("LARGE_DATA");
     bt_list.push_back("LARGE_DATAv6");
-    bt_list.push_back("DS_AUTO");
+    bt_list.push_back("P2P");
 
     for (auto test_transport : bt_list)
     {
