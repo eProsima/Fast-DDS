@@ -614,9 +614,20 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
                         .value(std::to_string(domain_id))
                         .value(easy_mode_env_value + ":" + std::to_string(domain_id))
                         .build_and_call();
-        if (res != 0)
+
+        // Python subprocess multiplies by 256 the result code
+        res /= 256;
+
+        if (res != SystemCommandBuilder::SystemCommandResult::SUCCESS)
         {
-            EPROSIMA_LOG_ERROR(DOMAIN, "Auto discovery server client setup. Unable to spawn daemon.");
+            if (res == SystemCommandBuilder::SystemCommandResult::BAD_PARAM)
+            {
+                EPROSIMA_LOG_ERROR(DOMAIN, "EASY_MODE IP connection conflicts with a previous one.");
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(DOMAIN, "Auto discovery server client setup. Unable to spawn daemon.");
+            }
             return nullptr;
         }
     }

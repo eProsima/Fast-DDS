@@ -33,6 +33,14 @@ class SystemCommandBuilder
 {
 public:
 
+    enum SystemCommandResult
+    {
+        SUCCESS = 0,
+        FAILURE,
+        BAD_PARAM,
+        INVALID
+    };
+
     SystemCommandBuilder() = default;
 
     SystemCommandBuilder& executable(
