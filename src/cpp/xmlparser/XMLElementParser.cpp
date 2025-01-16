@@ -4673,7 +4673,7 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
                 <xs:enumeration value="UDPv6" />
                 <xs:enumeration value="LARGE_DATA" />
                 <xs:enumeration value="LARGE_DATAv6" />
-                <xs:enumeration value="DS_AUTO" />
+                <xs:enumeration value="P2P" />
             </xs:restriction>
         </xs:simpleType>
 
@@ -4836,7 +4836,7 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
             UDPv6, eprosima::fastdds::rtps::BuiltinTransports::UDPv6,
             LARGE_DATA, eprosima::fastdds::rtps::BuiltinTransports::LARGE_DATA,
             LARGE_DATAv6, eprosima::fastdds::rtps::BuiltinTransports::LARGE_DATAv6,
-            DS_AUTO, eprosima::fastdds::rtps::BuiltinTransports::DS_AUTO))
+            P2P, eprosima::fastdds::rtps::BuiltinTransports::P2P))
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' bad content");
         ret = XMLP_ret::XML_ERROR;

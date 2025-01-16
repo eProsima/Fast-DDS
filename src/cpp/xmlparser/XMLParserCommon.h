@@ -215,7 +215,7 @@ extern const char* DEFAULT_C;
 extern const char* DEFAULTv6;
 extern const char* LARGE_DATA;
 extern const char* LARGE_DATAv6;
-extern const char* DS_AUTO;
+extern const char* P2P;
 extern const char* INIT_ACKNACK_DELAY;
 extern const char* HEARTB_RESP_DELAY;
 extern const char* INIT_HEARTB_DELAY;

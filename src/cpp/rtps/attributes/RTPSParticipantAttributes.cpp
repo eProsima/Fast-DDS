@@ -301,7 +301,7 @@ static void setup_transports_large_datav6(
     }
 }
 
-static void setup_transports_ds_auto(
+static void setup_transports_p2p(
         RTPSParticipantAttributes& att,
         bool intraprocess_only,
         const fastdds::rtps::BuiltinTransportsOptions& options)
@@ -332,7 +332,7 @@ void RTPSParticipantAttributes::setup_transports(
             transports != fastdds::rtps::BuiltinTransports::SHM &&
             transports != fastdds::rtps::BuiltinTransports::LARGE_DATA &&
             transports != fastdds::rtps::BuiltinTransports::LARGE_DATAv6 &&
-            transports != fastdds::rtps::BuiltinTransports::DS_AUTO))
+            transports != fastdds::rtps::BuiltinTransports::P2P))
     {
         EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
                 "Max message size of UDP cannot be greater than " << std::to_string(
@@ -381,10 +381,10 @@ void RTPSParticipantAttributes::setup_transports(
             setup_transports_large_datav6(*this, intraprocess_only, options);
             break;
 
-        case fastdds::rtps::BuiltinTransports::DS_AUTO:
+        case fastdds::rtps::BuiltinTransports::P2P:
             // This parameter will allow allow the initialization of UDP transports with maxMessageSize > 65500 KB (s_maximumMessageSize)
             max_msg_size_no_frag = options.maxMessageSize;
-            setup_transports_ds_auto(*this, intraprocess_only, options);
+            setup_transports_p2p(*this, intraprocess_only, options);
             break;
 
         default:
