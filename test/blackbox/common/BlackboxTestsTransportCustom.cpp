@@ -618,14 +618,14 @@ TEST(ChainingTransportTests, builtin_transports_env_large_data)
  * the background discovery server will not be launched and the test will never
  * finish since both clients will keep waiting for it.
  */
-TEST(ChainingTransportTests, builtin_transports_env_ds_auto)
+TEST(ChainingTransportTests, builtin_transports_env_p2p)
 {
 #ifdef _WIN32
-    _putenv_s("ROS_DISCOVERY_SERVER", "AUTO");
+    _putenv_s("EASY_MODE", "127.0.0.1");
 #else
-    setenv("ROS_DISCOVERY_SERVER", "AUTO", 1);
+    setenv("EASY_MODE", "127.0.0.1", 1);
 #endif // _WIN32
-    BuiltinTransportsTest::test_env("DS_AUTO");
+    BuiltinTransportsTest::test_env("P2P");
 }
 
 TEST(ChainingTransportTests, builtin_transports_env_large_data_with_max_msg_size)
@@ -692,21 +692,21 @@ TEST(ChainingTransportTests, builtin_transports_xml_large_data)
 }
 
 /**
- * DS Auto transport shall always be used along with ROS_DISCOVERY_SERVER=AUTO.
+ * DS Auto transport shall always be used along with EASY_MODE=<ip>.
  * This is due to the working principle of the mode. If it is not specified,
  * the background discovery server will not be launched and the test will never
  * finish since both clients will keep waiting for it.
  * On the other hand, defining the environment variable somehow shadows the
  * xml parsing, but it is assumed in this case.
  */
-TEST(ChainingTransportTests, builtin_transports_xml_ds_auto)
+TEST(ChainingTransportTests, builtin_transports_xml_p2p)
 {
 #ifdef _WIN32
-    _putenv_s("ROS_DISCOVERY_SERVER", "AUTO");
+    _putenv_s("EASY_MODE", "127.0.0.1");
 #else
-    setenv("ROS_DISCOVERY_SERVER", "AUTO", 1);
+    setenv("EASY_MODE", "127.0.0.1", 1);
 #endif // _WIN32
-    BuiltinTransportsTest::test_xml("builtin_transports_profile.xml", "participant_ds_auto");
+    BuiltinTransportsTest::test_xml("builtin_transports_profile.xml", "participant_p2p");
 }
 
 TEST(ChainingTransportTests, builtin_transports_xml_large_data_with_max_msg_size)
