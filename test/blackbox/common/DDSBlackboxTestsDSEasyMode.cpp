@@ -25,13 +25,14 @@
 #include "PubSubWriter.hpp"
 
 
-void set_ros_discovery_server_auto_env()
+void set_easy_discovery_mode_env(
+        const std::string& ip = "127.0.0.1")
 {
-    /* Set environment variable */
+    /* Set environment variable which will contain the ip of an external point of discovery*/
 #ifdef _WIN32
-    _putenv_s("ROS_DISCOVERY_SERVER", "AUTO");
+    _putenv_s("EASY_MODE", ip.c_str());
 #else
-    setenv("ROS_DISCOVERY_SERVER", "AUTO", 1);
+    setenv("EASY_MODE", ip.c_str(), 1);
 #endif // _WIN32
 
 }
@@ -44,21 +45,22 @@ void stop_background_servers()
 }
 
 /**
- * Refers to FASTDDS-DSAUTO-TEST:01 from the test plan.
+ * Refers to FASTDDS-EASYMODE-TEST:01 from the test plan.
  *
- * Launching a participant client with the environment variable ROS_DISCOVERY_SERVER
- * set to AUTO correctly launches and discovers a Discovery Server in the expected
+ * Launching a participant client with the environment variable EASY_MODE
+ * correctly spawns and discovers a Discovery Server in the expected
  * domain.
  *
  */
-TEST(DSAutoMode, ros_discovery_server_auto_env_correctly_launches)
+TEST(DSEasyMode, easy_discovery_mode_env_correctly_launches)
 {
+#ifndef _WIN32 // The feature is not supported on Windows yet
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
     // Setting ROS_DISCOVERY_SERVER to AUTO
     // Configures as SUPER_CLIENT SHM and TCP
-    set_ros_discovery_server_auto_env();
+    set_easy_discovery_mode_env();
 
     std::atomic<bool> writer_background_ds_discovered(false);
     std::atomic<bool> reader_background_ds_discovered(false);
@@ -112,15 +114,17 @@ TEST(DSAutoMode, ros_discovery_server_auto_env_correctly_launches)
 
     // Stop server
     stop_background_servers();
+#endif // _WIN32
 }
 
 /**
- * Refers to FASTDDS-DSAUTO-TEST:02 from the test plan.
+ * Refers to FASTDDS-EASYMODE-TEST:02 from the test plan.
  *
- * TCP and SHM are the transports used in ROS_DISCOVERY_SERVER=AUTO.
+ * TCP and SHM are the transports used in EASY_MODE.
  */
-TEST(DSAutoMode, ros_discovery_server_auto_env_correct_transports_are_used)
+TEST(DSEasyMode, easy_discovery_mode_env_correct_transports_are_used)
 {
+#ifndef _WIN32 // The feature is not supported on Windows yet
     PubSubWriter<HelloWorldPubSubType> writer_udp(TEST_TOPIC_NAME), writer_auto(TEST_TOPIC_NAME);
     PubSubReader<HelloWorldPubSubType> reader_auto(TEST_TOPIC_NAME);
 
@@ -134,23 +138,23 @@ TEST(DSAutoMode, ros_discovery_server_auto_env_correct_transports_are_used)
 
     // Setting ROS_DISCOVERY_SERVER to AUTO
     // Configures as SUPER_CLIENT SHM and TCP
-    set_ros_discovery_server_auto_env();
+    set_easy_discovery_mode_env();
 
-    std::atomic<bool> locators_match_ds_auto_transport(true);
+    std::atomic<bool> locators_match_p2p_transport(true);
 
     reader_auto.set_on_discovery_function(
-        [&locators_match_ds_auto_transport](const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& data,
+        [&locators_match_p2p_transport](const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& data,
         eprosima::fastdds::rtps::ParticipantDiscoveryStatus)
         {
             for (auto locator : data.metatraffic_locators.unicast)
             {
-                locators_match_ds_auto_transport.store( locators_match_ds_auto_transport &&
+                locators_match_p2p_transport.store( locators_match_p2p_transport &&
                 (locator.kind == LOCATOR_KIND_TCPv4 || locator.kind == LOCATOR_KIND_SHM));
             }
 
             if (!data.metatraffic_locators.multicast.empty())
             {
-                locators_match_ds_auto_transport.store(false);
+                locators_match_p2p_transport.store(false);
             }
 
             return true;
@@ -172,20 +176,22 @@ TEST(DSAutoMode, ros_discovery_server_auto_env_correct_transports_are_used)
     writer_auto.wait_discovery();
     reader_auto.wait_discovery();
 
-    ASSERT_TRUE(locators_match_ds_auto_transport.load());
+    ASSERT_TRUE(locators_match_p2p_transport.load());
 
     // Stop server
     stop_background_servers();
+#endif // _WIN32
 }
 
 /**
- * Refers to FASTDDS-DSAUTO-TEST:03 from the test plan.
+ * Refers to FASTDDS-EASYMODE-TEST:03 from the test plan.
  *
  * Client participants are aware of the discovery
  * information of the rest of participants in the same domain.
  */
-TEST(DSAutoMode, ros_discovery_server_auto_env_discovery_info)
+TEST(DSEasyMode, easy_discovery_mode_env_discovery_info)
 {
+#ifndef _WIN32 // The feature is not supported on Windows yet
     unsigned int num_writers = 3;
     std::vector<std::shared_ptr<PubSubWriter<HelloWorldPubSubType>>> writers;
     writers.reserve(num_writers);
@@ -205,17 +211,17 @@ TEST(DSAutoMode, ros_discovery_server_auto_env_discovery_info)
 
         eprosima::fastdds::rtps::PortParameters port_params;
 
-        auto ds_auto_port = port_params.get_discovery_server_port((uint32_t)GET_PID() % 230);
+        auto domain_port = port_params.get_discovery_server_port((uint32_t)GET_PID() % 230);
 
-        IPLocator::setPhysicalPort(locator, ds_auto_port);
-        IPLocator::setLogicalPort(locator, ds_auto_port);
+        IPLocator::setPhysicalPort(locator, domain_port);
+        IPLocator::setLogicalPort(locator, domain_port);
         IPLocator::setIPv4(locator, "127.0.0.1");
 
         // Point to the well known DS port in the corresponding domain
         wire_protocol_qos.builtin.discovery_config.m_DiscoveryServers.push_back(locator);
 
         writers.back()->set_wire_protocol_qos(wire_protocol_qos)
-                .setup_ds_auto_transports()
+                .setup_p2p_transports()
                 .init();
 
         ASSERT_TRUE(writers.back()->isInitialized());
@@ -223,7 +229,7 @@ TEST(DSAutoMode, ros_discovery_server_auto_env_discovery_info)
 
     // Setting ROS_DISCOVERY_SERVER to AUTO
     // Configures as SUPER_CLIENT SHM and TCP
-    set_ros_discovery_server_auto_env();
+    set_easy_discovery_mode_env();
 
     reader_auto.init();
     ASSERT_TRUE(reader_auto.isInitialized());
@@ -243,17 +249,19 @@ TEST(DSAutoMode, ros_discovery_server_auto_env_discovery_info)
 
     // Stop server
     stop_background_servers();
+#endif // _WIN32
 }
 
 /**
- * Refers to FASTDDS-DSAUTO-TEST:04 from the test plan.
+ * Refers to FASTDDS-EASYMODE-TEST:04 from the test plan.
  *
  * Launching participant clients in different domains with
  * ROS_DISCOVERY_SERVER set to AUTO correctly
  * launch and discover the Discovery Server in its domain.
  */
-TEST(DSAutoMode, ros_discovery_server_auto_env_multiple_clients_multiple_domains)
+TEST(DSEasyMode, easy_discovery_mode_env_multiple_clients_multiple_domains)
 {
+#ifndef _WIN32 // The feature is not supported on Windows yet
     unsigned int num_writer_reader_pairs = 5;
 
     std::vector<std::shared_ptr<PubSubWriter<HelloWorldPubSubType>>> writers;
@@ -261,7 +269,7 @@ TEST(DSAutoMode, ros_discovery_server_auto_env_multiple_clients_multiple_domains
 
     // Setting ROS_DISCOVERY_SERVER to AUTO
     // Configures as SUPER_CLIENT SHM and TCP
-    set_ros_discovery_server_auto_env();
+    set_easy_discovery_mode_env();
 
     for (std::size_t i = 10; i < 10 + num_writer_reader_pairs; ++i)
     {
@@ -295,4 +303,63 @@ TEST(DSAutoMode, ros_discovery_server_auto_env_multiple_clients_multiple_domains
 
     // Stop servers
     stop_background_servers();
+#endif // _WIN32
+}
+
+/**
+ * Launching a second participant in the same domain with different
+ * EASY_MODE ip value shall log an error.
+ */
+TEST(DSEasyMode, easy_discovery_mode_env_inconsistent_ip)
+{
+#ifndef _WIN32 // The feature is not supported on Windows yet
+
+    using Log = eprosima::fastdds::dds::Log;
+    using LogConsumer = eprosima::fastdds::dds::LogConsumer;
+
+    // A LogConsumer accounting for any log errors
+    struct TestConsumer : public LogConsumer
+    {
+        TestConsumer(
+                std::atomic_size_t& n_logs_ref)
+            : n_logs_(n_logs_ref)
+        {
+        }
+
+        void Consume(
+                const Log::Entry&) override
+        {
+            ++n_logs_;
+        }
+
+    private:
+
+        std::atomic_size_t& n_logs_;
+    };
+
+    // Counter for log entries
+    std::atomic<size_t>n_logs{};
+
+    // Prepare Log module to check that at least one DOMAIN error is produced
+    Log::SetCategoryFilter(std::regex("DOMAIN"));
+    Log::SetVerbosity(Log::Kind::Error);
+    Log::RegisterConsumer(std::unique_ptr<LogConsumer>(new TestConsumer(n_logs)));
+
+    // Set EASY_MODE to localhost
+    set_easy_discovery_mode_env();
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Set EASY_MODE to another address in the same domain
+    set_easy_discovery_mode_env("192.168.1.100");
+    PubSubWriter<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    reader.init();
+    ASSERT_TRUE(n_logs.load() > 0);
+
+    // Stop servers
+    stop_background_servers();
+#endif // _WIN32
 }
