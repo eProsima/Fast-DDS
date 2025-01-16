@@ -33,12 +33,16 @@ class TestDiscoveryParser(unittest.TestCase):
         self.check_command = ''
         # Attribute to check the domain sent to the RPC server to act as index
         self.domain = 0
+        # Attribute to check the value of the third attr (easy_mode or check_server) sent to the RPC server
+        self.third_attr = ''
 
     def side_effect_rpc(self, *args, **kwargs):
         domain = args[0]
         used_cmd = args[1]
+        third_attr = args[2]
         assert(domain == self.domain)
         assert(len(used_cmd) == len(self.check_command))
+        assert(third_attr == self.third_attr)
         for i in range(len(self.check_command)):
             assert(used_cmd[i] == self.check_command[i])
         return args
@@ -166,6 +170,36 @@ class TestDiscoveryParser(unittest.TestCase):
         mock_rpc_nbrequest.side_effect = self.side_effect_rpc
 
         argv = ['auto']
+        parser = Parser(argv)
+
+        mock_is_running.assert_not_called()
+        mock_spawn.assert_called_once()
+        mock_rpc_stopall.assert_not_called()
+        mock_rpc_nbrequest.assert_called_once()
+        mock_rpc_brequest.assert_not_called()
+        mock_exit.assert_not_called()
+
+    @patch('parser.sys.exit')
+    @patch('parser.is_daemon_running')
+    @patch('parser.spawn_daemon')
+    @patch('parser.client_cli.run_request_b')
+    @patch('parser.client_cli.run_request_nb')
+    @patch('parser.client_cli.stop_all_request')
+    def test_parser_auto_easy_mode_domain_env(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+        mock_rpc_stopall.return_value = 'Mocked request'
+        mock_rpc_nbrequest.return_value = 'Mocked request'
+        mock_rpc_brequest.return_value = 'Mocked request'
+        mock_spawn.return_value = True
+
+        self.set_env_values('EASY_MODE', '127.0.0.1')
+        self.domain = 42
+        self.third_attr = '127.0.0.1'
+        self.check_command = [str(command_to_int[Command.AUTO]), '-d', '42', '127.0.0.1:42']
+        mock_rpc_nbrequest.side_effect = self.side_effect_rpc
+
+        # The parser is not responsible of adding the EASY_MODE argument to the command. This is done in Fast DDS.
+        # The parser only checks if the EASY_MODE variable is set to pass it to the RPC server as third argument
+        argv = ['auto', '-d', '42', '127.0.0.1:42']
         parser = Parser(argv)
 
         mock_is_running.assert_not_called()
@@ -335,6 +369,32 @@ class TestDiscoveryParser(unittest.TestCase):
 
     @patch('parser.sys.exit')
     @patch('parser.is_daemon_running')
+    @patch('parser.shutdown_daemon')
+    @patch('parser.client_cli.run_request_b')
+    @patch('parser.client_cli.run_request_nb')
+    @patch('parser.client_cli.stop_request')
+    def test_parser_stop_whith_unknown_args(self, mock_rpc_stop_once, mock_rpc_nbrequest, mock_rpc_brequest, mock_shutdown, mock_is_running, mock_exit):
+        mock_rpc_stop_once.return_value = 'Mocked request'
+        mock_rpc_nbrequest.return_value = 'Mocked request'
+        mock_rpc_brequest.return_value = 'Mocked request'
+        mock_is_running.return_value = True
+        mock_shutdown.return_value = True
+
+        self.check_command = [str(command_to_int[Command.STOP]), '-d', '0']
+        mock_rpc_brequest.side_effect = self.side_effect_rpc
+
+        argv = ['stop', '-d', '0', 'extra_arg']
+        parser = Parser(argv)
+
+        mock_is_running.assert_called_once()
+        mock_shutdown.assert_not_called()
+        mock_rpc_stop_once.assert_not_called()
+        mock_rpc_nbrequest.assert_not_called()
+        mock_rpc_brequest.assert_not_called()
+        mock_exit.assert_called_once()
+
+    @patch('parser.sys.exit')
+    @patch('parser.is_daemon_running')
     @patch('parser.spawn_daemon')
     @patch('parser.client_cli.run_request_b')
     @patch('parser.client_cli.run_request_nb')
@@ -346,6 +406,7 @@ class TestDiscoveryParser(unittest.TestCase):
         mock_is_running.return_value = False
         mock_spawn.return_value = True
 
+        self.third_attr = False
         self.check_command = [str(command_to_int[Command.LIST]), '-d', '0']
         mock_rpc_brequest.side_effect = self.side_effect_rpc
 
@@ -376,6 +437,7 @@ class TestDiscoveryParser(unittest.TestCase):
         mock_is_running.return_value = True
         mock_spawn.return_value = True
 
+        self.third_attr = False
         self.check_command = [str(command_to_int[Command.LIST]), '-d', '0']
         mock_rpc_brequest.side_effect = self.side_effect_rpc
 
@@ -402,6 +464,7 @@ class TestDiscoveryParser(unittest.TestCase):
         mock_is_running.return_value = False
         mock_spawn.return_value = True
 
+        self.third_attr = True
         self.check_command = [str(command_to_int[Command.ADD]), '-d', '0']
         mock_rpc_brequest.side_effect = self.side_effect_rpc
 
@@ -432,6 +495,7 @@ class TestDiscoveryParser(unittest.TestCase):
         mock_is_running.return_value = True
         mock_spawn.return_value = True
 
+        self.third_attr = True
         self.check_command = [str(command_to_int[Command.ADD]), '-d', '0']
         mock_rpc_brequest.side_effect = self.side_effect_rpc
 
@@ -458,6 +522,7 @@ class TestDiscoveryParser(unittest.TestCase):
         mock_is_running.return_value = False
         mock_spawn.return_value = True
 
+        self.third_attr = True
         self.check_command = [str(command_to_int[Command.SET]), '-d', '0']
         mock_rpc_brequest.side_effect = self.side_effect_rpc
 
@@ -488,6 +553,7 @@ class TestDiscoveryParser(unittest.TestCase):
         mock_is_running.return_value = True
         mock_spawn.return_value = True
 
+        self.third_attr = True
         self.check_command = [str(command_to_int[Command.SET]), '-d', '0']
         mock_rpc_brequest.side_effect = self.side_effect_rpc
 
