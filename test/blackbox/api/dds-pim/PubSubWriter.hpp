@@ -1094,9 +1094,9 @@ public:
         return *this;
     }
 
-    PubSubWriter& setup_ds_auto_transports()
+    PubSubWriter& setup_p2p_transports()
     {
-        participant_qos_.setup_transports(eprosima::fastdds::rtps::BuiltinTransports::DS_AUTO);
+        participant_qos_.setup_transports(eprosima::fastdds::rtps::BuiltinTransports::P2P);
         return *this;
     }
 
