@@ -148,6 +148,13 @@ const char* const DEFAULT_ROS2_SERVER_GUIDPREFIX = "44.53.00.5f.45.50.52.4f.53.4
  */
 const char* const DEFAULT_ROS2_MASTER_URI = "ROS_DISCOVERY_SERVER";
 
+/* Environment variable that:
+ * - Will spawn a background Discovery Server in the current domain (if there were not).
+ * - Specify an external ip address to connect the background Discovery Server (the port is deduced from the domain).
+ * - Set the transports to TCP and SHM.
+ */
+const char* const EASY_MODE_URI = "EASY_MODE";
+
 /* Environment variable to transform a SIMPLE participant in a SUPER CLIENT.
  * If the participant is not SIMPLE, the variable doesn't have any effects.
  * The variable can assume the following values:
@@ -187,6 +194,12 @@ bool load_environment_server_info(
  * @return The value of environment variable DEFAULT_ROS2_MASTER_URI. Empty string if the variable is not defined.
  */
 const std::string& ros_discovery_server_env();
+
+/**
+ * Get the value of environment variable EASY_MODE_URI
+ * @return The value of environment variable EASY_MODE_URI. Empty string if the variable is not defined.
+ */
+const std::string& easy_mode_env();
 
 /**
  * Get the value of environment variable ROS_SUPER_CLIENT

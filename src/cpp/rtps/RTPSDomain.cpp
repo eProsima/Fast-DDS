@@ -519,9 +519,10 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
     // Is up to the caller guarantee the att argument is not modified during the call
     RTPSParticipantAttributes client_att(att);
 
-    const std::string& ros_discovery_server_env_value = ros_discovery_server_env();
+    // Check whether we need to initialize in easy mode
+    const std::string& easy_mode_env_value = easy_mode_env();
 
-    if (ros_discovery_server_env_value != "AUTO")
+    if (easy_mode_env_value.empty())
     {
         // Retrieve the info from the environment variable
         LocatorList_t& server_list = client_att.builtin.discovery_config.m_DiscoveryServers;
@@ -583,9 +584,9 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
         // SUPER_CLIENT
         client_att.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SUPER_CLIENT;
 
-        // DS_AUTO transport. Similar to LARGE_DATA, but without UDPv4
+        // P2P transport. Similar to LARGE_DATA, but without UDPv4
         client_att.useBuiltinTransports = false;
-        client_att.setup_transports(BuiltinTransports::DS_AUTO);
+        client_att.setup_transports(BuiltinTransports::P2P);
 
         // Ignore initialpeers
         client_att.builtin.initialPeersList = LocatorList();
@@ -596,10 +597,10 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
 
         eprosima::fastdds::rtps::PortParameters port_params;
 
-        auto ds_auto_port = port_params.get_discovery_server_port(domain_id);
+        auto domain_port = port_params.get_discovery_server_port(domain_id);
 
-        IPLocator::setPhysicalPort(locator, ds_auto_port);
-        IPLocator::setLogicalPort(locator, ds_auto_port);
+        IPLocator::setPhysicalPort(locator, domain_port);
+        IPLocator::setLogicalPort(locator, domain_port);
         IPLocator::setIPv4(locator, 127, 0, 0, 1);
 
         // Point to the well known DS port in the corresponding domain
@@ -611,6 +612,7 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
                         .verb(FAST_DDS_DEFAULT_CLI_AUTO_VERB)
                         .arg("-d")
                         .value(std::to_string(domain_id))
+                        .value(easy_mode_env_value + ":" + std::to_string(domain_id))
                         .build_and_call();
         if (res != 0)
         {
