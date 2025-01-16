@@ -40,6 +40,7 @@ from discovery.fastdds_daemon.xmlrpc_local import local_client as client_cli
 
 DOMAIN_ENV_VAR = "ROS_DOMAIN_ID"
 REMOTE_SERVERS_ENV_VAR = "ROS_STATIC_PEERS"
+EASY_MODE_ENV_VAR = "EASY_MODE"
 
 class Command(Enum):
     SERVER = "server" # Does not need to be specified
@@ -154,8 +155,8 @@ class Parser:
                 raise SystemExit(result.returncode)
             else:
                 if os.name == 'nt':
-                    # DS_AUTO not supported in Windows
-                    print('DS_AUTO not supported in Windows')
+                    # EASY_MODE not supported in Windows
+                    print('EASY_MODE not yet supported in Windows')
                     raise SystemExit(1)
                 daemon_args, unknown_args = parse_daemon_arguments(argv)
                 try:
@@ -183,16 +184,31 @@ class Parser:
                 self.__stop_daemon()
                 for p in Path(self.__shm_dir()).glob("*_servers.txt"):
                     p.unlink()
-            elif command_int == command_to_int[Command.AUTO] or command_int == command_to_int[Command.START]:
+            elif command_int == command_to_int[Command.AUTO]:
+                self.__start_daemon(tool_path)
+                easy_mode = self.__get_easy_mode_from_env()
+                if easy_mode is None:
+                    self.__add_remote_servers_to_args(args_for_cpp)
+                    easy_mode = ''
+                output = client_cli.run_request_nb(domain, args_for_cpp, easy_mode)
+                print(output)
+                if 'Error starting Server' in output:
+                    raise SystemExit(1)  # Exit with error code
+                elif 'Error: DS for Domain' in output:
+                    raise SystemExit(2)
+            elif command_int == command_to_int[Command.START]:
                 self.__start_daemon(tool_path)
                 self.__add_remote_servers_to_args(args_for_cpp)
-                output = client_cli.run_request_nb(domain, args_for_cpp)
+                output = client_cli.run_request_nb(domain, args_for_cpp, '')
                 print(output)
                 if 'Error starting Server' in output:
                     raise SystemExit(1)  # Exit with error code
             elif command_int == command_to_int[Command.STOP]:
                 if not self.__is_daemon_running():
                     print('The Fast DDS daemon is not running.')
+                    raise SystemExit(0)
+                if unknown_args:
+                    print(f"Unknown arguments: {unknown_args}")
                     raise SystemExit(0)
                 print(client_cli.stop_request(domain, get_sig_idx(signal.SIGTERM)))
             elif command_int == command_to_int[Command.ADD]:
@@ -211,10 +227,8 @@ class Parser:
                     print('The Fast DDS daemon is not running. No servers to list.')
                     raise SystemExit(0)
                 print(client_cli.run_request_b(domain, args_for_cpp, False))
-                pass
             elif command_int == command_to_int[Command.INFO]:
                 print('Info mode not implemented yet.')
-                pass
             else:
                 print('Fast DDS CLI Error: Unknown command')
 
@@ -305,15 +319,15 @@ class Parser:
         return id
 
     def __get_remote_servers_from_env(self) -> str:
-            """
-            Obtain the remote servers from the environment.
-            Default to empty string if not found.
-            """
-            servers = ''
-            env_value = os.getenv(REMOTE_SERVERS_ENV_VAR)
-            if env_value is not None:
-                servers = env_value
-            return servers
+        """
+        Obtain the remote servers from the environment.
+        Default to empty string if not found.
+        """
+        servers = ''
+        env_value = os.getenv(REMOTE_SERVERS_ENV_VAR)
+        if env_value is not None:
+            servers = env_value
+        return servers
 
     def __add_remote_servers_to_args(self, args) -> None:
         """
@@ -322,6 +336,14 @@ class Parser:
         remote_servers = self.__get_remote_servers_from_env()
         if remote_servers != '':
             args.append(remote_servers)
+
+    def __get_easy_mode_from_env(self) -> str:
+        """
+        Obtain the value present in 'EASY_MODE' from the environment.
+        """
+        value = None
+        value = os.getenv(EASY_MODE_ENV_VAR)
+        return value
 
     def __shm_dir(self):
         """

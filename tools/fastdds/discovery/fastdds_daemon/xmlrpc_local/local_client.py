@@ -15,10 +15,10 @@
 import discovery.fastdds_daemon.daemon as daemon
 import xmlrpc.client
 
-def run_request_nb(domain, command) -> str:
+def run_request_nb(domain, command, remote) -> str:
     server_url = daemon.get_xmlrpc_server_url()
     with xmlrpc.client.ServerProxy(server_url) as proxy:
-        return(proxy.run_process_nb(domain, command))
+        return(proxy.run_process_nb(domain, command, remote))
 
 def run_request_b(domain, command, check_server) -> str:
     server_url = daemon.get_xmlrpc_server_url()
