@@ -116,7 +116,7 @@ static void set_builtin_transports_from_env_var(
                     "UDPv6", BuiltinTransports::UDPv6,
                     "LARGE_DATA", BuiltinTransports::LARGE_DATA,
                     "LARGE_DATAv6", BuiltinTransports::LARGE_DATAv6,
-                    "DS_AUTO", BuiltinTransports::DS_AUTO))
+                    "P2P", BuiltinTransports::P2P))
             {
                 EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Wrong value '" << env_value << "' for environment variable '" <<
                         env_var_name << "'. Leaving as DEFAULT");
@@ -143,7 +143,7 @@ static void set_builtin_transports_from_env_var(
                         "UDPv6", BuiltinTransports::UDPv6,
                         "LARGE_DATA", BuiltinTransports::LARGE_DATA,
                         "LARGE_DATAv6", BuiltinTransports::LARGE_DATAv6,
-                        "DS_AUTO", BuiltinTransports::DS_AUTO))
+                        "P2P", BuiltinTransports::P2P))
                 {
                     EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Wrong value '" << env_value << "' for environment variable '" <<
                             env_var_name << "'. Leaving as DEFAULT");
