@@ -34,6 +34,15 @@ class MockCliDiscoveryManager : public CliDiscoveryManager
 {
 public:
 
+#ifndef _WIN32
+    MOCK_METHOD0(get_listening_ports, std::vector<uint16_t>());
+
+    std::vector<uint16_t> real_get_listening_ports()
+    {
+        return CliDiscoveryManager::get_listening_ports();
+    }
+#endif // _WIN32
+
     DomainParticipantQos getServerQos()
     {
         return serverQos;

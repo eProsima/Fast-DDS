@@ -153,7 +153,7 @@ target_link_libraries(
     fastdds
     fastcdr
     fastdds::optionparser
-    GTest::gtest
+    GTest::gmock
     ${CMAKE_DL_LIBS})
 
 gtest_discover_tests(${CLI_MANAGER_TESTS_EXEC})

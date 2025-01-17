@@ -714,15 +714,79 @@ TEST_F(CliDiscoveryManagerTest, ConfigureTransports)
 }
 
 #ifndef _WIN32
+// This test verifies that the get_listening_ports method returns *at least* the ports we know that
+// are being used by the servers. We cannot check the exact number of ports because the number of
+// ports is not fixed and depends on the number of TCP connection of the host.
+TEST_F(CliDiscoveryManagerTest, GetListeningPorts)
+{
+    // Check that the ports are not being used
+    std::vector<uint16_t> ports = manager.real_get_listening_ports();
+    bool port_7402_7652 = false;
+    for (const uint16_t port : ports)
+    {
+        port_7402_7652 |= (port == 7402 || port == 7652);
+    }
+    ASSERT_FALSE(port_7402_7652);
+
+    addServers(test_case_map.at("tcp_2_ip_2_port"));
+    manager.configure_transports();
+    DomainParticipant* server = DomainParticipantFactory::get_instance()->create_participant(0,
+                    manager.getServerQos());
+
+    ports.clear();
+    ports = manager.real_get_listening_ports();
+    bool port_7402 = false;
+    bool port_7652 = false;
+    for (const uint16_t port : ports)
+    {
+        port_7402 |= (port == 7402);
+        port_7652 |= (port == 7652);
+    }
+    EXPECT_TRUE(port_7402);
+    EXPECT_TRUE(port_7652);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(server), RETCODE_OK);
+}
+
 // This test also checks:
-// - get_listening_ports method, which is used in the get_local_servers method.
 // - is_server_running method, which checks if a server is running in a specific domain.
 // - get_pid_of_server method, which returns the pid of the running server in the specified port.
 TEST_F(CliDiscoveryManagerTest, GetLocalServers)
 {
+    // Lambda to verify servers
+    auto verify_servers = [&](const std::vector<MetaInfo_DS>& servers,
+                                  std::vector<uint16_t> expected_ports,
+                                  std::vector<uint32_t> expected_domains) {
+            for (const MetaInfo_DS& server : servers)
+            {
+                auto it = std::find(expected_ports.begin(), expected_ports.end(), server.port);
+                EXPECT_NE(it, expected_ports.end()) << "Expected port not found: " << server.port;
+                if (it != expected_ports.end())
+                {
+                    expected_ports.erase(it);
+                }
+                auto it_d = std::find(expected_domains.begin(), expected_domains.end(), server.domain_id);
+                EXPECT_NE(it_d, expected_domains.end()) << "Expected domain not found: " << server.domain_id;
+                if (it_d != expected_domains.end())
+                {
+                    expected_domains.erase(it_d);
+                }
+                EXPECT_TRUE(manager.is_server_running(server.domain_id));
+                EXPECT_GT(manager.get_pid_of_server(server.port), 0);
+            }
+            EXPECT_EQ(expected_ports.size(), 0);
+            EXPECT_EQ(expected_domains.size(), 0);
+        };
+    // Use a mocked method to get the listening ports
+    std::vector<uint16_t> mocked_ports = {};
+    EXPECT_CALL(manager, get_listening_ports())
+        .WillRepeatedly(::testing::Invoke([&]() {
+            return mocked_ports;
+        }));
+
     std::vector<MetaInfo_DS> servers = manager.get_local_servers();
     EXPECT_TRUE(servers.empty());
 
+    mocked_ports.push_back(7402);
     {
         DomainId_t domain = 0;
         PortParameters port_params;
@@ -734,19 +798,13 @@ TEST_F(CliDiscoveryManagerTest, GetLocalServers)
         DomainParticipant* server = DomainParticipantFactory::get_instance()->create_participant(0,
                         manager.getServerQos());
         servers = manager.get_local_servers();
-        EXPECT_EQ(servers.size(), 1);
-        for (const MetaInfo_DS& server : servers)
-        {
-            EXPECT_EQ(server.domain_id, domain);
-            EXPECT_EQ(server.port, port);
-        }
-        EXPECT_TRUE(manager.is_server_running(domain));
-        EXPECT_GT(manager.get_pid_of_server(port), 0);
+        verify_servers(servers, {port}, {domain});
         ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(server), RETCODE_OK);
         EXPECT_FALSE(manager.is_server_running(domain));
     }
 
     // Multiple servers
+    mocked_ports.push_back(7652);
     {
         DomainId_t d0 = 0;
         DomainId_t d1 = 1;
@@ -763,27 +821,7 @@ TEST_F(CliDiscoveryManagerTest, GetLocalServers)
                         manager.getServerQos());
         servers = manager.get_local_servers();
         EXPECT_EQ(servers.size(), 2);
-        std::vector<uint16_t> expected_ports({p0, p1});
-        std::vector<uint32_t> expected_domains({d0, d1});
-        for (const MetaInfo_DS& server : servers)
-        {
-            auto it = std::find(expected_ports.begin(), expected_ports.end(), server.port);
-            EXPECT_NE(it, expected_ports.end());
-            if (it != expected_ports.end())
-            {
-                expected_ports.erase(it);
-            }
-            auto it_d = std::find(expected_domains.begin(), expected_domains.end(), server.domain_id);
-            EXPECT_NE(it_d, expected_domains.end());
-            if (it_d != expected_domains.end())
-            {
-                expected_domains.erase(it_d);
-            }
-            EXPECT_TRUE(manager.is_server_running(server.domain_id));
-            EXPECT_GT(manager.get_pid_of_server(server.port), 0);
-        }
-        EXPECT_EQ(expected_ports.size(), 0);
-        EXPECT_EQ(expected_domains.size(), 0);
+        verify_servers(servers, {p0, p1}, {d0, d1});
         ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(server), RETCODE_OK);
     }
 }
@@ -793,6 +831,6 @@ int main(
         int argc,
         char** argv)
 {
-    ::testing::InitGoogleTest(&argc, argv);
+    testing::InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();
 }
