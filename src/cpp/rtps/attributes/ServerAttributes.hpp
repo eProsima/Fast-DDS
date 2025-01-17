@@ -152,6 +152,7 @@ const char* const DEFAULT_ROS2_MASTER_URI = "ROS_DISCOVERY_SERVER";
  * - Will spawn a background Discovery Server in the current domain (if there were not).
  * - Specify an external ip address to connect the background Discovery Server (the port is deduced from the domain).
  * - Set the transports to TCP and SHM.
+ * - Make the participant a SUPER_CLIENT.
  */
 const char* const EASY_MODE_URI = "EASY_MODE";
 
