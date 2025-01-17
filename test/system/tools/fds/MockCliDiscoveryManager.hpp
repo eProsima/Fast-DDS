@@ -20,8 +20,6 @@
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
-#include <gmock/gmock.h>
-
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
 using namespace eprosima::option;
@@ -33,6 +31,19 @@ namespace dds {
 class MockCliDiscoveryManager : public CliDiscoveryManager
 {
 public:
+
+#ifndef _WIN32
+    std::vector<uint16_t> get_listening_ports() override
+    {
+        return mocked_ports;
+    }
+
+    std::vector<uint16_t> real_get_listening_ports()
+    {
+        return CliDiscoveryManager::get_listening_ports();
+    }
+
+#endif // _WIN32
 
     DomainParticipantQos getServerQos()
     {
@@ -73,6 +84,7 @@ public:
         serverQos = DomainParticipantQos();
     }
 
+    std::vector<uint16_t> mocked_ports;
 };
 } // namespace dds
 } // namespace fastdds
