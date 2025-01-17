@@ -7,19 +7,25 @@ on:
 
 jobs:
   nightly-windows-ci-master:
+    name: nightly-windows-ci-master (${{ matrix.cmake_build_type }}, SEC=${{ matrix.security }}, ${{ matrix.test_filter }})
     strategy:
       fail-fast: false
       matrix:
+        cmake_build_type:
+          - 'RelWithDebInfo'
+          - 'Debug'
         security:
           - 'ON'
           - 'OFF'
-        cmake_build_type:
-          - 'Debug'
-          - 'RelWithDebInfo'
+        test_filter:
+          - 'blackbox'
+          - 'unittest'
+        filter_expression:
+          - 'BlackboxTests|example_tests|ParticipantTests|SecureDiscoverServer'
     uses: eProsima/Fast-DDS/.github/workflows/reusable-windows-ci.yml@master
     with:
-      label: 'nightly-sec-${{ matrix.security }}-windows-ci-master'
+      label: nightly-sec-${{ matrix.security }}-${{ matrix.cmake_build_type }}-${{ matrix.test_filter }}-windows-ci-master
       cmake-config: ${{ matrix.cmake_build_type }}
       cmake-args: "-DSECURITY=${{ matrix.security }}"
-      ctest-args: "-LE xfail"
+      ctest-args: -LE xfail ${{ matrix.test_filter == 'blackbox' && format('-R "{0}"', matrix.filter_expression) || format('-E "{0}" -j 4', matrix.filter_expression) }}
       fastdds_branch: 'master'
