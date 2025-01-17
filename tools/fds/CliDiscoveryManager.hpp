@@ -158,7 +158,7 @@ public:
      * @brief Get the listening TCP ports of the machine.
      * @return An ordered vector with the listening ports
      */
-    std::vector<uint16_t> get_listening_ports();
+    virtual std::vector<uint16_t> get_listening_ports();
 
     /**
      * @brief Get the local Discovery Servers running in the machine.
