@@ -117,9 +117,9 @@ bool SecurityManager::init(
         ParticipantSecurityAttributes& attributes,
         const PropertyPolicy& participant_properties)
 {
+    SecurityException exception;
     try
     {
-        SecurityException exception;
         domain_id_ = participant_->get_domain_id();
         const PropertyPolicy log_properties = PropertyPolicyHelper::get_properties_with_prefix(
             participant_->getRTPSParticipantAttributes().properties,
@@ -385,6 +385,13 @@ bool SecurityManager::init(
     {
         if (!e)
         {
+            // Unexpected code path. Let's log any errors
+            EPROSIMA_LOG_ERROR(SECURITY, "Error while configuring security plugin.");
+            if (0 != strlen(exception.what()))
+            {
+                EPROSIMA_LOG_ERROR(SECURITY, exception.what());
+            }
+
             cancel_init();
             return false;
         }
