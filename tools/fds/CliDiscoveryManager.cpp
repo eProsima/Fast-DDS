@@ -418,10 +418,13 @@ void CliDiscoveryManager::set_server_qos(
     auto tcp_descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
     tcp_descriptor->add_listener_port(port);
     tcp_descriptor->non_blocking_send = true;
+    tcp_descriptor->sendBufferSize = 500000;
+    tcp_descriptor->receiveBufferSize = 500000;
     serverQos.transport().user_transports.push_back(tcp_descriptor);
     serverQos.transport().use_builtin_transports = false;
     serverQos.wire_protocol().builtin.discovery_config.discoveryProtocol = rtps::DiscoveryProtocol::SERVER;
     serverQos.name("DiscoveryServerAuto");
+    serverQos.properties().properties().emplace_back("fastdds.type_propagation", "disabled");
 }
 
 bool CliDiscoveryManager::load_XML_file(

@@ -586,7 +586,11 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
 
         // P2P transport. Similar to LARGE_DATA, but without UDPv4
         client_att.useBuiltinTransports = false;
-        client_att.setup_transports(BuiltinTransports::P2P);
+        BuiltinTransportsOptions options;
+        options.non_blocking_send = true;
+        options.sockets_buffer_size = 500000;
+        client_att.setup_transports(BuiltinTransports::P2P, options);
+        client_att.properties.properties().emplace_back("fastdds.type_propagation", "disabled");
 
         // Ignore initialpeers
         client_att.builtin.initialPeersList = LocatorList();
