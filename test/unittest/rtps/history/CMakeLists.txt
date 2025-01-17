@@ -52,6 +52,8 @@ set(TOPICPAYLOADPOOLTESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp)
 
+set(WRITERHISTORYTESTS_SOURCE WriterHistoryTests.cpp)
+
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)
 endif()
@@ -121,9 +123,26 @@ target_link_libraries(TopicPayloadPoolTests
     ${CMAKE_DL_LIBS})
 add_gtest(TopicPayloadPoolTests SOURCES ${TOPICPAYLOADPOOLTESTS_SOURCE})
 
+
+add_executable(WriterHistoryTests ${WRITERHISTORYTESTS_SOURCE})
+target_compile_definitions(WriterHistoryTests PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_link_libraries(WriterHistoryTests 
+    fastcdr 
+    fastrtps
+    foonathan_memory
+    GTest::gtest
+    ${CMAKE_DL_LIBS})
+add_gtest(WriterHistoryTests SOURCES ${WRITERHISTORYTESTS_SOURCE})
+
 if(ANDROID)
     set_property(TARGET ReaderHistoryTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
     set_property(TARGET BasicPoolsTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
     set_property(TARGET CacheChangePoolTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
     set_property(TARGET CacheChangeTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET WriterHistoryTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
 endif()
