@@ -186,8 +186,8 @@ TEST_P(NetworkConfig, sub_unique_network_flows)
 // participant, only shared memory is used (which should create a SHM receiver in the first "unique" port attempted).
 // In the second participant both UDP and shared memory are used (which should create a UDP receiver in the first
 // "unique" port attempted, and a shared memory receiver in the second "unique" port attempted, as the first one is
-// already being used by the first participant). As a result, the listening shared memory locators of each participant
-// data readers at each participant should be different.
+// already being used by the first participant). As a result, the listening shared memory locators of each data
+// reader should be different.
 TEST_P(NetworkConfig, sub_unique_network_flows_multiple_locators)
 {
     PubSubParticipant<HelloWorldPubSubType> participant(0, 1, 0, 0);
