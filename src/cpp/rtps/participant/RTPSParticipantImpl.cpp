@@ -2005,6 +2005,9 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
                 // Set logical port only TCP locators
                 if (LOCATOR_KIND_TCPv4 == loc.kind || LOCATOR_KIND_TCPv6 == loc.kind)
                 {
+                    // Due to current implementation limitations only one physical port (actual socket receiver)
+                    // is allowed when using TCP tranport. All we can do for now is to create a unique "logical" flow.
+                    // TODO: create a unique dedicated TCP communication channel once this limitation is removed.
                     IPLocator::setLogicalPort(loc, port);
                 }
                 else
