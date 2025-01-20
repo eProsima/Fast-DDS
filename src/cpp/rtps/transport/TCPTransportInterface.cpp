@@ -307,8 +307,15 @@ ResponseCode TCPTransportInterface::bind_socket(
         decltype(channel_resources_)::value_type{channel->locator(), channel});
     if (false == insert_ret.second)
     {
-        // There is an existing channel that can be used. Force the Client to close unnecessary socket
-        ret = RETCODE_SERVER_ERROR;
+        if (insert_ret.first->second->connection_established())
+        {
+            // There is an existing channel that can be used. Force the Client to close unnecessary socket
+            ret = RETCODE_SERVER_ERROR;
+        }
+        else
+        {
+            insert_ret.first->second = channel;
+        }
     }
 
     std::vector<fastdds::rtps::IPFinder::info_IP> local_interfaces;
@@ -320,7 +327,12 @@ ResponseCode TCPTransportInterface::bind_socket(
         for (auto& interface_it : local_interfaces)
         {
             IPLocator::setIPv4(local_locator, interface_it.locator);
-            channel_resources_.insert(decltype(channel_resources_)::value_type{local_locator, channel});
+            const auto insert_ret_local = channel_resources_.insert(
+                decltype(channel_resources_)::value_type{local_locator, channel});
+            if (!insert_ret_local.first->second->connection_established())
+            {
+                insert_ret_local.first->second = channel;
+            }
         }
     }
     return ret;

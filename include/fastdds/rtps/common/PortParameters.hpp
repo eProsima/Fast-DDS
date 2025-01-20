@@ -42,6 +42,7 @@ public:
         , offsetd1(10)
         , offsetd2(1)
         , offsetd3(11)
+        , offsetd4(2)
     {
     }
 
@@ -58,7 +59,8 @@ public:
                (this->offsetd0 == b.offsetd0) &&
                (this->offsetd1 == b.offsetd1) &&
                (this->offsetd2 == b.offsetd2) &&
-               (this->offsetd3 == b.offsetd3);
+               (this->offsetd3 == b.offsetd3) &&
+               (this->offsetd4 == b.offsetd4);
     }
 
     /**
@@ -111,6 +113,30 @@ public:
         return port;
     }
 
+    /**
+     * Get a discovery server port based on the domain ID.
+     *
+     * @param domainId Domain ID.
+     * @return Discovery server port
+     */
+    inline uint16_t get_discovery_server_port(
+            uint32_t domainId) const
+    {
+        uint32_t port = portBase + domainIDGain * domainId + offsetd4;
+
+        if (port > 65535)
+        {
+            EPROSIMA_LOG_ERROR(RTPS, "Calculated port number is too high. Probably the domainId is over 232 "
+                    << "or portBase is too high.");
+            std::cout << "Calculated port number is too high. Probably the domainId is over 232 "
+                      << "or portBase is too high." << std::endl;
+            std::cout.flush();
+            exit(EXIT_FAILURE);
+        }
+
+        return static_cast<uint16_t>(port);
+    }
+
 public:
 
     //!PortBase, default value 7400.
@@ -127,6 +153,8 @@ public:
     uint16_t offsetd2;
     //!Offset d3, default value 11.
     uint16_t offsetd3;
+    //!Offset d4, default value 2.
+    uint16_t offsetd4;
 };
 
 } // namespace rtps

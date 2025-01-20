@@ -141,6 +141,7 @@
                     <offsetd1>${XML_PROFILES_ENV_VAR_60}</offsetd1>
                     <offsetd2>${XML_PROFILES_ENV_VAR_61}</offsetd2>
                     <offsetd3>${XML_PROFILES_ENV_VAR_62}</offsetd3>
+                    <offsetd4>${XML_PROFILES_ENV_VAR_168}</offsetd4>
                 </port>
                 <participantID>${XML_PROFILES_ENV_VAR_63}</participantID>
                 <useBuiltinTransports>${XML_PROFILES_ENV_VAR_64}</useBuiltinTransports>

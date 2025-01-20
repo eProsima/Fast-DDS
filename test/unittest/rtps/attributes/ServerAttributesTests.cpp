@@ -15,6 +15,7 @@
 #include <gtest/gtest.h>
 
 #include <rtps/attributes/ServerAttributes.hpp>
+#include <fastdds/rtps/common/PortParameters.hpp>
 
 // Port used if the ros environment variable doesn't specify one
 constexpr uint16_t DEFAULT_ROS2_SERVER_PORT = 11811;
@@ -456,6 +457,24 @@ TEST(ServerAttributesTests, ServerClientEnvironmentSetUpDNS)
 
     IPLocator::setIPv4(loc, string("172.30.80.1"));
     IPLocator::setPhysicalPort(loc, 31090);
+    standard.push_back(loc);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
+
+    // 6. Check Domain ID is transformed into a Discovery Server port
+    text = "192.168.36.34:0;172.30.80.1:7;";
+
+    output.clear();
+    standard.clear();
+
+    IPLocator::setIPv4(loc, string("192.168.36.34"));
+    PortParameters port_params;
+    IPLocator::setPhysicalPort(loc, port_params.get_discovery_server_port(0));
+    standard.push_back(loc);
+
+    IPLocator::setIPv4(loc, string("172.30.80.1"));
+    IPLocator::setPhysicalPort(loc, port_params.get_discovery_server_port(7));
     standard.push_back(loc);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
