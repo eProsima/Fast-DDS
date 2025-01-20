@@ -88,7 +88,7 @@ class PubSubWriter
             static_cast<void>(should_be_ignored);
             if (writer_.onDiscovery_ != nullptr)
             {
-                writer_.discovery_result_ = writer_.onDiscovery_(info);
+                writer_.discovery_result_ = writer_.onDiscovery_(info, status);
             }
 
             if (status == eprosima::fastdds::rtps::ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT)
@@ -303,7 +303,8 @@ public:
         , times_liveliness_lost_(0)
         , times_incompatible_qos_(0)
         , last_incompatible_qos_(eprosima::fastdds::dds::INVALID_QOS_POLICY_ID)
-
+        , use_preferred_domain_id_(false)
+        , preferred_domain_id_(0)
 #if HAVE_SECURITY
         , authorized_(0)
         , unauthorized_(0)
@@ -392,7 +393,7 @@ public:
         if (participant_ == nullptr)
         {
             participant_ = DomainParticipantFactory::get_instance()->create_participant(
-                (uint32_t)GET_PID() % 230,
+                (use_preferred_domain_id_ ? preferred_domain_id_ : (uint32_t)GET_PID() % 230),
                 participant_qos_,
                 &participant_listener_,
                 eprosima::fastdds::dds::StatusMask::none());
@@ -868,6 +869,21 @@ public:
         return *this;
     }
 
+    PubSubWriter& set_domain_id(
+            const uint32_t& domain_id)
+    {
+        use_preferred_domain_id_ = true;
+        preferred_domain_id_ = domain_id;
+        return *this;
+    }
+
+    void set_on_discovery_function(
+            std::function<bool(const eprosima::fastdds::rtps::ParticipantBuiltinTopicData&,
+            eprosima::fastdds::rtps::ParticipantDiscoveryStatus)> f)
+    {
+        onDiscovery_ = f;
+    }
+
     /*** Function to change QoS ***/
     PubSubWriter& reliability(
             const eprosima::fastdds::dds::ReliabilityQosPolicyKind kind)
@@ -1075,6 +1091,12 @@ public:
         participant_qos_.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(tcp_locator);
         participant_qos_.wire_protocol().default_unicast_locator_list.push_back(tcp_locator);
 
+        return *this;
+    }
+
+    PubSubWriter& setup_p2p_transports()
+    {
+        participant_qos_.setup_transports(eprosima::fastdds::rtps::BuiltinTransports::P2P);
         return *this;
     }
 
@@ -1653,6 +1675,11 @@ public:
         return matched_;
     }
 
+    unsigned int get_participants_matched() const
+    {
+        return participant_matched_;
+    }
+
     unsigned int missed_deadlines() const
     {
         return listener_.missed_deadlines();
@@ -2056,7 +2083,8 @@ protected:
     std::string participant_profile_ = "";
     std::string datawriter_profile_ = "";
 
-    std::function<bool(const eprosima::fastdds::dds::ParticipantBuiltinTopicData& info)> onDiscovery_;
+    std::function<bool(const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& info,
+            eprosima::fastdds::rtps::ParticipantDiscoveryStatus status)> onDiscovery_;
 
     //! A mutex for liveliness
     std::mutex liveliness_mutex_;
@@ -2073,6 +2101,9 @@ protected:
     unsigned int times_incompatible_qos_;
     //! Latest conflicting PolicyId
     eprosima::fastdds::dds::QosPolicyId_t last_incompatible_qos_;
+    //! Preferred domain ID
+    bool use_preferred_domain_id_;
+    uint32_t preferred_domain_id_;
 
 #if HAVE_SECURITY
     std::mutex mutexAuthentication_;

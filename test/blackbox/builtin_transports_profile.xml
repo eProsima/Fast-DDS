@@ -111,5 +111,13 @@
             </rtps>
         </participant>
 
+        <participant profile_name="participant_p2p">
+            <domainId>0</domainId>
+            <rtps>
+                <name>Participant.builtin_transports_p2p</name>
+                <builtinTransports>P2P</builtinTransports>
+            </rtps>
+        </participant>
+
     </profiles>
 </dds>

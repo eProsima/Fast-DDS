@@ -136,15 +136,25 @@ std::basic_ostream<charT>& operator <<(
 // Default server base guidPrefix
 const char* const DEFAULT_ROS2_SERVER_GUIDPREFIX = "44.53.00.5f.45.50.52.4f.53.49.4d.41";
 
-/* Environment variable to specify a semicolon-separated list of locators ([transport]ip:port) that define remote server
- * locators. The [transport] specification is optional. The default transport is UDPv4.
- * For the variable to take any effect, the following pre-condition must be met:
- *    - The discovery protocol must be either SIMPLE or SERVER.
- *       a. In the case of SIMPLE, the participant is created as a CLIENT instead.
- *       b. In the case of SERVER, the participant is created as a SERVER, using the DEFAULT_ROS2_MASTER_URI list to
- *          expand the list of remote servers.
+/* Environment variable that can either serve to:
+ * - Specify the Discovery Server auto mode by setting its value to AUTO.
+ * - Specify a semicolon-separated list of locators ([transport]ip:port) that define remote server
+ *   locators. The [transport] specification is optional. The default transport is UDPv4.
+ *   For the variable to take any effect, the following pre-condition must be met:
+ *      - The discovery protocol must be either SIMPLE or SERVER.
+ *         a. In the case of SIMPLE, the participant is created as a CLIENT instead.
+ *         b. In the case of SERVER, the participant is created as a SERVER, using the DEFAULT_ROS2_MASTER_URI list to
+ *            expand the list of remote servers.
  */
 const char* const DEFAULT_ROS2_MASTER_URI = "ROS_DISCOVERY_SERVER";
+
+/* Environment variable that:
+ * - Will spawn a background Discovery Server in the current domain (if there were not).
+ * - Specify an external ip address to connect the background Discovery Server (the port is deduced from the domain).
+ * - Set the transports to TCP and SHM.
+ * - Make the participant a SUPER_CLIENT.
+ */
+const char* const EASY_MODE_URI = "EASY_MODE";
 
 /* Environment variable to transform a SIMPLE participant in a SUPER CLIENT.
  * If the participant is not SIMPLE, the variable doesn't have any effects.
@@ -185,6 +195,12 @@ bool load_environment_server_info(
  * @return The value of environment variable DEFAULT_ROS2_MASTER_URI. Empty string if the variable is not defined.
  */
 const std::string& ros_discovery_server_env();
+
+/**
+ * Get the value of environment variable EASY_MODE_URI
+ * @return The value of environment variable EASY_MODE_URI. Empty string if the variable is not defined.
+ */
+const std::string& easy_mode_env();
 
 /**
  * Get the value of environment variable ROS_SUPER_CLIENT

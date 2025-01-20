@@ -68,7 +68,6 @@ PDPServer::PDPServer(
     LocatorList_t env_servers;
     {
         std::lock_guard<std::recursive_mutex> lock(*getMutex());
-
         if (load_environment_server_info(env_servers))
         {
             for (auto server : env_servers)
