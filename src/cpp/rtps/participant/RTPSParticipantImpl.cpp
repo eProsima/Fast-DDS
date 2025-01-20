@@ -1992,14 +1992,15 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
     if (unique_flows)
     {
         attributes.multicastLocatorList.clear();
-        attributes.unicastLocatorList = m_att.defaultUnicastLocatorList;
+        attributes.unicastLocatorList.clear();
         attributes.external_unicast_locators.clear();
 
-        uint16_t port = initial_unique_port;
-        while (port < final_unique_port)
+        // Create unique flows for unicast locators
+        LocatorList_t input_locator_list = m_att.defaultUnicastLocatorList;
+        for (Locator_t& loc : input_locator_list)
         {
-            // Set port on unicast locators
-            for (Locator_t& loc : attributes.unicastLocatorList)
+            uint16_t port = initial_unique_port;
+            while (port < final_unique_port)
             {
                 // Set logical port only TCP locators
                 if (LOCATOR_KIND_TCPv4 == loc.kind || LOCATOR_KIND_TCPv6 == loc.kind)
@@ -2010,24 +2011,34 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
                 {
                     loc.port = port;
                 }
+
+                // Try creating receiver  for this locator
+                LocatorList_t aux_locator_list;
+                aux_locator_list.push_back(loc);
+                if (createReceiverResources(aux_locator_list, false, true, false))
+                {
+                    break;
+                }
+
+                // Try with next port
+                ++port;
             }
 
-            // Try creating receiver resources
-            LocatorList_t aux_locator_list = attributes.unicastLocatorList;
-            if (createReceiverResources(aux_locator_list, false, true, false))
+            // Fail when unique ports are exhausted
+            if (port >= final_unique_port)
             {
-                break;
+                EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT, "Unique flows requested but exhausted. Port range: "
+                        << initial_unique_port << "-" << final_unique_port << ". Discarding locator: " << loc);
             }
-
-            // Try with next port
-            ++port;
+            else
+            {
+                attributes.unicastLocatorList.push_back(loc);
+            }
         }
 
-        // Fail when unique ports are exhausted
-        if (port >= final_unique_port)
+        if (attributes.unicastLocatorList.empty())
         {
-            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Unique flows requested but exhausted. Port range: "
-                    << initial_unique_port << "-" << final_unique_port);
+            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "No unicast locators to create unique flows");
             return false;
         }
     }
