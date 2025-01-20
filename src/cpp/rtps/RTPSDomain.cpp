@@ -584,27 +584,38 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
         // SUPER_CLIENT
         client_att.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SUPER_CLIENT;
 
-        // P2P transport. Similar to LARGE_DATA, but without UDPv4
+        // P2P transport. Similar to LARGE_DATA, but with UDPv4 unicast
         client_att.useBuiltinTransports = false;
         client_att.setup_transports(BuiltinTransports::P2P);
 
         // Ignore initialpeers
         client_att.builtin.initialPeersList = LocatorList();
 
-        // Add remote DS based on port
-        eprosima::fastdds::rtps::Locator_t locator;
-        locator.kind = LOCATOR_KIND_TCPv4;
-
         eprosima::fastdds::rtps::PortParameters port_params;
 
         auto domain_port = port_params.get_discovery_server_port(domain_id);
 
-        IPLocator::setPhysicalPort(locator, domain_port);
-        IPLocator::setLogicalPort(locator, domain_port);
-        IPLocator::setIPv4(locator, 127, 0, 0, 1);
+        // Add user traffic TCP
+        eprosima::fastdds::rtps::Locator_t locator_tcp;
+        locator_tcp.kind = LOCATOR_KIND_TCPv4;
+
+        IPLocator::setPhysicalPort(locator_tcp, 0);
+        IPLocator::setLogicalPort(locator_tcp, 0);
+        // Initialize to the wan interface
+        IPLocator::setIPv4(locator_tcp, "0.0.0.0");
 
         // Point to the well known DS port in the corresponding domain
-        client_att.builtin.discovery_config.m_DiscoveryServers.push_back(locator);
+        client_att.defaultUnicastLocatorList.push_back(locator_tcp);
+
+        // Add remote DS based on port
+        eprosima::fastdds::rtps::Locator_t locator_udp;
+        locator_udp.kind = LOCATOR_KIND_UDPv4;
+
+        locator_udp.port = domain_port;
+        IPLocator::setIPv4(locator_udp, 127, 0, 0, 1);
+
+        // Point to the well known DS port in the corresponding domain
+        client_att.builtin.discovery_config.m_DiscoveryServers.push_back(locator_udp);
 
         SystemCommandBuilder sys_command;
         int res = sys_command.executable(FAST_DDS_DEFAULT_CLI_SCRIPT_NAME)
