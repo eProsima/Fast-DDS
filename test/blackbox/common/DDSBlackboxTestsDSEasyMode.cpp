@@ -149,7 +149,7 @@ TEST(DSEasyMode, easy_discovery_mode_env_correct_transports_are_used)
             for (auto locator : data.metatraffic_locators.unicast)
             {
                 locators_match_p2p_transport.store( locators_match_p2p_transport &&
-                (locator.kind == LOCATOR_KIND_TCPv4 || locator.kind == LOCATOR_KIND_SHM));
+                (locator.kind == LOCATOR_KIND_UDPv4 || locator.kind == LOCATOR_KIND_SHM));
             }
 
             if (!data.metatraffic_locators.multicast.empty())
@@ -207,14 +207,13 @@ TEST(DSEasyMode, easy_discovery_mode_env_discovery_info)
                 eprosima::fastdds::rtps::DiscoveryProtocol::CLIENT;
 
         eprosima::fastdds::rtps::Locator_t locator;
-        locator.kind = LOCATOR_KIND_TCPv4;
+        locator.kind = LOCATOR_KIND_UDPv4;
 
         eprosima::fastdds::rtps::PortParameters port_params;
 
         auto domain_port = port_params.get_discovery_server_port((uint32_t)GET_PID() % 230);
 
-        IPLocator::setPhysicalPort(locator, domain_port);
-        IPLocator::setLogicalPort(locator, domain_port);
+        locator.port = domain_port;
         IPLocator::setIPv4(locator, "127.0.0.1");
 
         // Point to the well known DS port in the corresponding domain
