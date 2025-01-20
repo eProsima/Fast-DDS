@@ -318,8 +318,18 @@ static void setup_transports_p2p(
         IPLocator::setIPv4(tcp_loc, "0.0.0.0");
         IPLocator::setPhysicalPort(tcp_loc, 0);
         IPLocator::setLogicalPort(tcp_loc, 0);
-        att.builtin.metatrafficUnicastLocatorList.push_back(tcp_loc);
         att.defaultUnicastLocatorList.push_back(tcp_loc);
+    }
+
+    auto udp_descriptor = create_udpv4_transport(att, intraprocess_only, options);
+    att.userTransports.push_back(udp_descriptor);
+
+    if (!intraprocess_only)
+    {
+        Locator_t udp_locator;
+        udp_locator.kind = LOCATOR_KIND_UDPv4;
+        IPLocator::setIPv4(udp_locator, "127.0.0.1");
+        att.builtin.metatrafficUnicastLocatorList.push_back(udp_locator);
     }
 }
 
