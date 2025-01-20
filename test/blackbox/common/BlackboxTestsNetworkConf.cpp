@@ -22,6 +22,7 @@
 #include "PubSubParticipant.hpp"
 
 #include <fastrtps/rtps/common/Locator.h>
+#include <fastrtps/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
 #include <fastrtps/utils/IPFinder.h>
 
 using namespace eprosima::fastrtps;
@@ -168,6 +169,74 @@ TEST_P(NetworkConfig, sub_unique_network_flows)
         participant.get_native_reader(1).get_listening_locators(locators2);
 
         EXPECT_TRUE(locators == locators2);
+    }
+}
+
+// Regression test for redmine issue #22519 to check that readers using unique network flows cannot share locators
+// with other readers. The mentioned issue referred to the case where TCP + builtin transports are present.
+// In that concrete scenario, the problem was that while the TCP (and UDP) transports rightly were able
+// to create a receiver in the dedicated "unique flow" port, shared memory failed for that same port as the other
+// process (or participant) is already listening on it. However this was not being handled properly, so once matched,
+// the publisher attempts to send data to the wrongfully announced shared memory locator.
+// Note that the underlying problem is that, when creating unique network flows, all transports are requested to
+// create a receiver for a specific port all together. This is, the creation of unique flow receivers is only
+// considered to fail when it fails for all transports, instead of decoupling them and keep trying for alternative
+// ports when the creation of a specific transport receiver fails.
+// In this test a similar scenario is presented, but using instead UDP and shared memory transports. In the first
+// participant, only shared memory is used (which should create a SHM receiver in the first "unique" port attempted).
+// In the second participant both UDP and shared memory are used (which should create a UDP receiver in the first
+// "unique" port attempted, and a shared memory receiver in the second "unique" port attempted, as the first one is
+// already being used by the first participant). As a result, the listening shared memory locators of each participant
+// data readers at each participant should be different.
+TEST_P(NetworkConfig, sub_unique_network_flows_multiple_locators)
+{
+    PubSubParticipant<HelloWorldPubSubType> participant(0, 1, 0, 0);
+
+    PropertyPolicy properties;
+    properties.properties().emplace_back("fastdds.unique_network_flows", "");
+
+    participant.sub_topic_name(TEST_TOPIC_NAME).sub_property_policy(properties);
+
+    std::shared_ptr<SharedMemTransportDescriptor> shm_descriptor = std::make_shared<SharedMemTransportDescriptor>();
+    // Use only SHM transport in the first participant
+    participant.disable_builtin_transport().add_user_transport_to_pparams(shm_descriptor);
+
+    ASSERT_TRUE(participant.init_participant());
+    ASSERT_TRUE(participant.init_subscriber(0));
+
+    LocatorList_t locators;
+
+    participant.get_native_reader(0).get_listening_locators(locators);
+    ASSERT_EQ(locators.size(), 1u);
+    ASSERT_EQ((*locators.begin()).kind, LOCATOR_KIND_SHM);
+
+    // Second participant
+    PubSubParticipant<HelloWorldPubSubType> participant2(0, 1, 0, 0);
+
+    participant2.sub_topic_name(TEST_TOPIC_NAME).sub_property_policy(properties);
+
+    // Use both UDP and SHM in the second participant
+    if (!use_udpv4)
+    {
+        participant2.disable_builtin_transport().add_user_transport_to_pparams(descriptor_).
+                add_user_transport_to_pparams(shm_descriptor);
+    }
+
+    ASSERT_TRUE(participant2.init_participant());
+    ASSERT_TRUE(participant2.init_subscriber(0));
+
+    LocatorList_t locators2;
+
+    participant2.get_native_reader(0).get_listening_locators(locators2);
+    ASSERT_EQ(locators2.size(), 2u);
+
+    for (const Locator_t& loc : locators2)
+    {
+        if (LOCATOR_KIND_SHM == loc.kind)
+        {
+            // Ports should be different (expected first and second values of the unique network flows port range)
+            ASSERT_FALSE(loc == *locators.begin());
+        }
     }
 }
 
