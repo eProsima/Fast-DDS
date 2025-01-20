@@ -52,6 +52,7 @@ jobs:
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
           path: src/fastrtps
+          submodules: true
           ref: ${{ inputs.fastdds-branch }}
 
       - uses: eProsima/eProsima-CI/external/setup-python@v0

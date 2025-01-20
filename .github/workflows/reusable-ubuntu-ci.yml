@@ -87,6 +87,7 @@ jobs:
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
           path: src/fastrtps
+          submodules: true
           ref: ${{ inputs.fastdds-branch }}
 
       - name: Install Fix Python version
