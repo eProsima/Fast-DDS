@@ -604,7 +604,6 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
         // Initialize to the wan interface
         IPLocator::setIPv4(locator_tcp, "0.0.0.0");
 
-        // Point to the well known DS port in the corresponding domain
         client_att.defaultUnicastLocatorList.push_back(locator_tcp);
 
         // Add remote DS based on port
