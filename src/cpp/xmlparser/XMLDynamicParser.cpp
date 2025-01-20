@@ -1428,6 +1428,13 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
         {
             DynamicTypeBuilder::_ref_type inner_builder {factory->create_map_type(key_type, value_type,
                                                                  length)};
+            if (!inner_builder)
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Error parsing map member type: `create_map_type` failed for key=`" << key_type <<
+                        "`, value=`" << value_type << "`, length=`" << length << "`.");
+                return {};
+            }
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
             DynamicTypeBuilder::_ref_type builder = factory->create_array_type(
