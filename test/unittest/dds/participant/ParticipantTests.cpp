@@ -879,9 +879,9 @@ TEST(ParticipantTests, NoBuiltinMetatrafficMulticastForClients)
     EXPECT_EQ(attributes.builtin.metatrafficMulticastLocatorList.size(), 0);
 
     DomainParticipantQos result_qos = participant->get_qos();
-    EXPECT_EQ(RETCODE_OK, participant->set_qos(result_qos));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
 
-    EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
 }
 
 
