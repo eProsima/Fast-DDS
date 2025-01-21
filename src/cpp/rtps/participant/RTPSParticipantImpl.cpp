@@ -1743,7 +1743,7 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
                 {
                     // Due to current implementation limitations only one physical port (actual socket receiver)
                     // is allowed when using TCP tranport. All we can do for now is to create a unique "logical" flow.
-                    // TODO: create a unique dedicated TCP communication channel once this limitation is removed.
+                    // TODO(juanlofer): create a unique dedicated TCP communication channel once this limitation is removed.
                     IPLocator::setLogicalPort(loc, port);
                 }
                 else
@@ -1754,7 +1754,12 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
                 // Try creating receiver  for this locator
                 LocatorList_t aux_locator_list;
                 aux_locator_list.push_back(loc);
-                if (createReceiverResources(aux_locator_list, false, true, false))
+                // if (createReceiverResources(aux_locator_list, false, true, false))
+                // {
+                //     break;
+                // }
+                createReceiverResources(aux_locator_list, false, true, false);
+                if (!aux_locator_list.empty())
                 {
                     break;
                 }
