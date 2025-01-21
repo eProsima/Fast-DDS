@@ -21,6 +21,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <map>
 #include <memory>
 #include <mutex>
 #include <sstream>
@@ -1731,11 +1732,16 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
         attributes.unicastLocatorList.clear();
         attributes.external_unicast_locators.clear();
 
+        // Register created resources to distinguish the case where a receiver was created in this same function call
+        // (and can be reused for other locators of the same kind in this reader), and that in which it was already
+        // created before for other reader in this same participant.
+        std::map<int32_t, int16_t> created_resources;
+
         // Create unique flows for unicast locators
         LocatorList_t input_locator_list = m_att.defaultUnicastLocatorList;
         for (Locator_t& loc : input_locator_list)
         {
-            uint16_t port = initial_unique_port;
+            uint16_t port = created_resources.count(loc.kind) ? created_resources[loc.kind] : initial_unique_port;
             while (port < final_unique_port)
             {
                 // Set logical port only TCP locators
@@ -1751,15 +1757,18 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
                     loc.port = port;
                 }
 
-                // Try creating receiver  for this locator
+                // Try creating receiver for this locator
                 LocatorList_t aux_locator_list;
                 aux_locator_list.push_back(loc);
-                // if (createReceiverResources(aux_locator_list, false, true, false))
-                // {
-                //     break;
-                // }
-                createReceiverResources(aux_locator_list, false, true, false);
-                if (!aux_locator_list.empty())
+                if (createReceiverResources(aux_locator_list, false, true, false))
+                {
+                    created_resources[loc.kind] = port;
+                }
+
+                // Locator will be present in the list if receiver was created, or was already created
+                // Continue if receiver not created for this reader (might exist but created for other reader in this same participant)
+                if (!aux_locator_list.empty() &&
+                        created_resources.count(loc.kind) && (created_resources[loc.kind] == port))
                 {
                     break;
                 }
@@ -1893,7 +1902,7 @@ bool RTPSParticipantImpl::createReceiverResources(
     bool ret_val = input_list.empty();
 
 #if HAVE_SECURITY
-    // An auxilary buffer is needed in the ReceiverResource to to decrypt the message,
+    // An auxilary buffer is needed in the ReceiverResource to decrypt the message,
     // that imposes a limit in the received messages size even if the transport allows (uint32_t) messages size.
     uint32_t max_receiver_buffer_size =
             is_secure() ? std::numeric_limits<uint16_t>::max() : (std::numeric_limits<uint32_t>::max)();
