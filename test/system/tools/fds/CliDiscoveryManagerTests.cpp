@@ -226,9 +226,9 @@ protected:
         {
             "udp_1_ip_1_port",
             {
-                {"-l", "127.0.0.1", "-p", "8500"},
+                {"-l", "127.0.0.1", "-p", "7402"},
                 {"127.0.0.1"},
-                {8500},
+                {7402},
                 {},
                 {},
             }
@@ -535,12 +535,12 @@ TEST_F(CliDiscoveryManagerTest, SetServerQos)
     EXPECT_EQ(qos.wire_protocol().builtin.metatrafficUnicastLocatorList.size(), 1);
     for (const Locator_t& locator : qos.wire_protocol().builtin.metatrafficUnicastLocatorList)
     {
-        compareLocator(locator, "0.0.0.0", 7402, true, false);
+        compareLocator(locator, "0.0.0.0", 7402, false, false);
     }
     EXPECT_FALSE(qos.transport().use_builtin_transports);
     EXPECT_EQ(qos.wire_protocol().builtin.discovery_config.discoveryProtocol, DiscoveryProtocol::SERVER);
     ASSERT_EQ(qos.transport().user_transports.size(), 1);
-    EXPECT_TRUE(nullptr != dynamic_cast<TCPv4TransportDescriptor*>(qos.transport().user_transports[0].get()));
+    EXPECT_TRUE(nullptr != dynamic_cast<UDPv4TransportDescriptor*>(qos.transport().user_transports[0].get()));
 }
 
 TEST_F(CliDiscoveryManagerTest, GetCliPortsAndIps)
@@ -728,7 +728,7 @@ TEST_F(CliDiscoveryManagerTest, GetListeningPorts)
     }
     ASSERT_FALSE(port_7402_7652);
 
-    addServers(test_case_map.at("tcp_2_ip_2_port"));
+    addServers(test_case_map.at("udp_2_ip_2_port"));
     manager.configure_transports();
     DomainParticipant* server = DomainParticipantFactory::get_instance()->create_participant(0,
                     manager.getServerQos());
