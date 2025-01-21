@@ -22,7 +22,7 @@
 #include "PubSubParticipant.hpp"
 
 #include <fastrtps/rtps/common/Locator.h>
-#include <fastrtps/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastrtps/utils/IPFinder.h>
 
 using namespace eprosima::fastrtps;
@@ -197,7 +197,8 @@ TEST_P(NetworkConfig, sub_unique_network_flows_multiple_locators)
 
     participant.sub_topic_name(TEST_TOPIC_NAME).sub_property_policy(properties);
 
-    std::shared_ptr<SharedMemTransportDescriptor> shm_descriptor = std::make_shared<SharedMemTransportDescriptor>();
+    std::shared_ptr<eprosima::fastdds::rtps::SharedMemTransportDescriptor> shm_descriptor =
+            std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
     // Use only SHM transport in the first participant
     participant.disable_builtin_transport().add_user_transport_to_pparams(shm_descriptor);
 
