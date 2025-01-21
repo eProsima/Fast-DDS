@@ -633,7 +633,7 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
         {
             if (res == SystemCommandBuilder::SystemCommandResult::BAD_PARAM)
             {
-                EPROSIMA_LOG_ERROR(DOMAIN, "EASY_MODE IP connection conflicts with a previous one.");
+                EPROSIMA_LOG_ERROR("DOMAIN", "EASY_MODE IP connection conflicts with a previous one.");
             }
             else
             {
