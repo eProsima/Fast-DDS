@@ -868,14 +868,14 @@ TEST(ParticipantTests, SimpleParticipantRemoteServerListConfiguration)
 TEST(ParticipantTests, NoBuiltinMetatrafficMulticastForClients)
 {
     DomainParticipantQos qos;
-    qos.wire_protocol().builtin.discovery_config.discoveryProtocol = fastdds::rtps::DiscoveryProtocol::CLIENT;
+    qos.wire_protocol().builtin.discovery_config.discoveryProtocol = fastrtps::rtps::DiscoveryProtocol::CLIENT;
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, qos);
     ASSERT_NE(nullptr, participant);
 
-    fastdds::rtps::RTPSParticipantAttributes attributes;
+    fastrtps::rtps::RTPSParticipantAttributes attributes;
     get_rtps_attributes(participant, attributes);
-    EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastdds::rtps::DiscoveryProtocol::CLIENT);
+    EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::CLIENT);
     EXPECT_EQ(attributes.builtin.metatrafficMulticastLocatorList.size(), 0);
 
     DomainParticipantQos result_qos = participant->get_qos();
