@@ -403,7 +403,7 @@ bool PDPSimple::create_dcps_participant_endpoints()
     if (mp_RTPSParticipant->createWriter(&rtps_writer, watt, writer.history_.get(),
             nullptr, writer_entity_id, true))
     {
-        writer.writer_ = dynamic_cast<StatelessWriter*>(rtps_writer);
+        writer.writer_ = dynamic_cast<PDPStatelessWriter*>(rtps_writer);
         assert(nullptr != writer.writer_);
 
 #if HAVE_SECURITY
