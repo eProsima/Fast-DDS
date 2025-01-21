@@ -1521,7 +1521,14 @@ void StatefulWriter::check_acked_status()
 
         if (min_low_mark >= get_seq_num_min())
         {
-            may_remove_change_ = 1;
+            // If seq_num_min is unknown is because the history is already empty
+            if(get_seq_num_min() == SequenceNumber_t::unknown())
+            {
+                std::cout << "check_acked_status(): get_seq_num_min() == SequenceNumber_t::unknown()" << std::endl;
+                may_remove_change_ = 2;
+            }
+            else
+                may_remove_change_ = 1;
         }
 
         min_readers_low_mark_ = min_low_mark;
