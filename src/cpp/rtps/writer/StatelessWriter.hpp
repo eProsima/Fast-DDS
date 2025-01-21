@@ -62,10 +62,10 @@ public:
     //vvvvvvvvvvvvvvvvvvvvv [Exported API] vvvvvvvvvvvvvvvvvvvvv
 
     bool matched_reader_add_edp(
-            const ReaderProxyData& data) final;
+            const ReaderProxyData& data) override;
 
     bool matched_reader_remove(
-            const GUID_t& reader_guid) final;
+            const GUID_t& reader_guid) override;
 
     bool matched_reader_is_matched(
             const GUID_t& reader_guid) final;
