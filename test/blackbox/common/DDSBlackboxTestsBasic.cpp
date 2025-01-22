@@ -1054,7 +1054,6 @@ TEST(DDSBasic, reliable_volatile_writer_secure_builtin_no_potential_deadlock)
 
 TEST(DDSBasic, participant_factory_output_log_error_no_macro_collision)
 {
-#ifdef __APPLE__
     using Log = eprosima::fastdds::dds::Log;
     using LogConsumer = eprosima::fastdds::dds::LogConsumer;
 
@@ -1090,7 +1089,6 @@ TEST(DDSBasic, participant_factory_output_log_error_no_macro_collision)
     DomainParticipantQos qos;
     dpf->get_participant_qos_from_xml("", qos, "");
     ASSERT_GE(n_logs.load(), 1u);
-#endif //__APPLE__
 }
 
 } // namespace dds
