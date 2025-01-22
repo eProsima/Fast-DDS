@@ -248,7 +248,7 @@ def test_fast_discovery_parse_XML_file_default_profile(fast_discovery_tool):
 
     output, err, exit_code = send_command(command)
 
-    EXPECTED_SERVER_ID = "Server (" + PREFIX.lower() + ")"
+    EXPECTED_SERVER_ID = "GUID prefix: " + PREFIX.lower()
     print(EXPECTED_SERVER_ID)
 
     exit_code = check_output(output, err, EXPECTED_SERVER_ID, False, False)
@@ -285,7 +285,7 @@ def test_fast_discovery_parse_XML_file_URI_profile(fast_discovery_tool):
 
     output, err, exit_code = send_command(command)
 
-    EXPECTED_SERVER_ID = "Server (" + PREFIX.lower() + ")"
+    EXPECTED_SERVER_ID = "GUID prefix: " + PREFIX.lower()
     print(EXPECTED_SERVER_ID)
 
     exit_code = check_output(output, err, EXPECTED_SERVER_ID, False, False)
@@ -305,7 +305,7 @@ def test_fast_discovery_prefix_override(fast_discovery_tool):
     XML_file_path = 'test_xml_discovery_server_profile.xml'
     default_profile = XML_parse_profile(XML_file_path, "")
 
-    EXPECTED_SERVER_ID = "Server (44.53.00.5f.45.50.52.4f.53.49.4d.41)"
+    EXPECTED_SERVER_ID = "GUID prefix: 44.53.00.5f.45.50.52.4f.53.49.4d.41"
     EXPECTED_SERVER_ADDRESS = []
     udpv4 = default_profile.getElementsByTagName('udpv4')
     for elem in udpv4:
@@ -338,7 +338,7 @@ def test_fast_discovery_locator_address_override(fast_discovery_tool):
 
     prefix = default_profile.getElementsByTagName('prefix')
     PREFIX = prefix[0].firstChild.data
-    EXPECTED_SERVER_ID = "Server (" + PREFIX.lower() + ")"
+    EXPECTED_SERVER_ID = "GUID prefix: " + PREFIX.lower()
     EXPECTED_SERVER_ADDRESS = []
     EXPECTED_SERVER_ADDRESS.append("UDPv4:[172.168.43.125]:11811")
     XML_SERVER_ADDRESS = []
@@ -377,7 +377,7 @@ def test_fast_discovery_locator_override_same_address(fast_discovery_tool):
 
     prefix = default_profile.getElementsByTagName('prefix')
     PREFIX = prefix[0].firstChild.data
-    EXPECTED_SERVER_ID = "Server (" + PREFIX.lower() + ")"
+    EXPECTED_SERVER_ID = "GUID prefix: " + PREFIX.lower()
     EXPECTED_SERVER_ADDRESS = []
     EXPECTED_SERVER_ADDRESS.append("UDPv4:[127.0.0.9]:11811")
     XML_SERVER_ADDRESS = []
@@ -416,7 +416,7 @@ def test_fast_discovery_locator_port_override(fast_discovery_tool):
 
     prefix = default_profile.getElementsByTagName('prefix')
     PREFIX = prefix[0].firstChild.data
-    EXPECTED_SERVER_ID = "Server (" + PREFIX.lower() + ")"
+    EXPECTED_SERVER_ID = "GUID prefix: " + PREFIX.lower()
     EXPECTED_SERVER_ADDRESS = []
     EXPECTED_SERVER_ADDRESS.append("UDPv4:[0.0.0.0]:1234")
     XML_SERVER_ADDRESS = []
@@ -455,7 +455,7 @@ def test_fast_discovery_locator_override_same_port(fast_discovery_tool):
 
     prefix = default_profile.getElementsByTagName('prefix')
     PREFIX = prefix[0].firstChild.data
-    EXPECTED_SERVER_ID = "Server (" + PREFIX.lower() + ")"
+    EXPECTED_SERVER_ID = "GUID prefix: " + PREFIX.lower()
     EXPECTED_SERVER_ADDRESS = []
     EXPECTED_SERVER_ADDRESS.append("UDPv4:[0.0.0.0]:2811")
     XML_SERVER_ADDRESS = []
@@ -490,13 +490,17 @@ def test_fast_discovery_backup(fast_discovery_tool):
     """Test that launches a BACKUP using CLI and XML"""
 
     XML_file_path = "test_xml_discovery_server_profile.xml"
-    EXPECTED_BACKUP_ID = "Server (BACKUP) (44.53.00.5f.45.50.52.4f.53.49.4d.41)"
+    EXPECTED_PARTICIPANT_TYPE = "Backup"
+    EXPECTED_BACKUP_ID = "GUID prefix: 44.53.00.5f.45.50.52.4f.53.49.4d.41"
     EXPECTED_SERVER_ADDRESS = []
     EXPECTED_SERVER_ADDRESS.append("UDPv4:[0.0.0.0]:11811")
 
     command = [fast_discovery_tool, str(command_to_int_test[Command_test.SERVER]), '-b', '-i', '0']
     output, err, exit_code = send_command(command)
 
+    exit_code = check_output(output, err, EXPECTED_PARTICIPANT_TYPE, False, False)
+    if exit_code != 0:
+        sys.exit(exit_code)
     exit_code = check_output(output, err, EXPECTED_BACKUP_ID, False, False)
     if exit_code != 0:
         sys.exit(exit_code)
@@ -505,7 +509,7 @@ def test_fast_discovery_backup(fast_discovery_tool):
         if exit_code != 0:
             sys.exit(exit_code)
 
-    EXPECTED_XML_BACKUP_ID = "Server (BACKUP) (44.53.33.5f.45.50.52.4f.53.49.4d.41)"
+    EXPECTED_XML_BACKUP_ID = "GUID prefix: 44.53.33.5f.45.50.52.4f.53.49.4d.41"
     EXPECTED_XML_SERVER_ADDRESS = []
     EXPECTED_XML_SERVER_ADDRESS.append("UDPv4:[127.0.0.105]:11825")
 

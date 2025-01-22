@@ -45,7 +45,7 @@ class TestDiscoveryParser(unittest.TestCase):
         assert(third_attr == self.third_attr)
         for i in range(len(self.check_command)):
             assert(used_cmd[i] == self.check_command[i])
-        return args
+        return 'Mocked request'
 
     def set_env_values(self, env_var_name, value):
         os.environ[env_var_name] = value

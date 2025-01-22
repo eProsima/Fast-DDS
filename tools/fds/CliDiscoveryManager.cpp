@@ -495,7 +495,6 @@ bool CliDiscoveryManager::add_udp_servers()
     {
         EPROSIMA_LOG_WARNING(CLI,
                 "The number of specified ports doesn't match the ip addresses provided. Locators might share their port number.");
-        std::cout << "Where is the warning" << std::endl;
     }
     auto it_p = udp_ports_.begin();
     auto it_i = udp_ips_.begin();
@@ -878,15 +877,22 @@ int CliDiscoveryManager::fastdds_discovery_server(
 #endif // ifndef _WIN32
 
         // Print running server attributes
-        std::cout << "Server (";
+        std::cout << "#### ";
         if (serverQos.wire_protocol().builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
         {
-            std::cout << "BACKUP) (";
+            std::cout << "Backup ";
         }
-        std::cout << pServer->guid().guidPrefix << ") is running on:" << std::endl;
-        for (const Locator_t& locator : serverQos.wire_protocol().builtin.metatrafficUnicastLocatorList)
+        std::cout << "Server started ####" << std::endl;
+        std::cout << "  GUID prefix: " << pServer->guid().guidPrefix << std::endl;
+        std::cout << "  Running on:  ";
+        for (auto locator_it = serverQos.wire_protocol().builtin.metatrafficUnicastLocatorList.begin();
+                locator_it != serverQos.wire_protocol().builtin.metatrafficUnicastLocatorList.end();)
         {
-            std::cout << "  - " << locator << std::endl;
+            std::cout << *locator_it;
+            if (++locator_it != serverQos.wire_protocol().builtin.metatrafficUnicastLocatorList.end())
+            {
+                std::cout << std::endl << "               ";
+            }
         }
         std::cout << std::endl;
 

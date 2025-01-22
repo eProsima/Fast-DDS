@@ -112,7 +112,7 @@ enum class BuiltinTransports : uint16_t
     UDPv6 = 5,         //< Instantiate UDPv6 transport only
     LARGE_DATA = 6,    //< Instantiate SHM, UDPv4 and TCPv4 transports, but UDPv4 is only used for bootstrapping discovery
     LARGE_DATAv6 = 7,  //< Instantiate SHM, UDPv6 and TCPv6 transports, but UDPv6 is only used for bootstrapping discovery
-    P2P = 8            //< Instantiate SHM, UDPv4 and TCPv4 transports, shall only be used along with EASY_MODE=<ip>
+    P2P = 8            //< Instantiate SHM, UDPv4 (unicast) and TCPv4 transports, shall only be used along with EASY_MODE=<ip>
 };
 
 inline std::ostream& operator <<(
