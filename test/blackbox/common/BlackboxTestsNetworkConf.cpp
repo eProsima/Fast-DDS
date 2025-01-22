@@ -17,6 +17,7 @@
 
 #include <gtest/gtest.h>
 #include <fastdds/rtps/common/Locator.hpp>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
 #include <fastdds/utils/IPFinder.hpp>
 
 #include "BlackboxTests.hpp"
@@ -168,6 +169,106 @@ TEST_P(NetworkConfig, sub_unique_network_flows)
         participant.get_native_reader(1).get_listening_locators(locators2);
 
         EXPECT_TRUE(locators == locators2);
+    }
+}
+
+// Regression test for redmine issue #22519 to check that readers using unique network flows cannot share locators
+// with other readers. The mentioned issue referred to the case where TCP + builtin transports are present.
+// In that concrete scenario, the problem was that while the TCP (and UDP) transports rightly were able
+// to create a receiver in the dedicated "unique flow" port, shared memory failed for that same port as the other
+// process (or participant) is already listening on it. However this was not being handled properly, so once matched,
+// the publisher attempts to send data to the wrongfully announced shared memory locator.
+// Note that the underlying problem is that, when creating unique network flows, all transports are requested to
+// create a receiver for a specific port all together. This is, the creation of unique flow receivers is only
+// considered to fail when it fails for all transports, instead of decoupling them and keep trying for alternative
+// ports when the creation of a specific transport receiver fails.
+// In this test a similar scenario is presented, but using instead UDP and shared memory transports. In the first
+// participant, only shared memory is used (which should create a SHM receiver in the first "unique" port attempted).
+// In the second participant both UDP and shared memory are used (which should create a UDP receiver in the first
+// "unique" port attempted, and a shared memory receiver in the second "unique" port attempted, as the first one is
+// already being used by the first participant). As a result, the listening shared memory locators of each data
+// reader should be different. Finally, a third data reader is created in the second participant, and it is verified
+// that its listening locators are different from those of the other reader created in the same participant, as well as
+// from the (SHM) one of the reader created in the first participant.
+TEST_P(NetworkConfig, sub_unique_network_flows_multiple_locators)
+{
+    // Enable unique network flows feature
+    PropertyPolicy properties;
+    properties.properties().emplace_back("fastdds.unique_network_flows", "");
+
+    // First participant
+    PubSubParticipant<HelloWorldPubSubType> participant(0, 1, 0, 0);
+
+    participant.sub_topic_name(TEST_TOPIC_NAME).sub_property_policy(properties);
+
+    std::shared_ptr<SharedMemTransportDescriptor> shm_descriptor = std::make_shared<SharedMemTransportDescriptor>();
+    // Use only SHM transport in the first participant
+    participant.disable_builtin_transport().add_user_transport_to_pparams(shm_descriptor);
+
+    ASSERT_TRUE(participant.init_participant());
+    ASSERT_TRUE(participant.init_subscriber(0));
+
+    LocatorList_t locators;
+
+    participant.get_native_reader(0).get_listening_locators(locators);
+    ASSERT_EQ(locators.size(), 1u);
+    ASSERT_EQ((*locators.begin()).kind, LOCATOR_KIND_SHM);
+
+    // Second participant
+    PubSubParticipant<HelloWorldPubSubType> participant2(0, 2, 0, 0);
+
+    participant2.sub_topic_name(TEST_TOPIC_NAME).sub_property_policy(properties);
+
+    // Use both UDP and SHM in the second participant
+    if (!use_udpv4)
+    {
+        participant2.disable_builtin_transport().add_user_transport_to_pparams(descriptor_).
+                add_user_transport_to_pparams(shm_descriptor);
+    }
+
+    ASSERT_TRUE(participant2.init_participant());
+    ASSERT_TRUE(participant2.init_subscriber(0));
+
+    LocatorList_t locators2_1;
+
+    participant2.get_native_reader(0).get_listening_locators(locators2_1);
+    ASSERT_TRUE(locators2_1.size() >= 2u); // There should be at least two locators, one for SHM and N(#interfaces) for UDP
+
+    // Check SHM locator is different from the one in the first participant
+    for (const Locator_t& loc : locators2_1)
+    {
+        if (LOCATOR_KIND_SHM == loc.kind)
+        {
+            // Ports should be different (expected second and first values of the unique network flows port range)
+            ASSERT_FALSE(loc == *locators.begin());
+        }
+    }
+
+    // Now create a second reader in the second participant
+    ASSERT_TRUE(participant2.init_subscriber(1));
+
+    LocatorList_t locators2_2;
+
+    participant2.get_native_reader(1).get_listening_locators(locators2_2);
+    ASSERT_TRUE(locators2_2.size() >= 2u); // There should be at least two locators, one for SHM and N(#interfaces) for UDP
+
+    // Check SHM locator is different from the one in the first participant
+    for (const Locator_t& loc : locators2_2)
+    {
+        if (LOCATOR_KIND_SHM == loc.kind)
+        {
+            // Ports should be different (expected third and first values of the unique network flows port range)
+            ASSERT_FALSE(loc == *locators.begin());
+        }
+    }
+
+    // Now check no locators are shared between the two readers in the second participant
+    for (const Locator_t& loc_1 : locators2_1)
+    {
+        for (const Locator_t& loc_2 : locators2_2)
+        {
+            ASSERT_FALSE(loc_1 == loc_2);
+        }
     }
 }
 
