@@ -1023,6 +1023,7 @@ public:
      * @param ApplyMutation - True if we want to create a Resource with a "similar" locator if the one we provide is unavailable
      * @param RegisterReceiver - True if we want the receiver to be registered. Useful for receivers created after participant is enabled.
      * @param log_when_creation_fails - True if a log warning shall be issued for each locator when a receiver resource cannot be created.
+     * @return True if a receiver resource was created for at least a locator in the list, false otherwise.
      */
     bool createReceiverResources(
             LocatorList_t& Locator_list,
