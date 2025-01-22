@@ -20,6 +20,9 @@
 #define FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_SIMPLE__PDPSTATELESSWRITER_HPP
 
 #include <chrono>
+#include <set>
+
+#include <fastdds/rtps/common/LocatorList.hpp>
 
 #include <rtps/writer/StatelessWriter.hpp>
 
@@ -73,12 +76,55 @@ public:
      * @return true if the locators were set successfully.
      */
     bool set_fixed_locators(
-            const LocatorList_t& locator_list);
+            const LocatorList& locator_list);
 
     /**
      * Reset the unsent changes.
      */
     void unsent_changes_reset();
+
+private:
+
+    /**
+     * @brief Mark all readers as interested.
+     *
+     * This method sets the flag indicating that all readers are interested in the data sent by this writer.
+     * It is used to ensure that all readers are considered when sending data.
+     * The flag will be reset when all the samples from this writer have been sent.
+     */
+    void mark_all_readers_interested();
+
+    /**
+     * @brief Mark an interested reader.
+     *
+     * Add the guid of a reader to the list of interested readers.
+     *
+     * @param reader_guid The GUID of the reader to mark as interested.
+     */
+    void add_interested_reader(
+            const GUID_t& reader_guid);
+
+    /**
+     * @brief Unmark an interested reader.
+     *
+     * Remove the guid of a reader from the list of interested readers.
+     *
+     * @param reader_guid The GUID of the reader to mark as interested.
+     */
+    void remove_interested_reader(
+            const GUID_t& reader_guid);
+
+    /**
+     * @brief Add all samples from this writer to the flow controller.
+     */
+    void reschedule_all_samples();
+
+    //! The set of readers interested
+    std::set<GUID_t> interested_readers_{};
+    //! Configured initial peers
+    LocatorList initial_peers_{};
+    //! Whether we have set that all destinations are interested
+    bool should_reach_all_destinations_ = false;
 
 };
 

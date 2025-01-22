@@ -21,11 +21,13 @@
 #include <algorithm>
 #include <chrono>
 #include <mutex>
+#include <set>
 
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
 
+#include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/writer/StatelessWriter.hpp>
 
@@ -51,6 +53,9 @@ bool PDPStatelessWriter::matched_reader_add_edp(
     if (ret)
     {
         // Mark new reader as interested
+        add_interested_reader(data.guid());
+        // Send announcement to new reader
+        reschedule_all_samples();
     }
     return ret;
 }
@@ -62,6 +67,7 @@ bool PDPStatelessWriter::matched_reader_remove(
     if (ret)
     {
         // Mark reader as not interested
+        remove_interested_reader(reader_guid);
     }
     return ret;
 }
@@ -70,22 +76,56 @@ void PDPStatelessWriter::unsent_change_added_to_history(
         CacheChange_t* change,
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
+    mark_all_readers_interested();
     StatelessWriter::unsent_change_added_to_history(change, max_blocking_time);
-    // mark_all_readers_as_interested();
 }
 
 bool PDPStatelessWriter::set_fixed_locators(
-        const LocatorList_t& locator_list)
+        const LocatorList& locator_list)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
-    fixed_locators_.push_back(locator_list);
-    mp_RTPSParticipant->createSenderResources(fixed_locators_);
+    initial_peers_.push_back(locator_list);
+    mp_RTPSParticipant->createSenderResources(initial_peers_);
 
     return true;
 }
 
 void PDPStatelessWriter::unsent_changes_reset()
+{
+    mark_all_readers_interested();
+    reschedule_all_samples();
+}
+
+void PDPStatelessWriter::mark_all_readers_interested()
+{
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    should_reach_all_destinations_ = true;
+    interested_readers_.clear();
+    fixed_locators_.clear();
+    fixed_locators_.push_back(initial_peers_);
+    reader_data_filter(nullptr);
+}
+
+void PDPStatelessWriter::add_interested_reader(
+        const GUID_t& reader_guid)
+{
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    if (!should_reach_all_destinations_)
+    {
+        interested_readers_.insert(reader_guid);
+        // TODO: reader_data_filter(this);
+    }
+}
+
+void PDPStatelessWriter::remove_interested_reader(
+        const GUID_t& reader_guid)
+{
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    interested_readers_.erase(reader_guid);
+}
+
+void PDPStatelessWriter::reschedule_all_samples()
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     std::for_each(history_->changesBegin(), history_->changesEnd(), [&](CacheChange_t* change)
