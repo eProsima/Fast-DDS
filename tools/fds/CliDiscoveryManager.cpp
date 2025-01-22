@@ -34,6 +34,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
@@ -247,10 +248,10 @@ std::vector<uint16_t> CliDiscoveryManager::get_listening_ports()
     std::vector<uint16_t> ports;
     std::string command;
 #ifdef __APPLE__
-    command = "netstat -an | grep LISTEN";
+    command = "netstat -an | grep udp4";
     std::regex port_regex(R"(\*.([\d+]+))");
 #else
-    command = "ss -ltn";
+    command = "ss -lun";
     std::regex port_regex(R"(0\.0\.0\.0:(\d+))");
 #endif // ifdef __APPLE__
     std::string result = exec_command(command);
@@ -310,7 +311,7 @@ pid_t CliDiscoveryManager::get_pid_of_server(
 {
     std::string command = "lsof -i :";
     command += std::to_string(port);
-    command += " | grep LISTEN | awk '{print $2}'";
+    command += " | grep UDP | awk '{print $2}'";
     std::string result = exec_command(command);
     if (result.empty())
     {
@@ -372,7 +373,7 @@ void CliDiscoveryManager::start_server_auto_mode(
             load_environment_server_info(read_servers_from_file(file_name.str()), serverList);
             for (rtps::Locator_t& locator : serverList)
             {
-                locator.kind = LOCATOR_KIND_TCPv4;
+                locator.kind = LOCATOR_KIND_UDPv4;
             }
             pServer->get_qos(serverQos);
             serverQos.wire_protocol().builtin.discovery_config.m_DiscoveryServers = serverList;
@@ -388,7 +389,7 @@ void CliDiscoveryManager::start_server_auto_mode(
             load_environment_server_info(read_servers_from_file(file_name.str()), serverList);
             for (rtps::Locator_t& locator : serverList)
             {
-                locator.kind = LOCATOR_KIND_TCPv4;
+                locator.kind = LOCATOR_KIND_UDPv4;
             }
             serverQos.wire_protocol().builtin.discovery_config.m_DiscoveryServers = serverList;
             pServer = DomainParticipantFactory::get_instance()->create_participant(0, serverQos);
@@ -409,16 +410,14 @@ void CliDiscoveryManager::start_server_auto_mode(
 void CliDiscoveryManager::set_server_qos(
         const uint16_t port)
 {
-    rtps::Locator_t locator;
-    locator.kind = LOCATOR_KIND_TCPv4;
-    rtps::IPLocator::setPhysicalPort(locator, port);
-    rtps::IPLocator::setLogicalPort(locator, port);
-    rtps::IPLocator::setIPv4(locator, "0.0.0.0");
-    serverQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator);
-    auto tcp_descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
-    tcp_descriptor->add_listener_port(port);
-    tcp_descriptor->non_blocking_send = true;
-    serverQos.transport().user_transports.push_back(tcp_descriptor);
+    rtps::Locator_t udp_locator;
+    udp_locator.kind = LOCATOR_KIND_UDPv4;
+    udp_locator.port = port;
+    // Initialize to the wan interface
+    IPLocator::setIPv4(udp_locator, "0.0.0.0");
+    serverQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(udp_locator);
+    auto udp_descriptor = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
+    serverQos.transport().user_transports.push_back(udp_descriptor);
     serverQos.transport().use_builtin_transports = false;
     serverQos.wire_protocol().builtin.discovery_config.discoveryProtocol = rtps::DiscoveryProtocol::SERVER;
     serverQos.name("DiscoveryServerAuto");
@@ -958,7 +957,7 @@ int CliDiscoveryManager::fastdds_discovery_auto_start(
     load_environment_server_info(servers, serverList);
     for (rtps::Locator_t& locator : serverList)
     {
-        locator.kind = LOCATOR_KIND_TCPv4;
+        locator.kind = LOCATOR_KIND_UDPv4;
     }
     serverQos.wire_protocol().builtin.discovery_config.m_DiscoveryServers = serverList;
     start_server_auto_mode(port, id);
