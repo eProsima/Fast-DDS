@@ -380,19 +380,19 @@ void RTPSParticipantAttributes::setup_transports(
             break;
 
         case fastdds::rtps::BuiltinTransports::LARGE_DATA:
-            // This parameter will allow allow the initialization of UDP transports with maxMessageSize > 65500 KB (s_maximumMessageSize)
+            // This parameter will allow the initialization of UDP transports with maxMessageSize > 65500 KB (s_maximumMessageSize)
             max_msg_size_no_frag = options.maxMessageSize;
             setup_transports_large_data(*this, intraprocess_only, options);
             break;
 
         case fastdds::rtps::BuiltinTransports::LARGE_DATAv6:
-            // This parameter will allow allow the initialization of UDP transports with maxMessageSize > 65500 KB (s_maximumMessageSize)
+            // This parameter will allow the initialization of UDP transports with maxMessageSize > 65500 KB (s_maximumMessageSize)
             max_msg_size_no_frag = options.maxMessageSize;
             setup_transports_large_datav6(*this, intraprocess_only, options);
             break;
 
         case fastdds::rtps::BuiltinTransports::P2P:
-            // This parameter will allow allow the initialization of UDP transports with maxMessageSize > 65500 KB (s_maximumMessageSize)
+            // This parameter will allow the initialization of UDP transports with maxMessageSize > 65500 KB (s_maximumMessageSize)
             max_msg_size_no_frag = options.maxMessageSize;
             setup_transports_p2p(*this, intraprocess_only, options);
             break;

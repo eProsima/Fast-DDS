@@ -12,13 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
 import socket
 import struct
 # Import SimpleXMLRPCRequestHandler to re-export it.
 from xmlrpc.server import SimpleXMLRPCRequestHandler  # noqa
 from xmlrpc.server import SimpleXMLRPCServer
 
-import psutil
+try:
+    import psutil
+except ImportError:
+    print(
+        '"psutil" module not found. '
+        'Try to install running "pip install psutil"')
+    sys.exit(1)
 
 
 def get_local_ipaddrs():

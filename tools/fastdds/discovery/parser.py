@@ -116,16 +116,11 @@ class Parser:
             if result_help.returncode != 0:
                 raise SystemExit(result_help.returncode)
 
-            m = re.search('Usage: ([a-zA-Z0-9-\\.]*)\\s', result_help.stdout)
-            tool_name = ''
-            if m:
-                tool_name = m.group(1)
-
             aux_argument = False
             # Check for help and/or examples arguments
             aux_args = parse_aux_arguments(argv)
             if aux_args.help:
-                print(self.__edit_tool_text(result_help.stdout, tool_name))
+                print(self.__edit_tool_text(result_help.stdout, result_help.stdout))
                 aux_argument = True
             if aux_args.examples:
                 result_ex = subprocess.run(
@@ -133,7 +128,7 @@ class Parser:
                     stdout=subprocess.PIPE,
                     universal_newlines=True
                 )
-                print(self.__edit_tool_text(result_ex.stdout, tool_name))
+                print(self.__edit_tool_text(result_ex.stdout, result_help.stdout))
                 aux_argument = True
             # Check for version argument
             if aux_args.version:
@@ -144,6 +139,7 @@ class Parser:
                 )
                 print(result_ver.stdout)
                 aux_argument = True
+            # Allow calling -h, -e and -v in the same command
             if aux_argument:
                 raise SystemExit(0)
 
@@ -154,9 +150,10 @@ class Parser:
                 result = subprocess.run([tool_path] + args_for_cpp)
                 raise SystemExit(result.returncode)
             else:
+                # Easy Mode
                 if os.name == 'nt':
-                    # EASY_MODE not supported in Windows
-                    print('EASY_MODE not yet supported in Windows')
+                    # Easy Mode not supported in Windows
+                    print('Easy Mode not yet supported in Windows')
                     raise SystemExit(1)
                 daemon_args, unknown_args = parse_daemon_arguments(argv)
                 try:
@@ -191,7 +188,7 @@ class Parser:
                     self.__add_remote_servers_to_args(args_for_cpp)
                     easy_mode = ''
                 output = client_cli.run_request_nb(domain, args_for_cpp, easy_mode)
-                print(output)
+                print(output.strip())
                 if 'Error starting Server' in output:
                     raise SystemExit(1)  # Exit with error code
                 elif 'Error: DS for Domain' in output:
@@ -200,7 +197,7 @@ class Parser:
                 self.__start_daemon(tool_path)
                 self.__add_remote_servers_to_args(args_for_cpp)
                 output = client_cli.run_request_nb(domain, args_for_cpp, '')
-                print(output)
+                print(output.strip())
                 if 'Error starting Server' in output:
                     raise SystemExit(1)  # Exit with error code
             elif command_int == command_to_int[Command.STOP]:
@@ -216,12 +213,12 @@ class Parser:
                     print('The Fast DDS daemon is not running.')
                     raise SystemExit(0)
                 self.__add_remote_servers_to_args(args_for_cpp)
-                print(client_cli.run_request_b(domain, args_for_cpp, True))
+                print(client_cli.run_request_b(domain, args_for_cpp, True).strip())
             elif command_int == command_to_int[Command.SET]:
                 if not self.__is_daemon_running():
                     print('The Fast DDS daemon is not running.')
                     raise SystemExit(0)
-                print(client_cli.run_request_b(domain, args_for_cpp, True))
+                print(client_cli.run_request_b(domain, args_for_cpp, True).strip())
             elif command_int == command_to_int[Command.LIST]:
                 if not self.__is_daemon_running():
                     print('The Fast DDS daemon is not running. No servers to list.')
@@ -276,9 +273,11 @@ class Parser:
 
         return ret
 
-    def __edit_tool_text(self, usage_text, tool_name):
+    def __edit_tool_text(self, usage_text, raw_stdout):
         """Find and replace the tool-name by fastdds discovery."""
-        if tool_name != '':
+        m = re.search('Usage: ([a-zA-Z0-9-\\.]*)\\s', raw_stdout)
+        if m:
+            tool_name = m.group(1)
             return re.sub(tool_name, 'fastdds discovery', usage_text)
         return usage_text
 

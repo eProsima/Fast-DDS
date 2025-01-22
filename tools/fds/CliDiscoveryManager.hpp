@@ -129,7 +129,7 @@ public:
             const uint32_t& domainId);
 
     /**
-     * @brief Get the domain id the CLI argument. If not provided, the default domain id is 0.
+     * @brief Get the domain id from the CLI argument. If not provided, the default domain id is 0.
      * @param domain_id The domain id argument
      * @return The domain id
      */
@@ -155,7 +155,7 @@ public:
             const std::string& command);
 
     /**
-     * @brief Get the listening TCP ports of the machine.
+     * @brief Get the listening UDP ports of the machine.
      * @return An ordered vector with the listening ports
      */
     virtual std::vector<uint16_t> get_listening_ports();
@@ -284,7 +284,7 @@ public:
             option::Parser& parse);
 
     /**
-     * @brief Adds new remote servers to the Discovery Server running in the specified domain.
+     * @brief Add new remote servers to the Discovery Server running in the specified domain.
      * @param options The options received from the CLI
      * @param parse The parser object to be used
      */
@@ -293,7 +293,7 @@ public:
             option::Parser& parse);
 
     /**
-     * @brief Repalce the remote servers list of the Discovery Server running in the specified domain
+     * @brief Replace the remote servers list of the Discovery Server running in the specified domain
      * with a new list.
      * @param options The options received from the CLI
      * @param parse The parser object to be used
@@ -303,7 +303,7 @@ public:
             option::Parser& parse);
 
     /**
-     * @brief Lists all the local running Discovery Servers.
+     * @brief List all the local running Discovery Servers.
      * @param options The options received from the CLI
      * @param parse The parser object to be used
      */
@@ -312,7 +312,7 @@ public:
             option::Parser& parse);
 
     /**
-     * @brief Provides detailed information of the Discovery Server running in the specified domain.
+     * @brief Provide detailed information of the Discovery Server running in the specified domain.
      * @param options The options received from the CLI
      * @param parse The parser object to be used
      */

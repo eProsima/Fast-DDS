@@ -256,7 +256,7 @@ TEST(DSEasyMode, easy_discovery_mode_env_discovery_info)
  *
  * Launching participant clients in different domains with
  * ROS_DISCOVERY_SERVER set to AUTO correctly
- * launch and discover the Discovery Server in its domain.
+ * launches and discovers the Discovery Server in its domain.
  */
 TEST(DSEasyMode, easy_discovery_mode_env_multiple_clients_multiple_domains)
 {

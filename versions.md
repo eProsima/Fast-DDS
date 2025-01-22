@@ -13,6 +13,10 @@ Forthcoming
 * New property to configure the preferred key agreement algorithm.
 * Refactor benchmark example.
 * Extended CLI ``shm`` command with ``-f`` param to clean Data Sharing segments.
+* New Easy Mode:
+  * New `EASY_MODE` environment variable
+  * Extended CLI ``discovery`` command to handle Fast DDS daemon.
+  * Added P2P builtin transport.
 
 Version v3.1.0
 --------------

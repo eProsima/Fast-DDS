@@ -856,8 +856,6 @@ int CliDiscoveryManager::fastdds_discovery_server(
 
     configure_transports();
 
-    fastdds::rtps::GuidPrefix_t guid_prefix = serverQos.wire_protocol().prefix;
-
     // Create the server
     int return_value = 0;
     pServer = DomainParticipantFactory::get_instance()->create_participant(0, serverQos);
@@ -879,28 +877,16 @@ int CliDiscoveryManager::fastdds_discovery_server(
         signal(SIGHUP, sigint_handler);
 #endif // ifndef _WIN32
 
-        bool has_security = false;
-        if (guid_prefix != pServer->guid().guidPrefix)
-        {
-            has_security = true;
-        }
-
         // Print running server attributes
-        std::cout << "### Server is running ###" << std::endl;
-        std::cout << "  Participant Type:   " <<
-            serverQos.wire_protocol().builtin.discovery_config.discoveryProtocol <<
-            std::endl;
-        std::cout << "  Security:           " << (has_security ? "YES" : "NO") << std::endl;
-        std::cout << "  Server GUID prefix: " << pServer->guid().guidPrefix << std::endl;
-        std::cout << "  Server Addresses:   ";
-        for (auto locator_it = serverQos.wire_protocol().builtin.metatrafficUnicastLocatorList.begin();
-                locator_it != serverQos.wire_protocol().builtin.metatrafficUnicastLocatorList.end();)
+        std::cout << "Server (";
+        if (serverQos.wire_protocol().builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
         {
-            std::cout << *locator_it;
-            if (++locator_it != serverQos.wire_protocol().builtin.metatrafficUnicastLocatorList.end())
-            {
-                std::cout << std::endl << "                      ";
-            }
+            std::cout << "BACKUP) (";
+        }
+        std::cout << pServer->guid().guidPrefix << ") is running on:" << std::endl;
+        for (const Locator_t& locator : serverQos.wire_protocol().builtin.metatrafficUnicastLocatorList)
+        {
+            std::cout << "  - " << locator << std::endl;
         }
         std::cout << std::endl;
 
@@ -1036,6 +1022,10 @@ int CliDiscoveryManager::fastdds_discovery_add(
 
     uint16_t port = get_discovery_server_port(id);
     pid_t server_pid = get_pid_of_server(port);
+    if (server_pid == 0)
+    {
+        return 1;
+    }
     std::stringstream file_name;
     file_name << intraprocess_dir_ << "/" << port << "_servers.txt";
     std::string servers = get_remote_servers(parse, numServs);
@@ -1045,7 +1035,7 @@ int CliDiscoveryManager::fastdds_discovery_add(
                 "No servers specified to add. Use ROS_STATIC_PEERS or format: add -d <domain> <ip:domain;ip:domain...>");
         return 1;
     }
-    std::cout << "Adding remote servers: " << servers << " to Server for Domain ID [" << id << "]." << std::endl;
+    std::cout << "Signaling Server for Domain ID [" << id << "] to add: " << servers << std::endl;
     write_servers_to_file(file_name.str(), servers);
     kill(server_pid, SIGUSR1);
 
@@ -1089,6 +1079,7 @@ int CliDiscoveryManager::fastdds_discovery_set(
     std::stringstream file_name;
     file_name << intraprocess_dir_ << "/" << port << "_servers.txt";
     std::string servers = get_remote_servers(parse, numServs);
+    std::cout << "Signaling Server for Domain ID [" << id << "] to set: " << servers << std::endl;
     write_servers_to_file(file_name.str(), servers);
     kill(server_pid, SIGUSR2);
 
