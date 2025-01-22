@@ -23,6 +23,7 @@
 #include <mutex>
 #include <vector>
 
+#include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/history/IChangePool.hpp>
 #include <fastdds/rtps/history/IPayloadPool.hpp>
@@ -177,23 +178,6 @@ public:
     //^^^^^^^^^^^^^^^^^^^^^^ [BaseWriter API] ^^^^^^^^^^^^^^^^^^^^^^^
 
     /**
-     * @brief Set the locators to which the writer should always send data.
-     *
-     * This method is used to configure the initial peers list on the PDP writer.
-     *
-     * @param locator_list List of locators to which the writer should always send data.
-     *
-     * @return true if the locators were set successfully.
-     */
-    bool set_fixed_locators(
-            const LocatorList_t& locator_list);
-
-    /**
-     * Reset the unsent changes.
-     */
-    void unsent_changes_reset();
-
-    /**
      * Get the number of matched readers
      * @return Number of the matched readers
      */
@@ -204,6 +188,10 @@ public:
                + matched_local_readers_.size()
                + matched_datasharing_readers_.size();
     }
+
+protected:
+
+    LocatorList_t fixed_locators_;
 
 private:
 
@@ -226,7 +214,6 @@ private:
             ReaderLocator& reader_locator);
 
     bool is_inline_qos_expected_ = false;
-    LocatorList_t fixed_locators_;
     ResourceLimitedVector<std::unique_ptr<ReaderLocator>> matched_remote_readers_;
 
     std::condition_variable_any unsent_changes_cond_;
