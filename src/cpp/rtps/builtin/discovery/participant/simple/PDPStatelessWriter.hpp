@@ -19,6 +19,8 @@
 #ifndef FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_SIMPLE__PDPSTATELESSWRITER_HPP
 #define FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_SIMPLE__PDPSTATELESSWRITER_HPP
 
+#include <chrono>
+
 #include <rtps/writer/StatelessWriter.hpp>
 
 namespace eprosima {
@@ -60,6 +62,23 @@ public:
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) final;
 
     //^^^^^^^^^^^^^^^^^^^^^^ [BaseWriter API] ^^^^^^^^^^^^^^^^^^^^^^^
+
+    /**
+     * @brief Set the locators to which the writer should always send data.
+     *
+     * This method is used to configure the initial peers list on the PDP writer.
+     *
+     * @param locator_list List of locators to which the writer should always send data.
+     *
+     * @return true if the locators were set successfully.
+     */
+    bool set_fixed_locators(
+            const LocatorList_t& locator_list);
+
+    /**
+     * Reset the unsent changes.
+     */
+    void unsent_changes_reset();
 
 };
 

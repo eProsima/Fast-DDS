@@ -18,6 +18,17 @@
 
 #include <rtps/builtin/discovery/participant/simple/PDPStatelessWriter.hpp>
 
+#include <algorithm>
+#include <chrono>
+#include <mutex>
+
+#include <fastdds/rtps/common/LocatorList.hpp>
+#include <fastdds/rtps/history/WriterHistory.hpp>
+#include <fastdds/utils/TimedMutex.hpp>
+
+#include <rtps/participant/RTPSParticipantImpl.hpp>
+#include <rtps/writer/StatelessWriter.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -61,6 +72,27 @@ void PDPStatelessWriter::unsent_change_added_to_history(
 {
     StatelessWriter::unsent_change_added_to_history(change, max_blocking_time);
     // mark_all_readers_as_interested();
+}
+
+bool PDPStatelessWriter::set_fixed_locators(
+        const LocatorList_t& locator_list)
+{
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+
+    fixed_locators_.push_back(locator_list);
+    mp_RTPSParticipant->createSenderResources(fixed_locators_);
+
+    return true;
+}
+
+void PDPStatelessWriter::unsent_changes_reset()
+{
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    std::for_each(history_->changesBegin(), history_->changesEnd(), [&](CacheChange_t* change)
+    {
+        flow_controller_->add_new_sample(this, change,
+            std::chrono::steady_clock::now() + std::chrono::hours(24));
+    });
 }
 
 } // namespace rtps
