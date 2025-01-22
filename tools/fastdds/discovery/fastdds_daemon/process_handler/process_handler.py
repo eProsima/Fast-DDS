@@ -47,7 +47,7 @@ class ProcessHandler:
     def run_process_nb(self, domain: int, command: list, easy_mode: str):
         """
         Used for starting new servers. Commands 'start' and 'auto'.
-        If @easy_mode is empty, it means the 'EASY_MODE' variable was not set, that is,
+        If @easy_mode is empty, it means the 'ROS2_EASY_MODE' variable was not set, that is,
         it is a direct call from the CLI.
         Note that 'easy_mode' has already been added to the command string in the parser,
         it is only used here to avoid using regex to find its value and differentiate

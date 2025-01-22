@@ -14,7 +14,7 @@ Forthcoming
 * Refactor benchmark example.
 * Extended CLI ``shm`` command with ``-f`` param to clean Data Sharing segments.
 * New Easy Mode:
-  * New `EASY_MODE` environment variable
+  * New `ROS2_EASY_MODE` environment variable
   * Extended CLI ``discovery`` command to handle Fast DDS daemon.
   * Added P2P builtin transport.
 

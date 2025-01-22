@@ -40,7 +40,7 @@ from discovery.fastdds_daemon.xmlrpc_local import local_client as client_cli
 
 DOMAIN_ENV_VAR = "ROS_DOMAIN_ID"
 REMOTE_SERVERS_ENV_VAR = "ROS_STATIC_PEERS"
-EASY_MODE_ENV_VAR = "EASY_MODE"
+EASY_MODE_ENV_VAR = "ROS2_EASY_MODE"
 
 class Command(Enum):
     SERVER = "server" # Does not need to be specified
@@ -338,7 +338,7 @@ class Parser:
 
     def __get_easy_mode_from_env(self) -> str:
         """
-        Obtain the value present in 'EASY_MODE' from the environment.
+        Obtain the value present in 'ROS2_EASY_MODE' from the environment.
         """
         value = None
         value = os.getenv(EASY_MODE_ENV_VAR)

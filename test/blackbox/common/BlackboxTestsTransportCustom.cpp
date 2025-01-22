@@ -620,8 +620,8 @@ TEST(ChainingTransportTests, builtin_transports_env_large_data)
  */
 TEST(ChainingTransportTests, builtin_transports_env_p2p)
 {
-#ifndef _WIN32 // EASY_MODE not available on Windows yet
-    setenv("EASY_MODE", "127.0.0.1", 1);
+#ifndef _WIN32 // ROS2_EASY_MODE not available on Windows yet
+    setenv("ROS2_EASY_MODE", "127.0.0.1", 1);
     BuiltinTransportsTest::test_env("P2P");
 #endif // _WIN32
 }
@@ -690,7 +690,7 @@ TEST(ChainingTransportTests, builtin_transports_xml_large_data)
 }
 
 /**
- * DS Auto transport shall always be used along with EASY_MODE=<ip>.
+ * DS Auto transport shall always be used along with ROS2_EASY_MODE=<ip>.
  * This is due to the working principle of the mode. If it is not specified,
  * the background discovery server will not be launched and the test will never
  * finish since both clients will keep waiting for it.
@@ -699,8 +699,8 @@ TEST(ChainingTransportTests, builtin_transports_xml_large_data)
  */
 TEST(ChainingTransportTests, builtin_transports_xml_p2p)
 {
-#ifndef _WIN32 // EASY_MODE not available on Windows yet
-    setenv("EASY_MODE", "127.0.0.1", 1);
+#ifndef _WIN32 // ROS2_EASY_MODE not available on Windows yet
+    setenv("ROS2_EASY_MODE", "127.0.0.1", 1);
     BuiltinTransportsTest::test_xml("builtin_transports_profile.xml", "participant_p2p");
 #endif // _WIN32
 }

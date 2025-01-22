@@ -191,14 +191,14 @@ class TestDiscoveryParser(unittest.TestCase):
         mock_rpc_brequest.return_value = 'Mocked request'
         mock_spawn.return_value = True
 
-        self.set_env_values('EASY_MODE', '127.0.0.1')
+        self.set_env_values('ROS2_EASY_MODE', '127.0.0.1')
         self.domain = 42
         self.third_attr = '127.0.0.1'
         self.check_command = [str(command_to_int[Command.AUTO]), '-d', '42', '127.0.0.1:42']
         mock_rpc_nbrequest.side_effect = self.side_effect_rpc
 
-        # The parser is not responsible of adding the EASY_MODE argument to the command. This is done in Fast DDS.
-        # The parser only checks if the EASY_MODE variable is set to pass it to the RPC server as third argument
+        # The parser is not responsible of adding the ROS2_EASY_MODE argument to the command. This is done in Fast DDS.
+        # The parser only checks if the ROS2_EASY_MODE variable is set to pass it to the RPC server as third argument
         argv = ['auto', '-d', '42', '127.0.0.1:42']
         parser = Parser(argv)
 

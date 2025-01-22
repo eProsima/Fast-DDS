@@ -30,9 +30,9 @@ void set_easy_discovery_mode_env(
 {
     /* Set environment variable which will contain the ip of an external point of discovery*/
 #ifdef _WIN32
-    _putenv_s("EASY_MODE", ip.c_str());
+    _putenv_s("ROS2_EASY_MODE", ip.c_str());
 #else
-    setenv("EASY_MODE", ip.c_str(), 1);
+    setenv("ROS2_EASY_MODE", ip.c_str(), 1);
 #endif // _WIN32
 
 }
@@ -47,7 +47,7 @@ void stop_background_servers()
 /**
  * Refers to FASTDDS-EASYMODE-TEST:01 from the test plan.
  *
- * Launching a participant client with the environment variable EASY_MODE
+ * Launching a participant client with the environment variable ROS2_EASY_MODE
  * correctly spawns and discovers a Discovery Server in the expected
  * domain.
  *
@@ -120,7 +120,7 @@ TEST(DSEasyMode, easy_discovery_mode_env_correctly_launches)
 /**
  * Refers to FASTDDS-EASYMODE-TEST:02 from the test plan.
  *
- * TCP and SHM are the transports used in EASY_MODE.
+ * TCP and SHM are the transports used in ROS2_EASY_MODE.
  */
 TEST(DSEasyMode, easy_discovery_mode_env_correct_transports_are_used)
 {
@@ -307,7 +307,7 @@ TEST(DSEasyMode, easy_discovery_mode_env_multiple_clients_multiple_domains)
 
 /**
  * Launching a second participant in the same domain with different
- * EASY_MODE ip value shall log an error.
+ * ROS2_EASY_MODE ip value shall log an error.
  */
 TEST(DSEasyMode, easy_discovery_mode_env_inconsistent_ip)
 {
@@ -344,14 +344,14 @@ TEST(DSEasyMode, easy_discovery_mode_env_inconsistent_ip)
     Log::SetVerbosity(Log::Kind::Error);
     Log::RegisterConsumer(std::unique_ptr<LogConsumer>(new TestConsumer(n_logs)));
 
-    // Set EASY_MODE to localhost
+    // Set ROS2_EASY_MODE to localhost
     set_easy_discovery_mode_env();
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     writer.init();
     ASSERT_TRUE(writer.isInitialized());
 
-    // Set EASY_MODE to another address in the same domain
+    // Set ROS2_EASY_MODE to another address in the same domain
     set_easy_discovery_mode_env("192.168.1.100");
     PubSubWriter<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
