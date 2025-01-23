@@ -727,11 +727,6 @@ void PDPSimple::match_pdp_remote_endpoints(
         {
             writer->matched_reader_add_edp(*temp_reader_data);
         }
-
-        if (!writer_only && (dds::BEST_EFFORT_RELIABILITY_QOS == reliability_kind))
-        {
-            endpoints->writer.writer_->unsent_changes_reset();
-        }
     }
 }
 
