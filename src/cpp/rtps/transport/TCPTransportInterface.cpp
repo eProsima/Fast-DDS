@@ -40,7 +40,6 @@
 
 #include <fastdds/config.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/common/LocatorSelector.hpp>
