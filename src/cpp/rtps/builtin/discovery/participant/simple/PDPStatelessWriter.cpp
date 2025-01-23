@@ -21,11 +21,14 @@
 #include <algorithm>
 #include <cassert>
 #include <chrono>
+#include <cstdint>
 #include <mutex>
 #include <set>
+#include <vector>
 
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
+#include <fastdds/rtps/transport/NetworkBuffer.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
 
 #include <rtps/builtin/data/ReaderProxyData.hpp>
@@ -96,6 +99,30 @@ void PDPStatelessWriter::unsent_changes_reset()
 {
     mark_all_readers_interested();
     reschedule_all_samples();
+}
+
+bool PDPStatelessWriter::send_to_fixed_locators(
+        const std::vector<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
+        const uint32_t& total_bytes,
+        std::chrono::steady_clock::time_point& max_blocking_time_point) const
+{
+    bool ret = true;
+
+    if (should_reach_all_destinations_)
+    {
+        ret = initial_peers_.empty() ||
+                mp_RTPSParticipant->sendSync(buffers, total_bytes, m_guid,
+                        Locators(initial_peers_.begin()), Locators(initial_peers_.end()),
+                        max_blocking_time_point);
+
+        if (ret)
+        {
+            fixed_locators_.clear();
+            should_reach_all_destinations_ = false;
+        }
+    }
+
+    return ret;
 }
 
 void PDPStatelessWriter::mark_all_readers_interested()

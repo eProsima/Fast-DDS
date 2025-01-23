@@ -727,6 +727,14 @@ bool StatelessWriter::send_nts(
         return false;
     }
 
+    return send_to_fixed_locators(buffers, total_bytes, max_blocking_time_point);
+}
+
+bool StatelessWriter::send_to_fixed_locators(
+        const std::vector<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
+        const uint32_t& total_bytes,
+        std::chrono::steady_clock::time_point& max_blocking_time_point) const
+{
     return fixed_locators_.empty() ||
            mp_RTPSParticipant->sendSync(buffers, total_bytes, m_guid,
                    Locators(fixed_locators_.begin()), Locators(fixed_locators_.end()),
