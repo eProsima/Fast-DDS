@@ -19,6 +19,7 @@
 #include <rtps/builtin/discovery/participant/simple/PDPStatelessWriter.hpp>
 
 #include <algorithm>
+#include <cassert>
 #include <chrono>
 #include <mutex>
 #include <set>
@@ -128,11 +129,14 @@ void PDPStatelessWriter::remove_interested_reader(
 void PDPStatelessWriter::reschedule_all_samples()
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    std::for_each(history_->changesBegin(), history_->changesEnd(), [&](CacheChange_t* change)
+    size_t n_samples = history_->getHistorySize();
+    if (0 < n_samples)
     {
-        flow_controller_->add_new_sample(this, change,
-            std::chrono::steady_clock::now() + std::chrono::hours(24));
-    });
+        assert(1 == n_samples);
+        auto it = history_->changesBegin();
+        CacheChange_t* change = *it;
+        flow_controller_->add_new_sample(this, change, std::chrono::steady_clock::now() + std::chrono::hours(24));
+    }
 }
 
 } // namespace rtps
