@@ -306,6 +306,116 @@ TEST_F(XMLParserTests, get_xml_disable_heartbeat_piggyback)
 }
 
 /*
+ * This test checks the parsing of a <udpv4> element from a list of locators.
+ * 1. Correct parsing of a valid element.
+ * 2. Check an empty definition of <port> .
+ * 3. Check an empty definition of <address>.
+ * 4. Check an bad element as a child xml element.
+ */
+TEST_F(XMLParserTests, getXMLLocatorUDPv4)
+{
+
+    uint8_t ident = 1;
+    LocatorList_t list;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+            "\
+            <unicastLocatorList>\
+                <locator>\
+                    <udpv4>\
+                        <port>%s</port>\
+                        <address>%s</address>\
+                        %s\
+                    </udpv4>\
+                </locator>\
+            </unicastLocatorList>\
+            ";
+    constexpr size_t xml_len {500};
+    char xml[xml_len];
+
+    // Valid XML
+    snprintf(xml, xml_len, xml_p, "8844", "192.168.1.55", "");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLLocatorList_wrapper(titleElement, list, ident));
+    EXPECT_EQ(list.begin()->port, 8844u);
+    EXPECT_EQ(list.begin()->address[12], 192);
+    EXPECT_EQ(list.begin()->address[13], 168);
+    EXPECT_EQ(list.begin()->address[14], 1);
+    EXPECT_EQ(list.begin()->address[15], 55);
+    EXPECT_EQ(list.begin()->kind, LOCATOR_KIND_UDPv4);
+
+    // Missing data - port
+    snprintf(xml, xml_len, xml_p, "", "192.168.1.55", "");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLocatorList_wrapper(titleElement, list, ident));
+
+    // Missing data - address
+    snprintf(xml, xml_len, xml_p, "8844", "", "");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLocatorList_wrapper(titleElement, list, ident));
+
+    // Invalid element
+    snprintf(xml, xml_len, xml_p, "8844", "192.168.1.55", "<bad_element></bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLocatorList_wrapper(titleElement, list, ident));
+}
+
+/*
+ * This test checks the parsing of a <udpv4> element from a list of locators, using DNS resolution.
+ * 1. Correct parsing of a valid element (with address given by domain).
+ * 2. Check parsing an element with invalid domain name as address fails.
+ */
+TEST_F(XMLParserTests, getXMLLocatorDNSUDPv4)
+{
+
+    uint8_t ident = 1;
+    LocatorList_t list;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+            "\
+            <unicastLocatorList>\
+                <locator>\
+                    <udpv4>\
+                        <port>%s</port>\
+                        <address>%s</address>\
+                        %s\
+                    </udpv4>\
+                </locator>\
+            </unicastLocatorList>\
+            ";
+    constexpr size_t xml_len {500};
+    char xml[xml_len];
+
+    // Valid XML
+    snprintf(xml, xml_len, xml_p, "8844", "www.acme.com.test", "");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLLocatorList_wrapper(titleElement, list, ident));
+    EXPECT_EQ(list.begin()->port, 8844u);
+    EXPECT_EQ(list.begin()->address[12], 216);
+    EXPECT_EQ(list.begin()->address[13], 58);
+    EXPECT_EQ(list.begin()->address[14], 215);
+    EXPECT_EQ(list.begin()->address[15], 164);
+    EXPECT_EQ(list.begin()->kind, LOCATOR_KIND_UDPv4);
+
+    // Invalid domain name address
+    snprintf(xml, xml_len, xml_p, "8844", "hopefully.invalid.domain.name", "");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLocatorList_wrapper(titleElement, list, ident));
+}
+
+/*
  * This test checks the parsing of a <udpv6> element from a list of locators.
  * 1. Correct parsing of a valid element.
  * 2. Check an empty definition of <port> .
@@ -359,6 +469,51 @@ TEST_F(XMLParserTests, getXMLLocatorUDPv6)
 
     // Invalid element
     snprintf(xml, xml_len, xml_p, "8844", "::1", "<bad_element></bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLocatorList_wrapper(titleElement, list, ident));
+}
+
+/*
+ * This test checks the parsing of a <udpv6> element from a list of locators, using DNS resolution.
+ * 1. Correct parsing of a valid element (with address given by domain).
+ * 2. Check parsing an element with invalid domain name as address fails.
+ */
+TEST_F(XMLParserTests, getXMLLocatorDNSUDPv6)
+{
+
+    uint8_t ident = 1;
+    LocatorList_t list;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+            "\
+            <unicastLocatorList>\
+                <locator>\
+                    <udpv6>\
+                        <port>%s</port>\
+                        <address>%s</address>\
+                        %s\
+                    </udpv6>\
+                </locator>\
+            </unicastLocatorList>\
+            ";
+    constexpr size_t xml_len {500};
+    char xml[xml_len];
+
+    // Valid XML
+    snprintf(xml, xml_len, xml_p, "8844", "www.acme.com.test", "");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLLocatorList_wrapper(titleElement, list, ident));
+    Locator_t expected_locator;
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, "2a00:1450:400e:803::2004", 8844, expected_locator);
+    EXPECT_EQ(*list.begin(), expected_locator);
+
+    // Invalid domain name address
+    snprintf(xml, xml_len, xml_p, "8844", "hopefully.invalid.domain.name", "");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLocatorList_wrapper(titleElement, list, ident));
@@ -472,6 +627,86 @@ TEST_F(XMLParserTests, getXMLLocatorTCPv4)
 }
 
 /*
+ * This test checks the parsing of a <tcpv4> element from a list of locators, using DNS resolution.
+ * 1. Correct parsing of a valid element (with addresses given by domain).
+ * 2. Check parsing an element with invalid domain name as wan address fails.
+ * 3. Check parsing an element with invalid domain name as address fails.
+ */
+TEST_F(XMLParserTests, getXMLLocatorDNSTCPv4)
+{
+
+    uint8_t ident = 1;
+    LocatorList_t list;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+            "\
+            <unicastLocatorList>\
+                <locator>\
+                    <tcpv4>\
+                        <physical_port>%s</physical_port>\
+                        <port>%s</port>\
+                        <unique_lan_id>%s</unique_lan_id>\
+                        <wan_address>%s</wan_address>\
+                        <address>%s</address>\
+                        %s\
+                    </tcpv4>\
+                </locator>\
+            </unicastLocatorList>\
+            ";
+    constexpr size_t xml_len {1000};
+    char xml[xml_len];
+
+    // Valid XML
+    snprintf(xml, xml_len, xml_p, "5100", "8844", "192.168.1.1.1.1.2.55", "www.acme.com.test", "localhost", "");
+
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLLocatorList_wrapper(titleElement, list, ident));
+    EXPECT_EQ(IPLocator::getPhysicalPort(list.begin()->port), 5100u);
+    EXPECT_EQ(IPLocator::getLogicalPort(list.begin()->port), 8844u);
+
+    //<unique_lan_id>
+    EXPECT_EQ(list.begin()->address[0], 192);
+    EXPECT_EQ(list.begin()->address[1], 168);
+    EXPECT_EQ(list.begin()->address[2], 1);
+    EXPECT_EQ(list.begin()->address[3], 1);
+    EXPECT_EQ(list.begin()->address[4], 1);
+    EXPECT_EQ(list.begin()->address[5], 1);
+    EXPECT_EQ(list.begin()->address[6], 2);
+    EXPECT_EQ(list.begin()->address[7], 55);
+
+    //<wan_address>
+    EXPECT_EQ(list.begin()->address[8], 216);
+    EXPECT_EQ(list.begin()->address[9], 58);
+    EXPECT_EQ(list.begin()->address[10], 215);
+    EXPECT_EQ(list.begin()->address[11], 164);
+
+    // <address>
+    EXPECT_EQ(list.begin()->address[12], 127);
+    EXPECT_EQ(list.begin()->address[13], 0);
+    EXPECT_EQ(list.begin()->address[14], 0);
+    EXPECT_EQ(list.begin()->address[15], 1);
+    EXPECT_EQ(list.begin()->kind, LOCATOR_KIND_TCPv4);
+
+    // Invalid domain name wan address
+    snprintf(xml, xml_len, xml_p, "5100", "8844", "192.168.1.1.1.1.2.55", "hopefully.invalid.domain.name", "localhost",
+            "");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLocatorList_wrapper(titleElement, list, ident));
+
+    // Invalid domain name address
+    snprintf(xml, xml_len, xml_p, "5100", "8844", "192.168.1.1.1.1.2.55", "www.acme.com.test",
+            "hopefully.invalid.domain.name", "");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLocatorList_wrapper(titleElement, list, ident));
+}
+
+/*
  * This test checks the parsing of a <tcpv6> element from a list of locators.
  * 1. Correct parsing of a valid element.
  * 2. Check an empty definition of <physical_port> .
@@ -535,6 +770,55 @@ TEST_F(XMLParserTests, getXMLLocatorTCPv6)
 
     // Invalid element
     snprintf(xml, xml_len, xml_p, "5100", "8844", "::1", "<bad_element></bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLocatorList_wrapper(titleElement, list, ident));
+}
+
+/*
+ * This test checks the parsing of a <tcpv6> element from a list of locators, using DNS resolution.
+ * 1. Correct parsing of a valid element (with address given by domain).
+ * 2. Check parsing an element with invalid domain name as address fails.
+ */
+TEST_F(XMLParserTests, getXMLLocatorDNSTCPv6)
+{
+
+    uint8_t ident = 1;
+    LocatorList_t list;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+            "\
+            <unicastLocatorList>\
+                <locator>\
+                    <tcpv6>\
+                        <physical_port>%s</physical_port>\
+                        <port>%s</port>\
+                        <address>%s</address>\
+                        %s\
+                    </tcpv6>\
+                </locator>\
+            </unicastLocatorList>\
+            ";
+    constexpr size_t xml_len {500};
+    char xml[xml_len];
+
+    // Valid XML
+    snprintf(xml, xml_len, xml_p, "5100", "8844", "www.acme.com.test", "");
+
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLLocatorList_wrapper(titleElement, list, ident));
+    Locator_t expected_locator;
+    IPLocator::createLocator(LOCATOR_KIND_TCPv6, "2a00:1450:400e:803::2004", 0, expected_locator);
+    IPLocator::setPhysicalPort(expected_locator, 5100u);
+    IPLocator::setLogicalPort(expected_locator, 8844u);
+    EXPECT_EQ(*list.begin(), expected_locator);
+
+    // Invalid domain name address
+    snprintf(xml, xml_len, xml_p, "5100", "8844", "hopefully.invalid.domain.name", "");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLocatorList_wrapper(titleElement, list, ident));
