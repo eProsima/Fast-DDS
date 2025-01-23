@@ -23,6 +23,7 @@
 #include <set>
 
 #include <fastdds/rtps/common/LocatorList.hpp>
+#include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 
 #include <rtps/writer/StatelessWriter.hpp>
 
@@ -33,7 +34,7 @@ namespace rtps {
 /**
  * Class PDPStatelessWriter, specialization of StatelessWriter with specific behavior for PDP.
  */
-class PDPStatelessWriter : public StatelessWriter
+class PDPStatelessWriter : public StatelessWriter, private IReaderDataFilter
 {
 
 public:
@@ -93,6 +94,17 @@ protected:
 private:
 
     /**
+     * This method checks whether a CacheChange_t is relevant for the specified reader
+     * This callback should return always the same result given the same arguments
+     * @param change The CacheChange_t to be evaluated
+     * @param reader_guid remote reader GUID_t
+     * @return true if relevant, false otherwise.
+     */
+    bool is_relevant(
+            const fastdds::rtps::CacheChange_t& change,
+            const fastdds::rtps::GUID_t& reader_guid) const final;
+
+    /**
      * @brief Mark all readers as interested.
      *
      * This method sets the flag indicating that all readers are interested in the data sent by this writer.
@@ -126,10 +138,10 @@ private:
      */
     void reschedule_all_samples();
 
-    //! The set of readers interested
-    std::set<GUID_t> interested_readers_{};
     //! Configured initial peers
     LocatorList initial_peers_{};
+    //! The set of readers interested
+    mutable std::set<GUID_t> interested_readers_{};
     //! Whether we have set that all destinations are interested
     mutable bool should_reach_all_destinations_ = false;
 

@@ -121,8 +121,19 @@ bool PDPStatelessWriter::send_to_fixed_locators(
             should_reach_all_destinations_ = false;
         }
     }
+    else
+    {
+        interested_readers_.clear();
+    }
 
     return ret;
+}
+
+bool PDPStatelessWriter::is_relevant(
+        const fastdds::rtps::CacheChange_t& /* change */,
+        const fastdds::rtps::GUID_t& reader_guid) const
+{
+    return interested_readers_.count(reader_guid) > 0;
 }
 
 void PDPStatelessWriter::mark_all_readers_interested()
@@ -142,7 +153,7 @@ void PDPStatelessWriter::add_interested_reader(
     if (!should_reach_all_destinations_)
     {
         interested_readers_.insert(reader_guid);
-        // TODO: reader_data_filter(this);
+        reader_data_filter(this);
     }
 }
 
