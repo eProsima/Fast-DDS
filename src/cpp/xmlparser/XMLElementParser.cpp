@@ -777,6 +777,7 @@ XMLP_ret XMLParser::getXMLPortParameters(
                 <xs:element name="offsetd1" type="uint16Type" minOccurs="0"/>
                 <xs:element name="offsetd2" type="uint16Type" minOccurs="0"/>
                 <xs:element name="offsetd3" type="uint16Type" minOccurs="0"/>
+                <xs:element name="offsetd4" type="uint16Type" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
      */
@@ -838,6 +839,14 @@ XMLP_ret XMLParser::getXMLPortParameters(
         {
             // offsetd3 - uint16Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port.offsetd3, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, OFFSETD4) == 0)
+        {
+            // offsetd4 - uint16Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port.offsetd4, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
@@ -4664,6 +4673,7 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
                 <xs:enumeration value="UDPv6" />
                 <xs:enumeration value="LARGE_DATA" />
                 <xs:enumeration value="LARGE_DATAv6" />
+                <xs:enumeration value="P2P" />
             </xs:restriction>
         </xs:simpleType>
 
@@ -4825,7 +4835,8 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
             UDPv4, eprosima::fastdds::rtps::BuiltinTransports::UDPv4,
             UDPv6, eprosima::fastdds::rtps::BuiltinTransports::UDPv6,
             LARGE_DATA, eprosima::fastdds::rtps::BuiltinTransports::LARGE_DATA,
-            LARGE_DATAv6, eprosima::fastdds::rtps::BuiltinTransports::LARGE_DATAv6))
+            LARGE_DATAv6, eprosima::fastdds::rtps::BuiltinTransports::LARGE_DATAv6,
+            P2P, eprosima::fastdds::rtps::BuiltinTransports::P2P))
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' bad content");
         ret = XMLP_ret::XML_ERROR;

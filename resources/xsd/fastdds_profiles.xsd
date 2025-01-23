@@ -816,7 +816,8 @@
         ├ offsetd0          [uint16],
         ├ offsetd1          [uint16],
         ├ offsetd2          [uint16],
-        └ offsetd3          [uint16] -->
+        ├ offsetd3          [uint16],
+        └ offsetd4          [uint16] -->
     <xs:complexType name="portType">
         <xs:all>
             <xs:element name="portBase" type="uint16" minOccurs="0" maxOccurs="1"/>
@@ -826,6 +827,7 @@
             <xs:element name="offsetd1" type="uint16" minOccurs="0" maxOccurs="1"/>
             <xs:element name="offsetd2" type="uint16" minOccurs="0" maxOccurs="1"/>
             <xs:element name="offsetd3" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="offsetd4" type="uint16" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 
@@ -1961,6 +1963,7 @@
             <xs:enumeration value="UDPv6" />
             <xs:enumeration value="LARGE_DATA" />
             <xs:enumeration value="LARGE_DATAv6" />
+            <xs:enumeration value="P2P" />
         </xs:restriction>
     </xs:simpleType>
 

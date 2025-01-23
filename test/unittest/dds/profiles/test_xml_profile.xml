@@ -124,6 +124,7 @@
                     <offsetd1>1</offsetd1>
                     <offsetd2>2</offsetd2>
                     <offsetd3>3</offsetd3>
+                    <offsetd4>4</offsetd4>
                 </port>
                 <participantID>66</participantID>
                 <useBuiltinTransports>true</useBuiltinTransports>
@@ -290,6 +291,7 @@
                     <offsetd1>1</offsetd1>
                     <offsetd2>2</offsetd2>
                     <offsetd3>3</offsetd3>
+                    <offsetd4>4</offsetd4>
                 </port>
                 <participantID>99</participantID>
                 <useBuiltinTransports>true</useBuiltinTransports>

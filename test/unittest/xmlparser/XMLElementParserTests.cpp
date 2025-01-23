@@ -930,6 +930,7 @@ TEST_F(XMLParserTests, getXMLbuiltinTransports)
     bt_list.push_back("UDPv6");
     bt_list.push_back("LARGE_DATA");
     bt_list.push_back("LARGE_DATAv6");
+    bt_list.push_back("P2P");
 
     for (auto test_transport : bt_list)
     {
@@ -1209,7 +1210,7 @@ TEST_F(XMLParserTests, getXMLPortParameters_NegativeClauses)
     {
         if (i < 7)
         {
-            parameters.assign (7, "1");
+            parameters.assign (8, "1");
             parameters[i] = "";
             xml =
                     "<port>"
@@ -1220,6 +1221,7 @@ TEST_F(XMLParserTests, getXMLPortParameters_NegativeClauses)
                     "    <offsetd1>" + parameters[4] + "</offsetd1>"
                     "    <offsetd2>" + parameters[5] + "</offsetd2>"
                     "    <offsetd3>" + parameters[6] + "</offsetd3>"
+                    "    <offsetd4>" + parameters[7] + "</offsetd4>"
                     "</port>";
         }
         else
