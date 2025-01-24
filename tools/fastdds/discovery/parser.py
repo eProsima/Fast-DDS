@@ -54,16 +54,6 @@ class Parser:
                     (len(argv) == 1 and argv[0] == '--help')
                ):
                 print(self.__edit_tool_help(result.stdout))
-<<<<<<< HEAD
-=======
-            elif (
-                (len(argv) == 1 and argv[0] == '-v') or
-                (len(argv) == 1 and argv[0] == '--version')
-                ):
-                result = subprocess.run([tool_path, '-v'])
-                if result.returncode != 0:
-                    sys.exit(result.returncode)
->>>>>>> 2cdc2d96 (Fix Discovery CLI Tool in Windows (#5493))
             else:
                 # Call the tool
                 result = subprocess.run([tool_path] + argv)
