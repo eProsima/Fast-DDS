@@ -154,7 +154,7 @@ const char* const DEFAULT_ROS2_MASTER_URI = "ROS_DISCOVERY_SERVER";
  * - Set the transports to TCP and SHM.
  * - Make the participant a SUPER_CLIENT.
  */
-const char* const EASY_MODE_URI = "ROS2_EASY_MODE";
+const char* const ROS2_EASY_MODE_URI = "ROS2_EASY_MODE";
 
 /* Environment variable to transform a SIMPLE participant in a SUPER CLIENT.
  * If the participant is not SIMPLE, the variable doesn't have any effects.
@@ -197,10 +197,10 @@ bool load_environment_server_info(
 const std::string& ros_discovery_server_env();
 
 /**
- * Get the value of environment variable EASY_MODE_URI
- * @return The value of environment variable EASY_MODE_URI. Empty string if the variable is not defined.
+ * Get the value of environment variable ROS2_EASY_MODE_URI
+ * @return The value of environment variable ROS2_EASY_MODE_URI. Empty string if the variable is not defined.
  */
-const std::string& easy_mode_env();
+const std::string& ros_easy_mode_env();
 
 /**
  * Get the value of environment variable ROS_SUPER_CLIENT
