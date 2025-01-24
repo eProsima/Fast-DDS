@@ -982,6 +982,46 @@ TEST(DDSBasic, successful_destruction_among_intraprocess_participants)
     fastrtps::xmlparser::XMLProfileManager::library_settings(old_library_settings);
 }
 
+TEST(DDSBasic, participant_factory_output_log_error_no_macro_collision)
+{
+    using Log = eprosima::fastdds::dds::Log;
+    using LogConsumer = eprosima::fastdds::dds::LogConsumer;
+
+    // A LogConsumer that just counts the number of entries consumed
+    struct TestConsumer : public LogConsumer
+    {
+        TestConsumer(
+                std::atomic_size_t& n_logs_ref)
+            : n_logs_(n_logs_ref)
+        {
+        }
+
+        void Consume(
+                const Log::Entry&) override
+        {
+            ++n_logs_;
+        }
+
+    private:
+
+        std::atomic_size_t& n_logs_;
+    };
+
+    // Counter for log entries
+    std::atomic<size_t>n_logs{};
+
+    // Prepare Log module to check that no SECURITY errors are produced
+    Log::SetCategoryFilter(std::regex("DOMAIN"));
+    Log::SetVerbosity(Log::Kind::Error);
+    Log::RegisterConsumer(std::unique_ptr<LogConsumer>(new TestConsumer(n_logs)));
+
+    auto dpf = DomainParticipantFactory::get_shared_instance();
+    DomainParticipantQos qos;
+    dpf->get_participant_qos_from_xml("", qos, "");
+    Log::Flush();
+    ASSERT_GE(n_logs.load(), 1u);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
