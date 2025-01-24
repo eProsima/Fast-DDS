@@ -3436,6 +3436,56 @@ TEST(DDSStatus, keyed_reliable_positive_acks_disabled_on_unack_sample_removed)
     delete dummy_data;
 }
 
+/*¡
+* Regression Test for 22648: on_unacknowledged_sample_removed callback is called when best effort writer with keep all
+* history is used, when the history was full but before max_blocking_time a sample was acknowledged, as is_acked was
+* checked before the waiting time, and is not re-checked. This should not happen.
+*/
+
+TEST(DDSStatus, reliable_keep_all_unack_sample_removed_call)
+{
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .history_depth(1)
+            .init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_helloworld_data_generator();
+
+    bool firstOneSent = false;
+
+    for (auto sample : data)
+    {
+        reader.stopReception();
+        writer.send_sample(sample);
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        if (firstOneSent)
+        {
+            reader.startReception(data);
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        }
+        else
+        {
+            firstOneSent = true;
+        }
+    }
+
+    EXPECT_EQ(writer.times_unack_sample_removed(), 0u);
+}
+
 /*!
  * Test that checks with a writer of each type that having the same listener attached, the notified writer in the
  * callback is the corresponding writer that has removed a sample unacknowledged.
