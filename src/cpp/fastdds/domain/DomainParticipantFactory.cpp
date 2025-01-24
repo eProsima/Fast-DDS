@@ -316,7 +316,139 @@ ReturnCode_t DomainParticipantFactory::get_participant_qos_from_profile(
         return ReturnCode_t::RETCODE_OK;
     }
 
+<<<<<<< HEAD
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
+=======
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantFactory::get_participant_qos_from_xml(
+        const std::string& xml,
+        DomainParticipantQos& qos) const
+{
+    ParticipantAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_participant_attributes_from_xml(xml, attr, false))
+    {
+        qos = default_participant_qos_;
+        utils::set_qos_from_attributes(qos, attr.rtps);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantFactory::get_participant_qos_from_xml(
+        const std::string& xml,
+        DomainParticipantQos& qos,
+        const std::string& profile_name) const
+{
+    if (profile_name.empty())
+    {
+        EPROSIMA_LOG_ERROR(DDS_DOMAIN, "Provided profile name must be non-empty");
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    ParticipantAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_participant_attributes_from_xml(xml, attr, true, profile_name))
+    {
+        qos = default_participant_qos_;
+        utils::set_qos_from_attributes(qos, attr.rtps);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantFactory::get_default_participant_qos_from_xml(
+        const std::string& xml,
+        DomainParticipantQos& qos) const
+{
+    ParticipantAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_default_participant_attributes_from_xml(xml, attr, true))
+    {
+        qos = default_participant_qos_;
+        utils::set_qos_from_attributes(qos, attr.rtps);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantFactory::get_participant_extended_qos_from_profile(
+        const std::string& profile_name,
+        DomainParticipantExtendedQos& extended_qos) const
+{
+    ParticipantAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillParticipantAttributes(profile_name, attr, false))
+    {
+        extended_qos = default_participant_qos_;
+        utils::set_extended_qos_from_attributes(extended_qos, attr);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantFactory::get_participant_extended_qos_from_xml(
+        const std::string& xml,
+        DomainParticipantExtendedQos& extended_qos) const
+{
+    ParticipantAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_participant_attributes_from_xml(xml, attr, false))
+    {
+        extended_qos = default_participant_qos_;
+        utils::set_extended_qos_from_attributes(extended_qos, attr);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantFactory::get_participant_extended_qos_from_xml(
+        const std::string& xml,
+        DomainParticipantExtendedQos& extended_qos,
+        const std::string& profile_name) const
+{
+    if (profile_name.empty())
+    {
+        EPROSIMA_LOG_ERROR(DDS_DOMAIN, "Provided profile name must be non-empty");
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    ParticipantAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_participant_attributes_from_xml(xml, attr, true, profile_name))
+    {
+        extended_qos = default_participant_qos_;
+        utils::set_extended_qos_from_attributes(extended_qos, attr);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantFactory::get_default_participant_extended_qos_from_xml(
+        const std::string& xml,
+        DomainParticipantExtendedQos& extended_qos) const
+{
+    ParticipantAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fill_default_participant_attributes_from_xml(xml, attr, true))
+    {
+        extended_qos = default_participant_qos_;
+        utils::set_extended_qos_from_attributes(extended_qos, attr);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantFactory::get_participant_extended_qos_from_default_profile(
+        DomainParticipantExtendedQos& extended_qos) const
+{
+    ParticipantAttributes attr;
+    XMLProfileManager::getDefaultParticipantAttributes(attr);
+    utils::set_extended_qos_from_attributes(extended_qos, attr);
+    return RETCODE_OK;
+>>>>>>> a59d32fc (Fix log category name macro collision in `MacOS`  (#5585))
 }
 
 ReturnCode_t DomainParticipantFactory::load_profiles()
@@ -343,8 +475,13 @@ ReturnCode_t DomainParticipantFactory::load_XML_profiles_file(
 {
     if (XMLP_ret::XML_ERROR == XMLProfileManager::loadXMLFile(xml_profile_file))
     {
+<<<<<<< HEAD
         EPROSIMA_LOG_ERROR(DOMAIN, "Problem loading XML file '" << xml_profile_file << "'");
         return ReturnCode_t::RETCODE_ERROR;
+=======
+        EPROSIMA_LOG_ERROR(DDS_DOMAIN, "Problem loading XML file '" << xml_profile_file << "'");
+        return RETCODE_ERROR;
+>>>>>>> a59d32fc (Fix log category name macro collision in `MacOS`  (#5585))
     }
     return ReturnCode_t::RETCODE_OK;
 }
@@ -355,8 +492,13 @@ ReturnCode_t DomainParticipantFactory::load_XML_profiles_string(
 {
     if (XMLP_ret::XML_ERROR == XMLProfileManager::loadXMLString(data, length))
     {
+<<<<<<< HEAD
         EPROSIMA_LOG_ERROR(DOMAIN, "Problem loading XML string");
         return ReturnCode_t::RETCODE_ERROR;
+=======
+        EPROSIMA_LOG_ERROR(DDS_DOMAIN, "Problem loading XML string");
+        return RETCODE_ERROR;
+>>>>>>> a59d32fc (Fix log category name macro collision in `MacOS`  (#5585))
     }
     return ReturnCode_t::RETCODE_OK;
 }
@@ -367,8 +509,13 @@ ReturnCode_t DomainParticipantFactory::check_xml_static_discovery(
     eprosima::fastrtps::xmlparser::XMLEndpointParser parser;
     if (XMLP_ret::XML_OK != parser.loadXMLFile(xml_file))
     {
+<<<<<<< HEAD
         EPROSIMA_LOG_ERROR(DOMAIN, "Error parsing xml file");
         return ReturnCode_t::RETCODE_ERROR;
+=======
+        EPROSIMA_LOG_ERROR(DDS_DOMAIN, "Error parsing xml file");
+        return RETCODE_ERROR;
+>>>>>>> a59d32fc (Fix log category name macro collision in `MacOS`  (#5585))
     }
     return ReturnCode_t::RETCODE_OK;
 }
