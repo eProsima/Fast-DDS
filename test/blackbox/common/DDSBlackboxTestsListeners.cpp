@@ -3437,11 +3437,10 @@ TEST(DDSStatus, keyed_reliable_positive_acks_disabled_on_unack_sample_removed)
 }
 
 /*¡
-* Regression Test for 22648: on_unacknowledged_sample_removed callback is called when best effort writer with keep all
-* history is used, when the history was full but before max_blocking_time a sample was acknowledged, as is_acked was
-* checked before the waiting time, and is not re-checked. This should not happen.
-*/
-
+ * Regression Test for 22648: on_unacknowledged_sample_removed callback is called when best effort writer with keep all
+ * history is used, when the history was full but before max_blocking_time a sample was acknowledged, as is_acked was
+ * checked before the waiting time, and is not re-checked. This should not happen.
+ */
 TEST(DDSStatus, reliable_keep_all_unack_sample_removed_call)
 {
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
