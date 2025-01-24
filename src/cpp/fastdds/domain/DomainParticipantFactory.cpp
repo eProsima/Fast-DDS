@@ -363,7 +363,7 @@ ReturnCode_t DomainParticipantFactory::get_participant_qos_from_xml(
 {
     if (profile_name.empty())
     {
-        EPROSIMA_LOG_ERROR(DOMAIN, "Provided profile name must be non-empty");
+        EPROSIMA_LOG_ERROR(DDS_DOMAIN, "Provided profile name must be non-empty");
         return RETCODE_BAD_PARAMETER;
     }
 
@@ -430,7 +430,7 @@ ReturnCode_t DomainParticipantFactory::get_participant_extended_qos_from_xml(
 {
     if (profile_name.empty())
     {
-        EPROSIMA_LOG_ERROR(DOMAIN, "Provided profile name must be non-empty");
+        EPROSIMA_LOG_ERROR(DDS_DOMAIN, "Provided profile name must be non-empty");
         return RETCODE_BAD_PARAMETER;
     }
 
@@ -511,7 +511,7 @@ ReturnCode_t DomainParticipantFactory::load_XML_profiles_file(
 {
     if (XMLP_ret::XML_ERROR == XMLProfileManager::loadXMLFile(xml_profile_file))
     {
-        EPROSIMA_LOG_ERROR(DOMAIN, "Problem loading XML file '" << xml_profile_file << "'");
+        EPROSIMA_LOG_ERROR(DDS_DOMAIN, "Problem loading XML file '" << xml_profile_file << "'");
         return RETCODE_ERROR;
     }
     return RETCODE_OK;
@@ -523,7 +523,7 @@ ReturnCode_t DomainParticipantFactory::load_XML_profiles_string(
 {
     if (XMLP_ret::XML_ERROR == XMLProfileManager::loadXMLString(data, length))
     {
-        EPROSIMA_LOG_ERROR(DOMAIN, "Problem loading XML string");
+        EPROSIMA_LOG_ERROR(DDS_DOMAIN, "Problem loading XML string");
         return RETCODE_ERROR;
     }
     return RETCODE_OK;
@@ -535,7 +535,7 @@ ReturnCode_t DomainParticipantFactory::check_xml_static_discovery(
     xmlparser::XMLEndpointParser parser;
     if (XMLP_ret::XML_OK != parser.loadXMLFile(xml_file))
     {
-        EPROSIMA_LOG_ERROR(DOMAIN, "Error parsing xml file");
+        EPROSIMA_LOG_ERROR(DDS_DOMAIN, "Error parsing xml file");
         return RETCODE_ERROR;
     }
     return RETCODE_OK;
