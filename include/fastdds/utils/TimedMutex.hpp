@@ -26,6 +26,8 @@
 
 #if defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 193632528
 #include <mutex>
+#elif defined(MINGW_COMPILER)
+#include <mutex>
 #else
 #include <thread>
 extern int clock_gettime(
@@ -45,6 +47,9 @@ namespace fastdds {
 #if defined(_WIN32)
 
 #if defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 193632528
+using TimedMutex = std::timed_mutex;
+using RecursiveTimedMutex = std::recursive_timed_mutex;
+#elif defined(MINGW_COMPILER)
 using TimedMutex = std::timed_mutex;
 using RecursiveTimedMutex = std::recursive_timed_mutex;
 #else
