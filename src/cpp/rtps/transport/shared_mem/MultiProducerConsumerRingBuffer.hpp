@@ -54,7 +54,7 @@ public:
 
         uint32_t ref_counter() const
         {
-            return ref_counter_.load(std::memory_order_relaxed);
+            return ref_counter_.load(std::memory_order_acquire);
         }
 
         friend class MultiProducerConsumerRingBuffer<T>;
@@ -85,7 +85,7 @@ public:
          */
         Cell* head()
         {
-            auto pointer = buffer_.node_->pointer_.load(std::memory_order_relaxed);
+            auto pointer = buffer_.node_->pointer_.load(std::memory_order_acquire);
 
             // If local read_pointer and write_pointer are equal => buffer is empty for this listener
             if (read_p_ == pointer.ptr.write_p )
@@ -121,7 +121,7 @@ public:
             if (counter == 1)
             {
                 // Increase the free cells => increase the global read pointer
-                auto pointer = buffer_.node_->pointer_.load(std::memory_order_relaxed);
+                auto pointer = buffer_.node_->pointer_.load(std::memory_order_acquire);
                 while (!buffer_.node_->pointer_.compare_exchange_weak(pointer,
                         { { pointer.ptr.write_p, pointer.ptr.free_cells + 1 } },
                         std::memory_order_release,
@@ -179,7 +179,7 @@ public:
         // Init cells
         for (Cell* cell = &cells_[0]; cell < &cells_[total_cells]; cell++)
         {
-            cell->ref_counter_.store(0, std::memory_order_relaxed);
+            cell->ref_counter_.store(0, std::memory_order_release);
         }
     }
 
@@ -214,7 +214,7 @@ public:
             return false;
         }
 
-        auto pointer = node_->pointer_.load(std::memory_order_relaxed);
+        auto pointer = node_->pointer_.load(std::memory_order_acquire);
 
         // if free cells, increase the write pointer and decrease the free cells
         while (pointer.ptr.free_cells > 0 &&
@@ -240,12 +240,12 @@ public:
 
     bool is_buffer_full()
     {
-        return (node_->pointer_.load(std::memory_order_relaxed).ptr.free_cells == 0);
+        return (node_->pointer_.load(std::memory_order_acquire).ptr.free_cells == 0);
     }
 
     bool is_buffer_empty()
     {
-        return (node_->pointer_.load(std::memory_order_relaxed).ptr.free_cells == node_->total_cells_);
+        return (node_->pointer_.load(std::memory_order_acquire).ptr.free_cells == node_->total_cells_);
     }
 
     /**
@@ -261,7 +261,7 @@ public:
         // The new listener's read pointer is the current write pointer
         auto listener = std::unique_ptr<Listener>(
             new Listener(
-                *this, node_->pointer_.load(std::memory_order_relaxed).ptr.write_p));
+                *this, node_->pointer_.load(std::memory_order_acquire).ptr.write_p));
 
         node_->registered_listeners_++;
 
@@ -279,7 +279,7 @@ public:
 
         node->total_cells_ = total_cells;
         node->registered_listeners_ = 0;
-        node->pointer_.store({ { 0, total_cells } }, std::memory_order_relaxed);
+        node->pointer_.store({ { 0, total_cells } }, std::memory_order_release);
     }
 
     /**
@@ -293,7 +293,7 @@ public:
     {
         if (node_->registered_listeners_ > 0)
         {
-            auto pointer = node_->pointer_.load(std::memory_order_relaxed);
+            auto pointer = node_->pointer_.load(std::memory_order_acquire);
 
             uint32_t p = pointer_to_head(pointer);
 
