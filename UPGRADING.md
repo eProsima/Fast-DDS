@@ -3,6 +3,12 @@
 This document aims to help during the migration process from eProsima *Fast DDS version* 2 to *Fast DDS version* 3.
 For more information about all the updates, please refer to the [release notes](https://fast-dds.docs.eprosima.com/en/latest/notes/notes.html).
 
+> [!WARNING]
+> Fast DDS v3 introduces a new feature [XTypes](https://fast-dds.docs.eprosima.com/en/latest/fastdds/xtypes/xtypes.html#xtypes) that allows to discover remote types.
+> In consequence, discovery traffic can be increased during start up.
+> If you are experiencing high load during discovery, try disabling the new feature.
+> Please refer to [disable type propagation](https://fast-dds.docs.eprosima.com/en/latest/fastdds/property_policies/non_consolidated_qos.html#type-propagation) to learn how to do it.
+
 ## Migration Steps
 
 The following steps describe the possible changes that your project may require to migrate to *Fast DDS v3.0.0*:
