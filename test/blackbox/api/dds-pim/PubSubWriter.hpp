@@ -892,6 +892,14 @@ public:
         return *this;
     }
 
+    PubSubWriter& reliability(
+            const eprosima::fastdds::dds::ReliabilityQosPolicyKind kind, int max_blocking_time)
+    {
+        datawriter_qos_.reliability().kind = kind;
+        datawriter_qos_.reliability().max_blocking_time.seconds = max_blocking_time;
+        return *this;
+    }
+
     PubSubWriter& mem_policy(
             const eprosima::fastdds::rtps::MemoryManagementPolicy mem_policy)
     {
