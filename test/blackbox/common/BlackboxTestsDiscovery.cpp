@@ -1328,9 +1328,8 @@ TEST_P(Discovery, AsymmeticIgnoreParticipantFlags)
     // This will hold the multicast port. Since the test is not always run in the same domain, we'll need to set
     // its value when the first multicast datagram is sent.
     std::atomic<uint32_t> multicast_port{ 0 };
-    // Only two multicast datagrams are allowed: the initial DATA(p) and the DATA(p) sent in response of the discovery
-    // of p1.
-    constexpr uint32_t allowed_messages_on_port = 2;
+    // Only one multicast datagram is allowed: the initial DATA(p)
+    constexpr uint32_t allowed_messages_on_port = 1;
 
     auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
 
