@@ -29,6 +29,7 @@
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/transport/NetworkBuffer.hpp>
+#include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
 
 #include <rtps/builtin/data/ReaderProxyData.hpp>
@@ -47,6 +48,7 @@ PDPStatelessWriter::PDPStatelessWriter(
         WriterHistory* history,
         WriterListener* listener)
     : StatelessWriter(participant, guid, attributes, flow_controller, history, listener)
+    , interested_readers_(participant->get_attributes().allocation.participants)
 {
 }
 
@@ -131,7 +133,8 @@ bool PDPStatelessWriter::is_relevant(
         const fastdds::rtps::CacheChange_t& /* change */,
         const fastdds::rtps::GUID_t& reader_guid) const
 {
-    return interested_readers_.count(reader_guid) > 0;
+    return interested_readers_.end() !=
+           std::find(interested_readers_.begin(), interested_readers_.end(), reader_guid);
 }
 
 void PDPStatelessWriter::mark_all_readers_interested()
@@ -150,8 +153,12 @@ void PDPStatelessWriter::add_interested_reader(
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     if (!should_reach_all_destinations_)
     {
-        interested_readers_.insert(reader_guid);
-        reader_data_filter(this);
+        auto it = std::find(interested_readers_.begin(), interested_readers_.end(), reader_guid);
+        if (it == interested_readers_.end())
+        {
+            interested_readers_.emplace_back(reader_guid);
+            reader_data_filter(this);
+        }
     }
 }
 
@@ -159,7 +166,7 @@ void PDPStatelessWriter::remove_interested_reader(
         const GUID_t& reader_guid)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    interested_readers_.erase(reader_guid);
+    interested_readers_.remove(reader_guid);
 }
 
 void PDPStatelessWriter::reschedule_all_samples()
