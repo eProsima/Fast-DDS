@@ -20,10 +20,10 @@
 #define FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_SIMPLE__PDPSTATELESSWRITER_HPP
 
 #include <chrono>
-#include <set>
 
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
+#include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 #include <rtps/writer/StatelessWriter.hpp>
 
@@ -141,7 +141,7 @@ private:
     //! Configured initial peers
     LocatorList initial_peers_{};
     //! The set of readers interested
-    mutable std::set<GUID_t> interested_readers_{};
+    mutable ResourceLimitedVector<GUID_t> interested_readers_;
     //! Whether we have set that all destinations are interested
     mutable bool should_reach_all_destinations_ = false;
 
