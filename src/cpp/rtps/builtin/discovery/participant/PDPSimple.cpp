@@ -287,7 +287,7 @@ void PDPSimple::announceParticipantState(
 
         if (!(dispose || new_change))
         {
-            endpoints->writer.writer_->unsent_changes_reset();
+            endpoints->writer.writer_->send_periodic_announcement();
         }
     }
 }
@@ -455,7 +455,7 @@ bool PDPSimple::create_dcps_participant_endpoints()
                 EPROSIMA_LOG_WARNING(RTPS_PDP, "Ignoring initial peers locator " << loc << " : not allowed.");
             }
         }
-        writer.writer_->set_fixed_locators(fixed_locators);
+        writer.writer_->set_initial_peers(fixed_locators);
     }
     else
     {

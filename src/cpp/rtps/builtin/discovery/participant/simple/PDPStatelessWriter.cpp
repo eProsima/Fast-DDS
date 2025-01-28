@@ -84,18 +84,16 @@ void PDPStatelessWriter::unsent_change_added_to_history(
     StatelessWriter::unsent_change_added_to_history(change, max_blocking_time);
 }
 
-bool PDPStatelessWriter::set_fixed_locators(
+void PDPStatelessWriter::set_initial_peers(
         const LocatorList& locator_list)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
     initial_peers_.push_back(locator_list);
     mp_RTPSParticipant->createSenderResources(initial_peers_);
-
-    return true;
 }
 
-void PDPStatelessWriter::unsent_changes_reset()
+void PDPStatelessWriter::send_periodic_announcement()
 {
     mark_all_readers_interested();
     reschedule_all_samples();

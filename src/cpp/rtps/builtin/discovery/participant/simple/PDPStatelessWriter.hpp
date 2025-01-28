@@ -68,21 +68,21 @@ public:
     //^^^^^^^^^^^^^^^^^^^^^^ [BaseWriter API] ^^^^^^^^^^^^^^^^^^^^^^^
 
     /**
-     * @brief Set the locators to which the writer should always send data.
+     * @brief Set the locators to which the writer should send periodic announcements.
      *
      * This method is used to configure the initial peers list on the PDP writer.
      *
-     * @param locator_list List of locators to which the writer should always send data.
+     * @param locator_list List of locators to which the writer should send periodic announcements.
      *
      * @return true if the locators were set successfully.
      */
-    bool set_fixed_locators(
+    void set_initial_peers(
             const LocatorList& locator_list);
 
     /**
      * Reset the unsent changes.
      */
-    void unsent_changes_reset();
+    void send_periodic_announcement();
 
 protected:
 
