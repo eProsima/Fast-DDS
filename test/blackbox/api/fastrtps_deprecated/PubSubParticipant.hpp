@@ -430,6 +430,13 @@ public:
         return *this;
     }
 
+    PubSubParticipant& initial_peers(
+            const eprosima::fastrtps::rtps::LocatorList_t& initial_peers)
+    {
+        participant_attr_.rtps.builtin.initialPeersList = initial_peers;
+        return *this;
+    }
+
     PubSubParticipant& add_user_transport_to_pparams(
             std::shared_ptr<eprosima::fastrtps::rtps::TransportDescriptorInterface> userTransportDescriptor)
     {
