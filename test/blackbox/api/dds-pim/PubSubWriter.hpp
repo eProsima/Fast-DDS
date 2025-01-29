@@ -894,10 +894,10 @@ public:
 
     PubSubWriter& reliability(
             const eprosima::fastdds::dds::ReliabilityQosPolicyKind kind,
-            const int max_blocking_time)
+            eprosima::fastdds::dds::Duration_t max_blocking_time)
     {
         datawriter_qos_.reliability().kind = kind;
-        datawriter_qos_.reliability().max_blocking_time.seconds = max_blocking_time;
+        datawriter_qos_.reliability().max_blocking_time = max_blocking_time;
 
         return *this;
     }

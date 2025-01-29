@@ -3502,7 +3502,7 @@ TEST(DDSStatus, reliable_keep_all_unack_sample_removed_call)
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
-    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS, 200)
+    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS, eprosima::fastdds::dds::Duration_t (200, 0))
             .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .resource_limits_max_instances(1)
             .resource_limits_max_samples(1)
