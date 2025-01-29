@@ -3439,7 +3439,7 @@ TEST(DDSStatus, keyed_reliable_positive_acks_disabled_on_unack_sample_removed)
 /*!
  * Regression Test for 22658: when he entire history is acked in volatile, given that the entries are deleted from the
  * history, check_acked_status satisfies min_low_mark >= get_seq_num_min() because seq_num_min is unknown. This makes
- * try_remove to fail, because it tries to remove changes but there were none. This causes prepare_change to not 
+ * try_remove to fail, because it tries to remove changes but there were none. This causes prepare_change to not
  * perform the changes, since the history was full and could not delete any changes.
  */
 
@@ -3467,7 +3467,6 @@ TEST(DDSStatus, entire_history_acked_volatile_unknown_pointer)
     reader.wait_discovery();
 
     auto data = default_helloworld_data_generator(2);
-    
     for (auto sample : data)
     {
         EXPECT_TRUE(writer.send_sample(sample));
