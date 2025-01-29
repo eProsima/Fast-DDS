@@ -1521,7 +1521,7 @@ void StatefulWriter::check_acked_status()
 
         if (min_low_mark >= get_seq_num_min())
         {
-            may_remove_change_ = 1;
+            may_remove_change_ = (get_seq_num_min() == SequenceNumber_t::unknown()) ? 2 : 1;
         }
 
         min_readers_low_mark_ = min_low_mark;
