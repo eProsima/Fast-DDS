@@ -695,6 +695,30 @@ TEST_F(LogTests, thread_config)
     EXPECT_EQ(entries.size(), n_logs);
 }
 
+/**
+ * Regression test 22624: when setting thread affinity fails, eprosima log error throws another error,
+ * and calls eprosima log error. This causes a looping recursive call for eprosima log error.
+ */
+TEST_F(LogTests, thread_log_error_loop)
+{
+    // Set general verbosity
+    Log::SetVerbosity(Log::Error);
+
+    // Set thread settings
+    eprosima::fastdds::rtps::ThreadSettings thr_settings{};
+#ifdef __linux__
+    thr_settings.affinity = 0xFFFFFFFFFFFFFFFF;
+#elif _WIN32
+    thr_settings.affinity = 0xFFFFFFFFFFFFFFFF;
+#elif __APPLE__
+    thr_settings.affinity = 0xFFFFFFFFFFFFFFFF;
+#endif
+    Log::SetThreadConfig(thr_settings);
+
+    // Start the error message
+    EPROSIMA_LOG_ERROR(SYSTEM, "Did I start the recursive loop?");
+}
+
 int main(
         int argc,
         char** argv)
