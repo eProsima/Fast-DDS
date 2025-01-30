@@ -1502,8 +1502,7 @@ TEST(ParticipantTests, ServerParticipantRemoteServerListConfiguration)
 
 TEST(ParticipantTests, EasyModeParticipantLoadsServiceDataWriterQos)
 {
-    // Use get_publisher_qos_from_profile to check if the profile is correctly loaded.
-    // But we cannot check the actual value of the max_blocking_time from qos because it belongs to the PublisherAttributes
+    // Use get_datawriter_qos_from_profile to check if the profile is correctly loaded.
     {
         // Default participant
         DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
@@ -1511,9 +1510,8 @@ TEST(ParticipantTests, EasyModeParticipantLoadsServiceDataWriterQos)
         ASSERT_NE(nullptr, participant);
         Publisher* default_publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
         ASSERT_NE(default_publisher, nullptr);
-        PublisherQos profile_qos;
-        EXPECT_EQ(default_publisher->get_participant()->get_publisher_qos_from_profile("service", profile_qos),
-                RETCODE_BAD_PARAMETER);
+        DataWriterQos dw_qos;
+        EXPECT_EQ(default_publisher->get_datawriter_qos_from_profile("service", dw_qos), RETCODE_BAD_PARAMETER);
 
         EXPECT_EQ(RETCODE_OK, participant->delete_publisher(default_publisher));
         EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
@@ -1527,23 +1525,12 @@ TEST(ParticipantTests, EasyModeParticipantLoadsServiceDataWriterQos)
         ASSERT_NE(nullptr, participant);
         Publisher* easy_mode_publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
         ASSERT_NE(easy_mode_publisher, nullptr);
-        PublisherQos profile_qos;
-        EXPECT_EQ(easy_mode_publisher->get_participant()->get_publisher_qos_from_profile("service", profile_qos),
-                RETCODE_OK);
-        TypeSupport type(new TopicDataTypeMock());
-        type.register_type(participant, "footype");
-        Topic* topic = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);
-        ASSERT_NE(nullptr, topic);
-        DataWriter* data_writer = easy_mode_publisher->create_datawriter_with_profile(topic, "service");
-        ASSERT_NE(nullptr, data_writer);
         DataWriterQos dw_qos;
-        EXPECT_EQ(data_writer->get_qos(dw_qos), RETCODE_OK);
-        EXPECT_EQ(dw_qos.reliability().max_blocking_time.seconds, 1);
-        EXPECT_EQ(dw_qos.reliability().max_blocking_time.nanosec, 0);
+        EXPECT_EQ(easy_mode_publisher->get_datawriter_qos_from_profile("service", dw_qos), RETCODE_OK);
+        EXPECT_EQ(dw_qos.reliability().max_blocking_time.seconds, 1);         // Easy Mode value
+        EXPECT_EQ(dw_qos.reliability().max_blocking_time.nanosec, 0);         // Easy Mode value
         EXPECT_EQ(dw_qos.durability().kind, TRANSIENT_LOCAL_DURABILITY_QOS);  // Default value
 
-        EXPECT_EQ(RETCODE_OK, easy_mode_publisher->delete_datawriter(data_writer));
-        EXPECT_EQ(RETCODE_OK, participant->delete_topic(topic));
         EXPECT_EQ(RETCODE_OK, participant->delete_publisher(easy_mode_publisher));
         EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
         stop_background_servers();
@@ -1554,7 +1541,7 @@ TEST(ParticipantTests, EasyModeParticipantDoNotOverwriteCustomDataWriterQos)
 {
     {
         // Easy mode participant with existing profile
-        // set XML profile as environment variable: "export FASTDDS_DEFAULT_PROFILES_FILE=test_xml_service_easy_mode.xml"
+        // Set XML profile as environment variable: "export FASTDDS_DEFAULT_PROFILES_FILE=test_xml_service_easy_mode.xml"
         eprosima::testing::set_environment_variable("FASTDDS_DEFAULT_PROFILES_FILE", "test_xml_service_easy_mode.xml");
         set_easy_mode_environment_variable();
         DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
@@ -1565,20 +1552,12 @@ TEST(ParticipantTests, EasyModeParticipantDoNotOverwriteCustomDataWriterQos)
         PublisherQos profile_qos;
         EXPECT_EQ(easy_mode_publisher->get_participant()->get_publisher_qos_from_profile("service", profile_qos),
                 RETCODE_OK);
-        TypeSupport type(new TopicDataTypeMock());
-        type.register_type(participant, "footype");
-        Topic* topic = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);
-        ASSERT_NE(nullptr, topic);
-        DataWriter* data_writer = easy_mode_publisher->create_datawriter_with_profile(topic, "service");
-        ASSERT_NE(nullptr, data_writer);
         DataWriterQos dw_qos;
-        EXPECT_EQ(data_writer->get_qos(dw_qos), RETCODE_OK);
-        EXPECT_EQ(dw_qos.reliability().max_blocking_time.seconds, 5);
-        EXPECT_EQ(dw_qos.reliability().max_blocking_time.nanosec, 0);
+        easy_mode_publisher->get_datawriter_qos_from_profile("service", dw_qos);
+        EXPECT_EQ(dw_qos.reliability().max_blocking_time.seconds, 5);  // XML value
+        EXPECT_EQ(dw_qos.reliability().max_blocking_time.nanosec, 0);  // XML value
         EXPECT_EQ(dw_qos.durability().kind, VOLATILE_DURABILITY_QOS);  // XML value
 
-        EXPECT_EQ(RETCODE_OK, easy_mode_publisher->delete_datawriter(data_writer));
-        EXPECT_EQ(RETCODE_OK, participant->delete_topic(topic));
         EXPECT_EQ(RETCODE_OK, participant->delete_publisher(easy_mode_publisher));
         EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
         stop_background_servers();
