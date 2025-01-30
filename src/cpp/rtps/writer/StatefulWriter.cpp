@@ -1533,7 +1533,9 @@ void StatefulWriter::check_acked_status()
 
         if (min_low_mark >= get_seq_num_min())
         {
-            may_remove_change_ = 1;
+            // get_seq_num_min() returns SequenceNumber_t::unknown() when the history is empty.
+            // Thus, it is set to 2 to indicate that all samples have been removed.
+            may_remove_change_ = (get_seq_num_min() == SequenceNumber_t::unknown()) ? 2 : 1;
         }
 
         min_readers_low_mark_ = min_low_mark;
