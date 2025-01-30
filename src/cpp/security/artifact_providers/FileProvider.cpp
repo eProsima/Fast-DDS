@@ -53,6 +53,7 @@ X509_STORE* FileProvider::load_ca(
             if (BIO_read_filename(in, ca.substr(7).c_str()) > 0)
             {
                 STACK_OF(X509_INFO) * inf = PEM_X509_INFO_read_bio(in, NULL, NULL, NULL);
+                X509* ca_cert = nullptr;
 
                 if (inf != nullptr)
                 {
@@ -65,6 +66,11 @@ X509_STORE* FileProvider::load_ca(
 
                         if (itmp->x509)
                         {
+                            if (nullptr == ca_cert)
+                            {
+                                ca_cert = itmp->x509;
+                            }
+
                             // Retrieve subject name for future use.
                             if (ca_sn.empty())
                             {
@@ -102,9 +108,34 @@ X509_STORE* FileProvider::load_ca(
 
                     if (count > 0)
                     {
-                        BIO_free(in);
+                        // Verify CA certificate.
+                        unsigned long flags = 0;
+                        flags |= X509_V_FLAG_CHECK_SS_SIGNATURE | X509_V_FLAG_POLICY_CHECK;
+                        flags |= X509_V_FLAG_X509_STRICT;
+                        X509_STORE_CTX* ctx = X509_STORE_CTX_new();
+                        if (nullptr != ctx)
+                        {
+                            X509_STORE_CTX_init(ctx, store, ca_cert, NULL);
+                            X509_STORE_CTX_set_flags(ctx, flags);
+                            if (X509_verify_cert(ctx) == 1)
+                            {
+                                X509_STORE_CTX_free(ctx);
+                                BIO_free(in);
+                                return store;
+                            }
 
-                        return store;
+                            int error_code = X509_STORE_CTX_get_error(ctx);
+                            const char* error_msg = X509_verify_cert_error_string(error_code);
+
+                            exception = _SecurityException_(
+                                    "Error '" + std::to_string(error_code) + "' verifying CA certificate for " +
+                                    ca_sn + ": " + error_msg);
+                            X509_STORE_CTX_free(ctx);
+                        }
+                        else
+                        {
+                            exception = _SecurityException_("Error creating X509 store context");
+                        }
                     }
                 }
                 else
