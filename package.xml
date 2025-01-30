@@ -9,6 +9,8 @@
   <maintainer email="miguelcompany@eprosima.com">Miguel Company</maintainer>
   <maintainer email="eduardoponz@eprosima.com">Eduardo Ponz</maintainer>
   <license file="LICENSE">Apache 2.0</license>
+  
+  <replace>fastrtps</replace>
 
   <url type="website">https://www.eprosima.com/</url>
   <url type="bugtracker">https://github.com/eProsima/Fast-DDS/issues</url>
