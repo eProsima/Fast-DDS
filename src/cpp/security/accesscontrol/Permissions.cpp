@@ -387,9 +387,9 @@ static BIO* load_and_verify_document(
             }
         }
 
-        if (1 != sk_X509_num(stack))
+        if (0 == sk_X509_num(stack))
         {
-            exception = _SecurityException_("Certificate store should have exactly one certificate");
+            exception = _SecurityException_("Certificate store should have at least one certificate");
 
             sk_X509_free(stack);
             stack = nullptr;
