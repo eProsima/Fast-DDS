@@ -501,7 +501,7 @@ ReturnCode_t json_serialize_member(
         }
         default:
             EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                    "Error encountered while serializing map member to JSON: unexpected kind " << member_kind <<
+                    "Error encountered while serializing member to JSON: unexpected kind " << member_kind <<
                     " found.");
             return RETCODE_BAD_PARAMETER;
     }
@@ -746,7 +746,7 @@ ReturnCode_t json_serialize_basic_member(
                 // Insert UTF-8 converted value
                 std::wstring aux_wstring_value({value});
                 std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-                std::string utf8_value = converter.to_bytes(aux_wstring_value);
+                std::string utf8_value = converter.to_bytes(aux_wstring_value); // TODO: handle exception
                 json_insert(member_name, utf8_value, output);
             }
             else
@@ -777,7 +777,7 @@ ReturnCode_t json_serialize_basic_member(
             {
                 // Insert UTF-8 converted value
                 std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-                std::string utf8_value = converter.to_bytes(value);
+                std::string utf8_value = converter.to_bytes(value); // TODO: handle exception
                 json_insert(member_name, utf8_value, output);
             }
             else
