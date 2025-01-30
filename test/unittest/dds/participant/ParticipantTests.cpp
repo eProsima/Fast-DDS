@@ -83,9 +83,11 @@
 
 void stop_background_servers()
 {
+#ifndef _WIN32 // The feature is not supported on Windows yet
     // Stop server(s)
     int res = std::system("fastdds discovery stop");
     ASSERT_EQ(res, 0);
+#endif // _WIN32
 }
 
 namespace eprosima {
@@ -1528,7 +1530,7 @@ TEST(ParticipantTests, EasyModeParticipantLoadsServiceDataWriterQos)
         DataWriterQos dw_qos;
         EXPECT_EQ(easy_mode_publisher->get_datawriter_qos_from_profile("service", dw_qos), RETCODE_OK);
         EXPECT_EQ(dw_qos.reliability().max_blocking_time.seconds, 1);         // Easy Mode value
-        EXPECT_EQ(dw_qos.reliability().max_blocking_time.nanosec, 0);         // Easy Mode value
+        EXPECT_EQ(dw_qos.reliability().max_blocking_time.nanosec, 0u);        // Easy Mode value
         EXPECT_EQ(dw_qos.durability().kind, TRANSIENT_LOCAL_DURABILITY_QOS);  // Default value
 
         EXPECT_EQ(RETCODE_OK, participant->delete_publisher(easy_mode_publisher));
@@ -1554,9 +1556,9 @@ TEST(ParticipantTests, EasyModeParticipantDoNotOverwriteCustomDataWriterQos)
                 RETCODE_OK);
         DataWriterQos dw_qos;
         easy_mode_publisher->get_datawriter_qos_from_profile("service", dw_qos);
-        EXPECT_EQ(dw_qos.reliability().max_blocking_time.seconds, 5);  // XML value
-        EXPECT_EQ(dw_qos.reliability().max_blocking_time.nanosec, 0);  // XML value
-        EXPECT_EQ(dw_qos.durability().kind, VOLATILE_DURABILITY_QOS);  // XML value
+        EXPECT_EQ(dw_qos.reliability().max_blocking_time.seconds, 5);   // XML value
+        EXPECT_EQ(dw_qos.reliability().max_blocking_time.nanosec, 0u);  // XML value
+        EXPECT_EQ(dw_qos.durability().kind, VOLATILE_DURABILITY_QOS);   // XML value
 
         EXPECT_EQ(RETCODE_OK, participant->delete_publisher(easy_mode_publisher));
         EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
