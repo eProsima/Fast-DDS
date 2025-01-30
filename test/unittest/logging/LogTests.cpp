@@ -712,11 +712,11 @@ TEST_F(LogTests, thread_log_error_loop)
     thr_settings.affinity = 0xFFFFFFFFFFFFFFFF;
 #elif __APPLE__
     thr_settings.affinity = 0xFFFFFFFFFFFFFFFF;
-#endif
+#endif // ifdef __linux__
     Log::SetThreadConfig(thr_settings);
 
     // Start the error message
-    EPROSIMA_LOG_ERROR(SYSTEM, "Did I start the recursive loop?");
+    EPROSIMA_LOG_ERROR(SYSTEM, "Recursive error loop avoided");
 }
 
 int main(

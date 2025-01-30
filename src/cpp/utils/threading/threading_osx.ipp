@@ -23,6 +23,18 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 
+#define THREAD_EPROSIMA_LOG_ERROR(thread_name, msg)                         \
+    do{                                                                     \
+        if (strcmp(thread_name, "dds.log") == 0)                            \
+        {                                                                   \
+            std::cerr << msg << std::endl;                                  \
+        }                                                                   \
+        else                                                                \
+        {                                                                   \
+            EPROSIMA_LOG_ERROR(SYSTEM, msg);                                \
+        }                                                                   \
+    } while(0)
+
 namespace eprosima {
 
 template<typename ... Args>
@@ -98,13 +110,13 @@ static void configure_current_thread_scheduler(
             result = setpriority(PRIO_PROCESS, tid, sched_priority);
             if (0 != result)
             {
-                EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set priority of thread with id [" << tid << "," << thread_name << "] to value " << sched_priority << ". Error '" << strerror(
+                THREAD_EPROSIMA_LOG_ERROR(thread_name, "Problem to set priority of thread with id [" << tid << "," << thread_name << "] to value " << sched_priority << ". Error '" << strerror(
                             result) << "'");
             }
         }
         else if (0 != result)
         {
-            EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set scheduler of thread with id [" << self_tid << "," << thread_name << "] to value " << sched_class << ". Error '" << strerror(
+            THREAD_EPROSIMA_LOG_ERROR(thread_name, "Problem to set scheduler of thread with id [" << self_tid << "," << thread_name << "] to value " << sched_class << ". Error '" << strerror(
                         result) << "'");
         }
     }
@@ -118,7 +130,7 @@ static void configure_current_thread_scheduler(
         result = pthread_setschedparam(self_tid, sched_class, &param);
         if (0 != result)
         {
-            EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set scheduler of thread with id [" << self_tid << "," << thread_name << "] to value " << sched_class << " with priority " << param.sched_priority << ". Error '" << strerror(
+            THREAD_EPROSIMA_LOG_ERROR(thread_name, "Problem to set scheduler of thread with id [" << self_tid << "," << thread_name << "] to value " << sched_class << " with priority " << param.sched_priority << ". Error '" << strerror(
                         result) << "'");
         }
     }
@@ -138,7 +150,7 @@ static void configure_current_thread_affinity(
                         1);
         if (0 != result)
         {
-            EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set affinity of thread with id [" << self_tid << "," << thread_name << "] to value " << affinity << ". Error '" << strerror(
+            THREAD_EPROSIMA_LOG_ERROR(thread_name, "Problem to set affinity of thread with id [" << self_tid << "," << thread_name << "] to value " << affinity << ". Error '" << strerror(
                         result) << "'");
         }
     }
