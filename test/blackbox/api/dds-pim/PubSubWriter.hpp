@@ -898,7 +898,6 @@ public:
     {
         datawriter_qos_.reliability().kind = kind;
         datawriter_qos_.reliability().max_blocking_time = max_blocking_time;
-
         return *this;
     }
 
