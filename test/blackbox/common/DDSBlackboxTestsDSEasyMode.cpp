@@ -58,7 +58,7 @@ TEST(DSEasyMode, easy_discovery_mode_env_correctly_launches)
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
-    // Setting ROS_DISCOVERY_SERVER to AUTO
+    // Setting ROS2_EASY_MODE
     // Configures as SUPER_CLIENT SHM and TCP
     set_easy_discovery_mode_env();
 
@@ -136,8 +136,7 @@ TEST(DSEasyMode, easy_discovery_mode_env_correct_transports_are_used)
 
     ASSERT_TRUE(writer_udp.isInitialized());
 
-    // Setting ROS_DISCOVERY_SERVER to AUTO
-    // Configures as SUPER_CLIENT SHM and TCP
+    // Setting ROS2_EASY_MODE configures as SUPER_CLIENT SHM and TCP
     set_easy_discovery_mode_env();
 
     std::atomic<bool> locators_match_p2p_transport(true);
@@ -226,7 +225,7 @@ TEST(DSEasyMode, easy_discovery_mode_env_discovery_info)
         ASSERT_TRUE(writers.back()->isInitialized());
     }
 
-    // Setting ROS_DISCOVERY_SERVER to AUTO
+    // Setting ROS2_EASY_MODE
     // Configures as SUPER_CLIENT SHM and TCP
     set_easy_discovery_mode_env();
 
@@ -266,7 +265,7 @@ TEST(DSEasyMode, easy_discovery_mode_env_multiple_clients_multiple_domains)
     std::vector<std::shared_ptr<PubSubWriter<HelloWorldPubSubType>>> writers;
     std::vector<std::shared_ptr<PubSubReader<HelloWorldPubSubType>>> readers;
 
-    // Setting ROS_DISCOVERY_SERVER to AUTO
+    // Setting ROS2_EASY_MODE
     // Configures as SUPER_CLIENT SHM and TCP
     set_easy_discovery_mode_env();
 
