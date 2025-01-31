@@ -543,7 +543,7 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
     // Check the specified discovery protocol: if other than simple it has priority over ros environment variable
     if (att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol_t::SIMPLE)
     {
-        EPROSIMA_LOG_INFO(DOMAIN, "Detected non simple discovery protocol attributes."
+        EPROSIMA_LOG_INFO(RTPS_DOMAIN, "Detected non simple discovery protocol attributes."
                 << " Ignoring auto default client-server setup.");
         return nullptr;
     }
@@ -664,13 +664,13 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
     if (nullptr != part)
     {
         // Client successfully created
-        EPROSIMA_LOG_INFO(DOMAIN, "Auto default server-client setup. Default client created.");
+        EPROSIMA_LOG_INFO(RTPS_DOMAIN, "Auto default server-client setup. Default client created.");
         part->mp_impl->client_override(true);
         return part;
     }
 
     // Unable to create auto server-client default participants
-    EPROSIMA_LOG_ERROR(DOMAIN, "Auto default server-client setup. Unable to create the client.");
+    EPROSIMA_LOG_ERROR(RTPS_DOMAIN, "Auto default server-client setup. Unable to create the client.");
     return nullptr;
 }
 
