@@ -706,13 +706,7 @@ TEST_F(LogTests, thread_log_error_loop)
 
     // Set thread settings
     eprosima::fastdds::rtps::ThreadSettings thr_settings{};
-#ifdef __linux__
     thr_settings.affinity = 0xFFFFFFFFFFFFFFFF;
-#elif _WIN32
-    thr_settings.affinity = 0xFFFFFFFFFFFFFFFF;
-#elif __APPLE__
-    thr_settings.affinity = 0xFFFFFFFFFFFFFFFF;
-#endif // ifdef __linux__
     Log::SetThreadConfig(thr_settings);
 
     // Start the error message
