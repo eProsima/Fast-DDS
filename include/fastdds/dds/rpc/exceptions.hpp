@@ -21,6 +21,7 @@
 
 #include <fastdds/dds/rpc/exceptions/RpcBrokenPipeException.hpp>
 #include <fastdds/dds/rpc/exceptions/RpcException.hpp>
+#include <fastdds/dds/rpc/exceptions/RpcInputFeedCancelledException.hpp>
 #include <fastdds/dds/rpc/exceptions/RpcOperationError.hpp>
 #include <fastdds/dds/rpc/exceptions/RpcTimeoutException.hpp>
 

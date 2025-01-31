@@ -73,6 +73,9 @@ public:
      * Marks the end of the input feed.
      *
      * Will indicate to the server that no more inputs will be sent.
+     * Specifying a reason different from `RPC_STATUS_CODE_OK` will indicate that the feed was finished due to an
+     * error, and that the client will not be expecting a reply.
+     *
      * May block depending on the configured queue sizes in both the client and the server.
      *
      * @param reason The status code to indicate the reason for finishing the feed.
