@@ -937,6 +937,46 @@ TEST(DDSBasic, reliable_volatile_writer_secure_builtin_no_potential_deadlock)
     writer.destroy();
 }
 
+TEST(DDSBasic, participant_factory_output_log_error_no_macro_collision)
+{
+    using Log = eprosima::fastdds::dds::Log;
+    using LogConsumer = eprosima::fastdds::dds::LogConsumer;
+
+    // A LogConsumer that just counts the number of entries consumed
+    struct TestConsumer : public LogConsumer
+    {
+        TestConsumer(
+                std::atomic_size_t& n_logs_ref)
+            : n_logs_(n_logs_ref)
+        {
+        }
+
+        void Consume(
+                const Log::Entry&) override
+        {
+            ++n_logs_;
+        }
+
+    private:
+
+        std::atomic_size_t& n_logs_;
+    };
+
+    // Counter for log entries
+    std::atomic<size_t>n_logs{};
+
+    // Prepare Log module to check that no SECURITY errors are produced
+    Log::SetCategoryFilter(std::regex("DOMAIN"));
+    Log::SetVerbosity(Log::Kind::Error);
+    Log::RegisterConsumer(std::unique_ptr<LogConsumer>(new TestConsumer(n_logs)));
+
+    auto dpf = DomainParticipantFactory::get_shared_instance();
+    DomainParticipantQos qos;
+    dpf->load_XML_profiles_file("");
+    Log::Flush();
+    ASSERT_GE(n_logs.load(), 1u);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
