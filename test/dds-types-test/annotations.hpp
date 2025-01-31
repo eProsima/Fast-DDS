@@ -70,7 +70,6 @@ namespace AnnotationTest {
 
 } // namespace AnnotationTest
 
-
 /*!
  * @brief This class represents the structure AnnotatedStruct defined by the user in the IDL file.
  * @ingroup annotations
@@ -261,7 +260,6 @@ private:
 
 
 };
-
 /*!
  * @brief This class represents the structure BasicAnnotationsStruct defined by the user in the IDL file.
  * @ingroup annotations

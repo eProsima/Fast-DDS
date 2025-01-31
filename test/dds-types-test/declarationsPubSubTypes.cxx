@@ -211,7 +211,6 @@ void ForwardDeclarationsRecursiveStructPubSubType::register_type_object_represen
         "TypeObject type representation support disabled in generated code");
 }
 
-
 ForwardStructPubSubType::ForwardStructPubSubType()
 {
     set_name("ForwardStruct");
@@ -943,8 +942,6 @@ namespace declarations_module {
         EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
             "TypeObject type representation support disabled in generated code");
     }
-
-
 
 } // namespace declarations_module
 

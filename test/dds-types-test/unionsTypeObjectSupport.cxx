@@ -39,6 +39,67 @@
 
 using namespace eprosima::fastdds::dds::xtypes;
 
+namespace Fixed_String_Module {
+void register_fixed_string_in_module_type_identifier(
+        TypeIdentifierPair& type_ids_fixed_string_in_module)
+{
+    ReturnCode_t return_code_fixed_string_in_module {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_fixed_string_in_module =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "Fixed_String_Module::fixed_string_in_module", type_ids_fixed_string_in_module);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_fixed_string_in_module)
+    {
+        AliasTypeFlag alias_flags_fixed_string_in_module = 0;
+        QualifiedTypeName type_name_fixed_string_in_module = "Fixed_String_Module::fixed_string_in_module";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_fixed_string_in_module;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_fixed_string_in_module;
+        CompleteTypeDetail detail_fixed_string_in_module = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_fixed_string_in_module, ann_custom_fixed_string_in_module, type_name_fixed_string_in_module.to_string());
+        CompleteAliasHeader header_fixed_string_in_module = TypeObjectUtils::build_complete_alias_header(detail_fixed_string_in_module);
+        AliasMemberFlag related_flags_fixed_string_in_module = 0;
+        return_code_fixed_string_in_module =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+            "anonymous_string_20", type_ids_fixed_string_in_module);
+
+        if (eprosima::fastdds::dds::RETCODE_OK != return_code_fixed_string_in_module)
+        {
+            {
+                SBound bound = static_cast<SBound>(20);
+                StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
+                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                        TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
+                        "anonymous_string_20", type_ids_fixed_string_in_module))
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "anonymous_string_20 already registered in TypeObjectRegistry for a different type.");
+                }
+            }
+        }
+        bool common_fixed_string_in_module_ec {false};
+        CommonAliasBody common_fixed_string_in_module {TypeObjectUtils::build_common_alias_body(related_flags_fixed_string_in_module,
+                TypeObjectUtils::retrieve_complete_type_identifier(type_ids_fixed_string_in_module, common_fixed_string_in_module_ec))};
+        if (!common_fixed_string_in_module_ec)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Fixed_String_Module::fixed_string_in_module related TypeIdentifier inconsistent.");
+            return;
+        }
+        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_fixed_string_in_module;
+        ann_custom_fixed_string_in_module.reset();
+        CompleteAliasBody body_fixed_string_in_module = TypeObjectUtils::build_complete_alias_body(common_fixed_string_in_module,
+                member_ann_builtin_fixed_string_in_module, ann_custom_fixed_string_in_module);
+        CompleteAliasType alias_type_fixed_string_in_module = TypeObjectUtils::build_complete_alias_type(alias_flags_fixed_string_in_module,
+                header_fixed_string_in_module, body_fixed_string_in_module);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_alias_type_object(alias_type_fixed_string_in_module,
+                    type_name_fixed_string_in_module.to_string(), type_ids_fixed_string_in_module))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                "Fixed_String_Module::fixed_string_in_module already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
+
+
+} // namespace Fixed_String_Module
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_Union_Short_type_identifier(
         TypeIdentifierPair& type_ids_Union_Short)
@@ -4601,6 +4662,95 @@ void register_Union_Several_Fields_With_Default_type_identifier(
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_Union_Fixed_String_In_Module_Alias_type_identifier(
+        TypeIdentifierPair& type_ids_Union_Fixed_String_In_Module_Alias)
+{
+    ReturnCode_t return_code_Union_Fixed_String_In_Module_Alias {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_Union_Fixed_String_In_Module_Alias =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "Union_Fixed_String_In_Module_Alias", type_ids_Union_Fixed_String_In_Module_Alias);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_Union_Fixed_String_In_Module_Alias)
+    {
+        UnionTypeFlag union_flags_Union_Fixed_String_In_Module_Alias = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
+                false, false);
+        QualifiedTypeName type_name_Union_Fixed_String_In_Module_Alias = "Union_Fixed_String_In_Module_Alias";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Union_Fixed_String_In_Module_Alias;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Union_Fixed_String_In_Module_Alias;
+        CompleteTypeDetail detail_Union_Fixed_String_In_Module_Alias = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Union_Fixed_String_In_Module_Alias, ann_custom_Union_Fixed_String_In_Module_Alias, type_name_Union_Fixed_String_In_Module_Alias.to_string());
+        CompleteUnionHeader header_Union_Fixed_String_In_Module_Alias = TypeObjectUtils::build_complete_union_header(detail_Union_Fixed_String_In_Module_Alias);
+        UnionDiscriminatorFlag member_flags_Union_Fixed_String_In_Module_Alias = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                false);
+        return_code_Union_Fixed_String_In_Module_Alias =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+            "_int32_t", type_ids_Union_Fixed_String_In_Module_Alias);
+
+        if (return_code_Union_Fixed_String_In_Module_Alias != eprosima::fastdds::dds::RETCODE_OK)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "Union discriminator TypeIdentifier unknown to TypeObjectRegistry.");
+            return;
+        }
+        CommonDiscriminatorMember common_Union_Fixed_String_In_Module_Alias;
+        if (EK_COMPLETE == type_ids_Union_Fixed_String_In_Module_Alias.type_identifier1()._d() || TK_NONE == type_ids_Union_Fixed_String_In_Module_Alias.type_identifier2()._d())
+        {
+            common_Union_Fixed_String_In_Module_Alias = TypeObjectUtils::build_common_discriminator_member(member_flags_Union_Fixed_String_In_Module_Alias, type_ids_Union_Fixed_String_In_Module_Alias.type_identifier1());
+        }
+        else if (EK_COMPLETE == type_ids_Union_Fixed_String_In_Module_Alias.type_identifier2()._d())
+        {
+            common_Union_Fixed_String_In_Module_Alias = TypeObjectUtils::build_common_discriminator_member(member_flags_Union_Fixed_String_In_Module_Alias, type_ids_Union_Fixed_String_In_Module_Alias.type_identifier2());
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "Union_Fixed_String_In_Module_Alias discriminator TypeIdentifier inconsistent.");
+            return;
+        }
+        type_ann_builtin_Union_Fixed_String_In_Module_Alias.reset();
+        ann_custom_Union_Fixed_String_In_Module_Alias.reset();
+        CompleteDiscriminatorMember discriminator_Union_Fixed_String_In_Module_Alias = TypeObjectUtils::build_complete_discriminator_member(common_Union_Fixed_String_In_Module_Alias,
+                type_ann_builtin_Union_Fixed_String_In_Module_Alias, ann_custom_Union_Fixed_String_In_Module_Alias);
+        CompleteUnionMemberSeq member_seq_Union_Fixed_String_In_Module_Alias;
+        {
+            return_code_Union_Fixed_String_In_Module_Alias =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "Fixed_String_Module::fixed_string_in_module", type_ids_Union_Fixed_String_In_Module_Alias);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_Union_Fixed_String_In_Module_Alias)
+            {
+                Fixed_String_Module::register_fixed_string_in_module_type_identifier(type_ids_Union_Fixed_String_In_Module_Alias);
+            }
+            UnionMemberFlag member_flags_a = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false);
+            UnionCaseLabelSeq label_seq_a;
+            TypeObjectUtils::add_union_case_label(label_seq_a, static_cast<int32_t>(0));
+            MemberId member_id_a = 0x00000001;
+            bool common_a_ec {false};
+            CommonUnionMember common_a {TypeObjectUtils::build_common_union_member(member_id_a,
+                    member_flags_a, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_Union_Fixed_String_In_Module_Alias,
+                        common_a_ec), label_seq_a)};
+            if (!common_a_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Union a member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_a = "a";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+            ann_custom_Union_Fixed_String_In_Module_Alias.reset();
+            CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_Union_Fixed_String_In_Module_Alias);
+            CompleteUnionMember member_a = TypeObjectUtils::build_complete_union_member(common_a, detail_a);
+            TypeObjectUtils::add_complete_union_member(member_seq_Union_Fixed_String_In_Module_Alias, member_a);
+        }
+        CompleteUnionType union_type_Union_Fixed_String_In_Module_Alias = TypeObjectUtils::build_complete_union_type(union_flags_Union_Fixed_String_In_Module_Alias, header_Union_Fixed_String_In_Module_Alias, discriminator_Union_Fixed_String_In_Module_Alias,
+                member_seq_Union_Fixed_String_In_Module_Alias);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_union_type_object(union_type_Union_Fixed_String_In_Module_Alias, type_name_Union_Fixed_String_In_Module_Alias.to_string(), type_ids_Union_Fixed_String_In_Module_Alias))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "Union_Fixed_String_In_Module_Alias already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_UnionShort_type_identifier(
         TypeIdentifierPair& type_ids_UnionShort)
 {
@@ -7312,6 +7462,63 @@ void register_UnionShortExtraMember_type_identifier(
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "UnionShortExtraMember already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_UnionFixedStringAlias_type_identifier(
+        TypeIdentifierPair& type_ids_UnionFixedStringAlias)
+{
+
+    ReturnCode_t return_code_UnionFixedStringAlias {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_UnionFixedStringAlias =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "UnionFixedStringAlias", type_ids_UnionFixedStringAlias);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_UnionFixedStringAlias)
+    {
+        StructTypeFlag struct_flags_UnionFixedStringAlias = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
+                false, false);
+        QualifiedTypeName type_name_UnionFixedStringAlias = "UnionFixedStringAlias";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_UnionFixedStringAlias;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_UnionFixedStringAlias;
+        CompleteTypeDetail detail_UnionFixedStringAlias = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_UnionFixedStringAlias, ann_custom_UnionFixedStringAlias, type_name_UnionFixedStringAlias.to_string());
+        CompleteStructHeader header_UnionFixedStringAlias;
+        header_UnionFixedStringAlias = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_UnionFixedStringAlias);
+        CompleteStructMemberSeq member_seq_UnionFixedStringAlias;
+        {
+            TypeIdentifierPair type_ids_var_union_fixed_string_in_module_alias;
+            ReturnCode_t return_code_var_union_fixed_string_in_module_alias {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_var_union_fixed_string_in_module_alias =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "Union_Fixed_String_In_Module_Alias", type_ids_var_union_fixed_string_in_module_alias);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_union_fixed_string_in_module_alias)
+            {
+            ::register_Union_Fixed_String_In_Module_Alias_type_identifier(type_ids_var_union_fixed_string_in_module_alias);
+            }
+            StructMemberFlag member_flags_var_union_fixed_string_in_module_alias = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_var_union_fixed_string_in_module_alias = 0x00000000;
+            bool common_var_union_fixed_string_in_module_alias_ec {false};
+            CommonStructMember common_var_union_fixed_string_in_module_alias {TypeObjectUtils::build_common_struct_member(member_id_var_union_fixed_string_in_module_alias, member_flags_var_union_fixed_string_in_module_alias, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_union_fixed_string_in_module_alias, common_var_union_fixed_string_in_module_alias_ec))};
+            if (!common_var_union_fixed_string_in_module_alias_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_union_fixed_string_in_module_alias member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_union_fixed_string_in_module_alias = "var_union_fixed_string_in_module_alias";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_var_union_fixed_string_in_module_alias;
+            ann_custom_UnionFixedStringAlias.reset();
+            CompleteMemberDetail detail_var_union_fixed_string_in_module_alias = TypeObjectUtils::build_complete_member_detail(name_var_union_fixed_string_in_module_alias, member_ann_builtin_var_union_fixed_string_in_module_alias, ann_custom_UnionFixedStringAlias);
+            CompleteStructMember member_var_union_fixed_string_in_module_alias = TypeObjectUtils::build_complete_struct_member(common_var_union_fixed_string_in_module_alias, detail_var_union_fixed_string_in_module_alias);
+            TypeObjectUtils::add_complete_struct_member(member_seq_UnionFixedStringAlias, member_var_union_fixed_string_in_module_alias);
+        }
+        CompleteStructType struct_type_UnionFixedStringAlias = TypeObjectUtils::build_complete_struct_type(struct_flags_UnionFixedStringAlias, header_UnionFixedStringAlias, member_seq_UnionFixedStringAlias);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_UnionFixedStringAlias, type_name_UnionFixedStringAlias.to_string(), type_ids_UnionFixedStringAlias))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "UnionFixedStringAlias already registered in TypeObjectRegistry for a different type.");
         }
     }
 }

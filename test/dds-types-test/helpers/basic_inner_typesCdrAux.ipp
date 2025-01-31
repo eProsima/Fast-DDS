@@ -393,16 +393,6 @@ eProsima_user_DllExport void deserialize(
 }
 
 
-
-
-
-
-
-
-
-
-
-
 } // namespace fastcdr
 } // namespace eprosima
 

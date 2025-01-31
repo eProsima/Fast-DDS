@@ -42,7 +42,6 @@ typedef std::vector<ForwardStruct> RecursiveBoundedSeqForwardStruct;
 typedef std::vector<ForwardUnion> RecursiveUnboundedSeqForwardUnion;
 typedef std::vector<ForwardUnion> RecursiveBoundedSeqForwardUnion;
 
-
 /*!
  * @brief This class represents the TopicDataType of the type ForwardDeclarationsRecursiveStruct defined by the user in the IDL file.
  * @ingroup declarations
@@ -123,7 +122,6 @@ private:
     unsigned char* key_buffer_;
 
 };
-
 
 /*!
  * @brief This class represents the TopicDataType of the type ForwardStruct defined by the user in the IDL file.
@@ -457,8 +455,6 @@ namespace declarations_module
         unsigned char* key_buffer_;
 
     };
-
-
 } // namespace declarations_module
 
 /*!

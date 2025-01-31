@@ -60,7 +60,6 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ForwardDeclarationsRecursiveStruct& data);
 
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ForwardStruct& data);
@@ -76,8 +75,6 @@ eProsima_user_DllExport void serialize_key(
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const declarations_module::ModuledForwardStruct& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
