@@ -3477,7 +3477,7 @@ TEST(DDSStatus, entire_history_acked_volatile_unknown_pointer)
 }
 
 /*¡
- * Regression Test for 22648: on_unacknowledged_sample_removed callback is called when best effort writer with keep all
+ * Regression Test for 22648: on_unacknowledged_sample_removed callback is called when writer with keep all
  * history is used, when the history was full but before max_blocking_time a sample was acknowledged, as is_acked was
  * checked before the waiting time, and is not re-checked. This should not happen.
  */
