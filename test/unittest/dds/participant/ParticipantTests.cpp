@@ -81,6 +81,14 @@
 #define GET_PID getpid
 #endif // if defined(_WIN32)
 
+void stop_background_servers()
+{
+#ifndef _WIN32 // The feature is not supported on Windows yet
+    // Stop server(s)
+    int res = std::system("fastdds discovery stop");
+    ASSERT_EQ(res, 0);
+#endif // _WIN32
+}
 
 namespace eprosima {
 namespace fastdds {
@@ -1077,6 +1085,17 @@ void set_environment_variable(
 #endif // _WIN32
 }
 
+void set_easy_mode_environment_variable(
+        const std::string ip = "127.0.0.1"
+        )
+{
+#ifdef _WIN32
+    ASSERT_EQ(0, _putenv_s(rtps::EASY_MODE_URI, ip.c_str()));
+#else
+    ASSERT_EQ(0, setenv(rtps::EASY_MODE_URI, ip.c_str(), 1));
+#endif // _WIN32
+}
+
 void set_environment_file(
         const std::string& filename)
 {
@@ -1481,6 +1500,70 @@ TEST(ParticipantTests, ServerParticipantRemoteServerListConfiguration)
     DomainParticipantQos result_qos = participant->get_qos();
     EXPECT_EQ(RETCODE_OK, participant->set_qos(result_qos));
     EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+}
+
+TEST(ParticipantTests, EasyModeParticipantLoadsServiceDataWriterQos)
+{
+    // Use get_datawriter_qos_from_profile to check if the profile is correctly loaded.
+    {
+        // Default participant
+        DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
+            (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
+        ASSERT_NE(nullptr, participant);
+        Publisher* default_publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+        ASSERT_NE(default_publisher, nullptr);
+        DataWriterQos dw_qos;
+        EXPECT_EQ(default_publisher->get_datawriter_qos_from_profile("service", dw_qos), RETCODE_BAD_PARAMETER);
+
+        EXPECT_EQ(RETCODE_OK, participant->delete_publisher(default_publisher));
+        EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+    }
+
+    {
+        // Easy mode participant
+        set_easy_mode_environment_variable();
+        DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
+            (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
+        ASSERT_NE(nullptr, participant);
+        Publisher* easy_mode_publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+        ASSERT_NE(easy_mode_publisher, nullptr);
+        DataWriterQos dw_qos;
+        EXPECT_EQ(easy_mode_publisher->get_datawriter_qos_from_profile("service", dw_qos), RETCODE_OK);
+        EXPECT_EQ(dw_qos.reliability().max_blocking_time.seconds, 1);         // Easy Mode value
+        EXPECT_EQ(dw_qos.reliability().max_blocking_time.nanosec, 0u);        // Easy Mode value
+        EXPECT_EQ(dw_qos.durability().kind, TRANSIENT_LOCAL_DURABILITY_QOS);  // Default value
+
+        EXPECT_EQ(RETCODE_OK, participant->delete_publisher(easy_mode_publisher));
+        EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+        stop_background_servers();
+    }
+}
+
+TEST(ParticipantTests, EasyModeParticipantDoNotOverwriteCustomDataWriterQos)
+{
+    {
+        // Easy mode participant with existing profile
+        // Set XML profile as environment variable: "export FASTDDS_DEFAULT_PROFILES_FILE=test_xml_service_easy_mode.xml"
+        eprosima::testing::set_environment_variable("FASTDDS_DEFAULT_PROFILES_FILE", "test_xml_service_easy_mode.xml");
+        set_easy_mode_environment_variable();
+        DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
+            (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
+        ASSERT_NE(nullptr, participant);
+        Publisher* easy_mode_publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+        ASSERT_NE(easy_mode_publisher, nullptr);
+        PublisherQos profile_qos;
+        EXPECT_EQ(easy_mode_publisher->get_participant()->get_publisher_qos_from_profile("service", profile_qos),
+                RETCODE_OK);
+        DataWriterQos dw_qos;
+        easy_mode_publisher->get_datawriter_qos_from_profile("service", dw_qos);
+        EXPECT_EQ(dw_qos.reliability().max_blocking_time.seconds, 5);   // XML value
+        EXPECT_EQ(dw_qos.reliability().max_blocking_time.nanosec, 0u);  // XML value
+        EXPECT_EQ(dw_qos.durability().kind, VOLATILE_DURABILITY_QOS);   // XML value
+
+        EXPECT_EQ(RETCODE_OK, participant->delete_publisher(easy_mode_publisher));
+        EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+        stop_background_servers();
+    }
 }
 
 /**

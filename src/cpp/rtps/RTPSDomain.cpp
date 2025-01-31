@@ -58,6 +58,23 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+const char* EASY_MODE_SERVICE_PROFILE =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
+        "<dds xmlns=\"http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles\">\n"
+        "    <profiles>\n"
+        "        <data_writer profile_name=\"service\">\n"
+        "            <qos>\n"
+        "                <reliability>\n"
+        "                    <max_blocking_time>\n"
+        "                        <sec>1</sec>\n"
+        "                        <nanosec>0</nanosec>\n"
+        "                    </max_blocking_time>\n"
+        "                </reliability>\n"
+        "            </qos>\n"
+        "        </data_writer>\n"
+        "    </profiles>\n"
+        "</dds>\n";
+
 template<typename _Descriptor>
 bool has_user_transport(
         const RTPSParticipantAttributes& att)
@@ -615,6 +632,22 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
 
         // Point to the well known DS port in the corresponding domain
         client_att.builtin.discovery_config.m_DiscoveryServers.push_back(locator_udp);
+
+        // Load the 'service' profile for ROS2_EASY_MODE services if there is no existing profile yet
+        xmlparser::PublisherAttributes attr;
+        auto ret_if = xmlparser::XMLProfileManager::fillPublisherAttributes("service", attr, false);
+        if (ret_if == xmlparser::XMLP_ret::XML_ERROR)
+        {
+            // An XML_ERROR is returned if there is no existing profile for the given name
+            xmlparser::XMLProfileManager::loadXMLString(EASY_MODE_SERVICE_PROFILE, strlen(EASY_MODE_SERVICE_PROFILE));
+            EPROSIMA_LOG_INFO(RTPS_DOMAIN, "Loaded service profile for ROS2_EASY_MODE servers");
+        }
+        else
+        {
+            // There is already a profile with the given name. Do not overwrite it
+            EPROSIMA_LOG_WARNING(RTPS_DOMAIN, "An XML profile for 'service' was found. When using ROS2_EASY_MODE, please ensure"
+                    " the max_blocking_time is configured with a value higher than the default.");
+        }
 
         SystemCommandBuilder sys_command;
         int res = sys_command.executable(FAST_DDS_DEFAULT_CLI_SCRIPT_NAME)

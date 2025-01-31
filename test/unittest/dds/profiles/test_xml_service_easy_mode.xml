@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"  ?>
+<dds xmlns="http://www.eprosima.com">
+    <profiles>
+        <data_writer profile_name="service">
+            <qos>
+                <reliability>
+                    <max_blocking_time>
+                        <sec>5</sec>
+                        <nanosec>0</nanosec>
+                    </max_blocking_time>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+            </qos>
+        </data_writer>
+    </profiles>
+</dds>

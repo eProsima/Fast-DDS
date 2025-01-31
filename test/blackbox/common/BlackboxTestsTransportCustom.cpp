@@ -613,7 +613,7 @@ TEST(ChainingTransportTests, builtin_transports_env_large_data)
 }
 
 /**
- * DS Auto transport shall always be used along with ROS_DISCOVERY_SERVER=AUTO.
+ * P2P transport shall always be used along with ROS2_EASY_MODE.
  * This is due to the working principle of the mode. If it is not specified,
  * the background discovery server will not be launched and the test will never
  * finish since both clients will keep waiting for it.
