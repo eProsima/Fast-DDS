@@ -395,7 +395,26 @@ endif()
 ###############################################################################
 # Tools default setup
 ###############################################################################
-option(COMPILE_TOOLS "Build tools" ON)
+if(WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    execute_process(
+        COMMAND ${CMAKE_CXX_COMPILER} -dumpmachine
+        OUTPUT_VARIABLE COMPILER_MACHINE
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    if(COMPILER_MACHINE MATCHES "mingw")
+        message(STATUS "Using MinGW compiler.")
+        option(COMPILE_TOOLS "Build tools" OFF)
+        add_definitions(-DMINGW_COMPILER=1)
+        set(CMAKE_CXX_FLAGS
+            "${CMAKE_CXX_FLAGS} -Wno-attributes -Wno-stringop-overread -Wno-builtin-macro-redefined -Wno-cast-function-type -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Wno-missing-field-initializers")
+        target_link_libraries(fastdds PUBLIC ws2_32 mswsock)
+    else()
+        message(STATUS "Using a GNU compiler on Windows but not MinGW.")
+    endif()
+else()
+    message(STATUS "Not using a GNU compiler on Windows.")
+    option(COMPILE_TOOLS "Build tools" ON)
+endif()
 
 if(EPROSIMA_BUILD)
     set(COMPILE_TOOLS ON)

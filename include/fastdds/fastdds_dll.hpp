@@ -44,11 +44,19 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_ALL_DYN_LINK) || defined(FASTDDS_DYN_LINK)
-#if defined(fastdds_EXPORTS)
-#define FASTDDS_EXPORTED_API __declspec( dllexport )
+#if defined(MINGW_COMPILER)
+    #if defined(fastdds_EXPORTS)
+    #define FASTDDS_EXPORTED_API __declspec( dllexport )
+    #else
+    #define FASTDDS_EXPORTED_API __attribute__((visibility("default")))
+    #endif // FASTDDS_SOURCE
 #else
-#define FASTDDS_EXPORTED_API __declspec( dllimport )
-#endif // FASTDDS_SOURCE
+    #if defined(fastdds_EXPORTS)
+    #define FASTDDS_EXPORTED_API __declspec( dllexport )
+    #else
+    #define FASTDDS_EXPORTED_API __declspec( dllimport )
+    #endif // FASTDDS_SOURCE
+#endif // if defined(MINGW_COMPILER)
 #else
 #define FASTDDS_EXPORTED_API
 #endif // if defined(EPROSIMA_ALL_DYN_LINK) || defined(FASTDDS_DYN_LINK)
