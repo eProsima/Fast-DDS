@@ -3437,8 +3437,6 @@ TEST(DDSStatus, keyed_reliable_positive_acks_disabled_on_unack_sample_removed)
 }
 
 /*!
-<<<<<<< HEAD
-=======
  * Regression Test for 22658: when the entire history is acked in volatile, given that the entries are deleted from the
  * history, check_acked_status satisfies min_low_mark >= get_seq_num_min() because seq_num_min is unknown. This makes
  * try_remove to fail, because it tries to remove changes but there were none. This causes prepare_change to not
@@ -3569,7 +3567,6 @@ TEST(DDSStatus, reliable_keep_all_unack_sample_removed_call)
 }
 
 /*!
->>>>>>> 68f97fe2 ([22648] Unacknowledged sample removed in KeepAll mode (#5618))
  * Test that checks with a writer of each type that having the same listener attached, the notified writer in the
  * callback is the corresponding writer that has removed a sample unacknowledged.
  */
