@@ -151,6 +151,8 @@ bool DataWriterHistory::prepare_change(
         if (history_qos_.kind == KEEP_ALL_HISTORY_QOS)
         {
             ret = this->mp_writer->try_remove_change(max_blocking_time, lock);
+            // If change was removed (ret == 1) in KeepAllHistory, it must have been acked
+            is_acked = ret;
         }
         else if (history_qos_.kind == KEEP_LAST_HISTORY_QOS)
         {
