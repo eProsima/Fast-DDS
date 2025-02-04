@@ -345,10 +345,10 @@ ReturnCode_t DomainParticipantFactory::get_participant_extended_qos_from_profile
         const std::string& profile_name,
         DomainParticipantExtendedQos& extended_qos) const
 {
-    extended_qos = default_participant_qos_;
     ParticipantAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillParticipantAttributes(profile_name, attr, false))
     {
+        extended_qos = default_participant_qos_;
         utils::set_extended_qos_from_attributes(extended_qos, attr);
         return RETCODE_OK;
     }
@@ -407,7 +407,7 @@ ReturnCode_t DomainParticipantFactory::load_XML_profiles_file(
 {
     if (XMLP_ret::XML_ERROR == XMLProfileManager::loadXMLFile(xml_profile_file))
     {
-        EPROSIMA_LOG_ERROR(DOMAIN, "Problem loading XML file '" << xml_profile_file << "'");
+        EPROSIMA_LOG_ERROR(DDS_DOMAIN, "Problem loading XML file '" << xml_profile_file << "'");
         return RETCODE_ERROR;
     }
     return RETCODE_OK;
@@ -419,7 +419,7 @@ ReturnCode_t DomainParticipantFactory::load_XML_profiles_string(
 {
     if (XMLP_ret::XML_ERROR == XMLProfileManager::loadXMLString(data, length))
     {
-        EPROSIMA_LOG_ERROR(DOMAIN, "Problem loading XML string");
+        EPROSIMA_LOG_ERROR(DDS_DOMAIN, "Problem loading XML string");
         return RETCODE_ERROR;
     }
     return RETCODE_OK;
@@ -431,7 +431,7 @@ ReturnCode_t DomainParticipantFactory::check_xml_static_discovery(
     xmlparser::XMLEndpointParser parser;
     if (XMLP_ret::XML_OK != parser.loadXMLFile(xml_file))
     {
-        EPROSIMA_LOG_ERROR(DOMAIN, "Error parsing xml file");
+        EPROSIMA_LOG_ERROR(DDS_DOMAIN, "Error parsing xml file");
         return RETCODE_ERROR;
     }
     return RETCODE_OK;
