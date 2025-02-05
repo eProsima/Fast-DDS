@@ -19,6 +19,7 @@
 #include <processthreadsapi.h>
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
+#include <utils/threading/thread_logging.hpp>
 
 namespace eprosima {
 
@@ -69,7 +70,7 @@ static void configure_current_thread_priority(
     {
         if (0 == SetThreadPriority(GetCurrentThread(), priority))
         {
-            EPROSIMA_LOG_ERROR(SYSTEM,
+            THREAD_EPROSIMA_LOG_ERROR(thread_name,
                     "Problem to set priority of thread with id [" << GetCurrentThreadId() << "," << thread_name << "] to value " << priority <<
                     ". Error '" << GetLastError() << "'");
         }
@@ -84,7 +85,7 @@ static void configure_current_thread_affinity(
     {
         if (0 == SetThreadAffinityMask(GetCurrentThread(), static_cast<DWORD_PTR>(affinity_mask)))
         {
-            EPROSIMA_LOG_ERROR(SYSTEM,
+            THREAD_EPROSIMA_LOG_ERROR(thread_name,
                     "Problem to set affinity of thread with id [" << GetCurrentThreadId() << "," << thread_name << "] to value " << affinity_mask <<
                     ". Error '" << GetLastError() << "'");
         }
