@@ -25,6 +25,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
+#include <utils/threading/threading.hpp>
 
 #if defined(__GLIBC__) && ((__GLIBC__ > 2) || ((__GLIBC__ == 2) && (__GLIBC_MINOR__ <= 30)))
 #include <sys/syscall.h>
@@ -33,18 +34,6 @@
 #endif
 #define gettid() ((pid_t)syscall(SYS_gettid))
 #endif
-
-#define THREAD_EPROSIMA_LOG_ERROR(thread_name, msg)                         \
-    do{                                                                     \
-        if (strcmp(thread_name, "dds.log") == 0)                            \
-        {                                                                   \
-            std::cerr << msg << std::endl;                                  \
-        }                                                                   \
-        else                                                                \
-        {                                                                   \
-            EPROSIMA_LOG_ERROR(SYSTEM, msg);                                \
-        }                                                                   \
-    } while(0)
 
 namespace eprosima {
 
