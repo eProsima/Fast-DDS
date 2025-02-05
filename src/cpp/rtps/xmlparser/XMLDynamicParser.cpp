@@ -1185,6 +1185,13 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(
             dimensionsToArrayBounds(memberArray, bounds);
             memberBuilder = factory->create_array_builder(innerBuilder, bounds);
             //factory->DeleteBuilder(innerBuilder);
+            if (nullptr == innerBuilder)
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Error parsing map member type: `create_map_type` failed for key=`" << keyTypeBuilder <<
+                        "`, value=`" << valueTypeBuilder << "`, length=`" << length << "`.");
+                return nullptr;
+            }
         }
     }
     else if (strncmp(memberType, BOOLEAN, 8) == 0)
