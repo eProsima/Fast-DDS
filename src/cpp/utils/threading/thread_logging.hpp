@@ -31,4 +31,4 @@
         }                                                                   \
     } while (0)
 
-#endif  // THREADING_HPP
+#endif  // THREAD_LOGGING_HPP
