@@ -19,6 +19,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <map>
 #include <memory>
 #include <mutex>
 #include <sstream>
@@ -1837,42 +1838,69 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
     if (unique_flows)
     {
         attributes.multicastLocatorList.clear();
-        attributes.unicastLocatorList = m_att.defaultUnicastLocatorList;
+        attributes.unicastLocatorList.clear();
         attributes.external_unicast_locators.clear();
 
-        uint16_t port = initial_unique_port;
-        while (port < final_unique_port)
+        // Register created resources to distinguish the case where a receiver was created in this same function call
+        // (and can be reused for other locators of the same kind in this reader), and that in which it was already
+        // created before for other reader in this same participant.
+        std::map<int32_t, int16_t> created_resources;
+
+        // Create unique flows for unicast locators
+        LocatorList_t input_locator_list = m_att.defaultUnicastLocatorList;
+        for (Locator_t& loc : input_locator_list)
         {
-            // Set port on unicast locators
-            for (Locator_t& loc : attributes.unicastLocatorList)
+            uint16_t port = created_resources.count(loc.kind) ? created_resources[loc.kind] : initial_unique_port;
+            while (port < final_unique_port)
             {
                 // Set logical port only TCP locators
                 if (LOCATOR_KIND_TCPv4 == loc.kind || LOCATOR_KIND_TCPv6 == loc.kind)
                 {
+                    // Due to current implementation limitations only one physical port (actual socket receiver)
+                    // is allowed when using TCP tranport. All we can do for now is to create a unique "logical" flow.
+                    // TODO(juanlofer): create a unique dedicated TCP communication channel once this limitation is removed.
                     IPLocator::setLogicalPort(loc, port);
                 }
                 else
                 {
                     loc.port = port;
                 }
+
+                // Try creating receiver for this locator
+                LocatorList_t aux_locator_list;
+                aux_locator_list.push_back(loc);
+                if (createReceiverResources(aux_locator_list, false, true, false))
+                {
+                    created_resources[loc.kind] = port;
+                }
+
+                // Locator will be present in the list if receiver was created, or was already created
+                // Continue if receiver not created for this reader (might exist but created for other reader in this same participant)
+                if (!aux_locator_list.empty() &&
+                        created_resources.count(loc.kind) && (created_resources[loc.kind] == port))
+                {
+                    break;
+                }
+
+                // Try with next port
+                ++port;
             }
 
-            // Try creating receiver resources
-            LocatorList_t aux_locator_list = attributes.unicastLocatorList;
-            if (createReceiverResources(aux_locator_list, false, true, false))
+            // Fail when unique ports are exhausted
+            if (port >= final_unique_port)
             {
-                break;
+                EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT, "Unique flows requested but exhausted. Port range: "
+                        << initial_unique_port << "-" << final_unique_port << ". Discarding locator: " << loc);
             }
-
-            // Try with next port
-            ++port;
+            else
+            {
+                attributes.unicastLocatorList.push_back(loc);
+            }
         }
 
-        // Fail when unique ports are exhausted
-        if (port >= final_unique_port)
+        if (attributes.unicastLocatorList.empty())
         {
-            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Unique flows requested but exhausted. Port range: "
-                    << initial_unique_port << "-" << final_unique_port);
+            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "No unicast locators to create unique flows");
             return false;
         }
     }
@@ -1983,7 +2011,7 @@ bool RTPSParticipantImpl::createReceiverResources(
     bool ret_val = input_list.empty();
 
 #if HAVE_SECURITY
-    // An auxilary buffer is needed in the ReceiverResource to to decrypt the message,
+    // An auxilary buffer is needed in the ReceiverResource to decrypt the message,
     // that imposes a limit in the received messages size even if the transport allows (uint32_t) messages size.
     uint32_t max_receiver_buffer_size =
             is_secure() ? std::numeric_limits<uint16_t>::max() : (std::numeric_limits<uint32_t>::max)();
