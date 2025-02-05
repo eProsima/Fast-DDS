@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file RpcInputFeedCancelledException.hpp
+ * @file RpcFeedCancelledException.hpp
  */
 
 #ifndef FASTDDS_DDS_RPC_EXCEPTIONS__RPCINPUTFEEDCANCELLEDEXCEPTION_HPP
@@ -33,7 +33,7 @@ namespace rpc {
 /**
  * Exception thrown by the RPC API when the client cancels an input feed.
  */
-class FASTDDS_EXPORTED_API RpcInputFeedCancelledException : public RpcException
+class FASTDDS_EXPORTED_API RpcFeedCancelledException : public RpcException
 {
 
 public:
@@ -41,7 +41,7 @@ public:
     /**
      * Constructor.
      */
-    RpcInputFeedCancelledException(
+    RpcFeedCancelledException(
             RpcStatusCode reason)
         : RpcException("Input feed cancelled with reason '" + std::to_string(reason) + "'")
     {
@@ -50,19 +50,19 @@ public:
     /**
      * Copy constructor.
      */
-    RpcInputFeedCancelledException(
-            const RpcInputFeedCancelledException& other) noexcept = default;
+    RpcFeedCancelledException(
+            const RpcFeedCancelledException& other) noexcept = default;
 
     /**
      * Copy assignment.
      */
-    RpcInputFeedCancelledException& operator =(
-            const RpcInputFeedCancelledException& other) noexcept = default;
+    RpcFeedCancelledException& operator =(
+            const RpcFeedCancelledException& other) noexcept = default;
 
     /**
      * Destructor.
      */
-    virtual ~RpcInputFeedCancelledException() noexcept = default;
+    virtual ~RpcFeedCancelledException() noexcept = default;
 
 };
 

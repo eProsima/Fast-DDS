@@ -51,7 +51,7 @@ public:
      * @return True if a value was read, false if the feed has finished.
      *
      * @throw RpcBrokenPipeException if the communication with the client breaks.
-     * @throw RpcInputFeedCancelledException if the client cancels the input feed.
+     * @throw RpcFeedCancelledException if the client cancels the input feed.
      */
     virtual bool read(
             T& value) = 0;
@@ -67,7 +67,7 @@ public:
      *
      * @throw RpcTimeoutException if the timeout expires.
      * @throw RpcBrokenPipeException if the communication with the client breaks.
-     * @throw RpcInputFeedCancelledException if the client cancels the input feed.
+     * @throw RpcFeedCancelledException if the client cancels the input feed.
      */
     virtual bool read(
             T& value,
