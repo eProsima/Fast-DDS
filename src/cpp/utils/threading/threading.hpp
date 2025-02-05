@@ -26,4 +26,4 @@
         {                                                                   \
             EPROSIMA_LOG_ERROR(SYSTEM, msg);                                \
         }                                                                   \
-    } while(0)
+    } while (0)
