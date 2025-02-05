@@ -16,8 +16,8 @@
  * @file thread_logging.hpp
  */
 
-#ifndef THREADING_HPP
-#define THREADING_HPP
+#ifndef THREAD_LOGGING_HPP
+#define THREAD_LOGGING_HPP
 
 #define THREAD_EPROSIMA_LOG_ERROR(thread_name, msg)                         \
     do{                                                                     \
