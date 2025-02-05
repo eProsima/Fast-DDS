@@ -19,7 +19,7 @@
 #include <processthreadsapi.h>
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <utils/threading/threading.hpp>
+#include <utils/threading/thread_logging.hpp>
 
 namespace eprosima {
 

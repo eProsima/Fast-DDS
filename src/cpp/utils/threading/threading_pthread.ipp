@@ -25,7 +25,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <utils/threading/threading.hpp>
+#include <utils/threading/thread_logging.hpp>
 
 #if defined(__GLIBC__) && ((__GLIBC__ > 2) || ((__GLIBC__ == 2) && (__GLIBC_MINOR__ <= 30)))
 #include <sys/syscall.h>

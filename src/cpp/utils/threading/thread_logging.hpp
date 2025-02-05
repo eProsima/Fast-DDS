@@ -13,8 +13,11 @@
 // limitations under the License.
 
 /*!
- * @file threading.hpp
+ * @file thread_logging.hpp
  */
+
+#ifndef THREADING_HPP
+#define THREADING_HPP
 
 #define THREAD_EPROSIMA_LOG_ERROR(thread_name, msg)                         \
     do{                                                                     \
@@ -27,3 +30,5 @@
             EPROSIMA_LOG_ERROR(SYSTEM, msg);                                \
         }                                                                   \
     } while (0)
+
+#endif  // THREADING_HPP
