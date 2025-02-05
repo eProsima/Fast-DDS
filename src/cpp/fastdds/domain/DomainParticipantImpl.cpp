@@ -133,7 +133,14 @@ DomainParticipantImpl::DomainParticipantImpl(
         qos_.properties(), parameter_policy_physical_data_host);
     if (nullptr != property_value && property_value->empty())
     {
-        property_value->assign(SystemInfo::instance().machine_id().to_string());
+        if (SystemInfo::instance().machine_id().size() > 0)
+        {
+            property_value->assign(SystemInfo::instance().machine_id().to_string());
+        }
+        else
+        {
+            property_value->assign(asio::ip::host_name() + ":" + std::to_string(utils::default_domain_id()));
+        }
     }
 
     property_value = fastdds::rtps::PropertyPolicyHelper::find_property(
