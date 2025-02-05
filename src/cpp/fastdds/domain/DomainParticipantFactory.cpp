@@ -361,7 +361,7 @@ ReturnCode_t DomainParticipantFactory::load_XML_profiles_file(
 {
     if (XMLP_ret::XML_ERROR == XMLProfileManager::loadXMLFile(xml_profile_file))
     {
-        EPROSIMA_LOG_ERROR(DOMAIN, "Problem loading XML file '" << xml_profile_file << "'");
+        EPROSIMA_LOG_ERROR(DDS_DOMAIN, "Problem loading XML file '" << xml_profile_file << "'");
         return ReturnCode_t::RETCODE_ERROR;
     }
     return ReturnCode_t::RETCODE_OK;
@@ -373,7 +373,7 @@ ReturnCode_t DomainParticipantFactory::load_XML_profiles_string(
 {
     if (XMLP_ret::XML_ERROR == XMLProfileManager::loadXMLString(data, length))
     {
-        EPROSIMA_LOG_ERROR(DOMAIN, "Problem loading XML string");
+        EPROSIMA_LOG_ERROR(DDS_DOMAIN, "Problem loading XML string");
         return ReturnCode_t::RETCODE_ERROR;
     }
     return ReturnCode_t::RETCODE_OK;
@@ -385,7 +385,7 @@ ReturnCode_t DomainParticipantFactory::check_xml_static_discovery(
     eprosima::fastrtps::xmlparser::XMLEndpointParser parser;
     if (XMLP_ret::XML_OK != parser.loadXMLFile(xml_file))
     {
-        EPROSIMA_LOG_ERROR(DOMAIN, "Error parsing xml file");
+        EPROSIMA_LOG_ERROR(DDS_DOMAIN, "Error parsing xml file");
         return ReturnCode_t::RETCODE_ERROR;
     }
     return ReturnCode_t::RETCODE_OK;
