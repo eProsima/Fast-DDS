@@ -1,0 +1,267 @@
+// Copyright 2025 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#ifndef FASTDDS_RPC__SERVICEIMPL_HPP
+#define FASTDDS_RPC__SERVICEIMPL_HPP
+
+#include <mutex>
+
+#include <fastdds/dds/rpc/ReplierParams.hpp>
+#include <fastdds/dds/rpc/RequesterParams.hpp>
+#include <fastdds/dds/rpc/Service.hpp>
+#include <fastdds/dds/topic/ContentFilteredTopic.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
+
+#include "../domain/DomainParticipantImpl.hpp"
+
+namespace eprosima {
+namespace fastdds {
+namespace dds {
+namespace rpc {
+
+class ReplierImpl;
+class RequesterImpl;
+
+/**
+ * @brief Class that represents the implementation of a Service entity
+ */
+class ServiceImpl : public Service
+{
+
+friend class dds::DomainParticipantImpl;
+friend class ReplierImpl;
+friend class RequesterImpl;
+
+/**
+ * @brief Constructor
+ * Don't use it directly, use create_service from DomainParticipant instead
+ */
+ServiceImpl(
+        const std::string& service_name,
+        const std::string& service_type_name,
+        DomainParticipantImpl* participant);
+
+public:
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~ServiceImpl();
+
+    /**
+     * @brief Get the service name
+     *
+     * @return Service name
+     */
+    const std::string& get_service_name() const override
+    {
+        return service_name_;
+    }
+
+    /**
+     * @brief Get the service type name
+     *
+     * @return Service type name
+     */
+    const std::string& get_service_type_name() const override 
+    {
+        return service_type_name_;
+    }
+
+    /**
+     * @brief Remove a requester from the service
+     *
+     * @param requester Requester to remove
+     */
+    void remove_requester(
+            RequesterImpl* requester);
+
+    /**
+     * @brief Remove a replier from the service
+     *
+     * @param replier replier to remove
+     */
+    void remove_replier(
+            ReplierImpl* replier);
+
+    /**
+     * @brief Remove all requesters from the service
+     * It destroys the underlying requester objects
+     */
+    void remove_all_requesters();
+
+    /**
+     * @brief Remove all repliers from the service
+     * It destroys the underlying replier objects
+     */
+    void remove_all_repliers();
+
+    /**
+     * @brief Create a requester for the service
+     * 
+     * @param params Requester configuration parameters
+     * @return A pointer to the created requester or nullptr if an error occurred
+     */
+    RequesterImpl* create_requester(
+            const RequesterParams& params);
+
+    /**
+     * @brief Create a replier for the service
+     * 
+     * @param params Replier configuration parameters
+     * @return A pointer to the created replier or nullptr if an error occurred
+     */
+    ReplierImpl* create_replier(
+            const ReplierParams& params);
+
+    /**
+     * @brief Check if the service is valid (i.e: all DDS entities are correctly created)
+     */
+    inline bool is_valid() const
+    {
+        return valid_;
+    }
+
+    bool service_type_in_use(
+            const std::string& service_type_name) const
+    {
+        return service_type_name_ == service_type_name;
+    }
+
+    /**
+     * @brief Template methods to validate parameters with a lambda
+     */
+    template <typename T>
+    bool validate_params(
+            const T& params,
+            const std::function<bool(const T&)>& validator)
+    {
+        return validator(params);
+    }
+
+    /**
+     * @brief Validate the requester/replier parameters. They should be consistent with the service configuration
+     * 
+     * @param params Requester/replier parameters to validate
+     * @return True if the parameters are valid, false otherwise
+     */
+    template <typename T>
+    bool validate_params(const T& params)
+    {
+        // TODO: This is so ugly. Maybe do a list of validators?
+        std::function<bool(const T&)> validate_qos = [this](const T& params)
+        {
+            bool valid = true;
+            const auto& qos = params.qos();
+            
+            if (qos.service_name != service_name_)
+            {
+                EPROSIMA_LOG_ERROR(SERVICE, "Service name in QoS does not match the service name");
+                valid = false;
+            }
+
+            if (qos.request_type != request_topic_->get_type_name())
+            {
+                EPROSIMA_LOG_ERROR(SERVICE, "Request type in QoS does not match the service type name");
+                valid = false;
+            }
+
+            if (qos.reply_type != reply_topic_->get_type_name())
+            {
+                EPROSIMA_LOG_ERROR(SERVICE, "Reply type in QoS does not match the service type name");
+                valid = false;
+            }
+            
+            if (qos.request_topic_name != request_topic_->get_name())
+            {
+                EPROSIMA_LOG_ERROR(SERVICE, "Request topic name in QoS does not match the request topic name");
+                valid = false;
+            }
+
+            if (qos.reply_topic_name != reply_topic_->get_name())
+            {
+                EPROSIMA_LOG_ERROR(SERVICE, "Reply topic name in QoS does not match the reply topic name");
+                valid = false;
+            }
+
+            if (qos.writer_qos.reliability().kind != RELIABLE_RELIABILITY_QOS)
+            {
+                EPROSIMA_LOG_ERROR(SERVICE, "Writer QoS reliability must be RELIABLE_RELIABILITY_QOS");
+                valid = false;
+            }
+
+            if (qos.reader_qos.reliability().kind != RELIABLE_RELIABILITY_QOS)
+            {
+                EPROSIMA_LOG_ERROR(SERVICE, "Reader QoS reliability must be RELIABLE_RELIABILITY_QOS");
+                valid = false;
+            }
+
+            return valid;
+        };
+
+        return validate_params(params, validate_qos);
+    }
+
+private:
+
+    /**
+     * @brief Create request and reply topics for the service
+     * 
+     * @return RETCODE_OK if request/reply topics were created successfully, RETCODE_ERROR otherwise
+     */
+    virtual ReturnCode_t create_request_reply_topics();
+    
+    //! Service name
+    std::string service_name_;
+
+    //! Service type name
+    std::string service_type_name_;
+
+    //! DDS Participant associated with the service
+    DomainParticipantImpl* participant_;
+
+    //! Vector of repliers attached to the service
+    std::vector<ReplierImpl*> repliers_;
+
+    //! Mutex to protect the repliers list
+    std::mutex mtx_repliers_;
+
+    //! Vector of requesters attached to the service
+    std::vector<RequesterImpl*> requesters_;
+    
+    //! Mutex to protect the requesters list
+    std::mutex mtx_requesters_;
+
+    //! Request and Reply topics associated with the service
+    // NOTE: These topics do not filter samples. They are used to create the content filtered topics
+    // If we use these topics to publish/subscribe in a multiple requester - single replier service scenario,
+    // The requesters will receive all the replies, not only the ones that match their requests
+    Topic* request_topic_;
+    Topic* reply_topic_;
+
+    //! Request and Reply filtered topics associated with the service.
+    // In a multiple requester - single replier service scenario, each requester will discard the received replies destinated to another requester
+    ContentFilteredTopic* request_filtered_topic_;
+    ContentFilteredTopic* reply_filtered_topic_;
+
+    bool valid_;
+
+};
+
+} // namespace rpc
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
+
+#endif // FASTDDS_RPC__SERVICEIMPL_HPP

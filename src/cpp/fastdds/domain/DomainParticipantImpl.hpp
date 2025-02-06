@@ -25,6 +25,7 @@
 #include <condition_variable>
 #include <mutex>
 
+#include "fastdds/topic/DDSSQLFilter/DDSFilterFactory.hpp"
 #include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
@@ -32,6 +33,7 @@
 #include <fastdds/dds/domain/qos/ReplierQos.hpp>
 #include <fastdds/dds/domain/qos/RequesterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+#include <fastdds/dds/rpc/ServiceTypeSupport.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/topic/ContentFilteredTopic.hpp>
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
@@ -40,7 +42,6 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
-#include "fastdds/topic/DDSSQLFilter/DDSFilterFactory.hpp"
 #include <fastdds/topic/TopicProxyFactory.hpp>
 #include <rtps/reader/StatefulReader.hpp>
 
@@ -59,6 +60,12 @@ class PublisherAttributes;
 class SubscriberAttributes;
 
 namespace dds {
+namespace rpc {
+class Replier;
+class Requester;
+class Service;
+class ServiceImpl;
+} // namespace rpc
 
 class DomainParticipant;
 class DomainParticipantListener;
@@ -319,6 +326,75 @@ public:
     ReturnCode_t unregister_type(
             const std::string& typeName);
 
+    /**
+     * Register a service type in this participant.
+     * @param service_type The ServiceTypeSupport to register. A copy will be kept by the participant until removed.
+     * @param service_type_name The name that will be used to identify the ServiceType.
+     */
+    ReturnCode_t register_service_type(
+            rpc::ServiceTypeSupport service_type,
+            const std::string& service_type_name);
+
+    /**
+     * Unregister a service type in this participant.
+     * @param service_type_name Name of the service type
+     */
+    ReturnCode_t unregister_service_type(
+            const std::string& service_type_name);
+
+    /**
+     * Create a RPC service.
+     * 
+     * @param service_name Name of the service.
+     * @param service_type_name Type name of the service (Request & reply types)
+     * @return Pointer to the created service. nullptr in error case.
+     */
+    rpc::Service* create_service(
+            const std::string& service_name,
+            const std::string& service_type_name);
+
+    /**
+     * Find a registered RPC service by name
+     * 
+     * @param service_name Name of the service to search for.
+     * @return Pointer to the service object if found, nullptr if not found.
+     */
+    rpc::Service* find_service(
+            const std::string& service_name) const;
+
+    /**
+     * Delete a registered RPC service.
+     * 
+     * @param service Pointer to the service object to be deleted.
+     * @return RETCODE_OK if the service was deleted successfully, RETCODE_ERROR otherwise.
+     */
+    ReturnCode_t delete_service(
+            const rpc::Service* service);
+
+    /**
+     * Create a RPC Requester in a given Service.
+     * 
+     * @param service Pointer to a service object where the requester will be created.
+     * @param requester_qos QoS of the requester.
+     * 
+     * @return Pointer to the created requester. nullptr in error case.
+     */
+    rpc::Requester* create_service_requester(
+            rpc::Service* service,
+            const RequesterQos& requester_qos);
+
+    /**
+     * Create a RPC Replier in a given Service.
+     * 
+     * @param service Pointer to a service object where the Replier will be created.
+     * @param requester_qos QoS of the requester.
+     * 
+     * @return Pointer to the created replier. nullptr in error case.
+     */
+    rpc::Replier* create_service_replier(
+            rpc::Service* service,
+            const ReplierQos& replier_qos);
+
     // TODO create/delete topic
 
     // TODO Subscriber* get_builtin_subscriber();
@@ -551,6 +627,9 @@ public:
     const TypeSupport find_type(
             const std::string& type_name) const;
 
+    const rpc::ServiceTypeSupport find_service_type(
+            const std::string& service_name) const;
+
     const InstanceHandle_t& get_instance_handle() const;
 
     // From here legacy RTPS methods.
@@ -659,6 +738,12 @@ protected:
     //!TopicDataType map
     std::map<std::string, TypeSupport> types_;
     mutable std::mutex mtx_types_;
+
+    //! RPC Service maps
+    std::map<std::string, rpc::ServiceTypeSupport> service_types_;
+    std::map<std::string, rpc::ServiceImpl*> services_;
+    mutable std::mutex mtx_service_types_;
+    mutable std::mutex mtx_services_;
 
     //!Topic map
     std::map<std::string, TopicProxyFactory*> topics_;
