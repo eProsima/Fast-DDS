@@ -48,7 +48,7 @@ public:
      *
      * @param value The value to read the reply into.
      *
-     * @return True if a reply was read, false if the feed has finished.
+     * @return True if a reply was read, false if the feed has finished or has been cancelled.
      *
      * @throw RpcOperationError if the server communicates an error.
      * @throw RpcBrokenPipeException if the communication with the server breaks.
@@ -63,7 +63,7 @@ public:
      *
      * @param value The value to read the reply into.
      *
-     * @return True if a reply was read, false if the feed has finished.
+     * @return True if a reply was read, false if the feed has finished or has been cancelled.
      *
      * @throw RpcOperationError if the server communicates an error.
      * @throw RpcBrokenPipeException if the communication with the server breaks.
