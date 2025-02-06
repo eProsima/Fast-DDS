@@ -154,7 +154,14 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
             {
                 PhysicalData notification;
                 notification.participant_guid(*reinterpret_cast<const detail::GUID_s*>(&guid()));
-                notification.host(asio::ip::host_name() + ":" + std::to_string(efd::utils::default_domain_id()));
+                if (SystemInfo::instance().machine_id().size() > 0)
+                {
+                    notification.host(SystemInfo::instance().machine_id().to_string());
+                }
+                else
+                {
+                    notification.host(asio::ip::host_name() + ":" + std::to_string(efd::utils::default_domain_id()));
+                }
                 std::string username;
                 if (efd::RETCODE_OK == SystemInfo::get_username(username))
                 {
