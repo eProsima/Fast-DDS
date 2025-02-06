@@ -158,7 +158,7 @@ bool SystemInfo::file_exists(
 #ifdef _WIN32
     // modify for mingw
     DWORD fileAttributes = GetFileAttributesA(filename.c_str());
-    if (fileAttributes == INVALID_FILE_ATTRIBUTES) 
+    if (fileAttributes == INVALID_FILE_ATTRIBUTES)
     {
         return false;
     }

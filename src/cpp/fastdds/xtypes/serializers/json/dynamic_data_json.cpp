@@ -750,7 +750,8 @@ ReturnCode_t json_serialize_basic_member(
                 std::wstring aux_wstring_value({value});
                 std::string utf8_value;
                 int size_needed = std::wcstombs(nullptr, aux_wstring_value.data(), 0);
-                if (size_needed > 0) {
+                if (size_needed > 0)
+                {
                     utf8_value.resize(size_needed);
                     std::wcstombs(&utf8_value[0], aux_wstring_value.data(), size_needed);
                 }
@@ -759,7 +760,7 @@ ReturnCode_t json_serialize_basic_member(
                 std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
                 std::string utf8_value = converter.to_bytes(aux_wstring_value);
 
-#endif  // defined(MINGW_COMPILER)              
+#endif  // defined(MINGW_COMPILER)
                 json_insert(member_name, utf8_value, output);
             }
             else
@@ -792,7 +793,7 @@ ReturnCode_t json_serialize_basic_member(
 #ifdef MINGW_COMPILER
                 std::string utf8_value;
                 int size_needed = std::wcstombs(nullptr, value.data(), 0);
-                if (size_needed > 0) 
+                if (size_needed > 0)
                 {
                     utf8_value.resize(size_needed);
                     std::wcstombs(&utf8_value[0], value.data(), size_needed);
