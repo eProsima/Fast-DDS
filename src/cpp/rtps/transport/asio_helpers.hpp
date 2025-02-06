@@ -70,9 +70,9 @@ struct asio_helpers
                     final_buffer_value = option.value();
                     continue;
                 }
-                // Could not determine the actual value, but the option was set successfully.
-                // Assume the option was set to the desired value.
-                return true;
+                // Could not determine the actual value, even though the option was set successfully.
+                // The current buffer size is not defined.
+                return false;
             }
 
             final_buffer_value /= 2;
@@ -87,11 +87,11 @@ struct asio_helpers
             // Last attempt was successful. Get the actual value set.
             BufferOptionType option;
             socket.get_option(option, ec);
-            if (!ec)
+            if (!ec && (option.value() >= value_to_set))
             {
                 final_buffer_value = option.value();
+                return true;
             }
-            return true;
         }
         return false;
     }
