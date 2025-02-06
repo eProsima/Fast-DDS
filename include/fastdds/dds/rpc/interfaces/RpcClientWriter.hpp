@@ -51,6 +51,7 @@ public:
      *
      * @throw RpcBrokenPipeException if the communication with the server breaks.
      * @throw RpcTimeoutException if the operation needs to block for a time longer than the configured timeout.
+     * @throw RpcOperationError if the server communicates an error.
      */
     virtual void write(
             const T& value) = 0;
@@ -65,6 +66,7 @@ public:
      *
      * @throw RpcBrokenPipeException if the communication with the server breaks.
      * @throw RpcTimeoutException if the operation needs to block for a time longer than the configured timeout.
+     * @throw RpcOperationError if the server communicates an error.
      */
     virtual void write(
             T&& value) = 0;
