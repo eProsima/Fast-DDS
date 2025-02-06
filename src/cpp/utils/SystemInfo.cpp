@@ -158,14 +158,15 @@ bool SystemInfo::file_exists(
 #ifdef _WIN32
     // modify for mingw
     DWORD fileAttributes = GetFileAttributesA(filename.c_str());
-    if (fileAttributes == INVALID_FILE_ATTRIBUTES) {
+    if (fileAttributes == INVALID_FILE_ATTRIBUTES) 
+    {
         return false;
     }
     return !(fileAttributes & FILE_ATTRIBUTE_DIRECTORY);
 #else
     struct stat s;
     return (stat(filename.c_str(), &s) == 0 && s.st_mode & S_IFREG);
-#endif
+#endif // ifdef _WIN32
 }
 
 bool SystemInfo::wait_for_file_closure(

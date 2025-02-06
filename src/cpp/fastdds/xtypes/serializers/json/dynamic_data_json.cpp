@@ -792,7 +792,8 @@ ReturnCode_t json_serialize_basic_member(
 #ifdef MINGW_COMPILER
                 std::string utf8_value;
                 int size_needed = std::wcstombs(nullptr, value.data(), 0);
-                if (size_needed > 0) {
+                if (size_needed > 0) 
+                {
                     utf8_value.resize(size_needed);
                     std::wcstombs(&utf8_value[0], value.data(), size_needed);
                 }
