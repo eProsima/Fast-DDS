@@ -25,6 +25,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
+#include <utils/threading/thread_logging.hpp>
 
 #if defined(__GLIBC__) && ((__GLIBC__ > 2) || ((__GLIBC__ == 2) && (__GLIBC_MINOR__ <= 30)))
 #include <sys/syscall.h>
@@ -114,13 +115,13 @@ static void configure_current_thread_scheduler(
             result = setpriority(PRIO_PROCESS, gettid(), sched_priority);
             if (0 != result)
             {
-                EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set priority of thread with id [" << self_tid << "," << thread_name << "] to value " << sched_priority << ". Error '" << strerror(
+                THREAD_EPROSIMA_LOG_ERROR(thread_name, "Problem to set priority of thread with id [" << self_tid << "," << thread_name << "] to value " << sched_priority << ". Error '" << strerror(
                             result) << "'");
             }
         }
         else if (0 != result)
         {
-            EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set scheduler of thread with id [" << self_tid << "," << thread_name << "] to value " << sched_class << ". Error '" << strerror(
+            THREAD_EPROSIMA_LOG_ERROR(thread_name, "Problem to set scheduler of thread with id [" << self_tid << "," << thread_name << "] to value " << sched_class << ". Error '" << strerror(
                         result) << "'");
         }
     }
@@ -135,7 +136,7 @@ static void configure_current_thread_scheduler(
         result = pthread_setschedparam(self_tid, sched_class, &param);
         if (0 != result)
         {
-            EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set scheduler of thread with id [" << self_tid << "," << thread_name << "] to value " << sched_class << " with priority " << param.sched_priority << ". Error '" << strerror(
+            THREAD_EPROSIMA_LOG_ERROR(thread_name, "Problem to set scheduler of thread with id [" << self_tid << "," << thread_name << "] to value " << sched_class << " with priority " << param.sched_priority << ". Error '" << strerror(
                         result) << "'");
         }
     }
@@ -178,7 +179,7 @@ static void configure_current_thread_affinity(
 
     if (affinity_mask > 0)
     {
-        EPROSIMA_LOG_ERROR(SYSTEM, "Affinity mask has more processors than the ones present in the system");
+        THREAD_EPROSIMA_LOG_ERROR(thread_name, "Affinity mask has more processors than the ones present in the system");
     }
 
     if (result > 0)
@@ -192,7 +193,7 @@ static void configure_current_thread_affinity(
 
     if (0 != result)
     {
-        EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set affinity of thread with id [" << self_tid << "," << thread_name << "] to value " << affinity_mask << ". Error '" << strerror(
+        THREAD_EPROSIMA_LOG_ERROR(thread_name, "Problem to set affinity of thread with id [" << self_tid << "," << thread_name << "] to value " << affinity_mask << ". Error '" << strerror(
                     result) << "'");
     }
 }
