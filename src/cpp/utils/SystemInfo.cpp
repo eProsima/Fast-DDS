@@ -155,9 +155,18 @@ fastdds::dds::ReturnCode_t SystemInfo::get_username(
 bool SystemInfo::file_exists(
         const std::string& filename)
 {
+#ifdef _WIN32
+    // modify for mingw
+    DWORD fileAttributes = GetFileAttributesA(filename.c_str());
+    if (fileAttributes == INVALID_FILE_ATTRIBUTES)
+    {
+        return false;
+    }
+    return !(fileAttributes & FILE_ATTRIBUTE_DIRECTORY);
+#else
     struct stat s;
-    // Check existence and that it is a regular file (and not a folder)
     return (stat(filename.c_str(), &s) == 0 && s.st_mode & S_IFREG);
+#endif // ifdef _WIN32
 }
 
 bool SystemInfo::wait_for_file_closure(
