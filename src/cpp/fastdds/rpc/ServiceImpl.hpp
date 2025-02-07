@@ -83,16 +83,18 @@ public:
      * @brief Remove a requester from the service
      *
      * @param requester Requester to remove
+     * @return RETCODE_OK if the requester was removed successfully, an specific error code otherwise
      */
-    void remove_requester(
+    ReturnCode_t remove_requester(
             RequesterImpl* requester);
 
     /**
      * @brief Remove a replier from the service
      *
      * @param replier replier to remove
+     * @return RETCODE_OK if the requester was removed successfully, an specific error code otherwise
      */
-    void remove_replier(
+    ReturnCode_t remove_replier(
             ReplierImpl* replier);
 
     /**

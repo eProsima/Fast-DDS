@@ -68,26 +68,39 @@ ServiceImpl::~ServiceImpl()
     participant_ = nullptr;
 }
 
-void ServiceImpl::remove_requester(
+ReturnCode_t ServiceImpl::remove_requester(
         RequesterImpl* requester)
 {
     std::lock_guard<std::mutex> lock(mtx_requesters_);
     auto it = std::find(requesters_.begin(), requesters_.end(), requester);
-    if (it != requesters_.end())
+
+    if (it == requesters_.end())
     {
-        requesters_.erase(it);
+        // Requester not found
+        EPROSIMA_LOG_ERROR(SERVICE, "Trying to remove a non-registered requester.");
+        return RETCODE_PRECONDITION_NOT_MET;
     }
+
+    delete *it;
+    requesters_.erase(it);
+    return RETCODE_OK;
 }
 
-void ServiceImpl::remove_replier(
+ReturnCode_t ServiceImpl::remove_replier(
         ReplierImpl* replier)
 {
     std::lock_guard<std::mutex> lock(mtx_repliers_);
     auto it = std::find(repliers_.begin(), repliers_.end(), replier);
-    if (it != repliers_.end())
+    if (it == repliers_.end())
     {
-        repliers_.erase(it);
+        // Replier not found
+        EPROSIMA_LOG_ERROR(SERVICE, "Trying to remove a non-registered replier.");
+        return RETCODE_PRECONDITION_NOT_MET;
     }
+
+    delete *it;
+    repliers_.erase(it);
+    return RETCODE_OK;
 }
 
 void ServiceImpl::remove_all_requesters()

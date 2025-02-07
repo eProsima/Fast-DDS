@@ -2114,6 +2114,27 @@ rpc::Requester* DomainParticipantImpl::create_service_requester(
     return requester;
 }
 
+ReturnCode_t DomainParticipantImpl::delete_service_requester(
+        const std::string& service_name,
+        rpc::Requester* requester)
+{
+
+    rpc::RequesterImpl* requester_impl = dynamic_cast<rpc::RequesterImpl*>(requester);
+    assert(requester_impl != nullptr);
+
+    // Get registered service implementation
+    std::lock_guard<std::mutex> lock(mtx_services_);
+    auto it = services_.find(service_name);
+
+    if (it == services_.end())
+    {
+        // Service not registered
+        return RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    return it->second->remove_requester(requester_impl);
+}
+
 rpc::Replier* DomainParticipantImpl::create_service_replier(
         rpc::Service* service,
         const ReplierQos& qos)
@@ -2145,6 +2166,26 @@ rpc::Replier* DomainParticipantImpl::create_service_replier(
     rpc::Replier* replier = it->second->create_replier(params);
 
     return replier;
+}
+
+ReturnCode_t DomainParticipantImpl::delete_service_replier(
+        const std::string& service_name,
+        rpc::Replier* replier)
+{
+    rpc::ReplierImpl* replier_impl = dynamic_cast<rpc::ReplierImpl*>(replier);
+    assert(replier_impl != nullptr);
+
+    // Get registered service implementation
+    std::lock_guard<std::mutex> lock(mtx_services_);
+    auto it = services_.find(service_name);
+
+    if (it == services_.end())
+    {
+        // Service not registered
+        return RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    return it->second->remove_replier(replier_impl);
 }
 
 void DomainParticipantImpl::MyRTPSParticipantListener::on_participant_discovery(

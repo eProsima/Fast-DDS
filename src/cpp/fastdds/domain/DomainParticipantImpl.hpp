@@ -384,6 +384,17 @@ public:
             const RequesterQos& requester_qos);
 
     /**
+     * Deletes an existing RPC Requester
+     * 
+     * @param service_name Name of the service where the requester is created.
+     * @param requester Pointer to the requester to be deleted.
+     * @return RETCODE_OK if the requester was deleted, or an specific error code otherwise.
+     */
+    ReturnCode_t delete_service_requester(
+            const std::string& service_name,
+            rpc::Requester* requester);
+
+    /**
      * Create a RPC Replier in a given Service.
      * 
      * @param service Pointer to a service object where the Replier will be created.
@@ -394,6 +405,17 @@ public:
     rpc::Replier* create_service_replier(
             rpc::Service* service,
             const ReplierQos& replier_qos);
+
+    /**
+     * Deletes an existing RPC Replier
+     * 
+     * @param service_name Name of the service where the replier is created.
+     * @param replier Pointer to the replier to be deleted.
+     * @return RETCODE_OK if the replier was deleted, or an specific error code otherwise.
+     */
+    ReturnCode_t delete_service_replier(
+            const std::string& service_name,
+            rpc::Replier* replier);
 
     // TODO create/delete topic
 

@@ -287,11 +287,25 @@ rpc::Requester* DomainParticipant::create_service_requester(
     return impl_->create_service_requester(service, requester_qos);
 }
 
+ReturnCode_t DomainParticipant::delete_service_requester(
+        const std::string& service_name,
+        rpc::Requester* requester)
+{
+    return impl_->delete_service_requester(service_name, requester);
+}
+
 rpc::Replier* DomainParticipant::create_service_replier(
         rpc::Service* service,
         const ReplierQos& replier_qos)
 {
     return impl_->create_service_replier(service, replier_qos);
+}
+
+ReturnCode_t DomainParticipant::delete_service_replier(
+        const std::string& service_name,
+        rpc::Replier* replier)
+{
+    return impl_->delete_service_replier(service_name, replier);
 }
 
 TopicDescription* DomainParticipant::lookup_topicdescription(
