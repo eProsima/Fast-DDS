@@ -24,6 +24,8 @@ namespace dds {
 
 class LoanableCollection;
 class SampleInfo;
+class DataWriter;
+class DataReader;
 
 } // namespace dds
 
@@ -83,6 +85,16 @@ public:
     virtual ReturnCode_t take_request(
             LoanableCollection& data,
             LoanableSequence<SampleInfo>& info) = 0;
+
+    /**
+     * @brief Getter for the Replier's DataWriter
+     */
+    virtual const DataWriter* get_replier_writer() const = 0;
+
+    /**
+     * @brief Getter for the Replier's DataReader
+     */
+    virtual const DataReader* get_replier_reader() const = 0;
 
 };
 

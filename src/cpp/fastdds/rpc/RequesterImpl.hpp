@@ -105,25 +105,15 @@ public:
         return valid_;
     }
 
-    // Getters for all DDS entities
-    inline void get_requester_writer(DataWriter*& writer) const
+    // Getters for DDS Endpoints
+    inline const DataWriter* get_requester_writer() const override
     {
-        writer = requester_writer_;
+        return requester_writer_;
     }
 
-    inline void get_requester_reader(DataReader*& reader) const
+    inline const DataReader* get_requester_reader() const override
     {
-        reader = requester_reader_;
-    }
-
-    inline void get_requester_publisher(Publisher*& publisher) const
-    {
-        publisher = requester_publisher_;
-    }
-
-    inline void get_requester_subscriber(Subscriber*& subscriber) const
-    {
-        subscriber = requester_subscriber_;
+        return requester_reader_;
     }
 
 private:
