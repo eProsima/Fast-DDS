@@ -345,10 +345,10 @@ ReturnCode_t DomainParticipantFactory::get_participant_extended_qos_from_profile
         const std::string& profile_name,
         DomainParticipantExtendedQos& extended_qos) const
 {
+    extended_qos = default_participant_qos_;
     ParticipantAttributes attr;
     if (XMLP_ret::XML_OK == XMLProfileManager::fillParticipantAttributes(profile_name, attr, false))
     {
-        extended_qos = default_participant_qos_;
         utils::set_extended_qos_from_attributes(extended_qos, attr);
         return RETCODE_OK;
     }

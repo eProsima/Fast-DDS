@@ -1087,7 +1087,7 @@ TEST(DDSBasic, participant_factory_output_log_error_no_macro_collision)
 
     auto dpf = DomainParticipantFactory::get_shared_instance();
     DomainParticipantQos qos;
-    dpf->get_participant_qos_from_profile("", qos);
+    dpf->load_XML_profiles_file("");
     Log::Flush();
     ASSERT_GE(n_logs.load(), 1u);
 }
