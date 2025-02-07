@@ -14,6 +14,7 @@
 
 #include "BlackboxTests.hpp"
 
+#include <string>
 #include <thread>
 
 #include "PubSubReader.hpp"
@@ -2037,6 +2038,175 @@ TEST(LivelinessTests, correct_liveliness_state_one_writer_multiple_readers)
 
     // After 1.6 secs, we should receive a on_liveliness_changed(status lost) on the two readers
     ASSERT_EQ(reader.sub_wait_liveliness_lost_for(2, std::chrono::seconds(4)), 2u);
+}
+
+/**
+ * This is a regression test for redmine issue #21189.
+ *
+ * The test ensures that liveliness changed status is not affected by writers on a topic different from
+ * the one of the reader.
+ *
+ * The test creates two readers and two writers, each reader and writer pair on a different topic.
+ * Writing a sample on one writer should not affect the liveliness changed status of the other reader.
+ * Destroying the writer should not affect the liveliness changed status of the other reader.
+ */
+static void test_liveliness_qos_independent_topics(
+        const std::string& topic_name,
+        eprosima::fastdds::dds::ReliabilityQosPolicyKind reliability_kind)
+{
+    const auto lease_dutation_time = std::chrono::seconds(1);
+    const eprosima::fastrtps::Duration_t lease_duration(1, 0);
+    const eprosima::fastrtps::Duration_t announcement_period(0, 250000000);
+
+    PubSubReader<HelloWorldPubSubType> reader1(topic_name + "1");
+    PubSubReader<HelloWorldPubSubType> reader2(topic_name + "2");
+
+    PubSubWriter<HelloWorldPubSubType> writer1(topic_name + "1");
+    PubSubWriter<HelloWorldPubSubType> writer2(topic_name + "2");
+
+    // Configure and start the readers
+    reader1.liveliness_kind(eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS)
+            .liveliness_lease_duration(lease_duration)
+            .reliability(reliability_kind)
+            .init();
+    reader2.liveliness_kind(eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS)
+            .liveliness_lease_duration(lease_duration)
+            .reliability(reliability_kind)
+            .init();
+
+    // Configure and start the writers
+    writer1.liveliness_kind(eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS)
+            .liveliness_lease_duration(lease_duration)
+            .liveliness_announcement_period(announcement_period)
+            .reliability(reliability_kind)
+            .init();
+    writer2.liveliness_kind(eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS)
+            .liveliness_lease_duration(lease_duration)
+            .liveliness_announcement_period(announcement_period)
+            .reliability(reliability_kind)
+            .init();
+
+    // Wait for discovery
+    reader1.wait_discovery();
+    reader2.wait_discovery();
+    writer1.wait_discovery();
+    writer2.wait_discovery();
+
+    HelloWorldPubSubType::type data;
+
+    // Write a sample on writer1 and wait for reader1 to assert writer1's liveliness
+    writer1.send_sample(data);
+    reader1.wait_liveliness_recovered();
+
+    // Check liveliness changed status on both readers
+    {
+        auto liveliness = reader1.liveliness_changed_status();
+        EXPECT_EQ(liveliness.alive_count, 1);
+        EXPECT_EQ(liveliness.not_alive_count, 0);
+    }
+
+    {
+        auto liveliness = reader2.liveliness_changed_status();
+        EXPECT_EQ(liveliness.alive_count, 0);
+        EXPECT_EQ(liveliness.not_alive_count, 0);
+    }
+
+    // Write a sample on writer2 and wait for reader2 to assert writer2's liveliness
+    writer2.send_sample(data);
+    reader2.wait_liveliness_recovered();
+
+    // Check liveliness changed status on both readers
+    {
+        auto liveliness = reader1.liveliness_changed_status();
+        EXPECT_EQ(liveliness.alive_count, 1);
+        EXPECT_EQ(liveliness.not_alive_count, 0);
+    }
+
+    {
+        auto liveliness = reader2.liveliness_changed_status();
+        EXPECT_EQ(liveliness.alive_count, 1);
+        EXPECT_EQ(liveliness.not_alive_count, 0);
+    }
+
+    // Destroy writer2 and wait twice the lease duration time
+    writer2.destroy();
+    std::this_thread::sleep_for(lease_dutation_time * 2);
+
+    // Check liveliness changed status on both readers
+    {
+        auto liveliness = reader1.liveliness_changed_status();
+        EXPECT_EQ(liveliness.alive_count, 1);
+        EXPECT_EQ(liveliness.not_alive_count, 0);
+    }
+
+    {
+        auto liveliness = reader2.liveliness_changed_status();
+        EXPECT_EQ(liveliness.alive_count, 0);
+        EXPECT_EQ(liveliness.not_alive_count, 0);
+    }
+
+    // Start writer2 again and wait for reader2 to assert writer2's liveliness
+    writer2.init();
+    reader2.wait_discovery();
+    writer2.send_sample(data);
+    reader2.wait_liveliness_recovered(2);
+
+    // Check liveliness changed status on both readers
+    {
+        auto liveliness = reader1.liveliness_changed_status();
+        EXPECT_EQ(liveliness.alive_count, 1);
+        EXPECT_EQ(liveliness.not_alive_count, 0);
+    }
+
+    {
+        auto liveliness = reader2.liveliness_changed_status();
+        EXPECT_EQ(liveliness.alive_count, 1);
+        EXPECT_EQ(liveliness.not_alive_count, 0);
+    }
+
+    // Destroy writer1 and wait twice the lease duration time
+    writer1.destroy();
+    std::this_thread::sleep_for(lease_dutation_time * 2);
+
+    // Check liveliness changed status on both readers
+    {
+        auto liveliness = reader1.liveliness_changed_status();
+        EXPECT_EQ(liveliness.alive_count, 0);
+        EXPECT_EQ(liveliness.not_alive_count, 0);
+    }
+
+    {
+        auto liveliness = reader2.liveliness_changed_status();
+        EXPECT_EQ(liveliness.alive_count, 1);
+        EXPECT_EQ(liveliness.not_alive_count, 0);
+    }
+
+    // Destroy writer2 and wait twice the lease duration time
+    writer2.destroy();
+    std::this_thread::sleep_for(lease_dutation_time * 2);
+
+    // Check liveliness changed status on both readers
+    {
+        auto liveliness = reader1.liveliness_changed_status();
+        EXPECT_EQ(liveliness.alive_count, 0);
+        EXPECT_EQ(liveliness.not_alive_count, 0);
+    }
+
+    {
+        auto liveliness = reader2.liveliness_changed_status();
+        EXPECT_EQ(liveliness.alive_count, 0);
+        EXPECT_EQ(liveliness.not_alive_count, 0);
+    }
+}
+
+TEST_P(LivelinessQos, IndependentTopics_reliable)
+{
+    test_liveliness_qos_independent_topics(TEST_TOPIC_NAME, eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+}
+
+TEST_P(LivelinessQos, IndependentTopics_besteffort)
+{
+    test_liveliness_qos_independent_topics(TEST_TOPIC_NAME, eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
