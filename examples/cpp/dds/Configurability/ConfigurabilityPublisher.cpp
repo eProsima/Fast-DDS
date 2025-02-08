@@ -345,7 +345,7 @@ int main()
         return 1;
     }
 
-    int no_keys = 1;
+    int no_keys = (int)user_configuration.no_keys;
     sample my_sample;
 
     std::string c;
