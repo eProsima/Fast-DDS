@@ -130,6 +130,7 @@ set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
     common/DatagramInjectionTransport.cpp
     api/dds-pim/TCPReqRepHelloWorldRequester.cpp
     api/dds-pim/TCPReqRepHelloWorldReplier.cpp
+    api/dds-pim/TCPReqRepHelloWorldService.cpp
     )
 
 file(GLOB DDS_BLACKBOXTESTS_TEST_SOURCE "common/DDSBlackboxTests*.cpp")
@@ -184,6 +185,7 @@ if(FASTDDS_PIM_API_TESTS)
         ${DDS_BLACKBOXTESTS_SOURCE}
         api/dds-pim/ReqRepHelloWorldRequester.cpp
         api/dds-pim/ReqRepHelloWorldReplier.cpp
+        api/dds-pim/ReqRepHelloWorldService.cpp
         )
 
     if (FASTDDS_STATISTICS)

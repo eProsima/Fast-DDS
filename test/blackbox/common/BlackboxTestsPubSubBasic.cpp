@@ -28,8 +28,8 @@
 #include "PubSubParticipant.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
-#include "ReqRepAsReliableHelloWorldReplier.hpp"
-#include "ReqRepAsReliableHelloWorldRequester.hpp"
+#include "ReqRepHelloWorldReplier.hpp"
+#include "ReqRepHelloWorldRequester.hpp"
 
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
@@ -262,8 +262,8 @@ TEST_P(PubSubBasic, AsyncPubSubAsReliableHelloworld)
 
 TEST_P(PubSubBasic, ReqRepAsReliableHelloworld)
 {
-    ReqRepAsReliableHelloWorldRequester requester;
-    ReqRepAsReliableHelloWorldReplier replier;
+    ReqRepHelloWorldRequester requester;
+    ReqRepHelloWorldReplier replier;
     const uint16_t nmsgs = 10;
 
     requester.init();
