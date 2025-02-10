@@ -42,12 +42,7 @@ ServiceImpl::~ServiceImpl()
     remove_all_requesters();
     remove_all_repliers();
     
-    // Remove filtered Request/Reply topics
-    if (request_filtered_topic_)
-    {
-        participant_->delete_contentfilteredtopic(request_filtered_topic_);
-    }
-
+    // Remove filtered Reply topic
     if (reply_filtered_topic_)
     {
         participant_->delete_contentfilteredtopic(reply_filtered_topic_);
@@ -221,19 +216,6 @@ ReturnCode_t ServiceImpl::create_request_reply_topics()
     if (!reply_topic_)
     {
         EPROSIMA_LOG_ERROR(SERVICE, "Error creating Reply topic for Service '" << service_name_ << "'");
-        return RETCODE_ERROR;
-    }
-
-    request_filtered_topic_ = participant_->create_contentfilteredtopic(
-        service_name_ + "_RequestFiltered",
-        request_topic_,
-        " ",
-        std::vector<std::string>(),
-        "REQUEST_REPLY_CONTENT_FILTER"); 
-    
-    if (!request_filtered_topic_)
-    {
-        EPROSIMA_LOG_ERROR(SERVICE, "Error creating Content filtered Request topic for Service '" << service_name_ << "'");
         return RETCODE_ERROR;
     }
 

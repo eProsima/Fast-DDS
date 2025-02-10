@@ -49,7 +49,7 @@ public:
             const GUID_t& reader_guid) const override
     {
         static_cast<void>(payload);
-        return sample_info.related_sample_identity.writer_guid() == reader_guid;
+        return sample_info.related_sample_identity.writer_guid().guidPrefix == reader_guid.guidPrefix;
     }
 };
 

@@ -254,7 +254,6 @@ private:
 
     //! Request and Reply filtered topics associated with the service.
     // In a multiple requester - single replier service scenario, each requester will discard the received replies destinated to another requester
-    ContentFilteredTopic* request_filtered_topic_;
     ContentFilteredTopic* reply_filtered_topic_;
 
     bool valid_;
