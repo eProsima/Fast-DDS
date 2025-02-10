@@ -41,19 +41,17 @@ ReplierImpl::ReplierImpl(
 
 ReplierImpl::~ReplierImpl()
 {
-    delete replier_writer_;
-    delete replier_reader_;
-
     if (replier_subscriber_)
     {
         replier_subscriber_->delete_contained_entities();
-        delete replier_subscriber_;
+        // delete replier_subscriber_;
+        service_->participant_->delete_subscriber(replier_subscriber_);
     }
 
     if (replier_publisher_)
     {
         replier_publisher_->delete_contained_entities();
-        delete replier_publisher_;
+        service_->participant_->delete_publisher(replier_publisher_);
     }
 
     service_ = nullptr;
@@ -77,7 +75,12 @@ ReturnCode_t ReplierImpl::take_request(
         SampleInfo& info)
 {
     // TODO Implement matching algorithm
-    return replier_reader_->take_next_sample(data, &info);
+    ReturnCode_t retcode;
+    retcode = replier_reader_->take_next_sample(data, &info);
+    // Related sample identity is stored in sample_indentity member of info. Change it to related_sample_identity
+    info.related_sample_identity = info.sample_identity;
+
+    return retcode;
 }
 
 ReturnCode_t ReplierImpl::take_request(
@@ -123,7 +126,7 @@ ReturnCode_t ReplierImpl::create_dds_entities(const ReplierParams& params)
         return RETCODE_ERROR;
     }
 
-    replier_reader_ = replier_subscriber_->create_datareader(service_->request_filtered_topic_, params.qos().reader_qos);
+    replier_reader_ = replier_subscriber_->create_datareader(service_->request_topic_, params.qos().reader_qos);
 
     if (!replier_reader_)
     {

@@ -41,19 +41,16 @@ RequesterImpl::RequesterImpl(
 
 RequesterImpl::~RequesterImpl()
 {
-    delete requester_writer_;
-    delete requester_reader_;
-
     if (requester_subscriber_)
     {
         requester_subscriber_->delete_contained_entities();
-        delete requester_subscriber_;
+        service_->participant_->delete_subscriber(requester_subscriber_);
     }
 
     if (requester_publisher_)
     {
         requester_publisher_->delete_contained_entities();
-        delete requester_publisher_;
+        service_->participant_->delete_publisher(requester_publisher_);
     }
 
     service_ = nullptr;
