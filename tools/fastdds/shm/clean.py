@@ -179,7 +179,7 @@ class Clean:
             the deleted file names
 
         """
-        segment_lock_re = re.compile('fast_datasharing_([0-9a-f\.]){35}_([\d\.]{7})')
+        segment_lock_re = re.compile(r'fast_datasharing_([0-9a-f\.]){35}_([\d\.]{7})')
         segments_locks = [
             file_name for file_name in self.__list_dir() if segment_lock_re.match(
                 file_name)]
