@@ -32,7 +32,7 @@ namespace rpc {
 /**
  * Base class for all exceptions thrown by the RPC API.
  */
-class FASTDDS_EXPORTED_API RpcException : public std::logic_error
+class FASTDDS_EXPORTED_API RpcException
 {
 
 public:
@@ -44,7 +44,7 @@ public:
      */
     explicit RpcException(
             const std::string& message)
-        : std::logic_error(message)
+        : logic_error_(message)
     {
     }
 
@@ -55,7 +55,7 @@ public:
      */
     explicit RpcException(
             const char* message)
-        : std::logic_error(message)
+        : logic_error_(message)
     {
     }
 
@@ -75,6 +75,18 @@ public:
      * Destructor.
      */
     virtual ~RpcException() noexcept = default;
+
+    /**
+     * Returns the explanatory string.
+     */
+    const char* what() const noexcept
+    {
+        return logic_error_.what();
+    }
+
+private:
+
+    std::logic_error logic_error_;
 
 };
 
