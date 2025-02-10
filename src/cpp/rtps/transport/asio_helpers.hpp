@@ -50,21 +50,60 @@ struct asio_helpers
     {
         asio::error_code ec;
 
+        assert(initial_buffer_value >= minimum_buffer_value);
+
         final_buffer_value = initial_buffer_value;
         while (final_buffer_value >= minimum_buffer_value)
         {
             socket.set_option(BufferOptionType(static_cast<int32_t>(final_buffer_value)), ec);
             if (!ec)
             {
+<<<<<<< HEAD
                 return true;
+=======
+                BufferOptionType option;
+                socket.get_option(option, ec);
+                if (!ec)
+                {
+                    if (option.value() == value_to_set)
+                    {
+                        // Option actually set to the desired value
+                        return true;
+                    }
+                    // Try again with the value actually set
+                    final_buffer_value = option.value();
+                    continue;
+                }
+                // Could not determine the actual value, even though the option was set successfully.
+                // The current buffer size is not defined.
+                return false;
+>>>>>>> 72598404 (Fix error handling logic in `try_setting_buffer_size` (#5631))
             }
 
             final_buffer_value /= 2;
         }
 
         final_buffer_value = minimum_buffer_value;
+<<<<<<< HEAD
         socket.set_option(BufferOptionType(final_buffer_value), ec);
         return !ec;
+=======
+        int32_t value_to_set = static_cast<int32_t>(final_buffer_value);
+        socket.set_option(BufferOptionType(value_to_set), ec);
+        if (!ec)
+        {
+            // Last attempt was successful. Get the actual value set.
+            int32_t max_value = static_cast<int32_t>(initial_buffer_value);
+            BufferOptionType option;
+            socket.get_option(option, ec);
+            if (!ec && (option.value() >= value_to_set) && (option.value() <= max_value))
+            {
+                final_buffer_value = option.value();
+                return true;
+            }
+        }
+        return false;
+>>>>>>> 72598404 (Fix error handling logic in `try_setting_buffer_size` (#5631))
     }
 
     /**
