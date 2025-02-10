@@ -20,11 +20,11 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
-#include <fastdds/utils/IPFinder.hpp>
-#include <fastdds/utils/IPLocator.hpp>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastrtps/utils/IPFinder.h>
+#include <fastrtps/utils/IPLocator.h>
 
-#include <utils/Semaphore.hpp>
+#include <fastrtps/utils/Semaphore.h>
 
 #include <MockReceiverResource.h>
 #include <rtps/transport/asio_helpers.hpp>
