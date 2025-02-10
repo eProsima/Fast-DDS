@@ -62,6 +62,7 @@ public:
      * Will block until an input is available, the input feed has finished, or the timeout expires.
      *
      * @param value The value to read the input into.
+     * @param timeout The maximum time to wait for an input.
      *
      * @return True if a value was read, false if the feed has finished.
      *

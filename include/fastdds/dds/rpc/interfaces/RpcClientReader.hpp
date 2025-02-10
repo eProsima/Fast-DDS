@@ -62,6 +62,7 @@ public:
      * Will block until a reply is available, the replies feed has finished, or the timeout expires.
      *
      * @param value The value to read the reply into.
+     * @param timeout The maximum time to wait for a reply.
      *
      * @return True if a reply was read, false if the feed has finished or has been cancelled.
      *
