@@ -298,7 +298,7 @@ void TCPReqRepHelloWorldRequester::process_status_changes()
 
         if (RETCODE_OK != retcode)
         {
-            EPROSIMA_LOG_ERROR(REQREPHELLOWORLDREQUESTER, "Error processing status changes");
+            std::cout << "TCPRequester: Error processing status changes" << std::endl;
             continue;
         }
 
@@ -316,7 +316,7 @@ void TCPReqRepHelloWorldRequester::process_status_changes()
 
                 if (status_changes.is_active(StatusMask::publication_matched()))
                 {
-                    EPROSIMA_LOG_INFO(TCPREQREPHELLOWORLDREQUESTER, "Processing publication matched status");
+                    std::cout << "TCPRequester: Processing publication matched status" << std::endl;
 
                     DataWriter* writer = dynamic_cast<DataWriter*>(entity);
                     ASSERT_NE(writer, nullptr);
@@ -325,7 +325,7 @@ void TCPReqRepHelloWorldRequester::process_status_changes()
                     PublicationMatchedStatus status;
                     if (RETCODE_OK != writer->get_publication_matched_status(status))
                     {
-                        EPROSIMA_LOG_ERROR(TCPREQREPHELLOWORLDREQUESTER, "Error processing publication matched status");
+                        std::cout << "TCPRequester: Error processing publication matched status" << std::endl;
                         continue;
                     }
 
@@ -336,7 +336,7 @@ void TCPReqRepHelloWorldRequester::process_status_changes()
                 }
                 else if (status_changes.is_active(StatusMask::subscription_matched()))
                 {
-                    EPROSIMA_LOG_INFO(TCPREQREPHELLOWORLDREQUESTER, "Processing subscription matched status");
+                    std::cout << "TCPRequester: Processing subscription matched status" << std::endl;
 
                     DataReader* reader = dynamic_cast<DataReader*>(entity);
                     ASSERT_NE(reader, nullptr);
@@ -345,7 +345,7 @@ void TCPReqRepHelloWorldRequester::process_status_changes()
                     SubscriptionMatchedStatus status;
                     if (RETCODE_OK != reader->get_subscription_matched_status(status))
                     {
-                        EPROSIMA_LOG_ERROR(TCPREQREPHELLOWORLDREQUESTER, "Error processing subscription matched status");
+                        std::cout << "TCPRequester: Error processing subscription matched status" << std::endl;
                         continue;
                     }
 
@@ -360,7 +360,7 @@ void TCPReqRepHelloWorldRequester::process_status_changes()
                 }
                 else if (status_changes.is_active(StatusMask::data_available()))
                 {
-                    EPROSIMA_LOG_INFO(TCPREQREPHELLOWORLDREQUESTER, "Processing data available status");
+                    std::cout << "TCPRequester: Processing data available status" << std::endl;
 
                     DataReader* reader = dynamic_cast<DataReader*>(entity);
                     ASSERT_NE(reader, nullptr);
@@ -385,7 +385,7 @@ void TCPReqRepHelloWorldRequester::process_status_changes()
 
 RequesterParams TCPReqRepHelloWorldRequester::create_requester_params()
 {
-RequesterQos requester_qos;
+    RequesterQos requester_qos;
     DataWriterQos writer_qos;
     DataReaderQos reader_qos;
     RequesterParams requester_params;
@@ -397,6 +397,20 @@ RequesterQos requester_qos;
     reader_qos.reliability().max_blocking_time = Duration_t(1, 0);
     writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     writer_qos.reliability().max_blocking_time = Duration_t(1, 0);
+
+    assert(service_ != nullptr);
+    assert(participant_ != nullptr);
+
+    ServiceTypeSupport service_type = participant_->find_service_type(service_->get_service_type_name());
+
+    requester_qos.service_name = service_->get_service_name();
+    requester_qos.request_topic_name = service_->get_service_name() + "_Request";
+    requester_qos.reply_topic_name = service_->get_service_name() + "_Reply";
+    requester_qos.request_type = service_type.request_type().get_type_name();
+    requester_qos.reply_type = service_type.reply_type().get_type_name();
+    requester_qos.writer_qos = writer_qos;
+    requester_qos.reader_qos = reader_qos;
+    requester_params.qos(requester_qos);
 
     return requester_params;
 }
