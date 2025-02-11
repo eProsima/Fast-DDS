@@ -13,7 +13,17 @@
 # limitations under the License.
 
 if(NOT EXISTS "${PROJECT_SOURCE_DIR}/thirdparty/dds-types-test/IDL")
-    message(FATAL_ERROR "Folder thirdparty/dds-types-test/IDL does not exist. Submodule thirdparty/dds-types-test might not have been initialized.")
+    # Update submodule
+    message(STATUS "Updating submodule thirdparty/dds-types-test")
+    execute_process(
+        COMMAND git submodule update --recursive --init "thirdparty/dds-types-test"
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        RESULT_VARIABLE UPDATE_SUBMODULE_RESULT
+        )
+    # A result different than 0 means that the submodule could not be updated.
+    if(NOT UPDATE_SUBMODULE_RESULT EQUAL 0)
+        message(FATAL_ERROR "Cannot configure Git submodule thirdparty/dds-types-test")
+    endif()
 endif()
 
 if(WIN32)
