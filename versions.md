@@ -1,9 +1,16 @@
 Forthcoming
 -----------
 
+Version v3.1.2
+--------------
+
+* Refactor benchmark example.
+
+Version v3.1.1
+--------------
+
 * New property to configure the preferred key agreement algorithm.
 * Windows ci example testing infrastructure and `hello world` example.
-* Refactor benchmark example.
 
 Version v3.1.0
 --------------
