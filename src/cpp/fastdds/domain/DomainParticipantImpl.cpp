@@ -1949,11 +1949,6 @@ ReturnCode_t DomainParticipantImpl::unregister_service_type(
         }
     }
 
-    {
-        std::lock_guard<std::mutex> lock(mtx_service_types_);
-        service_types_.erase(service_type_name);
-    }
-
     // Unregister request/reply types
     ReturnCode_t ret_code;
     ret_code = unregister_type(t.request_type().get_type_name());
@@ -1969,7 +1964,16 @@ ReturnCode_t DomainParticipantImpl::unregister_service_type(
     if (RETCODE_OK != ret_code)
     {
         EPROSIMA_LOG_ERROR(PARTICIPANT, "Error unregistering Reply Type for Service Type " << service_type_name);
+
+        // Request topic type was unregistered, so register it again to avoid leaving the participant in an inconsistent state
+        register_type(t.request_type(), t.request_type().get_type_name());
+
         return ret_code;
+    }
+
+    {
+        std::lock_guard<std::mutex> lock(mtx_service_types_);
+        service_types_.erase(service_type_name);
     }
 
     return RETCODE_OK;
@@ -2067,6 +2071,16 @@ ReturnCode_t DomainParticipantImpl::delete_service(
         return RETCODE_BAD_PARAMETER;
     }
 
+    const rpc::ServiceImpl* service_impl = dynamic_cast<const rpc::ServiceImpl*>(service);
+    assert(service_impl != nullptr);
+
+    // Check that service belongs to this participant
+    if (service_impl->participant_ != this)
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Service does not belong to this participant.");
+        return RETCODE_PRECONDITION_NOT_MET;
+    }
+
     std::lock_guard<std::mutex> lock(mtx_services_);
     auto it = services_.find(service->get_service_name());
 
@@ -2089,6 +2103,16 @@ rpc::Requester* DomainParticipantImpl::create_service_requester(
     if (!service)
     {
         EPROSIMA_LOG_ERROR(PARTICIPANT, "Service is nullptr.");
+        return nullptr;
+    }
+
+    const rpc::ServiceImpl* service_impl = dynamic_cast<const rpc::ServiceImpl*>(service);
+    assert(service_impl != nullptr);
+
+    // Check that service belongs to this participant
+    if (service_impl->participant_ != this)
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Service does not belong to this participant.");
         return nullptr;
     }
 
@@ -2143,6 +2167,16 @@ rpc::Replier* DomainParticipantImpl::create_service_replier(
     if (!service)
     {
         EPROSIMA_LOG_ERROR(PARTICIPANT, "Service is nullptr.");
+        return nullptr;
+    }
+
+    const rpc::ServiceImpl* service_impl = dynamic_cast<const rpc::ServiceImpl*>(service);
+    assert(service_impl != nullptr);
+
+    // Check that service belongs to this participant
+    if (service_impl->participant_ != this)
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Service does not belong to this participant.");
         return nullptr;
     }
 

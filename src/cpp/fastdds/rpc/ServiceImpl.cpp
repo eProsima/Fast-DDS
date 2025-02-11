@@ -66,6 +66,13 @@ ServiceImpl::~ServiceImpl()
 ReturnCode_t ServiceImpl::remove_requester(
         RequesterImpl* requester)
 {
+    // Check that requester belongs to this service
+    if (requester->service_ != this)
+    {
+        EPROSIMA_LOG_ERROR(SERVICE, "Trying to remove a requester that does not belong to this service.");
+        return RETCODE_PRECONDITION_NOT_MET;
+    }
+
     std::lock_guard<std::mutex> lock(mtx_requesters_);
     auto it = std::find(requesters_.begin(), requesters_.end(), requester);
 
@@ -84,6 +91,13 @@ ReturnCode_t ServiceImpl::remove_requester(
 ReturnCode_t ServiceImpl::remove_replier(
         ReplierImpl* replier)
 {
+    // Check that replier belongs to this service
+    if (replier->service_ != this)
+    {
+        EPROSIMA_LOG_ERROR(SERVICE, "Trying to remove a replier that does not belong to this service.");
+        return RETCODE_PRECONDITION_NOT_MET;
+    }
+
     std::lock_guard<std::mutex> lock(mtx_repliers_);
     auto it = std::find(repliers_.begin(), repliers_.end(), replier);
     if (it == repliers_.end())
