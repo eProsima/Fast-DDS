@@ -15,6 +15,13 @@
 #ifndef _FASTDDS_TCP_TRANSPORT_INTERFACE_H_
 #define _FASTDDS_TCP_TRANSPORT_INTERFACE_H_
 
+#if TLS_FOUND
+#ifdef OPENSSL_API_COMPAT
+#undef OPENSSL_API_COMPAT
+#endif // ifdef OPENSSL_API_COMPAT
+#define OPENSSL_API_COMPAT 10101
+#endif // if TLS_FOUND
+
 #include <vector>
 #include <map>
 #include <memory>
@@ -35,7 +42,6 @@
 #include <rtps/transport/TCPChannelResourceBasic.h>
 
 #if TLS_FOUND
-#define OPENSSL_API_COMPAT 10101
 #include <rtps/transport/TCPAcceptorSecure.h>
 #include <asio/ssl.hpp>
 #endif // if TLS_FOUND
