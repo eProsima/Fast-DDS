@@ -17,6 +17,9 @@ Forthcoming
   * New `ROS2_EASY_MODE` environment variable
   * Extended CLI ``discovery`` command to handle Fast DDS daemon.
   * Added P2P builtin transport.
+* Added RPC over DDS internal API:
+  * New classes: `Service`, `Requester`, `Replier`, `ServiceTypeSupport`
+  * Added methods in DomainParticipant public API
 
 Version v3.1.0
 --------------
