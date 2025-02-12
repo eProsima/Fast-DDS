@@ -17,10 +17,13 @@
  *
  */
 
+#include "xmlparser/XMLParserCommon.h"
 #include <rtps/builtin/discovery/endpoint/EDPStatic.h>
 
+#include <algorithm>
 #include <mutex>
 #include <sstream>
+#include <string>
 
 #include <tinyxml2.h>
 
@@ -42,6 +45,7 @@ namespace rtps {
 const char* exchange_format_property_name = "dds.discovery.static_edp.exchange_format";
 const char* exchange_format_property_value_v1 = "v1";
 const char* exchange_format_property_value_v1_reduced = "v1_Reduced";
+const char* exchange_format_property_value_v2_reduced = "v2_Reduced";
 
 /**
  * Class Property, used to read and write the strings from the properties used to transmit the EntityId_t.
@@ -138,7 +142,11 @@ bool EDPStatic::initEDP(
     {
         if (0 == property.name().compare(exchange_format_property_name))
         {
-            if (0 == property.value().compare(exchange_format_property_value_v1_reduced))
+            if (0 == property.value().compare(exchange_format_property_value_v2_reduced))
+            {
+                exchange_format_ = ExchangeFormat::v2_Reduced;
+            }
+            else if (0 == property.value().compare(exchange_format_property_value_v1_reduced))
             {
                 exchange_format_ = ExchangeFormat::v1_Reduced;
             }
@@ -251,6 +259,209 @@ std::pair<std::string, std::string> EDPStaticProperty::toProperty(
     return prop;
 }
 
+typedef unsigned char uchar;
+static const std::string base64_str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";//=
+static std::string base64_encode(
+        const std::string& in)
+{
+    std::string out;
+
+    int val = 0, valb = -6;
+    for (uchar c : in)
+    {
+        val = (val << 8) + c;
+        valb += 8;
+        while (valb >= 0)
+        {
+            out.push_back(base64_str[(val >> valb) & 0x3F]);
+            valb -= 6;
+        }
+    }
+    if (valb > -6)
+    {
+        out.push_back(base64_str[((val << 8) >> (valb + 8)) & 0x3F]);
+    }
+    return out;
+}
+
+static std::string base64_decode(
+        const std::string& in)
+{
+
+    std::string out;
+
+    std::vector<int> T(256, -1);
+    for (int i = 0; i < 64; i++)
+    {
+        T[base64_str[i]] = i;
+    }
+
+    int val = 0, valb = -8;
+    for (uchar c : in)
+    {
+        if (T[c] == -1)
+        {
+            break;
+        }
+        val = (val << 6) + T[c];
+        valb += 6;
+        if (valb >= 0)
+        {
+            out.push_back(char((val >> valb) & 0xFF));
+            valb -= 8;
+        }
+    }
+    return out;
+}
+
+std::string vector_to_string(
+        const std::vector<uint8_t>& bits)
+{
+    assert(0 == bits.size() % 8);
+    std::string bits_str;
+
+    for (size_t i {0}; i < bits.size(); i += 8)
+    {
+        uint8_t byte {0};
+        for (size_t j {0}; j < 8; ++j)
+        {
+            byte |= bits[i + j] << (7 - j);
+        }
+        bits_str.push_back(byte);
+    }
+
+    return base64_encode(bits_str);
+}
+
+std::vector<uint8_t> string_to_vector(
+        const std::string& bits)
+{
+    std::vector<uint8_t> bits_vector;
+    std::string bits_str {base64_decode(bits)};
+
+    for (uint8_t byte : bits_str)
+    {
+        for (size_t i {0}; i < 8; ++i)
+        {
+            bits_vector.push_back(byte >> (7 - i) & 0x01);
+        }
+    }
+
+    return bits_vector;
+}
+
+bool EDPStatic::enable_reader_on_v2_reduced_property(
+        const std::string& local_participant_name,
+        fastdds::dds::ParameterPropertyList_t& pdp_properties,
+        uint16_t id,
+        bool disable)
+{
+    bool ret_value {false};
+    auto property_it = std::find_if(pdp_properties.begin(), pdp_properties.end(),
+                    [](const fastdds::dds::ParameterProperty_t& property)
+                    {
+                        if (0 == property.first().compare("ESR"))
+                        {
+                            return true;
+                        }
+
+                        return false;
+                    });
+
+    std::vector<uint8_t> bits;
+    std::pair<std::string, std::string> prop;
+
+    if (pdp_properties.end() == property_it)
+    {
+        // Create empty property.
+        prop.first = "ESR";
+        size_t number_of_readers = mp_edpXML->get_number_of_readers(local_participant_name);
+        // Make multiple of 8 bits
+        number_of_readers = (number_of_readers + 7) & ~7;
+        bits = std::vector<uint8_t>(number_of_readers, 0);
+        prop.second = vector_to_string(bits);
+        pdp_properties.push_back(prop);
+        property_it = pdp_properties.begin();
+        auto next_it = pdp_properties.begin();
+        while (++next_it != pdp_properties.end())
+        {
+            property_it = next_it;
+        }
+    }
+    else
+    {
+        bits = string_to_vector(property_it->second());
+    }
+
+    uint32_t position {0};
+    if (xmlparser::XMLP_ret::XML_OK == mp_edpXML->lookforReader(local_participant_name.c_str(), id, nullptr, position))
+    {
+        bits.at(position) = disable ? 0 : 1;
+        prop.first = property_it->first();
+        prop.second = vector_to_string(bits);
+        property_it->modify(prop);
+        ret_value = true;
+    }
+
+    return ret_value;
+}
+
+bool EDPStatic::enable_writer_on_v2_reduced_property(
+        const std::string& local_participant_name,
+        fastdds::dds::ParameterPropertyList_t& pdp_properties,
+        uint16_t id,
+        bool disable)
+{
+    bool ret_value {false};
+    auto property_it = std::find_if(pdp_properties.begin(), pdp_properties.end(),
+                    [](const fastdds::dds::ParameterProperty_t& property)
+                    {
+                        if (0 == property.first().compare("ESW"))
+                        {
+                            return true;
+                        }
+
+                        return false;
+                    });
+
+    std::vector<uint8_t> bits;
+    std::pair<std::string, std::string> prop;
+
+    if (pdp_properties.end() == property_it)
+    {
+        // Create empty property.
+        prop.first = "ESW";
+        size_t number_of_writers = mp_edpXML->get_number_of_writers(local_participant_name);
+        // Make multiple of 8 bits
+        number_of_writers = (number_of_writers + 7) & ~7;
+        bits = std::vector<uint8_t>(number_of_writers, 0);
+        prop.second = vector_to_string(bits);
+        pdp_properties.push_back(prop);
+        property_it = pdp_properties.begin();
+        auto next_it = pdp_properties.begin();
+        while (++next_it != pdp_properties.end())
+        {
+            property_it = next_it;
+        }
+    }
+    else
+    {
+        bits = string_to_vector(property_it->second());
+    }
+
+    uint32_t position {0};
+    if (xmlparser::XMLP_ret::XML_OK == mp_edpXML->lookforWriter(local_participant_name.c_str(), id, nullptr, position))
+    {
+        bits.at(position) = disable ? 0 : 1;
+        prop.first = property_it->first();
+        prop.second = vector_to_string(bits);
+        property_it->modify(prop);
+        ret_value = true;
+    }
+
+    return ret_value;
+}
+
 bool EDPStaticProperty::fromProperty(
         std::pair<std::string, std::string> prop)
 {
@@ -330,8 +541,16 @@ bool EDPStatic::process_reader_proxy_data(
     mp_PDP->getMutex()->lock();
     //Add the property list entry to our local pdp
     ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
-    localpdata->properties.push_back(EDPStaticProperty::toProperty(exchange_format_, "Reader", "ALIVE",
-            rdata->user_defined_id(), rdata->guid.entityId));
+    if (ExchangeFormat::v2_Reduced == exchange_format_)
+    {
+        enable_reader_on_v2_reduced_property(localpdata->participant_name.to_string(), localpdata->properties,
+                rdata->user_defined_id(), false);
+    }
+    else
+    {
+        localpdata->properties.push_back(EDPStaticProperty::toProperty(exchange_format_, "Reader", "ALIVE",
+                rdata->user_defined_id(), rdata->guid.entityId));
+    }
     mp_PDP->getMutex()->unlock();
     this->mp_PDP->announceParticipantState(true);
     return true;
@@ -345,8 +564,16 @@ bool EDPStatic::process_writer_proxy_data(
     mp_PDP->getMutex()->lock();
     //Add the property list entry to our local pdp
     ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
-    localpdata->properties.push_back(EDPStaticProperty::toProperty(exchange_format_, "Writer", "ALIVE",
-            wdata->user_defined_id(), wdata->guid.entityId));
+    if (ExchangeFormat::v2_Reduced == exchange_format_)
+    {
+        enable_writer_on_v2_reduced_property(localpdata->participant_name.to_string(), localpdata->properties,
+                wdata->user_defined_id(), false);
+    }
+    else
+    {
+        localpdata->properties.push_back(EDPStaticProperty::toProperty(exchange_format_, "Writer", "ALIVE",
+                wdata->user_defined_id(), wdata->guid.entityId));
+    }
     mp_PDP->getMutex()->unlock();
     this->mp_PDP->announceParticipantState(true);
     return true;
@@ -355,55 +582,83 @@ bool EDPStatic::process_writer_proxy_data(
 bool EDPStatic::remove_reader(
         RTPSReader* rtps_reader)
 {
+    bool ret_value {false};
     std::lock_guard<std::recursive_mutex> guard(*mp_PDP->getMutex());
     ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
-    for (ParameterPropertyList_t::iterator pit = localpdata->properties.begin();
-            pit != localpdata->properties.end(); ++pit)
+    if (ExchangeFormat::v2_Reduced == exchange_format_)
     {
-        EDPStaticProperty staticproperty;
-        if (staticproperty.fromProperty((*pit).pair()))
+        ret_value = enable_reader_on_v2_reduced_property(
+            localpdata->participant_name.to_string(), localpdata->properties,
+            rtps_reader->getAttributes().getUserDefinedID(), true);
+    }
+    else
+    {
+        for (ParameterPropertyList_t::iterator pit = localpdata->properties.begin();
+                pit != localpdata->properties.end(); ++pit)
         {
-            if (staticproperty.m_entityId == rtps_reader->getGuid().entityId)
+            EDPStaticProperty staticproperty;
+            if (staticproperty.fromProperty((*pit).pair()))
             {
-                auto new_property = EDPStaticProperty::toProperty(exchange_format_, "Reader", "ENDED",
-                                rtps_reader->getAttributes().getUserDefinedID(), rtps_reader->getGuid().entityId);
-                if (!pit->modify(new_property))
+                if (staticproperty.m_entityId == rtps_reader->getGuid().entityId)
                 {
-                    EPROSIMA_LOG_ERROR(RTPS_EDP, "Failed to change property <"
-                            << pit->first() << " | " << pit->second() << "> to <"
-                            << new_property.first << " | " << new_property.second << ">");
+                    auto new_property = EDPStaticProperty::toProperty(exchange_format_, "Reader", "ENDED",
+                                    rtps_reader->getAttributes().getUserDefinedID(), rtps_reader->getGuid().entityId);
+                    if (!pit->modify(new_property))
+                    {
+                        EPROSIMA_LOG_ERROR(RTPS_EDP, "Failed to change property <"
+                                << pit->first() << " | " << pit->second() << "> to <"
+                                << new_property.first << " | " << new_property.second << ">");
+                    }
+                    else
+                    {
+                        ret_value = true;
+                    }
                 }
             }
         }
     }
-    return false;
+    return ret_value;
 }
 
 bool EDPStatic::remove_writer(
         RTPSWriter* rtps_writer)
 {
+    bool ret_value {false};
     std::lock_guard<std::recursive_mutex> guard(*mp_PDP->getMutex());
     ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
-    for (ParameterPropertyList_t::iterator pit = localpdata->properties.begin();
-            pit != localpdata->properties.end(); ++pit)
+    if (ExchangeFormat::v2_Reduced == exchange_format_)
     {
-        EDPStaticProperty staticproperty;
-        if (staticproperty.fromProperty((*pit).pair()))
+        ret_value = enable_writer_on_v2_reduced_property(
+            localpdata->participant_name.to_string(), localpdata->properties,
+            rtps_writer->getAttributes().getUserDefinedID(), true);
+    }
+    else
+    {
+        for (ParameterPropertyList_t::iterator pit = localpdata->properties.begin();
+                pit != localpdata->properties.end(); ++pit)
         {
-            if (staticproperty.m_entityId == rtps_writer->getGuid().entityId)
+            EDPStaticProperty staticproperty;
+            if (staticproperty.fromProperty((*pit).pair()))
             {
-                auto new_property = EDPStaticProperty::toProperty(exchange_format_, "Writer", "ENDED",
-                                rtps_writer->getAttributes().getUserDefinedID(), rtps_writer->getGuid().entityId);
-                if (!pit->modify(new_property))
+                if (staticproperty.m_entityId == rtps_writer->getGuid().entityId)
                 {
-                    EPROSIMA_LOG_ERROR(RTPS_EDP, "Failed to change property <"
-                            << pit->first() << " | " << pit->second() << "> to <"
-                            << new_property.first << " | " << new_property.second << ">");
+                    auto new_property = EDPStaticProperty::toProperty(exchange_format_, "Writer", "ENDED",
+                                    rtps_writer->getAttributes().getUserDefinedID(), rtps_writer->getGuid().entityId);
+                    if (!pit->modify(new_property))
+                    {
+                        EPROSIMA_LOG_ERROR(RTPS_EDP, "Failed to change property <"
+                                << pit->first() << " | " << pit->second() << "> to <"
+                                << new_property.first << " | " << new_property.second << ">");
+                    }
+                    else
+                    {
+                        ret_value = true;
+                    }
                 }
             }
         }
     }
-    return false;
+    return ret_value;
 }
 
 void EDPStatic::assignRemoteEndpoints(
@@ -434,57 +689,103 @@ void EDPStatic::assignRemoteEndpoints(
         persistence_guid.entityId.value[2] = pdata.user_data.at(17);
     }
 
-    for (ParameterPropertyList_t::const_iterator pit = pdata.properties.begin();
-            pit != pdata.properties.end(); ++pit)
+    if (ExchangeFormat::v2_Reduced == exchange_format_)
     {
-        persistence_guid.entityId.value[3] = 0;
-
-        //cout << "STATIC EDP READING PROPERTY " << pit->first << "// " << pit->second << endl;
-        EDPStaticProperty staticproperty;
-        if (staticproperty.fromProperty((*pit).pair()))
+        std::string participant_name {pdata.participant_name.to_string()};
+        for (ParameterPropertyList_t::const_iterator pit = pdata.properties.begin();
+                pit != pdata.properties.end(); ++pit)
         {
-            if (staticproperty.m_endpointType == "Reader" && staticproperty.m_status == "ALIVE")
+            if (0 == pit->first().compare("ESR"))
             {
-                GUID_t guid(pdata.guid.guidPrefix, staticproperty.m_entityId);
-                if (!this->mp_PDP->has_reader_proxy_data(guid))//IF NOT FOUND, we CREATE AND PAIR IT
+                std::vector<uint8_t> bits = string_to_vector(pit->second());
+                for (size_t i {0}; i < bits.size(); ++i)
                 {
-                    newRemoteReader(pdata.guid, pdata.participant_name,
-                            staticproperty.m_userId, staticproperty.m_entityId);
-                }
-            }
-            else if (staticproperty.m_endpointType == "Writer" && staticproperty.m_status == "ALIVE")
-            {
-                GUID_t guid(pdata.guid.guidPrefix, staticproperty.m_entityId);
-                if (!this->mp_PDP->has_writer_proxy_data(guid))//IF NOT FOUND, we CREATE AND PAIR IT
-                {
-                    if (is_persistent_guid)
+                    ReaderProxyData* rdataptr {nullptr};
+                    if (xmlparser::XMLP_ret::XML_OK ==
+                            mp_edpXML->get_reader_from_position(participant_name, i, &rdataptr))
                     {
-                        persistence_guid.entityId.value[3] = static_cast<uint8_t>(staticproperty.m_userId);
+                        if (bits[i] && !this->mp_PDP->has_reader_proxy_data(rdataptr->guid))//IF NOT FOUND, we CREATE AND PAIR IT
+                        {
+                            newRemoteReader(pdata.guid, pdata.participant_name, rdataptr->user_defined_id());
+                        }
+                        else if (!bits[i] && this->mp_PDP->has_reader_proxy_data(rdataptr->guid))
+                        {
+                            this->mp_PDP->removeReaderProxyData(rdataptr->guid);
+                        }
                     }
-                    newRemoteWriter(pdata.guid, pdata.participant_name,
-                            staticproperty.m_userId, staticproperty.m_entityId, persistence_guid);
                 }
             }
-            else if (staticproperty.m_endpointType == "Reader" && staticproperty.m_status == "ENDED")
+            else if (0 == pit->first().compare("ESW"))
             {
-                GUID_t guid(pdata.guid.guidPrefix, staticproperty.m_entityId);
-                this->mp_PDP->removeReaderProxyData(guid);
-            }
-            else if (staticproperty.m_endpointType == "Writer" && staticproperty.m_status == "ENDED")
-            {
-                GUID_t guid(pdata.guid.guidPrefix, staticproperty.m_entityId);
-                this->mp_PDP->removeWriterProxyData(guid);
-            }
-            else
-            {
-                EPROSIMA_LOG_WARNING(RTPS_EDP, "EDPStaticProperty with type: " << staticproperty.m_endpointType
-                                                                               << " and status " << staticproperty.m_status <<
-                        " not recognized");
+                std::vector<uint8_t> bits = string_to_vector(pit->second());
+                for (size_t i {0}; i < bits.size(); ++i)
+                {
+                    WriterProxyData* wdataptr {nullptr};
+                    if (xmlparser::XMLP_ret::XML_OK ==
+                            mp_edpXML->get_writer_from_position(participant_name, i, &wdataptr))
+                    {
+                        if (bits[i] && !this->mp_PDP->has_writer_proxy_data(wdataptr->guid))//IF NOT FOUND, we CREATE AND PAIR IT
+                        {
+                            newRemoteWriter(pdata.guid, pdata.participant_name, wdataptr->user_defined_id());
+                        }
+                        else if (!bits[i] && this->mp_PDP->has_writer_proxy_data(wdataptr->guid))
+                        {
+                            this->mp_PDP->removeWriterProxyData(wdataptr->guid);
+                        }
+                    }
+                }
             }
         }
-        else
+    }
+    else
+    {
+        for (ParameterPropertyList_t::const_iterator pit = pdata.properties.begin();
+                pit != pdata.properties.end(); ++pit)
         {
+            persistence_guid.entityId.value[3] = 0;
 
+            EDPStaticProperty staticproperty;
+            if (staticproperty.fromProperty((*pit).pair()))
+            {
+                if (staticproperty.m_endpointType == "Reader" && staticproperty.m_status == "ALIVE")
+                {
+                    GUID_t guid(pdata.guid.guidPrefix, staticproperty.m_entityId);
+                    if (!this->mp_PDP->has_reader_proxy_data(guid))//IF NOT FOUND, we CREATE AND PAIR IT
+                    {
+                        newRemoteReader(pdata.guid, pdata.participant_name,
+                                staticproperty.m_userId, staticproperty.m_entityId);
+                    }
+                }
+                else if (staticproperty.m_endpointType == "Writer" && staticproperty.m_status == "ALIVE")
+                {
+                    GUID_t guid(pdata.guid.guidPrefix, staticproperty.m_entityId);
+                    if (!this->mp_PDP->has_writer_proxy_data(guid))//IF NOT FOUND, we CREATE AND PAIR IT
+                    {
+                        if (is_persistent_guid)
+                        {
+                            persistence_guid.entityId.value[3] = static_cast<uint8_t>(staticproperty.m_userId);
+                        }
+                        newRemoteWriter(pdata.guid, pdata.participant_name,
+                                staticproperty.m_userId, staticproperty.m_entityId, persistence_guid);
+                    }
+                }
+                else if (staticproperty.m_endpointType == "Reader" && staticproperty.m_status == "ENDED")
+                {
+                    GUID_t guid(pdata.guid.guidPrefix, staticproperty.m_entityId);
+                    this->mp_PDP->removeReaderProxyData(guid);
+                }
+                else if (staticproperty.m_endpointType == "Writer" && staticproperty.m_status == "ENDED")
+                {
+                    GUID_t guid(pdata.guid.guidPrefix, staticproperty.m_entityId);
+                    this->mp_PDP->removeWriterProxyData(guid);
+                }
+                else
+                {
+                    EPROSIMA_LOG_WARNING(RTPS_EDP, "EDPStaticProperty with type: " << staticproperty.m_endpointType
+                                                                                   << " and status " << staticproperty.m_status <<
+                            " not recognized");
+                }
+            }
         }
     }
 }
@@ -496,7 +797,9 @@ bool EDPStatic::newRemoteReader(
         EntityId_t ent_id)
 {
     ReaderProxyData* rpd = NULL;
-    if (mp_edpXML->lookforReader(participant_name, user_id, &rpd) == xmlparser::XMLP_ret::XML_OK)
+    uint32_t position {0};
+
+    if (xmlparser::XMLP_ret::XML_OK == mp_edpXML->lookforReader(participant_name, user_id, &rpd, position))
     {
         EPROSIMA_LOG_INFO(RTPS_EDP, "Activating: " << rpd->guid.entityId << " in topic " << rpd->topic_name);
         GUID_t reader_guid(participant_guid.guidPrefix, ent_id != c_EntityId_Unknown ? ent_id : rpd->guid.entityId);
@@ -549,7 +852,9 @@ bool EDPStatic::newRemoteWriter(
         const GUID_t& persistence_guid)
 {
     WriterProxyData* wpd = NULL;
-    if (mp_edpXML->lookforWriter(participant_name, user_id, &wpd) == xmlparser::XMLP_ret::XML_OK)
+    uint32_t position {0};
+
+    if (xmlparser::XMLP_ret::XML_OK == mp_edpXML->lookforWriter(participant_name, user_id, &wpd, position))
     {
         EPROSIMA_LOG_INFO(RTPS_EDP, "Activating: " << wpd->guid.entityId << " in topic " << wpd->topic_name);
         GUID_t writer_guid(participant_guid.guidPrefix, ent_id != c_EntityId_Unknown ? ent_id : wpd->guid.entityId);
