@@ -61,6 +61,13 @@ void ThroughputPublisher::DataWriterListener::on_publication_matched(
     throughput_publisher_.data_discovery_cv_.notify_one();
 }
 
+void ThroughputPublisher::DataWriterListener::on_unacknowledged_sample_removed(
+        eprosima::fastdds::dds::DataWriter*,
+        const eprosima::fastdds::dds::InstanceHandle_t&)
+{
+    EPROSIMA_LOG_ERROR(THROUGHPUTPUBLISHER, "Unacknowledged sample removed");
+}
+
 // *******************************************************************************************
 // ********************************* COMMAND READER LISTENER *********************************
 // *******************************************************************************************
@@ -131,6 +138,8 @@ bool ThroughputPublisher::init(
         Arg::EnablerValue shared_memory,
         int forced_domain)
 {
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Warning);
+
     pid_ = pid;
     hostname_ = hostname;
     dynamic_types_ = dynamic_types;
@@ -166,6 +175,8 @@ bool ThroughputPublisher::init(
             return false;
         }
     }
+
+    DomainParticipantFactory::get_shared_instance()->load_profiles();
 
     // Apply user's force domain
     if (forced_domain_ >= 0)
@@ -250,26 +261,26 @@ bool ThroughputPublisher::init(
     // Load the property policy specified
     dw_qos_.properties(property_policy);
 
-    // Reliability
-    ReliabilityQosPolicy rp;
-    if (reliable_)
-    {
-        rp.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
-        dw_qos_.reliability(rp);
+    // // Reliability
+    // ReliabilityQosPolicy rp;
+    // if (reliable_)
+    // {
+    //     rp.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    //     dw_qos_.reliability(rp);
 
-        RTPSReliableWriterQos rw_qos;
-        rw_qos.times.heartbeat_period.seconds = 0;
-        rw_qos.times.heartbeat_period.nanosec = 100000000;
-        rw_qos.times.nack_supression_duration = {0, 0};
-        rw_qos.times.nack_response_delay = {0, 0};
+    //     RTPSReliableWriterQos rw_qos;
+    //     rw_qos.times.heartbeat_period.seconds = 0;
+    //     rw_qos.times.heartbeat_period.nanosec = 100000000;
+    //     rw_qos.times.nack_supression_duration = {0, 0};
+    //     rw_qos.times.nack_response_delay = {0, 0};
 
-        dw_qos_.reliable_writer_qos(rw_qos);
-    }
-    else
-    {
-        rp.kind = eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
-        dw_qos_.reliability(rp);
-    }
+    //     dw_qos_.reliable_writer_qos(rw_qos);
+    // }
+    // else
+    // {
+    //     rp.kind = eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
+    //     dw_qos_.reliability(rp);
+    // }
 
     // Set data sharing according with cli. Is disabled by default in all xml profiles
     if (Arg::EnablerValue::ON == data_sharing_)
@@ -514,30 +525,30 @@ void ThroughputPublisher::run(
             max_demand = std::max(current_demand, max_demand);
         }
 
-        if (dw_qos.history().kind == KEEP_LAST_HISTORY_QOS)
-        {
-            // Ensure that the history depth is at least the demand
-            if (dw_qos.history().depth < 0 ||
-                    static_cast<uint32_t>(dw_qos.history().depth) < max_demand)
-            {
-                EPROSIMA_LOG_WARNING(THROUGHPUTPUBLISHER, "Setting history depth to " << max_demand);
-                dw_qos.resource_limits().max_samples = max_demand;
-                dw_qos.history().depth = max_demand;
-            }
-        }
-        // KEEP_ALL case
-        else
-        {
-            // Ensure that the max samples is at least the demand
-            if (dw_qos.resource_limits().max_samples <= 0 ||
-                    static_cast<uint32_t>(dw_qos.resource_limits().max_samples) < max_demand)
-            {
-                EPROSIMA_LOG_WARNING(THROUGHPUTPUBLISHER, "Setting resource limit max samples to " << max_demand);
-                dw_qos.resource_limits().max_samples = max_demand;
-            }
-        }
-        // Set the allocated samples to the max_samples. This is because allocated_sample must be <= max_samples
-        dw_qos.resource_limits().allocated_samples = dw_qos.resource_limits().max_samples;
+        // if (dw_qos.history().kind == KEEP_LAST_HISTORY_QOS)
+        // {
+        //     // Ensure that the history depth is at least the demand
+        //     if (dw_qos.history().depth < 0 ||
+        //             static_cast<uint32_t>(dw_qos.history().depth) < max_demand)
+        //     {
+        //         EPROSIMA_LOG_WARNING(THROUGHPUTPUBLISHER, "Setting history depth to " << max_demand);
+        //         dw_qos.resource_limits().max_samples = max_demand;
+        //         dw_qos.history().depth = max_demand;
+        //     }
+        // }
+        // // KEEP_ALL case
+        // else
+        // {
+        //     // Ensure that the max samples is at least the demand
+        //     if (dw_qos.resource_limits().max_samples <= 0 ||
+        //             static_cast<uint32_t>(dw_qos.resource_limits().max_samples) < max_demand)
+        //     {
+        //         EPROSIMA_LOG_WARNING(THROUGHPUTPUBLISHER, "Setting resource limit max samples to " << max_demand);
+        //         dw_qos.resource_limits().max_samples = max_demand;
+        //     }
+        // }
+        // // Set the allocated samples to the max_samples. This is because allocated_sample must be <= max_samples
+        // dw_qos.resource_limits().allocated_samples = dw_qos.resource_limits().max_samples;
 
         // Notify the new static type to the subscribers
         command.m_command = TYPE_NEW;
@@ -772,7 +783,21 @@ bool ThroughputPublisher::test(
                 throughput_data_->seqnum = ++seqnum;
                 data_writer_->write(throughput_data_);
             }
+
+            // if(sample % 100 == 0)
+            //     std::cout << "Sent NOT LOANED " << sample << " samples" << std::endl;
+            //data_writer_->wait_for_acknowledgments({238, 0});
+
+
         }
+
+        // WAIT FOR ACK: ReturnCode_t wait_for_acknowledgments(const fastdds::dds::Duration_t& )
+
+        // if(data_writer_->wait_for_acknowledgments({20, 0}) != RETCODE_OK)
+        // {
+        //     EPROSIMA_LOG_ERROR(THROUGHPUTPUBLISHER, "Something went wrong: The subscriber has not acknowledged the samples. msg_size: " << msg_size);
+        // }
+
         // Get end time
         t_end_ = std::chrono::steady_clock::now();
         // Add the number of sent samples
@@ -789,6 +814,11 @@ bool ThroughputPublisher::test(
         std::this_thread::sleep_for(recovery_duration_ns - (t_end_ - batch_start));
 
         clock_overhead += t_overhead_ * 2; // We access the clock twice per batch.
+    }
+
+    if(data_writer_->wait_for_acknowledgments({70, 0}) != RETCODE_OK)
+    {
+        EPROSIMA_LOG_ERROR(THROUGHPUTPUBLISHER, "Something went wrong: The subscriber has not acknowledged the samples. msg_size: " << msg_size);
     }
 
     size_t removed = 0;

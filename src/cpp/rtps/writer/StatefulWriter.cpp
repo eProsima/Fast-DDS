@@ -1421,6 +1421,7 @@ void StatefulWriter::rebuild_status_after_load()
     if (min_seq != SequenceNumber_t::unknown())
     {
         biggest_removed_sequence_number_ = min_seq - 1;
+        // std::cout << "rebuild_status_after_load(): Biggest removed sequence number: " << biggest_removed_sequence_number_ << std::endl;
         may_remove_change_ = 1;
     }
 
@@ -1577,6 +1578,7 @@ bool StatefulWriter::try_remove_change(
     // Some changes acked
     if (may_remove_change == 1)
     {
+        // std::cout << "Removing change" << std::endl;
         return history_->remove_min_change();
     }
     // Waiting a change was removed.

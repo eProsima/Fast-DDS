@@ -599,6 +599,11 @@ bool StatefulReader::process_data_msg(
                     IDSTRING "Trying to add change " << change->sequenceNumber << " TO reader: " << getGuid().entityId);
 
             size_t unknown_missing_changes_up_to = pWP ? pWP->unknown_missing_changes_up_to(change->sequenceNumber) : 0;
+
+            // if (unknown_missing_changes_up_to != 0)
+            //     std::cout << "Trying to add whole message change " << change->sequenceNumber << " with unknown_missing_changes_up_to "
+            //               << unknown_missing_changes_up_to << std::endl;
+
             bool will_never_be_accepted = false;
             if (!history_->can_change_be_added_nts(change->writerGUID, change->serializedPayload.length,
                     unknown_missing_changes_up_to, will_never_be_accepted))
@@ -674,7 +679,7 @@ bool StatefulReader::process_data_msg(
             // Perform reception of cache change
             if (!change_received(change_to_add, pWP, unknown_missing_changes_up_to))
             {
-                EPROSIMA_LOG_INFO(RTPS_MSG_IN,
+                EPROSIMA_LOG_WARNING(RTPS_MSG_IN,
                         IDSTRING "Change " << change_to_add->sequenceNumber << " not added to history");
                 change_to_add->serializedPayload.payload_owner->release_payload(change_to_add->serializedPayload);
                 change_pool_->release_cache(change_to_add);
@@ -723,6 +728,11 @@ bool StatefulReader::process_data_frag_msg(
                     getGuid().entityId);
 
             size_t changes_up_to = pWP->unknown_missing_changes_up_to(incomingChange->sequenceNumber);
+
+            // if(changes_up_to != 0)
+            //     std::cout << "Trying to add fragment " << incomingChange->sequenceNumber << " with unknown_missing_changes_up_to "
+            //               << changes_up_to << std::endl;
+
             bool will_never_be_accepted = false;
             if (!history_->can_change_be_added_nts(incomingChange->writerGUID, sampleSize, changes_up_to,
                     will_never_be_accepted))
@@ -1089,6 +1099,8 @@ bool StatefulReader::change_received(
         WriterProxy* prox,
         size_t unknown_missing_changes_up_to)
 {
+    // if(unknown_missing_changes_up_to > 0)
+    //     std::cout << "StatefulReader::change_received, seq_num: " << a_change->sequenceNumber << " unknown_missing_changes_up_to: " << unknown_missing_changes_up_to << std::endl;
     //First look for WriterProxy in case is not provided
     if (prox == nullptr)
     {
@@ -1138,7 +1150,7 @@ bool StatefulReader::change_received(
                     }
                 }
 
-                EPROSIMA_LOG_INFO(RTPS_READER, "Change received from " << a_change->writerGUID << " with sequence number: "
+                EPROSIMA_LOG_WARNING(RTPS_READER, "Change received from " << a_change->writerGUID << " with sequence number: "
                                                                        << a_change->sequenceNumber <<
                         " skipped. Higher sequence numbers have been received.");
                 return false;

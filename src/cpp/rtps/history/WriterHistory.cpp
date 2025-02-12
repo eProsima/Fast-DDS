@@ -386,6 +386,7 @@ bool WriterHistory::remove_min_change(
     }
     else
     {
+        // std::cerr << "Error removing change: m_changes.size() " << m_changes.size() << std::endl;
         return false;
     }
 }

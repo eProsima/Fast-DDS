@@ -132,6 +132,8 @@ int main(
         int argc,
         char** argv)
 {
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Warning);
+
     int columns;
 
 #if defined(_WIN32)
@@ -340,6 +342,7 @@ int main(
                 break;
             case DATA_LOAN:
                 data_loans = true;
+                std::cout << "Using loan sample API" << std::endl;
                 break;
             case SHARED_MEMORY:
                 if (0 == strncasecmp(opt.arg, "on", 2))
@@ -465,7 +468,7 @@ int main(
         std::cout << "Starting throughput test publisher agent" << std::endl;
 
         ThroughputPublisher throughput_publisher;
-
+        std::cout << "Starting throughput test publisher with loans: " << data_loans << std::endl;
         if (throughput_publisher.init(
                     reliable,
                     seed,
@@ -492,7 +495,7 @@ int main(
     }
     else if (test_agent == TestAgent::SUBSCRIBER)
     {
-        std::cout << "Starting throughput test subscriber agent" << std::endl;
+        std::cout << "Starting throughput test subscriber agent with loans: " << data_loans << std::endl;
         ThroughputSubscriber throughput_subscriber;
 
         if (throughput_subscriber.init(

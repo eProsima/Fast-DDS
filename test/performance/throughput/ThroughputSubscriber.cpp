@@ -89,6 +89,7 @@ void ThroughputSubscriber::DataReaderListener::on_data_available(
 {
     if (!enable_)
     {
+        std::cerr << "Listener disabled on_data_available" << std::endl;
         return;
     }
 
@@ -100,44 +101,45 @@ void ThroughputSubscriber::DataReaderListener::on_data_available(
         SampleInfoSeq infos;
         LoanableSequence<ThroughputType> data_seq;
 
-        if (RETCODE_OK != reader->take(data_seq, infos))
+        while (RETCODE_OK == reader->take(data_seq, infos))
         {
-            EPROSIMA_LOG_INFO(ThroughputTest, "Problem reading Subscriber echoed loaned test data");
-            return;
-        }
 
-        // Check for lost samples
-        auto size = data_seq.length();
-        uint32_t last_seq_num = last_seq_num_;
+            // Check for lost samples
+            auto size = data_seq.length();
+            uint32_t last_seq_num = last_seq_num_;
 
-        for (int32_t i = 0; i < size; ++i)
-        {
-            uint32_t seq_num = std::max(data_seq[i].seqnum, last_seq_num);
-            if (seq_num > last_seq_num + 1)
+            for (int32_t i = 0; i < size; ++i)
             {
-                if (!reader->is_sample_valid(&data_seq[i], &infos[i]))
+                uint32_t seq_num = std::max(data_seq[i].seqnum, last_seq_num);
+                if (seq_num > last_seq_num + 1)
                 {
-                    // This was overridden. Counts as a loss
-                    ++lost_samples_;
-                    ++last_seq_num;
-                    continue;
+                    if (!reader->is_sample_valid(&data_seq[i], &infos[i]))
+                    {
+                        // This was overridden. Counts as a loss
+                        ++lost_samples_;
+                        ++last_seq_num;
+                        continue;
+                    }
                 }
+                last_seq_num = seq_num;
+                received_samples_ += 1;
+
+                // if(received_samples_ % 1000 == 0)
+                //     std::cout << "Received loaned sample: " << received_samples_ << " sub.data_loans_: " << sub.data_loans_ << std::endl;
             }
-            last_seq_num = seq_num;
-            received_samples_ += 1;
-        }
 
-        if ((last_seq_num_ + size) < last_seq_num)
-        {
-            lost_samples_ += last_seq_num - last_seq_num_ - size;
-        }
-        last_seq_num_ = last_seq_num;
+            if ((last_seq_num_ + size) < last_seq_num)
+            {
+                lost_samples_ += last_seq_num - last_seq_num_ - size;
+            }
+            last_seq_num_ = last_seq_num;
 
-        // release the reader loan
-        if (RETCODE_OK != reader->return_loan(data_seq, infos))
-        {
-            EPROSIMA_LOG_INFO(ThroughputTest, "Problem returning loaned test data");
-            return;
+            // release the reader loan
+            if (RETCODE_OK != reader->return_loan(data_seq, infos))
+            {
+                EPROSIMA_LOG_INFO(ThroughputTest, "Problem returning loaned test data");
+                return;
+            }
         }
     }
     else
@@ -166,6 +168,9 @@ void ThroughputSubscriber::DataReaderListener::on_data_available(
                 }
                 last_seq_num_ = seq_num;
                 received_samples_ += 1;
+
+                // if(received_samples_ % 1000 == 0)
+                //     std::cout << "Received NOT LOANED sample: " << received_samples_ << std::endl;
             }
             else
             {
@@ -180,6 +185,22 @@ void ThroughputSubscriber::DataReaderListener::save_numbers()
     saved_last_seq_num_ = last_seq_num_;
     saved_lost_samples_ = lost_samples_;
     saved_received_samples_ = received_samples_;
+}
+
+void ThroughputSubscriber::DataReaderListener::on_sample_rejected(
+        DataReader*,
+        const SampleRejectedStatus& status)
+{
+    std::cout << "Sample Rejected. Reason: " << status.last_reason << " Total count change: "
+              << status.total_count_change << " Total count: " << status.total_count << std::endl;
+}
+
+void ThroughputSubscriber::DataReaderListener::on_sample_lost(
+        DataReader*,
+        const SampleLostStatus& status)
+{
+    std::cout << "Sample Lost. Count change: " << status.total_count_change << " Total count: " << status.total_count
+              << std::endl;
 }
 
 // *******************************************************************************************
@@ -580,32 +601,32 @@ int ThroughputSubscriber::process_message()
                     else
                     {
                         // Validate QoS settings
-                        uint32_t max_demand = command.m_demand;
-                        if (dr_qos.history().kind == KEEP_LAST_HISTORY_QOS)
-                        {
-                            // Ensure that the history depth is at least the demand
-                            if (dr_qos.history().depth < 0 ||
-                                    static_cast<uint32_t>(dr_qos.history().depth) < max_demand)
-                            {
-                                EPROSIMA_LOG_WARNING(THROUGHPUTSUBSCRIBER, "Setting history depth to " << max_demand);
-                                dr_qos.resource_limits().max_samples = max_demand;
-                                dr_qos.history().depth = max_demand;
-                            }
-                        }
-                        // KEEP_ALL case
-                        else
-                        {
-                            // Ensure that the max samples is at least the demand
-                            if (dr_qos.resource_limits().max_samples <= 0 ||
-                                    static_cast<uint32_t>(dr_qos.resource_limits().max_samples) < max_demand)
-                            {
-                                EPROSIMA_LOG_WARNING(THROUGHPUTSUBSCRIBER,
-                                        "Setting resource limit max samples to " << max_demand);
-                                dr_qos.resource_limits().max_samples = max_demand;
-                            }
-                        }
-                        // Set the allocated samples to the max_samples. This is because allocated_sample must be <= max_samples
-                        dr_qos.resource_limits().allocated_samples = dr_qos.resource_limits().max_samples;
+                        // uint32_t max_demand = command.m_demand;
+                        // if (dr_qos.history().kind == KEEP_LAST_HISTORY_QOS)
+                        // {
+                        //     // Ensure that the history depth is at least the demand
+                        //     if (dr_qos.history().depth < 0 ||
+                        //             static_cast<uint32_t>(dr_qos.history().depth) < max_demand)
+                        //     {
+                        //         EPROSIMA_LOG_WARNING(THROUGHPUTSUBSCRIBER, "Setting history depth to " << max_demand);
+                        //         dr_qos.resource_limits().max_samples = max_demand;
+                        //         dr_qos.history().depth = max_demand;
+                        //     }
+                        // }
+                        // // KEEP_ALL case
+                        // else
+                        // {
+                        //     // Ensure that the max samples is at least the demand
+                        //     if (dr_qos.resource_limits().max_samples <= 0 ||
+                        //             static_cast<uint32_t>(dr_qos.resource_limits().max_samples) < max_demand)
+                        //     {
+                        //         EPROSIMA_LOG_WARNING(THROUGHPUTSUBSCRIBER,
+                        //                 "Setting resource limit max samples to " << max_demand);
+                        //         dr_qos.resource_limits().max_samples = max_demand;
+                        //     }
+                        // }
+                        // // Set the allocated samples to the max_samples. This is because allocated_sample must be <= max_samples
+                        // dr_qos.resource_limits().allocated_samples = dr_qos.resource_limits().max_samples;
 
                         if (init_static_types(command.m_size) && create_data_endpoints(dr_qos))
                         {
