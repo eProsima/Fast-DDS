@@ -482,7 +482,8 @@ bool TCPTransportInterface::init(
         const fastdds::rtps::PropertyPolicy*,
         const uint32_t& max_msg_size_no_frag)
 {
-    uint32_t maximumMessageSize = max_msg_size_no_frag == 0 ? s_maximumMessageSize : max_msg_size_no_frag;
+    uint32_t maximumMessageSize = max_msg_size_no_frag == 0 ? configuration()->maxMessageSize : max_msg_size_no_frag;
+    EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "NO_ERROR: TCP maxMessageSize is: " << maximumMessageSize);
     uint32_t cfg_max_msg_size = configuration()->maxMessageSize;
     uint32_t cfg_send_size = configuration()->sendBufferSize;
     uint32_t cfg_recv_size = configuration()->receiveBufferSize;

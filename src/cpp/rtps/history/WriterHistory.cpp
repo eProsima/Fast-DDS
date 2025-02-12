@@ -502,6 +502,10 @@ void WriterHistory::set_fragments(
     {
         // Fragment the data.
         // Set the fragment size to the cachechange.
+        // Ensure we are not using fragmentation
+        EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY, "Data is too large to send in one message, DATAS: " <<
+                change->serializedPayload.length << " MAX SIZE: " << final_high_mark_for_frag <<
+                " fragmenting to: " << static_cast<uint16_t>((std::min)(final_high_mark_for_frag, RTPSMessageGroup::get_max_fragment_payload_size())));
         change->setFragmentSize(static_cast<uint16_t>(
                     (std::min)(final_high_mark_for_frag, RTPSMessageGroup::get_max_fragment_payload_size())));
     }

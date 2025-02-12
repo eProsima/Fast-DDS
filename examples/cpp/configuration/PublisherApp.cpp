@@ -83,6 +83,7 @@ PublisherApp::PublisherApp(
     }
     else
     {
+        std::cout << "Using participant profile: " << config.profile_participant << std::endl;
         participant_ = factory->create_participant_with_profile(config.profile_participant);
     }
     if (participant_ == nullptr)

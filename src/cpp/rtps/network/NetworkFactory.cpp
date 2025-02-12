@@ -157,6 +157,8 @@ bool NetworkFactory::RegisterTransport(
             if (descriptor->max_message_size() < maxMessageSizeBetweenTransports_)
             {
                 maxMessageSizeBetweenTransports_ = descriptor->max_message_size();
+                EPROSIMA_LOG_ERROR(RTPS_TRANSPORT, "NO_ERROR: Max message size between transports set to: " <<
+                        maxMessageSizeBetweenTransports_);
             }
 
             if (minSendBufferSize < minSendBufferSize_)
