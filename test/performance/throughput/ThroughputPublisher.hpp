@@ -178,6 +178,10 @@ private:
                 eprosima::fastdds::dds::DataWriter* writer,
                 const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
 
+        void on_unacknowledged_sample_removed(
+            eprosima::fastdds::dds::DataWriter*,
+                const eprosima::fastdds::dds::InstanceHandle_t&) override;
+
         int get_matches() const
         {
             return matched_;

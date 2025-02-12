@@ -202,6 +202,9 @@ bool DataReaderHistory::received_change(
     }
     else
     {
+        // std::cout << "Change not added due to: unknown_missing_changes_up_to: " << unknown_missing_changes_up_to
+        //           << " m_changes.size(): " << m_changes.size() << " max_samples: " << resource_limited_qos_.max_samples
+        //           << std::endl;
         rejection_reason = REJECTED_BY_SAMPLES_LIMIT;
     }
 

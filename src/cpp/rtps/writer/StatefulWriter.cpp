@@ -1414,6 +1414,7 @@ void StatefulWriter::rebuild_status_after_load()
     if (min_seq != SequenceNumber_t::unknown())
     {
         biggest_removed_sequence_number_ = min_seq - 1;
+        // std::cout << "rebuild_status_after_load(): Biggest removed sequence number: " << biggest_removed_sequence_number_ << std::endl;
         may_remove_change_ = 1;
     }
 
@@ -1515,13 +1516,7 @@ void StatefulWriter::check_acked_status()
         if (min_low_mark >= get_seq_num_min())
         {
             // If seq_num_min is unknown is because the history is already empty
-            if(get_seq_num_min() == SequenceNumber_t::unknown())
-            {
-                std::cout << "check_acked_status(): get_seq_num_min() == SequenceNumber_t::unknown()" << std::endl;
-                may_remove_change_ = 2;
-            }
-            else
-                may_remove_change_ = 1;
+            may_remove_change_ = ( get_seq_num_min() == SequenceNumber_t::unknown() ) ? 2 : 1;
         }
 
         min_readers_low_mark_ = min_low_mark;
@@ -1575,6 +1570,7 @@ bool StatefulWriter::try_remove_change(
     // Some changes acked
     if (may_remove_change == 1)
     {
+        // std::cout << "Removing change" << std::endl;
         return history_->remove_min_change();
     }
     // Waiting a change was removed.

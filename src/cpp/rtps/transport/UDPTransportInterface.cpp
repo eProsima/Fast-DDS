@@ -589,7 +589,7 @@ bool UDPTransportInterface::send(
                     return true;
                 }
 
-                EPROSIMA_LOG_WARNING(TRANSPORT_UDP, ec.message());
+                //EPROSIMA_LOG_WARNING(TRANSPORT_UDP, ec.message());
                 return false;
             }
         }

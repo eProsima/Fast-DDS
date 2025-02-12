@@ -79,8 +79,8 @@ struct FlowQueue
     {
         if (!is_empty())
         {
-            return !new_ones_.is_empty() ?
-                   new_ones_.head.writer_info.next : old_ones_.head.writer_info.next;
+            return !old_ones_.is_empty() ?
+                   old_ones_.head.writer_info.next : new_ones_.head.writer_info.next;
         }
 
         return nullptr;

@@ -162,6 +162,15 @@ private:
         void on_data_available(
                 eprosima::fastdds::dds::DataReader* reader) override;
 
+        void on_sample_rejected(
+                eprosima::fastdds::dds::DataReader*,
+                const eprosima::fastdds::dds::SampleRejectedStatus& status);
+
+        void on_sample_lost(
+                eprosima::fastdds::dds::DataReader*,
+                const eprosima::fastdds::dds::SampleLostStatus& status);
+
+
         void reset();
 
         void disable();

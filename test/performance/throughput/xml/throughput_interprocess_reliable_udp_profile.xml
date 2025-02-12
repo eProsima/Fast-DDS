@@ -40,16 +40,34 @@
                     <kind>KEEP_ALL</kind>
                 </historyQos>
                 <resourceLimitsQos>
-                    <max_samples>1</max_samples>
+                    <max_samples>500</max_samples>
                     <max_instances>1</max_instances>
-                    <max_samples_per_instance>1</max_samples_per_instance>
-                    <allocated_samples>1</allocated_samples>
+                    <max_samples_per_instance>500</max_samples_per_instance>
+                    <allocated_samples>500</allocated_samples>
                 </resourceLimitsQos>
             </topic>
             <qos>
+                <publishMode>
+                    <kind>SYNCHRONOUS</kind>
+                </publishMode>
                 <reliability>
                     <kind>RELIABLE</kind>
+                    <max_blocking_time>
+                        <sec>3600</sec>
+                        <nanosec>10</nanosec>
+                    </max_blocking_time>
                 </reliability>
+
+                <!-- <disable_heartbeat_piggyback>true</disable_heartbeat_piggyback> -->
+
+                <!-- <disablePositiveAcks>
+                    <enabled>true</enabled>
+                    <duration>
+                        <sec>0</sec>
+                        <nanosec>10</nanosec>
+                    </duration>
+                </disablePositiveAcks> -->
+
                 <durability>
                     <kind>VOLATILE</kind>
                 </durability>
@@ -57,6 +75,29 @@
                     <kind>OFF</kind>
                 </data_sharing>
             </qos>
+            <times>
+
+                <!-- <initial_heartbeat_delay>
+                    <sec>1</sec>
+                    <nanosec>856000</nanosec>
+                </initial_heartbeat_delay> -->
+
+                <!-- <heartbeat_period>
+                    <sec>0</sec>
+                    <nanosec>5000000</nanosec>
+                </heartbeat_period> -->
+
+                <!-- <nack_response_delay>
+                    <sec>0</sec>
+                    <nanosec>0</nanosec>
+                </nack_response_delay> -->
+
+                <!-- <nack_supression_duration>
+                    <sec>0</sec>
+                    <nanosec>5000000</nanosec>
+                </nack_supression_duration> -->
+
+            </times>
         </data_writer>
 
         <!-- SUBSCRIBER -->
@@ -66,20 +107,45 @@
                     <kind>KEEP_ALL</kind>
                 </historyQos>
                 <resourceLimitsQos>
-                    <max_samples>1</max_samples>
+                    <max_samples>1000</max_samples>
                     <max_instances>1</max_instances>
-                    <max_samples_per_instance>1</max_samples_per_instance>
-                    <allocated_samples>1</allocated_samples>
+                    <max_samples_per_instance>1000</max_samples_per_instance>
+                    <allocated_samples>1000</allocated_samples>
                 </resourceLimitsQos>
             </topic>
             <qos>
                 <reliability>
                     <kind>RELIABLE</kind>
+                    <!-- <max_blocking_time>
+                        <sec>3600</sec>
+                        <nanosec>10</nanosec>
+                    </max_blocking_time> -->
                 </reliability>
+
+                <!-- <disablePositiveAcks>
+                    <enabled>true</enabled>
+                    <duration>
+                        <sec>1</sec>
+                    </duration>
+                </disablePositiveAcks> -->
+
                 <data_sharing>
                     <kind>OFF</kind>
                 </data_sharing>
             </qos>
+             <times>
+
+                <!-- <initial_acknack_delay>
+                    <sec>1</sec>
+                    <nanosec>856000</nanosec>
+                </initial_acknack_delay> -->
+
+                <!-- <heartbeat_response_delay>
+                    <sec>0</sec>
+                    <nanosec>0</nanosec>
+                </heartbeat_response_delay> -->
+
+            </times>
         </data_reader>
     </profiles>
 </dds>
