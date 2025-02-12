@@ -19,14 +19,14 @@
 #include <fastdds/dds/core/LoanableCollection.hpp>
 #include <fastdds/dds/core/LoanableSequence.hpp>
 #include <fastdds/dds/domain/qos/ReplierQos.hpp>
-#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/domain/qos/ReplierQos.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/rpc/Replier.hpp>
-#include <fastdds/dds/rpc/ReplierParams.hpp>
 #include <fastdds/dds/rpc/RequestInfo.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastdds/dds/subscriber/DataReader.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -49,7 +49,7 @@ friend class ServiceImpl;
      */
     ReplierImpl(
             ServiceImpl* service,
-            const ReplierParams& params);
+            const ReplierQos& qos);
 
 public:
 
@@ -121,11 +121,11 @@ private:
     /**
      * @brief Create required DDS entities to enable communication with the requester
      * 
-     * @param params Replier parameters to configure the DDS entities
+     * @param qos Replier QoS to configure the DDS entities
      * 
      * @return RETCODE_OK if all DDS entities were created successfully, RETCODE_ERROR otherwise
      */
-    virtual ReturnCode_t create_dds_entities(const ReplierParams& params);
+    virtual ReturnCode_t create_dds_entities(const ReplierQos& qos);
 
     DataReader* replier_reader_;
     DataWriter* replier_writer_;

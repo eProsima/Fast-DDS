@@ -87,7 +87,7 @@ void ReqRepHelloWorldReplier::init()
     service_ = ReqRepHelloWorldService::init(participant_);
 
     // Create replier
-    replier_ = participant_->create_service_replier(service_, create_replier_params().qos());
+    replier_ = participant_->create_service_replier(service_, create_replier_qos());
 
     ASSERT_NE(replier_, nullptr);
 
@@ -96,8 +96,8 @@ void ReqRepHelloWorldReplier::init()
     initialized_ = true;
 }
 
-void ReqRepHelloWorldReplier::init_with_custom_params(
-        const ReplierParams& replier_params)
+void ReqRepHelloWorldReplier::init_with_custom_qos(
+        const ReplierQos& qos)
 {
     ASSERT_NE(initialized_, true);
 
@@ -111,7 +111,7 @@ void ReqRepHelloWorldReplier::init_with_custom_params(
     service_ = ReqRepHelloWorldService::init(participant_);
 
     // Create replier
-    replier_ = participant_->create_service_replier(service_, replier_params.qos());
+    replier_ = participant_->create_service_replier(service_, qos);
 
     init_processing_thread();
 
@@ -255,12 +255,11 @@ void ReqRepHelloWorldReplier::process_status_changes()
     }
 }
 
-ReplierParams ReqRepHelloWorldReplier::create_replier_params()
+ReplierQos ReqRepHelloWorldReplier::create_replier_qos()
 {
     ReplierQos replier_qos;
     DataWriterQos writer_qos;
     DataReaderQos reader_qos;
-    ReplierParams replier_params;
 
     // Requester/Replier DataWriter QoS configuration
     reader_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
@@ -300,7 +299,6 @@ ReplierParams ReqRepHelloWorldReplier::create_replier_params()
     replier_qos.reply_type = service_type.reply_type().get_type_name();
     replier_qos.writer_qos = writer_qos;
     replier_qos.reader_qos = reader_qos;
-    replier_params.qos(replier_qos);
 
-    return replier_params;
+    return replier_qos;
 }

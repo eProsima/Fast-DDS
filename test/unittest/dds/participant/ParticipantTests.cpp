@@ -33,15 +33,15 @@
 #include <fastdds/dds/domain/qos/DomainParticipantExtendedQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/domain/qos/ReplierQos.hpp>
+#include <fastdds/dds/domain/qos/ReplierQos.hpp>
+#include <fastdds/dds/domain/qos/RequesterQos.hpp>
 #include <fastdds/dds/domain/qos/RequesterQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/rpc/Replier.hpp>
-#include <fastdds/dds/rpc/ReplierParams.hpp>
 #include <fastdds/dds/rpc/Requester.hpp>
-#include <fastdds/dds/rpc/RequesterParams.hpp>
 #include <fastdds/dds/rpc/Service.hpp>
 #include <fastdds/dds/rpc/ServiceTypeSupport.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
@@ -3314,28 +3314,28 @@ TEST(ParticipantTests, CreateRequesterReplierOnExternalService)
     rpc::Service* service_1 = participant_1->create_service("Service", "ServiceType");
     ASSERT_NE(service_1, nullptr);
 
-    rpc::RequesterParams requester_params;
-    requester_params.qos().service_name = "Service";
-    requester_params.qos().request_type = "footype";
-    requester_params.qos().reply_type = "footype";
-    requester_params.qos().request_topic_name = "Service_Request";
-    requester_params.qos().reply_topic_name = "Service_Reply";
-    requester_params.qos().writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    requester_params.qos().reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    rpc::ReplierParams replier_params;
-    replier_params.qos().service_name = "Service";
-    replier_params.qos().request_type = "footype";
-    replier_params.qos().reply_type = "footype";
-    replier_params.qos().request_topic_name = "Service_Request";
-    replier_params.qos().reply_topic_name = "Service_Reply";
-    replier_params.qos().writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    replier_params.qos().reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    RequesterQos requester_qos;
+    requester_qos.service_name = "Service";
+    requester_qos.request_type = "footype";
+    requester_qos.reply_type = "footype";
+    requester_qos.request_topic_name = "Service_Request";
+    requester_qos.reply_topic_name = "Service_Reply";
+    requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    ReplierQos replier_qos;
+    replier_qos.service_name = "Service";
+    replier_qos.request_type = "footype";
+    replier_qos.reply_type = "footype";
+    replier_qos.request_topic_name = "Service_Request";
+    replier_qos.reply_topic_name = "Service_Reply";
+    replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    replier_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
     // Error: Trying to create a requester/replier on a service that belongs to another participant
-    ASSERT_EQ(participant_0->create_service_requester(service_1, requester_params.qos()), nullptr);
-    ASSERT_EQ(participant_1->create_service_replier(service_0, replier_params.qos()), nullptr);
-    ASSERT_EQ(participant_0->create_service_replier(service_1, replier_params.qos()), nullptr);
-    ASSERT_EQ(participant_1->create_service_requester(service_0, requester_params.qos()), nullptr);
+    ASSERT_EQ(participant_0->create_service_requester(service_1, requester_qos), nullptr);
+    ASSERT_EQ(participant_1->create_service_replier(service_0, replier_qos), nullptr);
+    ASSERT_EQ(participant_0->create_service_replier(service_1, replier_qos), nullptr);
+    ASSERT_EQ(participant_1->create_service_requester(service_0, requester_qos), nullptr);
 
     ASSERT_EQ(participant_0->delete_service(service_0), RETCODE_OK);
     ASSERT_EQ(participant_1->delete_service(service_1), RETCODE_OK);
@@ -3362,27 +3362,27 @@ TEST(ParticipantTests, DeleteRequesterReplierOnExternalService)
     rpc::Service* service_1 = participant_1->create_service("Service", "ServiceType");
     ASSERT_NE(service_1, nullptr);
 
-    rpc::RequesterParams requester_params;
-    requester_params.qos().service_name = "Service";
-    requester_params.qos().request_type = "footype";
-    requester_params.qos().reply_type = "footype";
-    requester_params.qos().request_topic_name = "Service_Request";
-    requester_params.qos().reply_topic_name = "Service_Reply";
-    requester_params.qos().writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    requester_params.qos().reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    rpc::ReplierParams replier_params;
-    replier_params.qos().service_name = "Service";
-    replier_params.qos().request_type = "footype";
-    replier_params.qos().reply_type = "footype";
-    replier_params.qos().request_topic_name = "Service_Request";
-    replier_params.qos().reply_topic_name = "Service_Reply";
-    replier_params.qos().writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    replier_params.qos().reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    RequesterQos requester_qos;
+    requester_qos.service_name = "Service";
+    requester_qos.request_type = "footype";
+    requester_qos.reply_type = "footype";
+    requester_qos.request_topic_name = "Service_Request";
+    requester_qos.reply_topic_name = "Service_Reply";
+    requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    ReplierQos replier_qos;
+    replier_qos.service_name = "Service";
+    replier_qos.request_type = "footype";
+    replier_qos.reply_type = "footype";
+    replier_qos.request_topic_name = "Service_Request";
+    replier_qos.reply_topic_name = "Service_Reply";
+    replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    replier_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
-    rpc::Requester* requester_0 = participant_0->create_service_requester(service_0, requester_params.qos());
-    rpc::Requester* requester_1 = participant_1->create_service_requester(service_1, requester_params.qos());
-    rpc::Replier* replier_0 = participant_0->create_service_replier(service_0, replier_params.qos());
-    rpc::Replier* replier_1 = participant_1->create_service_replier(service_1, replier_params.qos());
+    rpc::Requester* requester_0 = participant_0->create_service_requester(service_0, requester_qos);
+    rpc::Requester* requester_1 = participant_1->create_service_requester(service_1, requester_qos);
+    rpc::Replier* replier_0 = participant_0->create_service_replier(service_0, replier_qos);
+    rpc::Replier* replier_1 = participant_1->create_service_replier(service_1, replier_qos);
 
     // Error: Trying to delete a requester/replier on a service that belongs to another participant
     ASSERT_EQ(participant_0->delete_service_requester("Service", requester_1), RETCODE_PRECONDITION_NOT_MET);

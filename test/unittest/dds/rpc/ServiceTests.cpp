@@ -17,12 +17,12 @@
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/qos/ReplierQos.hpp>
+#include <fastdds/dds/domain/qos/RequesterQos.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/rpc/Replier.hpp>
-#include <fastdds/dds/rpc/ReplierParams.hpp>
 #include <fastdds/dds/rpc/Requester.hpp>
-#include <fastdds/dds/rpc/RequesterParams.hpp>
 #include <fastdds/dds/rpc/Service.hpp>
 #include <fastdds/dds/rpc/ServiceTypeSupport.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
@@ -148,26 +148,26 @@ TEST(ServiceTests, CreateRequesterValidParams)
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
-    RequesterParams requester_params;
-    requester_params.qos().service_name = "Service";
-    requester_params.qos().request_type = "footype";
-    requester_params.qos().reply_type = "footype";
-    requester_params.qos().request_topic_name = "Service_Request";
-    requester_params.qos().reply_topic_name = "Service_Reply";
-    requester_params.qos().writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    requester_params.qos().reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    RequesterQos requester_qos;
+    requester_qos.service_name = "Service";
+    requester_qos.request_type = "footype";
+    requester_qos.reply_type = "footype";
+    requester_qos.request_topic_name = "Service_Request";
+    requester_qos.reply_topic_name = "Service_Reply";
+    requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
-    Requester* requester = participant->create_service_requester(service, requester_params.qos());
+    Requester* requester = participant->create_service_requester(service, requester_qos);
     ASSERT_NE(requester, nullptr);
     ASSERT_NE(requester->get_requester_writer(), nullptr);
     ASSERT_NE(requester->get_requester_reader(), nullptr);
 
     EXPECT_EQ(requester->get_service_name(), "Service");
     EXPECT_EQ(requester->get_requester_writer()->get_type(), type);
-    EXPECT_EQ(requester->get_requester_writer()->get_qos(), requester_params.qos().writer_qos);
+    EXPECT_EQ(requester->get_requester_writer()->get_qos(), requester_qos.writer_qos);
     EXPECT_EQ(requester->get_requester_writer()->get_topic()->get_name(), "Service_Request");
     EXPECT_EQ(requester->get_requester_reader()->type(), type);
-    EXPECT_EQ(requester->get_requester_reader()->get_qos(), requester_params.qos().reader_qos);
+    EXPECT_EQ(requester->get_requester_reader()->get_qos(), requester_qos.reader_qos);
     EXPECT_EQ(requester->get_requester_reader()->get_topicdescription()->get_name(), "Service_ReplyFiltered");
 
     ASSERT_EQ(participant->delete_service_requester("Service", requester), RETCODE_OK);
@@ -188,16 +188,16 @@ TEST(ServiceTests, CreateRequesterInvalidServiceName)
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
-    RequesterParams requester_params;
-    requester_params.qos().service_name = "InvalidService";
-    requester_params.qos().request_type = "footype";
-    requester_params.qos().reply_type = "footype";
-    requester_params.qos().request_topic_name = "Service_Request";
-    requester_params.qos().reply_topic_name = "Service_Reply";
-    requester_params.qos().writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    requester_params.qos().reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    RequesterQos requester_qos;
+    requester_qos.service_name = "InvalidService";
+    requester_qos.request_type = "footype";
+    requester_qos.reply_type = "footype";
+    requester_qos.request_topic_name = "Service_Request";
+    requester_qos.reply_topic_name = "Service_Reply";
+    requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
-    Requester* requester = participant->create_service_requester(service, requester_params.qos());
+    Requester* requester = participant->create_service_requester(service, requester_qos);
     ASSERT_EQ(requester, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
@@ -217,16 +217,16 @@ TEST(ServiceTests, CreateRequesterInvalidRequestType)
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
-    RequesterParams requester_params;
-    requester_params.qos().service_name = "Service";
-    requester_params.qos().request_type = "InvalidType";
-    requester_params.qos().reply_type = "footype";
-    requester_params.qos().request_topic_name = "Service_Request";
-    requester_params.qos().reply_topic_name = "Service_Reply";
-    requester_params.qos().writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    requester_params.qos().reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    RequesterQos requester_qos;
+    requester_qos.service_name = "Service";
+    requester_qos.request_type = "InvalidType";
+    requester_qos.reply_type = "footype";
+    requester_qos.request_topic_name = "Service_Request";
+    requester_qos.reply_topic_name = "Service_Reply";
+    requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
-    Requester* requester = participant->create_service_requester(service, requester_params.qos());
+    Requester* requester = participant->create_service_requester(service, requester_qos);
     ASSERT_EQ(requester, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
@@ -246,16 +246,16 @@ TEST(ServiceTests, CreateRequesterInvalidReplyType)
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
-    RequesterParams requester_params;
-    requester_params.qos().service_name = "Service";
-    requester_params.qos().request_type = "footype";
-    requester_params.qos().reply_type = "InvalidType";
-    requester_params.qos().request_topic_name = "Service_Request";
-    requester_params.qos().reply_topic_name = "Service_Reply";
-    requester_params.qos().writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    requester_params.qos().reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    RequesterQos requester_qos;
+    requester_qos.service_name = "Service";
+    requester_qos.request_type = "footype";
+    requester_qos.reply_type = "InvalidType";
+    requester_qos.request_topic_name = "Service_Request";
+    requester_qos.reply_topic_name = "Service_Reply";
+    requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
-    Requester* requester = participant->create_service_requester(service, requester_params.qos());
+    Requester* requester = participant->create_service_requester(service, requester_qos);
     ASSERT_EQ(requester, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
@@ -275,16 +275,16 @@ TEST(ServiceTests, CreateRequesterInvalidRequestTopicName)
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
-    RequesterParams requester_params;
-    requester_params.qos().service_name = "Service";
-    requester_params.qos().request_type = "footype";
-    requester_params.qos().reply_type = "footype";
-    requester_params.qos().request_topic_name = "InvalidRequestTopic";
-    requester_params.qos().reply_topic_name = "Service_Reply";
-    requester_params.qos().writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    requester_params.qos().reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    RequesterQos requester_qos;
+    requester_qos.service_name = "Service";
+    requester_qos.request_type = "footype";
+    requester_qos.reply_type = "footype";
+    requester_qos.request_topic_name = "InvalidRequestTopic";
+    requester_qos.reply_topic_name = "Service_Reply";
+    requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
-    Requester* requester = participant->create_service_requester(service, requester_params.qos());
+    Requester* requester = participant->create_service_requester(service, requester_qos);
     ASSERT_EQ(requester, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
@@ -304,16 +304,16 @@ TEST(ServiceTests, CreateRequesterInvalidReplyTopicName)
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
-    RequesterParams requester_params;
-    requester_params.qos().service_name = "Service";
-    requester_params.qos().request_type = "footype";
-    requester_params.qos().reply_type = "footype";
-    requester_params.qos().request_topic_name = "Service_Request";
-    requester_params.qos().reply_topic_name = "InvalidReplyTopic";
-    requester_params.qos().writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    requester_params.qos().reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    RequesterQos requester_qos;
+    requester_qos.service_name = "Service";
+    requester_qos.request_type = "footype";
+    requester_qos.reply_type = "footype";
+    requester_qos.request_topic_name = "Service_Request";
+    requester_qos.reply_topic_name = "InvalidReplyTopic";
+    requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
-    Requester* requester = participant->create_service_requester(service, requester_params.qos());
+    Requester* requester = participant->create_service_requester(service, requester_qos);
     ASSERT_EQ(requester, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
@@ -333,16 +333,16 @@ TEST(ServiceTests, CreateRequesterInvalidWriterQos)
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
-    RequesterParams requester_params;
-    requester_params.qos().service_name = "Service";
-    requester_params.qos().request_type = "footype";
-    requester_params.qos().reply_type = "footype";
-    requester_params.qos().request_topic_name = "Service_Request";
-    requester_params.qos().reply_topic_name = "Service_Reply";
-    requester_params.qos().writer_qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
-    requester_params.qos().reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    RequesterQos requester_qos;
+    requester_qos.service_name = "Service";
+    requester_qos.request_type = "footype";
+    requester_qos.reply_type = "footype";
+    requester_qos.request_topic_name = "Service_Request";
+    requester_qos.reply_topic_name = "Service_Reply";
+    requester_qos.writer_qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
+    requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
-    Requester* requester = participant->create_service_requester(service, requester_params.qos());
+    Requester* requester = participant->create_service_requester(service, requester_qos);
     ASSERT_EQ(requester, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
@@ -362,16 +362,16 @@ TEST(ServiceTests, CreateRequesterInvalidReaderQos)
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
-    RequesterParams requester_params;
-    requester_params.qos().service_name = "Service";
-    requester_params.qos().request_type = "footype";
-    requester_params.qos().reply_type = "footype";
-    requester_params.qos().request_topic_name = "Service_Request";
-    requester_params.qos().reply_topic_name = "Service_Reply";
-    requester_params.qos().writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    requester_params.qos().reader_qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
+    RequesterQos requester_qos;
+    requester_qos.service_name = "Service";
+    requester_qos.request_type = "footype";
+    requester_qos.reply_type = "footype";
+    requester_qos.request_topic_name = "Service_Request";
+    requester_qos.reply_topic_name = "Service_Reply";
+    requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    requester_qos.reader_qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
 
-    Requester* requester = participant->create_service_requester(service, requester_params.qos());
+    Requester* requester = participant->create_service_requester(service, requester_qos);
     ASSERT_EQ(requester, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
@@ -391,26 +391,26 @@ TEST(ServiceTests, CreateReplierValidParams)
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
-    ReplierParams replier_params;
-    replier_params.qos().service_name = "Service";
-    replier_params.qos().request_type = "footype";
-    replier_params.qos().reply_type = "footype";
-    replier_params.qos().request_topic_name = "Service_Request";
-    replier_params.qos().reply_topic_name = "Service_Reply";
-    replier_params.qos().writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    replier_params.qos().reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    ReplierQos replier_qos;
+    replier_qos.service_name = "Service";
+    replier_qos.request_type = "footype";
+    replier_qos.reply_type = "footype";
+    replier_qos.request_topic_name = "Service_Request";
+    replier_qos.reply_topic_name = "Service_Reply";
+    replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    replier_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
-    Replier* replier = participant->create_service_replier(service, replier_params.qos());
+    Replier* replier = participant->create_service_replier(service, replier_qos);
     ASSERT_NE(replier, nullptr);
     ASSERT_NE(replier->get_replier_writer(), nullptr);
     ASSERT_NE(replier->get_replier_reader(), nullptr);
 
     EXPECT_EQ(replier->get_service_name(), "Service");
     EXPECT_EQ(replier->get_replier_writer()->get_type(), type);
-    EXPECT_EQ(replier->get_replier_writer()->get_qos(), replier_params.qos().writer_qos);
+    EXPECT_EQ(replier->get_replier_writer()->get_qos(), replier_qos.writer_qos);
     EXPECT_EQ(replier->get_replier_writer()->get_topic()->get_name(), "Service_Reply");
     EXPECT_EQ(replier->get_replier_reader()->type(), type);
-    EXPECT_EQ(replier->get_replier_reader()->get_qos(), replier_params.qos().reader_qos);
+    EXPECT_EQ(replier->get_replier_reader()->get_qos(), replier_qos.reader_qos);
     EXPECT_EQ(replier->get_replier_reader()->get_topicdescription()->get_name(), "Service_Request");
 
     ASSERT_EQ(participant->delete_service_replier("Service", replier), RETCODE_OK);
@@ -431,16 +431,16 @@ TEST(ServiceTests, CreateReplierInvalidServiceName)
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
-    ReplierParams replier_params;
-    replier_params.qos().service_name = "InvalidService";
-    replier_params.qos().request_type = "footype";
-    replier_params.qos().reply_type = "footype";
-    replier_params.qos().request_topic_name = "Service_Request";
-    replier_params.qos().reply_topic_name = "Service_Reply";
-    replier_params.qos().writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    replier_params.qos().reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    ReplierQos replier_qos;
+    replier_qos.service_name = "InvalidService";
+    replier_qos.request_type = "footype";
+    replier_qos.reply_type = "footype";
+    replier_qos.request_topic_name = "Service_Request";
+    replier_qos.reply_topic_name = "Service_Reply";
+    replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    replier_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
-    Replier* replier = participant->create_service_replier(service, replier_params.qos());
+    Replier* replier = participant->create_service_replier(service, replier_qos);
     ASSERT_EQ(replier, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
@@ -460,16 +460,16 @@ TEST(ServiceTests, CreateReplierInvalidRequestType)
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
-    ReplierParams replier_params;
-    replier_params.qos().service_name = "Service";
-    replier_params.qos().request_type = "InvalidType";
-    replier_params.qos().reply_type = "footype";
-    replier_params.qos().request_topic_name = "Service_Request";
-    replier_params.qos().reply_topic_name = "Service_Reply";
-    replier_params.qos().writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    replier_params.qos().reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    ReplierQos replier_qos;
+    replier_qos.service_name = "Service";
+    replier_qos.request_type = "InvalidType";
+    replier_qos.reply_type = "footype";
+    replier_qos.request_topic_name = "Service_Request";
+    replier_qos.reply_topic_name = "Service_Reply";
+    replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    replier_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
-    Replier* replier = participant->create_service_replier(service, replier_params.qos());
+    Replier* replier = participant->create_service_replier(service, replier_qos);
     ASSERT_EQ(replier, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
@@ -489,16 +489,16 @@ TEST(ServiceTests, CreateReplierInvalidReplyType)
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
-    ReplierParams replier_params;
-    replier_params.qos().service_name = "Service";
-    replier_params.qos().request_type = "footype";
-    replier_params.qos().reply_type = "InvalidType";
-    replier_params.qos().request_topic_name = "Service_Request";
-    replier_params.qos().reply_topic_name = "Service_Reply";
-    replier_params.qos().writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    replier_params.qos().reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    ReplierQos replier_qos;
+    replier_qos.service_name = "Service";
+    replier_qos.request_type = "footype";
+    replier_qos.reply_type = "InvalidType";
+    replier_qos.request_topic_name = "Service_Request";
+    replier_qos.reply_topic_name = "Service_Reply";
+    replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    replier_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
-    Replier* replier = participant->create_service_replier(service, replier_params.qos());
+    Replier* replier = participant->create_service_replier(service, replier_qos);
     ASSERT_EQ(replier, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
@@ -518,16 +518,16 @@ TEST(ServiceTests, CreateReplierInvalidRequestTopicName)
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
-    ReplierParams replier_params;
-    replier_params.qos().service_name = "Service";
-    replier_params.qos().request_type = "footype";
-    replier_params.qos().reply_type = "footype";
-    replier_params.qos().request_topic_name = "InvalidRequestTopic";
-    replier_params.qos().reply_topic_name = "Service_Reply";
-    replier_params.qos().writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    replier_params.qos().reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    ReplierQos replier_qos;
+    replier_qos.service_name = "Service";
+    replier_qos.request_type = "footype";
+    replier_qos.reply_type = "footype";
+    replier_qos.request_topic_name = "InvalidRequestTopic";
+    replier_qos.reply_topic_name = "Service_Reply";
+    replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    replier_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
-    Replier* replier = participant->create_service_replier(service, replier_params.qos());
+    Replier* replier = participant->create_service_replier(service, replier_qos);
     ASSERT_EQ(replier, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
@@ -547,16 +547,16 @@ TEST(ServiceTests, CreateReplierInvalidReplyTopicName)
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
-    ReplierParams replier_params;
-    replier_params.qos().service_name = "Service";
-    replier_params.qos().request_type = "footype";
-    replier_params.qos().reply_type = "footype";
-    replier_params.qos().request_topic_name = "Service_Request";
-    replier_params.qos().reply_topic_name = "InvalidReplyTopic";
-    replier_params.qos().writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    replier_params.qos().reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    ReplierQos replier_qos;
+    replier_qos.service_name = "Service";
+    replier_qos.request_type = "footype";
+    replier_qos.reply_type = "footype";
+    replier_qos.request_topic_name = "Service_Request";
+    replier_qos.reply_topic_name = "InvalidReplyTopic";
+    replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    replier_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
-    Replier* replier = participant->create_service_replier(service, replier_params.qos());
+    Replier* replier = participant->create_service_replier(service, replier_qos);
     ASSERT_EQ(replier, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
@@ -576,16 +576,16 @@ TEST(ServiceTests, CreateReplierInvalidWriterQos)
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
-    ReplierParams replier_params;
-    replier_params.qos().service_name = "Service";
-    replier_params.qos().request_type = "footype";
-    replier_params.qos().reply_type = "footype";
-    replier_params.qos().request_topic_name = "Service_Request";
-    replier_params.qos().reply_topic_name = "Service_Reply";
-    replier_params.qos().writer_qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
-    replier_params.qos().reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    ReplierQos replier_qos;
+    replier_qos.service_name = "Service";
+    replier_qos.request_type = "footype";
+    replier_qos.reply_type = "footype";
+    replier_qos.request_topic_name = "Service_Request";
+    replier_qos.reply_topic_name = "Service_Reply";
+    replier_qos.writer_qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
+    replier_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
-    Replier* replier = participant->create_service_replier(service, replier_params.qos());
+    Replier* replier = participant->create_service_replier(service, replier_qos);
     ASSERT_EQ(replier, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
@@ -605,16 +605,16 @@ TEST(ServiceTests, CreateReplierInvalidReaderQos)
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
-    ReplierParams replier_params;
-    replier_params.qos().service_name = "Service";
-    replier_params.qos().request_type = "footype";
-    replier_params.qos().reply_type = "footype";
-    replier_params.qos().request_topic_name = "Service_Request";
-    replier_params.qos().reply_topic_name = "Service_Reply";
-    replier_params.qos().writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    replier_params.qos().reader_qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
+    ReplierQos replier_qos;
+    replier_qos.service_name = "Service";
+    replier_qos.request_type = "footype";
+    replier_qos.reply_type = "footype";
+    replier_qos.request_topic_name = "Service_Request";
+    replier_qos.reply_topic_name = "Service_Reply";
+    replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    replier_qos.reader_qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
 
-    Replier* replier = participant->create_service_replier(service, replier_params.qos());
+    Replier* replier = participant->create_service_replier(service, replier_qos);
     ASSERT_EQ(replier, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);

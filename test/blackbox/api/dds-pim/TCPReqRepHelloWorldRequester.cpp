@@ -24,8 +24,8 @@
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/qos/RequesterQos.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
-#include <fastdds/dds/rpc/RequesterParams.hpp>
 #include <fastdds/dds/rpc/RequestInfo.hpp>
 #include <fastdds/dds/rpc/ServiceTypeSupport.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
@@ -181,7 +181,7 @@ void TCPReqRepHelloWorldRequester::init(
     service_ = TCPReqRepHelloWorldService::init(participant_);
 
     // Create requester
-    requester_ = participant_->create_service_requester(service_, create_requester_params().qos());
+    requester_ = participant_->create_service_requester(service_, create_requester_qos());
 
     init_processing_thread();
 
@@ -383,19 +383,18 @@ void TCPReqRepHelloWorldRequester::process_status_changes()
     }
 }
 
-RequesterParams TCPReqRepHelloWorldRequester::create_requester_params()
+RequesterQos TCPReqRepHelloWorldRequester::create_requester_qos()
 {
     RequesterQos requester_qos;
     DataWriterQos writer_qos;
     DataReaderQos reader_qos;
-    RequesterParams requester_params;
 
     reader_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     writer_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     //Increase default max_blocking_time to 1s in case the CPU is overhead
     reader_qos.reliability().max_blocking_time = Duration_t(1, 0);
-    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     writer_qos.reliability().max_blocking_time = Duration_t(1, 0);
 
     assert(service_ != nullptr);
@@ -410,7 +409,6 @@ RequesterParams TCPReqRepHelloWorldRequester::create_requester_params()
     requester_qos.reply_type = service_type.reply_type().get_type_name();
     requester_qos.writer_qos = writer_qos;
     requester_qos.reader_qos = reader_qos;
-    requester_params.qos(requester_qos);
 
-    return requester_params;
+    return requester_qos;
 }

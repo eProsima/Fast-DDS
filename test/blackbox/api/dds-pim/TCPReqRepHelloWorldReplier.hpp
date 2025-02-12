@@ -28,8 +28,8 @@
 #include <fastdds/dds/core/condition/GuardCondition.hpp>
 #include <fastdds/dds/core/condition/WaitSet.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/qos/ReplierQos.hpp>
 #include <fastdds/dds/rpc/Replier.hpp>
-#include <fastdds/dds/rpc/ReplierParams.hpp>
 #include <fastdds/dds/rpc/Service.hpp>
 
 #include "../../common/BlackboxTests.hpp"
@@ -77,7 +77,7 @@ public:
 
     bool is_matched();
 
-    eprosima::fastdds::dds::rpc::ReplierParams create_replier_params();
+    eprosima::fastdds::dds::ReplierQos create_replier_qos();
 
 private:
 

@@ -137,7 +137,7 @@ void TCPReqRepHelloWorldReplier::init(
     service_ = TCPReqRepHelloWorldService::init(participant_);
 
     // Create replier
-    replier_ = participant_->create_service_replier(service_, create_replier_params().qos());
+    replier_ = participant_->create_service_replier(service_, create_replier_qos());
     
     init_processing_thread();
 
@@ -340,13 +340,12 @@ void TCPReqRepHelloWorldReplier::process_status_changes()
     }
 }
 
-ReplierParams TCPReqRepHelloWorldReplier::create_replier_params()
+ReplierQos TCPReqRepHelloWorldReplier::create_replier_qos()
 {
 
     ReplierQos replier_qos;
     DataWriterQos writer_qos;
     DataReaderQos reader_qos;
-    ReplierParams replier_params;
 
     reader_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     writer_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
@@ -370,7 +369,6 @@ ReplierParams TCPReqRepHelloWorldReplier::create_replier_params()
     replier_qos.reply_type = service_type.reply_type().get_type_name();
     replier_qos.writer_qos = writer_qos;
     replier_qos.reader_qos = reader_qos;
-    replier_params.qos(replier_qos);
 
-    return replier_params;
+    return replier_qos;
 }

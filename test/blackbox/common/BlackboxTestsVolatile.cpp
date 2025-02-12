@@ -18,7 +18,7 @@
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
-#include <fastdds/dds/rpc/RequesterParams.hpp>
+#include <fastdds/dds/domain/qos/RequesterQos.hpp>
 
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"

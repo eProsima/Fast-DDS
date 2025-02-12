@@ -133,10 +133,10 @@ void ServiceImpl::remove_all_repliers()
 }
 
 RequesterImpl* ServiceImpl::create_requester(
-        const RequesterParams& params)
+        const RequesterQos& qos)
 {
     // Check if parameters are valid
-    if (!validate_params(params))
+    if (!validate_qos(qos))
     {
         return nullptr;
     }
@@ -145,7 +145,7 @@ RequesterImpl* ServiceImpl::create_requester(
 
     try
     {
-        requester = new RequesterImpl(this, params);
+        requester = new RequesterImpl(this, qos);
     }
     catch (const std::exception& e)
     {
@@ -171,10 +171,10 @@ RequesterImpl* ServiceImpl::create_requester(
 }
 
 ReplierImpl* ServiceImpl::create_replier(
-        const ReplierParams& params)
+        const ReplierQos& qos)
 {
     // Check if parameters are valid
-    if (!validate_params(params))
+    if (!validate_qos(qos))
     {
         return nullptr;
     }
@@ -183,7 +183,7 @@ ReplierImpl* ServiceImpl::create_replier(
 
     try
     {
-        replier = new ReplierImpl(this, params);
+        replier = new ReplierImpl(this, qos);
     }
     catch (const std::exception& e)
     {

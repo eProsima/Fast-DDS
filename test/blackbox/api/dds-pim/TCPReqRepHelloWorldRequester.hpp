@@ -28,8 +28,8 @@
 #include <fastdds/dds/core/condition/GuardCondition.hpp>
 #include <fastdds/dds/core/condition/WaitSet.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/qos/RequesterQos.hpp>
 #include <fastdds/dds/rpc/Requester.hpp>
-#include <fastdds/dds/rpc/RequesterParams.hpp>
 #include <fastdds/dds/rpc/Service.hpp>
 
 #include "../../common/BlackboxTests.hpp"
@@ -81,7 +81,7 @@ public:
     void send(
             const uint16_t number);
 
-    eprosima::fastdds::dds::rpc::RequesterParams create_requester_params();
+    eprosima::fastdds::dds::RequesterQos create_requester_qos();
 
 private:
 

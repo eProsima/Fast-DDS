@@ -21,7 +21,6 @@
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/rpc/Requester.hpp>
-#include <fastdds/dds/rpc/RequesterParams.hpp>
 #include <fastdds/dds/rpc/RequestInfo.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
@@ -49,7 +48,7 @@ friend class ServiceImpl;
      */
     RequesterImpl(
             ServiceImpl* service,
-            const RequesterParams& params);
+            const RequesterQos& qos);
 
 public:
 
@@ -121,11 +120,11 @@ private:
     /**
      * @brief Create required DDS entities to enable communication with the replier
      * 
-     * @param params Requester parameters to configure the DDS entities
+     * @param qos Requester QoS to configure the DDS entities
      * 
      * @return RETCODE_OK if all DDS entities were created successfully, RETCODE_ERROR otherwise
      */
-    virtual ReturnCode_t create_dds_entities(const RequesterParams& params);
+    virtual ReturnCode_t create_dds_entities(const RequesterQos& qos);
 
     DataReader* requester_reader_;
     DataWriter* requester_writer_;

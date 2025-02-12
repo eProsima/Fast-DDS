@@ -28,8 +28,8 @@
 #include <fastdds/dds/core/condition/GuardCondition.hpp>
 #include <fastdds/dds/core/condition/WaitSet.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/qos/RequesterQos.hpp>
 #include <fastdds/dds/rpc/Requester.hpp>
-#include <fastdds/dds/rpc/RequesterParams.hpp>
 #include <fastdds/dds/rpc/Service.hpp>
 
 #include "../../common/BlackboxTests.hpp"
@@ -53,8 +53,8 @@ public:
     void init(
             bool use_volatile = false);
 
-    void init_with_custom_params(
-            const eprosima::fastdds::dds::rpc::RequesterParams& requester_params);
+    void init_with_custom_qos(
+            const eprosima::fastdds::dds::RequesterQos& requester_qos);
 
     void init_with_latency(
             const eprosima::fastdds::dds::Duration_t& latency_budget_duration_pub,
@@ -83,7 +83,7 @@ public:
 
     const eprosima::fastdds::dds::Duration_t datareader_latency_budget_duration() const;
     
-    eprosima::fastdds::dds::rpc::RequesterParams create_requester_params(
+    eprosima::fastdds::dds::RequesterQos create_requester_qos(
             bool volatile_durability_qos = false);
 
 private:

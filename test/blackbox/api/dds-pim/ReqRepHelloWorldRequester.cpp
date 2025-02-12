@@ -89,7 +89,7 @@ void ReqRepHelloWorldRequester::init(
     service_ = ReqRepHelloWorldService::init(participant_);
 
     // Create requester
-    requester_ = participant_->create_service_requester(service_, create_requester_params(use_volatile).qos());
+    requester_ = participant_->create_service_requester(service_, create_requester_qos(use_volatile));
 
     ASSERT_NE(requester_, nullptr);
 
@@ -98,8 +98,8 @@ void ReqRepHelloWorldRequester::init(
     initialized_ = true;
 }
 
-void ReqRepHelloWorldRequester::init_with_custom_params(
-        const RequesterParams& requester_params)
+void ReqRepHelloWorldRequester::init_with_custom_qos(
+        const RequesterQos& requester_qos)
 {
     ASSERT_NE(initialized_, true);
 
@@ -113,7 +113,7 @@ void ReqRepHelloWorldRequester::init_with_custom_params(
     service_ = ReqRepHelloWorldService::init(participant_);
 
     // Create requester
-    requester_ = participant_->create_service_requester(service_, requester_params.qos());
+    requester_ = participant_->create_service_requester(service_, requester_qos);
 
     init_processing_thread();
 
@@ -126,10 +126,6 @@ void ReqRepHelloWorldRequester::init_with_latency(
 {
     ASSERT_NE(initialized_, true);
 
-    RequesterParams requester_params = create_requester_params();
-    requester_params.qos().writer_qos.latency_budget().duration = latency_budget_duration_pub;
-    requester_params.qos().reader_qos.latency_budget().duration = latency_budget_duration_sub;
-
     // Create participant
     participant_ = DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
@@ -139,8 +135,12 @@ void ReqRepHelloWorldRequester::init_with_latency(
     // Register service type and create service
     service_ = ReqRepHelloWorldService::init(participant_);
 
+    RequesterQos requester_qos = create_requester_qos();
+    requester_qos.writer_qos.latency_budget().duration = latency_budget_duration_pub;
+    requester_qos.reader_qos.latency_budget().duration = latency_budget_duration_sub;
+
     // Create requester
-    requester_ = participant_->create_service_requester(service_, requester_params.qos());
+    requester_ = participant_->create_service_requester(service_, requester_qos);
 
     init_processing_thread();
 
@@ -333,13 +333,12 @@ void ReqRepHelloWorldRequester::process_status_changes()
     }
 }
 
-RequesterParams ReqRepHelloWorldRequester::create_requester_params(
+RequesterQos ReqRepHelloWorldRequester::create_requester_qos(
         bool volatile_durability_qos)
 {
-    RequesterQos requester_qos;
     DataWriterQos writer_qos;
     DataReaderQos reader_qos;
-    RequesterParams requester_params;
+    RequesterQos requester_qos;
 
     // Requester/Replier DataWriter QoS configuration
     reader_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
@@ -385,7 +384,6 @@ RequesterParams ReqRepHelloWorldRequester::create_requester_params(
     requester_qos.reply_type = service_type.reply_type().get_type_name();
     requester_qos.writer_qos = writer_qos;
     requester_qos.reader_qos = reader_qos;
-    requester_params.qos(requester_qos);
 
-    return requester_params;
+    return requester_qos;
 }

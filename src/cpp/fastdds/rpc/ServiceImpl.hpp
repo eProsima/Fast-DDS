@@ -17,8 +17,8 @@
 
 #include <mutex>
 
-#include <fastdds/dds/rpc/ReplierParams.hpp>
-#include <fastdds/dds/rpc/RequesterParams.hpp>
+#include <fastdds/dds/domain/qos/ReplierQos.hpp>
+#include <fastdds/dds/domain/qos/RequesterQos.hpp>
 #include <fastdds/dds/rpc/Service.hpp>
 #include <fastdds/dds/topic/ContentFilteredTopic.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
@@ -112,20 +112,20 @@ public:
     /**
      * @brief Create a requester for the service
      * 
-     * @param params Requester configuration parameters
+     * @param qos Requester QoS
      * @return A pointer to the created requester or nullptr if an error occurred
      */
     RequesterImpl* create_requester(
-            const RequesterParams& params);
+            const RequesterQos& qos);
 
     /**
      * @brief Create a replier for the service
      * 
-     * @param params Replier configuration parameters
+     * @param qos Replier QoS
      * @return A pointer to the created replier or nullptr if an error occurred
      */
     ReplierImpl* create_replier(
-            const ReplierParams& params);
+            const ReplierQos& qos);
 
     /**
      * @brief Check if the service is valid (i.e: all DDS entities are correctly created)
@@ -142,77 +142,60 @@ public:
     }
 
     /**
-     * @brief Template methods to validate parameters with a lambda
-     */
-    template <typename T>
-    bool validate_params(
-            const T& params,
-            const std::function<bool(const T&)>& validator)
-    {
-        return validator(params);
-    }
-
-    /**
-     * @brief Validate the requester/replier parameters. They should be consistent with the service configuration
+     * @brief Validate the requester/replier's QoS. They should be consistent with the service configuration
      * 
-     * @param params Requester/replier parameters to validate
+     * @param qos QoS to validate
      * @return True if the parameters are valid, false otherwise
      */
     template <typename T>
-    bool validate_params(const T& params)
+    bool validate_qos(const T& qos)
     {
-        // TODO: This is so ugly. Maybe do a list of validators?
-        std::function<bool(const T&)> validate_qos = [this](const T& params)
+        
+        bool valid = true;
+        
+        if (qos.service_name != service_name_)
         {
-            bool valid = true;
-            const auto& qos = params.qos();
+            EPROSIMA_LOG_ERROR(SERVICE, "Service name in QoS does not match the service name");
+            valid = false;
+        }
+
+        if (qos.request_type != request_topic_->get_type_name())
+        {
+            EPROSIMA_LOG_ERROR(SERVICE, "Request type in QoS does not match the service type name");
+            valid = false;
+        }
+
+        if (qos.reply_type != reply_topic_->get_type_name())
+        {
+            EPROSIMA_LOG_ERROR(SERVICE, "Reply type in QoS does not match the service type name");
+            valid = false;
+        }
             
-            if (qos.service_name != service_name_)
-            {
-                EPROSIMA_LOG_ERROR(SERVICE, "Service name in QoS does not match the service name");
-                valid = false;
-            }
+        if (qos.request_topic_name != request_topic_->get_name())
+        {
+            EPROSIMA_LOG_ERROR(SERVICE, "Request topic name in QoS does not match the request topic name");
+            valid = false;
+        }
 
-            if (qos.request_type != request_topic_->get_type_name())
-            {
-                EPROSIMA_LOG_ERROR(SERVICE, "Request type in QoS does not match the service type name");
-                valid = false;
-            }
+        if (qos.reply_topic_name != reply_topic_->get_name())
+        {
+            EPROSIMA_LOG_ERROR(SERVICE, "Reply topic name in QoS does not match the reply topic name");
+            valid = false;
+        }
 
-            if (qos.reply_type != reply_topic_->get_type_name())
-            {
-                EPROSIMA_LOG_ERROR(SERVICE, "Reply type in QoS does not match the service type name");
-                valid = false;
-            }
-            
-            if (qos.request_topic_name != request_topic_->get_name())
-            {
-                EPROSIMA_LOG_ERROR(SERVICE, "Request topic name in QoS does not match the request topic name");
-                valid = false;
-            }
+        if (qos.writer_qos.reliability().kind != RELIABLE_RELIABILITY_QOS)
+        {
+            EPROSIMA_LOG_ERROR(SERVICE, "Writer QoS reliability must be RELIABLE_RELIABILITY_QOS");
+            valid = false;
+        }
 
-            if (qos.reply_topic_name != reply_topic_->get_name())
-            {
-                EPROSIMA_LOG_ERROR(SERVICE, "Reply topic name in QoS does not match the reply topic name");
-                valid = false;
-            }
+        if (qos.reader_qos.reliability().kind != RELIABLE_RELIABILITY_QOS)
+        {
+            EPROSIMA_LOG_ERROR(SERVICE, "Reader QoS reliability must be RELIABLE_RELIABILITY_QOS");
+            valid = false;
+        }
 
-            if (qos.writer_qos.reliability().kind != RELIABLE_RELIABILITY_QOS)
-            {
-                EPROSIMA_LOG_ERROR(SERVICE, "Writer QoS reliability must be RELIABLE_RELIABILITY_QOS");
-                valid = false;
-            }
-
-            if (qos.reader_qos.reliability().kind != RELIABLE_RELIABILITY_QOS)
-            {
-                EPROSIMA_LOG_ERROR(SERVICE, "Reader QoS reliability must be RELIABLE_RELIABILITY_QOS");
-                valid = false;
-            }
-
-            return valid;
-        };
-
-        return validate_params(params, validate_qos);
+        return valid;
     }
 
 private:

@@ -2131,9 +2131,7 @@ rpc::Requester* DomainParticipantImpl::create_service_requester(
     }
 
     // Create the requester and register it in the service
-    rpc::RequesterParams params;
-    params.qos(qos);
-    rpc::Requester* requester = it->second->create_requester(params);
+    rpc::Requester* requester = it->second->create_requester(qos);
 
     return requester;
 }
@@ -2195,9 +2193,7 @@ rpc::Replier* DomainParticipantImpl::create_service_replier(
     }
 
     // Create the replier and register it in the service
-    rpc::ReplierParams params;
-    params.qos(qos);
-    rpc::Replier* replier = it->second->create_replier(params);
+    rpc::Replier* replier = it->second->create_replier(qos);
 
     return replier;
 }

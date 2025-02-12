@@ -28,8 +28,8 @@
 #include <fastdds/dds/core/condition/GuardCondition.hpp>
 #include <fastdds/dds/core/condition/WaitSet.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/qos/ReplierQos.hpp>
 #include <fastdds/dds/rpc/Replier.hpp>
-#include <fastdds/dds/rpc/ReplierParams.hpp>
 #include <fastdds/dds/rpc/Service.hpp>
 
 #include "../../common/BlackboxTests.hpp"
@@ -52,8 +52,8 @@ public:
 
     void init();
 
-    void init_with_custom_params(
-            const eprosima::fastdds::dds::rpc::ReplierParams& replier_params);
+    void init_with_custom_qos(
+            const eprosima::fastdds::dds::ReplierQos& replier_qos);
 
     bool isInitialized() const
     {
@@ -68,7 +68,7 @@ public:
 
     void matched();
 
-    eprosima::fastdds::dds::rpc::ReplierParams create_replier_params();
+    eprosima::fastdds::dds::ReplierQos create_replier_qos();
 
 private:
 
