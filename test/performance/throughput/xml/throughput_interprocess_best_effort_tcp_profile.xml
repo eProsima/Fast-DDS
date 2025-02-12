@@ -11,6 +11,9 @@
                 <calculate_crc>false</calculate_crc>
                 <check_crc>false</check_crc>
                 <enable_tcp_nodelay>true</enable_tcp_nodelay>
+                <sendBufferSize>1100000</sendBufferSize>
+                <receiveBufferSize>1100000</receiveBufferSize>
+                <maxMessageSize>1100000</maxMessageSize>
                 <listening_ports>
                         <port>7400</port>
                 </listening_ports>
@@ -19,6 +22,9 @@
             <transport_descriptor>
                 <transport_id>throughput_subscriber_tcp_transport</transport_id>
                 <type>TCPv4</type>
+                <sendBufferSize>1100000</sendBufferSize>
+                <receiveBufferSize>1100000</receiveBufferSize>
+                <maxMessageSize>1100000</maxMessageSize>
                 <keep_alive_frequency_ms>1000</keep_alive_frequency_ms>
                 <keep_alive_timeout_ms>10000</keep_alive_timeout_ms>
                 <calculate_crc>false</calculate_crc>
