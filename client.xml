@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+    <transport_descriptors>
+        <transport_descriptor>
+            <transport_id>TCP_transport</transport_id>
+            <type>TCPv4</type>
+            <sendBufferSize>1100000</sendBufferSize>
+            <receiveBufferSize>1100000</receiveBufferSize>
+            <maxMessageSize>1100000</maxMessageSize>
+        </transport_descriptor>
+    </transport_descriptors>
+
+    <participant profile_name="client" is_default_profile="true">
+        <rtps>
+            <name>client</name>
+            <userTransports>
+                <transport_id>TCP_transport</transport_id>
+            </userTransports>
+            <useBuiltinTransports>false</useBuiltinTransports>
+            <builtin>
+                <initialPeersList>
+                    <locator>
+                        <tcpv4>
+                            <address>192.168.77.238</address>
+                            <physical_port>12345</physical_port>
+                            <port>12345</port>
+                        </tcpv4>
+                    </locator>
+                </initialPeersList>
+            </builtin>
+
+            <propertiesPolicy>
+                <properties>
+                    <property>
+                        <name>fastdds.type_propagation</name>
+                        <value>disabled</value>
+                    </property>
+                </properties>
+            </propertiesPolicy>
+        </rtps>
+    </participant>
+</profiles>
+
