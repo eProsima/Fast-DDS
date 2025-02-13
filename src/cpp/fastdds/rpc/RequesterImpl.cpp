@@ -72,7 +72,7 @@ ReturnCode_t RequesterImpl::send_request(
 
     retcode = requester_writer_->write(data, wparams);
     // Fill RequestInfo's related sample identity with the information expected for the corresponding reply
-    info.related_sample_identity = wparams.related_sample_identity();
+    info.related_sample_identity = wparams.sample_identity();
 
     return retcode;
 }
