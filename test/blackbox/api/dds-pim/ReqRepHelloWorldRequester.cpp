@@ -28,7 +28,6 @@
 #include <fastdds/dds/rpc/RequestInfo.hpp>
 #include <fastdds/dds/rpc/ServiceTypeSupport.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
-#include <fastdds/dds/subscriber/SampleInfo.hpp>
 
 #include "ReqRepHelloWorldRequester.hpp"
 #include "ReqRepHelloWorldService.hpp"
@@ -214,7 +213,7 @@ void ReqRepHelloWorldRequester::send(
     }
 
     ASSERT_EQ(requester_->send_request((void *)&hello, info), RETCODE_OK);
-    related_sample_identity_ = info.related_sample_identity();
+    related_sample_identity_ = info.related_sample_identity;
     
     ASSERT_NE(related_sample_identity_.sequence_number(), SequenceNumber_t());
 }
@@ -317,7 +316,7 @@ void ReqRepHelloWorldRequester::process_status_changes()
                     ASSERT_EQ(*reader, *(requester_->get_requester_reader()));
 
                     HelloWorld hello;
-                    SampleInfo info;
+                    RequestInfo info;
 
                     if (RETCODE_OK == requester_->take_reply((void*)&hello, info))
                     {

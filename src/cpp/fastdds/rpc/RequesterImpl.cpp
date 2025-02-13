@@ -14,6 +14,7 @@
 
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/common/WriteParams.hpp>
 
 #include "RequesterImpl.hpp"
 #include "ServiceImpl.hpp"
@@ -66,12 +67,19 @@ ReturnCode_t RequesterImpl::send_request(
         RequestInfo& info)
 {
     // TODO: Implement here the endpoint matching algorithm
-    return requester_writer_->write(data, info);
+    rtps::WriteParams wparams;
+    ReturnCode_t retcode;
+
+    retcode = requester_writer_->write(data, wparams);
+    // Fill RequestInfo's related sample identity with the information expected for the corresponding reply
+    info.related_sample_identity = wparams.related_sample_identity();
+
+    return retcode;
 }
 
 ReturnCode_t RequesterImpl::take_reply(
         void* data,
-        SampleInfo& info)
+        RequestInfo& info)
 {
     // TODO: Implement here the endpoint matching algorithm
     return requester_reader_->take_next_sample(data, &info);
@@ -79,7 +87,7 @@ ReturnCode_t RequesterImpl::take_reply(
 
 ReturnCode_t RequesterImpl::take_reply(
         LoanableCollection& data,
-        LoanableSequence<SampleInfo>& info)
+        LoanableSequence<RequestInfo>& info)
 {
     // TODO: Implement here the endpoint matching algorithm
     return requester_reader_->take(data, info);

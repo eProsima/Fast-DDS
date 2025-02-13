@@ -17,13 +17,13 @@
 
 #include <fastdds/dds/core/LoanableSequence.hpp>
 #include <fastdds/dds/rpc/RPCEntity.hpp>
+#include <fastdds/dds/rpc/RequestInfo.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
 class LoanableCollection;
-class SampleInfo;
 class DataWriter;
 class DataReader;
 
@@ -31,8 +31,6 @@ class DataReader;
 
 namespace dds {
 namespace rpc {
-
-class RequestInfo;
 
 /**
  * @brief Base class for a Requester in the RPC communication
@@ -72,7 +70,7 @@ public:
      */
     virtual ReturnCode_t take_reply(
             void* data,
-            SampleInfo& info) = 0;
+            RequestInfo& info) = 0;
 
     /**
      * @brief Take all reply messages stored in the Requester DataReader's history.
@@ -84,7 +82,7 @@ public:
      */
     virtual ReturnCode_t take_reply(
             LoanableCollection& data,
-            LoanableSequence<SampleInfo>& info) = 0;
+            LoanableSequence<RequestInfo>& info) = 0;
 
     /**
      * @brief Getter for the Requester's DataWriter

@@ -15,19 +15,14 @@
 #ifndef FASTDDS_DDS_RPC__REQUESTINFO_HPP
 #define FASTDDS_DDS_RPC__REQUESTINFO_HPP
 
-#include <fastdds/rtps/common/WriteParams.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 namespace rpc {
 
-/**
- * @brief Class that represents the information sended in a request/reply sample
- */
-class RequestInfo : public rtps::WriteParams
-{
-};
+using RequestInfo = SampleInfo;
 
 } // namespace rpc
 } // namespace dds

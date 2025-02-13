@@ -19,13 +19,11 @@
 #include <fastdds/dds/core/LoanableCollection.hpp>
 #include <fastdds/dds/core/LoanableSequence.hpp>
 #include <fastdds/dds/domain/qos/ReplierQos.hpp>
-#include <fastdds/dds/domain/qos/ReplierQos.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/rpc/Replier.hpp>
 #include <fastdds/dds/rpc/RequestInfo.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
-#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 
 namespace eprosima {
@@ -83,7 +81,7 @@ public:
      */
     virtual ReturnCode_t take_request(
             void* data,
-            SampleInfo& info) override;
+            RequestInfo& info) override;
 
     /**
      * @brief Take all request messages stored in the Replier DataReader's history.
@@ -95,7 +93,7 @@ public:
      */
     virtual ReturnCode_t take_request(
             LoanableCollection& data,
-            LoanableSequence<SampleInfo>& info) override;
+            LoanableSequence<RequestInfo>& info) override;
 
     /**
      * @brief Check if the replier is valid (i.e: all DDS entities are correctly created)

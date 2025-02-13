@@ -14,6 +14,7 @@
 
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/common/WriteParams.hpp>
 
 #include "ReplierImpl.hpp"
 #include "ServiceImpl.hpp"
@@ -67,12 +68,15 @@ ReturnCode_t ReplierImpl::send_reply(
         RequestInfo& info)
 {
     // TODO Implement matching algorithm
-    return replier_writer_->write(data, info);
+    rtps::WriteParams wparams;
+    wparams.related_sample_identity(info.related_sample_identity);
+
+    return replier_writer_->write(data, wparams);
 }
 
 ReturnCode_t ReplierImpl::take_request(
         void* data,
-        SampleInfo& info)
+        RequestInfo& info)
 {
     // TODO Implement matching algorithm
     ReturnCode_t retcode;
@@ -85,10 +89,19 @@ ReturnCode_t ReplierImpl::take_request(
 
 ReturnCode_t ReplierImpl::take_request(
         LoanableCollection& data,
-        LoanableSequence<SampleInfo>& info)
+        LoanableSequence<RequestInfo>& info)
 {
     // TODO Implement matching algorithm
-    return replier_reader_->take(data, info);
+    ReturnCode_t retcode;
+    retcode = replier_reader_->take(data, info);
+    
+    // Fill related_sample_identity attribute
+    for (LoanableCollection::size_type i = 0; i < info.length(); ++i)
+    {
+        info[i].related_sample_identity = info[i].sample_identity;
+    }
+
+    return retcode;
 }
 
 ReturnCode_t ReplierImpl::create_dds_entities(const ReplierQos& qos)

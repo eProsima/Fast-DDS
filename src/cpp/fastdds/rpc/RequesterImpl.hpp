@@ -23,7 +23,6 @@
 #include <fastdds/dds/rpc/Requester.hpp>
 #include <fastdds/dds/rpc/RequestInfo.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
-#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/rtps/common/SampleIdentity.hpp>
 
@@ -82,7 +81,7 @@ public:
      */
     ReturnCode_t take_reply(
             void* data,
-            SampleInfo& info) override;
+            RequestInfo& info) override;
 
     /**
      * @brief Take all reply messages stored in the Requester DataReader's history.
@@ -94,7 +93,7 @@ public:
      */
     ReturnCode_t take_reply(
             LoanableCollection& data,
-            LoanableSequence<SampleInfo>& info) override;
+            LoanableSequence<RequestInfo>& info) override;
 
     /**
      * @brief Check if the requester is valid (i.e: all DDS entities are correctly created)
