@@ -4251,8 +4251,6 @@ private:
 
 };
 
-
-
 /*!
  * @brief This class represents the TopicDataType of the type ArraySingleDimensionLiteralsShort defined by the user in the IDL file.
  * @ingroup arrays

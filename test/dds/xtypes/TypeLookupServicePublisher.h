@@ -877,6 +877,7 @@ private:
         PUBLISHER_TYPE_CREATOR_FUNCTION(UnionDiscriminatorUShort);
         PUBLISHER_TYPE_CREATOR_FUNCTION(UnionDiscriminatorWChar);
         PUBLISHER_TYPE_CREATOR_FUNCTION(UnionDouble);
+        PUBLISHER_TYPE_CREATOR_FUNCTION(UnionFixedStringAlias);
         PUBLISHER_TYPE_CREATOR_FUNCTION(UnionFloat);
         PUBLISHER_TYPE_CREATOR_FUNCTION(UnionInnerAliasHelper);
         PUBLISHER_TYPE_CREATOR_FUNCTION(UnionInnerBitMaskHelper);

@@ -394,17 +394,5 @@ void InnerEmptyStructureHelperPubSubType::register_type_object_representation()
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 // Include auxiliary functions like for serializing/deserializing.
 #include "basic_inner_typesCdrAux.ipp"
