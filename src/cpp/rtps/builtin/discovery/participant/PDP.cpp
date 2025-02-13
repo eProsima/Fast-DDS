@@ -1550,20 +1550,21 @@ void PDP::set_external_participant_properties_(
 
     // Set participant type property
     // TODO: This could be done somewhere else that makes more sense.
-    std::stringstream participant_type;
-    participant_type << part_attributes.builtin.discovery_config.discoveryProtocol;
-    auto ptype = participant_type.str();
-    participant_data->properties.push_back(fastdds::dds::parameter_property_participant_type, ptype);
+    /*
+        std::stringstream participant_type;
+        participant_type << part_attributes.builtin.discovery_config.discoveryProtocol;
+        auto ptype = participant_type.str();
+        participant_data->properties.push_back(fastdds::dds::parameter_property_participant_type, ptype);
 
-    // Add physical properties if present
-    // TODO: This should be done using propagate value, however this cannot be done without breaking compatibility
-    std::vector<std::string> physical_property_names = {
+       // Add physical properties if present
+       // TODO: This should be done using propagate value, however this cannot be done without breaking compatibility
+       std::vector<std::string> physical_property_names = {
         fastdds::dds::parameter_policy_physical_data_host,
         fastdds::dds::parameter_policy_physical_data_user,
         fastdds::dds::parameter_policy_physical_data_process
-    };
-    for (auto physical_property_name : physical_property_names)
-    {
+       };
+       for (auto physical_property_name : physical_property_names)
+       {
         auto properties = part_attributes.properties;
         std::string* physical_property = PropertyPolicyHelper::find_property(
             properties, physical_property_name);
@@ -1572,7 +1573,8 @@ void PDP::set_external_participant_properties_(
         {
             participant_data->properties.push_back(physical_property_name, *physical_property);
         }
-    }
+       }
+     */
 }
 
 static void set_builtin_matched_allocation(
