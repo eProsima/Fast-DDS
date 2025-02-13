@@ -53,6 +53,7 @@
 #include <rtps/builtin/discovery/participant/PDPClient.h>
 #include <rtps/builtin/discovery/participant/PDPServer.hpp>
 #include <rtps/builtin/discovery/participant/PDPSimple.h>
+#include <rtps/builtin/discovery/participant/simple/PDPStatelessWriter.hpp>
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/DataSharing/WriterPool.hpp>
 #include <rtps/history/BasicPayloadPool.hpp>
@@ -1231,7 +1232,7 @@ bool RTPSParticipantImpl::create_writer(
         return false;
     }
 
-    auto callback = [hist, listen, this]
+    auto callback = [hist, listen, entityId, this]
                 (const GUID_t& guid, WriterAttributes& watt, FlowController* flow_controller,
                     IPersistenceService* persistence, bool is_reliable) -> BaseWriter*
             {
@@ -1251,7 +1252,11 @@ bool RTPSParticipantImpl::create_writer(
                 }
                 else
                 {
-                    if (persistence != nullptr)
+                    if (entityId == c_EntityId_SPDPWriter)
+                    {
+                        writer = new PDPStatelessWriter(this, guid, watt, flow_controller, hist, listen);
+                    }
+                    else if (persistence != nullptr)
                     {
                         writer = new StatelessPersistentWriter(this, guid, watt,
                                         flow_controller, hist, listen, persistence);
