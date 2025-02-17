@@ -1,5 +1,5 @@
-Forthcoming
------------
+Version v3.0.2 (EOL)
+-------------------
 
 * New property to configure the preferred key agreement algorithm.
 * Windows ci example testing infrastructure and `hello world` example.
