@@ -88,7 +88,7 @@ public:
      * @brief Registers the service type on a participant
      *
      * @param participant DomainParticipant where the service type is going to be registered
-     * @param service_name Name of the service type to register
+     * @param service_type_name Name of the service type to register
      * @return RETCODE_BAD_PARAMETER if the service name is empty, RETCODE_PRECONDITION_NOT_MET if there is another service with
      * the same name registered on the DomainParticipant and RETCODE_OK if it is registered correctly
      */

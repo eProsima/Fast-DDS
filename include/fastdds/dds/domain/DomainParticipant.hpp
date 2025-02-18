@@ -453,9 +453,9 @@ public:
      * Create a RPC Replier in a given Service. It will override the current service's replier
      * 
      * @param service Pointer to a service object where the Replier will be created.
-     * @param requester_qos QoS of the requester.
+     * @param replier_qos QoS of the replier.
      * 
-     * @return Pointer to the created requester. nullptr in error case.
+     * @return Pointer to the created replier. nullptr in error case.
      */
     FASTDDS_EXPORTED_API rpc::Replier* create_service_replier(
             rpc::Service* service,
