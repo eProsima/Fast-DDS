@@ -542,6 +542,17 @@ bool StatelessWriter::matched_reader_add_edp(
                                                         << " as remote reader");
     }
 
+    // Create sender resources for the case when we send to a single reader
+    locator_selector_.locator_selector.reset(false);
+    locator_selector_.locator_selector.enable(data.guid());
+    mp_RTPSParticipant->network_factory().select_locators(locator_selector_.locator_selector);
+    RTPSParticipantImpl* part = mp_RTPSParticipant;
+    locator_selector_.locator_selector.for_each([part](const Locator_t& loc)
+            {
+                part->createSenderResources(loc);
+            });
+
+    // Create sender resources for the case when we send to all readers
     update_reader_info(true);
 
     if (nullptr != listener_)
@@ -562,26 +573,6 @@ bool StatelessWriter::matched_reader_add_edp(
         mp_RTPSParticipant->get_connections_observer()->on_local_entity_connections_change(m_guid);
     }
 #endif //FASTDDS_STATISTICS
-
-    return true;
-}
-
-bool StatelessWriter::set_fixed_locators(
-        const LocatorList_t& locator_list)
-{
-#if HAVE_SECURITY
-    if (getAttributes().security_attributes().is_submessage_protected ||
-            getAttributes().security_attributes().is_payload_protected)
-    {
-        EPROSIMA_LOG_ERROR(RTPS_WRITER, "A secure besteffort writer cannot add a lonely locator");
-        return false;
-    }
-#endif // if HAVE_SECURITY
-
-    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-
-    fixed_locators_.push_back(locator_list);
-    mp_RTPSParticipant->createSenderResources(fixed_locators_);
 
     return true;
 }
@@ -677,16 +668,6 @@ bool StatelessWriter::matched_reader_is_matched(
                    );
 }
 
-void StatelessWriter::unsent_changes_reset()
-{
-    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    std::for_each(history_->changesBegin(), history_->changesEnd(), [&](CacheChange_t* change)
-            {
-                flow_controller_->add_new_sample(this, change,
-                std::chrono::steady_clock::now() + std::chrono::hours(24));
-            });
-}
-
 bool StatelessWriter::process_acknack(
         const GUID_t& writer_guid,
         const GUID_t& reader_guid,
@@ -736,6 +717,14 @@ bool StatelessWriter::send_nts(
         return false;
     }
 
+    return send_to_fixed_locators(buffers, total_bytes, max_blocking_time_point);
+}
+
+bool StatelessWriter::send_to_fixed_locators(
+        const std::vector<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
+        const uint32_t& total_bytes,
+        std::chrono::steady_clock::time_point& max_blocking_time_point) const
+{
     return fixed_locators_.empty() ||
            mp_RTPSParticipant->sendSync(buffers, total_bytes, m_guid,
                    Locators(fixed_locators_.begin()), Locators(fixed_locators_.end()),
