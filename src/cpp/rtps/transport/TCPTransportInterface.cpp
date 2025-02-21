@@ -39,9 +39,14 @@
 #endif // if TLS_FOUND
 
 #include <fastdds/dds/log/Log.hpp>
+<<<<<<< HEAD
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/common/CDRMessage_t.h>
+=======
+#include <fastdds/rtps/attributes/PropertyPolicy.hpp>
+#include <fastdds/rtps/common/CDRMessage_t.hpp>
+>>>>>>> 1d8a6da6 (Remove repeated header include & Fix log (#5419))
 #include <fastdds/rtps/common/LocatorSelector.hpp>
 #include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
 #include <fastdds/rtps/common/PortParameters.h>
@@ -549,13 +554,13 @@ bool TCPTransportInterface::init(
 
     if (cfg_send_size > 0 && send_size != cfg_send_size)
     {
-        EPROSIMA_LOG_WARNING(TRANSPORT_TCP, "UDPTransport sendBufferSize could not be set to the desired value. "
+        EPROSIMA_LOG_WARNING(TRANSPORT_TCP, "TCPTransport sendBufferSize could not be set to the desired value. "
                 << "Using " << send_size << " instead of " << cfg_send_size);
     }
 
     if (cfg_recv_size > 0 && recv_size != cfg_recv_size)
     {
-        EPROSIMA_LOG_WARNING(TRANSPORT_TCP, "UDPTransport receiveBufferSize could not be set to the desired value. "
+        EPROSIMA_LOG_WARNING(TRANSPORT_TCP, "TCPTransport receiveBufferSize could not be set to the desired value. "
                 << "Using " << recv_size << " instead of " << cfg_recv_size);
     }
 
@@ -714,7 +719,7 @@ void TCPTransportInterface::SenderResourceHasBeenClosed(
     // Socket disconnection should always be done in the listening thread (or in the transport cleanup, when receiver resources have
     // already been destroyed and the listening thread had consequently finished).
     // An assert() clause finding the respective channel resource cannot be made since in LARGE DATA scenario, where the PDP discovery is done
-    // via UDP, a server's send resource can be created with without any associated channel resource until receiving a connection request from
+    // via UDP, a server's send resource can be created without any associated channel resource until receiving a connection request from
     // the client.
     // The send resource locator is invalidated to prevent further use of associated channel.
     LOCATOR_INVALID(locator);
