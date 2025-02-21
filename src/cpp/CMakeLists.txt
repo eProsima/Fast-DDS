@@ -141,6 +141,7 @@ set(${PROJECT_NAME}_source_files
     rtps/builtin/discovery/participant/PDPServer.cpp
     rtps/builtin/discovery/participant/PDPServerListener.cpp
     rtps/builtin/discovery/participant/PDPSimple.cpp
+    rtps/builtin/discovery/participant/simple/PDPStatelessWriter.cpp
     rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp
     rtps/builtin/discovery/participant/timedevent/DServerEvent.cpp
     rtps/builtin/liveliness/WLP.cpp
