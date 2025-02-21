@@ -39,14 +39,8 @@
 #endif // if TLS_FOUND
 
 #include <fastdds/dds/log/Log.hpp>
-<<<<<<< HEAD
-#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/common/CDRMessage_t.h>
-=======
-#include <fastdds/rtps/attributes/PropertyPolicy.hpp>
-#include <fastdds/rtps/common/CDRMessage_t.hpp>
->>>>>>> 1d8a6da6 (Remove repeated header include & Fix log (#5419))
 #include <fastdds/rtps/common/LocatorSelector.hpp>
 #include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
 #include <fastdds/rtps/common/PortParameters.h>
