@@ -29,7 +29,8 @@ ServiceImpl::ServiceImpl(
         DomainParticipantImpl* participant)
         : service_name_(service_name),
         service_type_name_(service_type_name),
-        participant_(participant)
+        participant_(participant),
+        enabled_(true)
 {
     ReturnCode_t retcode = create_request_reply_topics();
     valid_ = (retcode == RETCODE_OK);
@@ -66,13 +67,6 @@ ServiceImpl::~ServiceImpl()
 ReturnCode_t ServiceImpl::remove_requester(
         RequesterImpl* requester)
 {
-    // Check that requester belongs to this service
-    if (requester->service_ != this)
-    {
-        EPROSIMA_LOG_ERROR(SERVICE, "Trying to remove a requester that does not belong to this service.");
-        return RETCODE_PRECONDITION_NOT_MET;
-    }
-
     std::lock_guard<std::mutex> lock(mtx_requesters_);
     auto it = std::find(requesters_.begin(), requesters_.end(), requester);
 
@@ -91,13 +85,6 @@ ReturnCode_t ServiceImpl::remove_requester(
 ReturnCode_t ServiceImpl::remove_replier(
         ReplierImpl* replier)
 {
-    // Check that replier belongs to this service
-    if (replier->service_ != this)
-    {
-        EPROSIMA_LOG_ERROR(SERVICE, "Trying to remove a replier that does not belong to this service.");
-        return RETCODE_PRECONDITION_NOT_MET;
-    }
-
     std::lock_guard<std::mutex> lock(mtx_repliers_);
     auto it = std::find(repliers_.begin(), repliers_.end(), replier);
     if (it == repliers_.end())
@@ -208,16 +195,28 @@ ReplierImpl* ServiceImpl::create_replier(
     return replier;
 }
 
+ReturnCode_t ServiceImpl::enable()
+{
+    enabled_ = true;
+    return RETCODE_OK;
+}
+
+ReturnCode_t ServiceImpl::close()
+{
+    enabled_ = false;
+    return RETCODE_OK;
+}
+
 ReturnCode_t ServiceImpl::create_request_reply_topics()
 {
     ServiceTypeSupport service_type = participant_->find_service_type(service_type_name_);
-    if (service_type.empty())
+    if (service_type.empty_types())
     {
         EPROSIMA_LOG_ERROR(SERVICE, "Service type '" << service_type_name_ << "' not registered.");
         return RETCODE_ERROR;
     }
 
-    request_topic_ = participant_->create_topic(service_name_ + "_Request", service_type.request_type().get_type_name());
+    request_topic_ = participant_->create_topic(service_name_ + "_Request", service_type_name_ + "_Request");
 
     if (!request_topic_)
     {
@@ -225,7 +224,7 @@ ReturnCode_t ServiceImpl::create_request_reply_topics()
         return RETCODE_ERROR;
     }
 
-    reply_topic_ = participant_->create_topic(service_name_ + "_Reply", service_type.reply_type().get_type_name());
+    reply_topic_ = participant_->create_topic(service_name_ + "_Reply", service_type_name_ + "_Reply");
 
     if (!reply_topic_)
     {

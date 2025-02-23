@@ -128,6 +128,16 @@ public:
             const ReplierQos& qos);
 
     /**
+     * @brief Enable the service
+     */
+    ReturnCode_t enable() override;
+
+    /**
+     * @brief Disable the service
+     */
+    ReturnCode_t close() override;
+
+    /**
      * @brief Check if the service is valid (i.e: all DDS entities are correctly created)
      */
     inline bool is_valid() const
@@ -139,6 +149,14 @@ public:
             const std::string& service_type_name) const
     {
         return service_type_name_ == service_type_name;
+    }
+
+    /**
+     * @brief Check if the service is empty (i.e: it has neither requesters nor repliers)
+     */
+    inline bool is_empty() const
+    {
+        return repliers_.empty() && requesters_.empty();
     }
 
     /**
@@ -240,6 +258,7 @@ private:
     ContentFilteredTopic* reply_filtered_topic_;
 
     bool valid_;
+    bool enabled_;
 
 };
 

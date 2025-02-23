@@ -33,7 +33,8 @@ RequesterImpl::RequesterImpl(
         requester_subscriber_(nullptr),
         qos_(qos),
         service_(service),
-        valid_(false)
+        valid_(false),
+        enabled_(true)
 {
     // Create required DDS entities. If any of them fails, the requester is not valid
     ReturnCode_t retcode = create_dds_entities(qos);
@@ -91,6 +92,18 @@ ReturnCode_t RequesterImpl::take_reply(
 {
     // TODO: Implement here the endpoint matching algorithm
     return requester_reader_->take(data, info);
+}
+
+ReturnCode_t RequesterImpl::enable()
+{
+    enabled_ = true;
+    return RETCODE_OK;
+}
+
+ReturnCode_t RequesterImpl::close()
+{
+    enabled_ = false;
+    return RETCODE_OK;
 }
 
 ReturnCode_t RequesterImpl::create_dds_entities(const RequesterQos& qos)

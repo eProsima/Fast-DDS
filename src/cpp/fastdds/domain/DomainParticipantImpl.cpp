@@ -1882,10 +1882,16 @@ ReturnCode_t DomainParticipantImpl::register_service_type(
         return RETCODE_BAD_PARAMETER;
     }
 
+    if (service_type.empty_types())
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Trying to register a Service Type with empty request/reply types");
+        return RETCODE_BAD_PARAMETER;
+    }
+
     // Check if the service type is already registered
     rpc::ServiceTypeSupport t = find_service_type(service_type_name);
 
-    if (!t.empty())
+    if (!t.empty_types())
     {
         if (t == service_type)
         {
@@ -1899,7 +1905,7 @@ ReturnCode_t DomainParticipantImpl::register_service_type(
 
     // Register request/reply types
     ReturnCode_t ret_code;
-    ret_code = register_type(service_type.request_type(), service_type.request_type().get_type_name());
+    ret_code = register_type(service_type.request_type(), service_type_name + "_Request");
 
     if (RETCODE_OK != ret_code)
     {
@@ -1907,7 +1913,7 @@ ReturnCode_t DomainParticipantImpl::register_service_type(
         return ret_code;
     }
 
-    ret_code = register_type(service_type.reply_type(), service_type.reply_type().get_type_name());
+    ret_code = register_type(service_type.reply_type(), service_type_name + "_Reply");
 
     if (RETCODE_OK != ret_code)
     {
@@ -1932,7 +1938,7 @@ ReturnCode_t DomainParticipantImpl::unregister_service_type(
     }
 
     rpc::ServiceTypeSupport t = find_service_type(service_type_name);
-    if (t.empty())
+    if (t.empty_types())
     {
         return RETCODE_OK; // Not registered, so unregistering complete.
     }
@@ -1944,14 +1950,16 @@ ReturnCode_t DomainParticipantImpl::unregister_service_type(
         {
             if (service_it.second->service_type_in_use(service_type_name))
             {
-                return RETCODE_PRECONDITION_NOT_MET; // Is in use
+                EPROSIMA_LOG_ERROR(PARTICIPANT, "Service Type " << service_type_name << " is in use by service " <<
+                        service_it.first);
+                return RETCODE_PRECONDITION_NOT_MET;
             }
         }
     }
 
     // Unregister request/reply types
     ReturnCode_t ret_code;
-    ret_code = unregister_type(t.request_type().get_type_name());
+    ret_code = unregister_type(service_type_name + "_Request");
 
     if (RETCODE_OK != ret_code)
     {
@@ -1959,14 +1967,14 @@ ReturnCode_t DomainParticipantImpl::unregister_service_type(
         return ret_code;
     }
 
-    ret_code = unregister_type(t.reply_type().get_type_name());
+    ret_code = unregister_type(service_type_name + "_Reply");
 
     if (RETCODE_OK != ret_code)
     {
         EPROSIMA_LOG_ERROR(PARTICIPANT, "Error unregistering Reply Type for Service Type " << service_type_name);
 
         // Request topic type was unregistered, so register it again to avoid leaving the participant in an inconsistent state
-        register_type(t.request_type(), t.request_type().get_type_name());
+        register_type(t.request_type(), service_type_name + "_Request");
 
         return ret_code;
     }
@@ -2074,18 +2082,23 @@ ReturnCode_t DomainParticipantImpl::delete_service(
     const rpc::ServiceImpl* service_impl = dynamic_cast<const rpc::ServiceImpl*>(service);
     assert(service_impl != nullptr);
 
-    // Check that service belongs to this participant
-    if (service_impl->participant_ != this)
-    {
-        EPROSIMA_LOG_ERROR(PARTICIPANT, "Service does not belong to this participant.");
-        return RETCODE_PRECONDITION_NOT_MET;
-    }
-
     std::lock_guard<std::mutex> lock(mtx_services_);
     auto it = services_.find(service->get_service_name());
 
     if (it != services_.end())
     {
+        if (service_impl != it->second)
+        {
+            EPROSIMA_LOG_ERROR(PARTICIPANT, "Service mismatch.");
+            return RETCODE_PRECONDITION_NOT_MET;
+        }
+
+        // Check that the service does not contain any requesters or repliers
+        if (!it->second->is_empty())
+        {
+            return RETCODE_PRECONDITION_NOT_MET;
+        }
+
         delete it->second;
         services_.erase(it);
         return RETCODE_OK;
@@ -2109,13 +2122,6 @@ rpc::Requester* DomainParticipantImpl::create_service_requester(
     const rpc::ServiceImpl* service_impl = dynamic_cast<const rpc::ServiceImpl*>(service);
     assert(service_impl != nullptr);
 
-    // Check that service belongs to this participant
-    if (service_impl->participant_ != this)
-    {
-        EPROSIMA_LOG_ERROR(PARTICIPANT, "Service does not belong to this participant.");
-        return nullptr;
-    }
-
     auto it = services_.find(service->get_service_name());
     if (it == services_.end())
     {
@@ -2123,17 +2129,15 @@ rpc::Requester* DomainParticipantImpl::create_service_requester(
         return nullptr;
     }
 
-    // Make sure that both services are using the same service type
-    if (it->second->get_service_type_name() != service->get_service_type_name())
+    // Make sure that both services are the same
+    if (it->second != service_impl)
     {
-        EPROSIMA_LOG_ERROR(PARTICIPANT, "Service type mismatch.");
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Service mismatch.");
         return nullptr;
     }
 
     // Create the requester and register it in the service
-    rpc::Requester* requester = it->second->create_requester(qos);
-
-    return requester;
+    return it->second->create_requester(qos);
 }
 
 ReturnCode_t DomainParticipantImpl::delete_service_requester(
@@ -2150,7 +2154,7 @@ ReturnCode_t DomainParticipantImpl::delete_service_requester(
 
     if (it == services_.end())
     {
-        // Service not registered
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Service with name '" << service_name << "' not registered.");
         return RETCODE_PRECONDITION_NOT_MET;
     }
 
@@ -2171,13 +2175,6 @@ rpc::Replier* DomainParticipantImpl::create_service_replier(
     const rpc::ServiceImpl* service_impl = dynamic_cast<const rpc::ServiceImpl*>(service);
     assert(service_impl != nullptr);
 
-    // Check that service belongs to this participant
-    if (service_impl->participant_ != this)
-    {
-        EPROSIMA_LOG_ERROR(PARTICIPANT, "Service does not belong to this participant.");
-        return nullptr;
-    }
-
     auto it = services_.find(service->get_service_name());
     if (it == services_.end())
     {
@@ -2185,17 +2182,15 @@ rpc::Replier* DomainParticipantImpl::create_service_replier(
         return nullptr;
     }
 
-    // Make sure that both services are using the same service type
-    if (it->second->get_service_type_name() != service->get_service_type_name())
+    // Make sure that both services are the same
+    if (it->second != service_impl)
     {
-        EPROSIMA_LOG_ERROR(PARTICIPANT, "Service type mismatch.");
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Service mismatch.");
         return nullptr;
     }
 
     // Create the replier and register it in the service
-    rpc::Replier* replier = it->second->create_replier(qos);
-
-    return replier;
+    return it->second->create_replier(qos);
 }
 
 ReturnCode_t DomainParticipantImpl::delete_service_replier(

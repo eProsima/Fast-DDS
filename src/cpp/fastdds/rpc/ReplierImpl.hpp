@@ -96,6 +96,16 @@ public:
             LoanableSequence<RequestInfo>& info) override;
 
     /**
+     * @brief Enable the Replier
+     */
+    ReturnCode_t enable() override;
+
+    /**
+     * @brief Disable the Replier
+     */
+    ReturnCode_t close() override;
+
+    /**
      * @brief Check if the replier is valid (i.e: all DDS entities are correctly created)
      */
     inline bool is_valid() const
@@ -132,6 +142,7 @@ private:
     ReplierQos qos_;
     ServiceImpl* service_;
     bool valid_;
+    bool enabled_;
 
 };
 

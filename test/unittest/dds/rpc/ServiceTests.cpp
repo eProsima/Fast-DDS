@@ -150,8 +150,8 @@ TEST(ServiceTests, CreateRequesterValidParams)
 
     RequesterQos requester_qos;
     requester_qos.service_name = "Service";
-    requester_qos.request_type = "footype";
-    requester_qos.reply_type = "footype";
+    requester_qos.request_type = "ServiceType_Request";
+    requester_qos.reply_type = "ServiceType_Reply";
     requester_qos.request_topic_name = "Service_Request";
     requester_qos.reply_topic_name = "Service_Reply";
     requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
@@ -190,8 +190,8 @@ TEST(ServiceTests, CreateRequesterInvalidServiceName)
 
     RequesterQos requester_qos;
     requester_qos.service_name = "InvalidService";
-    requester_qos.request_type = "footype";
-    requester_qos.reply_type = "footype";
+    requester_qos.request_type = "ServiceType_Request";
+    requester_qos.reply_type = "ServiceType_Reply";
     requester_qos.request_topic_name = "Service_Request";
     requester_qos.reply_topic_name = "Service_Reply";
     requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
@@ -220,7 +220,7 @@ TEST(ServiceTests, CreateRequesterInvalidRequestType)
     RequesterQos requester_qos;
     requester_qos.service_name = "Service";
     requester_qos.request_type = "InvalidType";
-    requester_qos.reply_type = "footype";
+    requester_qos.reply_type = "ServiceType_Reply";
     requester_qos.request_topic_name = "Service_Request";
     requester_qos.reply_topic_name = "Service_Reply";
     requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
@@ -248,7 +248,7 @@ TEST(ServiceTests, CreateRequesterInvalidReplyType)
 
     RequesterQos requester_qos;
     requester_qos.service_name = "Service";
-    requester_qos.request_type = "footype";
+    requester_qos.request_type = "ServiceType_Request";
     requester_qos.reply_type = "InvalidType";
     requester_qos.request_topic_name = "Service_Request";
     requester_qos.reply_topic_name = "Service_Reply";
@@ -277,8 +277,8 @@ TEST(ServiceTests, CreateRequesterInvalidRequestTopicName)
 
     RequesterQos requester_qos;
     requester_qos.service_name = "Service";
-    requester_qos.request_type = "footype";
-    requester_qos.reply_type = "footype";
+    requester_qos.request_type = "ServiceType_Request";
+    requester_qos.reply_type = "ServiceType_Reply";
     requester_qos.request_topic_name = "InvalidRequestTopic";
     requester_qos.reply_topic_name = "Service_Reply";
     requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
@@ -306,8 +306,8 @@ TEST(ServiceTests, CreateRequesterInvalidReplyTopicName)
 
     RequesterQos requester_qos;
     requester_qos.service_name = "Service";
-    requester_qos.request_type = "footype";
-    requester_qos.reply_type = "footype";
+    requester_qos.request_type = "ServiceType_Request";
+    requester_qos.reply_type = "ServiceType_Reply";
     requester_qos.request_topic_name = "Service_Request";
     requester_qos.reply_topic_name = "InvalidReplyTopic";
     requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
@@ -335,8 +335,8 @@ TEST(ServiceTests, CreateRequesterInvalidWriterQos)
 
     RequesterQos requester_qos;
     requester_qos.service_name = "Service";
-    requester_qos.request_type = "footype";
-    requester_qos.reply_type = "footype";
+    requester_qos.request_type = "ServiceType_Request";
+    requester_qos.reply_type = "ServiceType_Reply";
     requester_qos.request_topic_name = "Service_Request";
     requester_qos.reply_topic_name = "Service_Reply";
     requester_qos.writer_qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
@@ -364,8 +364,8 @@ TEST(ServiceTests, CreateRequesterInvalidReaderQos)
 
     RequesterQos requester_qos;
     requester_qos.service_name = "Service";
-    requester_qos.request_type = "footype";
-    requester_qos.reply_type = "footype";
+    requester_qos.request_type = "ServiceType_Request";
+    requester_qos.reply_type = "ServiceType_Reply";
     requester_qos.request_topic_name = "Service_Request";
     requester_qos.reply_topic_name = "Service_Reply";
     requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
@@ -393,8 +393,8 @@ TEST(ServiceTests, CreateReplierValidParams)
 
     ReplierQos replier_qos;
     replier_qos.service_name = "Service";
-    replier_qos.request_type = "footype";
-    replier_qos.reply_type = "footype";
+    replier_qos.request_type = "ServiceType_Request";
+    replier_qos.reply_type = "ServiceType_Reply";
     replier_qos.request_topic_name = "Service_Request";
     replier_qos.reply_topic_name = "Service_Reply";
     replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
@@ -433,8 +433,8 @@ TEST(ServiceTests, CreateReplierInvalidServiceName)
 
     ReplierQos replier_qos;
     replier_qos.service_name = "InvalidService";
-    replier_qos.request_type = "footype";
-    replier_qos.reply_type = "footype";
+    replier_qos.request_type = "ServiceType_Request";
+    replier_qos.reply_type = "ServiceType_Reply";
     replier_qos.request_topic_name = "Service_Request";
     replier_qos.reply_topic_name = "Service_Reply";
     replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
@@ -463,7 +463,7 @@ TEST(ServiceTests, CreateReplierInvalidRequestType)
     ReplierQos replier_qos;
     replier_qos.service_name = "Service";
     replier_qos.request_type = "InvalidType";
-    replier_qos.reply_type = "footype";
+    replier_qos.reply_type = "ServiceType_Reply";
     replier_qos.request_topic_name = "Service_Request";
     replier_qos.reply_topic_name = "Service_Reply";
     replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
@@ -491,7 +491,7 @@ TEST(ServiceTests, CreateReplierInvalidReplyType)
 
     ReplierQos replier_qos;
     replier_qos.service_name = "Service";
-    replier_qos.request_type = "footype";
+    replier_qos.request_type = "ServiceType_Request";
     replier_qos.reply_type = "InvalidType";
     replier_qos.request_topic_name = "Service_Request";
     replier_qos.reply_topic_name = "Service_Reply";
@@ -520,8 +520,8 @@ TEST(ServiceTests, CreateReplierInvalidRequestTopicName)
 
     ReplierQos replier_qos;
     replier_qos.service_name = "Service";
-    replier_qos.request_type = "footype";
-    replier_qos.reply_type = "footype";
+    replier_qos.request_type = "ServiceType_Request";
+    replier_qos.reply_type = "ServiceType_Reply";
     replier_qos.request_topic_name = "InvalidRequestTopic";
     replier_qos.reply_topic_name = "Service_Reply";
     replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
@@ -549,8 +549,8 @@ TEST(ServiceTests, CreateReplierInvalidReplyTopicName)
 
     ReplierQos replier_qos;
     replier_qos.service_name = "Service";
-    replier_qos.request_type = "footype";
-    replier_qos.reply_type = "footype";
+    replier_qos.request_type = "ServiceType_Request";
+    replier_qos.reply_type = "ServiceType_Reply";
     replier_qos.request_topic_name = "Service_Request";
     replier_qos.reply_topic_name = "InvalidReplyTopic";
     replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
@@ -578,8 +578,8 @@ TEST(ServiceTests, CreateReplierInvalidWriterQos)
 
     ReplierQos replier_qos;
     replier_qos.service_name = "Service";
-    replier_qos.request_type = "footype";
-    replier_qos.reply_type = "footype";
+    replier_qos.request_type = "ServiceType_Request";
+    replier_qos.reply_type = "ServiceType_Reply";
     replier_qos.request_topic_name = "Service_Request";
     replier_qos.reply_topic_name = "Service_Reply";
     replier_qos.writer_qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
@@ -607,8 +607,8 @@ TEST(ServiceTests, CreateReplierInvalidReaderQos)
 
     ReplierQos replier_qos;
     replier_qos.service_name = "Service";
-    replier_qos.request_type = "footype";
-    replier_qos.reply_type = "footype";
+    replier_qos.request_type = "ServiceType_Request";
+    replier_qos.reply_type = "ServiceType_Reply";
     replier_qos.request_topic_name = "Service_Request";
     replier_qos.reply_topic_name = "Service_Reply";
     replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;

@@ -294,8 +294,8 @@ ReplierQos ReqRepHelloWorldReplier::create_replier_qos()
     replier_qos.service_name = service_->get_service_name();
     replier_qos.request_topic_name = service_->get_service_name() + "_Request";
     replier_qos.reply_topic_name = service_->get_service_name() + "_Reply";
-    replier_qos.request_type = service_type.request_type().get_type_name();
-    replier_qos.reply_type = service_type.reply_type().get_type_name();
+    replier_qos.request_type = service_->get_service_type_name() + "_Request";
+    replier_qos.reply_type = service_->get_service_type_name() + "_Reply";
     replier_qos.writer_qos = writer_qos;
     replier_qos.reader_qos = reader_qos;
 

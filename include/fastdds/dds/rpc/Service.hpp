@@ -39,11 +39,6 @@ class Service : public RPCEntity
 public:
 
     /**
-     * @brief Destructor
-     */
-    virtual ~Service(){};
-
-    /**
      * @brief Getter for the service name
      */
     virtual const std::string& get_service_name() const = 0;
@@ -52,6 +47,23 @@ public:
      * @brief Getter for the service type name
      */
     virtual const std::string& get_service_type_name() const = 0;
+
+    /**
+     * @brief Enable the Service
+     */
+    virtual ReturnCode_t enable() override = 0;
+
+    /**
+     * @brief Disable the Service
+     */
+    virtual ReturnCode_t close() override = 0;
+
+protected:
+
+    /**
+     * @brief Destructor
+     */
+    ~Service(){};
 
 };
 

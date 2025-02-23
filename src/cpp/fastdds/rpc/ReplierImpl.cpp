@@ -33,7 +33,8 @@ ReplierImpl::ReplierImpl(
         replier_subscriber_(nullptr),
         qos_(qos),
         service_(service),
-        valid_(false)
+        valid_(false),
+        enabled_(true)
 {
     // Create required DDS entities. If any of them fails, the replier is not valid
     ReturnCode_t retcode = create_dds_entities(qos);
@@ -102,6 +103,18 @@ ReturnCode_t ReplierImpl::take_request(
     }
 
     return retcode;
+}
+
+ReturnCode_t ReplierImpl::enable()
+{
+    enabled_ = true;
+    return RETCODE_OK;
+}
+
+ReturnCode_t ReplierImpl::close()
+{
+    enabled_ = false;
+    return RETCODE_OK;
 }
 
 ReturnCode_t ReplierImpl::create_dds_entities(const ReplierQos& qos)

@@ -32,43 +32,21 @@ class RPCEntity
 public:
 
     /**
-     * @brief Constructor
-     */
-    FASTDDS_EXPORTED_API RPCEntity()
-        : enable_(false)
-    {
-    }
-
-    /**
      * @brief Enables the entity
      */
-    virtual ReturnCode_t enable()
-    {
-        enable_ = true;
-        return RETCODE_OK;
-    }
+    virtual ReturnCode_t enable() = 0;
 
     /**
      * @brief Disables the entity
      */
-    virtual ReturnCode_t close()
-    {
-        enable_ = false;
-        return RETCODE_OK;
-    }
-
-    /**
-     * @brief Checks if the entity is enabled
-     */
-    FASTDDS_EXPORTED_API bool is_enabled() const
-    {
-        return enable_;
-    }
+    virtual ReturnCode_t close() = 0;
 
 protected:
 
-    //! Boolean that states if the Entity is enabled or disabled
-    bool enable_;
+    /**
+     * @brief Destructor
+     */
+    ~RPCEntity(){};
 
 };
 

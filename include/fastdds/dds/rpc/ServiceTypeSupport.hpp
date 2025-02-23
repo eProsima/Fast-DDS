@@ -113,11 +113,11 @@ public:
     }
 
     /**
-     * @brief Check if the ServiceTypeSupport object is empty (i.e: both request and reply types are empty)
+     * @brief Check if the ServiceTypeSupport object contains empty request/reply types
      */
-    FASTDDS_EXPORTED_API inline bool empty() const
+    FASTDDS_EXPORTED_API inline bool empty_types() const
     {
-        return request_type_.empty() && reply_type_.empty();
+        return request_type_.empty() || reply_type_.empty();
     }
 
     FASTDDS_EXPORTED_API bool operator ==(

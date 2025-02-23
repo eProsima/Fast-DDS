@@ -3198,10 +3198,11 @@ TEST(ParticipantTests, CreateServiceTopicsAlreadyExist)
 
     TypeSupport type(new TopicDataTypeMock());
     rpc::ServiceTypeSupport service_type(type, type);
-    participant->register_type(type, "footype");
+    participant->register_type(type, "ServiceType_Request");
+    participant->register_type(type, "ServiceType_Reply");
     participant->register_service_type(service_type, "ServiceType");
 
-    Topic* request_topic = participant->create_topic("Service_Request", "footype", TOPIC_QOS_DEFAULT);
+    Topic* request_topic = participant->create_topic("Service_Request", "ServiceType_Request", TOPIC_QOS_DEFAULT);
     ASSERT_NE(request_topic, nullptr);
 
     // Error: Service Request topic already exists
@@ -3210,7 +3211,7 @@ TEST(ParticipantTests, CreateServiceTopicsAlreadyExist)
 
     ASSERT_EQ(participant->delete_topic(request_topic), RETCODE_OK);
 
-    Topic* reply_topic = participant->create_topic("Service_Reply", "footype", TOPIC_QOS_DEFAULT);
+    Topic* reply_topic = participant->create_topic("Service_Reply", "ServiceType_Reply", TOPIC_QOS_DEFAULT);
     ASSERT_NE(reply_topic, nullptr);
 
     // Error: Service Reply topic already exists
@@ -3316,16 +3317,16 @@ TEST(ParticipantTests, CreateRequesterReplierOnExternalService)
 
     RequesterQos requester_qos;
     requester_qos.service_name = "Service";
-    requester_qos.request_type = "footype";
-    requester_qos.reply_type = "footype";
+    requester_qos.request_type = "ServiceType_Request";
+    requester_qos.reply_type = "ServiceType_Reply";
     requester_qos.request_topic_name = "Service_Request";
     requester_qos.reply_topic_name = "Service_Reply";
     requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     ReplierQos replier_qos;
     replier_qos.service_name = "Service";
-    replier_qos.request_type = "footype";
-    replier_qos.reply_type = "footype";
+    replier_qos.request_type = "ServiceType_Request";
+    replier_qos.reply_type = "ServiceType_Reply";
     replier_qos.request_topic_name = "Service_Request";
     replier_qos.reply_topic_name = "Service_Reply";
     replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
@@ -3364,16 +3365,16 @@ TEST(ParticipantTests, DeleteRequesterReplierOnExternalService)
 
     RequesterQos requester_qos;
     requester_qos.service_name = "Service";
-    requester_qos.request_type = "footype";
-    requester_qos.reply_type = "footype";
+    requester_qos.request_type = "ServiceType_Request";
+    requester_qos.reply_type = "ServiceType_Reply";
     requester_qos.request_topic_name = "Service_Request";
     requester_qos.reply_topic_name = "Service_Reply";
     requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     ReplierQos replier_qos;
     replier_qos.service_name = "Service";
-    replier_qos.request_type = "footype";
-    replier_qos.reply_type = "footype";
+    replier_qos.request_type = "ServiceType_Request";
+    replier_qos.reply_type = "ServiceType_Reply";
     replier_qos.request_topic_name = "Service_Request";
     replier_qos.reply_topic_name = "Service_Reply";
     replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
@@ -3829,9 +3830,7 @@ TEST(ParticipantTests, RegisterServiceTypeInvalid)
     ASSERT_EQ(participant->register_service_type(service_type, ""), RETCODE_BAD_PARAMETER);
 
     // Case 2: ServiceTypeSupport with invalid request type
-    TopicDataTypeMock* data_type = new TopicDataTypeMock();
-    TypeSupport type_invalid(data_type);
-    data_type->clearName();
+    TypeSupport type_invalid = TypeSupport(nullptr);
     rpc::ServiceTypeSupport service_type_invalid(type_invalid, type);
     ASSERT_EQ(participant->register_service_type(service_type_invalid, "ServiceType"), RETCODE_BAD_PARAMETER);
     
@@ -3840,6 +3839,9 @@ TEST(ParticipantTests, RegisterServiceTypeInvalid)
     ASSERT_EQ(participant->register_service_type(service_type_invalid, "ServiceType"), RETCODE_BAD_PARAMETER);
 
     // Case 4: Another ServiceTypeSupport already registered with the same name
+    TopicDataTypeMock* data_type = new TopicDataTypeMock();
+    data_type->set_name("bartype");
+    service_type_invalid = rpc::ServiceTypeSupport(TypeSupport(data_type), type);
     ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
     ASSERT_EQ(participant->register_service_type(service_type_invalid, "ServiceType"), RETCODE_PRECONDITION_NOT_MET);
 
@@ -3856,9 +3858,9 @@ TEST(ParticipantTests, FindServiceType)
     rpc::ServiceTypeSupport service_type(type, type);
     ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
     rpc::ServiceTypeSupport found_service_type = participant->find_service_type("ServiceType");
-    ASSERT_FALSE(found_service_type.empty());
+    ASSERT_FALSE(found_service_type.empty_types());
     rpc::ServiceTypeSupport not_found_service_type = participant->find_service_type("UnregisteredServiceType");
-    ASSERT_TRUE(not_found_service_type.empty());
+    ASSERT_TRUE(not_found_service_type.empty_types());
 
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
@@ -3873,8 +3875,9 @@ TEST(ParticipantTests, UnregisterServiceType)
     rpc::ServiceTypeSupport service_type(type, type);
     ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
     ASSERT_EQ(participant->unregister_service_type("ServiceType"), RETCODE_OK);
-    ASSERT_TRUE((participant->find_service_type("ServiceType")).empty());
-    ASSERT_TRUE((participant->find_type("footype")).empty());
+    ASSERT_TRUE((participant->find_service_type("ServiceType")).empty_types());
+    ASSERT_TRUE((participant->find_type("ServiceType_Request")).empty());
+    ASSERT_TRUE((participant->find_type("ServiceType_Reply")).empty());
 
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
@@ -3901,11 +3904,12 @@ TEST(ParticipantTests, UnregisterServiceTypeInvalid)
     ASSERT_EQ(participant->unregister_service_type("ServiceType"), RETCODE_PRECONDITION_NOT_MET);
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
 
-    ASSERT_FALSE((participant->find_service_type("ServiceType")).empty());
-    ASSERT_FALSE((participant->find_type("footype")).empty());
+    ASSERT_FALSE((participant->find_service_type("ServiceType")).empty_types());
+    ASSERT_FALSE((participant->find_type("ServiceType_Request")).empty());
+    ASSERT_FALSE((participant->find_type("ServiceType_Reply")).empty());
 
     // Case 4: Unregister a service type with request/reply types used by another topic 
-    Topic* topic = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);
+    Topic* topic = participant->create_topic("footopic", "ServiceType_Request", TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     DataReader* reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
@@ -3915,8 +3919,8 @@ TEST(ParticipantTests, UnregisterServiceTypeInvalid)
     ASSERT_EQ(participant->delete_subscriber(subscriber), RETCODE_OK);
     ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
 
-    ASSERT_FALSE((participant->find_service_type("ServiceType")).empty());
-    ASSERT_FALSE((participant->find_type("footype")).empty());
+    ASSERT_FALSE((participant->find_service_type("ServiceType")).empty_types());
+    ASSERT_FALSE((participant->find_type("ServiceType_Request")).empty());
 
     // Type not used by any topic/service, unregister it
     ASSERT_EQ(participant->unregister_service_type("ServiceType"), RETCODE_OK);

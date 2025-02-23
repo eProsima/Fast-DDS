@@ -41,11 +41,6 @@ class Requester : public RPCEntity
 public:
 
     /**
-     * @brief Destructor
-     */
-    virtual ~Requester(){};
-
-    /**
      * @brief Returns the name of the service to which the requester belongs
      */
     virtual const std::string& get_service_name() const = 0;
@@ -93,6 +88,23 @@ public:
      * @brief Getter for the Requester's DataReader
      */
     virtual const DataReader* get_requester_reader() const = 0;
+
+    /**
+     * @brief Enable the Requester
+     */
+    virtual ReturnCode_t enable() override = 0;
+
+    /**
+     * @brief Disable the Requester
+     */
+    virtual ReturnCode_t close() override = 0;
+
+protected:
+
+    /**
+     * @brief Destructor
+     */
+    ~Requester(){};
 
 };
 

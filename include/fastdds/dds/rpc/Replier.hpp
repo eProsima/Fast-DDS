@@ -41,11 +41,6 @@ class Replier : public RPCEntity
 public:
 
     /**
-     * @brief Destructor
-     */
-    virtual ~Replier(){};
-
-    /**
      * @brief Returns the name of the service to which the replier belongs
      */
     virtual const std::string& get_service_name() const = 0;
@@ -93,6 +88,23 @@ public:
      * @brief Getter for the Replier's DataReader
      */
     virtual const DataReader* get_replier_reader() const = 0;
+
+    /**
+     * @brief Enable the Replier
+     */
+    virtual ReturnCode_t enable() override = 0;
+
+    /**
+     * @brief Disable the Replier
+     */
+    virtual ReturnCode_t close() override = 0;
+
+protected:
+
+    /**
+     * @brief Destructor
+     */
+    ~Replier(){};
 
 };
 
