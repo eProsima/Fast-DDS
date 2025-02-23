@@ -1,7 +1,13 @@
 Forthcoming
 -----------
 
+<<<<<<< HEAD
 Version 2.14.3
+=======
+* New property to configure the preferred key agreement algorithm.
+
+Version v3.1.0
+>>>>>>> 4d793f001 (New property to select preferred key agreement algorithm (#5413) (#5442))
 --------------
 
 * Setting `vendor_id` in the received `CacheChange_t` for Data and DataFrag.
