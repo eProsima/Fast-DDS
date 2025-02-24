@@ -301,11 +301,8 @@ bool SharedMemTransport::init(
         {
             return false;
         }
-        uint32_t max_allocations = configuration_.segment_size() / configuration_.max_message_size();
-        if ((configuration_.segment_size() % configuration_.max_message_size()) != 0)
-        {
-            ++max_allocations;
-        }
+        uint32_t mean_message_size = configuration_.max_message_size() / 2;
+        uint32_t max_allocations = configuration_.segment_size() / mean_message_size;
         if (configuration_.port_queue_capacity() > max_allocations)
         {
             max_allocations = configuration_.port_queue_capacity();
