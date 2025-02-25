@@ -211,6 +211,9 @@ DomainParticipantImpl::~DomainParticipantImpl()
         services_.clear();
     }
 
+    services_publisher_ = {};
+    services_subscriber_ = {};
+
     {
         std::lock_guard<std::mutex> lock(mtx_pubs_);
         for (auto pub_it = publishers_.begin(); pub_it != publishers_.end(); ++pub_it)
@@ -978,6 +981,9 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
         delete it_pubs->second;
         it_pubs = publishers_.erase(it_pubs);
     }
+
+    services_publisher_ = {};
+    services_subscriber_ = {};
 
     std::lock_guard<std::mutex> lock_topics(mtx_topics_);
 
@@ -1833,7 +1839,8 @@ ReturnCode_t DomainParticipantImpl::unregister_type(
         {
             if (sit.second->type_in_use(type_name))
             {
-                return RETCODE_PRECONDITION_NOT_MET; // Is in use
+                EPROSIMA_LOG_ERROR(PARTICIPANT, "Type '" << type_name << "' is in use");
+                return RETCODE_PRECONDITION_NOT_MET;
             }
         }
     }
@@ -1846,7 +1853,8 @@ ReturnCode_t DomainParticipantImpl::unregister_type(
         {
             if (pit.second->type_in_use(type_name))
             {
-                return RETCODE_PRECONDITION_NOT_MET; // Is in use
+                EPROSIMA_LOG_ERROR(PARTICIPANT, "Type '" << type_name << "' is in use");
+                return RETCODE_PRECONDITION_NOT_MET;
             }
         }
     }
@@ -2016,12 +2024,12 @@ rpc::Service* DomainParticipantImpl::create_service(
     }
 
     // Check if the request/reply content filter factory is registered. If not, register it.
-    IContentFilterFactory* factory = find_content_filter_factory("REQUEST_REPLY_CONTENT_FILTER");
+    IContentFilterFactory* factory = find_content_filter_factory(rpc::__BUILTIN_REQUEST_REPLY_CONTENT_FILTER__);
 
     if (!factory)
     {
         factory = new rpc::RequestReplyContentFilterFactory();
-        ReturnCode_t ret_code = register_content_filter_factory("REQUEST_REPLY_CONTENT_FILTER", factory);
+        ReturnCode_t ret_code = register_content_filter_factory(rpc::__BUILTIN_REQUEST_REPLY_CONTENT_FILTER__, factory);
 
         if (RETCODE_OK != ret_code)
         {
@@ -2030,12 +2038,36 @@ rpc::Service* DomainParticipantImpl::create_service(
         }
     }
 
+    // Before creating the service, create the publisher and subscriber
+    // that it will use for DDS endpoints creation, if it is necessary
+    if (!services_publisher_.second)
+    {
+        Publisher* pub = create_publisher(PUBLISHER_QOS_DEFAULT);
+        if (!pub)
+        {
+            EPROSIMA_LOG_ERROR(PARTICIPANT, "Error creating Services publisher.");
+            return nullptr;
+        }
+        services_publisher_ = std::make_pair(pub, publishers_[pub]);
+    }
+
+    if (!services_subscriber_.second)
+    {
+        Subscriber* sub = create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+        if (!sub)
+        {
+            EPROSIMA_LOG_ERROR(PARTICIPANT, "Error creating Services subscriber.");
+            return nullptr;
+        }
+        services_subscriber_ = std::make_pair(sub, subscribers_[sub]);
+    }
     // Create and store the service (Internally, this will create the required DDS Request/Reply Topics))
     rpc::ServiceImpl* service(nullptr);
     
     try
     {
-        service = new rpc::ServiceImpl(service_name, service_type_name, this);  
+        service = new rpc::ServiceImpl(
+                service_name, service_type_name, this, services_publisher_.second, services_subscriber_.second);
     }
     catch (const std::exception& e)
     {
@@ -2043,15 +2075,18 @@ rpc::Service* DomainParticipantImpl::create_service(
         return nullptr;
     }
 
-    if (service->is_valid())
+    // Try to enable the created service
+    if (RETCODE_OK != service->enable())
     {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Error enabling service.");
+        delete service;
+        return nullptr;
+    }
+
+    {
+        // Register the service in the participant
         std::lock_guard<std::mutex> lock(mtx_services_);
         services_[service_name] = service;
-    }
-    else
-    {
-        delete service;
-        service = nullptr;
     }
 
     return service;
@@ -2067,7 +2102,6 @@ rpc::Service* DomainParticipantImpl::find_service(
     {
         return it->second;
     }
-
     return nullptr;
 }
 
@@ -2076,6 +2110,7 @@ ReturnCode_t DomainParticipantImpl::delete_service(
 {
     if (!service)
     {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Service is nullptr.");
         return RETCODE_BAD_PARAMETER;
     }
 
@@ -2093,10 +2128,16 @@ ReturnCode_t DomainParticipantImpl::delete_service(
             return RETCODE_PRECONDITION_NOT_MET;
         }
 
-        // Check that the service does not contain any requesters or repliers
-        if (!it->second->is_empty())
+        // Check that the service is disabled
+        if (!it->second->is_enabled())
         {
-            return RETCODE_PRECONDITION_NOT_MET;
+            EPROSIMA_LOG_INFO(PARTICIPANT, "Trying to delete an enabled service.");
+            ReturnCode_t retcode;
+            if (RETCODE_OK != (retcode = it->second->close()))
+            {
+                EPROSIMA_LOG_ERROR(PARTICIPANT, "Error closing service: " << retcode);
+                return retcode;
+            }
         }
 
         delete it->second;
@@ -2105,6 +2146,7 @@ ReturnCode_t DomainParticipantImpl::delete_service(
     }
 
     // The service was not found in this participant
+    EPROSIMA_LOG_ERROR(PARTICIPANT, "Service with name '" << service->get_service_name() << "' not found.");
     return RETCODE_PRECONDITION_NOT_MET;
 }
 
@@ -2206,7 +2248,7 @@ ReturnCode_t DomainParticipantImpl::delete_service_replier(
 
     if (it == services_.end())
     {
-        // Service not registered
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Service with name '" << service_name << "' not registered.");
         return RETCODE_PRECONDITION_NOT_MET;
     }
 

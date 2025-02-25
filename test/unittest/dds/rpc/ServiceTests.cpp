@@ -172,6 +172,7 @@ TEST(ServiceTests, CreateRequesterValidParams)
 
     ASSERT_EQ(participant->delete_service_requester("Service", requester), RETCODE_OK);
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
@@ -201,6 +202,7 @@ TEST(ServiceTests, CreateRequesterInvalidServiceName)
     ASSERT_EQ(requester, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
@@ -230,6 +232,7 @@ TEST(ServiceTests, CreateRequesterInvalidRequestType)
     ASSERT_EQ(requester, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
@@ -259,6 +262,7 @@ TEST(ServiceTests, CreateRequesterInvalidReplyType)
     ASSERT_EQ(requester, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
@@ -288,6 +292,7 @@ TEST(ServiceTests, CreateRequesterInvalidRequestTopicName)
     ASSERT_EQ(requester, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
@@ -317,6 +322,7 @@ TEST(ServiceTests, CreateRequesterInvalidReplyTopicName)
     ASSERT_EQ(requester, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
@@ -346,6 +352,7 @@ TEST(ServiceTests, CreateRequesterInvalidWriterQos)
     ASSERT_EQ(requester, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
@@ -375,6 +382,7 @@ TEST(ServiceTests, CreateRequesterInvalidReaderQos)
     ASSERT_EQ(requester, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
@@ -415,6 +423,7 @@ TEST(ServiceTests, CreateReplierValidParams)
 
     ASSERT_EQ(participant->delete_service_replier("Service", replier), RETCODE_OK);
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
@@ -444,6 +453,7 @@ TEST(ServiceTests, CreateReplierInvalidServiceName)
     ASSERT_EQ(replier, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
@@ -473,6 +483,7 @@ TEST(ServiceTests, CreateReplierInvalidRequestType)
     ASSERT_EQ(replier, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
@@ -502,6 +513,7 @@ TEST(ServiceTests, CreateReplierInvalidReplyType)
     ASSERT_EQ(replier, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
@@ -531,6 +543,7 @@ TEST(ServiceTests, CreateReplierInvalidRequestTopicName)
     ASSERT_EQ(replier, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
@@ -560,6 +573,7 @@ TEST(ServiceTests, CreateReplierInvalidReplyTopicName)
     ASSERT_EQ(replier, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
@@ -589,6 +603,7 @@ TEST(ServiceTests, CreateReplierInvalidWriterQos)
     ASSERT_EQ(replier, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
@@ -618,6 +633,235 @@ TEST(ServiceTests, CreateReplierInvalidReaderQos)
     ASSERT_EQ(replier, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
+}
+
+TEST(ServiceTests, ChangeEnabledState)
+{
+    Duration_t find_topic_timeout = Duration_t(5, 0);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    ServiceTypeSupport service_type(type, type);
+    ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
+
+    Service* service = participant->create_service("Service", "ServiceType");
+    ASSERT_NE(service, nullptr);
+    ASSERT_EQ(service->is_enabled(), true);
+
+    Topic* request_topic = participant->find_topic("Service_Request", find_topic_timeout);
+    Topic* reply_topic = participant->find_topic("Service_Reply", find_topic_timeout);
+    ASSERT_NE(request_topic, nullptr);
+    ASSERT_NE(reply_topic, nullptr);
+    // Release resources
+    ASSERT_EQ(participant->delete_topic(request_topic), RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(reply_topic), RETCODE_OK);
+
+    ReplierQos replier_qos;
+    replier_qos.service_name = "Service";
+    replier_qos.request_type = "ServiceType_Request";
+    replier_qos.reply_type = "ServiceType_Reply";
+    replier_qos.request_topic_name = "Service_Request";
+    replier_qos.reply_topic_name = "Service_Reply";
+    replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    replier_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+
+    RequesterQos requester_qos;
+    requester_qos.service_name = "Service";
+    requester_qos.request_type = "ServiceType_Request";
+    requester_qos.reply_type = "ServiceType_Reply";
+    requester_qos.request_topic_name = "Service_Request";
+    requester_qos.reply_topic_name = "Service_Reply";
+    requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+
+    Replier* replier = participant->create_service_replier(service, replier_qos);
+    ASSERT_NE(replier, nullptr);
+    // Service is enabled, so the replier is created in enabled state by default
+    ASSERT_EQ(replier->is_enabled(), true);
+    ASSERT_NE(replier->get_replier_writer(), nullptr);
+    ASSERT_NE(replier->get_replier_reader(), nullptr);
+
+    Requester* requester = participant->create_service_requester(service, requester_qos);
+    ASSERT_NE(requester, nullptr);
+    // Service is enabled, so the requester is created in enabled state by default
+    ASSERT_EQ(requester->is_enabled(), true);
+    ASSERT_NE(requester->get_requester_writer(), nullptr);
+    ASSERT_NE(requester->get_requester_reader(), nullptr);
+
+    // Now disable the service. 
+    // It should destroy Request/Reply topics and disable all its internal Requester/Replier entities
+    ASSERT_EQ(service->close(), RETCODE_OK);
+    ASSERT_EQ(service->is_enabled(), false);
+    ASSERT_EQ(participant->find_topic("Service_Request", find_topic_timeout), nullptr);
+    ASSERT_EQ(participant->find_topic("Service_Reply", find_topic_timeout), nullptr);
+
+    // If requester and replier are disabled, they should not have any writer/reader
+    ASSERT_EQ(replier->is_enabled(), false);
+    ASSERT_EQ(replier->get_replier_writer(), nullptr);
+    ASSERT_EQ(replier->get_replier_reader(), nullptr);
+    ASSERT_EQ(requester->is_enabled(), false);
+    ASSERT_EQ(requester->get_requester_writer(), nullptr);
+    ASSERT_EQ(requester->get_requester_reader(), nullptr);
+
+    // Create a new requester and replier. 
+    // Now Service is disabled, so they should be created in disabled state
+    Replier* replier_2 = participant->create_service_replier(service, replier_qos);
+    ASSERT_NE(replier_2, nullptr);
+    ASSERT_EQ(replier_2->is_enabled(), false);
+    ASSERT_EQ(replier_2->get_replier_writer(), nullptr);
+    ASSERT_EQ(replier_2->get_replier_reader(), nullptr);
+
+    Requester* requester_2 = participant->create_service_requester(service, requester_qos);
+    ASSERT_NE(requester_2, nullptr);
+    ASSERT_EQ(requester_2->is_enabled(), false);
+    ASSERT_EQ(requester_2->get_requester_writer(), nullptr);
+    ASSERT_EQ(requester_2->get_requester_reader(), nullptr);
+
+    // Enable the service again. 
+    // It should create Request/Reply topics and enable all its internal Requester/Replier entities.
+    // The requester and replier created while the service was disabled should be enabled now.
+    ASSERT_EQ(service->enable(), RETCODE_OK);
+    ASSERT_EQ(service->is_enabled(), true);
+    request_topic = participant->find_topic("Service_Request", find_topic_timeout);
+    reply_topic = participant->find_topic("Service_Reply", find_topic_timeout);
+    ASSERT_NE(request_topic, nullptr);
+    ASSERT_NE(reply_topic, nullptr);
+    // Release resources
+    ASSERT_EQ(participant->delete_topic(request_topic), RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(reply_topic), RETCODE_OK);
+    
+    ASSERT_EQ(replier->is_enabled(), true);
+    ASSERT_NE(replier->get_replier_writer(), nullptr);
+    ASSERT_NE(replier->get_replier_reader(), nullptr);
+    ASSERT_EQ(requester->is_enabled(), true);
+    ASSERT_NE(requester->get_requester_writer(), nullptr);
+    ASSERT_NE(requester->get_requester_reader(), nullptr);
+    ASSERT_EQ(replier_2->is_enabled(), true);
+    ASSERT_NE(replier_2->get_replier_writer(), nullptr);
+    ASSERT_NE(replier_2->get_replier_reader(), nullptr);
+    ASSERT_EQ(requester_2->is_enabled(), true);
+
+    ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
+}
+
+TEST(ServiceTests, EnableEntityOnDisabledService)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    ServiceTypeSupport service_type(type, type);
+    ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
+
+    Service* service = participant->create_service("Service", "ServiceType");
+    ASSERT_NE(service, nullptr);
+    ASSERT_EQ(service->is_enabled(), true);
+
+    // Disable the service
+    ASSERT_EQ(service->close(), RETCODE_OK);
+    ASSERT_EQ(service->is_enabled(), false);
+
+    // Create a requester and a replier, and try to enable them
+    // They should not be enabled because the service is disabled
+    ReplierQos replier_qos;
+    replier_qos.service_name = "Service";
+    replier_qos.request_type = "ServiceType_Request";
+    replier_qos.reply_type = "ServiceType_Reply";
+    replier_qos.request_topic_name = "Service_Request";
+    replier_qos.reply_topic_name = "Service_Reply";
+    replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    replier_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+
+    RequesterQos requester_qos;
+    requester_qos.service_name = "Service";
+    requester_qos.request_type = "ServiceType_Request";
+    requester_qos.reply_type = "ServiceType_Reply";
+    requester_qos.request_topic_name = "Service_Request";
+    requester_qos.reply_topic_name = "Service_Reply";
+    requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+
+    Replier* replier = participant->create_service_replier(service, replier_qos);
+    ASSERT_NE(replier, nullptr);
+    ASSERT_EQ(replier->is_enabled(), false);
+    ASSERT_EQ(replier->enable(), RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(replier->is_enabled(), false);
+    ASSERT_EQ(replier->get_replier_writer(), nullptr);
+    ASSERT_EQ(replier->get_replier_reader(), nullptr);
+
+    Requester* requester = participant->create_service_requester(service, requester_qos);
+    ASSERT_NE(requester, nullptr);
+    ASSERT_EQ(requester->is_enabled(), false);
+    ASSERT_EQ(requester->enable(), RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(requester->is_enabled(), false);
+    ASSERT_EQ(requester->get_requester_writer(), nullptr);
+    ASSERT_EQ(requester->get_requester_reader(), nullptr);
+
+    ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
+}
+
+TEST(ServiceTests, SendOrTakeOnDisabledRequesterReplier)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    ServiceTypeSupport service_type(type, type);
+    ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
+
+    Service* service = participant->create_service("Service", "ServiceType");
+    ASSERT_NE(service, nullptr);
+
+    // Disable the service
+    ASSERT_EQ(service->close(), RETCODE_OK);
+
+    // Create a requester and a replier, and try to send/take on them
+    // It should return RETCODE_PRECONDITION_NOT_MET because the service is disabled
+    ReplierQos replier_qos;
+    replier_qos.service_name = "Service";
+    replier_qos.request_type = "ServiceType_Request";
+    replier_qos.reply_type = "ServiceType_Reply";
+    replier_qos.request_topic_name = "Service_Request";
+    replier_qos.reply_topic_name = "Service_Reply";
+    replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    replier_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+
+    RequesterQos requester_qos;
+    requester_qos.service_name = "Service";
+    requester_qos.request_type = "ServiceType_Request";
+    requester_qos.reply_type = "ServiceType_Reply";
+    requester_qos.request_topic_name = "Service_Request";
+    requester_qos.reply_topic_name = "Service_Reply";
+    requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+
+    Replier* replier = participant->create_service_replier(service, replier_qos);
+    ASSERT_NE(replier, nullptr);
+
+    Requester* requester = participant->create_service_requester(service, requester_qos);
+    ASSERT_NE(requester, nullptr);
+
+    void* data = nullptr;
+    RequestInfo info;
+
+    ASSERT_EQ(requester->send_request(data, info), RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(replier->send_reply(data, info), RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(requester->take_reply(data, info), RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(replier->take_request(data, info), RETCODE_PRECONDITION_NOT_MET);
+
+    ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 

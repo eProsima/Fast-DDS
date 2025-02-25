@@ -38,9 +38,9 @@ class ServiceImpl;
  */
 class RequesterImpl : public Requester
 {
-
-friend class ServiceImpl;
-
+    
+public:
+    
     /**
      * @brief Constructor
      * Don't use it directly, use create_service_requester from DomainParticipant instead
@@ -48,8 +48,6 @@ friend class ServiceImpl;
     RequesterImpl(
             ServiceImpl* service,
             const RequesterQos& qos);
-
-public:
 
     /**
      * @brief Destructor
@@ -106,11 +104,11 @@ public:
     ReturnCode_t close() override;
 
     /**
-     * @brief Check if the requester is valid (i.e: all DDS entities are correctly created)
+     * @brief Check if the requester is enabled (i.e: all DDS entities are correctly created)
      */
-    inline bool is_valid() const
+    inline bool is_enabled() const override
     {
-        return valid_;
+        return enabled_;
     }
 
     // Getters for DDS Endpoints
@@ -133,15 +131,20 @@ private:
      * 
      * @return RETCODE_OK if all DDS entities were created successfully, RETCODE_ERROR otherwise
      */
-    virtual ReturnCode_t create_dds_entities(const RequesterQos& qos);
+    ReturnCode_t create_dds_entities(const RequesterQos& qos);
+
+    /**
+     * @brief Delete all internal DDS entities
+     * 
+     * @return RETCODE_OK if all entities were deleted successfully, RETCODE_PRECONDITION_NOT_MET
+     * if any entity cannot be deleted
+     */
+    ReturnCode_t delete_contained_entities();
 
     DataReader* requester_reader_;
     DataWriter* requester_writer_;
-    Publisher* requester_publisher_;
-    Subscriber* requester_subscriber_;
     RequesterQos qos_;
     ServiceImpl* service_;
-    bool valid_;
     bool enabled_;
 
 };

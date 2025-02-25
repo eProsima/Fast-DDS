@@ -71,7 +71,8 @@ TCPReqRepHelloWorldReplier::~TCPReqRepHelloWorldReplier()
 
             participant_->delete_service(service_);
         }
-
+        
+        participant_->delete_contained_entities();
         DomainParticipantFactory::get_instance()->delete_participant(participant_);
     }
 }

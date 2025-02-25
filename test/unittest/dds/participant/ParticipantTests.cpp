@@ -3127,6 +3127,7 @@ TEST(ParticipantTests, CreateService)
     ASSERT_NE(service, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
@@ -3140,6 +3141,7 @@ TEST(ParticipantTests, CreateServiceNonRegisteredType)
     rpc::Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_EQ(service, nullptr);
 
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
@@ -3160,7 +3162,8 @@ TEST(ParticipantTests, CreateServiceEmptyParams)
         // Error: Empty service type name
         service = participant->create_service("Service", "");
         ASSERT_EQ(service, nullptr);
-    
+                
+        ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
         ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
@@ -3187,6 +3190,7 @@ TEST(ParticipantTests, CreateServiceAlreadyExists)
     ASSERT_EQ(service_duplicated_2, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
@@ -3219,6 +3223,8 @@ TEST(ParticipantTests, CreateServiceTopicsAlreadyExist)
     ASSERT_EQ(service, nullptr);
 
     ASSERT_EQ(participant->delete_topic(reply_topic), RETCODE_OK);
+
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
@@ -3243,6 +3249,7 @@ TEST(ParticipantTests, FindService)
     ASSERT_EQ(unregistered_service, nullptr);
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
@@ -3262,6 +3269,7 @@ TEST(ParticipantTests, DeleteService)
 
     ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
     ASSERT_EQ(participant->find_service("Service"), nullptr);
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
@@ -3292,6 +3300,8 @@ TEST(ParticipantTests, DeleteServiceFromExternalParticipant)
 
     ASSERT_EQ(participant_0->delete_service(service_0), RETCODE_OK);
     ASSERT_EQ(participant_1->delete_service(service_1), RETCODE_OK);
+    ASSERT_EQ(participant_0->delete_contained_entities(), RETCODE_OK);
+    ASSERT_EQ(participant_1->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant_0), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant_1), RETCODE_OK);
 }
@@ -3340,6 +3350,8 @@ TEST(ParticipantTests, CreateRequesterReplierOnExternalService)
 
     ASSERT_EQ(participant_0->delete_service(service_0), RETCODE_OK);
     ASSERT_EQ(participant_1->delete_service(service_1), RETCODE_OK);
+    ASSERT_EQ(participant_0->delete_contained_entities(), RETCODE_OK);
+    ASSERT_EQ(participant_1->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant_0), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant_1), RETCODE_OK);
 }
@@ -3397,6 +3409,8 @@ TEST(ParticipantTests, DeleteRequesterReplierOnExternalService)
     ASSERT_EQ(participant_1->delete_service_replier("Service", replier_1), RETCODE_OK);
     ASSERT_EQ(participant_0->delete_service(service_0), RETCODE_OK);
     ASSERT_EQ(participant_1->delete_service(service_1), RETCODE_OK);
+    ASSERT_EQ(participant_0->delete_contained_entities(), RETCODE_OK);
+    ASSERT_EQ(participant_1->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant_0), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant_1), RETCODE_OK);
 }
@@ -3924,6 +3938,8 @@ TEST(ParticipantTests, UnregisterServiceTypeInvalid)
 
     // Type not used by any topic/service, unregister it
     ASSERT_EQ(participant->unregister_service_type("ServiceType"), RETCODE_OK);
+
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 

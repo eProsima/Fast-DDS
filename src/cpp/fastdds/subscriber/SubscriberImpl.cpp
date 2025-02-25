@@ -780,6 +780,41 @@ bool SubscriberImpl::can_be_deleted() const
     return true;
 }
 
+bool SubscriberImpl::can_be_deleted(
+        DataReader* reader) const
+{
+    if (!reader)
+    {
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "DataReader is nullptr.");
+        return false;
+    }
+
+    if (user_subscriber_ != reader->get_subscriber())
+    {
+        EPROSIMA_LOG_ERROR(SUBSCRIBER, "DataReader does not belong to this Subscriber.");
+        return false;
+    }
+
+    std::lock_guard<std::mutex> lock(mtx_readers_);
+    auto it = readers_.find(reader->impl_->get_topicdescription()->get_name());
+
+    if (it != readers_.end())
+    {
+        auto dr_it = std::find(it->second.begin(), it->second.end(), reader->impl_);
+
+        if (dr_it == it->second.end())
+        {
+            EPROSIMA_LOG_ERROR(SUBSCRIBER, "DataReader implementation not found.");
+            return false;
+        }
+
+        return (*dr_it)->can_be_deleted();
+    }
+
+    EPROSIMA_LOG_ERROR(SUBSCRIBER, "DataReader not found.");
+    return false;
+}
+
 #ifdef FASTDDS_STATISTICS
 bool SubscriberImpl::get_monitoring_status(
         statistics::MonitorServiceData& status,

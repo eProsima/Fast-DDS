@@ -24,6 +24,8 @@
 #include <fastdds/dds/topic/Topic.hpp>
 
 #include "../domain/DomainParticipantImpl.hpp"
+#include "../publisher/PublisherImpl.hpp"
+#include "../subscriber/SubscriberImpl.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -39,20 +41,18 @@ class RequesterImpl;
 class ServiceImpl : public Service
 {
 
-friend class dds::DomainParticipantImpl;
-friend class ReplierImpl;
-friend class RequesterImpl;
-
-/**
- * @brief Constructor
- * Don't use it directly, use create_service from DomainParticipant instead
- */
-ServiceImpl(
-        const std::string& service_name,
-        const std::string& service_type_name,
-        DomainParticipantImpl* participant);
-
 public:
+    
+    /**
+     * @brief Constructor
+     * Don't use it directly, use create_service from DomainParticipant instead
+     */
+    ServiceImpl(
+            const std::string& service_name,
+            const std::string& service_type_name,
+            DomainParticipantImpl* participant,
+            PublisherImpl* service_publisher,
+            SubscriberImpl* service_subscriber);
 
     /**
      * @brief Destructor
@@ -98,18 +98,6 @@ public:
             ReplierImpl* replier);
 
     /**
-     * @brief Remove all requesters from the service
-     * It destroys the underlying requester objects
-     */
-    void remove_all_requesters();
-
-    /**
-     * @brief Remove all repliers from the service
-     * It destroys the underlying replier objects
-     */
-    void remove_all_repliers();
-
-    /**
      * @brief Create a requester for the service
      * 
      * @param qos Requester QoS
@@ -129,20 +117,26 @@ public:
 
     /**
      * @brief Enable the service
+     * 
+     * @return RETCODE_OK if the topics were created successfully, an specific error code otherwise
+     * It will also try to enable all internal Requesters and Repliers
      */
     ReturnCode_t enable() override;
 
     /**
      * @brief Disable the service
+     * 
+     * @return RETCODE_OK if all topics were deleted and all internal requesters/repliers were disabled,
+     * an specific error code otherwise
      */
     ReturnCode_t close() override;
 
     /**
-     * @brief Check if the service is valid (i.e: all DDS entities are correctly created)
+     * @brief Check if the service is enabled
      */
-    inline bool is_valid() const
+    inline bool is_enabled() const override
     {
-        return valid_;
+        return enabled_;
     }
 
     bool service_type_in_use(
@@ -177,25 +171,25 @@ public:
             valid = false;
         }
 
-        if (qos.request_type != request_topic_->get_type_name())
+        if (qos.request_type != request_type_name_)
         {
             EPROSIMA_LOG_ERROR(SERVICE, "Request type in QoS does not match the service type name");
             valid = false;
         }
 
-        if (qos.reply_type != reply_topic_->get_type_name())
+        if (qos.reply_type != reply_type_name_)
         {
             EPROSIMA_LOG_ERROR(SERVICE, "Reply type in QoS does not match the service type name");
             valid = false;
         }
             
-        if (qos.request_topic_name != request_topic_->get_name())
+        if (qos.request_topic_name != request_topic_name_)
         {
             EPROSIMA_LOG_ERROR(SERVICE, "Request topic name in QoS does not match the request topic name");
             valid = false;
         }
 
-        if (qos.reply_topic_name != reply_topic_->get_name())
+        if (qos.reply_topic_name != reply_topic_name_)
         {
             EPROSIMA_LOG_ERROR(SERVICE, "Reply topic name in QoS does not match the reply topic name");
             valid = false;
@@ -216,14 +210,51 @@ public:
         return valid;
     }
 
+    DomainParticipantImpl* get_participant()
+    {
+        return participant_;
+    }
+
+    PublisherImpl* get_publisher()
+    {
+        return service_publisher_;
+    }
+
+    SubscriberImpl* get_subscriber()
+    {
+        return service_subscriber_;
+    }
+
+    Topic* get_request_topic()
+    {
+        return request_topic_;
+    }
+
+    Topic* get_reply_topic()
+    {
+        return reply_topic_;
+    }
+
+    ContentFilteredTopic* get_reply_filtered_topic()
+    {
+        return reply_filtered_topic_;
+    }
+
 private:
 
     /**
      * @brief Create request and reply topics for the service
      * 
-     * @return RETCODE_OK if request/reply topics were created successfully, RETCODE_ERROR otherwise
+     * @return RETCODE_OK if request/reply topics were created successfully, an specific error code otherwise
      */
-    virtual ReturnCode_t create_request_reply_topics();
+    ReturnCode_t create_request_reply_topics();
+
+    /**
+     * @brief Delete all internal Requester and Replier entities
+     * 
+     * @return RETCODE_OK if all entities were deleted successfully, an specific error code otherwise
+     */
+    ReturnCode_t delete_contained_entities();
     
     //! Service name
     std::string service_name_;
@@ -231,8 +262,23 @@ private:
     //! Service type name
     std::string service_type_name_;
 
+    //! Request topic info
+    std::string request_topic_name_;
+    std::string request_type_name_;
+
+    //! Reply topic info
+    std::string reply_topic_name_;
+    std::string reply_type_name_;
+    std::string reply_filtered_topic_name_;
+
     //! DDS Participant associated with the service
     DomainParticipantImpl* participant_;
+
+    //! DDS Publisher used to create DataWriters for Requesters and Repliers
+    PublisherImpl* service_publisher_;
+
+    //! DDS Subscriber used to create DataReaders for Requesters and Repliers
+    SubscriberImpl* service_subscriber_;
 
     //! Vector of repliers attached to the service
     std::vector<ReplierImpl*> repliers_;
@@ -257,7 +303,6 @@ private:
     // In a multiple requester - single replier service scenario, each requester will discard the received replies destinated to another requester
     ContentFilteredTopic* reply_filtered_topic_;
 
-    bool valid_;
     bool enabled_;
 
 };

@@ -48,22 +48,12 @@ public:
      */
     virtual const std::string& get_service_type_name() const = 0;
 
-    /**
-     * @brief Enable the Service
-     */
-    virtual ReturnCode_t enable() override = 0;
-
-    /**
-     * @brief Disable the Service
-     */
-    virtual ReturnCode_t close() override = 0;
-
 protected:
 
     /**
      * @brief Destructor
      */
-    ~Service(){};
+    ~Service() = default;
 
 };
 

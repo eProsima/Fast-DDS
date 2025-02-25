@@ -41,12 +41,17 @@ public:
      */
     virtual ReturnCode_t close() = 0;
 
+    /**
+     * @brief Check if the entity is enabled
+     */
+    virtual bool is_enabled() const = 0;
+
 protected:
 
     /**
      * @brief Destructor
      */
-    ~RPCEntity(){};
+    ~RPCEntity() = default;
 
 };
 

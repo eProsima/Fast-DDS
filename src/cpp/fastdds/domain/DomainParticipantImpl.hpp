@@ -343,7 +343,7 @@ public:
             const std::string& service_type_name);
 
     /**
-     * Create a RPC service.
+     * Create an enabled RPC service.
      * 
      * @param service_name Name of the service.
      * @param service_type_name Type name of the service (Request & reply types)
@@ -766,6 +766,10 @@ protected:
     std::map<std::string, rpc::ServiceImpl*> services_;
     mutable std::mutex mtx_service_types_;
     mutable std::mutex mtx_services_;
+
+    //! RPC Services publisher and subscriber
+    std::pair<Subscriber*, SubscriberImpl*> services_subscriber_;
+    std::pair<Publisher*, PublisherImpl*> services_publisher_;
 
     //!Topic map
     std::map<std::string, TopicProxyFactory*> topics_;

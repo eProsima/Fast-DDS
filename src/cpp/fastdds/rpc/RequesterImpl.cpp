@@ -29,47 +29,37 @@ RequesterImpl::RequesterImpl(
         const RequesterQos& qos)
         : requester_reader_(nullptr),
         requester_writer_(nullptr),
-        requester_publisher_(nullptr),
-        requester_subscriber_(nullptr),
         qos_(qos),
         service_(service),
-        valid_(false),
-        enabled_(true)
+        enabled_(false)
 {
-    // Create required DDS entities. If any of them fails, the requester is not valid
-    ReturnCode_t retcode = create_dds_entities(qos);
-    valid_ = (retcode == RETCODE_OK);
 }
 
 RequesterImpl::~RequesterImpl()
 {
-    if (requester_subscriber_)
-    {
-        requester_subscriber_->delete_contained_entities();
-        service_->participant_->delete_subscriber(requester_subscriber_);
-    }
-
-    if (requester_publisher_)
-    {
-        requester_publisher_->delete_contained_entities();
-        service_->participant_->delete_publisher(requester_publisher_);
-    }
-
+    close();
     service_ = nullptr;
 }
 
 const std::string& RequesterImpl::get_service_name() const
 {
-    return service_->service_name_;
+    return service_->get_service_name();
 }
 
 ReturnCode_t RequesterImpl::send_request(
         void* data,
         RequestInfo& info)
 {
-    // TODO: Implement here the endpoint matching algorithm
+    FASTDDS_TODO_BEFORE(3, 3, "Implement matching algorithm");
+    
     rtps::WriteParams wparams;
     ReturnCode_t retcode;
+
+    if (!enabled_)
+    {
+        EPROSIMA_LOG_ERROR(REQUESTER, "Trying to send a request with a disabled requester");
+        return RETCODE_PRECONDITION_NOT_MET;
+    }
 
     retcode = requester_writer_->write(data, wparams);
     // Fill RequestInfo's related sample identity with the information expected for the corresponding reply
@@ -82,7 +72,14 @@ ReturnCode_t RequesterImpl::take_reply(
         void* data,
         RequestInfo& info)
 {
-    // TODO: Implement here the endpoint matching algorithm
+    FASTDDS_TODO_BEFORE(3, 3, "Implement matching algorithm");
+
+    if (!enabled_)
+    {
+        EPROSIMA_LOG_ERROR(REQUESTER, "Trying to take a reply with a disabled requester");
+        return RETCODE_PRECONDITION_NOT_MET;
+    }
+
     return requester_reader_->take_next_sample(data, &info);
 }
 
@@ -90,41 +87,72 @@ ReturnCode_t RequesterImpl::take_reply(
         LoanableCollection& data,
         LoanableSequence<RequestInfo>& info)
 {
-    // TODO: Implement here the endpoint matching algorithm
+    FASTDDS_TODO_BEFORE(3, 3, "Implement matching algorithm");
+
+    if (!enabled_)
+    {
+        EPROSIMA_LOG_ERROR(REQUESTER, "Trying to take a reply with a disabled requester");
+        return RETCODE_PRECONDITION_NOT_MET;
+    }
     return requester_reader_->take(data, info);
 }
 
 ReturnCode_t RequesterImpl::enable()
 {
-    enabled_ = true;
-    return RETCODE_OK;
+    ReturnCode_t retcode = RETCODE_OK;
+
+    if (!enabled_)
+    {
+        if (!service_)
+        {
+            EPROSIMA_LOG_ERROR(REQUESTER, "Service is nullptr");
+            return RETCODE_ERROR;
+        }
+
+        if (!service_->is_enabled())
+        {
+            EPROSIMA_LOG_ERROR(REQUESTER, "Trying to enable Requester on a disabled Service");
+            return RETCODE_PRECONDITION_NOT_MET;
+        }
+
+        if (RETCODE_OK != (retcode = create_dds_entities(qos_)))
+        {
+            EPROSIMA_LOG_ERROR(REQUESTER, "Error creating DDS entities");
+            // If any error occurs, delete the created entities
+            // This is necessary to avoid keeping requester in an inconsistent state
+            delete_contained_entities();
+            return retcode;
+        }
+
+        enabled_ = true;
+    }
+
+    return retcode;
 }
 
 ReturnCode_t RequesterImpl::close()
 {
-    enabled_ = false;
-    return RETCODE_OK;
+    ReturnCode_t retcode = RETCODE_OK;
+
+    if (enabled_)
+    {
+        if (RETCODE_OK != (retcode = delete_contained_entities()))
+        {
+            EPROSIMA_LOG_ERROR(REQUESTER, "Error deleting DDS entities");
+            return retcode;
+        }
+
+        enabled_ = false;
+    }
+
+    return retcode;
 }
 
 ReturnCode_t RequesterImpl::create_dds_entities(const RequesterQos& qos)
 {
-    if (!service_)
-    {
-        // Service is not configured properly, so the requester does not have access to a valid DomainParticipant
-        EPROSIMA_LOG_ERROR(REQUESTER, "Service is nullptr");
-        return RETCODE_ERROR;
-    }
-    
-    // Create publisher and writer for the Request topic
-    requester_publisher_ = service_->participant_->create_publisher(PUBLISHER_QOS_DEFAULT);
-
-    if (!requester_publisher_)
-    {
-        EPROSIMA_LOG_ERROR(REQUESTER, "Error creating request publisher");
-        return RETCODE_ERROR;
-    }
-
-    requester_writer_ = requester_publisher_->create_datawriter(service_->request_topic_, qos.writer_qos);
+    // Create writer for the Request topic
+    requester_writer_ =
+            service_->get_publisher()->create_datawriter(service_->get_request_topic(), qos.writer_qos, nullptr);
 
     if (!requester_writer_)
     {
@@ -132,22 +160,46 @@ ReturnCode_t RequesterImpl::create_dds_entities(const RequesterQos& qos)
         return RETCODE_ERROR;
     }
 
-    // Create subscriber and reader for the Reply topic
-    requester_subscriber_ = service_->participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
-
-    if (!requester_subscriber_)
-    {
-        EPROSIMA_LOG_ERROR(REQUESTER, "Error creating reply subscriber");
-        return RETCODE_ERROR;
-    }
-
-    requester_reader_ = requester_subscriber_->create_datareader(service_->reply_filtered_topic_, qos.reader_qos);
+    requester_reader_ =
+            service_->get_subscriber()->create_datareader(
+                service_->get_reply_filtered_topic(), qos.reader_qos, nullptr);
 
     if (!requester_reader_)
     {
         EPROSIMA_LOG_ERROR(REQUESTER, "Error creating reply reader");
         return RETCODE_ERROR;
     }
+
+    return RETCODE_OK;
+}
+
+ReturnCode_t RequesterImpl::delete_contained_entities()
+{
+    // Check if DataWriter and DataReader can be deleted.
+    // If not, do nothing and return an error code
+    if (requester_writer_)
+    {
+        if (!service_->get_publisher()->can_be_deleted(requester_writer_))
+        {
+            EPROSIMA_LOG_ERROR(REQUESTER, "Requester DataWriter cannot be deleted");
+            return RETCODE_PRECONDITION_NOT_MET;
+        }
+    }
+
+    if (requester_reader_)
+    {
+        if (!service_->get_subscriber()->can_be_deleted(requester_reader_))
+        {
+            EPROSIMA_LOG_ERROR(REQUESTER, "Requester DataReader cannot be deleted");
+            return RETCODE_PRECONDITION_NOT_MET;
+        }
+    }
+
+    // Delete DataWriter and DataReader
+    service_->get_publisher()->delete_datawriter(requester_writer_);
+    requester_writer_ = nullptr;
+    service_->get_subscriber()->delete_datareader(requester_reader_);
+    requester_reader_ = nullptr;
 
     return RETCODE_OK;
 }

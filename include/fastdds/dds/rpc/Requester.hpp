@@ -89,22 +89,12 @@ public:
      */
     virtual const DataReader* get_requester_reader() const = 0;
 
-    /**
-     * @brief Enable the Requester
-     */
-    virtual ReturnCode_t enable() override = 0;
-
-    /**
-     * @brief Disable the Requester
-     */
-    virtual ReturnCode_t close() override = 0;
-
 protected:
 
     /**
      * @brief Destructor
      */
-    ~Requester(){};
+    ~Requester() = default;
 
 };
 

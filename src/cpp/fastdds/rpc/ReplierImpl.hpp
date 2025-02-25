@@ -39,17 +39,15 @@ class ServiceImpl;
 class ReplierImpl : public Replier
 {
 
-friend class ServiceImpl;
+public:
 
     /**
      * @brief Constructor
      * Don't use it directly, use create_service_replier from DomainParticipant instead
      */
     ReplierImpl(
-            ServiceImpl* service,
-            const ReplierQos& qos);
-
-public:
+        ServiceImpl* service,
+        const ReplierQos& qos);
 
     /**
      * @brief Destructor
@@ -68,7 +66,7 @@ public:
      * @param info Information about the reply sample. This information is used to match the reply with the request through the SampleIdentity
      * @return RETCODE_OK if the reply was sent successfully or a ReturnCode related to the specific error otherwise
      */
-    virtual ReturnCode_t send_reply(
+    ReturnCode_t send_reply(
             void* data,
             RequestInfo& info) override;
     
@@ -79,7 +77,7 @@ public:
      * @param info Information about the request sample
      * @return RETCODE_OK if the request was taken successfully or a ReturnCode related to the specific error otherwise
      */
-    virtual ReturnCode_t take_request(
+    ReturnCode_t take_request(
             void* data,
             RequestInfo& info) override;
 
@@ -91,7 +89,7 @@ public:
      * @param info Information about the request sample
      * @return RETCODE_OK if the request was taken successfully or a ReturnCode related to the specific error otherwise
      */
-    virtual ReturnCode_t take_request(
+    ReturnCode_t take_request(
             LoanableCollection& data,
             LoanableSequence<RequestInfo>& info) override;
 
@@ -106,11 +104,11 @@ public:
     ReturnCode_t close() override;
 
     /**
-     * @brief Check if the replier is valid (i.e: all DDS entities are correctly created)
+     * @brief Check if the replier is enabled (i.e: all DDS entities are correctly created)
      */
-    inline bool is_valid() const
+    inline bool is_enabled() const override
     {
-        return valid_;
+        return enabled_;
     }
 
     // Getters for DDS Endpoints
@@ -133,15 +131,20 @@ private:
      * 
      * @return RETCODE_OK if all DDS entities were created successfully, RETCODE_ERROR otherwise
      */
-    virtual ReturnCode_t create_dds_entities(const ReplierQos& qos);
+    ReturnCode_t create_dds_entities(const ReplierQos& qos);
+
+    /**
+     * @brief Delete all internal DDS Entities
+     * 
+     * @return RETCODE_OK if all entities were deleted successfully, RETCODE_PRECONDITION_NOT_MET
+     * if any entity cannot be deleted
+     */
+    ReturnCode_t delete_contained_entities();
 
     DataReader* replier_reader_;
     DataWriter* replier_writer_;
-    Publisher* replier_publisher_;
-    Subscriber* replier_subscriber_;
     ReplierQos qos_;
     ServiceImpl* service_;
-    bool valid_;
     bool enabled_;
 
 };

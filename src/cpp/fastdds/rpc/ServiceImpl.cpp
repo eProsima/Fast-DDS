@@ -14,9 +14,10 @@
 
 #include <fastdds/dds/rpc/ServiceTypeSupport.hpp>
 
-#include "ServiceImpl.hpp"
-#include "RequesterImpl.hpp"
 #include "ReplierImpl.hpp"
+#include "RequesterImpl.hpp"
+#include "RequestReplyContentFilterFactory.hpp"
+#include "ServiceImpl.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -26,47 +27,37 @@ namespace rpc {
 ServiceImpl::ServiceImpl(
         const std::string& service_name,
         const std::string& service_type_name,
-        DomainParticipantImpl* participant)
+        DomainParticipantImpl* participant,
+        PublisherImpl* service_publisher,
+        SubscriberImpl* service_subscriber)
         : service_name_(service_name),
         service_type_name_(service_type_name),
+        request_topic_name_(service_name + "_Request"),
+        request_type_name_(service_type_name + "_Request"),
+        reply_topic_name_(service_name + "_Reply"),
+        reply_type_name_(service_type_name + "_Reply"),
+        reply_filtered_topic_name_(service_name + "_ReplyFiltered"),
         participant_(participant),
-        enabled_(true)
+        service_publisher_(service_publisher),
+        service_subscriber_(service_subscriber),
+        enabled_(false)
 {
-    ReturnCode_t retcode = create_request_reply_topics();
-    valid_ = (retcode == RETCODE_OK);
 }
 
 ServiceImpl::~ServiceImpl()
 {
+    delete_contained_entities();
 
-    // Remove all requesters/repliers
-    remove_all_requesters();
-    remove_all_repliers();
-    
-    // Remove filtered Reply topic
-    if (reply_filtered_topic_)
-    {
-        participant_->delete_contentfilteredtopic(reply_filtered_topic_);
-    }
-
-    // Remove Request/reply topics
-    if (request_topic_)
-    {
-        participant_->delete_topic(request_topic_);
-    }
-
-    if (reply_topic_)
-    {
-        participant_->delete_topic(reply_topic_);
-    }
-
-    // Unset participant
+    // Unset participant, publisher and subscriber (shared with other services)
     participant_ = nullptr;
+    service_publisher_ = nullptr;
+    service_subscriber_ = nullptr;
 }
 
 ReturnCode_t ServiceImpl::remove_requester(
         RequesterImpl* requester)
 {
+    ReturnCode_t ret = RETCODE_OK;
     std::lock_guard<std::mutex> lock(mtx_requesters_);
     auto it = std::find(requesters_.begin(), requesters_.end(), requester);
 
@@ -77,6 +68,13 @@ ReturnCode_t ServiceImpl::remove_requester(
         return RETCODE_PRECONDITION_NOT_MET;
     }
 
+    // In case the requester is enabled, disable it first
+    if (RETCODE_OK != (ret = (*it)->close()))
+    {
+        EPROSIMA_LOG_ERROR(SERVICE, "Error closing Requester for Service '" << service_name_ << "'");
+        return ret;
+    }
+
     delete *it;
     requesters_.erase(it);
     return RETCODE_OK;
@@ -85,6 +83,7 @@ ReturnCode_t ServiceImpl::remove_requester(
 ReturnCode_t ServiceImpl::remove_replier(
         ReplierImpl* replier)
 {
+    ReturnCode_t ret = RETCODE_OK;
     std::lock_guard<std::mutex> lock(mtx_repliers_);
     auto it = std::find(repliers_.begin(), repliers_.end(), replier);
     if (it == repliers_.end())
@@ -94,29 +93,16 @@ ReturnCode_t ServiceImpl::remove_replier(
         return RETCODE_PRECONDITION_NOT_MET;
     }
 
+    // In case the replier is enabled, disable it first
+    if (RETCODE_OK != (ret = (*it)->close()))
+    {
+        EPROSIMA_LOG_ERROR(SERVICE, "Error closing Replier for Service '" << service_name_ << "'");
+        return ret;
+    }
+
     delete *it;
     repliers_.erase(it);
     return RETCODE_OK;
-}
-
-void ServiceImpl::remove_all_requesters()
-{
-    std::lock_guard<std::mutex> lock(mtx_requesters_);
-    for (auto requester : requesters_)
-    {
-        delete requester;
-    }
-    requesters_.clear();
-}
-
-void ServiceImpl::remove_all_repliers()
-{
-    std::lock_guard<std::mutex> lock(mtx_repliers_);
-    for (auto replier : repliers_)
-    {
-        delete replier;
-    }
-    repliers_.clear();
 }
 
 RequesterImpl* ServiceImpl::create_requester(
@@ -132,6 +118,7 @@ RequesterImpl* ServiceImpl::create_requester(
 
     try
     {
+        // create a new Requester (disabled by default)
         requester = new RequesterImpl(this, qos);
     }
     catch (const std::exception& e)
@@ -140,8 +127,8 @@ RequesterImpl* ServiceImpl::create_requester(
         return nullptr;
     }
 
-    // Check that all requester dds entities are correctly created
-    if (!requester->is_valid())
+    // If the service is active, try to enable the requester
+    if (enabled_ && (RETCODE_OK != requester->enable()))
     {
         EPROSIMA_LOG_ERROR(SERVICE, "Error creating requester DDS entities.");
         delete requester;
@@ -170,6 +157,7 @@ ReplierImpl* ServiceImpl::create_replier(
 
     try
     {
+        // create a new Replier (disabled by default)
         replier = new ReplierImpl(this, qos);
     }
     catch (const std::exception& e)
@@ -178,8 +166,8 @@ ReplierImpl* ServiceImpl::create_replier(
         return nullptr;
     }
 
-    // Check that all replier dds entities are correctly created
-    if (!replier->is_valid())
+    // If the service is active, try to enable the replier
+    if (enabled_ && (RETCODE_OK != replier->enable()))
     {
         EPROSIMA_LOG_ERROR(SERVICE, "Error creating replier DDS entities.");
         delete replier;
@@ -197,14 +185,110 @@ ReplierImpl* ServiceImpl::create_replier(
 
 ReturnCode_t ServiceImpl::enable()
 {
-    enabled_ = true;
-    return RETCODE_OK;
+    ReturnCode_t ret = RETCODE_OK;
+
+    if (!enabled_)
+    {
+        // Create request/reply topics
+        if (RETCODE_OK != (ret = create_request_reply_topics()))
+        {
+            EPROSIMA_LOG_ERROR(SERVICE, "Error creating request/reply topics for Service '" << service_name_ << "'");
+            return ret;
+        }
+
+        enabled_ = true;
+
+        {
+            // Try to enable internal Requesters.
+            // It will also create the DDS entities in the Service Request/Reply topics.
+            // If something goes wrong, Requester remains disabled and show an error message.
+            std::lock_guard<std::mutex> lock(mtx_requesters_);
+            for (auto requester : requesters_)
+            {
+                if (RETCODE_OK != (ret = requester->enable()))
+                {
+                    EPROSIMA_LOG_ERROR(SERVICE, "Error enabling Requester for Service '" << service_name_ << "'");
+                }
+                else
+                {
+                    EPROSIMA_LOG_INFO(SERVICE, "Requester for Service '" << service_name_ << "' enabled.");
+                }
+            }
+        }
+
+        {
+            // Enable internal Repliers.
+            // It will also create the DDS entities in the Service Request/Reply topics
+            std::lock_guard<std::mutex> lock(mtx_repliers_);
+            for (auto replier : repliers_)
+            {
+                if (RETCODE_OK != (ret = replier->enable()))
+                {
+                    EPROSIMA_LOG_ERROR(SERVICE, "Error enabling Replier for Service '" << service_name_ << "'");
+                }
+                else
+                {
+                    EPROSIMA_LOG_INFO(SERVICE, "Replier for Service '" << service_name_ << "' enabled.");
+                }
+            }
+        }
+    }
+    
+    return ret;
 }
 
 ReturnCode_t ServiceImpl::close()
 {
-    enabled_ = false;
-    return RETCODE_OK;
+    ReturnCode_t ret = RETCODE_OK;
+
+    if (enabled_)
+    {
+        // If Service contains requesters or repliers, disable them first
+        {
+            std::lock_guard<std::mutex> lock(mtx_requesters_);
+            for (auto requester : requesters_)
+            {
+                if (RETCODE_OK != (ret = requester->close()))
+                {
+                    EPROSIMA_LOG_ERROR(SERVICE, "Error closing Requester for Service '" << service_name_ << "'");
+                    return ret;
+                }
+            }
+        }
+        
+        {
+            std::lock_guard<std::mutex> lock(mtx_repliers_);
+            for (auto replier : repliers_)
+            {
+                if (RETCODE_OK != (ret = replier->close()))
+                {
+                    EPROSIMA_LOG_ERROR(SERVICE, "Error closing Replier for Service '" << service_name_ << "'");
+                    return ret;
+                }
+            }
+        }
+
+        // Remove filtered Reply topic
+        if (reply_filtered_topic_)
+        {
+            participant_->delete_contentfilteredtopic(reply_filtered_topic_);
+        }
+        
+        // Remove Request/reply topics
+        if (request_topic_)
+        {
+            participant_->delete_topic(request_topic_);
+        }
+        
+        if (reply_topic_)
+        {
+            participant_->delete_topic(reply_topic_);
+        }
+
+        enabled_ = false;
+    }
+
+    return ret;
 }
 
 ReturnCode_t ServiceImpl::create_request_reply_topics()
@@ -216,7 +300,7 @@ ReturnCode_t ServiceImpl::create_request_reply_topics()
         return RETCODE_ERROR;
     }
 
-    request_topic_ = participant_->create_topic(service_name_ + "_Request", service_type_name_ + "_Request");
+    request_topic_ = participant_->create_topic(request_topic_name_, request_type_name_);
 
     if (!request_topic_)
     {
@@ -224,7 +308,7 @@ ReturnCode_t ServiceImpl::create_request_reply_topics()
         return RETCODE_ERROR;
     }
 
-    reply_topic_ = participant_->create_topic(service_name_ + "_Reply", service_type_name_ + "_Reply");
+    reply_topic_ = participant_->create_topic(reply_topic_name_, reply_type_name_);
 
     if (!reply_topic_)
     {
@@ -233,11 +317,11 @@ ReturnCode_t ServiceImpl::create_request_reply_topics()
     }
 
     reply_filtered_topic_ = participant_->create_contentfilteredtopic(
-        service_name_ + "_ReplyFiltered",
+        reply_filtered_topic_name_,
         reply_topic_,
         " ",
         std::vector<std::string>(),
-        "REQUEST_REPLY_CONTENT_FILTER");
+        __BUILTIN_REQUEST_REPLY_CONTENT_FILTER__);
     
     if (!reply_filtered_topic_)
     {
@@ -246,6 +330,40 @@ ReturnCode_t ServiceImpl::create_request_reply_topics()
     }
 
     return RETCODE_OK;
+}
+
+ReturnCode_t ServiceImpl::delete_contained_entities()
+{
+    ReturnCode_t ret = RETCODE_OK;
+
+    // Close the Service
+    if (RETCODE_OK != (ret = close()))
+    {
+        EPROSIMA_LOG_ERROR(SERVICE, "Error closing Service '" << service_name_ << "'");
+        return ret;
+    }
+
+    // Remove all requesters
+    {
+        std::lock_guard<std::mutex> lock(mtx_requesters_);
+        for (auto requester : requesters_)
+        {
+            delete requester;
+        }
+        requesters_.clear();
+    }
+
+    // Remove all repliers
+    {
+        std::lock_guard<std::mutex> lock(mtx_repliers_);
+        for (auto replier : repliers_)
+        {
+            delete replier;
+        }
+        repliers_.clear();
+    }
+
+    return ret;
 }
 
 } // namespace rpc
