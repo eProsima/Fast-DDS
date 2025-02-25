@@ -537,9 +537,9 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
     RTPSParticipantAttributes client_att(att);
 
     // Check whether we need to initialize in easy mode
-    const std::string& easy_mode_env_value = easy_mode_env();
+    const std::string& ros_easy_mode_env_value = ros_easy_mode_env();
 
-    if (easy_mode_env_value.empty())
+    if (ros_easy_mode_env_value.empty())
     {
         // Retrieve the info from the environment variable
         LocatorList_t& server_list = client_att.builtin.discovery_config.m_DiscoveryServers;
@@ -655,7 +655,7 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
                         .verb(FAST_DDS_DEFAULT_CLI_AUTO_VERB)
                         .arg("-d")
                         .value(std::to_string(domain_id))
-                        .value(easy_mode_env_value + ":" + std::to_string(domain_id))
+                        .value(ros_easy_mode_env_value + ":" + std::to_string(domain_id))
                         .build_and_call();
 #ifndef _WIN32
         // Adecuate Python subprocess return
