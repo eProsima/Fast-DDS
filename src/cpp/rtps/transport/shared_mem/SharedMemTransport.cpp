@@ -301,8 +301,13 @@ bool SharedMemTransport::init(
         {
             return false;
         }
-        shared_mem_segment_ = shared_mem_manager_->create_segment(configuration_.segment_size(),
-                        configuration_.port_queue_capacity());
+        uint32_t mean_message_size = configuration_.max_message_size() / 2;
+        uint32_t max_allocations = configuration_.segment_size() / mean_message_size;
+        if (configuration_.port_queue_capacity() > max_allocations)
+        {
+            max_allocations = configuration_.port_queue_capacity();
+        }
+        shared_mem_segment_ = shared_mem_manager_->create_segment(configuration_.segment_size(), max_allocations);
 
         // Memset the whole segment to zero in order to force physical map of the buffer
         auto buffer = shared_mem_segment_->alloc_buffer(configuration_.segment_size(),
