@@ -38,19 +38,26 @@ class LibrarySettingsAttributes
 {
 public:
 
-    LibrarySettingsAttributes() {
+    LibrarySettingsAttributes()
+    {
     }
 
-    virtual ~LibrarySettingsAttributes() {
+    virtual ~LibrarySettingsAttributes()
+    {
     }
 
-    bool operator==(
+    bool operator ==(
             const LibrarySettingsAttributes& b) const
     {
         return (intraprocess_delivery == b.intraprocess_delivery);
     }
 
-    IntraprocessDeliveryType intraprocess_delivery = INTRAPROCESS_FULL;
+    IntraprocessDeliveryType intraprocess_delivery =
+#if HAVE_STRICT_REALTIME
+            INTRAPROCESS_OFF;
+#else
+            INTRAPROCESS_FULL;
+#endif // if HAVE_STRICT_REALTIME
 };
 
 }  // namespace fastrtps

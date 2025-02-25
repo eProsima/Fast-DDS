@@ -2311,9 +2311,10 @@ void RTPSParticipantImpl::set_check_type_function(
     type_check_fn_ = std::move(check_type);
 }
 
-std::unique_ptr<RTPSMessageGroup_t> RTPSParticipantImpl::get_send_buffer()
+std::unique_ptr<RTPSMessageGroup_t> RTPSParticipantImpl::get_send_buffer(
+        const std::chrono::steady_clock::time_point& max_blocking_time)
 {
-    return send_buffers_->get_buffer(this);
+    return send_buffers_->get_buffer(this, max_blocking_time);
 }
 
 void RTPSParticipantImpl::return_send_buffer(

@@ -360,29 +360,35 @@ bool StatelessWriter::intraprocess_delivery(
 }
 
 bool StatelessWriter::change_removed_by_history(
-        CacheChange_t* change)
+        CacheChange_t* change,
+        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
+    bool ret_value = false;
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
-    flow_controller_->remove_change(change);
-
-    // remove from datasharing pool history
-    if (is_datasharing_compatible())
+    if (flow_controller_->remove_change(change, max_blocking_time))
     {
-        auto pool = std::dynamic_pointer_cast<WriterPool>(payload_pool_);
-        assert (pool != nullptr);
 
-        pool->remove_from_shared_history(change);
-        EPROSIMA_LOG_INFO(RTPS_WRITER, "Removing shared cache change with SN " << change->sequenceNumber);
+        // remove from datasharing pool history
+        if (is_datasharing_compatible())
+        {
+            auto pool = std::dynamic_pointer_cast<WriterPool>(payload_pool_);
+            assert (pool != nullptr);
+
+            pool->remove_from_shared_history(change);
+            EPROSIMA_LOG_INFO(RTPS_WRITER, "Removing shared cache change with SN " << change->sequenceNumber);
+        }
+
+        const uint64_t sequence_number = change->sequenceNumber.to64long();
+        if (sequence_number > last_sequence_number_sent_)
+        {
+            unsent_changes_cond_.notify_all();
+        }
+
+        ret_value = true;
     }
 
-    const uint64_t sequence_number = change->sequenceNumber.to64long();
-    if (sequence_number > last_sequence_number_sent_)
-    {
-        unsent_changes_cond_.notify_all();
-    }
-
-    return true;
+    return ret_value;
 }
 
 bool StatelessWriter::has_been_fully_delivered(

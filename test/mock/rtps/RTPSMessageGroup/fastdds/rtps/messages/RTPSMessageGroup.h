@@ -20,6 +20,8 @@
 #ifndef _FASTDDS_RTPS_RTPSMESSAGEGROUP_H_
 #define _FASTDDS_RTPS_RTPSMESSAGEGROUP_H_
 
+#include <chrono>
+
 #include <gmock/gmock.h>
 
 namespace eprosima {
@@ -34,6 +36,18 @@ class RTPSMessageGroup
 {
 public:
 
+    class timeout : public std::runtime_error
+    {
+    public:
+
+        timeout()
+            : std::runtime_error("timeout")
+        {
+        }
+
+        virtual ~timeout() = default;
+    };
+
     RTPSMessageGroup(
             RTPSParticipantImpl*,
             bool)
@@ -43,7 +57,8 @@ public:
     RTPSMessageGroup(
             RTPSParticipantImpl*,
             Endpoint*,
-            const RTPSMessageSenderInterface*)
+            const RTPSMessageSenderInterface*,
+            std::chrono::steady_clock::time_point)
     {
     }
 

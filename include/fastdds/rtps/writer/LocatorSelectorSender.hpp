@@ -4,8 +4,7 @@
 #include <fastdds/rtps/common/LocatorSelector.hpp>
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
-
-#include <mutex>
+#include <fastrtps/utils/TimedMutex.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -95,6 +94,18 @@ public:
         mutex_.unlock();
     }
 
+    /*!
+     * Try to lock the object.
+     *
+     * This kind of object needs to be locked because could be used outside the writer's mutex.
+     */
+    template <class Clock, class Duration>
+    bool try_lock_until(
+            const std::chrono::time_point<Clock, Duration>& abs_time)
+    {
+        return mutex_.try_lock_until(abs_time);
+    }
+
     fastrtps::rtps::LocatorSelector locator_selector;
 
     ResourceLimitedVector<GUID_t> all_remote_readers;
@@ -105,7 +116,7 @@ private:
 
     RTPSWriter& writer_;
 
-    std::recursive_mutex mutex_;
+    RecursiveTimedMutex mutex_;
 };
 
 } // namespace rtps

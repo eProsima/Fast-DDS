@@ -535,7 +535,7 @@ protected:
     /**
      * Add a change to the unsent list.
      * @param change Pointer to the change to add.
-     * @param max_blocking_time
+     * @param[in] max_blocking_time Maximum time this method has to complete the task.
      */
     virtual void unsent_change_added_to_history(
             CacheChange_t* change,
@@ -544,10 +544,12 @@ protected:
     /**
      * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.
      * @param a_change Pointer to the change that is going to be removed.
+     * @param[in] max_blocking_time Maximum time this method has to complete the task.
      * @return True if removed correctly.
      */
     virtual bool change_removed_by_history(
-            CacheChange_t* a_change) = 0;
+            CacheChange_t* a_change,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) = 0;
 
     bool is_datasharing_compatible_with(
             const ReaderProxyData& rdata) const;

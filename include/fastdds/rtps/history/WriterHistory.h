@@ -84,6 +84,19 @@ public:
             bool release = true) override;
 
     /**
+     * Remove a specific change from the history.
+     * No Thread Safe
+     * @param removal iterator to the change for removal
+     * @param release specifies if the change should be return to the pool
+     * @param[in] max_blocking_time Maximum time this method has to complete the task.
+     * @return iterator to the next change if any
+     */
+    RTPS_DllAPI iterator remove_change_nts(
+            const_iterator removal,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time,
+            bool release = true) override;
+
+    /**
      * Criteria to search a specific CacheChange_t on history
      * @param inner change to compare
      * @param outer change for comparison
@@ -99,6 +112,10 @@ public:
     RTPS_DllAPI virtual bool remove_change_g(
             CacheChange_t* a_change);
 
+    RTPS_DllAPI virtual bool remove_change_g(
+            CacheChange_t* a_change,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
+
     RTPS_DllAPI bool remove_change(
             const SequenceNumber_t& sequence_number);
 
@@ -110,6 +127,14 @@ public:
      * @return True if correctly removed.
      */
     RTPS_DllAPI bool remove_min_change();
+
+    /**
+     * Remove the CacheChange_t with the minimum sequenceNumber.
+     * @param[in] max_blocking_time Maximum time this method has to complete the task.
+     * @return True if correctly removed.
+     */
+    RTPS_DllAPI bool remove_min_change(
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
     RTPS_DllAPI SequenceNumber_t next_sequence_number() const
     {

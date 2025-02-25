@@ -152,7 +152,7 @@ void RTPSWriter::deinit()
         std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
         for (auto it = mp_history->changesBegin(); it != mp_history->changesEnd(); ++it)
         {
-            flow_controller_->remove_change(*it);
+            flow_controller_->remove_change(*it, std::chrono::steady_clock::now() + std::chrono::hours(24));
         }
     }
     for (auto it = mp_history->changesBegin(); it != mp_history->changesEnd(); ++it)

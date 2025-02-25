@@ -55,6 +55,7 @@
 #endif // if HAVE_STRICT_REALTIME && defined(__unix__)
 
 #include <mutex>
+#include <condition_variable>
 #include <chrono>
 #include <functional>
 
@@ -116,6 +117,25 @@ public:
     }
 
     template<typename Mutex>
+    std::cv_status wait_for(
+            std::unique_lock<Mutex>& lock,
+            const std::chrono::nanoseconds& max_blocking_time)
+    {
+        auto nsecs = max_blocking_time;
+        struct timespec max_wait = {
+            0, 0
+        };
+        clock_gettime(CLOCK_MONOTONIC, &max_wait);
+        nsecs = nsecs + std::chrono::nanoseconds(max_wait.tv_nsec);
+        auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
+        nsecs -= secs;
+        max_wait.tv_sec += secs.count();
+        max_wait.tv_nsec = (long)nsecs.count();
+        return (CV_TIMEDWAIT_(cv_, lock.mutex()->native_handle(),
+               &max_wait) == 0) ? std::cv_status::no_timeout : std::cv_status::timeout;
+    }
+
+    template<typename Mutex>
     bool wait_until(
             std::unique_lock<Mutex>& lock,
             const std::chrono::steady_clock::time_point& max_blocking_time,
@@ -137,7 +157,7 @@ public:
     }
 
     template<typename Mutex>
-    bool wait_until(
+    std::cv_status wait_until(
             std::unique_lock<Mutex>& lock,
             const std::chrono::steady_clock::time_point& max_blocking_time)
     {
@@ -147,7 +167,8 @@ public:
         struct timespec max_wait = {
             secs.time_since_epoch().count(), ns.count()
         };
-        return (CV_TIMEDWAIT_(cv_, lock.mutex()->native_handle(), &max_wait) == 0);
+        return (CV_TIMEDWAIT_(cv_, lock.mutex()->native_handle(),
+               &max_wait) == 0) ? std::cv_status::no_timeout : std::cv_status::timeout;
     }
 
     void notify_one()

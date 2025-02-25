@@ -146,6 +146,19 @@ public:
             bool release = true);
 
     /**
+     * Remove a specific change from the history.
+     * No Thread Safe
+     * @param removal iterator to the CacheChange_t to remove.
+     * @param[in] max_blocking_time Maximum time this method has to complete the task.
+     * @param release defaults to true and hints if the CacheChange_t should return to the pool
+     * @return iterator to the next CacheChange_t or end iterator.
+     */
+    RTPS_DllAPI virtual iterator remove_change_nts(
+            const_iterator removal,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time,
+            bool release = true);
+
+    /**
      * Remove all changes from the History
      * @return True if everything was correctly removed.
      */
@@ -158,6 +171,16 @@ public:
      */
     RTPS_DllAPI bool remove_change(
             CacheChange_t* ch);
+
+    /**
+     * Remove a specific change from the history.
+     * @param ch Pointer to the CacheChange_t.
+     * @param[in] max_blocking_time Maximum time this method has to complete the task.
+     * @return True if removed.
+     */
+    RTPS_DllAPI bool remove_change(
+            CacheChange_t* ch,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
     /**
      * Find a specific change in the history using the matches_change method criteria.

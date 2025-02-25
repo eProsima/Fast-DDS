@@ -356,6 +356,13 @@ bool PublisherHistory::remove_change_g(
     return remove_change_pub(a_change);
 }
 
+bool PublisherHistory::remove_change_g(
+        CacheChange_t* a_change,
+        const std::chrono::time_point<std::chrono::steady_clock>&)
+{
+    return remove_change_pub(a_change);
+}
+
 bool PublisherHistory::remove_instance_changes(
         const rtps::InstanceHandle_t& handle,
         const rtps::SequenceNumber_t& seq_up_to)

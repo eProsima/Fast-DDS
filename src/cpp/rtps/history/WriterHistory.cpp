@@ -172,6 +172,15 @@ History::iterator WriterHistory::remove_change_nts(
         const_iterator removal,
         bool release)
 {
+    return WriterHistory::remove_change_nts(removal, std::chrono::steady_clock::now() + std::chrono::hours(24),
+                   release);
+}
+
+History::iterator WriterHistory::remove_change_nts(
+        const_iterator removal,
+        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time,
+        bool release)
+{
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
         EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY,
@@ -185,27 +194,38 @@ History::iterator WriterHistory::remove_change_nts(
         return changesEnd();
     }
 
-    // Remove from history
     CacheChange_t* change = *removal;
-    auto ret_val = m_changes.erase(removal);
-    m_isHistoryFull = false;
 
     // Inform writer
-    mp_writer->change_removed_by_history(change);
-
-    // Release from pools
-    if ( release )
+    if (mp_writer->change_removed_by_history(change, max_blocking_time))
     {
-        mp_writer->release_change(change);
+        // Remove from history
+        auto ret_val = m_changes.erase(removal);
+        m_isHistoryFull = false;
+
+        // Release from pools
+        if ( release )
+        {
+            mp_writer->release_change(change);
+        }
+
+        return ret_val;
     }
 
-    return ret_val;
+    return changesEnd();
 }
 
 bool WriterHistory::remove_change_g(
         CacheChange_t* a_change)
 {
-    return remove_change(a_change);
+    return remove_change(a_change, std::chrono::steady_clock::now() + std::chrono::hours(24));
+}
+
+bool WriterHistory::remove_change_g(
+        CacheChange_t* a_change,
+        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
+{
+    return remove_change(a_change, max_blocking_time);
 }
 
 bool WriterHistory::remove_change(
@@ -253,6 +273,12 @@ CacheChange_t* WriterHistory::remove_change_and_reuse(
 
 bool WriterHistory::remove_min_change()
 {
+    return remove_min_change(std::chrono::steady_clock::now() + std::chrono::hours(24));
+}
+
+bool WriterHistory::remove_min_change(
+        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
+{
 
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
@@ -262,7 +288,7 @@ bool WriterHistory::remove_min_change()
     }
 
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
-    if (m_changes.size() > 0 && remove_change_g(m_changes.front()))
+    if (m_changes.size() > 0 && remove_change_g(m_changes.front(), max_blocking_time))
     {
         return true;
     }
