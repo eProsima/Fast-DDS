@@ -1090,9 +1090,9 @@ void set_easy_mode_environment_variable(
         )
 {
 #ifdef _WIN32
-    ASSERT_EQ(0, _putenv_s(rtps::EASY_MODE_URI, ip.c_str()));
+    ASSERT_EQ(0, _putenv_s(rtps::ROS2_EASY_MODE_URI, ip.c_str()));
 #else
-    ASSERT_EQ(0, setenv(rtps::EASY_MODE_URI, ip.c_str(), 1));
+    ASSERT_EQ(0, setenv(rtps::ROS2_EASY_MODE_URI, ip.c_str(), 1));
 #endif // _WIN32
 }
 
