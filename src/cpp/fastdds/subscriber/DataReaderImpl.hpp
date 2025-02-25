@@ -483,6 +483,7 @@ protected:
 
         DataReaderImpl* data_reader_;
 
+        std::mutex inner_listener_mutex_;
     }
     reader_listener_;
 
