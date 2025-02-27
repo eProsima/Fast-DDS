@@ -957,6 +957,7 @@ void DataReaderImpl::InnerDataReaderListener::on_reader_matched(
         RTPSReader* /*reader*/,
         const MatchingInfo& info)
 {
+    std::lock_guard<std::mutex> lock(inner_listener_mutex_);
     data_reader_->update_subscription_matched_status(info);
 
     StatusMask notify_status = StatusMask::subscription_matched();
@@ -976,6 +977,7 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
         RTPSReader* /*reader*/,
         const LivelinessChangedStatus& status)
 {
+    std::lock_guard<std::mutex> guard(inner_listener_mutex_);
     data_reader_->update_liveliness_status(status);
     StatusMask notify_status = StatusMask::liveliness_changed();
     DataReaderListener* listener = data_reader_->get_listener_for(notify_status);
@@ -999,6 +1001,7 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
         RTPSReader* /*reader*/,
         PolicyMask qos)
 {
+    std::lock_guard<std::mutex> guard(inner_listener_mutex_);
     data_reader_->update_requested_incompatible_qos(qos);
     StatusMask notify_status = StatusMask::requested_incompatible_qos();
     DataReaderListener* listener = data_reader_->get_listener_for(notify_status);
@@ -1022,6 +1025,7 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_lost(
         RTPSReader* /*reader*/,
         int32_t sample_lost_since_last_update)
 {
+    std::lock_guard<std::mutex> guard(inner_listener_mutex_);
     data_reader_->update_sample_lost_status(sample_lost_since_last_update);
     StatusMask notify_status = StatusMask::sample_lost();
     DataReaderListener* listener = data_reader_->get_listener_for(notify_status);
@@ -1046,6 +1050,7 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_rejected(
         SampleRejectedStatusKind reason,
         const CacheChange_t* const change_in)
 {
+    std::lock_guard<std::mutex> guard(inner_listener_mutex_);
     data_reader_->update_sample_rejected_status(reason, change_in);
     StatusMask notify_status = StatusMask::sample_rejected();
     DataReaderListener* listener = data_reader_->get_listener_for(notify_status);
