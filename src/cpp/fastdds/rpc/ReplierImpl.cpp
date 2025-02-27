@@ -27,11 +27,11 @@ namespace rpc {
 ReplierImpl::ReplierImpl(
         ServiceImpl* service,
         const ReplierQos& qos)
-        : replier_reader_(nullptr),
-        replier_writer_(nullptr),
-        qos_(qos),
-        service_(service),
-        enabled_(false)
+    : replier_reader_(nullptr)
+    , replier_writer_(nullptr)
+    , qos_(qos)
+    , service_(service)
+    , enabled_(false)
 {
 }
 
@@ -90,7 +90,7 @@ ReturnCode_t ReplierImpl::take_request(
         LoanableSequence<RequestInfo>& info)
 {
     FASTDDS_TODO_BEFORE(3, 3, "Implement matching algorithm");
-    
+
     ReturnCode_t retcode;
 
     if (!enabled_)
@@ -100,7 +100,7 @@ ReturnCode_t ReplierImpl::take_request(
     }
 
     retcode = replier_reader_->take(data, info);
-    
+
     // Fill related_sample_identity attribute
     for (LoanableCollection::size_type i = 0; i < info.length(); ++i)
     {
@@ -136,7 +136,7 @@ ReturnCode_t ReplierImpl::enable()
             delete_contained_entities();
             return retcode;
         }
-        
+
         enabled_ = true;
     }
 
@@ -161,7 +161,8 @@ ReturnCode_t ReplierImpl::close()
     return retcode;
 }
 
-ReturnCode_t ReplierImpl::create_dds_entities(const ReplierQos& qos)
+ReturnCode_t ReplierImpl::create_dds_entities(
+        const ReplierQos& qos)
 {
     // Create writer for the Reply topic
     replier_writer_ =

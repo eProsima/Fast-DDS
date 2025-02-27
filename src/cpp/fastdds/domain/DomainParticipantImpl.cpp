@@ -2063,11 +2063,11 @@ rpc::Service* DomainParticipantImpl::create_service(
     }
     // Create and store the service (Internally, this will create the required DDS Request/Reply Topics))
     rpc::ServiceImpl* service(nullptr);
-    
+
     try
     {
         service = new rpc::ServiceImpl(
-                service_name, service_type_name, this, services_publisher_.second, services_subscriber_.second);
+            service_name, service_type_name, this, services_publisher_.second, services_subscriber_.second);
     }
     catch (const std::exception& e)
     {

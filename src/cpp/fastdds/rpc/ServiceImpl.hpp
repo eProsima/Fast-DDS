@@ -42,7 +42,7 @@ class ServiceImpl : public Service
 {
 
 public:
-    
+
     /**
      * @brief Constructor
      * Don't use it directly, use create_service from DomainParticipant instead
@@ -74,7 +74,7 @@ public:
      *
      * @return Service type name
      */
-    const std::string& get_service_type_name() const override 
+    const std::string& get_service_type_name() const override
     {
         return service_type_name_;
     }
@@ -99,7 +99,7 @@ public:
 
     /**
      * @brief Create a requester for the service
-     * 
+     *
      * @param qos Requester QoS
      * @return A pointer to the created requester or nullptr if an error occurred
      */
@@ -108,7 +108,7 @@ public:
 
     /**
      * @brief Create a replier for the service
-     * 
+     *
      * @param qos Replier QoS
      * @return A pointer to the created replier or nullptr if an error occurred
      */
@@ -117,7 +117,7 @@ public:
 
     /**
      * @brief Enable the service
-     * 
+     *
      * @return RETCODE_OK if the topics were created successfully, an specific error code otherwise
      * It will also try to enable all internal Requesters and Repliers
      */
@@ -125,7 +125,7 @@ public:
 
     /**
      * @brief Disable the service
-     * 
+     *
      * @return RETCODE_OK if all topics were deleted and all internal requesters/repliers were disabled,
      * an specific error code otherwise
      */
@@ -155,16 +155,17 @@ public:
 
     /**
      * @brief Validate the requester/replier's QoS. They should be consistent with the service configuration
-     * 
+     *
      * @param qos QoS to validate
      * @return True if the parameters are valid, false otherwise
      */
     template <typename T>
-    bool validate_qos(const T& qos)
+    bool validate_qos(
+            const T& qos)
     {
-        
+
         bool valid = true;
-        
+
         if (qos.service_name != service_name_)
         {
             EPROSIMA_LOG_ERROR(SERVICE, "Service name in QoS does not match the service name");
@@ -182,7 +183,7 @@ public:
             EPROSIMA_LOG_ERROR(SERVICE, "Reply type in QoS does not match the service type name");
             valid = false;
         }
-            
+
         if (qos.request_topic_name != request_topic_name_)
         {
             EPROSIMA_LOG_ERROR(SERVICE, "Request topic name in QoS does not match the request topic name");
@@ -244,18 +245,18 @@ private:
 
     /**
      * @brief Create request and reply topics for the service
-     * 
+     *
      * @return RETCODE_OK if request/reply topics were created successfully, an specific error code otherwise
      */
     ReturnCode_t create_request_reply_topics();
 
     /**
      * @brief Delete all internal Requester and Replier entities
-     * 
+     *
      * @return RETCODE_OK if all entities were deleted successfully, an specific error code otherwise
      */
     ReturnCode_t delete_contained_entities();
-    
+
     //! Service name
     std::string service_name_;
 
@@ -288,7 +289,7 @@ private:
 
     //! Vector of requesters attached to the service
     std::vector<RequesterImpl*> requesters_;
-    
+
     //! Mutex to protect the requesters list
     std::mutex mtx_requesters_;
 

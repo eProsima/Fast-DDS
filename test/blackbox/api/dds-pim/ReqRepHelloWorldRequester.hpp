@@ -82,7 +82,7 @@ public:
     const eprosima::fastdds::dds::Duration_t datawriter_latency_budget_duration() const;
 
     const eprosima::fastdds::dds::Duration_t datareader_latency_budget_duration() const;
-    
+
     eprosima::fastdds::dds::RequesterQos create_requester_qos(
             bool volatile_durability_qos = false);
 
@@ -114,7 +114,7 @@ private:
     std::condition_variable cvDiscovery_;
 
     // Entity status changes are managed using the WaitSet on a different thread
-    // The main thread remains blocked until the requester matches with the replier  
+    // The main thread remains blocked until the requester matches with the replier
     std::thread processing_thread_;
     eprosima::fastdds::dds::GuardCondition stop_processing_thread_;
 };

@@ -32,6 +32,7 @@ static const char* __BUILTIN_REQUEST_REPLY_CONTENT_FILTER__ = "REQUEST_REPLY_CON
 class RequestReplyContentFilterFactory : public IContentFilterFactory
 {
 public:
+
     ReturnCode_t create_content_filter(
             const char* filter_class_name,
             const char* type_name,
@@ -51,7 +52,7 @@ public:
         }
 
         // TODO: return RETCODE_BAD_PARAMETER if type_name is not a request/reply type?
-        
+
         if (nullptr != filter_instance)
         {
             delete(dynamic_cast<RequestReplyContentFilter*>(filter_instance));
@@ -75,6 +76,7 @@ public:
 
         return RETCODE_OK;
     }
+
 };
 
 } // namespace rpc

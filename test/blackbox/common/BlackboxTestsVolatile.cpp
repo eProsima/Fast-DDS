@@ -253,7 +253,7 @@ TEST_P(Volatile, ReqRepVolatileHelloworldRequesterCheckWriteParams)
     ReqRepHelloWorldRequester requester;
 
     requester.init(true);
-    
+
     ASSERT_TRUE(requester.isInitialized());
 
     requester.send(1);

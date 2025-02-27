@@ -43,13 +43,13 @@ using namespace eprosima::fastdds::dds::rpc;
 using namespace eprosima::fastdds::rtps;
 
 TCPReqRepHelloWorldRequester::TCPReqRepHelloWorldRequester()
-    : current_number_(std::numeric_limits<uint16_t>::max()),
-    number_received_(std::numeric_limits<uint16_t>::max()),
-    participant_(nullptr),
-    service_(nullptr),
-    requester_(nullptr),
-    initialized_(false),
-    matched_(0)
+    : current_number_(std::numeric_limits<uint16_t>::max())
+    , number_received_(std::numeric_limits<uint16_t>::max())
+    , participant_(nullptr)
+    , service_(nullptr)
+    , requester_(nullptr)
+    , initialized_(false)
+    , matched_(0)
 {
 }
 
@@ -74,7 +74,7 @@ TCPReqRepHelloWorldRequester::~TCPReqRepHelloWorldRequester()
 
             participant_->delete_service(service_);
         }
-        
+
         participant_->delete_contained_entities();
         DomainParticipantFactory::get_instance()->delete_participant(participant_);
     }
@@ -307,7 +307,7 @@ void TCPReqRepHelloWorldRequester::process_status_changes()
             // Process reader/writer status changes
             StatusCondition* status_condition = dynamic_cast<StatusCondition*>(condition);
 
-            // Check if the triggered condition is a status condition. 
+            // Check if the triggered condition is a status condition.
             // If it is, process it and notify the changes to the main thread
             if (status_condition)
             {
@@ -405,7 +405,7 @@ RequesterQos TCPReqRepHelloWorldRequester::create_requester_qos()
     requester_qos.service_name = service_->get_service_name();
     requester_qos.request_topic_name = service_->get_service_name() + "_Request";
     requester_qos.reply_topic_name = service_->get_service_name() + "_Reply";
-    requester_qos.request_type = service_->get_service_type_name() + "_Request";   
+    requester_qos.request_type = service_->get_service_type_name() + "_Request";
     requester_qos.reply_type = service_->get_service_type_name() + "_Reply";
     requester_qos.writer_qos = writer_qos;
     requester_qos.reader_qos = reader_qos;

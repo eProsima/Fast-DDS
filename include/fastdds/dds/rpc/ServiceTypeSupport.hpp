@@ -73,8 +73,8 @@ public:
     FASTDDS_EXPORTED_API ServiceTypeSupport(
             TypeSupport request_type,
             TypeSupport reply_type)
-        : request_type_(request_type),
-        reply_type_(reply_type)
+        : request_type_(request_type)
+        , reply_type_(reply_type)
 
     {
     }
@@ -95,7 +95,7 @@ public:
     FASTDDS_EXPORTED_API virtual ReturnCode_t register_service_type(
             DomainParticipant* participant,
             std::string service_type_name) const;
-    
+
     /**
      * @brief Returns the TypeSupport of the request type
      */

@@ -37,13 +37,13 @@ using namespace eprosima::fastdds::dds::rpc;
 using namespace eprosima::fastdds::rtps;
 
 ReqRepHelloWorldRequester::ReqRepHelloWorldRequester()
-    : current_number_(std::numeric_limits<uint16_t>::max()),
-    number_received_(std::numeric_limits<uint16_t>::max()),
-    requester_(nullptr),
-    service_(nullptr),
-    participant_(nullptr),
-    initialized_(false),
-    matched_(0)
+    : current_number_(std::numeric_limits<uint16_t>::max())
+    , number_received_(std::numeric_limits<uint16_t>::max())
+    , requester_(nullptr)
+    , service_(nullptr)
+    , participant_(nullptr)
+    , initialized_(false)
+    , matched_(0)
 {
 }
 
@@ -68,7 +68,7 @@ ReqRepHelloWorldRequester::~ReqRepHelloWorldRequester()
 
             participant_->delete_service(service_);
         }
-        
+
         participant_->delete_contained_entities();
         DomainParticipantFactory::get_instance()->delete_participant(participant_);
     }
@@ -213,9 +213,9 @@ void ReqRepHelloWorldRequester::send(
         current_number_ = number;
     }
 
-    ASSERT_EQ(requester_->send_request((void *)&hello, info), RETCODE_OK);
+    ASSERT_EQ(requester_->send_request((void*)&hello, info), RETCODE_OK);
     related_sample_identity_ = info.related_sample_identity;
-    
+
     ASSERT_NE(related_sample_identity_.sequence_number(), SequenceNumber_t());
 }
 
@@ -261,7 +261,7 @@ void ReqRepHelloWorldRequester::process_status_changes()
             // Process reader/writer status changes
             StatusCondition* status_condition = dynamic_cast<StatusCondition*>(condition);
 
-            // Check if the triggered condition is a status condition. 
+            // Check if the triggered condition is a status condition.
             // If it is, process it and notify the changes to the main thread
             if (status_condition)
             {

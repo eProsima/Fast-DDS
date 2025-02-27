@@ -30,17 +30,17 @@ ServiceImpl::ServiceImpl(
         DomainParticipantImpl* participant,
         PublisherImpl* service_publisher,
         SubscriberImpl* service_subscriber)
-        : service_name_(service_name),
-        service_type_name_(service_type_name),
-        request_topic_name_(service_name + "_Request"),
-        request_type_name_(service_type_name + "_Request"),
-        reply_topic_name_(service_name + "_Reply"),
-        reply_type_name_(service_type_name + "_Reply"),
-        reply_filtered_topic_name_(service_name + "_ReplyFiltered"),
-        participant_(participant),
-        service_publisher_(service_publisher),
-        service_subscriber_(service_subscriber),
-        enabled_(false)
+    : service_name_(service_name)
+    , service_type_name_(service_type_name)
+    , request_topic_name_(service_name + "_Request")
+    , request_type_name_(service_type_name + "_Request")
+    , reply_topic_name_(service_name + "_Reply")
+    , reply_type_name_(service_type_name + "_Reply")
+    , reply_filtered_topic_name_(service_name + "_ReplyFiltered")
+    , participant_(participant)
+    , service_publisher_(service_publisher)
+    , service_subscriber_(service_subscriber)
+    , enabled_(false)
 {
 }
 
@@ -113,7 +113,7 @@ RequesterImpl* ServiceImpl::create_requester(
     {
         return nullptr;
     }
-    
+
     RequesterImpl* requester(nullptr);
 
     try
@@ -233,7 +233,7 @@ ReturnCode_t ServiceImpl::enable()
             }
         }
     }
-    
+
     return ret;
 }
 
@@ -255,7 +255,7 @@ ReturnCode_t ServiceImpl::close()
                 }
             }
         }
-        
+
         {
             std::lock_guard<std::mutex> lock(mtx_repliers_);
             for (auto replier : repliers_)
@@ -273,13 +273,13 @@ ReturnCode_t ServiceImpl::close()
         {
             participant_->delete_contentfilteredtopic(reply_filtered_topic_);
         }
-        
+
         // Remove Request/reply topics
         if (request_topic_)
         {
             participant_->delete_topic(request_topic_);
         }
-        
+
         if (reply_topic_)
         {
             participant_->delete_topic(reply_topic_);
@@ -322,10 +322,11 @@ ReturnCode_t ServiceImpl::create_request_reply_topics()
         " ",
         std::vector<std::string>(),
         __BUILTIN_REQUEST_REPLY_CONTENT_FILTER__);
-    
+
     if (!reply_filtered_topic_)
     {
-        EPROSIMA_LOG_ERROR(SERVICE, "Error creating Content filtered Reply topic for Service '" << service_name_ << "'");
+        EPROSIMA_LOG_ERROR(SERVICE,
+                "Error creating Content filtered Reply topic for Service '" << service_name_ << "'");
         return RETCODE_ERROR;
     }
 

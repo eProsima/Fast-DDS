@@ -47,7 +47,7 @@ public:
 
     /**
      * @brief Send a reply message
-     * 
+     *
      * @param data Data to send
      * @param info Information about the reply sample. This information is used to match the reply with the request through the SampleIdentity
      * @return RETCODE_OK if the reply was sent successfully or a ReturnCode related to the specific error otherwise
@@ -58,7 +58,7 @@ public:
 
     /**
      * @brief Take a request message from the Replier DataReader's history.
-     * 
+     *
      * @param data Data to receive the request
      * @param info Information about the request sample
      * @return RETCODE_OK if the request was taken successfully or a ReturnCode related to the specific error otherwise
@@ -70,7 +70,7 @@ public:
     /**
      * @brief Take all request messages stored in the Replier DataReader's history.
      * @note This method does not allow to take only the samples associated to a given request. User must implement a zero-copy solution to link request and reply samples.
-     * 
+     *
      * @param data Data to receive the request
      * @param info Information about the request sample
      * @return RETCODE_OK if the request was taken successfully or a ReturnCode related to the specific error otherwise

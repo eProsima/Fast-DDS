@@ -3150,21 +3150,21 @@ TEST(ParticipantTests, CreateServiceEmptyParams)
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-    
-        TypeSupport type(new TopicDataTypeMock());
-        rpc::ServiceTypeSupport service_type(type, type);
-        participant->register_service_type(service_type, "ServiceType");
-    
-        // Error: Empty service name
-        rpc::Service* service = participant->create_service("", "ServiceType");
-        ASSERT_EQ(service, nullptr);
-    
-        // Error: Empty service type name
-        service = participant->create_service("Service", "");
-        ASSERT_EQ(service, nullptr);
-                
-        ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
-        ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
+
+    TypeSupport type(new TopicDataTypeMock());
+    rpc::ServiceTypeSupport service_type(type, type);
+    participant->register_service_type(service_type, "ServiceType");
+
+    // Error: Empty service name
+    rpc::Service* service = participant->create_service("", "ServiceType");
+    ASSERT_EQ(service, nullptr);
+
+    // Error: Empty service type name
+    service = participant->create_service("Service", "");
+    ASSERT_EQ(service, nullptr);
+
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
 TEST(ParticipantTests, CreateServiceAlreadyExists)
@@ -3243,7 +3243,7 @@ TEST(ParticipantTests, FindService)
 
     rpc::Service* registered_service = participant->find_service("Service");
     ASSERT_NE(registered_service, nullptr);
-    
+
     // Error: No service with that name is active
     rpc::Service* unregistered_service = participant->find_service("UnregisteredService");
     ASSERT_EQ(unregistered_service, nullptr);
@@ -3847,7 +3847,7 @@ TEST(ParticipantTests, RegisterServiceTypeInvalid)
     TypeSupport type_invalid = TypeSupport(nullptr);
     rpc::ServiceTypeSupport service_type_invalid(type_invalid, type);
     ASSERT_EQ(participant->register_service_type(service_type_invalid, "ServiceType"), RETCODE_BAD_PARAMETER);
-    
+
     // Case 3: ServiceTypeSupport with invalid reply type
     service_type_invalid = rpc::ServiceTypeSupport(type, type_invalid);
     ASSERT_EQ(participant->register_service_type(service_type_invalid, "ServiceType"), RETCODE_BAD_PARAMETER);
@@ -3922,7 +3922,7 @@ TEST(ParticipantTests, UnregisterServiceTypeInvalid)
     ASSERT_FALSE((participant->find_type("ServiceType_Request")).empty());
     ASSERT_FALSE((participant->find_type("ServiceType_Reply")).empty());
 
-    // Case 4: Unregister a service type with request/reply types used by another topic 
+    // Case 4: Unregister a service type with request/reply types used by another topic
     Topic* topic = participant->create_topic("footopic", "ServiceType_Request", TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);

@@ -42,11 +42,11 @@ using namespace eprosima::fastdds::dds::rpc;
 using namespace eprosima::fastdds::rtps;
 
 TCPReqRepHelloWorldReplier::TCPReqRepHelloWorldReplier()
-    : replier_(nullptr),
-    service_(nullptr),
-    participant_(nullptr),
-    initialized_(false),
-    matched_(0)
+    : replier_(nullptr)
+    , service_(nullptr)
+    , participant_(nullptr)
+    , initialized_(false)
+    , matched_(0)
 {
 }
 
@@ -71,7 +71,7 @@ TCPReqRepHelloWorldReplier::~TCPReqRepHelloWorldReplier()
 
             participant_->delete_service(service_);
         }
-        
+
         participant_->delete_contained_entities();
         DomainParticipantFactory::get_instance()->delete_participant(participant_);
     }
@@ -138,7 +138,7 @@ void TCPReqRepHelloWorldReplier::init(
 
     // Create replier
     replier_ = participant_->create_service_replier(service_, create_replier_qos());
-    
+
     init_processing_thread();
 
     initialized_ = true;
@@ -153,7 +153,7 @@ void TCPReqRepHelloWorldReplier::newNumber(
     hello.index(number);
     hello.message("GoodBye");
     info.related_sample_identity = sample_identity;
-    ASSERT_EQ(replier_->send_reply((void *)&hello, info), RETCODE_OK);
+    ASSERT_EQ(replier_->send_reply((void*)&hello, info), RETCODE_OK);
 }
 
 void TCPReqRepHelloWorldReplier::wait_discovery(
@@ -258,9 +258,9 @@ void TCPReqRepHelloWorldReplier::process_status_changes()
         for (Condition* condition : triggered_conditions)
         {
             // Process reader/writer status changes
-            StatusCondition* status_condition = dynamic_cast<StatusCondition*>(condition); 
+            StatusCondition* status_condition = dynamic_cast<StatusCondition*>(condition);
 
-            // Check if the triggered condition is a status condition. 
+            // Check if the triggered condition is a status condition.
             // If it is, process it and notify the changes to the main thread
             if (status_condition)
             {

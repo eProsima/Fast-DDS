@@ -27,11 +27,11 @@ namespace rpc {
 RequesterImpl::RequesterImpl(
         ServiceImpl* service,
         const RequesterQos& qos)
-        : requester_reader_(nullptr),
-        requester_writer_(nullptr),
-        qos_(qos),
-        service_(service),
-        enabled_(false)
+    : requester_reader_(nullptr)
+    , requester_writer_(nullptr)
+    , qos_(qos)
+    , service_(service)
+    , enabled_(false)
 {
 }
 
@@ -51,7 +51,7 @@ ReturnCode_t RequesterImpl::send_request(
         RequestInfo& info)
 {
     FASTDDS_TODO_BEFORE(3, 3, "Implement matching algorithm");
-    
+
     rtps::WriteParams wparams;
     ReturnCode_t retcode;
 
@@ -148,7 +148,8 @@ ReturnCode_t RequesterImpl::close()
     return retcode;
 }
 
-ReturnCode_t RequesterImpl::create_dds_entities(const RequesterQos& qos)
+ReturnCode_t RequesterImpl::create_dds_entities(
+        const RequesterQos& qos)
 {
     // Create writer for the Request topic
     requester_writer_ =
@@ -162,7 +163,7 @@ ReturnCode_t RequesterImpl::create_dds_entities(const RequesterQos& qos)
 
     requester_reader_ =
             service_->get_subscriber()->create_datareader(
-                service_->get_reply_filtered_topic(), qos.reader_qos, nullptr);
+        service_->get_reply_filtered_topic(), qos.reader_qos, nullptr);
 
     if (!requester_reader_)
     {

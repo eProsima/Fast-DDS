@@ -100,7 +100,7 @@ private:
     std::atomic<unsigned int> matched_;
 
     // Entity status changes are managed using the WaitSet on a different thread
-    // The main thread remains blocked until the requester matches with the replier  
+    // The main thread remains blocked until the requester matches with the replier
     std::thread processing_thread_;
     eprosima::fastdds::dds::GuardCondition stop_processing_thread_;
 };

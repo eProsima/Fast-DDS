@@ -144,7 +144,7 @@ TEST(ServiceTests, CreateRequesterValidParams)
     TypeSupport type(new TopicDataTypeMock());
     ServiceTypeSupport service_type(type, type);
     ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-    
+
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
@@ -185,7 +185,7 @@ TEST(ServiceTests, CreateRequesterInvalidServiceName)
     TypeSupport type(new TopicDataTypeMock());
     ServiceTypeSupport service_type(type, type);
     ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-    
+
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
@@ -215,7 +215,7 @@ TEST(ServiceTests, CreateRequesterInvalidRequestType)
     TypeSupport type(new TopicDataTypeMock());
     ServiceTypeSupport service_type(type, type);
     ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-    
+
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
@@ -245,7 +245,7 @@ TEST(ServiceTests, CreateRequesterInvalidReplyType)
     TypeSupport type(new TopicDataTypeMock());
     ServiceTypeSupport service_type(type, type);
     ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-    
+
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
@@ -275,7 +275,7 @@ TEST(ServiceTests, CreateRequesterInvalidRequestTopicName)
     TypeSupport type(new TopicDataTypeMock());
     ServiceTypeSupport service_type(type, type);
     ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-    
+
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
@@ -305,7 +305,7 @@ TEST(ServiceTests, CreateRequesterInvalidReplyTopicName)
     TypeSupport type(new TopicDataTypeMock());
     ServiceTypeSupport service_type(type, type);
     ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-    
+
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
@@ -335,7 +335,7 @@ TEST(ServiceTests, CreateRequesterInvalidWriterQos)
     TypeSupport type(new TopicDataTypeMock());
     ServiceTypeSupport service_type(type, type);
     ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-    
+
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
@@ -365,7 +365,7 @@ TEST(ServiceTests, CreateRequesterInvalidReaderQos)
     TypeSupport type(new TopicDataTypeMock());
     ServiceTypeSupport service_type(type, type);
     ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-    
+
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
@@ -395,7 +395,7 @@ TEST(ServiceTests, CreateReplierValidParams)
     TypeSupport type(new TopicDataTypeMock());
     ServiceTypeSupport service_type(type, type);
     ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-    
+
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
@@ -436,7 +436,7 @@ TEST(ServiceTests, CreateReplierInvalidServiceName)
     TypeSupport type(new TopicDataTypeMock());
     ServiceTypeSupport service_type(type, type);
     ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-    
+
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
@@ -466,7 +466,7 @@ TEST(ServiceTests, CreateReplierInvalidRequestType)
     TypeSupport type(new TopicDataTypeMock());
     ServiceTypeSupport service_type(type, type);
     ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-    
+
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
@@ -496,7 +496,7 @@ TEST(ServiceTests, CreateReplierInvalidReplyType)
     TypeSupport type(new TopicDataTypeMock());
     ServiceTypeSupport service_type(type, type);
     ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-    
+
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
@@ -526,7 +526,7 @@ TEST(ServiceTests, CreateReplierInvalidRequestTopicName)
     TypeSupport type(new TopicDataTypeMock());
     ServiceTypeSupport service_type(type, type);
     ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-    
+
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
@@ -556,7 +556,7 @@ TEST(ServiceTests, CreateReplierInvalidReplyTopicName)
     TypeSupport type(new TopicDataTypeMock());
     ServiceTypeSupport service_type(type, type);
     ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-    
+
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
@@ -586,7 +586,7 @@ TEST(ServiceTests, CreateReplierInvalidWriterQos)
     TypeSupport type(new TopicDataTypeMock());
     ServiceTypeSupport service_type(type, type);
     ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-    
+
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
@@ -616,7 +616,7 @@ TEST(ServiceTests, CreateReplierInvalidReaderQos)
     TypeSupport type(new TopicDataTypeMock());
     ServiceTypeSupport service_type(type, type);
     ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-    
+
     Service* service = participant->create_service("Service", "ServiceType");
     ASSERT_NE(service, nullptr);
 
@@ -693,7 +693,7 @@ TEST(ServiceTests, ChangeEnabledState)
     ASSERT_NE(requester->get_requester_writer(), nullptr);
     ASSERT_NE(requester->get_requester_reader(), nullptr);
 
-    // Now disable the service. 
+    // Now disable the service.
     // It should destroy Request/Reply topics and disable all its internal Requester/Replier entities
     ASSERT_EQ(service->close(), RETCODE_OK);
     ASSERT_EQ(service->is_enabled(), false);
@@ -708,7 +708,7 @@ TEST(ServiceTests, ChangeEnabledState)
     ASSERT_EQ(requester->get_requester_writer(), nullptr);
     ASSERT_EQ(requester->get_requester_reader(), nullptr);
 
-    // Create a new requester and replier. 
+    // Create a new requester and replier.
     // Now Service is disabled, so they should be created in disabled state
     Replier* replier_2 = participant->create_service_replier(service, replier_qos);
     ASSERT_NE(replier_2, nullptr);
@@ -722,7 +722,7 @@ TEST(ServiceTests, ChangeEnabledState)
     ASSERT_EQ(requester_2->get_requester_writer(), nullptr);
     ASSERT_EQ(requester_2->get_requester_reader(), nullptr);
 
-    // Enable the service again. 
+    // Enable the service again.
     // It should create Request/Reply topics and enable all its internal Requester/Replier entities.
     // The requester and replier created while the service was disabled should be enabled now.
     ASSERT_EQ(service->enable(), RETCODE_OK);
@@ -734,7 +734,7 @@ TEST(ServiceTests, ChangeEnabledState)
     // Release resources
     ASSERT_EQ(participant->delete_topic(request_topic), RETCODE_OK);
     ASSERT_EQ(participant->delete_topic(reply_topic), RETCODE_OK);
-    
+
     ASSERT_EQ(replier->is_enabled(), true);
     ASSERT_NE(replier->get_replier_writer(), nullptr);
     ASSERT_NE(replier->get_replier_reader(), nullptr);

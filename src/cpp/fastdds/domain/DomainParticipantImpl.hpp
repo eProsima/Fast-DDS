@@ -344,7 +344,7 @@ public:
 
     /**
      * Create an enabled RPC service.
-     * 
+     *
      * @param service_name Name of the service.
      * @param service_type_name Type name of the service (Request & reply types)
      * @return Pointer to the created service. nullptr in error case.
@@ -355,7 +355,7 @@ public:
 
     /**
      * Find a registered RPC service by name
-     * 
+     *
      * @param service_name Name of the service to search for.
      * @return Pointer to the service object if found, nullptr if not found.
      */
@@ -364,7 +364,7 @@ public:
 
     /**
      * Delete a registered RPC service.
-     * 
+     *
      * @param service Pointer to the service object to be deleted.
      * @return RETCODE_OK if the service was deleted successfully, RETCODE_ERROR otherwise.
      */
@@ -373,10 +373,10 @@ public:
 
     /**
      * Create a RPC Requester in a given Service.
-     * 
+     *
      * @param service Pointer to a service object where the requester will be created.
      * @param requester_qos QoS of the requester.
-     * 
+     *
      * @return Pointer to the created requester. nullptr in error case.
      */
     rpc::Requester* create_service_requester(
@@ -385,7 +385,7 @@ public:
 
     /**
      * Deletes an existing RPC Requester
-     * 
+     *
      * @param service_name Name of the service where the requester is created.
      * @param requester Pointer to the requester to be deleted.
      * @return RETCODE_OK if the requester was deleted, or an specific error code otherwise.
@@ -396,10 +396,10 @@ public:
 
     /**
      * Create a RPC Replier in a given Service.
-     * 
+     *
      * @param service Pointer to a service object where the Replier will be created.
      * @param requester_qos QoS of the requester.
-     * 
+     *
      * @return Pointer to the created replier. nullptr in error case.
      */
     rpc::Replier* create_service_replier(
@@ -408,7 +408,7 @@ public:
 
     /**
      * Deletes an existing RPC Replier
-     * 
+     *
      * @param service_name Name of the service where the replier is created.
      * @param replier Pointer to the replier to be deleted.
      * @return RETCODE_OK if the replier was deleted, or an specific error code otherwise.

@@ -28,7 +28,7 @@
 
 namespace eprosima {
 namespace fastdds {
-namespace dds{
+namespace dds {
 namespace rpc {
 
 class ServiceImpl;
@@ -46,8 +46,8 @@ public:
      * Don't use it directly, use create_service_replier from DomainParticipant instead
      */
     ReplierImpl(
-        ServiceImpl* service,
-        const ReplierQos& qos);
+            ServiceImpl* service,
+            const ReplierQos& qos);
 
     /**
      * @brief Destructor
@@ -58,10 +58,10 @@ public:
      * @brief Returns the name of the service to which the replier belongs
      */
     const std::string& get_service_name() const override;
-    
+
     /**
      * @brief Send a reply message to a requester
-     * 
+     *
      * @param data Data to send
      * @param info Information about the reply sample. This information is used to match the reply with the request through the SampleIdentity
      * @return RETCODE_OK if the reply was sent successfully or a ReturnCode related to the specific error otherwise
@@ -69,10 +69,10 @@ public:
     ReturnCode_t send_reply(
             void* data,
             RequestInfo& info) override;
-    
+
     /**
      * @brief Take a request message from the Replier DataReader's history.
-     * 
+     *
      * @param data Data to receive the request
      * @param info Information about the request sample
      * @return RETCODE_OK if the request was taken successfully or a ReturnCode related to the specific error otherwise
@@ -84,7 +84,7 @@ public:
     /**
      * @brief Take all request messages stored in the Replier DataReader's history.
      * @note This method does not allow to take only the samples associated to a given request. User must implement a zero-copy solution to link request and reply samples.
-     * 
+     *
      * @param data Data to receive the request
      * @param info Information about the request sample
      * @return RETCODE_OK if the request was taken successfully or a ReturnCode related to the specific error otherwise
@@ -126,16 +126,17 @@ private:
 
     /**
      * @brief Create required DDS entities to enable communication with the requester
-     * 
+     *
      * @param qos Replier QoS to configure the DDS entities
-     * 
+     *
      * @return RETCODE_OK if all DDS entities were created successfully, RETCODE_ERROR otherwise
      */
-    ReturnCode_t create_dds_entities(const ReplierQos& qos);
+    ReturnCode_t create_dds_entities(
+            const ReplierQos& qos);
 
     /**
      * @brief Delete all internal DDS Entities
-     * 
+     *
      * @return RETCODE_OK if all entities were deleted successfully, RETCODE_PRECONDITION_NOT_MET
      * if any entity cannot be deleted
      */

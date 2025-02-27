@@ -38,9 +38,9 @@ class ServiceImpl;
  */
 class RequesterImpl : public Requester
 {
-    
+
 public:
-    
+
     /**
      * @brief Constructor
      * Don't use it directly, use create_service_requester from DomainParticipant instead
@@ -61,7 +61,7 @@ public:
 
     /**
      * @brief Send a request message to a replier
-     * 
+     *
      * @param data Data to send
      * @param info Information about the request sample. This information is used to match the request with the reply through the SampleIdentity
      * @return RETCODE_OK if the reply was sent successfully or a ReturnCode related to the specific error otherwise
@@ -72,7 +72,7 @@ public:
 
     /**
      * @brief Take a reply message from the Requester DataReader's history.
-     * 
+     *
      * @param data Data to receive the reply
      * @param info Information about the reply sample
      * @return RETCODE_OK if the reply was taken successfully or a ReturnCode related to the specific error otherwise
@@ -84,7 +84,7 @@ public:
     /**
      * @brief Take all reply messages stored in the Requester DataReader's history.
      * @note This method does not allow to take only the samples associated to a given request. User must implement a zero-copy solution to link request and reply samples.
-     * 
+     *
      * @param data Data to receive the replies
      * @param info Information about the reply samples
      * @return RETCODE_OK if the replies were taken successfully or a ReturnCode related to the specific error otherwise
@@ -126,16 +126,17 @@ private:
 
     /**
      * @brief Create required DDS entities to enable communication with the replier
-     * 
+     *
      * @param qos Requester QoS to configure the DDS entities
-     * 
+     *
      * @return RETCODE_OK if all DDS entities were created successfully, RETCODE_ERROR otherwise
      */
-    ReturnCode_t create_dds_entities(const RequesterQos& qos);
+    ReturnCode_t create_dds_entities(
+            const RequesterQos& qos);
 
     /**
      * @brief Delete all internal DDS entities
-     * 
+     *
      * @return RETCODE_OK if all entities were deleted successfully, RETCODE_PRECONDITION_NOT_MET
      * if any entity cannot be deleted
      */

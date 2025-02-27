@@ -690,7 +690,8 @@ bool PublisherImpl::can_be_deleted()
     return can_be_deleted;
 }
 
-bool PublisherImpl::can_be_deleted(DataWriter* writer) const
+bool PublisherImpl::can_be_deleted(
+        DataWriter* writer) const
 {
     if (!writer)
     {
