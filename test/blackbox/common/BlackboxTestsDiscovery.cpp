@@ -1770,3 +1770,51 @@ TEST(Discovery, discovery_cyclone_participant_with_custom_pid)
     /* Clean up */
     factory->delete_participant(participant);
 }
+
+//! Using the service to discover that the total sum of USER_DATA and GROUP DATA
+//! data exceeds uint16ut byte CDR regression testing
+//! Regression test for support case #5154
+TEST_P(Discovery, CdrWriteDataLength)
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    std::size_t user_size = 65500;
+    std::vector<eprosima::fastdds::rtps::octet> user_data;
+    user_data.resize(user_size);
+    std::size_t group_size = 65000;
+    std::vector<eprosima::fastdds::rtps::octet> group_data;
+    group_data.resize(group_size);
+    writer.history_depth(100).
+            endpoint_userData(user_data).publisher_groupData(group_data).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.setOnEndpointDiscoveryFunction([&writer, &user_size, &group_size](WriterDiscoveryStatus /*reason*/,
+            const PublicationBuiltinTopicData& info) -> bool
+            {
+                if (info.guid == writer.datawriter_guid())
+                {
+                    std::cout << "Received USER_DATA size from the writer program: "
+                              << info.user_data.size() << std::endl;
+                    std::cout << "Received GROUP_DATA size from the writer program: "
+                              << info.group_data.size() << std::endl;
+
+                    return info.user_data.size() == user_size && info.group_data.size() == group_size;
+                }
+
+                return false;
+            });
+
+    reader.history_depth(100).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+
+    reader.wait_discovery();
+    writer.wait_discovery();
+
+    reader.wait_discovery_result();
+
+}

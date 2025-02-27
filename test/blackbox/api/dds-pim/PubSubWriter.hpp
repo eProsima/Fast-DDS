@@ -1470,6 +1470,13 @@ public:
         return *this;
     }
 
+    PubSubWriter& publisher_groupData(
+            std::vector<eprosima::fastdds::rtps::octet> group_data)
+    {
+        publisher_qos_.group_data() = group_data;
+        return *this;
+    }
+
     PubSubWriter& user_data_max_size(
             uint32_t max_user_data)
     {
