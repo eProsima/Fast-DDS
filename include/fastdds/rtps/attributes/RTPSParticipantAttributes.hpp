@@ -527,6 +527,9 @@ public:
     //! Participant ID
     int32_t participantID = -1;
 
+    //! IP of the Host where master Server is located (EASY_MODE context)
+    
+
     //! User defined transports to use alongside or in place of builtins.
     std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>> userTransports;
 
