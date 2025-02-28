@@ -119,6 +119,7 @@ public:
     void setup()
     {
         DomainParticipantQos pqos;
+        pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = { 0, 250000000 };
         pqos.name() = "Monitor_Service_Participant";
         auto participant = DomainParticipantFactory::get_instance()->
                         create_participant((uint32_t)GET_PID() % 230, pqos);
