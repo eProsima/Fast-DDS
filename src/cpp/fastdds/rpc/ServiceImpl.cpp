@@ -69,7 +69,9 @@ ReturnCode_t ServiceImpl::remove_requester(
     }
 
     // In case the requester is enabled, disable it first
-    if (RETCODE_OK != (ret = (*it)->close()))
+    ret = (*it)->close();
+
+    if (RETCODE_OK != ret)
     {
         EPROSIMA_LOG_ERROR(SERVICE, "Error closing Requester for Service '" << service_name_ << "'");
         return ret;
@@ -94,7 +96,9 @@ ReturnCode_t ServiceImpl::remove_replier(
     }
 
     // In case the replier is enabled, disable it first
-    if (RETCODE_OK != (ret = (*it)->close()))
+    ret = (*it)->close();
+
+    if (RETCODE_OK != ret)
     {
         EPROSIMA_LOG_ERROR(SERVICE, "Error closing Replier for Service '" << service_name_ << "'");
         return ret;
@@ -190,7 +194,9 @@ ReturnCode_t ServiceImpl::enable()
     if (!enabled_)
     {
         // Create request/reply topics
-        if (RETCODE_OK != (ret = create_request_reply_topics()))
+        ret = create_request_reply_topics();
+
+        if (RETCODE_OK != ret)
         {
             EPROSIMA_LOG_ERROR(SERVICE, "Error creating request/reply topics for Service '" << service_name_ << "'");
             return ret;
@@ -205,7 +211,9 @@ ReturnCode_t ServiceImpl::enable()
             std::lock_guard<std::mutex> lock(mtx_requesters_);
             for (auto requester : requesters_)
             {
-                if (RETCODE_OK != (ret = requester->enable()))
+                ret = requester->enable();
+
+                if (RETCODE_OK != ret)
                 {
                     EPROSIMA_LOG_ERROR(SERVICE, "Error enabling Requester for Service '" << service_name_ << "'");
                 }
@@ -222,7 +230,9 @@ ReturnCode_t ServiceImpl::enable()
             std::lock_guard<std::mutex> lock(mtx_repliers_);
             for (auto replier : repliers_)
             {
-                if (RETCODE_OK != (ret = replier->enable()))
+                ret = replier->enable();
+
+                if (RETCODE_OK != ret)
                 {
                     EPROSIMA_LOG_ERROR(SERVICE, "Error enabling Replier for Service '" << service_name_ << "'");
                 }
@@ -248,7 +258,9 @@ ReturnCode_t ServiceImpl::close()
             std::lock_guard<std::mutex> lock(mtx_requesters_);
             for (auto requester : requesters_)
             {
-                if (RETCODE_OK != (ret = requester->close()))
+                ret = requester->close();
+
+                if (RETCODE_OK != ret)
                 {
                     EPROSIMA_LOG_ERROR(SERVICE, "Error closing Requester for Service '" << service_name_ << "'");
                     return ret;
@@ -260,7 +272,9 @@ ReturnCode_t ServiceImpl::close()
             std::lock_guard<std::mutex> lock(mtx_repliers_);
             for (auto replier : repliers_)
             {
-                if (RETCODE_OK != (ret = replier->close()))
+                ret = replier->close();
+
+                if (RETCODE_OK != ret)
                 {
                     EPROSIMA_LOG_ERROR(SERVICE, "Error closing Replier for Service '" << service_name_ << "'");
                     return ret;
@@ -321,7 +335,7 @@ ReturnCode_t ServiceImpl::create_request_reply_topics()
         reply_topic_,
         " ",
         std::vector<std::string>(),
-        __BUILTIN_REQUEST_REPLY_CONTENT_FILTER__);
+        rpc::RequestReplyContentFilterFactory::FILTER_NAME);
 
     if (!reply_filtered_topic_)
     {
@@ -338,7 +352,9 @@ ReturnCode_t ServiceImpl::delete_contained_entities()
     ReturnCode_t ret = RETCODE_OK;
 
     // Close the Service
-    if (RETCODE_OK != (ret = close()))
+    ret = close();
+
+    if (RETCODE_OK != ret)
     {
         EPROSIMA_LOG_ERROR(SERVICE, "Error closing Service '" << service_name_ << "'");
         return ret;

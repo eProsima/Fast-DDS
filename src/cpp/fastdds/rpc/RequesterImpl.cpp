@@ -115,7 +115,9 @@ ReturnCode_t RequesterImpl::enable()
             return RETCODE_PRECONDITION_NOT_MET;
         }
 
-        if (RETCODE_OK != (retcode = create_dds_entities(qos_)))
+        retcode = create_dds_entities(qos_);
+
+        if (RETCODE_OK != retcode)
         {
             EPROSIMA_LOG_ERROR(REQUESTER, "Error creating DDS entities");
             // If any error occurs, delete the created entities
@@ -136,7 +138,9 @@ ReturnCode_t RequesterImpl::close()
 
     if (enabled_)
     {
-        if (RETCODE_OK != (retcode = delete_contained_entities()))
+        retcode = delete_contained_entities();
+
+        if (RETCODE_OK != retcode)
         {
             EPROSIMA_LOG_ERROR(REQUESTER, "Error deleting DDS entities");
             return retcode;

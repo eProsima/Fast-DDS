@@ -2024,12 +2024,13 @@ rpc::Service* DomainParticipantImpl::create_service(
     }
 
     // Check if the request/reply content filter factory is registered. If not, register it.
-    IContentFilterFactory* factory = find_content_filter_factory(rpc::__BUILTIN_REQUEST_REPLY_CONTENT_FILTER__);
+    IContentFilterFactory* factory = find_content_filter_factory(rpc::RequestReplyContentFilterFactory::FILTER_NAME);
 
     if (!factory)
     {
         factory = new rpc::RequestReplyContentFilterFactory();
-        ReturnCode_t ret_code = register_content_filter_factory(rpc::__BUILTIN_REQUEST_REPLY_CONTENT_FILTER__, factory);
+        ReturnCode_t ret_code =
+                register_content_filter_factory(rpc::RequestReplyContentFilterFactory::FILTER_NAME, factory);
 
         if (RETCODE_OK != ret_code)
         {
@@ -2129,11 +2130,11 @@ ReturnCode_t DomainParticipantImpl::delete_service(
         }
 
         // Check that the service is disabled
-        if (!it->second->is_enabled())
+        if (it->second->is_enabled())
         {
             EPROSIMA_LOG_INFO(PARTICIPANT, "Trying to delete an enabled service.");
-            ReturnCode_t retcode;
-            if (RETCODE_OK != (retcode = it->second->close()))
+            ReturnCode_t retcode = it->second->close();
+            if (RETCODE_OK != retcode)
             {
                 EPROSIMA_LOG_ERROR(PARTICIPANT, "Error closing service: " << retcode);
                 return retcode;

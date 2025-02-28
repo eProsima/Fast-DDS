@@ -24,14 +24,14 @@ namespace fastdds {
 namespace dds {
 namespace rpc {
 
-static const char* __BUILTIN_REQUEST_REPLY_CONTENT_FILTER__ = "REQUEST_REPLY_CONTENT_FILTER";
-
 /**
  * @brief This class represents the factory used to create the filter for Request/Reply topics
  */
 class RequestReplyContentFilterFactory : public IContentFilterFactory
 {
 public:
+
+    constexpr static const char* FILTER_NAME = "__BUILTIN_REQUEST_REPLY_CONTENT_FILTER__";
 
     ReturnCode_t create_content_filter(
             const char* filter_class_name,
@@ -46,12 +46,11 @@ public:
         static_cast<void>(filter_expression);
         static_cast<void>(filter_parameters);
 
-        if (0 != strcmp(filter_class_name, __BUILTIN_REQUEST_REPLY_CONTENT_FILTER__))
+        if (0 != strcmp(filter_class_name, FILTER_NAME))
         {
             return RETCODE_BAD_PARAMETER;
         }
 
-        // TODO: return RETCODE_BAD_PARAMETER if type_name is not a request/reply type?
         filter_instance = &filter_instance_;
 
         return RETCODE_OK;
@@ -63,7 +62,7 @@ public:
     {
         static_cast<void>(filter_instance);
 
-        if (0 != strcmp(filter_class_name, __BUILTIN_REQUEST_REPLY_CONTENT_FILTER__))
+        if (0 != strcmp(filter_class_name, FILTER_NAME))
         {
             return RETCODE_BAD_PARAMETER;
         }

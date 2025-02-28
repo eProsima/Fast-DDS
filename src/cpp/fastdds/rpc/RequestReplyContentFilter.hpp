@@ -24,7 +24,8 @@ namespace rpc {
 
 /**
  * @brief Content filter that allows to filter samples based on the GUID of the reader that received the sample
- * @note This filter is used to filter samples in a multiple requester - single replier service scenario. Each requester will receive only the replies that match some of its requests
+ * @note This filter is used to filter samples in a multiple requester - single replier service scenario.
+ * Each requester will receive only the replies that match their requests
  */
 class RequestReplyContentFilter : public IContentFilter
 {
