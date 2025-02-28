@@ -304,7 +304,8 @@ bool SharedMemTransport::init(
         {
             return false;
         }
-        uint32_t mean_message_size = configuration_.max_message_size() / 2;
+        constexpr uint32_t mean_message_size =
+                shm_default_segment_size / SharedMemTransportDescriptor::shm_default_port_queue_capacity;
         uint32_t max_allocations = configuration_.segment_size() / mean_message_size;
         if (configuration_.port_queue_capacity() > max_allocations)
         {
