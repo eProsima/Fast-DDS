@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <algorithm>
+#include <cstdint>
 #include <cstring>
 #include <thread>
 #include <utility>
@@ -26,6 +27,7 @@
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/transport/SenderResource.hpp>
 #include <fastdds/rtps/transport/TransportInterface.hpp>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
 
 #include <rtps/messages/CDRMessage.hpp>
 #include <rtps/messages/MessageReceiver.h>
@@ -44,6 +46,9 @@ using namespace std;
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
+
+// TODO(Adolfo): Calculate this value from UDP sockets buffers size.
+static constexpr uint32_t shm_default_segment_size = 512 * 1024;
 
 TransportInterface* SharedMemTransportDescriptor::create_transport() const
 {
@@ -271,8 +276,6 @@ bool SharedMemTransport::init(
         const uint32_t& max_msg_size_no_frag)
 {
     (void) max_msg_size_no_frag;
-    // TODO(Adolfo): Calculate this value from UDP sockets buffers size.
-    static constexpr uint32_t shm_default_segment_size = 512 * 1024;
 
     if (configuration_.segment_size() == 0)
     {
@@ -301,8 +304,14 @@ bool SharedMemTransport::init(
         {
             return false;
         }
-        shared_mem_segment_ = shared_mem_manager_->create_segment(configuration_.segment_size(),
-                        configuration_.port_queue_capacity());
+        constexpr uint32_t mean_message_size =
+                shm_default_segment_size / SharedMemTransportDescriptor::shm_default_port_queue_capacity;
+        uint32_t max_allocations = configuration_.segment_size() / mean_message_size;
+        if (configuration_.port_queue_capacity() > max_allocations)
+        {
+            max_allocations = configuration_.port_queue_capacity();
+        }
+        shared_mem_segment_ = shared_mem_manager_->create_segment(configuration_.segment_size(), max_allocations);
 
         // Memset the whole segment to zero in order to force physical map of the buffer
         auto buffer = shared_mem_segment_->alloc_buffer(configuration_.segment_size(),
