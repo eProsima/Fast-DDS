@@ -23,11 +23,11 @@
 
 #include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
 #include <fastdds/rtps/reader/StatelessReader.h>
-#include <fastdds/rtps/writer/StatelessWriter.h>
 
 #include <rtps/builtin/BuiltinReader.hpp>
 #include <rtps/builtin/BuiltinWriter.hpp>
 #include <rtps/builtin/discovery/participant/PDPEndpoints.hpp>
+#include <rtps/builtin/discovery/participant/simple/PDPStatelessWriter.hpp>
 #include <rtps/history/ITopicPayloadPool.h>
 
 namespace eprosima {
@@ -86,7 +86,7 @@ struct SimplePDPEndpoints : public PDPEndpoints
     BuiltinReader<fastrtps::rtps::StatelessReader> reader;
 
     //! Builtin Simple PDP writer
-    BuiltinWriter<fastrtps::rtps::StatelessWriter> writer;
+    BuiltinWriter<fastrtps::rtps::PDPStatelessWriter> writer;
 };
 
 } // namespace rtps
