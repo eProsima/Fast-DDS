@@ -223,7 +223,7 @@ public:
      * Get topic data type
      * @return Topic data type
      */
-    TypeSupport type();
+    TypeSupport type() const;
 
     /**
      * Get TopicDescription

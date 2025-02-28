@@ -232,6 +232,12 @@ public:
 
     bool can_be_deleted();
 
+    /**
+     * Check if a given DataWriter can be deleted.
+     */
+    bool can_be_deleted(
+            DataWriter* writer) const;
+
 #ifdef FASTDDS_STATISTICS
     bool get_monitoring_status(
             statistics::MonitorServiceData& status,
