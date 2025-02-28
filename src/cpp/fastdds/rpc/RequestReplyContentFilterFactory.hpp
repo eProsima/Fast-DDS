@@ -52,13 +52,7 @@ public:
         }
 
         // TODO: return RETCODE_BAD_PARAMETER if type_name is not a request/reply type?
-
-        if (nullptr != filter_instance)
-        {
-            delete(dynamic_cast<RequestReplyContentFilter*>(filter_instance));
-        }
-
-        filter_instance = new RequestReplyContentFilter();
+        filter_instance = &filter_instance_;
 
         return RETCODE_OK;
     }
@@ -67,15 +61,19 @@ public:
             const char* filter_class_name,
             IContentFilter* filter_instance) override
     {
+        static_cast<void>(filter_instance);
+
         if (0 != strcmp(filter_class_name, __BUILTIN_REQUEST_REPLY_CONTENT_FILTER__))
         {
             return RETCODE_BAD_PARAMETER;
         }
 
-        delete(dynamic_cast<RequestReplyContentFilter*>(filter_instance));
-
         return RETCODE_OK;
     }
+
+private:
+
+    RequestReplyContentFilter filter_instance_;
 
 };
 
