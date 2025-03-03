@@ -15,7 +15,19 @@
 #ifndef _FASTDDS_SHAREDMEM_TRANSPORT_DESCRIPTOR_
 #define _FASTDDS_SHAREDMEM_TRANSPORT_DESCRIPTOR_
 
+<<<<<<< HEAD:include/fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h
 #include "fastdds/rtps/transport/TransportDescriptorInterface.h"
+=======
+#ifndef FASTDDS_RTPS_TRANSPORT_SHARED_MEM__SHAREDMEMTRANSPORTDESCRIPTOR_HPP
+#define FASTDDS_RTPS_TRANSPORT_SHARED_MEM__SHAREDMEMTRANSPORTDESCRIPTOR_HPP
+
+#include <cstdint>
+#include <string>
+
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
+#include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
+#include <fastdds/fastdds_dll.hpp>
+>>>>>>> b54cb8ef (Improve `max_allocations` calculation on SHM transport (#5659)):include/fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp
 
 namespace eprosima {
 namespace fastdds {
@@ -39,6 +51,10 @@ class TransportInterface;
  */
 struct SharedMemTransportDescriptor : public TransportDescriptorInterface
 {
+    static constexpr uint32_t shm_default_segment_size = 0;
+    static constexpr uint32_t shm_default_port_queue_capacity = 512;
+    static constexpr uint32_t shm_default_healthy_check_timeout_ms = 1000;
+
     //! Destructor
     virtual ~SharedMemTransportDescriptor() = default;
 
@@ -132,11 +148,17 @@ struct SharedMemTransportDescriptor : public TransportDescriptorInterface
 
 private:
 
-    uint32_t segment_size_;
-    uint32_t port_queue_capacity_;
-    uint32_t healthy_check_timeout_ms_;
-    std::string rtps_dump_file_;
+    uint32_t segment_size_ = shm_default_segment_size;
+    uint32_t port_queue_capacity_ = shm_default_port_queue_capacity;
+    uint32_t healthy_check_timeout_ms_ = shm_default_healthy_check_timeout_ms;
+    std::string rtps_dump_file_ {""};
 
+<<<<<<< HEAD:include/fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h
+=======
+    //! Thread settings for the transport dump thread
+    ThreadSettings dump_thread_ {};
+
+>>>>>>> b54cb8ef (Improve `max_allocations` calculation on SHM transport (#5659)):include/fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp
 };
 
 } // namespace rtps

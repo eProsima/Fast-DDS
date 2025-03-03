@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <algorithm>
+#include <cstdint>
 #include <cstring>
 #include <utility>
 
@@ -22,11 +23,18 @@
 #endif // ifdef ANDROID
 
 #include <fastdds/dds/log/Log.hpp>
+<<<<<<< HEAD
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/transport/SenderResource.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastrtps/rtps/messages/CDRMessage.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
+=======
+#include <fastdds/rtps/common/Locator.hpp>
+#include <fastdds/rtps/transport/SenderResource.hpp>
+#include <fastdds/rtps/transport/TransportInterface.hpp>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
+>>>>>>> b54cb8ef (Improve `max_allocations` calculation on SHM transport (#5659))
 
 #include <rtps/network/ReceiverResource.h>
 #include <rtps/transport/shared_mem/SharedMemChannelResource.hpp>
@@ -44,11 +52,16 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+<<<<<<< HEAD
 using octet = fastrtps::rtps::octet;
 using SenderResource = fastrtps::rtps::SenderResource;
 using LocatorSelectorEntry = fastrtps::rtps::LocatorSelectorEntry;
 using LocatorSelector = fastrtps::rtps::LocatorSelector;
 using PortParameters = fastrtps::rtps::PortParameters;
+=======
+// TODO(Adolfo): Calculate this value from UDP sockets buffers size.
+static constexpr uint32_t shm_default_segment_size = 512 * 1024;
+>>>>>>> b54cb8ef (Improve `max_allocations` calculation on SHM transport (#5659))
 
 TransportInterface* SharedMemTransportDescriptor::create_transport() const
 {
@@ -241,8 +254,12 @@ bool SharedMemTransport::DoInputLocatorsMatch(
 bool SharedMemTransport::init(
         const fastrtps::rtps::PropertyPolicy*)
 {
+<<<<<<< HEAD
     // TODO(Adolfo): Calculate this value from UDP sockets buffers size.
     static constexpr uint32_t shm_default_segment_size = 512 * 1024;
+=======
+    (void) max_msg_size_no_frag;
+>>>>>>> b54cb8ef (Improve `max_allocations` calculation on SHM transport (#5659))
 
     if (configuration_.segment_size() == 0)
     {
@@ -271,8 +288,14 @@ bool SharedMemTransport::init(
         {
             return false;
         }
-        shared_mem_segment_ = shared_mem_manager_->create_segment(configuration_.segment_size(),
-                        configuration_.port_queue_capacity());
+        constexpr uint32_t mean_message_size =
+                shm_default_segment_size / SharedMemTransportDescriptor::shm_default_port_queue_capacity;
+        uint32_t max_allocations = configuration_.segment_size() / mean_message_size;
+        if (configuration_.port_queue_capacity() > max_allocations)
+        {
+            max_allocations = configuration_.port_queue_capacity();
+        }
+        shared_mem_segment_ = shared_mem_manager_->create_segment(configuration_.segment_size(), max_allocations);
 
         // Memset the whole segment to zero in order to force physical map of the buffer
         auto buffer = shared_mem_segment_->alloc_buffer(configuration_.segment_size(),

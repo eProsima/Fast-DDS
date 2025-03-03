@@ -28,8 +28,16 @@ class TransportInterface;
  *
  * @ingroup TRANSPORT_MODULE
  */
+<<<<<<< HEAD:test/mock/rtps/SharedMemTransportDescriptor/fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h
 typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterface
+=======
+struct SharedMemTransportDescriptor : public PortBasedTransportDescriptor
+>>>>>>> b54cb8ef (Improve `max_allocations` calculation on SHM transport (#5659)):test/mock/rtps/SharedMemTransportDescriptor/fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp
 {
+    static constexpr uint32_t shm_default_segment_size = 0;
+    static constexpr uint32_t shm_default_port_queue_capacity = 512;
+    static constexpr uint32_t shm_default_healthy_check_timeout_ms = 1000;
+
     virtual ~SharedMemTransportDescriptor()
     {
 
@@ -108,12 +116,12 @@ typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterfac
 
 private:
 
-    uint32_t segment_size_;
-    uint32_t port_queue_capacity_;
-    uint32_t healthy_check_timeout_ms_;
+    uint32_t segment_size_ = shm_default_segment_size;
+    uint32_t port_queue_capacity_ = shm_default_port_queue_capacity;
+    uint32_t healthy_check_timeout_ms_ = shm_default_healthy_check_timeout_ms;
     std::string rtps_dump_file_;
 
-}SharedMemTransportDescriptor;
+};
 
 } // namespace rtps
 } // namespace fastdds
