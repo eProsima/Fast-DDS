@@ -77,25 +77,7 @@ ReqRepHelloWorldRequester::~ReqRepHelloWorldRequester()
 void ReqRepHelloWorldRequester::init(
         bool use_volatile /* = false */)
 {
-    ASSERT_NE(initialized_, true);
-
-    // Create participant
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant_, nullptr);
-    ASSERT_TRUE(participant_->is_enabled());
-
-    // Register service type and create service
-    service_ = ReqRepHelloWorldService::init(participant_);
-
-    // Create requester
-    requester_ = participant_->create_service_requester(service_, create_requester_qos(use_volatile));
-
-    ASSERT_NE(requester_, nullptr);
-
-    init_processing_thread();
-
-    initialized_ = true;
+    init_with_custom_qos(create_requester_qos(use_volatile));
 }
 
 void ReqRepHelloWorldRequester::init_with_custom_qos(
@@ -110,7 +92,9 @@ void ReqRepHelloWorldRequester::init_with_custom_qos(
     ASSERT_TRUE(participant_->is_enabled());
 
     // Register service type and create service
-    service_ = ReqRepHelloWorldService::init(participant_);
+    ReqRepHelloWorldService service;
+    service_ = service.init(participant_);
+    ASSERT_NE(service_, nullptr);
 
     // Create requester
     requester_ = participant_->create_service_requester(service_, requester_qos);
@@ -124,35 +108,19 @@ void ReqRepHelloWorldRequester::init_with_latency(
         const Duration_t& latency_budget_duration_pub,
         const Duration_t& latency_budget_duration_sub)
 {
-    ASSERT_NE(initialized_, true);
-
-    // Create participant
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant_, nullptr);
-    ASSERT_TRUE(participant_->is_enabled());
-
-    // Register service type and create service
-    service_ = ReqRepHelloWorldService::init(participant_);
-
     RequesterQos requester_qos = create_requester_qos();
     requester_qos.writer_qos.latency_budget().duration = latency_budget_duration_pub;
     requester_qos.reader_qos.latency_budget().duration = latency_budget_duration_sub;
 
-    // Create requester
-    requester_ = participant_->create_service_requester(service_, requester_qos);
-
-    init_processing_thread();
-
-    initialized_ = true;
+    init_with_custom_qos(requester_qos);
 }
 
 void ReqRepHelloWorldRequester::newNumber(
-        SampleIdentity related_sample_identity,
+        const RequestInfo& info,
         uint16_t number)
 {
     std::unique_lock<std::mutex> lock(mutex_);
-    received_sample_identity_ = related_sample_identity;
+    received_sample_identity_ = info.related_sample_identity;
     number_received_ = number;
     ASSERT_EQ(current_number_, number_received_);
     if (current_number_ == number_received_)
@@ -275,7 +243,7 @@ void ReqRepHelloWorldRequester::process_status_changes()
                     DataWriter* writer = dynamic_cast<DataWriter*>(entity);
 
                     ASSERT_NE(writer, nullptr);
-                    ASSERT_EQ(*writer, *(requester_->get_requester_writer()));
+                    ASSERT_EQ(writer, requester_->get_requester_writer());
                     PublicationMatchedStatus status;
                     if (RETCODE_OK != writer->get_publication_matched_status(status))
                     {
@@ -294,7 +262,7 @@ void ReqRepHelloWorldRequester::process_status_changes()
 
                     DataReader* reader = dynamic_cast<DataReader*>(entity);
                     ASSERT_NE(reader, nullptr);
-                    ASSERT_EQ(*reader, *(requester_->get_requester_reader()));
+                    ASSERT_EQ(reader, requester_->get_requester_reader());
 
                     SubscriptionMatchedStatus status;
                     if (RETCODE_OK != reader->get_subscription_matched_status(status))
@@ -314,17 +282,17 @@ void ReqRepHelloWorldRequester::process_status_changes()
 
                     DataReader* reader = dynamic_cast<DataReader*>(entity);
                     ASSERT_NE(reader, nullptr);
-                    ASSERT_EQ(*reader, *(requester_->get_requester_reader()));
+                    ASSERT_EQ(reader, requester_->get_requester_reader());
 
                     HelloWorld hello;
                     RequestInfo info;
 
-                    if (RETCODE_OK == requester_->take_reply((void*)&hello, info))
+                    while (RETCODE_OK == requester_->take_reply((void*)&hello, info))
                     {
                         if (info.valid_data)
                         {
                             ASSERT_EQ(hello.message().compare("GoodBye"), 0);
-                            newNumber(info.related_sample_identity, hello.index());
+                            newNumber(info, hello.index());
                         }
                     }
                 }
@@ -339,6 +307,7 @@ RequesterQos ReqRepHelloWorldRequester::create_requester_qos(
     DataWriterQos writer_qos;
     DataReaderQos reader_qos;
     RequesterQos requester_qos;
+    ReqRepHelloWorldService service;
 
     // Requester/Replier DataWriter QoS configuration
     reader_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
@@ -372,16 +341,11 @@ RequesterQos ReqRepHelloWorldRequester::create_requester_qos(
         writer_qos.properties().properties().emplace_back("fastdds.push_mode", "false");
     }
 
-    assert(service_ != nullptr);
-    assert(participant_ != nullptr);
-
-    ServiceTypeSupport service_type = participant_->find_service_type(service_->get_service_type_name());
-
-    requester_qos.service_name = service_->get_service_name();
-    requester_qos.request_topic_name = service_->get_service_name() + "_Request";
-    requester_qos.reply_topic_name = service_->get_service_name() + "_Reply";
-    requester_qos.request_type = service_->get_service_type_name() + "_Request";
-    requester_qos.reply_type = service_->get_service_type_name() + "_Reply";
+    requester_qos.service_name = service.service_name();
+    requester_qos.request_topic_name = service.service_name() + "_Request";
+    requester_qos.reply_topic_name = service.service_name() + "_Reply";
+    requester_qos.request_type = service.service_type_name() + "_Request";
+    requester_qos.reply_type = service.service_type_name() + "_Reply";
     requester_qos.writer_qos = writer_qos;
     requester_qos.reader_qos = reader_qos;
 

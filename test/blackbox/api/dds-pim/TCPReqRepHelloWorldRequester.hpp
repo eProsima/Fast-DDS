@@ -64,7 +64,7 @@ public:
     }
 
     void newNumber(
-            eprosima::fastdds::rtps::SampleIdentity related_sample_identity,
+            const eprosima::fastdds::dds::rpc::RequestInfo& info,
             uint16_t number);
 
     void block();

@@ -31,14 +31,19 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::dds::rpc;
 
-Service* ReqRepHelloWorldService::init(
-        DomainParticipant* participant)
+ReqRepHelloWorldService::ReqRepHelloWorldService()
 {
     std::ostringstream service_name;
     service_name << "ReqRepHelloWorldService_" << asio::ip::host_name() << "_" << GET_PID();
-    std::string service_type_name = "ReqRepHelloWorldServiceType";
-    ServiceTypeSupport service_type(TypeSupport(new HelloWorldPubSubType()), TypeSupport(new HelloWorldPubSubType()));
+    service_name_ = service_name.str();
+    service_type_name_ = "ReqRepHelloWorldServiceType";
+    service_type_ = ServiceTypeSupport(
+        TypeSupport(new HelloWorldPubSubType()), TypeSupport(new HelloWorldPubSubType()));
+}
 
-    assert(participant->register_service_type(service_type, service_type_name) == RETCODE_OK);
-    return participant->create_service(service_name.str(), service_type_name);
+Service* ReqRepHelloWorldService::init(
+        DomainParticipant* participant)
+{
+    assert(participant->register_service_type(service_type_, service_type_name_) == RETCODE_OK);
+    return participant->create_service(service_name_, service_type_name_);
 }

@@ -62,7 +62,7 @@ public:
     }
 
     void newNumber(
-            eprosima::fastdds::rtps::SampleIdentity sample_identity,
+            eprosima::fastdds::dds::rpc::RequestInfo& info,
             uint16_t number);
 
     void wait_discovery(

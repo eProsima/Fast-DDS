@@ -30,6 +30,7 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/qos/ReplierQos.hpp>
 #include <fastdds/dds/rpc/Replier.hpp>
+#include <fastdds/dds/rpc/RequestInfo.hpp>
 #include <fastdds/dds/rpc/Service.hpp>
 
 #include "../../common/BlackboxTests.hpp"
@@ -61,7 +62,7 @@ public:
     }
 
     void newNumber(
-            eprosima::fastdds::rtps::SampleIdentity sample_identity,
+            eprosima::fastdds::dds::rpc::RequestInfo& info,
             uint16_t number);
 
     void wait_discovery();

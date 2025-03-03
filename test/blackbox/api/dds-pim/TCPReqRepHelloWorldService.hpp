@@ -23,11 +23,33 @@ class TCPReqRepHelloWorldService
 
 public:
 
-    static eprosima::fastdds::dds::rpc::Service* init(
+    TCPReqRepHelloWorldService();
+
+    virtual ~TCPReqRepHelloWorldService() = default;
+
+    eprosima::fastdds::dds::rpc::Service* init(
             eprosima::fastdds::dds::DomainParticipant* participant);
 
-    TCPReqRepHelloWorldService() = default;
-    virtual ~TCPReqRepHelloWorldService() = default;
+    const std::string& service_name() const
+    {
+        return service_name_;
+    }
+
+    const std::string& service_type_name() const
+    {
+        return service_type_name_;
+    }
+
+    const eprosima::fastdds::dds::rpc::ServiceTypeSupport& service_type() const
+    {
+        return service_type_;
+    }
+
+private:
+
+    std::string service_name_;
+    std::string service_type_name_;
+    eprosima::fastdds::dds::rpc::ServiceTypeSupport service_type_;
 
 };
 

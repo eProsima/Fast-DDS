@@ -178,7 +178,9 @@ void TCPReqRepHelloWorldRequester::init(
     ASSERT_TRUE(participant_->is_enabled());
 
     // Register service type and create service
-    service_ = TCPReqRepHelloWorldService::init(participant_);
+    TCPReqRepHelloWorldService service;
+    service_ = service.init(participant_);
+    ASSERT_NE(service_, nullptr);
 
     // Create requester
     requester_ = participant_->create_service_requester(service_, create_requester_qos());
@@ -189,11 +191,11 @@ void TCPReqRepHelloWorldRequester::init(
 }
 
 void TCPReqRepHelloWorldRequester::newNumber(
-        SampleIdentity related_sample_identity,
+        const RequestInfo& info,
         uint16_t number)
 {
     std::unique_lock<std::mutex> lock(mutex_);
-    received_sample_identity_ = related_sample_identity;
+    received_sample_identity_ = info.related_sample_identity;
     number_received_ = number;
     ASSERT_EQ(current_number_, number_received_);
     if (current_number_ == number_received_)
@@ -320,7 +322,7 @@ void TCPReqRepHelloWorldRequester::process_status_changes()
 
                     DataWriter* writer = dynamic_cast<DataWriter*>(entity);
                     ASSERT_NE(writer, nullptr);
-                    ASSERT_EQ(*writer, *(requester_->get_requester_writer()));
+                    ASSERT_EQ(writer, requester_->get_requester_writer());
 
                     PublicationMatchedStatus status;
                     if (RETCODE_OK != writer->get_publication_matched_status(status))
@@ -340,7 +342,7 @@ void TCPReqRepHelloWorldRequester::process_status_changes()
 
                     DataReader* reader = dynamic_cast<DataReader*>(entity);
                     ASSERT_NE(reader, nullptr);
-                    ASSERT_EQ(*reader, *(requester_->get_requester_reader()));
+                    ASSERT_EQ(reader, requester_->get_requester_reader());
 
                     SubscriptionMatchedStatus status;
                     if (RETCODE_OK != reader->get_subscription_matched_status(status))
@@ -364,17 +366,17 @@ void TCPReqRepHelloWorldRequester::process_status_changes()
 
                     DataReader* reader = dynamic_cast<DataReader*>(entity);
                     ASSERT_NE(reader, nullptr);
-                    ASSERT_EQ(*reader, *(requester_->get_requester_reader()));
+                    ASSERT_EQ(reader, requester_->get_requester_reader());
 
                     HelloWorld hello;
                     RequestInfo info;
 
-                    if (RETCODE_OK == requester_->take_reply((void*)&hello, info))
+                    while (RETCODE_OK == requester_->take_reply((void*)&hello, info))
                     {
                         if (info.valid_data)
                         {
                             ASSERT_EQ(hello.message().compare("GoodBye"), 0);
-                            newNumber(info.related_sample_identity, hello.index());
+                            newNumber(info, hello.index());
                         }
                     }
                 }
@@ -388,6 +390,7 @@ RequesterQos TCPReqRepHelloWorldRequester::create_requester_qos()
     RequesterQos requester_qos;
     DataWriterQos writer_qos;
     DataReaderQos reader_qos;
+    TCPReqRepHelloWorldService service;
 
     reader_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     writer_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
@@ -397,16 +400,11 @@ RequesterQos TCPReqRepHelloWorldRequester::create_requester_qos()
     reader_qos.reliability().max_blocking_time = Duration_t(1, 0);
     writer_qos.reliability().max_blocking_time = Duration_t(1, 0);
 
-    assert(service_ != nullptr);
-    assert(participant_ != nullptr);
-
-    ServiceTypeSupport service_type = participant_->find_service_type(service_->get_service_type_name());
-
-    requester_qos.service_name = service_->get_service_name();
-    requester_qos.request_topic_name = service_->get_service_name() + "_Request";
-    requester_qos.reply_topic_name = service_->get_service_name() + "_Reply";
-    requester_qos.request_type = service_->get_service_type_name() + "_Request";
-    requester_qos.reply_type = service_->get_service_type_name() + "_Reply";
+    requester_qos.service_name = service.service_name();
+    requester_qos.request_topic_name = service.service_name() + "_Request";
+    requester_qos.reply_topic_name = service.service_name() + "_Reply";
+    requester_qos.request_type = service.service_type_name() + "_Request";
+    requester_qos.reply_type = service.service_type_name() + "_Reply";
     requester_qos.writer_qos = writer_qos;
     requester_qos.reader_qos = reader_qos;
 

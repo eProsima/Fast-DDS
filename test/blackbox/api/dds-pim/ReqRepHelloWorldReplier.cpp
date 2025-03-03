@@ -74,26 +74,7 @@ ReqRepHelloWorldReplier::~ReqRepHelloWorldReplier()
 
 void ReqRepHelloWorldReplier::init()
 {
-    ASSERT_NE(initialized_, true);
-
-    // Create participant
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-
-    ASSERT_NE(participant_, nullptr);
-    ASSERT_TRUE(participant_->is_enabled());
-
-    // Register service type and create service
-    service_ = ReqRepHelloWorldService::init(participant_);
-
-    // Create replier
-    replier_ = participant_->create_service_replier(service_, create_replier_qos());
-
-    ASSERT_NE(replier_, nullptr);
-
-    init_processing_thread();
-
-    initialized_ = true;
+    init_with_custom_qos(create_replier_qos());
 }
 
 void ReqRepHelloWorldReplier::init_with_custom_qos(
@@ -108,7 +89,9 @@ void ReqRepHelloWorldReplier::init_with_custom_qos(
     ASSERT_TRUE(participant_->is_enabled());
 
     // Register service type and create service
-    service_ = ReqRepHelloWorldService::init(participant_);
+    ReqRepHelloWorldService service;
+    service_ = service.init(participant_);
+    ASSERT_NE(service_, nullptr);
 
     // Create replier
     replier_ = participant_->create_service_replier(service_, qos);
@@ -119,14 +102,12 @@ void ReqRepHelloWorldReplier::init_with_custom_qos(
 }
 
 void ReqRepHelloWorldReplier::newNumber(
-        SampleIdentity sample_identity,
+        RequestInfo& info,
         uint16_t number)
 {
-    RequestInfo info;
     HelloWorld hello;
     hello.index(number);
     hello.message("GoodBye");
-    info.related_sample_identity = sample_identity;
     ASSERT_EQ(replier_->send_reply((void*)&hello, info), RETCODE_OK);
 }
 
@@ -196,7 +177,7 @@ void ReqRepHelloWorldReplier::process_status_changes()
 
                     DataWriter* writer = dynamic_cast<DataWriter*>(entity);
                     ASSERT_NE(writer, nullptr);
-                    ASSERT_EQ(*writer, *(replier_->get_replier_writer()));
+                    ASSERT_EQ(writer, replier_->get_replier_writer());
 
                     PublicationMatchedStatus status;
                     if (RETCODE_OK != writer->get_publication_matched_status(status))
@@ -216,7 +197,7 @@ void ReqRepHelloWorldReplier::process_status_changes()
 
                     DataReader* reader = dynamic_cast<DataReader*>(entity);
                     ASSERT_NE(reader, nullptr);
-                    ASSERT_EQ(*reader, *(replier_->get_replier_reader()));
+                    ASSERT_EQ(reader, replier_->get_replier_reader());
 
                     SubscriptionMatchedStatus status;
                     if (RETCODE_OK != reader->get_subscription_matched_status(status))
@@ -236,17 +217,17 @@ void ReqRepHelloWorldReplier::process_status_changes()
 
                     DataReader* reader = dynamic_cast<DataReader*>(entity);
                     ASSERT_NE(reader, nullptr);
-                    ASSERT_EQ(*reader, *(replier_->get_replier_reader()));
+                    ASSERT_EQ(reader, replier_->get_replier_reader());
 
                     HelloWorld hello;
                     RequestInfo info;
 
-                    if (RETCODE_OK == replier_->take_request((void*)&hello, info))
+                    while (RETCODE_OK == replier_->take_request((void*)&hello, info))
                     {
                         if (info.valid_data)
                         {
                             ASSERT_EQ(hello.message().compare("HelloWorld"), 0);
-                            newNumber(info.related_sample_identity, hello.index());
+                            newNumber(info, hello.index());
                         }
                     }
                 }
@@ -260,6 +241,7 @@ ReplierQos ReqRepHelloWorldReplier::create_replier_qos()
     ReplierQos replier_qos;
     DataWriterQos writer_qos;
     DataReaderQos reader_qos;
+    ReqRepHelloWorldService service;
 
     // Requester/Replier DataWriter QoS configuration
     reader_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
@@ -287,16 +269,11 @@ ReplierQos ReqRepHelloWorldReplier::create_replier_qos()
         writer_qos.properties().properties().emplace_back("fastdds.push_mode", "false");
     }
 
-    assert(service_ != nullptr);
-    assert(participant_ != nullptr);
-
-    ServiceTypeSupport service_type = participant_->find_service_type(service_->get_service_type_name());
-
-    replier_qos.service_name = service_->get_service_name();
-    replier_qos.request_topic_name = service_->get_service_name() + "_Request";
-    replier_qos.reply_topic_name = service_->get_service_name() + "_Reply";
-    replier_qos.request_type = service_->get_service_type_name() + "_Request";
-    replier_qos.reply_type = service_->get_service_type_name() + "_Reply";
+    replier_qos.service_name = service.service_name();
+    replier_qos.request_topic_name = service.service_name() + "_Request";
+    replier_qos.reply_topic_name = service.service_name() + "_Reply";
+    replier_qos.request_type = service.service_type_name() + "_Request";
+    replier_qos.reply_type = service.service_type_name() + "_Reply";
     replier_qos.writer_qos = writer_qos;
     replier_qos.reader_qos = reader_qos;
 
