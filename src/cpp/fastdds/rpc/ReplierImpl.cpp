@@ -110,6 +110,19 @@ ReturnCode_t ReplierImpl::take_request(
     return retcode;
 }
 
+ReturnCode_t ReplierImpl::return_loan(
+        LoanableCollection& data,
+        LoanableSequence<RequestInfo>& info)
+{
+    if (!enabled_)
+    {
+        EPROSIMA_LOG_ERROR(REPLIER, "Trying to return loan with a disabled replier");
+        return RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    return replier_reader_->return_loan(data, info);
+}
+
 ReturnCode_t ReplierImpl::enable()
 {
     ReturnCode_t retcode = RETCODE_OK;

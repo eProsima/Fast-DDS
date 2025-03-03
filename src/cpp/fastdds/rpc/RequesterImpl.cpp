@@ -97,6 +97,19 @@ ReturnCode_t RequesterImpl::take_reply(
     return requester_reader_->take(data, info);
 }
 
+ReturnCode_t RequesterImpl::return_loan(
+        LoanableCollection& data,
+        LoanableSequence<RequestInfo>& info)
+{
+    if (!enabled_)
+    {
+        EPROSIMA_LOG_ERROR(REQUESTER, "Trying to return a loan with a disabled requester");
+        return RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    return requester_reader_->return_loan(data, info);
+}
+
 ReturnCode_t RequesterImpl::enable()
 {
     ReturnCode_t retcode = RETCODE_OK;

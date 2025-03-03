@@ -94,6 +94,20 @@ public:
             LoanableSequence<RequestInfo>& info) override;
 
     /**
+     * @brief This operation indicates to the Requester's DataReader that
+     * the application is done accessing the collection of Reply @c datas and @c infos obtained by
+     * some earlier invocation of @ref take_reply.
+     *
+     * @param [in,out] data          A LoanableCollection object where the received data samples were obtained from
+     *                               an earlier invocation of take_reply on this Requester.
+     * @param [in,out] sample        A LoanableSequence where the received request infos were obtained from
+     *                               an earlier invocation of take_reply on this Requester.
+     */
+    ReturnCode_t return_loan(
+            LoanableCollection& data,
+            LoanableSequence<RequestInfo>& info) override;
+
+    /**
      * @brief Enable the Requester
      */
     ReturnCode_t enable() override;
