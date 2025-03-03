@@ -444,6 +444,7 @@ public:
                (this->port == b.port) &&
                (this->userData == b.userData) &&
                (this->participantID == b.participantID) &&
+               (this->easy_mode_ip == b.easy_mode_ip) &&
                (this->useBuiltinTransports == b.useBuiltinTransports) &&
                (this->properties == b.properties) &&
                (this->prefix == b.prefix) &&
@@ -526,6 +527,9 @@ public:
 
     //! Participant ID
     int32_t participantID = -1;
+
+    //! IP of the Host where master Server is located (EASY_MODE context)
+    std::string easy_mode_ip = "";
 
     //! User defined transports to use alongside or in place of builtins.
     std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>> userTransports;
