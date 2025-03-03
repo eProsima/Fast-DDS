@@ -15,19 +15,7 @@
 #ifndef _FASTDDS_SHAREDMEM_TRANSPORT_DESCRIPTOR_
 #define _FASTDDS_SHAREDMEM_TRANSPORT_DESCRIPTOR_
 
-<<<<<<< HEAD:include/fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h
 #include "fastdds/rtps/transport/TransportDescriptorInterface.h"
-=======
-#ifndef FASTDDS_RTPS_TRANSPORT_SHARED_MEM__SHAREDMEMTRANSPORTDESCRIPTOR_HPP
-#define FASTDDS_RTPS_TRANSPORT_SHARED_MEM__SHAREDMEMTRANSPORTDESCRIPTOR_HPP
-
-#include <cstdint>
-#include <string>
-
-#include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
-#include <fastdds/fastdds_dll.hpp>
->>>>>>> b54cb8ef (Improve `max_allocations` calculation on SHM transport (#5659)):include/fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp
 
 namespace eprosima {
 namespace fastdds {
@@ -153,12 +141,6 @@ private:
     uint32_t healthy_check_timeout_ms_ = shm_default_healthy_check_timeout_ms;
     std::string rtps_dump_file_ {""};
 
-<<<<<<< HEAD:include/fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h
-=======
-    //! Thread settings for the transport dump thread
-    ThreadSettings dump_thread_ {};
-
->>>>>>> b54cb8ef (Improve `max_allocations` calculation on SHM transport (#5659)):include/fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp
 };
 
 } // namespace rtps
