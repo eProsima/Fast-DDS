@@ -54,6 +54,7 @@ struct IProxyObserver;
 
 namespace rtps {
 
+class PDPClientListener;
 class PDPServerListener;
 class PDPEndpoints;
 
@@ -85,6 +86,7 @@ class ParticipantProxyData;
 class ReaderListener;
 class PDPEndpoints;
 class PDPListener;
+class PDPClientListener;
 class PDPServerListener;
 class ITopicPayloadPool;
 
@@ -96,7 +98,9 @@ class ITopicPayloadPool;
 class PDP : public fastdds::statistics::rtps::IProxyQueryable
 {
     friend class PDPListener;
+    friend class PDPClientListener;
     friend class PDPServerListener;
+    friend class fastdds::rtps::PDPClientListener;
     friend class fastdds::rtps::PDPServerListener;
     friend class PDPSecurityInitiatorListener;
 

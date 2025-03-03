@@ -1,4 +1,4 @@
-// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file PDPServerListener.h
+ * @file PDPClientListener.h
  *
  */
 
-#ifndef _FASTDDS_RTPS_PDPSERVERLISTENER2_H_
-#define _FASTDDS_RTPS_PDPSERVERLISTENER2_H_
+#ifndef _FASTDDS_RTPS_PDPCLIENTLISTENER2_H_
+#define _FASTDDS_RTPS_PDPCLIENTLISTENER2_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
@@ -27,27 +27,22 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-class PDPServer;
+class PDPClient;
 
-/**
- * Class PDPServerListener, specification used by the PDP to perform the History check when a new message is received.
- * This class is implemented in order to use the same structure than with any other RTPSReader.
- *@ingroup DISCOVERY_MODULE
- */
-class PDPServerListener : public fastrtps::rtps::PDPListener
+class PDPClientListener : public fastrtps::rtps::PDPListener
 {
 public:
 
     /**
      * @param in_PDP
      */
-    PDPServerListener(
-            PDPServer* in_PDP);
+    PDPClientListener(
+            PDPClient* in_PDP);
 
-    ~PDPServerListener() override = default;
+    ~PDPClientListener() override = default;
 
     //!Pointer to the associated mp_SPDP;
-    PDPServer* pdp_server();
+    PDPClient* pdp_client();
 
     /**
      * New added cache
@@ -69,4 +64,4 @@ public:
 } /* namespace eprosima */
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_RTPS_PDPSERVERLISTENER2_H_ */
+#endif /* _FASTDDS_RTPS_PDPCLIENTLISTENER2_H_ */

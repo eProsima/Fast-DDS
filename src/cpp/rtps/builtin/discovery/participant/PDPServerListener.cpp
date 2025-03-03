@@ -189,6 +189,103 @@ void PDPServerListener::onNewCacheChangeAdded(
                 EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, dds::parameter_property_ds_version << " is not set. Assuming 1.0");
             }
 
+            // Whether to drop the participant (if it is a server) due to persistence GUID mismatch
+            bool should_be_dropped = false;
+
+            // Whether to skip data Ps according to sequence number
+            bool no_skip = false;
+
+            fastrtps::rtps::GUID_t persistence_guid = fastrtps::rtps::GUID_t::unknown();
+            auto _persistence_guid = std::find_if(
+                properties.begin(),
+                properties.end(),
+                [](const dds::ParameterProperty_t& property)
+                {
+                    return property.first() == dds::parameter_property_persistence_guid;
+                });
+
+            if (_persistence_guid != properties.end())
+            {
+                std::istringstream(_persistence_guid->second()) >> persistence_guid;
+                if (persistence_guid == fastrtps::rtps::GUID_t::unknown())
+                {
+                    // Unexpected: persistence GUID set but unknown
+                }
+                else
+                {
+                    auto pguid = persistence_guid_map.find(guid.guidPrefix);
+                    if (pguid != persistence_guid_map.end())
+                    {
+                        if (pguid->second != persistence_guid.guidPrefix)
+                        {
+                            // Persistence guid mismatch -> Remove persistence GUID from map and drop participant
+                            persistence_guid_map.erase(pguid);
+                            should_be_dropped = true;
+
+                            if (guid.guidPrefix == writer_guid.guidPrefix)
+                            {
+                                // Remove also sequence number map for this GUID
+                                auto last_sn = sn_db.find(writer_guid.guidPrefix);
+                                if (last_sn != sn_db.end())
+                                {
+                                    sn_db.erase(last_sn);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // First data P from unknown server -> add entry and avoid skipping based on SN
+                        persistence_guid_map[guid.guidPrefix] = persistence_guid.guidPrefix;
+                        no_skip = true;
+
+                        // Force first SN in case the present server was dropped and SN resetted
+                        sn_db[writer_guid.guidPrefix] = change->sequenceNumber;
+                    }
+                }
+            }
+            else
+            {
+                // Client case -> skip according to SN
+            }
+
+            if (should_be_dropped)
+            {
+                std::unique_lock<std::recursive_mutex> lock(*pdp_server()->getMutex());
+
+                for (ParticipantProxyData* it : pdp_server()->participant_proxies_)
+                {
+                    if (guid == it->m_guid)
+                    {
+                        pdp_server()->remove_remote_participant(guid, ParticipantDiscoveryInfo::DROPPED_PARTICIPANT);
+                        return;
+                    }
+                }
+            }
+
+            if (!no_skip)
+            {
+                auto last_sn = sn_db.find(writer_guid.guidPrefix);
+                if (last_sn != sn_db.end())
+                {
+                    if (change->sequenceNumber <= last_sn->second)
+                    {
+                        // Dropping already processed SN
+                        return;
+                    }
+                    else
+                    {
+                        // Newer SN -> update
+                        sn_db[writer_guid.guidPrefix] = change->sequenceNumber;
+                    }
+                }
+                else
+                {
+                    // First SN -> add
+                    sn_db[writer_guid.guidPrefix] = change->sequenceNumber;
+                }
+            }
+
             /* Check PARTICIPANT_TYPE */
             bool is_client = true;
             auto participant_type = std::find_if(
@@ -225,17 +322,10 @@ void PDPServerListener::onNewCacheChangeAdded(
             {
                 EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, dds::parameter_property_participant_type << " is not set");
                 // Fallback to checking whether participant is a SERVER looking for the persistence GUID
-                auto persistence_guid = std::find_if(
-                    properties.begin(),
-                    properties.end(),
-                    [](const dds::ParameterProperty_t& property)
-                    {
-                        return property.first() == dds::parameter_property_persistence_guid;
-                    });
                 // The presence of persistence GUID property suggests a SERVER. This assumption is made to keep
                 // backwards compatibility with Discovery Server v1.0. However, any participant that has been configured
                 // as persistent will have this property.
-                if (persistence_guid != properties.end())
+                if (persistence_guid != fastrtps::rtps::GUID_t::unknown())
                 {
                     is_client = false;
                 }

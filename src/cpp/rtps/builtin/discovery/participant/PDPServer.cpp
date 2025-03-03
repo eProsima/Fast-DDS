@@ -411,6 +411,8 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
     {
         endpoints.reader.reader_ = dynamic_cast<fastrtps::rtps::StatefulReader*>(reader);
 
+        endpoints.reader.reader_->process_read_data = true;
+
         // Enable unknown clients to reach this reader
         reader->enableMessagesFromUnkownWriters(true);
 

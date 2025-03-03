@@ -328,6 +328,8 @@ public:
             WriterProxy* writer,
             bool mark_as_read = true) override;
 
+    bool process_read_data = false;
+
 #ifdef FASTDDS_STATISTICS
     bool get_connections(
             fastdds::statistics::rtps::ConnectionList& connection_list) override;

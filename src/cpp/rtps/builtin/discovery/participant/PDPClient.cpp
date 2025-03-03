@@ -29,6 +29,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <rtps/builtin/discovery/participant/PDPClientListener.hpp>
 #include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
@@ -354,7 +355,7 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
     }
 #endif // HAVE_SECURITY
 
-    endpoints.reader.listener_.reset(new PDPListener(this));
+    endpoints.reader.listener_.reset(new PDPClientListener(this));
 
     RTPSReader* reader = nullptr;
 #if HAVE_SECURITY
@@ -368,6 +369,8 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
             reader_entity, true, false))
     {
         endpoints.reader.reader_ = dynamic_cast<fastrtps::rtps::StatefulReader*>(reader);
+
+        endpoints.reader.reader_->process_read_data = true;
 
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(reader, false);

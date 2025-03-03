@@ -234,6 +234,7 @@ set(${PROJECT_NAME}_source_files
     rtps/builtin/discovery/database/DiscoveryParticipantsAckStatus.cpp
     rtps/builtin/discovery/database/DiscoverySharedInfo.cpp
     rtps/builtin/discovery/participant/PDPClient.cpp
+    rtps/builtin/discovery/participant/PDPClientListener.cpp
     rtps/builtin/discovery/participant/PDPServer.cpp
     rtps/builtin/discovery/participant/PDPServerListener.cpp
     rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp

@@ -570,7 +570,7 @@ bool StatefulReader::processDataMsg(
     if (acceptMsgFrom(change->writerGUID, &pWP))
     {
         // Check if CacheChange was received or is framework data
-        if (!pWP || !pWP->change_was_received(change->sequenceNumber))
+        if (!pWP || process_read_data || !pWP->change_was_received(change->sequenceNumber))
         {
             // Always assert liveliness on scope exit
             auto assert_liveliness_lambda = [&lock, this, change](void*)
@@ -661,8 +661,12 @@ bool StatefulReader::processDataMsg(
             {
                 EPROSIMA_LOG_INFO(RTPS_MSG_IN,
                         IDSTRING "Change " << change_to_add->sequenceNumber << " not added to history");
-                change_to_add->payload_owner()->release_payload(*change_to_add);
-                change_pool_->release_cache(change_to_add);
+
+                if (change_to_add->payload_owner())
+                {
+                    change_to_add->payload_owner()->release_payload(*change_to_add);
+                    change_pool_->release_cache(change_to_add);
+                }
                 return false;
             }
         }
@@ -1235,7 +1239,7 @@ void StatefulReader::NotifyChanges(
 
     // Notify listener if new data is available
     auto listener = getListener();
-    if (new_data_available && (nullptr != listener))
+    if ((nullptr != listener) && (new_data_available || process_read_data))
     {
         bool notify_individual = false;
         listener->on_data_available(this, proxGUID, first_seq, max_seq, notify_individual);
