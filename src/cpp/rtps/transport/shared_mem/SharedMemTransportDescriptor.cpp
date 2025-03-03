@@ -21,21 +21,6 @@
 
 using namespace eprosima::fastdds::rtps;
 
-namespace eprosima {
-namespace fastdds {
-namespace rtps {
-
-<<<<<<< HEAD
-static constexpr uint32_t shm_default_segment_size = 0;
-static constexpr uint32_t shm_default_port_queue_capacity = 512;
-static constexpr uint32_t shm_default_healthy_check_timeout_ms = 1000;
-
-} // rtps
-} // fastdds
-} // eprosima
-
-=======
->>>>>>> b54cb8ef (Improve `max_allocations` calculation on SHM transport (#5659))
 //*********************************************************
 // SharedMemTransportDescriptor
 //*********************************************************

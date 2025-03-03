@@ -24,18 +24,12 @@
 #endif // ifdef ANDROID
 
 #include <fastdds/dds/log/Log.hpp>
-<<<<<<< HEAD
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/transport/SenderResource.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastrtps/rtps/messages/CDRMessage.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
-=======
-#include <fastdds/rtps/common/Locator.hpp>
-#include <fastdds/rtps/transport/SenderResource.hpp>
-#include <fastdds/rtps/transport/TransportInterface.hpp>
-#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
->>>>>>> b54cb8ef (Improve `max_allocations` calculation on SHM transport (#5659))
 
 #include <rtps/network/ReceiverResource.h>
 #include <rtps/transport/shared_mem/SharedMemChannelResource.hpp>
@@ -53,16 +47,14 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-<<<<<<< HEAD
 using octet = fastrtps::rtps::octet;
 using SenderResource = fastrtps::rtps::SenderResource;
 using LocatorSelectorEntry = fastrtps::rtps::LocatorSelectorEntry;
 using LocatorSelector = fastrtps::rtps::LocatorSelector;
 using PortParameters = fastrtps::rtps::PortParameters;
-=======
+
 // TODO(Adolfo): Calculate this value from UDP sockets buffers size.
 static constexpr uint32_t shm_default_segment_size = 512 * 1024;
->>>>>>> b54cb8ef (Improve `max_allocations` calculation on SHM transport (#5659))
 
 TransportInterface* SharedMemTransportDescriptor::create_transport() const
 {
