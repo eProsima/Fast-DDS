@@ -54,7 +54,7 @@ public:
      */
     virtual ReturnCode_t send_reply(
             void* data,
-            RequestInfo& info) = 0;
+            const RequestInfo& info) = 0;
 
     /**
      * @brief Take a request message from the Replier DataReader's history.

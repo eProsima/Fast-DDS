@@ -102,7 +102,7 @@ void ReqRepHelloWorldReplier::init_with_custom_qos(
 }
 
 void ReqRepHelloWorldReplier::newNumber(
-        RequestInfo& info,
+        const RequestInfo& info,
         uint16_t number)
 {
     HelloWorld hello;

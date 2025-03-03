@@ -68,7 +68,7 @@ public:
      */
     ReturnCode_t send_reply(
             void* data,
-            RequestInfo& info) override;
+            const RequestInfo& info) override;
 
     /**
      * @brief Take a request message from the Replier DataReader's history.

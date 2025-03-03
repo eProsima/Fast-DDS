@@ -147,7 +147,7 @@ void TCPReqRepHelloWorldReplier::init(
 }
 
 void TCPReqRepHelloWorldReplier::newNumber(
-        RequestInfo& info,
+        const RequestInfo& info,
         uint16_t number)
 {
     HelloWorld hello;

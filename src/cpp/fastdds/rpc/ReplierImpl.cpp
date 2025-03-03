@@ -48,7 +48,7 @@ const std::string& ReplierImpl::get_service_name() const
 
 ReturnCode_t ReplierImpl::send_reply(
         void* data,
-        RequestInfo& info)
+        const RequestInfo& info)
 {
     FASTDDS_TODO_BEFORE(3, 3, "Implement matching algorithm");
 
