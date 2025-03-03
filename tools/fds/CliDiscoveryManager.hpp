@@ -94,6 +94,11 @@ public:
     CliDiscoveryManager();
 
     /**
+     * @brief Destructor
+     */
+    ~CliDiscoveryManager();
+
+    /**
      * @brief Get the default shared directory used to communicate servers' info between processes.
      * @return The default shared directory
      */
