@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/rpc/ServiceTypeSupport.hpp>
 
 namespace eprosima {
@@ -23,10 +24,7 @@ ReturnCode_t ServiceTypeSupport::register_service_type(
         DomainParticipant* participant,
         std::string service_type_name) const
 {
-    static_cast<void>(participant);
-    static_cast<void>(service_type_name);
-
-    return RETCODE_OK;
+    return participant->register_service_type(*this, service_type_name);
 }
 
 } // namespace rpc

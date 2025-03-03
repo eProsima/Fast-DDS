@@ -710,15 +710,15 @@ bool PublisherImpl::can_be_deleted(
 
     if (it != writers_.end())
     {
-        auto dr_it = std::find(it->second.begin(), it->second.end(), writer->impl_);
+        auto dw_it = std::find(it->second.begin(), it->second.end(), writer->impl_);
 
-        if (dr_it == it->second.end())
+        if (dw_it == it->second.end())
         {
             EPROSIMA_LOG_ERROR(PUBLISHER, "DataWriter implementation not found.");
             return false;
         }
 
-        return (*dr_it)->check_delete_preconditions() == RETCODE_OK;
+        return (*dw_it)->check_delete_preconditions() == RETCODE_OK;
     }
 
     EPROSIMA_LOG_ERROR(PUBLISHER, "DataWriter not found.");
