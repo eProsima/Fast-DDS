@@ -824,7 +824,7 @@ bool TCPTransportInterface::OpenOutputChannel(
     // At this point, if there is no SenderResource to reuse, this is the first call to OpenOutputChannel for this locator.
     // Need to check if a channel already exists for this locator.
 
-    EPROSIMA_LOG_INFO(RTCP, "Called to OpenOutputChannel @ " << IPLocator::to_string(locator));
+    EPROSIMA_LOG_ERROR(RTCP, "Called to OpenOutputChannel @ " << IPLocator::to_string(locator));
 
     auto channel_resource = channel_resources_.find(physical_locator);
 
@@ -887,7 +887,7 @@ bool TCPTransportInterface::OpenOutputChannel(
         if (IPLocator::getPhysicalPort(physical_locator) > listening_port || local_lower_interface)
         {
             // Client side (either Server-Client or LARGE_DATA)
-            EPROSIMA_LOG_INFO(RTCP, "OpenOutputChannel: [CONNECT] @ " << IPLocator::to_string(locator));
+            EPROSIMA_LOG_ERROR(RTCP, "OpenOutputChannel: [CONNECT] @ " << IPLocator::to_string(locator));
 
             // Create a TCP_CONNECT_TYPE channel
             std::shared_ptr<TCPChannelResource> channel(
@@ -910,7 +910,7 @@ bool TCPTransportInterface::OpenOutputChannel(
         {
             // Server side LARGE_DATA
             // Act as server and wait to the other endpoint to connect. Add locator to sender_resource_list
-            EPROSIMA_LOG_INFO(RTCP,
+            EPROSIMA_LOG_ERROR(RTCP,
                     "OpenOutputChannel: [WAIT_CONNECTION] @ " << IPLocator::to_string(locator));
             std::lock_guard<std::mutex> channelPendingLock(channel_pending_logical_ports_mutex_);
             channel_pending_logical_ports_[physical_locator].insert(logical_port);
@@ -1009,7 +1009,7 @@ bool TCPTransportInterface::CreateInitialConnect(
     // There is no need to check if a channel already exists for this locator because this method is called only when
     // a new connection is required.
 
-    EPROSIMA_LOG_INFO(RTCP, "Called to CreateInitialConnect @ " << IPLocator::to_string(locator));
+    EPROSIMA_LOG_ERROR(RTCP, "Called to CreateInitialConnect @ " << IPLocator::to_string(locator));
 
     // Create a TCP_CONNECT_TYPE channel
     std::shared_ptr<TCPChannelResource> channel(
@@ -1024,7 +1024,7 @@ bool TCPTransportInterface::CreateInitialConnect(
             configuration()->maxMessageSize))
         );
 
-    EPROSIMA_LOG_INFO(RTCP, "CreateInitialConnect: [CONNECT] @ " << IPLocator::to_string(locator));
+    EPROSIMA_LOG_ERROR(RTCP, "CreateInitialConnect: [CONNECT] @ " << IPLocator::to_string(locator));
 
     channel_resources_[physical_locator] = channel;
     channel->connect(channel_resources_[physical_locator]);

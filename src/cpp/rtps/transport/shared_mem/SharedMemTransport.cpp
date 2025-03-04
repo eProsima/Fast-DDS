@@ -178,6 +178,7 @@ bool SharedMemTransport::is_locator_reachable(
             is_reachable = false;
         }
     }
+    EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, "Using SHM locator: '" << is_reachable <<"'");
 
     return is_reachable;
 }

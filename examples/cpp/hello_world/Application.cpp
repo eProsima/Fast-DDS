@@ -36,6 +36,7 @@ std::shared_ptr<Application> Application::make_app(
         const CLIParser::hello_world_config& config,
         const std::string& topic_name)
 {
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Warning);
     std::shared_ptr<Application> entity;
     switch (config.entity)
     {

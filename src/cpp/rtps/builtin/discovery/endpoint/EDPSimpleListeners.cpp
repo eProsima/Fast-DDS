@@ -103,6 +103,7 @@ void EDPBasePUBListener::add_writer_from_change(
                                 }
                                 *data = *temp_writer_data;
                                 data->setup_locators(*temp_writer_data, network, participant_data);
+                                // EPROSIMA_LOG_ERROR(RTPS_EDP, "Remote Pub WPD with locators: " << data->remote_locators());
 
                                 if (request_ret_status != fastdds::dds::RETCODE_OK)
                                 {
@@ -248,6 +249,7 @@ void EDPBaseSUBListener::add_reader_from_change(
                                 }
                                 *data = *temp_reader_data;
                                 data->setup_locators(*temp_reader_data, network, participant_data);
+                                // EPROSIMA_LOG_ERROR(RTPS_EDP, "Remote Sub WPD with locators: " << data->remote_locators());
 
                                 if (request_ret_status != fastdds::dds::RETCODE_OK)
                                 {

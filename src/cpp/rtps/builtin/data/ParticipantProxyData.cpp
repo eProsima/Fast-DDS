@@ -904,6 +904,7 @@ bool ParticipantProxyData::is_from_this_host() const
     {
         same_host = m_guid.is_from_this_host();
     }
+    // std::cout << "ParticipantProxyData::is_from_this_host() is: " << same_host << std::endl;
     return same_host;
 }
 

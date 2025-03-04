@@ -64,6 +64,7 @@ public:
     static bool is_shm_and_from_this_host(
             const Locator& locator)
     {
+        // (void)locator;
         if (locator.kind == LOCATOR_KIND_SHM)
         {
             auto host_id = Host::instance().id();
