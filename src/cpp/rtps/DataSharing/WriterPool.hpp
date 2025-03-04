@@ -88,6 +88,7 @@ public:
             payload.data = data.data;
             payload.length = data.length;
             payload.max_size = data.length;
+            payload.is_serialized_key = data.is_serialized_key;
             payload.payload_owner = this;
             return true;
         }
