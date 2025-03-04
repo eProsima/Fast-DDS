@@ -243,7 +243,7 @@ struct ReadTakeCommand
          * More importantly, the related sample identity should be taken from the related sample identity
          * in write_params.
          */
-        // FASTDDS_TODO_BEFORE(3, 0, "Fill both sample_identity and related_sample_identity with write_params");
+        FASTDDS_TODO_BEFORE(4, 0, "Fill both sample_identity and related_sample_identity with write_params");
         info.sample_identity.writer_guid(item->writerGUID);
         info.sample_identity.sequence_number(item->sequenceNumber);
         info.related_sample_identity = item->write_params.sample_identity();
