@@ -158,10 +158,6 @@ const ProtocolVersion_t c_ProtocolVersion_2_3{2, 3};
 
 const ProtocolVersion_t c_ProtocolVersion;
 
-//!@brief Structure VendorId_t, specifying the vendor Id of the implementation.
-// FASTDDS_TODO_BEFORE(3, 0, "Remove eprosima::fastdds::rtps::VendorId_t usings");
-using VendorId_t = eprosima::fastdds::rtps::VendorId_t;
-
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
