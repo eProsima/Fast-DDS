@@ -1620,7 +1620,7 @@ void set_builtin_endpoint_locators(
         const ParticipantProxyData* part_data,
         const BuiltinAttributes& builtin_attr,
         const BuiltinProtocols* builtin_protocol)
-{    
+{
     if (nullptr == part_data)
     {
         // Local participant data has not yet been created.
@@ -1648,7 +1648,8 @@ void set_builtin_endpoint_locators(
     endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
 }
 
-ReaderAttributes PDP::static_create_builtin_reader_attributes(const RTPSParticipantImpl* RTPSParticipant)
+ReaderAttributes PDP::static_create_builtin_reader_attributes(
+        const RTPSParticipantImpl* RTPSParticipant)
 {
     ReaderAttributes attributes;
 
@@ -1673,13 +1674,15 @@ ReaderAttributes PDP::static_create_builtin_reader_attributes(const RTPSParticip
 ReaderAttributes PDP::create_builtin_reader_attributes()
 {
     ReaderAttributes attributes = static_create_builtin_reader_attributes(getRTPSParticipant());
-    
-    set_builtin_endpoint_locators(attributes.endpoint, getRTPSParticipant()->get_attributes(), this->getLocalParticipantProxyData(), this->builtin_attributes(), mp_builtin);
+
+    set_builtin_endpoint_locators(attributes.endpoint, getRTPSParticipant()->get_attributes(),
+            this->getLocalParticipantProxyData(), this->builtin_attributes(), mp_builtin);
 
     return attributes;
 }
 
-WriterAttributes PDP::static_create_builtin_writer_attributes(const RTPSParticipantImpl* RTPSParticipant)
+WriterAttributes PDP::static_create_builtin_writer_attributes(
+        const RTPSParticipantImpl* RTPSParticipant)
 {
     WriterAttributes attributes;
 
@@ -1692,7 +1695,7 @@ WriterAttributes PDP::static_create_builtin_writer_attributes(const RTPSParticip
     attributes.endpoint.topicKind = WITH_KEY;
 
     attributes.endpoint.endpointKind = WRITER;
-    
+
     // We assume that if we have at least one flow controller defined, we use async flow controller
     if (!pattr.flow_controllers.empty())
     {
@@ -1710,7 +1713,8 @@ WriterAttributes PDP::create_builtin_writer_attributes()
 {
     WriterAttributes attributes = static_create_builtin_writer_attributes(getRTPSParticipant());
 
-    set_builtin_endpoint_locators(attributes.endpoint, getRTPSParticipant()->get_attributes(), this->getLocalParticipantProxyData(), this->builtin_attributes(), mp_builtin);
+    set_builtin_endpoint_locators(attributes.endpoint, getRTPSParticipant()->get_attributes(),
+            this->getLocalParticipantProxyData(), this->builtin_attributes(), mp_builtin);
 
     return attributes;
 }

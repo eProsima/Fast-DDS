@@ -450,14 +450,16 @@ public:
      * It is a static method to allow TypeLookupManager to create builtin readers
      * @return ReaderAttributes
      */
-    static ReaderAttributes static_create_builtin_reader_attributes(const RTPSParticipantImpl* RTPSParticipant);
+    static ReaderAttributes static_create_builtin_reader_attributes(
+            const RTPSParticipantImpl* RTPSParticipant);
 
     /**
      * Create the attributes common to any builtin writer
      * It is a static method to allow TypeLookupManager to create builtin writers
      * @return WriterAttributes
      */
-    static WriterAttributes static_create_builtin_writer_attributes(const RTPSParticipantImpl* RTPSParticipant);
+    static WriterAttributes static_create_builtin_writer_attributes(
+            const RTPSParticipantImpl* RTPSParticipant);
 
 #if HAVE_SECURITY
     void add_builtin_security_attributes(
