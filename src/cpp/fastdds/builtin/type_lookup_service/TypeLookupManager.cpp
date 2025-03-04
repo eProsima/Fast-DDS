@@ -560,12 +560,14 @@ bool TypeLookupManager::create_endpoints()
 
     WriterAttributes watt = PDP::static_create_builtin_writer_attributes(participant_);
     rtps::set_builtin_endpoint_locators(watt.endpoint, pattr, nullptr, builtin_protocols_->m_att, builtin_protocols_);
+    watt.endpoint.remoteLocatorList = builtin_protocols_->m_initialPeersList;
     watt.endpoint.topicKind = fastdds::rtps::NO_KEY;
     watt.endpoint.durabilityKind = fastdds::rtps::VOLATILE;
     watt.mode = fastdds::rtps::ASYNCHRONOUS_WRITER;
 
     ReaderAttributes ratt = PDP::static_create_builtin_reader_attributes(participant_);
     rtps::set_builtin_endpoint_locators(ratt.endpoint, pattr, nullptr, builtin_protocols_->m_att, builtin_protocols_);
+    ratt.endpoint.remoteLocatorList = builtin_protocols_->m_initialPeersList;
     ratt.expects_inline_qos = true;
     ratt.endpoint.topicKind = fastdds::rtps::NO_KEY;
     ratt.endpoint.durabilityKind = fastdds::rtps::VOLATILE;
