@@ -176,6 +176,7 @@ struct FASTDDS_EXPORTED_API CacheChange_t
 
         // Copy certain values from serializedPayload
         serializedPayload.encapsulation = ch_ptr->serializedPayload.encapsulation;
+        serializedPayload.is_serialized_key = ch_ptr->serializedPayload.is_serialized_key;
 
         // Copy fragment size and calculate fragment count
         setFragmentSize(ch_ptr->fragment_size_, false);
@@ -286,6 +287,12 @@ struct FASTDDS_EXPORTED_API CacheChange_t
         uint32_t original_offset = (fragment_starting_num - 1) * fragment_size_;
         uint32_t incoming_length = fragment_size_ * fragments_in_submessage;
         uint32_t last_fragment_index = fragment_starting_num + fragments_in_submessage - 1;
+
+        // Validate payload types
+        if (serializedPayload.is_serialized_key != incoming_data.is_serialized_key)
+        {
+            return false;
+        }
 
         // Validate fragment indexes
         if (last_fragment_index > fragment_count_)
