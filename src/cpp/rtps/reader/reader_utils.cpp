@@ -31,6 +31,12 @@ bool change_is_relevant_for_filter(
 {
     bool ret = true;
 
+    // If the change contains only a serialized key, it is always relevant
+    if (change.serializedPayload.is_serialized_key)
+    {
+        return true;
+    }
+
     // If the change has no payload, it should have an instanceHandle.
     // This is only allowed for UNREGISTERED and DISPOSED changes, where the instanceHandle is used to identify the
     // instance to unregister or dispose.
