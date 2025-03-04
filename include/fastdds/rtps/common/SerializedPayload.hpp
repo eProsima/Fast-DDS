@@ -72,6 +72,8 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
     uint32_t pos;
     //!Pool that created the payload
     IPayloadPool* payload_owner = nullptr;
+    //!Whether the payload contains a serialized key, or the whole data
+    bool is_serialized_key = false;
 
     //!Default constructor
     SerializedPayload_t()
