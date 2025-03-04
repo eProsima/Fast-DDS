@@ -422,8 +422,8 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
     endpoints.writer.history_.reset(new WriterHistory(hatt));
 
     // PDP Writer Attributes
-    WriterAttributes watt;
-    watt.endpoint.endpointKind = WRITER;
+    WriterAttributes watt = create_builtin_writer_attributes();
+
     // VOLATILE durability to highlight that on steady state the history is empty (except for announcement DATAs)
     // this setting is incompatible with CLIENTs TRANSIENT_LOCAL PDP readers but not validation is done on builitin
     // endpoints
@@ -435,16 +435,8 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
             get_writer_persistence_file_name()));
 #endif // HAVE_SQLITE3
 
-    watt.endpoint.reliabilityKind = RELIABLE;
-    watt.endpoint.topicKind = WITH_KEY;
-    watt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
-    watt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
-    watt.endpoint.external_unicast_locators = mp_builtin->m_att.metatraffic_external_unicast_locators;
-    watt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
-    watt.times.heartbeat_period = pdp_heartbeat_period;
-    watt.times.nack_response_delay = pdp_nack_response_delay;
-    watt.times.nack_supression_duration = pdp_nack_supression_duration;
-    watt.mode = ASYNCHRONOUS_WRITER;
+    watt.mode = ASYNCHRONOUS_WRITER; //
+
     // Enable separate sending so the filter can be called for each change and reader proxy
     watt.separate_sending = true;
 #if HAVE_SECURITY

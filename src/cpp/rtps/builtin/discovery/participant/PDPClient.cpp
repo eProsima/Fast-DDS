@@ -377,18 +377,7 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
     hatt.memoryPolicy = mp_builtin->m_att.writerHistoryMemoryPolicy;
     endpoints.writer.history_.reset(new WriterHistory(hatt));
 
-    WriterAttributes watt;
-    watt.endpoint.endpointKind = WRITER;
-    watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-    watt.endpoint.reliabilityKind = RELIABLE;
-    watt.endpoint.topicKind = WITH_KEY;
-    watt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
-    watt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
-    watt.endpoint.external_unicast_locators = mp_builtin->m_att.metatraffic_external_unicast_locators;
-    watt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
-    watt.times.heartbeat_period = pdp_heartbeat_period;
-    watt.times.nack_response_delay = pdp_nack_response_delay;
-    watt.times.nack_supression_duration = pdp_nack_supression_duration;
+    WriterAttributes watt = create_builtin_writer_attributes();
 
 #if HAVE_SECURITY
     if (is_discovery_protected)
@@ -398,13 +387,6 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
                 PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
     }
 #endif // HAVE_SECURITY
-
-    // We assume that if we have at least one flow controller defined, we use async flow controller
-    if (!pattr.flow_controllers.empty())
-    {
-        watt.mode = ASYNCHRONOUS_WRITER;
-        watt.flow_controller_name = fastdds::rtps::async_flow_controller_name;
-    }
 
     RTPSWriter* wout = nullptr;
 #if HAVE_SECURITY
