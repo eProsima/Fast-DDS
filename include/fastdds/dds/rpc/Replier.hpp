@@ -86,7 +86,7 @@ public:
      *
      * @param [in,out] data          A LoanableCollection object where the received data samples were obtained from
      *                               an earlier invocation of take_request on this Replier.
-     * @param [in,out] sample        A LoanableSequence where the received request infos were obtained from
+     * @param [in,out] info          A LoanableSequence where the received request infos were obtained from
      *                               an earlier invocation of take_request on this Replier.
      */
     virtual ReturnCode_t return_loan(
