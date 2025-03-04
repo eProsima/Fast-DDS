@@ -395,12 +395,6 @@ bool PDPSimple::create_dcps_participant_endpoints()
         mp_RTPSParticipant->createSenderResources(entry);
     }
 
-    // We assume that if we have at least one flow controller defined, we use async flow controller
-    if (!pattr.flow_controllers.empty())
-    {
-        watt.mode = ASYNCHRONOUS_WRITER;
-        watt.flow_controller_name = fastdds::rtps::async_flow_controller_name;
-    }
 
     RTPSWriter* rtps_writer = nullptr;
     if (mp_RTPSParticipant->createWriter(&rtps_writer, watt, writer.history_.get(),
