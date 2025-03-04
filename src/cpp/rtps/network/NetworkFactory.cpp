@@ -149,6 +149,7 @@ bool NetworkFactory::RegisterTransport(
         {
             minSendBufferSize = transport->get_configuration()->min_send_buffer_size();
             mRegisteredTransports.emplace_back(std::move(transport));
+            EPROSIMA_LOG_ERROR(REGISTER_TRANSPORT, "Init transport of kind: " << kind << ". Size of registered: " << mRegisteredTransports.size());
             wasRegistered = true;
         }
 

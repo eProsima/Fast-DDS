@@ -142,6 +142,7 @@ private:
 
         // Compute the machine id hash
         machine_id_ = compute_machine_id();
+        EPROSIMA_LOG_ERROR(UTILS, "Machine id is: " << machine_id_);
         if (machine_id_ == "")
         {
             EPROSIMA_LOG_WARNING(UTILS, "Cannot get machine id. Failing back to IP based ID");
