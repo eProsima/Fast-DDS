@@ -1660,8 +1660,12 @@ ReaderAttributes PDP::static_create_builtin_reader_attributes(const RTPSParticip
     attributes.endpoint.durabilityKind = TRANSIENT_LOCAL;
     attributes.endpoint.topicKind = WITH_KEY;
 
+    attributes.endpoint.endpointKind = READER;
+
     // Built-in readers never expect inline qos
     attributes.expects_inline_qos = false;
+
+    attributes.times.heartbeat_response_delay = pdp_heartbeat_response_delay;
 
     return attributes;
 }

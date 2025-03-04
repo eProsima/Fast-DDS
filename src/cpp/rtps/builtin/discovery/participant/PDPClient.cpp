@@ -310,8 +310,6 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
 
     EPROSIMA_LOG_INFO(RTPS_PDP, "Beginning PDPClient Endpoints creation");
 
-    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->get_attributes();
-
     /***********************************
     * PDP READER
     ***********************************/
@@ -322,17 +320,8 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
     hatt.memoryPolicy = mp_builtin->m_att.readerHistoryMemoryPolicy;
     endpoints.reader.history_.reset(new ReaderHistory(hatt));
 
-    ReaderAttributes ratt;
-    ratt.expects_inline_qos = false;
-    ratt.endpoint.endpointKind = READER;
-    ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
-    ratt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
-    ratt.endpoint.external_unicast_locators = mp_builtin->m_att.metatraffic_external_unicast_locators;
-    ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
-    ratt.endpoint.topicKind = WITH_KEY;
-    ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-    ratt.endpoint.reliabilityKind = RELIABLE;
-    ratt.times.heartbeat_response_delay = pdp_heartbeat_response_delay;
+    ReaderAttributes ratt = create_builtin_reader_attributes();
+
 #if HAVE_SECURITY
     if (is_discovery_protected)
     {
