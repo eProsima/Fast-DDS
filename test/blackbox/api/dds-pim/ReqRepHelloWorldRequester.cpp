@@ -98,6 +98,8 @@ void ReqRepHelloWorldRequester::init_with_custom_qos(
 
     // Create requester
     requester_ = participant_->create_service_requester(service_, requester_qos);
+    ASSERT_NE(requester_, nullptr);
+    ASSERT_EQ(requester_->is_enabled(), true);
 
     init_processing_thread();
 
@@ -189,19 +191,16 @@ void ReqRepHelloWorldRequester::send(
 
 const Duration_t ReqRepHelloWorldRequester::datawriter_latency_budget_duration() const
 {
-    assert(requester_ != nullptr);
     return requester_->get_requester_writer()->get_qos().latency_budget().duration;
 }
 
 const Duration_t ReqRepHelloWorldRequester::datareader_latency_budget_duration() const
 {
-    assert(requester_ != nullptr);
     return requester_->get_requester_reader()->get_qos().latency_budget().duration;
 }
 
 void ReqRepHelloWorldRequester::init_processing_thread()
 {
-    assert(requester_ != nullptr);
     wait_set_.attach_condition(stop_processing_thread_);
     wait_set_.attach_condition(requester_->get_requester_writer()->get_statuscondition());
     wait_set_.attach_condition(requester_->get_requester_reader()->get_statuscondition());

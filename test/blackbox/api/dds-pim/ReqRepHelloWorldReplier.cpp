@@ -95,6 +95,8 @@ void ReqRepHelloWorldReplier::init_with_custom_qos(
 
     // Create replier
     replier_ = participant_->create_service_replier(service_, qos);
+    ASSERT_NE(replier_, nullptr);
+    ASSERT_EQ(replier_->is_enabled(), true);
 
     init_processing_thread();
 

@@ -140,6 +140,8 @@ void TCPReqRepHelloWorldReplier::init(
 
     // Create replier
     replier_ = participant_->create_service_replier(service_, create_replier_qos());
+    ASSERT_NE(replier_, nullptr);
+    ASSERT_EQ(replier_->is_enabled(), true);
 
     init_processing_thread();
 
@@ -269,7 +271,7 @@ void TCPReqRepHelloWorldReplier::process_status_changes()
 
                 if (status_changes.is_active(StatusMask::publication_matched()))
                 {
-                    std::cout << "TCPRequester: Processing publication matched status" << std::endl;
+                    std::cout << "TCPReplier: Processing publication matched status" << std::endl;
 
                     DataWriter* writer = dynamic_cast<DataWriter*>(entity);
                     ASSERT_NE(writer, nullptr);
@@ -278,7 +280,7 @@ void TCPReqRepHelloWorldReplier::process_status_changes()
                     PublicationMatchedStatus status;
                     if (RETCODE_OK != writer->get_publication_matched_status(status))
                     {
-                        std::cout << "TCPRequester: Error processing publication matched status" << std::endl;
+                        std::cout << "TCPReplier: Error processing publication matched status" << std::endl;
                         continue;
                     }
 
@@ -293,7 +295,7 @@ void TCPReqRepHelloWorldReplier::process_status_changes()
                 }
                 else if (status_changes.is_active(StatusMask::subscription_matched()))
                 {
-                    std::cout << "TCPRequester: Processing subscription matched status" << std::endl;
+                    std::cout << "TCPReplier: Processing subscription matched status" << std::endl;
 
                     DataReader* reader = dynamic_cast<DataReader*>(entity);
                     ASSERT_NE(reader, nullptr);
@@ -302,7 +304,7 @@ void TCPReqRepHelloWorldReplier::process_status_changes()
                     SubscriptionMatchedStatus status;
                     if (RETCODE_OK != reader->get_subscription_matched_status(status))
                     {
-                        std::cout << "TCPRequester: Error processing subscription matched status" << std::endl;
+                        std::cout << "TCPReplier: Error processing subscription matched status" << std::endl;
                         continue;
                     }
 
@@ -317,7 +319,7 @@ void TCPReqRepHelloWorldReplier::process_status_changes()
                 }
                 else if (status_changes.is_active(StatusMask::data_available()))
                 {
-                    std::cout << "TCPRequester: Processing data available status" << std::endl;
+                    std::cout << "TCPReplier: Processing data available status" << std::endl;
 
                     DataReader* reader = dynamic_cast<DataReader*>(entity);
                     ASSERT_NE(reader, nullptr);

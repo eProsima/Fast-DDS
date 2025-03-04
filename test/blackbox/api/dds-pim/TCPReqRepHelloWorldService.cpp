@@ -44,6 +44,6 @@ TCPReqRepHelloWorldService::TCPReqRepHelloWorldService()
 Service* TCPReqRepHelloWorldService::init(
         DomainParticipant* participant)
 {
-    assert(participant->register_service_type(service_type_, service_type_name_) == RETCODE_OK);
+    participant->register_service_type(service_type_, service_type_name_);
     return participant->create_service(service_name_, service_type_name_);
 }

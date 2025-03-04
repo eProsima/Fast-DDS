@@ -184,6 +184,8 @@ void TCPReqRepHelloWorldRequester::init(
 
     // Create requester
     requester_ = participant_->create_service_requester(service_, create_requester_qos());
+    ASSERT_NE(requester_, nullptr);
+    ASSERT_EQ(requester_->is_enabled(), true);
 
     init_processing_thread();
 
