@@ -2504,6 +2504,7 @@ bool DomainParticipantImpl::can_qos_be_updated(
                 from.wire_protocol().builtin.writerHistoryMemoryPolicy) ||
                 !(to.wire_protocol().builtin.writerPayloadSize == from.wire_protocol().builtin.writerPayloadSize) ||
                 !(to.wire_protocol().builtin.mutation_tries == from.wire_protocol().builtin.mutation_tries) ||
+                !(to.wire_protocol().builtin.flow_controller_name == from.wire_protocol().builtin.flow_controller_name) ||
                 !(to.wire_protocol().builtin.avoid_builtin_multicast ==
                 from.wire_protocol().builtin.avoid_builtin_multicast) ||
                 !(to.wire_protocol().builtin.discovery_config.discoveryProtocol ==

@@ -49,6 +49,7 @@
 #include <rtps/builtin/discovery/participant/PDPEndpoints.hpp>
 #include <rtps/builtin/discovery/participant/PDPListener.h>
 #include <rtps/builtin/liveliness/WLP.hpp>
+#include <rtps/flowcontrol/FlowControllerFactory.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.hpp>
@@ -1679,6 +1680,7 @@ WriterAttributes PDP::static_create_builtin_writer_attributes(
     if (!pattr.flow_controllers.empty())
     {
         attributes.mode = ASYNCHRONOUS_WRITER;
+        attributes.flow_controller_name = (pattr.builtin.flow_controller_name != "") ? pattr.builtin.flow_controller_name : fastdds::rtps::async_flow_controller_name;
     }
 
     attributes.times.heartbeat_period = pdp_heartbeat_period;
