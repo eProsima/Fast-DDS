@@ -72,7 +72,6 @@
 
 #include "../rpc/ReplierImpl.hpp"
 #include "../rpc/RequesterImpl.hpp"
-#include "../rpc/RequestReplyContentFilterFactory.hpp"
 #include "../rpc/ServiceImpl.hpp"
 
 namespace eprosima {
@@ -2028,7 +2027,7 @@ rpc::Service* DomainParticipantImpl::create_service(
 
     if (!factory)
     {
-        factory = new rpc::RequestReplyContentFilterFactory();
+        factory = &req_rep_filter_factory_;
         ReturnCode_t ret_code =
                 register_content_filter_factory(rpc::RequestReplyContentFilterFactory::FILTER_NAME, factory);
 

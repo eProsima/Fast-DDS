@@ -33,6 +33,7 @@
 #include <fastdds/dds/domain/qos/ReplierQos.hpp>
 #include <fastdds/dds/domain/qos/RequesterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+#include "fastdds/rpc/RequestReplyContentFilterFactory.hpp"
 #include <fastdds/dds/rpc/ServiceTypeSupport.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/topic/ContentFilteredTopic.hpp>
@@ -770,6 +771,9 @@ protected:
     //! RPC Services publisher and subscriber
     std::pair<Subscriber*, SubscriberImpl*> services_subscriber_;
     std::pair<Publisher*, PublisherImpl*> services_publisher_;
+
+    //! RPC Services Reply topic Content Filter Factory
+    rpc::RequestReplyContentFilterFactory req_rep_filter_factory_;
 
     //!Topic map
     std::map<std::string, TopicProxyFactory*> topics_;
