@@ -17,6 +17,7 @@ Forthcoming
   * New `ROS2_EASY_MODE` environment variable
   * Extended CLI ``discovery`` command to handle Fast DDS daemon.
   * Added P2P builtin transport.
+  * Added new `easy_mode_ip` XML tag and `easy_mode_` member in `WireProtocolConfigQos` for Discovery Server IP configuration. 
 
 Version v3.1.0
 --------------

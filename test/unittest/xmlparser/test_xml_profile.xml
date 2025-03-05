@@ -163,6 +163,7 @@
                     <offsetd4>251</offsetd4>
                 </port>
                 <participantID>9898</participantID>
+                <easy_mode_ip>127.0.0.1</easy_mode_ip>
                 <useBuiltinTransports>true</useBuiltinTransports>
                 <netmask_filter>ON</netmask_filter>
                 <name>test_name</name>

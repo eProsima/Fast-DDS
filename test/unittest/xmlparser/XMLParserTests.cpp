@@ -545,6 +545,7 @@ TEST_F(XMLParserTests, Data)
     EXPECT_EQ(port.offsetd3, 456);
     EXPECT_EQ(port.offsetd4, 251);
     EXPECT_EQ(rtps_atts.participantID, 9898);
+    EXPECT_EQ(rtps_atts.easy_mode_ip, "127.0.0.1");
     EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048);
     EXPECT_EQ(rtps_atts.flow_controllers.at(0)->period_ms, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
@@ -640,6 +641,7 @@ TEST_F(XMLParserTests, DataDeprecated)
     EXPECT_EQ(port.offsetd3, 456);
     EXPECT_EQ(port.offsetd4, 251);
     EXPECT_EQ(rtps_atts.participantID, 9898);
+    EXPECT_EQ(rtps_atts.easy_mode_ip, "127.0.0.1");
     EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048);
     EXPECT_EQ(rtps_atts.flow_controllers.at(0)->period_ms, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
@@ -735,6 +737,7 @@ TEST_F(XMLParserTests, DataBuffer)
     EXPECT_EQ(port.offsetd3, 456);
     EXPECT_EQ(port.offsetd4, 251);
     EXPECT_EQ(rtps_atts.participantID, 9898);
+    EXPECT_EQ(rtps_atts.easy_mode_ip, "127.0.0.1");
     EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048);
     EXPECT_EQ(rtps_atts.flow_controllers.at(0)->period_ms, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
@@ -830,6 +833,7 @@ TEST_F(XMLParserTests, DataBufferDeprecated)
     EXPECT_EQ(port.offsetd3, 456);
     EXPECT_EQ(port.offsetd4, 251);
     EXPECT_EQ(rtps_atts.participantID, 9898);
+    EXPECT_EQ(rtps_atts.easy_mode_ip, "127.0.0.1");
     EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048);
     EXPECT_EQ(rtps_atts.flow_controllers.at(0)->period_ms, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
@@ -1864,6 +1868,7 @@ TEST_F(XMLParserTests, fillDataNodeParticipantNegativeClauses)
             "<builtin><bad_element></bad_element></builtin>",
             "<port><bad_element></bad_element></port>",
             "<participantID><bad_element></bad_element></participantID>",
+            "<easy_mode_ip><bad_element></bad_element></easy_mode_ip>",
             "<flow_controller_descriptor_list><bad_element></bad_element></flow_controller_descriptor_list>",
             "<userTransports><bad_element></bad_element></userTransports>",
             "<useBuiltinTransports><bad_element></bad_element></useBuiltinTransports>",
