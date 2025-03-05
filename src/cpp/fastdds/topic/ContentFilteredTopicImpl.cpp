@@ -43,11 +43,11 @@ bool ContentFilteredTopicImpl::is_relevant(
 
     if (!check_filter_signature(change, ret_val))
     {
-        IContentFilter::FilterSampleInfo filter_info
-        {
-            change.write_params.sample_identity(),
-            change.write_params.related_sample_identity()
-        };
+        IContentFilter::FilterSampleInfo filter_info;
+        filter_info.sample_identity.writer_guid(change.writerGUID);
+        filter_info.sample_identity.sequence_number(change.sequenceNumber);
+        FASTDDS_TODO_BEFORE(4, 0, "Use change.write_params.related_sample_identity()");
+        filter_info.related_sample_identity = change.write_params.sample_identity();
         ret_val = filter_instance->evaluate(change.serializedPayload, filter_info, reader_guid);
     }
 
