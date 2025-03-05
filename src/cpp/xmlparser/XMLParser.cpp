@@ -2246,6 +2246,7 @@ XMLP_ret XMLParser::fillDataNode(
                 <xs:element name="port" type="portType" minOccurs="0"/>
                 <xs:element name="userData" type="octetVectorType" minOccurs="0"/>
                 <xs:element name="participantID" type="int32Type" minOccurs="0"/>
+                <xs:element name="easy_mode_ip" type="stringType" minOccurs="0"/>
                 <xs:element name="flow_controller_descriptors" type="flowControllerDescriptorsType" minOccurs="0"/>
                 <xs:element name="userTransports" type="stringListType" minOccurs="0"/>
                 <xs:element name="useBuiltinTransports" type="boolType" minOccurs="0"/>
@@ -2442,6 +2443,14 @@ XMLP_ret XMLParser::fillDataNode(
         {
             // participantID - int32Type
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &participant_node.get()->rtps.participantID, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, EASY_MODE_IP) == 0)
+        {
+            // easy_mode_ip - stringType
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &participant_node.get()->rtps.easy_mode_ip, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }

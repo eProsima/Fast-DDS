@@ -137,6 +137,7 @@ extern const char* LOGICAL_PORT;
 extern const char* PHYSICAL_PORT;
 extern const char* USER_DATA;
 extern const char* PART_ID;
+extern const char* EASY_MODE_IP;
 extern const char* IP4_TO_SEND;
 extern const char* IP6_TO_SEND;
 extern const char* FLOW_CONTROLLER_DESCRIPTOR_LIST;

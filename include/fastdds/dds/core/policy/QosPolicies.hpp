@@ -2731,7 +2731,8 @@ public:
     /**
      * Setter for ROS 2 Easy Mode IP
      */
-    void easy_mode(std::string ip)
+    void easy_mode(
+            std::string ip)
     {
         easy_mode_ = ip;
     }

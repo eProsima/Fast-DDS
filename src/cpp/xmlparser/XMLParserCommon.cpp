@@ -123,6 +123,7 @@ const char* LOGICAL_PORT = "logical_port";
 const char* PHYSICAL_PORT = "physical_port";
 const char* USER_DATA = "userData";
 const char* PART_ID = "participantID";
+const char* EASY_MODE_IP = "easy_mode_ip";
 const char* FLOW_CONTROLLER_DESCRIPTOR_LIST = "flow_controller_descriptor_list";
 const char* USER_TRANS = "userTransports";
 const char* USE_BUILTIN_TRANS = "useBuiltinTransports";
