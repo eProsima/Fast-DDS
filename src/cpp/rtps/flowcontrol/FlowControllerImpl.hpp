@@ -1127,7 +1127,6 @@ private:
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
     {
         bool ret_value = false;
-        assert(!change->writer_info.is_linked.load());
         // Sync delivery failed. Try to store for asynchronous delivery.
 #if HAVE_STRICT_REALTIME
         std::unique_lock<fastdds::TimedMutex> lock(async_mode.changes_interested_mutex, std::defer_lock);

@@ -377,6 +377,9 @@ public:
     //! Mutation tries if the port is being used.
     uint32_t mutation_tries = 100u;
 
+    //! Flow controller name to use for the builtin writers
+    std::string flow_controller_name = "";
+
     //! Set to true to avoid multicast traffic on builtin endpoints
     bool avoid_builtin_multicast = true;
 
@@ -399,6 +402,7 @@ public:
                (this->writerHistoryMemoryPolicy == b.writerHistoryMemoryPolicy) &&
                (this->writerPayloadSize == b.writerPayloadSize) &&
                (this->mutation_tries == b.mutation_tries) &&
+               (this->flow_controller_name == b.flow_controller_name) &&
                (this->avoid_builtin_multicast == b.avoid_builtin_multicast);
     }
 
