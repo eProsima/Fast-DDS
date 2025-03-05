@@ -12,15 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
 #include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/core/Time_t.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
 #include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
 #include <fastdds/statistics/topic_names.hpp>
 #include <gtest/gtest.h>
 
 // TODO(jlbueno): remove private header
-#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
 #include "../types/statistics/monitorservice_typesPubSubTypes.hpp"
 #include "BlackboxTests.hpp"
@@ -118,6 +120,7 @@ public:
     void setup()
     {
         DomainParticipantQos pqos;
+        pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = { 0, 250000000 };
         pqos.name() = "Monitor_Service_Participant";
         auto participant = DomainParticipantFactory::get_instance()->
                         create_participant((uint32_t)GET_PID() % 230, pqos);
