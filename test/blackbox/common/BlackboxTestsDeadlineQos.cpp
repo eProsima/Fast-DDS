@@ -21,8 +21,6 @@
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
-#include "ReqRepAsReliableHelloWorldReplier.hpp"
-#include "ReqRepAsReliableHelloWorldRequester.hpp"
 
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;

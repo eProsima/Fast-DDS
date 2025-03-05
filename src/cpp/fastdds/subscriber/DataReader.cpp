@@ -456,7 +456,7 @@ ReturnCode_t DataReader::wait_for_historical_data(
      */
 }
 
-TypeSupport DataReader::type()
+TypeSupport DataReader::type() const
 {
     return impl_->type();
 }
