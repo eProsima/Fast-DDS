@@ -93,7 +93,7 @@ bool ParameterList::updateCacheChangeFromInlineQos(
                              * Changing this here implies a behaviour change in the
                              * RTPS layer, so it is postponed until the next major release.
                              */
-                            // FASTDDS_TODO_BEFORE(3, 0, "Fill related sample identity instead");
+                            FASTDDS_TODO_BEFORE(4, 0, "Fill related sample identity instead");
                             change.write_params.sample_identity(p.sample_id);
                         }
                         break;

@@ -867,7 +867,7 @@ bool MessageReceiver::proc_Submsg_Data(
         uint32_t next_pos = msg->pos + payload_size;
         if (msg->length >= next_pos && payload_size > 0)
         {
-            FASTDDS_TODO_BEFORE(3, 2, "Pass keyFlag in serializedPayload, and always pass input data upwards");
+            FASTDDS_TODO_BEFORE(3, 3, "Pass keyFlag in serializedPayload, and always pass input data upwards");
             if (dataFlag)
             {
                 ch.serializedPayload.data = &msg->buffer[msg->pos];
