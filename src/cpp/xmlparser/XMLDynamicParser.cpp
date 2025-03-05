@@ -1422,7 +1422,17 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
 
         if (!isArray)
         {
-            member = factory->create_map_type(key_type, value_type, length)->build();
+            auto temp_map = factory->create_map_type(key_type, value_type, length);
+            if (temp_map)
+            {
+                member = temp_map->build();
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Error parsing map member with name = " << memberName);
+                return {};
+            }
         }
         else
         {
