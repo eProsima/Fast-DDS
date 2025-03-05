@@ -41,8 +41,6 @@
 #include "../api/dds-pim/CustomPayloadPool.hpp"
 #include "../api/dds-pim/PubSubReader.hpp"
 #include "../api/dds-pim/PubSubWriter.hpp"
-#include "../api/dds-pim/ReqRepAsReliableHelloWorldRequester.hpp"
-#include "../api/dds-pim/ReqRepAsReliableHelloWorldReplier.hpp"
 #include "../types/FixedSized.hpp"
 #include "../types/FixedSizedPubSubTypes.hpp"
 #include "../types/HelloWorldPubSubTypes.hpp"

@@ -33,6 +33,7 @@
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/domain/qos/ReplierQos.hpp>
 #include <fastdds/dds/domain/qos/RequesterQos.hpp>
+#include <fastdds/dds/rpc/ServiceTypeSupport.hpp>
 #include <fastdds/dds/topic/ContentFilteredTopic.hpp>
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
@@ -55,12 +56,19 @@ class ResourceEvent;
 } // namespace rtps
 
 namespace dds {
+namespace rpc {
+class Replier;
+class Requester;
+class Service;
+} // namespace rpc
 
 class DomainParticipantImpl;
 class DomainParticipantListener;
 class Publisher;
 class PublisherQos;
 class PublisherListener;
+class ReplierQos;
+class RequesterQos;
 class Subscriber;
 class SubscriberQos;
 class SubscriberListener;
@@ -387,6 +395,82 @@ public:
     FASTDDS_EXPORTED_API Topic* find_topic(
             const std::string& topic_name,
             const fastdds::dds::Duration_t& timeout);
+
+    /**
+     * Create a RPC service.
+     *
+     * @param service_name Name of the service.
+     * @param service_type_name Type name of the service (Request & reply types)
+     *
+     * @return Pointer to the created service. nullptr in error case.
+     */
+    FASTDDS_EXPORTED_API rpc::Service* create_service(
+            const std::string& service_name,
+            const std::string& service_type_name);
+
+    /**
+     * Find a RPC service by name
+     *
+     * @param service_name Name of the service to search for.
+     * @return Pointer to the service object if found, nullptr if not found.
+     */
+    FASTDDS_EXPORTED_API rpc::Service* find_service(
+            const std::string& service_name) const;
+
+    /**
+     * Delete a registered RPC service
+     *
+     * @param service Pointer to the service to be deleted.
+     * @return RETCODE_OK if the service was deleted, or an specific error code otherwise.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t delete_service(
+            const rpc::Service* service);
+
+    /**
+     * Create a RPC Requester in a given Service.
+     *
+     * @param service Pointer to a service object where the requester will be created.
+     * @param requester_qos QoS of the requester.
+     *
+     * @return Pointer to the created requester. nullptr in error case.
+     */
+    FASTDDS_EXPORTED_API rpc::Requester* create_service_requester(
+            rpc::Service* service,
+            const RequesterQos& requester_qos);
+
+    /**
+     * Deletes an existing RPC Requester
+     *
+     * @param service_name Name of the service where the requester is created.
+     * @param requester Pointer to the requester to be deleted.
+     * @return RETCODE_OK if the requester was deleted, or an specific error code otherwise.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t delete_service_requester(
+            const std::string& service_name,
+            rpc::Requester* requester);
+
+    /**
+     * Create a RPC Replier in a given Service. It will override the current service's replier
+     *
+     * @param service Pointer to a service object where the Replier will be created.
+     * @param replier_qos QoS of the replier.
+     *
+     * @return Pointer to the created replier. nullptr in error case.
+     */
+    FASTDDS_EXPORTED_API rpc::Replier* create_service_replier(
+            rpc::Service* service,
+            const ReplierQos& replier_qos);
+
+    /**
+     * Deletes an existing RPC Replier
+     *
+     * @param service_name Name of the service where the replier is created.
+     * @param replier Pointer to the replier to be deleted.
+     * @return RETCODE_OK if the replier was deleted, or an specific error code otherwise.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t delete_service_replier(
+            const std::string& service_name,
+            rpc::Replier* replier);
 
     /**
      * Looks up an existing, locally created @ref TopicDescription, based on its name.
@@ -1040,6 +1124,35 @@ public:
      */
     FASTDDS_EXPORTED_API TypeSupport find_type(
             const std::string& type_name) const;
+
+    /**
+     * Register a service type in this participant.
+     *
+     * @param service_type ServiceTypeSupport.
+     * @param service_type_name The name that will be used to identify the service type.
+     * @return RETCODE_OK if it is correctly registered. Error code otherwise.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t register_service_type(
+            rpc::ServiceTypeSupport service_type,
+            const std::string& service_type_name);
+
+    /**
+     * Unregister a service type in this participant.
+     *
+     * @param service_type_name Name of the type
+     * @return RETCODE_OK if it is correctly unregistered. Error code otherwise.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t unregister_service_type(
+            const std::string& service_type_name);
+
+    /**
+     * This method gives access to a registered service type based on its name.
+     *
+     * @param service_type_name Name of the type
+     * @return ServiceTypeSupport corresponding to the service_type_name
+     */
+    FASTDDS_EXPORTED_API rpc::ServiceTypeSupport find_service_type(
+            const std::string& service_type_name) const;
 
     /**
      * Returns the DomainParticipant's handle.
