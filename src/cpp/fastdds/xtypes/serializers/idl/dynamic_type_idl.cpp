@@ -1098,8 +1098,8 @@ int resolve_module_structure(
         size_t pos_start = 0;
         size_t pos_end = type_name.find("::");
 
-        std::string module_name = new_type_name.substr(0,pos_end - 1);
-        new_type_name.erase(pos_start, pos_end - pos_start + 1);
+        std::string module_name = new_type_name.substr(0,pos_end);
+        new_type_name.erase(pos_start, pos_end - pos_start + 2);
 
         for (int i = 0; i < n_modules; i++)
         {
