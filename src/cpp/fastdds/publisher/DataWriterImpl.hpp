@@ -487,6 +487,8 @@ protected:
 #endif //FASTDDS_STATISTICS
 
         DataWriterImpl* data_writer_;
+
+        std::mutex inner_listener_mutex_;
     }
     writer_listener_;
 

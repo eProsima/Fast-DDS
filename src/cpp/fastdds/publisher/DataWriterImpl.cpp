@@ -1298,6 +1298,7 @@ void DataWriterImpl::InnerDataWriterListener::on_writer_matched(
         RTPSWriter* /*writer*/,
         const MatchingInfo& info)
 {
+    std::lock_guard<std::mutex> guard(inner_listener_mutex_);
     data_writer_->update_publication_matched_status(info);
 
     StatusMask notify_status = StatusMask::publication_matched();
@@ -1317,6 +1318,7 @@ void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
         RTPSWriter* /*writer*/,
         fastdds::dds::PolicyMask qos)
 {
+    std::lock_guard<std::mutex> guard(inner_listener_mutex_);
     data_writer_->update_offered_incompatible_qos(qos);
     StatusMask notify_status = StatusMask::offered_incompatible_qos();
     DataWriterListener* listener = data_writer_->get_listener_for(notify_status);
@@ -1356,6 +1358,7 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
         fastdds::rtps::RTPSWriter* /*writer*/,
         const LivelinessLostStatus& status)
 {
+    std::lock_guard<std::mutex> guard(inner_listener_mutex_);
     data_writer_->update_liveliness_lost_status(status);
     StatusMask notify_status = StatusMask::liveliness_lost();
     DataWriterListener* listener = data_writer_->get_listener_for(notify_status);
