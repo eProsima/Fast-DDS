@@ -1142,7 +1142,7 @@ int resolve_module_structure(
         idl << TAB_SEPARATOR;
     }
 
-    idl << "struct " << new_type_name;
+    idl << "struct " << new_type_name << "\n";
 
     return n_modules;
 }
