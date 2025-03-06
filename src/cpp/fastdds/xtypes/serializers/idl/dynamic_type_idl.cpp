@@ -955,11 +955,21 @@ ReturnCode_t struct_to_idl(
         }
     }
 
-    idl << TYPE_OPENING;
+    for (int i = 0; i < n_modules; i++)
+    {
+        idl << TAB_SEPARATOR;
+    }
+
+    idl << "{\n";
 
     // Add struct attributes
     for (auto const& child : node.branches())
     {
+        for (int i = 0; i < n_modules+1; i++)
+        {
+            idl << TAB_SEPARATOR;
+        }
+
         if (child.info.is_base)
         {
             continue;
@@ -972,10 +982,19 @@ ReturnCode_t struct_to_idl(
 
     // Close definition
 
-    for (int i = 0; i < n_modules+1; i++)
+    while (n_modules > 0)
     {
-        idl << TAB_SEPARATOR;
+        for (int i = 0; i < n_modules; i++)
+        {
+            idl << TAB_SEPARATOR;
+        }
+
+        idl << "};\n";
+
+        n_modules--;
     }
+
+    idl << "};\n";
 
     return ret;
 }
