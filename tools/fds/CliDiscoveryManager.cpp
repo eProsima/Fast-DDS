@@ -106,6 +106,13 @@ CliDiscoveryManager::CliDiscoveryManager()
     }
 }
 
+CliDiscoveryManager::~CliDiscoveryManager()
+{
+    Log::Flush();
+    std::cout.flush();
+    std::cerr.flush();
+}
+
 std::string CliDiscoveryManager::get_default_shared_dir()
 {
     std::string shm_path;
