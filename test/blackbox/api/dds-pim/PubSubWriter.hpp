@@ -993,6 +993,22 @@ public:
         return *this;
     }
 
+    PubSubWriter& add_builtin_flow_controller(
+            eprosima::fastdds::rtps::FlowControllerSchedulerPolicy scheduler_policy,
+            uint32_t bytesPerPeriod,
+            uint32_t periodInMs)
+    {
+        auto new_flow_controller = std::make_shared<eprosima::fastdds::rtps::FlowControllerDescriptor>();
+        new_flow_controller->name = "MyFlowController";
+        new_flow_controller->scheduler = scheduler_policy;
+        new_flow_controller->max_bytes_per_period = bytesPerPeriod;
+        new_flow_controller->period_ms = static_cast<uint64_t>(periodInMs);
+        participant_qos_.flow_controllers().push_back(new_flow_controller);
+        participant_qos_.wire_protocol().builtin.flow_controller_name = new_flow_controller->name;
+        
+        return *this;
+    }
+
     PubSubWriter& asynchronously(
             const eprosima::fastdds::dds::PublishModeQosPolicyKind kind)
     {
