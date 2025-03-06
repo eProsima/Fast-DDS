@@ -39,6 +39,10 @@ class TransportInterface;
  */
 struct SharedMemTransportDescriptor : public TransportDescriptorInterface
 {
+    static constexpr uint32_t shm_default_segment_size = 0;
+    static constexpr uint32_t shm_default_port_queue_capacity = 512;
+    static constexpr uint32_t shm_default_healthy_check_timeout_ms = 1000;
+
     //! Destructor
     virtual ~SharedMemTransportDescriptor() = default;
 
@@ -132,10 +136,10 @@ struct SharedMemTransportDescriptor : public TransportDescriptorInterface
 
 private:
 
-    uint32_t segment_size_;
-    uint32_t port_queue_capacity_;
-    uint32_t healthy_check_timeout_ms_;
-    std::string rtps_dump_file_;
+    uint32_t segment_size_ = shm_default_segment_size;
+    uint32_t port_queue_capacity_ = shm_default_port_queue_capacity;
+    uint32_t healthy_check_timeout_ms_ = shm_default_healthy_check_timeout_ms;
+    std::string rtps_dump_file_ {""};
 
 };
 
