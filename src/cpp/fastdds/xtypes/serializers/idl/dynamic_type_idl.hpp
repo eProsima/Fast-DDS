@@ -219,6 +219,18 @@ ReturnCode_t node_to_idl(
         const utilities::collections::TreeNode<TreeNodeType>& node,
         std::ostream& idl) noexcept;
 
+/**
+ * @brief Resolves and applies the module structure for the parent struct.
+ *
+ * @param type_name The full name of the type, including the module structure.
+ * @param idl The idl representation of the tree.
+ * 
+ * @return The number of modules resolved.
+ */
+int resolve_module_structure(
+        const std::string& type_name,
+        std::ostream& idl) noexcept;
+
 ///////////////////////
 // AUXILIARY METHODS //
 ///////////////////////

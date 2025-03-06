@@ -935,8 +935,8 @@ ReturnCode_t struct_to_idl(
         }
     }
 
-    // Add types name
-    idl << "struct " << node.info.type_kind_name;
+    // Add types name and resolve module structure
+    int n_modules = resolve_module_structure(node.info.type_kind_name, idl);
 
     const auto base_type = type_descriptor->base_type();
 
@@ -971,7 +971,11 @@ ReturnCode_t struct_to_idl(
     }
 
     // Close definition
-    idl << TYPE_CLOSURE;
+
+    for (int i = 0; i < n_modules+1; i++)
+    {
+        idl << TAB_SEPARATOR;
+    }
 
     return ret;
 }
@@ -1080,6 +1084,48 @@ ReturnCode_t node_to_idl(
     }
 
     return RETCODE_OK;
+}
+
+int resolve_module_structure(
+        const std::string& type_name,
+        std::ostream& idl) noexcept
+{
+    int n_modules = 0;
+    std::string new_type_name = type_name;
+
+    while(new_type_name.find("::") != std::string::npos)
+    {
+        size_t pos_start = 0;
+        size_t pos_end = type_name.find("::");
+
+        std::string module_name = new_type_name.substr(0,pos_end - 1);
+        new_type_name.erase(pos_start, pos_end - pos_start + 1);
+
+        for (int i = 0; i < n_modules; i++)
+        {
+            idl << TAB_SEPARATOR;
+        }
+
+        idl << "module " << module_name << "\n";
+
+        for (int i = 0; i < n_modules; i++)
+        {
+            idl << TAB_SEPARATOR;
+        }
+
+        idl << "{\n";
+
+        n_modules++;
+    }
+
+    for (int i = 0; i < n_modules; i++)
+    {
+        idl << TAB_SEPARATOR;
+    }
+
+    idl << "struct " << new_type_name;
+
+    return n_modules;
 }
 
 ///////////////////////
