@@ -1526,7 +1526,6 @@ TEST_P(Discovery, single_unicast_pdp_response_flowcontroller)
     main_wire_protocol.builtin.discovery_config.initial_announcements.count = 1;
     main_wire_protocol.builtin.discovery_config.initial_announcements.period = { 0, 100000000u };
     main_wire_protocol.builtin.flow_controller_name = "TestFlowController";
-    // main_wire_protocol.builtin.flow_controller_name = "FastDDSFlowControllerDefault";
 
     // Flowcontroller to limit the bandwidth
     auto test_flow_controller = std::make_shared<eprosima::fastdds::rtps::FlowControllerDescriptor>();
@@ -1650,7 +1649,6 @@ TEST_P(Discovery, single_unicast_pdp_response_flowcontroller_limited)
     main_wire_protocol.builtin.discovery_config.initial_announcements.count = 1;
     main_wire_protocol.builtin.discovery_config.initial_announcements.period = { 0, 100000000u };
     main_wire_protocol.builtin.flow_controller_name = "TestFlowController";
-    // main_wire_protocol.builtin.flow_controller_name = "FastDDSFlowControllerDefault";
 
     // Flowcontroller to limit the bandwidth
     auto test_flow_controller = std::make_shared<eprosima::fastdds::rtps::FlowControllerDescriptor>();

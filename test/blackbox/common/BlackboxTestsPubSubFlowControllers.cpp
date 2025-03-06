@@ -21,6 +21,7 @@
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 #include "PubSubWriterReader.hpp"
+#include "PubSubParticipant.hpp"
 
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
@@ -399,6 +400,22 @@ TEST_P(PubSubFlowControllers, BuiltinFlowControllerWLPLimited)
     reader.wait_liveliness_lost(1);
     stop.store(true);
     liveliness_thread.join();
+}
+
+TEST_P(PubSubFlowControllers, BuiltinFlowControllerNotRegistered)
+{
+    using namespace eprosima::fastdds::dds;
+
+    // Create the main participant
+    auto main_participant = std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(0, 0, 0, 0);
+    WireProtocolConfigQos main_wire_protocol;
+    main_wire_protocol.builtin.flow_controller_name = "NotRegisteredTestFlowController";
+
+    // The main participant will use the test transport, specific announcements configuration and a flowcontroller
+    main_participant->wire_protocol(main_wire_protocol);
+
+    // Start the main participant
+    ASSERT_FALSE(main_participant->init_participant());
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
