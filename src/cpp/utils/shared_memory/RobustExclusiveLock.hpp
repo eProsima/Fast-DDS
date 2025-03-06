@@ -172,7 +172,8 @@ private:
             bool* was_lock_created)
     {
         int fd = -1;
-        do {
+        do
+        {
             fd = open(file_path.c_str(), O_RDONLY, 0);
 
             if (fd != -1)
