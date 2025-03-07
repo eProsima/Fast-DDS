@@ -21,9 +21,13 @@
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 #include "PubSubWriterReader.hpp"
+#include "PubSubParticipant.hpp"
 
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
+
+#define SIZE_PDP 625
+#define SIZE_EDP 1675
 
 class PubSubFlowControllers : public testing::TestWithParam<eprosima::fastdds::rtps::FlowControllerSchedulerPolicy>
 {
@@ -281,6 +285,135 @@ TEST_P(PubSubFlowControllers, AsyncPubSubAsReliableData64kbWithParticipantFlowCo
     reader.destroy();
     writer.destroy();
     std::remove(db_file_name.c_str());
+}
+
+// This test checks that the PDP and EDP discovery are successful when proper parameters
+//  for builtin flow controller are set
+TEST_P(PubSubFlowControllers, BuiltinFlowControllerPubSub)
+{
+    PubSubReader<Data64kbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data64kbPubSubType> writer(TEST_TOPIC_NAME);
+
+    reader.history_depth(3).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    uint32_t bytesPerPeriod = SIZE_PDP + SIZE_EDP;
+    uint32_t periodInMs = 50000;
+    writer.add_builtin_flow_controller(scheduler_policy_, bytesPerPeriod, periodInMs);
+
+    writer.history_depth(3).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_data64kb_data_generator(3);
+
+    reader.startReception(data);
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_all();
+}
+
+// This test checks that the PDP discovery process is not successful when the builtin
+//  flow controller is set with not enough size to send the PDP
+TEST_P(PubSubFlowControllers, BuiltinFlowControllerFailDiscovery)
+{
+    PubSubReader<Data64kbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data64kbPubSubType> writer(TEST_TOPIC_NAME);
+
+    reader.init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    uint32_t bytesPerPeriod = SIZE_PDP - 20; // Not enough size to send Data P
+    uint32_t periodInMs = 50000;
+    writer.add_builtin_flow_controller(scheduler_policy_, bytesPerPeriod, periodInMs);
+
+    writer.init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Reader discovery should fail
+    ASSERT_FALSE(reader.wait_participant_discovery(1, std::chrono::seconds(1)));
+}
+
+// This test checks that the WLP service is not able to send non stop liveliness messages when the builtin
+//  flow controller is set with not enough size to send all the liveliness messages
+TEST_P(PubSubFlowControllers, BuiltinFlowControllerWLPLimited)
+{
+    eprosima::fastdds::LibrarySettings att;
+    att.intraprocess_delivery = eprosima::fastdds::INTRAPROCESS_OFF;
+    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(att);
+
+    unsigned int lease_duration_ms = 501;
+    unsigned int announcement_period_ms = 200;
+
+    PubSubReader<Data64kbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data64kbPubSubType> writer(TEST_TOPIC_NAME);
+
+    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .liveliness_kind(eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS)
+            .liveliness_lease_duration(lease_duration_ms * 1e-3).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    uint32_t bytesPerPeriod = SIZE_PDP + SIZE_EDP + 5000;
+    uint32_t periodInMs = 50000;
+    writer.add_builtin_flow_controller(scheduler_policy_, bytesPerPeriod, periodInMs);
+
+    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .liveliness_kind(eprosima::fastdds::dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+            .liveliness_lease_duration(lease_duration_ms * 1e-3)
+            .liveliness_announcement_period(announcement_period_ms * 1e-3).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Once asserted that the writer is matched, it should eventually be declared as not alive because the
+    // flow controller will not allow the wlp writer to send more liveliness messages
+    std::atomic<bool> stop(false);
+    auto assert_liveliness_func = [&writer, lease_duration_ms, &stop]()
+            {
+                while (!stop)
+                {
+                    writer.assert_liveliness();
+                    std::this_thread::sleep_for(std::chrono::milliseconds(lease_duration_ms / 10));
+                }
+            };
+    std::thread liveliness_thread(assert_liveliness_func);
+
+    reader.wait_liveliness_lost(1);
+    stop.store(true);
+    liveliness_thread.join();
+}
+
+TEST_P(PubSubFlowControllers, BuiltinFlowControllerNotRegistered)
+{
+    using namespace eprosima::fastdds::dds;
+
+    // Create the main participant
+    auto main_participant = std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(0, 0, 0, 0);
+    WireProtocolConfigQos main_wire_protocol;
+    main_wire_protocol.builtin.flow_controller_name = "NotRegisteredTestFlowController";
+
+    // The main participant will use the test transport, specific announcements configuration and a flowcontroller
+    main_participant->wire_protocol(main_wire_protocol);
+
+    // Start the main participant
+    ASSERT_FALSE(main_participant->init_participant());
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

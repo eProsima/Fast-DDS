@@ -37,6 +37,7 @@
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
+#include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
@@ -557,28 +558,18 @@ bool TypeLookupManager::create_endpoints()
     hatt.maximumReservedCaches = 1000;
     hatt.payloadMaxSize = TypeLookupManager::typelookup_data_max_size;
 
-    WriterAttributes watt;
-    watt.endpoint.unicastLocatorList = builtin_protocols_->m_metatrafficUnicastLocatorList;
-    watt.endpoint.multicastLocatorList = builtin_protocols_->m_metatrafficMulticastLocatorList;
-    watt.endpoint.external_unicast_locators = builtin_protocols_->m_att.metatraffic_external_unicast_locators;
-    watt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
+    WriterAttributes watt = PDP::static_create_builtin_writer_attributes(participant_);
+    rtps::set_builtin_endpoint_locators(watt.endpoint, pattr, nullptr, builtin_protocols_->m_att, builtin_protocols_);
     watt.endpoint.remoteLocatorList = builtin_protocols_->m_initialPeersList;
-    watt.matched_readers_allocation = pattr.allocation.participants;
     watt.endpoint.topicKind = fastdds::rtps::NO_KEY;
-    watt.endpoint.reliabilityKind = fastdds::rtps::RELIABLE;
     watt.endpoint.durabilityKind = fastdds::rtps::VOLATILE;
     watt.mode = fastdds::rtps::ASYNCHRONOUS_WRITER;
 
-    ReaderAttributes ratt;
-    ratt.endpoint.unicastLocatorList = builtin_protocols_->m_metatrafficUnicastLocatorList;
-    ratt.endpoint.multicastLocatorList = builtin_protocols_->m_metatrafficMulticastLocatorList;
-    ratt.endpoint.external_unicast_locators = builtin_protocols_->m_att.metatraffic_external_unicast_locators;
-    ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
+    ReaderAttributes ratt = PDP::static_create_builtin_reader_attributes(participant_);
+    rtps::set_builtin_endpoint_locators(ratt.endpoint, pattr, nullptr, builtin_protocols_->m_att, builtin_protocols_);
     ratt.endpoint.remoteLocatorList = builtin_protocols_->m_initialPeersList;
-    ratt.matched_writers_allocation = pattr.allocation.participants;
     ratt.expects_inline_qos = true;
     ratt.endpoint.topicKind = fastdds::rtps::NO_KEY;
-    ratt.endpoint.reliabilityKind = fastdds::rtps::RELIABLE;
     ratt.endpoint.durabilityKind = fastdds::rtps::VOLATILE;
 
     // Built-in request writer

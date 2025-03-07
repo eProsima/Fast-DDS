@@ -88,6 +88,7 @@ def define_args(participant):
     args.extend([f"timeout={participant.get('timeout', 10)}"])
     args.extend([f"expected_matches={participant.get('expected_matches', 1)}"])
     args.extend([f"seed={str(os.getpid())}"])
+    args.extend([f"builtin_flow_controller_bytes={participant.get('builtin_flow_controller_bytes', 0)}"])
 
     # Check if 'known_types' key exists and is a list
     if 'known_types' in participant and isinstance(participant['known_types'], list):

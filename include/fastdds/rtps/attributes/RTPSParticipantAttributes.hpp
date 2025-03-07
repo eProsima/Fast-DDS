@@ -391,6 +391,9 @@ public:
     //! Set to true to avoid multicast traffic on builtin endpoints
     bool avoid_builtin_multicast = true;
 
+    //! Flow controller name to use for the builtin writers
+    std::string flow_controller_name = "";
+
     BuiltinAttributes() = default;
 
     virtual ~BuiltinAttributes() = default;
@@ -410,6 +413,7 @@ public:
                (this->writerHistoryMemoryPolicy == b.writerHistoryMemoryPolicy) &&
                (this->writerPayloadSize == b.writerPayloadSize) &&
                (this->mutation_tries == b.mutation_tries) &&
+               (this->flow_controller_name == b.flow_controller_name) &&
                (this->avoid_builtin_multicast == b.avoid_builtin_multicast);
     }
 
