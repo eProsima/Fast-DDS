@@ -1717,7 +1717,7 @@ TEST_P(Discovery, single_unicast_pdp_response_flowcontroller_limited)
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     // No more messages have been sent sin the limit was reached
-    EXPECT_EQ(num_unicast_sends.load(std::memory_order::memory_order_seq_cst),num_unicast_sends_limit);
+    EXPECT_EQ(num_unicast_sends.load(std::memory_order::memory_order_seq_cst), num_unicast_sends_limit);
 
     // Clean up
     participants.clear();
