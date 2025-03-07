@@ -32,6 +32,7 @@
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <rtps/builtin/discovery/participant/simple/PDPStatelessWriter.hpp>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/common/EntityId_t.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
@@ -1405,7 +1406,7 @@ bool RTPSParticipantImpl::createWriter(
         return false;
     }
 
-    auto callback = [hist, listen, &payload_pool, this]
+    auto callback = [hist, listen, entityId, &payload_pool, this]
                 (const GUID_t& guid, WriterAttributes& param, fastdds::rtps::FlowController* flow_controller,
                     IPersistenceService* persistence, bool is_reliable) -> RTPSWriter*
             {
@@ -1424,7 +1425,12 @@ bool RTPSParticipantImpl::createWriter(
                 }
                 else
                 {
-                    if (persistence != nullptr)
+                    if (entityId == c_EntityId_SPDPWriter)
+                    {
+                        return new PDPStatelessWriter(this, guid, param, flow_controller,
+                                        hist, listen);
+                    }
+                    else if (persistence != nullptr)
                     {
                         return new StatelessPersistentWriter(this, guid, param, payload_pool, flow_controller,
                                        hist, listen, persistence);
