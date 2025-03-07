@@ -34,7 +34,7 @@ using RpcStatusCode = uint32_t;
 /**
  * Status code for successful operations.
  */
-constexpr RpcStatusCode RPC_STATUS_OK = 0;
+constexpr RpcStatusCode RPC_STATUS_CODE_OK = 0;
 
 }  // namespace rpc
 }  // namespace dds
