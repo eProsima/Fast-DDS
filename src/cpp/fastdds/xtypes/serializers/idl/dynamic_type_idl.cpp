@@ -667,8 +667,17 @@ ReturnCode_t alias_to_idl(
         return ret;
     }
 
-    idl << "typedef ";
+    // Add types name and resolve module structure
+    std::string type_name = node.info.type_kind_name;
+    int n_modules = resolve_module_structure(type_name, idl);
+        
+    for (int i = 0; i < n_modules; i++)
+    {
+        idl << TAB_SEPARATOR;
+    }
 
+    idl << "typedef ";
+    
     // Find the base type of the alias
     ret = type_kind_to_idl(type_descriptor->base_type(), idl);
 
@@ -678,7 +687,19 @@ ReturnCode_t alias_to_idl(
         return ret;
     }
 
-    idl << " " << node.info.type_kind_name << ";\n";
+    idl << " " << type_name << ";\n";
+
+    while (n_modules > 0)
+    {
+        for (int i = 0; i < n_modules-1; i++)
+        {
+            idl << TAB_SEPARATOR;
+        }
+
+        idl << "};\n";
+
+        n_modules--;
+    }
 
     return ret;
 }
@@ -715,7 +736,23 @@ ReturnCode_t bitmask_to_idl(
         idl << "@bit_bound(" << std::to_string(bitmask_size) << ")\n";
     }
 
-    idl << "bitmask " << node.info.type_kind_name << TYPE_OPENING;
+    // Add types name and resolve module structure
+    std::string type_name = node.info.type_kind_name;
+    int n_modules = resolve_module_structure(type_name, idl);
+    
+    for (int i = 0; i < n_modules; i++)
+    {
+        idl << TAB_SEPARATOR;
+    }
+    
+    idl << "bitmask " << type_name << "\n";
+
+    for (int i = 0; i < n_modules; i++)
+    {
+        idl << TAB_SEPARATOR;
+    }
+
+    idl << "{\n";
 
     const auto member_count = node.info.dynamic_type->get_member_count();
 
@@ -733,6 +770,11 @@ ReturnCode_t bitmask_to_idl(
         }
 
         idl << TAB_SEPARATOR;
+
+        for (int i = 0; i < n_modules; i++)
+        {
+            idl << TAB_SEPARATOR;
+        }
 
         // Annotation with the position
         const auto id = member->get_id();
@@ -757,7 +799,20 @@ ReturnCode_t bitmask_to_idl(
     }
 
     // Close definition
-    idl << TYPE_CLOSURE;
+
+    while (n_modules > 0)
+    {
+        for (int i = 0; i < n_modules; i++)
+        {
+            idl << TAB_SEPARATOR;
+        }
+
+        idl << "};\n";
+
+        n_modules--;
+    }
+
+    idl << "};\n";
 
     return ret;
 }
@@ -770,7 +825,23 @@ ReturnCode_t bitset_to_idl(
 
     ReturnCode_t ret = RETCODE_OK;
 
-    idl << "bitset " << node.info.type_kind_name << TYPE_OPENING;
+    // Add types name and resolve module structure
+    std::string type_name = node.info.type_kind_name;
+    int n_modules = resolve_module_structure(type_name, idl);
+    
+    for (int i = 0; i < n_modules; i++)
+    {
+        idl << TAB_SEPARATOR;
+    }    
+
+    idl << "bitset " << type_name << "\n";
+
+    for (int i = 0; i < n_modules; i++)
+    {
+        idl << TAB_SEPARATOR;
+    }
+
+    idl << "{\n";
 
     // Find the bits that each bitfield occupies
     BoundSeq bounds;
@@ -814,8 +885,18 @@ ReturnCode_t bitset_to_idl(
             const auto gap = id - bits_set;
             bits_set += gap;
 
+            for (int i = 0; i < n_modules; i++)
+            {
+                idl << TAB_SEPARATOR;
+            }
+
             idl << TAB_SEPARATOR << "bitfield<" << std::to_string(gap) << ">;\n";
         }
+
+        for (int i = 0; i < n_modules; i++)
+        {
+            idl << TAB_SEPARATOR;
+        }   
 
         idl << TAB_SEPARATOR << "bitfield<" << std::to_string(bounds[index]);
 
@@ -853,7 +934,20 @@ ReturnCode_t bitset_to_idl(
     }
 
     // Close definition
-    idl << TYPE_CLOSURE;
+
+    while (n_modules > 0)
+    {
+        for (int i = 0; i < n_modules; i++)
+        {
+            idl << TAB_SEPARATOR;
+        }
+
+        idl << "};\n";
+
+        n_modules--;
+    }
+
+    idl << "};\n";
 
     return ret;
 }
@@ -866,7 +960,23 @@ ReturnCode_t enum_to_idl(
 
     ReturnCode_t ret = RETCODE_OK;
 
-    idl << "enum " << node.info.type_kind_name << TYPE_OPENING << TAB_SEPARATOR;
+    // Add types name and resolve module structure
+    std::string type_name = node.info.type_kind_name;
+    int n_modules = resolve_module_structure(type_name, idl);
+    
+    for (int i = 0; i < n_modules; i++)
+    {
+        idl << TAB_SEPARATOR;
+    }    
+
+    idl << "enum " << type_name << "\n";
+
+    for (int i = 0; i < n_modules; i++)
+    {
+        idl << TAB_SEPARATOR;
+    }
+    
+    idl << "{\n" << TAB_SEPARATOR;
 
     for (std::uint32_t index = 0; index < node.info.dynamic_type->get_member_count(); index++)
     {
@@ -879,17 +989,38 @@ ReturnCode_t enum_to_idl(
             return ret;
         }
 
-        if (0 != index)
+        for (int i = 0; i < n_modules; i++)
         {
-            idl << ",\n" << TAB_SEPARATOR;
+            idl << TAB_SEPARATOR;
         }
 
         idl << member->get_name().to_string();
+        
+        if (node.info.dynamic_type->get_member_count() - 1 != index)
+        {
+            idl << ",\n" << TAB_SEPARATOR;
+        }
+        else
+        {
+            idl << "\n";
+        }
     }
 
     // Close definition
-    idl << "\n" << TYPE_CLOSURE;
 
+    while (n_modules > 0)
+    {
+        for (int i = 0; i < n_modules; i++)
+        {
+            idl << TAB_SEPARATOR;
+        }
+
+        idl << "};\n";
+
+        n_modules--;
+    }
+
+    idl << "};\n";
     return ret;
 }
 
@@ -936,7 +1067,15 @@ ReturnCode_t struct_to_idl(
     }
 
     // Add types name and resolve module structure
-    int n_modules = resolve_module_structure(node.info.type_kind_name, idl);
+    std::string type_name = node.info.type_kind_name;
+    int n_modules = resolve_module_structure(type_name, idl);
+
+    for (int i = 0; i < n_modules; i++)
+    {
+        idl << TAB_SEPARATOR;
+    }
+
+    idl << "struct " << type_name << "\n";
 
     const auto base_type = type_descriptor->base_type();
 
@@ -965,7 +1104,7 @@ ReturnCode_t struct_to_idl(
     // Add struct attributes
     for (auto const& child : node.branches())
     {
-        for (int i = 0; i < n_modules+1; i++)
+        for (int i = 0; i < n_modules; i++)
         {
             idl << TAB_SEPARATOR;
         }
@@ -1016,7 +1155,16 @@ ReturnCode_t union_to_idl(
         return ret;
     }
 
-    idl << "union " << node.info.type_kind_name << " switch (";
+    // Add types name and resolve module structure
+    std::string type_name = node.info.type_kind_name;
+    int n_modules = resolve_module_structure(type_name, idl);
+    
+    for (int i = 0; i < n_modules; i++)
+    {
+        idl << TAB_SEPARATOR;
+    }
+
+    idl << "union " << type_name << " switch (";
 
     ret = type_kind_to_idl(type_descriptor->discriminator_type(), idl);
 
@@ -1025,7 +1173,14 @@ ReturnCode_t union_to_idl(
         return ret;
     }
 
-    idl << ")" << TYPE_OPENING;
+    idl << ")\n";
+
+    for (int i = 0; i < n_modules; i++)
+    {
+        idl << TAB_SEPARATOR;
+    }
+
+    idl << "{\n";
 
     for (std::uint32_t index = 1; index < node.info.dynamic_type->get_member_count(); index++)
     {
@@ -1045,15 +1200,30 @@ ReturnCode_t union_to_idl(
 
         for (const auto& label : labels)
         {
+            for (int i = 0; i < n_modules; i++)
+            {
+                idl << TAB_SEPARATOR;
+            }
+
             idl << TAB_SEPARATOR << "case " << std::to_string(label) << ":\n";
         }
 
         if (member_descriptor->is_default_label())
         {
+            for (int i = 0; i < n_modules; i++)
+            {
+                idl << TAB_SEPARATOR;
+            }
+
             idl << TAB_SEPARATOR << "default:\n";
         }
 
         idl << TAB_SEPARATOR << TAB_SEPARATOR;
+
+        for (int i = 0; i < n_modules; i++)
+        {
+            idl << TAB_SEPARATOR;
+        }
 
         ret = type_kind_to_idl(member_descriptor->type(), idl);
 
@@ -1066,7 +1236,20 @@ ReturnCode_t union_to_idl(
     }
 
     // Close definition
-    idl << TYPE_CLOSURE;
+
+    while (n_modules > 0)
+    {
+        for (int i = 0; i < n_modules; i++)
+        {
+            idl << TAB_SEPARATOR;
+        }
+
+        idl << "};\n";
+
+        n_modules--;
+    }
+
+    idl << "};\n";
 
     return ret;
 }
@@ -1106,19 +1289,18 @@ ReturnCode_t node_to_idl(
 }
 
 int resolve_module_structure(
-        const std::string& type_name,
+        std::string& type_name,
         std::ostream& idl) noexcept
 {
     int n_modules = 0;
-    std::string new_type_name = type_name;
 
-    while(new_type_name.find("::") != std::string::npos)
+    while(type_name.find("::") != std::string::npos)
     {
         size_t pos_start = 0;
-        size_t pos_end = new_type_name.find("::");
+        size_t pos_end = type_name.find("::");
 
-        std::string module_name = new_type_name.substr(0,pos_end);
-        new_type_name.erase(pos_start, pos_end - pos_start + 2);
+        std::string module_name = type_name.substr(0,pos_end);
+        type_name.erase(pos_start, pos_end - pos_start + 2);
 
         for (int i = 0; i < n_modules; i++)
         {
@@ -1136,13 +1318,6 @@ int resolve_module_structure(
 
         n_modules++;
     }
-
-    for (int i = 0; i < n_modules; i++)
-    {
-        idl << TAB_SEPARATOR;
-    }
-
-    idl << "struct " << new_type_name << "\n";
 
     return n_modules;
 }
