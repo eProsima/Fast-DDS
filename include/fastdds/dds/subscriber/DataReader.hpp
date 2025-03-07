@@ -837,9 +837,9 @@ public:
     /**
      * Getter for the data type.
      *
-     * @return TypeSupport associated to the DataReader.
+     * @return Copy of the TypeSupport associated to the DataReader.
      */
-    FASTDDS_EXPORTED_API TypeSupport type();
+    FASTDDS_EXPORTED_API TypeSupport type() const;
 
     /**
      * Get TopicDescription.

@@ -12,17 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <gtest/gtest.h>
+
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
-#include <gtest/gtest.h>
+#include <fastdds/dds/domain/qos/RequesterQos.hpp>
 
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
-#include "ReqRepAsReliableHelloWorldReplier.hpp"
-#include "ReqRepAsReliableHelloWorldRequester.hpp"
+#include "ReqRepHelloWorldReplier.hpp"
+#include "ReqRepHelloWorldRequester.hpp"
 
 using namespace eprosima::fastdds;
 
@@ -248,9 +250,9 @@ TEST_P(Volatile, AsyncVolatileKeepAllPubReliableSubNonReliableHelloWorld)
 // Regression test of Refs #3376, github ros2/rmw_fastrtps #226
 TEST_P(Volatile, ReqRepVolatileHelloworldRequesterCheckWriteParams)
 {
-    ReqRepAsReliableHelloWorldRequester requester;
+    ReqRepHelloWorldRequester requester;
 
-    requester.durability_kind(eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS).init();
+    requester.init(true);
 
     ASSERT_TRUE(requester.isInitialized());
 
