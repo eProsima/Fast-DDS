@@ -918,6 +918,28 @@ TEST(ParticipantTests, SimpleParticipantRemoteServerListConfiguration)
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
 }
 
+/**
+ * Test that checks a CLIENT participant is not initialized with builtin metatrafficMulticastLocators.
+ */
+TEST(ParticipantTests, NoBuiltinMetatrafficMulticastForClients)
+{
+    DomainParticipantQos qos;
+    qos.wire_protocol().builtin.discovery_config.discoveryProtocol = fastrtps::rtps::DiscoveryProtocol::CLIENT;
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
+        (uint32_t)GET_PID() % 230, qos);
+    ASSERT_NE(nullptr, participant);
+
+    fastrtps::rtps::RTPSParticipantAttributes attributes;
+    get_rtps_attributes(participant, attributes);
+    EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::CLIENT);
+    EXPECT_EQ(attributes.builtin.metatrafficMulticastLocatorList.size(), 0);
+
+    DomainParticipantQos result_qos = participant->get_qos();
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
+
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+}
+
 
 /**
  * Test that a SIMPLE participant is transformed into a CLIENT if the variable ROS_SUPER_CLIENT is false and into a SUPERCLIENT if it's true.
