@@ -224,7 +224,7 @@ ReturnCode_t node_to_idl(
  *
  * @param type_name The full name of the type, including the module structure.
  * @param idl The idl representation of the tree.
- * 
+ *
  * @return The number of modules resolved.
  */
 int resolve_module_structure(

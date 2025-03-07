@@ -670,14 +670,14 @@ ReturnCode_t alias_to_idl(
     // Add types name and resolve module structure
     std::string type_name = node.info.type_kind_name;
     int n_modules = resolve_module_structure(type_name, idl);
-        
+
     for (int i = 0; i < n_modules; i++)
     {
         idl << TAB_SEPARATOR;
     }
 
     idl << "typedef ";
-    
+
     // Find the base type of the alias
     ret = type_kind_to_idl(type_descriptor->base_type(), idl);
 
@@ -691,7 +691,7 @@ ReturnCode_t alias_to_idl(
 
     while (n_modules > 0)
     {
-        for (int i = 0; i < n_modules-1; i++)
+        for (int i = 0; i < n_modules - 1; i++)
         {
             idl << TAB_SEPARATOR;
         }
@@ -739,12 +739,12 @@ ReturnCode_t bitmask_to_idl(
     // Add types name and resolve module structure
     std::string type_name = node.info.type_kind_name;
     int n_modules = resolve_module_structure(type_name, idl);
-    
+
     for (int i = 0; i < n_modules; i++)
     {
         idl << TAB_SEPARATOR;
     }
-    
+
     idl << "bitmask " << type_name << "\n";
 
     for (int i = 0; i < n_modules; i++)
@@ -828,11 +828,11 @@ ReturnCode_t bitset_to_idl(
     // Add types name and resolve module structure
     std::string type_name = node.info.type_kind_name;
     int n_modules = resolve_module_structure(type_name, idl);
-    
+
     for (int i = 0; i < n_modules; i++)
     {
         idl << TAB_SEPARATOR;
-    }    
+    }
 
     idl << "bitset " << type_name << "\n";
 
@@ -896,7 +896,7 @@ ReturnCode_t bitset_to_idl(
         for (int i = 0; i < n_modules; i++)
         {
             idl << TAB_SEPARATOR;
-        }   
+        }
 
         idl << TAB_SEPARATOR << "bitfield<" << std::to_string(bounds[index]);
 
@@ -963,11 +963,11 @@ ReturnCode_t enum_to_idl(
     // Add types name and resolve module structure
     std::string type_name = node.info.type_kind_name;
     int n_modules = resolve_module_structure(type_name, idl);
-    
+
     for (int i = 0; i < n_modules; i++)
     {
         idl << TAB_SEPARATOR;
-    }    
+    }
 
     idl << "enum " << type_name << "\n";
 
@@ -975,7 +975,7 @@ ReturnCode_t enum_to_idl(
     {
         idl << TAB_SEPARATOR;
     }
-    
+
     idl << "{\n" << TAB_SEPARATOR;
 
     for (std::uint32_t index = 0; index < node.info.dynamic_type->get_member_count(); index++)
@@ -995,7 +995,7 @@ ReturnCode_t enum_to_idl(
         }
 
         idl << member->get_name().to_string();
-        
+
         if (node.info.dynamic_type->get_member_count() - 1 != index)
         {
             idl << ",\n" << TAB_SEPARATOR;
@@ -1158,7 +1158,7 @@ ReturnCode_t union_to_idl(
     // Add types name and resolve module structure
     std::string type_name = node.info.type_kind_name;
     int n_modules = resolve_module_structure(type_name, idl);
-    
+
     for (int i = 0; i < n_modules; i++)
     {
         idl << TAB_SEPARATOR;
@@ -1294,12 +1294,12 @@ int resolve_module_structure(
 {
     int n_modules = 0;
 
-    while(type_name.find("::") != std::string::npos)
+    while (type_name.find("::") != std::string::npos)
     {
         size_t pos_start = 0;
         size_t pos_end = type_name.find("::");
 
-        std::string module_name = type_name.substr(0,pos_end);
+        std::string module_name = type_name.substr(0, pos_end);
         type_name.erase(pos_start, pos_end - pos_start + 2);
 
         for (int i = 0; i < n_modules; i++)
