@@ -351,40 +351,54 @@ private:
             bool* was_lock_created,
             bool* was_lock_released)
     {
-        auto fd = open(file_path.c_str(), O_RDONLY, 0);
+        int fd = -1;
+        do
+        {
+            fd = open(file_path.c_str(), O_RDONLY, 0);
 
-        if (fd != -1)
-        {
-            *was_lock_created = false;
-        }
-        else
-        {
-            *was_lock_created = true;
-            fd = open(file_path.c_str(), O_CREAT | O_RDONLY, 0666);
-        }
-
-        if (was_lock_released != nullptr)
-        {
-            // Lock exclusive
-            if (0 == flock(fd, LOCK_EX | LOCK_NB))
+            if (fd != -1)
             {
-                // Exclusive => shared
-                flock(fd, LOCK_SH | LOCK_NB);
-                *was_lock_released = true;
-                return fd;
+                *was_lock_created = false;
             }
             else
             {
-                *was_lock_released = false;
+                *was_lock_created = true;
+                fd = open(file_path.c_str(), O_CREAT | O_RDONLY, 0666);
             }
-        }
 
-        // Lock shared
-        if (0 != flock(fd, LOCK_SH | LOCK_NB))
-        {
-            close(fd);
-            throw std::runtime_error(("failed to lock " + file_path).c_str());
-        }
+            if (was_lock_released != nullptr)
+            {
+                // Lock exclusive
+                if (0 == flock(fd, LOCK_EX | LOCK_NB))
+                {
+                    // Check if file was deleted by clean up script between open and lock
+                    // if yes, repeat file creation
+                    struct stat buffer = {};
+                    if (stat(file_path.c_str(), &buffer) != 0 && errno == ENOENT)
+                    {
+                        close(fd);
+                        fd = -1;
+                        continue;
+                    }
+
+                    // Exclusive => shared
+                    flock(fd, LOCK_SH | LOCK_NB);
+                    *was_lock_released = true;
+                    return fd;
+                }
+                else
+                {
+                    *was_lock_released = false;
+                }
+            }
+
+            // Lock shared
+            if (0 != flock(fd, LOCK_SH | LOCK_NB))
+            {
+                close(fd);
+                throw std::runtime_error(("failed to lock " + file_path).c_str());
+            }
+        } while (fd == -1);
 
         return fd;
     }
