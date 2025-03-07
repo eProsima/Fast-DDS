@@ -387,7 +387,7 @@ TEST_P(PubSubFlowControllers, BuiltinFlowControllerWLPLimited)
     // flow controller will not allow the wlp writer to send more liveliness messages
     
     std::atomic<bool> stop(false);
-    auto assert_liveliness_func = [&writer, &reader, lease_duration_ms, &stop]()
+    auto assert_liveliness_func = [&writer, lease_duration_ms, &stop]()
     {
         while (!stop)
         {

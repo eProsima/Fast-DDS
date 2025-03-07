@@ -118,7 +118,7 @@ int main(
                 // This case checks that the TypeLookUpService is controller by builtin flow controller, so it will
                 // not be able to send the type object because the builtin flow controller is too small, thus there will
                 // be no data writer to discover.
-                if (args.builtin_flow_controller_bytes <= 3000)
+                if (args.builtin_flow_controller_bytes > 0 && args.builtin_flow_controller_bytes <= 3000)
                 {
                     return (pub.init(args.seed % 230, args.known_types, args.builtin_flow_controller_bytes) &&
                         !pub.wait_discovery(args.expected_matches, args.timeout)) ? 0 : -1;
@@ -133,7 +133,7 @@ int main(
             }
             case 2: {
                 eprosima::fastdds::dds::TypeLookupServiceSubscriber sub;
-                if (args.builtin_flow_controller_bytes <= 3000)
+                if (args.builtin_flow_controller_bytes > 0 && args.builtin_flow_controller_bytes <= 3000)
                 {
                     return (sub.init(args.seed % 230, args.known_types, 0) &&
                         sub.wait_participant_discovery(args.expected_matches, args.timeout) &&
