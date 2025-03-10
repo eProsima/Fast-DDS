@@ -695,13 +695,10 @@ void PDP::notify_and_maybe_ignore_new_participant(
         {
             std::lock_guard<std::mutex> cb_lock(callback_mtx_);
 
-            ParticipantBuiltinTopicData info;
-            from_proxy_to_builtin(*pdata, info);
-
             listener->on_participant_discovery(
                 getRTPSParticipant()->getUserRTPSParticipant(),
                 ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT,
-                info,
+                *pdata,
                 should_be_ignored);
         }
 
@@ -1377,12 +1374,9 @@ void PDP::actions_on_remote_participant_removed(
     {
         std::lock_guard<std::mutex> lock(callback_mtx_);
 
-        ParticipantBuiltinTopicData info;
-        from_proxy_to_builtin(*pdata, info);
-
         bool should_be_ignored = false;
         listener->on_participant_discovery(mp_RTPSParticipant->getUserRTPSParticipant(), reason,
-                info, should_be_ignored);
+                *pdata, should_be_ignored);
     }
 
     {

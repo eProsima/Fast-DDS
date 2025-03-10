@@ -242,8 +242,7 @@ void PDPListener::process_alive_data(
         }
 
         // Copy proxy to be passed forward before releasing PDP mutex
-        ParticipantBuiltinTopicData old_topic_data_copy;
-        from_proxy_to_builtin(*old_data, old_topic_data_copy);
+        ParticipantProxyData old_proxy_data_copy(*old_data);
 
         lock.unlock();
 
@@ -254,12 +253,11 @@ void PDPListener::process_alive_data(
 
             {
                 std::lock_guard<std::mutex> cb_lock(parent_pdp_->callback_mtx_);
-                ParticipantBuiltinTopicData info(old_topic_data_copy);
 
                 listener->on_participant_discovery(
                     parent_pdp_->getRTPSParticipant()->getUserRTPSParticipant(),
                     ParticipantDiscoveryStatus::CHANGED_QOS_PARTICIPANT,
-                    info,
+                    old_proxy_data_copy,
                     should_be_ignored);
             }
             if (should_be_ignored)
