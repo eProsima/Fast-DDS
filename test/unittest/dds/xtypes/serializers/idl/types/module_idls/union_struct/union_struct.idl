@@ -1,0 +1,20 @@
+module TrialModule
+{
+    module UnionModule
+    {
+        union UnionType switch (long)
+        {
+            case 0:
+                long case_long;
+            case 1:
+                float case_float;
+            default:
+                string case_string;
+        };
+    };
+};
+
+struct TrialStruct
+{
+    TrialModule::UnionModule::UnionType union_member;
+};

@@ -1,0 +1,15 @@
+module TrialModule
+{
+    module StructModule
+    {
+        struct StructType
+        {
+            String struct_data;
+        };
+    };
+};
+    
+struct TrialStruct
+{
+    TrialModule::StructModule::StructType struct_member;
+};

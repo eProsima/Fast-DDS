@@ -1,0 +1,12 @@
+module TrialModule
+{
+    module AliasModule
+    {
+        typedef long AliasType;
+    };
+};
+
+struct TrialStruct
+{
+    TrialModule::AliasModule::AliasType alias_member;
+};

@@ -119,6 +119,52 @@ TEST_P(DynTypeIDLTests, to_idl)
     ASSERT_EQ(idl_file, idl_serialization.str());
 }
 
+/**
+ * Verify that the IDL serialization of a DynamicType generated with Fast-DDS Gen matches its IDL file, with modules.
+ *
+ * CASES:
+ *  - Verify that the IDL file was opened successfully.
+ *  - Verify that the IDL serialization finished successfully.
+ *  - Verify that the two IDLs match.
+ */
+TEST_P(DynTypeIDLTests, to_idl_modules)
+{
+    const std::string type = GetParam();
+
+    if (type != "alias_struct" &&
+        type != "bitmask_struct" &&
+        type != "bitset_struct" &&
+        type != "enum_struct" &&
+        type != "struct_struct" &&
+        type != "union_struct")
+    {
+        GTEST_SKIP() << "Module structure only supported for alias, bitmask, bitset, enum, struct and union types.";
+        return;
+    }
+
+    test::register_type_object_representation(type);
+
+    // Read the IDL file as a string
+    const auto file_name = std::string("types/module_idls/") + type + "/" + type + ".idl";
+
+    std::ifstream file(file_name);
+    ASSERT_TRUE(file.is_open());
+
+    const std::string idl_file{std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()};
+
+    // Get Dynamic type
+    DynamicType::_ref_type dyn_type;
+    get_dynamic_type(snake_to_camel(type), dyn_type);
+    ASSERT_NE(dyn_type, nullptr);
+
+    // Serialize DynamicType to IDL
+    std::stringstream idl_serialization;
+    ASSERT_EQ(idl_serialize(dyn_type, idl_serialization), RETCODE_OK);
+
+    // Compare IDLs
+    ASSERT_EQ(idl_file, idl_serialization.str());
+}
+
 INSTANTIATE_TEST_SUITE_P(
     DynTypeIDLTests,
     DynTypeIDLTests,

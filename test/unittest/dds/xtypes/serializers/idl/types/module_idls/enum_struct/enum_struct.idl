@@ -1,0 +1,17 @@
+module TrialModule
+{
+    module EnumModule
+    {
+        enum EnumType
+        {
+            VALUE_ONE,
+            VALUE_TWO,
+            VALUE_THREE
+        };
+    };
+};
+
+struct TrialStruct
+{
+    TrialModule::EnumModule::EnumType enum_member;
+};
