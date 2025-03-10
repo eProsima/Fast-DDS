@@ -28,6 +28,7 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/ProductVersion_t.hpp>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
 #include <fastdds/rtps/common/Token.hpp>
@@ -61,7 +62,7 @@ class ProxyHashTable;
  * ParticipantProxyData class is used to store and convert the information Participants send to each other during the PDP phase.
  *@ingroup BUILTIN_MODULE
  */
-class ParticipantProxyData
+class ParticipantProxyData : public ParticipantBuiltinTopicData
 {
 public:
 
@@ -74,35 +75,19 @@ public:
     virtual ~ParticipantProxyData();
 
     //!Protocol version
-    ProtocolVersion_t m_protocolVersion;
-    //!GUID
-    GUID_t m_guid;
+    ProtocolVersion_t m_protocol_version;
     //!Machine ID
     fastcdr::string_255 machine_id;
-    //!Vendor ID
-    fastdds::rtps::VendorId_t m_VendorId;
-    //! Product version
-    fastdds::rtps::ProductVersion_t product_version;
-    //!Domain ID
-    fastdds::dds::DomainId_t m_domain_id;
     //!Expects Inline QOS.
-    bool m_expectsInlineQos;
+    bool m_expects_inline_qos;
     //!Available builtin endpoints
-    BuiltinEndpointSet_t m_availableBuiltinEndpoints;
+    BuiltinEndpointSet_t m_available_builtin_endpoints;
     //!Network configuration
-    NetworkConfigSet_t m_networkConfiguration;
-    //!Metatraffic locators
-    RemoteLocatorList metatraffic_locators;
-    //!Default locators
-    RemoteLocatorList default_locators;
+    NetworkConfigSet_t m_network_configuration;
     //!Manual liveliness count
-    Count_t m_manualLivelinessCount;
-    //!Participant name
-    fastcdr::string_255 m_participantName;
+    Count_t m_manual_liveliness_count;
     //!
     InstanceHandle_t m_key;
-    //!
-    dds::Duration_t m_leaseDuration;
 #if HAVE_SECURITY
     //!
     IdentityToken identity_token_;
@@ -114,11 +99,7 @@ public:
     security::PluginParticipantSecurityAttributesMask plugin_security_attributes_;
 #endif // if HAVE_SECURITY
     //!
-    bool isAlive;
-    //!
-    fastdds::dds::ParameterPropertyList_t m_properties;
-    //!
-    fastdds::dds::UserDataQosPolicy m_userData;
+    bool is_alive;
     //!
     TimedEvent* lease_duration_event;
     //!
@@ -135,7 +116,7 @@ public:
      * @param pdata Object to copy the data from
      * @return True on success
      */
-    bool updateData(
+    bool update_data(
             ParticipantProxyData& pdata);
 
     /**
@@ -226,11 +207,6 @@ public:
     const std::chrono::steady_clock::time_point& last_received_message_tm() const
     {
         return last_received_message_tm_;
-    }
-
-    const std::chrono::microseconds& lease_duration() const
-    {
-        return lease_duration_;
     }
 
 private:
