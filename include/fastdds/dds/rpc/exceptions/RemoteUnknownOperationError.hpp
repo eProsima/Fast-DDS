@@ -40,8 +40,7 @@ public:
      * Constructor.
      */
     RemoteUnknownOperationError()
-        : RemoteUnknownOperationError(
-                "The operation called is unknown")
+        : RemoteUnknownOperationError("The operation called is unknown")
     {
     }
 
@@ -52,9 +51,7 @@ public:
      */
     RemoteUnknownOperationError(
             const char* msg)
-        : RemoteUnknownOperationError(
-                RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_OPERATION,
-                msg)
+        : RpcRemoteException(RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_OPERATION, msg)
     {
     }
 
