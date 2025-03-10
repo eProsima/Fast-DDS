@@ -34,7 +34,6 @@ namespace dds {
 
 using namespace eprosima::utilities::collections;
 
-constexpr auto TYPE_OPENING = "\n{\n";
 constexpr auto TYPE_CLOSURE = "};\n";
 constexpr auto TAB_SEPARATOR = "    ";
 
@@ -696,7 +695,7 @@ ReturnCode_t alias_to_idl(
             idl << TAB_SEPARATOR;
         }
 
-        idl << "};\n";
+        idl << TYPE_CLOSURE;
 
         n_modules--;
     }
@@ -807,12 +806,12 @@ ReturnCode_t bitmask_to_idl(
             idl << TAB_SEPARATOR;
         }
 
-        idl << "};\n";
+        idl << TYPE_CLOSURE;
 
         n_modules--;
     }
 
-    idl << "};\n";
+    idl << TYPE_CLOSURE;
 
     return ret;
 }
@@ -942,12 +941,12 @@ ReturnCode_t bitset_to_idl(
             idl << TAB_SEPARATOR;
         }
 
-        idl << "};\n";
+        idl << TYPE_CLOSURE;
 
         n_modules--;
     }
 
-    idl << "};\n";
+    idl << TYPE_CLOSURE;
 
     return ret;
 }
@@ -1015,12 +1014,12 @@ ReturnCode_t enum_to_idl(
             idl << TAB_SEPARATOR;
         }
 
-        idl << "};\n";
+        idl << TYPE_CLOSURE;
 
         n_modules--;
     }
 
-    idl << "};\n";
+    idl << TYPE_CLOSURE;
     return ret;
 }
 
@@ -1128,12 +1127,12 @@ ReturnCode_t struct_to_idl(
             idl << TAB_SEPARATOR;
         }
 
-        idl << "};\n";
+        idl << TYPE_CLOSURE;
 
         n_modules--;
     }
 
-    idl << "};\n";
+    idl << TYPE_CLOSURE;
 
     return ret;
 }
@@ -1244,12 +1243,12 @@ ReturnCode_t union_to_idl(
             idl << TAB_SEPARATOR;
         }
 
-        idl << "};\n";
+        idl << TYPE_CLOSURE;
 
         n_modules--;
     }
 
-    idl << "};\n";
+    idl << TYPE_CLOSURE;
 
     return ret;
 }
