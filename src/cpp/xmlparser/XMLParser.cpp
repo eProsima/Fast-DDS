@@ -2450,10 +2450,20 @@ XMLP_ret XMLParser::fillDataNode(
         else if (strcmp(name, EASY_MODE_IP) == 0)
         {
             // easy_mode_ip - stringType
-            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &participant_node.get()->rtps.easy_mode_ip, ident))
+            std::string str_aux;
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &str_aux, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
+
+            // Check that the string is a valid IPv4 address
+            if (!fastdds::rtps::IPLocator::isIPv4(str_aux))
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "'easy_mode_ip' is not a valid IPv4 address.");
+                return XMLP_ret::XML_ERROR;
+            }
+
+            participant_node.get()->rtps.easy_mode_ip = str_aux;
         }
         else if (strcmp(name, FLOW_CONTROLLER_DESCRIPTOR_LIST) == 0)
         {

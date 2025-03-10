@@ -2734,6 +2734,15 @@ public:
     void easy_mode(
             std::string ip)
     {
+        // Check if the input is a valid IP
+        if (!rtps::IPLocator::isIPv4(ip))
+        {
+            EPROSIMA_LOG_ERROR(
+                WIREPROTOCOLQOS, "Invalid IP address format for ROS 2 Easy Mode. It must be an IPv4 address.");
+
+            return;
+        }
+
         easy_mode_ = ip;
     }
 

@@ -1813,6 +1813,7 @@ TEST_F(XMLParserTests, parseLogConfig)
  * 2. Check missing DomainId value in tag
  * 3. Check bad values for all attributes
  * 4. Check a non existant attribute tag
+ * 5. Check a non valid Easy Mode IP
  */
 TEST_F(XMLParserTests, fillDataNodeParticipantNegativeClauses)
 {
@@ -1885,6 +1886,13 @@ TEST_F(XMLParserTests, fillDataNodeParticipantNegativeClauses)
             EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *participant_node));
 
         }
+
+        // Check invalid easy_mode_ip value (not a valid IPv4 address)
+        std::string invalid_easy_mode_ip = "<easy_mode_ip>Foo</easy_mode_ip>";
+        snprintf(xml, xml_len, xml_p, invalid_easy_mode_ip.c_str());
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *participant_node));
     }
 }
 
