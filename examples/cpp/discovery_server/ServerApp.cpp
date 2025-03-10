@@ -87,12 +87,6 @@ ServerApp::ServerApp(
 
     switch (config.transport_kind)
     {
-        case TransportKind::SHM:
-            descriptor = std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
-            listening_locator.kind = LOCATOR_KIND_SHM;
-            connection_locator.kind = LOCATOR_KIND_SHM;
-            break;
-
         case TransportKind::UDPv4:
         {
             auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
