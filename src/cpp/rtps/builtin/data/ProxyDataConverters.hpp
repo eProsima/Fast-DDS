@@ -19,22 +19,10 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-struct ParticipantBuiltinTopicData;
-class ParticipantProxyData;
 struct PublicationBuiltinTopicData;
 class ReaderProxyData;
 struct SubscriptionBuiltinTopicData;
 class WriterProxyData;
-
-/**
- * Convert a ParticipantProxyData to a ParticipantBuiltinTopicData.
- *
- * @param [in]  proxy_data    ParticipantProxyData to convert.
- * @param [out] builtin_data  ParticipantBuiltinTopicData to fill.
- */
-void from_proxy_to_builtin(
-        const ParticipantProxyData& proxy_data,
-        ParticipantBuiltinTopicData& builtin_data);
 
 /**
  * Convert a ReaderProxyData to a SubscriptionBuiltinTopicData.

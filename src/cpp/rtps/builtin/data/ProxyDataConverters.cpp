@@ -31,7 +31,6 @@
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
 
-#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <utils/BuiltinTopicKeyConversions.hpp>
@@ -41,89 +40,11 @@ namespace fastdds {
 namespace rtps {
 
 void from_proxy_to_builtin(
-        const EntityId_t& entity_id,
-        BuiltinTopicKeyValue& builtin_key_value)
-{
-    builtin_key_value[0] = 0;
-    builtin_key_value[1] = 0;
-    builtin_key_value[2] = static_cast<uint32_t>(entity_id.value[0]) << 24
-            | static_cast<uint32_t>(entity_id.value[1]) << 16
-            | static_cast<uint32_t>(entity_id.value[2]) << 8
-            | static_cast<uint32_t>(entity_id.value[3]);
-}
-
-void from_proxy_to_builtin(
-        const GuidPrefix_t& guid_prefix,
-        BuiltinTopicKeyValue& dds_key)
-{
-    dds_key[0] = static_cast<uint32_t>(guid_prefix.value[0]) << 24
-            | static_cast<uint32_t>(guid_prefix.value[1]) << 16
-            | static_cast<uint32_t>(guid_prefix.value[2]) << 8
-            | static_cast<uint32_t>(guid_prefix.value[3]);
-    dds_key[1] = static_cast<uint32_t>(guid_prefix.value[4]) << 24
-            | static_cast<uint32_t>(guid_prefix.value[5]) << 16
-            | static_cast<uint32_t>(guid_prefix.value[6]) << 8
-            | static_cast<uint32_t>(guid_prefix.value[7]);
-    dds_key[2] = static_cast<uint32_t>(guid_prefix.value[8]) << 24
-            | static_cast<uint32_t>(guid_prefix.value[9]) << 16
-            | static_cast<uint32_t>(guid_prefix.value[10]) << 8
-            | static_cast<uint32_t>(guid_prefix.value[11]);
-}
-
-void from_builtin_to_proxy(
-        const BuiltinTopicKeyValue& dds_key,
-        EntityId_t& entity_id)
-{
-    entity_id.value[0] = static_cast<uint8_t>((dds_key[2] >> 24) & 0xFF);
-    entity_id.value[1] = static_cast<uint8_t>((dds_key[2] >> 16) & 0xFF);
-    entity_id.value[2] = static_cast<uint8_t>((dds_key[2] >> 8) & 0xFF);
-    entity_id.value[3] = static_cast<uint8_t>(dds_key[2] & 0xFF);
-}
-
-void from_builtin_to_proxy(
-        const BuiltinTopicKeyValue& dds_key,
-        GuidPrefix_t& guid_prefix)
-{
-    guid_prefix.value[0] = static_cast<uint8_t>((dds_key[0] >> 24) & 0xFF);
-    guid_prefix.value[1] = static_cast<uint8_t>((dds_key[0] >> 16) & 0xFF);
-    guid_prefix.value[2] = static_cast<uint8_t>((dds_key[0] >> 8) & 0xFF);
-    guid_prefix.value[3] = static_cast<uint8_t>(dds_key[0] & 0xFF);
-
-    guid_prefix.value[4] = static_cast<uint8_t>((dds_key[1] >> 24) & 0xFF);
-    guid_prefix.value[5] = static_cast<uint8_t>((dds_key[1] >> 16) & 0xFF);
-    guid_prefix.value[6] = static_cast<uint8_t>((dds_key[1] >> 8) & 0xFF);
-    guid_prefix.value[7] = static_cast<uint8_t>(dds_key[1] & 0xFF);
-
-    guid_prefix.value[8] = static_cast<uint8_t>((dds_key[2] >> 24) & 0xFF);
-    guid_prefix.value[9] = static_cast<uint8_t>((dds_key[2] >> 16) & 0xFF);
-    guid_prefix.value[10] = static_cast<uint8_t>((dds_key[2] >> 8) & 0xFF);
-    guid_prefix.value[11] = static_cast<uint8_t>(dds_key[2] & 0xFF);
-}
-
-void from_proxy_to_builtin(
-        const ParticipantProxyData& proxy_data,
-        ParticipantBuiltinTopicData& builtin_data)
-{
-    from_proxy_to_builtin(proxy_data.m_guid.guidPrefix, builtin_data.key.value);
-
-    builtin_data.user_data = proxy_data.m_userData;
-    builtin_data.guid = proxy_data.m_guid;
-    builtin_data.metatraffic_locators = proxy_data.metatraffic_locators;
-    builtin_data.default_locators = proxy_data.default_locators;
-    builtin_data.participant_name = proxy_data.m_participantName;
-    builtin_data.properties = proxy_data.m_properties;
-    builtin_data.lease_duration = proxy_data.m_leaseDuration;
-    builtin_data.vendor_id = proxy_data.m_VendorId;
-    builtin_data.product_version = proxy_data.product_version;
-    builtin_data.domain_id = proxy_data.m_domain_id;
-}
-
-void from_proxy_to_builtin(
         const ReaderProxyData& proxy_data,
         SubscriptionBuiltinTopicData& builtin_data)
 {
-    from_proxy_to_builtin(proxy_data.guid().entityId, builtin_data.key.value);
-    from_proxy_to_builtin(proxy_data.guid().guidPrefix, builtin_data.participant_key.value);
+    from_entity_id_to_topic_key(proxy_data.guid().entityId, builtin_data.key.value);
+    from_guid_prefix_to_topic_key(proxy_data.guid().guidPrefix, builtin_data.participant_key.value);
 
     builtin_data.topic_name = proxy_data.topicName();
     builtin_data.type_name = proxy_data.typeName();
@@ -165,8 +86,8 @@ void from_proxy_to_builtin(
         const WriterProxyData& proxy_data,
         PublicationBuiltinTopicData& builtin_data)
 {
-    from_proxy_to_builtin(proxy_data.guid().entityId, builtin_data.key.value);
-    from_proxy_to_builtin(proxy_data.guid().guidPrefix, builtin_data.participant_key.value);
+    from_entity_id_to_topic_key(proxy_data.guid().entityId, builtin_data.key.value);
+    from_guid_prefix_to_topic_key(proxy_data.guid().guidPrefix, builtin_data.participant_key.value);
 
     builtin_data.topic_name = proxy_data.topicName();
     builtin_data.type_name = proxy_data.typeName();
@@ -210,8 +131,8 @@ void from_builtin_to_proxy(
 {
     fastdds::dds::WriterQos qos{};
 
-    from_builtin_to_proxy(builtin_data.participant_key.value, proxy_data.guid().guidPrefix);
-    from_builtin_to_proxy(builtin_data.key.value, proxy_data.guid().entityId);
+    from_topic_key_to_guid_prefix(builtin_data.participant_key.value, proxy_data.guid().guidPrefix);
+    from_topic_key_to_entity_id(builtin_data.key.value, proxy_data.guid().entityId);
 
     proxy_data.topicName(builtin_data.topic_name);
     proxy_data.typeName(builtin_data.type_name);
@@ -255,8 +176,8 @@ void from_builtin_to_proxy(
 {
     fastdds::dds::ReaderQos qos{};
 
-    from_builtin_to_proxy(builtin_data.participant_key.value, proxy_data.guid().guidPrefix);
-    from_builtin_to_proxy(builtin_data.key.value, proxy_data.guid().entityId);
+    from_topic_key_to_guid_prefix(builtin_data.participant_key.value, proxy_data.guid().guidPrefix);
+    from_topic_key_to_entity_id(builtin_data.key.value, proxy_data.guid().entityId);
 
     proxy_data.topicName(builtin_data.topic_name);
     proxy_data.typeName(builtin_data.type_name);
