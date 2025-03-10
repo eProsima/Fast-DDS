@@ -2248,7 +2248,7 @@ std::vector<std::string> RTPSParticipantImpl::getParticipantNames() const
     auto pdp = mp_builtinProtocols->mp_PDP;
     for (auto it = pdp->ParticipantProxiesBegin(); it != pdp->ParticipantProxiesEnd(); ++it)
     {
-        participant_names.emplace_back((*it)->m_participantName.to_string());
+        participant_names.emplace_back((*it)->participant_name.to_string());
     }
     return participant_names;
 }
@@ -3112,7 +3112,7 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
 
     if (ret)
     {
-        from_proxy_to_builtin(part_prox_data, data);
+        data = part_prox_data;
     }
 
     return ret && (data.guid.entityId == c_EntityId_RTPSParticipant);
@@ -3199,7 +3199,7 @@ RTPSParticipantImpl::get_entity_connections(
         for (; pit != pdp()->ParticipantProxiesEnd(); ++pit)
         {
             fastdds::statistics::Connection connection;
-            connection.guid(fastdds::statistics::to_statistics_type((*pit)->m_guid));
+            connection.guid(fastdds::statistics::to_statistics_type((*pit)->guid));
             connection.mode(fastdds::statistics::ConnectionMode::TRANSPORT);
 
             std::vector<fastdds::statistics::detail::Locator_s> statistic_locators;

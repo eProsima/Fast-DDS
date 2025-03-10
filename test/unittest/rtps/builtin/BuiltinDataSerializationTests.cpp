@@ -811,9 +811,9 @@ TEST(BuiltinDataSerializationTests, other_vendor_parameter_list_with_custom_pids
 
         // ParticipantProxyData check
         ParticipantProxyData participant_pdata(RTPSParticipantAllocationAttributes{});
-        participant_pdata.m_networkConfiguration = 0;
+        participant_pdata.m_network_configuration = 0;
         participant_read(data_buffer, buffer_length, participant_pdata);
-        ASSERT_EQ(participant_pdata.m_networkConfiguration, 0u);
+        ASSERT_EQ(participant_pdata.m_network_configuration, 0u);
 
         // WriterProxyData check
         WriterProxyData writer_pdata(max_unicast_locators, max_multicast_locators);

@@ -142,7 +142,7 @@ void PDPServerListener::on_new_cache_change_added(
                     true,
                     change_in->vendor_id))
         {
-            if (parent_pdp_->getRTPSParticipant()->is_participant_ignored(participant_data.m_guid.guidPrefix))
+            if (parent_pdp_->getRTPSParticipant()->is_participant_ignored(participant_data.guid.guidPrefix))
             {
                 return;
             }
@@ -232,7 +232,7 @@ void PDPServerListener::on_new_cache_change_added(
             ParticipantProxyData* pdata = nullptr;
             for (ParticipantProxyData* it : pdp_server()->participant_proxies_)
             {
-                if (guid == it->m_guid)
+                if (guid == it->guid)
                 {
                     pdata = it;
                     break;
@@ -274,8 +274,8 @@ void PDPServerListener::on_new_cache_change_added(
             else
             {
                 // Update proxy
-                pdata->updateData(participant_data);
-                pdata->isAlive = true;
+                pdata->update_data(participant_data);
+                pdata->is_alive = true;
                 // Realease PDP mutex
                 lock.unlock();
 
@@ -374,7 +374,7 @@ std::pair<bool, bool> PDPServerListener::check_server_discovery_conditions(
     std::pair<bool, bool> ret{true, true};
 
     /* Check PID_VENDOR_ID */
-    if (participant_data.m_VendorId != fastdds::rtps::c_VendorId_eProsima)
+    if (participant_data.vendor_id != fastdds::rtps::c_VendorId_eProsima)
     {
         EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER,
                 "DATA(p|Up) from different vendor is not supported for Discover-Server operation");
@@ -385,7 +385,7 @@ std::pair<bool, bool> PDPServerListener::check_server_discovery_conditions(
     // domain ids to be the same
     /* Do not check PID_DOMAIN_ID */
 
-    fastdds::dds::ParameterPropertyList_t properties = participant_data.m_properties;
+    fastdds::dds::ParameterPropertyList_t properties = participant_data.properties;
 
     /* Check DS_VERSION */
     if (ret.first)

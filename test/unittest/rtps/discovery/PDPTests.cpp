@@ -148,7 +148,7 @@ public:
     {
         RTPSParticipantAllocationAttributes attrs;
         ParticipantProxyData* pdata = new ParticipantProxyData(attrs);
-        pdata->m_guid = part_guid;
+        pdata->guid = part_guid;
 
         add_participant_proxy_data(part_guid, false, pdata);
         pdatas_.push_back(pdata);

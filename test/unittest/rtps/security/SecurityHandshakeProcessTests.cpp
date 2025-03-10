@@ -33,10 +33,10 @@ TEST_F(SecurityTest, discovered_participant_begin_handshake_request_fail_and_the
             WillOnce(Return(ValidationResult_t::VALIDATION_FAILED));
 
     ParticipantProxyData participant_data;
-    fill_participant_key(participant_data.m_guid);
+    fill_participant_key(participant_data.guid);
     ParticipantAuthenticationInfo info;
     info.status = ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT;
-    info.guid = participant_data.m_guid;
+    info.guid = participant_data.guid;
     EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
     EXPECT_CALL(participant_, pdp()).Times(1).WillOnce(Return(&pdp_));
     EXPECT_CALL(pdp_, get_participant_proxy_data_serialized(BIGEND)).Times(1);
@@ -113,7 +113,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_bad_message_class_id
             Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
 
     ParticipantProxyData participant_data;
-    fill_participant_key(participant_data.m_guid);
+    fill_participant_key(participant_data.guid);
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
 
     ParticipantGenericMessage message;
@@ -157,20 +157,20 @@ TEST_F(SecurityTest, discovered_participant_process_message_not_expecting_reques
             WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle), Return(ValidationResult_t::VALIDATION_OK)));
 
     ParticipantProxyData participant_data;
-    fill_participant_key(participant_data.m_guid);
+    fill_participant_key(participant_data.guid);
     EXPECT_CALL(participant_, pdp()).Times(1).WillOnce(Return(&pdp_));
     EXPECT_CALL(pdp_, notifyAboveRemoteEndpoints(_, true)).Times(1);
 
     ParticipantAuthenticationInfo info;
     info.status = ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT;
-    info.guid = participant_data.m_guid;
+    info.guid = participant_data.guid;
     EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
 
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
 
     ParticipantGenericMessage message;
-    message.message_identity().source_guid(participant_data.m_guid);
-    message.destination_participant_key(participant_data.m_guid);
+    message.message_identity().source_guid(participant_data.guid);
+    message.destination_participant_key(participant_data.guid);
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
@@ -215,12 +215,12 @@ TEST_F(SecurityTest, discovered_participant_process_message_fail_begin_handshake
             Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
 
     ParticipantProxyData participant_data;
-    fill_participant_key(participant_data.m_guid);
+    fill_participant_key(participant_data.guid);
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
 
     ParticipantGenericMessage message;
-    message.message_identity().source_guid(participant_data.m_guid);
-    message.destination_participant_key(participant_data.m_guid);
+    message.message_identity().source_guid(participant_data.guid);
+    message.destination_participant_key(participant_data.guid);
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
@@ -253,7 +253,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_fail_begin_handshake
             WillOnce(Return(true));
     ParticipantAuthenticationInfo info;
     info.status = ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT;
-    info.guid = participant_data.m_guid;
+    info.guid = participant_data.guid;
     EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
     EXPECT_CALL(participant_, pdp()).Times(1).WillOnce(Return(&pdp_));
     EXPECT_CALL(pdp_, get_participant_proxy_data_serialized(BIGEND)).Times(1);
@@ -274,12 +274,12 @@ TEST_F(SecurityTest, discovered_participant_process_message_ok_begin_handshake_r
             Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
 
     ParticipantProxyData participant_data;
-    fill_participant_key(participant_data.m_guid);
+    fill_participant_key(participant_data.guid);
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
 
     ParticipantGenericMessage message;
-    message.message_identity().source_guid(participant_data.m_guid);
-    message.destination_participant_key(participant_data.m_guid);
+    message.message_identity().source_guid(participant_data.guid);
+    message.destination_participant_key(participant_data.guid);
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
@@ -336,7 +336,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_ok_begin_handshake_r
 
     ParticipantAuthenticationInfo info;
     info.status = ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT;
-    info.guid = participant_data.m_guid;
+    info.guid = participant_data.guid;
     EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
 
     CacheChange_t kx_change_to_add;
@@ -362,12 +362,12 @@ TEST_F(SecurityTest, discovered_participant_process_message_new_change_fail)
             Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
 
     ParticipantProxyData participant_data;
-    fill_participant_key(participant_data.m_guid);
+    fill_participant_key(participant_data.guid);
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
 
     ParticipantGenericMessage message;
-    message.message_identity().source_guid(participant_data.m_guid);
-    message.destination_participant_key(participant_data.m_guid);
+    message.message_identity().source_guid(participant_data.guid);
+    message.destination_participant_key(participant_data.guid);
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
@@ -426,12 +426,12 @@ TEST_F(SecurityTest, discovered_participant_process_message_add_change_fail)
             Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
 
     ParticipantProxyData participant_data;
-    fill_participant_key(participant_data.m_guid);
+    fill_participant_key(participant_data.guid);
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
 
     ParticipantGenericMessage message;
-    message.message_identity().source_guid(participant_data.m_guid);
-    message.destination_participant_key(participant_data.m_guid);
+    message.message_identity().source_guid(participant_data.guid);
+    message.destination_participant_key(participant_data.guid);
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
@@ -535,14 +535,14 @@ TEST_F(SecurityTest, discovered_participant_process_message_pending_handshake_re
     expect_kx_exchange(kx_change_to_add, kx_change_to_remove);
 
     ParticipantProxyData participant_data;
-    fill_participant_key(participant_data.m_guid);
+    fill_participant_key(participant_data.guid);
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
 
     volatile_writer_->listener_->on_writer_change_received_by_all(volatile_writer_, kx_change_to_remove);
 
     ParticipantGenericMessage message;
-    message.message_identity().source_guid(participant_data.m_guid);
-    message.destination_participant_key(participant_data.m_guid);
+    message.message_identity().source_guid(participant_data.guid);
+    message.destination_participant_key(participant_data.guid);
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
@@ -605,7 +605,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_pending_handshake_re
 
     ParticipantAuthenticationInfo info;
     info.status = ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT;
-    info.guid = participant_data.m_guid;
+    info.guid = participant_data.guid;
     EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
 
     stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
@@ -621,7 +621,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_fail_process_handsha
     request_process_ok();
     EXPECT_CALL(*stateless_writer_->history_, remove_change(SequenceNumber_t{0, 1})).Times(1).WillOnce(Return(true));
 
-    GUID_t remote_participant_key(participant_data_.m_guid);
+    GUID_t remote_participant_key(participant_data_.guid);
 
     ParticipantGenericMessage message;
     message.message_identity().source_guid(remote_participant_key);
@@ -674,7 +674,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_ok_process_handshake
     EXPECT_CALL(*stateless_writer_->history_, remove_change(SequenceNumber_t{0, 1})).Times(1).
             WillOnce(Return(true));
 
-    GUID_t remote_participant_key(participant_data_.m_guid);
+    GUID_t remote_participant_key(participant_data_.guid);
 
     ParticipantGenericMessage message;
     message.message_identity().source_guid(remote_participant_key);
@@ -752,7 +752,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_process_handshake_re
     EXPECT_CALL(*stateless_writer_->history_, remove_change(SequenceNumber_t{0, 1})).Times(1).
             WillOnce(Return(true));
 
-    GUID_t remote_participant_key(participant_data_.m_guid);
+    GUID_t remote_participant_key(participant_data_.guid);
 
     ParticipantGenericMessage message;
     message.message_identity().source_guid(remote_participant_key);
@@ -806,7 +806,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_process_handshake_re
     EXPECT_CALL(*stateless_writer_->history_, remove_change(SequenceNumber_t{0, 1})).Times(1).
             WillOnce(Return(true));
 
-    GUID_t remote_participant_key(participant_data_.m_guid);
+    GUID_t remote_participant_key(participant_data_.guid);
 
     ParticipantGenericMessage message;
     message.message_identity().source_guid(remote_participant_key);
@@ -885,7 +885,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_process_handshake_re
     CacheChange_t* final_message_change = nullptr;
     final_message_process_ok(&final_message_change);
 
-    GUID_t remote_participant_key(participant_data_.m_guid);
+    GUID_t remote_participant_key(participant_data_.guid);
 
     ParticipantGenericMessage message;
     message.message_identity().source_guid(remote_participant_key);
@@ -930,7 +930,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_bad_related_guid)
     reply_process_ok();
     EXPECT_CALL(*stateless_writer_->history_, remove_change(SequenceNumber_t{ 0, 1 })).Times(1).WillOnce(Return(true));
 
-    GUID_t remote_participant_key(participant_data_.m_guid);
+    GUID_t remote_participant_key(participant_data_.guid);
     remote_participant_key.guidPrefix.value[0] = 0xFF;
 
     ParticipantGenericMessage message;
@@ -976,7 +976,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_bad_related_sequence
     reply_process_ok();
     EXPECT_CALL(*stateless_writer_->history_, remove_change(SequenceNumber_t{ 0, 1 })).Times(1).WillOnce(Return(true));
 
-    GUID_t remote_participant_key(participant_data_.m_guid);
+    GUID_t remote_participant_key(participant_data_.guid);
 
     ParticipantGenericMessage message;
     message.message_identity().source_guid(remote_participant_key);
@@ -1021,7 +1021,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_fail_process_handsha
     reply_process_ok();
     EXPECT_CALL(*stateless_writer_->history_, remove_change(SequenceNumber_t{ 0, 1 })).Times(1).WillOnce(Return(true));
 
-    GUID_t remote_participant_key(participant_data_.m_guid);
+    GUID_t remote_participant_key(participant_data_.guid);
 
     ParticipantGenericMessage message;
     message.message_identity().source_guid(remote_participant_key);
@@ -1074,7 +1074,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_ok_process_handshake
     EXPECT_CALL(*stateless_writer_->history_, remove_change(SequenceNumber_t{0, 1})).Times(1).
             WillOnce(Return(true));
 
-    GUID_t remote_participant_key(participant_data_.m_guid);
+    GUID_t remote_participant_key(participant_data_.guid);
 
     ParticipantGenericMessage message;
     message.message_identity().source_guid(remote_participant_key);

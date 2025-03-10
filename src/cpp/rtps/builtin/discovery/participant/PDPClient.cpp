@@ -116,32 +116,32 @@ void PDPClient::initializeParticipantProxyData(
 
     if (discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
     {
-        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
-        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
+        participant_data->m_available_builtin_endpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
+        participant_data->m_available_builtin_endpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
     }
 
     if (discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
     {
-        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
-        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+        participant_data->m_available_builtin_endpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
+        participant_data->m_available_builtin_endpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
     }
 
     // Set discovery server version property
-    participant_data->m_properties.push_back(std::pair<std::string,
+    participant_data->properties.push_back(std::pair<std::string,
             std::string>({fastdds::dds::parameter_property_ds_version,
                           fastdds::dds::parameter_property_current_ds_version}));
 
 #if HAVE_SECURITY
     if (discovery_config.m_simpleEDP.enable_builtin_secure_publications_writer_and_subscriptions_reader)
     {
-        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_ANNOUNCER;
-        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR;
+        participant_data->m_available_builtin_endpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_ANNOUNCER;
+        participant_data->m_available_builtin_endpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR;
     }
 
     if (discovery_config.m_simpleEDP.enable_builtin_secure_subscriptions_writer_and_publications_reader)
     {
-        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER;
-        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR;
+        participant_data->m_available_builtin_endpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER;
+        participant_data->m_available_builtin_endpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR;
     }
 #endif // HAVE_SECURITY
 
@@ -183,20 +183,20 @@ ParticipantProxyData* PDPClient::createParticipantProxyData(
 
     // Verify if this participant is a server
     bool is_server = false;
-    std::string part_type = check_participant_type(participant_data.m_properties);
+    std::string part_type = check_participant_type(participant_data.properties);
     if (part_type == ParticipantType::SERVER || part_type == ParticipantType::BACKUP)
     {
         is_server = true;
     }
 
-    ParticipantProxyData* pdata = add_participant_proxy_data(participant_data.m_guid, is_server, &participant_data);
+    ParticipantProxyData* pdata = add_participant_proxy_data(participant_data.guid, is_server, &participant_data);
     if (pdata != nullptr)
     {
         // Clients only assert its server liveliness, other clients liveliness is provided
         // through server's PDP discovery data
         if (is_server)
         {
-            pdata->lease_duration_event->update_interval(pdata->m_leaseDuration);
+            pdata->lease_duration_event->update_interval(pdata->lease_duration);
             pdata->lease_duration_event->restart_timer();
         }
     }
@@ -457,13 +457,13 @@ void PDPClient::assignRemoteEndpoints(
         {
             eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
-            std::string part_type = check_participant_type(pdata->m_properties);
+            std::string part_type = check_participant_type(pdata->properties);
             if (part_type == ParticipantType::SERVER || part_type == ParticipantType::BACKUP)
             {
                 // Add new servers to the connected list
-                EPROSIMA_LOG_INFO(RTPS_PDP_CLIENT, "Server [" << pdata->m_guid.guidPrefix << "] matched.");
+                EPROSIMA_LOG_INFO(RTPS_PDP_CLIENT, "Server [" << pdata->guid.guidPrefix << "] matched.");
                 RemoteServerAttributes server;
-                server.guidPrefix = pdata->m_guid.guidPrefix;
+                server.guidPrefix = pdata->guid.guidPrefix;
                 for (const Locator_t& locator : pdata->metatraffic_locators.multicast)
                 {
                     server.metatrafficMulticastLocatorList.push_back(locator);
@@ -494,7 +494,7 @@ void PDPClient::assignRemoteEndpoints(
     }
     else
     {
-        EPROSIMA_LOG_INFO(RTPS_PDP, "Ignoring new participant " << pdata->m_guid);
+        EPROSIMA_LOG_INFO(RTPS_PDP, "Ignoring new participant " << pdata->guid);
     }
 }
 
@@ -507,13 +507,13 @@ void PDPClient::notifyAboveRemoteEndpoints(
     {
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
-        std::string part_type = check_participant_type(pdata.m_properties);
+        std::string part_type = check_participant_type(pdata.properties);
         if (part_type == ParticipantType::SERVER || part_type == ParticipantType::BACKUP)
         {
             // Add new servers to the connected list
-            EPROSIMA_LOG_INFO(RTPS_PDP_CLIENT, "Secure Server [" << pdata.m_guid.guidPrefix << "] matched.");
+            EPROSIMA_LOG_INFO(RTPS_PDP_CLIENT, "Secure Server [" << pdata.guid.guidPrefix << "] matched.");
             RemoteServerAttributes server;
-            server.guidPrefix = pdata.m_guid.guidPrefix;
+            server.guidPrefix = pdata.guid.guidPrefix;
             for (const Locator_t& locator : pdata.metatraffic_locators.multicast)
             {
                 server.metatrafficMulticastLocatorList.push_back(locator);
@@ -597,7 +597,7 @@ void PDPClient::removeRemoteEndpoints(
         auto it = connected_servers_.begin();
         while (it != connected_servers_.end())
         {
-            if (it->guidPrefix == pdata->m_guid.guidPrefix)
+            if (it->guidPrefix == pdata->guid.guidPrefix)
             {
                 std::unique_lock<std::recursive_mutex> lock(*getMutex());
                 it = connected_servers_.erase(it);
@@ -615,9 +615,9 @@ void PDPClient::removeRemoteEndpoints(
     if (is_server)
     {
         // We should unmatch and match the PDP endpoints to renew the PDP reader and writer associated proxies
-        EPROSIMA_LOG_INFO(RTPS_PDP, "For unmatching for server: " << pdata->m_guid);
+        EPROSIMA_LOG_INFO(RTPS_PDP, "For unmatching for server: " << pdata->guid);
         const NetworkFactory& network = mp_RTPSParticipant->network_factory();
-        uint32_t endp = pdata->m_availableBuiltinEndpoints;
+        uint32_t endp = pdata->m_available_builtin_endpoints;
         uint32_t auxendp = endp;
         auxendp &= (DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER | DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_ANNOUNCER);
 
@@ -625,7 +625,7 @@ void PDPClient::removeRemoteEndpoints(
         {
             GUID_t wguid;
 
-            wguid.guidPrefix = pdata->m_guid.guidPrefix;
+            wguid.guidPrefix = pdata->guid.guidPrefix;
             wguid.entityId = endpoints->writer.writer_->getGuid().entityId;
             endpoints->reader.reader_->matched_writer_remove(wguid);
 
@@ -655,7 +655,7 @@ void PDPClient::removeRemoteEndpoints(
         if (auxendp != 0)
         {
             GUID_t rguid;
-            rguid.guidPrefix = pdata->m_guid.guidPrefix;
+            rguid.guidPrefix = pdata->guid.guidPrefix;
             rguid.entityId = endpoints->reader.reader_->getGuid().entityId;
             endpoints->writer.writer_->matched_reader_remove(rguid);
 

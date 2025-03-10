@@ -850,7 +850,7 @@ bool EDP::pairingReader(
             if (valid)
             {
 #if HAVE_SECURITY
-                if (!mp_RTPSParticipant->security_manager().discovered_writer(reader_guid, (*pit)->m_guid,
+                if (!mp_RTPSParticipant->security_manager().discovered_writer(reader_guid, (*pit)->guid,
                         *wdatait, reader->getAttributes().security_attributes()))
                 {
                     EPROSIMA_LOG_ERROR(RTPS_EDP, "Security manager returns an error for reader " << reader_guid);
@@ -881,7 +881,7 @@ bool EDP::pairingReader(
                     mp_PDP->notify_incompatible_qos_matching(R->getGuid(), wdatait->guid(), incompatible_qos);
                 }
 
-                //EPROSIMA_LOG_INFO(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<wdatait->m_guid<<RTPS_DEF<<endl);
+                //EPROSIMA_LOG_INFO(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<wdatait->guid<<RTPS_DEF<<endl);
                 if (reader->matched_writer_is_matched(wdatait->guid())
                         && reader->matched_writer_remove(wdatait->guid()))
                 {
@@ -944,7 +944,7 @@ bool EDP::pairingWriter(
             if (valid)
             {
 #if HAVE_SECURITY
-                if (!mp_RTPSParticipant->security_manager().discovered_reader(writer_guid, (*pit)->m_guid,
+                if (!mp_RTPSParticipant->security_manager().discovered_reader(writer_guid, (*pit)->guid,
                         *rdatait, writer->getAttributes().security_attributes()))
                 {
                     EPROSIMA_LOG_ERROR(RTPS_EDP, "Security manager returns an error for writer " << writer_guid);
@@ -974,7 +974,7 @@ bool EDP::pairingWriter(
                     mp_PDP->notify_incompatible_qos_matching(W->getGuid(), rdatait->guid(), incompatible_qos);
                 }
 
-                //EPROSIMA_LOG_INFO(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<wdatait->m_guid<<RTPS_DEF<<endl);
+                //EPROSIMA_LOG_INFO(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<wdatait->guid<<RTPS_DEF<<endl);
                 if (writer->matched_reader_is_matched(reader_guid) && writer->matched_reader_remove(reader_guid))
                 {
 #if HAVE_SECURITY

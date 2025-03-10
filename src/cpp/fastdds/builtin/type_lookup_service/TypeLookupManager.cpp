@@ -158,13 +158,13 @@ bool TypeLookupManager::assign_remote_endpoints(
         const ParticipantProxyData& pdata)
 {
     const NetworkFactory& network = participant_->network_factory();
-    uint32_t endp = pdata.m_availableBuiltinEndpoints;
+    uint32_t endp = pdata.m_available_builtin_endpoints;
     uint32_t auxendp = endp;
 
     std::lock_guard<std::mutex> data_guard(temp_data_lock_);
 
-    temp_writer_proxy_data_->guid().guidPrefix = pdata.m_guid.guidPrefix;
-    temp_writer_proxy_data_->persistence_guid().guidPrefix = pdata.m_guid.guidPrefix;
+    temp_writer_proxy_data_->guid().guidPrefix = pdata.guid.guidPrefix;
+    temp_writer_proxy_data_->persistence_guid().guidPrefix = pdata.guid.guidPrefix;
     temp_writer_proxy_data_->set_remote_locators(pdata.metatraffic_locators, network, true, pdata.is_from_this_host());
     temp_writer_proxy_data_->topicKind(NO_KEY);
     temp_writer_proxy_data_->m_qos.m_durability.kind = fastdds::dds::VOLATILE_DURABILITY_QOS;
@@ -172,13 +172,13 @@ bool TypeLookupManager::assign_remote_endpoints(
 
     temp_reader_proxy_data_->clear();
     temp_reader_proxy_data_->m_expectsInlineQos = false;
-    temp_reader_proxy_data_->guid().guidPrefix = pdata.m_guid.guidPrefix;
+    temp_reader_proxy_data_->guid().guidPrefix = pdata.guid.guidPrefix;
     temp_reader_proxy_data_->set_remote_locators(pdata.metatraffic_locators, network, true, pdata.is_from_this_host());
     temp_reader_proxy_data_->topicKind(NO_KEY);
     temp_reader_proxy_data_->m_qos.m_durability.kind = fastdds::dds::VOLATILE_DURABILITY_QOS;
     temp_reader_proxy_data_->m_qos.m_reliability.kind = fastdds::dds::RELIABLE_RELIABILITY_QOS;
 
-    EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "for RTPSParticipant: " << pdata.m_guid);
+    EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "for RTPSParticipant: " << pdata.guid);
 
     auxendp &= rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_WRITER;
 
@@ -228,10 +228,10 @@ void TypeLookupManager::remove_remote_endpoints(
         fastdds::rtps::ParticipantProxyData* pdata)
 {
     fastdds::rtps::GUID_t tmp_guid;
-    tmp_guid.guidPrefix = pdata->m_guid.guidPrefix;
+    tmp_guid.guidPrefix = pdata->guid.guidPrefix;
 
-    EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "for RTPSParticipant: " << pdata->m_guid);
-    uint32_t endp = pdata->m_availableBuiltinEndpoints;
+    EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "for RTPSParticipant: " << pdata->guid);
+    uint32_t endp = pdata->m_available_builtin_endpoints;
     uint32_t partdet = endp;
     uint32_t auxendp = endp;
     partdet &= rtps::DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR; //Habria que quitar esta linea que comprueba si tiene PDP.
