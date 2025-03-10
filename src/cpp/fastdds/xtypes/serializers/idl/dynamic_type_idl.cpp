@@ -724,6 +724,15 @@ ReturnCode_t bitmask_to_idl(
     {
         EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Bitmask type has " << bounds.size() << " bounds instead of one.");
         return RETCODE_BAD_PARAMETER;
+    }    
+    
+    // Add types name and resolve module structure
+    std::string type_name = node.info.type_kind_name;
+    int n_modules = resolve_module_structure(type_name, idl);
+
+    for (int i = 0; i < n_modules; i++)
+    {
+        idl << TAB_SEPARATOR;
     }
 
     // Annotation with the bitmask size
@@ -734,10 +743,6 @@ ReturnCode_t bitmask_to_idl(
     {
         idl << "@bit_bound(" << std::to_string(bitmask_size) << ")\n";
     }
-
-    // Add types name and resolve module structure
-    std::string type_name = node.info.type_kind_name;
-    int n_modules = resolve_module_structure(type_name, idl);
 
     for (int i = 0; i < n_modules; i++)
     {
@@ -1074,7 +1079,7 @@ ReturnCode_t struct_to_idl(
         idl << TAB_SEPARATOR;
     }
 
-    idl << "struct " << type_name << "\n";
+    idl << "struct " << type_name;
 
     const auto base_type = type_descriptor->base_type();
 
@@ -1092,6 +1097,8 @@ ReturnCode_t struct_to_idl(
             return ret;
         }
     }
+    
+    idl << "\n";
 
     for (int i = 0; i < n_modules; i++)
     {
