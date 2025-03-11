@@ -134,12 +134,9 @@ bool BaseReader::matched_writer_add(
         const PublicationBuiltinTopicData& info)
 {
     const auto& alloc = mp_RTPSParticipant->get_attributes().allocation;
-    WriterProxyData wdata(
-        alloc.locators.max_unicast_locators,
-        alloc.locators.max_multicast_locators,
-        alloc.data_limits);
+    WriterProxyData wdata(alloc.data_limits,
+                          info);
 
-    from_builtin_to_proxy(info, wdata);
     return matched_writer_add_edp(wdata);
 }
 

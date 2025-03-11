@@ -2873,7 +2873,7 @@ bool RTPSParticipantImpl::get_publication_info(
 
     if (mp_builtinProtocols->mp_PDP->lookupWriterProxyData(writer_guid, wproxy_data))
     {
-        from_proxy_to_builtin(wproxy_data, data);
+        data = wproxy_data;
         ret = true;
     }
 
@@ -3144,7 +3144,7 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
 
     if (ret)
     {
-        from_proxy_to_builtin(writer_data, data);
+        data = writer_data;
     }
 
     return ret;

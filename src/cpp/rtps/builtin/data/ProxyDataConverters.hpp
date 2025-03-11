@@ -35,26 +35,6 @@ void from_proxy_to_builtin(
         SubscriptionBuiltinTopicData& builtin_data);
 
 /**
- * Convert a WriterProxyData to a PublicationBuiltinTopicData.
- *
- * @param [in]  proxy_data    WriterProxyData to convert.
- * @param [out] builtin_data  PublicationBuiltinTopicData to fill.
- */
-void from_proxy_to_builtin(
-        const WriterProxyData& proxy_data,
-        PublicationBuiltinTopicData& builtin_data);
-
-/**
- * Convert a PublicationBuiltinTopicData to a WriterProxyData.
- *
- * @param [in]   builtin_data  PublicationBuiltinTopicData to convert.
- * @param [out]  proxy_data    WriterProxyData to fill.
- */
-void from_builtin_to_proxy(
-        const PublicationBuiltinTopicData& proxy_data,
-        WriterProxyData& builtin_data);
-
-/**
  * Convert a SubscriptionBuiltinTopicData to a ReaderProxyData.
  *
  * @param [in]   builtin_data  SubscriptionBuiltinTopicData to convert.
