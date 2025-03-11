@@ -24,6 +24,7 @@
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
+#include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
@@ -38,66 +39,41 @@ namespace rtps {
 
 class NetworkFactory;
 
-class WriterProxyData
+class WriterProxyData : public PublicationBuiltinTopicData
 {
 public:
 
     WriterProxyData(
-            size_t max_unicast_locators,
-            size_t max_multicast_locators)
-        : remote_locators_(max_unicast_locators, max_multicast_locators)
-        , topic_kind_(NO_KEY)
-        , is_alive_(true)
-        , type_info_()
-        , m_typeMaxSerialized(0)
-        , m_userDefinedId(0)
+            const size_t max_unicast_locators,
+            const size_t max_multicast_locators,
+            const VariableLengthDataLimits& data_limits)
+        : PublicationBuiltinTopicData(max_unicast_locators, max_multicast_locators, data_limits)
+#if HAVE_SECURITY
+        , security_attributes_(0)
+        , plugin_security_attributes_(0)
+#else
+        : m_network_configuration(0)
+#endif // if HAVE_SECURITY
+        , m_user_defined_id(0)
     {
-        m_qos.m_userData.set_max_size(0);
-        m_qos.m_partition.set_max_size(0);
+
     }
 
     WriterProxyData(
-            size_t max_unicast_locators,
-            size_t max_multicast_locators,
-            const VariableLengthDataLimits& data_limits)
-        : remote_locators_(max_unicast_locators, max_multicast_locators)
-        , topic_kind_(NO_KEY)
-        , is_alive_(true)
-        , type_info_()
-        , m_typeMaxSerialized(0)
-        , m_userDefinedId(0)
+            const size_t max_unicast_locators,
+            const size_t max_multicast_locators)
+        : WriterProxyData(max_unicast_locators, max_multicast_locators, VariableLengthDataLimits())
     {
-        m_qos.m_userData.set_max_size((uint32_t)data_limits.max_user_data);
-        m_qos.m_partition.set_max_size((uint32_t)data_limits.max_partitions);
     }
 
-    const GUID_t& guid() const
+    WriterProxyData(
+            const VariableLengthDataLimits&,
+            const PublicationBuiltinTopicData& publication_data)
+        : PublicationBuiltinTopicData(publication_data)
     {
-        return m_guid;
-    }
-
-    GUID_t& guid()
-    {
-        return m_guid;
-    }
-
-    void guid (
-            const GUID_t& guid)
-    {
-        m_guid = guid;
     }
 
     void clear()
-    {
-    }
-
-    const GUID_t& persistence_guid() const
-    {
-        return m_guid;
-    }
-
-    void persistence_guid(
-            const GUID_t& /*guid*/)
     {
     }
 
@@ -123,13 +99,13 @@ public:
     void add_unicast_locator(
             const Locator_t& locator)
     {
-        remote_locators_.add_unicast_locator(locator);
+        remote_locators.add_unicast_locator(locator);
     }
 
     void add_multicast_locator(
             const Locator_t& locator)
     {
-        remote_locators_.add_multicast_locator(locator);
+        remote_locators.add_multicast_locator(locator);
     }
 
     void set_multicast_locators(
@@ -142,56 +118,7 @@ public:
 
     bool has_locators() const
     {
-        return !remote_locators_.unicast.empty() || !remote_locators_.multicast.empty();
-    }
-
-    const RemoteLocatorList& remote_locators() const
-    {
-        return remote_locators_;
-    }
-
-    void typeName(
-            const fastcdr::string_255& typeName)
-    {
-        type_name_ = typeName;
-    }
-
-    const fastcdr::string_255& typeName() const
-    {
-        return type_name_;
-    }
-
-    void topicName(
-            const fastcdr::string_255& topicName)
-    {
-        topic_name_ = topicName;
-    }
-
-    const fastcdr::string_255& topicName() const
-    {
-        return topic_name_;
-    }
-
-    void topicKind(
-            TopicKind_t topicKind)
-    {
-        topic_kind_ = topicKind;
-    }
-
-    TopicKind_t topicKind() const
-    {
-        return topic_kind_;
-    }
-
-    void isAlive (
-            bool alive)
-    {
-        is_alive_ = alive;
-    }
-
-    bool isAlive () const
-    {
-        return is_alive_;
+        return !remote_locators.unicast.empty() || !remote_locators.multicast.empty();
     }
 
     bool has_type_information () const
@@ -217,20 +144,20 @@ public:
         return type_info_;
     }
 
-    void typeMaxSerialized(
+    void type_max_serialized(
             uint32_t typeMaxSerialized)
     {
-        m_typeMaxSerialized = typeMaxSerialized;
+        max_serialized_size = typeMaxSerialized;
     }
 
-    uint32_t typeMaxSerialized() const
+    uint32_t type_max_serialized() const
     {
-        return m_typeMaxSerialized;
+        return max_serialized_size;
     }
 
-    uint32_t& typeMaxSerialized()
+    uint32_t& type_max_serialized()
     {
-        return m_typeMaxSerialized;
+        return max_serialized_size;
     }
 
     void key(
@@ -255,26 +182,26 @@ public:
         return m_key;
     }
 
-    void RTPSParticipantKey(
+    void rtps_participant_key(
             const InstanceHandle_t& RTPSParticipantKey)
     {
-        m_RTPSParticipantKey = RTPSParticipantKey;
+        m_rtps_participant_key = RTPSParticipantKey;
     }
 
-    void RTPSParticipantKey(
+    void rtps_participant_key(
             InstanceHandle_t&& RTPSParticipantKey)
     {
-        m_RTPSParticipantKey = std::move(RTPSParticipantKey);
+        m_rtps_participant_key = std::move(RTPSParticipantKey);
     }
 
-    InstanceHandle_t RTPSParticipantKey() const
+    InstanceHandle_t rtps_participant_key() const
     {
-        return m_RTPSParticipantKey;
+        return m_rtps_participant_key;
     }
 
-    InstanceHandle_t& RTPSParticipantKey()
+    InstanceHandle_t& rtps_participant_key()
     {
-        return m_RTPSParticipantKey;
+        return m_rtps_participant_key;
     }
 
     void set_locators(
@@ -283,26 +210,20 @@ public:
 
     }
 
-    void userDefinedId(
-            uint16_t userDefinedId)
+    void user_defined_id(
+            uint16_t user_defined_id)
     {
-        m_userDefinedId = userDefinedId;
+        m_user_defined_id = user_defined_id;
     }
 
-    uint16_t userDefinedId() const
+    uint16_t user_defined_id() const
     {
-        return m_userDefinedId;
+        return m_user_defined_id;
     }
 
-    uint16_t& userDefinedId()
+    uint16_t& user_defined_id()
     {
-        return m_userDefinedId;
-    }
-
-    void copy(
-            WriterProxyData* /*wdat*/)
-    {
-
+        return m_user_defined_id;
     }
 
 #if HAVE_SECURITY
@@ -310,21 +231,12 @@ public:
     security::PluginEndpointSecurityAttributesMask plugin_security_attributes_ = 0UL;
 #endif // if HAVE_SECURITY
 
-    fastdds::dds::WriterQos m_qos;
-
 private:
 
-    GUID_t m_guid;
-    RemoteLocatorList remote_locators_;
-    fastcdr::string_255 topic_name_;
-    fastcdr::string_255 type_name_;
-    TopicKind_t topic_kind_;
-    bool is_alive_;
     fastdds::dds::xtypes::TypeInformationParameter type_info_;
-    uint32_t m_typeMaxSerialized;
     InstanceHandle_t m_key;
-    InstanceHandle_t m_RTPSParticipantKey;
-    uint16_t m_userDefinedId;
+    InstanceHandle_t m_rtps_participant_key;
+    uint16_t m_user_defined_id;
     bool has_type_info_ {false};
 };
 

@@ -23,6 +23,7 @@
 
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
+#include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
@@ -42,7 +43,7 @@ class ParticipantProxyData;
 /**
  **@ingroup BUILTIN_MODULE
  */
-class WriterProxyData
+class WriterProxyData : public PublicationBuiltinTopicData
 {
 public:
 
@@ -55,6 +56,10 @@ public:
             const size_t max_multicast_locators,
             const VariableLengthDataLimits& data_limits);
 
+    WriterProxyData(
+            const VariableLengthDataLimits& data_limits,
+            const PublicationBuiltinTopicData& publication_data);
+
     virtual ~WriterProxyData();
 
     WriterProxyData(
@@ -63,86 +68,37 @@ public:
     WriterProxyData& operator =(
             const WriterProxyData& writerInfo);
 
-    void guid(
-            const GUID_t& guid)
+    void networkConfiguration(
+            const NetworkConfigSet_t& network_configuration)
     {
-        m_guid = guid;
-    }
-
-    void guid(
-            GUID_t&& guid)
-    {
-        m_guid = std::move(guid);
-    }
-
-    const GUID_t& guid() const
-    {
-        return m_guid;
-    }
-
-    GUID_t& guid()
-    {
-        return m_guid;
+        m_network_configuration = network_configuration;
     }
 
     void networkConfiguration(
-            const NetworkConfigSet_t& networkConfiguration)
+            NetworkConfigSet_t&& network_configuration)
     {
-        m_networkConfiguration = networkConfiguration;
-    }
-
-    void networkConfiguration(
-            NetworkConfigSet_t&& networkConfiguration)
-    {
-        m_networkConfiguration = std::move(networkConfiguration);
+        m_network_configuration = std::move(network_configuration);
     }
 
     const NetworkConfigSet_t& networkConfiguration() const
     {
-        return m_networkConfiguration;
+        return m_network_configuration;
     }
 
     NetworkConfigSet_t& networkConfiguration()
     {
-        return m_networkConfiguration;
-    }
-
-    void persistence_guid(
-            const GUID_t& guid)
-    {
-        persistence_guid_ = guid;
-    }
-
-    void persistence_guid(
-            GUID_t&& guid)
-    {
-        persistence_guid_ = std::move(guid);
-    }
-
-    GUID_t persistence_guid() const
-    {
-        return persistence_guid_;
-    }
-
-    GUID_t& persistence_guid()
-    {
-        return persistence_guid_;
+        return m_network_configuration;
     }
 
     void set_persistence_entity_id(
             const EntityId_t& nid)
     {
-        persistence_guid_.entityId = persistence_guid_.guidPrefix != c_GuidPrefix_Unknown ? nid : c_EntityId_Unknown;
+        persistence_guid.entityId = persistence_guid.guidPrefix != c_GuidPrefix_Unknown ? nid : c_EntityId_Unknown;
     }
 
     bool has_locators() const
     {
-        return !remote_locators_.unicast.empty() || !remote_locators_.multicast.empty();
-    }
-
-    const RemoteLocatorList& remote_locators() const
-    {
-        return remote_locators_;
+        return !remote_locators.unicast.empty() || !remote_locators.multicast.empty();
     }
 
     void add_unicast_locator(
@@ -214,118 +170,58 @@ public:
         return m_key;
     }
 
-    void RTPSParticipantKey(
-            const InstanceHandle_t& RTPSParticipantKey)
+    void rtps_participant_key(
+            const InstanceHandle_t& rtps_participant_key)
     {
-        m_RTPSParticipantKey = RTPSParticipantKey;
+        m_rtps_participant_key = rtps_participant_key;
     }
 
-    void RTPSParticipantKey(
-            InstanceHandle_t&& RTPSParticipantKey)
+    void rtps_participant_key(
+            InstanceHandle_t&& rtps_participant_key)
     {
-        m_RTPSParticipantKey = std::move(RTPSParticipantKey);
+        m_rtps_participant_key = std::move(rtps_participant_key);
     }
 
-    InstanceHandle_t RTPSParticipantKey() const
+    InstanceHandle_t rtps_participant_key() const
     {
-        return m_RTPSParticipantKey;
+        return m_rtps_participant_key;
     }
 
-    InstanceHandle_t& RTPSParticipantKey()
+    InstanceHandle_t& rtps_participant_key()
     {
-        return m_RTPSParticipantKey;
+        return m_rtps_participant_key;
     }
 
-    void typeName(
-            const fastcdr::string_255& typeName)
+    void user_defined_id(
+            uint16_t user_defined_id)
     {
-        m_typeName = typeName;
+        m_user_defined_id = user_defined_id;
     }
 
-    void typeName(
-            fastcdr::string_255&& typeName)
+    uint16_t user_defined_id() const
     {
-        m_typeName = std::move(typeName);
+        return m_user_defined_id;
     }
 
-    const fastcdr::string_255& typeName() const
+    uint16_t& user_defined_id()
     {
-        return m_typeName;
+        return m_user_defined_id;
     }
 
-    fastcdr::string_255& typeName()
+    void type_max_serialized(
+            uint32_t type_max_serialized)
     {
-        return m_typeName;
+        max_serialized_size = type_max_serialized;
     }
 
-    void topicName(
-            const fastcdr::string_255& topicName)
+    uint32_t type_max_serialized() const
     {
-        m_topicName = topicName;
+        return max_serialized_size;
     }
 
-    void topicName(
-            fastcdr::string_255&& topicName)
+    uint32_t& type_max_serialized()
     {
-        m_topicName = std::move(topicName);
-    }
-
-    const fastcdr::string_255& topicName() const
-    {
-        return m_topicName;
-    }
-
-    fastcdr::string_255& topicName()
-    {
-        return m_topicName;
-    }
-
-    void userDefinedId(
-            uint16_t userDefinedId)
-    {
-        m_userDefinedId = userDefinedId;
-    }
-
-    uint16_t userDefinedId() const
-    {
-        return m_userDefinedId;
-    }
-
-    uint16_t& userDefinedId()
-    {
-        return m_userDefinedId;
-    }
-
-    void typeMaxSerialized(
-            uint32_t typeMaxSerialized)
-    {
-        m_typeMaxSerialized = typeMaxSerialized;
-    }
-
-    uint32_t typeMaxSerialized() const
-    {
-        return m_typeMaxSerialized;
-    }
-
-    uint32_t& typeMaxSerialized()
-    {
-        return m_typeMaxSerialized;
-    }
-
-    void topicKind(
-            TopicKind_t topicKind)
-    {
-        m_topicKind = topicKind;
-    }
-
-    TopicKind_t topicKind() const
-    {
-        return m_topicKind;
-    }
-
-    TopicKind_t& topicKind()
-    {
-        return m_topicKind;
+        return max_serialized_size;
     }
 
     void type_id(
@@ -406,9 +302,6 @@ public:
         return m_type_information != nullptr;
     }
 
-    //!WriterQOS
-    fastdds::dds::WriterQos m_qos;
-
     /**
      * Set participant client server sample identity
      * @param sid valid SampleIdentity
@@ -454,10 +347,6 @@ public:
     void update(
             WriterProxyData* wdata);
 
-    //!Copy all information from another object.
-    void copy(
-            WriterProxyData* wdata);
-
     /**
      * Get the size in bytes of the CDR serialization of this object.
      * @param include_encapsulation Whether to include the size of the encapsulation info.
@@ -483,7 +372,7 @@ public:
             fastdds::rtps::VendorId_t source_vendor_id = c_VendorId_eProsima);
 
     /**
-     * Transform and set the remote locators from the remote_locators_ of another WriterProxyData.
+     * Transform and set the remote locators from the remote_locators of another WriterProxyData.
      * If the received WriterProxyData has no locators, remote locators will be extracted from the
      * ParticipantProxyData.
      * @param wdata WriterProxyData to get the locators from
@@ -497,38 +386,22 @@ public:
 
 private:
 
-    //!GUID
-    GUID_t m_guid;
+    /**
+     * Initialize the common attributes of the ReaderProxyData.
+     */
+    void init(const VariableLengthDataLimits& data_limits);
 
     //!Network configuration
-    NetworkConfigSet_t m_networkConfiguration;
-
-    //!Holds locator information
-    RemoteLocatorList remote_locators_;
+    NetworkConfigSet_t m_network_configuration;
 
     //!GUID_t of the Writer converted to InstanceHandle_t
     InstanceHandle_t m_key;
 
     //!GUID_t of the participant converted to InstanceHandle
-    InstanceHandle_t m_RTPSParticipantKey;
-
-    //!Type name
-    fastcdr::string_255 m_typeName;
-
-    //!Topic name
-    fastcdr::string_255 m_topicName;
+    InstanceHandle_t m_rtps_participant_key;
 
     //!User defined ID
-    uint16_t m_userDefinedId;
-
-    //!Maximum size of the type associated with this Wrtiter, serialized.
-    uint32_t m_typeMaxSerialized;
-
-    //!Topic kind
-    TopicKind_t m_topicKind;
-
-    //!Persistence GUID
-    GUID_t persistence_guid_;
+    uint16_t m_user_defined_id;
 
     //!Type Identifier
     dds::TypeIdV1* m_type_id;
