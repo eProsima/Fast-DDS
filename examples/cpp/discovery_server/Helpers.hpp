@@ -30,7 +30,6 @@ enum class TransportKind : uint8_t
     UDPv6,
     TCPv4,
     TCPv6,
-    SHM,
 };
 
 inline bool is_ip(
