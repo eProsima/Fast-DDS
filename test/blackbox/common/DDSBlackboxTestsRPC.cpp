@@ -82,3 +82,49 @@ TEST(RPC, Exceptions)
     rpc::RemoteUnsupportedError unsupported_error("Still not implemented");
     EXPECT_NE(unsupported_error.what(), nullptr);
 }
+
+TEST(RPC, ThrowExceptions)
+{
+    EXPECT_THROW(throw rpc::RpcException("Generic exception"), rpc::RpcException);
+    EXPECT_THROW(throw rpc::RpcException(std::string("Generic exception")), rpc::RpcException);
+
+    EXPECT_THROW(throw rpc::RpcBrokenPipeException(true), rpc::RpcBrokenPipeException);
+    EXPECT_THROW(throw rpc::RpcBrokenPipeException(false), rpc::RpcBrokenPipeException);
+    EXPECT_THROW(throw rpc::RpcBrokenPipeException(false), rpc::RpcException);
+
+    EXPECT_THROW(throw rpc::RpcFeedCancelledException(rpc::RPC_STATUS_CODE_OK), rpc::RpcFeedCancelledException);
+    EXPECT_THROW(throw rpc::RpcFeedCancelledException(rpc::RPC_STATUS_CODE_OK), rpc::RpcException);
+
+    EXPECT_THROW(throw rpc::RpcOperationError("Operation error"), rpc::RpcOperationError);
+    EXPECT_THROW(throw rpc::RpcOperationError(std::string("Operation error")), rpc::RpcOperationError);
+    EXPECT_THROW(throw rpc::RpcOperationError("Operation error"), rpc::RpcException);
+
+    EXPECT_THROW(throw rpc::RpcTimeoutException(), rpc::RpcTimeoutException);
+    EXPECT_THROW(throw rpc::RpcTimeoutException(), rpc::RpcException);
+
+    EXPECT_THROW(throw rpc::RpcRemoteException(rpc::RemoteExceptionCode_t::REMOTE_EX_OK,
+            "Remote exception"), rpc::RpcRemoteException);
+    EXPECT_THROW(throw rpc::RpcRemoteException(rpc::RemoteExceptionCode_t::REMOTE_EX_OK,
+            "Remote exception"), rpc::RpcException);
+
+    EXPECT_THROW(throw rpc::RemoteInvalidArgumentError("Invalid argument"), rpc::RemoteInvalidArgumentError);
+    EXPECT_THROW(throw rpc::RemoteInvalidArgumentError("Invalid argument"), rpc::RpcRemoteException);
+    EXPECT_THROW(throw rpc::RemoteInvalidArgumentError("Invalid argument"), rpc::RpcException);
+
+    EXPECT_THROW(throw rpc::RemoteOutOfResourcesError("Not enough memory"), rpc::RemoteOutOfResourcesError);
+    EXPECT_THROW(throw rpc::RemoteOutOfResourcesError("Not enough memory"), rpc::RpcRemoteException);
+    EXPECT_THROW(throw rpc::RemoteOutOfResourcesError("Not enough memory"), rpc::RpcException);
+
+    EXPECT_THROW(throw rpc::RemoteUnknownExceptionError("std::exception"), rpc::RemoteUnknownExceptionError);
+    EXPECT_THROW(throw rpc::RemoteUnknownExceptionError("std::exception"), rpc::RpcRemoteException);
+    EXPECT_THROW(throw rpc::RemoteUnknownExceptionError("std::exception"), rpc::RpcException);
+
+    EXPECT_THROW(throw rpc::RemoteUnknownOperationError(
+                "Operation hash 0123456789abcdef"), rpc::RemoteUnknownOperationError);
+    EXPECT_THROW(throw rpc::RemoteUnknownOperationError("Operation hash 0123456789abcdef"), rpc::RpcRemoteException);
+    EXPECT_THROW(throw rpc::RemoteUnknownOperationError("Operation hash 0123456789abcdef"), rpc::RpcException);
+
+    EXPECT_THROW(throw rpc::RemoteUnsupportedError("Still not implemented"), rpc::RemoteUnsupportedError);
+    EXPECT_THROW(throw rpc::RemoteUnsupportedError("Still not implemented"), rpc::RpcRemoteException);
+    EXPECT_THROW(throw rpc::RemoteUnsupportedError("Still not implemented"), rpc::RpcException);
+}
