@@ -2230,28 +2230,55 @@ XMLP_ret XMLParser::fillDataNode(
         DataNode<fastdds::xmlparser::ParticipantAttributes>& participant_node)
 {
     /*
-        <xs:complexType name="rtpsParticipantAttributesType">
-            <xs:all minOccurs="0">
-                <xs:element name="domainId" type="uint32Type" minOccurs="0"/>
-                <xs:element name="allocation" type="rtpsParticipantAllocationAttributesType" minOccurs="0"/>
-                <xs:element name="prefix" type="guid" minOccurs="0"/>
-                <xs:element name="default_external_unicast_locators" type="externalLocatorListType" minOccurs="0"/>
-                <xs:element name="ignore_non_matching_locators" type="boolType" minOccurs="0"/>
-                <xs:element name="defaultUnicastLocatorList" type="locatorListType" minOccurs="0"/>
-                <xs:element name="defaultMulticastLocatorList" type="locatorListType" minOccurs="0"/>
-                <xs:element name="sendSocketBufferSize" type="uint32Type" minOccurs="0"/>
-                <xs:element name="listenSocketBufferSize" type="uint32Type" minOccurs="0"/>
-                <xs:element name="netmask_filter" type="netmaskFilterType" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="builtin" type="builtinAttributesType" minOccurs="0"/>
-                <xs:element name="port" type="portType" minOccurs="0"/>
-                <xs:element name="userData" type="octetVectorType" minOccurs="0"/>
-                <xs:element name="participantID" type="int32Type" minOccurs="0"/>
-                <xs:element name="easy_mode_ip" type="stringType" minOccurs="0"/>
-                <xs:element name="flow_controller_descriptors" type="flowControllerDescriptorsType" minOccurs="0"/>
-                <xs:element name="userTransports" type="stringListType" minOccurs="0"/>
-                <xs:element name="useBuiltinTransports" type="boolType" minOccurs="0"/>
-                <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
-                <xs:element name="name" type="stringType" minOccurs="0"/>
+        <xs:complexType name="participantProfileType">
+            <xs:all>
+                <xs:element name="domainId" type="domainIDType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="rtps" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:all>
+                            <xs:element name="name" type="string" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="defaultUnicastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="defaultMulticastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="default_external_unicast_locators" type="externalLocatorListType" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="ignore_non_matching_locators" type="boolean" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="sendSocketBufferSize" type="uint32" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="listenSocketBufferSize" type="uint32" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="netmask_filter" minOccurs="0" maxOccurs="1">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:enumeration value="OFF"/>
+                                        <xs:enumeration value="AUTO"/>
+                                        <xs:enumeration value="ON"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element name="builtin" type="builtinAttributesType" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="port" type="portType" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="participantID" type="int32" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="easy_mode_ip" type="string" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="userTransports" minOccurs="0" maxOccurs="1">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="transport_id" type="string" minOccurs="1" maxOccurs="unbounded"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="useBuiltinTransports" type="boolean" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="builtinTransports" type="builtinTransportsType" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="allocation" type="rtpsParticipantAllocationAttributesType"  minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="userData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="prefix" type="prefixType" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="flow_controller_descriptor_list" type="flowControllerDescriptorListType" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="builtin_controllers_sender_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="timed_events_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="discovery_server_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="typelookup_service_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="builtin_transports_reception_threads" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="security_log_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                        </xs:all>
+                    </xs:complexType>
+                </xs:element>
             </xs:all>
         </xs:complexType>
      */
@@ -2287,7 +2314,7 @@ XMLP_ret XMLParser::fillDataNode(
 
         if (strcmp(p_element->Name(), DOMAIN_ID) == 0)
         {
-            // domainId - uint32Type
+            // domainId - uint32
             if (XMLP_ret::XML_OK != getXMLUint(p_element, &participant_node.get()->domainId, ident))
             {
                 return XMLP_ret::XML_ERROR;
@@ -2344,7 +2371,7 @@ XMLP_ret XMLParser::fillDataNode(
         }
         else if (strcmp(name, IGN_NON_MATCHING_LOCS) == 0)
         {
-            // ignore_non_matching_locators - boolType
+            // ignore_non_matching_locators - boolean
             if (XMLP_ret::XML_OK !=
                     getXMLBool(p_aux0, &participant_node.get()->rtps.ignore_non_matching_locators, ident))
             {
@@ -2381,7 +2408,7 @@ XMLP_ret XMLParser::fillDataNode(
         }
         else if (strcmp(name, SEND_SOCK_BUF_SIZE) == 0)
         {
-            // sendSocketBufferSize - uint32Type
+            // sendSocketBufferSize - uint32
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &participant_node.get()->rtps.sendSocketBufferSize, ident))
             {
                 return XMLP_ret::XML_ERROR;
@@ -2389,7 +2416,7 @@ XMLP_ret XMLParser::fillDataNode(
         }
         else if (strcmp(name, LIST_SOCK_BUF_SIZE) == 0)
         {
-            // listenSocketBufferSize - uint32Type
+            // listenSocketBufferSize - uint32
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &participant_node.get()->rtps.listenSocketBufferSize, ident))
             {
                 return XMLP_ret::XML_ERROR;
@@ -2441,7 +2468,7 @@ XMLP_ret XMLParser::fillDataNode(
         }
         else if (strcmp(name, PART_ID) == 0)
         {
-            // participantID - int32Type
+            // participantID - int32
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &participant_node.get()->rtps.participantID, ident))
             {
                 return XMLP_ret::XML_ERROR;
@@ -2449,7 +2476,7 @@ XMLP_ret XMLParser::fillDataNode(
         }
         else if (strcmp(name, EASY_MODE_IP) == 0)
         {
-            // easy_mode_ip - stringType
+            // easy_mode_ip - string
             std::string str_aux;
             if (XMLP_ret::XML_OK != getXMLString(p_aux0, &str_aux, ident))
             {
@@ -2484,7 +2511,7 @@ XMLP_ret XMLParser::fillDataNode(
         }
         else if (strcmp(name, USE_BUILTIN_TRANS) == 0)
         {
-            // useBuiltinTransports - boolType
+            // useBuiltinTransports - boolean
             if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &participant_node.get()->rtps.useBuiltinTransports, ident))
             {
                 return XMLP_ret::XML_ERROR;
@@ -2511,7 +2538,7 @@ XMLP_ret XMLParser::fillDataNode(
         }
         else if (strcmp(name, NAME) == 0)
         {
-            // name - stringType
+            // name - string
             std::string s;
             if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident))
             {

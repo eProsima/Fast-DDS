@@ -79,7 +79,7 @@ const std::string& ros_easy_mode_env()
         // Check that the value is a valid IPv4 address
         if (!IPLocator::isIPv4(ip_value))
         {
-            EPROSIMA_LOG_ERROR(
+            EPROSIMA_LOG_WARNING(
                 SERVERATTRIBUTES,
                 "Invalid format: Easy Mode IP must be a valid IPv4 address. "
                 "Ignoring " << ROS2_EASY_MODE_URI << " value.");

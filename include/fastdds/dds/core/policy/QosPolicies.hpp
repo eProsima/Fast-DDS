@@ -2729,7 +2729,10 @@ public:
     bool ignore_non_matching_locators = false;
 
     /**
-     * Setter for ROS 2 Easy Mode IP
+     * @brief Setter for ROS 2 Easy Mode IP
+     *
+     * @param ip IP address to set
+     * @note The IP address must be an IPv4 address. If it is not, the IP address will not be set.
      */
     void easy_mode(
             std::string ip)
@@ -2751,7 +2754,9 @@ public:
     }
 
     /**
-     * Getter for ROS 2 Easy Mode IP
+     * @brief Getter for ROS 2 Easy Mode IP
+     *
+     * @return IP address if set, empty string otherwise
      */
     const std::string& easy_mode() const
     {
