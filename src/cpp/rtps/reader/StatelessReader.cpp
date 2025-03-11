@@ -125,10 +125,8 @@ bool StatelessReader::matched_writer_add_edp(
                 {
                     // call the listener without the lock taken
                     guard.unlock();
-                    PublicationBuiltinTopicData info;
-                    from_proxy_to_builtin(wdata, info);
-                    listener->on_writer_discovery(this, WriterDiscoveryStatus::CHANGED_QOS_WRITER, wdata.guid(),
-                            &info);
+                    listener->on_writer_discovery(this, WriterDiscoveryStatus::CHANGED_QOS_WRITER, wdata.guid,
+                            &wdata);
                 }
 
 #ifdef FASTDDS_STATISTICS
@@ -215,9 +213,7 @@ bool StatelessReader::matched_writer_add_edp(
 
     if (nullptr != listener)
     {
-        PublicationBuiltinTopicData info;
-        from_proxy_to_builtin(wdata, info);
-        listener->on_writer_discovery(this, WriterDiscoveryStatus::DISCOVERED_WRITER, wdata.guid(), &info);
+        listener->on_writer_discovery(this, WriterDiscoveryStatus::DISCOVERED_WRITER, wdata.guid, &wdata);
     }
 
 #ifdef FASTDDS_STATISTICS
