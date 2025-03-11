@@ -638,13 +638,13 @@ void PDPClient::removeRemoteEndpoints(
                 auto temp_writer_data = get_temporary_writer_proxies_pool().get();
 
                 temp_writer_data->clear();
-                temp_writer_data->guid(wguid);
-                temp_writer_data->persistence_guid(pdata->get_persistence_guid());
+                temp_writer_data->guid = wguid;
+                temp_writer_data->persistence_guid = pdata->get_persistence_guid();
                 temp_writer_data->set_persistence_entity_id(c_EntityId_SPDPWriter);
                 temp_writer_data->set_remote_locators(pdata->metatraffic_locators, network, true,
                         pdata->is_from_this_host());
-                temp_writer_data->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
-                temp_writer_data->m_qos.m_durability.kind = dds::TRANSIENT_DURABILITY_QOS;
+                temp_writer_data->reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
+                temp_writer_data->durability.kind = dds::TRANSIENT_DURABILITY_QOS;
                 endpoints->reader.reader_->matched_writer_add_edp(*temp_writer_data);
             }
         }
@@ -886,11 +886,11 @@ void PDPClient::match_pdp_writer_nts_(
     auto temp_writer_data = get_temporary_writer_proxies_pool().get();
 
     temp_writer_data->clear();
-    temp_writer_data->guid({ prefix_override, endpoints->writer.writer_->getGuid().entityId });
+    temp_writer_data->guid = { prefix_override, endpoints->writer.writer_->getGuid().entityId };
     temp_writer_data->set_multicast_locators(server_att.metatrafficMulticastLocatorList, network, from_this_host);
     temp_writer_data->set_remote_unicast_locators(server_att.metatrafficUnicastLocatorList, network, from_this_host);
-    temp_writer_data->m_qos.m_durability.kind = dds::TRANSIENT_DURABILITY_QOS;
-    temp_writer_data->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
+    temp_writer_data->durability.kind = dds::TRANSIENT_DURABILITY_QOS;
+    temp_writer_data->reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
 #if HAVE_SECURITY
     if (should_protect_discovery())
     {

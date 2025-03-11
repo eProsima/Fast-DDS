@@ -337,7 +337,7 @@ TEST_F(PDPTests, iproxy_queryable_get_all_local_proxies)
             pdp_->addWriterProxyData(entity_guid, part_guid,
                     [&entity_guid](WriterProxyData* wdata, bool, const ParticipantProxyData&)
                     {
-                        wdata->guid(entity_guid); return true;
+                        wdata->guid = entity_guid; return true;
                     });
         }
 
@@ -374,7 +374,7 @@ TEST_F(PDPTests, iproxy_queryable_get_all_local_proxies)
             pdp_->addWriterProxyData(entity_guid, other_part_guid,
                     [&entity_guid](WriterProxyData* wdata, bool, const ParticipantProxyData&)
                     {
-                        wdata->guid(entity_guid); return true;
+                        wdata->guid = entity_guid; return true;
                     });
         }
     }

@@ -112,8 +112,8 @@ TEST(BuiltinDataSerializationTests, ok_with_defaults)
         WriterProxyData out(max_unicast_locators, max_multicast_locators);
 
         // Topic and type name cannot be empty
-        in.topicName("TEST");
-        in.typeName("TestType");
+        in.topic_name = "TEST";
+        in.type_name = "TestType";
 
         // Perform serialization
         uint32_t msg_size = in.get_serialized_size(true);
@@ -668,9 +668,9 @@ TEST(BuiltinDataSerializationTests, other_vendor_parameter_list_with_custom_pids
 
         // WriterProxyData check
         WriterProxyData writer_pdata(max_unicast_locators, max_multicast_locators);
-        writer_pdata.persistence_guid(c_Guid_Unknown);
+        writer_pdata.persistence_guid = c_Guid_Unknown;
         writer_read(data_buffer, buffer_length, writer_pdata);
-        ASSERT_EQ(writer_pdata.persistence_guid(), c_Guid_Unknown);
+        ASSERT_EQ(writer_pdata.persistence_guid, c_Guid_Unknown);
 
         // ReaderProxyData check
         ReaderProxyData reader_pdata(max_unicast_locators, max_multicast_locators);
@@ -740,9 +740,9 @@ TEST(BuiltinDataSerializationTests, other_vendor_parameter_list_with_custom_pids
 
         // WriterProxyData check
         WriterProxyData writer_pdata(max_unicast_locators, max_multicast_locators);
-        writer_pdata.m_qos.m_disablePositiveACKs.enabled = false;
+        writer_pdata.disable_positive_acks.enabled = false;
         writer_read(data_buffer, buffer_length, writer_pdata);
-        ASSERT_EQ(writer_pdata.m_qos.m_disablePositiveACKs.enabled, false);
+        ASSERT_EQ(writer_pdata.disable_positive_acks.enabled, false);
 
         // ReaderProxyData check
         ReaderProxyData reader_pdata(max_unicast_locators, max_multicast_locators);
@@ -776,10 +776,10 @@ TEST(BuiltinDataSerializationTests, other_vendor_parameter_list_with_custom_pids
 
         // WriterProxyData check
         WriterProxyData writer_pdata(max_unicast_locators, max_multicast_locators);
-        writer_pdata.m_qos.data_sharing.off();
-        writer_pdata.m_qos.data_sharing.set_max_domains(0);
+        writer_pdata.data_sharing.off();
+        writer_pdata.data_sharing.set_max_domains(0);
         writer_read(data_buffer, buffer_length, writer_pdata);
-        ASSERT_EQ(writer_pdata.m_qos.data_sharing.kind(), dds::OFF);
+        ASSERT_EQ(writer_pdata.data_sharing.kind(), dds::OFF);
 
         // ReaderProxyData check
         ReaderProxyData reader_pdata(max_unicast_locators, max_multicast_locators);
@@ -952,9 +952,9 @@ TEST(BuiltinDataSerializationTests, rti_parameter_list_with_custom_pids)
 
         // WriterProxyData check
         WriterProxyData writer_pdata(max_unicast_locators, max_multicast_locators);
-        writer_pdata.persistence_guid(c_Guid_Unknown);
+        writer_pdata.persistence_guid = c_Guid_Unknown;
         writer_read(data_buffer, buffer_length, writer_pdata);
-        ASSERT_EQ(writer_pdata.persistence_guid(), guid);
+        ASSERT_EQ(writer_pdata.persistence_guid, guid);
 
         // ReaderProxyData check
         ReaderProxyData reader_pdata(max_unicast_locators, max_multicast_locators);
@@ -1055,9 +1055,9 @@ TEST(BuiltinDataSerializationTests, rti_parameter_list_with_custom_pids)
 
         // WriterProxyData check
         WriterProxyData writer_pdata(max_unicast_locators, max_multicast_locators);
-        writer_pdata.m_qos.m_disablePositiveACKs.enabled = false;
+        writer_pdata.disable_positive_acks.enabled = false;
         writer_read(data_buffer, buffer_length, writer_pdata);
-        ASSERT_EQ(writer_pdata.m_qos.m_disablePositiveACKs.enabled, true);
+        ASSERT_EQ(writer_pdata.disable_positive_acks.enabled, true);
 
         // ReaderProxyData check
         ReaderProxyData reader_pdata(max_unicast_locators, max_multicast_locators);

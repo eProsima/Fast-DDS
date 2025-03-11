@@ -109,17 +109,17 @@ bool StatelessReader::matched_writer_add_edp(
 
         for (RemoteWriterInfo_t& writer : matched_writers_)
         {
-            if (writer.guid == wdata.guid())
+            if (writer.guid == wdata.guid)
             {
                 EPROSIMA_LOG_INFO(RTPS_READER, "Attempting to add existing writer, updating information");
 
                 if (dds::EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind &&
-                        writer.ownership_strength != wdata.m_qos.m_ownershipStrength.value)
+                        writer.ownership_strength != wdata.ownership_strength.value)
                 {
                     history_->writer_update_its_ownership_strength_nts(
-                        writer.guid, wdata.m_qos.m_ownershipStrength.value);
+                        writer.guid, wdata.ownership_strength.value);
                 }
-                writer.ownership_strength = wdata.m_qos.m_ownershipStrength.value;
+                writer.ownership_strength = wdata.ownership_strength.value;
 
                 if (nullptr != listener)
                 {
@@ -142,28 +142,28 @@ bool StatelessReader::matched_writer_add_edp(
             }
         }
 
-        bool is_same_process = RTPSDomainImpl::should_intraprocess_between(m_guid, wdata.guid());
+        bool is_same_process = RTPSDomainImpl::should_intraprocess_between(m_guid, wdata.guid);
         bool is_datasharing = is_datasharing_compatible_with(wdata);
 
         RemoteWriterInfo_t info;
-        info.guid = wdata.guid();
-        info.persistence_guid = wdata.persistence_guid();
-        info.has_manual_topic_liveliness = (dds::MANUAL_BY_TOPIC_LIVELINESS_QOS == wdata.m_qos.m_liveliness.kind);
+        info.guid = wdata.guid;
+        info.persistence_guid = wdata.persistence_guid;
+        info.has_manual_topic_liveliness = (dds::MANUAL_BY_TOPIC_LIVELINESS_QOS == wdata.liveliness.kind);
         info.is_datasharing = is_datasharing;
-        info.ownership_strength = wdata.m_qos.m_ownershipStrength.value;
+        info.ownership_strength = wdata.ownership_strength.value;
 
         if (is_datasharing)
         {
-            if (datasharing_listener_->add_datasharing_writer(wdata.guid(),
+            if (datasharing_listener_->add_datasharing_writer(wdata.guid,
                     m_att.durabilityKind == VOLATILE,
                     history_->m_att.maximumReservedCaches))
             {
-                EPROSIMA_LOG_INFO(RTPS_READER, "Writer Proxy " << wdata.guid() << " added to " << this->m_guid.entityId
+                EPROSIMA_LOG_INFO(RTPS_READER, "Writer Proxy " << wdata.guid << " added to " << this->m_guid.entityId
                                                                << " with data sharing");
             }
             else
             {
-                EPROSIMA_LOG_ERROR(RTPS_READER, "Failed to add Writer Proxy " << wdata.guid()
+                EPROSIMA_LOG_ERROR(RTPS_READER, "Failed to add Writer Proxy " << wdata.guid
                                                                               << " to " << this->m_guid.entityId
                                                                               << " with data sharing.");
                 return false;
@@ -173,14 +173,14 @@ bool StatelessReader::matched_writer_add_edp(
 
         if (matched_writers_.emplace_back(info) == nullptr)
         {
-            EPROSIMA_LOG_WARNING(RTPS_READER, "No space to add writer " << wdata.guid() << " to reader " << m_guid);
+            EPROSIMA_LOG_WARNING(RTPS_READER, "No space to add writer " << wdata.guid << " to reader " << m_guid);
             if (is_datasharing)
             {
-                datasharing_listener_->remove_datasharing_writer(wdata.guid());
+                datasharing_listener_->remove_datasharing_writer(wdata.guid);
             }
             return false;
         }
-        EPROSIMA_LOG_INFO(RTPS_READER, "Writer " << wdata.guid() << " added to reader " << m_guid);
+        EPROSIMA_LOG_INFO(RTPS_READER, "Writer " << wdata.guid << " added to reader " << m_guid);
 
         add_persistence_guid(info.guid, info.persistence_guid);
 
@@ -201,7 +201,7 @@ bool StatelessReader::matched_writer_add_edp(
         if ( wlp != nullptr)
         {
             wlp->sub_liveliness_manager_->add_writer(
-                wdata.guid(),
+                wdata.guid,
                 liveliness_kind_,
                 liveliness_lease_duration_);
         }

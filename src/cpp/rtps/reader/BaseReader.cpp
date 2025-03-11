@@ -135,7 +135,7 @@ bool BaseReader::matched_writer_add(
 {
     const auto& alloc = mp_RTPSParticipant->get_attributes().allocation;
     WriterProxyData wdata(alloc.data_limits,
-                          info);
+            info);
 
     return matched_writer_add_edp(wdata);
 }
@@ -478,12 +478,12 @@ bool BaseReader::is_datasharing_compatible_with(
         const fastdds::rtps::WriterProxyData& wdata)
 {
     if (!is_datasharing_compatible_ ||
-            wdata.m_qos.data_sharing.kind() == fastdds::dds::DataSharingKind::OFF)
+            wdata.data_sharing.kind() == fastdds::dds::DataSharingKind::OFF)
     {
         return false;
     }
 
-    for (auto id : wdata.m_qos.data_sharing.domain_ids())
+    for (auto id : wdata.data_sharing.domain_ids())
     {
         if (std::find(m_att.data_sharing_configuration().domain_ids().begin(),
                 m_att.data_sharing_configuration().domain_ids().end(), id)

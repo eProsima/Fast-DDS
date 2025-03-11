@@ -77,7 +77,7 @@ void EDPBasePUBListener::add_writer_from_change(
 
     if (temp_writer_data->readFromCDRMessage(&tempMsg, change->vendor_id))
     {
-        if (temp_writer_data->guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
+        if (temp_writer_data->guid.guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
         {
             EPROSIMA_LOG_INFO(RTPS_EDP, "Message from own RTPSParticipant, ignoring");
             return;
@@ -99,7 +99,7 @@ void EDPBasePUBListener::add_writer_from_change(
                                 {
                                     EPROSIMA_LOG_WARNING(RTPS_EDP,
                                             "Received incompatible update for WriterQos. writer_guid = " <<
-                                            data->guid());
+                                            data->guid);
                                 }
                                 *data = *temp_writer_data;
                                 data->setup_locators(*temp_writer_data, network, participant_data);
@@ -113,7 +113,7 @@ void EDPBasePUBListener::add_writer_from_change(
 
                     GUID_t participant_guid;
                     WriterProxyData* writer_data =
-                            edp->mp_PDP->addWriterProxyData(temp_writer_data->guid(), participant_guid, copy_data_fun);
+                            edp->mp_PDP->addWriterProxyData(temp_writer_data->guid, participant_guid, copy_data_fun);
 
                     if (writer_data != nullptr)
                     {

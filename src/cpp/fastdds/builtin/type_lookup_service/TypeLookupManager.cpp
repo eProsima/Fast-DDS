@@ -163,12 +163,12 @@ bool TypeLookupManager::assign_remote_endpoints(
 
     std::lock_guard<std::mutex> data_guard(temp_data_lock_);
 
-    temp_writer_proxy_data_->guid().guidPrefix = pdata.guid.guidPrefix;
-    temp_writer_proxy_data_->persistence_guid().guidPrefix = pdata.guid.guidPrefix;
+    temp_writer_proxy_data_->guid.guidPrefix = pdata.guid.guidPrefix;
+    temp_writer_proxy_data_->persistence_guid.guidPrefix = pdata.guid.guidPrefix;
     temp_writer_proxy_data_->set_remote_locators(pdata.metatraffic_locators, network, true, pdata.is_from_this_host());
-    temp_writer_proxy_data_->topicKind(NO_KEY);
-    temp_writer_proxy_data_->m_qos.m_durability.kind = fastdds::dds::VOLATILE_DURABILITY_QOS;
-    temp_writer_proxy_data_->m_qos.m_reliability.kind = fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    temp_writer_proxy_data_->topic_kind = NO_KEY;
+    temp_writer_proxy_data_->durability.kind = fastdds::dds::VOLATILE_DURABILITY_QOS;
+    temp_writer_proxy_data_->reliability.kind = fastdds::dds::RELIABLE_RELIABILITY_QOS;
 
     temp_reader_proxy_data_->clear();
     temp_reader_proxy_data_->m_expectsInlineQos = false;
@@ -185,8 +185,8 @@ bool TypeLookupManager::assign_remote_endpoints(
     if (auxendp != 0 && builtin_request_reader_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Adding remote writer to the local Builtin Request Reader");
-        temp_writer_proxy_data_->guid().entityId = fastdds::rtps::c_EntityId_TypeLookup_request_writer;
-        temp_writer_proxy_data_->persistence_guid().entityId = fastdds::rtps::c_EntityId_TypeLookup_request_writer;
+        temp_writer_proxy_data_->guid.entityId = fastdds::rtps::c_EntityId_TypeLookup_request_writer;
+        temp_writer_proxy_data_->persistence_guid.entityId = fastdds::rtps::c_EntityId_TypeLookup_request_writer;
         builtin_request_reader_->matched_writer_add_edp(*temp_writer_proxy_data_);
     }
 
@@ -196,8 +196,8 @@ bool TypeLookupManager::assign_remote_endpoints(
     if (auxendp != 0 && builtin_reply_reader_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Adding remote writer to the local Builtin Reply Reader");
-        temp_writer_proxy_data_->guid().entityId = fastdds::rtps::c_EntityId_TypeLookup_reply_writer;
-        temp_writer_proxy_data_->persistence_guid().entityId = fastdds::rtps::c_EntityId_TypeLookup_reply_writer;
+        temp_writer_proxy_data_->guid.entityId = fastdds::rtps::c_EntityId_TypeLookup_reply_writer;
+        temp_writer_proxy_data_->persistence_guid.entityId = fastdds::rtps::c_EntityId_TypeLookup_reply_writer;
         builtin_reply_reader_->matched_writer_add_edp(*temp_writer_proxy_data_);
     }
 

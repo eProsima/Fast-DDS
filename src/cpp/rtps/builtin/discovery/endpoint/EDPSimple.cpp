@@ -549,7 +549,7 @@ bool EDPSimple::process_writer_proxy_data(
         RTPSWriter* rtps_writer,
         WriterProxyData* wdata)
 {
-    EPROSIMA_LOG_INFO(RTPS_EDP, wdata->guid().entityId);
+    EPROSIMA_LOG_INFO(RTPS_EDP, wdata->guid.entityId);
     (void)rtps_writer;
 
     auto* writer = &publications_writer_;
@@ -760,19 +760,19 @@ void EDPSimple::assignRemoteEndpoints(
     auto temp_writer_proxy_data = get_temporary_writer_proxies_pool().get();
 
     temp_writer_proxy_data->clear();
-    temp_writer_proxy_data->guid().guidPrefix = pdata.guid.guidPrefix;
-    temp_writer_proxy_data->persistence_guid(pdata.get_persistence_guid());
+    temp_writer_proxy_data->guid.guidPrefix = pdata.guid.guidPrefix;
+    temp_writer_proxy_data->persistence_guid = pdata.get_persistence_guid();
     temp_writer_proxy_data->set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators,
             pdata.is_from_this_host());
-    temp_writer_proxy_data->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
-    temp_writer_proxy_data->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
+    temp_writer_proxy_data->durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    temp_writer_proxy_data->reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
 
     auxendp = endp;
     auxendp &= fastdds::rtps::DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
     if (auxendp != 0 && publications_reader_.first != nullptr) //Exist Pub Writer and i have pub reader
     {
         EPROSIMA_LOG_INFO(RTPS_EDP, "Adding SEDP Pub Writer to my Pub Reader");
-        temp_writer_proxy_data->guid().entityId = c_EntityId_SEDPPubWriter;
+        temp_writer_proxy_data->guid.entityId = c_EntityId_SEDPPubWriter;
         temp_writer_proxy_data->set_persistence_entity_id(c_EntityId_SEDPPubWriter);
         publications_reader_.first->matched_writer_add_edp(*temp_writer_proxy_data);
     }
@@ -789,7 +789,7 @@ void EDPSimple::assignRemoteEndpoints(
     if (auxendp != 0 && subscriptions_reader_.first != nullptr) //Exist Pub Announcer
     {
         EPROSIMA_LOG_INFO(RTPS_EDP, "Adding SEDP Sub Writer to my Sub Reader");
-        temp_writer_proxy_data->guid().entityId = c_EntityId_SEDPSubWriter;
+        temp_writer_proxy_data->guid.entityId = c_EntityId_SEDPSubWriter;
         temp_writer_proxy_data->set_persistence_entity_id(c_EntityId_SEDPSubWriter);
         subscriptions_reader_.first->matched_writer_add_edp(*temp_writer_proxy_data);
     }
@@ -807,7 +807,7 @@ void EDPSimple::assignRemoteEndpoints(
     auxendp &= fastdds::rtps::DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_ANNOUNCER;
     if (auxendp != 0 && publications_secure_reader_.first != nullptr && assign_secure_endpoints)
     {
-        temp_writer_proxy_data->guid().entityId = sedp_builtin_publications_secure_writer;
+        temp_writer_proxy_data->guid.entityId = sedp_builtin_publications_secure_writer;
         temp_writer_proxy_data->set_persistence_entity_id(sedp_builtin_publications_secure_writer);
 
         if (!mp_RTPSParticipant->security_manager().discovered_builtin_writer(
@@ -837,7 +837,7 @@ void EDPSimple::assignRemoteEndpoints(
     auxendp &= fastdds::rtps::DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER;
     if (auxendp != 0 && subscriptions_secure_reader_.first != nullptr && assign_secure_endpoints)
     {
-        temp_writer_proxy_data->guid().entityId = sedp_builtin_subscriptions_secure_writer;
+        temp_writer_proxy_data->guid.entityId = sedp_builtin_subscriptions_secure_writer;
         temp_writer_proxy_data->set_persistence_entity_id(sedp_builtin_subscriptions_secure_writer);
 
         if (!mp_RTPSParticipant->security_manager().discovered_builtin_writer(

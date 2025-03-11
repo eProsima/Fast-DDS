@@ -550,7 +550,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
                 delete(wdata);
                 return XMLP_ret::XML_ERROR;
             }
-            wdata->userDefinedId(id);
+            wdata->user_defined_id(id);
         }
         else if (key == ENTITY_ID)
         {
@@ -562,9 +562,9 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
                 return XMLP_ret::XML_ERROR;
             }
             octet* c = (octet*)&id;
-            wdata->guid().entityId.value[2] = c[0];
-            wdata->guid().entityId.value[1] = c[1];
-            wdata->guid().entityId.value[0] = c[2];
+            wdata->guid.entityId.value[2] = c[0];
+            wdata->guid.entityId.value[1] = c[1];
+            wdata->guid.entityId.value[0] = c[2];
         }
         else if (key == EXPECT_INLINE_QOS)
         {
@@ -573,20 +573,20 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
         else if (key == TOPIC)
         {
             const char* topicName = element->Attribute(NAME);
-            wdata->topicName(std::string(topicName ? topicName : EPROSIMA_UNKNOWN_STRING));
+            wdata->topic_name = std::string(topicName ? topicName : EPROSIMA_UNKNOWN_STRING);
             const char* typeName = element->Attribute(DATA_TYPE);
-            wdata->typeName(std::string(typeName ? typeName : EPROSIMA_UNKNOWN_STRING));
+            wdata->type_name = std::string(typeName ? typeName : EPROSIMA_UNKNOWN_STRING);
             const char* kind = element->Attribute(KIND);
             std::string auxString(kind ? kind : "");
             if (auxString == _NO_KEY)
             {
-                wdata->topicKind(NO_KEY);
-                wdata->guid().entityId.value[3] = 0x03;
+                wdata->topic_kind = NO_KEY;
+                wdata->guid.entityId.value[3] = 0x03;
             }
             else if (auxString == _WITH_KEY)
             {
-                wdata->topicKind(WITH_KEY);
-                wdata->guid().entityId.value[3] = 0x02;
+                wdata->topic_kind = WITH_KEY;
+                wdata->guid.entityId.value[3] = 0x02;
             }
             else
             {
@@ -594,10 +594,10 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
                 delete(wdata);
                 return XMLP_ret::XML_ERROR;
             }
-            if (wdata->topicName() == EPROSIMA_UNKNOWN_STRING || wdata->typeName() == EPROSIMA_UNKNOWN_STRING)
+            if (wdata->topic_name == EPROSIMA_UNKNOWN_STRING || wdata->type_name == EPROSIMA_UNKNOWN_STRING)
             {
                 EPROSIMA_LOG_ERROR(RTPS_EDP,
-                        "Bad XML file, topic: " << wdata->topicName() << " or typeName: " << wdata->typeName() <<
+                        "Bad XML file, topic: " << wdata->topic_name << " or typeName: " << wdata->type_name <<
                         " undefined");
                 delete(wdata);
                 return XMLP_ret::XML_ERROR;
@@ -605,24 +605,24 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
         }
         else if (key == TOPIC_NAME)
         {
-            wdata->topicName(std::string(get_element_text(element)));
+            wdata->topic_name = std::string(get_element_text(element));
         }
         else if (key == TOPIC_DATA_TYPE)
         {
-            wdata->typeName(std::string(get_element_text(element)));
+            wdata->type_name = std::string(get_element_text(element));
         }
         else if (key == TOPIC_KIND)
         {
             std::string auxString = std::string(get_element_text(element));
             if (auxString == _NO_KEY)
             {
-                wdata->topicKind(NO_KEY);
-                wdata->guid().entityId.value[3] = 0x03;
+                wdata->topic_kind = NO_KEY;
+                wdata->guid.entityId.value[3] = 0x03;
             }
             else if (auxString == _WITH_KEY)
             {
-                wdata->topicKind(WITH_KEY);
-                wdata->guid().entityId.value[3] = 0x02;
+                wdata->topic_kind = WITH_KEY;
+                wdata->guid.entityId.value[3] = 0x02;
             }
             else
             {
@@ -636,11 +636,11 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
             std::string auxString = std::string(get_element_text(element));
             if (auxString == _RELIABLE_RELIABILITY_QOS)
             {
-                wdata->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
+                wdata->reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
             }
             else if (auxString == _BEST_EFFORT_RELIABILITY_QOS)
             {
-                wdata->m_qos.m_reliability.kind = dds::BEST_EFFORT_RELIABILITY_QOS;
+                wdata->reliability.kind = dds::BEST_EFFORT_RELIABILITY_QOS;
             }
             else
             {
@@ -662,19 +662,19 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
             std::string auxstring = std::string(get_element_text(element));
             if (auxstring == _PERSISTENT_DURABILITY_QOS)
             {
-                wdata->m_qos.m_durability.kind = dds::PERSISTENT_DURABILITY_QOS;
+                wdata->durability.kind = dds::PERSISTENT_DURABILITY_QOS;
             }
             else if (auxstring == _TRANSIENT_DURABILITY_QOS)
             {
-                wdata->m_qos.m_durability.kind = dds::TRANSIENT_DURABILITY_QOS;
+                wdata->durability.kind = dds::TRANSIENT_DURABILITY_QOS;
             }
             else if (auxstring == _TRANSIENT_LOCAL_DURABILITY_QOS)
             {
-                wdata->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+                wdata->durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
             }
             else if (auxstring == _VOLATILE_DURABILITY_QOS)
             {
-                wdata->m_qos.m_durability.kind = dds::VOLATILE_DURABILITY_QOS;
+                wdata->durability.kind = dds::VOLATILE_DURABILITY_QOS;
             }
             else
             {
@@ -689,11 +689,11 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
             std::string auxstring(kind ? kind : OWNERSHIP_KIND_NOT_PRESENT);
             if (auxstring == _SHARED_OWNERSHIP_QOS)
             {
-                wdata->m_qos.m_ownership.kind = dds::SHARED_OWNERSHIP_QOS;
+                wdata->ownership.kind = dds::SHARED_OWNERSHIP_QOS;
             }
             else if (auxstring == _EXCLUSIVE_OWNERSHIP_QOS)
             {
-                wdata->m_qos.m_ownership.kind = dds::EXCLUSIVE_OWNERSHIP_QOS;
+                wdata->ownership.kind = dds::EXCLUSIVE_OWNERSHIP_QOS;
             }
             else
             {
@@ -703,11 +703,11 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
             }
             int strength = 0;
             element->QueryIntAttribute(STRENGTH, &strength);
-            wdata->m_qos.m_ownershipStrength.value = strength;
+            wdata->ownership_strength.value = strength;
         }
         else if (key == PARTITION_QOS)
         {
-            wdata->m_qos.m_partition.push_back(get_element_text(element).c_str());
+            wdata->partition.push_back(get_element_text(element).c_str());
         }
         else if (key == LIVELINESS_QOS)
         {
@@ -715,15 +715,15 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
             std::string auxstring(kind ? kind : LIVELINESS_KIND_NOT_PRESENT);
             if (auxstring == _AUTOMATIC_LIVELINESS_QOS)
             {
-                wdata->m_qos.m_liveliness.kind = dds::AUTOMATIC_LIVELINESS_QOS;
+                wdata->liveliness.kind = dds::AUTOMATIC_LIVELINESS_QOS;
             }
             else if (auxstring == _MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
             {
-                wdata->m_qos.m_liveliness.kind = dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+                wdata->liveliness.kind = dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
             }
             else if (auxstring == _MANUAL_BY_TOPIC_LIVELINESS_QOS)
             {
-                wdata->m_qos.m_liveliness.kind = dds::MANUAL_BY_TOPIC_LIVELINESS_QOS;
+                wdata->liveliness.kind = dds::MANUAL_BY_TOPIC_LIVELINESS_QOS;
             }
             else
             {
@@ -735,12 +735,12 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
             auxstring = std::string(leaseDuration_ms ? leaseDuration_ms : _INF);
             if (auxstring == _INF)
             {
-                wdata->m_qos.m_liveliness.lease_duration = dds::c_TimeInfinite;
+                wdata->liveliness.lease_duration = dds::c_TimeInfinite;
             }
             else
             {
                 uint32_t milliseclease = std::strtoul(auxstring.c_str(), nullptr, 10);
-                wdata->m_qos.m_liveliness.lease_duration =
+                wdata->liveliness.lease_duration =
                         fastdds::rtps::TimeConv::MilliSeconds2Time_t((double)milliseclease).to_duration_t();
                 if (milliseclease == 0)
                 {
@@ -752,7 +752,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
         {
             // Disable positive acks
             if (XMLP_ret::XML_OK !=
-                    XMLParser::getXMLDisablePositiveAcksQos(element, wdata->m_qos.m_disablePositiveACKs, 0))
+                    XMLParser::getXMLDisablePositiveAcksQos(element, wdata->disable_positive_acks, 0))
             {
                 return XMLP_ret::XML_ERROR;
             }
@@ -765,7 +765,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
         element = element->NextSiblingElement();
     }
 
-    if (wdata->userDefinedId() == 0)
+    if (wdata->user_defined_id() == 0)
     {
         EPROSIMA_LOG_ERROR(RTPS_EDP, "Writer XML endpoint with NO ID defined");
         delete(wdata);
@@ -823,7 +823,7 @@ XMLP_ret XMLEndpointParser::lookforWriter(
             for (std::vector<WriterProxyData*>::iterator wit = (*pit)->m_writers.begin();
                     wit != (*pit)->m_writers.end(); ++wit)
             {
-                if ((*wit)->userDefinedId() == id)
+                if ((*wit)->user_defined_id() == id)
                 {
                     *wdataptr = *wit;
                     return XMLP_ret::XML_OK;

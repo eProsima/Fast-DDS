@@ -121,7 +121,7 @@ std::string EDPServerPUBListener::get_writer_proxy_topic_name(
     auto temp_writer_data = get_pdp()->get_temporary_writer_proxies_pool().get();
     if (get_pdp()->lookupWriterProxyData(auxGUID, *temp_writer_data))
     {
-        topic_name = temp_writer_data->topicName().to_string();
+        topic_name = temp_writer_data->topic_name.to_string();
     }
     else
     {

@@ -1260,7 +1260,7 @@ bool Permissions::check_remote_datawriter(
 {
     bool returned_value = false;
     const AccessPermissionsHandle& rah = AccessPermissionsHandle::narrow(remote_handle);
-    const char* topic_name = publication_data.topicName().c_str();
+    const char* topic_name = publication_data.topic_name.c_str();
 
     if (rah.nil())
     {
@@ -1282,7 +1282,7 @@ bool Permissions::check_remote_datawriter(
     else
     {
         exception = _SecurityException_(
-            "Not found topic access rule for topic " + publication_data.topicName().to_string());
+            "Not found topic access rule for topic " + publication_data.topic_name.to_string());
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
         return false;
     }
@@ -1293,7 +1293,7 @@ bool Permissions::check_remote_datawriter(
         {
             if (is_topic_in_criterias(topic_name, rule.publishes))
             {
-                returned_value = check_rule(topic_name, rule, publication_data.m_qos.m_partition.getNames(),
+                returned_value = check_rule(topic_name, rule, publication_data.partition.getNames(),
                                 rule.publishes, exception);
                 break;
             }

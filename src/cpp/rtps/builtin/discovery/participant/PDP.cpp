@@ -773,7 +773,7 @@ bool PDP::lookupWriterProxyData(
             auto wit = pit->m_writers->find(writer.entityId);
             if ( wit != pit->m_writers->end())
             {
-                wdata.copy(wit->second);
+                wdata = *(wit->second);
                 return true;
             }
         }
@@ -861,7 +861,7 @@ bool PDP::removeWriterProxyData(
                 // notify monitor service
                 if (nullptr != get_proxy_observer())
                 {
-                    proxy_observer->on_remote_proxy_data_removed(pW->guid());
+                    proxy_observer->on_remote_proxy_data_removed(pW->guid);
                 }
 #endif // ifdef FASTDDS_STATISTICS
 
@@ -1150,7 +1150,7 @@ bool PDP::get_all_local_proxies(
     // Add all the writers and readers belonging to the participant
     for (auto& writer : *(local_participant->m_writers))
     {
-        guids.push_back(writer.second->guid());
+        guids.push_back(writer.second->guid);
     }
 
     for (auto& reader : *(local_participant->m_readers))
@@ -1225,7 +1225,7 @@ bool PDP::get_serialized_proxy(
             {
                 for (auto& writer : *((*part_proxy)->m_writers))
                 {
-                    if (writer.second->guid() == guid)
+                    if (writer.second->guid == guid)
                     {
                         msg->max_size = msg->reserved_size = writer.second->get_serialized_size(true);
                         ret = writer.second->writeToCDRMessage(msg, true);
@@ -1328,7 +1328,7 @@ void PDP::actions_on_remote_participant_removed(
         for (auto pit : *pdata->m_writers)
         {
             WriterProxyData* wit = pit.second;
-            GUID_t writer_guid(wit->guid());
+            GUID_t writer_guid(wit->guid);
             if (writer_guid != c_Guid_Unknown)
             {
                 mp_EDP->unpairWriterProxy(partGUID, writer_guid,

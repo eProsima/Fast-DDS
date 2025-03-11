@@ -3139,7 +3139,7 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
 
     if (ret)
     {
-        ret = writer_data.guid().entityId.is_writer();
+        ret = writer_data.guid.entityId.is_writer();
     }
 
     if (ret)

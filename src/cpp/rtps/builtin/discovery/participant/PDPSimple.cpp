@@ -676,14 +676,14 @@ void PDPSimple::match_pdp_remote_endpoints(
         auto temp_writer_data = get_temporary_writer_proxies_pool().get();
 
         temp_writer_data->clear();
-        temp_writer_data->guid().guidPrefix = pdata.guid.guidPrefix;
-        temp_writer_data->guid().entityId = writer_entity_id;
-        temp_writer_data->persistence_guid(pdata.get_persistence_guid());
+        temp_writer_data->guid.guidPrefix = pdata.guid.guidPrefix;
+        temp_writer_data->guid.entityId = writer_entity_id;
+        temp_writer_data->persistence_guid = pdata.get_persistence_guid();
         temp_writer_data->set_persistence_entity_id(writer_entity_id);
         temp_writer_data->set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators,
                 pdata.is_from_this_host());
-        temp_writer_data->m_qos.m_reliability.kind = reliability_kind;
-        temp_writer_data->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+        temp_writer_data->reliability.kind = reliability_kind;
+        temp_writer_data->durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
 #if HAVE_SECURITY
         if (notify_secure_endpoints)
         {
@@ -692,7 +692,7 @@ void PDPSimple::match_pdp_remote_endpoints(
                         reader->getAttributes().security_attributes()))
             {
                 EPROSIMA_LOG_ERROR(RTPS_EDP, "Security manager returns an error for writer " <<
-                        temp_writer_data->guid());
+                        temp_writer_data->guid);
             }
         }
         else

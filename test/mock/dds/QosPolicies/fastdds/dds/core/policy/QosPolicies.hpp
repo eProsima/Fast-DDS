@@ -1350,6 +1350,18 @@ public:
         return domain_ids_;
     }
 
+    void set_max_domains(
+            uint32_t size)
+    {
+        domain_ids_.reserve(size);
+        max_domains_ = size;
+    }
+
+    const uint32_t& max_domains() const
+    {
+        return max_domains_;
+    }
+
     void automatic()
     {
         automatic(std::string(), std::vector<uint16_t> (1, 1));
@@ -1414,6 +1426,7 @@ public:
     DataSharingKind kind_ = AUTO;
     std::string shm_directory_;
     std::vector<uint64_t> domain_ids_;
+    uint32_t max_domains_ = 0;
 };
 
 

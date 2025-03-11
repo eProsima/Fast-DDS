@@ -341,12 +341,12 @@ bool EDPStatic::process_writer_proxy_data(
         RTPSWriter*,
         WriterProxyData* wdata)
 {
-    EPROSIMA_LOG_INFO(RTPS_EDP, wdata->guid().entityId << " in topic: " << wdata->topicName());
+    EPROSIMA_LOG_INFO(RTPS_EDP, wdata->guid.entityId << " in topic: " << wdata->topic_name);
     mp_PDP->getMutex()->lock();
     //Add the property list entry to our local pdp
     ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
     localpdata->properties.push_back(EDPStaticProperty::toProperty(exchange_format_, "Writer", "ALIVE",
-            wdata->userDefinedId(), wdata->guid().entityId));
+            wdata->user_defined_id(), wdata->guid.entityId));
     mp_PDP->getMutex()->unlock();
     this->mp_PDP->announceParticipantState(true);
     return true;
@@ -551,8 +551,8 @@ bool EDPStatic::newRemoteWriter(
     WriterProxyData* wpd = NULL;
     if (mp_edpXML->lookforWriter(participant_name, user_id, &wpd) == xmlparser::XMLP_ret::XML_OK)
     {
-        EPROSIMA_LOG_INFO(RTPS_EDP, "Activating: " << wpd->guid().entityId << " in topic " << wpd->topicName());
-        GUID_t writer_guid(participant_guid.guidPrefix, ent_id != c_EntityId_Unknown ? ent_id : wpd->guid().entityId);
+        EPROSIMA_LOG_INFO(RTPS_EDP, "Activating: " << wpd->guid.entityId << " in topic " << wpd->topic_name);
+        GUID_t writer_guid(participant_guid.guidPrefix, ent_id != c_EntityId_Unknown ? ent_id : wpd->guid.entityId);
 
         auto init_fun = [this, participant_guid, writer_guid, wpd, persistence_guid](
             WriterProxyData* newWPD,
@@ -564,22 +564,22 @@ bool EDPStatic::newRemoteWriter(
                     assert(!updating);
 
                     *newWPD = *wpd;
-                    newWPD->guid(writer_guid);
+                    newWPD->guid = writer_guid;
                     if (!checkEntityId(newWPD))
                     {
                         EPROSIMA_LOG_ERROR(RTPS_EDP, "The provided entityId for Writer with User ID: "
-                                << newWPD->userDefinedId() << " does not match the topic Kind");
+                                << newWPD->user_defined_id() << " does not match the topic Kind");
                         return false;
                     }
-                    newWPD->key() = newWPD->guid();
-                    newWPD->RTPSParticipantKey() = participant_guid;
+                    newWPD->key() = newWPD->guid;
+                    newWPD->rtps_participant_key() = participant_guid;
                     if (!newWPD->has_locators())
                     {
                         const NetworkFactory& network = mp_RTPSParticipant->network_factory();
                         newWPD->set_remote_locators(participant_data.default_locators, network, true,
                                 participant_data.is_from_this_host());
                     }
-                    newWPD->persistence_guid(persistence_guid);
+                    newWPD->persistence_guid = persistence_guid;
 
                     return true;
                 };
@@ -611,11 +611,11 @@ bool EDPStatic::checkEntityId(
 bool EDPStatic::checkEntityId(
         WriterProxyData* wdata)
 {
-    if (wdata->topicKind() == WITH_KEY && wdata->guid().entityId.value[3] == 0x02)
+    if (wdata->topic_kind == WITH_KEY && wdata->guid.entityId.value[3] == 0x02)
     {
         return true;
     }
-    if (wdata->topicKind() == NO_KEY && wdata->guid().entityId.value[3] == 0x03)
+    if (wdata->topic_kind == NO_KEY && wdata->guid.entityId.value[3] == 0x03)
     {
         return true;
     }

@@ -490,13 +490,13 @@ bool WLP::assignRemoteEndpoints(
 
     std::lock_guard<std::mutex> data_guard(temp_data_lock_);
 
-    temp_writer_proxy_data_.guid().guidPrefix = pdata.guid.guidPrefix;
-    temp_writer_proxy_data_.persistence_guid(pdata.get_persistence_guid());
+    temp_writer_proxy_data_.guid.guidPrefix = pdata.guid.guidPrefix;
+    temp_writer_proxy_data_.persistence_guid = pdata.get_persistence_guid();
     temp_writer_proxy_data_.set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators,
             pdata.is_from_this_host());
-    temp_writer_proxy_data_.topicKind(WITH_KEY);
-    temp_writer_proxy_data_.m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
-    temp_writer_proxy_data_.m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
+    temp_writer_proxy_data_.topic_kind = WITH_KEY;
+    temp_writer_proxy_data_.durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    temp_writer_proxy_data_.reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
 
     temp_reader_proxy_data_.clear();
     temp_reader_proxy_data_.m_expectsInlineQos = false;
@@ -511,7 +511,7 @@ bool WLP::assignRemoteEndpoints(
     if (auxendp != 0 && this->mp_builtinReader != nullptr)
     {
         EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Adding remote writer to my local Builtin Reader");
-        temp_writer_proxy_data_.guid().entityId = c_EntityId_WriterLiveliness;
+        temp_writer_proxy_data_.guid.entityId = c_EntityId_WriterLiveliness;
         temp_writer_proxy_data_.set_persistence_entity_id(c_EntityId_WriterLiveliness);
         mp_builtinReader->matched_writer_add_edp(temp_writer_proxy_data_);
     }
@@ -530,7 +530,7 @@ bool WLP::assignRemoteEndpoints(
     if (auxendp != 0 && this->mp_builtinReaderSecure != nullptr && assign_secure_endpoints)
     {
         EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Adding remote writer to my local Builtin Secure Reader");
-        temp_writer_proxy_data_.guid().entityId = c_EntityId_WriterLivelinessSecure;
+        temp_writer_proxy_data_.guid.entityId = c_EntityId_WriterLivelinessSecure;
         temp_writer_proxy_data_.set_persistence_entity_id(c_EntityId_WriterLivelinessSecure);
 
         if (!mp_participant->security_manager().discovered_builtin_writer(
