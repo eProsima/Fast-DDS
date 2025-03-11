@@ -30,7 +30,7 @@ namespace rpc {
 /**
  * Exception thrown by the RPC API when the communication with the remote endpoint breaks.
  */
-class FASTDDS_EXPORTED_API RpcBrokenPipeException : public RpcException
+class RpcBrokenPipeException : public RpcException
 {
 
 public:

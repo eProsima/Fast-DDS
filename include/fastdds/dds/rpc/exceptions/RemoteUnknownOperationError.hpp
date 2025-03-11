@@ -31,7 +31,7 @@ namespace rpc {
 /**
  * Exception thrown by the RPC API when the server does not recognize the invoked operation.
  */
-class FASTDDS_EXPORTED_API RemoteUnknownOperationError : public RpcRemoteException
+class RemoteUnknownOperationError : public RpcRemoteException
 {
 
 public:

@@ -31,7 +31,7 @@ namespace rpc {
 /**
  * Exception thrown by the RPC API when the service implementation raises an unspecified exception.
  */
-class FASTDDS_EXPORTED_API RemoteUnknownExceptionError : public RpcRemoteException
+class RemoteUnknownExceptionError : public RpcRemoteException
 {
 
 public:

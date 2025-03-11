@@ -32,7 +32,7 @@ namespace rpc {
 /**
  * Base class for all exceptions thrown by the RPC API.
  */
-class FASTDDS_EXPORTED_API RpcException
+class RpcException
 {
 
 public:

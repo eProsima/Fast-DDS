@@ -31,7 +31,7 @@ namespace rpc {
 /**
  * Exception thrown by the RPC API when the server reports out of resources.
  */
-class FASTDDS_EXPORTED_API RemoteOutOfResourcesError : public RpcRemoteException
+class RemoteOutOfResourcesError : public RpcRemoteException
 {
 
 public:

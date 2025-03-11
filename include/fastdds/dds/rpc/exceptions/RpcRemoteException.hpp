@@ -31,7 +31,7 @@ namespace rpc {
 /**
  * Base class for exceptions that map to a RpcExceptionCode_t.
  */
-class FASTDDS_EXPORTED_API RpcRemoteException : public RpcException
+class RpcRemoteException : public RpcException
 {
 
 public:

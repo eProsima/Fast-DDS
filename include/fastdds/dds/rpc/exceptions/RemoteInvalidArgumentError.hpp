@@ -31,7 +31,7 @@ namespace rpc {
 /**
  * Exception thrown by the RPC API when the server reports invalid arguments.
  */
-class FASTDDS_EXPORTED_API RemoteInvalidArgumentError : public RpcRemoteException
+class RemoteInvalidArgumentError : public RpcRemoteException
 {
 
 public:

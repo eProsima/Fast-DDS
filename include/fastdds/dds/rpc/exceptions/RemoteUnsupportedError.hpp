@@ -31,7 +31,7 @@ namespace rpc {
 /**
  * Exception thrown by the RPC API when the server reports an unsupported operation.
  */
-class FASTDDS_EXPORTED_API RemoteUnsupportedError : public RpcRemoteException
+class RemoteUnsupportedError : public RpcRemoteException
 {
 
 public:
