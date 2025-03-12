@@ -24,6 +24,7 @@
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
+#include <fastdds/rtps/builtin/data/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
@@ -39,58 +40,44 @@ namespace rtps {
 
 class NetworkFactory;
 
-class ReaderProxyData
+class ReaderProxyData : public SubscriptionBuiltinTopicData
 {
 public:
 
-    ReaderProxyData(
-            size_t max_unicast_locators,
-            size_t max_multicast_locators)
-        : remote_locators_(max_unicast_locators, max_multicast_locators)
-        , m_expectsInlineQos(false)
-        , topic_kind_(NO_KEY)
-        , is_alive_(true)
-        , type_info_()
-        , m_userDefinedId(0)
-        , content_filter_({})
+    ReaderProxyData (
+        const size_t max_unicast_locators,
+        const size_t max_multicast_locators,
+        const VariableLengthDataLimits& data_limits,
+        const fastdds::rtps::ContentFilterProperty::AllocationConfiguration& content_filterlimits = {})
+    : SubscriptionBuiltinTopicData(max_unicast_locators, max_multicast_locators, data_limits, content_filterlimits)
+#if HAVE_SECURITY
+    , security_attributes_(0UL)
+    , plugin_security_attributes_(0UL)
+#endif // if HAVE_SECURITY
+    , m_is_alive(true)
+    , m_user_defined_id(0)
     {
+
+    }
+
+    ReaderProxyData (
+        const size_t max_unicast_locators,
+        const size_t max_multicast_locators,
+        const fastdds::rtps::ContentFilterProperty::AllocationConfiguration& content_filterlimits = {})
+    : ReaderProxyData(max_unicast_locators, max_multicast_locators, VariableLengthDataLimits(), content_filterlimits)
+    {
+
     }
 
     ReaderProxyData(
-            size_t max_unicast_locators,
-            size_t max_multicast_locators,
-            const VariableLengthDataLimits& data_limits,
-            const fastdds::rtps::ContentFilterProperty::AllocationConfiguration filter_allocation)
-        : remote_locators_(max_unicast_locators, max_multicast_locators)
-        , m_expectsInlineQos(false)
-        , topic_kind_(NO_KEY)
-        , is_alive_(true)
-        , type_info_()
-        , m_userDefinedId(0)
-        , content_filter_(filter_allocation)
+        const VariableLengthDataLimits&,
+        const SubscriptionBuiltinTopicData& subscription_data)
+    : SubscriptionBuiltinTopicData(subscription_data)
     {
-        static_cast<void>(filter_allocation);
 
-        m_qos.m_userData.set_max_size(data_limits.max_user_data);
     }
 
-    const GUID_t& guid() const
-    {
-        return m_guid;
-    }
-
-    GUID_t& guid()
-    {
-        return m_guid;
-    }
-
-    void guid(
-            const GUID_t& guid)
-    {
-        m_guid = guid;
-    }
-
-    bool disable_positive_acks() const
+    bool disable_positive_acks_enabled() const
     {
         return false;
     }
@@ -98,23 +85,18 @@ public:
     void add_unicast_locator(
             const Locator_t& locator)
     {
-        remote_locators_.add_unicast_locator(locator);
+        remote_locators.add_unicast_locator(locator);
     }
 
     void add_multicast_locator(
             const Locator_t& locator)
     {
-        remote_locators_.add_multicast_locator(locator);
+        remote_locators.add_multicast_locator(locator);
     }
 
     bool has_locators() const
     {
-        return !remote_locators_.unicast.empty() || !remote_locators_.multicast.empty();
-    }
-
-    const RemoteLocatorList& remote_locators() const
-    {
-        return remote_locators_;
+        return !remote_locators.unicast.empty() || !remote_locators.multicast.empty();
     }
 
     void clear ()
@@ -154,63 +136,15 @@ public:
     {
     }
 
-    void typeName(
-            const fastcdr::string_255& typeName)
-    {
-        type_name_ = typeName;
-    }
-
-    const fastcdr::string_255& typeName() const
-    {
-        return type_name_;
-    }
-
-    fastcdr::string_255& typeName()
-    {
-        return type_name_;
-    }
-
-    void topicName(
-            const fastcdr::string_255& topicName)
-    {
-        topic_name_ = topicName;
-    }
-
-    const fastcdr::string_255& topicName() const
-    {
-        return topic_name_;
-    }
-
-    fastcdr::string_255& topicName()
-    {
-        return topic_name_;
-    }
-
-    void topicKind(
-            TopicKind_t topicKind)
-    {
-        topic_kind_ = topicKind;
-    }
-
-    TopicKind_t topicKind() const
-    {
-        return topic_kind_;
-    }
-
-    TopicKind_t& topicKind()
-    {
-        return topic_kind_;
-    }
-
-    void isAlive (
+    void is_alive (
             bool alive)
     {
-        is_alive_ = alive;
+        m_is_alive = alive;
     }
 
-    bool isAlive () const
+    bool is_alive () const
     {
-        return is_alive_;
+        return m_is_alive;
     }
 
     bool has_type_information () const
@@ -258,76 +192,47 @@ public:
         return m_key;
     }
 
-    void RTPSParticipantKey(
-            const InstanceHandle_t& RTPSParticipantKey)
+    void rtps_participant_key(
+            const InstanceHandle_t& rtps_participant_key)
     {
-        m_RTPSParticipantKey = RTPSParticipantKey;
+        m_rtps_participant_key = rtps_participant_key;
     }
 
-    void RTPSParticipantKey(
-            InstanceHandle_t&& RTPSParticipantKey)
+    void rtps_participant_key(
+            InstanceHandle_t&& rtps_participant_key)
     {
-        m_RTPSParticipantKey = std::move(RTPSParticipantKey);
+        m_rtps_participant_key = std::move(rtps_participant_key);
     }
 
-    InstanceHandle_t RTPSParticipantKey() const
+    InstanceHandle_t rtps_participant_key() const
     {
-        return m_RTPSParticipantKey;
+        return m_rtps_participant_key;
     }
 
-    InstanceHandle_t& RTPSParticipantKey()
+    InstanceHandle_t& rtps_participant_key()
     {
-        return m_RTPSParticipantKey;
+        return m_rtps_participant_key;
     }
 
     void set_locators(
             const RemoteLocatorList& /*locators*/)
     {
-
     }
 
-    void userDefinedId(
-            uint16_t userDefinedId)
+    void user_defined_id(
+            uint16_t user_defined_id)
     {
-        m_userDefinedId = userDefinedId;
+        m_user_defined_id = user_defined_id;
     }
 
-    uint16_t userDefinedId() const
+    uint16_t user_defined_id() const
     {
-        return m_userDefinedId;
+        return m_user_defined_id;
     }
 
-    uint16_t& userDefinedId()
+    uint16_t& user_defined_id()
     {
-        return m_userDefinedId;
-    }
-
-    FASTDDS_EXPORTED_API void content_filter(
-            const fastdds::rtps::ContentFilterProperty& filter)
-    {
-        content_filter_ = filter;
-    }
-
-    FASTDDS_EXPORTED_API void content_filter(
-            fastdds::rtps::ContentFilterProperty&& filter)
-    {
-        content_filter_ = std::move(filter);
-    }
-
-    FASTDDS_EXPORTED_API const fastdds::rtps::ContentFilterProperty& content_filter() const
-    {
-        return content_filter_;
-    }
-
-    FASTDDS_EXPORTED_API fastdds::rtps::ContentFilterProperty& content_filter()
-    {
-        return content_filter_;
-    }
-
-    void copy(
-            ReaderProxyData* /*rdat*/)
-    {
-
+        return m_user_defined_id;
     }
 
 #if HAVE_SECURITY
@@ -335,22 +240,15 @@ public:
     security::PluginEndpointSecurityAttributesMask plugin_security_attributes_ = 0UL;
 #endif // if HAVE_SECURITY
 
-    RemoteLocatorList remote_locators_;
-    bool m_expectsInlineQos;
-    fastdds::dds::ReaderQos m_qos;
-
 private:
 
-    GUID_t m_guid;
-    fastcdr::string_255 topic_name_;
-    fastcdr::string_255 type_name_;
-    TopicKind_t topic_kind_;
-    bool is_alive_;
+    void init(const VariableLengthDataLimits& data_limits);
+
+    bool m_is_alive;
     fastdds::dds::xtypes::TypeInformationParameter type_info_;
     InstanceHandle_t m_key;
-    InstanceHandle_t m_RTPSParticipantKey;
-    uint16_t m_userDefinedId;
-    fastdds::rtps::ContentFilterProperty content_filter_;
+    InstanceHandle_t m_rtps_participant_key;
+    uint16_t m_user_defined_id;
     bool has_type_info_ {false};
 
 };

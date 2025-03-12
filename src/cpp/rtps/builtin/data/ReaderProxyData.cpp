@@ -26,6 +26,7 @@
 
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/network/NetworkFactory.hpp>
+#include <utils/BuiltinTopicKeyConversions.hpp>
 #include <utils/SystemInfo.hpp>
 
 #include "ProxyDataFilters.hpp"
@@ -42,71 +43,64 @@ using ::operator <<;
 ReaderProxyData::ReaderProxyData (
         const size_t max_unicast_locators,
         const size_t max_multicast_locators,
+        const VariableLengthDataLimits& data_limits,
         const fastdds::rtps::ContentFilterProperty::AllocationConfiguration& content_filter_limits)
-    : m_expectsInlineQos(false)
-#if HAVE_SECURITY
-    , security_attributes_(0UL)
-    , plugin_security_attributes_(0UL)
-#endif // if HAVE_SECURITY
-    , m_networkConfiguration(0)
-    , remote_locators_(max_unicast_locators, max_multicast_locators)
-    , m_userDefinedId(0)
-    , m_isAlive(true)
-    , m_topicKind(NO_KEY)
-    , m_type_id(nullptr)
-    , m_type(nullptr)
-    , m_type_information(nullptr)
-    , content_filter_(content_filter_limits)
+    : SubscriptionBuiltinTopicData(max_unicast_locators, max_multicast_locators, data_limits, content_filter_limits)
 {
-    // As DDS-XTypes, v1.2 (page 182) document stablishes, local default is ALLOW_TYPE_COERCION,
-    // but when remotes doesn't send TypeConsistencyQos, we must assume DISALLOW.
-    m_qos.type_consistency.m_kind = dds::DISALLOW_TYPE_COERCION;
+    init(data_limits);
 }
 
 ReaderProxyData::ReaderProxyData (
         const size_t max_unicast_locators,
         const size_t max_multicast_locators,
-        const VariableLengthDataLimits& data_limits,
         const fastdds::rtps::ContentFilterProperty::AllocationConfiguration& content_filter_limits)
-    : ReaderProxyData(max_unicast_locators, max_multicast_locators, content_filter_limits)
+    : ReaderProxyData(max_unicast_locators, max_multicast_locators, VariableLengthDataLimits(), content_filter_limits)
 {
-    m_qos.m_userData.set_max_size(static_cast<uint32_t>(data_limits.max_user_data));
-    m_qos.m_partition.set_max_size(static_cast<uint32_t>(data_limits.max_partitions));
-    m_properties.set_max_size(static_cast<uint32_t>(data_limits.max_properties));
-    m_qos.data_sharing.set_max_domains(static_cast<uint32_t>(data_limits.max_datasharing_domains));
+
+}
+
+ReaderProxyData::ReaderProxyData(
+        const VariableLengthDataLimits& data_limits,
+        const SubscriptionBuiltinTopicData& subscription_data)
+    : SubscriptionBuiltinTopicData(subscription_data)
+{
+    init(data_limits);
 }
 
 ReaderProxyData::~ReaderProxyData()
 {
-    delete m_type;
-    delete m_type_id;
-    delete m_type_information;
+    if (nullptr != m_type)
+    {
+        delete m_type;
+    }
+    if (nullptr != m_type_id)
+    {
+        delete m_type_id;
+    }
+    if (nullptr != m_type_information)
+    {
+        delete m_type_information;
+    }
 
-    EPROSIMA_LOG_INFO(RTPS_PROXY_DATA, "ReaderProxyData destructor: " << m_guid; );
+    EPROSIMA_LOG_INFO(RTPS_PROXY_DATA, "ReaderProxyData destructor: " << guid; );
 }
 
 ReaderProxyData::ReaderProxyData(
         const ReaderProxyData& readerInfo)
-    : m_expectsInlineQos(readerInfo.m_expectsInlineQos)
+    : SubscriptionBuiltinTopicData(readerInfo)
 #if HAVE_SECURITY
     , security_attributes_(readerInfo.security_attributes_)
     , plugin_security_attributes_(readerInfo.plugin_security_attributes_)
 #endif // if HAVE_SECURITY
-    , m_guid(readerInfo.m_guid)
-    , m_networkConfiguration(readerInfo.m_networkConfiguration)
-    , remote_locators_(readerInfo.remote_locators_)
+    , m_network_configuration(readerInfo.m_network_configuration)
     , m_key(readerInfo.m_key)
-    , m_RTPSParticipantKey(readerInfo.m_RTPSParticipantKey)
-    , m_typeName(readerInfo.m_typeName)
-    , m_topicName(readerInfo.m_topicName)
-    , m_userDefinedId(readerInfo.m_userDefinedId)
-    , m_isAlive(readerInfo.m_isAlive)
-    , m_topicKind(readerInfo.m_topicKind)
+    , m_rtps_participant_key(readerInfo.m_rtps_participant_key)
+    , m_user_defined_id(readerInfo.m_user_defined_id)
+    , m_is_alive(readerInfo.m_is_alive)
     , m_type_id(nullptr)
     , m_type(nullptr)
     , m_type_information(nullptr)
     , m_properties(readerInfo.m_properties)
-    , content_filter_(readerInfo.content_filter_)
 {
     if (readerInfo.m_type_id)
     {
@@ -122,32 +116,37 @@ ReaderProxyData::ReaderProxyData(
     {
         type_information(*readerInfo.m_type_information);
     }
-
-    m_qos.setQos(readerInfo.m_qos, true);
 }
 
 ReaderProxyData& ReaderProxyData::operator =(
         const ReaderProxyData& readerInfo)
 {
-    m_expectsInlineQos = readerInfo.m_expectsInlineQos;
+    SubscriptionBuiltinTopicData::key = readerInfo.SubscriptionBuiltinTopicData::key;
+    participant_key = readerInfo.participant_key;
+    type_name = readerInfo.type_name;
+    topic_name = readerInfo.topic_name;
+    topic_kind = readerInfo.topic_kind;
+
+    set_qos(readerInfo, true);
+
+    content_filter = readerInfo.content_filter;
+    guid = readerInfo.guid;
+    participant_guid = readerInfo.participant_guid;
+    remote_locators = readerInfo.remote_locators;
+    loopback_transformation = readerInfo.loopback_transformation;
+    expects_inline_qos = readerInfo.expects_inline_qos;
+
+    m_network_configuration = readerInfo.m_network_configuration;
+    m_key = readerInfo.m_key;
+    m_rtps_participant_key = readerInfo.m_rtps_participant_key;
+    m_user_defined_id = readerInfo.m_user_defined_id;
+    m_is_alive = readerInfo.m_is_alive;
+    m_properties = readerInfo.m_properties;
+
 #if HAVE_SECURITY
     security_attributes_ = readerInfo.security_attributes_;
     plugin_security_attributes_ = readerInfo.plugin_security_attributes_;
 #endif // if HAVE_SECURITY
-    m_guid = readerInfo.m_guid;
-    m_networkConfiguration = readerInfo.m_networkConfiguration;
-    remote_locators_ = readerInfo.remote_locators_;
-    m_key = readerInfo.m_key;
-    m_RTPSParticipantKey = readerInfo.m_RTPSParticipantKey;
-    m_typeName = readerInfo.m_typeName;
-    m_topicName = readerInfo.m_topicName;
-    m_userDefinedId = readerInfo.m_userDefinedId;
-    m_isAlive = readerInfo.m_isAlive;
-    m_expectsInlineQos = readerInfo.m_expectsInlineQos;
-    m_topicKind = readerInfo.m_topicKind;
-    m_qos.setQos(readerInfo.m_qos, true);
-    m_properties = readerInfo.m_properties;
-    content_filter_ = readerInfo.content_filter_;
 
     if (readerInfo.m_type_id)
     {
@@ -182,6 +181,26 @@ ReaderProxyData& ReaderProxyData::operator =(
     return *this;
 }
 
+void ReaderProxyData::init(const VariableLengthDataLimits& data_limits)
+{
+#if HAVE_SECURITY
+    security_attributes_ = 0UL;
+    plugin_security_attributes_ = 0UL;
+#endif // if HAVE_SECURITY
+    m_network_configuration = 0;
+    m_user_defined_id = 0;
+    m_is_alive = true;
+    m_type_id = nullptr;
+    m_type = nullptr;
+    m_type_information = nullptr;
+
+    m_properties.set_max_size(static_cast<uint32_t>(data_limits.max_properties));
+
+    // As DDS-XTypes, v1.2 (page 182) document stablishes, local default is ALLOW_TYPE_COERCION,
+    // but when remotes doesn't send TypeConsistencyQos, we must assume DISALLOW.
+    type_consistency.m_kind = dds::DISALLOW_TYPE_COERCION;
+}
+
 uint32_t ReaderProxyData::get_serialized_size(
         bool include_encapsulation) const
 {
@@ -194,10 +213,10 @@ uint32_t ReaderProxyData::get_serialized_size(
     ret_val += 4 + PARAMETER_NETWORKCONFIGSET_LENGTH;
 
     // PID_UNICAST_LOCATOR
-    ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * remote_locators_.unicast.size());
+    ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * remote_locators.unicast.size());
 
     // PID_MULTICAST_LOCATOR
-    ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * remote_locators_.multicast.size());
+    ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * remote_locators.multicast.size());
 
     // PID_EXPECTS_INLINE_QOS
     ret_val += 4 + PARAMETER_BOOL_LENGTH;
@@ -206,10 +225,10 @@ uint32_t ReaderProxyData::get_serialized_size(
     ret_val += 4 + PARAMETER_GUID_LENGTH;
 
     // PID_TOPIC_NAME
-    ret_val += dds::ParameterSerializer<Parameter_t>::cdr_serialized_size(m_topicName);
+    ret_val += dds::ParameterSerializer<Parameter_t>::cdr_serialized_size(topic_name);
 
     // PID_TYPE_NAME
-    ret_val += dds::ParameterSerializer<Parameter_t>::cdr_serialized_size(m_typeName);
+    ret_val += dds::ParameterSerializer<Parameter_t>::cdr_serialized_size(type_name);
 
     // PID_KEY_HASH
     ret_val += 4 + 16;
@@ -220,79 +239,74 @@ uint32_t ReaderProxyData::get_serialized_size(
     // PID_VENDORID
     ret_val += 4 + 4;
 
-    if (m_qos.m_durability.send_always() || m_qos.m_durability.hasChanged)
+    if (durability.send_always() || durability.hasChanged)
     {
         ret_val +=
-                dds::QosPoliciesSerializer<dds::DurabilityQosPolicy>::cdr_serialized_size(m_qos.m_durability);
+                dds::QosPoliciesSerializer<dds::DurabilityQosPolicy>::cdr_serialized_size(durability);
     }
-    if (m_qos.m_durabilityService.send_always() || m_qos.m_durabilityService.hasChanged)
+    if (deadline.send_always() || deadline.hasChanged)
     {
-        ret_val += dds::QosPoliciesSerializer<dds::DurabilityServiceQosPolicy>::cdr_serialized_size(
-            m_qos.m_durabilityService);
+        ret_val += dds::QosPoliciesSerializer<dds::DeadlineQosPolicy>::cdr_serialized_size(deadline);
     }
-    if (m_qos.m_deadline.send_always() || m_qos.m_deadline.hasChanged)
-    {
-        ret_val += dds::QosPoliciesSerializer<dds::DeadlineQosPolicy>::cdr_serialized_size(m_qos.m_deadline);
-    }
-    if (m_qos.m_latencyBudget.send_always() || m_qos.m_latencyBudget.hasChanged)
+    if (latency_budget.send_always() || latency_budget.hasChanged)
     {
         ret_val += dds::QosPoliciesSerializer<dds::LatencyBudgetQosPolicy>::cdr_serialized_size(
-            m_qos.m_latencyBudget);
+            latency_budget);
     }
-    if (m_qos.m_liveliness.send_always() || m_qos.m_liveliness.hasChanged)
+    if (liveliness.send_always() || liveliness.hasChanged)
     {
         ret_val +=
-                dds::QosPoliciesSerializer<dds::LivelinessQosPolicy>::cdr_serialized_size(m_qos.m_liveliness);
+                dds::QosPoliciesSerializer<dds::LivelinessQosPolicy>::cdr_serialized_size(liveliness);
     }
-    if (m_qos.m_reliability.send_always() || m_qos.m_reliability.hasChanged)
+    if (reliability.send_always() || reliability.hasChanged)
     {
         ret_val += dds::QosPoliciesSerializer<dds::ReliabilityQosPolicy>::cdr_serialized_size(
-            m_qos.m_reliability);
+            reliability);
     }
-    if (m_qos.m_lifespan.send_always() || m_qos.m_lifespan.hasChanged)
+    if (lifespan.send_always() || lifespan.hasChanged)
     {
-        ret_val += dds::QosPoliciesSerializer<dds::LifespanQosPolicy>::cdr_serialized_size(m_qos.m_lifespan);
+        ret_val += dds::QosPoliciesSerializer<dds::LifespanQosPolicy>::cdr_serialized_size(lifespan);
     }
-    if (m_qos.m_userData.send_always() || m_qos.m_userData.hasChanged)
+    if (user_data.send_always() || user_data.hasChanged)
     {
-        ret_val += dds::QosPoliciesSerializer<dds::UserDataQosPolicy>::cdr_serialized_size(m_qos.m_userData);
+        ret_val += dds::QosPoliciesSerializer<dds::UserDataQosPolicy>::cdr_serialized_size(user_data);
     }
-    if (m_qos.m_timeBasedFilter.send_always() || m_qos.m_timeBasedFilter.hasChanged)
+    if (time_based_filter.send_always() || time_based_filter.hasChanged)
     {
         ret_val += dds::QosPoliciesSerializer<dds::TimeBasedFilterQosPolicy>::cdr_serialized_size(
-            m_qos.m_timeBasedFilter);
+            time_based_filter);
     }
-    if (m_qos.m_ownership.send_always() || m_qos.m_ownership.hasChanged)
+    if (ownership.send_always() || ownership.hasChanged)
     {
-        ret_val += dds::QosPoliciesSerializer<dds::OwnershipQosPolicy>::cdr_serialized_size(m_qos.m_ownership);
+        ret_val += dds::QosPoliciesSerializer<dds::OwnershipQosPolicy>::cdr_serialized_size(ownership);
     }
-    if (m_qos.m_destinationOrder.send_always() || m_qos.m_destinationOrder.hasChanged)
+    if (destination_order.send_always() || destination_order.hasChanged)
     {
         ret_val += dds::QosPoliciesSerializer<dds::DestinationOrderQosPolicy>::cdr_serialized_size(
-            m_qos.m_destinationOrder);
+            destination_order);
     }
-    if (m_qos.m_presentation.send_always() || m_qos.m_presentation.hasChanged)
+    if (presentation.send_always() || presentation.hasChanged)
     {
         ret_val +=
                 dds::QosPoliciesSerializer<dds::PresentationQosPolicy>::cdr_serialized_size(
-            m_qos.m_presentation);
+            presentation);
     }
-    if (m_qos.m_partition.send_always() || m_qos.m_partition.hasChanged)
+    if (partition.send_always() || partition.hasChanged)
     {
-        ret_val += dds::QosPoliciesSerializer<dds::PartitionQosPolicy>::cdr_serialized_size(m_qos.m_partition);
+        ret_val += dds::QosPoliciesSerializer<dds::PartitionQosPolicy>::cdr_serialized_size(partition);
     }
-    if (m_qos.m_topicData.send_always() || m_qos.m_topicData.hasChanged)
+    if (topic_data.send_always() || topic_data.hasChanged)
     {
-        ret_val += dds::QosPoliciesSerializer<dds::TopicDataQosPolicy>::cdr_serialized_size(m_qos.m_topicData);
+        ret_val += dds::QosPoliciesSerializer<dds::TopicDataQosPolicy>::cdr_serialized_size(topic_data);
     }
-    if (m_qos.m_groupData.send_always() || m_qos.m_groupData.hasChanged)
+    if (group_data.send_always() || group_data.hasChanged)
     {
-        ret_val += dds::QosPoliciesSerializer<dds::GroupDataQosPolicy>::cdr_serialized_size(m_qos.m_groupData);
+        ret_val += dds::QosPoliciesSerializer<dds::GroupDataQosPolicy>::cdr_serialized_size(group_data);
     }
-    if (m_qos.m_disablePositiveACKs.send_always() || m_qos.m_disablePositiveACKs.hasChanged)
+    if (disable_positive_acks.send_always() || disable_positive_acks.hasChanged)
     {
         ret_val += dds::QosPoliciesSerializer<dds::DisablePositiveACKsQosPolicy>::cdr_serialized_size(
-            m_qos.m_disablePositiveACKs);
+            disable_positive_acks);
     }
     if (m_type_information && m_type_information->assigned())
     {
@@ -300,16 +314,16 @@ uint32_t ReaderProxyData::get_serialized_size(
                 dds::QosPoliciesSerializer<dds::xtypes::TypeInformationParameter>::cdr_serialized_size(
             *m_type_information);
     }
-    if (m_qos.type_consistency.send_always() || m_qos.type_consistency.hasChanged)
+    if (type_consistency.send_always() || type_consistency.hasChanged)
     {
         ret_val += dds::QosPoliciesSerializer<dds::TypeConsistencyEnforcementQosPolicy>::cdr_serialized_size(
-            m_qos.type_consistency);
+            type_consistency);
     }
-    if ((m_qos.data_sharing.send_always() || m_qos.data_sharing.hasChanged) &&
-            m_qos.data_sharing.kind() != fastdds::dds::OFF)
+    if ((data_sharing.send_always() || data_sharing.hasChanged) &&
+            data_sharing.kind() != fastdds::dds::OFF)
     {
         ret_val += dds::QosPoliciesSerializer<dds::DataSharingQosPolicy>::cdr_serialized_size(
-            m_qos.data_sharing);
+            data_sharing);
     }
 
     if (m_properties.size() > 0)
@@ -320,9 +334,9 @@ uint32_t ReaderProxyData::get_serialized_size(
 
     // PID_CONTENT_FILTER_PROPERTY
     // Take into count only when filter_class_name and filter_expression are not empty.
-    if (0 < content_filter_.filter_class_name.size() && 0 < content_filter_.filter_expression.size())
+    if (0 < content_filter.filter_class_name.size() && 0 < content_filter.filter_expression.size())
     {
-        ret_val += dds::ParameterSerializer<ContentFilterProperty>::cdr_serialized_size(content_filter_);
+        ret_val += dds::ParameterSerializer<ContentFilterProperty>::cdr_serialized_size(content_filter);
     }
 
 #if HAVE_SECURITY
@@ -332,16 +346,16 @@ uint32_t ReaderProxyData::get_serialized_size(
     }
 #endif // if HAVE_SECURITY
 
-    if (m_qos.representation.send_always() || m_qos.representation.hasChanged)
+    if (representation.send_always() || representation.hasChanged)
     {
         ret_val += dds::QosPoliciesSerializer<dds::DataRepresentationQosPolicy>::cdr_serialized_size(
-            m_qos.representation);
+            representation);
     }
 
-    if (m_qos.type_consistency.send_always() || m_qos.type_consistency.hasChanged)
+    if (type_consistency.send_always() || type_consistency.hasChanged)
     {
         ret_val += dds::QosPoliciesSerializer<dds::TypeConsistencyEnforcementQosPolicy>::cdr_serialized_size(
-            m_qos.type_consistency);
+            type_consistency);
     }
     if (m_type_information && m_type_information->assigned())
     {
@@ -367,7 +381,7 @@ bool ReaderProxyData::writeToCDRMessage(
     }
 
     {
-        ParameterGuid_t p(fastdds::dds::PID_ENDPOINT_GUID, PARAMETER_GUID_LENGTH, m_guid);
+        ParameterGuid_t p(fastdds::dds::PID_ENDPOINT_GUID, PARAMETER_GUID_LENGTH, guid);
         if (!dds::ParameterSerializer<ParameterGuid_t>::add_to_cdr_message(p, msg))
         {
             return false;
@@ -376,14 +390,14 @@ bool ReaderProxyData::writeToCDRMessage(
 
     {
         ParameterNetworkConfigSet_t p(fastdds::dds::PID_NETWORK_CONFIGURATION_SET, PARAMETER_NETWORKCONFIGSET_LENGTH);
-        p.netconfigSet = m_networkConfiguration;
+        p.netconfigSet = m_network_configuration;
         if (!dds::ParameterSerializer<ParameterNetworkConfigSet_t>::add_to_cdr_message(p, msg))
         {
             return false;
         }
     }
 
-    for (const Locator_t& locator : remote_locators_.unicast)
+    for (const Locator_t& locator : remote_locators.unicast)
     {
         ParameterLocator_t p(fastdds::dds::PID_UNICAST_LOCATOR, PARAMETER_LOCATOR_LENGTH, locator);
         if (!dds::ParameterSerializer<ParameterLocator_t>::add_to_cdr_message(p, msg))
@@ -391,7 +405,7 @@ bool ReaderProxyData::writeToCDRMessage(
             return false;
         }
     }
-    for (const Locator_t& locator : remote_locators_.multicast)
+    for (const Locator_t& locator : remote_locators.multicast)
     {
         ParameterLocator_t p(fastdds::dds::PID_MULTICAST_LOCATOR, PARAMETER_LOCATOR_LENGTH, locator);
         if (!dds::ParameterSerializer<ParameterLocator_t>::add_to_cdr_message(p, msg))
@@ -400,28 +414,28 @@ bool ReaderProxyData::writeToCDRMessage(
         }
     }
     {
-        ParameterBool_t p(fastdds::dds::PID_EXPECTS_INLINE_QOS, PARAMETER_BOOL_LENGTH, m_expectsInlineQos);
+        ParameterBool_t p(fastdds::dds::PID_EXPECTS_INLINE_QOS, PARAMETER_BOOL_LENGTH, expects_inline_qos);
         if (!dds::ParameterSerializer<ParameterBool_t>::add_to_cdr_message(p, msg))
         {
             return false;
         }
     }
     {
-        ParameterGuid_t p(fastdds::dds::PID_PARTICIPANT_GUID, PARAMETER_GUID_LENGTH, m_RTPSParticipantKey);
+        ParameterGuid_t p(fastdds::dds::PID_PARTICIPANT_GUID, PARAMETER_GUID_LENGTH, m_rtps_participant_key);
         if (!dds::ParameterSerializer<ParameterGuid_t>::add_to_cdr_message(p, msg))
         {
             return false;
         }
     }
     {
-        ParameterString_t p(fastdds::dds::PID_TOPIC_NAME, 0, m_topicName);
+        ParameterString_t p(fastdds::dds::PID_TOPIC_NAME, 0, topic_name);
         if (!dds::ParameterSerializer<ParameterString_t>::add_to_cdr_message(p, msg))
         {
             return false;
         }
     }
     {
-        ParameterString_t p(fastdds::dds::PID_TYPE_NAME, 0, m_typeName);
+        ParameterString_t p(fastdds::dds::PID_TYPE_NAME, 0, type_name);
         if (!dds::ParameterSerializer<ParameterString_t>::add_to_cdr_message(p, msg))
         {
             return false;
@@ -448,132 +462,124 @@ bool ReaderProxyData::writeToCDRMessage(
             return false;
         }
     }
-    if (m_qos.m_durability.send_always() || m_qos.m_durability.hasChanged)
+    if (durability.send_always() || durability.hasChanged)
     {
-        if (!dds::QosPoliciesSerializer<dds::DurabilityQosPolicy>::add_to_cdr_message(m_qos.m_durability, msg))
+        if (!dds::QosPoliciesSerializer<dds::DurabilityQosPolicy>::add_to_cdr_message(durability, msg))
         {
             return false;
         }
     }
-    if (m_qos.m_durabilityService.send_always() || m_qos.m_durabilityService.hasChanged)
+    if (deadline.send_always() || deadline.hasChanged)
     {
-        if (!dds::QosPoliciesSerializer<dds::DurabilityServiceQosPolicy>::add_to_cdr_message(
-                    m_qos.m_durabilityService, msg))
+        if (!dds::QosPoliciesSerializer<dds::DeadlineQosPolicy>::add_to_cdr_message(deadline, msg))
         {
             return false;
         }
     }
-    if (m_qos.m_deadline.send_always() || m_qos.m_deadline.hasChanged)
-    {
-        if (!dds::QosPoliciesSerializer<dds::DeadlineQosPolicy>::add_to_cdr_message(m_qos.m_deadline, msg))
-        {
-            return false;
-        }
-    }
-    if (m_qos.m_latencyBudget.send_always() || m_qos.m_latencyBudget.hasChanged)
+    if (latency_budget.send_always() || latency_budget.hasChanged)
     {
         if (!dds::QosPoliciesSerializer<dds::LatencyBudgetQosPolicy>::add_to_cdr_message(
-                    m_qos.m_latencyBudget, msg))
+                    latency_budget, msg))
         {
             return false;
         }
     }
-    if (m_qos.m_liveliness.send_always() || m_qos.m_liveliness.hasChanged)
+    if (liveliness.send_always() || liveliness.hasChanged)
     {
-        if (!dds::QosPoliciesSerializer<dds::LivelinessQosPolicy>::add_to_cdr_message(m_qos.m_liveliness, msg))
+        if (!dds::QosPoliciesSerializer<dds::LivelinessQosPolicy>::add_to_cdr_message(liveliness, msg))
         {
             return false;
         }
     }
-    if (m_qos.m_reliability.send_always() || m_qos.m_reliability.hasChanged)
+    if (reliability.send_always() || reliability.hasChanged)
     {
         if (!dds::QosPoliciesSerializer<dds::ReliabilityQosPolicy>::add_to_cdr_message(
-                    m_qos.m_reliability, msg))
+                    reliability, msg))
         {
             return false;
         }
     }
-    if (m_qos.m_lifespan.send_always() || m_qos.m_lifespan.hasChanged)
+    if (lifespan.send_always() || lifespan.hasChanged)
     {
-        if (!dds::QosPoliciesSerializer<dds::LifespanQosPolicy>::add_to_cdr_message(m_qos.m_lifespan, msg))
+        if (!dds::QosPoliciesSerializer<dds::LifespanQosPolicy>::add_to_cdr_message(lifespan, msg))
         {
             return false;
         }
     }
-    if (m_qos.m_userData.send_always() || m_qos.m_userData.hasChanged)
+    if (user_data.send_always() || user_data.hasChanged)
     {
-        if (!dds::QosPoliciesSerializer<dds::UserDataQosPolicy>::add_to_cdr_message(m_qos.m_userData, msg))
+        if (!dds::QosPoliciesSerializer<dds::UserDataQosPolicy>::add_to_cdr_message(user_data, msg))
         {
             return false;
         }
     }
-    if (m_qos.m_timeBasedFilter.send_always() || m_qos.m_timeBasedFilter.hasChanged)
+    if (time_based_filter.send_always() || time_based_filter.hasChanged)
     {
         if (!dds::QosPoliciesSerializer<dds::TimeBasedFilterQosPolicy>::add_to_cdr_message(
-                    m_qos.m_timeBasedFilter, msg))
+                    time_based_filter, msg))
         {
             return false;
         }
     }
-    if (m_qos.m_ownership.send_always() || m_qos.m_ownership.hasChanged)
+    if (ownership.send_always() || ownership.hasChanged)
     {
-        if (!dds::QosPoliciesSerializer<dds::OwnershipQosPolicy>::add_to_cdr_message(m_qos.m_ownership, msg))
+        if (!dds::QosPoliciesSerializer<dds::OwnershipQosPolicy>::add_to_cdr_message(ownership, msg))
         {
             return false;
         }
     }
-    if (m_qos.m_destinationOrder.send_always() || m_qos.m_destinationOrder.hasChanged)
+    if (destination_order.send_always() || destination_order.hasChanged)
     {
         if (!dds::QosPoliciesSerializer<dds::DestinationOrderQosPolicy>::add_to_cdr_message(
-                    m_qos.m_destinationOrder, msg))
+                    destination_order, msg))
         {
             return false;
         }
     }
-    if (m_qos.m_presentation.send_always() || m_qos.m_presentation.hasChanged)
+    if (presentation.send_always() || presentation.hasChanged)
     {
         if (!dds::QosPoliciesSerializer<dds::PresentationQosPolicy>::add_to_cdr_message(
-                    m_qos.m_presentation, msg))
+                    presentation, msg))
         {
             return false;
         }
     }
-    if (m_qos.m_partition.send_always() || m_qos.m_partition.hasChanged)
+    if (partition.send_always() || partition.hasChanged)
     {
-        if (!dds::QosPoliciesSerializer<dds::PartitionQosPolicy>::add_to_cdr_message(m_qos.m_partition, msg))
+        if (!dds::QosPoliciesSerializer<dds::PartitionQosPolicy>::add_to_cdr_message(partition, msg))
         {
             return false;
         }
     }
-    if (m_qos.m_topicData.send_always() || m_qos.m_topicData.hasChanged)
+    if (topic_data.send_always() || topic_data.hasChanged)
     {
-        if (!dds::QosPoliciesSerializer<dds::TopicDataQosPolicy>::add_to_cdr_message(m_qos.m_topicData, msg))
+        if (!dds::QosPoliciesSerializer<dds::TopicDataQosPolicy>::add_to_cdr_message(topic_data, msg))
         {
             return false;
         }
     }
-    if (m_qos.m_groupData.send_always() || m_qos.m_groupData.hasChanged)
+    if (group_data.send_always() || group_data.hasChanged)
     {
-        if (!dds::QosPoliciesSerializer<dds::GroupDataQosPolicy>::add_to_cdr_message(m_qos.m_groupData, msg))
+        if (!dds::QosPoliciesSerializer<dds::GroupDataQosPolicy>::add_to_cdr_message(group_data, msg))
         {
             return false;
         }
     }
-    if ((m_qos.m_disablePositiveACKs.send_always() || m_qos.m_topicData.hasChanged) &&
-            m_qos.m_disablePositiveACKs.enabled)
+    if ((disable_positive_acks.send_always() || disable_positive_acks.hasChanged) &&
+            disable_positive_acks.enabled)
     {
         if (!dds::QosPoliciesSerializer<dds::DisablePositiveACKsQosPolicy>::add_to_cdr_message(
-                    m_qos.m_disablePositiveACKs, msg))
+                    disable_positive_acks, msg))
         {
             return false;
         }
     }
 
-    if ((m_qos.data_sharing.send_always() || m_qos.data_sharing.hasChanged) &&
-            m_qos.data_sharing.kind() != fastdds::dds::OFF)
+    if ((data_sharing.send_always() || data_sharing.hasChanged) &&
+            data_sharing.kind() != fastdds::dds::OFF)
     {
         if (!dds::QosPoliciesSerializer<dds::DataSharingQosPolicy>::add_to_cdr_message(
-                    m_qos.data_sharing, msg))
+                    data_sharing, msg))
         {
             return false;
         }
@@ -596,9 +602,9 @@ bool ReaderProxyData::writeToCDRMessage(
     }
 
     // Serialize ContentFilterProperty only when filter_class_name and filter_expression are not empty.
-    if (0 < content_filter_.filter_class_name.size() && 0 < content_filter_.filter_expression.size())
+    if (0 < content_filter.filter_class_name.size() && 0 < content_filter.filter_expression.size())
     {
-        if (!dds::ParameterSerializer<ContentFilterProperty>::add_to_cdr_message(content_filter_, msg))
+        if (!dds::ParameterSerializer<ContentFilterProperty>::add_to_cdr_message(content_filter, msg))
         {
             return false;
         }
@@ -617,19 +623,19 @@ bool ReaderProxyData::writeToCDRMessage(
     }
 #endif // if HAVE_SECURITY
 
-    if (m_qos.representation.send_always() || m_qos.representation.hasChanged)
+    if (representation.send_always() || representation.hasChanged)
     {
         if (!dds::QosPoliciesSerializer<dds::DataRepresentationQosPolicy>::add_to_cdr_message(
-                    m_qos.representation, msg))
+                    representation, msg))
         {
             return false;
         }
     }
 
-    if (m_qos.type_consistency.send_always() || m_qos.type_consistency.hasChanged)
+    if (type_consistency.send_always() || type_consistency.hasChanged)
     {
         if (!dds::QosPoliciesSerializer<dds::TypeConsistencyEnforcementQosPolicy>::add_to_cdr_message(
-                    m_qos.type_consistency, msg))
+                    type_consistency, msg))
         {
             return false;
         }
@@ -673,16 +679,7 @@ bool ReaderProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_DURABILITY:
                     {
                         if (!dds::QosPoliciesSerializer<dds::DurabilityQosPolicy>::read_from_cdr_message(
-                                    m_qos.m_durability, msg, plength))
-                        {
-                            return false;
-                        }
-                        break;
-                    }
-                    case fastdds::dds::PID_DURABILITY_SERVICE:
-                    {
-                        if (!dds::QosPoliciesSerializer<dds::DurabilityServiceQosPolicy>::read_from_cdr_message(
-                                    m_qos.m_durabilityService, msg, plength))
+                                    durability, msg, plength))
                         {
                             return false;
                         }
@@ -691,7 +688,7 @@ bool ReaderProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_DEADLINE:
                     {
                         if (!dds::QosPoliciesSerializer<dds::DeadlineQosPolicy>::read_from_cdr_message(
-                                    m_qos.m_deadline, msg, plength))
+                                    deadline, msg, plength))
                         {
                             return false;
                         }
@@ -700,7 +697,7 @@ bool ReaderProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_LATENCY_BUDGET:
                     {
                         if (!dds::QosPoliciesSerializer<dds::LatencyBudgetQosPolicy>::read_from_cdr_message(
-                                    m_qos.m_latencyBudget, msg, plength))
+                                    latency_budget, msg, plength))
                         {
                             return false;
                         }
@@ -709,7 +706,7 @@ bool ReaderProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_LIVELINESS:
                     {
                         if (!dds::QosPoliciesSerializer<dds::LivelinessQosPolicy>::read_from_cdr_message(
-                                    m_qos.m_liveliness, msg, plength))
+                                    liveliness, msg, plength))
                         {
                             return false;
                         }
@@ -718,7 +715,7 @@ bool ReaderProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_RELIABILITY:
                     {
                         if (!dds::QosPoliciesSerializer<dds::ReliabilityQosPolicy>::read_from_cdr_message(
-                                    m_qos.m_reliability, msg, plength))
+                                    reliability, msg, plength))
                         {
                             return false;
                         }
@@ -727,7 +724,7 @@ bool ReaderProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_LIFESPAN:
                     {
                         if (!dds::QosPoliciesSerializer<dds::LifespanQosPolicy>::read_from_cdr_message(
-                                    m_qos.m_lifespan, msg, plength))
+                                    lifespan, msg, plength))
                         {
                             return false;
                         }
@@ -736,7 +733,7 @@ bool ReaderProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_USER_DATA:
                     {
                         if (!dds::QosPoliciesSerializer<dds::UserDataQosPolicy>::read_from_cdr_message(
-                                    m_qos.m_userData, msg, plength))
+                                    user_data, msg, plength))
                         {
                             return false;
                         }
@@ -745,7 +742,7 @@ bool ReaderProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_TIME_BASED_FILTER:
                     {
                         if (!dds::QosPoliciesSerializer<dds::TimeBasedFilterQosPolicy>::read_from_cdr_message(
-                                    m_qos.m_timeBasedFilter, msg, plength))
+                                    time_based_filter, msg, plength))
                         {
                             return false;
                         }
@@ -754,7 +751,7 @@ bool ReaderProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_OWNERSHIP:
                     {
                         if (!dds::QosPoliciesSerializer<dds::OwnershipQosPolicy>::read_from_cdr_message(
-                                    m_qos.m_ownership, msg, plength))
+                                    ownership, msg, plength))
                         {
                             return false;
                         }
@@ -763,7 +760,7 @@ bool ReaderProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_DESTINATION_ORDER:
                     {
                         if (!dds::QosPoliciesSerializer<dds::DestinationOrderQosPolicy>::read_from_cdr_message(
-                                    m_qos.m_destinationOrder, msg, plength))
+                                    destination_order, msg, plength))
                         {
                             return false;
                         }
@@ -772,7 +769,7 @@ bool ReaderProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_PRESENTATION:
                     {
                         if (!dds::QosPoliciesSerializer<dds::PresentationQosPolicy>::read_from_cdr_message(
-                                    m_qos.m_presentation, msg, plength))
+                                    presentation, msg, plength))
                         {
                             return false;
                         }
@@ -781,7 +778,7 @@ bool ReaderProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_PARTITION:
                     {
                         if (!dds::QosPoliciesSerializer<dds::PartitionQosPolicy>::read_from_cdr_message(
-                                    m_qos.m_partition, msg, plength))
+                                    partition, msg, plength))
                         {
                             return false;
                         }
@@ -790,7 +787,7 @@ bool ReaderProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_TOPIC_DATA:
                     {
                         if (!dds::QosPoliciesSerializer<dds::TopicDataQosPolicy>::read_from_cdr_message(
-                                    m_qos.m_topicData, msg, plength))
+                                    topic_data, msg, plength))
                         {
                             return false;
                         }
@@ -799,7 +796,7 @@ bool ReaderProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_GROUP_DATA:
                     {
                         if (!dds::QosPoliciesSerializer<dds::GroupDataQosPolicy>::read_from_cdr_message(
-                                    m_qos.m_groupData, msg, plength))
+                                    group_data, msg, plength))
                         {
                             return false;
                         }
@@ -814,7 +811,7 @@ bool ReaderProxyData::readFromCDRMessage(
                             return false;
                         }
 
-                        m_topicName = p.getName();
+                        topic_name = p.getName();
                         break;
                     }
                     case fastdds::dds::PID_TYPE_NAME:
@@ -826,7 +823,7 @@ bool ReaderProxyData::readFromCDRMessage(
                             return false;
                         }
 
-                        m_typeName = p.getName();
+                        type_name = p.getName();
                         break;
                     }
                     case fastdds::dds::PID_PARTICIPANT_GUID:
@@ -838,7 +835,9 @@ bool ReaderProxyData::readFromCDRMessage(
                             return false;
                         }
 
-                        m_RTPSParticipantKey = p.guid;
+                        m_rtps_participant_key = p.guid;
+                        participant_guid = p.guid;
+                        from_guid_prefix_to_topic_key(participant_guid.guidPrefix, participant_key.value);
                         break;
                     }
                     case fastdds::dds::PID_ENDPOINT_GUID:
@@ -850,8 +849,9 @@ bool ReaderProxyData::readFromCDRMessage(
                             return false;
                         }
 
-                        m_guid = p.guid;
+                        guid = p.guid;
                         m_key = p.guid;
+                        from_entity_id_to_topic_key(guid.entityId, SubscriptionBuiltinTopicData::key.value);
                         break;
                     }
                     case fastdds::dds::PID_NETWORK_CONFIGURATION_SET:
@@ -877,7 +877,7 @@ bool ReaderProxyData::readFromCDRMessage(
                             return false;
                         }
 
-                        m_networkConfiguration = p.netconfigSet;
+                        m_network_configuration = p.netconfigSet;
                         break;
                     }
                     case fastdds::dds::PID_UNICAST_LOCATOR:
@@ -889,7 +889,7 @@ bool ReaderProxyData::readFromCDRMessage(
                             return false;
                         }
 
-                        remote_locators_.add_unicast_locator(p.locator);
+                        remote_locators.add_unicast_locator(p.locator);
                         break;
                     }
                     case fastdds::dds::PID_MULTICAST_LOCATOR:
@@ -901,7 +901,7 @@ bool ReaderProxyData::readFromCDRMessage(
                             return false;
                         }
 
-                        remote_locators_.add_unicast_locator(p.locator);
+                        remote_locators.add_unicast_locator(p.locator);
                         break;
                     }
                     case fastdds::dds::PID_EXPECTS_INLINE_QOS:
@@ -913,7 +913,7 @@ bool ReaderProxyData::readFromCDRMessage(
                             return false;
                         }
 
-                        m_expectsInlineQos = p.value;
+                        expects_inline_qos = p.value;
                         break;
                     }
                     case fastdds::dds::PID_KEY_HASH:
@@ -926,13 +926,13 @@ bool ReaderProxyData::readFromCDRMessage(
                         }
 
                         m_key = p.key;
-                        iHandle2GUID(m_guid, m_key);
+                        iHandle2GUID(guid, m_key);
                         break;
                     }
                     case fastdds::dds::PID_DATA_REPRESENTATION:
                     {
                         if (!dds::QosPoliciesSerializer<dds::DataRepresentationQosPolicy>::read_from_cdr_message(
-                                    m_qos.representation, msg, plength))
+                                    representation, msg, plength))
                         {
                             return false;
                         }
@@ -941,7 +941,7 @@ bool ReaderProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_TYPE_CONSISTENCY_ENFORCEMENT:
                     {
                         if (!dds::QosPoliciesSerializer<dds::TypeConsistencyEnforcementQosPolicy>::
-                                read_from_cdr_message(m_qos.type_consistency, msg, plength))
+                                read_from_cdr_message(type_consistency, msg, plength))
                         {
                             return false;
                         }
@@ -1002,7 +1002,7 @@ bool ReaderProxyData::readFromCDRMessage(
 
                         if (!dds::QosPoliciesSerializer<dds::DisablePositiveACKsQosPolicy>::
                                 read_from_cdr_message(
-                                    m_qos.m_disablePositiveACKs, msg, plength))
+                                    disable_positive_acks, msg, plength))
                         {
                             return false;
                         }
@@ -1036,7 +1036,7 @@ bool ReaderProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_CONTENT_FILTER_PROPERTY:
                     {
                         if (!dds::ParameterSerializer<ContentFilterProperty>::read_from_cdr_message(
-                                    content_filter_, msg, plength))
+                                    content_filter, msg, plength))
                         {
                             return false;
                         }
@@ -1060,7 +1060,7 @@ bool ReaderProxyData::readFromCDRMessage(
                         }
 
                         if (!dds::QosPoliciesSerializer<dds::DataSharingQosPolicy>::read_from_cdr_message(
-                                    m_qos.data_sharing, msg, plength))
+                                    data_sharing, msg, plength))
                         {
                             EPROSIMA_LOG_ERROR(RTPS_READER_PROXY_DATA,
                                     "Received with error.");
@@ -1081,29 +1081,29 @@ bool ReaderProxyData::readFromCDRMessage(
 
     uint32_t qos_size;
     clear();
-    m_qos.data_sharing.off();
+    data_sharing.off();
     try
     {
         if (ParameterList::readParameterListfromCDRMsg(*msg, param_process, true, qos_size))
         {
-            if (m_guid.entityId.value[3] == 0x04)
+            if (guid.entityId.value[3] == 0x04)
             {
-                m_topicKind = NO_KEY;
+                topic_kind = NO_KEY;
             }
-            else if (m_guid.entityId.value[3] == 0x07)
+            else if (guid.entityId.value[3] == 0x07)
             {
-                m_topicKind = WITH_KEY;
+                topic_kind = WITH_KEY;
             }
 
             /* Some vendors (i.e. CycloneDDS) do not follow DDSI-RTPS and omit PID_PARTICIPANT_GUID
              * In that case we use a default value relying on the prefix from m_guid and the default
              * participant entity id
              */
-            if (!m_RTPSParticipantKey.isDefined())
+            if (!m_rtps_participant_key.isDefined())
             {
-                GUID_t tmp_guid = m_guid;
+                GUID_t tmp_guid = guid;
                 tmp_guid.entityId = c_EntityId_RTPSParticipant;
-                m_RTPSParticipantKey = tmp_guid;
+                m_rtps_participant_key = tmp_guid;
             }
 
             return true;
@@ -1132,22 +1132,22 @@ void ReaderProxyData::setup_locators(
     if (rdata.has_locators())
     {
         // Get the transformed remote locators for the ReaderProxyData received
-        remote_locators_.unicast.clear();
-        remote_locators_.multicast.clear();
-        for (const Locator_t& locator : rdata.remote_locators_.unicast)
+        remote_locators.unicast.clear();
+        remote_locators.multicast.clear();
+        for (const Locator_t& locator : rdata.remote_locators.unicast)
         {
             Locator_t temp_locator;
-            if (network.transform_remote_locator(locator, temp_locator, m_networkConfiguration, from_this_host))
+            if (network.transform_remote_locator(locator, temp_locator, m_network_configuration, from_this_host))
             {
-                ProxyDataFilters::filter_locators(network, remote_locators_, temp_locator, true);
+                ProxyDataFilters::filter_locators(network, remote_locators, temp_locator, true);
             }
         }
-        for (const Locator_t& locator : rdata.remote_locators_.multicast)
+        for (const Locator_t& locator : rdata.remote_locators.multicast)
         {
             Locator_t temp_locator;
-            if (network.transform_remote_locator(locator, temp_locator, m_networkConfiguration, from_this_host))
+            if (network.transform_remote_locator(locator, temp_locator, m_network_configuration, from_this_host))
             {
-                ProxyDataFilters::filter_locators(network, remote_locators_, temp_locator, false);
+                ProxyDataFilters::filter_locators(network, remote_locators, temp_locator, false);
             }
         }
     }
@@ -1160,30 +1160,20 @@ void ReaderProxyData::setup_locators(
 
 void ReaderProxyData::clear()
 {
-    m_expectsInlineQos = false;
+    SubscriptionBuiltinTopicData::clear();
+
+    m_network_configuration = 0;
+    m_key = InstanceHandle_t();
+    m_rtps_participant_key = InstanceHandle_t();
+    m_user_defined_id = 0;
+    m_is_alive = true;
+    m_properties.clear();
+    m_properties.length = 0;
+
 #if HAVE_SECURITY
     security_attributes_ = 0UL;
     plugin_security_attributes_ = 0UL;
 #endif // if HAVE_SECURITY
-    m_guid = c_Guid_Unknown;
-    m_networkConfiguration = 0;
-    remote_locators_.unicast.clear();
-    remote_locators_.multicast.clear();
-    m_key = InstanceHandle_t();
-    m_RTPSParticipantKey = InstanceHandle_t();
-    m_typeName = "";
-    m_topicName = "";
-    m_userDefinedId = 0;
-    m_isAlive = true;
-    m_topicKind = NO_KEY;
-    m_qos.clear();
-    m_properties.clear();
-    m_properties.length = 0;
-    content_filter_.filter_class_name = "";
-    content_filter_.content_filtered_topic_name = "";
-    content_filter_.related_topic_name = "";
-    content_filter_.filter_expression = "";
-    content_filter_.expression_parameters.clear();
 
     if (m_type_id)
     {
@@ -1202,92 +1192,43 @@ void ReaderProxyData::clear()
 bool ReaderProxyData::is_update_allowed(
         const ReaderProxyData& rdata) const
 {
-    if ((m_guid != rdata.m_guid) ||
+    if ((guid != rdata.guid) ||
 #if HAVE_SECURITY
             (security_attributes_ != rdata.security_attributes_) ||
             (plugin_security_attributes_ != rdata.plugin_security_attributes_) ||
 #endif // if HAVE_SECURITY
-            (m_typeName != rdata.m_typeName) ||
-            (m_topicName != rdata.m_topicName))
+            (type_name != rdata.type_name) ||
+            (topic_name != rdata.topic_name))
     {
         return false;
     }
 
-    return m_qos.canQosBeUpdated(rdata.m_qos);
+    return can_qos_be_updated(rdata);
 }
 
 void ReaderProxyData::update(
         ReaderProxyData* rdata)
 {
-    remote_locators_ = rdata->remote_locators_;
-    m_qos.setQos(rdata->m_qos, false);
-    m_isAlive = rdata->m_isAlive;
-    m_expectsInlineQos = rdata->m_expectsInlineQos;
-    content_filter_ = rdata->content_filter_;
-}
-
-void ReaderProxyData::copy(
-        ReaderProxyData* rdata)
-{
-    m_guid = rdata->m_guid;
-    m_networkConfiguration = rdata->m_networkConfiguration;
-    remote_locators_ = rdata->remote_locators_;
-    m_key = rdata->m_key;
-    m_RTPSParticipantKey = rdata->m_RTPSParticipantKey;
-    m_typeName = rdata->m_typeName;
-    m_topicName = rdata->m_topicName;
-    m_userDefinedId = rdata->m_userDefinedId;
-    m_qos = rdata->m_qos;
-    m_expectsInlineQos = rdata->m_expectsInlineQos;
-    m_isAlive = rdata->m_isAlive;
-    m_topicKind = rdata->m_topicKind;
-    m_properties = rdata->m_properties;
-    content_filter_ = rdata->content_filter_;
-
-    if (rdata->m_type_id)
-    {
-        type_id(*rdata->m_type_id);
-    }
-    else
-    {
-        delete m_type_id;
-        m_type_id = nullptr;
-    }
-
-    if (rdata->m_type)
-    {
-        type(*rdata->m_type);
-    }
-    else
-    {
-        delete m_type;
-        m_type = nullptr;
-    }
-
-    if (rdata->m_type_information)
-    {
-        type_information(*rdata->m_type_information);
-    }
-    else
-    {
-        delete m_type_information;
-        m_type_information = nullptr;
-    }
+    remote_locators = rdata->remote_locators;
+    set_qos(*rdata, false);
+    m_is_alive = rdata->m_is_alive;
+    expects_inline_qos = rdata->expects_inline_qos;
+    content_filter = rdata->content_filter;
 }
 
 void ReaderProxyData::add_unicast_locator(
         const Locator_t& locator)
 {
-    remote_locators_.add_unicast_locator(locator);
+    remote_locators.add_unicast_locator(locator);
 }
 
 void ReaderProxyData::set_announced_unicast_locators(
         const LocatorList_t& locators)
 {
-    remote_locators_.unicast.clear();
+    remote_locators.unicast.clear();
     for (const Locator_t& locator : locators)
     {
-        remote_locators_.add_unicast_locator(locator);
+        remote_locators.add_unicast_locator(locator);
     }
 }
 
@@ -1296,12 +1237,12 @@ void ReaderProxyData::set_remote_unicast_locators(
         const NetworkFactory& network,
         bool from_this_host)
 {
-    remote_locators_.unicast.clear();
+    remote_locators.unicast.clear();
     for (const Locator_t& locator : locators)
     {
         if (network.is_locator_remote_or_allowed(locator, from_this_host))
         {
-            remote_locators_.add_unicast_locator(locator);
+            remote_locators.add_unicast_locator(locator);
         }
     }
 }
@@ -1309,7 +1250,7 @@ void ReaderProxyData::set_remote_unicast_locators(
 void ReaderProxyData::add_multicast_locator(
         const Locator_t& locator)
 {
-    remote_locators_.add_multicast_locator(locator);
+    remote_locators.add_multicast_locator(locator);
 }
 
 void ReaderProxyData::set_multicast_locators(
@@ -1317,12 +1258,12 @@ void ReaderProxyData::set_multicast_locators(
         const NetworkFactory& network,
         bool from_this_host)
 {
-    remote_locators_.multicast.clear();
+    remote_locators.multicast.clear();
     for (const Locator_t& locator : locators)
     {
         if (network.is_locator_remote_or_allowed(locator, from_this_host))
         {
-            remote_locators_.add_multicast_locator(locator);
+            remote_locators.add_multicast_locator(locator);
         }
     }
 }
@@ -1330,7 +1271,7 @@ void ReaderProxyData::set_multicast_locators(
 void ReaderProxyData::set_locators(
         const RemoteLocatorList& locators)
 {
-    remote_locators_ = locators;
+    remote_locators = locators;
 }
 
 void ReaderProxyData::set_remote_locators(
@@ -1339,14 +1280,14 @@ void ReaderProxyData::set_remote_locators(
         bool use_multicast_locators,
         bool from_this_host)
 {
-    remote_locators_.unicast.clear();
-    remote_locators_.multicast.clear();
+    remote_locators.unicast.clear();
+    remote_locators.multicast.clear();
 
     for (const Locator_t& locator : locators.unicast)
     {
         if (network.is_locator_remote_or_allowed(locator, from_this_host))
         {
-            remote_locators_.add_unicast_locator(locator);
+            remote_locators.add_unicast_locator(locator);
         }
     }
 
@@ -1356,7 +1297,7 @@ void ReaderProxyData::set_remote_locators(
         {
             if (network.is_locator_remote_or_allowed(locator, from_this_host))
             {
-                remote_locators_.add_multicast_locator(locator);
+                remote_locators.add_multicast_locator(locator);
             }
         }
     }
