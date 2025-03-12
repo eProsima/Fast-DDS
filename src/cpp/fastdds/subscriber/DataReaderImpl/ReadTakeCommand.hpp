@@ -180,6 +180,18 @@ struct ReadTakeCommand
             ++it;
         }
 
+        // Check if there is a fake sample available
+        if (instance_->second->has_fake_sample)
+        {
+            // Add sample and info to collections
+            bool deserialization_error = false;
+            bool added = add_sample(nullptr, deserialization_error);
+            if (added && take_samples)
+            {
+                instance_->second->has_fake_sample = false;
+            }
+        }
+
         if (current_slot_ > first_slot)
         {
             history_.instance_viewed_nts(instance_->second);
@@ -395,7 +407,34 @@ private:
         }
 
         SampleInfo& info = sample_infos_[current_slot_];
-        generate_info(info, *instance_->second, item);
+        const DataReaderInstance& instance = *instance_->second;
+        if (item)
+        {
+            generate_info(info, instance, item);
+        }
+        else
+        {
+            fastdds::rtps::Time_t current_time;
+            fastdds::rtps::Time_t::now(current_time);
+
+            info.sample_state = NOT_READ_SAMPLE_STATE;
+            info.instance_state = instance.instance_state;
+            info.view_state = instance.view_state;
+            info.disposed_generation_count = instance.disposed_generation_count;
+            info.no_writers_generation_count = instance.no_writers_generation_count;
+            info.sample_rank = 0;
+            info.generation_rank = 0;
+            info.absolute_generation_rank = 0;
+            info.source_timestamp = current_time;
+            info.reception_timestamp = current_time;
+            info.instance_handle = instance_->first;
+            info.publication_handle = reader_->getGuid();
+
+            info.sample_identity = rtps::SampleIdentity{};
+            info.related_sample_identity = rtps::SampleIdentity{};
+
+            info.valid_data = false;
+        }
     }
 
     bool check_datasharing_validity(
