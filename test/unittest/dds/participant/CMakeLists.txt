@@ -20,6 +20,10 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_service_easy_mod
     ${CMAKE_CURRENT_BINARY_DIR}/test_xml_service_easy_mode.xml
     COPYONLY)
 
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_easy_mode_config.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/test_xml_easy_mode_config.xml
+    COPYONLY)
+
 set(PARTICIPANTTESTS_SOURCE
         ParticipantTests.cpp
     )
