@@ -115,6 +115,7 @@ namespace rtps {
 
 struct PublicationBuiltinTopicData;
 struct TopicDescription;
+struct RemoteLocatorList;
 class RTPSParticipant;
 class RTPSParticipantListener;
 class BuiltinProtocols;
@@ -1044,6 +1045,10 @@ public:
 
     void createSenderResources(
             const Locator_t& locator);
+
+    void createSenderResources(
+            const RemoteLocatorList& locator_list,
+            const EndpointAttributes& param);
 
     /**
      * Creates sender resources for the given locator selector entry by calling the NetworkFactory's
