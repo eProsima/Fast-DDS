@@ -536,10 +536,23 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
     // Is up to the caller guarantee the att argument is not modified during the call
     RTPSParticipantAttributes client_att(att);
 
-    // Check whether we need to initialize in easy mode
-    const std::string& ros_easy_mode_env_value = ros_easy_mode_env();
+    /* Check whether we need to initialize in easy mode */
 
-    if (ros_easy_mode_env_value.empty())
+    // Get the IP of the remote discovery server.
+    // 1. Check if it is configured in RTPSParticipantAttributes
+    // 2. If not, check if it is configured in the environment variable
+    std::string ros_easy_mode_ip_value;
+
+    if (!att.easy_mode_ip.empty())
+    {
+        ros_easy_mode_ip_value = att.easy_mode_ip;
+    }
+    else
+    {
+        ros_easy_mode_ip_value = ros_easy_mode_env();
+    }
+
+    if (ros_easy_mode_ip_value.empty())
     {
         // Retrieve the info from the environment variable
         LocatorList_t& server_list = client_att.builtin.discovery_config.m_DiscoveryServers;
@@ -655,7 +668,7 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
                         .verb(FAST_DDS_DEFAULT_CLI_AUTO_VERB)
                         .arg("-d")
                         .value(std::to_string(domain_id))
-                        .value(ros_easy_mode_env_value + ":" + std::to_string(domain_id))
+                        .value(ros_easy_mode_ip_value + ":" + std::to_string(domain_id))
                         .build_and_call();
 #ifndef _WIN32
         // Adecuate Python subprocess return
