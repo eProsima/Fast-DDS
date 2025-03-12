@@ -35,7 +35,6 @@
 #include <fastdds/rtps/reader/ReaderListener.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 
-#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/DataSharing/DataSharingListener.hpp>
 #include <rtps/DataSharing/DataSharingNotification.hpp>

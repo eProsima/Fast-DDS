@@ -47,7 +47,6 @@
 #include <rtps/attributes/ServerAttributes.hpp>
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
-#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/builtin/discovery/participant/PDPClient.h>
@@ -2890,7 +2889,7 @@ bool RTPSParticipantImpl::get_subscription_info(
 
     if (mp_builtinProtocols->mp_PDP->lookupReaderProxyData(reader_guid, rproxy_data))
     {
-        from_proxy_to_builtin(rproxy_data, data);
+        data = rproxy_data;
         ret = true;
     }
 
@@ -3170,12 +3169,12 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
 
     if (ret)
     {
-        ret = reader_data.guid().entityId.is_reader();
+        ret = reader_data.guid.entityId.is_reader();
     }
 
     if (ret)
     {
-        from_proxy_to_builtin(reader_data, data);
+        data = reader_data;
     }
 
     return ret;

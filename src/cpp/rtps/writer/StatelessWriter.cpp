@@ -33,7 +33,6 @@
 
 #include "../flowcontrol/FlowController.hpp"
 #include <rtps/builtin/BuiltinProtocols.h>
-#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/DataSharing/DataSharingNotifier.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>

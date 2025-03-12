@@ -41,7 +41,6 @@
 #include <fastdds/utils/TypePropagation.hpp>
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
-#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/data/ProxyHashTables.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
