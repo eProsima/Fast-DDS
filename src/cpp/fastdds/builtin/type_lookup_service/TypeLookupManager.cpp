@@ -171,12 +171,12 @@ bool TypeLookupManager::assign_remote_endpoints(
     temp_writer_proxy_data_->reliability.kind = fastdds::dds::RELIABLE_RELIABILITY_QOS;
 
     temp_reader_proxy_data_->clear();
-    temp_reader_proxy_data_->m_expectsInlineQos = false;
-    temp_reader_proxy_data_->guid().guidPrefix = pdata.guid.guidPrefix;
+    temp_reader_proxy_data_->expects_inline_qos = false;
+    temp_reader_proxy_data_->guid.guidPrefix = pdata.guid.guidPrefix;
     temp_reader_proxy_data_->set_remote_locators(pdata.metatraffic_locators, network, true, pdata.is_from_this_host());
-    temp_reader_proxy_data_->topicKind(NO_KEY);
-    temp_reader_proxy_data_->m_qos.m_durability.kind = fastdds::dds::VOLATILE_DURABILITY_QOS;
-    temp_reader_proxy_data_->m_qos.m_reliability.kind = fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    temp_reader_proxy_data_->topic_kind = NO_KEY;
+    temp_reader_proxy_data_->durability.kind = fastdds::dds::VOLATILE_DURABILITY_QOS;
+    temp_reader_proxy_data_->reliability.kind = fastdds::dds::RELIABLE_RELIABILITY_QOS;
 
     EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "for RTPSParticipant: " << pdata.guid);
 
@@ -207,7 +207,7 @@ bool TypeLookupManager::assign_remote_endpoints(
     if (auxendp != 0 && builtin_request_writer_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Adding remote reader to the local Builtin Request Writer");
-        temp_reader_proxy_data_->guid().entityId = fastdds::rtps::c_EntityId_TypeLookup_request_reader;
+        temp_reader_proxy_data_->guid.entityId = fastdds::rtps::c_EntityId_TypeLookup_request_reader;
         builtin_request_writer_->matched_reader_add_edp(*temp_reader_proxy_data_);
     }
 
@@ -217,7 +217,7 @@ bool TypeLookupManager::assign_remote_endpoints(
     if (auxendp != 0 && builtin_reply_writer_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Adding remote reader to the local Builtin Reply Writer");
-        temp_reader_proxy_data_->guid().entityId = fastdds::rtps::c_EntityId_TypeLookup_reply_reader;
+        temp_reader_proxy_data_->guid.entityId = fastdds::rtps::c_EntityId_TypeLookup_reply_reader;
         builtin_reply_writer_->matched_reader_add_edp(*temp_reader_proxy_data_);
     }
 

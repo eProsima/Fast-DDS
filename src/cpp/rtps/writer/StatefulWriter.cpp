@@ -964,7 +964,7 @@ bool StatefulWriter::matched_reader_add_edp(
 {
     using network::external_locators::filter_remote_locators;
 
-    if (rdata.guid() == c_Guid_Unknown)
+    if (rdata.guid == c_Guid_Unknown)
     {
         EPROSIMA_LOG_ERROR(RTPS_WRITER, "Reliable Writer need GUID_t of matched readers");
         return false;
@@ -978,7 +978,7 @@ bool StatefulWriter::matched_reader_add_edp(
     if (for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
             [this, &rdata](ReaderProxy* reader)
             {
-                if (reader->guid() == rdata.guid())
+                if (reader->guid() == rdata.guid)
                 {
                     EPROSIMA_LOG_INFO(RTPS_WRITER, "Attempting to add existing reader, updating information.");
                     if (reader->update(rdata))
@@ -1041,7 +1041,7 @@ bool StatefulWriter::matched_reader_add_edp(
     }
 
     // Add info of new datareader.
-    rp->start(rdata, is_datasharing_compatible_with(rdata.m_qos.data_sharing));
+    rp->start(rdata, is_datasharing_compatible_with(rdata.data_sharing));
     filter_remote_locators(*rp->general_locator_selector_entry(),
             m_att.external_unicast_locators, m_att.ignore_non_matching_locators);
     filter_remote_locators(*rp->async_locator_selector_entry(),
@@ -1052,7 +1052,7 @@ bool StatefulWriter::matched_reader_add_edp(
     if (rp->is_local_reader())
     {
         matched_local_readers_.push_back(rp);
-        EPROSIMA_LOG_INFO(RTPS_WRITER, "Adding reader " << rdata.guid() << " to " << this->m_guid.entityId
+        EPROSIMA_LOG_INFO(RTPS_WRITER, "Adding reader " << rdata.guid << " to " << this->m_guid.entityId
                                                         << " as local reader");
     }
     else
@@ -1060,13 +1060,13 @@ bool StatefulWriter::matched_reader_add_edp(
         if (rp->is_datasharing_reader())
         {
             matched_datasharing_readers_.push_back(rp);
-            EPROSIMA_LOG_INFO(RTPS_WRITER, "Adding reader " << rdata.guid() << " to " << this->m_guid.entityId
+            EPROSIMA_LOG_INFO(RTPS_WRITER, "Adding reader " << rdata.guid << " to " << this->m_guid.entityId
                                                             << " as data sharing");
         }
         else
         {
             matched_remote_readers_.push_back(rp);
-            EPROSIMA_LOG_INFO(RTPS_WRITER, "Adding reader " << rdata.guid() << " to " << this->m_guid.entityId
+            EPROSIMA_LOG_INFO(RTPS_WRITER, "Adding reader " << rdata.guid << " to " << this->m_guid.entityId
                                                             << " as remote reader");
         }
     }
@@ -1180,8 +1180,8 @@ bool StatefulWriter::matched_reader_add_edp(
     }
 
     EPROSIMA_LOG_INFO(RTPS_WRITER, "Reader Proxy " << rp->guid() << " added to " << this->m_guid.entityId << " with "
-                                                   << rdata.remote_locators().unicast.size() << "(u)-"
-                                                   << rdata.remote_locators().multicast.size() <<
+                                                   << rdata.remote_locators.unicast.size() << "(u)-"
+                                                   << rdata.remote_locators.multicast.size() <<
             "(m) locators");
 
     if (nullptr != listener_)

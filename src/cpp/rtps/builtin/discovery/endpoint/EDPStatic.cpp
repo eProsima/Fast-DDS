@@ -326,12 +326,12 @@ bool EDPStatic::process_reader_proxy_data(
         RTPSReader*,
         ReaderProxyData* rdata)
 {
-    EPROSIMA_LOG_INFO(RTPS_EDP, rdata->guid().entityId << " in topic: " << rdata->topicName());
+    EPROSIMA_LOG_INFO(RTPS_EDP, rdata->guid.entityId << " in topic: " << rdata->topic_name);
     mp_PDP->getMutex()->lock();
     //Add the property list entry to our local pdp
     ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
     localpdata->properties.push_back(EDPStaticProperty::toProperty(exchange_format_, "Reader", "ALIVE",
-            rdata->userDefinedId(), rdata->guid().entityId));
+            rdata->user_defined_id(), rdata->guid.entityId));
     mp_PDP->getMutex()->unlock();
     this->mp_PDP->announceParticipantState(true);
     return true;
@@ -498,8 +498,8 @@ bool EDPStatic::newRemoteReader(
     ReaderProxyData* rpd = NULL;
     if (mp_edpXML->lookforReader(participant_name, user_id, &rpd) == xmlparser::XMLP_ret::XML_OK)
     {
-        EPROSIMA_LOG_INFO(RTPS_EDP, "Activating: " << rpd->guid().entityId << " in topic " << rpd->topicName());
-        GUID_t reader_guid(participant_guid.guidPrefix, ent_id != c_EntityId_Unknown ? ent_id : rpd->guid().entityId);
+        EPROSIMA_LOG_INFO(RTPS_EDP, "Activating: " << rpd->guid.entityId << " in topic " << rpd->topic_name);
+        GUID_t reader_guid(participant_guid.guidPrefix, ent_id != c_EntityId_Unknown ? ent_id : rpd->guid.entityId);
 
         auto init_fun = [this, participant_guid, reader_guid, rpd](
             ReaderProxyData* newRPD,
@@ -511,15 +511,15 @@ bool EDPStatic::newRemoteReader(
                     assert(!updating);
 
                     *newRPD = *rpd;
-                    newRPD->guid(reader_guid);
+                    newRPD->guid = reader_guid;
                     if (!checkEntityId(newRPD))
                     {
                         EPROSIMA_LOG_ERROR(RTPS_EDP, "The provided entityId for Reader with ID: "
-                                << newRPD->userDefinedId() << " does not match the topic Kind");
+                                << newRPD->user_defined_id() << " does not match the topic Kind");
                         return false;
                     }
-                    newRPD->key() = newRPD->guid();
-                    newRPD->RTPSParticipantKey() = participant_guid;
+                    newRPD->key() = newRPD->guid;
+                    newRPD->rtps_participant_key() = participant_guid;
                     if (!newRPD->has_locators())
                     {
                         const NetworkFactory& network = mp_RTPSParticipant->network_factory();
@@ -597,11 +597,11 @@ bool EDPStatic::newRemoteWriter(
 bool EDPStatic::checkEntityId(
         ReaderProxyData* rdata)
 {
-    if (rdata->topicKind() == WITH_KEY && rdata->guid().entityId.value[3] == 0x07)
+    if (rdata->topic_kind == WITH_KEY && rdata->guid.entityId.value[3] == 0x07)
     {
         return true;
     }
-    if (rdata->topicKind() == NO_KEY && rdata->guid().entityId.value[3] == 0x04)
+    if (rdata->topic_kind == NO_KEY && rdata->guid.entityId.value[3] == 0x04)
     {
         return true;
     }

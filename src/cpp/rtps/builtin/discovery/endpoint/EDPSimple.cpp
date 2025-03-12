@@ -525,7 +525,7 @@ bool EDPSimple::process_reader_proxy_data(
         RTPSReader* rtps_reader,
         ReaderProxyData* rdata)
 {
-    EPROSIMA_LOG_INFO(RTPS_EDP, rdata->guid().entityId);
+    EPROSIMA_LOG_INFO(RTPS_EDP, rdata->guid.entityId);
     (void)rtps_reader;
 
     auto* writer = &subscriptions_writer_;
@@ -750,12 +750,12 @@ void EDPSimple::assignRemoteEndpoints(
     auto temp_reader_proxy_data = get_temporary_reader_proxies_pool().get();
 
     temp_reader_proxy_data->clear();
-    temp_reader_proxy_data->m_expectsInlineQos = false;
-    temp_reader_proxy_data->guid().guidPrefix = pdata.guid.guidPrefix;
+    temp_reader_proxy_data->expects_inline_qos = false;
+    temp_reader_proxy_data->guid.guidPrefix = pdata.guid.guidPrefix;
     temp_reader_proxy_data->set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators,
             pdata.is_from_this_host());
-    temp_reader_proxy_data->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
-    temp_reader_proxy_data->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
+    temp_reader_proxy_data->durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    temp_reader_proxy_data->reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
 
     auto temp_writer_proxy_data = get_temporary_writer_proxies_pool().get();
 
@@ -781,7 +781,7 @@ void EDPSimple::assignRemoteEndpoints(
     if (auxendp != 0 && publications_writer_.first != nullptr) //Exist Pub Detector
     {
         EPROSIMA_LOG_INFO(RTPS_EDP, "Adding SEDP Pub Reader to my Pub Writer");
-        temp_reader_proxy_data->guid().entityId = c_EntityId_SEDPPubReader;
+        temp_reader_proxy_data->guid.entityId = c_EntityId_SEDPPubReader;
         publications_writer_.first->matched_reader_add_edp(*temp_reader_proxy_data);
     }
     auxendp = endp;
@@ -798,7 +798,7 @@ void EDPSimple::assignRemoteEndpoints(
     if (auxendp != 0 && subscriptions_writer_.first != nullptr) //Exist Pub Announcer
     {
         EPROSIMA_LOG_INFO(RTPS_EDP, "Adding SEDP Sub Reader to my Sub Writer");
-        temp_reader_proxy_data->guid().entityId = c_EntityId_SEDPSubReader;
+        temp_reader_proxy_data->guid.entityId = c_EntityId_SEDPSubReader;
         subscriptions_writer_.first->matched_reader_add_edp(*temp_reader_proxy_data);
     }
 
@@ -823,7 +823,7 @@ void EDPSimple::assignRemoteEndpoints(
     auxendp &= fastdds::rtps::DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR;
     if (auxendp != 0 && publications_secure_writer_.first != nullptr && assign_secure_endpoints)
     {
-        temp_reader_proxy_data->guid().entityId = sedp_builtin_publications_secure_reader;
+        temp_reader_proxy_data->guid.entityId = sedp_builtin_publications_secure_reader;
         if (!mp_RTPSParticipant->security_manager().discovered_builtin_reader(
                     publications_secure_writer_.first->getGuid(), pdata.guid, *temp_reader_proxy_data,
                     publications_secure_writer_.first->getAttributes().security_attributes()))
@@ -854,7 +854,7 @@ void EDPSimple::assignRemoteEndpoints(
     if (auxendp != 0 && subscriptions_secure_writer_.first != nullptr && assign_secure_endpoints)
     {
         EPROSIMA_LOG_INFO(RTPS_EDP, "Adding SEDP Sub Reader to my Sub Writer");
-        temp_reader_proxy_data->guid().entityId = sedp_builtin_subscriptions_secure_reader;
+        temp_reader_proxy_data->guid.entityId = sedp_builtin_subscriptions_secure_reader;
         if (!mp_RTPSParticipant->security_manager().discovered_builtin_reader(
                     subscriptions_secure_writer_.first->getGuid(), pdata.guid, *temp_reader_proxy_data,
                     subscriptions_secure_writer_.first->getAttributes().security_attributes()))

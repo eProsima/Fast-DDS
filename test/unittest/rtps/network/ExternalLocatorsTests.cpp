@@ -242,7 +242,7 @@ void single_endpoint_check(
         const RemoteLocatorList& check_locators)
 {
     external_locators::add_external_locators(rdata, ext_locators);
-    ASSERT_TRUE(rdata.remote_locators() == check_locators);
+    ASSERT_TRUE(rdata.remote_locators == check_locators);
 }
 
 template<typename ProxyData>
@@ -250,8 +250,8 @@ void test_add_external_locators_endpoint(
         ProxyData& working_data)
 {
     ExternalLocators empty_locators;
-    RemoteLocatorList empty_test_list(working_data.remote_locators());
-    RemoteLocatorList test_list(working_data.remote_locators());
+    RemoteLocatorList empty_test_list(working_data.remote_locators);
+    RemoteLocatorList test_list(working_data.remote_locators);
     LocatorWithMask test_locator;
     std::stringstream stream("UDPv4:[1.1.1.1]:9999");
     stream >> test_locator;
@@ -259,7 +259,7 @@ void test_add_external_locators_endpoint(
 
     ProxyData initial_data(working_data);
 
-    ASSERT_TRUE(working_data.remote_locators() == empty_test_list);
+    ASSERT_TRUE(working_data.remote_locators == empty_test_list);
 
     // Adding empty external locators should leave working_data untouched
     single_endpoint_check(working_data, empty_locators, empty_test_list);

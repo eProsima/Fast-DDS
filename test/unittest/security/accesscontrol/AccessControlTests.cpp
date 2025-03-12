@@ -233,8 +233,8 @@ void AccessControlTest::check_remote_datareader(
     SecurityException exception;
 
     ReaderProxyData reader_proxy_data(1, 1);
-    reader_proxy_data.topicName(eprosima::fastcdr::string_255(topic_name));
-    reader_proxy_data.m_qos.m_partition.setNames(partitions);
+    reader_proxy_data.topic_name = eprosima::fastcdr::string_255(topic_name);
+    reader_proxy_data.partition.setNames(partitions);
     bool relay_only;
     bool result = access_plugin.check_remote_datareader(
         *access_handle,

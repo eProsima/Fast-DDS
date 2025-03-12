@@ -737,7 +737,7 @@ bool PDP::lookupReaderProxyData(
             auto rit = pit->m_readers->find(reader.entityId);
             if (rit != pit->m_readers->end())
             {
-                rdata.copy(rit->second);
+                rdata = *(rit->second);
                 return true;
             }
         }
@@ -811,7 +811,7 @@ bool PDP::removeReaderProxyData(
                 // notify monitor service
                 if (nullptr != proxy_observer)
                 {
-                    proxy_observer->on_remote_proxy_data_removed(pR->guid());
+                    proxy_observer->on_remote_proxy_data_removed(pR->guid);
                 }
 #endif // ifdef FASTDDS_STATISTICS
 
@@ -983,7 +983,7 @@ ReaderProxyData* PDP::addReaderProxyData(
             }
 
             // Copy network configuration from participant to reader proxy
-            ret_val->networkConfiguration(pit->m_network_configuration);
+            ret_val->network_configuration(pit->m_network_configuration);
 
             // Add to ParticipantProxyData
             (*pit->m_readers)[reader_guid.entityId] = ret_val;
@@ -1148,7 +1148,7 @@ bool PDP::get_all_local_proxies(
 
     for (auto& reader : *(local_participant->m_readers))
     {
-        guids.push_back(reader.second->guid());
+        guids.push_back(reader.second->guid);
     }
 
     return true;
@@ -1192,7 +1192,7 @@ bool PDP::get_serialized_proxy(
             {
                 for (auto& reader : *((*part_proxy)->m_readers))
                 {
-                    if (reader.second->guid() == guid)
+                    if (reader.second->guid == guid)
                     {
                         msg->max_size = msg->reserved_size = reader.second->get_serialized_size(true);
                         ret = reader.second->writeToCDRMessage(msg, true);
@@ -1302,7 +1302,7 @@ void PDP::actions_on_remote_participant_removed(
         for (auto pit : *pdata->m_readers)
         {
             ReaderProxyData* rit = pit.second;
-            GUID_t reader_guid(rit->guid());
+            GUID_t reader_guid(rit->guid);
             if (reader_guid != c_Guid_Unknown)
             {
                 mp_EDP->unpairReaderProxy(partGUID, reader_guid);

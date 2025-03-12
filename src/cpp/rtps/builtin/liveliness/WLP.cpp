@@ -499,13 +499,13 @@ bool WLP::assignRemoteEndpoints(
     temp_writer_proxy_data_.reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
 
     temp_reader_proxy_data_.clear();
-    temp_reader_proxy_data_.m_expectsInlineQos = false;
-    temp_reader_proxy_data_.guid().guidPrefix = pdata.guid.guidPrefix;
+    temp_reader_proxy_data_.expects_inline_qos = false;
+    temp_reader_proxy_data_.guid.guidPrefix = pdata.guid.guidPrefix;
     temp_reader_proxy_data_.set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators,
             pdata.is_from_this_host());
-    temp_reader_proxy_data_.topicKind(WITH_KEY);
-    temp_reader_proxy_data_.m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
-    temp_reader_proxy_data_.m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
+    temp_reader_proxy_data_.topic_kind = WITH_KEY;
+    temp_reader_proxy_data_.durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    temp_reader_proxy_data_.reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
 
     auxendp &= fastdds::rtps::BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
     if (auxendp != 0 && this->mp_builtinReader != nullptr)
@@ -520,7 +520,7 @@ bool WLP::assignRemoteEndpoints(
     if (auxendp != 0 && this->mp_builtinWriter != nullptr)
     {
         EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Adding remote reader to my local Builtin Writer");
-        temp_reader_proxy_data_.guid().entityId = c_EntityId_ReaderLiveliness;
+        temp_reader_proxy_data_.guid.entityId = c_EntityId_ReaderLiveliness;
         mp_builtinWriter->matched_reader_add_edp(temp_reader_proxy_data_);
     }
 
@@ -546,7 +546,7 @@ bool WLP::assignRemoteEndpoints(
     if (auxendp != 0 && this->mp_builtinWriterSecure != nullptr && assign_secure_endpoints)
     {
         EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Adding remote reader to my local Builtin Secure Writer");
-        temp_reader_proxy_data_.guid().entityId = c_EntityId_ReaderLivelinessSecure;
+        temp_reader_proxy_data_.guid.entityId = c_EntityId_ReaderLivelinessSecure;
         if (!mp_participant->security_manager().discovered_builtin_reader(
                     mp_builtinWriterSecure->getGuid(), pdata.guid, temp_reader_proxy_data_,
                     mp_builtinWriterSecure->getAttributes().security_attributes()))

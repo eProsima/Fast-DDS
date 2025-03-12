@@ -707,13 +707,13 @@ void PDPSimple::match_pdp_remote_endpoints(
         auto temp_reader_data = get_temporary_reader_proxies_pool().get();
 
         temp_reader_data->clear();
-        temp_reader_data->m_expectsInlineQos = false;
-        temp_reader_data->guid().guidPrefix = pdata.guid.guidPrefix;
-        temp_reader_data->guid().entityId = reader_entity_id;
+        temp_reader_data->expects_inline_qos = false;
+        temp_reader_data->guid.guidPrefix = pdata.guid.guidPrefix;
+        temp_reader_data->guid.entityId = reader_entity_id;
         temp_reader_data->set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators,
                 pdata.is_from_this_host());
-        temp_reader_data->m_qos.m_reliability.kind = reliability_kind;
-        temp_reader_data->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+        temp_reader_data->reliability.kind = reliability_kind;
+        temp_reader_data->durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
 #if HAVE_SECURITY
         if (notify_secure_endpoints)
         {
@@ -722,7 +722,7 @@ void PDPSimple::match_pdp_remote_endpoints(
                         writer->getAttributes().security_attributes()))
             {
                 EPROSIMA_LOG_ERROR(RTPS_EDP, "Security manager returns an error for reader " <<
-                        temp_reader_data->guid());
+                        temp_reader_data->guid);
             }
         }
         else

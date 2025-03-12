@@ -2152,15 +2152,15 @@ void SecurityManager::match_builtin_endpoints(
         auto temp_stateless_reader_proxy_data_ = get_temporary_reader_proxies_pool().get();
 
         temp_stateless_reader_proxy_data_->clear();
-        temp_stateless_reader_proxy_data_->m_expectsInlineQos = false;
-        temp_stateless_reader_proxy_data_->guid().guidPrefix = participant_data.guid.guidPrefix;
-        temp_stateless_reader_proxy_data_->guid().entityId = participant_stateless_message_reader_entity_id;
+        temp_stateless_reader_proxy_data_->expects_inline_qos = false;
+        temp_stateless_reader_proxy_data_->guid.guidPrefix = participant_data.guid.guidPrefix;
+        temp_stateless_reader_proxy_data_->guid.entityId = participant_stateless_message_reader_entity_id;
         temp_stateless_reader_proxy_data_->set_remote_locators(participant_data.metatraffic_locators, network, false,
                 participant_data.is_from_this_host());
-        temp_stateless_reader_proxy_data_->topicKind(NO_KEY);
-        temp_stateless_reader_proxy_data_->m_qos.m_reliability.kind =
+        temp_stateless_reader_proxy_data_->topic_kind = NO_KEY;
+        temp_stateless_reader_proxy_data_->reliability.kind =
                 eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
-        temp_stateless_reader_proxy_data_->m_qos.m_durability.kind = eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS;
+        temp_stateless_reader_proxy_data_->durability.kind = eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS;
         participant_stateless_message_writer_->matched_reader_add_edp(*temp_stateless_reader_proxy_data_);
     }
 }
@@ -2194,14 +2194,14 @@ void SecurityManager::match_builtin_key_exchange_endpoints(
         auto temp_volatile_reader_proxy_data_ = get_temporary_reader_proxies_pool().get();
 
         temp_volatile_reader_proxy_data_->clear();
-        temp_volatile_reader_proxy_data_->m_expectsInlineQos = false;
-        temp_volatile_reader_proxy_data_->guid().guidPrefix = participant_data.guid.guidPrefix;
-        temp_volatile_reader_proxy_data_->guid().entityId = participant_volatile_message_secure_reader_entity_id;
+        temp_volatile_reader_proxy_data_->expects_inline_qos = false;
+        temp_volatile_reader_proxy_data_->guid.guidPrefix = participant_data.guid.guidPrefix;
+        temp_volatile_reader_proxy_data_->guid.entityId = participant_volatile_message_secure_reader_entity_id;
         temp_volatile_reader_proxy_data_->set_remote_locators(participant_data.metatraffic_locators, network, false,
                 participant_data.is_from_this_host());
-        temp_volatile_reader_proxy_data_->topicKind(NO_KEY);
-        temp_volatile_reader_proxy_data_->m_qos.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
-        temp_volatile_reader_proxy_data_->m_qos.m_durability.kind = eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS;
+        temp_volatile_reader_proxy_data_->topic_kind = NO_KEY;
+        temp_volatile_reader_proxy_data_->reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+        temp_volatile_reader_proxy_data_->durability.kind = eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS;
         participant_volatile_message_secure_writer_->matched_reader_add_edp(*temp_volatile_reader_proxy_data_);
     }
 }
@@ -2944,7 +2944,7 @@ bool SecurityManager::discovered_reader(
             if ((returned_value = access_plugin_->check_remote_datareader(
                         *remote_permissions, domain_id_, remote_reader_data, relay_only, exception)) == false)
             {
-                EPROSIMA_LOG_ERROR(SECURITY, "Error checking create remote reader " << remote_reader_data.guid()
+                EPROSIMA_LOG_ERROR(SECURITY, "Error checking create remote reader " << remote_reader_data.guid
                                                                                     << " (" << exception.what() << ")");
             }
         }
@@ -2953,7 +2953,7 @@ bool SecurityManager::discovered_reader(
     if (returned_value && crypto_plugin_ != nullptr && (security_attributes.is_submessage_protected ||
             security_attributes.is_payload_protected))
     {
-        bool is_key_exchange = (remote_reader_data.guid().entityId
+        bool is_key_exchange = (remote_reader_data.guid.entityId
                 == participant_volatile_message_secure_reader_entity_id);
         auto local_writer = writer_handles_.find(writer_guid);
         returned_value = false;
@@ -2972,8 +2972,8 @@ bool SecurityManager::discovered_reader(
                     if (is_key_exchange)
                     {
                         EPROSIMA_LOG_INFO(SECURITY,
-                                "Process successful discovering local reader " << remote_reader_data.guid());
-                        local_writer->second.associated_readers.emplace(remote_reader_data.guid(),
+                                "Process successful discovering local reader " << remote_reader_data.guid);
+                        local_writer->second.associated_readers.emplace(remote_reader_data.guid,
                                 std::make_tuple(remote_reader_data, remote_reader_handle));
                         lock.unlock();
                         participant_->pairing_remote_reader_with_local_writer_after_security(
@@ -2983,7 +2983,7 @@ bool SecurityManager::discovered_reader(
                     {
                         // Check pending reader crypto messages.
                         auto pending = remote_reader_pending_messages_.find(
-                            std::make_pair(remote_reader_data.guid(), writer_guid));
+                            std::make_pair(remote_reader_data.guid, writer_guid));
                         bool pairing_cause_pending_message = false;
 
                         if (pending != remote_reader_pending_messages_.end())
@@ -2999,7 +2999,7 @@ bool SecurityManager::discovered_reader(
                             else
                             {
                                 EPROSIMA_LOG_ERROR(SECURITY, "Cannot set remote reader crypto tokens ("
-                                        << remote_reader_data.guid() << ") - (" << exception.what() << ")");
+                                        << remote_reader_data.guid << ") - (" << exception.what() << ")");
                             }
 
                             remote_reader_pending_messages_.erase(pending);
@@ -3018,12 +3018,12 @@ bool SecurityManager::discovered_reader(
                             if (remote_participant_key == participant_->getGuid())
                             {
                                 EPROSIMA_LOG_INFO(SECURITY, "Process successful discovering local reader "
-                                        << remote_reader_data.guid());
-                                local_writer->second.associated_readers.emplace(remote_reader_data.guid(),
+                                        << remote_reader_data.guid);
+                                local_writer->second.associated_readers.emplace(remote_reader_data.guid,
                                         std::make_tuple(remote_reader_data, remote_reader_handle));
 
                                 // Search local reader.
-                                auto local_reader = reader_handles_.find(remote_reader_data.guid());
+                                auto local_reader = reader_handles_.find(remote_reader_data.guid);
 
                                 if (local_reader != reader_handles_.end())
                                 {
@@ -3044,7 +3044,7 @@ bool SecurityManager::discovered_reader(
                                         else
                                         {
                                             EPROSIMA_LOG_ERROR(SECURITY, "Cannot set local reader crypto tokens ("
-                                                    << remote_reader_data.guid() << ") - (" << exception.what() << ")");
+                                                    << remote_reader_data.guid << ") - (" << exception.what() << ")");
                                         }
                                     }
                                     else
@@ -3058,16 +3058,16 @@ bool SecurityManager::discovered_reader(
                                 else
                                 {
                                     EPROSIMA_LOG_ERROR(SECURITY, "Cannot find local reader ("
-                                            << remote_reader_data.guid() << ") - (" << exception.what() << ")");
+                                            << remote_reader_data.guid << ") - (" << exception.what() << ")");
                                 }
                             }
                             else
                             {
                                 ParticipantGenericMessage message =
                                         generate_writer_crypto_token_message(remote_participant_key,
-                                                remote_reader_data.guid(), writer_guid, local_writer_crypto_tokens);
+                                                remote_reader_data.guid, writer_guid, local_writer_crypto_tokens);
 
-                                local_writer->second.associated_readers.emplace(remote_reader_data.guid(),
+                                local_writer->second.associated_readers.emplace(remote_reader_data.guid,
                                         std::make_tuple(remote_reader_data, remote_reader_handle));
                                 lock.unlock();
 
@@ -3099,7 +3099,7 @@ bool SecurityManager::discovered_reader(
                                         if (participant_volatile_message_secure_writer_history_->add_change(change))
                                         {
                                             EPROSIMA_LOG_INFO(SECURITY, "Process successful discovering remote reader "
-                                                    << remote_reader_data.guid());
+                                                    << remote_reader_data.guid);
                                             returned_value = true;
                                         }
                                         else
@@ -3151,13 +3151,13 @@ bool SecurityManager::discovered_reader(
                 else
                 {
                     EPROSIMA_LOG_ERROR(SECURITY,
-                            "Crypto plugin fails registering remote reader " << remote_reader_data.guid() <<
+                            "Crypto plugin fails registering remote reader " << remote_reader_data.guid <<
                             " of participant " << remote_participant_key);
                 }
             }
             else
             {
-                EPROSIMA_LOG_INFO(SECURITY, "Storing remote reader << " << remote_reader_data.guid() <<
+                EPROSIMA_LOG_INFO(SECURITY, "Storing remote reader << " << remote_reader_data.guid <<
                         " of participant " << remote_participant_key << " on pendings");
 
                 remote_reader_pending_discovery_messages_.push_back(std::make_tuple(remote_reader_data,

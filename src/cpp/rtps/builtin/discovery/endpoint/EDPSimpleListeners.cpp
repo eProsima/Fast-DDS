@@ -222,7 +222,7 @@ void EDPBaseSUBListener::add_reader_from_change(
 
     if (temp_reader_data->readFromCDRMessage(&tempMsg, change->vendor_id))
     {
-        if (temp_reader_data->guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
+        if (temp_reader_data->guid.guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
         {
             EPROSIMA_LOG_INFO(RTPS_EDP, "From own RTPSParticipant, ignoring");
             return;
@@ -244,7 +244,7 @@ void EDPBaseSUBListener::add_reader_from_change(
                                 {
                                     EPROSIMA_LOG_WARNING(RTPS_EDP,
                                             "Received incompatible update for ReaderQos. reader_guid = " <<
-                                            data->guid());
+                                            data->guid);
                                 }
                                 *data = *temp_reader_data;
                                 data->setup_locators(*temp_reader_data, network, participant_data);
@@ -259,7 +259,7 @@ void EDPBaseSUBListener::add_reader_from_change(
                     //LOOK IF IS AN UPDATED INFORMATION
                     GUID_t participant_guid;
                     ReaderProxyData* reader_data =
-                            edp->mp_PDP->addReaderProxyData(temp_reader_data->guid(), participant_guid, copy_data_fun);
+                            edp->mp_PDP->addReaderProxyData(temp_reader_data->guid, participant_guid, copy_data_fun);
 
                     if (reader_data != nullptr) //ADDED NEW DATA
                     {

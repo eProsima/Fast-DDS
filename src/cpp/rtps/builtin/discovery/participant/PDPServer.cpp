@@ -594,13 +594,13 @@ void PDPServer::match_reliable_pdp_endpoints(
         auto temp_reader_data = get_temporary_reader_proxies_pool().get();
 
         temp_reader_data->clear();
-        temp_reader_data->m_expectsInlineQos = false;
-        temp_reader_data->guid().guidPrefix = pdata.guid.guidPrefix;
-        temp_reader_data->guid().entityId = endpoints->reader.reader_->getGuid().entityId;
+        temp_reader_data->expects_inline_qos = false;
+        temp_reader_data->guid.guidPrefix = pdata.guid.guidPrefix;
+        temp_reader_data->guid.entityId = endpoints->reader.reader_->getGuid().entityId;
         temp_reader_data->set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators,
                 pdata.is_from_this_host());
-        temp_reader_data->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
-        temp_reader_data->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+        temp_reader_data->reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
+        temp_reader_data->durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
 #if HAVE_SECURITY
         if (should_protect_discovery())
         {
@@ -2010,10 +2010,10 @@ void PDPServer::match_pdp_reader_nts_(
     auto temp_reader_data = get_temporary_reader_proxies_pool().get();
 
     temp_reader_data->clear();
-    temp_reader_data->guid({ pdata.guid.guidPrefix, endpoints->reader.reader_->getGuid().entityId });
+    temp_reader_data->guid = { pdata.guid.guidPrefix, endpoints->reader.reader_->getGuid().entityId };
     temp_reader_data->set_remote_locators(pdata.metatraffic_locators, network, true, pdata.is_from_this_host());
-    temp_reader_data->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
-    temp_reader_data->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
+    temp_reader_data->durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    temp_reader_data->reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
 #if HAVE_SECURITY
     if (should_protect_discovery())
     {
