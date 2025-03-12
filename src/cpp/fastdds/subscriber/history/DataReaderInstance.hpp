@@ -134,6 +134,7 @@ struct DataReaderInstance
                 break;
         }
 
+        has_fake_sample = false;
         return ret_val;
     }
 
@@ -159,6 +160,10 @@ struct DataReaderInstance
                 if (alive_writers.empty() && (InstanceStateKind::ALIVE_INSTANCE_STATE == instance_state))
                 {
                     instance_state = InstanceStateKind::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE;
+                    if (cache_changes.empty())
+                    {
+                        has_fake_sample = true;
+                    }
                 }
                 if (ALIVE_INSTANCE_STATE == instance_state)
                 {
@@ -293,6 +298,10 @@ private:
             {
                 instance_state = InstanceStateKind::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE;
                 counters_update(counters.instances_alive, counters.instances_no_writers, counters, false);
+                if (cache_changes.empty())
+                {
+                    has_fake_sample = true;
+                }
             }
 
             ret_val = true;
