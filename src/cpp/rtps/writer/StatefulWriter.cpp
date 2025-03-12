@@ -1003,9 +1003,7 @@ bool StatefulWriter::matched_reader_add_edp(
             guard_locator_selector_general.unlock();
             guard.unlock();
 
-            SubscriptionBuiltinTopicData info;
-            from_proxy_to_builtin(rdata, info);
-            listener_->on_reader_discovery(this, ReaderDiscoveryStatus::CHANGED_QOS_READER, rdata.guid(), &info);
+            listener_->on_reader_discovery(this, ReaderDiscoveryStatus::CHANGED_QOS_READER, rdata.guid, &rdata);
         }
 
 #ifdef FASTDDS_STATISTICS
@@ -1086,9 +1084,7 @@ bool StatefulWriter::matched_reader_add_edp(
             guard_locator_selector_general.unlock();
             guard.unlock();
 
-            SubscriptionBuiltinTopicData info;
-            from_proxy_to_builtin(rdata, info);
-            listener_->on_reader_discovery(this, ReaderDiscoveryStatus::DISCOVERED_READER, rdata.guid(), &info);
+            listener_->on_reader_discovery(this, ReaderDiscoveryStatus::DISCOVERED_READER, rdata.guid, &rdata);
         }
 
 #ifdef FASTDDS_STATISTICS
@@ -1196,9 +1192,7 @@ bool StatefulWriter::matched_reader_add_edp(
         guard_locator_selector_general.unlock();
         guard.unlock();
 
-        SubscriptionBuiltinTopicData info;
-        from_proxy_to_builtin(rdata, info);
-        listener_->on_reader_discovery(this, ReaderDiscoveryStatus::DISCOVERED_READER, rdata.guid(), &info);
+        listener_->on_reader_discovery(this, ReaderDiscoveryStatus::DISCOVERED_READER, rdata.guid, &rdata);
     }
 
 #ifdef FASTDDS_STATISTICS
