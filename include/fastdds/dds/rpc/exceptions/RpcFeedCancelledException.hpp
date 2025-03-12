@@ -33,7 +33,7 @@ namespace rpc {
 /**
  * Exception thrown by the RPC API when the client cancels an input feed.
  */
-class FASTDDS_EXPORTED_API RpcFeedCancelledException : public RpcException
+class RpcFeedCancelledException : public RpcException
 {
 
 public:
