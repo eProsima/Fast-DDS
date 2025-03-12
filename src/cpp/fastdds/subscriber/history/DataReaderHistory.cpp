@@ -904,7 +904,13 @@ void DataReaderHistory::writer_not_alive(
 {
     for (auto& it : instances_)
     {
+        bool had_fake_sample = it.second->has_fake_sample;
         it.second->writer_removed(counters_, writer_guid);
+        if (it.second->has_fake_sample && !had_fake_sample)
+        {
+            // Mark instance as data available
+            data_available_instances_[it.first] = it.second;
+        }
     }
 }
 
