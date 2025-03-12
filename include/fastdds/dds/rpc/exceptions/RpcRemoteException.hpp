@@ -13,13 +13,14 @@
 // limitations under the License.
 
 /**
- * @file RpcBrokenPipeException.hpp
+ * @file RpcRemoteException.hpp
  */
 
-#ifndef FASTDDS_DDS_RPC_EXCEPTIONS__RPCBROKENPIPEEXCEPTION_HPP
-#define FASTDDS_DDS_RPC_EXCEPTIONS__RPCBROKENPIPEEXCEPTION_HPP
+#ifndef FASTDDS_DDS_RPC_EXCEPTIONS__RPCREMOTEEXCEPTION_HPP
+#define FASTDDS_DDS_RPC_EXCEPTIONS__RPCREMOTEEXCEPTION_HPP
 
 #include <fastdds/fastdds_dll.hpp>
+#include <fastdds/dds/rpc/RemoteExceptionCode_t.hpp>
 #include <fastdds/dds/rpc/exceptions/RpcException.hpp>
 
 namespace eprosima {
@@ -28,9 +29,9 @@ namespace dds {
 namespace rpc {
 
 /**
- * Exception thrown by the RPC API when the communication with the remote endpoint breaks.
+ * Base class for exceptions that map to a RpcExceptionCode_t.
  */
-class RpcBrokenPipeException : public RpcException
+class RpcRemoteException : public RpcException
 {
 
 public:
@@ -38,28 +39,45 @@ public:
     /**
      * Constructor.
      */
-    RpcBrokenPipeException(
-            bool local_is_server)
-        : RpcException(local_is_server ? "Communication lost with the client" : "Communication lost with the server")
+    RpcRemoteException(
+            RemoteExceptionCode_t code,
+            const char* msg)
+        : RpcException(msg)
+        , code_(code)
     {
     }
 
     /**
      * Copy constructor.
      */
-    RpcBrokenPipeException(
-            const RpcBrokenPipeException& other) noexcept = default;
+    RpcRemoteException(
+            const RpcRemoteException& other) noexcept = default;
 
     /**
      * Copy assignment.
      */
-    RpcBrokenPipeException& operator =(
-            const RpcBrokenPipeException& other) noexcept = default;
+    RpcRemoteException& operator =(
+            const RpcRemoteException& other) noexcept = default;
 
     /**
      * Destructor.
      */
-    virtual ~RpcBrokenPipeException() noexcept = default;
+    virtual ~RpcRemoteException() noexcept = default;
+
+    /**
+     * Get the exception code.
+     *
+     * @return The exception code.
+     */
+    RemoteExceptionCode_t code() const noexcept
+    {
+        return code_;
+    }
+
+private:
+
+    /// The exception code.
+    RemoteExceptionCode_t code_;
 
 };
 
@@ -68,4 +86,4 @@ public:
 }  // namespace fastdds
 }  // namespace eprosima
 
-#endif  // FASTDDS_DDS_RPC_EXCEPTIONS__RPCBROKENPIPEEXCEPTION_HPP
+#endif  // FASTDDS_DDS_RPC_EXCEPTIONS__RPCREMOTEEXCEPTION_HPP

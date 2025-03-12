@@ -30,7 +30,7 @@ namespace rpc {
 /**
  * Exception thrown by the RPC API when an operation times out.
  */
-class FASTDDS_EXPORTED_API RpcTimeoutException : public RpcException
+class RpcTimeoutException : public RpcException
 {
 
 public:
