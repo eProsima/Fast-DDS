@@ -878,7 +878,7 @@ void PDPServer::announceParticipantState(
                     aux_msg.msg_endian =  LITTLEEND;
 #endif // if __BIG_ENDIAN__
 
-                    if (proxy_data_copy.writeToCDRMessage(&aux_msg, true))
+                    if (proxy_data_copy.write_to_cdr_message(&aux_msg, true))
                     {
                         change->serializedPayload.length = (uint16_t)aux_msg.length;
                     }

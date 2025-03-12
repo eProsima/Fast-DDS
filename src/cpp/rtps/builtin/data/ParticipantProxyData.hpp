@@ -131,7 +131,7 @@ public:
      * Write as a parameter list on a CDRMessage_t
      * @return True on success
      */
-    bool writeToCDRMessage(
+    bool write_to_cdr_message(
             CDRMessage_t* msg,
             bool write_encapsulation);
 
@@ -139,7 +139,7 @@ public:
      * Read the parameter list from a received CDRMessage_t
      * @return True on success
      */
-    bool readFromCDRMessage(
+    bool read_from_cdr_message(
             CDRMessage_t* msg,
             bool use_encapsulation,
             NetworkFactory& network,

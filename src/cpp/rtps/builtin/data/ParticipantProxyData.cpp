@@ -243,7 +243,7 @@ uint32_t ParticipantProxyData::get_serialized_size(
     return ret_val + 4;
 }
 
-bool ParticipantProxyData::writeToCDRMessage(
+bool ParticipantProxyData::write_to_cdr_message(
         CDRMessage_t* msg,
         bool write_encapsulation)
 {
@@ -450,7 +450,7 @@ bool ParticipantProxyData::writeToCDRMessage(
     return fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(msg);
 }
 
-bool ParticipantProxyData::readFromCDRMessage(
+bool ParticipantProxyData::read_from_cdr_message(
         CDRMessage_t* msg,
         bool use_encapsulation,
         NetworkFactory& network,

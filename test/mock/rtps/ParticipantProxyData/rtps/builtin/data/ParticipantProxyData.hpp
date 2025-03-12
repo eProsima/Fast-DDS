@@ -60,14 +60,14 @@ public:
     {
     }
 
-    bool writeToCDRMessage(
+    bool write_to_cdr_message(
             CDRMessage_t* /*msg*/,
             bool /*write_encapsulation*/)
     {
         return true;
     }
 
-    bool readFromCDRMessage(
+    bool read_from_cdr_message(
             CDRMessage_t* /*msg*/,
             fastdds::rtps::VendorId_t /*source_vendor_id*/)
     {

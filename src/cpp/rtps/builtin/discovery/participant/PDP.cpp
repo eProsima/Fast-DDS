@@ -607,7 +607,7 @@ void PDP::announceParticipantState(
                     aux_msg.msg_endian =  LITTLEEND;
 #endif // if __BIG_ENDIAN__
 
-                    if (proxy_data_copy.writeToCDRMessage(&aux_msg, true))
+                    if (proxy_data_copy.write_to_cdr_message(&aux_msg, true))
                     {
                         change->serializedPayload.length = (uint16_t)aux_msg.length;
 
@@ -648,7 +648,7 @@ void PDP::announceParticipantState(
                 aux_msg.msg_endian =  LITTLEEND;
 #endif // if __BIG_ENDIAN__
 
-                if (proxy_data_copy.writeToCDRMessage(&aux_msg, true))
+                if (proxy_data_copy.write_to_cdr_message(&aux_msg, true))
                 {
                     change->serializedPayload.length = (uint16_t)aux_msg.length;
 
@@ -1172,7 +1172,7 @@ bool PDP::get_serialized_proxy(
             {
                 msg->msg_endian = LITTLEEND;
                 msg->max_size = msg->reserved_size = (*part_proxy)->get_serialized_size(true);
-                ret = (*part_proxy)->writeToCDRMessage(msg, true);
+                ret = (*part_proxy)->write_to_cdr_message(msg, true);
                 found = true;
                 break;
             }
@@ -1195,7 +1195,7 @@ bool PDP::get_serialized_proxy(
                     if (reader.second->guid == guid)
                     {
                         msg->max_size = msg->reserved_size = reader.second->get_serialized_size(true);
-                        ret = reader.second->writeToCDRMessage(msg, true);
+                        ret = reader.second->write_to_cdr_message(msg, true);
                         found = true;
                         break;
                     }
@@ -1221,7 +1221,7 @@ bool PDP::get_serialized_proxy(
                     if (writer.second->guid == guid)
                     {
                         msg->max_size = msg->reserved_size = writer.second->get_serialized_size(true);
-                        ret = writer.second->writeToCDRMessage(msg, true);
+                        ret = writer.second->write_to_cdr_message(msg, true);
                         found = true;
                         break;
                     }
@@ -1439,7 +1439,7 @@ CDRMessage_t PDP::get_participant_proxy_data_serialized(
     CDRMessage_t cdr_msg(RTPSMESSAGE_DEFAULT_SIZE);
     cdr_msg.msg_endian = endian;
 
-    if (!getLocalParticipantProxyData()->writeToCDRMessage(&cdr_msg, false))
+    if (!getLocalParticipantProxyData()->write_to_cdr_message(&cdr_msg, false))
     {
         cdr_msg.pos = 0;
         cdr_msg.length = 0;

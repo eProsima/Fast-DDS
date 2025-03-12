@@ -368,7 +368,7 @@ uint32_t ReaderProxyData::get_serialized_size(
     return ret_val + 4;
 }
 
-bool ReaderProxyData::writeToCDRMessage(
+bool ReaderProxyData::write_to_cdr_message(
         CDRMessage_t* msg,
         bool write_encapsulation) const
 {
@@ -653,7 +653,7 @@ bool ReaderProxyData::writeToCDRMessage(
     return dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(msg);
 }
 
-bool ReaderProxyData::readFromCDRMessage(
+bool ReaderProxyData::read_from_cdr_message(
         CDRMessage_t* msg,
         fastdds::rtps::VendorId_t source_vendor_id)
 {

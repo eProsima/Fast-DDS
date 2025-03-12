@@ -75,7 +75,7 @@ void EDPBasePUBListener::add_writer_from_change(
     auto temp_writer_data = edp->get_temporary_writer_proxies_pool().get();
     const auto type_server = change->writerGUID;
 
-    if (temp_writer_data->readFromCDRMessage(&tempMsg, change->vendor_id))
+    if (temp_writer_data->read_from_cdr_message(&tempMsg, change->vendor_id))
     {
         if (temp_writer_data->guid.guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
         {
@@ -220,7 +220,7 @@ void EDPBaseSUBListener::add_reader_from_change(
     auto temp_reader_data = edp->get_temporary_reader_proxies_pool().get();
     const auto type_server = change->writerGUID;
 
-    if (temp_reader_data->readFromCDRMessage(&tempMsg, change->vendor_id))
+    if (temp_reader_data->read_from_cdr_message(&tempMsg, change->vendor_id))
     {
         if (temp_reader_data->guid.guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
         {

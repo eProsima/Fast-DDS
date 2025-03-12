@@ -334,7 +334,7 @@ public:
      * Write as a parameter list on a CDRMessage_t
      * @return True on success
      */
-    bool writeToCDRMessage(
+    bool write_to_cdr_message(
             CDRMessage_t* msg,
             bool write_encapsulation) const;
 
@@ -345,7 +345,7 @@ public:
      * @param source_vendor_id VendorId of the source participant from which the message was received
      * @return true on success
      */
-    bool readFromCDRMessage(
+    bool read_from_cdr_message(
             CDRMessage_t* msg,
             fastdds::rtps::VendorId_t source_vendor_id = c_VendorId_eProsima);
 

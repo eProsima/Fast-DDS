@@ -134,7 +134,7 @@ void PDPServerListener::on_new_cache_change_added(
         temp_participant_data_.clear();
         auto participant_data = temp_participant_data_;
 
-        if (participant_data.readFromCDRMessage(
+        if (participant_data.read_from_cdr_message(
                     &msg,
                     true,
                     pdp_server()->getRTPSParticipant()->network_factory(),
