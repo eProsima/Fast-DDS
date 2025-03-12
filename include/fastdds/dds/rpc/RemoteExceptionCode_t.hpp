@@ -26,7 +26,7 @@ namespace rpc {
  * Enumeration of possible error codes that can be returned by a remote service.
  * Extracted from DDS-RPV v1.0 - 7.5.2 Mapping of Error Codes.
  */
-enum class RemoteExceptionCode_t : uint32_t
+enum class RemoteExceptionCode_t : int32_t
 {
     /// The request was executed successfully.
     REMOTE_EX_OK,
