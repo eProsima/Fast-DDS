@@ -164,7 +164,7 @@ public:
         std::cout << "  -p <num>, --connection-port <num>    Port of the Server to connect to"         << std::endl;
         std::cout << "                                       (Default port: 16166)."                   << std::endl;
         std::cout << "                                       (0 by default)."                          << std::endl;
-        std::cout << "            --transport <str>          [udpv4|udpv6|tcpv4|tcpv6|shm] "           << std::endl;
+        std::cout << "            --transport <str>          [udpv4|udpv6|tcpv4|tcpv6] "               << std::endl;
         std::cout << "                                       (udpv4 by default)."                      << std::endl;
         std::cout << ""                                                                                << std::endl;
         std::cout << "Publisher options:"                                                              << std::endl;
@@ -288,12 +288,6 @@ public:
                         config.sub_config.transport_kind = TransportKind::TCPv6;
                         config.srv_config.transport_kind = TransportKind::TCPv6;
                         uses_ipv6 = true;
-                    }
-                    else if (input == "shm")
-                    {
-                        config.pub_config.transport_kind = TransportKind::SHM;
-                        config.sub_config.transport_kind = TransportKind::SHM;
-                        config.srv_config.transport_kind = TransportKind::SHM;
                     }
                     else
                     {
