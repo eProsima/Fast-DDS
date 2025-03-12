@@ -571,7 +571,6 @@ int fastdds_discovery_server(
         }
     }
 
-    fastdds::rtps::GuidPrefix_t guid_prefix = participantQos.wire_protocol().prefix;
     participantQos.transport().use_builtin_transports = udp_server_initialized || options[XML_FILE] != nullptr;
 
     // Create the server
@@ -596,9 +595,15 @@ int fastdds_discovery_server(
 #endif // ifndef _WIN32
 
         bool has_security = false;
-        if (guid_prefix != pServer->guid().guidPrefix)
+        auto participantQos = pServer->get_qos();
+        // Access the properties of the participant QoS
+        for (auto prop : participantQos.properties().properties())
         {
-            has_security = true;
+            if (prop.name() == "dds.sec.auth.builtin.PKI-DH.identity_ca" && prop.value() != "")
+            {
+                has_security = true;
+                break;
+            }
         }
 
         // Print running server attributes
