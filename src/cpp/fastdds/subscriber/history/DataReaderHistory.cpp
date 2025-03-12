@@ -899,9 +899,11 @@ bool DataReaderHistory::update_instance_nts(
     return ret;
 }
 
-void DataReaderHistory::writer_not_alive(
+bool DataReaderHistory::writer_not_alive(
         const GUID_t& writer_guid)
 {
+    bool ret_val = false;
+
     for (auto& it : instances_)
     {
         bool had_fake_sample = it.second->has_fake_sample;
@@ -910,8 +912,11 @@ void DataReaderHistory::writer_not_alive(
         {
             // Mark instance as data available
             data_available_instances_[it.first] = it.second;
+            ret_val = true;
         }
     }
+
+    return ret_val;
 }
 
 StateFilter DataReaderHistory::get_mask_status() const noexcept
