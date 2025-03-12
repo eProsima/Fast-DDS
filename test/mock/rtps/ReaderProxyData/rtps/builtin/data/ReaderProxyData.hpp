@@ -45,34 +45,35 @@ class ReaderProxyData : public SubscriptionBuiltinTopicData
 public:
 
     ReaderProxyData (
-        const size_t max_unicast_locators,
-        const size_t max_multicast_locators,
-        const VariableLengthDataLimits& data_limits,
-        const fastdds::rtps::ContentFilterProperty::AllocationConfiguration& content_filterlimits = {})
-    : SubscriptionBuiltinTopicData(max_unicast_locators, max_multicast_locators, data_limits, content_filterlimits)
+            const size_t max_unicast_locators,
+            const size_t max_multicast_locators,
+            const VariableLengthDataLimits& data_limits,
+            const fastdds::rtps::ContentFilterProperty::AllocationConfiguration& content_filterlimits = {})
+        : SubscriptionBuiltinTopicData(max_unicast_locators, max_multicast_locators, data_limits, content_filterlimits)
 #if HAVE_SECURITY
-    , security_attributes_(0UL)
-    , plugin_security_attributes_(0UL)
+        , security_attributes_(0UL)
+        , plugin_security_attributes_(0UL)
 #endif // if HAVE_SECURITY
-    , m_is_alive(true)
-    , m_user_defined_id(0)
+        , m_is_alive(true)
+        , m_user_defined_id(0)
     {
 
     }
 
     ReaderProxyData (
-        const size_t max_unicast_locators,
-        const size_t max_multicast_locators,
-        const fastdds::rtps::ContentFilterProperty::AllocationConfiguration& content_filterlimits = {})
-    : ReaderProxyData(max_unicast_locators, max_multicast_locators, VariableLengthDataLimits(), content_filterlimits)
+            const size_t max_unicast_locators,
+            const size_t max_multicast_locators,
+            const fastdds::rtps::ContentFilterProperty::AllocationConfiguration& content_filterlimits = {})
+        : ReaderProxyData(max_unicast_locators, max_multicast_locators, VariableLengthDataLimits(),
+                content_filterlimits)
     {
 
     }
 
     ReaderProxyData(
-        const VariableLengthDataLimits&,
-        const SubscriptionBuiltinTopicData& subscription_data)
-    : SubscriptionBuiltinTopicData(subscription_data)
+            const VariableLengthDataLimits&,
+            const SubscriptionBuiltinTopicData& subscription_data)
+        : SubscriptionBuiltinTopicData(subscription_data)
     {
 
     }
@@ -242,7 +243,8 @@ public:
 
 private:
 
-    void init(const VariableLengthDataLimits& data_limits);
+    void init(
+            const VariableLengthDataLimits& data_limits);
 
     bool m_is_alive;
     fastdds::dds::xtypes::TypeInformationParameter type_info_;

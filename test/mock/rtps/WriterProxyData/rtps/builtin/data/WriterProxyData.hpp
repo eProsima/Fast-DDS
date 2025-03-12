@@ -52,7 +52,7 @@ public:
         , security_attributes_(0)
         , plugin_security_attributes_(0)
 #else
-        : m_network_configuration(0)
+            : m_network_configuration(0)
 #endif // if HAVE_SECURITY
         , m_user_defined_id(0)
     {

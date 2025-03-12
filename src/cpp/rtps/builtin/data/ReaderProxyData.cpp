@@ -181,7 +181,8 @@ ReaderProxyData& ReaderProxyData::operator =(
     return *this;
 }
 
-void ReaderProxyData::init(const VariableLengthDataLimits& data_limits)
+void ReaderProxyData::init(
+        const VariableLengthDataLimits& data_limits)
 {
 #if HAVE_SECURITY
     security_attributes_ = 0UL;
