@@ -58,6 +58,8 @@ struct DataReaderInstance
     int32_t disposed_generation_count = 0;
     //! Current no_writers generation of the instance
     int32_t no_writers_generation_count = 0;
+    //! Whether the instance has a fake sample available
+    bool has_fake_sample = false;
 
     DataReaderInstance(
             const eprosima::fastdds::ResourceLimitedContainerConfig& changes_allocation,
