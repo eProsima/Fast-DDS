@@ -22,6 +22,7 @@
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/builtin/data/BuiltinTopicKey.hpp>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
@@ -30,11 +31,44 @@
 
 namespace eprosima {
 namespace fastdds {
+namespace dds {
+
+class ReaderQos;
+
+} // namespace dds
 namespace rtps {
 
 /// Structure SubscriptionBuiltinTopicData, contains the information on a discovered subscription.
 struct SubscriptionBuiltinTopicData
 {
+    SubscriptionBuiltinTopicData() = default;
+
+    SubscriptionBuiltinTopicData(
+        const size_t max_unicast_locators,
+        const size_t max_multicast_locators,
+        const VariableLengthDataLimits& data_limits,
+        const fastdds::rtps::ContentFilterProperty::AllocationConfiguration& content_filter_limits)
+        : content_filter(content_filter_limits)
+        , remote_locators(max_unicast_locators, max_multicast_locators)
+    {
+        user_data.set_max_size(data_limits.max_user_data);
+        partition.set_max_size(data_limits.max_partitions);
+        data_sharing.set_max_domains(data_limits.max_datasharing_domains);
+    }
+
+    FASTDDS_EXPORTED_API void set_qos(
+        const SubscriptionBuiltinTopicData& qos,
+        bool first_time);
+
+    FASTDDS_EXPORTED_API void set_qos(
+            const dds::ReaderQos& qos,
+            bool first_time);
+
+    FASTDDS_EXPORTED_API bool can_qos_be_updated(
+            const SubscriptionBuiltinTopicData& qos) const;
+
+    FASTDDS_EXPORTED_API void clear();
+
     /// Builtin topic Key
     BuiltinTopicKey_t key{{0, 0, 0}};
 
