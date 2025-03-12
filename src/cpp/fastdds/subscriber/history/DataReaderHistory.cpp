@@ -673,7 +673,7 @@ void DataReaderHistory::check_and_remove_instance(
 {
     DataReaderInstance* instance = instance_info->second.get();
 
-    if (instance->cache_changes.empty())
+    if (instance->cache_changes.empty() && (false == instance->has_fake_sample))
     {
         if (InstanceStateKind::ALIVE_INSTANCE_STATE != instance->instance_state &&
                 instance->alive_writers.empty() &&
