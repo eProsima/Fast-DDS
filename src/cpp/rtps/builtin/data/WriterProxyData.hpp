@@ -368,7 +368,8 @@ private:
     /**
      * Initialize the common attributes of the ReaderProxyData.
      */
-    void init(const VariableLengthDataLimits& data_limits);
+    void init(
+            const VariableLengthDataLimits& data_limits);
 
     //!Network configuration
     NetworkConfigSet_t m_network_configuration;

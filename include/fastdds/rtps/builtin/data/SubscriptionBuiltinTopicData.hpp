@@ -44,10 +44,10 @@ struct SubscriptionBuiltinTopicData
     SubscriptionBuiltinTopicData() = default;
 
     SubscriptionBuiltinTopicData(
-        const size_t max_unicast_locators,
-        const size_t max_multicast_locators,
-        const VariableLengthDataLimits& data_limits,
-        const fastdds::rtps::ContentFilterProperty::AllocationConfiguration& content_filter_limits)
+            const size_t max_unicast_locators,
+            const size_t max_multicast_locators,
+            const VariableLengthDataLimits& data_limits,
+            const fastdds::rtps::ContentFilterProperty::AllocationConfiguration& content_filter_limits)
         : content_filter(content_filter_limits)
         , remote_locators(max_unicast_locators, max_multicast_locators)
     {
@@ -57,8 +57,8 @@ struct SubscriptionBuiltinTopicData
     }
 
     FASTDDS_EXPORTED_API void set_qos(
-        const SubscriptionBuiltinTopicData& qos,
-        bool first_time);
+            const SubscriptionBuiltinTopicData& qos,
+            bool first_time);
 
     FASTDDS_EXPORTED_API void set_qos(
             const dds::ReaderQos& qos,

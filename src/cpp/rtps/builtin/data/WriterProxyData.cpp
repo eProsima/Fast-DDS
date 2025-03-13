@@ -167,7 +167,7 @@ WriterProxyData& WriterProxyData::operator =(
 }
 
 void WriterProxyData::init(
-    const VariableLengthDataLimits& data_limits)
+        const VariableLengthDataLimits& data_limits)
 {
 #if HAVE_SECURITY
     security_attributes_ = 0;

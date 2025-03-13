@@ -104,7 +104,8 @@ void PDPListener::on_new_cache_change_added(
         // Load information on temp_participant_data_
         CDRMessage_t msg(change->serializedPayload);
         temp_participant_data_.clear();
-        if (temp_participant_data_.read_from_cdr_message(&msg, true, parent_pdp_->getRTPSParticipant()->network_factory(),
+        if (temp_participant_data_.read_from_cdr_message(&msg, true,
+                parent_pdp_->getRTPSParticipant()->network_factory(),
                 true, change_in->vendor_id))
         {
             // After correctly reading it
