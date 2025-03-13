@@ -75,7 +75,6 @@ WriterProxyData::WriterProxyData(
     , m_user_defined_id(writerInfo.m_user_defined_id)
     , m_type_id(nullptr)
     , m_type(nullptr)
-    , m_type_information(nullptr)
     , m_properties(writerInfo.m_properties)
 {
     if (writerInfo.m_type_id)
@@ -88,10 +87,7 @@ WriterProxyData::WriterProxyData(
         type(*writerInfo.m_type);
     }
 
-    if (writerInfo.m_type_information)
-    {
-        type_information(*writerInfo.m_type_information);
-    }
+    type_information = writerInfo.type_information;
 }
 
 WriterProxyData::~WriterProxyData()
@@ -103,10 +99,6 @@ WriterProxyData::~WriterProxyData()
     if (nullptr != m_type_id)
     {
         delete m_type_id;
-    }
-    if (nullptr != m_type_information)
-    {
-        delete m_type_information;
     }
 
     EPROSIMA_LOG_INFO(RTPS_PROXY_DATA, PublicationBuiltinTopicData::guid);
@@ -122,6 +114,11 @@ WriterProxyData& WriterProxyData::operator =(
     topic_kind = writerInfo.topic_kind;
 
     set_qos(writerInfo, true);
+
+    if (writerInfo.has_type_information())
+    {
+        type_information = writerInfo.type_information;
+    }
 
     guid = writerInfo.guid;
     participant_guid = writerInfo.participant_guid;
@@ -161,14 +158,9 @@ WriterProxyData& WriterProxyData::operator =(
         m_type = nullptr;
     }
 
-    if (writerInfo.m_type_information)
+    if (writerInfo.type_information.assigned())
     {
-        type_information(*writerInfo.m_type_information);
-    }
-    else
-    {
-        delete m_type_information;
-        m_type_information = nullptr;
+        type_information = writerInfo.type_information;
     }
 
     return *this;
@@ -185,7 +177,6 @@ void WriterProxyData::init(
     m_user_defined_id = 0;
     m_type_id = nullptr;
     m_type = nullptr;
-    m_type_information = nullptr;
 
     m_properties.set_max_size(static_cast<uint32_t>(data_limits.max_properties));
 }
@@ -337,10 +328,10 @@ uint32_t WriterProxyData::get_serialized_size(
             representation);
     }
 
-    if (m_type_information && m_type_information->assigned())
+    if (type_information.assigned())
     {
         ret_val += dds::QosPoliciesSerializer<dds::xtypes::TypeInformationParameter>::cdr_serialized_size(
-            *m_type_information);
+            type_information);
     }
 
     // PID_SENTINEL
@@ -574,10 +565,10 @@ bool WriterProxyData::write_to_cdr_message(
             return false;
         }
     }
-    if (m_type_information && m_type_information->assigned())
+    if (type_information.assigned())
     {
         if (!dds::QosPoliciesSerializer<dds::xtypes::TypeInformationParameter>::add_to_cdr_message(
-                    *m_type_information, msg))
+                    type_information, msg))
         {
             return false;
         }
@@ -938,7 +929,7 @@ bool WriterProxyData::read_from_cdr_message(
                         }
 
                         if (!dds::QosPoliciesSerializer<dds::xtypes::TypeInformationParameter>::
-                                read_from_cdr_message(type_information(), msg, plength))
+                                read_from_cdr_message(type_information, msg, plength))
                         {
                             return false;
                         }
@@ -1156,10 +1147,6 @@ void WriterProxyData::clear()
     if (m_type)
     {
         *m_type = dds::TypeObjectV1();
-    }
-    if (m_type_information)
-    {
-        *m_type_information = dds::xtypes::TypeInformationParameter();
     }
 }
 

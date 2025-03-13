@@ -156,7 +156,7 @@ bool EDP::new_reader_proxy_data(
                     {
                         case TypePropagation::TYPEPROPAGATION_ENABLED:
                         {
-                            rpd->type_information(type_info);
+                            rpd->type_information = type_info;
                             break;
                         }
                         case TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH:
@@ -164,7 +164,7 @@ bool EDP::new_reader_proxy_data(
                             TypeInformationParameter minimal;
                             minimal.type_information.minimal(type_info.type_information.minimal());
                             minimal.assigned(true);
-                            rpd->type_information(minimal);
+                            rpd->type_information = minimal;
                             break;
                         }
                         case TypePropagation::TYPEPROPAGATION_REGISTRATION_ONLY:
@@ -172,7 +172,7 @@ bool EDP::new_reader_proxy_data(
                         {
                             if (rpd->has_type_information())
                             {
-                                rpd->type_information().assigned(false);
+                                rpd->type_information.assigned(false);
                             }
                             break;
                         }
@@ -299,7 +299,7 @@ bool EDP::new_writer_proxy_data(
                     {
                         case TypePropagation::TYPEPROPAGATION_ENABLED:
                         {
-                            wpd->type_information(type_info);
+                            wpd->type_information = type_info;
                             break;
                         }
                         case TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH:
@@ -307,7 +307,7 @@ bool EDP::new_writer_proxy_data(
                             TypeInformationParameter minimal;
                             minimal.type_information.minimal(type_info.type_information.minimal());
                             minimal.assigned(true);
-                            wpd->type_information(minimal);
+                            wpd->type_information = minimal;
                             break;
                         }
                         case TypePropagation::TYPEPROPAGATION_REGISTRATION_ONLY:
@@ -315,7 +315,7 @@ bool EDP::new_writer_proxy_data(
                         {
                             if (wpd->has_type_information())
                             {
-                                wpd->type_information().assigned(false);
+                                wpd->type_information.assigned(false);
                             }
                             break;
                         }
@@ -588,10 +588,10 @@ bool EDP::valid_matching(
         return false;
     }
 
-    if ((wdata->has_type_information() && wdata->type_information().assigned()) &&
-            (rdata->has_type_information() && rdata->type_information().assigned()))
+    if ((wdata->has_type_information() && wdata->type_information.assigned()) &&
+            (rdata->has_type_information() && rdata->type_information.assigned()))
     {
-        if (!is_same_type(wdata->type_information().type_information, rdata->type_information().type_information))
+        if (!is_same_type(wdata->type_information.type_information, rdata->type_information.type_information))
         {
             reason.set(MatchingFailureMask::different_typeinfo);
             return false;

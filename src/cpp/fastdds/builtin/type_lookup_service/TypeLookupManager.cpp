@@ -373,10 +373,10 @@ ReturnCode_t TypeLookupManager::check_type_identifier_received(
         AsyncCallback>>>& async_get_type_callbacks)
 {
     xtypes::TypeIdentfierWithSize type_identifier_with_size =
-            temp_proxy_data->type_information().type_information.complete().typeid_with_size().type_id()._d() !=
+            temp_proxy_data->type_information.type_information.complete().typeid_with_size().type_id()._d() !=
             TK_NONE ?
-            temp_proxy_data->type_information().type_information.complete().typeid_with_size() :
-            temp_proxy_data->type_information().type_information.minimal().typeid_with_size();
+            temp_proxy_data->type_information.type_information.complete().typeid_with_size() :
+            temp_proxy_data->type_information.type_information.minimal().typeid_with_size();
 
     // Check if the type is known
     if (fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().

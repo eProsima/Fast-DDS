@@ -134,8 +134,8 @@ protected:
     void set_incompatible_type()
     {
         rdata->type_name = "AnotherTypeName";
-        rdata->type_information().assigned(false);
-        wdata->type_information().assigned(false);
+        rdata->type_information.assigned(false);
+        wdata->type_information.assigned(false);
     }
 
     void check_expectations(
@@ -507,49 +507,49 @@ TEST_F(EdpTests, CheckTypeIdentifierComparation)
     complete.equivalence_hash({2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
     complete._d(dds::xtypes::EK_COMPLETE);
 
-    wdata->type_information().assigned(true);
-    rdata->type_information().assigned(true);
+    wdata->type_information.assigned(true);
+    rdata->type_information.assigned(true);
 
-    wdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
-    wdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
-    rdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
-    rdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
+    wdata->type_information.type_information.complete().typeid_with_size().type_id(complete);
+    wdata->type_information.type_information.minimal().typeid_with_size().type_id(minimal);
+    rdata->type_information.type_information.complete().typeid_with_size().type_id(complete);
+    rdata->type_information.type_information.minimal().typeid_with_size().type_id(minimal);
     check_expectations(true);
 
-    wdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
-    wdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
-    rdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
-    rdata->type_information().type_information.minimal().typeid_with_size().type_id().no_value({});
+    wdata->type_information.type_information.complete().typeid_with_size().type_id(complete);
+    wdata->type_information.type_information.minimal().typeid_with_size().type_id(minimal);
+    rdata->type_information.type_information.complete().typeid_with_size().type_id(complete);
+    rdata->type_information.type_information.minimal().typeid_with_size().type_id().no_value({});
     check_expectations(true);
 
-    wdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
-    wdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
-    rdata->type_information().type_information.complete().typeid_with_size().type_id().no_value({});
-    rdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
+    wdata->type_information.type_information.complete().typeid_with_size().type_id(complete);
+    wdata->type_information.type_information.minimal().typeid_with_size().type_id(minimal);
+    rdata->type_information.type_information.complete().typeid_with_size().type_id().no_value({});
+    rdata->type_information.type_information.minimal().typeid_with_size().type_id(minimal);
     check_expectations(true);
 
-    wdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
-    wdata->type_information().type_information.minimal().typeid_with_size().type_id().no_value({});
-    rdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
-    rdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
+    wdata->type_information.type_information.complete().typeid_with_size().type_id(complete);
+    wdata->type_information.type_information.minimal().typeid_with_size().type_id().no_value({});
+    rdata->type_information.type_information.complete().typeid_with_size().type_id(complete);
+    rdata->type_information.type_information.minimal().typeid_with_size().type_id(minimal);
     check_expectations(true);
 
-    wdata->type_information().type_information.complete().typeid_with_size().type_id().no_value({});
-    wdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
-    rdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
-    rdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
+    wdata->type_information.type_information.complete().typeid_with_size().type_id().no_value({});
+    wdata->type_information.type_information.minimal().typeid_with_size().type_id(minimal);
+    rdata->type_information.type_information.complete().typeid_with_size().type_id(complete);
+    rdata->type_information.type_information.minimal().typeid_with_size().type_id(minimal);
     check_expectations(true);
 
-    wdata->type_information().type_information.complete().typeid_with_size().type_id().no_value({});
-    wdata->type_information().type_information.minimal().typeid_with_size().type_id().no_value({});
-    rdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
-    rdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
+    wdata->type_information.type_information.complete().typeid_with_size().type_id().no_value({});
+    wdata->type_information.type_information.minimal().typeid_with_size().type_id().no_value({});
+    rdata->type_information.type_information.complete().typeid_with_size().type_id(complete);
+    rdata->type_information.type_information.minimal().typeid_with_size().type_id(minimal);
     check_expectations(false);
 
-    wdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
-    wdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
-    rdata->type_information().type_information.complete().typeid_with_size().type_id().no_value({});
-    rdata->type_information().type_information.minimal().typeid_with_size().type_id().no_value({});
+    wdata->type_information.type_information.complete().typeid_with_size().type_id(complete);
+    wdata->type_information.type_information.minimal().typeid_with_size().type_id(minimal);
+    rdata->type_information.type_information.complete().typeid_with_size().type_id().no_value({});
+    rdata->type_information.type_information.minimal().typeid_with_size().type_id().no_value({});
     check_expectations(false);
 }
 

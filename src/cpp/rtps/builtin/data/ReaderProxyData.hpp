@@ -272,30 +272,9 @@ public:
         return m_type != nullptr;
     }
 
-    void type_information(
-            const dds::xtypes::TypeInformationParameter& other_type_information)
-    {
-        type_information() = other_type_information;
-    }
-
-    const dds::xtypes::TypeInformationParameter& type_information() const
-    {
-        assert(m_type_information != nullptr);
-        return *m_type_information;
-    }
-
-    dds::xtypes::TypeInformationParameter& type_information()
-    {
-        if (m_type_information == nullptr)
-        {
-            m_type_information = new dds::xtypes::TypeInformationParameter();
-        }
-        return *m_type_information;
-    }
-
     bool has_type_information() const
     {
-        return m_type_information != nullptr;
+        return type_information.assigned();
     }
 
     inline bool disable_positive_acks_enabled() const
@@ -411,8 +390,6 @@ private:
     dds::TypeIdV1* m_type_id;
     //!Type Object
     dds::TypeObjectV1* m_type;
-    //!Type Information
-    dds::xtypes::TypeInformationParameter* m_type_information;
     //!
     ParameterPropertyList_t m_properties;
 };

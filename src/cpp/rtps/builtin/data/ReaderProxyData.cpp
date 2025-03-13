@@ -77,10 +77,6 @@ ReaderProxyData::~ReaderProxyData()
     {
         delete m_type_id;
     }
-    if (nullptr != m_type_information)
-    {
-        delete m_type_information;
-    }
 
     EPROSIMA_LOG_INFO(RTPS_PROXY_DATA, "ReaderProxyData destructor: " << guid; );
 }
@@ -99,7 +95,6 @@ ReaderProxyData::ReaderProxyData(
     , m_is_alive(readerInfo.m_is_alive)
     , m_type_id(nullptr)
     , m_type(nullptr)
-    , m_type_information(nullptr)
     , m_properties(readerInfo.m_properties)
 {
     if (readerInfo.m_type_id)
@@ -112,9 +107,9 @@ ReaderProxyData::ReaderProxyData(
         type(*readerInfo.m_type);
     }
 
-    if (readerInfo.m_type_information)
+    if (readerInfo.has_type_information())
     {
-        type_information(*readerInfo.m_type_information);
+        type_information = readerInfo.type_information;
     }
 }
 
@@ -128,6 +123,11 @@ ReaderProxyData& ReaderProxyData::operator =(
     topic_kind = readerInfo.topic_kind;
 
     set_qos(readerInfo, true);
+
+    if (readerInfo.has_type_information())
+    {
+        type_information = readerInfo.type_information;
+    }
 
     content_filter = readerInfo.content_filter;
     guid = readerInfo.guid;
@@ -168,14 +168,9 @@ ReaderProxyData& ReaderProxyData::operator =(
         m_type = nullptr;
     }
 
-    if (readerInfo.m_type_information)
+    if (readerInfo.has_type_information())
     {
-        type_information(*readerInfo.m_type_information);
-    }
-    else
-    {
-        delete m_type_information;
-        m_type_information = nullptr;
+        type_information = readerInfo.type_information;
     }
 
     return *this;
@@ -193,7 +188,6 @@ void ReaderProxyData::init(
     m_is_alive = true;
     m_type_id = nullptr;
     m_type = nullptr;
-    m_type_information = nullptr;
 
     m_properties.set_max_size(static_cast<uint32_t>(data_limits.max_properties));
 
@@ -309,11 +303,11 @@ uint32_t ReaderProxyData::get_serialized_size(
         ret_val += dds::QosPoliciesSerializer<dds::DisablePositiveACKsQosPolicy>::cdr_serialized_size(
             disable_positive_acks);
     }
-    if (m_type_information && m_type_information->assigned())
+    if (type_information.assigned())
     {
         ret_val +=
                 dds::QosPoliciesSerializer<dds::xtypes::TypeInformationParameter>::cdr_serialized_size(
-            *m_type_information);
+            type_information);
     }
     if (type_consistency.send_always() || type_consistency.hasChanged)
     {
@@ -358,11 +352,11 @@ uint32_t ReaderProxyData::get_serialized_size(
         ret_val += dds::QosPoliciesSerializer<dds::TypeConsistencyEnforcementQosPolicy>::cdr_serialized_size(
             type_consistency);
     }
-    if (m_type_information && m_type_information->assigned())
+    if (type_information.assigned())
     {
         ret_val +=
                 dds::QosPoliciesSerializer<dds::xtypes::TypeInformationParameter>::cdr_serialized_size(
-            *m_type_information);
+            type_information);
     }
 
     // PID_SENTINEL
@@ -589,7 +583,7 @@ bool ReaderProxyData::write_to_cdr_message(
     if (m_type_id && m_type_id->m_type_identifier._d() != fastdds::dds::xtypes::TK_NONE)
     {
         if (!dds::QosPoliciesSerializer<dds::xtypes::TypeInformationParameter>::add_to_cdr_message(
-                    *m_type_information, msg))
+                    type_information, msg))
         {
             return false;
         }
@@ -642,10 +636,10 @@ bool ReaderProxyData::write_to_cdr_message(
         }
     }
 
-    if (m_type_information && m_type_information->assigned())
+    if (type_information.assigned())
     {
         if (!dds::QosPoliciesSerializer<dds::xtypes::TypeInformationParameter>::add_to_cdr_message(
-                    *m_type_information, msg))
+                    type_information, msg))
         {
             return false;
         }
@@ -977,7 +971,7 @@ bool ReaderProxyData::read_from_cdr_message(
                         }
 
                         if (!dds::QosPoliciesSerializer<dds::xtypes::TypeInformationParameter>::read_from_cdr_message(
-                                    type_information(), msg, plength))
+                                    type_information, msg, plength))
                         {
                             return false;
                         }
@@ -1183,10 +1177,6 @@ void ReaderProxyData::clear()
     if (m_type)
     {
         *m_type = dds::TypeObjectV1();
-    }
-    if (m_type_information)
-    {
-        *m_type_information = dds::xtypes::TypeInformationParameter();
     }
 }
 

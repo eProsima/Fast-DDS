@@ -106,7 +106,7 @@ void EDPBasePUBListener::add_writer_from_change(
 
                                 if (request_ret_status != fastdds::dds::RETCODE_OK)
                                 {
-                                    data->type_information().clear();
+                                    data->type_information.clear();
                                 }
                                 return true;
                             };
@@ -138,7 +138,7 @@ void EDPBasePUBListener::add_writer_from_change(
         auto typelookup_manager = edp->mp_RTPSParticipant->typelookup_manager();
 
         // Check if TypeInformation exists to start the typelookup service
-        if (nullptr != typelookup_manager && temp_writer_data->type_information().assigned())
+        if (nullptr != typelookup_manager && temp_writer_data->type_information.assigned())
         {
             typelookup_manager->async_get_type(
                 temp_writer_data,
@@ -251,7 +251,7 @@ void EDPBaseSUBListener::add_reader_from_change(
 
                                 if (request_ret_status != fastdds::dds::RETCODE_OK)
                                 {
-                                    data->type_information().clear();
+                                    data->type_information.clear();
                                 }
                                 return true;
                             };
@@ -284,7 +284,7 @@ void EDPBaseSUBListener::add_reader_from_change(
         auto typelookup_manager = edp->mp_RTPSParticipant->typelookup_manager();
 
         // Check if TypeInformation exists to start the typelookup service
-        if (nullptr != typelookup_manager && temp_reader_data->type_information().assigned())
+        if (nullptr != typelookup_manager && temp_reader_data->type_information.assigned())
         {
             typelookup_manager->async_get_type(
                 temp_reader_data,

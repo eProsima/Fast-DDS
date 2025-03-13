@@ -330,6 +330,7 @@ void SubscriptionBuiltinTopicData::clear()
     disable_positive_acks.clear();
     representation.clear();
     type_consistency.clear();
+    type_information.clear();
     data_sharing.clear();
 }
 

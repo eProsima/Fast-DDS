@@ -150,25 +150,7 @@ public:
 
     bool has_type_information () const
     {
-        return has_type_info_;
-    }
-
-    void type_information(
-            const fastdds::dds::xtypes::TypeInformationParameter& other_type_info)
-    {
-        has_type_info_ = true;
-        type_info_ = other_type_info;
-    }
-
-    const fastdds::dds::xtypes::TypeInformationParameter& type_information() const
-    {
-        return type_info_;
-    }
-
-    fastdds::dds::xtypes::TypeInformationParameter& type_information()
-    {
-        has_type_info_ = true;
-        return type_info_;
+        return type_information.assigned();
     }
 
     void key(
@@ -247,11 +229,9 @@ private:
             const VariableLengthDataLimits& data_limits);
 
     bool m_is_alive;
-    fastdds::dds::xtypes::TypeInformationParameter type_info_;
     InstanceHandle_t m_key;
     InstanceHandle_t m_rtps_participant_key;
     uint16_t m_user_defined_id;
-    bool has_type_info_ {false};
 
 };
 

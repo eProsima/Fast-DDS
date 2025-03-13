@@ -337,6 +337,7 @@ void PublicationBuiltinTopicData::clear()
     disable_positive_acks.clear();
     ownership_strength.clear();
     representation.clear();
+    type_information.clear();
     data_sharing.clear();
     publish_mode.clear();
 

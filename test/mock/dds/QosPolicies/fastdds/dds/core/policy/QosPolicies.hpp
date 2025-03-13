@@ -1607,7 +1607,7 @@ public:
         std::swap(*this, reset);
     }
 
-    FASTDDS_EXPORTED_API bool isAssigned() const
+    FASTDDS_EXPORTED_API bool assigned() const
     {
         return true;
     }
