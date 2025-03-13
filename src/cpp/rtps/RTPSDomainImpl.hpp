@@ -115,21 +115,18 @@ public:
             RTPSParticipant* p);
 
     /**
-     * Creates a RTPSParticipant as default server or client if ROS_MASTER_URI environment variable is set.
-     * @param domain_id DDS domain associated
-     * @param enabled True if the RTPSParticipant should be enabled on creation. False if it will be enabled later with RTPSParticipant::enable()
-     * @param attrs RTPSParticipant Attributes.
-     * @param listen Pointer to the ParticipantListener.
-     * @return Pointer to the RTPSParticipant.
+     * Fills RTPSParticipantAttributes to create a RTPSParticipant as default server or client
+     * if ROS_MASTER_URI environment variable is set.
      *
-     * \warning The returned pointer is invalidated after a call to removeRTPSParticipant() or stopAll(),
-     *          so its use may result in undefined behaviour.
+     * @param domain_id DDS domain associated
+     * @param [in, out] attrs RTPSParticipant Attributes.
+     * @return True if the attributes were successfully modified,
+     * false if an error occurred or environment variable not set
+     *
      */
-    static RTPSParticipant* clientServerEnvironmentCreationOverride(
+    static bool client_server_environment_attributes_override(
             uint32_t domain_id,
-            bool enabled,
-            const RTPSParticipantAttributes& attrs,
-            RTPSParticipantListener* listen /*= nullptr*/);
+            RTPSParticipantAttributes& attrs);
 
     /**
      * Create a RTPSWriter in a participant.
