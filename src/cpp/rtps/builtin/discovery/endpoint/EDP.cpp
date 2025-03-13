@@ -125,6 +125,7 @@ bool EDP::new_reader_proxy_data(
                 rpd->is_alive(true);
                 rpd->expects_inline_qos = rtps_reader->expects_inline_qos();
                 rpd->guid = rtps_reader->getGuid();
+                rpd->participant_guid = participant_data.guid;
                 rpd->key() = rpd->guid;
                 if (ratt.multicastLocatorList.empty() && ratt.unicastLocatorList.empty())
                 {
@@ -266,6 +267,7 @@ bool EDP::new_writer_proxy_data(
                 const auto& watt = rtps_writer->getAttributes();
 
                 wpd->guid = rtps_writer->getGuid();
+                wpd->participant_guid = participant_data.guid;
                 wpd->key() = wpd->guid;
                 if (watt.multicastLocatorList.empty() && watt.unicastLocatorList.empty())
                 {
@@ -864,7 +866,7 @@ bool EDP::pairingReader(
                     static_cast<void>(reader_guid);  // Void cast to force usage if we don't have LOG_INFOs
                     EPROSIMA_LOG_INFO(RTPS_EDP_MATCH,
                             "WP:" << wdatait->guid << " match R:" << reader_guid << ". RLoc:" <<
-                            wdatait->remote_locators());
+                            wdatait->remote_locators);
                     //MATCHED AND ADDED CORRECTLY:
                     if (reader->get_listener() != nullptr)
                     {
@@ -957,7 +959,7 @@ bool EDP::pairingWriter(
                 {
                     EPROSIMA_LOG_INFO(RTPS_EDP_MATCH,
                             "RP:" << rdatait->guid << " match W:" << writer_guid << ". WLoc:" <<
-                            rdatait->remote_locators());
+                            rdatait->remote_locators);
                     //MATCHED AND ADDED CORRECTLY:
                     if (writer->get_listener() != nullptr)
                     {
@@ -1033,7 +1035,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
                         {
                             EPROSIMA_LOG_INFO(RTPS_EDP_MATCH,
                             "RP:" << rdata->guid << " match W:" << w.getGuid() << ". RLoc:" <<
-                                rdata->remote_locators());
+                                rdata->remote_locators);
                             //MATCHED AND ADDED CORRECTLY:
                             if (w.get_listener() != nullptr)
                             {
@@ -1226,7 +1228,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
                         {
                             EPROSIMA_LOG_INFO(RTPS_EDP_MATCH,
                             "WP:" << wdata->guid << " match R:" << r.getGuid() << ". WLoc:" <<
-                                wdata->remote_locators());
+                                wdata->remote_locators);
                             //MATCHED AND ADDED CORRECTLY:
                             if (r.get_listener() != nullptr)
                             {
