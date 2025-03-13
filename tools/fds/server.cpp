@@ -595,9 +595,9 @@ int fastdds_discovery_server(
 #endif // ifndef _WIN32
 
         bool has_security = false;
-        auto check_qos = pServer->get_qos();
+        const auto& check_qos = pServer->get_qos();
         // Access the properties of the participant QoS
-        for (auto prop : check_qos.properties().properties())
+        for (const auto& prop : check_qos.properties().properties())
         {
             if (prop.name() == "dds.sec.auth.builtin.PKI-DH.identity_ca" && prop.value() != "")
             {
