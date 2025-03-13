@@ -127,7 +127,20 @@ RTPSParticipant* RTPSDomain::createParticipant(
         const RTPSParticipantAttributes& attrs,
         RTPSParticipantListener* listen)
 {
-    return RTPSDomainImpl::createParticipant(domain_id, enabled, attrs, listen);
+    RTPSParticipant* part = nullptr;
+    RTPSParticipantAttributes env_attrs = attrs;
+
+    if (RTPSDomainImpl::client_server_environment_attributes_override(domain_id, env_attrs))
+    {
+        part = RTPSDomainImpl::createParticipant(domain_id, enabled, env_attrs, listen);
+    }
+
+    if (!part)
+    {
+        part = RTPSDomainImpl::createParticipant(domain_id, enabled, attrs, listen);
+    }
+
+    return part;
 }
 
 bool RTPSDomain::removeRTPSParticipant(
@@ -518,18 +531,16 @@ bool RTPSDomainImpl::removeRTPSReader(
     return false;
 }
 
-RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
+bool RTPSDomainImpl::client_server_environment_attributes_override(
         uint32_t domain_id,
-        bool enabled,
-        const RTPSParticipantAttributes& att,
-        RTPSParticipantListener* listen)
+        RTPSParticipantAttributes& att)
 {
     // Check the specified discovery protocol: if other than simple it has priority over ros environment variable
     if (att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol::SIMPLE)
     {
         EPROSIMA_LOG_INFO(RTPS_DOMAIN, "Detected non simple discovery protocol attributes."
                 << " Ignoring auto default client-server setup.");
-        return nullptr;
+        return false;
     }
 
     // We only make the attributes copy when we are sure is worth
@@ -560,7 +571,7 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
         {
             // It's not an error, the environment variable may not be set. Any issue with environment
             // variable syntax is EPROSIMA_LOG_ERROR already
-            return nullptr;
+            return false;
         }
 
         // Check if some address requires the UDPv6, TCPv4 or TCPv6 transport
@@ -685,22 +696,13 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
             {
                 EPROSIMA_LOG_ERROR(DOMAIN, "Auto discovery server client setup. Unable to spawn daemon.");
             }
-            return nullptr;
+            return false;
         }
     }
 
-    RTPSParticipant* part = createParticipant(domain_id, enabled, client_att, listen);
-    if (nullptr != part)
-    {
-        // Client successfully created
-        EPROSIMA_LOG_INFO(RTPS_DOMAIN, "Auto default server-client setup. Default client created.");
-        part->mp_impl->client_override(true);
-        return part;
-    }
+    att = client_att;
 
-    // Unable to create auto server-client default participants
-    EPROSIMA_LOG_ERROR(RTPS_DOMAIN, "Auto default server-client setup. Unable to create the client.");
-    return nullptr;
+    return true;
 }
 
 uint32_t RTPSDomainImpl::getNewId()
