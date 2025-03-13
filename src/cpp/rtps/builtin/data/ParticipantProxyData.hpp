@@ -168,7 +168,7 @@ public:
      * @param guid valid GUID_t
      */
     void set_persistence_guid(
-            const GUID_t& guid);
+            const GUID_t& ps_guid);
 
     /**
      * Retrieve participant persistent GUID_t

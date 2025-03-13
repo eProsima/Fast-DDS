@@ -52,8 +52,8 @@ struct SubscriptionBuiltinTopicData
         , remote_locators(max_unicast_locators, max_multicast_locators)
     {
         user_data.set_max_size(data_limits.max_user_data);
-        partition.set_max_size(data_limits.max_partitions);
-        data_sharing.set_max_domains(data_limits.max_datasharing_domains);
+        partition.set_max_size(static_cast<uint32_t>(data_limits.max_partitions));
+        data_sharing.set_max_domains(static_cast<uint32_t>(data_limits.max_datasharing_domains));
     }
 
     FASTDDS_EXPORTED_API void set_qos(

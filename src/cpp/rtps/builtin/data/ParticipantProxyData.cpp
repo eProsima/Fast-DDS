@@ -1003,10 +1003,10 @@ bool ParticipantProxyData::update_data(
 }
 
 void ParticipantProxyData::set_persistence_guid(
-        const GUID_t& guid)
+        const GUID_t& ps_guid)
 {
     // only valid values
-    if (guid == c_Guid_Unknown)
+    if (ps_guid == c_Guid_Unknown)
     {
         return;
     }
@@ -1016,7 +1016,7 @@ void ParticipantProxyData::set_persistence_guid(
     persistent_guid.first = fastdds::dds::parameter_property_persistence_guid;
 
     std::ostringstream data;
-    data << guid;
+    data << ps_guid;
     persistent_guid.second = data.str();
 
     // if exists replace
@@ -1078,9 +1078,9 @@ SampleIdentity ParticipantProxyData::get_sample_identity() const
 }
 
 void ParticipantProxyData::set_backup_stamp(
-        const GUID_t& guid)
+        const GUID_t& guid_)
 {
-    fastdds::dds::set_proxy_property(guid, "PID_BACKUP_STAMP", properties);
+    fastdds::dds::set_proxy_property(guid_, "PID_BACKUP_STAMP", properties);
 }
 
 GUID_t ParticipantProxyData::get_backup_stamp() const
