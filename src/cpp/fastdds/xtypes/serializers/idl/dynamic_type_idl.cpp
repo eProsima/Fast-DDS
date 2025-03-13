@@ -1046,6 +1046,15 @@ ReturnCode_t struct_to_idl(
         return ret;
     }
 
+    // Add types name and resolve module structure
+    std::string type_name = node.info.type_kind_name;
+    int n_modules = resolve_module_structure(type_name, idl);
+
+    for (int i = 0; i < n_modules; i++)
+    {
+        idl << TAB_SEPARATOR;
+    }
+
     switch (type_descriptor->extensibility_kind())
     {
         case ExtensibilityKind::FINAL:
@@ -1069,10 +1078,6 @@ ReturnCode_t struct_to_idl(
             return RETCODE_BAD_PARAMETER;
         }
     }
-
-    // Add types name and resolve module structure
-    std::string type_name = node.info.type_kind_name;
-    int n_modules = resolve_module_structure(type_name, idl);
 
     for (int i = 0; i < n_modules; i++)
     {
