@@ -2664,6 +2664,7 @@ public:
     FASTDDS_EXPORTED_API WireProtocolConfigQos()
         : QosPolicy(false)
         , participant_id(-1)
+        , easy_mode_("")
     {
     }
 
@@ -2683,6 +2684,7 @@ public:
                (this->default_multicast_locator_list == b.default_multicast_locator_list) &&
                (this->default_external_unicast_locators == b.default_external_unicast_locators) &&
                (this->ignore_non_matching_locators == b.ignore_non_matching_locators) &&
+               (this->easy_mode_ == b.easy_mode()) &&
                QosPolicy::operator ==(b);
     }
 
@@ -2725,6 +2727,46 @@ public:
      * Whether locators that don't match with the announced locators should be kept.
      */
     bool ignore_non_matching_locators = false;
+
+    /**
+     * @brief Setter for ROS 2 Easy Mode IP
+     *
+     * @param ip IP address to set
+     * @note The IP address must be an IPv4 address. If it is not, the IP address will not be set.
+     */
+    void easy_mode(
+            std::string ip)
+    {
+        // Check if the input is empty
+        if (!ip.empty())
+        {
+            // Check if the input is a valid IP
+            if (!rtps::IPLocator::isIPv4(ip))
+            {
+                EPROSIMA_LOG_ERROR(
+                    WIREPROTOCOLQOS, "Invalid IP address format for ROS 2 Easy Mode. It must be an IPv4 address.");
+
+                return;
+            }
+        }
+
+        easy_mode_ = ip;
+    }
+
+    /**
+     * @brief Getter for ROS 2 Easy Mode IP
+     *
+     * @return IP address if set, empty string otherwise
+     */
+    const std::string& easy_mode() const
+    {
+        return easy_mode_;
+    }
+
+private:
+
+    //! ROS 2 Easy Mode IP
+    std::string easy_mode_;
 };
 
 //! Qos Policy to configure the transport layer

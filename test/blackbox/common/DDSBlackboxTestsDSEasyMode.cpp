@@ -361,3 +361,79 @@ TEST(DSEasyMode, easy_discovery_mode_env_inconsistent_ip)
     stop_background_servers();
 #endif // _WIN32
 }
+
+/**
+ * Check that the environment variable ROS2_EASY_MODE is ignored if
+ * it does not have a valid IPv4 format.
+ */
+TEST(DSEasyMode, easy_discovery_mode_env_invalid)
+{
+#ifndef _WIN32 // The feature is not supported on Windows yet
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    // Set ROS2_EASY_MODE to an invalid string value
+    set_easy_discovery_mode_env("Foo");
+
+    std::atomic<bool> writer_background_ds_discovered(false);
+    std::atomic<bool> reader_background_ds_discovered(false);
+
+    writer.set_on_discovery_function(
+        [&writer_background_ds_discovered](
+            const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& data,
+            eprosima::fastdds::rtps::ParticipantDiscoveryStatus)
+        {
+            if (data.participant_name == "DiscoveryServerAuto")
+            {
+                writer_background_ds_discovered.store(true);
+            }
+            return true;
+        });
+    writer.init();
+
+    reader.set_on_discovery_function(
+        [&reader_background_ds_discovered](const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& data,
+        eprosima::fastdds::rtps::ParticipantDiscoveryStatus)
+        {
+            if (data.participant_name == "DiscoveryServerAuto")
+            {
+                reader_background_ds_discovered.store(true);
+            }
+            return true;
+        });
+    reader.init();
+
+    ASSERT_TRUE(writer.isInitialized());
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for endpoint discovery first
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Check that no Background DS was discovered,
+    // only the other reader or writer
+    ASSERT_GE(writer.get_participants_matched(), 1u);
+    ASSERT_GE(reader.get_participants_matched(), 1u);
+    ASSERT_FALSE(writer_background_ds_discovered.load());
+    ASSERT_FALSE(reader_background_ds_discovered.load());
+#endif // _WIN32
+}
+
+/**
+ * Check that easy mode configuration is ignored when setting it
+ * with code using WireProtocolConfigQos.
+ *
+ * Note: This test only checks that the configuration is ignored.
+ * Probably it should be extended similarly to easy_discovery_mode_env_invalid
+ * when Configuring Easy Mode via c++ and XML is implemented.
+ */
+TEST(DSEasyMode, wire_protocol_qos_params_invalid)
+{
+    eprosima::fastdds::dds::WireProtocolConfigQos wire_protocol_qos;
+
+    // Try to set easy mode IP using an invalid IP address
+    wire_protocol_qos.easy_mode("Foo");
+
+    ASSERT_TRUE(wire_protocol_qos.easy_mode().empty());
+}

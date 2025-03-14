@@ -131,6 +131,7 @@
             ├ builtin                              [0~1],
             ├ port                                 [0~1],
             ├ participantID                        [int32],
+            ├ easy_mode_ip                         [string],
             ├ userTransports                       [0~1],
             |   └ transport_id                     [1~*] [string],
             ├ useBuiltinTransports                 [bool],
@@ -172,6 +173,7 @@
                         <xs:element name="builtin" type="builtinAttributesType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="port" type="portType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="participantID" type="int32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="easy_mode_ip" type="string" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="userTransports" minOccurs="0" maxOccurs="1">
                             <xs:complexType>
                                 <xs:sequence>
