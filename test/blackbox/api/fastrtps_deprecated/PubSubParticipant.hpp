@@ -47,6 +47,39 @@ namespace fastrtps {
 template<class TypeSupport>
 class PubSubParticipant
 {
+    class PrtListener : public ParticipantListener
+    {
+        friend class PubSubParticipant;
+
+    public:
+
+        PrtListener(
+                PubSubParticipant* participant)
+            : participant_(participant)
+        {
+        }
+
+        ~PrtListener()
+        {
+        }
+
+        void onParticipantDiscovery(
+                Participant* part,
+                rtps::ParticipantDiscoveryInfo&& info) override
+        {
+            (void)part;
+            (void)info;
+            participant_->prt_matched();
+        }
+
+    private:
+
+        PrtListener& operator =(
+                const PrtListener&) = delete;
+        //! A pointer to the participant
+        PubSubParticipant* participant_;
+    };
+
     class PubListener : public PublisherListener
     {
         friend class PubSubParticipant;
@@ -151,6 +184,7 @@ public:
         , publisher_attr_()
         , pub_listener_(this)
         , sub_listener_(this)
+        , prt_matched_(0)
         , pub_matched_(0)
         , sub_matched_(0)
         , pub_times_liveliness_lost_(0)
@@ -267,6 +301,59 @@ public:
             unsigned int index = 0)
     {
         publishers_[index]->assert_liveliness();
+    }
+
+    bool wait_discovery(
+            std::chrono::seconds timeout = std::chrono::seconds::zero(),
+            uint8_t matched = 0,
+            bool exact = false)
+    {
+        // No need to wait in this case
+        if (exact && matched == prt_matched_)
+        {
+            return true;
+        }
+
+        std::unique_lock<std::mutex> lock(prt_mutex_);
+        bool ret_value = true;
+        std::cout << "Participant is waiting discovery..." << std::endl;
+
+        if (timeout == std::chrono::seconds::zero())
+        {
+            prt_cv_.wait(lock, [&]()
+                    {
+                        if (exact)
+                        {
+                            return prt_matched_ == matched;
+                        }
+                        return prt_matched_ >= matched;
+                    });
+        }
+        else
+        {
+            if (!prt_cv_.wait_for(lock, timeout, [&]()
+                    {
+                        if (exact)
+                        {
+                            return prt_matched_ == matched;
+                        }
+                        return prt_matched_ >= matched;
+                    }))
+            {
+                ret_value = false;
+            }
+        }
+
+        if (ret_value)
+        {
+            std::cout << "Participant discovery finished successfully..." << std::endl;
+        }
+        else
+        {
+            std::cout << "Participant discovery finished unsuccessfully..." << std::endl;
+        }
+
+        return ret_value;
     }
 
     void pub_wait_discovery(
@@ -437,6 +524,13 @@ public:
         return *this;
     }
 
+    PubSubParticipant& wire_protocol_builtin(
+            const eprosima::fastrtps::rtps::BuiltinAttributes& wire_protocol_builtin)
+    {
+        participant_attr_.rtps.builtin = wire_protocol_builtin;
+        return *this;
+    }
+
     PubSubParticipant& initial_peers(
             const eprosima::fastrtps::rtps::LocatorList_t& initial_peers)
     {
@@ -601,6 +695,20 @@ private:
     PubSubParticipant& operator =(
             const PubSubParticipant&) = delete;
 
+    void prt_matched()
+    {
+        std::unique_lock<std::mutex> lock(prt_mutex_);
+        ++prt_matched_;
+        prt_cv_.notify_one();
+    }
+
+    void prt_unmatched()
+    {
+        std::unique_lock<std::mutex> lock(prt_mutex_);
+        --prt_matched_;
+        prt_cv_.notify_one();
+    }
+
     void pub_matched()
     {
         std::unique_lock<std::mutex> lock(pub_mutex_);
@@ -654,10 +762,13 @@ private:
     //! A listener for subscribers
     SubListener sub_listener_;
 
+    std::mutex prt_mutex_;
     std::mutex pub_mutex_;
     std::mutex sub_mutex_;
+    std::condition_variable prt_cv_;
     std::condition_variable pub_cv_;
     std::condition_variable sub_cv_;
+    std::atomic<unsigned int> prt_matched_;
     std::atomic<unsigned int> pub_matched_;
     std::atomic<unsigned int> sub_matched_;
 

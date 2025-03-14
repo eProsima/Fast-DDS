@@ -39,6 +39,7 @@
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 #include "PubSubWriterReader.hpp"
+#include "PubSubParticipant.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -1326,9 +1327,8 @@ TEST_P(Discovery, AsymmeticIgnoreParticipantFlags)
     // This will hold the multicast port. Since the test is not always run in the same domain, we'll need to set
     // its value when the first multicast datagram is sent.
     std::atomic<uint32_t> multicast_port{ 0 };
-    // Only two multicast datagrams are allowed: the initial DATA(p) and the DATA(p) sent in response of the discovery
-    // of p1.
-    constexpr uint32_t allowed_messages_on_port = 2;
+    // Only one multicast datagram is allowed: the initial DATA(p)
+    constexpr uint32_t allowed_messages_on_port = 1;
 
     auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
 
@@ -1362,6 +1362,115 @@ TEST_P(Discovery, AsymmeticIgnoreParticipantFlags)
 
     // Check expectation on the number of multicast datagrams sent by p2
     EXPECT_EQ(messages_on_port, allowed_messages_on_port);
+}
+
+//! Regression test for redmine issue 22506
+TEST_P(Discovery, single_unicast_pdp_response)
+{
+    // Leverage intraprocess so transport is only used for participant discovery
+    if (INTRAPROCESS != GetParam())
+    {
+        GTEST_SKIP() << "Only makes sense on INTRAPROCESS";
+        return;
+    }
+
+    using namespace eprosima::fastdds::rtps;
+
+    // All participants would restrict communication to UDP localhost.
+    // The main participant should send a single initial announcement, and have a big announcement period.
+    // This is to ensure that we only check the datagrams sent in response to the participant discovery,
+    // and not the ones sent in the periodic announcements.
+    // The main participant will use the test transport to count the number of unicast messages sent.
+
+    // This will hold the multicast port. Since the test is not always run in the same domain, we'll need to set
+    // its value when the first multicast datagram is sent.
+    std::atomic<uint32_t> multicast_port{ 0 };
+    // Declare a test transport that will count the number of unicast messages sent
+    std::atomic<size_t> num_unicast_sends{ 0 };
+    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    test_transport->interfaceWhiteList.push_back("127.0.0.1");
+    test_transport->locator_filter_ = [&num_unicast_sends, &multicast_port](
+        const Locator& destination)
+            {
+                if (IPLocator::isMulticast(destination))
+                {
+                    uint32_t port = 0;
+                    multicast_port.compare_exchange_strong(port, destination.port);
+                }
+                else
+                {
+                    num_unicast_sends.fetch_add(1u, std::memory_order_seq_cst);
+                }
+
+                // Do not discard any message
+                return false;
+            };
+
+    // Create the main participant
+    auto main_participant = std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(0, 0, 0, 0);
+    eprosima::fastdds::dds::WireProtocolConfigQos main_wire_protocol;
+    main_wire_protocol.builtin.avoid_builtin_multicast = true;
+    main_wire_protocol.builtin.discovery_config.leaseDuration = c_TimeInfinite;
+    main_wire_protocol.builtin.discovery_config.leaseDuration_announcementperiod = { 3600, 0 };
+    main_wire_protocol.builtin.discovery_config.initial_announcements.count = 1;
+    main_wire_protocol.builtin.discovery_config.initial_announcements.period = { 0, 100000000 };
+
+    // The main participant will use the test transport and a specific announcments configuration
+    main_participant->disable_builtin_transport().add_user_transport_to_pparams(test_transport)
+            .wire_protocol_builtin(main_wire_protocol.builtin);
+
+    // Start the main participant
+    ASSERT_TRUE(main_participant->init_participant());
+
+    // Wait for the initial announcements to be sent
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    // This would have set the multicast port
+    EXPECT_NE(multicast_port, 0u);
+
+    // The rest of the participants only send announcements to the main participant
+    // Calculate the metatraffic unicast port of the main participant
+    uint32_t port = multicast_port + main_wire_protocol.port.offsetd1 - main_wire_protocol.port.offsetd0;
+
+    // The rest of the participants only send announcements to the main participant
+    auto udp_localhost_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    udp_localhost_transport->interfaceWhiteList.push_back("127.0.0.1");
+    Locator peer_locator;
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, "127.0.0.1", port, peer_locator);
+    eprosima::fastdds::dds::WireProtocolConfigQos wire_protocol;
+    wire_protocol.builtin.avoid_builtin_multicast = true;
+    wire_protocol.builtin.initialPeersList.push_back(peer_locator);
+
+    std::vector<std::shared_ptr<PubSubParticipant<HelloWorldPubSubType>>> participants;
+    for (size_t i = 0; i < 5; ++i)
+    {
+        auto participant = std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(0, 0, 0, 0);
+        // All participants use the same transport
+        participant->disable_builtin_transport().add_user_transport_to_pparams(udp_localhost_transport)
+                .wire_protocol_builtin(wire_protocol.builtin);
+        participants.push_back(participant);
+    }
+
+    // Start the rest of the participants
+    for (auto& participant : participants)
+    {
+        ASSERT_TRUE(participant->init_participant());
+        participant->wait_discovery();
+    }
+
+    // Destroy main participant
+    main_participant.reset();
+    for (auto& participant : participants)
+    {
+        participant->wait_discovery(std::chrono::seconds::zero(), 0, true);
+    }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    // Check that only two unicast messages per participant were sent
+    EXPECT_EQ(num_unicast_sends.load(std::memory_order::memory_order_seq_cst),
+            participants.size() + participants.size());
+
+    // Clean up
+    participants.clear();
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
