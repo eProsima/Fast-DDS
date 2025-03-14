@@ -146,6 +146,9 @@ struct SubscriptionBuiltinTopicData
 
     /// Expects Inline Qos
     bool expects_inline_qos = false;
+
+    // Property list
+    ParameterPropertyList_t properties;
 };
 
 }   // namespace rtps

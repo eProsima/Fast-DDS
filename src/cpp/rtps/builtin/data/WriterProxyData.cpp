@@ -75,7 +75,6 @@ WriterProxyData::WriterProxyData(
     , m_user_defined_id(writerInfo.m_user_defined_id)
     , m_type_id(nullptr)
     , m_type(nullptr)
-    , m_properties(writerInfo.m_properties)
 {
     if (writerInfo.m_type_id)
     {
@@ -120,12 +119,12 @@ WriterProxyData& WriterProxyData::operator =(
     loopback_transformation = writerInfo.loopback_transformation;
     remote_locators = writerInfo.remote_locators;
     max_serialized_size = writerInfo.max_serialized_size;
+    properties = writerInfo.properties;
 
     m_network_configuration = writerInfo.m_network_configuration;
     m_key = writerInfo.m_key;
     m_rtps_participant_key = writerInfo.m_rtps_participant_key;
     m_user_defined_id = writerInfo.m_user_defined_id;
-    m_properties = writerInfo.m_properties;
 
 #if HAVE_SECURITY
     security_attributes_ = writerInfo.security_attributes_;
@@ -172,7 +171,7 @@ void WriterProxyData::init(
     m_type_id = nullptr;
     m_type = nullptr;
 
-    m_properties.set_max_size(static_cast<uint32_t>(data_limits.max_properties));
+    properties.set_max_size(static_cast<uint32_t>(data_limits.max_properties));
 }
 
 uint32_t WriterProxyData::get_serialized_size(
@@ -303,10 +302,10 @@ uint32_t WriterProxyData::get_serialized_size(
         ret_val += dds::QosPoliciesSerializer<dds::TypeObjectV1>::cdr_serialized_size(*m_type);
     }
 
-    if (m_properties.size() > 0)
+    if (properties.size() > 0)
     {
         // PID_PROPERTY_LIST
-        ret_val += dds::ParameterSerializer<dds::ParameterPropertyList_t>::cdr_serialized_size(m_properties);
+        ret_val += dds::ParameterSerializer<dds::ParameterPropertyList_t>::cdr_serialized_size(properties);
     }
 
 #if HAVE_SECURITY
@@ -567,9 +566,9 @@ bool WriterProxyData::write_to_cdr_message(
             return false;
         }
     }
-    if (m_properties.size() > 0)
+    if (properties.size() > 0)
     {
-        if (!dds::ParameterSerializer<ParameterPropertyList_t>::add_to_cdr_message(m_properties, msg))
+        if (!dds::ParameterSerializer<ParameterPropertyList_t>::add_to_cdr_message(properties, msg))
         {
             return false;
         }
@@ -987,7 +986,7 @@ bool WriterProxyData::read_from_cdr_message(
                     case fastdds::dds::PID_PROPERTY_LIST:
                     {
                         if (!dds::ParameterSerializer<ParameterPropertyList_t>::read_from_cdr_message(
-                                    m_properties, msg, plength))
+                                    properties, msg, plength))
                         {
                             return false;
                         }
@@ -1424,6 +1423,8 @@ void WriterProxyData::clear()
     type_information.clear();
     data_sharing.clear();
     publish_mode.clear();
+    properties.clear();
+    properties.length = 0;
 
     reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
 
@@ -1441,8 +1442,6 @@ void WriterProxyData::clear()
     m_user_defined_id = 0;
     m_key = InstanceHandle_t();
     m_rtps_participant_key = InstanceHandle_t();
-    m_properties.clear();
-    m_properties.length = 0;
 
 #if HAVE_SECURITY
     security_attributes_ = 0UL;

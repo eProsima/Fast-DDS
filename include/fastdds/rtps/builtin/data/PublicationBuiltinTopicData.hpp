@@ -150,6 +150,9 @@ struct PublicationBuiltinTopicData
 
     /// Network configuration
     NetworkConfigSet_t loopback_transformation{};
+
+    // Property list
+    ParameterPropertyList_t properties;
 };
 
 }   // namespace rtps

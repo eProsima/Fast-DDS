@@ -90,7 +90,6 @@ ReaderProxyData::ReaderProxyData(
     , m_is_alive(readerInfo.m_is_alive)
     , m_type_id(nullptr)
     , m_type(nullptr)
-    , m_properties(readerInfo.m_properties)
 {
     if (readerInfo.m_type_id)
     {
@@ -130,13 +129,13 @@ ReaderProxyData& ReaderProxyData::operator =(
     remote_locators = readerInfo.remote_locators;
     loopback_transformation = readerInfo.loopback_transformation;
     expects_inline_qos = readerInfo.expects_inline_qos;
+    properties = readerInfo.properties;
 
     m_network_configuration = readerInfo.m_network_configuration;
     m_key = readerInfo.m_key;
     m_rtps_participant_key = readerInfo.m_rtps_participant_key;
     m_user_defined_id = readerInfo.m_user_defined_id;
     m_is_alive = readerInfo.m_is_alive;
-    m_properties = readerInfo.m_properties;
 
 #if HAVE_SECURITY
     security_attributes_ = readerInfo.security_attributes_;
@@ -184,7 +183,7 @@ void ReaderProxyData::init(
     m_type_id = nullptr;
     m_type = nullptr;
 
-    m_properties.set_max_size(static_cast<uint32_t>(data_limits.max_properties));
+    properties.set_max_size(static_cast<uint32_t>(data_limits.max_properties));
 
     // As DDS-XTypes, v1.2 (page 182) document stablishes, local default is ALLOW_TYPE_COERCION,
     // but when remotes doesn't send TypeConsistencyQos, we must assume DISALLOW.
@@ -316,10 +315,10 @@ uint32_t ReaderProxyData::get_serialized_size(
             data_sharing);
     }
 
-    if (m_properties.size() > 0)
+    if (properties.size() > 0)
     {
         // PID_PROPERTY_LIST
-        ret_val += dds::ParameterSerializer<dds::ParameterPropertyList_t>::cdr_serialized_size(m_properties);
+        ret_val += dds::ParameterSerializer<dds::ParameterPropertyList_t>::cdr_serialized_size(properties);
     }
 
     // PID_CONTENT_FILTER_PROPERTY
@@ -583,9 +582,9 @@ bool ReaderProxyData::write_to_cdr_message(
             return false;
         }
     }
-    if (m_properties.size() > 0)
+    if (properties.size() > 0)
     {
-        if (!dds::ParameterSerializer<dds::ParameterPropertyList_t>::add_to_cdr_message(m_properties, msg))
+        if (!dds::ParameterSerializer<dds::ParameterPropertyList_t>::add_to_cdr_message(properties, msg))
         {
             return false;
         }
@@ -1016,7 +1015,7 @@ bool ReaderProxyData::read_from_cdr_message(
                     case fastdds::dds::PID_PROPERTY_LIST:
                     {
                         if (!dds::ParameterSerializer<dds::ParameterPropertyList_t>::read_from_cdr_message(
-                                    m_properties, msg, plength))
+                                    properties, msg, plength))
                         {
                             return false;
                         }
@@ -1187,6 +1186,8 @@ void ReaderProxyData::clear()
     type_consistency.clear();
     type_information.clear();
     data_sharing.clear();
+    properties.clear();
+    properties.length = 0;
 
     //Clear ReaderProxyData
     m_network_configuration = 0;
@@ -1194,8 +1195,6 @@ void ReaderProxyData::clear()
     m_rtps_participant_key = InstanceHandle_t();
     m_user_defined_id = 0;
     m_is_alive = true;
-    m_properties.clear();
-    m_properties.length = 0;
 
 #if HAVE_SECURITY
     security_attributes_ = 0UL;

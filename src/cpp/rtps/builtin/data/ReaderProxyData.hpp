@@ -289,7 +289,7 @@ public:
     void set_sample_identity(
             const SampleIdentity& sid)
     {
-        fastdds::dds::set_proxy_property(sid, "PID_CLIENT_SERVER_KEY", m_properties);
+        fastdds::dds::set_proxy_property(sid, "PID_CLIENT_SERVER_KEY", properties);
     }
 
     /**
@@ -298,7 +298,7 @@ public:
      */
     SampleIdentity get_sample_identity() const
     {
-        return fastdds::dds::get_proxy_property<SampleIdentity>("PID_CLIENT_SERVER_KEY", m_properties);
+        return fastdds::dds::get_proxy_property<SampleIdentity>("PID_CLIENT_SERVER_KEY", properties);
     }
 
     /**
@@ -423,8 +423,6 @@ private:
     dds::TypeIdV1* m_type_id;
     //!Type Object
     dds::TypeObjectV1* m_type;
-    //!
-    ParameterPropertyList_t m_properties;
 };
 
 } // namespace rtps
