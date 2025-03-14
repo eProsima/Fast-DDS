@@ -1417,7 +1417,7 @@ TEST_P(Discovery, single_unicast_pdp_response)
 
     // The main participant will use the test transport and a specific announcments configuration
     main_participant->disable_builtin_transport().add_user_transport_to_pparams(test_transport)
-            .wire_protocol(main_wire_protocol);
+            .wire_protocol_builtin(main_wire_protocol.builtin);
 
     // Start the main participant
     ASSERT_TRUE(main_participant->init_participant());
@@ -1446,7 +1446,7 @@ TEST_P(Discovery, single_unicast_pdp_response)
         auto participant = std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(0, 0, 0, 0);
         // All participants use the same transport
         participant->disable_builtin_transport().add_user_transport_to_pparams(udp_localhost_transport)
-                .wire_protocol(wire_protocol);
+                .wire_protocol_builtin(wire_protocol.builtin);
         participants.push_back(participant);
     }
 

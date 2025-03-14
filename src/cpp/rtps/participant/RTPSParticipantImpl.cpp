@@ -147,7 +147,8 @@ static void set_builtin_transports_from_env_var(
                         "LARGE_DATA", BuiltinTransports::LARGE_DATA,
                         "LARGE_DATAv6", BuiltinTransports::LARGE_DATAv6))
                 {
-                    EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Wrong value '" << env_value << "' for environment variable '" <<
+                    EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
+                            "Wrong value '" << env_value << "' for environment variable '" <<
                             env_var_name << "'. Leaving as DEFAULT");
                 }
                 // Max_msg_size parser
@@ -486,7 +487,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(
                     {
                         EPROSIMA_LOG_INFO(RTPS_PARTICIPANT,
                                 "Participant " << m_att.getName() << " with GUID " << m_guid <<
-                                " tries to create a TCP client for discovery server without providing a proper listening port." <<
+                                " tries to create a TCP client for discovery server without providing a proper listening port."
+                                               <<
                                 " No TCP participants will be able to connect to this participant, but it will be able make connections.");
                     }
                     for (fastdds::rtps::RemoteServerAttributes& it : m_att.builtin.discovery_config.m_DiscoveryServers)
@@ -1428,7 +1430,7 @@ bool RTPSParticipantImpl::createWriter(
                     if (entityId == c_EntityId_SPDPWriter)
                     {
                         return new PDPStatelessWriter(this, guid, param, flow_controller,
-                                        hist, listen);
+                                       hist, listen);
                     }
                     else if (persistence != nullptr)
                     {
@@ -3027,7 +3029,8 @@ void RTPSParticipantImpl::environment_file_has_changed()
     }
     else
     {
-        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Trying to add Discovery Servers to a participant which is not a SERVER, BACKUP " <<
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
+                "Trying to add Discovery Servers to a participant which is not a SERVER, BACKUP " <<
                 "or an overriden CLIENT (SIMPLE participant transformed into CLIENT with the environment variable)");
     }
 }

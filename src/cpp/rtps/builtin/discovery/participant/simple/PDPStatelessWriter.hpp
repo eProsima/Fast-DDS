@@ -135,7 +135,7 @@ private:
 
     //! Configured initial peers
     fastdds::rtps::LocatorList initial_peers_{};
-    
+
     //! The set of readers interested
     mutable ResourceLimitedVector<GUID_t> interested_readers_;
     //! Whether we have set that all destinations are interested
