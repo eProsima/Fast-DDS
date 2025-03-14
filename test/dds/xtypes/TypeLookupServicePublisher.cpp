@@ -45,7 +45,8 @@ TypeLookupServicePublisher::~TypeLookupServicePublisher()
 
 bool TypeLookupServicePublisher::init(
         uint32_t domain_id,
-        std::vector<std::string> known_types)
+        std::vector<std::string> known_types,
+        uint32_t builtin_flow_controller_bytes)
 {
     domain_id_ = domain_id;
     create_type_creator_functions();
@@ -54,8 +55,18 @@ bool TypeLookupServicePublisher::init(
     settings.intraprocess_delivery = INTRAPROCESS_OFF;
     DomainParticipantFactory::get_instance()->set_library_settings(settings);
 
+    auto qos = PARTICIPANT_QOS_DEFAULT;
+    if (builtin_flow_controller_bytes > 0)
+    {
+        auto new_flow_controller = std::make_shared<eprosima::fastdds::rtps::FlowControllerDescriptor>();
+        new_flow_controller->name = "MyFlowController";
+        new_flow_controller->max_bytes_per_period = builtin_flow_controller_bytes;
+        new_flow_controller->period_ms = static_cast<uint64_t>(100000);
+        qos.flow_controllers().push_back(new_flow_controller);
+        qos.wire_protocol().builtin.flow_controller_name = new_flow_controller->name;
+    }
     participant_ = DomainParticipantFactory::get_instance()
-                    ->create_participant(domain_id, PARTICIPANT_QOS_DEFAULT, this);
+                    ->create_participant(domain_id, qos, this);
     if (participant_ == nullptr)
     {
         std::cout << "ERROR TypeLookupServicePublisher: create_participant" << std::endl;
