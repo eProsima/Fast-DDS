@@ -324,7 +324,7 @@ TEST_P(PubSubFlowControllers, BuiltinFlowControllerPubSub)
     reader.block_for_all();
 }
 
-// This test checks that the PDP discovery process is not successful when the builtin 
+// This test checks that the PDP discovery process is not successful when the builtin
 //  flow controller is set with not enough size to send the PDP
 TEST_P(PubSubFlowControllers, BuiltinFlowControllerFailDiscovery)
 {
@@ -344,7 +344,7 @@ TEST_P(PubSubFlowControllers, BuiltinFlowControllerFailDiscovery)
     ASSERT_TRUE(writer.isInitialized());
 
     // Reader discovery should fail
-    ASSERT_FALSE(reader.wait_participant_discovery(1,std::chrono::seconds(1)));
+    ASSERT_FALSE(reader.wait_participant_discovery(1, std::chrono::seconds(1)));
 }
 
 // This test checks that the WLP service is not able to send non stop liveliness messages when the builtin
@@ -357,14 +357,13 @@ TEST_P(PubSubFlowControllers, BuiltinFlowControllerWLPLimited)
 
     unsigned int lease_duration_ms = 501;
     unsigned int announcement_period_ms = 200;
-    
+
     PubSubReader<Data64kbPubSubType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data64kbPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .liveliness_kind(eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS)
             .liveliness_lease_duration(lease_duration_ms * 1e-3).init();
-            // .liveliness_announcement_period(announcement_period_ms * 1e-3)
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -382,19 +381,18 @@ TEST_P(PubSubFlowControllers, BuiltinFlowControllerWLPLimited)
     // Wait for discovery.
     writer.wait_discovery();
     reader.wait_discovery();
-    
+
     // Once asserted that the writer is matched, it should eventually be declared as not alive because the
     // flow controller will not allow the wlp writer to send more liveliness messages
-    
     std::atomic<bool> stop(false);
-    auto assert_liveliness_func = [&writer, &reader, lease_duration_ms, &stop]()
-    {
-        while (!stop)
-        {
-            writer.assert_liveliness();
-            std::this_thread::sleep_for(std::chrono::milliseconds(lease_duration_ms / 10));
-        }
-    };
+    auto assert_liveliness_func = [&writer, lease_duration_ms, &stop]()
+            {
+                while (!stop)
+                {
+                    writer.assert_liveliness();
+                    std::this_thread::sleep_for(std::chrono::milliseconds(lease_duration_ms / 10));
+                }
+            };
     std::thread liveliness_thread(assert_liveliness_func);
 
     reader.wait_liveliness_lost(1);

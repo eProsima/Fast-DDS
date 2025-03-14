@@ -488,7 +488,8 @@ void TypeLookupServiceSubscriber::on_participant_discovery(
     static_cast<void>(should_be_ignored);
     if (status == ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT)
     {
-        std::cout << "Participant " << participant->guid() << " discovered participant " << info.guid << ": " << ++participant_matched_ << std::endl;
+        std::cout << "Participant " << participant->guid() << " discovered participant " << info.guid << ": " <<
+            ++participant_matched_ << std::endl;
     }
     else if (status == ParticipantDiscoveryStatus::CHANGED_QOS_PARTICIPANT)
     {
@@ -498,7 +499,8 @@ void TypeLookupServiceSubscriber::on_participant_discovery(
     else if (status == ParticipantDiscoveryStatus::REMOVED_PARTICIPANT ||
             status == ParticipantDiscoveryStatus::DROPPED_PARTICIPANT)
     {
-        std::cout << "Participant " << participant->guid() << " undiscovered participant " << info.guid << ": " << --participant_matched_ << std::endl;
+        std::cout << "Participant " << participant->guid() << " undiscovered participant " << info.guid << ": " <<
+            --participant_matched_ << std::endl;
     }
     cv_.notify_all();
 }
