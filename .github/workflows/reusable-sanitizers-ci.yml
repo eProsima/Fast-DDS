@@ -159,7 +159,7 @@ jobs:
       - name: Install Python dependencies
         uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
         with:
-          packages: vcstool setuptools gcovr tomark xmltodict jsondiff pandas
+          packages: vcstool setuptools gcovr tomark xmltodict jsondiff pandas psutil
 
       - name: Set up hosts file for DNS testing
         run: |
@@ -257,7 +257,7 @@ jobs:
       - name: Install Python dependencies
         uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
         with:
-          packages: vcstool setuptools gcovr tomark xmltodict jsondiff pandas
+          packages: vcstool setuptools gcovr tomark xmltodict jsondiff pandas psutil
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
@@ -363,7 +363,7 @@ jobs:
       - name: Install Python dependencies
         uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
         with:
-          packages: vcstool setuptools gcovr tomark xmltodict jsondiff pandas
+          packages: vcstool setuptools gcovr tomark xmltodict jsondiff pandas psutil
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
