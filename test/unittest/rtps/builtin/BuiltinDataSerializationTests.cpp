@@ -112,17 +112,17 @@ TEST(BuiltinDataSerializationTests, ok_with_defaults)
         WriterProxyData out(max_unicast_locators, max_multicast_locators);
 
         // Topic and type name cannot be empty
-        in.topicName("TEST");
-        in.typeName("TestType");
+        in.topic_name = "TEST";
+        in.type_name = "TestType";
 
         // Perform serialization
         uint32_t msg_size = in.get_serialized_size(true);
         CDRMessage_t msg(msg_size);
-        EXPECT_TRUE(in.writeToCDRMessage(&msg, true));
+        EXPECT_TRUE(in.write_to_cdr_message(&msg, true));
 
         // Perform deserialization
         msg.pos = 0;
-        EXPECT_TRUE(out.readFromCDRMessage(&msg));
+        EXPECT_TRUE(out.read_from_cdr_message(&msg));
         // EXPECT_EQ(in, out);
     }
 
@@ -131,17 +131,17 @@ TEST(BuiltinDataSerializationTests, ok_with_defaults)
         ReaderProxyData out(max_unicast_locators, max_multicast_locators);
 
         // Topic and type name cannot be empty
-        in.topicName("TEST");
-        in.typeName("TestType");
+        in.topic_name = "TEST";
+        in.type_name = "TestType";
 
         // Perform serialization
         uint32_t msg_size = in.get_serialized_size(true);
         CDRMessage_t msg(msg_size);
-        EXPECT_TRUE(in.writeToCDRMessage(&msg, true));
+        EXPECT_TRUE(in.write_to_cdr_message(&msg, true));
 
         // Perform deserialization
         msg.pos = 0;
-        EXPECT_TRUE(out.readFromCDRMessage(&msg));
+        EXPECT_TRUE(out.read_from_cdr_message(&msg));
     }
 }
 
@@ -154,7 +154,7 @@ TEST(BuiltinDataSerializationTests, msg_with_product_version)
                 msg.init(buffer, buffer_length);
                 msg.length = msg.max_size;
 
-                EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, true, network, false,
+                EXPECT_NO_THROW(EXPECT_TRUE(out.read_from_cdr_message(&msg, true, network, false,
                         c_VendorId_eProsima)));
             };
 
@@ -214,8 +214,8 @@ TEST(BuiltinDataSerializationTests, msg_without_datasharing)
         msg.length = msg.max_size;
 
         ReaderProxyData out(max_unicast_locators, max_multicast_locators);
-        out.readFromCDRMessage(&msg);
-        ASSERT_EQ(out.m_qos.data_sharing.kind(), dds::OFF);
+        out.read_from_cdr_message(&msg);
+        ASSERT_EQ(out.data_sharing.kind(), dds::OFF);
     }
 
     {
@@ -231,8 +231,8 @@ TEST(BuiltinDataSerializationTests, msg_without_datasharing)
         msg.length = msg.max_size;
 
         ReaderProxyData out(max_unicast_locators, max_multicast_locators);
-        out.readFromCDRMessage(&msg);
-        ASSERT_EQ(out.m_qos.data_sharing.kind(), dds::OFF);
+        out.read_from_cdr_message(&msg);
+        ASSERT_EQ(out.data_sharing.kind(), dds::OFF);
     }
 }
 
@@ -254,8 +254,8 @@ TEST(BuiltinDataSerializationTests, msg_with_datasharing)
         msg.length = msg.max_size;
 
         ReaderProxyData out(max_unicast_locators, max_multicast_locators);
-        out.readFromCDRMessage(&msg);
-        ASSERT_EQ(out.m_qos.data_sharing.kind(), dds::ON);
+        out.read_from_cdr_message(&msg);
+        ASSERT_EQ(out.data_sharing.kind(), dds::ON);
     }
 
     {
@@ -274,8 +274,8 @@ TEST(BuiltinDataSerializationTests, msg_with_datasharing)
         msg.length = msg.max_size;
 
         ReaderProxyData out(max_unicast_locators, max_multicast_locators);
-        out.readFromCDRMessage(&msg);
-        ASSERT_EQ(out.m_qos.data_sharing.kind(), dds::ON);
+        out.read_from_cdr_message(&msg);
+        ASSERT_EQ(out.data_sharing.kind(), dds::ON);
     }
 }
 
@@ -343,7 +343,7 @@ TEST(BuiltinDataSerializationTests, interoperability_with_opendds_3_27)
         msg.length = msg.max_size;
 
         WriterProxyData out(max_unicast_locators, max_multicast_locators);
-        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg)));
+        EXPECT_NO_THROW(EXPECT_TRUE(out.read_from_cdr_message(&msg)));
     }
 
     // DATA(r)
@@ -405,7 +405,7 @@ TEST(BuiltinDataSerializationTests, interoperability_with_opendds_3_27)
         msg.length = msg.max_size;
 
         ReaderProxyData out(max_unicast_locators, max_multicast_locators);
-        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg)));
+        EXPECT_NO_THROW(EXPECT_TRUE(out.read_from_cdr_message(&msg)));
     }
 }
 
@@ -520,7 +520,7 @@ TEST(BuiltinDataSerializationTests, ignore_unsupported_type_object)
         msg.length = msg.max_size;
 
         WriterProxyData out(max_unicast_locators, max_multicast_locators);
-        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg)));
+        EXPECT_NO_THROW(EXPECT_TRUE(out.read_from_cdr_message(&msg)));
     }
 }
 
@@ -598,7 +598,7 @@ TEST(BuiltinDataSerializationTests, property_list_with_binary_properties)
     msg.length = msg.max_size;
 
     ParticipantProxyData out(RTPSParticipantAllocationAttributes{});
-    EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, true, network, true)));
+    EXPECT_NO_THROW(EXPECT_TRUE(out.read_from_cdr_message(&msg, true, network, true)));
 }
 
 // Regression test for redmine tickets 20306 and 20307
@@ -611,7 +611,7 @@ TEST(BuiltinDataSerializationTests, other_vendor_parameter_list_with_custom_pids
                 msg.init(buffer, buffer_length);
                 msg.length = msg.max_size;
 
-                EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, true, network, false,
+                EXPECT_NO_THROW(EXPECT_TRUE(out.read_from_cdr_message(&msg, true, network, false,
                         fastdds::rtps::VendorId_t({2, 0}))));
             };
 
@@ -621,7 +621,7 @@ TEST(BuiltinDataSerializationTests, other_vendor_parameter_list_with_custom_pids
                 msg.init(buffer, buffer_length);
                 msg.length = msg.max_size;
 
-                EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, fastdds::rtps::VendorId_t({2, 0}))));
+                EXPECT_NO_THROW(EXPECT_TRUE(out.read_from_cdr_message(&msg, fastdds::rtps::VendorId_t({2, 0}))));
             };
 
     auto reader_read = [](octet* buffer, uint32_t buffer_length, ReaderProxyData& out) -> void
@@ -630,7 +630,7 @@ TEST(BuiltinDataSerializationTests, other_vendor_parameter_list_with_custom_pids
                 msg.init(buffer, buffer_length);
                 msg.length = msg.max_size;
 
-                EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, fastdds::rtps::VendorId_t({2, 0}))));
+                EXPECT_NO_THROW(EXPECT_TRUE(out.read_from_cdr_message(&msg, fastdds::rtps::VendorId_t({2, 0}))));
             };
 
     auto update_cache_change =
@@ -668,9 +668,9 @@ TEST(BuiltinDataSerializationTests, other_vendor_parameter_list_with_custom_pids
 
         // WriterProxyData check
         WriterProxyData writer_pdata(max_unicast_locators, max_multicast_locators);
-        writer_pdata.persistence_guid(c_Guid_Unknown);
+        writer_pdata.persistence_guid = c_Guid_Unknown;
         writer_read(data_buffer, buffer_length, writer_pdata);
-        ASSERT_EQ(writer_pdata.persistence_guid(), c_Guid_Unknown);
+        ASSERT_EQ(writer_pdata.persistence_guid, c_Guid_Unknown);
 
         // ReaderProxyData check
         ReaderProxyData reader_pdata(max_unicast_locators, max_multicast_locators);
@@ -740,15 +740,15 @@ TEST(BuiltinDataSerializationTests, other_vendor_parameter_list_with_custom_pids
 
         // WriterProxyData check
         WriterProxyData writer_pdata(max_unicast_locators, max_multicast_locators);
-        writer_pdata.m_qos.m_disablePositiveACKs.enabled = false;
+        writer_pdata.disable_positive_acks.enabled = false;
         writer_read(data_buffer, buffer_length, writer_pdata);
-        ASSERT_EQ(writer_pdata.m_qos.m_disablePositiveACKs.enabled, false);
+        ASSERT_EQ(writer_pdata.disable_positive_acks.enabled, false);
 
         // ReaderProxyData check
         ReaderProxyData reader_pdata(max_unicast_locators, max_multicast_locators);
-        reader_pdata.m_qos.m_disablePositiveACKs.enabled = false;
+        reader_pdata.disable_positive_acks.enabled = false;
         reader_read(data_buffer, buffer_length, reader_pdata);
-        ASSERT_EQ(reader_pdata.m_qos.m_disablePositiveACKs.enabled, false);
+        ASSERT_EQ(reader_pdata.disable_positive_acks.enabled, false);
 
         // CacheChange_t check
         CacheChange_t change;
@@ -776,18 +776,18 @@ TEST(BuiltinDataSerializationTests, other_vendor_parameter_list_with_custom_pids
 
         // WriterProxyData check
         WriterProxyData writer_pdata(max_unicast_locators, max_multicast_locators);
-        writer_pdata.m_qos.data_sharing.off();
-        writer_pdata.m_qos.data_sharing.set_max_domains(0);
+        writer_pdata.data_sharing.off();
+        writer_pdata.data_sharing.set_max_domains(0);
         writer_read(data_buffer, buffer_length, writer_pdata);
-        ASSERT_EQ(writer_pdata.m_qos.data_sharing.kind(), dds::OFF);
+        ASSERT_EQ(writer_pdata.data_sharing.kind(), dds::OFF);
 
         // ReaderProxyData check
         ReaderProxyData reader_pdata(max_unicast_locators, max_multicast_locators);
-        reader_pdata.m_qos.data_sharing.off();
-        reader_pdata.m_qos.data_sharing.set_max_domains(0);
-        reader_pdata.m_qos.m_disablePositiveACKs.enabled = false;
+        reader_pdata.data_sharing.off();
+        reader_pdata.data_sharing.set_max_domains(0);
+        reader_pdata.disable_positive_acks.enabled = false;
         reader_read(data_buffer, buffer_length, reader_pdata);
-        ASSERT_EQ(reader_pdata.m_qos.data_sharing.kind(), dds::OFF);
+        ASSERT_EQ(reader_pdata.data_sharing.kind(), dds::OFF);
 
         // CacheChange_t check
         CacheChange_t change;
@@ -811,9 +811,9 @@ TEST(BuiltinDataSerializationTests, other_vendor_parameter_list_with_custom_pids
 
         // ParticipantProxyData check
         ParticipantProxyData participant_pdata(RTPSParticipantAllocationAttributes{});
-        participant_pdata.m_networkConfiguration = 0;
+        participant_pdata.m_network_configuration = 0;
         participant_read(data_buffer, buffer_length, participant_pdata);
-        ASSERT_EQ(participant_pdata.m_networkConfiguration, 0u);
+        ASSERT_EQ(participant_pdata.m_network_configuration, 0u);
 
         // WriterProxyData check
         WriterProxyData writer_pdata(max_unicast_locators, max_multicast_locators);
@@ -823,9 +823,9 @@ TEST(BuiltinDataSerializationTests, other_vendor_parameter_list_with_custom_pids
 
         // ReaderProxyData check
         ReaderProxyData reader_pdata(max_unicast_locators, max_multicast_locators);
-        reader_pdata.networkConfiguration(0);
+        reader_pdata.network_configuration(0);
         reader_read(data_buffer, buffer_length, reader_pdata);
-        ASSERT_EQ(reader_pdata.networkConfiguration(), 0u);
+        ASSERT_EQ(reader_pdata.network_configuration(), 0u);
 
         // CacheChange_t check
         CacheChange_t change;
@@ -871,7 +871,7 @@ TEST(BuiltinDataSerializationTests, rti_parameter_list_with_custom_pids)
                 msg.init(buffer, buffer_length);
                 msg.length = msg.max_size;
 
-                EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, true, network, false,
+                EXPECT_NO_THROW(EXPECT_TRUE(out.read_from_cdr_message(&msg, true, network, false,
                         fastdds::rtps::c_VendorId_rti_connext)));
             };
 
@@ -881,7 +881,7 @@ TEST(BuiltinDataSerializationTests, rti_parameter_list_with_custom_pids)
                 msg.init(buffer, buffer_length);
                 msg.length = msg.max_size;
 
-                EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, fastdds::rtps::c_VendorId_rti_connext)));
+                EXPECT_NO_THROW(EXPECT_TRUE(out.read_from_cdr_message(&msg, fastdds::rtps::c_VendorId_rti_connext)));
             };
 
     auto reader_read = [](octet* buffer, uint32_t buffer_length, ReaderProxyData& out) -> void
@@ -890,7 +890,7 @@ TEST(BuiltinDataSerializationTests, rti_parameter_list_with_custom_pids)
                 msg.init(buffer, buffer_length);
                 msg.length = msg.max_size;
 
-                EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, fastdds::rtps::c_VendorId_rti_connext)));
+                EXPECT_NO_THROW(EXPECT_TRUE(out.read_from_cdr_message(&msg, fastdds::rtps::c_VendorId_rti_connext)));
             };
 
     auto update_cache_change =
@@ -952,9 +952,9 @@ TEST(BuiltinDataSerializationTests, rti_parameter_list_with_custom_pids)
 
         // WriterProxyData check
         WriterProxyData writer_pdata(max_unicast_locators, max_multicast_locators);
-        writer_pdata.persistence_guid(c_Guid_Unknown);
+        writer_pdata.persistence_guid = c_Guid_Unknown;
         writer_read(data_buffer, buffer_length, writer_pdata);
-        ASSERT_EQ(writer_pdata.persistence_guid(), guid);
+        ASSERT_EQ(writer_pdata.persistence_guid, guid);
 
         // ReaderProxyData check
         ReaderProxyData reader_pdata(max_unicast_locators, max_multicast_locators);
@@ -1055,15 +1055,15 @@ TEST(BuiltinDataSerializationTests, rti_parameter_list_with_custom_pids)
 
         // WriterProxyData check
         WriterProxyData writer_pdata(max_unicast_locators, max_multicast_locators);
-        writer_pdata.m_qos.m_disablePositiveACKs.enabled = false;
+        writer_pdata.disable_positive_acks.enabled = false;
         writer_read(data_buffer, buffer_length, writer_pdata);
-        ASSERT_EQ(writer_pdata.m_qos.m_disablePositiveACKs.enabled, true);
+        ASSERT_EQ(writer_pdata.disable_positive_acks.enabled, true);
 
         // ReaderProxyData check
         ReaderProxyData reader_pdata(max_unicast_locators, max_multicast_locators);
-        reader_pdata.m_qos.m_disablePositiveACKs.enabled = false;
+        reader_pdata.disable_positive_acks.enabled = false;
         reader_read(data_buffer, buffer_length, reader_pdata);
-        ASSERT_EQ(reader_pdata.m_qos.m_disablePositiveACKs.enabled, true);
+        ASSERT_EQ(reader_pdata.disable_positive_acks.enabled, true);
 
         // CacheChange_t check
         CacheChange_t change;
@@ -1080,8 +1080,8 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_without_parameters)
     ReaderProxyData out(max_unicast_locators, max_multicast_locators);
 
     // Topic and type name cannot be empty
-    in.topicName("TEST");
-    in.typeName("TestType");
+    in.topic_name = "TEST";
+    in.type_name = "TestType";
 
     // Fill ContentFilterProperty_t without parameters.
     fastdds::rtps::ContentFilterProperty::AllocationConfiguration content_filter_allocation;
@@ -1090,22 +1090,22 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_without_parameters)
     content_filter_property.related_topic_name = "TEST";
     content_filter_property.filter_class_name = "MyFilterClass";
     content_filter_property.filter_expression = "This is a custom test filter expression";
-    in.content_filter(content_filter_property);
+    in.content_filter = content_filter_property;
 
     // Perform serialization
     uint32_t msg_size = in.get_serialized_size(true);
     CDRMessage_t msg(msg_size);
-    EXPECT_TRUE(in.writeToCDRMessage(&msg, true));
+    EXPECT_TRUE(in.write_to_cdr_message(&msg, true));
 
     // Perform deserialization
     msg.pos = 0;
-    EXPECT_TRUE(out.readFromCDRMessage(&msg));
+    EXPECT_TRUE(out.read_from_cdr_message(&msg));
 
-    ASSERT_EQ(in.content_filter().content_filtered_topic_name, out.content_filter().content_filtered_topic_name);
-    ASSERT_EQ(in.content_filter().related_topic_name, out.content_filter().related_topic_name);
-    ASSERT_EQ(in.content_filter().filter_class_name, out.content_filter().filter_class_name);
-    ASSERT_EQ(in.content_filter().filter_expression, out.content_filter().filter_expression);
-    ASSERT_EQ(in.content_filter().expression_parameters.size(), out.content_filter().expression_parameters.size());
+    ASSERT_EQ(in.content_filter.content_filtered_topic_name, out.content_filter.content_filtered_topic_name);
+    ASSERT_EQ(in.content_filter.related_topic_name, out.content_filter.related_topic_name);
+    ASSERT_EQ(in.content_filter.filter_class_name, out.content_filter.filter_class_name);
+    ASSERT_EQ(in.content_filter.filter_expression, out.content_filter.filter_expression);
+    ASSERT_EQ(in.content_filter.expression_parameters.size(), out.content_filter.expression_parameters.size());
 }
 
 /*!
@@ -1117,8 +1117,8 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_with_parameters)
     ReaderProxyData out(max_unicast_locators, max_multicast_locators);
 
     // Topic and type name cannot be empty
-    in.topicName("TEST");
-    in.typeName("TestType");
+    in.topic_name = "TEST";
+    in.type_name = "TestType";
 
     // Fill ContentFilterProperty_t without parameters.
     fastdds::rtps::ContentFilterProperty::AllocationConfiguration content_filter_allocation;
@@ -1131,26 +1131,26 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_with_parameters)
     content_filter_property.expression_parameters.push_back("parameter 2");
     content_filter_property.expression_parameters.push_back("parameter 3");
     content_filter_property.expression_parameters.push_back("parameter 4");
-    in.content_filter(content_filter_property);
+    in.content_filter = content_filter_property;
 
     // Perform serialization
     uint32_t msg_size = in.get_serialized_size(true);
     CDRMessage_t msg(msg_size);
-    EXPECT_TRUE(in.writeToCDRMessage(&msg, true));
+    EXPECT_TRUE(in.write_to_cdr_message(&msg, true));
 
     // Perform deserialization
     msg.pos = 0;
-    EXPECT_TRUE(out.readFromCDRMessage(&msg));
+    EXPECT_TRUE(out.read_from_cdr_message(&msg));
 
-    ASSERT_EQ(in.content_filter().content_filtered_topic_name, out.content_filter().content_filtered_topic_name);
-    ASSERT_EQ(in.content_filter().related_topic_name, out.content_filter().related_topic_name);
-    ASSERT_EQ(in.content_filter().filter_class_name, out.content_filter().filter_class_name);
-    ASSERT_EQ(in.content_filter().filter_expression, out.content_filter().filter_expression);
-    ASSERT_EQ(in.content_filter().expression_parameters.size(), out.content_filter().expression_parameters.size());
-    ASSERT_EQ(in.content_filter().expression_parameters[0], out.content_filter().expression_parameters[0]);
-    ASSERT_EQ(in.content_filter().expression_parameters[1], out.content_filter().expression_parameters[1]);
-    ASSERT_EQ(in.content_filter().expression_parameters[2], out.content_filter().expression_parameters[2]);
-    ASSERT_EQ(in.content_filter().expression_parameters[3], out.content_filter().expression_parameters[3]);
+    ASSERT_EQ(in.content_filter.content_filtered_topic_name, out.content_filter.content_filtered_topic_name);
+    ASSERT_EQ(in.content_filter.related_topic_name, out.content_filter.related_topic_name);
+    ASSERT_EQ(in.content_filter.filter_class_name, out.content_filter.filter_class_name);
+    ASSERT_EQ(in.content_filter.filter_expression, out.content_filter.filter_expression);
+    ASSERT_EQ(in.content_filter.expression_parameters.size(), out.content_filter.expression_parameters.size());
+    ASSERT_EQ(in.content_filter.expression_parameters[0], out.content_filter.expression_parameters[0]);
+    ASSERT_EQ(in.content_filter.expression_parameters[1], out.content_filter.expression_parameters[1]);
+    ASSERT_EQ(in.content_filter.expression_parameters[2], out.content_filter.expression_parameters[2]);
+    ASSERT_EQ(in.content_filter.expression_parameters[3], out.content_filter.expression_parameters[3]);
 }
 
 /*!
@@ -1164,8 +1164,8 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_topic_name_ser)
         ReaderProxyData out(max_unicast_locators, max_multicast_locators);
 
         // Topic and type name cannot be empty
-        in.topicName("TEST");
-        in.typeName("TestType");
+        in.topic_name = "TEST";
+        in.type_name = "TestType";
 
         // Fill ContentFilterProperty_t without parameters.
         fastdds::rtps::ContentFilterProperty::AllocationConfiguration content_filter_allocation;
@@ -1173,12 +1173,12 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_topic_name_ser)
         content_filter_property.related_topic_name = "TEST";
         content_filter_property.filter_class_name = "MyFilterClass";
         content_filter_property.filter_expression = "This is a custom test filter expression";
-        in.content_filter(content_filter_property);
+        in.content_filter = content_filter_property;
 
         // Perform serialization
         uint32_t msg_size = in.get_serialized_size(true);
         CDRMessage_t msg(msg_size);
-        EXPECT_FALSE(in.writeToCDRMessage(&msg, true));
+        EXPECT_FALSE(in.write_to_cdr_message(&msg, true));
     }
 }
 
@@ -1232,9 +1232,9 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_topic_name_deser
         EXPECT_TRUE(fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(&msg));
 
         msg.pos = 0;
-        EXPECT_TRUE(out.readFromCDRMessage(&msg));
+        EXPECT_TRUE(out.read_from_cdr_message(&msg));
 
-        assert_is_empty_content_filter(out.content_filter());
+        assert_is_empty_content_filter(out.content_filter);
     }
 
     // Larger string than 256 characters.
@@ -1281,9 +1281,9 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_topic_name_deser
         EXPECT_TRUE(fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(&msg));
 
         msg.pos = 0;
-        EXPECT_TRUE(out.readFromCDRMessage(&msg));
+        EXPECT_TRUE(out.read_from_cdr_message(&msg));
 
-        assert_is_empty_content_filter(out.content_filter());
+        assert_is_empty_content_filter(out.content_filter);
     }
 }
 
@@ -1298,8 +1298,8 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_related_topic_na
         ReaderProxyData out(max_unicast_locators, max_multicast_locators);
 
         // Topic and type name cannot be empty
-        in.topicName("TEST");
-        in.typeName("TestType");
+        in.topic_name = "TEST";
+        in.type_name = "TestType";
 
         // Fill ContentFilterProperty_t without parameters.
         fastdds::rtps::ContentFilterProperty::AllocationConfiguration content_filter_allocation;
@@ -1307,12 +1307,12 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_related_topic_na
         content_filter_property.content_filtered_topic_name = "CFT_TEST";
         content_filter_property.filter_class_name = "MyFilterClass";
         content_filter_property.filter_expression = "This is a custom test filter expression";
-        in.content_filter(content_filter_property);
+        in.content_filter = content_filter_property;
 
         // Perform serialization
         uint32_t msg_size = in.get_serialized_size(true);
         CDRMessage_t msg(msg_size);
-        EXPECT_FALSE(in.writeToCDRMessage(&msg, true));
+        EXPECT_FALSE(in.write_to_cdr_message(&msg, true));
     }
 }
 
@@ -1366,9 +1366,9 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_related_topic_na
         EXPECT_TRUE(fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(&msg));
 
         msg.pos = 0;
-        EXPECT_TRUE(out.readFromCDRMessage(&msg));
+        EXPECT_TRUE(out.read_from_cdr_message(&msg));
 
-        assert_is_empty_content_filter(out.content_filter());
+        assert_is_empty_content_filter(out.content_filter);
     }
 
     // Larger string than 256 characters.
@@ -1415,9 +1415,9 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_related_topic_na
         EXPECT_TRUE(fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(&msg));
 
         msg.pos = 0;
-        EXPECT_TRUE(out.readFromCDRMessage(&msg));
+        EXPECT_TRUE(out.read_from_cdr_message(&msg));
 
-        assert_is_empty_content_filter(out.content_filter());
+        assert_is_empty_content_filter(out.content_filter);
     }
 }
 
@@ -1430,8 +1430,8 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_empty_filter_class)
     ReaderProxyData out(max_unicast_locators, max_multicast_locators);
 
     // Topic and type name cannot be empty
-    in.topicName("TEST");
-    in.typeName("TestType");
+    in.topic_name = "TEST";
+    in.type_name = "TestType";
 
     // Fill ContentFilterProperty_t without parameters.
     fastdds::rtps::ContentFilterProperty::AllocationConfiguration content_filter_allocation;
@@ -1440,18 +1440,18 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_empty_filter_class)
     content_filter_property.related_topic_name = "TEST";
     content_filter_property.filter_class_name = "";
     content_filter_property.filter_expression = "This is a custom test filter expression";
-    in.content_filter(content_filter_property);
+    in.content_filter = content_filter_property;
 
     // Perform serialization
     uint32_t msg_size = in.get_serialized_size(true);
     CDRMessage_t msg(msg_size);
-    EXPECT_TRUE(in.writeToCDRMessage(&msg, true));
+    EXPECT_TRUE(in.write_to_cdr_message(&msg, true));
 
     // Perform deserialization
     msg.pos = 0;
-    EXPECT_TRUE(out.readFromCDRMessage(&msg));
+    EXPECT_TRUE(out.read_from_cdr_message(&msg));
 
-    assert_is_empty_content_filter(out.content_filter());
+    assert_is_empty_content_filter(out.content_filter);
 }
 
 /*!
@@ -1504,9 +1504,9 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_filter_class_des
         EXPECT_TRUE(fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(&msg));
 
         msg.pos = 0;
-        EXPECT_TRUE(out.readFromCDRMessage(&msg));
+        EXPECT_TRUE(out.read_from_cdr_message(&msg));
 
-        assert_is_empty_content_filter(out.content_filter());
+        assert_is_empty_content_filter(out.content_filter);
     }
 
     // Larger string than 256 characters.
@@ -1553,9 +1553,9 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_filter_class_des
         EXPECT_TRUE(fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(&msg));
 
         msg.pos = 0;
-        EXPECT_TRUE(out.readFromCDRMessage(&msg));
+        EXPECT_TRUE(out.read_from_cdr_message(&msg));
 
-        assert_is_empty_content_filter(out.content_filter());
+        assert_is_empty_content_filter(out.content_filter);
     }
 }
 
@@ -1568,8 +1568,8 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_empty_filter_expressio
     ReaderProxyData out(max_unicast_locators, max_multicast_locators);
 
     // Topic and type name cannot be empty
-    in.topicName("TEST");
-    in.typeName("TestType");
+    in.topic_name = "TEST";
+    in.type_name = "TestType";
 
     // Fill ContentFilterProperty_t without parameters.
     fastdds::rtps::ContentFilterProperty::AllocationConfiguration content_filter_allocation;
@@ -1578,18 +1578,18 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_empty_filter_expressio
     content_filter_property.related_topic_name = "TEST";
     content_filter_property.filter_class_name = "MyFilterClass";
     content_filter_property.filter_expression = "";
-    in.content_filter(content_filter_property);
+    in.content_filter = content_filter_property;
 
     // Perform serialization
     uint32_t msg_size = in.get_serialized_size(true);
     CDRMessage_t msg(msg_size);
-    EXPECT_TRUE(in.writeToCDRMessage(&msg, true));
+    EXPECT_TRUE(in.write_to_cdr_message(&msg, true));
 
     // Perform deserialization
     msg.pos = 0;
-    EXPECT_TRUE(out.readFromCDRMessage(&msg));
+    EXPECT_TRUE(out.read_from_cdr_message(&msg));
 
-    assert_is_empty_content_filter(out.content_filter());
+    assert_is_empty_content_filter(out.content_filter);
 }
 
 /*!
@@ -1642,9 +1642,9 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_filter_expressio
         EXPECT_TRUE(fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(&msg));
 
         msg.pos = 0;
-        EXPECT_TRUE(out.readFromCDRMessage(&msg));
+        EXPECT_TRUE(out.read_from_cdr_message(&msg));
 
-        assert_is_empty_content_filter(out.content_filter());
+        assert_is_empty_content_filter(out.content_filter);
     }
 }
 
@@ -1829,17 +1829,17 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_interoperability)
     msg.length = msg.max_size;
 
     ReaderProxyData out(max_unicast_locators, max_multicast_locators);
-    EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg)));
+    EXPECT_NO_THROW(EXPECT_TRUE(out.read_from_cdr_message(&msg)));
 
-    ASSERT_EQ("ContentFilter_0", out.content_filter().content_filtered_topic_name.to_string());
-    ASSERT_EQ("Square", out.content_filter().related_topic_name.to_string());
-    ASSERT_EQ("DDSSQL", out.content_filter().filter_class_name.to_string());
-    ASSERT_EQ("x > %0 and x < %1 and y > %2 and y < %3", out.content_filter().filter_expression);
-    ASSERT_EQ(4, out.content_filter().expression_parameters.size());
-    ASSERT_EQ("100", out.content_filter().expression_parameters[0].to_string());
-    ASSERT_EQ("200", out.content_filter().expression_parameters[1].to_string());
-    ASSERT_EQ("100", out.content_filter().expression_parameters[2].to_string());
-    ASSERT_EQ("200", out.content_filter().expression_parameters[3].to_string());
+    ASSERT_EQ("ContentFilter_0", out.content_filter.content_filtered_topic_name.to_string());
+    ASSERT_EQ("Square", out.content_filter.related_topic_name.to_string());
+    ASSERT_EQ("DDSSQL", out.content_filter.filter_class_name.to_string());
+    ASSERT_EQ("x > %0 and x < %1 and y > %2 and y < %3", out.content_filter.filter_expression);
+    ASSERT_EQ(4, out.content_filter.expression_parameters.size());
+    ASSERT_EQ("100", out.content_filter.expression_parameters[0].to_string());
+    ASSERT_EQ("200", out.content_filter.expression_parameters[1].to_string());
+    ASSERT_EQ("100", out.content_filter.expression_parameters[2].to_string());
+    ASSERT_EQ("200", out.content_filter.expression_parameters[3].to_string());
 }
 
 /*!
@@ -1898,9 +1898,9 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_max_parameter_check)
         EXPECT_TRUE(fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(&msg));
 
         msg.pos = 0;
-        EXPECT_TRUE(out.readFromCDRMessage(&msg));
+        EXPECT_TRUE(out.read_from_cdr_message(&msg));
 
-        ASSERT_EQ(100, out.content_filter().expression_parameters.size());
+        ASSERT_EQ(100, out.content_filter.expression_parameters.size());
 
         CDRMessage_t msg_fault(5000);
         EXPECT_TRUE(fastdds::dds::ParameterList::writeEncapsulationToCDRMsg(&msg_fault));
@@ -1942,7 +1942,7 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_max_parameter_check)
 
         msg_fault.pos = 0;
         // Deserialization of messages with more than 100 parameters should fail
-        ASSERT_FALSE(out.readFromCDRMessage(&msg_fault));
+        ASSERT_FALSE(out.read_from_cdr_message(&msg_fault));
     }
 }
 
@@ -2051,7 +2051,7 @@ TEST(BuiltinDataSerializationTests, interoperability_with_intercomdds)
         msg.length = msg.max_size;
 
         ParticipantProxyData out({});
-        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, true, network, false, intercom_vendor_id)));
+        EXPECT_NO_THROW(EXPECT_TRUE(out.read_from_cdr_message(&msg, true, network, false, intercom_vendor_id)));
     }
 
     // DATA(w)
@@ -2115,7 +2115,7 @@ TEST(BuiltinDataSerializationTests, interoperability_with_intercomdds)
         msg.length = msg.max_size;
 
         WriterProxyData out(max_unicast_locators, max_multicast_locators);
-        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, intercom_vendor_id)));
+        EXPECT_NO_THROW(EXPECT_TRUE(out.read_from_cdr_message(&msg, intercom_vendor_id)));
     }
 
     // DATA(r)
@@ -2182,7 +2182,7 @@ TEST(BuiltinDataSerializationTests, interoperability_with_intercomdds)
         msg.length = msg.max_size;
 
         ReaderProxyData out(max_unicast_locators, max_multicast_locators);
-        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, intercom_vendor_id)));
+        EXPECT_NO_THROW(EXPECT_TRUE(out.read_from_cdr_message(&msg, intercom_vendor_id)));
     }
 }
 
@@ -2397,7 +2397,7 @@ TEST(BuiltinDataSerializationTests, deserialization_of_big_parameters)
             att.data_limits.max_user_data = parameter_length;
             ParticipantProxyData out({});
             EXPECT_NO_THROW(
-                if (!out.readFromCDRMessage(&msg, true, network, false))
+                if (!out.read_from_cdr_message(&msg, true, network, false))
                         {
                             failed_for_data_p.insert(pid);
                         }
@@ -2414,7 +2414,7 @@ TEST(BuiltinDataSerializationTests, deserialization_of_big_parameters)
             limits.max_user_data = parameter_length;
             WriterProxyData out(max_unicast_locators, max_multicast_locators, limits);
             EXPECT_NO_THROW(
-                if (!out.readFromCDRMessage(&msg))
+                if (!out.read_from_cdr_message(&msg))
                         {
                             failed_for_data_w.insert(pid);
                         }
@@ -2431,7 +2431,7 @@ TEST(BuiltinDataSerializationTests, deserialization_of_big_parameters)
             limits.max_user_data = parameter_length;
             ReaderProxyData out(max_unicast_locators, max_multicast_locators, limits);
             EXPECT_NO_THROW(
-                if (!out.readFromCDRMessage(&msg))
+                if (!out.read_from_cdr_message(&msg))
                         {
                             failed_for_data_r.insert(pid);
                         }

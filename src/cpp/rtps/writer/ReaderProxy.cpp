@@ -116,17 +116,17 @@ void ReaderProxy::start(
         bool is_datasharing)
 {
     locator_info_.start(
-        reader_attributes.guid(),
-        reader_attributes.remote_locators().unicast,
-        reader_attributes.remote_locators().multicast,
-        reader_attributes.m_expectsInlineQos,
+        reader_attributes.guid,
+        reader_attributes.remote_locators.unicast,
+        reader_attributes.remote_locators.multicast,
+        reader_attributes.expects_inline_qos,
         is_datasharing);
 
     is_active_ = true;
-    durability_kind_ = reader_attributes.m_qos.m_durability.durabilityKind();
-    expects_inline_qos_ = reader_attributes.m_expectsInlineQos;
-    is_reliable_ = reader_attributes.m_qos.m_reliability.kind != dds::BEST_EFFORT_RELIABILITY_QOS;
-    disable_positive_acks_ = reader_attributes.disable_positive_acks();
+    durability_kind_ = reader_attributes.durability.durabilityKind();
+    expects_inline_qos_ = reader_attributes.expects_inline_qos;
+    is_reliable_ = reader_attributes.reliability.kind != dds::BEST_EFFORT_RELIABILITY_QOS;
+    disable_positive_acks_ = reader_attributes.disable_positive_acks_enabled();
     if (durability_kind_ == DurabilityKind_t::VOLATILE)
     {
         SequenceNumber_t min_sequence = writer_->get_seq_num_min();
@@ -150,15 +150,15 @@ void ReaderProxy::start(
 bool ReaderProxy::update(
         const ReaderProxyData& reader_attributes)
 {
-    durability_kind_ = reader_attributes.m_qos.m_durability.durabilityKind();
-    expects_inline_qos_ = reader_attributes.m_expectsInlineQos;
-    is_reliable_ = reader_attributes.m_qos.m_reliability.kind != dds::BEST_EFFORT_RELIABILITY_QOS;
-    disable_positive_acks_ = reader_attributes.disable_positive_acks();
+    durability_kind_ = reader_attributes.durability.durabilityKind();
+    expects_inline_qos_ = reader_attributes.expects_inline_qos;
+    is_reliable_ = reader_attributes.reliability.kind != dds::BEST_EFFORT_RELIABILITY_QOS;
+    disable_positive_acks_ = reader_attributes.disable_positive_acks_enabled();
 
     locator_info_.update(
-        reader_attributes.remote_locators().unicast,
-        reader_attributes.remote_locators().multicast,
-        reader_attributes.m_expectsInlineQos);
+        reader_attributes.remote_locators.unicast,
+        reader_attributes.remote_locators.multicast,
+        reader_attributes.expects_inline_qos);
 
     return true;
 }

@@ -127,7 +127,7 @@ TEST(ReaderProxyTests, requested_changes_set_test)
     RTPSGapBuilder gap_builder(message_group);
 
     ReaderProxyData reader_attributes(0, 0);
-    reader_attributes.m_qos.m_reliability.kind = fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    reader_attributes.reliability.kind = fastdds::dds::RELIABLE_RELIABILITY_QOS;
     rproxy.start(reader_attributes);
 
 
@@ -187,7 +187,7 @@ TEST(ReaderProxyTests, process_nack_frag_single_fragment_different_windows_test)
     RTPSGapBuilder gap_builder(message_group);
 
     ReaderProxyData reader_attributes(0, 0);
-    reader_attributes.m_qos.m_reliability.kind = fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    reader_attributes.reliability.kind = fastdds::dds::RELIABLE_RELIABILITY_QOS;
     rproxy.start(reader_attributes);
 
     ChangeForReader_t change(&seq);
@@ -256,7 +256,7 @@ TEST(ReaderProxyTests, process_nack_frag_multiple_fragments_different_windows_te
     RTPSGapBuilder gap_builder(message_group);
 
     ReaderProxyData reader_attributes(0, 0);
-    reader_attributes.m_qos.m_reliability.kind = fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    reader_attributes.reliability.kind = fastdds::dds::RELIABLE_RELIABILITY_QOS;
     rproxy.start(reader_attributes);
 
     ChangeForReader_t change(&seq);
@@ -345,7 +345,7 @@ TEST(ReaderProxyTests, has_been_delivered_test)
     seq2.sequenceNumber = {0, 2};
 
     ReaderProxyData reader_attributes(0, 0);
-    reader_attributes.m_qos.m_reliability.kind = fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    reader_attributes.reliability.kind = fastdds::dds::RELIABLE_RELIABILITY_QOS;
     rproxy.start(reader_attributes);
 
     auto expect_result = [&rproxy](SequenceNumber_t seq, bool delivered, bool should_be_found)
@@ -391,7 +391,7 @@ TEST(ReaderProxyTests, acknack_count)
     ReaderProxy rproxy(w_times, alloc, &writer_mock);
 
     ReaderProxyData reader_attributes(0, 0);
-    reader_attributes.m_qos.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    reader_attributes.reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     rproxy.start(reader_attributes);
 
     // Check that the initial acknack count is 0.

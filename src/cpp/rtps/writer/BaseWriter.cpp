@@ -50,7 +50,6 @@
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
 
-#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/DataSharing/WriterPool.hpp>
 #include <rtps/flowcontrol/FlowController.hpp>
@@ -118,12 +117,9 @@ bool BaseWriter::matched_reader_add(
         const SubscriptionBuiltinTopicData& rqos)
 {
     const auto& alloc = mp_RTPSParticipant->get_attributes().allocation;
-    ReaderProxyData rdata(
-        alloc.locators.max_unicast_locators,
-        alloc.locators.max_multicast_locators,
-        alloc.data_limits);
+    ReaderProxyData rdata(alloc.data_limits,
+            rqos);
 
-    from_builtin_to_proxy(rqos, rdata);
     return matched_reader_add_edp(rdata);
 }
 

@@ -326,12 +326,12 @@ bool EDPStatic::process_reader_proxy_data(
         RTPSReader*,
         ReaderProxyData* rdata)
 {
-    EPROSIMA_LOG_INFO(RTPS_EDP, rdata->guid().entityId << " in topic: " << rdata->topicName());
+    EPROSIMA_LOG_INFO(RTPS_EDP, rdata->guid.entityId << " in topic: " << rdata->topic_name);
     mp_PDP->getMutex()->lock();
     //Add the property list entry to our local pdp
     ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
-    localpdata->m_properties.push_back(EDPStaticProperty::toProperty(exchange_format_, "Reader", "ALIVE",
-            rdata->userDefinedId(), rdata->guid().entityId));
+    localpdata->properties.push_back(EDPStaticProperty::toProperty(exchange_format_, "Reader", "ALIVE",
+            rdata->user_defined_id(), rdata->guid.entityId));
     mp_PDP->getMutex()->unlock();
     this->mp_PDP->announceParticipantState(true);
     return true;
@@ -341,12 +341,12 @@ bool EDPStatic::process_writer_proxy_data(
         RTPSWriter*,
         WriterProxyData* wdata)
 {
-    EPROSIMA_LOG_INFO(RTPS_EDP, wdata->guid().entityId << " in topic: " << wdata->topicName());
+    EPROSIMA_LOG_INFO(RTPS_EDP, wdata->guid.entityId << " in topic: " << wdata->topic_name);
     mp_PDP->getMutex()->lock();
     //Add the property list entry to our local pdp
     ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
-    localpdata->m_properties.push_back(EDPStaticProperty::toProperty(exchange_format_, "Writer", "ALIVE",
-            wdata->userDefinedId(), wdata->guid().entityId));
+    localpdata->properties.push_back(EDPStaticProperty::toProperty(exchange_format_, "Writer", "ALIVE",
+            wdata->user_defined_id(), wdata->guid.entityId));
     mp_PDP->getMutex()->unlock();
     this->mp_PDP->announceParticipantState(true);
     return true;
@@ -357,8 +357,8 @@ bool EDPStatic::remove_reader(
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_PDP->getMutex());
     ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
-    for (ParameterPropertyList_t::iterator pit = localpdata->m_properties.begin();
-            pit != localpdata->m_properties.end(); ++pit)
+    for (ParameterPropertyList_t::iterator pit = localpdata->properties.begin();
+            pit != localpdata->properties.end(); ++pit)
     {
         EDPStaticProperty staticproperty;
         if (staticproperty.fromProperty((*pit).pair()))
@@ -384,8 +384,8 @@ bool EDPStatic::remove_writer(
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_PDP->getMutex());
     ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
-    for (ParameterPropertyList_t::iterator pit = localpdata->m_properties.begin();
-            pit != localpdata->m_properties.end(); ++pit)
+    for (ParameterPropertyList_t::iterator pit = localpdata->properties.begin();
+            pit != localpdata->properties.end(); ++pit)
     {
         EDPStaticProperty staticproperty;
         if (staticproperty.fromProperty((*pit).pair()))
@@ -413,29 +413,29 @@ void EDPStatic::assignRemoteEndpoints(
     GUID_t persistence_guid;
 
     // Fill persistence GUID if present in UserData.
-    bool is_persistent_guid = (18 <= pdata.m_userData.size()) &&
-            ('V' == pdata.m_userData.at(0)) && ('G' == pdata.m_userData.at(1)) && ('W' == pdata.m_userData.at(2));
+    bool is_persistent_guid = (18 <= pdata.user_data.size()) &&
+            ('V' == pdata.user_data.at(0)) && ('G' == pdata.user_data.at(1)) && ('W' == pdata.user_data.at(2));
     if (is_persistent_guid)
     {
-        persistence_guid.guidPrefix.value[0] = pdata.m_userData.at(3);
-        persistence_guid.guidPrefix.value[1] = pdata.m_userData.at(4);
-        persistence_guid.guidPrefix.value[2] = pdata.m_userData.at(5);
-        persistence_guid.guidPrefix.value[3] = pdata.m_userData.at(6);
-        persistence_guid.guidPrefix.value[4] = pdata.m_userData.at(7);
-        persistence_guid.guidPrefix.value[5] = pdata.m_userData.at(8);
-        persistence_guid.guidPrefix.value[6] = pdata.m_userData.at(9);
-        persistence_guid.guidPrefix.value[7] = pdata.m_userData.at(10);
-        persistence_guid.guidPrefix.value[8] = pdata.m_userData.at(11);
-        persistence_guid.guidPrefix.value[9] = pdata.m_userData.at(12);
-        persistence_guid.guidPrefix.value[10] = pdata.m_userData.at(13);
-        persistence_guid.guidPrefix.value[11] = pdata.m_userData.at(14);
-        persistence_guid.entityId.value[0] = pdata.m_userData.at(15);
-        persistence_guid.entityId.value[1] = pdata.m_userData.at(16);
-        persistence_guid.entityId.value[2] = pdata.m_userData.at(17);
+        persistence_guid.guidPrefix.value[0] = pdata.user_data.at(3);
+        persistence_guid.guidPrefix.value[1] = pdata.user_data.at(4);
+        persistence_guid.guidPrefix.value[2] = pdata.user_data.at(5);
+        persistence_guid.guidPrefix.value[3] = pdata.user_data.at(6);
+        persistence_guid.guidPrefix.value[4] = pdata.user_data.at(7);
+        persistence_guid.guidPrefix.value[5] = pdata.user_data.at(8);
+        persistence_guid.guidPrefix.value[6] = pdata.user_data.at(9);
+        persistence_guid.guidPrefix.value[7] = pdata.user_data.at(10);
+        persistence_guid.guidPrefix.value[8] = pdata.user_data.at(11);
+        persistence_guid.guidPrefix.value[9] = pdata.user_data.at(12);
+        persistence_guid.guidPrefix.value[10] = pdata.user_data.at(13);
+        persistence_guid.guidPrefix.value[11] = pdata.user_data.at(14);
+        persistence_guid.entityId.value[0] = pdata.user_data.at(15);
+        persistence_guid.entityId.value[1] = pdata.user_data.at(16);
+        persistence_guid.entityId.value[2] = pdata.user_data.at(17);
     }
 
-    for (ParameterPropertyList_t::const_iterator pit = pdata.m_properties.begin();
-            pit != pdata.m_properties.end(); ++pit)
+    for (ParameterPropertyList_t::const_iterator pit = pdata.properties.begin();
+            pit != pdata.properties.end(); ++pit)
     {
         persistence_guid.entityId.value[3] = 0;
 
@@ -445,34 +445,34 @@ void EDPStatic::assignRemoteEndpoints(
         {
             if (staticproperty.m_endpointType == "Reader" && staticproperty.m_status == "ALIVE")
             {
-                GUID_t guid(pdata.m_guid.guidPrefix, staticproperty.m_entityId);
+                GUID_t guid(pdata.guid.guidPrefix, staticproperty.m_entityId);
                 if (!this->mp_PDP->has_reader_proxy_data(guid))//IF NOT FOUND, we CREATE AND PAIR IT
                 {
-                    newRemoteReader(pdata.m_guid, pdata.m_participantName,
+                    newRemoteReader(pdata.guid, pdata.participant_name,
                             staticproperty.m_userId, staticproperty.m_entityId);
                 }
             }
             else if (staticproperty.m_endpointType == "Writer" && staticproperty.m_status == "ALIVE")
             {
-                GUID_t guid(pdata.m_guid.guidPrefix, staticproperty.m_entityId);
+                GUID_t guid(pdata.guid.guidPrefix, staticproperty.m_entityId);
                 if (!this->mp_PDP->has_writer_proxy_data(guid))//IF NOT FOUND, we CREATE AND PAIR IT
                 {
                     if (is_persistent_guid)
                     {
                         persistence_guid.entityId.value[3] = static_cast<uint8_t>(staticproperty.m_userId);
                     }
-                    newRemoteWriter(pdata.m_guid, pdata.m_participantName,
+                    newRemoteWriter(pdata.guid, pdata.participant_name,
                             staticproperty.m_userId, staticproperty.m_entityId, persistence_guid);
                 }
             }
             else if (staticproperty.m_endpointType == "Reader" && staticproperty.m_status == "ENDED")
             {
-                GUID_t guid(pdata.m_guid.guidPrefix, staticproperty.m_entityId);
+                GUID_t guid(pdata.guid.guidPrefix, staticproperty.m_entityId);
                 this->mp_PDP->removeReaderProxyData(guid);
             }
             else if (staticproperty.m_endpointType == "Writer" && staticproperty.m_status == "ENDED")
             {
-                GUID_t guid(pdata.m_guid.guidPrefix, staticproperty.m_entityId);
+                GUID_t guid(pdata.guid.guidPrefix, staticproperty.m_entityId);
                 this->mp_PDP->removeWriterProxyData(guid);
             }
             else
@@ -498,8 +498,8 @@ bool EDPStatic::newRemoteReader(
     ReaderProxyData* rpd = NULL;
     if (mp_edpXML->lookforReader(participant_name, user_id, &rpd) == xmlparser::XMLP_ret::XML_OK)
     {
-        EPROSIMA_LOG_INFO(RTPS_EDP, "Activating: " << rpd->guid().entityId << " in topic " << rpd->topicName());
-        GUID_t reader_guid(participant_guid.guidPrefix, ent_id != c_EntityId_Unknown ? ent_id : rpd->guid().entityId);
+        EPROSIMA_LOG_INFO(RTPS_EDP, "Activating: " << rpd->guid.entityId << " in topic " << rpd->topic_name);
+        GUID_t reader_guid(participant_guid.guidPrefix, ent_id != c_EntityId_Unknown ? ent_id : rpd->guid.entityId);
 
         auto init_fun = [this, participant_guid, reader_guid, rpd](
             ReaderProxyData* newRPD,
@@ -511,15 +511,15 @@ bool EDPStatic::newRemoteReader(
                     assert(!updating);
 
                     *newRPD = *rpd;
-                    newRPD->guid(reader_guid);
+                    newRPD->guid = reader_guid;
                     if (!checkEntityId(newRPD))
                     {
                         EPROSIMA_LOG_ERROR(RTPS_EDP, "The provided entityId for Reader with ID: "
-                                << newRPD->userDefinedId() << " does not match the topic Kind");
+                                << newRPD->user_defined_id() << " does not match the topic Kind");
                         return false;
                     }
-                    newRPD->key() = newRPD->guid();
-                    newRPD->RTPSParticipantKey() = participant_guid;
+                    newRPD->key() = newRPD->guid;
+                    newRPD->rtps_participant_key() = participant_guid;
                     if (!newRPD->has_locators())
                     {
                         const NetworkFactory& network = mp_RTPSParticipant->network_factory();
@@ -551,8 +551,8 @@ bool EDPStatic::newRemoteWriter(
     WriterProxyData* wpd = NULL;
     if (mp_edpXML->lookforWriter(participant_name, user_id, &wpd) == xmlparser::XMLP_ret::XML_OK)
     {
-        EPROSIMA_LOG_INFO(RTPS_EDP, "Activating: " << wpd->guid().entityId << " in topic " << wpd->topicName());
-        GUID_t writer_guid(participant_guid.guidPrefix, ent_id != c_EntityId_Unknown ? ent_id : wpd->guid().entityId);
+        EPROSIMA_LOG_INFO(RTPS_EDP, "Activating: " << wpd->guid.entityId << " in topic " << wpd->topic_name);
+        GUID_t writer_guid(participant_guid.guidPrefix, ent_id != c_EntityId_Unknown ? ent_id : wpd->guid.entityId);
 
         auto init_fun = [this, participant_guid, writer_guid, wpd, persistence_guid](
             WriterProxyData* newWPD,
@@ -564,22 +564,22 @@ bool EDPStatic::newRemoteWriter(
                     assert(!updating);
 
                     *newWPD = *wpd;
-                    newWPD->guid(writer_guid);
+                    newWPD->guid = writer_guid;
                     if (!checkEntityId(newWPD))
                     {
                         EPROSIMA_LOG_ERROR(RTPS_EDP, "The provided entityId for Writer with User ID: "
-                                << newWPD->userDefinedId() << " does not match the topic Kind");
+                                << newWPD->user_defined_id() << " does not match the topic Kind");
                         return false;
                     }
-                    newWPD->key() = newWPD->guid();
-                    newWPD->RTPSParticipantKey() = participant_guid;
+                    newWPD->key() = newWPD->guid;
+                    newWPD->rtps_participant_key() = participant_guid;
                     if (!newWPD->has_locators())
                     {
                         const NetworkFactory& network = mp_RTPSParticipant->network_factory();
                         newWPD->set_remote_locators(participant_data.default_locators, network, true,
                                 participant_data.is_from_this_host());
                     }
-                    newWPD->persistence_guid(persistence_guid);
+                    newWPD->persistence_guid = persistence_guid;
 
                     return true;
                 };
@@ -597,11 +597,11 @@ bool EDPStatic::newRemoteWriter(
 bool EDPStatic::checkEntityId(
         ReaderProxyData* rdata)
 {
-    if (rdata->topicKind() == WITH_KEY && rdata->guid().entityId.value[3] == 0x07)
+    if (rdata->topic_kind == WITH_KEY && rdata->guid.entityId.value[3] == 0x07)
     {
         return true;
     }
-    if (rdata->topicKind() == NO_KEY && rdata->guid().entityId.value[3] == 0x04)
+    if (rdata->topic_kind == NO_KEY && rdata->guid.entityId.value[3] == 0x04)
     {
         return true;
     }
@@ -611,11 +611,11 @@ bool EDPStatic::checkEntityId(
 bool EDPStatic::checkEntityId(
         WriterProxyData* wdata)
 {
-    if (wdata->topicKind() == WITH_KEY && wdata->guid().entityId.value[3] == 0x02)
+    if (wdata->topic_kind == WITH_KEY && wdata->guid.entityId.value[3] == 0x02)
     {
         return true;
     }
-    if (wdata->topicKind() == NO_KEY && wdata->guid().entityId.value[3] == 0x03)
+    if (wdata->topic_kind == NO_KEY && wdata->guid.entityId.value[3] == 0x03)
     {
         return true;
     }

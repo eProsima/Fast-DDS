@@ -148,7 +148,7 @@ public:
     {
         RTPSParticipantAllocationAttributes attrs;
         ParticipantProxyData* pdata = new ParticipantProxyData(attrs);
-        pdata->m_guid = part_guid;
+        pdata->guid = part_guid;
 
         add_participant_proxy_data(part_guid, false, pdata);
         pdatas_.push_back(pdata);
@@ -329,7 +329,7 @@ TEST_F(PDPTests, iproxy_queryable_get_all_local_proxies)
             pdp_->addReaderProxyData(entity_guid, part_guid,
                     [&entity_guid](ReaderProxyData* rdata, bool, const ParticipantProxyData&)
                     {
-                        rdata->guid(entity_guid); return true;
+                        rdata->guid = entity_guid; return true;
                     });
         }
         else
@@ -337,7 +337,7 @@ TEST_F(PDPTests, iproxy_queryable_get_all_local_proxies)
             pdp_->addWriterProxyData(entity_guid, part_guid,
                     [&entity_guid](WriterProxyData* wdata, bool, const ParticipantProxyData&)
                     {
-                        wdata->guid(entity_guid); return true;
+                        wdata->guid = entity_guid; return true;
                     });
         }
 
@@ -366,7 +366,7 @@ TEST_F(PDPTests, iproxy_queryable_get_all_local_proxies)
             pdp_->addReaderProxyData(entity_guid, other_part_guid,
                     [&entity_guid](ReaderProxyData* rdata, bool, const ParticipantProxyData&)
                     {
-                        rdata->guid(entity_guid); return true;
+                        rdata->guid = entity_guid; return true;
                     });
         }
         else
@@ -374,7 +374,7 @@ TEST_F(PDPTests, iproxy_queryable_get_all_local_proxies)
             pdp_->addWriterProxyData(entity_guid, other_part_guid,
                     [&entity_guid](WriterProxyData* wdata, bool, const ParticipantProxyData&)
                     {
-                        wdata->guid(entity_guid); return true;
+                        wdata->guid = entity_guid; return true;
                     });
         }
     }
@@ -414,9 +414,9 @@ TEST_F(PDPTests, iproxy_queryable_get_serialized_proxy)
     pdp_->addReaderProxyData(reader_guid, part_guid,
             [&reader_guid](ReaderProxyData* rdata, bool, const ParticipantProxyData&)
             {
-                rdata->guid(reader_guid);
-                rdata->topicName("test");
-                rdata->typeName("foo");
+                rdata->guid = reader_guid;
+                rdata->topic_name = "test";
+                rdata->type_name = "foo";
                 return true;
             });
 

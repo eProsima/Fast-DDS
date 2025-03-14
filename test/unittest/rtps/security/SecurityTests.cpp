@@ -91,7 +91,7 @@ void SecurityTest::request_process_ok(
     EXPECT_CALL(participant_, pdp()).Times(1).WillOnce(Return(&pdp_));
     EXPECT_CALL(pdp_, get_participant_proxy_data_serialized(BIGEND)).Times(1);
 
-    fill_participant_key(participant_data_.m_guid);
+    fill_participant_key(participant_data_.guid);
     ASSERT_TRUE(manager_.discovered_participant(participant_data_));
 
     if (request_message_change != nullptr)
@@ -113,12 +113,12 @@ void SecurityTest::reply_process_ok(
             WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle_),
             Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
 
-    fill_participant_key(participant_data_.m_guid);
+    fill_participant_key(participant_data_.guid);
     ASSERT_TRUE(manager_.discovered_participant(participant_data_));
 
     ParticipantGenericMessage message;
-    message.message_identity().source_guid(participant_data_.m_guid);
-    message.destination_participant_key(participant_data_.m_guid);
+    message.message_identity().source_guid(participant_data_.guid);
+    message.destination_participant_key(participant_data_.guid);
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
@@ -176,7 +176,7 @@ void SecurityTest::final_message_process_ok(
     EXPECT_CALL(*stateless_writer_->history_, remove_change(SequenceNumber_t{ 0, 1 })).Times(1).
             WillOnce(Return(true));
 
-    GUID_t remote_participant_key(participant_data_.m_guid);
+    GUID_t remote_participant_key(participant_data_.guid);
 
     ParticipantGenericMessage message;
     message.message_identity().source_guid(remote_participant_key);

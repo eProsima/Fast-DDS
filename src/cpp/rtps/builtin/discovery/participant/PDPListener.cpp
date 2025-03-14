@@ -30,7 +30,6 @@
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
-#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/builtin/discovery/participant/PDPEndpoints.hpp>
@@ -105,12 +104,13 @@ void PDPListener::on_new_cache_change_added(
         // Load information on temp_participant_data_
         CDRMessage_t msg(change->serializedPayload);
         temp_participant_data_.clear();
-        if (temp_participant_data_.readFromCDRMessage(&msg, true, parent_pdp_->getRTPSParticipant()->network_factory(),
+        if (temp_participant_data_.read_from_cdr_message(&msg, true,
+                parent_pdp_->getRTPSParticipant()->network_factory(),
                 true, change_in->vendor_id))
         {
             // After correctly reading it
             change->instanceHandle = temp_participant_data_.m_key;
-            guid = temp_participant_data_.m_guid;
+            guid = temp_participant_data_.guid;
 
             if (parent_pdp_->getRTPSParticipant()->is_participant_ignored(guid.guidPrefix))
             {
@@ -133,7 +133,7 @@ void PDPListener::on_new_cache_change_added(
             bool already_processed = false;
             for (ParticipantProxyData* it : parent_pdp_->participant_proxies_)
             {
-                if (guid == it->m_guid)
+                if (guid == it->guid)
                 {
                     pdata = it;
 
@@ -191,7 +191,7 @@ void PDPListener::process_alive_data(
         RTPSReader* reader,
         std::unique_lock<std::recursive_mutex>& lock)
 {
-    GUID_t participant_guid = new_data.m_guid;
+    GUID_t participant_guid = new_data.guid;
 
     if (old_data == nullptr)
     {
@@ -226,13 +226,13 @@ void PDPListener::process_alive_data(
     }
     else
     {
-        old_data->updateData(new_data);
-        old_data->isAlive = true;
+        old_data->update_data(new_data);
+        old_data->is_alive = true;
 
         reader->getMutex().unlock();
 
         EPROSIMA_LOG_INFO(RTPS_PDP_DISCOVERY, "Update participant "
-                << old_data->m_guid << " at "
+                << old_data->guid << " at "
                 << "MTTLoc: " << old_data->metatraffic_locators
                 << " DefLoc:" << old_data->default_locators);
 
@@ -242,8 +242,7 @@ void PDPListener::process_alive_data(
         }
 
         // Copy proxy to be passed forward before releasing PDP mutex
-        ParticipantBuiltinTopicData old_topic_data_copy;
-        from_proxy_to_builtin(*old_data, old_topic_data_copy);
+        ParticipantBuiltinTopicData old_proxy_data_copy(*old_data);
 
         lock.unlock();
 
@@ -254,12 +253,11 @@ void PDPListener::process_alive_data(
 
             {
                 std::lock_guard<std::mutex> cb_lock(parent_pdp_->callback_mtx_);
-                ParticipantBuiltinTopicData info(old_topic_data_copy);
 
                 listener->on_participant_discovery(
                     parent_pdp_->getRTPSParticipant()->getUserRTPSParticipant(),
                     ParticipantDiscoveryStatus::CHANGED_QOS_PARTICIPANT,
-                    info,
+                    old_proxy_data_copy,
                     should_be_ignored);
             }
             if (should_be_ignored)
@@ -287,7 +285,7 @@ bool PDPListener::check_discovery_conditions(
         ParticipantProxyData& participant_data)
 {
     bool ret = true;
-    uint32_t remote_participant_domain_id = participant_data.m_domain_id;
+    uint32_t remote_participant_domain_id = participant_data.domain_id;
 
     // In PDPSimple, do not match if the participant is from a different domain.
     // If the domain id is unknown, it is assumed to be the same domain

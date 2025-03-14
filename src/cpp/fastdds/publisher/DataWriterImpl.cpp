@@ -1687,8 +1687,9 @@ ReturnCode_t DataWriterImpl::get_publication_builtin_topic_data(
 
     publication_data = PublicationBuiltinTopicData{};
 
-    from_proxy_to_builtin(guid_.entityId, publication_data.key.value);
-    from_proxy_to_builtin(publisher_->get_participant()->guid().guidPrefix, publication_data.participant_key.value);
+    from_entity_id_to_topic_key(guid_.entityId, publication_data.key.value);
+    from_guid_prefix_to_topic_key(
+        publisher_->get_participant()->guid().guidPrefix, publication_data.participant_key.value);
 
     publication_data.topic_name = topic_->get_name();
     publication_data.type_name = topic_->get_type_name();

@@ -94,23 +94,22 @@ protected:
     void SetUp() override
     {
         wdata = new ::testing::NiceMock<WriterProxyData>(1, 1);
-        rdata = new ::testing::NiceMock<ReaderProxyData>(1, 1);
+        rdata = new ::testing::NiceMock<ReaderProxyData>((size_t)1, (size_t)1);
 
         //Same Topic
-        wdata->topicName("Topic");
-        rdata->topicName("Topic");
+        wdata->topic_name = "Topic";
+        rdata->topic_name = "Topic";
 
         //Same Topic Kind
-        wdata->topicKind(TopicKind_t::NO_KEY);
-        rdata->topicKind(TopicKind_t::NO_KEY);
+        wdata->topic_kind = TopicKind_t::NO_KEY;
+        rdata->topic_kind = TopicKind_t::NO_KEY;
 
         //With no type information, only Type name is compared
-        rdata->m_qos.type_consistency.m_force_type_validation = false;
-        wdata->typeName("TypeName");
-        rdata->typeName("TypeName");
+        rdata->type_consistency.m_force_type_validation = false;
+        wdata->type_name = "TypeName";
+        rdata->type_name = "TypeName";
 
-        rdata->isAlive(true);
-        wdata->isAlive(true);
+        rdata->is_alive(true);
 
         edp = new EDPMock(&pdp_, &participant_);
     }
@@ -124,19 +123,19 @@ protected:
 
     void set_incompatible_topic()
     {
-        rdata->topicName("AnotherTopic");
+        rdata->topic_name = "AnotherTopic";
     }
 
     void set_incompatible_topic_kind()
     {
-        rdata->topicKind(TopicKind_t::WITH_KEY);
+        rdata->topic_kind = TopicKind_t::WITH_KEY;
     }
 
     void set_incompatible_type()
     {
-        rdata->typeName("AnotherTypeName");
-        rdata->type_information().assigned(false);
-        wdata->type_information().assigned(false);
+        rdata->type_name = "AnotherTypeName";
+        rdata->type_information.assigned(false);
+        wdata->type_information.assigned(false);
     }
 
     void check_expectations(
@@ -234,37 +233,37 @@ TEST_F(EdpTests, IncompatibleType)
 TEST_F(EdpTests, CheckPartitionCompatibility)
 {
     // Start with the same partitions
-    wdata->m_qos.m_partition.push_back("Partition1");
-    rdata->m_qos.m_partition.push_back("Partition1");
+    wdata->partition.push_back("Partition1");
+    rdata->partition.push_back("Partition1");
     check_expectations(true);
 
     // Add new (different) partitions. They still match on the previous one
-    wdata->m_qos.m_partition.push_back("Partition2");
-    rdata->m_qos.m_partition.push_back("Partition3");
+    wdata->partition.push_back("Partition2");
+    rdata->partition.push_back("Partition3");
     check_expectations(true);
 
     // Clear and add different partitions
-    wdata->m_qos.m_partition.clear();
-    wdata->m_qos.m_partition.push_back("Partition10");
-    rdata->m_qos.m_partition.clear();
-    rdata->m_qos.m_partition.push_back("Partition20");
+    wdata->partition.clear();
+    wdata->partition.push_back("Partition10");
+    rdata->partition.clear();
+    rdata->partition.push_back("Partition20");
     check_expectations(false);
 
     // Wildcard matching
-    wdata->m_qos.m_partition.clear();
-    wdata->m_qos.m_partition.push_back("Part*");
-    rdata->m_qos.m_partition.clear();
-    rdata->m_qos.m_partition.push_back("Partition");
+    wdata->partition.clear();
+    wdata->partition.push_back("Part*");
+    rdata->partition.clear();
+    rdata->partition.push_back("Partition");
     check_expectations(true);
 
     // Matching empty list against empty partition
-    wdata->m_qos.m_partition.clear();
-    rdata->m_qos.m_partition.clear();
-    rdata->m_qos.m_partition.push_back("");
+    wdata->partition.clear();
+    rdata->partition.clear();
+    rdata->partition.push_back("");
     check_expectations(true);
-    wdata->m_qos.m_partition.clear();
-    wdata->m_qos.m_partition.push_back("");
-    rdata->m_qos.m_partition.clear();
+    wdata->partition.clear();
+    wdata->partition.push_back("");
+    rdata->partition.clear();
     check_expectations(true);
 }
 
@@ -307,8 +306,8 @@ TEST_F(EdpTests, CheckDurabilityCompatibility)
 
     for (auto testing_case : testing_cases)
     {
-        wdata->m_qos.m_durability.kind = testing_case.offered_qos;
-        rdata->m_qos.m_durability.kind = testing_case.requested_qos;
+        wdata->durability.kind = testing_case.offered_qos;
+        rdata->durability.kind = testing_case.requested_qos;
         check_expectations(testing_case.failed_qos);
     }
 }
@@ -323,8 +322,8 @@ TEST_F(EdpTests, CheckDeadlineCompatibility)
 
     for (auto testing_case : testing_cases)
     {
-        wdata->m_qos.m_deadline.period = testing_case.offered_qos;
-        rdata->m_qos.m_deadline.period = testing_case.requested_qos;
+        wdata->deadline.period = testing_case.offered_qos;
+        rdata->deadline.period = testing_case.requested_qos;
         check_expectations(testing_case.failed_qos);
     }
 }
@@ -343,8 +342,8 @@ TEST_F(EdpTests, CheckOwnershipCompatibility)
 
     for (auto testing_case : testing_cases)
     {
-        wdata->m_qos.m_ownership.kind = testing_case.offered_qos;
-        rdata->m_qos.m_ownership.kind = testing_case.requested_qos;
+        wdata->ownership.kind = testing_case.offered_qos;
+        rdata->ownership.kind = testing_case.requested_qos;
         check_expectations(testing_case.failed_qos);
     }
 }
@@ -374,8 +373,8 @@ TEST_F(EdpTests, CheckLivelinessKindCompatibility)
 
     for (auto testing_case : testing_cases)
     {
-        wdata->m_qos.m_liveliness.kind = testing_case.offered_qos;
-        rdata->m_qos.m_liveliness.kind = testing_case.requested_qos;
+        wdata->liveliness.kind = testing_case.offered_qos;
+        rdata->liveliness.kind = testing_case.requested_qos;
         check_expectations(testing_case.failed_qos);
     }
 }
@@ -390,8 +389,8 @@ TEST_F(EdpTests, CheckLeaseDurationCompatibility)
 
     for (auto testing_case : testing_cases)
     {
-        wdata->m_qos.m_liveliness.lease_duration = testing_case.offered_qos;
-        rdata->m_qos.m_liveliness.lease_duration = testing_case.requested_qos;
+        wdata->liveliness.lease_duration = testing_case.offered_qos;
+        rdata->liveliness.lease_duration = testing_case.requested_qos;
         check_expectations(testing_case.failed_qos);
     }
 }
@@ -411,8 +410,8 @@ TEST_F(EdpTests, CheckReliabilityCompatibility)
 
     for (auto testing_case : testing_cases)
     {
-        wdata->m_qos.m_reliability.kind = testing_case.offered_qos;
-        rdata->m_qos.m_reliability.kind = testing_case.requested_qos;
+        wdata->reliability.kind = testing_case.offered_qos;
+        rdata->reliability.kind = testing_case.requested_qos;
         check_expectations(testing_case.failed_qos);
     }
 }
@@ -428,8 +427,8 @@ TEST_F(EdpTests, CheckPositiveAckCompatibility)
 
     for (auto testing_case : testing_cases)
     {
-        wdata->m_qos.m_disablePositiveACKs.enabled = testing_case.offered_qos;
-        rdata->m_qos.m_disablePositiveACKs.enabled = testing_case.requested_qos;
+        wdata->disable_positive_acks.enabled = testing_case.offered_qos;
+        rdata->disable_positive_acks.enabled = testing_case.requested_qos;
         check_expectations(testing_case.failed_qos);
     }
 }
@@ -473,8 +472,8 @@ TEST_F(EdpTests, CheckDataRepresentationCompatibility)
 
     for (auto testing_case : testing_cases)
     {
-        wdata->m_qos.representation.m_value = testing_case.offered_qos;
-        rdata->m_qos.representation.m_value = testing_case.requested_qos;
+        wdata->representation.m_value = testing_case.offered_qos;
+        rdata->representation.m_value = testing_case.requested_qos;
         check_expectations(testing_case.failed_qos);
     }
 }
@@ -508,49 +507,49 @@ TEST_F(EdpTests, CheckTypeIdentifierComparation)
     complete.equivalence_hash({2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
     complete._d(dds::xtypes::EK_COMPLETE);
 
-    wdata->type_information().assigned(true);
-    rdata->type_information().assigned(true);
+    wdata->type_information.assigned(true);
+    rdata->type_information.assigned(true);
 
-    wdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
-    wdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
-    rdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
-    rdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
+    wdata->type_information.type_information.complete().typeid_with_size().type_id(complete);
+    wdata->type_information.type_information.minimal().typeid_with_size().type_id(minimal);
+    rdata->type_information.type_information.complete().typeid_with_size().type_id(complete);
+    rdata->type_information.type_information.minimal().typeid_with_size().type_id(minimal);
     check_expectations(true);
 
-    wdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
-    wdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
-    rdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
-    rdata->type_information().type_information.minimal().typeid_with_size().type_id().no_value({});
+    wdata->type_information.type_information.complete().typeid_with_size().type_id(complete);
+    wdata->type_information.type_information.minimal().typeid_with_size().type_id(minimal);
+    rdata->type_information.type_information.complete().typeid_with_size().type_id(complete);
+    rdata->type_information.type_information.minimal().typeid_with_size().type_id().no_value({});
     check_expectations(true);
 
-    wdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
-    wdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
-    rdata->type_information().type_information.complete().typeid_with_size().type_id().no_value({});
-    rdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
+    wdata->type_information.type_information.complete().typeid_with_size().type_id(complete);
+    wdata->type_information.type_information.minimal().typeid_with_size().type_id(minimal);
+    rdata->type_information.type_information.complete().typeid_with_size().type_id().no_value({});
+    rdata->type_information.type_information.minimal().typeid_with_size().type_id(minimal);
     check_expectations(true);
 
-    wdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
-    wdata->type_information().type_information.minimal().typeid_with_size().type_id().no_value({});
-    rdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
-    rdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
+    wdata->type_information.type_information.complete().typeid_with_size().type_id(complete);
+    wdata->type_information.type_information.minimal().typeid_with_size().type_id().no_value({});
+    rdata->type_information.type_information.complete().typeid_with_size().type_id(complete);
+    rdata->type_information.type_information.minimal().typeid_with_size().type_id(minimal);
     check_expectations(true);
 
-    wdata->type_information().type_information.complete().typeid_with_size().type_id().no_value({});
-    wdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
-    rdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
-    rdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
+    wdata->type_information.type_information.complete().typeid_with_size().type_id().no_value({});
+    wdata->type_information.type_information.minimal().typeid_with_size().type_id(minimal);
+    rdata->type_information.type_information.complete().typeid_with_size().type_id(complete);
+    rdata->type_information.type_information.minimal().typeid_with_size().type_id(minimal);
     check_expectations(true);
 
-    wdata->type_information().type_information.complete().typeid_with_size().type_id().no_value({});
-    wdata->type_information().type_information.minimal().typeid_with_size().type_id().no_value({});
-    rdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
-    rdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
+    wdata->type_information.type_information.complete().typeid_with_size().type_id().no_value({});
+    wdata->type_information.type_information.minimal().typeid_with_size().type_id().no_value({});
+    rdata->type_information.type_information.complete().typeid_with_size().type_id(complete);
+    rdata->type_information.type_information.minimal().typeid_with_size().type_id(minimal);
     check_expectations(false);
 
-    wdata->type_information().type_information.complete().typeid_with_size().type_id(complete);
-    wdata->type_information().type_information.minimal().typeid_with_size().type_id(minimal);
-    rdata->type_information().type_information.complete().typeid_with_size().type_id().no_value({});
-    rdata->type_information().type_information.minimal().typeid_with_size().type_id().no_value({});
+    wdata->type_information.type_information.complete().typeid_with_size().type_id(complete);
+    wdata->type_information.type_information.minimal().typeid_with_size().type_id(minimal);
+    rdata->type_information.type_information.complete().typeid_with_size().type_id().no_value({});
+    rdata->type_information.type_information.minimal().typeid_with_size().type_id().no_value({});
     check_expectations(false);
 }
 

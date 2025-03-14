@@ -75,9 +75,9 @@ void EDPBasePUBListener::add_writer_from_change(
     auto temp_writer_data = edp->get_temporary_writer_proxies_pool().get();
     const auto type_server = change->writerGUID;
 
-    if (temp_writer_data->readFromCDRMessage(&tempMsg, change->vendor_id))
+    if (temp_writer_data->read_from_cdr_message(&tempMsg, change->vendor_id))
     {
-        if (temp_writer_data->guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
+        if (temp_writer_data->guid.guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
         {
             EPROSIMA_LOG_INFO(RTPS_EDP, "Message from own RTPSParticipant, ignoring");
             return;
@@ -99,21 +99,21 @@ void EDPBasePUBListener::add_writer_from_change(
                                 {
                                     EPROSIMA_LOG_WARNING(RTPS_EDP,
                                             "Received incompatible update for WriterQos. writer_guid = " <<
-                                            data->guid());
+                                            data->guid);
                                 }
                                 *data = *temp_writer_data;
                                 data->setup_locators(*temp_writer_data, network, participant_data);
 
                                 if (request_ret_status != fastdds::dds::RETCODE_OK)
                                 {
-                                    data->type_information().clear();
+                                    data->type_information.clear();
                                 }
                                 return true;
                             };
 
                     GUID_t participant_guid;
                     WriterProxyData* writer_data =
-                            edp->mp_PDP->addWriterProxyData(temp_writer_data->guid(), participant_guid, copy_data_fun);
+                            edp->mp_PDP->addWriterProxyData(temp_writer_data->guid, participant_guid, copy_data_fun);
 
                     if (writer_data != nullptr)
                     {
@@ -138,7 +138,7 @@ void EDPBasePUBListener::add_writer_from_change(
         auto typelookup_manager = edp->mp_RTPSParticipant->typelookup_manager();
 
         // Check if TypeInformation exists to start the typelookup service
-        if (nullptr != typelookup_manager && temp_writer_data->type_information().assigned())
+        if (nullptr != typelookup_manager && temp_writer_data->type_information.assigned())
         {
             typelookup_manager->async_get_type(
                 temp_writer_data,
@@ -220,9 +220,9 @@ void EDPBaseSUBListener::add_reader_from_change(
     auto temp_reader_data = edp->get_temporary_reader_proxies_pool().get();
     const auto type_server = change->writerGUID;
 
-    if (temp_reader_data->readFromCDRMessage(&tempMsg, change->vendor_id))
+    if (temp_reader_data->read_from_cdr_message(&tempMsg, change->vendor_id))
     {
-        if (temp_reader_data->guid().guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
+        if (temp_reader_data->guid.guidPrefix == edp->mp_RTPSParticipant->getGuid().guidPrefix)
         {
             EPROSIMA_LOG_INFO(RTPS_EDP, "From own RTPSParticipant, ignoring");
             return;
@@ -244,14 +244,14 @@ void EDPBaseSUBListener::add_reader_from_change(
                                 {
                                     EPROSIMA_LOG_WARNING(RTPS_EDP,
                                             "Received incompatible update for ReaderQos. reader_guid = " <<
-                                            data->guid());
+                                            data->guid);
                                 }
                                 *data = *temp_reader_data;
                                 data->setup_locators(*temp_reader_data, network, participant_data);
 
                                 if (request_ret_status != fastdds::dds::RETCODE_OK)
                                 {
-                                    data->type_information().clear();
+                                    data->type_information.clear();
                                 }
                                 return true;
                             };
@@ -259,7 +259,7 @@ void EDPBaseSUBListener::add_reader_from_change(
                     //LOOK IF IS AN UPDATED INFORMATION
                     GUID_t participant_guid;
                     ReaderProxyData* reader_data =
-                            edp->mp_PDP->addReaderProxyData(temp_reader_data->guid(), participant_guid, copy_data_fun);
+                            edp->mp_PDP->addReaderProxyData(temp_reader_data->guid, participant_guid, copy_data_fun);
 
                     if (reader_data != nullptr) //ADDED NEW DATA
                     {
@@ -284,7 +284,7 @@ void EDPBaseSUBListener::add_reader_from_change(
         auto typelookup_manager = edp->mp_RTPSParticipant->typelookup_manager();
 
         // Check if TypeInformation exists to start the typelookup service
-        if (nullptr != typelookup_manager && temp_reader_data->type_information().assigned())
+        if (nullptr != typelookup_manager && temp_reader_data->type_information.assigned())
         {
             typelookup_manager->async_get_type(
                 temp_reader_data,

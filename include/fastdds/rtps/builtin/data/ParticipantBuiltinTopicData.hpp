@@ -31,6 +31,23 @@ namespace rtps {
 
 struct ParticipantBuiltinTopicData
 {
+    //! Default constructor
+    ParticipantBuiltinTopicData() = default;
+
+    //! Constructor with allocation attributes
+    ParticipantBuiltinTopicData(
+            const VendorId_t vendor_id,
+            const dds::DomainId_t domain_id,
+            const RTPSParticipantAllocationAttributes& allocation)
+        : user_data(static_cast<uint16_t>(allocation.data_limits.max_user_data))
+        , properties(static_cast<uint32_t>(allocation.data_limits.max_properties))
+        , metatraffic_locators(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
+        , default_locators(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
+        , vendor_id(vendor_id)
+        , domain_id(domain_id)
+    {
+    }
+
     /// Builtin topic Key
     BuiltinTopicKey_t key;
 

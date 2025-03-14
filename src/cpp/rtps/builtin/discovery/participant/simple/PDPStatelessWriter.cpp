@@ -59,7 +59,7 @@ bool PDPStatelessWriter::matched_reader_add_edp(
     if (ret)
     {
         // Mark new reader as interested
-        add_interested_reader(data.guid());
+        add_interested_reader(data.guid);
         // Send announcement to new reader
         reschedule_all_samples();
     }

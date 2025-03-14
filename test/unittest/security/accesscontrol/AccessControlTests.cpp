@@ -233,8 +233,8 @@ void AccessControlTest::check_remote_datareader(
     SecurityException exception;
 
     ReaderProxyData reader_proxy_data(1, 1);
-    reader_proxy_data.topicName(eprosima::fastcdr::string_255(topic_name));
-    reader_proxy_data.m_qos.m_partition.setNames(partitions);
+    reader_proxy_data.topic_name = eprosima::fastcdr::string_255(topic_name);
+    reader_proxy_data.partition.setNames(partitions);
     bool relay_only;
     bool result = access_plugin.check_remote_datareader(
         *access_handle,
@@ -291,8 +291,8 @@ void AccessControlTest::check_remote_datawriter(
     SecurityException exception;
 
     WriterProxyData writer_proxy_data(1, 1);
-    writer_proxy_data.topicName(eprosima::fastcdr::string_255(topic_name));
-    writer_proxy_data.m_qos.m_partition.setNames(partitions);
+    writer_proxy_data.topic_name = eprosima::fastcdr::string_255(topic_name);
+    writer_proxy_data.partition.setNames(partitions);
     bool result = access_plugin.check_remote_datawriter(
         *access_handle,
         domain_id,
@@ -495,7 +495,7 @@ TEST_F(AccessControlTest, validation_ok_on_chained_ca)
     permissions_ca = "chainedcacert.pem";
     permissions_file = "permissions_signed_by_chained_ca.smime";
     governance_file = "governance_signed_by_chained_ca.smime";
-    
+
     topic_name = "HelloWorldTopic_no_partitions";
 
     RTPSParticipantAttributes subscriber_participant_attr;
