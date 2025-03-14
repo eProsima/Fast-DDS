@@ -274,9 +274,7 @@ ReturnCode_t DomainParticipantImpl::enable()
     utils::set_attributes_from_qos(rtps_attr, qos_);
     rtps_attr.participantID = participant_id_;
 
-    // If DEFAULT_ROS2_MASTER_URI is specified then try to create default client if
-    // that already exists.
-    RTPSParticipant* part = RTPSDomainImpl::clientServerEnvironmentCreationOverride(
+    RTPSParticipant* part = RTPSDomain::createParticipant(
         domain_id_,
         false,
         rtps_attr,
@@ -284,13 +282,8 @@ ReturnCode_t DomainParticipantImpl::enable()
 
     if (part == nullptr)
     {
-        part = RTPSDomain::createParticipant(domain_id_, false, rtps_attr, &rtps_listener_);
-
-        if (part == nullptr)
-        {
-            EPROSIMA_LOG_ERROR(DOMAIN_PARTICIPANT, "Problem creating RTPSParticipant");
-            return RETCODE_ERROR;
-        }
+        EPROSIMA_LOG_ERROR(DOMAIN_PARTICIPANT, "Problem creating RTPSParticipant");
+        return RETCODE_ERROR;
     }
 
     guid_ = part->getGuid();
