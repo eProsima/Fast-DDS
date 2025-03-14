@@ -256,6 +256,12 @@ public:
 
     bool can_be_deleted() const;
 
+    /**
+     * Check if a given DataReader can be deleted.
+     */
+    bool can_be_deleted(
+            DataReader* reader) const;
+
 #ifdef FASTDDS_STATISTICS
     bool get_monitoring_status(
             statistics::MonitorServiceData& status,

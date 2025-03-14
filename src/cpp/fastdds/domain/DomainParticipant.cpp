@@ -257,6 +257,57 @@ Topic* DomainParticipant::find_topic(
     return impl_->find_topic(topic_name, timeout);
 }
 
+rpc::Service* DomainParticipant::create_service(
+        const std::string& service_name,
+        const std::string& service_type_name)
+{
+    // NOTE: According to the RPC Standard annotation, service_name must be <interface_name>_<Service_name>
+    // Where <Service_name> is "Service" by default.
+    // The Service topics will be service_name + "_Request" and service_name + "_Reply"
+
+    return impl_->create_service(service_name, service_type_name);
+}
+
+rpc::Service* DomainParticipant::find_service(
+        const std::string& service_name) const
+{
+    return impl_->find_service(service_name);
+}
+
+ReturnCode_t DomainParticipant::delete_service(
+        const rpc::Service* service)
+{
+    return impl_->delete_service(service);
+}
+
+rpc::Requester* DomainParticipant::create_service_requester(
+        rpc::Service* service,
+        const RequesterQos& requester_qos)
+{
+    return impl_->create_service_requester(service, requester_qos);
+}
+
+ReturnCode_t DomainParticipant::delete_service_requester(
+        const std::string& service_name,
+        rpc::Requester* requester)
+{
+    return impl_->delete_service_requester(service_name, requester);
+}
+
+rpc::Replier* DomainParticipant::create_service_replier(
+        rpc::Service* service,
+        const ReplierQos& replier_qos)
+{
+    return impl_->create_service_replier(service, replier_qos);
+}
+
+ReturnCode_t DomainParticipant::delete_service_replier(
+        const std::string& service_name,
+        rpc::Replier* replier)
+{
+    return impl_->delete_service_replier(service_name, replier);
+}
+
 TopicDescription* DomainParticipant::lookup_topicdescription(
         const std::string& topic_name) const
 {
@@ -615,6 +666,25 @@ TypeSupport DomainParticipant::find_type(
         const std::string& type_name) const
 {
     return impl_->find_type(type_name);
+}
+
+ReturnCode_t DomainParticipant::register_service_type(
+        rpc::ServiceTypeSupport service_type,
+        const std::string& service_type_name)
+{
+    return impl_->register_service_type(service_type, service_type_name);
+}
+
+ReturnCode_t DomainParticipant::unregister_service_type(
+        const std::string& service_name)
+{
+    return impl_->unregister_service_type(service_name);
+}
+
+rpc::ServiceTypeSupport DomainParticipant::find_service_type(
+        const std::string& service_type_name) const
+{
+    return impl_->find_service_type(service_type_name);
 }
 
 const InstanceHandle_t& DomainParticipant::get_instance_handle() const
