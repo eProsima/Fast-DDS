@@ -2449,7 +2449,7 @@ ReturnCode_t DomainParticipantImpl::check_qos(
             return RETCODE_INCONSISTENT_POLICY;
         }
     }
-    
+
     // Check participant's wire protocol (builtin flow controller) configuration
     if (RETCODE_OK == ret_val)
     {
@@ -2462,10 +2462,11 @@ ReturnCode_t DomainParticipantImpl::check_qos(
 
             // Check if any flow controller matches the builtin flow controller name
             bool found = std::any_of(flow_controllers.begin(), flow_controllers.end(),
-                                    [&builtin_flow_controller_name](const std::shared_ptr<fastdds::rtps::FlowControllerDescriptor>& fc)
-                                    {
-                                        return fc && fc->name == builtin_flow_controller_name;
-                                    });
+                            [&builtin_flow_controller_name](const std::shared_ptr<fastdds::rtps::
+                                    FlowControllerDescriptor>& fc)
+                            {
+                                return fc && fc->name == builtin_flow_controller_name;
+                            });
 
             if (!found)
             {
@@ -2531,7 +2532,8 @@ bool DomainParticipantImpl::can_qos_be_updated(
                 from.wire_protocol().builtin.writerHistoryMemoryPolicy) ||
                 !(to.wire_protocol().builtin.writerPayloadSize == from.wire_protocol().builtin.writerPayloadSize) ||
                 !(to.wire_protocol().builtin.mutation_tries == from.wire_protocol().builtin.mutation_tries) ||
-                !(to.wire_protocol().builtin.flow_controller_name == from.wire_protocol().builtin.flow_controller_name) ||
+                !(to.wire_protocol().builtin.flow_controller_name ==
+                from.wire_protocol().builtin.flow_controller_name) ||
                 !(to.wire_protocol().builtin.avoid_builtin_multicast ==
                 from.wire_protocol().builtin.avoid_builtin_multicast) ||
                 !(to.wire_protocol().builtin.discovery_config.discoveryProtocol ==

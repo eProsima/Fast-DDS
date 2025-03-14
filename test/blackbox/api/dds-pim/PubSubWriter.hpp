@@ -1005,7 +1005,7 @@ public:
         new_flow_controller->period_ms = static_cast<uint64_t>(periodInMs);
         participant_qos_.flow_controllers().push_back(new_flow_controller);
         participant_qos_.wire_protocol().builtin.flow_controller_name = new_flow_controller->name;
-        
+
         return *this;
     }
 

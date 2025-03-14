@@ -1530,7 +1530,7 @@ TEST_P(Discovery, single_unicast_pdp_response_flowcontroller)
     // Flowcontroller to limit the bandwidth
     auto test_flow_controller = std::make_shared<eprosima::fastdds::rtps::FlowControllerDescriptor>();
     test_flow_controller->name = "TestFlowController";
-    test_flow_controller->max_bytes_per_period = 3120; //3120 OK
+    test_flow_controller->max_bytes_per_period = 3700;
     test_flow_controller->period_ms = static_cast<uint64_t>(100);
 
     // The main participant will use the test transport, specific announcements configuration and a flowcontroller
@@ -1653,7 +1653,7 @@ TEST_P(Discovery, single_unicast_pdp_response_flowcontroller_limited)
     // Flowcontroller to limit the bandwidth
     auto test_flow_controller = std::make_shared<eprosima::fastdds::rtps::FlowControllerDescriptor>();
     test_flow_controller->name = "TestFlowController";
-    test_flow_controller->max_bytes_per_period = 3120; //3120 OK
+    test_flow_controller->max_bytes_per_period = 3700;
     test_flow_controller->period_ms = static_cast<uint64_t>(100000);
 
     // The main participant will use the test transport, specific announcements configuration and a flowcontroller
@@ -1687,7 +1687,7 @@ TEST_P(Discovery, single_unicast_pdp_response_flowcontroller_limited)
     wire_protocol.builtin.discovery_config.initial_announcements.period = { 0, 100000000u };
 
     std::vector<std::shared_ptr<PubSubParticipant<HelloWorldPubSubType>>> participants;
-    for (size_t i = 0; i < 5; ++i)
+    for (size_t i = 0; i < 10; ++i)
     {
         auto participant = std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(0, 0, 0, 0);
         // All participants use the same transport
@@ -1717,7 +1717,7 @@ TEST_P(Discovery, single_unicast_pdp_response_flowcontroller_limited)
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     // No more messages have been sent sin the limit was reached
-    EXPECT_EQ(num_unicast_sends.load(std::memory_order::memory_order_seq_cst),num_unicast_sends_limit);
+    EXPECT_EQ(num_unicast_sends.load(std::memory_order::memory_order_seq_cst), num_unicast_sends_limit);
 
     // Clean up
     participants.clear();

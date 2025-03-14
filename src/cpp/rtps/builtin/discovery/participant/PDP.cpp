@@ -1680,7 +1680,8 @@ WriterAttributes PDP::static_create_builtin_writer_attributes(
     if (!pattr.flow_controllers.empty())
     {
         attributes.mode = ASYNCHRONOUS_WRITER;
-        attributes.flow_controller_name = (pattr.builtin.flow_controller_name != "") ? pattr.builtin.flow_controller_name : fastdds::rtps::async_flow_controller_name;
+        attributes.flow_controller_name = (pattr.builtin.flow_controller_name !=
+                "") ? pattr.builtin.flow_controller_name : fastdds::rtps::async_flow_controller_name;
     }
 
     attributes.times.heartbeat_period = pdp_heartbeat_period;
