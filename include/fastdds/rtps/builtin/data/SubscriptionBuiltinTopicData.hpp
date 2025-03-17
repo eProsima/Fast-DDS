@@ -41,9 +41,9 @@ namespace rtps {
 /// Structure SubscriptionBuiltinTopicData, contains the information on a discovered subscription.
 struct SubscriptionBuiltinTopicData
 {
-    SubscriptionBuiltinTopicData() = default;
+    FASTDDS_EXPORTED_API SubscriptionBuiltinTopicData() = default;
 
-    SubscriptionBuiltinTopicData(
+    FASTDDS_EXPORTED_API SubscriptionBuiltinTopicData(
             const size_t max_unicast_locators,
             const size_t max_multicast_locators,
             const VariableLengthDataLimits& data_limits,

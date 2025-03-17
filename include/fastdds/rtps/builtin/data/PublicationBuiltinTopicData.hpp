@@ -43,9 +43,9 @@ namespace rtps {
 /// Structure PublicationBuiltinTopicData, contains the information on a discovered publication.
 struct PublicationBuiltinTopicData
 {
-    PublicationBuiltinTopicData();
+    FASTDDS_EXPORTED_API PublicationBuiltinTopicData();
 
-    PublicationBuiltinTopicData(
+    FASTDDS_EXPORTED_API PublicationBuiltinTopicData(
             const size_t max_unicast_locators,
             const size_t max_multicast_locators,
             const VariableLengthDataLimits& data_limits);

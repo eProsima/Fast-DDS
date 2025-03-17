@@ -367,7 +367,7 @@ public:
      * Set qos parameters
      * (only certain qos from PublicationBuiltinTopicData will be set).
      *
-     * @param qos Const reference to the SubscriptionBuiltinTopicData object.
+     * @param qos Const reference to the PublicationBuiltinTopicData object.
      * @param first_time Boolean indicating whether is the first time (true) or not (false).
      */
     void set_qos(
@@ -375,10 +375,10 @@ public:
             bool first_time);
 
     /**
-     * Set qos parameters from a ReaderQos structure.
+     * Set qos parameters from a WriterQos structure.
      * (only certain qos from PublicationBuiltinTopicData will be set).
      *
-     * @param qos Const reference to the ReaderQos object.
+     * @param qos Const reference to the WriterQos object.
      * @param first_time Boolean indicating whether is the first time (true) or not (false).
      */
     void set_qos(

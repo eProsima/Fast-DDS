@@ -33,10 +33,10 @@ namespace rtps {
 struct ParticipantBuiltinTopicData
 {
     //! Default constructor
-    ParticipantBuiltinTopicData() = default;
+    FASTDDS_EXPORTED_API ParticipantBuiltinTopicData() = default;
 
     //! Constructor with allocation attributes
-    ParticipantBuiltinTopicData(
+    FASTDDS_EXPORTED_API ParticipantBuiltinTopicData(
             const VendorId_t vendor_id,
             const dds::DomainId_t domain_id,
             const RTPSParticipantAllocationAttributes& allocation);
