@@ -96,12 +96,12 @@ public:
     /**
      * @brief Getter for the Requester's DataWriter
      */
-    virtual const DataWriter* get_requester_writer() const = 0;
+    virtual DataWriter* get_requester_writer() const = 0;
 
     /**
      * @brief Getter for the Requester's DataReader
      */
-    virtual const DataReader* get_requester_reader() const = 0;
+    virtual DataReader* get_requester_reader() const = 0;
 
 protected:
 

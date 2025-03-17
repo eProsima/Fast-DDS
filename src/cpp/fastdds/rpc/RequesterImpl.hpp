@@ -126,12 +126,12 @@ public:
     }
 
     // Getters for DDS Endpoints
-    inline const DataWriter* get_requester_writer() const override
+    inline DataWriter* get_requester_writer() const override
     {
         return requester_writer_;
     }
 
-    inline const DataReader* get_requester_reader() const override
+    inline DataReader* get_requester_reader() const override
     {
         return requester_reader_;
     }
