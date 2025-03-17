@@ -185,6 +185,7 @@ set(${PROJECT_NAME}_source_files
     rtps/builtin/discovery/participant/PDP.cpp
     rtps/builtin/discovery/participant/ServerAttributes.cpp
     rtps/builtin/discovery/participant/PDPSimple.cpp
+    rtps/builtin/discovery/participant/simple/PDPStatelessWriter.cpp
     rtps/builtin/discovery/participant/PDPListener.cpp
     rtps/builtin/discovery/endpoint/EDP.cpp
     rtps/builtin/discovery/endpoint/EDPSimple.cpp

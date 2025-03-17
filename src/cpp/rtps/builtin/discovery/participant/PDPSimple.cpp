@@ -284,7 +284,7 @@ void PDPSimple::announceParticipantState(
 
         if (!(dispose || new_change))
         {
-            endpoints->writer.writer_->unsent_changes_reset();
+            endpoints->writer.writer_->send_periodic_announcement();
         }
     }
 }
@@ -393,7 +393,7 @@ bool PDPSimple::create_dcps_participant_endpoints()
     if (mp_RTPSParticipant->createWriter(&rtps_writer, watt, writer.payload_pool_, writer.history_.get(),
             nullptr, writer_entity_id, true))
     {
-        writer.writer_ = dynamic_cast<StatelessWriter*>(rtps_writer);
+        writer.writer_ = dynamic_cast<PDPStatelessWriter*>(rtps_writer);
         assert(nullptr != writer.writer_);
 
 #if HAVE_SECURITY
@@ -410,7 +410,7 @@ bool PDPSimple::create_dcps_participant_endpoints()
                 fixed_locators.push_back(local_locator);
             }
         }
-        writer.writer_->set_fixed_locators(fixed_locators);
+        writer.writer_->set_initial_peers(fixed_locators);
     }
     else
     {
@@ -679,11 +679,6 @@ void PDPSimple::match_pdp_remote_endpoints(
 #endif // HAVE_SECURITY
         {
             writer->matched_reader_add(*temp_reader_data);
-        }
-
-        if (!writer_only && (BEST_EFFORT_RELIABILITY_QOS == reliability_kind))
-        {
-            endpoints->writer.writer_->unsent_changes_reset();
         }
     }
 }
