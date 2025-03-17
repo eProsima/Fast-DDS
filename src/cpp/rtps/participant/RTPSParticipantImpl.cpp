@@ -32,6 +32,7 @@
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <rtps/builtin/discovery/participant/simple/PDPStatelessWriter.hpp>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/common/EntityId_t.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
@@ -146,7 +147,8 @@ static void set_builtin_transports_from_env_var(
                         "LARGE_DATA", BuiltinTransports::LARGE_DATA,
                         "LARGE_DATAv6", BuiltinTransports::LARGE_DATAv6))
                 {
-                    EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Wrong value '" << env_value << "' for environment variable '" <<
+                    EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
+                            "Wrong value '" << env_value << "' for environment variable '" <<
                             env_var_name << "'. Leaving as DEFAULT");
                 }
                 // Max_msg_size parser
@@ -485,7 +487,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(
                     {
                         EPROSIMA_LOG_INFO(RTPS_PARTICIPANT,
                                 "Participant " << m_att.getName() << " with GUID " << m_guid <<
-                                " tries to create a TCP client for discovery server without providing a proper listening port." <<
+                                " tries to create a TCP client for discovery server without providing a proper listening port."
+                                               <<
                                 " No TCP participants will be able to connect to this participant, but it will be able make connections.");
                     }
                     for (fastdds::rtps::RemoteServerAttributes& it : m_att.builtin.discovery_config.m_DiscoveryServers)
@@ -1405,7 +1408,7 @@ bool RTPSParticipantImpl::createWriter(
         return false;
     }
 
-    auto callback = [hist, listen, &payload_pool, this]
+    auto callback = [hist, listen, entityId, &payload_pool, this]
                 (const GUID_t& guid, WriterAttributes& param, fastdds::rtps::FlowController* flow_controller,
                     IPersistenceService* persistence, bool is_reliable) -> RTPSWriter*
             {
@@ -1424,7 +1427,12 @@ bool RTPSParticipantImpl::createWriter(
                 }
                 else
                 {
-                    if (persistence != nullptr)
+                    if (entityId == c_EntityId_SPDPWriter)
+                    {
+                        return new PDPStatelessWriter(this, guid, param, flow_controller,
+                                       hist, listen);
+                    }
+                    else if (persistence != nullptr)
                     {
                         return new StatelessPersistentWriter(this, guid, param, payload_pool, flow_controller,
                                        hist, listen, persistence);
@@ -3021,7 +3029,8 @@ void RTPSParticipantImpl::environment_file_has_changed()
     }
     else
     {
-        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Trying to add Discovery Servers to a participant which is not a SERVER, BACKUP " <<
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
+                "Trying to add Discovery Servers to a participant which is not a SERVER, BACKUP " <<
                 "or an overriden CLIENT (SIMPLE participant transformed into CLIENT with the environment variable)");
     }
 }

@@ -76,6 +76,12 @@ protected:
             WriterHistory* hist,
             WriterListener* listen = nullptr);
 
+    mutable LocatorList_t fixed_locators_;
+
+    virtual bool send_to_fixed_locators(
+            CDRMessage_t* message,
+            std::chrono::steady_clock::time_point& max_blocking_time_point) const;
+
 public:
 
     virtual ~StatelessWriter();
@@ -159,10 +165,11 @@ public:
         //FOR NOW THERE IS NOTHING TO UPDATE.
     }
 
+    //! Deprecated in favor of PDP simple writer
     bool set_fixed_locators(
             const LocatorList_t& locator_list);
 
-    //!Reset the unsent changes.
+    //! Deprecated in favor of PDP simple writer
     void unsent_changes_reset();
 
     /**
@@ -272,7 +279,6 @@ private:
 
 
     bool is_inline_qos_expected_ = false;
-    LocatorList_t fixed_locators_;
     ResourceLimitedVector<std::unique_ptr<ReaderLocator>> matched_remote_readers_;
 
     std::condition_variable_any unsent_changes_cond_;
