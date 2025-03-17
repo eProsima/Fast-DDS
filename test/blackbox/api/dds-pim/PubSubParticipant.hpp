@@ -671,6 +671,13 @@ public:
         return *this;
     }
 
+    PubSubParticipant& wire_protocol_builtin(
+            const eprosima::fastrtps::rtps::BuiltinAttributes& wire_protocol_builtin)
+    {
+        participant_qos_.wire_protocol().builtin = wire_protocol_builtin;
+        return *this;
+    }
+
     bool update_wire_protocol(
             const eprosima::fastdds::dds::WireProtocolConfigQos& wire_protocol)
     {
