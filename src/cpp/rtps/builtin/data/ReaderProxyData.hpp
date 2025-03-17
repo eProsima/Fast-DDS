@@ -369,6 +369,28 @@ public:
     void update(
             ReaderProxyData* rdata);
 
+    /**
+     * Set qos parameters
+     * (only certain qos from SubscriptionBuiltinTopicData will be set).
+     *
+     * @param qos Const reference to the SubscriptionBuiltinTopicData object.
+     * @param first_time Boolean indicating whether is the first time (true) or not (false).
+     */
+    void set_qos(
+            const SubscriptionBuiltinTopicData& qos,
+            bool first_time);
+
+    /**
+     * Set qos parameters from a ReaderQos structure.
+     * (only certain qos from SubscriptionBuiltinTopicData will be set).
+     *
+     * @param qos Const reference to the ReaderQos object.
+     * @param first_time Boolean indicating whether is the first time (true) or not (false).
+     */
+    void set_qos(
+            const dds::ReaderQos& qos,
+            bool first_time);
+
 private:
 
     /**
@@ -376,6 +398,16 @@ private:
      */
     void init(
             const VariableLengthDataLimits& data_limits);
+
+    /**
+     * Checks whether the QoS can be updated with the provided QoS.
+     *
+     * @param qos The QoS to check.
+     * @return true if the QoS can be updated, false otherwise.
+     */
+    bool can_qos_be_updated(
+            const SubscriptionBuiltinTopicData& qos) const;
+
 
     //!Network configuration
     NetworkConfigSet_t m_network_configuration;

@@ -223,10 +223,30 @@ public:
     security::PluginEndpointSecurityAttributesMask plugin_security_attributes_ = 0UL;
 #endif // if HAVE_SECURITY
 
+    void set_qos(
+            const SubscriptionBuiltinTopicData&,
+            bool)
+    {
+    }
+
+    void set_qos(
+            const dds::ReaderQos&,
+            bool)
+    {
+    }
+
 private:
 
     void init(
-            const VariableLengthDataLimits& data_limits);
+            const VariableLengthDataLimits&)
+    {
+    }
+
+    bool can_qos_be_updated(
+            const SubscriptionBuiltinTopicData&) const
+    {
+        return true;
+    }
 
     bool m_is_alive;
     InstanceHandle_t m_key;

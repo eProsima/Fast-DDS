@@ -213,7 +213,30 @@ public:
     security::PluginEndpointSecurityAttributesMask plugin_security_attributes_ = 0UL;
 #endif // if HAVE_SECURITY
 
+    void set_qos(
+            const PublicationBuiltinTopicData&,
+            bool)
+    {
+    }
+
+    void set_qos(
+            const dds::WriterQos&,
+            bool)
+    {
+    }
+
 private:
+
+    void init(
+            const VariableLengthDataLimits&)
+    {
+    }
+
+    bool can_qos_be_updated(
+            const PublicationBuiltinTopicData&) const
+    {
+        return true;
+    }
 
     InstanceHandle_t m_key;
     InstanceHandle_t m_rtps_participant_key;

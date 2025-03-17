@@ -43,35 +43,12 @@ namespace rtps {
 /// Structure PublicationBuiltinTopicData, contains the information on a discovered publication.
 struct PublicationBuiltinTopicData
 {
-    PublicationBuiltinTopicData()
-    {
-        reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
-    }
+    PublicationBuiltinTopicData();
 
     PublicationBuiltinTopicData(
             const size_t max_unicast_locators,
             const size_t max_multicast_locators,
-            const VariableLengthDataLimits& data_limits)
-        : remote_locators(max_unicast_locators, max_multicast_locators)
-    {
-        user_data.set_max_size(data_limits.max_user_data);
-        partition.set_max_size(static_cast<uint32_t>(data_limits.max_partitions));
-        data_sharing.set_max_domains(static_cast<uint32_t>(data_limits.max_datasharing_domains));
-        reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
-    }
-
-    FASTDDS_EXPORTED_API void set_qos(
-            const PublicationBuiltinTopicData& qos,
-            bool first_time);
-
-    FASTDDS_EXPORTED_API void set_qos(
-            const dds::WriterQos& qos,
-            bool first_time);
-
-    FASTDDS_EXPORTED_API bool can_qos_be_updated(
-            const PublicationBuiltinTopicData& qos) const;
-
-    FASTDDS_EXPORTED_API void clear();
+            const VariableLengthDataLimits& data_limits);
 
     /// Builtin topic Key
     BuiltinTopicKey_t key{{0, 0, 0}};

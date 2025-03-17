@@ -21,6 +21,7 @@
 #define FASTDDS_RTPS_BUILTIN_DATA__PARTICIPANTBUILTINTOPICDATA_HPP
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/builtin/data/BuiltinTopicKey.hpp>
 #include <fastdds/rtps/common/ProductVersion_t.hpp>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
@@ -38,15 +39,7 @@ struct ParticipantBuiltinTopicData
     ParticipantBuiltinTopicData(
             const VendorId_t vendor_id,
             const dds::DomainId_t domain_id,
-            const RTPSParticipantAllocationAttributes& allocation)
-        : user_data(static_cast<uint16_t>(allocation.data_limits.max_user_data))
-        , properties(static_cast<uint32_t>(allocation.data_limits.max_properties))
-        , metatraffic_locators(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
-        , default_locators(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
-        , vendor_id(vendor_id)
-        , domain_id(domain_id)
-    {
-    }
+            const RTPSParticipantAllocationAttributes& allocation);
 
     /// Builtin topic Key
     BuiltinTopicKey_t key;
