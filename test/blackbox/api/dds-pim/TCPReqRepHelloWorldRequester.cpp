@@ -396,17 +396,10 @@ RequesterQos TCPReqRepHelloWorldRequester::create_requester_qos()
 
     reader_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     writer_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     //Increase default max_blocking_time to 1s in case the CPU is overhead
     reader_qos.reliability().max_blocking_time = Duration_t(1, 0);
     writer_qos.reliability().max_blocking_time = Duration_t(1, 0);
 
-    requester_qos.service_name = service.service_name();
-    requester_qos.request_topic_name = service.service_name() + "_Request";
-    requester_qos.reply_topic_name = service.service_name() + "_Reply";
-    requester_qos.request_type = service.service_type_name() + "_Request";
-    requester_qos.reply_type = service.service_type_name() + "_Reply";
     requester_qos.writer_qos = writer_qos;
     requester_qos.reader_qos = reader_qos;
 

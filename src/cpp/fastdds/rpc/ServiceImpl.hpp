@@ -166,36 +166,6 @@ public:
 
         bool valid = true;
 
-        if (qos.service_name != service_name_)
-        {
-            EPROSIMA_LOG_ERROR(SERVICE, "Service name in QoS does not match the service name");
-            valid = false;
-        }
-
-        if (qos.request_type != request_type_name_)
-        {
-            EPROSIMA_LOG_ERROR(SERVICE, "Request type in QoS does not match the service type name");
-            valid = false;
-        }
-
-        if (qos.reply_type != reply_type_name_)
-        {
-            EPROSIMA_LOG_ERROR(SERVICE, "Reply type in QoS does not match the service type name");
-            valid = false;
-        }
-
-        if (qos.request_topic_name != request_topic_name_)
-        {
-            EPROSIMA_LOG_ERROR(SERVICE, "Request topic name in QoS does not match the request topic name");
-            valid = false;
-        }
-
-        if (qos.reply_topic_name != reply_topic_name_)
-        {
-            EPROSIMA_LOG_ERROR(SERVICE, "Reply topic name in QoS does not match the reply topic name");
-            valid = false;
-        }
-
         if (qos.writer_qos.reliability().kind != RELIABLE_RELIABILITY_QOS)
         {
             EPROSIMA_LOG_ERROR(SERVICE, "Writer QoS reliability must be RELIABLE_RELIABILITY_QOS");
