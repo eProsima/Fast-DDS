@@ -303,11 +303,11 @@ void ReqRepHelloWorldRequester::process_status_changes()
 RequesterQos ReqRepHelloWorldRequester::create_requester_qos(
         bool volatile_durability_qos)
 {
-    DataWriterQos writer_qos;
-    DataReaderQos reader_qos;
     RequesterQos requester_qos;
     ReqRepHelloWorldService service;
 
+    DataWriterQos& writer_qos = requester_qos.writer_qos;
+    DataReaderQos& reader_qos = requester_qos.reader_qos;
     // Requester/Replier DataWriter QoS configuration
     reader_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     writer_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
@@ -336,9 +336,6 @@ RequesterQos ReqRepHelloWorldRequester::create_requester_qos(
     {
         writer_qos.properties().properties().emplace_back("fastdds.push_mode", "false");
     }
-
-    requester_qos.writer_qos = writer_qos;
-    requester_qos.reader_qos = reader_qos;
 
     return requester_qos;
 }

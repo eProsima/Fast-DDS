@@ -345,9 +345,10 @@ void TCPReqRepHelloWorldReplier::process_status_changes()
 ReplierQos TCPReqRepHelloWorldReplier::create_replier_qos()
 {
     ReplierQos replier_qos;
-    DataWriterQos writer_qos;
-    DataReaderQos reader_qos;
     TCPReqRepHelloWorldService service;
+
+    DataWriterQos& writer_qos = replier_qos.writer_qos;
+    DataReaderQos& reader_qos = replier_qos.reader_qos;
 
     reader_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     writer_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
@@ -355,9 +356,6 @@ ReplierQos TCPReqRepHelloWorldReplier::create_replier_qos()
     //Increase default max_blocking_time to 1s in case the CPU is overhead
     reader_qos.reliability().max_blocking_time = Duration_t(1, 0);
     writer_qos.reliability().max_blocking_time = Duration_t(1, 0);
-
-    replier_qos.writer_qos = writer_qos;
-    replier_qos.reader_qos = reader_qos;
 
     return replier_qos;
 }

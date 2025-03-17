@@ -390,18 +390,16 @@ void TCPReqRepHelloWorldRequester::process_status_changes()
 RequesterQos TCPReqRepHelloWorldRequester::create_requester_qos()
 {
     RequesterQos requester_qos;
-    DataWriterQos writer_qos;
-    DataReaderQos reader_qos;
     TCPReqRepHelloWorldService service;
+
+    DataWriterQos& writer_qos = requester_qos.writer_qos;
+    DataReaderQos& reader_qos = requester_qos.reader_qos;
 
     reader_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     writer_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     //Increase default max_blocking_time to 1s in case the CPU is overhead
     reader_qos.reliability().max_blocking_time = Duration_t(1, 0);
     writer_qos.reliability().max_blocking_time = Duration_t(1, 0);
-
-    requester_qos.writer_qos = writer_qos;
-    requester_qos.reader_qos = reader_qos;
 
     return requester_qos;
 }

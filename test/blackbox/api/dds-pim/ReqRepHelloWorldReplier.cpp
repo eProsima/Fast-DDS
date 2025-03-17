@@ -241,9 +241,10 @@ void ReqRepHelloWorldReplier::process_status_changes()
 ReplierQos ReqRepHelloWorldReplier::create_replier_qos()
 {
     ReplierQos replier_qos;
-    DataWriterQos writer_qos;
-    DataReaderQos reader_qos;
     ReqRepHelloWorldService service;
+
+    DataWriterQos& writer_qos = replier_qos.writer_qos;
+    DataReaderQos& reader_qos = replier_qos.reader_qos;
 
     // Requester/Replier DataWriter QoS configuration
     reader_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
@@ -267,9 +268,6 @@ ReplierQos ReqRepHelloWorldReplier::create_replier_qos()
     {
         writer_qos.properties().properties().emplace_back("fastdds.push_mode", "false");
     }
-
-    replier_qos.writer_qos = writer_qos;
-    replier_qos.reader_qos = reader_qos;
 
     return replier_qos;
 }
