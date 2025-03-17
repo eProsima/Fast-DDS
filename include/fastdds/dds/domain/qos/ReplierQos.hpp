@@ -36,7 +36,12 @@ public:
     /**
      * @brief Constructor
      */
-    FASTDDS_EXPORTED_API ReplierQos() = default;
+    FASTDDS_EXPORTED_API ReplierQos()
+    {
+        // Set reliability to RELIABLE_RELIABILITY_QOS by default
+        writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+        reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    }
 
     /**
      * @brief Equal comparison operator

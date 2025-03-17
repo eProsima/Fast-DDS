@@ -249,9 +249,6 @@ ReplierQos ReqRepHelloWorldReplier::create_replier_qos()
     reader_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     writer_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
-    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
     writer_qos.reliable_writer_qos().times.heartbeat_period.seconds = 1;
     writer_qos.reliable_writer_qos().times.heartbeat_period.nanosec = 0;
 
@@ -271,11 +268,6 @@ ReplierQos ReqRepHelloWorldReplier::create_replier_qos()
         writer_qos.properties().properties().emplace_back("fastdds.push_mode", "false");
     }
 
-    replier_qos.service_name = service.service_name();
-    replier_qos.request_topic_name = service.service_name() + "_Request";
-    replier_qos.reply_topic_name = service.service_name() + "_Reply";
-    replier_qos.request_type = service.service_type_name() + "_Request";
-    replier_qos.reply_type = service.service_type_name() + "_Reply";
     replier_qos.writer_qos = writer_qos;
     replier_qos.reader_qos = reader_qos;
 

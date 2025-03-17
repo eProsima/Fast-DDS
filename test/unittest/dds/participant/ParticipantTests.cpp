@@ -3326,21 +3326,7 @@ TEST(ParticipantTests, CreateRequesterReplierOnExternalService)
     ASSERT_NE(service_1, nullptr);
 
     RequesterQos requester_qos;
-    requester_qos.service_name = "Service";
-    requester_qos.request_type = "ServiceType_Request";
-    requester_qos.reply_type = "ServiceType_Reply";
-    requester_qos.request_topic_name = "Service_Request";
-    requester_qos.reply_topic_name = "Service_Reply";
-    requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     ReplierQos replier_qos;
-    replier_qos.service_name = "Service";
-    replier_qos.request_type = "ServiceType_Request";
-    replier_qos.reply_type = "ServiceType_Reply";
-    replier_qos.request_topic_name = "Service_Request";
-    replier_qos.reply_topic_name = "Service_Reply";
-    replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    replier_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
     // Error: Trying to create a requester/replier on a service that belongs to another participant
     ASSERT_EQ(participant_0->create_service_requester(service_1, requester_qos), nullptr);
@@ -3376,21 +3362,7 @@ TEST(ParticipantTests, DeleteRequesterReplierOnExternalService)
     ASSERT_NE(service_1, nullptr);
 
     RequesterQos requester_qos;
-    requester_qos.service_name = "Service";
-    requester_qos.request_type = "ServiceType_Request";
-    requester_qos.reply_type = "ServiceType_Reply";
-    requester_qos.request_topic_name = "Service_Request";
-    requester_qos.reply_topic_name = "Service_Reply";
-    requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     ReplierQos replier_qos;
-    replier_qos.service_name = "Service";
-    replier_qos.request_type = "ServiceType_Request";
-    replier_qos.reply_type = "ServiceType_Reply";
-    replier_qos.request_topic_name = "Service_Request";
-    replier_qos.reply_topic_name = "Service_Reply";
-    replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    replier_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
     rpc::Requester* requester_0 = participant_0->create_service_requester(service_0, requester_qos);
     rpc::Requester* requester_1 = participant_1->create_service_requester(service_1, requester_qos);

@@ -312,9 +312,6 @@ RequesterQos ReqRepHelloWorldRequester::create_requester_qos(
     reader_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     writer_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
-    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
     if (volatile_durability_qos)
     {
         reader_qos.durability().kind = VOLATILE_DURABILITY_QOS;
@@ -340,11 +337,6 @@ RequesterQos ReqRepHelloWorldRequester::create_requester_qos(
         writer_qos.properties().properties().emplace_back("fastdds.push_mode", "false");
     }
 
-    requester_qos.service_name = service.service_name();
-    requester_qos.request_topic_name = service.service_name() + "_Request";
-    requester_qos.reply_topic_name = service.service_name() + "_Reply";
-    requester_qos.request_type = service.service_type_name() + "_Request";
-    requester_qos.reply_type = service.service_type_name() + "_Reply";
     requester_qos.writer_qos = writer_qos;
     requester_qos.reader_qos = reader_qos;
 

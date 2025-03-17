@@ -149,13 +149,6 @@ TEST(ServiceTests, CreateRequesterValidParams)
     ASSERT_NE(service, nullptr);
 
     RequesterQos requester_qos;
-    requester_qos.service_name = "Service";
-    requester_qos.request_type = "ServiceType_Request";
-    requester_qos.reply_type = "ServiceType_Reply";
-    requester_qos.request_topic_name = "Service_Request";
-    requester_qos.reply_topic_name = "Service_Reply";
-    requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
     Requester* requester = participant->create_service_requester(service, requester_qos);
     ASSERT_NE(requester, nullptr);
@@ -176,156 +169,6 @@ TEST(ServiceTests, CreateRequesterValidParams)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
-TEST(ServiceTests, CreateRequesterInvalidServiceName)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    TypeSupport type(new TopicDataTypeMock());
-    ServiceTypeSupport service_type(type, type);
-    ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-
-    Service* service = participant->create_service("Service", "ServiceType");
-    ASSERT_NE(service, nullptr);
-
-    RequesterQos requester_qos;
-    requester_qos.service_name = "InvalidService";
-    requester_qos.request_type = "ServiceType_Request";
-    requester_qos.reply_type = "ServiceType_Reply";
-    requester_qos.request_topic_name = "Service_Request";
-    requester_qos.reply_topic_name = "Service_Reply";
-    requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
-    Requester* requester = participant->create_service_requester(service, requester_qos);
-    ASSERT_EQ(requester, nullptr);
-
-    ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
-    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ServiceTests, CreateRequesterInvalidRequestType)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    TypeSupport type(new TopicDataTypeMock());
-    ServiceTypeSupport service_type(type, type);
-    ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-
-    Service* service = participant->create_service("Service", "ServiceType");
-    ASSERT_NE(service, nullptr);
-
-    RequesterQos requester_qos;
-    requester_qos.service_name = "Service";
-    requester_qos.request_type = "InvalidType";
-    requester_qos.reply_type = "ServiceType_Reply";
-    requester_qos.request_topic_name = "Service_Request";
-    requester_qos.reply_topic_name = "Service_Reply";
-    requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
-    Requester* requester = participant->create_service_requester(service, requester_qos);
-    ASSERT_EQ(requester, nullptr);
-
-    ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
-    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ServiceTests, CreateRequesterInvalidReplyType)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    TypeSupport type(new TopicDataTypeMock());
-    ServiceTypeSupport service_type(type, type);
-    ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-
-    Service* service = participant->create_service("Service", "ServiceType");
-    ASSERT_NE(service, nullptr);
-
-    RequesterQos requester_qos;
-    requester_qos.service_name = "Service";
-    requester_qos.request_type = "ServiceType_Request";
-    requester_qos.reply_type = "InvalidType";
-    requester_qos.request_topic_name = "Service_Request";
-    requester_qos.reply_topic_name = "Service_Reply";
-    requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
-    Requester* requester = participant->create_service_requester(service, requester_qos);
-    ASSERT_EQ(requester, nullptr);
-
-    ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
-    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ServiceTests, CreateRequesterInvalidRequestTopicName)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    TypeSupport type(new TopicDataTypeMock());
-    ServiceTypeSupport service_type(type, type);
-    ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-
-    Service* service = participant->create_service("Service", "ServiceType");
-    ASSERT_NE(service, nullptr);
-
-    RequesterQos requester_qos;
-    requester_qos.service_name = "Service";
-    requester_qos.request_type = "ServiceType_Request";
-    requester_qos.reply_type = "ServiceType_Reply";
-    requester_qos.request_topic_name = "InvalidRequestTopic";
-    requester_qos.reply_topic_name = "Service_Reply";
-    requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
-    Requester* requester = participant->create_service_requester(service, requester_qos);
-    ASSERT_EQ(requester, nullptr);
-
-    ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
-    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ServiceTests, CreateRequesterInvalidReplyTopicName)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    TypeSupport type(new TopicDataTypeMock());
-    ServiceTypeSupport service_type(type, type);
-    ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-
-    Service* service = participant->create_service("Service", "ServiceType");
-    ASSERT_NE(service, nullptr);
-
-    RequesterQos requester_qos;
-    requester_qos.service_name = "Service";
-    requester_qos.request_type = "ServiceType_Request";
-    requester_qos.reply_type = "ServiceType_Reply";
-    requester_qos.request_topic_name = "Service_Request";
-    requester_qos.reply_topic_name = "InvalidReplyTopic";
-    requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
-    Requester* requester = participant->create_service_requester(service, requester_qos);
-    ASSERT_EQ(requester, nullptr);
-
-    ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
-    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
 TEST(ServiceTests, CreateRequesterInvalidWriterQos)
 {
     DomainParticipant* participant =
@@ -340,13 +183,7 @@ TEST(ServiceTests, CreateRequesterInvalidWriterQos)
     ASSERT_NE(service, nullptr);
 
     RequesterQos requester_qos;
-    requester_qos.service_name = "Service";
-    requester_qos.request_type = "ServiceType_Request";
-    requester_qos.reply_type = "ServiceType_Reply";
-    requester_qos.request_topic_name = "Service_Request";
-    requester_qos.reply_topic_name = "Service_Reply";
     requester_qos.writer_qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
-    requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
     Requester* requester = participant->create_service_requester(service, requester_qos);
     ASSERT_EQ(requester, nullptr);
@@ -370,12 +207,6 @@ TEST(ServiceTests, CreateRequesterInvalidReaderQos)
     ASSERT_NE(service, nullptr);
 
     RequesterQos requester_qos;
-    requester_qos.service_name = "Service";
-    requester_qos.request_type = "ServiceType_Request";
-    requester_qos.reply_type = "ServiceType_Reply";
-    requester_qos.request_topic_name = "Service_Request";
-    requester_qos.reply_topic_name = "Service_Reply";
-    requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     requester_qos.reader_qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
 
     Requester* requester = participant->create_service_requester(service, requester_qos);
@@ -400,13 +231,6 @@ TEST(ServiceTests, CreateReplierValidParams)
     ASSERT_NE(service, nullptr);
 
     ReplierQos replier_qos;
-    replier_qos.service_name = "Service";
-    replier_qos.request_type = "ServiceType_Request";
-    replier_qos.reply_type = "ServiceType_Reply";
-    replier_qos.request_topic_name = "Service_Request";
-    replier_qos.reply_topic_name = "Service_Reply";
-    replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    replier_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
     Replier* replier = participant->create_service_replier(service, replier_qos);
     ASSERT_NE(replier, nullptr);
@@ -427,156 +251,6 @@ TEST(ServiceTests, CreateReplierValidParams)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
-TEST(ServiceTests, CreateReplierInvalidServiceName)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    TypeSupport type(new TopicDataTypeMock());
-    ServiceTypeSupport service_type(type, type);
-    ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-
-    Service* service = participant->create_service("Service", "ServiceType");
-    ASSERT_NE(service, nullptr);
-
-    ReplierQos replier_qos;
-    replier_qos.service_name = "InvalidService";
-    replier_qos.request_type = "ServiceType_Request";
-    replier_qos.reply_type = "ServiceType_Reply";
-    replier_qos.request_topic_name = "Service_Request";
-    replier_qos.reply_topic_name = "Service_Reply";
-    replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    replier_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
-    Replier* replier = participant->create_service_replier(service, replier_qos);
-    ASSERT_EQ(replier, nullptr);
-
-    ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
-    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ServiceTests, CreateReplierInvalidRequestType)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    TypeSupport type(new TopicDataTypeMock());
-    ServiceTypeSupport service_type(type, type);
-    ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-
-    Service* service = participant->create_service("Service", "ServiceType");
-    ASSERT_NE(service, nullptr);
-
-    ReplierQos replier_qos;
-    replier_qos.service_name = "Service";
-    replier_qos.request_type = "InvalidType";
-    replier_qos.reply_type = "ServiceType_Reply";
-    replier_qos.request_topic_name = "Service_Request";
-    replier_qos.reply_topic_name = "Service_Reply";
-    replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    replier_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
-    Replier* replier = participant->create_service_replier(service, replier_qos);
-    ASSERT_EQ(replier, nullptr);
-
-    ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
-    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ServiceTests, CreateReplierInvalidReplyType)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    TypeSupport type(new TopicDataTypeMock());
-    ServiceTypeSupport service_type(type, type);
-    ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-
-    Service* service = participant->create_service("Service", "ServiceType");
-    ASSERT_NE(service, nullptr);
-
-    ReplierQos replier_qos;
-    replier_qos.service_name = "Service";
-    replier_qos.request_type = "ServiceType_Request";
-    replier_qos.reply_type = "InvalidType";
-    replier_qos.request_topic_name = "Service_Request";
-    replier_qos.reply_topic_name = "Service_Reply";
-    replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    replier_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
-    Replier* replier = participant->create_service_replier(service, replier_qos);
-    ASSERT_EQ(replier, nullptr);
-
-    ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
-    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ServiceTests, CreateReplierInvalidRequestTopicName)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    TypeSupport type(new TopicDataTypeMock());
-    ServiceTypeSupport service_type(type, type);
-    ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-
-    Service* service = participant->create_service("Service", "ServiceType");
-    ASSERT_NE(service, nullptr);
-
-    ReplierQos replier_qos;
-    replier_qos.service_name = "Service";
-    replier_qos.request_type = "ServiceType_Request";
-    replier_qos.reply_type = "ServiceType_Reply";
-    replier_qos.request_topic_name = "InvalidRequestTopic";
-    replier_qos.reply_topic_name = "Service_Reply";
-    replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    replier_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
-    Replier* replier = participant->create_service_replier(service, replier_qos);
-    ASSERT_EQ(replier, nullptr);
-
-    ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
-    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ServiceTests, CreateReplierInvalidReplyTopicName)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    TypeSupport type(new TopicDataTypeMock());
-    ServiceTypeSupport service_type(type, type);
-    ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-
-    Service* service = participant->create_service("Service", "ServiceType");
-    ASSERT_NE(service, nullptr);
-
-    ReplierQos replier_qos;
-    replier_qos.service_name = "Service";
-    replier_qos.request_type = "ServiceType_Request";
-    replier_qos.reply_type = "ServiceType_Reply";
-    replier_qos.request_topic_name = "Service_Request";
-    replier_qos.reply_topic_name = "InvalidReplyTopic";
-    replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    replier_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
-    Replier* replier = participant->create_service_replier(service, replier_qos);
-    ASSERT_EQ(replier, nullptr);
-
-    ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
-    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
 TEST(ServiceTests, CreateReplierInvalidWriterQos)
 {
     DomainParticipant* participant =
@@ -591,13 +265,7 @@ TEST(ServiceTests, CreateReplierInvalidWriterQos)
     ASSERT_NE(service, nullptr);
 
     ReplierQos replier_qos;
-    replier_qos.service_name = "Service";
-    replier_qos.request_type = "ServiceType_Request";
-    replier_qos.reply_type = "ServiceType_Reply";
-    replier_qos.request_topic_name = "Service_Request";
-    replier_qos.reply_topic_name = "Service_Reply";
     replier_qos.writer_qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
-    replier_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
     Replier* replier = participant->create_service_replier(service, replier_qos);
     ASSERT_EQ(replier, nullptr);
@@ -621,12 +289,6 @@ TEST(ServiceTests, CreateReplierInvalidReaderQos)
     ASSERT_NE(service, nullptr);
 
     ReplierQos replier_qos;
-    replier_qos.service_name = "Service";
-    replier_qos.request_type = "ServiceType_Request";
-    replier_qos.reply_type = "ServiceType_Reply";
-    replier_qos.request_topic_name = "Service_Request";
-    replier_qos.reply_topic_name = "Service_Reply";
-    replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     replier_qos.reader_qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
 
     Replier* replier = participant->create_service_replier(service, replier_qos);
@@ -662,22 +324,7 @@ TEST(ServiceTests, ChangeEnabledState)
     ASSERT_EQ(participant->delete_topic(reply_topic), RETCODE_OK);
 
     ReplierQos replier_qos;
-    replier_qos.service_name = "Service";
-    replier_qos.request_type = "ServiceType_Request";
-    replier_qos.reply_type = "ServiceType_Reply";
-    replier_qos.request_topic_name = "Service_Request";
-    replier_qos.reply_topic_name = "Service_Reply";
-    replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    replier_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
     RequesterQos requester_qos;
-    requester_qos.service_name = "Service";
-    requester_qos.request_type = "ServiceType_Request";
-    requester_qos.reply_type = "ServiceType_Reply";
-    requester_qos.request_topic_name = "Service_Request";
-    requester_qos.reply_topic_name = "Service_Reply";
-    requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
     Replier* replier = participant->create_service_replier(service, replier_qos);
     ASSERT_NE(replier, nullptr);
@@ -772,22 +419,7 @@ TEST(ServiceTests, EnableEntityOnDisabledService)
     // Create a requester and a replier, and try to enable them
     // They should not be enabled because the service is disabled
     ReplierQos replier_qos;
-    replier_qos.service_name = "Service";
-    replier_qos.request_type = "ServiceType_Request";
-    replier_qos.reply_type = "ServiceType_Reply";
-    replier_qos.request_topic_name = "Service_Request";
-    replier_qos.reply_topic_name = "Service_Reply";
-    replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    replier_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
     RequesterQos requester_qos;
-    requester_qos.service_name = "Service";
-    requester_qos.request_type = "ServiceType_Request";
-    requester_qos.reply_type = "ServiceType_Reply";
-    requester_qos.request_topic_name = "Service_Request";
-    requester_qos.reply_topic_name = "Service_Reply";
-    requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
     Replier* replier = participant->create_service_replier(service, replier_qos);
     ASSERT_NE(replier, nullptr);
@@ -829,22 +461,7 @@ TEST(ServiceTests, SendOrTakeOnDisabledRequesterReplier)
     // Create a requester and a replier, and try to send/take on them
     // It should return RETCODE_PRECONDITION_NOT_MET because the service is disabled
     ReplierQos replier_qos;
-    replier_qos.service_name = "Service";
-    replier_qos.request_type = "ServiceType_Request";
-    replier_qos.reply_type = "ServiceType_Reply";
-    replier_qos.request_topic_name = "Service_Request";
-    replier_qos.reply_topic_name = "Service_Reply";
-    replier_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    replier_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
     RequesterQos requester_qos;
-    requester_qos.service_name = "Service";
-    requester_qos.request_type = "ServiceType_Request";
-    requester_qos.reply_type = "ServiceType_Reply";
-    requester_qos.request_topic_name = "Service_Request";
-    requester_qos.reply_topic_name = "Service_Reply";
-    requester_qos.writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    requester_qos.reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
     Replier* replier = participant->create_service_replier(service, replier_qos);
     ASSERT_NE(replier, nullptr);
