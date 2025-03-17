@@ -84,10 +84,10 @@ public:
                     return locator == entry.first;
                 };
         auto it = std::find_if(collection_.begin(), collection_.end(), search);
-        if(it == collection_.end())
+        if (it == collection_.end())
         {
             EPROSIMA_LOG_ERROR(RTPS_OUT,
-                "Locator '" << locator << "' not found in collection. Adding entry.");
+                    "Locator '" << locator << "' not found in collection. Adding entry.");
             it = collection_.insert(it, entry_type(locator, value_type{}));
         }
         set_statistics_submessage_from_transport(locator, send_buffer, total_bytes, it->second);
