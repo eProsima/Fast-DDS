@@ -52,15 +52,20 @@ ReturnCode_t RequesterImpl::send_request(
 {
     FASTDDS_TODO_BEFORE(3, 3, "Implement matching algorithm");
 
-    rtps::WriteParams wparams;
-
     if (!enabled_)
     {
         EPROSIMA_LOG_ERROR(REQUESTER, "Trying to send a request with a disabled requester");
         return RETCODE_PRECONDITION_NOT_MET;
     }
 
-    return requester_writer_->write(data, wparams);
+    rtps::WriteParams wparams;
+    ReturnCode_t ret = requester_writer_->write(data, wparams);
+    if (RETCODE_OK == ret)
+    {
+        // Fill RequestInfo's related sample identity with the information expected for the corresponding reply
+        info.related_sample_identity = wparams.related_sample_identity();
+    }
+    return ret;
 }
 
 ReturnCode_t RequesterImpl::take_reply(
