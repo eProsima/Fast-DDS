@@ -1004,7 +1004,7 @@ ReturnCode_t struct_to_idl(
         }
 
     }
-        
+
     tabulate_n(n_modules, idl);
 
     idl << "struct " << type_name;
