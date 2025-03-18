@@ -455,6 +455,7 @@ bool StatelessWriter::matched_reader_add_edp(
                     {
                         filter_remote_locators(*reader.general_locator_selector_entry(),
                         m_att.external_unicast_locators, m_att.ignore_non_matching_locators);
+                        mp_RTPSParticipant->createSenderResources(data.remote_locators(), m_att);
                         update_reader_info(true);
                     }
                     return true;
@@ -543,14 +544,7 @@ bool StatelessWriter::matched_reader_add_edp(
     }
 
     // Create sender resources for the case when we send to a single reader
-    locator_selector_.locator_selector.reset(false);
-    locator_selector_.locator_selector.enable(data.guid());
-    mp_RTPSParticipant->network_factory().select_locators(locator_selector_.locator_selector);
-    RTPSParticipantImpl* part = mp_RTPSParticipant;
-    locator_selector_.locator_selector.for_each([part](const Locator_t& loc)
-            {
-                part->createSenderResources(loc);
-            });
+    mp_RTPSParticipant->createSenderResources(data.remote_locators(), m_att);
 
     // Create sender resources for the case when we send to all readers
     update_reader_info(true);
