@@ -198,7 +198,8 @@ const std::string& ros_discovery_server_env();
 
 /**
  * Get the value of environment variable ROS2_EASY_MODE_URI
- * @return The value of environment variable ROS2_EASY_MODE_URI. Empty string if the variable is not defined.
+ * @return The value of environment variable ROS2_EASY_MODE_URI.
+ * Empty string if the variable is not defined or does not have a valid IPv4 format.
  */
 const std::string& ros_easy_mode_env();
 
