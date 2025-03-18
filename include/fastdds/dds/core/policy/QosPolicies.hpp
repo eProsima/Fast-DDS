@@ -2734,6 +2734,9 @@ public:
      *
      * @param ip IP address to set
      * @note The IP address must be an IPv4 address. If it is not, the IP address will not be set.
+     *
+     * @return RETCODE_OK if the IP address is set, an specific error code otherwise:
+     * RETCODE_BAD_PARAMETER if the IP address is not an IPv4 address.
      */
     ReturnCode_t easy_mode(
             const std::string& ip)
