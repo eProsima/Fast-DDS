@@ -248,8 +248,7 @@ bool WLP::createEndpoints()
     mp_builtinWriterHistory = new WriterHistory(hatt, payload_pool_);
 
     // Built-in writer
-    WriterAttributes watt = PDP::static_create_builtin_writer_attributes(mp_participant);
-    rtps::set_builtin_endpoint_locators(watt.endpoint, pattr, nullptr, mp_builtinProtocols->m_att, mp_builtinProtocols);
+    WriterAttributes watt = mp_participant->pdp()->create_builtin_writer_attributes();
     watt.endpoint.remoteLocatorList = mp_builtinProtocols->m_initialPeersList;
 
     RTPSWriter* wout;
@@ -286,8 +285,7 @@ bool WLP::createEndpoints()
 
     // Built-in reader
 
-    ReaderAttributes ratt = PDP::static_create_builtin_reader_attributes(mp_participant);
-    rtps::set_builtin_endpoint_locators(ratt.endpoint, pattr, nullptr, mp_builtinProtocols->m_att, mp_builtinProtocols);
+    ReaderAttributes ratt = mp_participant->pdp()->create_builtin_reader_attributes();
     ratt.endpoint.remoteLocatorList = mp_builtinProtocols->m_initialPeersList;
     ratt.expects_inline_qos = true;
 
@@ -333,8 +331,7 @@ bool WLP::createSecureEndpoints()
     secure_payload_pool_->reserve_history(writer_pool_cfg, false);
     mp_builtinWriterSecureHistory = new WriterHistory(hatt, secure_payload_pool_);
 
-    WriterAttributes watt = PDP::static_create_builtin_writer_attributes(mp_participant);
-    rtps::set_builtin_endpoint_locators(watt.endpoint, pattr, nullptr, mp_builtinProtocols->m_att, mp_builtinProtocols);
+    WriterAttributes watt = mp_participant->pdp()->create_builtin_writer_attributes();
     //	Wparam.topic.topicName = "DCPSParticipantMessageSecure";
     //	Wparam.topic.topicDataType = "RTPSParticipantMessageData";
 
@@ -378,8 +375,7 @@ bool WLP::createSecureEndpoints()
     secure_payload_pool_->reserve_history(reader_pool_cfg, true);
 
     mp_builtinReaderSecureHistory = new ReaderHistory(hatt);
-    ReaderAttributes ratt = PDP::static_create_builtin_reader_attributes(mp_participant);
-    rtps::set_builtin_endpoint_locators(ratt.endpoint, pattr, nullptr, mp_builtinProtocols->m_att, mp_builtinProtocols);
+    ReaderAttributes ratt = mp_participant->pdp()->create_builtin_reader_attributes();
     ratt.expects_inline_qos = true;
     //Rparam.topic.topicName = "DCPSParticipantMessageSecure";
     //Rparam.topic.topicDataType = "RTPSParticipantMessageData";

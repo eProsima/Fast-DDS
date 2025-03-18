@@ -445,22 +445,6 @@ public:
 
     WriterAttributes create_builtin_writer_attributes();
 
-    /**
-     * Create the attributes common to any builtin reader
-     * It is a static method to allow TypeLookupManager to create builtin readers
-     * @return ReaderAttributes
-     */
-    static ReaderAttributes static_create_builtin_reader_attributes(
-            const RTPSParticipantImpl* RTPSParticipant);
-
-    /**
-     * Create the attributes common to any builtin writer
-     * It is a static method to allow TypeLookupManager to create builtin writers
-     * @return WriterAttributes
-     */
-    static WriterAttributes static_create_builtin_writer_attributes(
-            const RTPSParticipantImpl* RTPSParticipant);
-
 #if HAVE_SECURITY
     void add_builtin_security_attributes(
             ReaderAttributes& ratt,
@@ -694,14 +678,6 @@ private:
             RTPSParticipantListener* listener);
 
 };
-
-void set_builtin_endpoint_locators(
-        EndpointAttributes& endpoint,
-        const RTPSParticipantAttributes& pattr,
-        const ParticipantProxyData* part_data,
-        const BuiltinAttributes& builtin_attr,
-        const BuiltinProtocols* builtin_protocol);
-
 
 // configuration values for PDP reliable entities.
 extern const dds::Duration_t pdp_heartbeat_period;

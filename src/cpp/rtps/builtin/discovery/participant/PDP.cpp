@@ -1594,19 +1594,20 @@ static void set_builtin_matched_allocation(
     }
 }
 
-void set_builtin_endpoint_locators(
+static void set_builtin_endpoint_locators(
         EndpointAttributes& endpoint,
-        const RTPSParticipantAttributes& pattr,
-        const ParticipantProxyData* part_data,
-        const BuiltinAttributes& builtin_attr,
-        const BuiltinProtocols* builtin_protocol)
+        const PDP* pdp,
+        const BuiltinProtocols* builtin)
 {
+    const RTPSParticipantAttributes& pattr = pdp->getRTPSParticipant()->get_attributes();
+
+    auto part_data = pdp->getLocalParticipantProxyData();
     if (nullptr == part_data)
     {
         // Local participant data has not yet been created.
         // This means we are creating the PDP endpoints, so we copy the locators from mp_builtin
-        endpoint.multicastLocatorList = builtin_protocol->m_metatrafficMulticastLocatorList;
-        endpoint.unicastLocatorList = builtin_protocol->m_metatrafficUnicastLocatorList;
+        endpoint.multicastLocatorList = builtin->m_metatrafficMulticastLocatorList;
+        endpoint.unicastLocatorList = builtin->m_metatrafficUnicastLocatorList;
     }
     else
     {
@@ -1624,16 +1625,15 @@ void set_builtin_endpoint_locators(
     }
 
     // External locators are always taken from the same place
-    endpoint.external_unicast_locators = builtin_attr.metatraffic_external_unicast_locators;
+    endpoint.external_unicast_locators = pdp->builtin_attributes().metatraffic_external_unicast_locators;
     endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
 }
 
-ReaderAttributes PDP::static_create_builtin_reader_attributes(
-        const RTPSParticipantImpl* RTPSParticipant)
+ReaderAttributes PDP::create_builtin_reader_attributes()
 {
     ReaderAttributes attributes;
 
-    const RTPSParticipantAttributes& pattr = RTPSParticipant->get_attributes();
+    const RTPSParticipantAttributes& pattr = getRTPSParticipant()->get_attributes();
     set_builtin_matched_allocation(attributes.matched_writers_allocation, pattr);
 
     // Builtin endpoints are always reliable, transient local, keyed topics
@@ -1648,25 +1648,16 @@ ReaderAttributes PDP::static_create_builtin_reader_attributes(
 
     attributes.times.heartbeat_response_delay = pdp_heartbeat_response_delay;
 
-    return attributes;
-}
-
-ReaderAttributes PDP::create_builtin_reader_attributes()
-{
-    ReaderAttributes attributes = static_create_builtin_reader_attributes(getRTPSParticipant());
-
-    set_builtin_endpoint_locators(attributes.endpoint, getRTPSParticipant()->get_attributes(),
-            this->getLocalParticipantProxyData(), this->builtin_attributes(), mp_builtin);
+    set_builtin_endpoint_locators(attributes.endpoint, this, mp_builtin);
 
     return attributes;
 }
 
-WriterAttributes PDP::static_create_builtin_writer_attributes(
-        const RTPSParticipantImpl* RTPSParticipant)
+WriterAttributes PDP::create_builtin_writer_attributes()
 {
     WriterAttributes attributes;
 
-    const RTPSParticipantAttributes& pattr = RTPSParticipant->get_attributes();
+    const RTPSParticipantAttributes& pattr = getRTPSParticipant()->get_attributes();
     set_builtin_matched_allocation(attributes.matched_readers_allocation, pattr);
 
     // Builtin endpoints are always reliable, transient local, keyed topics
@@ -1688,15 +1679,7 @@ WriterAttributes PDP::static_create_builtin_writer_attributes(
     attributes.times.nack_response_delay = pdp_nack_response_delay;
     attributes.times.nack_supression_duration = pdp_nack_supression_duration;
 
-    return attributes;
-}
-
-WriterAttributes PDP::create_builtin_writer_attributes()
-{
-    WriterAttributes attributes = static_create_builtin_writer_attributes(getRTPSParticipant());
-
-    set_builtin_endpoint_locators(attributes.endpoint, getRTPSParticipant()->get_attributes(),
-            this->getLocalParticipantProxyData(), this->builtin_attributes(), mp_builtin);
+    set_builtin_endpoint_locators(attributes.endpoint, this, mp_builtin);
 
     return attributes;
 }

@@ -550,23 +550,19 @@ bool TypeLookupManager::create_endpoints()
 {
     bool ret = true;
 
-    const RTPSParticipantAttributes& pattr = participant_->get_attributes();
-
     // Built-in history attributes.
     HistoryAttributes hatt;
     hatt.initialReservedCaches = 20;
     hatt.maximumReservedCaches = 1000;
     hatt.payloadMaxSize = TypeLookupManager::typelookup_data_max_size;
 
-    WriterAttributes watt = PDP::static_create_builtin_writer_attributes(participant_);
-    rtps::set_builtin_endpoint_locators(watt.endpoint, pattr, nullptr, builtin_protocols_->m_att, builtin_protocols_);
+    WriterAttributes watt = participant_->pdp()->create_builtin_writer_attributes();
     watt.endpoint.remoteLocatorList = builtin_protocols_->m_initialPeersList;
     watt.endpoint.topicKind = fastdds::rtps::NO_KEY;
     watt.endpoint.durabilityKind = fastdds::rtps::VOLATILE;
     watt.mode = fastdds::rtps::ASYNCHRONOUS_WRITER;
 
-    ReaderAttributes ratt = PDP::static_create_builtin_reader_attributes(participant_);
-    rtps::set_builtin_endpoint_locators(ratt.endpoint, pattr, nullptr, builtin_protocols_->m_att, builtin_protocols_);
+    ReaderAttributes ratt = participant_->pdp()->create_builtin_reader_attributes();
     ratt.endpoint.remoteLocatorList = builtin_protocols_->m_initialPeersList;
     ratt.expects_inline_qos = true;
     ratt.endpoint.topicKind = fastdds::rtps::NO_KEY;

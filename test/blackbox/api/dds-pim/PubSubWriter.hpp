@@ -999,7 +999,7 @@ public:
             uint32_t periodInMs)
     {
         auto new_flow_controller = std::make_shared<eprosima::fastdds::rtps::FlowControllerDescriptor>();
-        new_flow_controller->name = "MyFlowController";
+        new_flow_controller->name = "MyBuiltinFlowController";
         new_flow_controller->scheduler = scheduler_policy;
         new_flow_controller->max_bytes_per_period = bytesPerPeriod;
         new_flow_controller->period_ms = static_cast<uint64_t>(periodInMs);
