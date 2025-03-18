@@ -687,7 +687,7 @@ ReturnCode_t alias_to_idl(
 
     while (n_modules > 0)
     {
-        tabulate_n(n_modules -1, idl);
+        tabulate_n(n_modules - 1, idl);
 
         idl << TYPE_CLOSURE;
 
@@ -784,7 +784,7 @@ ReturnCode_t bitmask_to_idl(
 
     // Close definition
 
-    ret = close_module_structure(n_modules,idl);
+    ret = close_module_structure(n_modules, idl);
 
     idl << TYPE_CLOSURE;
 
@@ -895,7 +895,7 @@ ReturnCode_t bitset_to_idl(
 
     // Close definition
 
-    ret = close_module_structure(n_modules,idl);
+    ret = close_module_structure(n_modules, idl);
 
     idl << TYPE_CLOSURE;
 
@@ -947,7 +947,7 @@ ReturnCode_t enum_to_idl(
 
     // Close definition
 
-    ret = close_module_structure(n_modules,idl);
+    ret = close_module_structure(n_modules, idl);
 
     idl << TYPE_CLOSURE;
 
@@ -981,13 +981,13 @@ ReturnCode_t struct_to_idl(
         case ExtensibilityKind::FINAL:
         {
             idl << "@extensibility(FINAL)\n";
-            
+
             break;
         }
         case ExtensibilityKind::MUTABLE:
         {
             idl << "@extensibility(MUTABLE)\n";
-            
+
             break;
         }
         case ExtensibilityKind::APPENDABLE:
@@ -1001,8 +1001,8 @@ ReturnCode_t struct_to_idl(
         {
             EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Extensibility kind not supported.");
             return RETCODE_BAD_PARAMETER;
-        }    
-    
+        }
+
     }
         
     tabulate_n(n_modules, idl);
@@ -1049,7 +1049,7 @@ ReturnCode_t struct_to_idl(
 
     // Close definition
 
-    ret = close_module_structure(n_modules,idl);
+    ret = close_module_structure(n_modules, idl);
 
     idl << TYPE_CLOSURE;
 
@@ -1138,7 +1138,7 @@ ReturnCode_t union_to_idl(
 
     // Close definition
 
-    ret = close_module_structure(n_modules,idl);
+    ret = close_module_structure(n_modules, idl);
 
     idl << TYPE_CLOSURE;
 
@@ -1210,8 +1210,8 @@ unsigned int resolve_module_structure(
 }
 
 ReturnCode_t close_module_structure(
-    unsigned int& n_modules,
-    std::ostream& idl) noexcept
+        unsigned int& n_modules,
+        std::ostream& idl) noexcept
 {
     while (n_modules > 0)
     {
@@ -1226,8 +1226,8 @@ ReturnCode_t close_module_structure(
 }
 
 void tabulate_n(
-    const unsigned int& n_modules,
-    std::ostream& idl) noexcept
+        const unsigned int& n_modules,
+        std::ostream& idl) noexcept
 {
     for (unsigned int i = 0; i < n_modules; i++)
     {

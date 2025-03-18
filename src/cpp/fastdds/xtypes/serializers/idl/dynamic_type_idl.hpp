@@ -249,7 +249,7 @@ ReturnCode_t close_module_structure(
  */
 void tabulate_n(
         const unsigned int& n_modules,
-        std::ostream& idl) noexcept;  
+        std::ostream& idl) noexcept;
 
 ///////////////////////
 // AUXILIARY METHODS //
