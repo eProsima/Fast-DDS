@@ -173,6 +173,18 @@ enum ParameterId_t : uint16_t
     PID_DATASHARING                         = 0x8006,
     PID_NETWORK_CONFIGURATION_SET           = 0x8007,
     PID_CUSTOM_RELATED_SAMPLE_IDENTITY      = 0x800f,
+    PID_RTPS_ENDPOINT                       = 0x8010,
+    /* Writer specific */
+    PID_WRITER_DATA_LIFECYCLE               = 0x8020,
+    PID_PUBLISH_MODE                        = 0x8021,
+    PID_RTPS_RELIABLE_WRITER                = 0x8022,
+    PID_WRITER_RESOURCE_LIMITS              = 0x8023,
+    /* Reader specific */
+    PID_READER_DATA_LIFECYCLE               = 0x8040,
+    PID_RTPS_RELIABLE_READER                = 0x8041,
+    PID_READER_RESOURCE_LIMITS              = 0x8042,
+    /* Participant specific */
+    PID_WIREPROTOCOL_CONFIG                 = 0x8080
 };
 
 /*!

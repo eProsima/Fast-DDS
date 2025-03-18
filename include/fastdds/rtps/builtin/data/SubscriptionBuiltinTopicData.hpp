@@ -20,8 +20,12 @@
 #define FASTDDS_RTPS_BUILTIN_DATA__SUBSCRIPTIONBUILTINTOPICDATA_HPP
 
 #include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/optional.hpp>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/core/policy/ReaderDataLifecycleQosPolicy.hpp>
+#include <fastdds/dds/core/policy/ReaderResourceLimitsQos.hpp>
+#include <fastdds/dds/core/policy/RTPSReliableReaderQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/builtin/data/BuiltinTopicKey.hpp>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
@@ -131,6 +135,24 @@ struct SubscriptionBuiltinTopicData
 
     /// Information for data sharing compatibility check.
     dds::DataSharingQosPolicy data_sharing;
+
+    /// History Qos, kind and depth
+    fastcdr::optional<dds::HistoryQosPolicy> history;
+
+    /// Resource limits Qos
+    fastcdr::optional<dds::ResourceLimitsQosPolicy> resource_limits;
+
+    /// Reader data lifecycle Qos
+    fastcdr::optional<dds::ReaderDataLifecycleQosPolicy> reader_data_lifecycle;
+
+    /// Reliable reader qos policy
+    fastcdr::optional<dds::RTPSReliableReaderQos> rtps_reliable_reader;
+
+    /// Endpoint qos policy
+    fastcdr::optional<dds::RTPSEndpointQos> endpoint;
+
+    /// Reader reosurce limits
+    fastcdr::optional<dds::ReaderResourceLimitsQos> reader_resource_limits;
 
     /// GUID
     GUID_t guid;

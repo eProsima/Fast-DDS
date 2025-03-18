@@ -123,6 +123,31 @@ ReaderProxyData& ReaderProxyData::operator =(
         type_information = readerInfo.type_information;
     }
 
+    if (readerInfo.history)
+    {
+        history = readerInfo.history;
+    }
+    if (readerInfo.resource_limits)
+    {
+        resource_limits = readerInfo.resource_limits;
+    }
+    if (readerInfo.reader_data_lifecycle)
+    {
+        reader_data_lifecycle = readerInfo.reader_data_lifecycle;
+    }
+    if (readerInfo.rtps_reliable_reader)
+    {
+        rtps_reliable_reader = readerInfo.rtps_reliable_reader;
+    }
+    if (readerInfo.endpoint)
+    {
+        endpoint = readerInfo.endpoint;
+    }
+    if (readerInfo.reader_resource_limits)
+    {
+        reader_resource_limits = readerInfo.reader_resource_limits;
+    }
+
     content_filter = readerInfo.content_filter;
     guid = readerInfo.guid;
     participant_guid = readerInfo.participant_guid;
@@ -1059,6 +1084,164 @@ bool ReaderProxyData::read_from_cdr_message(
                         break;
                     }
 
+                    case fastdds::dds::PID_HISTORY:
+                    {
+                        if (!history)
+                        {
+                            history.reset(true);
+                        }
+
+                        if (!dds::QosPoliciesSerializer<dds::HistoryQosPolicy>::read_from_cdr_message(
+                                    history.value(), msg, plength))
+                        {
+                            EPROSIMA_LOG_ERROR(RTPS_READER_PROXY_DATA,
+                                    "Received with error.");
+                            return false;
+                        }
+                        break;
+                    }
+
+                    case fastdds::dds::PID_RESOURCE_LIMITS:
+                    {
+                        if (!resource_limits)
+                        {
+                            resource_limits.reset(true);
+                        }
+
+                        if (!dds::QosPoliciesSerializer<dds::ResourceLimitsQosPolicy>::read_from_cdr_message(
+                                    resource_limits.value(), msg, plength))
+                        {
+                            EPROSIMA_LOG_ERROR(RTPS_READER_PROXY_DATA,
+                                    "Received with error.");
+                            return false;
+                        }
+                        break;
+                    }
+
+                    case fastdds::dds::PID_READER_DATA_LIFECYCLE:
+                    {
+                        VendorId_t local_vendor_id = source_vendor_id;
+                        if (c_VendorId_Unknown == local_vendor_id)
+                        {
+                            local_vendor_id = ((c_VendorId_Unknown == vendor_id) ? c_VendorId_eProsima : vendor_id);
+                        }
+
+                        // Ignore custom PID when coming from other vendors
+                        if (c_VendorId_eProsima != local_vendor_id)
+                        {
+                            EPROSIMA_LOG_INFO(RTPS_PROXY_DATA,
+                                    "Ignoring custom PID" << pid << " from vendor " << local_vendor_id);
+                            return true;
+                        }
+
+                        if (!reader_data_lifecycle)
+                        {
+                            reader_data_lifecycle.reset(true);
+                        }
+
+                        if (!dds::QosPoliciesSerializer<dds::ReaderDataLifecycleQosPolicy>::read_from_cdr_message(
+                                    reader_data_lifecycle.value(), msg, plength))
+                        {
+                            EPROSIMA_LOG_ERROR(RTPS_READER_PROXY_DATA,
+                                    "Received with error.");
+                            return false;
+                        }
+                        break;
+                    }
+
+                    case fastdds::dds::PID_RTPS_RELIABLE_READER:
+                    {
+                        VendorId_t local_vendor_id = source_vendor_id;
+                        if (c_VendorId_Unknown == local_vendor_id)
+                        {
+                            local_vendor_id = ((c_VendorId_Unknown == vendor_id) ? c_VendorId_eProsima : vendor_id);
+                        }
+
+                        // Ignore custom PID when coming from other vendors
+                        if (c_VendorId_eProsima != local_vendor_id)
+                        {
+                            EPROSIMA_LOG_INFO(RTPS_PROXY_DATA,
+                                    "Ignoring custom PID" << pid << " from vendor " << local_vendor_id);
+                            return true;
+                        }
+
+                        if (!rtps_reliable_reader)
+                        {
+                            rtps_reliable_reader.reset(true);
+                        }
+
+                        if (!dds::QosPoliciesSerializer<dds::RTPSReliableReaderQos>::read_from_cdr_message(
+                                    rtps_reliable_reader.value(), msg, plength))
+                        {
+                            EPROSIMA_LOG_ERROR(RTPS_READER_PROXY_DATA,
+                                    "Received with error.");
+                            return false;
+                        }
+                        break;
+                    }
+
+                    case fastdds::dds::PID_RTPS_ENDPOINT:
+                    {
+                        VendorId_t local_vendor_id = source_vendor_id;
+                        if (c_VendorId_Unknown == local_vendor_id)
+                        {
+                            local_vendor_id = ((c_VendorId_Unknown == vendor_id) ? c_VendorId_eProsima : vendor_id);
+                        }
+
+                        // Ignore custom PID when coming from other vendors
+                        if (c_VendorId_eProsima != local_vendor_id)
+                        {
+                            EPROSIMA_LOG_INFO(RTPS_PROXY_DATA,
+                                    "Ignoring custom PID" << pid << " from vendor " << local_vendor_id);
+                            return true;
+                        }
+
+                        if (!endpoint)
+                        {
+                            endpoint.reset(true);
+                        }
+
+                        if (!dds::QosPoliciesSerializer<dds::RTPSEndpointQos>::read_from_cdr_message(
+                                    endpoint.value(), msg, plength))
+                        {
+                            EPROSIMA_LOG_ERROR(RTPS_READER_PROXY_DATA,
+                                    "Received with error.");
+                            return false;
+                        }
+                        break;
+                    }
+
+                    case fastdds::dds::PID_READER_RESOURCE_LIMITS:
+                    {
+                        VendorId_t local_vendor_id = source_vendor_id;
+                        if (c_VendorId_Unknown == local_vendor_id)
+                        {
+                            local_vendor_id = ((c_VendorId_Unknown == vendor_id) ? c_VendorId_eProsima : vendor_id);
+                        }
+
+                        // Ignore custom PID when coming from other vendors
+                        if (c_VendorId_eProsima != local_vendor_id)
+                        {
+                            EPROSIMA_LOG_INFO(RTPS_PROXY_DATA,
+                                    "Ignoring custom PID" << pid << " from vendor " << local_vendor_id);
+                            return true;
+                        }
+
+                        if (!reader_resource_limits)
+                        {
+                            reader_resource_limits.reset(true);
+                        }
+
+                        if (!dds::QosPoliciesSerializer<dds::ReaderResourceLimitsQos>::read_from_cdr_message(
+                                    reader_resource_limits.value(), msg, plength))
+                        {
+                            EPROSIMA_LOG_ERROR(RTPS_READER_PROXY_DATA,
+                                    "Received with error.");
+                            return false;
+                        }
+                        break;
+                    }
+
                     default:
                     {
                         break;
@@ -1155,17 +1338,6 @@ void ReaderProxyData::clear()
     type_name = "";
     topic_name = "";
     topic_kind = NO_KEY;
-    content_filter.filter_class_name = "";
-    content_filter.content_filtered_topic_name = "";
-    content_filter.related_topic_name = "";
-    content_filter.filter_expression = "";
-    content_filter.expression_parameters.clear();
-    guid = c_Guid_Unknown;
-    participant_guid = c_Guid_Unknown;
-    remote_locators.unicast.clear();
-    remote_locators.multicast.clear();
-    loopback_transformation = NetworkConfigSet_t();
-    expects_inline_qos = false;
 
     durability.clear();
     deadline.clear();
@@ -1186,6 +1358,42 @@ void ReaderProxyData::clear()
     type_consistency.clear();
     type_information.clear();
     data_sharing.clear();
+    if (history)
+    {
+        history->clear();
+    }
+    if (resource_limits)
+    {
+        resource_limits->clear();
+    }
+    if (reader_data_lifecycle)
+    {
+        reader_data_lifecycle->clear();
+    }
+    if (rtps_reliable_reader)
+    {
+        rtps_reliable_reader->clear();
+    }
+    if (endpoint)
+    {
+        endpoint->clear();
+    }
+    if (reader_resource_limits)
+    {
+        reader_resource_limits->clear();
+    }
+
+    content_filter.filter_class_name = "";
+    content_filter.content_filtered_topic_name = "";
+    content_filter.related_topic_name = "";
+    content_filter.filter_expression = "";
+    content_filter.expression_parameters.clear();
+    guid = c_Guid_Unknown;
+    participant_guid = c_Guid_Unknown;
+    remote_locators.unicast.clear();
+    remote_locators.multicast.clear();
+    loopback_transformation = NetworkConfigSet_t();
+    expects_inline_qos = false;
     properties.clear();
     properties.length = 0;
 

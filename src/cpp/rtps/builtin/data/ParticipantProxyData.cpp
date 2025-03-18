@@ -928,6 +928,10 @@ void ParticipantProxyData::clear()
     properties.length = 0;
     user_data.clear();
     user_data.length = 0;
+    if (wire_protocol)
+    {
+        wire_protocol->clear();
+    }
 }
 
 void ParticipantProxyData::copy(
@@ -955,6 +959,11 @@ void ParticipantProxyData::copy(
     user_data = pdata.user_data;
     properties = pdata.properties;
     m_sample_identity = pdata.m_sample_identity;
+
+    if (pdata.wire_protocol)
+    {
+        wire_protocol = pdata.wire_protocol;
+    }
 
     // This method is only called when a new participant is discovered.The destination of the copy
     // will always be a new ParticipantProxyData or one from the pool, so there is no need for
