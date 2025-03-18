@@ -24,7 +24,12 @@
 #include <vector>
 
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
+#include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.hpp>
+#include <fastdds/rtps/attributes/ResourceManagement.hpp>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
+#include <fastdds/rtps/common/LocatorList.hpp>
+#include <fastdds/rtps/common/PortParameters.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
@@ -104,14 +109,14 @@ public:
 
     QosPolicy()
         : hasChanged(false)
-        , m_sendAlways(false)
+        , send_always_(false)
     {
     }
 
     QosPolicy(
             bool b_sendAlways)
         : hasChanged(false)
-        , m_sendAlways(b_sendAlways)
+        , send_always_(b_sendAlways)
     {
     }
 
@@ -126,7 +131,7 @@ public:
      */
     virtual bool sendAlways() const
     {
-        return m_sendAlways;
+        return send_always_;
     }
 
     virtual inline void clear() = 0;
@@ -144,7 +149,7 @@ public:
 
 protected:
 
-    bool m_sendAlways;
+    bool send_always_;
 
 };
 /**
@@ -578,7 +583,7 @@ public:
     {
         return collection_ == b.collection_ &&
                Parameter_t::operator ==(b) &&
-               m_sendAlways == b.m_sendAlways &&
+               send_always_ == b.send_always_ &&
                hasChanged == b.hasChanged;
     }
 
@@ -1288,7 +1293,85 @@ public:
     bool enabled = false;
 };
 
+//! Qos Policy to configure the endpoint
+class RTPSEndpointQos
+{
+public:
 
+    FASTDDS_EXPORTED_API RTPSEndpointQos() = default;
+
+    virtual FASTDDS_EXPORTED_API ~RTPSEndpointQos() = default;
+
+    bool operator ==(
+            const RTPSEndpointQos& b) const
+    {
+        return (this->unicast_locator_list == b.unicast_locator_list) &&
+               (this->multicast_locator_list == b.multicast_locator_list) &&
+               (this->remote_locator_list == b.remote_locator_list) &&
+               (this->external_unicast_locators == b.external_unicast_locators) &&
+               (this->ignore_non_matching_locators == b.ignore_non_matching_locators) &&
+               (this->user_defined_id == b.user_defined_id) &&
+               (this->entity_id == b.entity_id) &&
+               (this->history_memory_policy == b.history_memory_policy);
+    }
+
+    //! Unicast locator list
+    rtps::LocatorList unicast_locator_list;
+
+    //! Multicast locator list
+    rtps::LocatorList multicast_locator_list;
+
+    //! Remote locator list
+    rtps::LocatorList remote_locator_list;
+
+    //! The collection of external locators to use for communication.
+    fastdds::rtps::ExternalLocators external_unicast_locators;
+
+    //! Whether locators that don't match with the announced locators should be kept.
+    bool ignore_non_matching_locators = false;
+
+    //! User Defined ID, used for StaticEndpointDiscovery. <br> By default, -1.
+    int16_t user_defined_id = -1;
+
+    //! Entity ID, if the user wants to specify the EntityID of the endpoint. <br> By default, -1.
+    int16_t entity_id = -1;
+
+    //! Underlying History memory policy. <br> By default, PREALLOCATED_WITH_REALLOC_MEMORY_MODE.
+    fastdds::rtps::MemoryManagementPolicy_t history_memory_policy =
+            fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+};
+
+//!Qos Policy to configure the limit of the writer resources
+class WriterResourceLimitsQos
+{
+public:
+
+    /**
+     * @brief Constructor
+     */
+    FASTDDS_EXPORTED_API WriterResourceLimitsQos()
+        : matched_subscriber_allocation()
+        , reader_filters_allocation(0, 32u, 1u)
+    {
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual FASTDDS_EXPORTED_API ~WriterResourceLimitsQos() = default;
+
+    bool operator ==(
+            const WriterResourceLimitsQos& b) const
+    {
+        return (matched_subscriber_allocation == b.matched_subscriber_allocation) &&
+               (reader_filters_allocation == b.reader_filters_allocation);
+    }
+
+    //!Matched subscribers allocation limits.
+    fastdds::ResourceLimitedContainerConfig matched_subscriber_allocation;
+    //!Reader filters allocation limits.
+    fastdds::ResourceLimitedContainerConfig reader_filters_allocation;
+};
 
 enum DataSharingKind : uint16_t
 {
@@ -1449,14 +1532,14 @@ public:
     FASTDDS_EXPORTED_API TypeIdV1(
             const TypeIdV1& type)
         : Parameter_t(type.Pid, type.length)
-        , QosPolicy(type.m_sendAlways)
+        , QosPolicy(type.send_always_)
     {
     }
 
     FASTDDS_EXPORTED_API TypeIdV1(
             TypeIdV1&& type)
         : Parameter_t(type.Pid, type.length)
-        , QosPolicy(type.m_sendAlways)
+        , QosPolicy(type.send_always_)
     {
     }
 
@@ -1465,7 +1548,7 @@ public:
     {
         Pid = type.Pid;
         length = type.length;
-        m_sendAlways = type.m_sendAlways;
+        send_always_ = type.send_always_;
 
         return *this;
     }
@@ -1475,7 +1558,7 @@ public:
     {
         Pid = type.Pid;
         length = type.length;
-        m_sendAlways = type.m_sendAlways;
+        send_always_ = type.send_always_;
 
         return *this;
     }
@@ -1510,14 +1593,14 @@ public:
     FASTDDS_EXPORTED_API TypeObjectV1(
             const TypeObjectV1& type)
         : Parameter_t(type.Pid, type.length)
-        , QosPolicy(type.m_sendAlways)
+        , QosPolicy(type.send_always_)
     {
     }
 
     FASTDDS_EXPORTED_API TypeObjectV1(
             TypeObjectV1&& type)
         : Parameter_t(type.Pid, type.length)
-        , QosPolicy(type.m_sendAlways)
+        , QosPolicy(type.send_always_)
     {
     }
 
@@ -1526,7 +1609,7 @@ public:
     {
         Pid = type.Pid;
         length = type.length;
-        m_sendAlways = type.m_sendAlways;
+        send_always_ = type.send_always_;
 
         return *this;
     }
@@ -1536,7 +1619,7 @@ public:
     {
         Pid = type.Pid;
         length = type.length;
-        m_sendAlways = type.m_sendAlways;
+        send_always_ = type.send_always_;
 
         return *this;
     }
@@ -1574,14 +1657,14 @@ public:
     FASTDDS_EXPORTED_API TypeInformationParameter(
             const TypeInformationParameter& type)
         : Parameter_t(type.Pid, type.length)
-        , QosPolicy(type.m_sendAlways)
+        , QosPolicy(type.send_always_)
     {
     }
 
     FASTDDS_EXPORTED_API TypeInformationParameter(
             TypeInformationParameter&& type)
         : Parameter_t(type.Pid, type.length)
-        , QosPolicy(type.m_sendAlways)
+        , QosPolicy(type.send_always_)
     {
     }
 
@@ -1626,6 +1709,82 @@ public:
 };
 
 } // namespace xtypes
+
+//! Qos Policy that configures the wire protocol
+class WireProtocolConfigQos : public QosPolicy
+{
+
+public:
+
+    /**
+     * @brief Constructor
+     */
+    FASTDDS_EXPORTED_API WireProtocolConfigQos()
+        : QosPolicy(false)
+        , participant_id(-1)
+    {
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual FASTDDS_EXPORTED_API ~WireProtocolConfigQos() = default;
+
+    bool operator ==(
+            const WireProtocolConfigQos& b) const
+    {
+        return (this->prefix == b.prefix) &&
+               (this->participant_id == b.participant_id) &&
+               (this->builtin == b.builtin) &&
+               (this->port == b.port) &&
+               (this->default_unicast_locator_list == b.default_unicast_locator_list) &&
+               (this->default_multicast_locator_list == b.default_multicast_locator_list) &&
+               (this->default_external_unicast_locators == b.default_external_unicast_locators) &&
+               (this->ignore_non_matching_locators == b.ignore_non_matching_locators) &&
+               send_always_ == b.send_always_ &&
+               hasChanged == b.hasChanged;
+    }
+
+    inline void clear() override
+    {
+        WireProtocolConfigQos reset = WireProtocolConfigQos();
+        std::swap(*this, reset);
+    }
+
+    //! Optionally allows user to define the GuidPrefix_t
+    fastdds::rtps::GuidPrefix_t prefix;
+
+    //! Participant ID <br> By default, -1.
+    int32_t participant_id;
+
+    //! Builtin parameters.
+    fastdds::rtps::BuiltinAttributes builtin;
+
+    //! Port Parameters
+    fastdds::rtps::PortParameters port;
+
+    /**
+     * Default list of Unicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the case
+     * that it was defined with NO UnicastLocators. At least ONE locator should be included in this list.
+     */
+    rtps::LocatorList default_unicast_locator_list;
+
+    /**
+     * Default list of Multicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the
+     * case that it was defined with NO MulticastLocators. This is usually left empty.
+     */
+    rtps::LocatorList default_multicast_locator_list;
+
+    /**
+     * The collection of external locators to use for communication on user created topics.
+     */
+    rtps::ExternalLocators default_external_unicast_locators;
+
+    /**
+     * Whether locators that don't match with the announced locators should be kept.
+     */
+    bool ignore_non_matching_locators = false;
+};
 
 } //namespace dds
 } //namespace fastdds
