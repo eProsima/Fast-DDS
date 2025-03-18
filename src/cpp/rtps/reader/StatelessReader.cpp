@@ -107,7 +107,7 @@ bool StatelessReader::matched_writer_add_edp(
         std::unique_lock<RecursiveTimedMutex> guard(mp_mutex);
         listener = listener_;
 
-        bool is_same_process = RTPSDomainImpl::should_intraprocess_between(m_guid, wdata.guid);
+        bool is_same_process = RTPSDomainImpl::should_intraprocess_between(m_guid, wdata.guid());
         bool is_datasharing = is_datasharing_compatible_with(wdata);
 
         for (RemoteWriterInfo_t& writer : matched_writers_)
@@ -126,7 +126,7 @@ bool StatelessReader::matched_writer_add_edp(
 
                 if (!is_same_process && !is_datasharing)
                 {
-                    mp_RTPSParticipant->createSenderResources(wdata.remote_locators, m_att);
+                    mp_RTPSParticipant->createSenderResources(wdata.remote_locators(), m_att);
                 }
 
                 if (nullptr != listener)
@@ -152,12 +152,6 @@ bool StatelessReader::matched_writer_add_edp(
             }
         }
 
-<<<<<<< HEAD
-        bool is_same_process = RTPSDomainImpl::should_intraprocess_between(m_guid, wdata.guid());
-        bool is_datasharing = is_datasharing_compatible_with(wdata);
-
-=======
->>>>>>> 777a71b4 (Fix assertion on `OutputTrafficManager` (#5704))
         RemoteWriterInfo_t info;
         info.guid = wdata.guid();
         info.persistence_guid = wdata.persistence_guid();
@@ -209,7 +203,7 @@ bool StatelessReader::matched_writer_add_edp(
 
         if (!is_same_process && !is_datasharing)
         {
-            mp_RTPSParticipant->createSenderResources(wdata.remote_locators, m_att);
+            mp_RTPSParticipant->createSenderResources(wdata.remote_locators(), m_att);
         }
     }
 
