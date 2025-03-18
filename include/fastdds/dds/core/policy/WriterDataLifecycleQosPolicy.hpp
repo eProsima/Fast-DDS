@@ -19,6 +19,8 @@
 #ifndef FASTDDS_DDS_CORE_POLICY__WRITERDATALIFECYCLEQOSPOLICY_HPP
 #define FASTDDS_DDS_CORE_POLICY__WRITERDATALIFECYCLEQOSPOLICY_HPP
 
+#include <utility>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -43,6 +45,12 @@ public:
      */
     virtual FASTDDS_EXPORTED_API ~WriterDataLifecycleQosPolicy()
     {
+    }
+
+    inline void clear()
+    {
+        WriterDataLifecycleQosPolicy reset = WriterDataLifecycleQosPolicy();
+        std::swap(*this, reset);
     }
 
     bool operator ==(

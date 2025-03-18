@@ -22,105 +22,16 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/core/policy/ReaderDataLifecycleQosPolicy.hpp>
+#include <fastdds/dds/core/policy/ReaderResourceLimitsQos.hpp>
+#include <fastdds/dds/core/policy/RTPSReliableReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
-#include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 #include <fastdds/fastdds_dll.hpp>
+#include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-
-//! Qos Policy to configure the DisablePositiveACKsQos and the reader attributes
-class RTPSReliableReaderQos
-{
-public:
-
-    /**
-     * @brief Constructor
-     */
-    FASTDDS_EXPORTED_API RTPSReliableReaderQos()
-    {
-    }
-
-    /**
-     * @brief Destructor
-     */
-    virtual FASTDDS_EXPORTED_API ~RTPSReliableReaderQos() = default;
-
-    bool operator ==(
-            const RTPSReliableReaderQos& b) const
-    {
-        return (this->times == b.times) &&
-               (this->disable_positive_acks == b.disable_positive_acks);
-    }
-
-    inline void clear()
-    {
-        *this = RTPSReliableReaderQos();
-    }
-
-    /*!
-     * @brief Times associated with the Reliable Readers events.
-     */
-    fastdds::rtps::ReaderTimes times;
-
-    /*!
-     * @brief Control the sending of positive ACKs
-     */
-    DisablePositiveACKsQosPolicy disable_positive_acks;
-};
-
-//! Qos Policy to configure the limit of the reader resources
-class ReaderResourceLimitsQos
-{
-public:
-
-    /**
-     * @brief Constructor
-     */
-    FASTDDS_EXPORTED_API ReaderResourceLimitsQos() = default;
-
-    /**
-     * @brief Destructor
-     */
-    virtual FASTDDS_EXPORTED_API ~ReaderResourceLimitsQos() = default;
-
-    bool operator ==(
-            const ReaderResourceLimitsQos& b) const
-    {
-        return
-            (matched_publisher_allocation == b.matched_publisher_allocation) &&
-            (sample_infos_allocation == b.sample_infos_allocation) &&
-            (outstanding_reads_allocation == b.outstanding_reads_allocation) &&
-            (max_samples_per_read == b.max_samples_per_read);
-    }
-
-    inline void clear()
-    {
-        ReaderResourceLimitsQos reset = ReaderResourceLimitsQos();
-        std::swap(*this, reset);
-    }
-
-    //! Matched publishers allocation limits.
-    fastdds::ResourceLimitedContainerConfig matched_publisher_allocation;
-    //! SampleInfo allocation limits.
-    fastdds::ResourceLimitedContainerConfig sample_infos_allocation{ 32u };
-    //! Loaned collections allocation limits.
-    fastdds::ResourceLimitedContainerConfig outstanding_reads_allocation{ 2u };
-
-    /**
-     * Maximum number of samples to return on a single call to read / take.
-     *
-     * This attribute is a signed integer to be consistent with the @c max_samples argument of
-     * @ref DataReader methods, but should always have a strict positive value. Bear in mind that
-     * a big number here may cause the creation of the DataReader to fail due to pre-allocation of
-     * internal resources.
-     *
-     * Default value: 32.
-     */
-    int32_t max_samples_per_read = 32;
-};
 
 /**
  * Class DataReaderQos, containing all the possible Qos that can be set for a determined DataReader.
