@@ -2164,6 +2164,7 @@ rpc::Requester* DomainParticipantImpl::create_service_requester(
     const rpc::ServiceImpl* service_impl = dynamic_cast<const rpc::ServiceImpl*>(service);
     assert(service_impl != nullptr);
 
+    std::lock_guard<std::mutex> lock(mtx_services_);
     auto it = services_.find(service->get_service_name());
     if (it == services_.end())
     {
@@ -2217,6 +2218,7 @@ rpc::Replier* DomainParticipantImpl::create_service_replier(
     const rpc::ServiceImpl* service_impl = dynamic_cast<const rpc::ServiceImpl*>(service);
     assert(service_impl != nullptr);
 
+    std::lock_guard<std::mutex> lock(mtx_services_);
     auto it = services_.find(service->get_service_name());
     if (it == services_.end())
     {

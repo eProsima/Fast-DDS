@@ -53,7 +53,6 @@ ReturnCode_t RequesterImpl::send_request(
     FASTDDS_TODO_BEFORE(3, 3, "Implement matching algorithm");
 
     rtps::WriteParams wparams;
-    ReturnCode_t retcode;
 
     if (!enabled_)
     {
@@ -61,11 +60,7 @@ ReturnCode_t RequesterImpl::send_request(
         return RETCODE_PRECONDITION_NOT_MET;
     }
 
-    retcode = requester_writer_->write(data, wparams);
-    // Fill RequestInfo's related sample identity with the information expected for the corresponding reply
-    info.related_sample_identity = wparams.sample_identity();
-
-    return retcode;
+    return requester_writer_->write(data, wparams);
 }
 
 ReturnCode_t RequesterImpl::take_reply(
