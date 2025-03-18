@@ -227,9 +227,29 @@ ReturnCode_t node_to_idl(
  *
  * @return The number of modules resolved.
  */
-int resolve_module_structure(
+unsigned int resolve_module_structure(
         std::string& type_name,
         std::ostream& idl) noexcept;
+
+/**
+ * @brief Closes the module structure for the processed struct.
+ *
+ * @param n_modules The number of modules that need to be closed.
+ * @param idl The idl representation of the tree.
+ */
+ReturnCode_t close_module_structure(
+        unsigned int& n_modules,
+        std::ostream& idl) noexcept;
+
+/**
+ * @brief Introdces tabulation for the processed struct.
+ *
+ * @param n_modules THe number of modules we tabulate for.
+ * @param idl The idl representation of the tree.
+ */
+void tabulate_n(
+        const unsigned int& n_modules,
+        std::ostream& idl) noexcept;  
 
 ///////////////////////
 // AUXILIARY METHODS //
