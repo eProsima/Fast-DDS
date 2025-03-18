@@ -54,6 +54,13 @@ void register_ValueStruct_type_identifier(
         QualifiedTypeName type_name_ValueStruct = "ValueStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_ValueStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_ValueStruct;
+        AppliedAnnotationSeq tmp_ann_custom_ValueStruct;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_ValueStruct;
+        if (!tmp_ann_custom_ValueStruct.empty())
+        {
+            ann_custom_ValueStruct = tmp_ann_custom_ValueStruct;
+        }
+
         CompleteTypeDetail detail_ValueStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_ValueStruct, ann_custom_ValueStruct, type_name_ValueStruct.to_string());
         CompleteStructHeader header_ValueStruct;
         header_ValueStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_ValueStruct);
@@ -113,6 +120,13 @@ void register_MapStruct_type_identifier(
         QualifiedTypeName type_name_MapStruct = "MapStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_MapStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_MapStruct;
+        AppliedAnnotationSeq tmp_ann_custom_MapStruct;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_MapStruct;
+        if (!tmp_ann_custom_MapStruct.empty())
+        {
+            ann_custom_MapStruct = tmp_ann_custom_MapStruct;
+        }
+
         CompleteTypeDetail detail_MapStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_MapStruct, ann_custom_MapStruct, type_name_MapStruct.to_string());
         CompleteStructHeader header_MapStruct;
         header_MapStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_MapStruct);

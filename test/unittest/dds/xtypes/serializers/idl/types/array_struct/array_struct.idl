@@ -1,8 +1,10 @@
+@extensibility(APPENDABLE)
 struct NestedArrayElement
 {
     string my_string;
 };
 
+@extensibility(APPENDABLE)
 struct ComplexArrayElement
 {
     long my_number;
@@ -10,6 +12,7 @@ struct ComplexArrayElement
     NestedArrayElement my_nested_element;
 };
 
+@extensibility(APPENDABLE)
 struct ArrayStruct
 {
     long my_basic_array[10];

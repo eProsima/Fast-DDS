@@ -318,6 +318,13 @@ void register_StructType_type_identifier(
         QualifiedTypeName type_name_StructType = "TrialModule::StructModule::StructType";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_StructType;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_StructType;
+        AppliedAnnotationSeq tmp_ann_custom_StructType;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_StructType;
+        if (!tmp_ann_custom_StructType.empty())
+        {
+            ann_custom_StructType = tmp_ann_custom_StructType;
+        }
+
         CompleteTypeDetail detail_StructType = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_StructType, ann_custom_StructType, type_name_StructType.to_string());
         CompleteStructHeader header_StructType;
         header_StructType = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_StructType);
@@ -557,6 +564,13 @@ void register_ModuleStruct_type_identifier(
         QualifiedTypeName type_name_ModuleStruct = "ModuleStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_ModuleStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_ModuleStruct;
+        AppliedAnnotationSeq tmp_ann_custom_ModuleStruct;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_ModuleStruct;
+        if (!tmp_ann_custom_ModuleStruct.empty())
+        {
+            ann_custom_ModuleStruct = tmp_ann_custom_ModuleStruct;
+        }
+
         CompleteTypeDetail detail_ModuleStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_ModuleStruct, ann_custom_ModuleStruct, type_name_ModuleStruct.to_string());
         CompleteStructHeader header_ModuleStruct;
         header_ModuleStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_ModuleStruct);

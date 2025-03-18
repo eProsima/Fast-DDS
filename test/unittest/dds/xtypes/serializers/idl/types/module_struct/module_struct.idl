@@ -50,6 +50,7 @@ module TrialModule
 {
     module StructModule
     {
+        @extensibility(APPENDABLE)
         struct StructType
         {
             string struct_data;
@@ -73,6 +74,7 @@ module TrialModule
     };
 };
 
+@extensibility(APPENDABLE)
 struct ModuleStruct
 {
     TrialModule::AliasModule::AliasType alias_member;

@@ -54,6 +54,13 @@ void register_PrimitivesStruct_type_identifier(
         QualifiedTypeName type_name_PrimitivesStruct = "PrimitivesStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_PrimitivesStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_PrimitivesStruct;
+        AppliedAnnotationSeq tmp_ann_custom_PrimitivesStruct;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_PrimitivesStruct;
+        if (!tmp_ann_custom_PrimitivesStruct.empty())
+        {
+            ann_custom_PrimitivesStruct = tmp_ann_custom_PrimitivesStruct;
+        }
+
         CompleteTypeDetail detail_PrimitivesStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_PrimitivesStruct, ann_custom_PrimitivesStruct, type_name_PrimitivesStruct.to_string());
         CompleteStructHeader header_PrimitivesStruct;
         header_PrimitivesStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_PrimitivesStruct);

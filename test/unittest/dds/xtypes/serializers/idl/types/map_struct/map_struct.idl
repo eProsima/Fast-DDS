@@ -1,8 +1,10 @@
+@extensibility(APPENDABLE)
 struct ValueStruct
 {
     boolean value;
 };
 
+@extensibility(APPENDABLE)
 struct MapStruct
 {
     map<string, boolean> my_basic_map;

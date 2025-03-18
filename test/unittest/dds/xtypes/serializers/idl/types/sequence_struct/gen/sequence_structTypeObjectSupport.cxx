@@ -54,6 +54,13 @@ void register_NestedSequenceElement_type_identifier(
         QualifiedTypeName type_name_NestedSequenceElement = "NestedSequenceElement";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_NestedSequenceElement;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_NestedSequenceElement;
+        AppliedAnnotationSeq tmp_ann_custom_NestedSequenceElement;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_NestedSequenceElement;
+        if (!tmp_ann_custom_NestedSequenceElement.empty())
+        {
+            ann_custom_NestedSequenceElement = tmp_ann_custom_NestedSequenceElement;
+        }
+
         CompleteTypeDetail detail_NestedSequenceElement = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_NestedSequenceElement, ann_custom_NestedSequenceElement, type_name_NestedSequenceElement.to_string());
         CompleteStructHeader header_NestedSequenceElement;
         header_NestedSequenceElement = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_NestedSequenceElement);
@@ -121,6 +128,13 @@ void register_ComplexSequenceElement_type_identifier(
         QualifiedTypeName type_name_ComplexSequenceElement = "ComplexSequenceElement";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_ComplexSequenceElement;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_ComplexSequenceElement;
+        AppliedAnnotationSeq tmp_ann_custom_ComplexSequenceElement;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_ComplexSequenceElement;
+        if (!tmp_ann_custom_ComplexSequenceElement.empty())
+        {
+            ann_custom_ComplexSequenceElement = tmp_ann_custom_ComplexSequenceElement;
+        }
+
         CompleteTypeDetail detail_ComplexSequenceElement = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_ComplexSequenceElement, ann_custom_ComplexSequenceElement, type_name_ComplexSequenceElement.to_string());
         CompleteStructHeader header_ComplexSequenceElement;
         header_ComplexSequenceElement = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_ComplexSequenceElement);
@@ -238,6 +252,13 @@ void register_SequenceStruct_type_identifier(
         QualifiedTypeName type_name_SequenceStruct = "SequenceStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_SequenceStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_SequenceStruct;
+        AppliedAnnotationSeq tmp_ann_custom_SequenceStruct;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_SequenceStruct;
+        if (!tmp_ann_custom_SequenceStruct.empty())
+        {
+            ann_custom_SequenceStruct = tmp_ann_custom_SequenceStruct;
+        }
+
         CompleteTypeDetail detail_SequenceStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_SequenceStruct, ann_custom_SequenceStruct, type_name_SequenceStruct.to_string());
         CompleteStructHeader header_SequenceStruct;
         header_SequenceStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_SequenceStruct);

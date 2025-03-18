@@ -982,22 +982,19 @@ ReturnCode_t struct_to_idl(
         {
             idl << "@extensibility(FINAL)\n";
             
-            tabulate_n(n_modules, idl);
-
             break;
         }
         case ExtensibilityKind::MUTABLE:
         {
             idl << "@extensibility(MUTABLE)\n";
             
-            tabulate_n(n_modules, idl);
-
             break;
         }
         case ExtensibilityKind::APPENDABLE:
         {
             // Appendable is the default extensibility kind
-            //idl << "@extensibility(APPENDABLE)\n";
+            idl << "@extensibility(APPENDABLE)\n";
+
             break;
         }
         default:
@@ -1008,7 +1005,7 @@ ReturnCode_t struct_to_idl(
     
     }
         
-    //tabulate_n(n_modules, idl);
+    tabulate_n(n_modules, idl);
 
     idl << "struct " << type_name;
 
