@@ -1039,6 +1039,7 @@ bool StatefulWriter::matched_reader_add(
                         m_att.external_unicast_locators, m_att.ignore_non_matching_locators);
                         filter_remote_locators(*reader->async_locator_selector_entry(),
                         m_att.external_unicast_locators, m_att.ignore_non_matching_locators);
+                        mp_RTPSParticipant->createSenderResources(rdata.remote_locators(), m_att);
                         update_reader_info(locator_selector_general_, true);
                         update_reader_info(locator_selector_async_, true);
                     }
@@ -1113,6 +1114,7 @@ bool StatefulWriter::matched_reader_add(
         }
     }
 
+    mp_RTPSParticipant->createSenderResources(rdata.remote_locators(), m_att);
     update_reader_info(locator_selector_general_, true);
     update_reader_info(locator_selector_async_, true);
 

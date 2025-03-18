@@ -2094,6 +2094,28 @@ void RTPSParticipantImpl::createSenderResources(
     m_network_Factory.build_send_resources(send_resource_list_, locator);
 }
 
+void RTPSParticipantImpl::createSenderResources(
+        const RemoteLocatorList& locator_list,
+        const EndpointAttributes& param)
+{
+    using fastdds::rtps::ExternalLocatorsProcessor::filter_remote_locators;
+
+    LocatorSelectorEntry entry(locator_list.unicast.size(), locator_list.multicast.size());
+    entry.multicast = locator_list.multicast;
+    entry.unicast = locator_list.unicast;
+    filter_remote_locators(entry, param.external_unicast_locators, param.ignore_non_matching_locators);
+
+    std::lock_guard<std::timed_mutex> lock(m_send_resources_mutex_);
+    for (const Locator_t& locator : entry.unicast)
+    {
+        m_network_Factory.build_send_resources(send_resource_list_, locator);
+    }
+    for (const Locator_t& locator : entry.multicast)
+    {
+        m_network_Factory.build_send_resources(send_resource_list_, locator);
+    }
+}
+
 bool RTPSParticipantImpl::deleteUserEndpoint(
         const GUID_t& endpoint)
 {
