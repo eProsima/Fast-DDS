@@ -433,7 +433,7 @@ TEST(DSEasyMode, wire_protocol_qos_params_invalid)
     eprosima::fastdds::dds::WireProtocolConfigQos wire_protocol_qos;
 
     // Try to set easy mode IP using an invalid IP address
-    wire_protocol_qos.easy_mode("Foo");
+    ASSERT_EQ(wire_protocol_qos.easy_mode("Foo"), eprosima::fastdds::dds::RETCODE_BAD_PARAMETER);
 
     ASSERT_TRUE(wire_protocol_qos.easy_mode().empty());
 }

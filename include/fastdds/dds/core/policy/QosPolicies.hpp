@@ -23,11 +23,13 @@
 #include <bitset>
 #include <vector>
 
+#include <fastdds/dds/core/detail/DDSReturnCode.hpp>
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
 #include <fastdds/dds/core/Types.hpp>
 #include <fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobject.hpp>
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.hpp>
+#include <fastdds/rtps/attributes/ResourceManagement.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
@@ -35,7 +37,6 @@
 #include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/rtps/flowcontrol/FlowControllerConsts.hpp>
-#include <fastdds/rtps/attributes/ResourceManagement.hpp>
 #include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
@@ -2734,8 +2735,8 @@ public:
      * @param ip IP address to set
      * @note The IP address must be an IPv4 address. If it is not, the IP address will not be set.
      */
-    void easy_mode(
-            std::string ip)
+    ReturnCode_t easy_mode(
+            const std::string& ip)
     {
         // Check if the input is empty
         if (!ip.empty())
@@ -2746,11 +2747,13 @@ public:
                 EPROSIMA_LOG_ERROR(
                     WIREPROTOCOLQOS, "Invalid IP address format for ROS 2 Easy Mode. It must be an IPv4 address.");
 
-                return;
+                return RETCODE_BAD_PARAMETER;
             }
         }
 
         easy_mode_ = ip;
+
+        return RETCODE_OK;
     }
 
     /**
