@@ -1506,6 +1506,57 @@ TEST_P(TransportTCP, tcp_unique_network_flows_communication)
     EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(30)));
 }
 
+/**
+ * This verifies that a best effort reader is capable of creating resources when a new locator
+ * is received along a Data(W) in order to start communication. This will ensure the creation a new connect channel.
+ * The reader must have the lowest listening port to force the participant to create the channel.
+ */
+TEST_P(TransportTCP, best_effort_reader_tcp_resources_creation)
+{
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    // Large data setup is reused to enable UDP for multicast and TCP for data.
+    // However, the metatraffic unicast needs to be replaced for UDP to ensure that the TCP
+    // locator is not announced in the Data(P) (In large data the metatraffic unicast is TCP).
+    LocatorList metatraffic_unicast;
+    eprosima::fastdds::rtps::Locator_t udp_locator;
+    udp_locator.kind = LOCATOR_KIND_UDPv4;
+    eprosima::fastdds::rtps::IPLocator::setIPv4(udp_locator, "127.0.0.1");
+    metatraffic_unicast.push_back(udp_locator);
+
+    // Writer with highest listening port will wait for connection
+    writer.setup_large_data_tcp(use_ipv6, global_port + 1)
+            .metatraffic_unicast_locator_list(metatraffic_unicast)
+            .init();
+
+    // Reader with lowest listening port to force the connection channel creation
+    reader.setup_large_data_tcp(use_ipv6, global_port)
+            .reliability(eprosima::fastdds::dds::ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS)
+            .metatraffic_unicast_locator_list(metatraffic_unicast)
+            .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.wait_discovery(std::chrono::seconds(5));
+    reader.wait_discovery(std::chrono::seconds(5));
+
+    ASSERT_EQ(writer.get_matched(), 1u);
+    ASSERT_EQ(reader.get_matched(), 1u);
+
+    // Although participants have matched, the TCP connection might not be established yet.
+    // This active wait ensures the connection had time to be established before sending non-reliable samples.
+    std::this_thread::sleep_for(std::chrono::seconds(3));
+
+    auto data = default_helloworld_data_generator();
+    reader.startReception(data);
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+
+    reader.block_for_all();
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
