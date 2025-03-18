@@ -42,7 +42,7 @@ bool EDPClient::process_reader_proxy_data(
         RTPSReader* local_reader,
         ReaderProxyData* rdata)
 {
-    EPROSIMA_LOG_INFO(RTPS_EDP, rdata->guid().entityId);
+    EPROSIMA_LOG_INFO(RTPS_EDP, rdata->guid.entityId);
     (void)local_reader;
 
     auto* writer = &subscriptions_writer_;
@@ -75,7 +75,7 @@ bool EDPClient::process_writer_proxy_data(
         RTPSWriter* rtps_writer,
         WriterProxyData* wdata)
 {
-    EPROSIMA_LOG_INFO(RTPS_EDP, wdata->guid().entityId);
+    EPROSIMA_LOG_INFO(RTPS_EDP, wdata->guid.entityId);
     (void)rtps_writer;
 
     auto* writer = &publications_writer_;

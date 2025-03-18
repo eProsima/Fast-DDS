@@ -27,7 +27,6 @@
 #include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 
-#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/discovery/database/DiscoveryParticipantChangeData.hpp>
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpoints.hpp>
@@ -135,14 +134,14 @@ void PDPServerListener::on_new_cache_change_added(
         temp_participant_data_.clear();
         auto participant_data = temp_participant_data_;
 
-        if (participant_data.readFromCDRMessage(
+        if (participant_data.read_from_cdr_message(
                     &msg,
                     true,
                     pdp_server()->getRTPSParticipant()->network_factory(),
                     true,
                     change_in->vendor_id))
         {
-            if (parent_pdp_->getRTPSParticipant()->is_participant_ignored(participant_data.m_guid.guidPrefix))
+            if (parent_pdp_->getRTPSParticipant()->is_participant_ignored(participant_data.guid.guidPrefix))
             {
                 return;
             }
@@ -232,7 +231,7 @@ void PDPServerListener::on_new_cache_change_added(
             ParticipantProxyData* pdata = nullptr;
             for (ParticipantProxyData* it : pdp_server()->participant_proxies_)
             {
-                if (guid == it->m_guid)
+                if (guid == it->guid)
                 {
                     pdata = it;
                     break;
@@ -274,8 +273,8 @@ void PDPServerListener::on_new_cache_change_added(
             else
             {
                 // Update proxy
-                pdata->updateData(participant_data);
-                pdata->isAlive = true;
+                pdata->update_data(participant_data);
+                pdata->is_alive = true;
                 // Realease PDP mutex
                 lock.unlock();
 
@@ -297,12 +296,10 @@ void PDPServerListener::on_new_cache_change_added(
                     bool should_be_ignored = false;
                     {
                         std::lock_guard<std::mutex> cb_lock(pdp_server()->callback_mtx_);
-                        ParticipantBuiltinTopicData info;
-                        from_proxy_to_builtin(*pdata, info);
 
                         listener->on_participant_discovery(
                             pdp_server()->getRTPSParticipant()->getUserRTPSParticipant(),
-                            status, std::move(info), should_be_ignored);
+                            status, std::move(*pdata), should_be_ignored);
                     }
                     if (should_be_ignored)
                     {
@@ -376,7 +373,7 @@ std::pair<bool, bool> PDPServerListener::check_server_discovery_conditions(
     std::pair<bool, bool> ret{true, true};
 
     /* Check PID_VENDOR_ID */
-    if (participant_data.m_VendorId != fastdds::rtps::c_VendorId_eProsima)
+    if (participant_data.vendor_id != fastdds::rtps::c_VendorId_eProsima)
     {
         EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER,
                 "DATA(p|Up) from different vendor is not supported for Discover-Server operation");
@@ -387,7 +384,7 @@ std::pair<bool, bool> PDPServerListener::check_server_discovery_conditions(
     // domain ids to be the same
     /* Do not check PID_DOMAIN_ID */
 
-    fastdds::dds::ParameterPropertyList_t properties = participant_data.m_properties;
+    fastdds::dds::ParameterPropertyList_t properties = participant_data.properties;
 
     /* Check DS_VERSION */
     if (ret.first)

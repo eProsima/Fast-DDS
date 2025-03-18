@@ -21,6 +21,7 @@
 #define FASTDDS_RTPS_BUILTIN_DATA__PARTICIPANTBUILTINTOPICDATA_HPP
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/builtin/data/BuiltinTopicKey.hpp>
 #include <fastdds/rtps/common/ProductVersion_t.hpp>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
@@ -31,6 +32,15 @@ namespace rtps {
 
 struct ParticipantBuiltinTopicData
 {
+    //! Default constructor
+    FASTDDS_EXPORTED_API ParticipantBuiltinTopicData() = default;
+
+    //! Constructor with allocation attributes
+    FASTDDS_EXPORTED_API ParticipantBuiltinTopicData(
+            const VendorId_t vendor_id,
+            const dds::DomainId_t domain_id,
+            const RTPSParticipantAllocationAttributes& allocation);
+
     /// Builtin topic Key
     BuiltinTopicKey_t key;
 

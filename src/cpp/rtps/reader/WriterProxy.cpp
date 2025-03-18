@@ -131,16 +131,16 @@ void WriterProxy::start(
     heartbeat_response_->update_interval(reader_->getTimes().heartbeat_response_delay);
     initial_acknack_->update_interval(reader_->getTimes().initial_acknack_delay);
 
-    locators_entry_.remote_guid = attributes.guid();
-    guid_as_vector_.push_back(attributes.guid());
-    guid_prefix_as_vector_.push_back(attributes.guid().guidPrefix);
-    persistence_guid_ = attributes.persistence_guid();
+    locators_entry_.remote_guid = attributes.guid;
+    guid_as_vector_.push_back(attributes.guid);
+    guid_prefix_as_vector_.push_back(attributes.guid.guidPrefix);
+    persistence_guid_ = attributes.persistence_guid;
     is_alive_ = true;
-    is_on_same_process_ = RTPSDomainImpl::should_intraprocess_between(reader_->getGuid(), attributes.guid());
-    ownership_strength_ = attributes.m_qos.m_ownershipStrength.value;
-    liveliness_kind_ = attributes.m_qos.m_liveliness.kind;
-    locators_entry_.unicast = attributes.remote_locators().unicast;
-    locators_entry_.multicast = attributes.remote_locators().multicast;
+    is_on_same_process_ = RTPSDomainImpl::should_intraprocess_between(reader_->getGuid(), attributes.guid);
+    ownership_strength_ = attributes.ownership_strength.value;
+    liveliness_kind_ = attributes.liveliness.kind;
+    locators_entry_.unicast = attributes.remote_locators.unicast;
+    locators_entry_.multicast = attributes.remote_locators.multicast;
     filter_remote_locators(locators_entry_,
             reader_->getAttributes().external_unicast_locators, reader_->getAttributes().ignore_non_matching_locators);
     is_datasharing_writer_ = is_datasharing;
@@ -160,9 +160,9 @@ void WriterProxy::update(
 #endif // SHOULD_DEBUG_LINUX
 
     assert(is_alive_);
-    ownership_strength_ = attributes.m_qos.m_ownershipStrength.value;
-    locators_entry_.unicast = attributes.remote_locators().unicast;
-    locators_entry_.multicast = attributes.remote_locators().multicast;
+    ownership_strength_ = attributes.ownership_strength.value;
+    locators_entry_.unicast = attributes.remote_locators.unicast;
+    locators_entry_.multicast = attributes.remote_locators.multicast;
     filter_remote_locators(locators_entry_,
             reader_->getAttributes().external_unicast_locators, reader_->getAttributes().ignore_non_matching_locators);
 }

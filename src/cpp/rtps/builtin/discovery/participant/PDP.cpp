@@ -41,7 +41,6 @@
 #include <fastdds/utils/TypePropagation.hpp>
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
-#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/data/ProxyHashTables.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
@@ -60,6 +59,7 @@
 #if HAVE_SECURITY
 #include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #endif // if HAVE_SECURITY
+#include <utils/BuiltinTopicKeyConversions.hpp>
 #include <utils/shared_mutex.hpp>
 #include <utils/SystemInfo.hpp>
 #include <utils/TimeConversion.hpp>
@@ -205,13 +205,13 @@ ParticipantProxyData* PDP::add_participant_proxy_data(
 
     // Add returned entry to the collection
     ret_val->should_check_lease_duration = with_lease_duration;
-    ret_val->m_guid = participant_guid;
+    ret_val->guid = participant_guid;
     if (nullptr != participant_proxy_data)
     {
         ret_val->copy(*participant_proxy_data);
-        ret_val->isAlive = true;
+        ret_val->is_alive = true;
         // Notify discovery of remote participant
-        getRTPSParticipant()->on_entity_discovery(participant_guid, ret_val->m_properties);
+        getRTPSParticipant()->on_entity_discovery(participant_guid, ret_val->properties);
     }
     participant_proxies_.push_back(ret_val);
 
@@ -222,13 +222,13 @@ bool PDP::data_matches_with_prefix(
         const GuidPrefix_t& guid_prefix,
         const ParticipantProxyData& participant_data)
 {
-    bool ret_val = (guid_prefix == participant_data.m_guid.guidPrefix);
+    bool ret_val = (guid_prefix == participant_data.guid.guidPrefix);
 
 #if HAVE_SECURITY
     if (!ret_val)
     {
         GUID_t guid = GUID_t(guid_prefix, c_EntityId_RTPSParticipant);
-        return getRTPSParticipant()->security_manager().check_guid_comes_from(participant_data.m_guid, guid);
+        return getRTPSParticipant()->security_manager().check_guid_comes_from(participant_data.guid, guid);
     }
 #endif  // HAVE_SECURITY
 
@@ -306,32 +306,33 @@ void PDP::initializeParticipantProxyData(
     RTPSParticipantAttributes attributes = mp_RTPSParticipant->get_attributes();
     bool announce_locators = !mp_RTPSParticipant->is_intraprocess_only();
 
-    participant_data->m_domain_id = mp_RTPSParticipant->get_domain_id();
-    participant_data->m_leaseDuration = attributes.builtin.discovery_config.leaseDuration;
+    from_guid_prefix_to_topic_key(participant_data->guid.guidPrefix, participant_data->key.value);
+    participant_data->domain_id = mp_RTPSParticipant->get_domain_id();
+    participant_data->lease_duration = attributes.builtin.discovery_config.leaseDuration;
     //set_VendorId_eProsima(participant_data->m_VendorId);
-    participant_data->m_VendorId = c_VendorId_eProsima;
+    participant_data->vendor_id = c_VendorId_eProsima;
     participant_data->product_version.major = FASTDDS_VERSION_MAJOR;
     participant_data->product_version.minor = FASTDDS_VERSION_MINOR;
     participant_data->product_version.patch = FASTDDS_VERSION_MICRO;
     participant_data->machine_id = SystemInfo::instance().machine_id();
 
-    // TODO: participant_data->m_availableBuiltinEndpoints |= mp_builtin->available_builtin_endpoints();
+    // TODO: participant_data->m_available_builtin_endpoints |= mp_builtin->available_builtin_endpoints();
 
-    participant_data->m_availableBuiltinEndpoints |= builtin_endpoints_->builtin_endpoints();
+    participant_data->m_available_builtin_endpoints |= builtin_endpoints_->builtin_endpoints();
 
     if (attributes.builtin.use_WriterLivelinessProtocol)
     {
-        participant_data->m_availableBuiltinEndpoints |=
+        participant_data->m_available_builtin_endpoints |=
                 fastdds::rtps::BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
-        participant_data->m_availableBuiltinEndpoints |=
+        participant_data->m_available_builtin_endpoints |=
                 fastdds::rtps::BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
 
 #if HAVE_SECURITY
         if (mp_RTPSParticipant->is_secure())
         {
-            participant_data->m_availableBuiltinEndpoints |=
+            participant_data->m_available_builtin_endpoints |=
                     fastdds::rtps::BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_WRITER;
-            participant_data->m_availableBuiltinEndpoints |=
+            participant_data->m_available_builtin_endpoints |=
                     fastdds::rtps::BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_READER;
         }
 #endif // if HAVE_SECURITY
@@ -345,27 +346,27 @@ void PDP::initializeParticipantProxyData(
 
     if (should_announce_typelookup)
     {
-        participant_data->m_availableBuiltinEndpoints |=
+        participant_data->m_available_builtin_endpoints |=
                 fastdds::rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_READER;
-        participant_data->m_availableBuiltinEndpoints |=
+        participant_data->m_available_builtin_endpoints |=
                 fastdds::rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_WRITER;
 
-        participant_data->m_availableBuiltinEndpoints |=
+        participant_data->m_available_builtin_endpoints |=
                 fastdds::rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_WRITER;
-        participant_data->m_availableBuiltinEndpoints |=
+        participant_data->m_available_builtin_endpoints |=
                 fastdds::rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_READER;
     }
 
 #if HAVE_SECURITY
     if (mp_RTPSParticipant->is_secure())
     {
-        participant_data->m_availableBuiltinEndpoints |= mp_RTPSParticipant->security_manager().builtin_endpoints();
+        participant_data->m_available_builtin_endpoints |= mp_RTPSParticipant->security_manager().builtin_endpoints();
     }
 #endif // if HAVE_SECURITY
 
     if (announce_locators)
     {
-        participant_data->m_networkConfiguration = attributes.builtin.network_configuration;
+        participant_data->m_network_configuration = attributes.builtin.network_configuration;
 
         for (const Locator_t& loc : attributes.defaultUnicastLocatorList)
         {
@@ -376,10 +377,10 @@ void PDP::initializeParticipantProxyData(
             participant_data->default_locators.add_multicast_locator(loc);
         }
     }
-    participant_data->m_expectsInlineQos = false;
-    participant_data->m_guid = mp_RTPSParticipant->getGuid();
-    memcpy( participant_data->m_key.value, participant_data->m_guid.guidPrefix.value, 12);
-    memcpy( participant_data->m_key.value + 12, participant_data->m_guid.entityId.value, 4);
+    participant_data->m_expects_inline_qos = false;
+    participant_data->guid = mp_RTPSParticipant->getGuid();
+    memcpy( participant_data->m_key.value, participant_data->guid.guidPrefix.value, 12);
+    memcpy( participant_data->m_key.value + 12, participant_data->guid.entityId.value, 4);
 
     // Keep persistence Guid_Prefix_t in a specific property. This info must be propagated to all builtin endpoints
     {
@@ -427,9 +428,9 @@ void PDP::initializeParticipantProxyData(
                 attributes.default_external_unicast_locators);
     }
 
-    participant_data->m_participantName = std::string(attributes.getName());
+    participant_data->participant_name = std::string(attributes.getName());
 
-    participant_data->m_userData = attributes.userData;
+    participant_data->user_data = attributes.userData;
 
 #if HAVE_SECURITY
     if (mp_RTPSParticipant->is_secure())
@@ -530,7 +531,7 @@ bool PDP::enable()
     enabled_.store(true);
     // Notify "self-discovery"
     getRTPSParticipant()->on_entity_discovery(mp_RTPSParticipant->getGuid(),
-            get_participant_proxy_data(mp_RTPSParticipant->getGuid().guidPrefix)->m_properties);
+            get_participant_proxy_data(mp_RTPSParticipant->getGuid().guidPrefix)->properties);
 
     return builtin_endpoints_->enable_pdp_readers(mp_RTPSParticipant);
 }
@@ -553,7 +554,7 @@ void PDP::disable()
     // Unmatch all remote participants
     for (ParticipantProxyData* pdata : participants)
     {
-        actions_on_remote_participant_removed(pdata, pdata->m_guid,
+        actions_on_remote_participant_removed(pdata, pdata->guid,
                 ParticipantDiscoveryStatus::REMOVED_PARTICIPANT, nullptr);
     }
 }
@@ -606,7 +607,7 @@ void PDP::announceParticipantState(
                     aux_msg.msg_endian =  LITTLEEND;
 #endif // if __BIG_ENDIAN__
 
-                    if (proxy_data_copy.writeToCDRMessage(&aux_msg, true))
+                    if (proxy_data_copy.write_to_cdr_message(&aux_msg, true))
                     {
                         change->serializedPayload.length = (uint16_t)aux_msg.length;
 
@@ -647,7 +648,7 @@ void PDP::announceParticipantState(
                 aux_msg.msg_endian =  LITTLEEND;
 #endif // if __BIG_ENDIAN__
 
-                if (proxy_data_copy.writeToCDRMessage(&aux_msg, true))
+                if (proxy_data_copy.write_to_cdr_message(&aux_msg, true))
                 {
                     change->serializedPayload.length = (uint16_t)aux_msg.length;
 
@@ -685,7 +686,7 @@ void PDP::notify_and_maybe_ignore_new_participant(
     should_be_ignored = false;
 
     EPROSIMA_LOG_INFO(RTPS_PDP_DISCOVERY, "New participant "
-            << pdata->m_guid << " at "
+            << pdata->guid << " at "
             << "MTTLoc: " << pdata->metatraffic_locators
             << " DefLoc:" << pdata->default_locators);
 
@@ -695,19 +696,16 @@ void PDP::notify_and_maybe_ignore_new_participant(
         {
             std::lock_guard<std::mutex> cb_lock(callback_mtx_);
 
-            ParticipantBuiltinTopicData info;
-            from_proxy_to_builtin(*pdata, info);
-
             listener->on_participant_discovery(
                 getRTPSParticipant()->getUserRTPSParticipant(),
                 ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT,
-                info,
+                *pdata,
                 should_be_ignored);
         }
 
         if (should_be_ignored)
         {
-            getRTPSParticipant()->ignore_participant(pdata->m_guid.guidPrefix);
+            getRTPSParticipant()->ignore_participant(pdata->guid.guidPrefix);
         }
     }
 }
@@ -718,7 +716,7 @@ bool PDP::has_reader_proxy_data(
     std::lock_guard<std::recursive_mutex> guardPDP(*mp_mutex);
     for (ParticipantProxyData* pit : participant_proxies_)
     {
-        if (pit->m_guid.guidPrefix == reader.guidPrefix)
+        if (pit->guid.guidPrefix == reader.guidPrefix)
         {
             ProxyHashTable<ReaderProxyData>& readers = *pit->m_readers;
             return readers.find(reader.entityId) != readers.end();
@@ -734,12 +732,12 @@ bool PDP::lookupReaderProxyData(
     std::lock_guard<std::recursive_mutex> guardPDP(*mp_mutex);
     for (ParticipantProxyData* pit : participant_proxies_)
     {
-        if (pit->m_guid.guidPrefix == reader.guidPrefix)
+        if (pit->guid.guidPrefix == reader.guidPrefix)
         {
             auto rit = pit->m_readers->find(reader.entityId);
             if (rit != pit->m_readers->end())
             {
-                rdata.copy(rit->second);
+                rdata = *(rit->second);
                 return true;
             }
         }
@@ -753,7 +751,7 @@ bool PDP::has_writer_proxy_data(
     std::lock_guard<std::recursive_mutex> guardPDP(*mp_mutex);
     for (ParticipantProxyData* pit : participant_proxies_)
     {
-        if (pit->m_guid.guidPrefix == writer.guidPrefix)
+        if (pit->guid.guidPrefix == writer.guidPrefix)
         {
             ProxyHashTable<WriterProxyData>& writers = *pit->m_writers;
             return writers.find(writer.entityId) != writers.end();
@@ -769,12 +767,12 @@ bool PDP::lookupWriterProxyData(
     std::lock_guard<std::recursive_mutex> guardPDP(*mp_mutex);
     for (ParticipantProxyData* pit : participant_proxies_)
     {
-        if (pit->m_guid.guidPrefix == writer.guidPrefix)
+        if (pit->guid.guidPrefix == writer.guidPrefix)
         {
             auto wit = pit->m_writers->find(writer.entityId);
             if ( wit != pit->m_writers->end())
             {
-                wdata.copy(wit->second);
+                wdata = *(wit->second);
                 return true;
             }
         }
@@ -790,14 +788,14 @@ bool PDP::removeReaderProxyData(
 
     for (ParticipantProxyData* pit : participant_proxies_)
     {
-        if (pit->m_guid.guidPrefix == reader_guid.guidPrefix)
+        if (pit->guid.guidPrefix == reader_guid.guidPrefix)
         {
             auto rit = pit->m_readers->find(reader_guid.entityId);
 
             if (rit != pit->m_readers->end())
             {
                 ReaderProxyData* pR = rit->second;
-                mp_EDP->unpairReaderProxy(pit->m_guid, reader_guid);
+                mp_EDP->unpairReaderProxy(pit->guid, reader_guid);
 
                 RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
                 if (listener)
@@ -805,9 +803,7 @@ bool PDP::removeReaderProxyData(
                     RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
                     bool should_be_ignored = false;
                     auto reason = ReaderDiscoveryStatus::REMOVED_READER;
-                    SubscriptionBuiltinTopicData info;
-                    from_proxy_to_builtin(*pR, info);
-                    listener->on_reader_discovery(participant, reason, info, should_be_ignored);
+                    listener->on_reader_discovery(participant, reason, *pR, should_be_ignored);
                 }
 
 #ifdef FASTDDS_STATISTICS
@@ -815,7 +811,7 @@ bool PDP::removeReaderProxyData(
                 // notify monitor service
                 if (nullptr != proxy_observer)
                 {
-                    proxy_observer->on_remote_proxy_data_removed(pR->guid());
+                    proxy_observer->on_remote_proxy_data_removed(pR->guid);
                 }
 #endif // ifdef FASTDDS_STATISTICS
 
@@ -839,14 +835,14 @@ bool PDP::removeWriterProxyData(
 
     for (ParticipantProxyData* pit : participant_proxies_)
     {
-        if (pit->m_guid.guidPrefix == writer_guid.guidPrefix)
+        if (pit->guid.guidPrefix == writer_guid.guidPrefix)
         {
             auto wit = pit->m_writers->find(writer_guid.entityId);
 
             if (wit != pit->m_writers->end())
             {
                 WriterProxyData* pW = wit->second;
-                mp_EDP->unpairWriterProxy(pit->m_guid, writer_guid, false);
+                mp_EDP->unpairWriterProxy(pit->guid, writer_guid, false);
 
                 RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
                 if (listener)
@@ -854,9 +850,7 @@ bool PDP::removeWriterProxyData(
                     RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
                     bool should_be_ignored = false;
                     auto status = WriterDiscoveryStatus::REMOVED_WRITER;
-                    PublicationBuiltinTopicData info;
-                    from_proxy_to_builtin(*pW, info);
-                    listener->on_writer_discovery(participant, status, info, should_be_ignored);
+                    listener->on_writer_discovery(participant, status, *pW, should_be_ignored);
                 }
 
 #ifdef FASTDDS_STATISTICS
@@ -864,7 +858,7 @@ bool PDP::removeWriterProxyData(
                 // notify monitor service
                 if (nullptr != get_proxy_observer())
                 {
-                    proxy_observer->on_remote_proxy_data_removed(pW->guid());
+                    proxy_observer->on_remote_proxy_data_removed(pW->guid);
                 }
 #endif // ifdef FASTDDS_STATISTICS
 
@@ -888,9 +882,9 @@ bool PDP::lookup_participant_name(
     std::lock_guard<std::recursive_mutex> guardPDP(*mp_mutex);
     for (ParticipantProxyData* pit : participant_proxies_)
     {
-        if (pit->m_guid == guid)
+        if (pit->guid == guid)
         {
-            name = pit->m_participantName;
+            name = pit->participant_name;
             return true;
         }
     }
@@ -904,7 +898,7 @@ bool PDP::lookup_participant_key(
     std::lock_guard<std::recursive_mutex> guardPDP(*mp_mutex);
     for (ParticipantProxyData* pit : participant_proxies_)
     {
-        if (pit->m_guid == participant_guid)
+        if (pit->guid == participant_guid)
         {
             key = pit->m_key;
             return true;
@@ -928,10 +922,10 @@ ReaderProxyData* PDP::addReaderProxyData(
 
     for (ParticipantProxyData* pit : participant_proxies_)
     {
-        if (pit->m_guid.guidPrefix == reader_guid.guidPrefix)
+        if (pit->guid.guidPrefix == reader_guid.guidPrefix)
         {
             // Copy participant data to be used outside.
-            participant_guid = pit->m_guid;
+            participant_guid = pit->guid;
 
             // Check that it is not already there:
             auto rpi = pit->m_readers->find(reader_guid.entityId);
@@ -951,9 +945,7 @@ ReaderProxyData* PDP::addReaderProxyData(
                     RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
                     bool should_be_ignored = false;
                     auto reason = ReaderDiscoveryStatus::CHANGED_QOS_READER;
-                    SubscriptionBuiltinTopicData info;
-                    from_proxy_to_builtin(*ret_val, info);
-                    listener->on_reader_discovery(participant, reason, info, should_be_ignored);
+                    listener->on_reader_discovery(participant, reason, *ret_val, should_be_ignored);
                 }
 
                 return ret_val;
@@ -991,7 +983,7 @@ ReaderProxyData* PDP::addReaderProxyData(
             }
 
             // Copy network configuration from participant to reader proxy
-            ret_val->networkConfiguration(pit->m_networkConfiguration);
+            ret_val->network_configuration(pit->m_network_configuration);
 
             // Add to ParticipantProxyData
             (*pit->m_readers)[reader_guid.entityId] = ret_val;
@@ -1007,9 +999,7 @@ ReaderProxyData* PDP::addReaderProxyData(
                 RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
                 bool should_be_ignored = false;
                 auto reason = ReaderDiscoveryStatus::DISCOVERED_READER;
-                SubscriptionBuiltinTopicData info;
-                from_proxy_to_builtin(*ret_val, info);
-                listener->on_reader_discovery(participant, reason, info, should_be_ignored);
+                listener->on_reader_discovery(participant, reason, *ret_val, should_be_ignored);
             }
 
             return ret_val;
@@ -1034,10 +1024,10 @@ WriterProxyData* PDP::addWriterProxyData(
 
     for (ParticipantProxyData* pit : participant_proxies_)
     {
-        if (pit->m_guid.guidPrefix == writer_guid.guidPrefix)
+        if (pit->guid.guidPrefix == writer_guid.guidPrefix)
         {
             // Copy participant data to be used outside.
-            participant_guid = pit->m_guid;
+            participant_guid = pit->guid;
 
             // Check that it is not already there:
             auto wpi = pit->m_writers->find(writer_guid.entityId);
@@ -1057,9 +1047,7 @@ WriterProxyData* PDP::addWriterProxyData(
                     RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
                     bool should_be_ignored = false;
                     auto status = WriterDiscoveryStatus::CHANGED_QOS_WRITER;
-                    PublicationBuiltinTopicData info;
-                    from_proxy_to_builtin(*ret_val, info);
-                    listener->on_writer_discovery(participant, status, info, should_be_ignored);
+                    listener->on_writer_discovery(participant, status, *ret_val, should_be_ignored);
                 }
 
                 return ret_val;
@@ -1096,7 +1084,7 @@ WriterProxyData* PDP::addWriterProxyData(
             }
 
             // Copy network configuration from participant to writer proxy
-            ret_val->networkConfiguration(pit->m_networkConfiguration);
+            ret_val->networkConfiguration(pit->m_network_configuration);
 
             // Add to ParticipantProxyData
             (*pit->m_writers)[writer_guid.entityId] = ret_val;
@@ -1112,9 +1100,7 @@ WriterProxyData* PDP::addWriterProxyData(
                 RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
                 bool should_be_ignored = false;
                 auto status = WriterDiscoveryStatus::DISCOVERED_WRITER;
-                PublicationBuiltinTopicData info;
-                from_proxy_to_builtin(*ret_val, info);
-                listener->on_writer_discovery(participant, status, info, should_be_ignored);
+                listener->on_writer_discovery(participant, status, *ret_val, should_be_ignored);
             }
 
             return ret_val;
@@ -1152,17 +1138,17 @@ bool PDP::get_all_local_proxies(
             1);
 
     //! Add the Participant entity to the local entities
-    guids.push_back(local_participant->m_guid);
+    guids.push_back(local_participant->guid);
 
     // Add all the writers and readers belonging to the participant
     for (auto& writer : *(local_participant->m_writers))
     {
-        guids.push_back(writer.second->guid());
+        guids.push_back(writer.second->guid);
     }
 
     for (auto& reader : *(local_participant->m_readers))
     {
-        guids.push_back(reader.second->guid());
+        guids.push_back(reader.second->guid);
     }
 
     return true;
@@ -1182,11 +1168,11 @@ bool PDP::get_serialized_proxy(
         for (auto part_proxy = participant_proxies_.begin();
                 part_proxy != participant_proxies_.end(); ++part_proxy)
         {
-            if ((*part_proxy)->m_guid == guid)
+            if ((*part_proxy)->guid == guid)
             {
                 msg->msg_endian = LITTLEEND;
                 msg->max_size = msg->reserved_size = (*part_proxy)->get_serialized_size(true);
-                ret = (*part_proxy)->writeToCDRMessage(msg, true);
+                ret = (*part_proxy)->write_to_cdr_message(msg, true);
                 found = true;
                 break;
             }
@@ -1202,14 +1188,14 @@ bool PDP::get_serialized_proxy(
         for (auto part_proxy = participant_proxies_.begin();
                 part_proxy != participant_proxies_.end(); ++part_proxy)
         {
-            if ((*part_proxy)->m_guid.guidPrefix == guid.guidPrefix)
+            if ((*part_proxy)->guid.guidPrefix == guid.guidPrefix)
             {
                 for (auto& reader : *((*part_proxy)->m_readers))
                 {
-                    if (reader.second->guid() == guid)
+                    if (reader.second->guid == guid)
                     {
                         msg->max_size = msg->reserved_size = reader.second->get_serialized_size(true);
-                        ret = reader.second->writeToCDRMessage(msg, true);
+                        ret = reader.second->write_to_cdr_message(msg, true);
                         found = true;
                         break;
                     }
@@ -1228,14 +1214,14 @@ bool PDP::get_serialized_proxy(
         for (auto part_proxy = participant_proxies_.begin();
                 part_proxy != participant_proxies_.end(); ++part_proxy)
         {
-            if ((*part_proxy)->m_guid.guidPrefix == guid.guidPrefix)
+            if ((*part_proxy)->guid.guidPrefix == guid.guidPrefix)
             {
                 for (auto& writer : *((*part_proxy)->m_writers))
                 {
-                    if (writer.second->guid() == guid)
+                    if (writer.second->guid == guid)
                     {
                         msg->max_size = msg->reserved_size = writer.second->get_serialized_size(true);
-                        ret = writer.second->writeToCDRMessage(msg, true);
+                        ret = writer.second->write_to_cdr_message(msg, true);
                         found = true;
                         break;
                     }
@@ -1269,7 +1255,7 @@ bool PDP::remove_remote_participant(
         const GUID_t& partGUID,
         ParticipantDiscoveryStatus reason)
 {
-    if (partGUID == getLocalParticipantProxyData()->m_guid)
+    if (partGUID == getLocalParticipantProxyData()->guid)
     {
         // avoid removing our own data
         return false;
@@ -1284,7 +1270,7 @@ bool PDP::remove_remote_participant(
         for (ResourceLimitedVector<ParticipantProxyData*>::iterator pit = participant_proxies_.begin();
                 pit != participant_proxies_.end(); ++pit)
         {
-            if ((*pit)->m_guid == partGUID)
+            if ((*pit)->guid == partGUID)
             {
                 pdata = *pit;
                 participant_proxies_.erase(pit);
@@ -1316,7 +1302,7 @@ void PDP::actions_on_remote_participant_removed(
         for (auto pit : *pdata->m_readers)
         {
             ReaderProxyData* rit = pit.second;
-            GUID_t reader_guid(rit->guid());
+            GUID_t reader_guid(rit->guid);
             if (reader_guid != c_Guid_Unknown)
             {
                 mp_EDP->unpairReaderProxy(partGUID, reader_guid);
@@ -1326,16 +1312,14 @@ void PDP::actions_on_remote_participant_removed(
                     RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
                     bool should_be_ignored = false;
                     auto status = ReaderDiscoveryStatus::REMOVED_READER;
-                    SubscriptionBuiltinTopicData info;
-                    from_proxy_to_builtin(*rit, info);
-                    listener->on_reader_discovery(participant, status, info, should_be_ignored);
+                    listener->on_reader_discovery(participant, status, *rit, should_be_ignored);
                 }
             }
         }
         for (auto pit : *pdata->m_writers)
         {
             WriterProxyData* wit = pit.second;
-            GUID_t writer_guid(wit->guid());
+            GUID_t writer_guid(wit->guid);
             if (writer_guid != c_Guid_Unknown)
             {
                 mp_EDP->unpairWriterProxy(partGUID, writer_guid,
@@ -1346,9 +1330,7 @@ void PDP::actions_on_remote_participant_removed(
                     RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
                     bool should_be_ignored = false;
                     auto status = WriterDiscoveryStatus::REMOVED_WRITER;
-                    PublicationBuiltinTopicData info;
-                    from_proxy_to_builtin(*wit, info);
-                    listener->on_writer_discovery(participant, status, info, should_be_ignored);
+                    listener->on_writer_discovery(participant, status, *wit, should_be_ignored);
                 }
             }
         }
@@ -1377,12 +1359,9 @@ void PDP::actions_on_remote_participant_removed(
     {
         std::lock_guard<std::mutex> lock(callback_mtx_);
 
-        ParticipantBuiltinTopicData info;
-        from_proxy_to_builtin(*pdata, info);
-
         bool should_be_ignored = false;
         listener->on_participant_discovery(mp_RTPSParticipant->getUserRTPSParticipant(), reason,
-                info, should_be_ignored);
+                *pdata, should_be_ignored);
     }
 
     {
@@ -1443,10 +1422,10 @@ void PDP::assert_remote_participant_liveliness(
 
     for (ParticipantProxyData* it : participant_proxies_)
     {
-        if (it->m_guid.guidPrefix == remote_guid)
+        if (it->guid.guidPrefix == remote_guid)
         {
-            // TODO Ricardo: Study if isAlive attribute is necessary.
-            it->isAlive = true;
+            // TODO Ricardo: Study if is_alive attribute is necessary.
+            it->is_alive = true;
             it->assert_liveliness();
             break;
         }
@@ -1460,7 +1439,7 @@ CDRMessage_t PDP::get_participant_proxy_data_serialized(
     CDRMessage_t cdr_msg(RTPSMESSAGE_DEFAULT_SIZE);
     cdr_msg.msg_endian = endian;
 
-    if (!getLocalParticipantProxyData()->writeToCDRMessage(&cdr_msg, false))
+    if (!getLocalParticipantProxyData()->write_to_cdr_message(&cdr_msg, false))
     {
         cdr_msg.pos = 0;
         cdr_msg.length = 0;
@@ -1494,17 +1473,17 @@ void PDP::check_remote_participant_liveliness(
 
     if (remote_participant->should_check_lease_duration)
     {
-        assert(GUID_t::unknown() != remote_participant->m_guid);
+        assert(GUID_t::unknown() != remote_participant->guid);
         // Check last received message's time_point plus lease duration time doesn't overcome now().
         // If overcame, remove participant.
         auto now = std::chrono::steady_clock::now();
         auto real_lease_tm = remote_participant->last_received_message_tm() +
                 std::chrono::microseconds(fastdds::rtps::TimeConv::Duration_t2MicroSecondsInt64(remote_participant->
-                                m_leaseDuration));
+                                lease_duration));
         if (now > real_lease_tm)
         {
             guard.unlock();
-            remove_remote_participant(remote_participant->m_guid, ParticipantDiscoveryStatus::DROPPED_PARTICIPANT);
+            remove_remote_participant(remote_participant->guid, ParticipantDiscoveryStatus::DROPPED_PARTICIPANT);
             return;
         }
 
@@ -1564,7 +1543,7 @@ void PDP::set_external_participant_properties_(
     {
         if (property.propagate())
         {
-            participant_data->m_properties.push_back(property.name(), property.value());
+            participant_data->properties.push_back(property.name(), property.value());
         }
     }
 
@@ -1573,7 +1552,7 @@ void PDP::set_external_participant_properties_(
     std::stringstream participant_type;
     participant_type << part_attributes.builtin.discovery_config.discoveryProtocol;
     auto ptype = participant_type.str();
-    participant_data->m_properties.push_back(fastdds::dds::parameter_property_participant_type, ptype);
+    participant_data->properties.push_back(fastdds::dds::parameter_property_participant_type, ptype);
 
     // Add physical properties if present
     // TODO: This should be done using propagate value, however this cannot be done without breaking compatibility
@@ -1590,7 +1569,7 @@ void PDP::set_external_participant_properties_(
 
         if (nullptr != physical_property)
         {
-            participant_data->m_properties.push_back(physical_property_name, *physical_property);
+            participant_data->properties.push_back(physical_property_name, *physical_property);
         }
     }
 }
@@ -1725,7 +1704,7 @@ void PDP::local_participant_attributes_update_nts(
 {
     // Update user data
     auto participant_data = getLocalParticipantProxyData();
-    participant_data->m_userData.data_vec(new_atts.userData);
+    participant_data->user_data.data_vec(new_atts.userData);
 
     // If we are intraprocess only, we do not need to update locators
     bool announce_locators = !mp_RTPSParticipant->is_intraprocess_only();

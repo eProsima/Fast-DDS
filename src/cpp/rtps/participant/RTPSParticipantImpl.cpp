@@ -47,7 +47,6 @@
 #include <rtps/attributes/ServerAttributes.hpp>
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
-#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/builtin/discovery/participant/PDPClient.h>
@@ -2248,7 +2247,7 @@ std::vector<std::string> RTPSParticipantImpl::getParticipantNames() const
     auto pdp = mp_builtinProtocols->mp_PDP;
     for (auto it = pdp->ParticipantProxiesBegin(); it != pdp->ParticipantProxiesEnd(); ++it)
     {
-        participant_names.emplace_back((*it)->m_participantName.to_string());
+        participant_names.emplace_back((*it)->participant_name.to_string());
     }
     return participant_names;
 }
@@ -2873,7 +2872,7 @@ bool RTPSParticipantImpl::get_publication_info(
 
     if (mp_builtinProtocols->mp_PDP->lookupWriterProxyData(writer_guid, wproxy_data))
     {
-        from_proxy_to_builtin(wproxy_data, data);
+        data = wproxy_data;
         ret = true;
     }
 
@@ -2890,7 +2889,7 @@ bool RTPSParticipantImpl::get_subscription_info(
 
     if (mp_builtinProtocols->mp_PDP->lookupReaderProxyData(reader_guid, rproxy_data))
     {
-        from_proxy_to_builtin(rproxy_data, data);
+        data = rproxy_data;
         ret = true;
     }
 
@@ -3103,7 +3102,7 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
 
     ParticipantProxyData part_prox_data(m_att.allocation);
 
-    ret = part_prox_data.readFromCDRMessage(
+    ret = part_prox_data.read_from_cdr_message(
         &serialized_msg,
         true,
         network_factory(),
@@ -3112,7 +3111,7 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
 
     if (ret)
     {
-        from_proxy_to_builtin(part_prox_data, data);
+        data = part_prox_data;
     }
 
     return ret && (data.guid.entityId == c_EntityId_RTPSParticipant);
@@ -3135,16 +3134,16 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
         alloc_limits.locators.max_multicast_locators,
         alloc_limits.data_limits);
 
-    ret = writer_data.readFromCDRMessage(&serialized_msg, c_VendorId_eProsima);
+    ret = writer_data.read_from_cdr_message(&serialized_msg, c_VendorId_eProsima);
 
     if (ret)
     {
-        ret = writer_data.guid().entityId.is_writer();
+        ret = writer_data.guid.entityId.is_writer();
     }
 
     if (ret)
     {
-        from_proxy_to_builtin(writer_data, data);
+        data = writer_data;
     }
 
     return ret;
@@ -3166,16 +3165,16 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
         alloc_limits.locators.max_unicast_locators,
         alloc_limits.locators.max_multicast_locators,
         alloc_limits.data_limits);
-    ret = reader_data.readFromCDRMessage(&serialized_msg, c_VendorId_eProsima);
+    ret = reader_data.read_from_cdr_message(&serialized_msg, c_VendorId_eProsima);
 
     if (ret)
     {
-        ret = reader_data.guid().entityId.is_reader();
+        ret = reader_data.guid.entityId.is_reader();
     }
 
     if (ret)
     {
-        from_proxy_to_builtin(reader_data, data);
+        data = reader_data;
     }
 
     return ret;
@@ -3199,7 +3198,7 @@ RTPSParticipantImpl::get_entity_connections(
         for (; pit != pdp()->ParticipantProxiesEnd(); ++pit)
         {
             fastdds::statistics::Connection connection;
-            connection.guid(fastdds::statistics::to_statistics_type((*pit)->m_guid));
+            connection.guid(fastdds::statistics::to_statistics_type((*pit)->guid));
             connection.mode(fastdds::statistics::ConnectionMode::TRANSPORT);
 
             std::vector<fastdds::statistics::detail::Locator_s> statistic_locators;

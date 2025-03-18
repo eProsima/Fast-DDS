@@ -228,7 +228,7 @@ bool EDPServer::remove_reader(
     {
         auto temp_reader_proxy_data = get_temporary_reader_proxies_pool().get();
         mp_PDP->lookupReaderProxyData(guid, *temp_reader_proxy_data);
-        topic_name = temp_reader_proxy_data->topicName().to_string();
+        topic_name = temp_reader_proxy_data->topic_name.to_string();
     }
 
     // Remove proxy data associated with the reader
@@ -284,7 +284,7 @@ bool EDPServer::remove_writer(
     {
         auto temp_writer_proxy_data = get_temporary_writer_proxies_pool().get();
         mp_PDP->lookupWriterProxyData(guid, *temp_writer_proxy_data);
-        topic_name = temp_writer_proxy_data->topicName().to_string();
+        topic_name = temp_writer_proxy_data->topic_name.to_string();
     }
 
     // Remove proxy data associated with the writer
@@ -329,7 +329,7 @@ bool EDPServer::process_writer_proxy_data(
         RTPSWriter* local_writer,
         WriterProxyData* wdata)
 {
-    EPROSIMA_LOG_INFO(RTPS_EDP, "Processing local writer: " << wdata->guid().entityId);
+    EPROSIMA_LOG_INFO(RTPS_EDP, "Processing local writer: " << wdata->guid.entityId);
     // We actually don't need the writer here
     (void)local_writer;
 
@@ -354,7 +354,7 @@ bool EDPServer::process_writer_proxy_data(
         wp.related_sample_identity(local);
 
         // Notify the DiscoveryDataBase
-        if (get_pdp()->discovery_db().update(change, wdata->topicName().to_string()))
+        if (get_pdp()->discovery_db().update(change, wdata->topic_name.to_string()))
         {
             // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
             // references to the CacheChange_t.
@@ -379,7 +379,7 @@ bool EDPServer::process_reader_proxy_data(
         RTPSReader* local_reader,
         ReaderProxyData* rdata)
 {
-    EPROSIMA_LOG_INFO(RTPS_EDP, "Processing local reader: " << rdata->guid().entityId);
+    EPROSIMA_LOG_INFO(RTPS_EDP, "Processing local reader: " << rdata->guid.entityId);
     // We actually don't need the reader here
     (void)local_reader;
 
@@ -404,7 +404,7 @@ bool EDPServer::process_reader_proxy_data(
         wp.related_sample_identity(local);
 
         // Notify the DiscoveryDataBase
-        if (get_pdp()->discovery_db().update(change, rdata->topicName().to_string()))
+        if (get_pdp()->discovery_db().update(change, rdata->topic_name.to_string()))
         {
             // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
             // references to the CacheChange_t.

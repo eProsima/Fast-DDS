@@ -117,8 +117,10 @@ set(${PROJECT_NAME}_source_files
     rtps/attributes/ServerAttributes.cpp
     rtps/attributes/ThreadSettings.cpp
     rtps/builtin/BuiltinProtocols.cpp
+    rtps/builtin/data/ParticipantBuiltinTopicData.cpp
     rtps/builtin/data/ParticipantProxyData.cpp
-    rtps/builtin/data/ProxyDataConverters.cpp
+    rtps/builtin/data/PublicationBuiltinTopicData.cpp
+    rtps/builtin/data/SubscriptionBuiltinTopicData.cpp
     rtps/builtin/data/ReaderProxyData.cpp
     rtps/builtin/data/WriterProxyData.cpp
     rtps/builtin/discovery/database/backup/SharedBackupFunctions.cpp

@@ -22,6 +22,7 @@
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/builtin/data/BuiltinTopicKey.hpp>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
@@ -30,11 +31,24 @@
 
 namespace eprosima {
 namespace fastdds {
+namespace dds {
+
+class ReaderQos;
+
+} // namespace dds
 namespace rtps {
 
 /// Structure SubscriptionBuiltinTopicData, contains the information on a discovered subscription.
 struct SubscriptionBuiltinTopicData
 {
+    FASTDDS_EXPORTED_API SubscriptionBuiltinTopicData() = default;
+
+    FASTDDS_EXPORTED_API SubscriptionBuiltinTopicData(
+            const size_t max_unicast_locators,
+            const size_t max_multicast_locators,
+            const VariableLengthDataLimits& data_limits,
+            const fastdds::rtps::ContentFilterProperty::AllocationConfiguration& content_filter_limits);
+
     /// Builtin topic Key
     BuiltinTopicKey_t key{{0, 0, 0}};
 

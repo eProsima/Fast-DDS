@@ -2229,8 +2229,8 @@ ReturnCode_t DataReaderImpl::get_subscription_builtin_topic_data(
 
     subscription_data = SubscriptionBuiltinTopicData{};
 
-    from_proxy_to_builtin(guid_.entityId, subscription_data.key.value);
-    from_proxy_to_builtin(subscriber_->get_participant()->guid().guidPrefix,
+    from_entity_id_to_topic_key(guid_.entityId, subscription_data.key.value);
+    from_guid_prefix_to_topic_key(subscriber_->get_participant()->guid().guidPrefix,
             subscription_data.participant_key.value);
 
     subscription_data.topic_name = topic_->get_impl()->get_rtps_topic_name();

@@ -35,7 +35,6 @@
 #include <fastdds/rtps/reader/ReaderListener.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 
-#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/DataSharing/DataSharingListener.hpp>
 #include <rtps/DataSharing/DataSharingNotification.hpp>
@@ -134,12 +133,8 @@ bool BaseReader::matched_writer_add(
         const PublicationBuiltinTopicData& info)
 {
     const auto& alloc = mp_RTPSParticipant->get_attributes().allocation;
-    WriterProxyData wdata(
-        alloc.locators.max_unicast_locators,
-        alloc.locators.max_multicast_locators,
-        alloc.data_limits);
+    WriterProxyData wdata(alloc.data_limits, info);
 
-    from_builtin_to_proxy(info, wdata);
     return matched_writer_add_edp(wdata);
 }
 
@@ -481,12 +476,12 @@ bool BaseReader::is_datasharing_compatible_with(
         const fastdds::rtps::WriterProxyData& wdata)
 {
     if (!is_datasharing_compatible_ ||
-            wdata.m_qos.data_sharing.kind() == fastdds::dds::DataSharingKind::OFF)
+            wdata.data_sharing.kind() == fastdds::dds::DataSharingKind::OFF)
     {
         return false;
     }
 
-    for (auto id : wdata.m_qos.data_sharing.domain_ids())
+    for (auto id : wdata.data_sharing.domain_ids())
     {
         if (std::find(m_att.data_sharing_configuration().domain_ids().begin(),
                 m_att.data_sharing_configuration().domain_ids().end(), id)

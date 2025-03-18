@@ -25,6 +25,7 @@
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/builtin/data/BuiltinTopicKey.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
@@ -32,15 +33,22 @@
 
 namespace eprosima {
 namespace fastdds {
+namespace dds {
+
+class WriterQos;
+
+} // namespace dds
 namespace rtps {
 
 /// Structure PublicationBuiltinTopicData, contains the information on a discovered publication.
 struct PublicationBuiltinTopicData
 {
-    PublicationBuiltinTopicData()
-    {
-        reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
-    }
+    FASTDDS_EXPORTED_API PublicationBuiltinTopicData();
+
+    FASTDDS_EXPORTED_API PublicationBuiltinTopicData(
+            const size_t max_unicast_locators,
+            const size_t max_multicast_locators,
+            const VariableLengthDataLimits& data_limits);
 
     /// Builtin topic Key
     BuiltinTopicKey_t key{{0, 0, 0}};
@@ -122,6 +130,9 @@ struct PublicationBuiltinTopicData
     /// Information for data sharing compatibility check.
     dds::DataSharingQosPolicy data_sharing;
 
+    /// Publish mode qos policy
+    dds::PublishModeQosPolicy publish_mode;
+
     /// GUID
     GUID_t guid;
 
@@ -139,7 +150,6 @@ struct PublicationBuiltinTopicData
 
     /// Network configuration
     NetworkConfigSet_t loopback_transformation{};
-
 };
 
 }   // namespace rtps

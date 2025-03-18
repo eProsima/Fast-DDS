@@ -26,6 +26,7 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
+#include <fastdds/rtps/builtin/data/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 
@@ -42,7 +43,7 @@ class ParticipantProxyData;
  * implementing the discovery.
  * *@ingroup BUILTIN_MODULE
  */
-class ReaderProxyData
+class ReaderProxyData : public SubscriptionBuiltinTopicData
 {
 public:
 
@@ -57,6 +58,10 @@ public:
             const VariableLengthDataLimits& data_limits,
             const fastdds::rtps::ContentFilterProperty::AllocationConfiguration& content_filter_limits = {});
 
+    ReaderProxyData(
+            const VariableLengthDataLimits& data_limits,
+            const SubscriptionBuiltinTopicData& subscription_data);
+
     virtual ~ReaderProxyData();
 
     ReaderProxyData(
@@ -65,58 +70,31 @@ public:
     ReaderProxyData& operator =(
             const ReaderProxyData& readerInfo);
 
-    void guid(
-            const GUID_t& guid)
+    void network_configuration(
+            const NetworkConfigSet_t& network_configuration)
     {
-        m_guid = guid;
+        m_network_configuration = network_configuration;
     }
 
-    void guid(
-            GUID_t&& guid)
+    void network_configuration(
+            NetworkConfigSet_t&& network_configuration)
     {
-        m_guid = std::move(guid);
+        m_network_configuration = std::move(network_configuration);
     }
 
-    const GUID_t& guid() const
+    const NetworkConfigSet_t& network_configuration() const
     {
-        return m_guid;
+        return m_network_configuration;
     }
 
-    GUID_t& guid()
+    NetworkConfigSet_t& network_configuration()
     {
-        return m_guid;
-    }
-
-    void networkConfiguration(
-            const NetworkConfigSet_t& networkConfiguration)
-    {
-        m_networkConfiguration = networkConfiguration;
-    }
-
-    void networkConfiguration(
-            NetworkConfigSet_t&& networkConfiguration)
-    {
-        m_networkConfiguration = std::move(networkConfiguration);
-    }
-
-    const NetworkConfigSet_t& networkConfiguration() const
-    {
-        return m_networkConfiguration;
-    }
-
-    NetworkConfigSet_t& networkConfiguration()
-    {
-        return m_networkConfiguration;
+        return m_network_configuration;
     }
 
     bool has_locators() const
     {
-        return !remote_locators_.unicast.empty() || !remote_locators_.multicast.empty();
-    }
-
-    const RemoteLocatorList& remote_locators() const
-    {
-        return remote_locators_;
+        return !remote_locators.unicast.empty() || !remote_locators.multicast.empty();
     }
 
     void add_unicast_locator(
@@ -188,140 +166,58 @@ public:
         return m_key;
     }
 
-    void RTPSParticipantKey(
-            const InstanceHandle_t& RTPSParticipantKey)
+    void rtps_participant_key(
+            const InstanceHandle_t& rtps_participant_key)
     {
-        m_RTPSParticipantKey = RTPSParticipantKey;
+        m_rtps_participant_key = rtps_participant_key;
     }
 
-    void RTPSParticipantKey(
-            InstanceHandle_t&& RTPSParticipantKey)
+    void rtps_participant_key(
+            InstanceHandle_t&& rtps_participant_key)
     {
-        m_RTPSParticipantKey = std::move(RTPSParticipantKey);
+        m_rtps_participant_key = std::move(rtps_participant_key);
     }
 
-    InstanceHandle_t RTPSParticipantKey() const
+    InstanceHandle_t rtps_participant_key() const
     {
-        return m_RTPSParticipantKey;
+        return m_rtps_participant_key;
     }
 
-    InstanceHandle_t& RTPSParticipantKey()
+    InstanceHandle_t& rtps_participant_key()
     {
-        return m_RTPSParticipantKey;
+        return m_rtps_participant_key;
     }
 
-    void typeName(
-            const fastcdr::string_255& typeName)
+    void user_defined_id(
+            uint16_t user_defined_id)
     {
-        m_typeName = typeName;
+        m_user_defined_id = user_defined_id;
     }
 
-    void typeName(
-            fastcdr::string_255&& typeName)
+    uint16_t user_defined_id() const
     {
-        m_typeName = std::move(typeName);
+        return m_user_defined_id;
     }
 
-    const fastcdr::string_255& typeName() const
+    uint16_t& user_defined_id()
     {
-        return m_typeName;
+        return m_user_defined_id;
     }
 
-    fastcdr::string_255& typeName()
+    void is_alive(
+            bool is_alive)
     {
-        return m_typeName;
+        m_is_alive = is_alive;
     }
 
-    void topicName(
-            const fastcdr::string_255& topicName)
+    bool is_alive() const
     {
-        m_topicName = topicName;
+        return m_is_alive;
     }
 
-    void topicName(
-            fastcdr::string_255&& topicName)
+    bool& is_alive()
     {
-        m_topicName = std::move(topicName);
-    }
-
-    const fastcdr::string_255& topicName() const
-    {
-        return m_topicName;
-    }
-
-    fastcdr::string_255& topicName()
-    {
-        return m_topicName;
-    }
-
-    void userDefinedId(
-            uint16_t userDefinedId)
-    {
-        m_userDefinedId = userDefinedId;
-    }
-
-    uint16_t userDefinedId() const
-    {
-        return m_userDefinedId;
-    }
-
-    uint16_t& userDefinedId()
-    {
-        return m_userDefinedId;
-    }
-
-    void content_filter(
-            const fastdds::rtps::ContentFilterProperty& filter)
-    {
-        content_filter_ = filter;
-    }
-
-    void content_filter(
-            fastdds::rtps::ContentFilterProperty&& filter)
-    {
-        content_filter_ = std::move(filter);
-    }
-
-    const fastdds::rtps::ContentFilterProperty& content_filter() const
-    {
-        return content_filter_;
-    }
-
-    fastdds::rtps::ContentFilterProperty& content_filter()
-    {
-        return content_filter_;
-    }
-
-    void isAlive(
-            bool isAlive)
-    {
-        m_isAlive = isAlive;
-    }
-
-    bool isAlive() const
-    {
-        return m_isAlive;
-    }
-
-    bool& isAlive()
-    {
-        return m_isAlive;
-    }
-
-    void topicKind(
-            TopicKind_t topicKind)
-    {
-        m_topicKind = topicKind;
-    }
-
-    TopicKind_t topicKind() const
-    {
-        return m_topicKind;
-    }
-
-    TopicKind_t& topicKind()
-    {
-        return m_topicKind;
+        return m_is_alive;
     }
 
     void type_id(
@@ -376,35 +272,14 @@ public:
         return m_type != nullptr;
     }
 
-    void type_information(
-            const dds::xtypes::TypeInformationParameter& other_type_information)
-    {
-        type_information() = other_type_information;
-    }
-
-    const dds::xtypes::TypeInformationParameter& type_information() const
-    {
-        assert(m_type_information != nullptr);
-        return *m_type_information;
-    }
-
-    dds::xtypes::TypeInformationParameter& type_information()
-    {
-        if (m_type_information == nullptr)
-        {
-            m_type_information = new dds::xtypes::TypeInformationParameter();
-        }
-        return *m_type_information;
-    }
-
     bool has_type_information() const
     {
-        return m_type_information != nullptr;
+        return type_information.assigned();
     }
 
-    inline bool disable_positive_acks() const
+    inline bool disable_positive_acks_enabled() const
     {
-        return m_qos.m_disablePositiveACKs.enabled;
+        return disable_positive_acks.enabled;
     }
 
     /**
@@ -438,7 +313,7 @@ public:
      * Write as a parameter list on a CDRMessage_t
      * @return True on success
      */
-    bool writeToCDRMessage(
+    bool write_to_cdr_message(
             CDRMessage_t* msg,
             bool write_encapsulation) const;
 
@@ -449,12 +324,12 @@ public:
      * @param source_vendor_id VendorId of the source participant from which the message was received
      * @return true on success
      */
-    bool readFromCDRMessage(
+    bool read_from_cdr_message(
             CDRMessage_t* msg,
             fastdds::rtps::VendorId_t source_vendor_id = c_VendorId_eProsima);
 
     /**
-     * Transform and set the remote locators from the remote_locators_ of another ReaderProxyData.
+     * Transform and set the remote locators from the remote_locators of another ReaderProxyData.
      * If the received ReaderProxyData has no locators, remote locators will be extracted from the
      * ParticipantProxyData.
      * @param rdata ReaderProxyData to get the locators from
@@ -465,11 +340,6 @@ public:
             const ReaderProxyData& rdata,
             NetworkFactory& network,
             const ParticipantProxyData& participant_data);
-
-    //!
-    bool m_expectsInlineQos;
-    //!Reader Qos
-    fastdds::dds::ReaderQos m_qos;
 
 #if HAVE_SECURITY
     //!EndpointSecurityInfo.endpoint_security_attributes
@@ -500,44 +370,61 @@ public:
             ReaderProxyData* rdata);
 
     /**
-     * Copy ALL the information from another object.
-     * @param rdata Pointer to the object from where the information must be copied.
+     * Set qos parameters
+     * (only certain qos from SubscriptionBuiltinTopicData will be set).
+     *
+     * @param qos Const reference to the SubscriptionBuiltinTopicData object.
+     * @param first_time Boolean indicating whether is the first time (true) or not (false).
      */
-    void copy(
-            ReaderProxyData* rdata);
+    void set_qos(
+            const SubscriptionBuiltinTopicData& qos,
+            bool first_time);
+
+    /**
+     * Set qos parameters from a ReaderQos structure.
+     * (only certain qos from SubscriptionBuiltinTopicData will be set).
+     *
+     * @param qos Const reference to the ReaderQos object.
+     * @param first_time Boolean indicating whether is the first time (true) or not (false).
+     */
+    void set_qos(
+            const dds::ReaderQos& qos,
+            bool first_time);
 
 private:
 
-    //!GUID
-    GUID_t m_guid;
+    /**
+     * Initialize the common attributes of the ReaderProxyData.
+     */
+    void init(
+            const VariableLengthDataLimits& data_limits);
+
+    /**
+     * Checks whether the QoS can be updated with the provided QoS.
+     *
+     * @param qos The QoS to check.
+     * @return true if the QoS can be updated, false otherwise.
+     */
+    bool can_qos_be_updated(
+            const SubscriptionBuiltinTopicData& qos) const;
+
+
     //!Network configuration
-    NetworkConfigSet_t m_networkConfiguration;
-    //!Holds locator information
-    RemoteLocatorList remote_locators_;
+    NetworkConfigSet_t m_network_configuration;
     //!GUID_t of the Reader converted to InstanceHandle_t
     InstanceHandle_t m_key;
     //!GUID_t of the participant converted to InstanceHandle
-    InstanceHandle_t m_RTPSParticipantKey;
-    //!Type name
-    fastcdr::string_255 m_typeName;
-    //!Topic name
-    fastcdr::string_255 m_topicName;
+    InstanceHandle_t m_rtps_participant_key;
     //!User defined ID
-    uint16_t m_userDefinedId;
+    uint16_t m_user_defined_id;
     //!Field to indicate if the Reader is Alive.
-    bool m_isAlive;
-    //!Topic kind
-    TopicKind_t m_topicKind;
+    bool m_is_alive;
     //!Type Identifier
     dds::TypeIdV1* m_type_id;
     //!Type Object
     dds::TypeObjectV1* m_type;
-    //!Type Information
-    dds::xtypes::TypeInformationParameter* m_type_information;
     //!
     ParameterPropertyList_t m_properties;
-    //!Information on the content filter applied by the reader.
-    fastdds::rtps::ContentFilterProperty content_filter_;
 };
 
 } // namespace rtps

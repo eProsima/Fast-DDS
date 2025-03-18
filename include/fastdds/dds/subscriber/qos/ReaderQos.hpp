@@ -33,6 +33,7 @@ namespace dds {
  * Please consult each of them to check for implementation details and default values.
  * @ingroup FASTDDS_QOS_MODULE
  */
+FASTDDS_TODO_BEFORE(4, 0, "Remove this class in favor of SubscriptionBuiltinTopicData");
 class ReaderQos
 {
 public:
@@ -130,6 +131,8 @@ public:
      * Set Qos from another class
      * @param readerqos Reference from a ReaderQos object.
      * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
+     *
+     * @warning The use of this class and methods is discourgaed, consider using SubscriptionBuiltinTopicData instead.
      */
     FASTDDS_EXPORTED_API void setQos(
             const ReaderQos& readerqos,
@@ -138,6 +141,8 @@ public:
     /**
      * Check if the Qos values are compatible between each other.
      * @return True if correct.
+     *
+     * @warning The use of this class and methods is discourgaed, consider using SubscriptionBuiltinTopicData instead.
      */
     FASTDDS_EXPORTED_API bool checkQos() const;
 
@@ -145,10 +150,15 @@ public:
      * Check if the Qos can be update with the values provided. This method DOES NOT update anything.
      * @param qos Reference to the new qos.
      * @return True if they can be updated.
+     *
+     * @warning The use of this class and methods is discourgaed, consider using SubscriptionBuiltinTopicData instead.
      */
     FASTDDS_EXPORTED_API bool canQosBeUpdated(
             const ReaderQos& qos) const;
 
+    /**
+     * @warning The use of this class and methods is discourgaed, consider using SubscriptionBuiltinTopicData instead.
+     */
     void clear();
 };
 

@@ -33,7 +33,6 @@
 #include "reader_utils.hpp"
 #include "rtps/RTPSDomainImpl.hpp"
 #include <rtps/builtin/BuiltinProtocols.h>
-#include <rtps/builtin/data/ProxyDataConverters.hpp>
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/DataSharing/DataSharingListener.hpp>
 #include <rtps/DataSharing/ReaderPool.hpp>
@@ -201,7 +200,7 @@ void StatefulReader::init(
 bool StatefulReader::matched_writer_add_edp(
         const WriterProxyData& wdata)
 {
-    assert(wdata.guid() != c_Guid_Unknown);
+    assert(wdata.guid != c_Guid_Unknown);
     ReaderListener* listener = nullptr;
 
     {
@@ -213,20 +212,20 @@ bool StatefulReader::matched_writer_add_edp(
         }
 
         listener = listener_;
-        bool is_same_process = RTPSDomainImpl::should_intraprocess_between(m_guid, wdata.guid());
+        bool is_same_process = RTPSDomainImpl::should_intraprocess_between(m_guid, wdata.guid);
         bool is_datasharing = is_datasharing_compatible_with(wdata);
 
         for (WriterProxy* it : matched_writers_)
         {
-            if (it->guid() == wdata.guid())
+            if (it->guid() == wdata.guid)
             {
                 EPROSIMA_LOG_INFO(RTPS_READER, "Attempting to add existing writer, updating information");
                 // If Ownership strength changes then update all history instances.
                 if (dds::EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind &&
-                        it->ownership_strength() != wdata.m_qos.m_ownershipStrength.value)
+                        it->ownership_strength() != wdata.ownership_strength.value)
                 {
                     history_->writer_update_its_ownership_strength_nts(
-                        it->guid(), wdata.m_qos.m_ownershipStrength.value);
+                        it->guid(), wdata.ownership_strength.value);
                 }
                 it->update(wdata);
                 if (!is_same_process)
@@ -241,10 +240,8 @@ bool StatefulReader::matched_writer_add_edp(
                 {
                     // call the listener without the lock taken
                     guard.unlock();
-                    PublicationBuiltinTopicData info;
-                    from_proxy_to_builtin(wdata, info);
                     listener->on_writer_discovery(
-                        this, WriterDiscoveryStatus::CHANGED_QOS_WRITER, wdata.guid(), &info);
+                        this, WriterDiscoveryStatus::CHANGED_QOS_WRITER, wdata.guid, &wdata);
                 }
 
 #ifdef FASTDDS_STATISTICS
@@ -284,8 +281,8 @@ bool StatefulReader::matched_writer_add_edp(
         }
 
         SequenceNumber_t initial_sequence;
-        add_persistence_guid(wdata.guid(), wdata.persistence_guid());
-        initial_sequence = get_last_notified(wdata.guid());
+        add_persistence_guid(wdata.guid, wdata.persistence_guid);
+        initial_sequence = get_last_notified(wdata.guid);
 
         wp->start(wdata, initial_sequence, is_datasharing);
 
@@ -299,17 +296,17 @@ bool StatefulReader::matched_writer_add_edp(
 
         if (is_datasharing)
         {
-            if (datasharing_listener_->add_datasharing_writer(wdata.guid(),
+            if (datasharing_listener_->add_datasharing_writer(wdata.guid,
                     m_att.durabilityKind == VOLATILE,
                     history_->m_att.maximumReservedCaches))
             {
                 matched_writers_.push_back(wp);
-                EPROSIMA_LOG_INFO(RTPS_READER, "Writer Proxy " << wdata.guid() << " added to " << this->m_guid.entityId
+                EPROSIMA_LOG_INFO(RTPS_READER, "Writer Proxy " << wdata.guid << " added to " << this->m_guid.entityId
                                                                << " with data sharing");
             }
             else
             {
-                EPROSIMA_LOG_ERROR(RTPS_READER, "Failed to add Writer Proxy " << wdata.guid()
+                EPROSIMA_LOG_ERROR(RTPS_READER, "Failed to add Writer Proxy " << wdata.guid
                                                                               << " to " << this->m_guid.entityId
                                                                               << " with data sharing.");
                 {
@@ -353,7 +350,7 @@ bool StatefulReader::matched_writer_add_edp(
         if ( wlp != nullptr)
         {
             wlp->sub_liveliness_manager_->add_writer(
-                wdata.guid(),
+                wdata.guid,
                 liveliness_kind_,
                 liveliness_lease_duration_);
         }
@@ -366,9 +363,7 @@ bool StatefulReader::matched_writer_add_edp(
 
     if (nullptr != listener)
     {
-        PublicationBuiltinTopicData info;
-        from_proxy_to_builtin(wdata, info);
-        listener->on_writer_discovery(this, WriterDiscoveryStatus::DISCOVERED_WRITER, wdata.guid(), &info);
+        listener->on_writer_discovery(this, WriterDiscoveryStatus::DISCOVERED_WRITER, wdata.guid, &wdata);
     }
 
 #ifdef FASTDDS_STATISTICS
