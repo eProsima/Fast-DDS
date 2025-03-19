@@ -151,7 +151,7 @@ struct SubscriptionBuiltinTopicData
     /// Endpoint qos policy
     fastcdr::optional<dds::RTPSEndpointQos> endpoint;
 
-    /// Reader reosurce limits
+    /// Reader resource limits
     fastcdr::optional<dds::ReaderResourceLimitsQos> reader_resource_limits;
 
     /// GUID
