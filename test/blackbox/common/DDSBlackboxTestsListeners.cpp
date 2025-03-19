@@ -3603,11 +3603,12 @@ TEST(DDSStatus, several_writers_on_unack_sample_removed)
             .init();
     ASSERT_TRUE(ack_disabled_writer.isInitialized());
 
-    best_effort_writer.wait_discovery();
-    reliable_writer.wait_discovery();
-    ack_disabled_writer.wait_discovery();
-    best_effort_reader.wait_discovery();
-    reliable_reader.wait_discovery();
+    // The only non matching case is the best effort writer with the reliable reader
+    best_effort_writer.wait_discovery(1u, std::chrono::seconds::zero());
+    reliable_writer.wait_discovery(2u, std::chrono::seconds::zero());
+    ack_disabled_writer.wait_discovery(2u, std::chrono::seconds::zero());
+    best_effort_reader.wait_discovery(std::chrono::seconds::zero(), 3u);
+    reliable_reader.wait_discovery(std::chrono::seconds::zero(), 2u);
 
     auto best_effort_data = default_helloworld_data_generator();
     auto reliable_data = best_effort_data;
