@@ -12,7 +12,7 @@ Disclaimer:
 
 ## Short term
 
-The following list of features are planned to be addressed in the short term, and incorporated into the following release of the product (v3.2.0):
+The following list of features are planned to be addressed in the short term, and incorporated into the following release of the product (v3.3.0):
 
 * Consolidation of some [properties](https://fast-dds.docs.eprosima.com/en/latest/fastdds/property_policies/property_policies.html) into QoS policies
 * SHM permissions override
