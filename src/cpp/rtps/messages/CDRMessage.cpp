@@ -33,6 +33,21 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+void clamp_uint64_to_size_t(
+        const uint64_t& value,
+        size_t& result)
+{
+    constexpr uint64_t max_size_t = std::numeric_limits<size_t>::max();
+    if (value >= max_size_t)
+    {
+        result = max_size_t;
+    }
+    else
+    {
+        result = static_cast<size_t>(value);
+    }
+}
+
 bool CDRMessage::initCDRMsg(
         CDRMessage_t* msg,
         uint32_t payload_size)
@@ -1251,9 +1266,16 @@ bool CDRMessage::read_resource_limited_container_config(
         CDRMessage_t* msg,
         ResourceLimitedContainerConfig& config)
 {
-    bool ret = CDRMessage::readUInt32(msg, (uint32_t*)&config.initial);
-    ret &= CDRMessage::readUInt32(msg, (uint32_t*)&config.maximum);
-    ret &= CDRMessage::readUInt32(msg, (uint32_t*)&config.increment);
+    uint64_t deser_val = 0;
+
+    bool ret = CDRMessage::readUInt64(msg, &deser_val);
+    clamp_uint64_to_size_t(deser_val, config.initial);
+
+    ret &= CDRMessage::readUInt64(msg, &deser_val);
+    clamp_uint64_to_size_t(deser_val, config.maximum);
+
+    ret &= CDRMessage::readUInt64(msg, &deser_val);
+    clamp_uint64_to_size_t(deser_val, config.increment);
 
     return ret;
 }
@@ -1262,9 +1284,9 @@ bool CDRMessage::add_resource_limited_container_config(
         CDRMessage_t* msg,
         const ResourceLimitedContainerConfig& config)
 {
-    bool ret = rtps::CDRMessage::addUInt32(msg, (uint32_t)config.initial);
-    ret &= rtps::CDRMessage::addUInt32(msg, (uint32_t)config.maximum);
-    ret &= rtps::CDRMessage::addUInt32(msg, (uint32_t)config.increment);
+    bool ret = rtps::CDRMessage::addUInt64(msg, config.initial);
+    ret &= rtps::CDRMessage::addUInt64(msg, config.maximum);
+    ret &= rtps::CDRMessage::addUInt64(msg, config.increment);
 
     return ret;
 }

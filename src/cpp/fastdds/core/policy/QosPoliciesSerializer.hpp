@@ -1595,8 +1595,8 @@ template<>
 inline uint32_t QosPoliciesSerializer<WriterResourceLimitsQos>::cdr_serialized_size(
         const WriterResourceLimitsQos&)
 {
-    // p_id + p_length +  2*(uint32_t(4) + uint32_t(4) + uint32_t(4))
-    return 2 + 2 + 24;
+    // p_id + p_length +  2*(uint64_t(8) + uint64_t(8) + uint64_t(8))
+    return 2 + 2 + 48;
 }
 
 template<>
@@ -1619,7 +1619,7 @@ inline bool QosPoliciesSerializer<WriterResourceLimitsQos>::read_content_from_cd
         rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length < 24)
+    if (parameter_length < 48)
     {
         return false;
     }
@@ -1747,8 +1747,8 @@ template<>
 inline uint32_t QosPoliciesSerializer<ReaderResourceLimitsQos>::cdr_serialized_size(
         const ReaderResourceLimitsQos&)
 {
-    // p_id + p_length +  3*(uint32_t(4) + uint32_t(4) + uint32_t(4)) + max_samples_per_read(4)
-    return 2 + 2 + 36 + 4;
+    // p_id + p_length +  3*(uint64_t(8) + uint64_t(8) + uint64_t(8)) + max_samples_per_read(4)
+    return 2 + 2 + 72 + 4;
 }
 
 template<>
@@ -1779,7 +1779,7 @@ inline bool QosPoliciesSerializer<ReaderResourceLimitsQos>::read_content_from_cd
         rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length < 40)
+    if (parameter_length < 76)
     {
         return false;
     }
