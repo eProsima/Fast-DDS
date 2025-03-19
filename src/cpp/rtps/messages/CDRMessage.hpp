@@ -30,6 +30,7 @@
 #include <fastdds/rtps/common/SampleIdentity.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
+#include <fastdds/utils/collections/ResourceLimitedContainerConfig.hpp>
 
 #include <rtps/security/common/ParticipantGenericMessage.h>
 
@@ -168,6 +169,15 @@ bool readMessageIdentity(
 bool readParticipantGenericMessage(
         CDRMessage_t* msg,
         security::ParticipantGenericMessage& message);
+
+bool read_resource_limited_container_config(
+        CDRMessage_t* msg,
+        ResourceLimitedContainerConfig& config);
+
+bool read_duration_t(
+        CDRMessage_t* msg,
+        dds::Duration_t& duration);
+
 ///@}
 
 
@@ -332,6 +342,13 @@ bool addParticipantGenericMessage(
         CDRMessage_t* msg,
         const security::ParticipantGenericMessage& message);
 
+bool add_resource_limited_container_config(
+        CDRMessage_t* msg,
+        const ResourceLimitedContainerConfig& config);
+
+bool add_duration_t(
+        CDRMessage_t* msg,
+        const dds::Duration_t& duration);
 ///@}
 
 /**

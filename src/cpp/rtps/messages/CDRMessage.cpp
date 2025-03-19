@@ -1247,6 +1247,46 @@ bool CDRMessage::readParticipantGenericMessage(
     return true;
 }
 
+bool CDRMessage::read_resource_limited_container_config(
+        CDRMessage_t* msg,
+        ResourceLimitedContainerConfig& config)
+{
+    bool ret = CDRMessage::readUInt32(msg, (uint32_t*)&config.initial);
+    ret &= CDRMessage::readUInt32(msg, (uint32_t*)&config.maximum);
+    ret &= CDRMessage::readUInt32(msg, (uint32_t*)&config.increment);
+
+    return ret;
+}
+
+bool CDRMessage::add_resource_limited_container_config(
+        CDRMessage_t* msg,
+        const ResourceLimitedContainerConfig& config)
+{
+    bool ret = rtps::CDRMessage::addUInt32(msg, (uint32_t)config.initial);
+    ret &= rtps::CDRMessage::addUInt32(msg, (uint32_t)config.maximum);
+    ret &= rtps::CDRMessage::addUInt32(msg, (uint32_t)config.increment);
+
+    return ret;
+}
+
+bool CDRMessage::read_duration_t(
+        CDRMessage_t* msg,
+        dds::Duration_t& duration)
+{
+    bool valid = CDRMessage::readInt32(msg, &duration.seconds);
+    valid &= CDRMessage::readUInt32(msg, &duration.nanosec);
+    return valid;
+}
+
+bool CDRMessage::add_duration_t(
+        CDRMessage_t* msg,
+        const dds::Duration_t& duration)
+{
+    bool ret = rtps::CDRMessage::addInt32(msg, duration.seconds);
+    ret &= rtps::CDRMessage::addUInt32(msg, duration.nanosec);
+    return ret;
+}
+
 bool CDRMessage::skip(
         CDRMessage_t* msg,
         uint32_t length)

@@ -1282,7 +1282,8 @@ inline uint32_t QosPoliciesSerializer<RTPSEndpointQos>::cdr_serialized_size(
         ret_val += 4 + 4 + 16;
     }
 
-    // Do not serialize external_locators yet.
+    // Do not serialize external_locators yet, but leave a length = 0 field here
+    ret_val += 4;
 
     // + ignore_non_matching_locators(4) + user_defined_id(4) + entity_id(4) + history_management(4)
     ret_val += 16;
@@ -1325,6 +1326,7 @@ inline bool QosPoliciesSerializer<RTPSEndpointQos>::add_to_cdr_message(
     }
 
     // Do not serialize external_locators yet.
+    valid &= rtps::CDRMessage::addUInt32(cdr_message, 0); // 0 length
 
     // ignore_non_matching_locators
     valid &= rtps::CDRMessage::addOctet(cdr_message, qos_policy.ignore_non_matching_locators);
@@ -1352,8 +1354,8 @@ inline bool QosPoliciesSerializer<RTPSEndpointQos>::read_content_from_cdr_messag
         rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    // empty locators lists(12) + 16
-    if (parameter_length < 28)
+    // empty locators lists(12) + 4 + 16
+    if (parameter_length < 32)
     {
         return false;
     }
@@ -1392,6 +1394,7 @@ inline bool QosPoliciesSerializer<RTPSEndpointQos>::read_content_from_cdr_messag
     }
 
     // Do not deserialize external_locators yet.
+    valid &= rtps::CDRMessage::readUInt32(cdr_message, &locators_size); // 0 length
 
     // ignore_non_matching_locators
     valid &= rtps::CDRMessage::readOctet(cdr_message, (fastdds::rtps::octet*)&qos_policy.ignore_non_matching_locators);
@@ -1440,7 +1443,7 @@ inline bool QosPoliciesSerializer<WriterDataLifecycleQosPolicy>::read_content_fr
         rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    // Fail if length is lower than paramt
+    // Fail if length is lower than required
     if (parameter_length < PARAMETER_BOOL_LENGTH)
     {
         return false;
@@ -1529,32 +1532,21 @@ inline bool QosPoliciesSerializer<RTPSReliableWriterQos>::add_to_cdr_message(
         rtps::CDRMessage_t* cdr_message)
 {
     // times
-    bool valid = rtps::CDRMessage::addInt32(cdr_message,
-                    qos_policy.times.initial_heartbeat_delay.seconds);
-    valid &= rtps::CDRMessage::addUInt32(cdr_message,
-                    qos_policy.times.initial_heartbeat_delay.fraction());
-    valid &= rtps::CDRMessage::addInt32(cdr_message,
-                    qos_policy.times.heartbeat_period.seconds);
-    valid &= rtps::CDRMessage::addUInt32(cdr_message,
-                    qos_policy.times.heartbeat_period.fraction());
-    valid &= rtps::CDRMessage::addInt32(cdr_message,
-                    qos_policy.times.nack_response_delay.seconds);
-    valid &= rtps::CDRMessage::addUInt32(cdr_message,
-                    qos_policy.times.nack_response_delay.fraction());
-    valid &= rtps::CDRMessage::addInt32(cdr_message,
-                    qos_policy.times.nack_supression_duration.seconds);
-    valid &= rtps::CDRMessage::addUInt32(cdr_message,
-                    qos_policy.times.nack_supression_duration.fraction());
+    bool valid = rtps::CDRMessage::add_duration_t(cdr_message,
+                    qos_policy.times.initial_heartbeat_delay);
+    valid &= rtps::CDRMessage::add_duration_t(cdr_message,
+                    qos_policy.times.heartbeat_period);
+    valid &= rtps::CDRMessage::add_duration_t(cdr_message,
+                    qos_policy.times.nack_response_delay);
+    valid &= rtps::CDRMessage::add_duration_t(cdr_message,
+                    qos_policy.times.nack_supression_duration);
 
     // disable_positive_acks
     valid &= rtps::CDRMessage::addOctet(cdr_message, qos_policy.disable_positive_acks.enabled);
     valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00);
     valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00);
     valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00);
-    valid &= rtps::CDRMessage::addInt32(cdr_message,
-                    qos_policy.disable_positive_acks.duration.seconds);
-    valid &= rtps::CDRMessage::addUInt32(cdr_message,
-                    qos_policy.disable_positive_acks.duration.fraction());
+    valid &= rtps::CDRMessage::add_duration_t(cdr_message, qos_policy.disable_positive_acks.duration);
 
     // disable_heatbeat_piggyback
     valid &= rtps::CDRMessage::addOctet(cdr_message, qos_policy.disable_heartbeat_piggyback);
@@ -1577,33 +1569,20 @@ inline bool QosPoliciesSerializer<RTPSReliableWriterQos>::read_content_from_cdr_
         return false;
     }
 
-    uint32_t frac(0);
-
-    bool valid = rtps::CDRMessage::readInt32(cdr_message,
-                    &qos_policy.times.initial_heartbeat_delay.seconds);
-    valid &= rtps::CDRMessage::readUInt32(cdr_message, &frac);
-    qos_policy.times.initial_heartbeat_delay.fraction(frac);
-    valid &= rtps::CDRMessage::readInt32(cdr_message,
-                    &qos_policy.times.heartbeat_period.seconds);
-    valid &= rtps::CDRMessage::readUInt32(cdr_message, &frac);
-    qos_policy.times.heartbeat_period.fraction(frac);
-    valid &= rtps::CDRMessage::readInt32(cdr_message,
-                    &qos_policy.times.nack_response_delay.seconds);
-    valid &= rtps::CDRMessage::readUInt32(cdr_message, &frac);
-    qos_policy.times.nack_response_delay.fraction(frac);
-    valid &= rtps::CDRMessage::readInt32(cdr_message,
-                    &qos_policy.times.nack_supression_duration.seconds);
-    valid &= rtps::CDRMessage::readUInt32(cdr_message, &frac);
-    qos_policy.times.nack_supression_duration.fraction(frac);
+    bool valid = rtps::CDRMessage::read_duration_t(cdr_message,
+                    qos_policy.times.initial_heartbeat_delay);
+    valid &= rtps::CDRMessage::read_duration_t(cdr_message,
+                    qos_policy.times.heartbeat_period);
+    valid &= rtps::CDRMessage::read_duration_t(cdr_message,
+                    qos_policy.times.nack_response_delay);
+    valid &= rtps::CDRMessage::read_duration_t(cdr_message,
+                    qos_policy.times.nack_supression_duration);
 
     valid &= rtps::CDRMessage::readOctet(cdr_message,
                     (fastdds::rtps::octet*) &qos_policy.disable_positive_acks.enabled);
     cdr_message->pos += 3; //padding
 
-    valid &= rtps::CDRMessage::readInt32(cdr_message,
-                    &qos_policy.disable_positive_acks.duration.seconds);
-    valid &= rtps::CDRMessage::readUInt32(cdr_message, &frac);
-    qos_policy.disable_positive_acks.duration.fraction(frac);
+    valid &= rtps::CDRMessage::read_duration_t(cdr_message, qos_policy.disable_positive_acks.duration);
 
     valid &= rtps::CDRMessage::readOctet(cdr_message,
                     (fastdds::rtps::octet*)&qos_policy.disable_heartbeat_piggyback);
@@ -1625,12 +1604,11 @@ inline bool QosPoliciesSerializer<WriterResourceLimitsQos>::add_to_cdr_message(
         const WriterResourceLimitsQos& qos_policy,
         rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = rtps::CDRMessage::addUInt32(cdr_message, (uint32_t)qos_policy.matched_subscriber_allocation.initial);
-    valid &= rtps::CDRMessage::addUInt32(cdr_message, (uint32_t)qos_policy.matched_subscriber_allocation.maximum);
-    valid &= rtps::CDRMessage::addUInt32(cdr_message, (uint32_t)qos_policy.matched_subscriber_allocation.increment);
-    valid &= rtps::CDRMessage::addUInt32(cdr_message, (uint32_t)qos_policy.reader_filters_allocation.initial);
-    valid &= rtps::CDRMessage::addUInt32(cdr_message, (uint32_t)qos_policy.reader_filters_allocation.maximum);
-    valid &= rtps::CDRMessage::addUInt32(cdr_message, (uint32_t)qos_policy.reader_filters_allocation.increment);
+    // matched_subscriber_allocation
+    bool valid = rtps::CDRMessage::add_resource_limited_container_config(cdr_message,
+                    qos_policy.matched_subscriber_allocation);
+    // reader_filters_allocation
+    valid &= rtps::CDRMessage::add_resource_limited_container_config(cdr_message, qos_policy.reader_filters_allocation);
 
     return valid;
 }
@@ -1650,23 +1628,10 @@ inline bool QosPoliciesSerializer<WriterResourceLimitsQos>::read_content_from_cd
     qos_policy.matched_subscriber_allocation.maximum = 0;
     qos_policy.reader_filters_allocation.maximum = 0;
 
-    bool valid = rtps::CDRMessage::readUInt32(cdr_message,
-                    (uint32_t*)&qos_policy.matched_subscriber_allocation.initial);
-
-    valid &= rtps::CDRMessage::readUInt32(cdr_message,
-                    (uint32_t*)&qos_policy.matched_subscriber_allocation.maximum);
-
-    valid &= rtps::CDRMessage::readUInt32(cdr_message,
-                    (uint32_t*)&qos_policy.matched_subscriber_allocation.increment);
-
-    valid &= rtps::CDRMessage::readUInt32(cdr_message,
-                    (uint32_t*)&qos_policy.reader_filters_allocation.initial);
-
-    valid &= rtps::CDRMessage::readUInt32(cdr_message,
-                    (uint32_t*)&qos_policy.reader_filters_allocation.maximum);
-
-    valid &= rtps::CDRMessage::readUInt32(cdr_message,
-                    (uint32_t*)&qos_policy.reader_filters_allocation.increment);
+    bool valid = rtps::CDRMessage::read_resource_limited_container_config(cdr_message,
+                    qos_policy.matched_subscriber_allocation);
+    valid &= rtps::CDRMessage::read_resource_limited_container_config(cdr_message,
+                    qos_policy.reader_filters_allocation);
 
     return valid;
 }
@@ -1685,16 +1650,12 @@ inline bool QosPoliciesSerializer<ReaderDataLifecycleQosPolicy>::add_to_cdr_mess
         rtps::CDRMessage_t* cdr_message)
 {
     // autopurge_no_writer_samples_delay
-    bool valid = rtps::CDRMessage::addInt32(cdr_message,
-                    qos_policy.autopurge_no_writer_samples_delay.seconds);
-    valid &= rtps::CDRMessage::addUInt32(cdr_message,
-                    qos_policy.autopurge_no_writer_samples_delay.fraction());
+    bool valid = rtps::CDRMessage::add_duration_t(cdr_message,
+                    qos_policy.autopurge_no_writer_samples_delay);
 
     // autopurge_disposed_samples_delay
-    valid &= rtps::CDRMessage::addInt32(cdr_message,
-                    qos_policy.autopurge_disposed_samples_delay.seconds);
-    valid &= rtps::CDRMessage::addUInt32(cdr_message,
-                    qos_policy.autopurge_disposed_samples_delay.fraction());
+    valid &= rtps::CDRMessage::add_duration_t(cdr_message,
+                    qos_policy.autopurge_disposed_samples_delay);
 
     return valid;
 }
@@ -1711,16 +1672,10 @@ inline bool QosPoliciesSerializer<ReaderDataLifecycleQosPolicy>::read_content_fr
         return false;
     }
 
-    uint32_t frac(0);
-
-    bool valid = rtps::CDRMessage::readInt32(cdr_message,
-                    &qos_policy.autopurge_no_writer_samples_delay.seconds);
-    valid &= rtps::CDRMessage::readUInt32(cdr_message, &frac);
-    qos_policy.autopurge_no_writer_samples_delay.fraction(frac);
-    valid &= rtps::CDRMessage::readInt32(cdr_message,
-                    &qos_policy.autopurge_disposed_samples_delay.seconds);
-    valid &= rtps::CDRMessage::readUInt32(cdr_message, &frac);
-    qos_policy.autopurge_disposed_samples_delay.fraction(frac);
+    bool valid = rtps::CDRMessage::read_duration_t(cdr_message,
+                    qos_policy.autopurge_no_writer_samples_delay);
+    valid &= rtps::CDRMessage::read_duration_t(cdr_message,
+                    qos_policy.autopurge_disposed_samples_delay);
 
     return valid;
 }
@@ -1744,24 +1699,18 @@ inline bool QosPoliciesSerializer<RTPSReliableReaderQos>::add_to_cdr_message(
         rtps::CDRMessage_t* cdr_message)
 {
     // reader times
-    bool valid = rtps::CDRMessage::addInt32(cdr_message,
-                    qos_policy.times.initial_acknack_delay.seconds);
-    valid &= rtps::CDRMessage::addUInt32(cdr_message,
-                    qos_policy.times.initial_acknack_delay.fraction());
-    valid &= rtps::CDRMessage::addInt32(cdr_message,
-                    qos_policy.times.heartbeat_response_delay.seconds);
-    valid &= rtps::CDRMessage::addUInt32(cdr_message,
-                    qos_policy.times.heartbeat_response_delay.fraction());
+    bool valid = rtps::CDRMessage::add_duration_t(cdr_message,
+                    qos_policy.times.initial_acknack_delay);
+    valid &= rtps::CDRMessage::add_duration_t(cdr_message,
+                    qos_policy.times.heartbeat_response_delay);
 
     // disable_positive_acks
     valid &= rtps::CDRMessage::addOctet(cdr_message, qos_policy.disable_positive_acks.enabled);
     valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00);
     valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00);
     valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00);
-    valid &= rtps::CDRMessage::addInt32(cdr_message,
-                    qos_policy.disable_positive_acks.duration.seconds);
-    valid &= rtps::CDRMessage::addUInt32(cdr_message,
-                    qos_policy.disable_positive_acks.duration.fraction());
+    valid &= rtps::CDRMessage::add_duration_t(cdr_message,
+                    qos_policy.disable_positive_acks.duration);
 
     return valid;
 }
@@ -1778,25 +1727,18 @@ inline bool QosPoliciesSerializer<RTPSReliableReaderQos>::read_content_from_cdr_
         return false;
     }
 
-    uint32_t frac(0);
+    bool valid = rtps::CDRMessage::read_duration_t(cdr_message,
+                    qos_policy.times.initial_acknack_delay);
 
-    bool valid = rtps::CDRMessage::readInt32(cdr_message,
-                    &qos_policy.times.initial_acknack_delay.seconds);
-    valid &= rtps::CDRMessage::readUInt32(cdr_message, &frac);
-    qos_policy.times.initial_acknack_delay.fraction(frac);
-    valid &= rtps::CDRMessage::readInt32(cdr_message,
-                    &qos_policy.times.heartbeat_response_delay.seconds);
-    valid &= rtps::CDRMessage::readUInt32(cdr_message, &frac);
-    qos_policy.times.heartbeat_response_delay.fraction(frac);
+    valid &= rtps::CDRMessage::read_duration_t(cdr_message,
+                    qos_policy.times.heartbeat_response_delay);
 
     valid &= rtps::CDRMessage::readOctet(cdr_message,
                     (fastdds::rtps::octet*) &qos_policy.disable_positive_acks.enabled);
     cdr_message->pos += 3; //padding
 
-    valid &= rtps::CDRMessage::readInt32(cdr_message,
-                    &qos_policy.disable_positive_acks.duration.seconds);
-    valid &= rtps::CDRMessage::readUInt32(cdr_message, &frac);
-    qos_policy.disable_positive_acks.duration.fraction(frac);
+    valid &= rtps::CDRMessage::read_duration_t(cdr_message,
+                    qos_policy.disable_positive_acks.duration);
 
     return valid;
 }
@@ -1815,19 +1757,15 @@ inline bool QosPoliciesSerializer<ReaderResourceLimitsQos>::add_to_cdr_message(
         rtps::CDRMessage_t* cdr_message)
 {
     // matched_publisher_allocation
-    bool valid = rtps::CDRMessage::addUInt32(cdr_message, (uint32_t)qos_policy.matched_publisher_allocation.initial);
-    valid &= rtps::CDRMessage::addUInt32(cdr_message, (uint32_t)qos_policy.matched_publisher_allocation.maximum);
-    valid &= rtps::CDRMessage::addUInt32(cdr_message, (uint32_t)qos_policy.matched_publisher_allocation.increment);
+    bool valid = rtps::CDRMessage::add_resource_limited_container_config(cdr_message,
+                    qos_policy.matched_publisher_allocation);
 
     // sample_infos_allocation
-    valid &= rtps::CDRMessage::addUInt32(cdr_message, (uint32_t)qos_policy.sample_infos_allocation.initial);
-    valid &= rtps::CDRMessage::addUInt32(cdr_message, (uint32_t)qos_policy.sample_infos_allocation.maximum);
-    valid &= rtps::CDRMessage::addUInt32(cdr_message, (uint32_t)qos_policy.sample_infos_allocation.increment);
+    valid &= rtps::CDRMessage::add_resource_limited_container_config(cdr_message, qos_policy.sample_infos_allocation);
 
     // outstanding_reads_allocation
-    valid &= rtps::CDRMessage::addUInt32(cdr_message, (uint32_t)qos_policy.outstanding_reads_allocation.initial);
-    valid &= rtps::CDRMessage::addUInt32(cdr_message, (uint32_t)qos_policy.outstanding_reads_allocation.maximum);
-    valid &= rtps::CDRMessage::addUInt32(cdr_message, (uint32_t)qos_policy.outstanding_reads_allocation.increment);
+    valid &= rtps::CDRMessage::add_resource_limited_container_config(cdr_message,
+                    qos_policy.outstanding_reads_allocation);
 
     // max_samples_per_read
     valid &= rtps::CDRMessage::addInt32(cdr_message, qos_policy.max_samples_per_read);
@@ -1851,32 +1789,14 @@ inline bool QosPoliciesSerializer<ReaderResourceLimitsQos>::read_content_from_cd
     qos_policy.sample_infos_allocation.maximum = 0;
     qos_policy.outstanding_reads_allocation.maximum = 0;
 
-    bool valid = rtps::CDRMessage::readUInt32(cdr_message,
-                    (uint32_t*)&qos_policy.matched_publisher_allocation.initial);
+    bool valid = rtps::CDRMessage::read_resource_limited_container_config(cdr_message,
+                    qos_policy.matched_publisher_allocation);
 
-    valid &= rtps::CDRMessage::readUInt32(cdr_message,
-                    (uint32_t*)&qos_policy.matched_publisher_allocation.maximum);
+    valid &= rtps::CDRMessage::read_resource_limited_container_config(cdr_message,
+                    qos_policy.sample_infos_allocation);
 
-    valid &= rtps::CDRMessage::readUInt32(cdr_message,
-                    (uint32_t*)&qos_policy.matched_publisher_allocation.increment);
-
-    valid &= rtps::CDRMessage::readUInt32(cdr_message,
-                    (uint32_t*)&qos_policy.sample_infos_allocation.initial);
-
-    valid &= rtps::CDRMessage::readUInt32(cdr_message,
-                    (uint32_t*)&qos_policy.sample_infos_allocation.maximum);
-
-    valid &= rtps::CDRMessage::readUInt32(cdr_message,
-                    (uint32_t*)&qos_policy.sample_infos_allocation.increment);
-
-    valid &= rtps::CDRMessage::readUInt32(cdr_message,
-                    (uint32_t*)&qos_policy.outstanding_reads_allocation.initial);
-
-    valid &= rtps::CDRMessage::readUInt32(cdr_message,
-                    (uint32_t*)&qos_policy.outstanding_reads_allocation.maximum);
-
-    valid &= rtps::CDRMessage::readUInt32(cdr_message,
-                    (uint32_t*)&qos_policy.outstanding_reads_allocation.increment);
+    valid &= rtps::CDRMessage::read_resource_limited_container_config(cdr_message,
+                    qos_policy.outstanding_reads_allocation);
 
     valid &= rtps::CDRMessage::readInt32(cdr_message,
                     &qos_policy.max_samples_per_read);

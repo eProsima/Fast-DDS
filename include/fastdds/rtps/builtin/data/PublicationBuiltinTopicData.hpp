@@ -175,7 +175,7 @@ struct PublicationBuiltinTopicData
     /// Network configuration
     NetworkConfigSet_t loopback_transformation{};
 
-    // Property list
+    /// Property list
     ParameterPropertyList_t properties;
 };
 
