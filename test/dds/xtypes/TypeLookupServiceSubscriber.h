@@ -889,6 +889,7 @@ private:
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(UnionDiscriminatorUShort);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(UnionDiscriminatorWChar);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(UnionDouble);
+        SUBSCRIBER_TYPE_CREATOR_FUNCTION(UnionFixedStringAlias);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(UnionFloat);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(UnionInnerAliasHelper);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(UnionInnerBitMaskHelper);

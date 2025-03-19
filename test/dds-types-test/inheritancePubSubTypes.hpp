@@ -606,9 +606,6 @@ private:
 
 };
 
-
-
-
 /*!
  * @brief This class represents the TopicDataType of the type BitsetsChildInheritanceStruct defined by the user in the IDL file.
  * @ingroup inheritance

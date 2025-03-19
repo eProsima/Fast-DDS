@@ -68,7 +68,6 @@ typedef std::vector<ForwardUnion> RecursiveUnboundedSeqForwardUnion;
 
 typedef std::vector<ForwardUnion> RecursiveBoundedSeqForwardUnion;
 
-
 /*!
  * @brief This class represents the structure ForwardDeclarationsRecursiveStruct defined by the user in the IDL file.
  * @ingroup declarations
