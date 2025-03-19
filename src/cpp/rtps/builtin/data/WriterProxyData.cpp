@@ -1107,8 +1107,8 @@ bool WriterProxyData::read_from_cdr_message(
                             return true;
                         }
 
-                        if (!dds::QosPoliciesSerializer<dds::RTPSEndpointQos>::read_from_cdr_message(
-                                    endpoint.value(), msg, plength))
+                        if (!dds::QosPoliciesSerializer<dds::TransportPriorityQosPolicy>::read_from_cdr_message(
+                                    transport_priority.value(), msg, plength))
                         {
                             EPROSIMA_LOG_ERROR(RTPS_WRITER_PROXY_DATA,
                                     "Received with error.");
