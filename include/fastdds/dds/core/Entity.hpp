@@ -132,6 +132,16 @@ public:
         return status_condition_;
     }
 
+    /**
+     * @brief Allows access to the StatusCondition associated with the Entity
+     *
+     * @return Const Reference to StatusCondition object
+     */
+    FASTDDS_EXPORTED_API const StatusCondition& get_statuscondition() const
+    {
+        return status_condition_;
+    }
+
 protected:
 
     /**

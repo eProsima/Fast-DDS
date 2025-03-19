@@ -70,6 +70,10 @@
 #include <xmlparser/attributes/TopicAttributes.hpp>
 #include <xmlparser/XMLProfileManager.h>
 
+#include "../rpc/ReplierImpl.hpp"
+#include "../rpc/RequesterImpl.hpp"
+#include "../rpc/ServiceImpl.hpp"
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -197,6 +201,18 @@ void DomainParticipantImpl::disable()
 
 DomainParticipantImpl::~DomainParticipantImpl()
 {
+    {
+        std::lock_guard<std::mutex> lock(mtx_services_);
+        for (auto service_it = services_.begin(); service_it != services_.end(); ++service_it)
+        {
+            delete service_it->second;
+        }
+        services_.clear();
+    }
+
+    services_publisher_ = {};
+    services_subscriber_ = {};
+
     {
         std::lock_guard<std::mutex> lock(mtx_pubs_);
         for (auto pub_it = publishers_.begin(); pub_it != publishers_.end(); ++pub_it)
@@ -964,6 +980,9 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
         delete it_pubs->second;
         it_pubs = publishers_.erase(it_pubs);
     }
+
+    services_publisher_ = {};
+    services_subscriber_ = {};
 
     std::lock_guard<std::mutex> lock_topics(mtx_topics_);
 
@@ -1819,7 +1838,8 @@ ReturnCode_t DomainParticipantImpl::unregister_type(
         {
             if (sit.second->type_in_use(type_name))
             {
-                return RETCODE_PRECONDITION_NOT_MET; // Is in use
+                EPROSIMA_LOG_ERROR(PARTICIPANT, "Type '" << type_name << "' is in use");
+                return RETCODE_PRECONDITION_NOT_MET;
             }
         }
     }
@@ -1832,7 +1852,8 @@ ReturnCode_t DomainParticipantImpl::unregister_type(
         {
             if (pit.second->type_in_use(type_name))
             {
-                return RETCODE_PRECONDITION_NOT_MET; // Is in use
+                EPROSIMA_LOG_ERROR(PARTICIPANT, "Type '" << type_name << "' is in use");
+                return RETCODE_PRECONDITION_NOT_MET;
             }
         }
     }
@@ -1841,6 +1862,399 @@ ReturnCode_t DomainParticipantImpl::unregister_type(
     types_.erase(type_name);
 
     return RETCODE_OK;
+}
+
+const rpc::ServiceTypeSupport DomainParticipantImpl::find_service_type(
+        const std::string& service_type_name) const
+{
+    std::lock_guard<std::mutex> lock(mtx_service_types_);
+
+    auto service_type_it = service_types_.find(service_type_name);
+
+    if (service_type_it != service_types_.end())
+    {
+        return service_type_it->second;
+    }
+
+    return rpc::ServiceTypeSupport(TypeSupport(nullptr), TypeSupport(nullptr));
+}
+
+ReturnCode_t DomainParticipantImpl::register_service_type(
+        rpc::ServiceTypeSupport service_type,
+        const std::string& service_type_name)
+{
+    if (service_type_name.size() <= 0)
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Registered Service Type must have a name");
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    if (service_type.empty_types())
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Trying to register a Service Type with empty request/reply types");
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    // Check if the service type is already registered
+    rpc::ServiceTypeSupport t = find_service_type(service_type_name);
+
+    if (!t.empty_types())
+    {
+        if (t == service_type)
+        {
+            return RETCODE_OK;
+        }
+
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Another service type with the same name '" << service_type_name <<
+                "' is already registered.");
+        return RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    // Register request/reply types
+    ReturnCode_t ret_code;
+    ret_code = register_type(service_type.request_type(), service_type_name + "_Request");
+
+    if (RETCODE_OK != ret_code)
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Error registering Request Type for Service Type " << service_type_name);
+        return ret_code;
+    }
+
+    ret_code = register_type(service_type.reply_type(), service_type_name + "_Reply");
+
+    if (RETCODE_OK != ret_code)
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Error registering Request Type for Service Type " << service_type_name);
+        return ret_code;
+    }
+
+    EPROSIMA_LOG_INFO(PARTICIPANT, "Service Type " << service_type_name << " registered.");
+    std::lock_guard<std::mutex> lock(mtx_service_types_);
+    service_types_.insert(std::make_pair(service_type_name, service_type));
+
+    return RETCODE_OK;
+}
+
+ReturnCode_t DomainParticipantImpl::unregister_service_type(
+        const std::string& service_type_name)
+{
+    if (service_type_name.size() <= 0)
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Registered Service Type must have a name");
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    rpc::ServiceTypeSupport t = find_service_type(service_type_name);
+    if (t.empty_types())
+    {
+        return RETCODE_OK; // Not registered, so unregistering complete.
+    }
+
+    // Iterate over all active services and check if any of them is using the service type
+    {
+        std::lock_guard<std::mutex> lock(mtx_services_);
+        for (auto service_it : services_)
+        {
+            if (service_it.second->service_type_in_use(service_type_name))
+            {
+                EPROSIMA_LOG_ERROR(PARTICIPANT, "Service Type " << service_type_name << " is in use by service " <<
+                        service_it.first);
+                return RETCODE_PRECONDITION_NOT_MET;
+            }
+        }
+    }
+
+    // Unregister request/reply types
+    ReturnCode_t ret_code;
+    ret_code = unregister_type(service_type_name + "_Request");
+
+    if (RETCODE_OK != ret_code)
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Error unregistering Request Type for Service Type " << service_type_name);
+        return ret_code;
+    }
+
+    ret_code = unregister_type(service_type_name + "_Reply");
+
+    if (RETCODE_OK != ret_code)
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Error unregistering Reply Type for Service Type " << service_type_name);
+
+        // Request topic type was unregistered, so register it again to avoid leaving the participant in an inconsistent state
+        register_type(t.request_type(), service_type_name + "_Request");
+
+        return ret_code;
+    }
+
+    {
+        std::lock_guard<std::mutex> lock(mtx_service_types_);
+        service_types_.erase(service_type_name);
+    }
+
+    return RETCODE_OK;
+}
+
+rpc::Service* DomainParticipantImpl::create_service(
+        const std::string& service_name,
+        const std::string& service_type_name)
+{
+    if (service_name.empty())
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Service name cannot be empty.");
+        return nullptr;
+    }
+
+    if (service_type_name.empty())
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Service type name cannot be empty.");
+        return nullptr;
+    }
+
+    // Check if the service has already been created
+    {
+        std::lock_guard<std::mutex> lock(mtx_services_);
+        auto it = services_.find(service_name);
+
+        if (it != services_.end())
+        {
+            EPROSIMA_LOG_ERROR(PARTICIPANT, "Service with name '" << service_name << "' already exists.");
+            return nullptr;
+        }
+    }
+
+    // Check if the request/reply content filter factory is registered. If not, register it.
+    IContentFilterFactory* factory = find_content_filter_factory(rpc::RequestReplyContentFilterFactory::FILTER_NAME);
+
+    if (!factory)
+    {
+        factory = &req_rep_filter_factory_;
+        ReturnCode_t ret_code =
+                register_content_filter_factory(rpc::RequestReplyContentFilterFactory::FILTER_NAME, factory);
+
+        if (RETCODE_OK != ret_code)
+        {
+            EPROSIMA_LOG_ERROR(PARTICIPANT, "Error registering Request/Reply Content Filter Factory.");
+            return nullptr;
+        }
+    }
+
+    // Before creating the service, create the publisher and subscriber
+    // that it will use for DDS endpoints creation, if it is necessary
+    if (!services_publisher_.second)
+    {
+        Publisher* pub = create_publisher(PUBLISHER_QOS_DEFAULT);
+        if (!pub)
+        {
+            EPROSIMA_LOG_ERROR(PARTICIPANT, "Error creating Services publisher.");
+            return nullptr;
+        }
+        services_publisher_ = std::make_pair(pub, publishers_[pub]);
+    }
+
+    if (!services_subscriber_.second)
+    {
+        Subscriber* sub = create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+        if (!sub)
+        {
+            EPROSIMA_LOG_ERROR(PARTICIPANT, "Error creating Services subscriber.");
+            return nullptr;
+        }
+        services_subscriber_ = std::make_pair(sub, subscribers_[sub]);
+    }
+    // Create and store the service (Internally, this will create the required DDS Request/Reply Topics))
+    rpc::ServiceImpl* service(nullptr);
+
+    try
+    {
+        service = new rpc::ServiceImpl(
+            service_name, service_type_name, this, services_publisher_.second, services_subscriber_.second);
+    }
+    catch (const std::exception& e)
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Error creating service: " << e.what());
+        return nullptr;
+    }
+
+    // Try to enable the created service
+    if (RETCODE_OK != service->enable())
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Error enabling service.");
+        delete service;
+        return nullptr;
+    }
+
+    {
+        // Register the service in the participant
+        std::lock_guard<std::mutex> lock(mtx_services_);
+        services_[service_name] = service;
+    }
+
+    return service;
+}
+
+rpc::Service* DomainParticipantImpl::find_service(
+        const std::string& service_name) const
+{
+    std::lock_guard<std::mutex> lock(mtx_services_);
+    auto it = services_.find(service_name);
+
+    if (it != services_.end())
+    {
+        return it->second;
+    }
+    return nullptr;
+}
+
+ReturnCode_t DomainParticipantImpl::delete_service(
+        const rpc::Service* service)
+{
+    if (!service)
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Service is nullptr.");
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    const rpc::ServiceImpl* service_impl = dynamic_cast<const rpc::ServiceImpl*>(service);
+    assert(service_impl != nullptr);
+
+    std::lock_guard<std::mutex> lock(mtx_services_);
+    auto it = services_.find(service->get_service_name());
+
+    if (it != services_.end())
+    {
+        if (service_impl != it->second)
+        {
+            EPROSIMA_LOG_ERROR(PARTICIPANT, "Service mismatch.");
+            return RETCODE_PRECONDITION_NOT_MET;
+        }
+
+        // Check that the service is disabled
+        if (it->second->is_enabled())
+        {
+            EPROSIMA_LOG_INFO(PARTICIPANT, "Trying to delete an enabled service.");
+            ReturnCode_t retcode = it->second->close();
+            if (RETCODE_OK != retcode)
+            {
+                EPROSIMA_LOG_ERROR(PARTICIPANT, "Error closing service: " << retcode);
+                return retcode;
+            }
+        }
+
+        delete it->second;
+        services_.erase(it);
+        return RETCODE_OK;
+    }
+
+    // The service was not found in this participant
+    EPROSIMA_LOG_ERROR(PARTICIPANT, "Service with name '" << service->get_service_name() << "' not found.");
+    return RETCODE_PRECONDITION_NOT_MET;
+}
+
+rpc::Requester* DomainParticipantImpl::create_service_requester(
+        rpc::Service* service,
+        const RequesterQos& qos)
+{
+    // Check if the service is valid and registered in participant
+    if (!service)
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Service is nullptr.");
+        return nullptr;
+    }
+
+    const rpc::ServiceImpl* service_impl = dynamic_cast<const rpc::ServiceImpl*>(service);
+    assert(service_impl != nullptr);
+
+    std::lock_guard<std::mutex> lock(mtx_services_);
+    auto it = services_.find(service->get_service_name());
+    if (it == services_.end())
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Service with name '" << service->get_service_name() << "' not found.");
+        return nullptr;
+    }
+
+    // Make sure that both services are the same
+    if (it->second != service_impl)
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Service mismatch.");
+        return nullptr;
+    }
+
+    // Create the requester and register it in the service
+    return it->second->create_requester(qos);
+}
+
+ReturnCode_t DomainParticipantImpl::delete_service_requester(
+        const std::string& service_name,
+        rpc::Requester* requester)
+{
+
+    rpc::RequesterImpl* requester_impl = dynamic_cast<rpc::RequesterImpl*>(requester);
+    assert(requester_impl != nullptr);
+
+    // Get registered service implementation
+    std::lock_guard<std::mutex> lock(mtx_services_);
+    auto it = services_.find(service_name);
+
+    if (it == services_.end())
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Service with name '" << service_name << "' not registered.");
+        return RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    return it->second->remove_requester(requester_impl);
+}
+
+rpc::Replier* DomainParticipantImpl::create_service_replier(
+        rpc::Service* service,
+        const ReplierQos& qos)
+{
+    // Check if the service is valid and registered in participant
+    if (!service)
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Service is nullptr.");
+        return nullptr;
+    }
+
+    const rpc::ServiceImpl* service_impl = dynamic_cast<const rpc::ServiceImpl*>(service);
+    assert(service_impl != nullptr);
+
+    std::lock_guard<std::mutex> lock(mtx_services_);
+    auto it = services_.find(service->get_service_name());
+    if (it == services_.end())
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Service with name '" << service->get_service_name() << "' not found.");
+        return nullptr;
+    }
+
+    // Make sure that both services are the same
+    if (it->second != service_impl)
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Service mismatch.");
+        return nullptr;
+    }
+
+    // Create the replier and register it in the service
+    return it->second->create_replier(qos);
+}
+
+ReturnCode_t DomainParticipantImpl::delete_service_replier(
+        const std::string& service_name,
+        rpc::Replier* replier)
+{
+    rpc::ReplierImpl* replier_impl = dynamic_cast<rpc::ReplierImpl*>(replier);
+    assert(replier_impl != nullptr);
+
+    // Get registered service implementation
+    std::lock_guard<std::mutex> lock(mtx_services_);
+    auto it = services_.find(service_name);
+
+    if (it == services_.end())
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Service with name '" << service_name << "' not registered.");
+        return RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    return it->second->remove_replier(replier_impl);
 }
 
 void DomainParticipantImpl::MyRTPSParticipantListener::on_participant_discovery(

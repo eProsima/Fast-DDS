@@ -1475,7 +1475,7 @@ const TopicDescription* DataReaderImpl::get_topicdescription() const
     return topic_;
 }
 
-TypeSupport DataReaderImpl::type()
+TypeSupport DataReaderImpl::type() const
 {
     return type_;
 }

@@ -18,6 +18,9 @@ Forthcoming
   * Extended CLI ``discovery`` command to handle Fast DDS daemon.
   * Added P2P builtin transport.
   * Added new `easy_mode_ip` XML tag and `easy_mode` setter in `WireProtocolConfigQos` for Easy Mode IP configuration through XML and code.
+* Added RPC over DDS internal API:
+  * New classes: `Service`, `Requester`, `Replier`, `ServiceTypeSupport`
+  * Added methods in DomainParticipant public API
 
 Version v3.1.0
 --------------

@@ -17,150 +17,112 @@
  *
  */
 
-#include "ReqRepHelloWorldRequester.hpp"
-
 #include <gtest/gtest.h>
 
-#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/core/condition/Condition.hpp>
+#include <fastdds/dds/core/condition/StatusCondition.hpp>
+#include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
+#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
-#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/rpc/RequestInfo.hpp>
+#include <fastdds/dds/rpc/ServiceTypeSupport.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
-#include <fastdds/dds/subscriber/SampleInfo.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastdds/dds/topic/Topic.hpp>
-#include <fastdds/rtps/common/WriteParams.hpp>
 
-#include "../../common/BlackboxTests.hpp"
+#include "ReqRepHelloWorldRequester.hpp"
+#include "ReqRepHelloWorldService.hpp"
+
+using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastdds::dds::rpc;
+using namespace eprosima::fastdds::rtps;
 
 ReqRepHelloWorldRequester::ReqRepHelloWorldRequester()
-    : reply_listener_(*this)
-    , request_listener_(*this)
-    , current_number_(std::numeric_limits<uint16_t>::max())
+    : current_number_(std::numeric_limits<uint16_t>::max())
     , number_received_(std::numeric_limits<uint16_t>::max())
+    , requester_(nullptr)
+    , service_(nullptr)
     , participant_(nullptr)
-    , reply_subscriber_(nullptr)
-    , request_publisher_(nullptr)
     , initialized_(false)
     , matched_(0)
 {
-    // By default, memory mode is PREALLOCATED_WITH_REALLOC_MEMORY_MODE
-    datareader_qos_.endpoint().history_memory_policy = eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-    datawriter_qos_.endpoint().history_memory_policy = eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-
-    datawriter_qos_.reliable_writer_qos().times.heartbeat_period.seconds = 1;
-    datawriter_qos_.reliable_writer_qos().times.heartbeat_period.nanosec = 0;
 }
 
 ReqRepHelloWorldRequester::~ReqRepHelloWorldRequester()
 {
-    if (participant_ != nullptr)
+    stop_processing_thread_.set_trigger_value(true);
+
+    // Stop the processing thread
+    if (processing_thread_.joinable())
     {
-        if (reply_subscriber_)
+        processing_thread_.join();
+    }
+
+    if (participant_)
+    {
+        if (service_)
         {
-            if (reply_datareader_)
+            if (requester_)
             {
-                reply_subscriber_->delete_datareader(reply_datareader_);
+                participant_->delete_service_requester(service_->get_service_name(), requester_);
             }
-            participant_->delete_subscriber(reply_subscriber_);
+
+            participant_->delete_service(service_);
         }
-        if (request_publisher_)
-        {
-            if (request_datawriter_)
-            {
-                request_publisher_->delete_datawriter(request_datawriter_);
-            }
-            participant_->delete_publisher(request_publisher_);
-        }
-        if (request_topic_)
-        {
-            participant_->delete_topic(request_topic_);
-        }
-        if (reply_topic_)
-        {
-            participant_->delete_topic(reply_topic_);
-        }
-        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(participant_);
+
+        participant_->delete_contained_entities();
+        DomainParticipantFactory::get_instance()->delete_participant(participant_);
     }
 }
 
-void ReqRepHelloWorldRequester::init()
+void ReqRepHelloWorldRequester::init(
+        bool use_volatile /* = false */)
 {
-    participant_ = eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
+    init_with_custom_qos(create_requester_qos(use_volatile));
+}
+
+void ReqRepHelloWorldRequester::init_with_custom_qos(
+        const RequesterQos& requester_qos)
+{
+    ASSERT_NE(initialized_, true);
+
+    // Create participant
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(
+        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant_, nullptr);
     ASSERT_TRUE(participant_->is_enabled());
 
-    // Register type
-    type_.reset(new HelloWorldPubSubType());
-    ASSERT_EQ(participant_->register_type(type_), eprosima::fastdds::dds::RETCODE_OK);
+    // Register service type and create service
+    ReqRepHelloWorldService service;
+    service_ = service.init(participant_);
+    ASSERT_NE(service_, nullptr);
 
-    reply_subscriber_ = participant_->create_subscriber(eprosima::fastdds::dds::SUBSCRIBER_QOS_DEFAULT);
-    ASSERT_NE(reply_subscriber_, nullptr);
-    ASSERT_TRUE(reply_subscriber_->is_enabled());
+    // Create requester
+    requester_ = participant_->create_service_requester(service_, requester_qos);
+    ASSERT_NE(requester_, nullptr);
+    ASSERT_EQ(requester_->is_enabled(), true);
 
-    request_publisher_ = participant_->create_publisher(eprosima::fastdds::dds::PUBLISHER_QOS_DEFAULT);
-    ASSERT_NE(request_publisher_, nullptr);
-    ASSERT_TRUE(request_publisher_->is_enabled());
-
-    configDatareader("Reply");
-    reply_topic_ = participant_->create_topic(datareader_topicname_,
-                    type_->get_name(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
-    ASSERT_NE(reply_topic_, nullptr);
-    ASSERT_TRUE(reply_topic_->is_enabled());
-
-    configDatawriter("Request");
-    request_topic_ = participant_->create_topic(datawriter_topicname_,
-                    type_->get_name(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
-    ASSERT_NE(request_topic_, nullptr);
-    ASSERT_TRUE(request_topic_->is_enabled());
-
-    if (enable_datasharing)
-    {
-        datareader_qos_.data_sharing().automatic();
-        datawriter_qos_.data_sharing().automatic();
-    }
-    else
-    {
-        datareader_qos_.data_sharing().off();
-        datawriter_qos_.data_sharing().off();
-    }
-
-    if (use_pull_mode)
-    {
-        datawriter_qos_.properties().properties().emplace_back("fastdds.push_mode", "false");
-    }
-
-    //Create DataReader
-    reply_datareader_ = reply_subscriber_->create_datareader(reply_topic_, datareader_qos_, &reply_listener_);
-    ASSERT_NE(reply_datareader_, nullptr);
-    ASSERT_TRUE(reply_datareader_->is_enabled());
-
-    //Create DataWriter
-    request_datawriter_ = request_publisher_->create_datawriter(request_topic_, datawriter_qos_,
-                    &request_listener_);
-    ASSERT_NE(request_datawriter_, nullptr);
-    ASSERT_TRUE(request_datawriter_->is_enabled());
+    init_processing_thread();
 
     initialized_ = true;
 }
 
 void ReqRepHelloWorldRequester::init_with_latency(
-        const eprosima::fastdds::dds::Duration_t& latency_budget_duration_pub,
-        const eprosima::fastdds::dds::Duration_t& latency_budget_duration_sub)
+        const Duration_t& latency_budget_duration_pub,
+        const Duration_t& latency_budget_duration_sub)
 {
-    datareader_qos_.latency_budget().duration = latency_budget_duration_sub;
-    datawriter_qos_.latency_budget().duration = latency_budget_duration_pub;
-    init();
+    RequesterQos requester_qos = create_requester_qos();
+    requester_qos.writer_qos.latency_budget().duration = latency_budget_duration_pub;
+    requester_qos.reader_qos.latency_budget().duration = latency_budget_duration_sub;
+
+    init_with_custom_qos(requester_qos);
 }
 
 void ReqRepHelloWorldRequester::newNumber(
-        eprosima::fastdds::rtps::SampleIdentity related_sample_identity,
+        const RequestInfo& info,
         uint16_t number)
 {
     std::unique_lock<std::mutex> lock(mutex_);
-    received_sample_identity_ = related_sample_identity;
+    received_sample_identity_ = info.related_sample_identity;
     number_received_ = number;
     ASSERT_EQ(current_number_, number_received_);
     if (current_number_ == number_received_)
@@ -208,28 +170,10 @@ void ReqRepHelloWorldRequester::matched()
     }
 }
 
-void ReqRepHelloWorldRequester::ReplyListener::on_data_available(
-        eprosima::fastdds::dds::DataReader* datareader)
-{
-    ASSERT_NE(datareader, nullptr);
-
-    HelloWorld hello;
-    eprosima::fastdds::dds::SampleInfo info;
-
-    if (eprosima::fastdds::dds::RETCODE_OK == datareader->take_next_sample((void*)&hello, &info))
-    {
-        if (info.valid_data)
-        {
-            ASSERT_EQ(hello.message().compare("GoodBye"), 0);
-            requester_.newNumber(info.related_sample_identity, hello.index());
-        }
-    }
-}
-
 void ReqRepHelloWorldRequester::send(
         const uint16_t number)
 {
-    eprosima::fastdds::rtps::WriteParams wparams;
+    RequestInfo info;
     HelloWorld hello;
     hello.index(number);
     hello.message("HelloWorld");
@@ -239,7 +183,159 @@ void ReqRepHelloWorldRequester::send(
         current_number_ = number;
     }
 
-    ASSERT_EQ(request_datawriter_->write((void*)&hello, wparams), eprosima::fastdds::dds::RETCODE_OK);
-    related_sample_identity_ = wparams.sample_identity();
-    ASSERT_NE(related_sample_identity_.sequence_number(), eprosima::fastdds::rtps::SequenceNumber_t());
+    ASSERT_EQ(requester_->send_request((void*)&hello, info), RETCODE_OK);
+    related_sample_identity_ = info.related_sample_identity;
+
+    ASSERT_NE(related_sample_identity_.sequence_number(), SequenceNumber_t());
+}
+
+const Duration_t ReqRepHelloWorldRequester::datawriter_latency_budget_duration() const
+{
+    return requester_->get_requester_writer()->get_qos().latency_budget().duration;
+}
+
+const Duration_t ReqRepHelloWorldRequester::datareader_latency_budget_duration() const
+{
+    return requester_->get_requester_reader()->get_qos().latency_budget().duration;
+}
+
+void ReqRepHelloWorldRequester::init_processing_thread()
+{
+    wait_set_.attach_condition(stop_processing_thread_);
+    wait_set_.attach_condition(requester_->get_requester_writer()->get_statuscondition());
+    wait_set_.attach_condition(requester_->get_requester_reader()->get_statuscondition());
+
+    processing_thread_ = std::thread(&ReqRepHelloWorldRequester::process_status_changes, this);
+}
+
+void ReqRepHelloWorldRequester::process_status_changes()
+{
+    while (!stop_processing_thread_.get_trigger_value())
+    {
+        ReturnCode_t retcode;
+        ConditionSeq triggered_conditions;
+
+        retcode = wait_set_.wait(triggered_conditions, c_TimeInfinite);
+
+        if (RETCODE_OK != retcode)
+        {
+            std::cout << "Requester: Error processing status changes" << std::endl;
+            continue;
+        }
+
+        for (Condition* condition : triggered_conditions)
+        {
+            // Process reader/writer status changes
+            StatusCondition* status_condition = dynamic_cast<StatusCondition*>(condition);
+
+            // Check if the triggered condition is a status condition.
+            // If it is, process it and notify the changes to the main thread
+            if (status_condition)
+            {
+                Entity* entity = status_condition->get_entity();
+                StatusMask status_changes = entity->get_status_changes();
+
+                if (status_changes.is_active(StatusMask::publication_matched()))
+                {
+                    std::cout << "Requester: Processing publication matched status" << std::endl;
+
+                    DataWriter* writer = dynamic_cast<DataWriter*>(entity);
+
+                    ASSERT_NE(writer, nullptr);
+                    ASSERT_EQ(writer, requester_->get_requester_writer());
+                    PublicationMatchedStatus status;
+                    if (RETCODE_OK != writer->get_publication_matched_status(status))
+                    {
+                        std::cout << "Requester: Error processing publication matched status" << std::endl;
+                        continue;
+                    }
+
+                    if (status.current_count_change > 0)
+                    {
+                        matched();
+                    }
+                }
+                else if (status_changes.is_active(StatusMask::subscription_matched()))
+                {
+                    std::cout << "Requester: Processing subscription matched status" << std::endl;
+
+                    DataReader* reader = dynamic_cast<DataReader*>(entity);
+                    ASSERT_NE(reader, nullptr);
+                    ASSERT_EQ(reader, requester_->get_requester_reader());
+
+                    SubscriptionMatchedStatus status;
+                    if (RETCODE_OK != reader->get_subscription_matched_status(status))
+                    {
+                        std::cout << "Requester: Error processing subscription matched status" << std::endl;
+                        continue;
+                    }
+
+                    if (status.current_count_change > 0)
+                    {
+                        matched();
+                    }
+                }
+                else if (status_changes.is_active(StatusMask::data_available()))
+                {
+                    std::cout << "Requester: Processing data available status" << std::endl;
+
+                    DataReader* reader = dynamic_cast<DataReader*>(entity);
+                    ASSERT_NE(reader, nullptr);
+                    ASSERT_EQ(reader, requester_->get_requester_reader());
+
+                    HelloWorld hello;
+                    RequestInfo info;
+
+                    while (RETCODE_OK == requester_->take_reply((void*)&hello, info))
+                    {
+                        if (info.valid_data)
+                        {
+                            ASSERT_EQ(hello.message().compare("GoodBye"), 0);
+                            newNumber(info, hello.index());
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+RequesterQos ReqRepHelloWorldRequester::create_requester_qos(
+        bool volatile_durability_qos)
+{
+    RequesterQos requester_qos;
+    ReqRepHelloWorldService service;
+
+    DataWriterQos& writer_qos = requester_qos.writer_qos;
+    DataReaderQos& reader_qos = requester_qos.reader_qos;
+    // Requester/Replier DataWriter QoS configuration
+    reader_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    writer_qos.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+
+    if (volatile_durability_qos)
+    {
+        reader_qos.durability().kind = VOLATILE_DURABILITY_QOS;
+        writer_qos.durability().kind = VOLATILE_DURABILITY_QOS;
+    }
+
+    writer_qos.reliable_writer_qos().times.heartbeat_period.seconds = 1;
+    writer_qos.reliable_writer_qos().times.heartbeat_period.nanosec = 0;
+
+    if (enable_datasharing)
+    {
+        reader_qos.data_sharing().automatic();
+        writer_qos.data_sharing().automatic();
+    }
+    else
+    {
+        reader_qos.data_sharing().off();
+        writer_qos.data_sharing().off();
+    }
+
+    if (use_pull_mode)
+    {
+        writer_qos.properties().properties().emplace_back("fastdds.push_mode", "false");
+    }
+
+    return requester_qos;
 }
