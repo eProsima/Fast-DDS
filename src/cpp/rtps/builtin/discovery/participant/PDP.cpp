@@ -49,6 +49,7 @@
 #include <rtps/builtin/discovery/participant/PDPEndpoints.hpp>
 #include <rtps/builtin/discovery/participant/PDPListener.h>
 #include <rtps/builtin/liveliness/WLP.hpp>
+#include <rtps/flowcontrol/FlowControllerFactory.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.hpp>
@@ -1628,37 +1629,57 @@ static void set_builtin_endpoint_locators(
     endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
 }
 
-ReaderAttributes PDP::create_builtin_reader_attributes() const
+ReaderAttributes PDP::create_builtin_reader_attributes()
 {
     ReaderAttributes attributes;
 
     const RTPSParticipantAttributes& pattr = getRTPSParticipant()->get_attributes();
     set_builtin_matched_allocation(attributes.matched_writers_allocation, pattr);
-    set_builtin_endpoint_locators(attributes.endpoint, this, mp_builtin);
 
     // Builtin endpoints are always reliable, transient local, keyed topics
     attributes.endpoint.reliabilityKind = RELIABLE;
     attributes.endpoint.durabilityKind = TRANSIENT_LOCAL;
     attributes.endpoint.topicKind = WITH_KEY;
 
+    attributes.endpoint.endpointKind = READER;
+
     // Built-in readers never expect inline qos
     attributes.expects_inline_qos = false;
+
+    attributes.times.heartbeat_response_delay = pdp_heartbeat_response_delay;
+
+    set_builtin_endpoint_locators(attributes.endpoint, this, mp_builtin);
 
     return attributes;
 }
 
-WriterAttributes PDP::create_builtin_writer_attributes() const
+WriterAttributes PDP::create_builtin_writer_attributes()
 {
     WriterAttributes attributes;
 
     const RTPSParticipantAttributes& pattr = getRTPSParticipant()->get_attributes();
     set_builtin_matched_allocation(attributes.matched_readers_allocation, pattr);
-    set_builtin_endpoint_locators(attributes.endpoint, this, mp_builtin);
 
     // Builtin endpoints are always reliable, transient local, keyed topics
     attributes.endpoint.reliabilityKind = RELIABLE;
     attributes.endpoint.durabilityKind = TRANSIENT_LOCAL;
     attributes.endpoint.topicKind = WITH_KEY;
+
+    attributes.endpoint.endpointKind = WRITER;
+
+    // We assume that if we have at least one flow controller defined, we use async flow controller
+    if (!pattr.flow_controllers.empty())
+    {
+        attributes.mode = ASYNCHRONOUS_WRITER;
+        attributes.flow_controller_name = (pattr.builtin.flow_controller_name !=
+                "") ? pattr.builtin.flow_controller_name : fastdds::rtps::async_flow_controller_name;
+    }
+
+    attributes.times.heartbeat_period = pdp_heartbeat_period;
+    attributes.times.nack_response_delay = pdp_nack_response_delay;
+    attributes.times.nack_supression_duration = pdp_nack_supression_duration;
+
+    set_builtin_endpoint_locators(attributes.endpoint, this, mp_builtin);
 
     return attributes;
 }

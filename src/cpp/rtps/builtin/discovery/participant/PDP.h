@@ -441,9 +441,9 @@ public:
         return temp_writer_proxies_;
     }
 
-    ReaderAttributes create_builtin_reader_attributes() const;
+    ReaderAttributes create_builtin_reader_attributes();
 
-    WriterAttributes create_builtin_writer_attributes() const;
+    WriterAttributes create_builtin_writer_attributes();
 
 #if HAVE_SECURITY
     void add_builtin_security_attributes(
@@ -678,7 +678,6 @@ private:
             RTPSParticipantListener* listener);
 
 };
-
 
 // configuration values for PDP reliable entities.
 extern const dds::Duration_t pdp_heartbeat_period;

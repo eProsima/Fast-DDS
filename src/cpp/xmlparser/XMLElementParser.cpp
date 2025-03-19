@@ -593,6 +593,7 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(
             <xs:element name="readerHistoryMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
             <xs:element name="writerHistoryMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
             <xs:element name="mutation_tries" type="uint32Type" minOccurs="0"/>
+            <xs:element name="flow_controller_name" type="stringType" minOccurs="0"/>
         </xs:all>
        </xs:complexType>
      */
@@ -705,6 +706,14 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(
         {
             // avoid_builtin_multicast - boolType
             if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &builtin.avoid_builtin_multicast, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, FLOW_CONTROLLER_NAME) == 0)
+        {
+            // flow_controller_name - stringType
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &builtin.flow_controller_name, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }

@@ -722,7 +722,8 @@
         ├ writerHistoryMemoryPolicy             [0~1],
         ├ readerPayloadSize                     [uint32],
         ├ writerPayloadSize                     [uint32],
-        └ mutation_tries                        [uint32]-->
+        ├ mutation_tries                        [uint32],
+        └ flow_controller_name                  [string] -->
     <xs:complexType name="builtinAttributesType">
         <xs:all>
             <xs:element name="discovery_config" type="discoverySettingsType" minOccurs="0" maxOccurs="1"/>
@@ -737,6 +738,7 @@
             <xs:element name="readerPayloadSize" type="uint32" minOccurs="0" maxOccurs="1"/>
             <xs:element name="writerPayloadSize" type="uint32" minOccurs="0" maxOccurs="1"/>
             <xs:element name="mutation_tries" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="flow_controller_name" type="string" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 

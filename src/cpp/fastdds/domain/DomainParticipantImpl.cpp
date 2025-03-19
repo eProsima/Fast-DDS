@@ -19,6 +19,7 @@
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 
+#include <algorithm>
 #include <chrono>
 #include <string>
 
@@ -2449,6 +2450,33 @@ ReturnCode_t DomainParticipantImpl::check_qos(
         }
     }
 
+    // Check participant's wire protocol (builtin flow controller) configuration
+    if (RETCODE_OK == ret_val)
+    {
+        const std::string& builtin_flow_controller_name = qos.wire_protocol().builtin.flow_controller_name;
+
+        if (!builtin_flow_controller_name.empty())
+        {
+            // Get the list of flow controllers
+            auto flow_controllers = qos.flow_controllers();
+
+            // Check if any flow controller matches the builtin flow controller name
+            bool found = std::any_of(flow_controllers.begin(), flow_controllers.end(),
+                            [&builtin_flow_controller_name](const std::shared_ptr<fastdds::rtps::
+                                    FlowControllerDescriptor>& fc)
+                            {
+                                return fc && fc->name == builtin_flow_controller_name;
+                            });
+
+            if (!found)
+            {
+                EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK, "Flow controller name not found in flow controllers list");
+                return RETCODE_INCONSISTENT_POLICY;
+            }
+        }
+    }
+
+
     return ret_val;
 }
 
@@ -2504,6 +2532,8 @@ bool DomainParticipantImpl::can_qos_be_updated(
                 from.wire_protocol().builtin.writerHistoryMemoryPolicy) ||
                 !(to.wire_protocol().builtin.writerPayloadSize == from.wire_protocol().builtin.writerPayloadSize) ||
                 !(to.wire_protocol().builtin.mutation_tries == from.wire_protocol().builtin.mutation_tries) ||
+                !(to.wire_protocol().builtin.flow_controller_name ==
+                from.wire_protocol().builtin.flow_controller_name) ||
                 !(to.wire_protocol().builtin.avoid_builtin_multicast ==
                 from.wire_protocol().builtin.avoid_builtin_multicast) ||
                 !(to.wire_protocol().builtin.discovery_config.discoveryProtocol ==

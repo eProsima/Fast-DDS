@@ -701,6 +701,14 @@ public:
         return false;
     }
 
+    PubSubParticipant& flow_controller(
+            const std::shared_ptr<eprosima::fastdds::rtps::FlowControllerDescriptor>& flow_controller)
+    {
+        participant_qos_.flow_controllers().clear();
+        participant_qos_.flow_controllers().push_back(flow_controller);
+        return *this;
+    }
+
     PubSubParticipant& initial_peers(
             const eprosima::fastdds::rtps::LocatorList& initial_peers)
     {

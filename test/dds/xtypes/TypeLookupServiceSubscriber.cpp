@@ -47,7 +47,8 @@ TypeLookupServiceSubscriber::~TypeLookupServiceSubscriber()
 
 bool TypeLookupServiceSubscriber::init(
         uint32_t domain_id,
-        std::vector<std::string> known_types)
+        std::vector<std::string> known_types,
+        uint32_t builtin_flow_controller_bytes)
 {
     domain_id_ = domain_id;
     create_type_creator_functions();
@@ -60,8 +61,18 @@ bool TypeLookupServiceSubscriber::init(
             << StatusMask::data_available()
             << StatusMask::liveliness_changed();
 
+    auto qos = PARTICIPANT_QOS_DEFAULT;
+    if (builtin_flow_controller_bytes > 0)
+    {
+        auto new_flow_controller = std::make_shared<eprosima::fastdds::rtps::FlowControllerDescriptor>();
+        new_flow_controller->name = "MyFlowController";
+        new_flow_controller->max_bytes_per_period = builtin_flow_controller_bytes;
+        new_flow_controller->period_ms = static_cast<uint64_t>(100000);
+        qos.flow_controllers().push_back(new_flow_controller);
+        qos.wire_protocol().builtin.flow_controller_name = new_flow_controller->name;
+    }
     participant_ = DomainParticipantFactory::get_instance()
-                    ->create_participant(domain_id, PARTICIPANT_QOS_DEFAULT, this, mask);
+                    ->create_participant(domain_id, qos, this, mask);
     if (participant_ == nullptr)
     {
         std::cout << "ERROR TypeLookupServiceSubscriber: create_participant" << std::endl;
@@ -314,6 +325,26 @@ bool TypeLookupServiceSubscriber::wait_discovery(
     return true;
 }
 
+bool TypeLookupServiceSubscriber::wait_participant_discovery(
+        uint32_t expected_matches,
+        uint32_t timeout)
+{
+    std::unique_lock<std::mutex> lock(mutex_);
+    bool result = cv_.wait_for(lock, std::chrono::seconds(timeout),
+                    [&]()
+                    {
+                        return participant_matched_ == static_cast<int32_t>(expected_matches);
+                    });
+
+    if (!result)
+    {
+        std::cout << "ERROR TypeLookupServiceSubscriber participoant discovery Timeout with matched = " <<
+            participant_matched_ << std::endl;
+        return false;
+    }
+    return true;
+}
+
 bool TypeLookupServiceSubscriber::run(
         uint32_t samples,
         uint32_t timeout)
@@ -446,4 +477,30 @@ void TypeLookupServiceSubscriber::on_data_writer_discovery(
             }
         }
     }
+}
+
+void TypeLookupServiceSubscriber::on_participant_discovery(
+        DomainParticipant* participant,
+        eprosima::fastdds::rtps::ParticipantDiscoveryStatus status,
+        const ParticipantBuiltinTopicData& info,
+        bool& should_be_ignored)
+{
+    static_cast<void>(should_be_ignored);
+    if (status == ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT)
+    {
+        std::cout << "Participant " << participant->guid() << " discovered participant " << info.guid << ": " <<
+            ++participant_matched_ << std::endl;
+    }
+    else if (status == ParticipantDiscoveryStatus::CHANGED_QOS_PARTICIPANT)
+    {
+        std::cout << "Participant " << participant->guid() << " detected changes on participant " << info.guid
+                  << std::endl;
+    }
+    else if (status == ParticipantDiscoveryStatus::REMOVED_PARTICIPANT ||
+            status == ParticipantDiscoveryStatus::DROPPED_PARTICIPANT)
+    {
+        std::cout << "Participant " << participant->guid() << " undiscovered participant " << info.guid << ": " <<
+            --participant_matched_ << std::endl;
+    }
+    cv_.notify_all();
 }

@@ -21,6 +21,7 @@ Forthcoming
 * Added RPC over DDS internal API:
   * New classes: `Service`, `Requester`, `Replier`, `ServiceTypeSupport`
   * Added methods in DomainParticipant public API
+* Added builtin flow controller for builtin writers (PDP, EDP, WLP and Type Look Up Service).
 
 Version v3.1.0
 --------------
