@@ -242,14 +242,14 @@ ReturnCode_t close_module_structure(
         std::ostream& idl) noexcept;
 
 /**
- * @brief Introdces tabulation for the processed struct.
+ * @brief Introduces tabulation in the processed stream.
  *
- * @param n_modules THe number of modules we tabulate for.
- * @param idl The idl representation of the tree.
+ * @param n_modules The number of modules we tabulate for.
+ * 
+ * @return The tabulation string.
  */
-void tabulate_n(
-        const unsigned int& n_modules,
-        std::ostream& idl) noexcept;
+std::string tabulate_n(
+        const unsigned int& n_modules) noexcept;
 
 ///////////////////////
 // AUXILIARY METHODS //

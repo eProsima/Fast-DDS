@@ -685,14 +685,7 @@ ReturnCode_t alias_to_idl(
 
     idl << " " << type_name << ";\n";
 
-    while (n_modules > 0)
-    {
-        tabulate_n(n_modules - 1, idl);
-
-        idl << TYPE_CLOSURE;
-
-        n_modules--;
-    }
+    ret = close_module_structure(n_modules, idl);
 
     return ret;
 }
@@ -733,13 +726,9 @@ ReturnCode_t bitmask_to_idl(
         idl << "@bit_bound(" << std::to_string(bitmask_size) << ")\n";
     }
 
-    tabulate_n(n_modules, idl);
+    idl << tabulate_n(n_modules) << "bitmask " << type_name << "\n";
 
-    idl << "bitmask " << type_name << "\n";
-
-    tabulate_n(n_modules, idl);
-
-    idl << TYPE_OPENING;
+    idl << tabulate_n(n_modules) << TYPE_OPENING;
 
     const auto member_count = node.info.dynamic_type->get_member_count();
 
@@ -756,9 +745,7 @@ ReturnCode_t bitmask_to_idl(
             return ret;
         }
 
-        idl << TAB_SEPARATOR;
-
-        tabulate_n(n_modules, idl);
+        idl << TAB_SEPARATOR << tabulate_n(n_modules);
 
         // Annotation with the position
         const auto id = member->get_id();
@@ -784,9 +771,9 @@ ReturnCode_t bitmask_to_idl(
 
     // Close definition
 
-    ret = close_module_structure(n_modules, idl);
+    idl << tabulate_n(n_modules) << TYPE_CLOSURE;
 
-    idl << TYPE_CLOSURE;
+    ret = close_module_structure(n_modules, idl);
 
     return ret;
 }
@@ -805,9 +792,7 @@ ReturnCode_t bitset_to_idl(
 
     idl << "bitset " << type_name << "\n";
 
-    tabulate_n(n_modules, idl);
-
-    idl << TYPE_OPENING;
+    idl << tabulate_n(n_modules) << TYPE_OPENING;
 
     // Find the bits that each bitfield occupies
     BoundSeq bounds;
@@ -851,14 +836,10 @@ ReturnCode_t bitset_to_idl(
             const auto gap = id - bits_set;
             bits_set += gap;
 
-            tabulate_n(n_modules, idl);
-
-            idl << TAB_SEPARATOR << "bitfield<" << std::to_string(gap) << ">;\n";
+            idl << tabulate_n(n_modules) << TAB_SEPARATOR << "bitfield<" << std::to_string(gap) << ">;\n";
         }
 
-        tabulate_n(n_modules, idl);
-
-        idl << TAB_SEPARATOR << "bitfield<" << std::to_string(bounds[index]);
+        idl << tabulate_n(n_modules) << TAB_SEPARATOR << "bitfield<" << std::to_string(bounds[index]);
 
         MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
         ret = member->get_descriptor(member_descriptor);
@@ -895,9 +876,9 @@ ReturnCode_t bitset_to_idl(
 
     // Close definition
 
-    ret = close_module_structure(n_modules, idl);
+    idl << tabulate_n(n_modules) << TYPE_CLOSURE;
 
-    idl << TYPE_CLOSURE;
+    ret = close_module_structure(n_modules, idl);
 
     return ret;
 }
@@ -916,9 +897,7 @@ ReturnCode_t enum_to_idl(
 
     idl << "enum " << type_name << "\n";
 
-    tabulate_n(n_modules, idl);
-
-    idl << TYPE_OPENING << TAB_SEPARATOR;
+    idl << tabulate_n(n_modules) << TYPE_OPENING << TAB_SEPARATOR;
 
     for (std::uint32_t index = 0; index < node.info.dynamic_type->get_member_count(); index++)
     {
@@ -931,9 +910,7 @@ ReturnCode_t enum_to_idl(
             return ret;
         }
 
-        tabulate_n(n_modules, idl);
-
-        idl << member->get_name().to_string();
+        idl << tabulate_n(n_modules) << member->get_name().to_string();
 
         if (node.info.dynamic_type->get_member_count() - 1 != index)
         {
@@ -947,9 +924,9 @@ ReturnCode_t enum_to_idl(
 
     // Close definition
 
-    ret = close_module_structure(n_modules, idl);
+    idl << tabulate_n(n_modules) << TYPE_CLOSURE;
 
-    idl << TYPE_CLOSURE;
+    ret = close_module_structure(n_modules, idl);
 
     return ret;
 }
@@ -981,20 +958,17 @@ ReturnCode_t struct_to_idl(
         case ExtensibilityKind::FINAL:
         {
             idl << "@extensibility(FINAL)\n";
-
             break;
         }
         case ExtensibilityKind::MUTABLE:
         {
             idl << "@extensibility(MUTABLE)\n";
-
             break;
         }
         case ExtensibilityKind::APPENDABLE:
         {
             // Appendable is the default extensibility kind
             idl << "@extensibility(APPENDABLE)\n";
-
             break;
         }
         default:
@@ -1002,12 +976,9 @@ ReturnCode_t struct_to_idl(
             EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Extensibility kind not supported.");
             return RETCODE_BAD_PARAMETER;
         }
-
     }
 
-    tabulate_n(n_modules, idl);
-
-    idl << "struct " << type_name;
+    idl << tabulate_n(n_modules) << "struct " << type_name;
 
     const auto base_type = type_descriptor->base_type();
 
@@ -1026,16 +997,12 @@ ReturnCode_t struct_to_idl(
         }
     }
 
-    idl << "\n";
-
-    tabulate_n(n_modules, idl);
-
-    idl << TYPE_OPENING;
+    idl << "\n" << tabulate_n(n_modules) << TYPE_OPENING;
 
     // Add struct attributes
     for (auto const& child : node.branches())
     {
-        tabulate_n(n_modules, idl);
+        idl << tabulate_n(n_modules);
 
         if (child.info.is_base)
         {
@@ -1049,9 +1016,9 @@ ReturnCode_t struct_to_idl(
 
     // Close definition
 
-    ret = close_module_structure(n_modules, idl);
+    idl << tabulate_n(n_modules) << TYPE_CLOSURE;
 
-    idl << TYPE_CLOSURE;
+    ret = close_module_structure(n_modules, idl);
 
     return ret;
 }
@@ -1086,11 +1053,7 @@ ReturnCode_t union_to_idl(
         return ret;
     }
 
-    idl << ")\n";
-
-    tabulate_n(n_modules, idl);
-
-    idl << TYPE_OPENING;
+    idl << ")\n" << tabulate_n(n_modules) << TYPE_OPENING;
 
     for (std::uint32_t index = 1; index < node.info.dynamic_type->get_member_count(); index++)
     {
@@ -1110,21 +1073,15 @@ ReturnCode_t union_to_idl(
 
         for (const auto& label : labels)
         {
-            tabulate_n(n_modules, idl);
-
-            idl << TAB_SEPARATOR << "case " << std::to_string(label) << ":\n";
+            idl << tabulate_n(n_modules) << TAB_SEPARATOR << "case " << std::to_string(label) << ":\n";
         }
 
         if (member_descriptor->is_default_label())
         {
-            tabulate_n(n_modules, idl);
-
-            idl << TAB_SEPARATOR << "default:\n";
+            idl << tabulate_n(n_modules) << TAB_SEPARATOR << "default:\n";
         }
 
-        idl << TAB_SEPARATOR << TAB_SEPARATOR;
-
-        tabulate_n(n_modules, idl);
+        idl << TAB_SEPARATOR << TAB_SEPARATOR << tabulate_n(n_modules);
 
         ret = type_kind_to_idl(member_descriptor->type(), idl);
 
@@ -1138,9 +1095,9 @@ ReturnCode_t union_to_idl(
 
     // Close definition
 
-    ret = close_module_structure(n_modules, idl);
+    idl << tabulate_n(n_modules) << TYPE_CLOSURE;
 
-    idl << TYPE_CLOSURE;
+    ret = close_module_structure(n_modules, idl);
 
     return ret;
 }
@@ -1193,18 +1150,14 @@ unsigned int resolve_module_structure(
         std::string module_name = type_name.substr(0, pos_end);
         type_name.erase(pos_start, pos_end - pos_start + std::strlen(MODULE_SEPARATOR));
 
-        tabulate_n(n_modules, idl);
+        idl << tabulate_n(n_modules) << "module " << module_name << "\n";
 
-        idl << "module " << module_name << "\n";
-
-        tabulate_n(n_modules, idl);
-
-        idl << TYPE_OPENING;
+        idl << tabulate_n(n_modules) << TYPE_OPENING;
 
         n_modules++;
     }
 
-    tabulate_n(n_modules, idl);
+    idl << tabulate_n(n_modules);
 
     return n_modules;
 }
@@ -1215,24 +1168,23 @@ ReturnCode_t close_module_structure(
 {
     while (n_modules > 0)
     {
-        tabulate_n(n_modules, idl);
-
-        idl << TYPE_CLOSURE;
-
-        n_modules--;
+        idl << tabulate_n(--n_modules) << TYPE_CLOSURE;
     }
 
     return RETCODE_OK;
 }
 
-void tabulate_n(
-        const unsigned int& n_modules,
-        std::ostream& idl) noexcept
+std::string tabulate_n(
+        const unsigned int& n_modules) noexcept
 {
+    std::string tabs;
+
     for (unsigned int i = 0; i < n_modules; i++)
     {
-        idl << TAB_SEPARATOR;
+        tabs += TAB_SEPARATOR;
     }
+
+    return tabs;
 }
 
 ///////////////////////
