@@ -75,7 +75,6 @@ WriterProxyData::WriterProxyData(
     , m_user_defined_id(writerInfo.m_user_defined_id)
     , m_type_id(nullptr)
     , m_type(nullptr)
-    , m_properties(writerInfo.m_properties)
 {
     if (writerInfo.m_type_id)
     {
@@ -114,18 +113,51 @@ WriterProxyData& WriterProxyData::operator =(
         type_information = writerInfo.type_information;
     }
 
+    if (writerInfo.history)
+    {
+        history = writerInfo.history;
+    }
+    if (writerInfo.resource_limits)
+    {
+        resource_limits = writerInfo.resource_limits;
+    }
+    if (writerInfo.transport_priority)
+    {
+        transport_priority = writerInfo.transport_priority;
+    }
+    if (writerInfo.writer_data_lifecycle)
+    {
+        writer_data_lifecycle = writerInfo.writer_data_lifecycle;
+    }
+    if (writerInfo.publish_mode)
+    {
+        publish_mode = writerInfo.publish_mode;
+    }
+    if (writerInfo.rtps_reliable_writer)
+    {
+        rtps_reliable_writer = writerInfo.rtps_reliable_writer;
+    }
+    if (writerInfo.endpoint)
+    {
+        endpoint = writerInfo.endpoint;
+    }
+    if (writerInfo.writer_resource_limits)
+    {
+        writer_resource_limits = writerInfo.writer_resource_limits;
+    }
+
     guid = writerInfo.guid;
     participant_guid = writerInfo.participant_guid;
     persistence_guid = writerInfo.persistence_guid;
     loopback_transformation = writerInfo.loopback_transformation;
     remote_locators = writerInfo.remote_locators;
     max_serialized_size = writerInfo.max_serialized_size;
+    properties = writerInfo.properties;
 
     m_network_configuration = writerInfo.m_network_configuration;
     m_key = writerInfo.m_key;
     m_rtps_participant_key = writerInfo.m_rtps_participant_key;
     m_user_defined_id = writerInfo.m_user_defined_id;
-    m_properties = writerInfo.m_properties;
 
 #if HAVE_SECURITY
     security_attributes_ = writerInfo.security_attributes_;
@@ -172,7 +204,7 @@ void WriterProxyData::init(
     m_type_id = nullptr;
     m_type = nullptr;
 
-    m_properties.set_max_size(static_cast<uint32_t>(data_limits.max_properties));
+    properties.set_max_size(static_cast<uint32_t>(data_limits.max_properties));
 }
 
 uint32_t WriterProxyData::get_serialized_size(
@@ -303,10 +335,10 @@ uint32_t WriterProxyData::get_serialized_size(
         ret_val += dds::QosPoliciesSerializer<dds::TypeObjectV1>::cdr_serialized_size(*m_type);
     }
 
-    if (m_properties.size() > 0)
+    if (properties.size() > 0)
     {
         // PID_PROPERTY_LIST
-        ret_val += dds::ParameterSerializer<dds::ParameterPropertyList_t>::cdr_serialized_size(m_properties);
+        ret_val += dds::ParameterSerializer<dds::ParameterPropertyList_t>::cdr_serialized_size(properties);
     }
 
 #if HAVE_SECURITY
@@ -567,9 +599,9 @@ bool WriterProxyData::write_to_cdr_message(
             return false;
         }
     }
-    if (m_properties.size() > 0)
+    if (properties.size() > 0)
     {
-        if (!dds::ParameterSerializer<ParameterPropertyList_t>::add_to_cdr_message(m_properties, msg))
+        if (!dds::ParameterSerializer<ParameterPropertyList_t>::add_to_cdr_message(properties, msg))
         {
             return false;
         }
@@ -987,7 +1019,7 @@ bool WriterProxyData::read_from_cdr_message(
                     case fastdds::dds::PID_PROPERTY_LIST:
                     {
                         if (!dds::ParameterSerializer<ParameterPropertyList_t>::read_from_cdr_message(
-                                    m_properties, msg, plength))
+                                    properties, msg, plength))
                         {
                             return false;
                         }
@@ -1012,6 +1044,226 @@ bool WriterProxyData::read_from_cdr_message(
 
                         if (!dds::QosPoliciesSerializer<dds::DataSharingQosPolicy>::read_from_cdr_message(
                                     data_sharing, msg, plength))
+                        {
+                            EPROSIMA_LOG_ERROR(RTPS_WRITER_PROXY_DATA,
+                                    "Received with error.");
+                            return false;
+                        }
+                        break;
+                    }
+
+                    case fastdds::dds::PID_HISTORY:
+                    {
+                        if (!history)
+                        {
+                            history.reset(true);
+                        }
+
+                        if (!dds::QosPoliciesSerializer<dds::HistoryQosPolicy>::read_from_cdr_message(
+                                    history.value(), msg, plength))
+                        {
+                            EPROSIMA_LOG_ERROR(RTPS_WRITER_PROXY_DATA,
+                                    "Received with error.");
+                            return false;
+                        }
+                        break;
+                    }
+
+                    case fastdds::dds::PID_RESOURCE_LIMITS:
+                    {
+                        if (!resource_limits)
+                        {
+                            resource_limits.reset(true);
+                        }
+
+                        if (!dds::QosPoliciesSerializer<dds::ResourceLimitsQosPolicy>::read_from_cdr_message(
+                                    resource_limits.value(), msg, plength))
+                        {
+                            EPROSIMA_LOG_ERROR(RTPS_WRITER_PROXY_DATA,
+                                    "Received with error.");
+                            return false;
+                        }
+                        break;
+                    }
+
+                    case fastdds::dds::PID_TRANSPORT_PRIORITY:
+                    {
+                        if (!transport_priority)
+                        {
+                            transport_priority.reset(true);
+                        }
+
+                        VendorId_t local_vendor_id = source_vendor_id;
+                        if (c_VendorId_Unknown == local_vendor_id)
+                        {
+                            local_vendor_id = ((c_VendorId_Unknown == vendor_id) ? c_VendorId_eProsima : vendor_id);
+                        }
+
+                        // Ignore custom PID when coming from other vendors
+                        if (c_VendorId_eProsima != local_vendor_id)
+                        {
+                            EPROSIMA_LOG_INFO(RTPS_PROXY_DATA,
+                                    "Ignoring custom PID" << pid << " from vendor " << local_vendor_id);
+                            return true;
+                        }
+
+                        if (!dds::QosPoliciesSerializer<dds::TransportPriorityQosPolicy>::read_from_cdr_message(
+                                    transport_priority.value(), msg, plength))
+                        {
+                            EPROSIMA_LOG_ERROR(RTPS_WRITER_PROXY_DATA,
+                                    "Received with error.");
+                            return false;
+                        }
+                        break;
+                    }
+
+                    case fastdds::dds::PID_WRITER_DATA_LIFECYCLE:
+                    {
+                        VendorId_t local_vendor_id = source_vendor_id;
+                        if (c_VendorId_Unknown == local_vendor_id)
+                        {
+                            local_vendor_id = ((c_VendorId_Unknown == vendor_id) ? c_VendorId_eProsima : vendor_id);
+                        }
+
+                        // Ignore custom PID when coming from other vendors
+                        if (c_VendorId_eProsima != local_vendor_id)
+                        {
+                            EPROSIMA_LOG_INFO(RTPS_PROXY_DATA,
+                                    "Ignoring custom PID" << pid << " from vendor " << local_vendor_id);
+                            return true;
+                        }
+
+                        if (!writer_data_lifecycle)
+                        {
+                            writer_data_lifecycle.reset(true);
+                        }
+
+                        if (!dds::QosPoliciesSerializer<dds::WriterDataLifecycleQosPolicy>::read_from_cdr_message(
+                                    writer_data_lifecycle.value(), msg, plength))
+                        {
+                            EPROSIMA_LOG_ERROR(RTPS_WRITER_PROXY_DATA,
+                                    "Received with error.");
+                            return false;
+                        }
+                        break;
+                    }
+
+                    case fastdds::dds::PID_PUBLISH_MODE:
+                    {
+                        VendorId_t local_vendor_id = source_vendor_id;
+                        if (c_VendorId_Unknown == local_vendor_id)
+                        {
+                            local_vendor_id = ((c_VendorId_Unknown == vendor_id) ? c_VendorId_eProsima : vendor_id);
+                        }
+
+                        // Ignore custom PID when coming from other vendors
+                        if (c_VendorId_eProsima != local_vendor_id)
+                        {
+                            EPROSIMA_LOG_INFO(RTPS_PROXY_DATA,
+                                    "Ignoring custom PID" << pid << " from vendor " << local_vendor_id);
+                            return true;
+                        }
+
+                        if (!publish_mode)
+                        {
+                            publish_mode.reset(true);
+                        }
+
+                        if (!dds::QosPoliciesSerializer<dds::PublishModeQosPolicy>::read_from_cdr_message(
+                                    publish_mode.value(), msg, plength))
+                        {
+                            EPROSIMA_LOG_ERROR(RTPS_WRITER_PROXY_DATA,
+                                    "Received with error.");
+                            return false;
+                        }
+                        break;
+                    }
+
+                    case fastdds::dds::PID_RTPS_RELIABLE_WRITER:
+                    {
+                        VendorId_t local_vendor_id = source_vendor_id;
+                        if (c_VendorId_Unknown == local_vendor_id)
+                        {
+                            local_vendor_id = ((c_VendorId_Unknown == vendor_id) ? c_VendorId_eProsima : vendor_id);
+                        }
+
+                        // Ignore custom PID when coming from other vendors
+                        if (c_VendorId_eProsima != local_vendor_id)
+                        {
+                            EPROSIMA_LOG_INFO(RTPS_PROXY_DATA,
+                                    "Ignoring custom PID" << pid << " from vendor " << local_vendor_id);
+                            return true;
+                        }
+
+                        if (!rtps_reliable_writer)
+                        {
+                            rtps_reliable_writer.reset(true);
+                        }
+
+                        if (!dds::QosPoliciesSerializer<dds::RTPSReliableWriterQos>::read_from_cdr_message(
+                                    rtps_reliable_writer.value(), msg, plength))
+                        {
+                            EPROSIMA_LOG_ERROR(RTPS_WRITER_PROXY_DATA,
+                                    "Received with error.");
+                            return false;
+                        }
+                        break;
+                    }
+
+                    case fastdds::dds::PID_RTPS_ENDPOINT:
+                    {
+                        VendorId_t local_vendor_id = source_vendor_id;
+                        if (c_VendorId_Unknown == local_vendor_id)
+                        {
+                            local_vendor_id = ((c_VendorId_Unknown == vendor_id) ? c_VendorId_eProsima : vendor_id);
+                        }
+
+                        // Ignore custom PID when coming from other vendors
+                        if (c_VendorId_eProsima != local_vendor_id)
+                        {
+                            EPROSIMA_LOG_INFO(RTPS_PROXY_DATA,
+                                    "Ignoring custom PID" << pid << " from vendor " << local_vendor_id);
+                            return true;
+                        }
+
+                        if (!endpoint)
+                        {
+                            endpoint.reset(true);
+                        }
+
+                        if (!dds::QosPoliciesSerializer<dds::RTPSEndpointQos>::read_from_cdr_message(
+                                    endpoint.value(), msg, plength))
+                        {
+                            EPROSIMA_LOG_ERROR(RTPS_WRITER_PROXY_DATA,
+                                    "Received with error.");
+                            return false;
+                        }
+                        break;
+                    }
+
+                    case fastdds::dds::PID_WRITER_RESOURCE_LIMITS:
+                    {
+                        VendorId_t local_vendor_id = source_vendor_id;
+                        if (c_VendorId_Unknown == local_vendor_id)
+                        {
+                            local_vendor_id = ((c_VendorId_Unknown == vendor_id) ? c_VendorId_eProsima : vendor_id);
+                        }
+
+                        // Ignore custom PID when coming from other vendors
+                        if (c_VendorId_eProsima != local_vendor_id)
+                        {
+                            EPROSIMA_LOG_INFO(RTPS_PROXY_DATA,
+                                    "Ignoring custom PID" << pid << " from vendor " << local_vendor_id);
+                            return true;
+                        }
+
+                        if (!writer_resource_limits)
+                        {
+                            writer_resource_limits.reset(true);
+                        }
+
+                        if (!dds::QosPoliciesSerializer<dds::WriterResourceLimitsQos>::read_from_cdr_message(
+                                    writer_resource_limits.value(), msg, plength))
                         {
                             EPROSIMA_LOG_ERROR(RTPS_WRITER_PROXY_DATA,
                                     "Received with error.");
@@ -1214,10 +1466,10 @@ void WriterProxyData::set_qos(
         data_sharing = qos.data_sharing;
         data_sharing.hasChanged = true;
     }
-    if (first_time)
+    if (first_time && qos.publish_mode)
     {
         publish_mode = qos.publish_mode;
-        publish_mode.hasChanged = true;
+        publish_mode->hasChanged = true;
     }
 }
 
@@ -1330,7 +1582,7 @@ void WriterProxyData::set_qos(
     if (first_time)
     {
         publish_mode = qos.m_publishMode;
-        publish_mode.hasChanged = true;
+        publish_mode->hasChanged = true;
     }
 }
 
@@ -1392,38 +1644,64 @@ bool WriterProxyData::can_qos_be_updated(
 
 void WriterProxyData::clear()
 {
+    // Clear PublicationBuiltinTopicData
     PublicationBuiltinTopicData::key = BuiltinTopicKey_t{{0, 0, 0}};
     participant_key = BuiltinTopicKey_t{{0, 0, 0}};
     type_name = "";
     topic_name = "";
     topic_kind = NO_KEY;
-    persistence_guid = c_Guid_Unknown;
-    guid = c_Guid_Unknown;
-    remote_locators.unicast.clear();
-    remote_locators.multicast.clear();
-    loopback_transformation = NetworkConfigSet_t();
-    max_serialized_size = 0;
 
     durability.clear();
+    durability_service.clear();
     deadline.clear();
     latency_budget.clear();
     liveliness.clear();
     reliability.clear();
-    ownership.clear();
-    destination_order.clear();
+    lifespan.clear();
     user_data.clear();
+    ownership.clear();
+    ownership_strength.clear();
+    destination_order.clear();
     presentation.clear();
     partition.clear();
     topic_data.clear();
     group_data.clear();
-    durability_service.clear();
-    lifespan.clear();
-    disable_positive_acks.clear();
-    ownership_strength.clear();
-    representation.clear();
     type_information.clear();
+    representation.clear();
+    disable_positive_acks.clear();
     data_sharing.clear();
-    publish_mode.clear();
+    if (history)
+    {
+        history->clear();
+    }
+    if (resource_limits)
+    {
+        resource_limits->clear();
+    }
+    if (transport_priority)
+    {
+        transport_priority->clear();
+    }
+    if (writer_data_lifecycle)
+    {
+        writer_data_lifecycle->clear();
+    }
+    if (publish_mode)
+    {
+        publish_mode->clear();
+    }
+    if (rtps_reliable_writer)
+    {
+        rtps_reliable_writer->clear();
+    }
+    if (endpoint)
+    {
+        endpoint->clear();
+    }
+    if (writer_resource_limits)
+    {
+        writer_resource_limits->clear();
+    }
 
     reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
 
@@ -1432,17 +1710,15 @@ void WriterProxyData::clear()
     participant_guid = c_Guid_Unknown;
     remote_locators.unicast.clear();
     remote_locators.multicast.clear();
-    type_name = "";
-    topic_name = "";
-    topic_kind = NO_KEY;
     max_serialized_size = 0;
+    loopback_transformation = NetworkConfigSet_t();
+    properties.clear();
+    properties.length = 0;
 
     m_network_configuration = 0;
     m_user_defined_id = 0;
     m_key = InstanceHandle_t();
     m_rtps_participant_key = InstanceHandle_t();
-    m_properties.clear();
-    m_properties.length = 0;
 
 #if HAVE_SECURITY
     security_attributes_ = 0UL;

@@ -22,9 +22,12 @@
 #include <cstdint>
 #include <string>
 
+#include <fastcdr/xcdr/optional.hpp>
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/core/policy/RTPSReliableWriterQos.hpp>
+#include <fastdds/dds/core/policy/WriterDataLifecycleQosPolicy.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/builtin/data/BuiltinTopicKey.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
@@ -130,8 +133,29 @@ struct PublicationBuiltinTopicData
     /// Information for data sharing compatibility check.
     dds::DataSharingQosPolicy data_sharing;
 
+    /// History Qos, kind and depth
+    fastcdr::optional<dds::HistoryQosPolicy> history;
+
+    /// Resource limits Qos
+    fastcdr::optional<dds::ResourceLimitsQosPolicy> resource_limits;
+
+    /// Transport priority Qos
+    fastcdr::optional<dds::TransportPriorityQosPolicy> transport_priority;
+
+    /// Writer data lifecycle Qos
+    fastcdr::optional<dds::WriterDataLifecycleQosPolicy> writer_data_lifecycle;
+
     /// Publish mode qos policy
-    dds::PublishModeQosPolicy publish_mode;
+    fastcdr::optional<dds::PublishModeQosPolicy> publish_mode;
+
+    /// Reliable writer qos policy
+    fastcdr::optional<dds::RTPSReliableWriterQos> rtps_reliable_writer;
+
+    /// Endpoint qos policy
+    fastcdr::optional<dds::RTPSEndpointQos> endpoint;
+
+    /// Writer resource limits qos policy
+    fastcdr::optional<dds::WriterResourceLimitsQos> writer_resource_limits;
 
     /// GUID
     GUID_t guid;
@@ -150,6 +174,9 @@ struct PublicationBuiltinTopicData
 
     /// Network configuration
     NetworkConfigSet_t loopback_transformation{};
+
+    /// Property list
+    ParameterPropertyList_t properties;
 };
 
 }   // namespace rtps

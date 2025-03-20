@@ -20,9 +20,14 @@
 #ifndef FASTDDS_CORE_PLICY__QOSPOLICIESSERIALIZER_HPP_
 #define FASTDDS_CORE_PLICY__QOSPOLICIESSERIALIZER_HPP_
 
-#include <fastdds/dds/core/policy/QosPolicies.hpp>
-#include <fastdds/rtps/common/CdrSerialization.hpp>
 #include "ParameterSerializer.hpp"
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/core/policy/ReaderDataLifecycleQosPolicy.hpp>
+#include <fastdds/dds/core/policy/ReaderResourceLimitsQos.hpp>
+#include <fastdds/dds/core/policy/RTPSReliableReaderQos.hpp>
+#include <fastdds/dds/core/policy/RTPSReliableWriterQos.hpp>
+#include <fastdds/dds/core/policy/WriterDataLifecycleQosPolicy.hpp>
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -1238,6 +1243,565 @@ inline bool QosPoliciesSerializer<TopicDataQosPolicy>::read_from_cdr_message(
 {
     return QosPoliciesSerializer<GenericDataQosPolicy>::read_from_cdr_message(qos_policy, cdr_message,
                    parameter_length);
+}
+
+template<>
+inline uint32_t QosPoliciesSerializer<RTPSEndpointQos>::cdr_serialized_size(
+        const RTPSEndpointQos& qos_policy)
+{
+    // p_id + p_length
+    uint32_t ret_val = 2 + 2;
+
+    // + unicast locator list size
+    ret_val += 4;
+    for (rtps::LocatorListConstIterator it = qos_policy.unicast_locator_list.begin();
+            it != qos_policy.unicast_locator_list.end();
+            ++it)
+    {
+        // kind + port + address
+        ret_val += 4 + 4 + 16;
+    }
+
+    // + multicast locator list size
+    ret_val += 4;
+    for (rtps::LocatorListConstIterator it = qos_policy.multicast_locator_list.begin();
+            it != qos_policy.unicast_locator_list.end();
+            ++it)
+    {
+        // kind + port + address
+        ret_val += 4 + 4 + 16;
+    }
+
+    // + remote locator list
+    ret_val += 4;
+    for (rtps::LocatorListConstIterator it = qos_policy.remote_locator_list.begin();
+            it != qos_policy.unicast_locator_list.end();
+            ++it)
+    {
+        // kind + port + address
+        ret_val += 4 + 4 + 16;
+    }
+
+    // Do not serialize external_locators yet, but leave a length = 0 field here
+    ret_val += 4;
+
+    // + ignore_non_matching_locators(4) + user_defined_id(4) + entity_id(4) + history_management(4)
+    ret_val += 16;
+
+    return ret_val;
+}
+
+template<>
+inline bool QosPoliciesSerializer<RTPSEndpointQos>::add_to_cdr_message(
+        const RTPSEndpointQos& qos_policy,
+        rtps::CDRMessage_t* cdr_message)
+{
+    bool valid = true;
+
+    // Unicast locator list
+    valid &= rtps::CDRMessage::addUInt32(cdr_message, (uint32_t)qos_policy.unicast_locator_list.size());
+    for (rtps::LocatorListConstIterator it = qos_policy.unicast_locator_list.begin();
+            it != qos_policy.unicast_locator_list.end();
+            ++it)
+    {
+        valid &= rtps::CDRMessage::addLocator(cdr_message, *it);
+    }
+
+    // Multicast locator list
+    valid &= rtps::CDRMessage::addUInt32(cdr_message, (uint32_t)qos_policy.multicast_locator_list.size());
+    for (rtps::LocatorListConstIterator it = qos_policy.multicast_locator_list.begin();
+            it != qos_policy.multicast_locator_list.end();
+            ++it)
+    {
+        valid &= rtps::CDRMessage::addLocator(cdr_message, *it);
+    }
+
+    // Remote locator list
+    valid &= rtps::CDRMessage::addUInt32(cdr_message, (uint32_t)qos_policy.remote_locator_list.size());
+    for (rtps::LocatorListConstIterator it = qos_policy.remote_locator_list.begin();
+            it != qos_policy.remote_locator_list.end();
+            ++it)
+    {
+        valid &= rtps::CDRMessage::addLocator(cdr_message, *it);
+    }
+
+    // Do not serialize external_locators yet.
+    valid &= rtps::CDRMessage::addUInt32(cdr_message, 0); // 0 length
+
+    // ignore_non_matching_locators
+    valid &= rtps::CDRMessage::addOctet(cdr_message, qos_policy.ignore_non_matching_locators);
+    valid &= rtps::CDRMessage::addOctet(cdr_message, 0); // padding
+    valid &= rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= rtps::CDRMessage::addOctet(cdr_message, 0);
+
+    // user_defined_id
+    valid &= rtps::CDRMessage::addUInt16(cdr_message, qos_policy.user_defined_id);
+    valid &= rtps::CDRMessage::addUInt16(cdr_message, 0); // padding
+
+    // entity_id
+    valid &= rtps::CDRMessage::addUInt16(cdr_message, qos_policy.entity_id);
+    valid &= rtps::CDRMessage::addUInt16(cdr_message, 0); // padding
+
+    // history_management
+    valid &= rtps::CDRMessage::addInt32(cdr_message, qos_policy.history_memory_policy);
+
+    return valid;
+}
+
+template<>
+inline bool QosPoliciesSerializer<RTPSEndpointQos>::read_content_from_cdr_message(
+        RTPSEndpointQos& qos_policy,
+        rtps::CDRMessage_t* cdr_message,
+        const uint16_t parameter_length)
+{
+    // empty locators lists(12) + 4 + 16
+    if (parameter_length < 32)
+    {
+        return false;
+    }
+
+    uint32_t pos_ref = cdr_message->pos;
+
+    // Unicast locator list
+    uint32_t locators_size;
+    bool valid = rtps::CDRMessage::readUInt32(cdr_message, &locators_size);
+    qos_policy.unicast_locator_list.reserve(locators_size);
+    for (uint32_t i = 0; i < locators_size; ++i)
+    {
+        rtps::Locator_t loc;
+        valid &= rtps::CDRMessage::readLocator(cdr_message, &loc);
+        qos_policy.unicast_locator_list.push_back(loc);
+    }
+
+    // Multicast locator list
+    valid &= rtps::CDRMessage::readUInt32(cdr_message, &locators_size);
+    qos_policy.multicast_locator_list.reserve(locators_size);
+    for (uint32_t i = 0; i < locators_size; ++i)
+    {
+        rtps::Locator_t loc;
+        valid &= rtps::CDRMessage::readLocator(cdr_message, &loc);
+        qos_policy.multicast_locator_list.push_back(loc);
+    }
+
+    // Remote locator list
+    valid &= rtps::CDRMessage::readUInt32(cdr_message, &locators_size);
+    qos_policy.remote_locator_list.reserve(locators_size);
+    for (uint32_t i = 0; i < locators_size; ++i)
+    {
+        rtps::Locator_t loc;
+        valid &= rtps::CDRMessage::readLocator(cdr_message, &loc);
+        qos_policy.remote_locator_list.push_back(loc);
+    }
+
+    // Do not deserialize external_locators yet.
+    valid &= rtps::CDRMessage::readUInt32(cdr_message, &locators_size); // 0 length
+
+    // ignore_non_matching_locators
+    valid &= rtps::CDRMessage::readOctet(cdr_message, (fastdds::rtps::octet*)&qos_policy.ignore_non_matching_locators);
+    cdr_message->pos += 3; // padding
+
+    // user_defined_id
+    valid &= rtps::CDRMessage::readInt16(cdr_message, &qos_policy.user_defined_id);
+    cdr_message->pos += 2; // padding
+
+    // entity_id
+    valid &= rtps::CDRMessage::readInt16(cdr_message, &qos_policy.entity_id);
+    cdr_message->pos += 2; // padding
+
+    // history_management
+    valid &= rtps::CDRMessage::readInt32(cdr_message, (int*)&qos_policy.history_memory_policy);
+
+    uint32_t length_diff = cdr_message->pos - pos_ref;
+    valid &= (parameter_length == length_diff);
+
+    return valid;
+}
+
+template<>
+inline uint32_t QosPoliciesSerializer<WriterDataLifecycleQosPolicy>::cdr_serialized_size(
+        const WriterDataLifecycleQosPolicy&)
+{
+    // p_id + p_length + (bool + padding)(4)
+    return 2 + 2 + PARAMETER_BOOL_LENGTH;
+}
+
+template<>
+inline bool QosPoliciesSerializer<WriterDataLifecycleQosPolicy>::add_to_cdr_message(
+        const WriterDataLifecycleQosPolicy& qos_policy,
+        rtps::CDRMessage_t* cdr_message)
+{
+    bool valid = rtps::CDRMessage::addOctet(cdr_message, qos_policy.autodispose_unregistered_instances);
+    valid &= rtps::CDRMessage::addOctet(cdr_message, 0); // padding
+    valid &= rtps::CDRMessage::addOctet(cdr_message, 0); // padding
+    valid &= rtps::CDRMessage::addOctet(cdr_message, 0); // padding
+    return valid;
+}
+
+template<>
+inline bool QosPoliciesSerializer<WriterDataLifecycleQosPolicy>::read_content_from_cdr_message(
+        WriterDataLifecycleQosPolicy& qos_policy,
+        rtps::CDRMessage_t* cdr_message,
+        const uint16_t parameter_length)
+{
+    // Fail if length is lower than required
+    if (parameter_length < PARAMETER_BOOL_LENGTH)
+    {
+        return false;
+    }
+
+    bool valid = rtps::CDRMessage::readOctet(cdr_message,
+                    (fastdds::rtps::octet*)&qos_policy.autodispose_unregistered_instances);
+    cdr_message->pos += 3; //padding
+    return valid;
+}
+
+template<>
+inline uint32_t QosPoliciesSerializer<PublishModeQosPolicy>::cdr_serialized_size(
+        const PublishModeQosPolicy& qos_policy)
+{
+    // p_id + p_length + kind(1) + padding(3)
+    uint32_t ret_val = 2 + 2 + 1 + 3;
+    // + str_size + str_data (including null char)
+    ret_val += 4 + static_cast<uint32_t>(qos_policy.flow_controller_name.size());
+    // align
+    ret_val = (ret_val + 3) & ~3;
+
+    return ret_val;
+}
+
+template<>
+inline bool QosPoliciesSerializer<PublishModeQosPolicy>::add_to_cdr_message(
+        const PublishModeQosPolicy& qos_policy,
+        rtps::CDRMessage_t* cdr_message)
+{
+    bool valid = rtps::CDRMessage::addOctet(cdr_message, qos_policy.kind);
+    valid &= rtps::CDRMessage::addOctet(cdr_message, 0); // padding
+    valid &= rtps::CDRMessage::addOctet(cdr_message, 0); // padding
+    valid &= rtps::CDRMessage::addOctet(cdr_message, 0); // padding
+
+    valid &= rtps::CDRMessage::add_string(cdr_message, qos_policy.flow_controller_name);
+
+    return valid;
+}
+
+template<>
+inline bool QosPoliciesSerializer<PublishModeQosPolicy>::read_content_from_cdr_message(
+        PublishModeQosPolicy& qos_policy,
+        rtps::CDRMessage_t* cdr_message,
+        const uint16_t parameter_length)
+{
+    // Fail if length is lower than kind + str_size + (null str + padding)
+    if (parameter_length < (PARAMETER_KIND_LENGTH + 4 + 4))
+    {
+        return false;
+    }
+
+    uint32_t pos_ref = cdr_message->pos;
+
+    bool valid = rtps::CDRMessage::readOctet(cdr_message,
+                    (fastdds::rtps::octet*)&qos_policy.kind);
+    cdr_message->pos += 3; //padding
+
+    rtps::CDRMessage::readString(cdr_message, &qos_policy.flow_controller_name);
+
+    uint32_t length_diff = cdr_message->pos - pos_ref;
+    valid &= (parameter_length == length_diff);
+
+    return valid;
+}
+
+template<>
+inline uint32_t QosPoliciesSerializer<RTPSReliableWriterQos>::cdr_serialized_size(
+        const RTPSReliableWriterQos&)
+{
+    // p_id + p_length + times(32)
+    uint32_t ret_val = 2 + 2 + 32;
+
+    // + disable_positive_acks(12)
+    ret_val += 12;
+
+    // + disable_heatbeat_piggyback(4)
+    ret_val += 4;
+
+    return ret_val;
+}
+
+template<>
+inline bool QosPoliciesSerializer<RTPSReliableWriterQos>::add_to_cdr_message(
+        const RTPSReliableWriterQos& qos_policy,
+        rtps::CDRMessage_t* cdr_message)
+{
+    // times
+    bool valid = rtps::CDRMessage::add_duration_t(cdr_message,
+                    qos_policy.times.initial_heartbeat_delay);
+    valid &= rtps::CDRMessage::add_duration_t(cdr_message,
+                    qos_policy.times.heartbeat_period);
+    valid &= rtps::CDRMessage::add_duration_t(cdr_message,
+                    qos_policy.times.nack_response_delay);
+    valid &= rtps::CDRMessage::add_duration_t(cdr_message,
+                    qos_policy.times.nack_supression_duration);
+
+    // disable_positive_acks
+    valid &= rtps::CDRMessage::addOctet(cdr_message, qos_policy.disable_positive_acks.enabled);
+    valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00);
+    valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00);
+    valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00);
+    valid &= rtps::CDRMessage::add_duration_t(cdr_message, qos_policy.disable_positive_acks.duration);
+
+    // disable_heatbeat_piggyback
+    valid &= rtps::CDRMessage::addOctet(cdr_message, qos_policy.disable_heartbeat_piggyback);
+    valid &= rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= rtps::CDRMessage::addOctet(cdr_message, 0);
+
+    return valid;
+}
+
+template<>
+inline bool QosPoliciesSerializer<RTPSReliableWriterQos>::read_content_from_cdr_message(
+        RTPSReliableWriterQos& qos_policy,
+        rtps::CDRMessage_t* cdr_message,
+        const uint16_t parameter_length)
+{
+    // times(32) + disable_positive_acks(12) + disable_heatbeat_piggyback(4)
+    if (parameter_length < 48)
+    {
+        return false;
+    }
+
+    bool valid = rtps::CDRMessage::read_duration_t(cdr_message,
+                    qos_policy.times.initial_heartbeat_delay);
+    valid &= rtps::CDRMessage::read_duration_t(cdr_message,
+                    qos_policy.times.heartbeat_period);
+    valid &= rtps::CDRMessage::read_duration_t(cdr_message,
+                    qos_policy.times.nack_response_delay);
+    valid &= rtps::CDRMessage::read_duration_t(cdr_message,
+                    qos_policy.times.nack_supression_duration);
+
+    valid &= rtps::CDRMessage::readOctet(cdr_message,
+                    (fastdds::rtps::octet*) &qos_policy.disable_positive_acks.enabled);
+    cdr_message->pos += 3; //padding
+
+    valid &= rtps::CDRMessage::read_duration_t(cdr_message, qos_policy.disable_positive_acks.duration);
+
+    valid &= rtps::CDRMessage::readOctet(cdr_message,
+                    (fastdds::rtps::octet*)&qos_policy.disable_heartbeat_piggyback);
+    cdr_message->pos += 3; //padding
+
+    return valid;
+}
+
+template<>
+inline uint32_t QosPoliciesSerializer<WriterResourceLimitsQos>::cdr_serialized_size(
+        const WriterResourceLimitsQos&)
+{
+    // p_id + p_length +  2*(uint64_t(8) + uint64_t(8) + uint64_t(8))
+    return 2 + 2 + 48;
+}
+
+template<>
+inline bool QosPoliciesSerializer<WriterResourceLimitsQos>::add_to_cdr_message(
+        const WriterResourceLimitsQos& qos_policy,
+        rtps::CDRMessage_t* cdr_message)
+{
+    // matched_subscriber_allocation
+    bool valid = rtps::CDRMessage::add_resource_limited_container_config(cdr_message,
+                    qos_policy.matched_subscriber_allocation);
+    // reader_filters_allocation
+    valid &= rtps::CDRMessage::add_resource_limited_container_config(cdr_message, qos_policy.reader_filters_allocation);
+
+    return valid;
+}
+
+template<>
+inline bool QosPoliciesSerializer<WriterResourceLimitsQos>::read_content_from_cdr_message(
+        WriterResourceLimitsQos& qos_policy,
+        rtps::CDRMessage_t* cdr_message,
+        const uint16_t parameter_length)
+{
+    if (parameter_length < 48)
+    {
+        return false;
+    }
+
+    // Initialize to 0 in case of size_t to be more than 32 bits
+    qos_policy.matched_subscriber_allocation.maximum = 0;
+    qos_policy.reader_filters_allocation.maximum = 0;
+
+    bool valid = rtps::CDRMessage::read_resource_limited_container_config(cdr_message,
+                    qos_policy.matched_subscriber_allocation);
+    valid &= rtps::CDRMessage::read_resource_limited_container_config(cdr_message,
+                    qos_policy.reader_filters_allocation);
+
+    return valid;
+}
+
+template<>
+inline uint32_t QosPoliciesSerializer<ReaderDataLifecycleQosPolicy>::cdr_serialized_size(
+        const ReaderDataLifecycleQosPolicy&)
+{
+    // p_id + p_length + 2*(uint32_t(4) + uint32_t(4))
+    return 2 + 2 + 16;
+}
+
+template<>
+inline bool QosPoliciesSerializer<ReaderDataLifecycleQosPolicy>::add_to_cdr_message(
+        const ReaderDataLifecycleQosPolicy& qos_policy,
+        rtps::CDRMessage_t* cdr_message)
+{
+    // autopurge_no_writer_samples_delay
+    bool valid = rtps::CDRMessage::add_duration_t(cdr_message,
+                    qos_policy.autopurge_no_writer_samples_delay);
+
+    // autopurge_disposed_samples_delay
+    valid &= rtps::CDRMessage::add_duration_t(cdr_message,
+                    qos_policy.autopurge_disposed_samples_delay);
+
+    return valid;
+}
+
+template<>
+inline bool QosPoliciesSerializer<ReaderDataLifecycleQosPolicy>::read_content_from_cdr_message(
+        ReaderDataLifecycleQosPolicy& qos_policy,
+        rtps::CDRMessage_t* cdr_message,
+        const uint16_t parameter_length)
+{
+    // autopurge_no_writer_samples_delay + autopurge_disposed_samples_delay
+    if (parameter_length < 8 + 8)
+    {
+        return false;
+    }
+
+    bool valid = rtps::CDRMessage::read_duration_t(cdr_message,
+                    qos_policy.autopurge_no_writer_samples_delay);
+    valid &= rtps::CDRMessage::read_duration_t(cdr_message,
+                    qos_policy.autopurge_disposed_samples_delay);
+
+    return valid;
+}
+
+template<>
+inline uint32_t QosPoliciesSerializer<RTPSReliableReaderQos>::cdr_serialized_size(
+        const RTPSReliableReaderQos&)
+{
+    // p_id + p_length + reader_times(16)
+    uint32_t ret_val = 2 + 2 + 16;
+
+    // + disable_positive_acks(12)
+    ret_val += 12;
+
+    return ret_val;
+}
+
+template<>
+inline bool QosPoliciesSerializer<RTPSReliableReaderQos>::add_to_cdr_message(
+        const RTPSReliableReaderQos& qos_policy,
+        rtps::CDRMessage_t* cdr_message)
+{
+    // reader times
+    bool valid = rtps::CDRMessage::add_duration_t(cdr_message,
+                    qos_policy.times.initial_acknack_delay);
+    valid &= rtps::CDRMessage::add_duration_t(cdr_message,
+                    qos_policy.times.heartbeat_response_delay);
+
+    // disable_positive_acks
+    valid &= rtps::CDRMessage::addOctet(cdr_message, qos_policy.disable_positive_acks.enabled);
+    valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00);
+    valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00);
+    valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00);
+    valid &= rtps::CDRMessage::add_duration_t(cdr_message,
+                    qos_policy.disable_positive_acks.duration);
+
+    return valid;
+}
+
+template<>
+inline bool QosPoliciesSerializer<RTPSReliableReaderQos>::read_content_from_cdr_message(
+        RTPSReliableReaderQos& qos_policy,
+        rtps::CDRMessage_t* cdr_message,
+        const uint16_t parameter_length)
+{
+    // times(16) + disable_positive_acks(12)
+    if (parameter_length < 28)
+    {
+        return false;
+    }
+
+    bool valid = rtps::CDRMessage::read_duration_t(cdr_message,
+                    qos_policy.times.initial_acknack_delay);
+
+    valid &= rtps::CDRMessage::read_duration_t(cdr_message,
+                    qos_policy.times.heartbeat_response_delay);
+
+    valid &= rtps::CDRMessage::readOctet(cdr_message,
+                    (fastdds::rtps::octet*) &qos_policy.disable_positive_acks.enabled);
+    cdr_message->pos += 3; //padding
+
+    valid &= rtps::CDRMessage::read_duration_t(cdr_message,
+                    qos_policy.disable_positive_acks.duration);
+
+    return valid;
+}
+
+template<>
+inline uint32_t QosPoliciesSerializer<ReaderResourceLimitsQos>::cdr_serialized_size(
+        const ReaderResourceLimitsQos&)
+{
+    // p_id + p_length +  3*(uint64_t(8) + uint64_t(8) + uint64_t(8)) + max_samples_per_read(4)
+    return 2 + 2 + 72 + 4;
+}
+
+template<>
+inline bool QosPoliciesSerializer<ReaderResourceLimitsQos>::add_to_cdr_message(
+        const ReaderResourceLimitsQos& qos_policy,
+        rtps::CDRMessage_t* cdr_message)
+{
+    // matched_publisher_allocation
+    bool valid = rtps::CDRMessage::add_resource_limited_container_config(cdr_message,
+                    qos_policy.matched_publisher_allocation);
+
+    // sample_infos_allocation
+    valid &= rtps::CDRMessage::add_resource_limited_container_config(cdr_message, qos_policy.sample_infos_allocation);
+
+    // outstanding_reads_allocation
+    valid &= rtps::CDRMessage::add_resource_limited_container_config(cdr_message,
+                    qos_policy.outstanding_reads_allocation);
+
+    // max_samples_per_read
+    valid &= rtps::CDRMessage::addInt32(cdr_message, qos_policy.max_samples_per_read);
+
+    return valid;
+}
+
+template<>
+inline bool QosPoliciesSerializer<ReaderResourceLimitsQos>::read_content_from_cdr_message(
+        ReaderResourceLimitsQos& qos_policy,
+        rtps::CDRMessage_t* cdr_message,
+        const uint16_t parameter_length)
+{
+    if (parameter_length < 76)
+    {
+        return false;
+    }
+
+    // Initialize to 0 in case of size_t to be more than 32 bits
+    qos_policy.matched_publisher_allocation.maximum = 0;
+    qos_policy.sample_infos_allocation.maximum = 0;
+    qos_policy.outstanding_reads_allocation.maximum = 0;
+
+    bool valid = rtps::CDRMessage::read_resource_limited_container_config(cdr_message,
+                    qos_policy.matched_publisher_allocation);
+
+    valid &= rtps::CDRMessage::read_resource_limited_container_config(cdr_message,
+                    qos_policy.sample_infos_allocation);
+
+    valid &= rtps::CDRMessage::read_resource_limited_container_config(cdr_message,
+                    qos_policy.outstanding_reads_allocation);
+
+    valid &= rtps::CDRMessage::readInt32(cdr_message,
+                    &qos_policy.max_samples_per_read);
+
+    return valid;
 }
 
 } //namespace dds

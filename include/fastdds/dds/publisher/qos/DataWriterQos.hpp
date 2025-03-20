@@ -21,8 +21,7 @@
 #define FASTDDS_DDS_PUBLISHER_QOS__DATAWRITERQOS_HPP
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
-#include <fastdds/dds/publisher/qos/WriterQos.hpp>
-#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+#include <fastdds/dds/core/policy/RTPSReliableWriterQos.hpp>
 #include <fastdds/dds/core/policy/WriterDataLifecycleQosPolicy.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
@@ -32,46 +31,6 @@
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-
-//! Qos Policy to configure the DisablePositiveACKsQos and the writer timing attributes
-class RTPSReliableWriterQos
-{
-public:
-
-    /**
-     * @brief Constructor
-     */
-    FASTDDS_EXPORTED_API RTPSReliableWriterQos()
-    {
-    }
-
-    /**
-     * @brief Destructor
-     */
-    virtual FASTDDS_EXPORTED_API ~RTPSReliableWriterQos() = default;
-
-    bool operator ==(
-            const RTPSReliableWriterQos& b) const
-    {
-        return (this->times == b.times) &&
-               (this->disable_positive_acks == b.disable_positive_acks) &&
-               (this->disable_heartbeat_piggyback == b.disable_heartbeat_piggyback);
-    }
-
-    inline void clear()
-    {
-        *this = RTPSReliableWriterQos();
-    }
-
-    //!Writer Timing Attributes
-    fastdds::rtps::WriterTimes times;
-
-    //!Disable positive acks QoS, implemented in the library.
-    DisablePositiveACKsQosPolicy disable_positive_acks;
-
-    //! Disable heartbeat piggyback mechanism.
-    bool disable_heartbeat_piggyback = false;
-};
 
 /**
  * Class DataWriterQos, containing all the possible Qos that can be set for a determined DataWriter.

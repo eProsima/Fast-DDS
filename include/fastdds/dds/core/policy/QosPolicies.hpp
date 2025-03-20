@@ -2858,6 +2858,12 @@ public:
 
     virtual FASTDDS_EXPORTED_API ~RTPSEndpointQos() = default;
 
+    inline void clear()
+    {
+        RTPSEndpointQos reset = RTPSEndpointQos();
+        std::swap(*this, reset);
+    }
+
     bool operator ==(
             const RTPSEndpointQos& b) const
     {
@@ -2915,6 +2921,12 @@ public:
      * @brief Destructor
      */
     virtual FASTDDS_EXPORTED_API ~WriterResourceLimitsQos() = default;
+
+    inline void clear()
+    {
+        WriterResourceLimitsQos reset = WriterResourceLimitsQos();
+        std::swap(*this, reset);
+    }
 
     bool operator ==(
             const WriterResourceLimitsQos& b) const
