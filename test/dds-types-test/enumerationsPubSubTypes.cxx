@@ -34,7 +34,6 @@ using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 namespace Test {
 } // namespace Test
 
-
 EnumStructurePubSubType::EnumStructurePubSubType()
 {
     set_name("EnumStructure");
@@ -80,6 +79,7 @@ bool EnumStructurePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -261,6 +261,7 @@ bool BitMaskStructurePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -442,6 +443,7 @@ bool BoundedBitMaskStructurePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -623,6 +625,7 @@ bool EnumWithValuesStructurePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {

@@ -74,6 +74,7 @@ bool short_externalPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -256,6 +257,7 @@ bool ushort_externalPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -438,6 +440,7 @@ bool long_externalPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -620,6 +623,7 @@ bool ulong_externalPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -802,6 +806,7 @@ bool longlong_externalPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -984,6 +989,7 @@ bool ulonglong_externalPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1166,6 +1172,7 @@ bool float_externalPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1348,6 +1355,7 @@ bool double_externalPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1530,6 +1538,7 @@ bool longdouble_externalPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1712,6 +1721,7 @@ bool boolean_externalPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1894,6 +1904,7 @@ bool octet_externalPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2076,6 +2087,7 @@ bool char_externalPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2258,6 +2270,7 @@ bool wchar_externalPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2440,6 +2453,7 @@ bool sequence_short_externalPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2622,6 +2636,7 @@ bool string_unbounded_externalPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2804,6 +2819,7 @@ bool string_bounded_externalPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2986,6 +3002,7 @@ bool map_short_externalPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3168,6 +3185,7 @@ bool array_short_externalPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3350,6 +3368,7 @@ bool struct_externalPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3532,6 +3551,7 @@ bool InnerStructExternalPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3714,6 +3734,7 @@ bool ext_struct_externalPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3896,6 +3917,7 @@ bool ext_and_inner_struct_externalPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4078,6 +4100,7 @@ bool struct_external_optionalPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4215,7 +4238,6 @@ void struct_external_optionalPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 recursive_union_containerPubSubType::recursive_union_containerPubSubType()
 {
     set_name("recursive_union_container");
@@ -4261,6 +4283,7 @@ bool recursive_union_containerPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4398,7 +4421,6 @@ void recursive_union_containerPubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
 recursive_test_1PubSubType::recursive_test_1PubSubType()
 {
     set_name("recursive_test_1");
@@ -4444,6 +4466,7 @@ bool recursive_test_1PubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4581,8 +4604,6 @@ void recursive_test_1PubSubType::register_type_object_representation()
         "TypeObject type representation support disabled in generated code");
 }
 
-
-
 recursive_structurePubSubType::recursive_structurePubSubType()
 {
     set_name("recursive_structure");
@@ -4628,6 +4649,7 @@ bool recursive_structurePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4810,6 +4832,7 @@ bool recursive_test_2PubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {

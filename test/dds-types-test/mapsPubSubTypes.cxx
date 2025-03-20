@@ -76,6 +76,7 @@ bool MapShortShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -257,6 +258,7 @@ bool MapShortUShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -438,6 +440,7 @@ bool MapShortLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -619,6 +622,7 @@ bool MapShortULongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -800,6 +804,7 @@ bool MapShortLongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -981,6 +986,7 @@ bool MapShortULongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1162,6 +1168,7 @@ bool MapShortFloatPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1343,6 +1350,7 @@ bool MapShortDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1524,6 +1532,7 @@ bool MapShortLongDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1705,6 +1714,7 @@ bool MapShortBooleanPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1886,6 +1896,7 @@ bool MapShortOctetPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2067,6 +2078,7 @@ bool MapShortCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2248,6 +2260,7 @@ bool MapShortWCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2429,6 +2442,7 @@ bool MapShortStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2610,6 +2624,7 @@ bool MapShortWStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2791,6 +2806,7 @@ bool MapShortInnerAliasBoundedStringHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2972,6 +2988,7 @@ bool MapShortInnerAliasBoundedWStringHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3153,6 +3170,7 @@ bool MapShortInnerEnumHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3334,6 +3352,7 @@ bool MapShortInnerBitMaskHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3515,6 +3534,7 @@ bool MapShortInnerAliasHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3696,6 +3716,7 @@ bool MapShortInnerAliasArrayHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3877,6 +3898,7 @@ bool MapShortInnerAliasSequenceHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4058,6 +4080,7 @@ bool MapShortInnerAliasMapHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4239,6 +4262,7 @@ bool MapShortInnerUnionHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4420,6 +4444,7 @@ bool MapShortInnerStructureHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4601,6 +4626,7 @@ bool MapShortInnerBitsetHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4782,6 +4808,7 @@ bool MapUShortShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4963,6 +4990,7 @@ bool MapUShortUShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5144,6 +5172,7 @@ bool MapUShortLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5325,6 +5354,7 @@ bool MapUShortULongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5506,6 +5536,7 @@ bool MapUShortLongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5687,6 +5718,7 @@ bool MapUShortULongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5868,6 +5900,7 @@ bool MapUShortFloatPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6049,6 +6082,7 @@ bool MapUShortDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6230,6 +6264,7 @@ bool MapUShortLongDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6411,6 +6446,7 @@ bool MapUShortBooleanPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6592,6 +6628,7 @@ bool MapUShortOctetPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6773,6 +6810,7 @@ bool MapUShortCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6954,6 +6992,7 @@ bool MapUShortWCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7135,6 +7174,7 @@ bool MapUShortStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7316,6 +7356,7 @@ bool MapUShortWStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7497,6 +7538,7 @@ bool MapUShortInnerAliasBoundedStringHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7678,6 +7720,7 @@ bool MapUShortInnerAliasBoundedWStringHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7859,6 +7902,7 @@ bool MapUShortInnerEnumHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8040,6 +8084,7 @@ bool MapUShortInnerBitMaskHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8221,6 +8266,7 @@ bool MapUShortInnerAliasHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8402,6 +8448,7 @@ bool MapUShortInnerAliasArrayHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8583,6 +8630,7 @@ bool MapUShortInnerAliasSequenceHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8764,6 +8812,7 @@ bool MapUShortInnerAliasMapHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8945,6 +8994,7 @@ bool MapUShortInnerUnionHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9126,6 +9176,7 @@ bool MapUShortInnerStructureHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9307,6 +9358,7 @@ bool MapUShortInnerBitsetHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9488,6 +9540,7 @@ bool MapLongShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9669,6 +9722,7 @@ bool MapLongUShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9850,6 +9904,7 @@ bool MapLongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10031,6 +10086,7 @@ bool MapLongULongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10212,6 +10268,7 @@ bool MapLongKeyLongLongValuePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10393,6 +10450,7 @@ bool MapLongULongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10574,6 +10632,7 @@ bool MapLongFloatPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10755,6 +10814,7 @@ bool MapLongDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10936,6 +10996,7 @@ bool MapLongKeyLongDoubleValuePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11117,6 +11178,7 @@ bool MapLongBooleanPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11298,6 +11360,7 @@ bool MapLongOctetPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11479,6 +11542,7 @@ bool MapLongCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11660,6 +11724,7 @@ bool MapLongWCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11841,6 +11906,7 @@ bool MapLongStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12022,6 +12088,7 @@ bool MapLongWStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12203,6 +12270,7 @@ bool MapLongInnerAliasBoundedStringHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12384,6 +12452,7 @@ bool MapLongInnerAliasBoundedWStringHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12565,6 +12634,7 @@ bool MapLongInnerEnumHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12746,6 +12816,7 @@ bool MapLongInnerBitMaskHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12927,6 +12998,7 @@ bool MapLongInnerAliasHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13108,6 +13180,7 @@ bool MapLongInnerAliasArrayHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13289,6 +13362,7 @@ bool MapLongInnerAliasSequenceHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13470,6 +13544,7 @@ bool MapLongInnerAliasMapHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13651,6 +13726,7 @@ bool MapLongInnerUnionHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13832,6 +13908,7 @@ bool MapLongInnerStructureHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14013,6 +14090,7 @@ bool MapLongInnerBitsetHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14194,6 +14272,7 @@ bool MapULongShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14375,6 +14454,7 @@ bool MapULongUShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14556,6 +14636,7 @@ bool MapULongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14737,6 +14818,7 @@ bool MapULongULongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14918,6 +15000,7 @@ bool MapKeyULongValueLongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15099,6 +15182,7 @@ bool MapULongULongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15280,6 +15364,7 @@ bool MapULongFloatPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15461,6 +15546,7 @@ bool MapULongDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15642,6 +15728,7 @@ bool MapKeyULongValueLongDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15823,6 +15910,7 @@ bool MapULongBooleanPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16004,6 +16092,7 @@ bool MapULongOctetPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16185,6 +16274,7 @@ bool MapULongCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16366,6 +16456,7 @@ bool MapULongWCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16547,6 +16638,7 @@ bool MapULongStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16728,6 +16820,7 @@ bool MapULongWStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16909,6 +17002,7 @@ bool MapULongInnerAliasBoundedStringHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17090,6 +17184,7 @@ bool MapULongInnerAliasBoundedWStringHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17271,6 +17366,7 @@ bool MapULongInnerEnumHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17452,6 +17548,7 @@ bool MapULongInnerBitMaskHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17633,6 +17730,7 @@ bool MapULongInnerAliasHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17814,6 +17912,7 @@ bool MapULongInnerAliasArrayHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17995,6 +18094,7 @@ bool MapULongInnerAliasSequenceHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -18176,6 +18276,7 @@ bool MapULongInnerAliasMapHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -18357,6 +18458,7 @@ bool MapULongInnerUnionHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -18538,6 +18640,7 @@ bool MapULongInnerStructureHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -18719,6 +18822,7 @@ bool MapULongInnerBitsetHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -18900,6 +19004,7 @@ bool MapLongLongShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -19081,6 +19186,7 @@ bool MapLongLongUShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -19262,6 +19368,7 @@ bool MapLongLongKeyLongValuePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -19443,6 +19550,7 @@ bool MapLongLongULongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -19624,6 +19732,7 @@ bool MapLongLongLongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -19805,6 +19914,7 @@ bool MapLongLongULongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -19986,6 +20096,7 @@ bool MapLongLongFloatPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -20167,6 +20278,7 @@ bool MapLongLongKeyDoubleValuePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -20348,6 +20460,7 @@ bool MapLongLongLongDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -20529,6 +20642,7 @@ bool MapLongLongBooleanPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -20710,6 +20824,7 @@ bool MapLongLongOctetPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -20891,6 +21006,7 @@ bool MapLongLongCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -21072,6 +21188,7 @@ bool MapLongLongWCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -21253,6 +21370,7 @@ bool MapLongLongStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -21434,6 +21552,7 @@ bool MapLongLongWStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -21615,6 +21734,7 @@ bool MapLongLongInnerAliasBoundedStringHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -21796,6 +21916,7 @@ bool MapLongLongInnerAliasBoundedWStringHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -21977,6 +22098,7 @@ bool MapLongLongInnerEnumHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -22158,6 +22280,7 @@ bool MapLongLongInnerBitMaskHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -22339,6 +22462,7 @@ bool MapLongLongInnerAliasHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -22520,6 +22644,7 @@ bool MapLongLongInnerAliasArrayHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -22701,6 +22826,7 @@ bool MapLongLongInnerAliasSequenceHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -22882,6 +23008,7 @@ bool MapLongLongInnerAliasMapHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -23063,6 +23190,7 @@ bool MapLongLongInnerUnionHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -23244,6 +23372,7 @@ bool MapLongLongInnerStructureHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -23425,6 +23554,7 @@ bool MapLongLongInnerBitsetHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -23606,6 +23736,7 @@ bool MapULongLongShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -23787,6 +23918,7 @@ bool MapULongLongUShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -23968,6 +24100,7 @@ bool MapULongLongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -24149,6 +24282,7 @@ bool MapULongLongULongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -24330,6 +24464,7 @@ bool MapULongLongLongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -24511,6 +24646,7 @@ bool MapULongLongULongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -24692,6 +24828,7 @@ bool MapULongLongFloatPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -24873,6 +25010,7 @@ bool MapKeyULongLongValueDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -25054,6 +25192,7 @@ bool MapULongLongLongDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -25235,6 +25374,7 @@ bool MapULongLongBooleanPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -25416,6 +25556,7 @@ bool MapULongLongOctetPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -25597,6 +25738,7 @@ bool MapULongLongCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -25778,6 +25920,7 @@ bool MapULongLongWCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -25959,6 +26102,7 @@ bool MapULongLongStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -26140,6 +26284,7 @@ bool MapULongLongWStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -26321,6 +26466,7 @@ bool MapULongLongInnerAliasBoundedStringHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -26502,6 +26648,7 @@ bool MapULongLongInnerAliasBoundedWStringHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -26683,6 +26830,7 @@ bool MapULongLongInnerEnumHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -26864,6 +27012,7 @@ bool MapULongLongInnerBitMaskHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -27045,6 +27194,7 @@ bool MapULongLongInnerAliasHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -27226,6 +27376,7 @@ bool MapULongLongInnerAliasArrayHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -27407,6 +27558,7 @@ bool MapULongLongInnerAliasSequenceHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -27588,6 +27740,7 @@ bool MapULongLongInnerAliasMapHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -27769,6 +27922,7 @@ bool MapULongLongInnerUnionHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -27950,6 +28104,7 @@ bool MapULongLongInnerStructureHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -28131,6 +28286,7 @@ bool MapULongLongInnerBitsetHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -28312,6 +28468,7 @@ bool MapStringShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -28493,6 +28650,7 @@ bool MapStringUShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -28674,6 +28832,7 @@ bool MapStringLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -28855,6 +29014,7 @@ bool MapStringULongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -29036,6 +29196,7 @@ bool MapStringLongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -29217,6 +29378,7 @@ bool MapStringULongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -29398,6 +29560,7 @@ bool MapStringFloatPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -29579,6 +29742,7 @@ bool MapStringDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -29760,6 +29924,7 @@ bool MapStringLongDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -29941,6 +30106,7 @@ bool MapStringBooleanPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -30122,6 +30288,7 @@ bool MapStringOctetPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -30303,6 +30470,7 @@ bool MapStringCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -30484,6 +30652,7 @@ bool MapStringWCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -30665,6 +30834,7 @@ bool MapStringStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -30846,6 +31016,7 @@ bool MapStringWStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -31027,6 +31198,7 @@ bool MapStringInnerAliasBoundedStringHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -31208,6 +31380,7 @@ bool MapStringInnerAliasBoundedWStringHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -31389,6 +31562,7 @@ bool MapStringInnerEnumHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -31570,6 +31744,7 @@ bool MapStringInnerBitMaskHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -31751,6 +31926,7 @@ bool MapStringInnerAliasHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -31932,6 +32108,7 @@ bool MapStringInnerAliasArrayHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -32113,6 +32290,7 @@ bool MapStringInnerAliasSequenceHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -32294,6 +32472,7 @@ bool MapStringInnerAliasMapHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -32475,6 +32654,7 @@ bool MapStringInnerUnionHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -32656,6 +32836,7 @@ bool MapStringInnerStructureHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -32837,6 +33018,7 @@ bool MapStringInnerBitsetHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -33018,6 +33200,7 @@ bool MapWStringShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -33199,6 +33382,7 @@ bool MapWStringUShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -33380,6 +33564,7 @@ bool MapWStringLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -33561,6 +33746,7 @@ bool MapWStringULongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -33742,6 +33928,7 @@ bool MapWStringLongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -33923,6 +34110,7 @@ bool MapWStringULongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -34104,6 +34292,7 @@ bool MapWStringFloatPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -34285,6 +34474,7 @@ bool MapWStringDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -34466,6 +34656,7 @@ bool MapWStringLongDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -34647,6 +34838,7 @@ bool MapWStringBooleanPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -34828,6 +35020,7 @@ bool MapWStringOctetPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -35009,6 +35202,7 @@ bool MapWStringCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -35190,6 +35384,7 @@ bool MapWStringWCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -35371,6 +35566,7 @@ bool MapWStringStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -35552,6 +35748,7 @@ bool MapWStringWStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -35733,6 +35930,7 @@ bool MapWStringInnerAliasBoundedStringHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -35914,6 +36112,7 @@ bool MapWStringInnerAliasBoundedWStringHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -36095,6 +36294,7 @@ bool MapWStringInnerEnumHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -36276,6 +36476,7 @@ bool MapWStringInnerBitMaskHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -36457,6 +36658,7 @@ bool MapWStringInnerAliasHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -36638,6 +36840,7 @@ bool MapWStringInnerAliasArrayHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -36819,6 +37022,7 @@ bool MapWStringInnerAliasSequenceHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -37000,6 +37204,7 @@ bool MapWStringInnerAliasMapHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -37181,6 +37386,7 @@ bool MapWStringInnerUnionHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -37362,6 +37568,7 @@ bool MapWStringInnerStructureHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -37543,6 +37750,7 @@ bool MapWStringInnerBitsetHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -37724,6 +37932,7 @@ bool MapInnerAliasBoundedStringHelperShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -37905,6 +38114,7 @@ bool MapInnerAliasBoundedStringHelperUShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -38086,6 +38296,7 @@ bool MapInnerAliasBoundedStringHelperLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -38267,6 +38478,7 @@ bool MapInnerAliasBoundedStringHelperULongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -38448,6 +38660,7 @@ bool MapInnerAliasBoundedStringHelperLongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -38629,6 +38842,7 @@ bool MapInnerAliasBoundedStringHelperULongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -38810,6 +39024,7 @@ bool MapInnerAliasBoundedStringHelperFloatPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -38991,6 +39206,7 @@ bool MapInnerAliasBoundedStringHelperDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -39172,6 +39388,7 @@ bool MapInnerAliasBoundedStringHelperLongDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -39353,6 +39570,7 @@ bool MapInnerAliasBoundedStringHelperBooleanPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -39534,6 +39752,7 @@ bool MapInnerAliasBoundedStringHelperOctetPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -39715,6 +39934,7 @@ bool MapInnerAliasBoundedStringHelperCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -39896,6 +40116,7 @@ bool MapInnerAliasBoundedStringHelperWCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -40077,6 +40298,7 @@ bool MapInnerAliasBoundedStringHelperStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -40258,6 +40480,7 @@ bool MapInnerAliasBoundedStringHelperWStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -40439,6 +40662,7 @@ bool MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType::se
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -40620,6 +40844,7 @@ bool MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType::s
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -40801,6 +41026,7 @@ bool MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -40982,6 +41208,7 @@ bool MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -41163,6 +41390,7 @@ bool MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -41344,6 +41572,7 @@ bool MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -41525,6 +41754,7 @@ bool MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType::seriali
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -41706,6 +41936,7 @@ bool MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -41887,6 +42118,7 @@ bool MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -42068,6 +42300,7 @@ bool MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -42249,6 +42482,7 @@ bool MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -42430,6 +42664,7 @@ bool MapInnerAliasBoundedWStringHelperShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -42611,6 +42846,7 @@ bool MapInnerAliasBoundedWStringHelperUShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -42792,6 +43028,7 @@ bool MapInnerAliasBoundedWStringHelperLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -42973,6 +43210,7 @@ bool MapInnerAliasBoundedWStringHelperULongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -43154,6 +43392,7 @@ bool MapInnerAliasBoundedWStringHelperLongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -43335,6 +43574,7 @@ bool MapInnerAliasBoundedWStringHelperULongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -43516,6 +43756,7 @@ bool MapInnerAliasBoundedWStringHelperFloatPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -43697,6 +43938,7 @@ bool MapInnerAliasBoundedWStringHelperDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -43878,6 +44120,7 @@ bool MapInnerAliasBoundedWStringHelperLongDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -44059,6 +44302,7 @@ bool MapInnerAliasBoundedWStringHelperBooleanPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -44240,6 +44484,7 @@ bool MapInnerAliasBoundedWStringHelperOctetPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -44421,6 +44666,7 @@ bool MapInnerAliasBoundedWStringHelperCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -44602,6 +44848,7 @@ bool MapInnerAliasBoundedWStringHelperWCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -44783,6 +45030,7 @@ bool MapInnerAliasBoundedWStringHelperStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -44964,6 +45212,7 @@ bool MapInnerAliasBoundedWStringHelperWStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -45145,6 +45394,7 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelperPubSubType::s
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -45326,6 +45576,7 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelperPubSubType::
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -45507,6 +45758,7 @@ bool MapInnerAliasBoundedWStringHelperInnerEnumHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -45688,6 +45940,7 @@ bool MapInnerAliasBoundedWStringHelperInnerBitMaskHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -45869,6 +46122,7 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -46050,6 +46304,7 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasArrayHelperPubSubType::serialize
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -46231,6 +46486,7 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelperPubSubType::serial
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -46412,6 +46668,7 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasMapHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -46593,6 +46850,7 @@ bool MapInnerAliasBoundedWStringHelperInnerUnionHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -46774,6 +47032,7 @@ bool MapInnerAliasBoundedWStringHelperInnerStructureHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -46955,6 +47214,7 @@ bool MapInnerAliasBoundedWStringHelperInnerBitsetHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -47136,6 +47396,7 @@ bool BoundedSmallMapPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -47317,6 +47578,7 @@ bool BoundedLargeMapPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {

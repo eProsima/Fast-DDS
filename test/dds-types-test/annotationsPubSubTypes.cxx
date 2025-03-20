@@ -76,6 +76,7 @@ bool AnnotatedStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -257,6 +258,7 @@ bool EmptyAnnotatedStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -393,7 +395,6 @@ void EmptyAnnotatedStructPubSubType::register_type_object_representation()
     register_EmptyAnnotatedStruct_type_identifier(type_identifiers_);
 }
 
-
 BasicAnnotationsStructPubSubType::BasicAnnotationsStructPubSubType()
 {
     set_name("BasicAnnotationsStruct");
@@ -439,6 +440,7 @@ bool BasicAnnotationsStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {

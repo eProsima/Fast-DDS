@@ -200,9 +200,6 @@ private:
     unsigned char* key_buffer_;
 
 };
-
-
-
 typedef eprosima::fastcdr::fixed_string<10> Inner_alias_bounded_string_helper;
 typedef std::wstring Inner_alias_bounded_wstring_helper;
 typedef std::array<int16_t, 2> Inner_alias_array_helper;
@@ -210,8 +207,6 @@ typedef std::vector<int16_t> Inner_alias_sequence_helper;
 typedef std::map<int32_t, int32_t> Inner_alias_map_helper;
 typedef InnerStructureHelper inner_structure_helper_alias;
 typedef InnerBitsetHelper inner_bitset_helper_alias;
-
-
 
 #endif // FAST_DDS_GENERATED__BASIC_INNER_TYPES_PUBSUBTYPES_HPP
 

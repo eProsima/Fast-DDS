@@ -77,6 +77,7 @@ namespace const_module1 {
             ser.serialize_encapsulation();
             // Serialize the object.
             ser << *p_type;
+            ser.set_dds_cdr_options({0,0});
         }
         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
         {
@@ -261,6 +262,7 @@ namespace const_module2 {
             ser.serialize_encapsulation();
             // Serialize the object.
             ser << *p_type;
+            ser.set_dds_cdr_options({0,0});
         }
         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
         {
@@ -444,6 +446,7 @@ bool ConstsLiteralsStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {

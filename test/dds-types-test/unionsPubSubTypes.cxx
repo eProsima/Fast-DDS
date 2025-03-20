@@ -31,6 +31,9 @@ using SerializedPayload_t = eprosima::fastdds::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
+namespace Fixed_String_Module {
+} // namespace Fixed_String_Module
+
 UnionShortPubSubType::UnionShortPubSubType()
 {
     set_name("UnionShort");
@@ -76,6 +79,7 @@ bool UnionShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -257,6 +261,7 @@ bool UnionUShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -438,6 +443,7 @@ bool UnionLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -619,6 +625,7 @@ bool UnionULongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -800,6 +807,7 @@ bool UnionLongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -981,6 +989,7 @@ bool UnionULongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1162,6 +1171,7 @@ bool UnionFloatPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1343,6 +1353,7 @@ bool UnionDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1524,6 +1535,7 @@ bool UnionLongDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1705,6 +1717,7 @@ bool UnionBooleanPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1886,6 +1899,7 @@ bool UnionOctetPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2067,6 +2081,7 @@ bool UnionCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2248,6 +2263,7 @@ bool UnionWCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2429,6 +2445,7 @@ bool UnionStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2610,6 +2627,7 @@ bool UnionWStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2791,6 +2809,7 @@ bool UnionBoundedStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2972,6 +2991,7 @@ bool UnionBoundedWStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3153,6 +3173,7 @@ bool UnionInnerEnumHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3334,6 +3355,7 @@ bool UnionInnerBitMaskHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3515,6 +3537,7 @@ bool UnionInnerAliasHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3696,6 +3719,7 @@ bool UnionArrayPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3877,6 +3901,7 @@ bool UnionSequencePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4058,6 +4083,7 @@ bool UnionMapPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4239,6 +4265,7 @@ bool UnionInnerUnionHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4420,6 +4447,7 @@ bool UnionInnerStructureHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4601,6 +4629,7 @@ bool UnionInnerBitsetHelperPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4782,6 +4811,7 @@ bool UnionDiscriminatorShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4963,6 +4993,7 @@ bool UnionDiscriminatorUShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5144,6 +5175,7 @@ bool UnionDiscriminatorLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5325,6 +5357,7 @@ bool UnionDiscriminatorULongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5506,6 +5539,7 @@ bool UnionDiscriminatorLongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5687,6 +5721,7 @@ bool UnionDiscriminatorULongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5868,6 +5903,7 @@ bool UnionDiscriminatorBooleanPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6049,6 +6085,7 @@ bool UnionDiscriminatorOctetPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6230,6 +6267,7 @@ bool UnionDiscriminatorCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6411,6 +6449,7 @@ bool UnionDiscriminatorWCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6592,6 +6631,7 @@ bool UnionDiscriminatorEnumPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6773,6 +6813,7 @@ bool UnionDiscriminatorEnumLabelPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6954,6 +6995,7 @@ bool UnionDiscriminatorAliasPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7135,6 +7177,7 @@ bool UnionSeveralFieldsPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7316,6 +7359,7 @@ bool UnionSeveralFieldsWithDefaultPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7452,8 +7496,6 @@ void UnionSeveralFieldsWithDefaultPubSubType::register_type_object_representatio
     register_UnionSeveralFieldsWithDefault_type_identifier(type_identifiers_);
 }
 
-
-
 UnionShortExtraMemberPubSubType::UnionShortExtraMemberPubSubType()
 {
     set_name("UnionShortExtraMember");
@@ -7499,6 +7541,7 @@ bool UnionShortExtraMemberPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7633,6 +7676,188 @@ bool UnionShortExtraMemberPubSubType::compute_key(
 void UnionShortExtraMemberPubSubType::register_type_object_representation()
 {
     register_UnionShortExtraMember_type_identifier(type_identifiers_);
+}
+
+UnionFixedStringAliasPubSubType::UnionFixedStringAliasPubSubType()
+{
+    set_name("UnionFixedStringAlias");
+    uint32_t type_size = UnionFixedStringAlias_max_cdr_typesize;
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
+    max_serialized_type_size = type_size + 4; /*encapsulation*/
+    is_compute_key_provided = false;
+    uint32_t key_length = UnionFixedStringAlias_max_key_cdr_typesize > 16 ? UnionFixedStringAlias_max_key_cdr_typesize : 16;
+    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
+    memset(key_buffer_, 0, key_length);
+}
+
+UnionFixedStringAliasPubSubType::~UnionFixedStringAliasPubSubType()
+{
+    if (key_buffer_ != nullptr)
+    {
+        free(key_buffer_);
+    }
+}
+
+bool UnionFixedStringAliasPubSubType::serialize(
+        const void* const data,
+        SerializedPayload_t& payload,
+        DataRepresentationId_t data_representation)
+{
+    const UnionFixedStringAlias* p_type = static_cast<const UnionFixedStringAlias*>(data);
+
+    // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
+    // Object that serializes the data.
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+            eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    ser.set_encoding_flag(
+        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
+        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+
+    try
+    {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
+        // Serialize the object.
+        ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
+    }
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+    {
+        return false;
+    }
+
+    // Get the serialized length
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    return true;
+}
+
+bool UnionFixedStringAliasPubSubType::deserialize(
+        SerializedPayload_t& payload,
+        void* data)
+{
+    try
+    {
+        // Convert DATA to pointer of your type
+        UnionFixedStringAlias* p_type = static_cast<UnionFixedStringAlias*>(data);
+
+        // Object that manages the raw buffer.
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
+
+        // Object that deserializes the data.
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
+
+        // Deserialize encapsulation.
+        deser.read_encapsulation();
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+        // Deserialize the object.
+        deser >> *p_type;
+    }
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+uint32_t UnionFixedStringAliasPubSubType::calculate_serialized_size(
+        const void* const data,
+        DataRepresentationId_t data_representation)
+{
+    try
+    {
+        eprosima::fastcdr::CdrSizeCalculator calculator(
+            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+            eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        size_t current_alignment {0};
+        return static_cast<uint32_t>(calculator.calculate_serialized_size(
+                    *static_cast<const UnionFixedStringAlias*>(data), current_alignment)) +
+                4u /*encapsulation*/;
+    }
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+    {
+        return 0;
+    }
+}
+
+void* UnionFixedStringAliasPubSubType::create_data()
+{
+    return reinterpret_cast<void*>(new UnionFixedStringAlias());
+}
+
+void UnionFixedStringAliasPubSubType::delete_data(
+        void* data)
+{
+    delete(reinterpret_cast<UnionFixedStringAlias*>(data));
+}
+
+bool UnionFixedStringAliasPubSubType::compute_key(
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    UnionFixedStringAlias data;
+    if (deserialize(payload, static_cast<void*>(&data)))
+    {
+        return compute_key(static_cast<void*>(&data), handle, force_md5);
+    }
+
+    return false;
+}
+
+bool UnionFixedStringAliasPubSubType::compute_key(
+        const void* const data,
+        InstanceHandle_t& handle,
+        bool force_md5)
+{
+    if (!is_compute_key_provided)
+    {
+        return false;
+    }
+
+    const UnionFixedStringAlias* p_type = static_cast<const UnionFixedStringAlias*>(data);
+
+    // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
+            UnionFixedStringAlias_max_key_cdr_typesize);
+
+    // Object that serializes the data.
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
+    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || UnionFixedStringAlias_max_key_cdr_typesize > 16)
+    {
+        md5_.init();
+        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
+        md5_.finalize();
+        for (uint8_t i = 0; i < 16; ++i)
+        {
+            handle.value[i] = md5_.digest[i];
+        }
+    }
+    else
+    {
+        for (uint8_t i = 0; i < 16; ++i)
+        {
+            handle.value[i] = key_buffer_[i];
+        }
+    }
+    return true;
+}
+
+void UnionFixedStringAliasPubSubType::register_type_object_representation()
+{
+    register_UnionFixedStringAlias_type_identifier(type_identifiers_);
 }
 
 

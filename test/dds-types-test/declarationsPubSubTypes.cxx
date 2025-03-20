@@ -74,6 +74,7 @@ bool ForwardDeclarationsRecursiveStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -211,7 +212,6 @@ void ForwardDeclarationsRecursiveStructPubSubType::register_type_object_represen
         "TypeObject type representation support disabled in generated code");
 }
 
-
 ForwardStructPubSubType::ForwardStructPubSubType()
 {
     set_name("ForwardStruct");
@@ -257,6 +257,7 @@ bool ForwardStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -440,6 +441,7 @@ namespace declarations_module {
             ser.serialize_encapsulation();
             // Serialize the object.
             ser << *p_type;
+            ser.set_dds_cdr_options({0,0});
         }
         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
         {
@@ -624,6 +626,7 @@ bool ModuledForwardDeclarationsRecursiveStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -807,6 +810,7 @@ namespace declarations_module {
             ser.serialize_encapsulation();
             // Serialize the object.
             ser << *p_type;
+            ser.set_dds_cdr_options({0,0});
         }
         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
         {
@@ -944,8 +948,6 @@ namespace declarations_module {
             "TypeObject type representation support disabled in generated code");
     }
 
-
-
 } // namespace declarations_module
 
 ModuledCommonNameStructurePubSubType::ModuledCommonNameStructurePubSubType()
@@ -993,6 +995,7 @@ bool ModuledCommonNameStructurePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {

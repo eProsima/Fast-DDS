@@ -568,8 +568,6 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionBitset& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsShort& data);

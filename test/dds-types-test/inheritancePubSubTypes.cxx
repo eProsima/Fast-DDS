@@ -76,6 +76,7 @@ bool InnerStructureHelperChildPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -257,6 +258,7 @@ bool InnerStructureHelperChildChildPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -438,6 +440,7 @@ bool InnerStructureHelperEmptyChildPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -619,6 +622,7 @@ bool InnerStructureHelperEmptyChildChildPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -800,6 +804,7 @@ bool InnerEmptyStructureHelperChildPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -981,6 +986,7 @@ bool StructAliasInheritanceStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1162,6 +1168,7 @@ bool StructuresInheritanceStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1298,9 +1305,6 @@ void StructuresInheritanceStructPubSubType::register_type_object_representation(
     register_StructuresInheritanceStruct_type_identifier(type_identifiers_);
 }
 
-
-
-
 BitsetsChildInheritanceStructPubSubType::BitsetsChildInheritanceStructPubSubType()
 {
     set_name("BitsetsChildInheritanceStruct");
@@ -1346,6 +1350,7 @@ bool BitsetsChildInheritanceStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
+        ser.set_dds_cdr_options({0,0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
