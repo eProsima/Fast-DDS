@@ -666,7 +666,6 @@ private:
 
 };
 
-
 // configuration values for PDP reliable entities.
 extern const dds::Duration_t pdp_heartbeat_period;
 extern const dds::Duration_t pdp_nack_response_delay;
