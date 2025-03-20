@@ -1597,15 +1597,20 @@ ReaderAttributes PDP::create_builtin_reader_attributes() const
 
     const RTPSParticipantAttributes& pattr = getRTPSParticipant()->getRTPSParticipantAttributes();
     set_builtin_matched_allocation(attributes.matched_writers_allocation, pattr);
-    set_builtin_endpoint_locators(attributes.endpoint, this, mp_builtin);
 
     // Builtin endpoints are always reliable, transient local, keyed topics
     attributes.endpoint.reliabilityKind = RELIABLE;
     attributes.endpoint.durabilityKind = TRANSIENT_LOCAL;
     attributes.endpoint.topicKind = WITH_KEY;
 
+    attributes.endpoint.endpointKind = READER;
+
     // Built-in readers never expect inline qos
     attributes.expectsInlineQos = false;
+
+    attributes.times.heartbeatResponseDelay = pdp_heartbeat_response_delay;
+
+    set_builtin_endpoint_locators(attributes.endpoint, this, mp_builtin);
 
     return attributes;
 }
@@ -1616,12 +1621,25 @@ WriterAttributes PDP::create_builtin_writer_attributes() const
 
     const RTPSParticipantAttributes& pattr = getRTPSParticipant()->getRTPSParticipantAttributes();
     set_builtin_matched_allocation(attributes.matched_readers_allocation, pattr);
-    set_builtin_endpoint_locators(attributes.endpoint, this, mp_builtin);
 
     // Builtin endpoints are always reliable, transient local, keyed topics
     attributes.endpoint.reliabilityKind = RELIABLE;
     attributes.endpoint.durabilityKind = TRANSIENT_LOCAL;
     attributes.endpoint.topicKind = WITH_KEY;
+
+    attributes.endpoint.endpointKind = WRITER;
+
+    // We assume that if we have at least one flow controller defined, we use async flow controller
+    if (pattr.throughputController.bytesPerPeriod != UINT32_MAX && pattr.throughputController.periodMillisecs != 0)
+    {
+        attributes.mode = ASYNCHRONOUS_WRITER;
+    }
+
+    attributes.times.heartbeatPeriod = pdp_heartbeat_period;
+    attributes.times.nackResponseDelay = pdp_nack_response_delay;
+    attributes.times.nackSupressionDuration = pdp_nack_supression_duration;
+
+    set_builtin_endpoint_locators(attributes.endpoint, this, mp_builtin);
 
     return attributes;
 }

@@ -322,8 +322,6 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
 
     EPROSIMA_LOG_INFO(RTPS_PDP, "Beginning PDPClient Endpoints creation");
 
-    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
-
     /***********************************
     * PDP READER
     ***********************************/
@@ -334,17 +332,8 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
     hatt.memoryPolicy = mp_builtin->m_att.readerHistoryMemoryPolicy;
     endpoints.reader.history_.reset(new ReaderHistory(hatt));
 
-    ReaderAttributes ratt;
-    ratt.expectsInlineQos = false;
-    ratt.endpoint.endpointKind = READER;
-    ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
-    ratt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
-    ratt.endpoint.external_unicast_locators = mp_builtin->m_att.metatraffic_external_unicast_locators;
-    ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
-    ratt.endpoint.topicKind = WITH_KEY;
-    ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-    ratt.endpoint.reliabilityKind = RELIABLE;
-    ratt.times.heartbeatResponseDelay = pdp_heartbeat_response_delay;
+    ReaderAttributes ratt = create_builtin_reader_attributes();
+
 #if HAVE_SECURITY
     if (is_discovery_protected)
     {
@@ -389,18 +378,7 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
     hatt.memoryPolicy = mp_builtin->m_att.writerHistoryMemoryPolicy;
     endpoints.writer.history_.reset(new WriterHistory(hatt));
 
-    WriterAttributes watt;
-    watt.endpoint.endpointKind = WRITER;
-    watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-    watt.endpoint.reliabilityKind = RELIABLE;
-    watt.endpoint.topicKind = WITH_KEY;
-    watt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
-    watt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
-    watt.endpoint.external_unicast_locators = mp_builtin->m_att.metatraffic_external_unicast_locators;
-    watt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
-    watt.times.heartbeatPeriod = pdp_heartbeat_period;
-    watt.times.nackResponseDelay = pdp_nack_response_delay;
-    watt.times.nackSupressionDuration = pdp_nack_supression_duration;
+    WriterAttributes watt = create_builtin_writer_attributes();
 
 #if HAVE_SECURITY
     if (is_discovery_protected)
@@ -410,11 +388,6 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
                 PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
     }
 #endif // HAVE_SECURITY
-
-    if (pattr.throughputController.bytesPerPeriod != UINT32_MAX && pattr.throughputController.periodMillisecs != 0)
-    {
-        watt.mode = ASYNCHRONOUS_WRITER;
-    }
 
     RTPSWriter* wout = nullptr;
 #if HAVE_SECURITY
