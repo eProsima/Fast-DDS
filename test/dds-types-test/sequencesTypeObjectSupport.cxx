@@ -2721,4 +2721,325 @@ void register_BoundedBigSequences_type_identifier(
         }
     }
 }
+namespace Common_Module {
+void register_My_Char_type_identifier(
+        TypeIdentifierPair& type_ids_My_Char)
+{
+    ReturnCode_t return_code_My_Char {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_My_Char =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "Common_Module::My_Char", type_ids_My_Char);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_My_Char)
+    {
+        AliasTypeFlag alias_flags_My_Char = 0;
+        QualifiedTypeName type_name_My_Char = "Common_Module::My_Char";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_My_Char;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_My_Char;
+        CompleteTypeDetail detail_My_Char = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_My_Char, ann_custom_My_Char, type_name_My_Char.to_string());
+        CompleteAliasHeader header_My_Char = TypeObjectUtils::build_complete_alias_header(detail_My_Char);
+        AliasMemberFlag related_flags_My_Char = 0;
+        return_code_My_Char =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+            "_char", type_ids_My_Char);
+
+        if (eprosima::fastdds::dds::RETCODE_OK != return_code_My_Char)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "Common_Module::My_Char related TypeIdentifier unknown to TypeObjectRegistry.");
+            return;
+        }
+        bool common_My_Char_ec {false};
+        CommonAliasBody common_My_Char {TypeObjectUtils::build_common_alias_body(related_flags_My_Char,
+                TypeObjectUtils::retrieve_complete_type_identifier(type_ids_My_Char, common_My_Char_ec))};
+        if (!common_My_Char_ec)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Common_Module::My_Char related TypeIdentifier inconsistent.");
+            return;
+        }
+        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_My_Char;
+        ann_custom_My_Char.reset();
+        CompleteAliasBody body_My_Char = TypeObjectUtils::build_complete_alias_body(common_My_Char,
+                member_ann_builtin_My_Char, ann_custom_My_Char);
+        CompleteAliasType alias_type_My_Char = TypeObjectUtils::build_complete_alias_type(alias_flags_My_Char,
+                header_My_Char, body_My_Char);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_alias_type_object(alias_type_My_Char,
+                    type_name_My_Char.to_string(), type_ids_My_Char))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                "Common_Module::My_Char already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
+
+void register_My_String_type_identifier(
+        TypeIdentifierPair& type_ids_My_String)
+{
+    ReturnCode_t return_code_My_String {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_My_String =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "Common_Module::My_String", type_ids_My_String);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_My_String)
+    {
+        AliasTypeFlag alias_flags_My_String = 0;
+        QualifiedTypeName type_name_My_String = "Common_Module::My_String";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_My_String;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_My_String;
+        CompleteTypeDetail detail_My_String = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_My_String, ann_custom_My_String, type_name_My_String.to_string());
+        CompleteAliasHeader header_My_String = TypeObjectUtils::build_complete_alias_header(detail_My_String);
+        AliasMemberFlag related_flags_My_String = 0;
+        return_code_My_String =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+            "anonymous_sequence_Common_Module_My_Char_20", type_ids_My_String);
+
+        if (eprosima::fastdds::dds::RETCODE_OK != return_code_My_String)
+        {
+            return_code_My_String =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "Common_Module::My_Char", type_ids_My_String);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_My_String)
+            {
+                Common_Module::register_My_Char_type_identifier(type_ids_My_String);
+            }
+            bool element_identifier_anonymous_sequence_Common_Module_My_Char_20_ec {false};
+            TypeIdentifier* element_identifier_anonymous_sequence_Common_Module_My_Char_20 {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_My_String, element_identifier_anonymous_sequence_Common_Module_My_Char_20_ec))};
+            if (!element_identifier_anonymous_sequence_Common_Module_My_Char_20_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Sequence element TypeIdentifier inconsistent.");
+                return;
+            }
+            EquivalenceKind equiv_kind_anonymous_sequence_Common_Module_My_Char_20 = EK_COMPLETE;
+            if (TK_NONE == type_ids_My_String.type_identifier2()._d())
+            {
+                equiv_kind_anonymous_sequence_Common_Module_My_Char_20 = EK_BOTH;
+            }
+            CollectionElementFlag element_flags_anonymous_sequence_Common_Module_My_Char_20 = 0;
+            PlainCollectionHeader header_anonymous_sequence_Common_Module_My_Char_20 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_sequence_Common_Module_My_Char_20, element_flags_anonymous_sequence_Common_Module_My_Char_20);
+            {
+                SBound bound = static_cast<SBound>(20);
+                PlainSequenceSElemDefn seq_sdefn = TypeObjectUtils::build_plain_sequence_s_elem_defn(header_anonymous_sequence_Common_Module_My_Char_20, bound,
+                            eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_Common_Module_My_Char_20));
+                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                        TypeObjectUtils::build_and_register_s_sequence_type_identifier(seq_sdefn, "anonymous_sequence_Common_Module_My_Char_20", type_ids_My_String))
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "anonymous_sequence_Common_Module_My_Char_20 already registered in TypeObjectRegistry for a different type.");
+                }
+            }
+        }
+        bool common_My_String_ec {false};
+        CommonAliasBody common_My_String {TypeObjectUtils::build_common_alias_body(related_flags_My_String,
+                TypeObjectUtils::retrieve_complete_type_identifier(type_ids_My_String, common_My_String_ec))};
+        if (!common_My_String_ec)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Common_Module::My_String related TypeIdentifier inconsistent.");
+            return;
+        }
+        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_My_String;
+        ann_custom_My_String.reset();
+        CompleteAliasBody body_My_String = TypeObjectUtils::build_complete_alias_body(common_My_String,
+                member_ann_builtin_My_String, ann_custom_My_String);
+        CompleteAliasType alias_type_My_String = TypeObjectUtils::build_complete_alias_type(alias_flags_My_String,
+                header_My_String, body_My_String);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_alias_type_object(alias_type_My_String,
+                    type_name_My_String.to_string(), type_ids_My_String))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                "Common_Module::My_String already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
+
+
+} // namespace Common_Module
+namespace NoCommon_Module {
+void register_My_AliasString_type_identifier(
+        TypeIdentifierPair& type_ids_My_AliasString)
+{
+    ReturnCode_t return_code_My_AliasString {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_My_AliasString =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "NoCommon_Module::My_AliasString", type_ids_My_AliasString);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_My_AliasString)
+    {
+        AliasTypeFlag alias_flags_My_AliasString = 0;
+        QualifiedTypeName type_name_My_AliasString = "NoCommon_Module::My_AliasString";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_My_AliasString;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_My_AliasString;
+        CompleteTypeDetail detail_My_AliasString = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_My_AliasString, ann_custom_My_AliasString, type_name_My_AliasString.to_string());
+        CompleteAliasHeader header_My_AliasString = TypeObjectUtils::build_complete_alias_header(detail_My_AliasString);
+        AliasMemberFlag related_flags_My_AliasString = 0;
+        return_code_My_AliasString =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+            "Common_Module::My_String", type_ids_My_AliasString);
+
+        if (eprosima::fastdds::dds::RETCODE_OK != return_code_My_AliasString)
+        {
+            Common_Module::register_My_String_type_identifier(type_ids_My_AliasString);
+        }
+        bool common_My_AliasString_ec {false};
+        CommonAliasBody common_My_AliasString {TypeObjectUtils::build_common_alias_body(related_flags_My_AliasString,
+                TypeObjectUtils::retrieve_complete_type_identifier(type_ids_My_AliasString, common_My_AliasString_ec))};
+        if (!common_My_AliasString_ec)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "NoCommon_Module::My_AliasString related TypeIdentifier inconsistent.");
+            return;
+        }
+        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_My_AliasString;
+        ann_custom_My_AliasString.reset();
+        CompleteAliasBody body_My_AliasString = TypeObjectUtils::build_complete_alias_body(common_My_AliasString,
+                member_ann_builtin_My_AliasString, ann_custom_My_AliasString);
+        CompleteAliasType alias_type_My_AliasString = TypeObjectUtils::build_complete_alias_type(alias_flags_My_AliasString,
+                header_My_AliasString, body_My_AliasString);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_alias_type_object(alias_type_My_AliasString,
+                    type_name_My_AliasString.to_string(), type_ids_My_AliasString))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                "NoCommon_Module::My_AliasString already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
+
+void register_My_SequenceString_type_identifier(
+        TypeIdentifierPair& type_ids_My_SequenceString)
+{
+    ReturnCode_t return_code_My_SequenceString {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_My_SequenceString =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "NoCommon_Module::My_SequenceString", type_ids_My_SequenceString);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_My_SequenceString)
+    {
+        AliasTypeFlag alias_flags_My_SequenceString = 0;
+        QualifiedTypeName type_name_My_SequenceString = "NoCommon_Module::My_SequenceString";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_My_SequenceString;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_My_SequenceString;
+        CompleteTypeDetail detail_My_SequenceString = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_My_SequenceString, ann_custom_My_SequenceString, type_name_My_SequenceString.to_string());
+        CompleteAliasHeader header_My_SequenceString = TypeObjectUtils::build_complete_alias_header(detail_My_SequenceString);
+        AliasMemberFlag related_flags_My_SequenceString = 0;
+        return_code_My_SequenceString =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+            "anonymous_sequence_anonymous_sequence_Common_Module_My_Char_20_unbounded", type_ids_My_SequenceString);
+
+        if (eprosima::fastdds::dds::RETCODE_OK != return_code_My_SequenceString)
+        {
+            return_code_My_SequenceString =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "NoCommon_Module::My_AliasString", type_ids_My_SequenceString);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_My_SequenceString)
+            {
+                NoCommon_Module::register_My_AliasString_type_identifier(type_ids_My_SequenceString);
+            }
+            bool element_identifier_anonymous_sequence_anonymous_sequence_Common_Module_My_Char_20_unbounded_ec {false};
+            TypeIdentifier* element_identifier_anonymous_sequence_anonymous_sequence_Common_Module_My_Char_20_unbounded {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_My_SequenceString, element_identifier_anonymous_sequence_anonymous_sequence_Common_Module_My_Char_20_unbounded_ec))};
+            if (!element_identifier_anonymous_sequence_anonymous_sequence_Common_Module_My_Char_20_unbounded_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Sequence element TypeIdentifier inconsistent.");
+                return;
+            }
+            EquivalenceKind equiv_kind_anonymous_sequence_anonymous_sequence_Common_Module_My_Char_20_unbounded = EK_COMPLETE;
+            if (TK_NONE == type_ids_My_SequenceString.type_identifier2()._d())
+            {
+                equiv_kind_anonymous_sequence_anonymous_sequence_Common_Module_My_Char_20_unbounded = EK_BOTH;
+            }
+            CollectionElementFlag element_flags_anonymous_sequence_anonymous_sequence_Common_Module_My_Char_20_unbounded = 0;
+            PlainCollectionHeader header_anonymous_sequence_anonymous_sequence_Common_Module_My_Char_20_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_sequence_anonymous_sequence_Common_Module_My_Char_20_unbounded, element_flags_anonymous_sequence_anonymous_sequence_Common_Module_My_Char_20_unbounded);
+            {
+                SBound bound = 0;
+                PlainSequenceSElemDefn seq_sdefn = TypeObjectUtils::build_plain_sequence_s_elem_defn(header_anonymous_sequence_anonymous_sequence_Common_Module_My_Char_20_unbounded, bound,
+                            eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_anonymous_sequence_Common_Module_My_Char_20_unbounded));
+                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                        TypeObjectUtils::build_and_register_s_sequence_type_identifier(seq_sdefn, "anonymous_sequence_anonymous_sequence_Common_Module_My_Char_20_unbounded", type_ids_My_SequenceString))
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "anonymous_sequence_anonymous_sequence_Common_Module_My_Char_20_unbounded already registered in TypeObjectRegistry for a different type.");
+                }
+            }
+        }
+        bool common_My_SequenceString_ec {false};
+        CommonAliasBody common_My_SequenceString {TypeObjectUtils::build_common_alias_body(related_flags_My_SequenceString,
+                TypeObjectUtils::retrieve_complete_type_identifier(type_ids_My_SequenceString, common_My_SequenceString_ec))};
+        if (!common_My_SequenceString_ec)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "NoCommon_Module::My_SequenceString related TypeIdentifier inconsistent.");
+            return;
+        }
+        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_My_SequenceString;
+        ann_custom_My_SequenceString.reset();
+        CompleteAliasBody body_My_SequenceString = TypeObjectUtils::build_complete_alias_body(common_My_SequenceString,
+                member_ann_builtin_My_SequenceString, ann_custom_My_SequenceString);
+        CompleteAliasType alias_type_My_SequenceString = TypeObjectUtils::build_complete_alias_type(alias_flags_My_SequenceString,
+                header_My_SequenceString, body_My_SequenceString);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_alias_type_object(alias_type_My_SequenceString,
+                    type_name_My_SequenceString.to_string(), type_ids_My_SequenceString))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                "NoCommon_Module::My_SequenceString already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
+
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_My_Structure_type_identifier(
+        TypeIdentifierPair& type_ids_My_Structure)
+{
+
+    ReturnCode_t return_code_My_Structure {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_My_Structure =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "NoCommon_Module::My_Structure", type_ids_My_Structure);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_My_Structure)
+    {
+        StructTypeFlag struct_flags_My_Structure = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
+                false, false);
+        QualifiedTypeName type_name_My_Structure = "NoCommon_Module::My_Structure";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_My_Structure;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_My_Structure;
+        CompleteTypeDetail detail_My_Structure = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_My_Structure, ann_custom_My_Structure, type_name_My_Structure.to_string());
+        CompleteStructHeader header_My_Structure;
+        header_My_Structure = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_My_Structure);
+        CompleteStructMemberSeq member_seq_My_Structure;
+        {
+            TypeIdentifierPair type_ids_list;
+            ReturnCode_t return_code_list {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_list =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "NoCommon_Module::My_SequenceString", type_ids_list);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_list)
+            {
+                NoCommon_Module::register_My_SequenceString_type_identifier(type_ids_list);
+            }
+            StructMemberFlag member_flags_list = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_list = 0x00000000;
+            bool common_list_ec {false};
+            CommonStructMember common_list {TypeObjectUtils::build_common_struct_member(member_id_list, member_flags_list, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_list, common_list_ec))};
+            if (!common_list_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure list member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_list = "list";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_list;
+            ann_custom_My_Structure.reset();
+            CompleteMemberDetail detail_list = TypeObjectUtils::build_complete_member_detail(name_list, member_ann_builtin_list, ann_custom_My_Structure);
+            CompleteStructMember member_list = TypeObjectUtils::build_complete_struct_member(common_list, detail_list);
+            TypeObjectUtils::add_complete_struct_member(member_seq_My_Structure, member_list);
+        }
+        CompleteStructType struct_type_My_Structure = TypeObjectUtils::build_complete_struct_type(struct_flags_My_Structure, header_My_Structure, member_seq_My_Structure);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_My_Structure, type_name_My_Structure.to_string(), type_ids_My_Structure))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "NoCommon_Module::My_Structure already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
+
+} // namespace NoCommon_Module
 

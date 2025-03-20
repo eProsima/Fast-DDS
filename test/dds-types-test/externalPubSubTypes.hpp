@@ -1902,7 +1902,6 @@ private:
 
 };
 
-
 /*!
  * @brief This class represents the TopicDataType of the type recursive_union_container defined by the user in the IDL file.
  * @ingroup external
@@ -1984,7 +1983,6 @@ private:
 
 };
 
-
 /*!
  * @brief This class represents the TopicDataType of the type recursive_test_1 defined by the user in the IDL file.
  * @ingroup external
@@ -2065,8 +2063,6 @@ private:
     unsigned char* key_buffer_;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type recursive_structure defined by the user in the IDL file.
