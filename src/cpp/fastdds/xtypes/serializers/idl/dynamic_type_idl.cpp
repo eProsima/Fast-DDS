@@ -668,9 +668,9 @@ ReturnCode_t alias_to_idl(
         return ret;
     }
 
-    // Add types name and resolve module structure
+    // Open modules definition (if any) and get type name
     std::string type_name = node.info.type_kind_name;
-    unsigned int n_modules = resolve_module_structure(type_name, idl);
+    unsigned int n_modules = open_modules_definition(type_name, idl);
 
     idl << "typedef ";
 
@@ -685,7 +685,8 @@ ReturnCode_t alias_to_idl(
 
     idl << " " << type_name << ";\n";
 
-    ret = close_module_structure(n_modules, idl);
+    // Close modules definition (if any)
+    close_modules_definition(n_modules, idl);
 
     return ret;
 }
@@ -713,9 +714,9 @@ ReturnCode_t bitmask_to_idl(
         return RETCODE_BAD_PARAMETER;
     }
 
-    // Add types name and resolve module structure
+    // Open modules definition (if any) and get type name
     std::string type_name = node.info.type_kind_name;
-    unsigned int n_modules = resolve_module_structure(type_name, idl);
+    unsigned int n_modules = open_modules_definition(type_name, idl);
 
     // Annotation with the bitmask size
     static constexpr std::uint32_t DEFAULT_BITMASK_SIZE = 32;
@@ -769,11 +770,11 @@ ReturnCode_t bitmask_to_idl(
         pos = id + 1;
     }
 
-    // Close definition
-
+    // Close type definition
     idl << tabulate_n(n_modules) << TYPE_CLOSURE;
 
-    ret = close_module_structure(n_modules, idl);
+    // Close modules definition (if any)
+    close_modules_definition(n_modules, idl);
 
     return ret;
 }
@@ -786,9 +787,9 @@ ReturnCode_t bitset_to_idl(
 
     ReturnCode_t ret = RETCODE_OK;
 
-    // Add types name and resolve module structure
+    // Open modules definition (if any) and get type name
     std::string type_name = node.info.type_kind_name;
-    unsigned int n_modules = resolve_module_structure(type_name, idl);
+    unsigned int n_modules = open_modules_definition(type_name, idl);
 
     idl << "bitset " << type_name << "\n";
 
@@ -874,11 +875,11 @@ ReturnCode_t bitset_to_idl(
         bits_set += bounds[index];
     }
 
-    // Close definition
-
+    // Close type definition
     idl << tabulate_n(n_modules) << TYPE_CLOSURE;
 
-    ret = close_module_structure(n_modules, idl);
+    // Close modules definition (if any)
+    close_modules_definition(n_modules, idl);
 
     return ret;
 }
@@ -891,9 +892,9 @@ ReturnCode_t enum_to_idl(
 
     ReturnCode_t ret = RETCODE_OK;
 
-    // Add types name and resolve module structure
+    // Open modules definition (if any) and get type name
     std::string type_name = node.info.type_kind_name;
-    unsigned int n_modules = resolve_module_structure(type_name, idl);
+    unsigned int n_modules = open_modules_definition(type_name, idl);
 
     idl << "enum " << type_name << "\n";
 
@@ -922,11 +923,11 @@ ReturnCode_t enum_to_idl(
         }
     }
 
-    // Close definition
-
+    // Close type definition
     idl << tabulate_n(n_modules) << TYPE_CLOSURE;
 
-    ret = close_module_structure(n_modules, idl);
+    // Close modules definition (if any)
+    close_modules_definition(n_modules, idl);
 
     return ret;
 }
@@ -949,9 +950,9 @@ ReturnCode_t struct_to_idl(
         return ret;
     }
 
-    // Add types name and resolve module structure
+    // Open modules definition (if any) and get type name
     std::string type_name = node.info.type_kind_name;
-    unsigned int n_modules = resolve_module_structure(type_name, idl);
+    unsigned int n_modules = open_modules_definition(type_name, idl);
 
     switch (type_descriptor->extensibility_kind())
     {
@@ -967,7 +968,6 @@ ReturnCode_t struct_to_idl(
         }
         case ExtensibilityKind::APPENDABLE:
         {
-            // Appendable is the default extensibility kind
             idl << "@extensibility(APPENDABLE)\n";
             break;
         }
@@ -978,6 +978,7 @@ ReturnCode_t struct_to_idl(
         }
     }
 
+    // Add type name
     idl << tabulate_n(n_modules) << "struct " << type_name;
 
     const auto base_type = type_descriptor->base_type();
@@ -1014,11 +1015,11 @@ ReturnCode_t struct_to_idl(
         idl << ";\n";
     }
 
-    // Close definition
-
+    // Close type definition
     idl << tabulate_n(n_modules) << TYPE_CLOSURE;
 
-    ret = close_module_structure(n_modules, idl);
+    // Close modules definition (if any)
+    close_modules_definition(n_modules, idl);
 
     return ret;
 }
@@ -1040,9 +1041,9 @@ ReturnCode_t union_to_idl(
         return ret;
     }
 
-    // Add types name and resolve module structure
+    // Open modules definition (if any) and get type name
     std::string type_name = node.info.type_kind_name;
-    unsigned int n_modules = resolve_module_structure(type_name, idl);
+    unsigned int n_modules = open_modules_definition(type_name, idl);
 
     idl << "union " << type_name << " switch (";
 
@@ -1093,11 +1094,11 @@ ReturnCode_t union_to_idl(
         idl << " " << member->get_name().to_string() << ";\n";
     }
 
-    // Close definition
-
+    // Close type definition
     idl << tabulate_n(n_modules) << TYPE_CLOSURE;
 
-    ret = close_module_structure(n_modules, idl);
+    // Close modules definition (if any)
+    close_modules_definition(n_modules, idl);
 
     return ret;
 }
@@ -1136,7 +1137,7 @@ ReturnCode_t node_to_idl(
     return RETCODE_OK;
 }
 
-unsigned int resolve_module_structure(
+unsigned int open_modules_definition(
         std::string& type_name,
         std::ostream& idl) noexcept
 {
@@ -1162,7 +1163,7 @@ unsigned int resolve_module_structure(
     return n_modules;
 }
 
-ReturnCode_t close_module_structure(
+void close_modules_definition(
         unsigned int& n_modules,
         std::ostream& idl) noexcept
 {
@@ -1170,16 +1171,15 @@ ReturnCode_t close_module_structure(
     {
         idl << tabulate_n(--n_modules) << TYPE_CLOSURE;
     }
-
-    return RETCODE_OK;
 }
 
 std::string tabulate_n(
-        const unsigned int& n_modules) noexcept
+        const unsigned int& n_tabs) noexcept
 {
     std::string tabs;
 
-    for (unsigned int i = 0; i < n_modules; i++)
+    tabs.reserve(std::strlen(TAB_SEPARATOR) * n_tabs);
+    for (unsigned int i = 0; i < n_tabs; i++)
     {
         tabs += TAB_SEPARATOR;
     }

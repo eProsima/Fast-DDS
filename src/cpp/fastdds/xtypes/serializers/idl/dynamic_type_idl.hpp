@@ -220,36 +220,36 @@ ReturnCode_t node_to_idl(
         std::ostream& idl) noexcept;
 
 /**
- * @brief Resolves and applies the module structure for the parent struct.
+ * @brief Resolves and inserts the opening modules definition of a type (if any), and removes them from \c type_name .
  *
- * @param type_name The full name of the type, including the module structure.
+ * @param type_name The full name of the type, including modules (if defined).
  * @param idl The idl representation of the tree.
  *
  * @return The number of modules resolved.
  */
-unsigned int resolve_module_structure(
+unsigned int open_modules_definition(
         std::string& type_name,
         std::ostream& idl) noexcept;
 
 /**
- * @brief Closes the module structure for the processed struct.
+ * @brief Closes the modules definition for the processed type.
  *
  * @param n_modules The number of modules that need to be closed.
  * @param idl The idl representation of the tree.
  */
-ReturnCode_t close_module_structure(
+void close_modules_definition(
         unsigned int& n_modules,
         std::ostream& idl) noexcept;
 
 /**
- * @brief Introduces tabulation in the processed stream.
+ * @brief Returns a string with \c n_tabs concatenated tabs.
  *
- * @param n_modules The number of modules we tabulate for.
+ * @param n_tabs The number of tabs to return.
  *
- * @return The tabulation string.
+ * @return A string with \c n_tabs concatenated tabs.
  */
 std::string tabulate_n(
-        const unsigned int& n_modules) noexcept;
+        const unsigned int& n_tabs) noexcept;
 
 ///////////////////////
 // AUXILIARY METHODS //
