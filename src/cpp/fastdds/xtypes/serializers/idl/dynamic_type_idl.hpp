@@ -245,7 +245,7 @@ ReturnCode_t close_module_structure(
  * @brief Introduces tabulation in the processed stream.
  *
  * @param n_modules The number of modules we tabulate for.
- * 
+ *
  * @return The tabulation string.
  */
 std::string tabulate_n(
