@@ -367,8 +367,12 @@ void RTPSParticipantAttributes::setup_transports(
     }
     bool intraprocess_only = is_intraprocess_only(*this);
 
-    sendSocketBufferSize = (sendSocketBufferSize == 0) ? options.sockets_buffer_size : sendSocketBufferSize;
-    listenSocketBufferSize = (listenSocketBufferSize == 0) ? options.sockets_buffer_size : listenSocketBufferSize;
+    // Override the default send and receive buffer sizes when set in the options
+    if (options.sockets_buffer_size != 0)
+    {
+        sendSocketBufferSize = options.sockets_buffer_size;
+        listenSocketBufferSize = options.sockets_buffer_size;
+    }
 
     switch (transports)
     {
