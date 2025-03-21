@@ -1,8 +1,10 @@
+@extensibility(APPENDABLE)
 struct NestedSequenceElement
 {
     string my_string;
 };
 
+@extensibility(APPENDABLE)
 struct ComplexSequenceElement
 {
     short my_short;
@@ -10,6 +12,7 @@ struct ComplexSequenceElement
     NestedSequenceElement my_complex_element;
 };
 
+@extensibility(APPENDABLE)
 struct SequenceStruct
 {
     sequence<char> my_basic_sequence;

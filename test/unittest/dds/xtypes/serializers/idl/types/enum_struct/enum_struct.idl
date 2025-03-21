@@ -5,6 +5,7 @@ enum ColorEnum
     BLUE
 };
 
+@extensibility(APPENDABLE)
 struct EnumStruct
 {
     ColorEnum enum_value;

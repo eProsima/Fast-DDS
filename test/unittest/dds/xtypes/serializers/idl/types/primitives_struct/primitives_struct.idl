@@ -1,3 +1,4 @@
+@extensibility(APPENDABLE)
 struct PrimitivesStruct
 {
     boolean my_bool;

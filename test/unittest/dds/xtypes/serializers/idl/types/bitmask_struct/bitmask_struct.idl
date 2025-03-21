@@ -7,6 +7,7 @@ bitmask ColorBitmask
     @position(5) yellow
 };
 
+@extensibility(APPENDABLE)
 struct BitmaskStruct
 {
     ColorBitmask my_bitmask;
