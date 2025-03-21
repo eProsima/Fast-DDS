@@ -117,6 +117,8 @@ public:
     /**
      * Fills RTPSParticipantAttributes to create a RTPSParticipant as default server or client
      * if ROS_MASTER_URI environment variable is set.
+     * It also configures ROS 2 Easy Mode IP if ROS2_EASY_MODE_URI environment variable is set
+     * and it was empty in the input attributes.
      *
      * @param domain_id DDS domain associated
      * @param [in, out] attrs RTPSParticipant Attributes.
@@ -251,6 +253,18 @@ public:
      * @return const xtypes::TypeObjectRegistry reference.
      */
     static fastdds::dds::xtypes::TypeObjectRegistry& type_object_registry_observer();
+
+    /**
+     * @brief Run the Easy Mode discovery server using the Fast DDS CLI command
+     *
+     * @param domain_id Domain ID to use for the discovery server
+     * @param easy_mode_ip IP address to use for the discovery server
+     *
+     * @return True if the server was successfully started, false otherwise.
+     */
+    static bool run_easy_mode_discovery_server(
+            uint32_t domain_id,
+            const std::string& easy_mode_ip);
 
 private:
 

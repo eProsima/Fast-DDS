@@ -476,8 +476,6 @@ TEST(DSEasyMode, easy_mode_from_qos_valid)
     participant_writer.wait_discovery(std::chrono::seconds::zero(), 2);
     participant_reader.wait_discovery(std::chrono::seconds::zero(), 2);
 
-    // ASSERT_GE(writer.get_participants_matched(), 2u);
-    // ASSERT_GE(reader.get_participants_matched(), 2u);
     ASSERT_TRUE(participant_writer_background_ds_discovered.load());
     ASSERT_TRUE(participant_reader_background_ds_discovered.load());
 
