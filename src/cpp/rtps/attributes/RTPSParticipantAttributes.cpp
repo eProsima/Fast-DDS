@@ -237,6 +237,13 @@ static void setup_large_data_shm_transport(
         segment_size = 8500 * 1024;  // 8500 KiBytes
         descriptor->segment_size(segment_size);
     }
+    // Configure port queue capacity to hold the maximum allocations on the segment
+    constexpr auto mean_message_size =
+            SharedMemTransportDescriptor::shm_implicit_segment_size /
+            SharedMemTransportDescriptor::shm_default_port_queue_capacity;
+    auto max_allocations = segment_size / mean_message_size;
+    descriptor->port_queue_capacity(max_allocations);
+    // Add descriptor to the list of user transports
     att.userTransports.push_back(descriptor);
 
     auto shm_loc = fastdds::rtps::SHMLocator::create_locator(0, fastdds::rtps::SHMLocator::Type::UNICAST);
