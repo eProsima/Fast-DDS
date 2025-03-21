@@ -7,16 +7,14 @@ All information is provided as a general guidelines only, and this section may b
 
 Disclaimer:
 
-* This section has been last updated in November 2024.
+* This section has been last updated in March 2025.
   Please take into account its content could be obsolete.
 
 ## Short term
 
-The following list of features are planned to be addressed in the short term, and incorporated into the following release of the product (v3.2.0):
+The following list of features are planned to be addressed in the short term, and incorporated into the following release of the product (v3.3.0):
 
-* Support creating a `DynamicTypeBuilder` from an IDL string
 * Consolidation of some [properties](https://fast-dds.docs.eprosima.com/en/latest/fastdds/property_policies/property_policies.html) into QoS policies
-* Transmission on discovery of all QoS policies
 * SHM permissions override
 * Ignore local endpoints configured at endpoint level
 

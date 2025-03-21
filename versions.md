@@ -1,6 +1,10 @@
 Forthcoming
 -----------
 
+
+Version v3.2.0
+--------------
+
 * Added implementation for:
   * `DataWriter::get_matched_subscription_data()`
   * `DataWriter::get_matched_subscriptions()`
