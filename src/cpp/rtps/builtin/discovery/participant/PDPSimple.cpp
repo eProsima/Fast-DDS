@@ -384,10 +384,6 @@ bool PDPSimple::create_dcps_participant_endpoints()
     watt.endpoint.reliabilityKind = BEST_EFFORT;
     watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
 
-    if (pattr.throughputController.bytesPerPeriod != UINT32_MAX && pattr.throughputController.periodMillisecs != 0)
-    {
-        watt.mode = ASYNCHRONOUS_WRITER;
-    }
 
     RTPSWriter* rtps_writer = nullptr;
     if (mp_RTPSParticipant->createWriter(&rtps_writer, watt, writer.payload_pool_, writer.history_.get(),
