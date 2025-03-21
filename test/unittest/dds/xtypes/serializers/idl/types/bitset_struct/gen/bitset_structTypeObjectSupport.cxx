@@ -131,6 +131,13 @@ void register_BitsetStruct_type_identifier(
         QualifiedTypeName type_name_BitsetStruct = "BitsetStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_BitsetStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_BitsetStruct;
+        AppliedAnnotationSeq tmp_ann_custom_BitsetStruct;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_BitsetStruct;
+        if (!tmp_ann_custom_BitsetStruct.empty())
+        {
+            ann_custom_BitsetStruct = tmp_ann_custom_BitsetStruct;
+        }
+
         CompleteTypeDetail detail_BitsetStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_BitsetStruct, ann_custom_BitsetStruct, type_name_BitsetStruct.to_string());
         CompleteStructHeader header_BitsetStruct;
         header_BitsetStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_BitsetStruct);

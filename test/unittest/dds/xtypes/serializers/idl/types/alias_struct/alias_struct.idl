@@ -8,6 +8,7 @@ typedef boolean MyBoolean;
 
 typedef MyBoolean MyRecursiveBoolean;
 
+@extensibility(APPENDABLE)
 struct AliasStruct
 {
     MyLong my_long;

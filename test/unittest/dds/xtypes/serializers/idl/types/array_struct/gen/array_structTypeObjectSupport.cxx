@@ -54,6 +54,13 @@ void register_NestedArrayElement_type_identifier(
         QualifiedTypeName type_name_NestedArrayElement = "NestedArrayElement";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_NestedArrayElement;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_NestedArrayElement;
+        AppliedAnnotationSeq tmp_ann_custom_NestedArrayElement;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_NestedArrayElement;
+        if (!tmp_ann_custom_NestedArrayElement.empty())
+        {
+            ann_custom_NestedArrayElement = tmp_ann_custom_NestedArrayElement;
+        }
+
         CompleteTypeDetail detail_NestedArrayElement = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_NestedArrayElement, ann_custom_NestedArrayElement, type_name_NestedArrayElement.to_string());
         CompleteStructHeader header_NestedArrayElement;
         header_NestedArrayElement = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_NestedArrayElement);
@@ -121,6 +128,13 @@ void register_ComplexArrayElement_type_identifier(
         QualifiedTypeName type_name_ComplexArrayElement = "ComplexArrayElement";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_ComplexArrayElement;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_ComplexArrayElement;
+        AppliedAnnotationSeq tmp_ann_custom_ComplexArrayElement;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_ComplexArrayElement;
+        if (!tmp_ann_custom_ComplexArrayElement.empty())
+        {
+            ann_custom_ComplexArrayElement = tmp_ann_custom_ComplexArrayElement;
+        }
+
         CompleteTypeDetail detail_ComplexArrayElement = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_ComplexArrayElement, ann_custom_ComplexArrayElement, type_name_ComplexArrayElement.to_string());
         CompleteStructHeader header_ComplexArrayElement;
         header_ComplexArrayElement = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_ComplexArrayElement);
@@ -238,6 +252,13 @@ void register_ArrayStruct_type_identifier(
         QualifiedTypeName type_name_ArrayStruct = "ArrayStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_ArrayStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_ArrayStruct;
+        AppliedAnnotationSeq tmp_ann_custom_ArrayStruct;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_ArrayStruct;
+        if (!tmp_ann_custom_ArrayStruct.empty())
+        {
+            ann_custom_ArrayStruct = tmp_ann_custom_ArrayStruct;
+        }
+
         CompleteTypeDetail detail_ArrayStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_ArrayStruct, ann_custom_ArrayStruct, type_name_ArrayStruct.to_string());
         CompleteStructHeader header_ArrayStruct;
         header_ArrayStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_ArrayStruct);

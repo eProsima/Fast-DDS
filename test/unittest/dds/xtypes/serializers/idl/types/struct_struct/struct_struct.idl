@@ -1,8 +1,10 @@
+@extensibility(APPENDABLE)
 struct GrandparentStruct
 {
     long my_long;
 };
 
+@extensibility(APPENDABLE)
 struct ParentStruct : GrandparentStruct
 {
     short my_short;
@@ -10,11 +12,13 @@ struct ParentStruct : GrandparentStruct
     GrandparentStruct my_grandparent;
 };
 
+@extensibility(APPENDABLE)
 struct NestedStructElement
 {
     boolean my_boolean;
 };
 
+@extensibility(APPENDABLE)
 struct StructStruct : ParentStruct
 {
     NestedStructElement my_nested_element;

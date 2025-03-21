@@ -16,6 +16,7 @@ union ComplexUnion switch (long)
         BasicUnion fourth;
 };
 
+@extensibility(APPENDABLE)
 struct UnionStruct
 {
     ComplexUnion my_complex_union;

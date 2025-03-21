@@ -10,11 +10,13 @@ struct MutableStruct
     octet my_value;
 };
 
+@extensibility(APPENDABLE)
 struct AppendableStruct
 {
     octet my_value;
 };
 
+@extensibility(APPENDABLE)
 struct ExtensibilityStruct
 {
     FinalStruct my_final_struct;

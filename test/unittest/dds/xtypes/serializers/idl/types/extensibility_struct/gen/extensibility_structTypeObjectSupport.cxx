@@ -186,6 +186,13 @@ void register_AppendableStruct_type_identifier(
         QualifiedTypeName type_name_AppendableStruct = "AppendableStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_AppendableStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_AppendableStruct;
+        AppliedAnnotationSeq tmp_ann_custom_AppendableStruct;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_AppendableStruct;
+        if (!tmp_ann_custom_AppendableStruct.empty())
+        {
+            ann_custom_AppendableStruct = tmp_ann_custom_AppendableStruct;
+        }
+
         CompleteTypeDetail detail_AppendableStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_AppendableStruct, ann_custom_AppendableStruct, type_name_AppendableStruct.to_string());
         CompleteStructHeader header_AppendableStruct;
         header_AppendableStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_AppendableStruct);
@@ -245,6 +252,13 @@ void register_ExtensibilityStruct_type_identifier(
         QualifiedTypeName type_name_ExtensibilityStruct = "ExtensibilityStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_ExtensibilityStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_ExtensibilityStruct;
+        AppliedAnnotationSeq tmp_ann_custom_ExtensibilityStruct;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_ExtensibilityStruct;
+        if (!tmp_ann_custom_ExtensibilityStruct.empty())
+        {
+            ann_custom_ExtensibilityStruct = tmp_ann_custom_ExtensibilityStruct;
+        }
+
         CompleteTypeDetail detail_ExtensibilityStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_ExtensibilityStruct, ann_custom_ExtensibilityStruct, type_name_ExtensibilityStruct.to_string());
         CompleteStructHeader header_ExtensibilityStruct;
         header_ExtensibilityStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_ExtensibilityStruct);

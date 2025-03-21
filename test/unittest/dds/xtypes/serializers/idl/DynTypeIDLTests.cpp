@@ -45,8 +45,8 @@ protected:
     {
         // Find TypeObjects for the type
         xtypes::TypeObjectPair type_objs;
-        ASSERT_EQ(DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(
-                    type_name, type_objs),
+        ASSERT_EQ(DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(type_name,
+                type_objs),
                 fastdds::dds::RETCODE_OK);
 
         // Create DynamicType from TypeObject

@@ -7,6 +7,7 @@ bitset ColorBitset
     bitfield<12, short> yellow;
 };
 
+@extensibility(APPENDABLE)
 struct BitsetStruct
 {
     ColorBitset my_bitset;

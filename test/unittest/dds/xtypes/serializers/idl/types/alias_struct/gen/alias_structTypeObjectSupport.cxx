@@ -300,6 +300,13 @@ void register_AliasStruct_type_identifier(
         QualifiedTypeName type_name_AliasStruct = "AliasStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_AliasStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_AliasStruct;
+        AppliedAnnotationSeq tmp_ann_custom_AliasStruct;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_AliasStruct;
+        if (!tmp_ann_custom_AliasStruct.empty())
+        {
+            ann_custom_AliasStruct = tmp_ann_custom_AliasStruct;
+        }
+
         CompleteTypeDetail detail_AliasStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_AliasStruct, ann_custom_AliasStruct, type_name_AliasStruct.to_string());
         CompleteStructHeader header_AliasStruct;
         header_AliasStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_AliasStruct);
