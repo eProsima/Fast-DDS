@@ -228,6 +228,22 @@ static void setup_large_data_shm_transport(
             "TCP for communications on the same host.");
 #else
     auto descriptor = create_shm_transport(att, options);
+    auto segment_size = descriptor->segment_size();
+    if (segment_size == 0)
+    {
+        // The user did not configure a buffer size. The correct approach here would
+        // be to create a socket and querying its output buffer size via get socket option.
+        // As a workaround, use a value that allows for some big images to be sent.
+        segment_size = 8500 * 1024;  // 8500 KiBytes
+        descriptor->segment_size(segment_size);
+    }
+    // Configure port queue capacity to hold the maximum allocations on the segment
+    constexpr auto mean_message_size =
+            SharedMemTransportDescriptor::shm_implicit_segment_size /
+            SharedMemTransportDescriptor::shm_default_port_queue_capacity;
+    auto max_allocations = segment_size / mean_message_size;
+    descriptor->port_queue_capacity(max_allocations);
+    // Add descriptor to the list of user transports
     att.userTransports.push_back(descriptor);
 
     auto shm_loc = fastdds::rtps::SHMLocator::create_locator(0, fastdds::rtps::SHMLocator::Type::UNICAST);
@@ -351,8 +367,12 @@ void RTPSParticipantAttributes::setup_transports(
     }
     bool intraprocess_only = is_intraprocess_only(*this);
 
-    sendSocketBufferSize = options.sockets_buffer_size;
-    listenSocketBufferSize = options.sockets_buffer_size;
+    // Override the default send and receive buffer sizes when set in the options
+    if (options.sockets_buffer_size != 0)
+    {
+        sendSocketBufferSize = options.sockets_buffer_size;
+        listenSocketBufferSize = options.sockets_buffer_size;
+    }
 
     switch (transports)
     {

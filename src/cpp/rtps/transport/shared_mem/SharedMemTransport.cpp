@@ -48,7 +48,7 @@ namespace fastdds {
 namespace rtps {
 
 // TODO(Adolfo): Calculate this value from UDP sockets buffers size.
-static constexpr uint32_t shm_default_segment_size = 512 * 1024;
+static constexpr uint32_t shm_default_segment_size = SharedMemTransportDescriptor::shm_implicit_segment_size;
 
 TransportInterface* SharedMemTransportDescriptor::create_transport() const
 {

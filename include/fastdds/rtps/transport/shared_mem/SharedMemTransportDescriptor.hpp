@@ -52,6 +52,7 @@ struct SharedMemTransportDescriptor : public PortBasedTransportDescriptor
     static constexpr uint32_t shm_default_segment_size = 0;
     static constexpr uint32_t shm_default_port_queue_capacity = 512;
     static constexpr uint32_t shm_default_healthy_check_timeout_ms = 1000;
+    static constexpr uint32_t shm_implicit_segment_size = 512 * 1024;
 
     //! Destructor
     virtual ~SharedMemTransportDescriptor() = default;
