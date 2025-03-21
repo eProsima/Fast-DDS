@@ -54,6 +54,13 @@ void register_ImportantStruct_type_identifier(
         QualifiedTypeName type_name_ImportantStruct = "ImportantStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_ImportantStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_ImportantStruct;
+        AppliedAnnotationSeq tmp_ann_custom_ImportantStruct;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_ImportantStruct;
+        if (!tmp_ann_custom_ImportantStruct.empty())
+        {
+            ann_custom_ImportantStruct = tmp_ann_custom_ImportantStruct;
+        }
+
         CompleteTypeDetail detail_ImportantStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_ImportantStruct, ann_custom_ImportantStruct, type_name_ImportantStruct.to_string());
         CompleteStructHeader header_ImportantStruct;
         header_ImportantStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_ImportantStruct);
@@ -199,6 +206,13 @@ void register_KeyStruct_type_identifier(
         QualifiedTypeName type_name_KeyStruct = "KeyStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_KeyStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_KeyStruct;
+        AppliedAnnotationSeq tmp_ann_custom_KeyStruct;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_KeyStruct;
+        if (!tmp_ann_custom_KeyStruct.empty())
+        {
+            ann_custom_KeyStruct = tmp_ann_custom_KeyStruct;
+        }
+
         CompleteTypeDetail detail_KeyStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_KeyStruct, ann_custom_KeyStruct, type_name_KeyStruct.to_string());
         CompleteStructHeader header_KeyStruct;
         header_KeyStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_KeyStruct);

@@ -1,0 +1,86 @@
+module TrialModule
+{
+    module AliasModule
+    {
+        typedef long AliasType;
+    };
+};
+
+module TrialModule
+{
+    module BitsetModule
+    {
+        bitset BitsetType
+        {
+            bitfield<3> flag1;
+            bitfield<10> flag2;
+            bitfield<12, long> flag3;
+        };
+    };
+};
+
+module TrialModule
+{
+    module BitmaskModule
+    {
+        @bit_bound(8)
+        bitmask BitmaskType
+        {
+            FLAG_ONE,
+            FLAG_TWO,
+            FLAG_THREE
+        };
+    };
+};
+
+module TrialModule
+{
+    module EnumModule
+    {
+        enum EnumType
+        {
+            VALUE_ONE,
+            VALUE_TWO,
+            VALUE_THREE
+        };
+    };
+};
+
+module TrialModule
+{
+    module StructModule
+    {
+        @extensibility(APPENDABLE)
+        struct StructType
+        {
+            string struct_data;
+        };
+    };
+};
+
+module TrialModule
+{
+    module UnionModule
+    {
+        union UnionType switch (long)
+        {
+            case 0:
+                long case_long;
+            case 1:
+                float case_float;
+            default:
+                string case_string;
+        };
+    };
+};
+
+@extensibility(APPENDABLE)
+struct ModuleStruct
+{
+    TrialModule::AliasModule::AliasType alias_member;
+    TrialModule::BitsetModule::BitsetType bitset_member;
+    TrialModule::BitmaskModule::BitmaskType bitmask_member;
+    TrialModule::EnumModule::EnumType enum_member;
+    TrialModule::StructModule::StructType struct_member;
+    TrialModule::UnionModule::UnionType union_member;
+};

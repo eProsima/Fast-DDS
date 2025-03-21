@@ -111,6 +111,13 @@ void register_EnumStruct_type_identifier(
         QualifiedTypeName type_name_EnumStruct = "EnumStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_EnumStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_EnumStruct;
+        AppliedAnnotationSeq tmp_ann_custom_EnumStruct;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_EnumStruct;
+        if (!tmp_ann_custom_EnumStruct.empty())
+        {
+            ann_custom_EnumStruct = tmp_ann_custom_EnumStruct;
+        }
+
         CompleteTypeDetail detail_EnumStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_EnumStruct, ann_custom_EnumStruct, type_name_EnumStruct.to_string());
         CompleteStructHeader header_EnumStruct;
         header_EnumStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_EnumStruct);

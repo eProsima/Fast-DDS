@@ -142,6 +142,13 @@ void register_BitmaskStruct_type_identifier(
         QualifiedTypeName type_name_BitmaskStruct = "BitmaskStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_BitmaskStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_BitmaskStruct;
+        AppliedAnnotationSeq tmp_ann_custom_BitmaskStruct;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_BitmaskStruct;
+        if (!tmp_ann_custom_BitmaskStruct.empty())
+        {
+            ann_custom_BitmaskStruct = tmp_ann_custom_BitmaskStruct;
+        }
+
         CompleteTypeDetail detail_BitmaskStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_BitmaskStruct, ann_custom_BitmaskStruct, type_name_BitmaskStruct.to_string());
         CompleteStructHeader header_BitmaskStruct;
         header_BitmaskStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_BitmaskStruct);
