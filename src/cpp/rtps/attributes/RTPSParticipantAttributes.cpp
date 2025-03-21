@@ -228,6 +228,15 @@ static void setup_large_data_shm_transport(
             "TCP for communications on the same host.");
 #else
     auto descriptor = create_shm_transport(att, options);
+    auto segment_size = descriptor->segment_size();
+    if (segment_size == 0)
+    {
+        // The user did not configure a buffer size. The correct approach here would
+        // be to create a socket and querying its output buffer size via get socket option.
+        // As a workaround, use a value that allows for some big images to be sent.
+        segment_size = 8500 * 1024;  // 8500 KiBytes
+        descriptor->segment_size(segment_size);
+    }
     att.userTransports.push_back(descriptor);
 
     auto shm_loc = fastdds::rtps::SHMLocator::create_locator(0, fastdds::rtps::SHMLocator::Type::UNICAST);
