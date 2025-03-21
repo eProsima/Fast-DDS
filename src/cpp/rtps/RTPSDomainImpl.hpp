@@ -115,21 +115,20 @@ public:
             RTPSParticipant* p);
 
     /**
-     * Creates a RTPSParticipant as default server or client if ROS_MASTER_URI environment variable is set.
-     * @param domain_id DDS domain associated
-     * @param enabled True if the RTPSParticipant should be enabled on creation. False if it will be enabled later with RTPSParticipant::enable()
-     * @param attrs RTPSParticipant Attributes.
-     * @param listen Pointer to the ParticipantListener.
-     * @return Pointer to the RTPSParticipant.
+     * Fills RTPSParticipantAttributes to create a RTPSParticipant as default server or client
+     * if ROS_MASTER_URI environment variable is set.
+     * It also configures ROS 2 Easy Mode IP if ROS2_EASY_MODE_URI environment variable is set
+     * and it was empty in the input attributes.
      *
-     * \warning The returned pointer is invalidated after a call to removeRTPSParticipant() or stopAll(),
-     *          so its use may result in undefined behaviour.
+     * @param domain_id DDS domain associated
+     * @param [in, out] attrs RTPSParticipant Attributes.
+     * @return True if the attributes were successfully modified,
+     * false if an error occurred or environment variable not set
+     *
      */
-    static RTPSParticipant* clientServerEnvironmentCreationOverride(
+    static bool client_server_environment_attributes_override(
             uint32_t domain_id,
-            bool enabled,
-            const RTPSParticipantAttributes& attrs,
-            RTPSParticipantListener* listen /*= nullptr*/);
+            RTPSParticipantAttributes& attrs);
 
     /**
      * Create a RTPSWriter in a participant.
@@ -254,6 +253,18 @@ public:
      * @return const xtypes::TypeObjectRegistry reference.
      */
     static fastdds::dds::xtypes::TypeObjectRegistry& type_object_registry_observer();
+
+    /**
+     * @brief Run the Easy Mode discovery server using the Fast DDS CLI command
+     *
+     * @param domain_id Domain ID to use for the discovery server
+     * @param easy_mode_ip IP address to use for the discovery server
+     *
+     * @return True if the server was successfully started, false otherwise.
+     */
+    static bool run_easy_mode_discovery_server(
+            uint32_t domain_id,
+            const std::string& easy_mode_ip);
 
 private:
 

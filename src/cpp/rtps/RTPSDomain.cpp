@@ -118,7 +118,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
         const RTPSParticipantAttributes& attrs,
         RTPSParticipantListener* listen)
 {
-    return RTPSDomainImpl::createParticipant(domain_id, true, attrs, listen);
+    return RTPSDomain::createParticipant(domain_id, true, attrs, listen);
 }
 
 RTPSParticipant* RTPSDomain::createParticipant(
@@ -127,7 +127,59 @@ RTPSParticipant* RTPSDomain::createParticipant(
         const RTPSParticipantAttributes& attrs,
         RTPSParticipantListener* listen)
 {
-    return RTPSDomainImpl::createParticipant(domain_id, enabled, attrs, listen);
+    RTPSParticipant* part = nullptr;
+    RTPSParticipantAttributes env_attrs = attrs;
+    bool client_created = true;
+
+    // Fill participant attributes using set environment variables.
+    // Note: If ROS2_EASY_MODE is configured and it is not set in the input participant attributes, it will be set.
+    // In other case, the previous easy_mode_ip value will be kept and ROS2_EASY_MODE will be ignored.
+    if (RTPSDomainImpl::client_server_environment_attributes_override(domain_id, env_attrs))
+    {
+        part = RTPSDomainImpl::createParticipant(domain_id, enabled, env_attrs, listen);
+
+        if (!part)
+        {
+            // Unable to create auto server-client default participants
+            EPROSIMA_LOG_ERROR(RTPS_DOMAIN, "Auto default server-client setup: Unable to create the client.");
+            client_created = false;
+        }
+        else
+        {
+            // Launch the discovery server daemon if Easy Mode is enabled
+            if (!env_attrs.easy_mode_ip.empty())
+            {
+                if (!RTPSDomainImpl::run_easy_mode_discovery_server(domain_id, env_attrs.easy_mode_ip))
+                {
+                    EPROSIMA_LOG_ERROR(RTPS_DOMAIN, "Error launching Easy Mode discovery server daemon");
+                    // Remove the client participant
+                    RTPSDomainImpl::removeRTPSParticipant(part);
+                    part = nullptr;
+                    client_created = false;
+                }
+            }
+        }
+    }
+    else
+    {
+        client_created = false;
+    }
+
+    if (!client_created)
+    {
+        // Try to create the participant with the input attributes if the auto server-client setup failed
+        part = RTPSDomainImpl::createParticipant(domain_id, enabled, attrs, listen);
+        if (!part)
+        {
+            EPROSIMA_LOG_ERROR(RTPS_DOMAIN, "Unable to create the participant");
+        }
+    }
+    else
+    {
+        EPROSIMA_LOG_INFO(RTPS_DOMAIN, "Auto default server-client setup: Client created.");
+    }
+
+    return part;
 }
 
 bool RTPSDomain::removeRTPSParticipant(
@@ -518,28 +570,44 @@ bool RTPSDomainImpl::removeRTPSReader(
     return false;
 }
 
-RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
+bool RTPSDomainImpl::client_server_environment_attributes_override(
         uint32_t domain_id,
-        bool enabled,
-        const RTPSParticipantAttributes& att,
-        RTPSParticipantListener* listen)
+        RTPSParticipantAttributes& att)
 {
     // Check the specified discovery protocol: if other than simple it has priority over ros environment variable
     if (att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol::SIMPLE)
     {
         EPROSIMA_LOG_INFO(RTPS_DOMAIN, "Detected non simple discovery protocol attributes."
                 << " Ignoring auto default client-server setup.");
-        return nullptr;
+        return false;
     }
 
     // We only make the attributes copy when we are sure is worth
     // Is up to the caller guarantee the att argument is not modified during the call
     RTPSParticipantAttributes client_att(att);
 
-    // Check whether we need to initialize in easy mode
-    const std::string& ros_easy_mode_env_value = ros_easy_mode_env();
+    /* Check whether we need to initialize in easy mode */
 
-    if (ros_easy_mode_env_value.empty())
+    // Get the IP of the remote discovery server.
+    // 1. Check if it is configured in RTPSParticipantAttributes
+    // 2. If not, check if it is configured in the environment variable
+    std::string ros_easy_mode_ip_env = ros_easy_mode_env();
+
+    if (!att.easy_mode_ip.empty())
+    {
+        if (!ros_easy_mode_ip_env.empty())
+        {
+            EPROSIMA_LOG_WARNING(RTPSDOMAIN, "Easy mode IP is configured in both RTPSParticipantAttributes and "
+                    << ROS2_EASY_MODE_URI << " environment variable, so " << ROS2_EASY_MODE_URI << " will be ignored.");
+        }
+        client_att.easy_mode_ip = att.easy_mode_ip;
+    }
+    else
+    {
+        client_att.easy_mode_ip = ros_easy_mode_ip_env;
+    }
+
+    if (client_att.easy_mode_ip.empty())
     {
         // Retrieve the info from the environment variable
         LocatorList_t& server_list = client_att.builtin.discovery_config.m_DiscoveryServers;
@@ -547,7 +615,7 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
         {
             // It's not an error, the environment variable may not be set. Any issue with environment
             // variable syntax is EPROSIMA_LOG_ERROR already
-            return nullptr;
+            return false;
         }
 
         // Check if some address requires the UDPv6, TCPv4 or TCPv6 transport
@@ -648,46 +716,11 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
             EPROSIMA_LOG_WARNING(RTPS_DOMAIN, "An XML profile for 'service' was found. When using ROS2_EASY_MODE, please ensure"
                     " the max_blocking_time is configured with a value higher than the default.");
         }
-
-        SystemCommandBuilder sys_command;
-        int res = sys_command.executable(FAST_DDS_DEFAULT_CLI_SCRIPT_NAME)
-                        .verb(FAST_DDS_DEFAULT_CLI_DISCOVERY_VERB)
-                        .verb(FAST_DDS_DEFAULT_CLI_AUTO_VERB)
-                        .arg("-d")
-                        .value(std::to_string(domain_id))
-                        .value(ros_easy_mode_env_value + ":" + std::to_string(domain_id))
-                        .build_and_call();
-#ifndef _WIN32
-        // Adecuate Python subprocess return
-        res = WEXITSTATUS(res);
-#endif // _WIN32
-
-        if (res != SystemCommandBuilder::SystemCommandResult::SUCCESS)
-        {
-            if (res == SystemCommandBuilder::SystemCommandResult::BAD_PARAM)
-            {
-                EPROSIMA_LOG_ERROR("DOMAIN", "ROS2_EASY_MODE IP connection conflicts with a previous one.");
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(DOMAIN, "Auto discovery server client setup. Unable to spawn daemon.");
-            }
-            return nullptr;
-        }
     }
 
-    RTPSParticipant* part = createParticipant(domain_id, enabled, client_att, listen);
-    if (nullptr != part)
-    {
-        // Client successfully created
-        EPROSIMA_LOG_INFO(RTPS_DOMAIN, "Auto default server-client setup. Default client created.");
-        part->mp_impl->client_override(true);
-        return part;
-    }
+    att = client_att;
 
-    // Unable to create auto server-client default participants
-    EPROSIMA_LOG_ERROR(RTPS_DOMAIN, "Auto default server-client setup. Unable to create the client.");
-    return nullptr;
+    return true;
 }
 
 uint32_t RTPSDomainImpl::getNewId()
@@ -932,6 +965,39 @@ fastdds::dds::xtypes::ITypeObjectRegistry& RTPSDomainImpl::type_object_registry(
 fastdds::dds::xtypes::TypeObjectRegistry& RTPSDomainImpl::type_object_registry_observer()
 {
     return get_instance()->type_object_registry_;
+}
+
+bool RTPSDomainImpl::run_easy_mode_discovery_server(
+        uint32_t domain_id,
+        const std::string& ip)
+{
+    SystemCommandBuilder sys_command;
+    int res = sys_command.executable(FAST_DDS_DEFAULT_CLI_SCRIPT_NAME)
+                    .verb(FAST_DDS_DEFAULT_CLI_DISCOVERY_VERB)
+                    .verb(FAST_DDS_DEFAULT_CLI_AUTO_VERB)
+                    .arg("-d")
+                    .value(std::to_string(domain_id))
+                    .value(ip + ":" + std::to_string(domain_id))
+                    .build_and_call();
+#ifndef _WIN32
+    // Adecuate Python subprocess return
+    res = WEXITSTATUS(res);
+#endif // _WIN32
+
+    if (res != SystemCommandBuilder::SystemCommandResult::SUCCESS)
+    {
+        if (res == SystemCommandBuilder::SystemCommandResult::BAD_PARAM)
+        {
+            EPROSIMA_LOG_ERROR("DOMAIN", "ROS2_EASY_MODE IP connection conflicts with a previous one.");
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(DOMAIN, "Auto discovery server client setup. Unable to spawn daemon.");
+        }
+        return false;
+    }
+
+    return true;
 }
 
 } // namespace rtps
