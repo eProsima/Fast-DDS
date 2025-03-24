@@ -128,46 +128,14 @@ RTPSParticipant* RTPSDomain::createParticipant(
         RTPSParticipantListener* listen)
 {
     RTPSParticipant* part = nullptr;
-    RTPSParticipantAttributes env_attrs = attrs;
-    bool client_created = true;
 
-    // Fill participant attributes using set environment variables.
-    // Note: If ROS2_EASY_MODE is configured and it is not set in the input participant attributes, it will be set.
-    // In other case, the previous easy_mode_ip value will be kept and ROS2_EASY_MODE will be ignored.
-    if (RTPSDomainImpl::client_server_environment_attributes_override(domain_id, env_attrs))
-    {
-        part = RTPSDomainImpl::createParticipant(domain_id, enabled, env_attrs, listen);
+    // Try to create a participant with the default server-client setup.
+    part = RTPSDomainImpl::create_client_server_participant(domain_id, enabled, attrs, listen);
 
-        if (!part)
-        {
-            // Unable to create auto server-client default participants
-            EPROSIMA_LOG_ERROR(RTPS_DOMAIN, "Auto default server-client setup: Unable to create the client.");
-            client_created = false;
-        }
-        else
-        {
-            // Launch the discovery server daemon if Easy Mode is enabled
-            if (!env_attrs.easy_mode_ip.empty())
-            {
-                if (!RTPSDomainImpl::run_easy_mode_discovery_server(domain_id, env_attrs.easy_mode_ip))
-                {
-                    EPROSIMA_LOG_ERROR(RTPS_DOMAIN, "Error launching Easy Mode discovery server daemon");
-                    // Remove the client participant
-                    RTPSDomainImpl::removeRTPSParticipant(part);
-                    part = nullptr;
-                    client_created = false;
-                }
-            }
-        }
-    }
-    else
-    {
-        client_created = false;
-    }
-
-    if (!client_created)
+    if (!part)
     {
         // Try to create the participant with the input attributes if the auto server-client setup failed
+        // or was omitted.
         part = RTPSDomainImpl::createParticipant(domain_id, enabled, attrs, listen);
         if (!part)
         {
@@ -180,6 +148,15 @@ RTPSParticipant* RTPSDomain::createParticipant(
     }
 
     return part;
+}
+
+RTPSParticipant* RTPSDomain::create_client_server_participant(
+        uint32_t domain_id,
+        bool enabled,
+        const RTPSParticipantAttributes& attrs,
+        RTPSParticipantListener* plisten /* = nullptr */)
+{
+    return RTPSDomainImpl::create_client_server_participant(domain_id, enabled, attrs, plisten);
 }
 
 bool RTPSDomain::removeRTPSParticipant(
@@ -363,6 +340,54 @@ RTPSParticipant* RTPSDomainImpl::createParticipant(
         pimpl->enable();
     }
     return p;
+}
+
+RTPSParticipant* RTPSDomainImpl::create_client_server_participant(
+        uint32_t domain_id,
+        bool enabled,
+        const RTPSParticipantAttributes& attrs,
+        RTPSParticipantListener* plisten)
+{
+    RTPSParticipant* part = nullptr;
+    RTPSParticipantAttributes env_attrs = attrs;
+
+    // Fill participant attributes using set environment variables.
+    // Note: If ROS2_EASY_MODE is configured and it is not set in the input participant attributes, it will be set.
+    // In other case, the previous easy_mode_ip value will be kept and ROS2_EASY_MODE will be ignored.
+    if (client_server_environment_attributes_override(domain_id, env_attrs))
+    {
+        part = createParticipant(domain_id, enabled, env_attrs, plisten);
+
+        if (!part)
+        {
+            // Unable to create auto server-client default participants
+            EPROSIMA_LOG_ERROR(RTPS_DOMAIN, "Auto default server-client setup: Unable to create the client.");
+            return nullptr;
+        }
+        else
+        {
+            // Launch the discovery server daemon if Easy Mode is enabled
+            if (!env_attrs.easy_mode_ip.empty())
+            {
+                if (!run_easy_mode_discovery_server(domain_id, env_attrs.easy_mode_ip))
+                {
+                    EPROSIMA_LOG_ERROR(RTPS_DOMAIN, "Error launching Easy Mode discovery server daemon");
+                    // Remove the client participant
+                    removeRTPSParticipant(part);
+                    part = nullptr;
+                    return nullptr;
+                }
+            }
+
+            return part;
+        }
+    }
+    else
+    {
+        EPROSIMA_LOG_WARNING(RTPS_DOMAIN,
+                "ParticipantAttributes not overriden. Skipping auto server-client default setup.");
+        return nullptr;
+    }
 }
 
 bool RTPSDomainImpl::removeRTPSParticipant(
@@ -597,8 +622,8 @@ bool RTPSDomainImpl::client_server_environment_attributes_override(
     {
         if (!ros_easy_mode_ip_env.empty())
         {
-            EPROSIMA_LOG_WARNING(RTPSDOMAIN, "Easy mode IP is configured in both RTPSParticipantAttributes and "
-                    << ROS2_EASY_MODE_URI << " environment variable, so " << ROS2_EASY_MODE_URI << " will be ignored.");
+            EPROSIMA_LOG_WARNING(RTPSDOMAIN, "Easy mode IP is configured both in RTPSParticipantAttributes and "
+                    << ROS2_EASY_MODE_URI << " environment variable, ignoring the latter.");
         }
         client_att.easy_mode_ip = att.easy_mode_ip;
     }
