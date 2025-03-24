@@ -54,6 +54,13 @@ void register_GrandparentStruct_type_identifier(
         QualifiedTypeName type_name_GrandparentStruct = "GrandparentStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_GrandparentStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_GrandparentStruct;
+        AppliedAnnotationSeq tmp_ann_custom_GrandparentStruct;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_GrandparentStruct;
+        if (!tmp_ann_custom_GrandparentStruct.empty())
+        {
+            ann_custom_GrandparentStruct = tmp_ann_custom_GrandparentStruct;
+        }
+
         CompleteTypeDetail detail_GrandparentStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_GrandparentStruct, ann_custom_GrandparentStruct, type_name_GrandparentStruct.to_string());
         CompleteStructHeader header_GrandparentStruct;
         header_GrandparentStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_GrandparentStruct);
@@ -121,6 +128,13 @@ void register_ParentStruct_type_identifier(
         QualifiedTypeName type_name_ParentStruct = "ParentStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_ParentStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_ParentStruct;
+        AppliedAnnotationSeq tmp_ann_custom_ParentStruct;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_ParentStruct;
+        if (!tmp_ann_custom_ParentStruct.empty())
+        {
+            ann_custom_ParentStruct = tmp_ann_custom_ParentStruct;
+        }
+
         CompleteTypeDetail detail_ParentStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_ParentStruct, ann_custom_ParentStruct, type_name_ParentStruct.to_string());
         CompleteStructHeader header_ParentStruct;
         if (EK_COMPLETE == type_ids_ParentStruct.type_identifier1()._d())
@@ -259,6 +273,13 @@ void register_NestedStructElement_type_identifier(
         QualifiedTypeName type_name_NestedStructElement = "NestedStructElement";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_NestedStructElement;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_NestedStructElement;
+        AppliedAnnotationSeq tmp_ann_custom_NestedStructElement;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_NestedStructElement;
+        if (!tmp_ann_custom_NestedStructElement.empty())
+        {
+            ann_custom_NestedStructElement = tmp_ann_custom_NestedStructElement;
+        }
+
         CompleteTypeDetail detail_NestedStructElement = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_NestedStructElement, ann_custom_NestedStructElement, type_name_NestedStructElement.to_string());
         CompleteStructHeader header_NestedStructElement;
         header_NestedStructElement = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_NestedStructElement);
@@ -326,6 +347,13 @@ void register_StructStruct_type_identifier(
         QualifiedTypeName type_name_StructStruct = "StructStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_StructStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_StructStruct;
+        AppliedAnnotationSeq tmp_ann_custom_StructStruct;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_StructStruct;
+        if (!tmp_ann_custom_StructStruct.empty())
+        {
+            ann_custom_StructStruct = tmp_ann_custom_StructStruct;
+        }
+
         CompleteTypeDetail detail_StructStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_StructStruct, ann_custom_StructStruct, type_name_StructStruct.to_string());
         CompleteStructHeader header_StructStruct;
         if (EK_COMPLETE == type_ids_StructStruct.type_identifier1()._d())

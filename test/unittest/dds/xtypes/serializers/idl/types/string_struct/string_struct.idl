@@ -1,3 +1,4 @@
+@extensibility(APPENDABLE)
 struct StringStruct
 {
     string my_string;

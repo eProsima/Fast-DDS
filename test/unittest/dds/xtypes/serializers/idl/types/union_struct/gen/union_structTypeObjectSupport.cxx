@@ -306,6 +306,13 @@ void register_UnionStruct_type_identifier(
         QualifiedTypeName type_name_UnionStruct = "UnionStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_UnionStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_UnionStruct;
+        AppliedAnnotationSeq tmp_ann_custom_UnionStruct;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_UnionStruct;
+        if (!tmp_ann_custom_UnionStruct.empty())
+        {
+            ann_custom_UnionStruct = tmp_ann_custom_UnionStruct;
+        }
+
         CompleteTypeDetail detail_UnionStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_UnionStruct, ann_custom_UnionStruct, type_name_UnionStruct.to_string());
         CompleteStructHeader header_UnionStruct;
         header_UnionStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_UnionStruct);

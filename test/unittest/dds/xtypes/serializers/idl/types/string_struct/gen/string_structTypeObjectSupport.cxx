@@ -54,6 +54,13 @@ void register_StringStruct_type_identifier(
         QualifiedTypeName type_name_StringStruct = "StringStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_StringStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_StringStruct;
+        AppliedAnnotationSeq tmp_ann_custom_StringStruct;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_StringStruct;
+        if (!tmp_ann_custom_StringStruct.empty())
+        {
+            ann_custom_StringStruct = tmp_ann_custom_StringStruct;
+        }
+
         CompleteTypeDetail detail_StringStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_StringStruct, ann_custom_StringStruct, type_name_StringStruct.to_string());
         CompleteStructHeader header_StringStruct;
         header_StringStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_StringStruct);
