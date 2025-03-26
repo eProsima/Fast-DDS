@@ -1578,7 +1578,7 @@ TEST(ParticipantTests, EasyModeParticipantDoNotOverwriteCustomDataWriterQos)
  */
 TEST(ParticipantTests, EasyModeParticipantCheckConfigurationPriority)
 {
-// Easy Mode is currently not supported on Windows
+    // Easy Mode is currently not supported on Windows
 #ifndef _WIN32
     set_easy_mode_environment_variable("1.1.1.1");
 
@@ -1615,7 +1615,7 @@ TEST(ParticipantTests, EasyModeParticipantCheckConfigurationPriority)
  */
 TEST(ParticipantTests, EasyModeIPConfigFromXML)
 {
-// Easy Mode is currently not supported on Windows
+    // Easy Mode is currently not supported on Windows
 #ifndef _WIN32
     DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_easy_mode_config.xml");
     uint32_t domain_id = (uint32_t)GET_PID() % 230;
