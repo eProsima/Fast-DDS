@@ -1839,7 +1839,7 @@ ReturnCode_t DomainParticipantImpl::unregister_type(
         {
             if (sit.second->type_in_use(type_name))
             {
-                EPROSIMA_LOG_ERROR(PARTICIPANT, "Type '" << type_name << "' is in use");
+                EPROSIMA_LOG_WARNING(PARTICIPANT, "Type '" << type_name << "' is in use");
                 return RETCODE_PRECONDITION_NOT_MET;
             }
         }
@@ -1853,7 +1853,7 @@ ReturnCode_t DomainParticipantImpl::unregister_type(
         {
             if (pit.second->type_in_use(type_name))
             {
-                EPROSIMA_LOG_ERROR(PARTICIPANT, "Type '" << type_name << "' is in use");
+                EPROSIMA_LOG_WARNING(PARTICIPANT, "Type '" << type_name << "' is in use");
                 return RETCODE_PRECONDITION_NOT_MET;
             }
         }
