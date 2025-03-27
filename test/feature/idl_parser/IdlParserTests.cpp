@@ -1258,9 +1258,9 @@ TEST_F(IdlParserTests, relative_path_include)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
     std::vector<std::string> include_paths;
-    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+    include_paths.push_back("IDL/helpers");
 
-    DynamicTypeBuilder::_ref_type builder1 = factory->create_type_w_uri("IDL/relative_path_include.idl",
+    DynamicTypeBuilder::_ref_type builder1 = factory->create_type_w_uri("IDL/no_path_included.idl",
                     "RelativePathIncludeStruct", include_paths);
     EXPECT_TRUE(builder1);
     DynamicType::_ref_type type1 = builder1->build();
