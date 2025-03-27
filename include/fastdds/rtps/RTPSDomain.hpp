@@ -111,6 +111,26 @@ public:
             RTPSParticipantListener* plisten = nullptr);
 
     /**
+     * @brief Create a RTPSParticipant as default server or client if ROS_MASTER_URI environment variable is set.
+     * It also configures ROS 2 Easy Mode IP if ROS2_EASY_MODE_URI environment variable is set
+     * and it was empty in the input attributes.
+     *
+     * @param domain_id DomainId to be used by the RTPSParticipant.
+     * @param enabled True if the RTPSParticipant should be enabled on creation. False if it will be enabled later with RTPSParticipant::enable()
+     * @param attrs RTPSParticipant Attributes.
+     * @param plisten Pointer to the ParticipantListener.
+     * @return Pointer to the RTPSParticipant.
+     *
+     * \warning The returned pointer is invalidated after a call to removeRTPSParticipant() or stopAll(),
+     *          so its use may result in undefined behaviour.
+     */
+    static RTPSParticipant* create_client_server_participant(
+            uint32_t domain_id,
+            bool enabled,
+            const RTPSParticipantAttributes& attrs,
+            RTPSParticipantListener* plisten = nullptr);
+
+    /**
      * Create a RTPSWriter in a participant.
      *
      * @param p       Pointer to the RTPSParticipant.

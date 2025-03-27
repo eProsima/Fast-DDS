@@ -645,6 +645,16 @@ public:
         return sub_times_liveliness_lost_;
     }
 
+    void sub_wait_data_received(
+            unsigned int num_received)
+    {
+        std::unique_lock<std::mutex> lock(sub_data_mutex_);
+        sub_data_cv_.wait(lock, [&]()
+                {
+                    return sub_times_data_received_ >= num_received;
+                });
+    }
+
     PubSubParticipant& property_policy(
             const eprosima::fastdds::rtps::PropertyPolicy property_policy)
     {
