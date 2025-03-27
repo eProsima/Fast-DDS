@@ -39,6 +39,11 @@ on:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         required: true
         type: string
+      fastcdr_ref:
+        description: 'Branch or tag of Fast CDR repository (https://github.com/eProsima/Fast-CDR)'
+        required: false
+        type: string
+        default: 'master'
       discovery_server_ref:
         description: >
           Branch or tag of Discovery Server repository (https://github.com/eProsima/Discovery-Server)
@@ -90,6 +95,20 @@ jobs:
         if: ${{ !always() }}
         with:
           api_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get Fast CDR branch
+        id: get_fastcdr_branch
+        uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
+        with:
+          remote_repository: eProsima/Fast-CDR
+          fallback_branch: ${{ inputs.fastcdr_ref }}
+
+      - name: Download Fast CDR
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          repository: eProsima/Fast-CDR
+          path: ${{ github.workspace }}/src/fastcdr
+          ref: ${{ steps.get_fastcdr_branch.outputs.deduced_branch }}
 
       - name: Fetch Fast DDS dependencies
         uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
@@ -370,6 +389,20 @@ jobs:
         if: ${{ !always() }}
         with:
           api_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get Fast CDR branch
+        id: get_fastcdr_branch
+        uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
+        with:
+          remote_repository: eProsima/Fast-CDR
+          fallback_branch: ${{ inputs.fastcdr_ref }}
+
+      - name: Download Fast CDR
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          repository: eProsima/Fast-CDR
+          path: ${{ github.workspace }}/src/fastcdr
+          ref: ${{ steps.get_fastcdr_branch.outputs.deduced_branch }}
 
       - name: Fetch Fast DDS dependencies
         uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
