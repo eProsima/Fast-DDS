@@ -354,48 +354,44 @@ RTPSParticipant* RTPSDomainImpl::create_client_server_participant(
     // Fill participant attributes using set environment variables.
     // Note: If ROS2_EASY_MODE is configured and it is not set in the input participant attributes, it will be set.
     // In other case, the previous easy_mode_ip value will be kept and ROS2_EASY_MODE will be ignored.
-    if (client_server_environment_attributes_override(domain_id, env_attrs))
+    if (!client_server_environment_attributes_override(domain_id, env_attrs))
     {
-        part = createParticipant(domain_id, enabled, env_attrs, plisten);
-
-        if (!part)
-        {
-            // Unable to create auto server-client default participants
-            EPROSIMA_LOG_ERROR(RTPS_DOMAIN, "Auto default server-client setup: Unable to create the client.");
-            return nullptr;
-        }
-        else
-        {
-            // Launch the discovery server daemon if Easy Mode is enabled
-            if (!env_attrs.easy_mode_ip.empty())
-            {
-                if (!run_easy_mode_discovery_server(domain_id, env_attrs.easy_mode_ip))
-                {
-                    EPROSIMA_LOG_ERROR(RTPS_DOMAIN, "Error launching Easy Mode discovery server daemon");
-                    // Remove the client participant
-                    removeRTPSParticipant(part);
-                    part = nullptr;
-                    return nullptr;
-                }
-
-                EPROSIMA_LOG_INFO(RTPS_DOMAIN, "Easy Mode discovery server launched successfully");
-            }
-
-            EPROSIMA_LOG_INFO(RTPS_DOMAIN, "Auto default server-client setup: Default client created.");
-
-            // At this point, Discovery Protocol has changed from SIMPLE to CLIENT or SUPER_CLIENT.
-            // Set client_override_ flag to true (Simple Participant turned into a Client Participant).
-            part->mp_impl->client_override(true);
-
-            return part;
-        }
-    }
-    else
-    {
-        EPROSIMA_LOG_WARNING(RTPS_DOMAIN,
+        EPROSIMA_LOG_INFO(RTPS_DOMAIN,
                 "ParticipantAttributes not overriden. Skipping auto server-client default setup.");
         return nullptr;
     }
+
+    part = createParticipant(domain_id, enabled, env_attrs, plisten);
+
+    if (!part)
+    {
+        // Unable to create auto server-client default participants
+        EPROSIMA_LOG_ERROR(RTPS_DOMAIN, "Auto default server-client setup: Unable to create the client.");
+        return nullptr;
+    }
+
+    // Launch the discovery server daemon if Easy Mode is enabled
+    if (!env_attrs.easy_mode_ip.empty())
+    {
+        if (!run_easy_mode_discovery_server(domain_id, env_attrs.easy_mode_ip))
+        {
+            EPROSIMA_LOG_ERROR(RTPS_DOMAIN, "Error launching Easy Mode discovery server daemon");
+            // Remove the client participant
+            removeRTPSParticipant(part);
+            part = nullptr;
+            return nullptr;
+        }
+
+        EPROSIMA_LOG_INFO(RTPS_DOMAIN, "Easy Mode discovery server launched successfully");
+    }
+
+    EPROSIMA_LOG_INFO(RTPS_DOMAIN, "Auto default server-client setup: Default client created.");
+
+    // At this point, Discovery Protocol has changed from SIMPLE to CLIENT or SUPER_CLIENT.
+    // Set client_override_ flag to true (Simple Participant turned into a Client Participant).
+    part->mp_impl->client_override(true);
+
+    return part;
 }
 
 bool RTPSDomainImpl::removeRTPSParticipant(

@@ -92,15 +92,32 @@ public:
 
     /**
      * @brief Create a RTPSParticipant as default server or client if ROS_MASTER_URI environment variable is set.
-     * It also configures ROS 2 Easy Mode IP if the following conditions are met:
-     * 1. ROS2_EASY_MODE_URI environment variable is set.
-     * 2. `easy_mode_ip` member of the input RTPSParticipantAttributes is an empty string.
+     * The RTPSParticipant is created as a ros easy mode client and its corresponding easy mode server is spawned
+     * if at least one of the following conditions are met:
+     *
+     * CONDITION_A:
+     *  - `easy_mode_ip` member of the input RTPSParticipantAttributes is a non-empty string.
+     *
+     * CONDITION_B:
+     *  - ROS2_EASY_MODE_URI environment variable is set.
+     *
+     * In case of both conditions are met at the same time, the value of `easy_mode_ip` member is used
+     * as the easy mode server IP and ROS2_EASY_MODE_URI value is ignored. A warning log is displayed in this case.
      *
      * @param domain_id DomainId to be used by the RTPSParticipant.
      * @param enabled True if the RTPSParticipant should be enabled on creation. False if it will be enabled later with RTPSParticipant::enable()
      * @param attrs RTPSParticipant Attributes.
      * @param plisten Pointer to the ParticipantListener.
-     * @return Pointer to the RTPSParticipant.
+     * @return Pointer to the RTPSParticipant or nullptr in the following cases:
+     *
+     *        - The input attributes are not overriden by the environment variables.
+     *          In this case no errors ocurred,
+     *          but preconditions are not met and the entire Participant setup is skipped.
+     *
+     *        - An error ocurred during the RTPSParticipant creation.
+     *
+     *        - RTPSParticipant is created correctly, but an error ocurred during the Easy Mode discovery server launch.
+     *          In this case, the RTPSParticipant is removed before returning.
      *
      * \warning The returned pointer is invalidated after a call to removeRTPSParticipant() or stopAll(),
      *          so its use may result in undefined behaviour.
