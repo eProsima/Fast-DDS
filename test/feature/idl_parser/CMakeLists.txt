@@ -66,4 +66,5 @@ message(STATUS "Copying IDL directory from ${PROJECT_SOURCE_DIR}/thirdparty/dds-
 add_custom_command(
     TARGET IdlParserTests POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/thirdparty/dds-types-test/IDL ${CMAKE_CURRENT_BINARY_DIR}/IDL
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/no_path_included.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
 )
