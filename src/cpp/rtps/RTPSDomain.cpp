@@ -377,7 +377,15 @@ RTPSParticipant* RTPSDomainImpl::create_client_server_participant(
                     part = nullptr;
                     return nullptr;
                 }
+
+                EPROSIMA_LOG_INFO(RTPS_DOMAIN, "Easy Mode discovery server launched successfully");
             }
+
+            EPROSIMA_LOG_INFO(RTPS_DOMAIN, "Auto default server-client setup: Default client created.");
+
+            // At this point, Discovery Protocol has changed from SIMPLE to CLIENT or SUPER_CLIENT.
+            // Set client_override_ flag to true (Simple Participant turned into a Client Participant).
+            part->mp_impl->client_override(true);
 
             return part;
         }

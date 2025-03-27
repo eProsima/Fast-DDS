@@ -92,8 +92,9 @@ public:
 
     /**
      * @brief Create a RTPSParticipant as default server or client if ROS_MASTER_URI environment variable is set.
-     * It also configures ROS 2 Easy Mode IP if ROS2_EASY_MODE_URI environment variable is set
-     * and it was empty in the input attributes.
+     * It also configures ROS 2 Easy Mode IP if the following conditions are met:
+     * 1. ROS2_EASY_MODE_URI environment variable is set.
+     * 2. `easy_mode_ip` member of the input RTPSParticipantAttributes is an empty string.
      *
      * @param domain_id DomainId to be used by the RTPSParticipant.
      * @param enabled True if the RTPSParticipant should be enabled on creation. False if it will be enabled later with RTPSParticipant::enable()
