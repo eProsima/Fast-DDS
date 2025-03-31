@@ -23,7 +23,7 @@ on:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         required: true
         type: string
-      fastcdr-branch:
+      fastcdr_branch:
         description: 'Branch or tag of Fast CDR repository (https://github.com/eProsima/Fast-CDR)'
         required: false
         type: string
@@ -131,7 +131,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/Fast-CDR
-          fallback_branch: ${{ inputs.fastcdr-branch }}
+          fallback_branch: ${{ inputs.fastcdr_branch }}
 
       - name: Download Fast CDR
         uses: eProsima/eProsima-CI/external/checkout@v0
