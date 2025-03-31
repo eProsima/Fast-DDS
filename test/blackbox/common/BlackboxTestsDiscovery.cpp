@@ -1577,20 +1577,29 @@ TEST_P(Discovery, single_unicast_pdp_response_flowcontroller)
     for (auto& participant : participants)
     {
         ASSERT_TRUE(participant->init_participant());
-        participant->wait_discovery(std::chrono::seconds(1), 1, true);
+        participant->wait_discovery(std::chrono::seconds::zero(), 1, true);
     }
+
+    main_participant->wait_discovery(std::chrono::seconds::zero(), 5, true);
+
+    // When in single threaded application, give some time for the builtin endpoints matching
+    std::this_thread::sleep_for(std::chrono::seconds(5));
 
     // Destroy main participant
     main_participant.reset();
     for (auto& participant : participants)
     {
-        participant->wait_discovery(std::chrono::seconds(1), 0, true);
+        participant->wait_discovery(std::chrono::seconds::zero(), 0, true);
     }
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    // Check that only two unicast messages per participant were sent
-    EXPECT_EQ(num_unicast_sends.load(std::memory_order::memory_order_seq_cst),
-            participants.size() + participants.size());
+    // Check that the main participant sends two unicast messages to every other participant.
+    // One Data[P] and one Data[uP].
+    // Note that in a single core system, the number of unicast messages sent may be one
+    // per participant since the main participant's destruction races with
+    // the asynchronous Data[uP] in the locator selector (the unicast locator of the remote may not be there by the time)
+    // using the multicast instead.
+    EXPECT_GE(num_unicast_sends.load(std::memory_order::memory_order_seq_cst),
+            participants.size());
 
     // Clean up
     participants.clear();
