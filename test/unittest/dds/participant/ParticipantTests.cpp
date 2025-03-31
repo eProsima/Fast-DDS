@@ -1573,6 +1573,79 @@ TEST(ParticipantTests, EasyModeParticipantDoNotOverwriteCustomDataWriterQos)
 }
 
 /**
+ * Check that, in case of configuring Easy Mode via WireProtocolConfigQos and
+ * ROS2_EASY_MODE environment variable, the first takes precedence.
+ */
+TEST(ParticipantTests, EasyModeParticipantCheckConfigurationPriority)
+{
+    // Easy Mode is currently not supported on Windows
+#ifndef _WIN32
+    set_easy_mode_environment_variable("1.1.1.1");
+
+    // Set Easy Mode manually using WireProtocolConfigQos with a different value
+    DomainParticipantQos qos;
+    qos.wire_protocol().easy_mode("2.2.2.2");
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
+        (uint32_t)GET_PID() % 230, qos);
+    ASSERT_NE(nullptr, participant);
+
+    // Verify that the localhost Discovery Server is created and the configured remote IP
+    // is the one set by the QoS (i.e., ROS2_EASY_MODE environment variable is ignored).
+    rtps::RTPSParticipantAttributes rtps_attr;
+    get_rtps_attributes(participant, rtps_attr);
+    ASSERT_EQ(rtps_attr.builtin.discovery_config.m_DiscoveryServers.size(), 1);
+
+    rtps::Locator_t expected_locator;
+    rtps::IPLocator::setIPv4(expected_locator, "127.0.0.1");
+
+    ASSERT_TRUE(
+        rtps::IPLocator::compareAddress(
+            *(rtps_attr.builtin.discovery_config.m_DiscoveryServers.begin()),
+            expected_locator,
+            false));
+    ASSERT_EQ(rtps_attr.easy_mode_ip, "2.2.2.2");
+
+    ASSERT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+    stop_background_servers();
+#endif // _WIN32
+}
+
+/**
+ * Check that Easy Mode IP is configured correctly when loading a qos profile from XML.
+ */
+TEST(ParticipantTests, EasyModeIPConfigFromXML)
+{
+    // Easy Mode is currently not supported on Windows
+#ifndef _WIN32
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_easy_mode_config.xml");
+    uint32_t domain_id = (uint32_t)GET_PID() % 230;
+
+    //participant using the default profile
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(domain_id, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    // Verify that the localhost Discovery Server is created and the configured remote IP
+    // is the one set by the QoS
+    rtps::RTPSParticipantAttributes rtps_attr;
+    get_rtps_attributes(participant, rtps_attr);
+    ASSERT_EQ(rtps_attr.builtin.discovery_config.m_DiscoveryServers.size(), 1);
+
+    rtps::Locator_t expected_locator;
+    rtps::IPLocator::setIPv4(expected_locator, "127.0.0.1");
+
+    ASSERT_TRUE(
+        rtps::IPLocator::compareAddress(
+            *(rtps_attr.builtin.discovery_config.m_DiscoveryServers.begin()),
+            expected_locator,
+            false));
+    ASSERT_EQ(rtps_attr.easy_mode_ip, "2.2.2.2"); // XML value
+
+    ASSERT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+    stop_background_servers();
+#endif // _WIN32
+}
+/**
  * Dynamic modification of servers. Replacing previous servers with new ones.
  */
 TEST(ParticipantTests, ServerParticipantReplaceRemoteServerListConfiguration)
