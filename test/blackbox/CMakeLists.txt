@@ -66,6 +66,9 @@ set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
     types/Data1mb.cxx
     types/Data1mbPubSubTypes.cxx
     types/Data1mbv1.cxx
+    types/Data100kb.cxx
+    types/Data100kbPubSubTypes.cxx
+    types/Data100kbv1.cxx
     types/Data64kb.cxx
     types/Data64kbPubSubTypes.cxx
     types/Data64kbv1.cxx
@@ -116,6 +119,9 @@ set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
     types/Data1mb.cxx
     types/Data1mbPubSubTypes.cxx
     types/Data1mbv1.cxx
+    types/Data100kb.cxx
+    types/Data100kbPubSubTypes.cxx
+    types/Data100kbv1.cxx
     types/Data64kb.cxx
     types/Data64kbPubSubTypes.cxx
     types/Data64kbv1.cxx
