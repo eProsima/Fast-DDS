@@ -1,0 +1,11 @@
+module performance_test {
+  module msg {
+    struct Array1m {
+      octet array[1048576];
+
+      int64 time;
+
+      uint64 id;
+    };
+  };
+};

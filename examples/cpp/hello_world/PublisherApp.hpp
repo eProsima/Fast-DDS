@@ -29,6 +29,7 @@
 #include "Application.hpp"
 #include "CLIParser.hpp"
 #include "HelloWorld.hpp"
+#include "Sample1m.hpp"
 
 using namespace eprosima::fastdds::dds;
 
@@ -67,6 +68,7 @@ private:
     bool publish();
 
     HelloWorld hello_;
+    performance_test::msg::Array1m data_;
 
     DomainParticipant* participant_;
 

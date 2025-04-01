@@ -33,6 +33,7 @@
 #include "CLIParser.hpp"
 #include "HelloWorldPubSubTypes.hpp"
 #include "Application.hpp"
+#include "Sample1mPubSubTypes.hpp"
 
 using namespace eprosima::fastdds::dds;
 
@@ -48,7 +49,7 @@ ListenerSubscriberApp::ListenerSubscriberApp(
     , subscriber_(nullptr)
     , topic_(nullptr)
     , reader_(nullptr)
-    , type_(new HelloWorldPubSubType())
+    , type_(new performance_test::msg::Array1mPubSubType())
     , samples_(config.samples)
     , received_samples_(0)
     , stop_(false)
@@ -85,6 +86,7 @@ ListenerSubscriberApp::ListenerSubscriberApp(
     // Create the reader
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
     subscriber_->get_default_datareader_qos(reader_qos);
+    reader_qos.data_sharing().off();
     reader_ = subscriber_->create_datareader(topic_, reader_qos, this, StatusMask::all());
     if (reader_ == nullptr)
     {
@@ -127,13 +129,13 @@ void ListenerSubscriberApp::on_data_available(
         DataReader* reader)
 {
     SampleInfo info;
-    while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(&hello_, &info)))
+    while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(&data_, &info)))
     {
         if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
         {
             received_samples_++;
             // Print Hello world message data
-            std::cout << "Message: '" << hello_.message() << "' with index: '" << hello_.index()
+            std::cout << "Message: '" << data_.array().size() << "' with index: '" << data_.id()
                       << "' RECEIVED" << std::endl;
             if (samples_ > 0 && (received_samples_ >= samples_))
             {

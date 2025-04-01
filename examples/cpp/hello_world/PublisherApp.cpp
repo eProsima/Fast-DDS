@@ -29,6 +29,7 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 
 #include "HelloWorldPubSubTypes.hpp"
+#include "Sample1mPubSubTypes.hpp"
 
 using namespace eprosima::fastdds::dds;
 
@@ -44,15 +45,17 @@ PublisherApp::PublisherApp(
     , publisher_(nullptr)
     , topic_(nullptr)
     , writer_(nullptr)
-    , type_(new HelloWorldPubSubType())
+    , type_(new performance_test::msg::Array1mPubSubType())
     , matched_(0)
     , samples_(config.samples)
     , expected_matches_(config.matched)
     , stop_(false)
 {
     // Set up the data type with initial values
-    hello_.index(0);
-    hello_.message("Hello world");
+    data_.id(0);
+    std::array<uint8_t, 1048576> data;
+    std::fill(data.begin(), data.end(), 0xFF);
+    data_.array(data);
 
     // Create the participant
     auto factory = DomainParticipantFactory::get_instance();
@@ -86,6 +89,7 @@ PublisherApp::PublisherApp(
     // Create the data writer
     DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
     publisher_->get_default_datawriter_qos(writer_qos);
+    writer_qos.data_sharing().off();
     writer_ = publisher_->create_datawriter(topic_, writer_qos, this, StatusMask::all());
     if (writer_ == nullptr)
     {
@@ -129,11 +133,11 @@ void PublisherApp::on_publication_matched(
 
 void PublisherApp::run()
 {
-    while (!is_stopped() && ((samples_ == 0) || (hello_.index() < samples_)))
+    while (!is_stopped() && ((samples_ == 0) || (data_.id() < samples_)))
     {
         if (publish())
         {
-            std::cout << "Message: '" << hello_.message() << "' with index: '" << hello_.index()
+            std::cout << "Message: '" << data_.array().size() << "' with index: '" << data_.id()
                       << "' SENT" << std::endl;
         }
         // Wait for period or stop event
@@ -158,8 +162,8 @@ bool PublisherApp::publish()
 
     if (!is_stopped())
     {
-        hello_.index(hello_.index() + 1);
-        ret = (RETCODE_OK == writer_->write(&hello_));
+        data_.id(data_.id() + 1);
+        ret = (RETCODE_OK == writer_->write(&data_));
     }
     return ret;
 }
