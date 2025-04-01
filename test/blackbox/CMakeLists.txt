@@ -60,6 +60,8 @@ file(GLOB RTPS_BLACKBOXTESTS_TEST_SOURCE "common/RTPSBlackboxTests*.cpp")
 set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
     types/Data1mbPubSubTypes.cxx
     types/Data1mbTypeObjectSupport.cxx
+    types/Data100kbPubSubTypes.cxx
+    types/Data100kbTypeObjectSupport.cxx
     types/Data64kbPubSubTypes.cxx
     types/Data64kbTypeObjectSupport.cxx
     types/FixedSizedPubSubTypes.cxx
@@ -103,6 +105,8 @@ file(GLOB BLACKBOXTESTS_TEST_SOURCE "common/BlackboxTests*.cpp")
 set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
     types/Data1mbPubSubTypes.cxx
     types/Data1mbTypeObjectSupport.cxx
+    types/Data100kbPubSubTypes.cxx
+    types/Data100kbTypeObjectSupport.cxx
     types/Data64kbPubSubTypes.cxx
     types/Data64kbTypeObjectSupport.cxx
     types/FixedSizedPubSubTypes.cxx

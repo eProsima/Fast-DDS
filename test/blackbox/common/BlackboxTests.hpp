@@ -32,6 +32,7 @@
 #endif // if defined(_WIN32)
 
 #include "../types/Data1mbPubSubTypes.hpp"
+#include "../types/Data100kbPubSubTypes.hpp"
 #include "../types/Data64kbPubSubTypes.hpp"
 #include "../types/FixedSizedPubSubTypes.hpp"
 #include "../types/HelloWorldPubSubTypes.hpp"
@@ -101,6 +102,10 @@ void default_receive_print(
 
 template<>
 void default_receive_print(
+        const Data100kb& data);
+
+template<>
+void default_receive_print(
         const Data1mb& data);
 
 template<>
@@ -137,6 +142,10 @@ void default_send_print(
 template<>
 void default_send_print(
         const Data64kb& data);
+
+template<>
+void default_send_print(
+        const Data100kb& data);
 
 template<>
 void default_send_print(
@@ -179,6 +188,9 @@ std::list<Data1mb> default_data300kb_mix_data_generator(
 std::list<Data1mb> default_data96kb_data300kb_data_generator(
         size_t max = 0);
 
+std::list<Data100kb> default_data100kb_data_generator(
+        size_t max = 0);
+
 std::list<KeyedData1mb> default_keyeddata300kb_data_generator(
         size_t max = 0);
 
@@ -195,6 +207,8 @@ extern const std::function<void(const KeyedHelloWorld&)>  default_keyedhelloworl
 extern const std::function<void(const StringTest&)>  default_string_print;
 
 extern const std::function<void(const Data64kb&)>  default_data64kb_print;
+
+extern const std::function<void(const Data100kb&)>  default_data100kb_print;
 
 extern const std::function<void(const Data1mb&)>  default_data300kb_print;
 
