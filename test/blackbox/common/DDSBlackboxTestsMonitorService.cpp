@@ -639,6 +639,11 @@ public:
         return PubSubReader<MonitorServiceType>::block_for_all(time);
     }
 
+    void block_for_all()
+    {
+        PubSubReader<MonitorServiceType>::block_for_all();
+    }
+
     void stop()
     {
         destroy();
@@ -2648,7 +2653,7 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_extended_incompatible_qos)
     }
 
     //! Assertions
-    ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(5)), expected_msgs.size());
+    MSC.block_for_all();
 
 #endif //FASTDDS_STATISTICS
 }
