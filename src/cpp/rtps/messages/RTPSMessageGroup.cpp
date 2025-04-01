@@ -308,7 +308,12 @@ void RTPSMessageGroup::send()
             }
 #endif // if HAVE_SECURITY
 
-            eprosima::fastdds::statistics::rtps::add_statistics_submessage(msgToSend);
+            if (msgToSend->length <
+                    static_cast<uint32_t>(std::numeric_limits<uint16_t>::max() - RTPSMESSAGE_DATA_MIN_LENGTH))
+            {
+                // Avoid sending the data message for DATA that are not fragmented and exceed the 65 kB limit
+                eprosima::fastdds::statistics::rtps::add_statistics_submessage(msgToSend);
+            }
 
             if (!sender_->send(msgToSend,
                     max_blocking_time_point_))
