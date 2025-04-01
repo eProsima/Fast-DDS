@@ -240,7 +240,7 @@ TEST_F(IdlParserTests, structures)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
     std::vector<std::string> include_paths;
-    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+    include_paths.push_back("IDL/helpers");
 
     DynamicTypeBuilder::_ref_type builder1 = factory->create_type_w_uri("IDL/structures.idl", "StructShort",
                     include_paths);
@@ -423,7 +423,7 @@ TEST_F(IdlParserTests, aliases)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
     std::vector<std::string> include_paths;
-    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+    include_paths.push_back("IDL/helpers");
 
     DynamicTypeBuilder::_ref_type builder1 = factory->create_type_w_uri("IDL/aliases.idl", "AliasInt16", include_paths);
     EXPECT_TRUE(builder1);
@@ -581,7 +581,7 @@ TEST_F(IdlParserTests, arrays)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
     std::vector<std::string> include_paths;
-    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+    include_paths.push_back("IDL/helpers");
 
     DynamicTypeBuilder::_ref_type builder1 = factory->create_type_w_uri("IDL/arrays.idl", "ArrayShort", include_paths);
     EXPECT_TRUE(builder1);
@@ -1254,11 +1254,30 @@ TEST_F(IdlParserTests, arrays)
     ASSERT_TRUE(type105);
 }
 
+TEST_F(IdlParserTests, no_path_included)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    std::vector<std::string> include_paths;
+    include_paths.push_back("IDL/helpers");
+
+    DynamicTypeBuilder::_ref_type builder1 = factory->create_type_w_uri("IDL/no_path_included.idl",
+                    "RelativePathIncludeStruct", include_paths);
+    EXPECT_TRUE(builder1);
+    DynamicType::_ref_type type1 = builder1->build();
+    ASSERT_TRUE(type1);
+    DynamicData::_ref_type data1 {DynamicDataFactory::get_instance()->create_data(type1)};
+    ASSERT_TRUE(data1);
+    int32_t test1 {0};
+    EXPECT_EQ(data1->set_int32_value(0, 2), RETCODE_OK);
+    EXPECT_EQ(data1->get_int32_value(test1, 0), RETCODE_OK);
+    EXPECT_EQ(test1, 2);
+}
+
 TEST_F(IdlParserTests, relative_path_include)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
     std::vector<std::string> include_paths;
-    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+    include_paths.push_back("IDL/helpers");
 
     DynamicTypeBuilder::_ref_type builder1 = factory->create_type_w_uri("IDL/relative_path_include.idl",
                     "RelativePathIncludeStruct", include_paths);
@@ -1277,7 +1296,7 @@ TEST_F(IdlParserTests, unions)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
     std::vector<std::string> include_paths;
-    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+    include_paths.push_back("IDL/helpers");
 
     DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/unions.idl", "Union_Short", include_paths);
     EXPECT_TRUE(builder);
