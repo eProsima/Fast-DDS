@@ -41,6 +41,10 @@ ReaderHistory::ReaderHistory(
     : History(att)
     , mp_reader(nullptr)
 {
+    if(att.memoryPolicy == PREALLOCATED_MEMORY_MODE)
+    {
+        std::cout << "ReaderHistory::ReaderHistory: Preallocated memory mode" << std::endl;
+    }
 }
 
 ReaderHistory::~ReaderHistory()
@@ -57,6 +61,10 @@ bool ReaderHistory::can_change_be_added_nts(
 
     will_never_be_accepted = false;
 
+    if (total_payload_size > 1000)
+    {
+        std::cout << "Mem_policy: " << m_att.memoryPolicy << ". TPS: " << total_payload_size << " and payloadMaxSize: " << m_att.payloadMaxSize << std::endl;
+    }
     if (m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE && total_payload_size > m_att.payloadMaxSize)
     {
         EPROSIMA_LOG_ERROR(RTPS_READER_HISTORY,

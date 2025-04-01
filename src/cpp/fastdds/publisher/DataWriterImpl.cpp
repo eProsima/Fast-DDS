@@ -260,6 +260,7 @@ ReturnCode_t DataWriterImpl::enable()
     if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == pool_config_.memory_policy &&
             (type_->is_bounded() || type_->is_plain(data_representation_)))
     {
+        std::cout << "Modifying memory policy from PREALLOCATED_WITH_REALLOC to PREALLOCATED" << std::endl;
         pool_config_.memory_policy = PREALLOCATED_MEMORY_MODE;
     }
 

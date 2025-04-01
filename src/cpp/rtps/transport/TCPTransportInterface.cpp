@@ -1568,6 +1568,7 @@ bool TCPTransportInterface::send(
             }
             TCPHeader tcp_header;
             // Statistics submessage is always the last buffer to be added
+            // std::cout << "Stats msg in TCP: " << total_bytes << " and buffers: " << buffers.size() << std::endl;
             statistics_info_.set_statistics_message_data(remote_locator, buffers.back(), total_bytes);
             fill_rtcp_header(tcp_header, buffers, total_bytes, logical_port);
             {

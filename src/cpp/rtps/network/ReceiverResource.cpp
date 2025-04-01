@@ -131,6 +131,10 @@ void ReceiverResource::OnDataReceived(
         msg.max_size = size;
         msg.reserved_size = size;
 
+        if (msg.length > 1000)
+        {
+            std::cout << "Msg lenght: " << msg.length << std::endl;
+        }
         // TODO: Should we unlock in case UnregisterReceiver is called from callback ?
         rcv->processCDRMsg(remoteLocator, localLocator, &msg);
 

@@ -464,6 +464,10 @@ void MessageReceiver::processCDRMsg(
                     {
                         EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Data Submsg received, processing.");
                         EntityId_t writerId = c_EntityId_Unknown;
+                        if (submsgh.submessageLength > 1000)
+                        {
+                            std::cout << "Submsg lenght is: " << submsgh.submessageLength << std::endl;
+                        }
                         valid = proc_Submsg_Data(submessage, &submsgh, writerId, current_message_was_decoded);
 #if !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
                         if (valid && writerId == c_EntityId_SPDPWriter)
@@ -665,11 +669,15 @@ bool MessageReceiver::readSubmessageHeader(
     {
         // THIS IS THE LAST SUBMESSAGE
         smh->submessageLength = msg->length - msg->pos;
+        std::cout << "readSubmsg length is: " << smh->submessageLength << "(" << msg->length << "," << msg->pos << ")" << std::endl;
+        // std::cout << bool(length == 0) << bool(smh->submessageId != INFO_TS) << bool(smh->submessageId != PAD) << std::endl;
         smh->is_last = true;
     }
     else
     {
         smh->submessageLength = length;
+        std::cout << "readSubmsg length is: " << smh->submessageLength << std::endl;
+        // std::cout << bool(length == 0) << bool(smh->submessageId != INFO_TS) << bool(smh->submessageId != PAD) << std::endl;
         smh->is_last = false;
     }
 

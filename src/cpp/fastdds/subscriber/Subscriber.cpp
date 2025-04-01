@@ -110,6 +110,7 @@ DataReader* Subscriber::create_datareader(
         const StatusMask& mask,
         std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool)
 {
+    std::cout << "Qos of history reader: " << reader_qos.endpoint().history_memory_policy << std::endl;
     return impl_->create_datareader(topic, reader_qos, listener, mask, payload_pool);
 }
 

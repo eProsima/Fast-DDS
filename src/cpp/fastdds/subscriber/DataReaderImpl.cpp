@@ -1802,6 +1802,7 @@ std::shared_ptr<IPayloadPool> DataReaderImpl::get_payload_pool()
     if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == history_.m_att.memoryPolicy &&
             (type_->is_bounded() || is_plain))
     {
+        std::cout << "Modifying memory policy from PREALLOCATED_WITH_REALLOC to PREALLOCATED" << std::endl;
         history_.m_att.memoryPolicy = PREALLOCATED_MEMORY_MODE;
     }
 

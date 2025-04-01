@@ -467,13 +467,15 @@ std::shared_ptr<SharedMemManager::Buffer> SharedMemTransport::copy_to_shared_buf
 
     // Statistics submessage is always the last buffer to be added
     // If statistics message is present, skip last buffer
+    // std::cout << "Removing stat buffer: " << total_bytes << " and buffers:" << buffers.size() << std::endl;
     auto it_end = remove_statistics_buffer(buffers.back(), total_bytes) ? std::prev(buffers.end()) : buffers.end();
-
+    std::cout << "Removed stat buffer: " << total_bytes << " and buffers:" << buffers.size() << std::endl;
 
     for (auto it = buffers.begin(); it != it_end; ++it)
     {
         // Direct copy from the const_buffer to the mutable shared_buffer
         memcpy(pos, (it->buffer), it->size);
+        std::cout << "Buffer size: " << it->size << std::endl;
         pos += it->size;
     }
 

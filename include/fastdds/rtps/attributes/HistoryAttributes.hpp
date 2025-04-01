@@ -24,6 +24,7 @@
 #include <fastdds/fastdds_dll.hpp>
 
 #include <cstdint>
+#include <iostream>
 
 namespace eprosima {
 namespace fastdds {
@@ -92,6 +93,10 @@ public:
         , maximumReservedCaches(maxRes)
         , extraReservedCaches(1)
     {
+        if(memoryPolicy == PREALLOCATED_MEMORY_MODE)
+        {
+            std::cout << "ReaderHistory::ReaderHistory: Preallocated memory mode" << std::endl;
+        }
     }
 
     /** Constructor
@@ -115,6 +120,10 @@ public:
         , maximumReservedCaches(maxRes)
         , extraReservedCaches(extra)
     {
+        if(memoryPolicy == PREALLOCATED_MEMORY_MODE)
+        {
+            std::cout << "ReaderHistory::ReaderHistory: Preallocated memory mode" << std::endl;
+        }
     }
 
     virtual ~HistoryAttributes()
