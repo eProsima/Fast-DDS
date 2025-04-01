@@ -327,9 +327,17 @@ private:
         reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
                 .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS);
 
-        // Builtin transport configuration according to test_case
-        writer.setup_transports(builtin_transports, *builtin_transports_options);
-        reader.setup_transports(builtin_transports, *builtin_transports_options);
+        // Builtin transport configuration
+        if (builtin_transports_options != nullptr)
+        {
+            writer.setup_transports(builtin_transports, *builtin_transports_options);
+            reader.setup_transports(builtin_transports, *builtin_transports_options);
+        }
+        else
+        {
+            writer.setup_transports(builtin_transports);
+            reader.setup_transports(builtin_transports);
+        }
 
         /* Run test */
         // Init writer
