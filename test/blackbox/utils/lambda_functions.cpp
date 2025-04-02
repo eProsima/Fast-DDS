@@ -43,6 +43,11 @@ const std::function<void(const Data64kb&)> default_data64kb_print = [](const Dat
             std::cout << (uint16_t)data.data()[0] << " ";
         };
 
+const std::function<void(const Data100kb&)> default_data100kb_print = [](const Data100kb& data)
+        {
+            std::cout << (uint16_t)data.data()[0] << " ";
+        };
+
 const std::function<void(const Data1mb&)> default_data300kb_print = [](const Data1mb& data)
         {
             std::cout << (uint16_t)data.data()[0] << " ";
