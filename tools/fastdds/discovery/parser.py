@@ -39,7 +39,6 @@ from discovery.fastdds_daemon.node.daemon_node import (
 from discovery.fastdds_daemon.xmlrpc_local import local_client as client_cli
 
 DOMAIN_ENV_VAR = "ROS_DOMAIN_ID"
-REMOTE_SERVERS_ENV_VAR = "ROS_STATIC_PEERS"
 EASY_MODE_ENV_VAR = "ROS2_EASY_MODE"
 
 class Command(Enum):
@@ -63,6 +62,17 @@ command_to_int = {
     Command.LIST: 5,
     Command.INFO: 6,
     Command.SERVER: 42
+}
+
+int_to_command = {
+    0 : Command.AUTO,
+    1 : Command.START,
+    2 : Command.STOP,
+    3 : Command.ADD,
+    4 : Command.SET,
+    5 : Command.LIST,
+    6 : Command.INFO,
+    42 : Command.SERVER
 }
 
 def get_sig_idx(sig) -> int:
@@ -164,10 +174,13 @@ class Parser:
 
             # Daemon commands
             domain = 0
-            if daemon_args.domain is not None:
-                domain = daemon_args.domain
+            if daemon_args.domain is None:
+                if command_int != command_to_int[Command.STOP] and \
+                        command_int != command_to_int[Command.LIST]:
+                    print(f"Error: Domain ID not specified. Use -d <domain_id> to specify the domain.")
+                    raise SystemExit(1)
             else:
-                domain = self.__get_domain_id_from_env()
+                domain = daemon_args.domain
             args_for_cpp = [str(command_int), '-d', str(domain)]
             for unknown_arg in unknown_args:
                 args_for_cpp.append(unknown_arg)
@@ -177,55 +190,67 @@ class Parser:
                 if not self.__is_daemon_running():
                     print('The Fast DDS daemon is not running.')
                     raise SystemExit(0)
+
                 print(client_cli.stop_all_request(get_sig_idx(signal.SIGTERM)))
                 self.__stop_daemon()
                 for p in Path(self.__shm_dir()).glob("*_servers.txt"):
                     p.unlink()
-            elif command_int == command_to_int[Command.AUTO]:
-                self.__start_daemon(tool_path)
+
+            elif command_int == command_to_int[Command.AUTO] or command_int == command_to_int[Command.START]:
+                # The 'start' or 'auto' commands require an <IP>:<domain> argument
+                self.__check_unknown_args(unknown_args, command_int)
+                try:
+                    ip, _ = unknown_args[0].split(':', 1)
+                except ValueError:
+                    print("Error: Invalid argument format. Expected <IP>:<domain>.")
+                    raise SystemExit(1)
+
                 easy_mode = self.__get_easy_mode_from_env()
-                if easy_mode is None:
-                    self.__add_remote_servers_to_args(args_for_cpp)
-                    easy_mode = ''
-                output = client_cli.run_request_nb(domain, args_for_cpp, easy_mode)
-                print(output.strip())
-                if 'Error starting Server' in output:
-                    raise SystemExit(1)  # Exit with error code
-                elif 'Error: DS for Domain' in output:
-                    raise SystemExit(2)
-            elif command_int == command_to_int[Command.START]:
+                if easy_mode is not None:
+                    # Check if the first IP address is the same as the easy mode
+                    if ip != easy_mode:
+                        print(f"Warning: Incompatibility detected between ROS2_EASY_MODE ({easy_mode}) \
+                                and CLI argument ({ip}). CLI argument will be used.")
+
                 self.__start_daemon(tool_path)
-                self.__add_remote_servers_to_args(args_for_cpp)
-                output = client_cli.run_request_nb(domain, args_for_cpp, '')
-                print(output.strip())
-                if 'Error starting Server' in output:
-                    raise SystemExit(1)  # Exit with error code
+                output = client_cli.run_request_nb(domain, args_for_cpp, ip)
+                self.__notify_output(output)
+
             elif command_int == command_to_int[Command.STOP]:
                 if not self.__is_daemon_running():
                     print('The Fast DDS daemon is not running.')
                     raise SystemExit(0)
+                # The 'stop' command does not support extra argument
                 if unknown_args:
                     print(f"Unknown arguments: {unknown_args}")
-                    raise SystemExit(0)
+                    raise SystemExit(1)
                 print(client_cli.stop_request(domain, get_sig_idx(signal.SIGTERM)))
+
             elif command_int == command_to_int[Command.ADD]:
+                # The 'add' commands require an <IP>:<domain> argument
+                self.__check_unknown_args(unknown_args, command_int)
                 if not self.__is_daemon_running():
                     print('The Fast DDS daemon is not running.')
                     raise SystemExit(0)
-                self.__add_remote_servers_to_args(args_for_cpp)
                 print(client_cli.run_request_b(domain, args_for_cpp, True).strip())
+
             elif command_int == command_to_int[Command.SET]:
+                # The 'set' commands require an <IP>:<domain> argument
+                self.__check_unknown_args(unknown_args, command_int)
                 if not self.__is_daemon_running():
                     print('The Fast DDS daemon is not running.')
                     raise SystemExit(0)
                 print(client_cli.run_request_b(domain, args_for_cpp, True).strip())
+
             elif command_int == command_to_int[Command.LIST]:
                 if not self.__is_daemon_running():
                     print('The Fast DDS daemon is not running. No servers to list.')
                     raise SystemExit(0)
                 print(client_cli.run_request_b(domain, args_for_cpp, False))
+
             elif command_int == command_to_int[Command.INFO]:
                 print('Info mode not implemented yet.')
+
             else:
                 print('Fast DDS CLI Error: Unknown command')
 
@@ -237,7 +262,7 @@ class Parser:
             sys.exit(e.code)
 
         except BaseException as e:
-            print(f'\n Fast DDS CLI Error: {e}')
+            print(f'\n Fast DDS CLI Error: {type(e).__name__} - {e}')
             sys.exit(1)
 
     def __find_tool_path(self):
@@ -301,41 +326,6 @@ class Parser:
             return True
         return False
 
-    def __get_domain_id_from_env(self) -> int:
-        """
-        Obtain the domain ID from the environment.
-        Default to 0 if not found.
-        """
-        id = 0
-        env_value = os.getenv(DOMAIN_ENV_VAR)
-        if env_value is not None:
-            try:
-                id = int(env_value)
-                if id >= 256:
-                    raise ValueError("Domain ID out of range")
-            except ValueError:
-                print(f"Error: Found invalid Domain ID ({env_value}) in environment variable.")
-        return id
-
-    def __get_remote_servers_from_env(self) -> str:
-        """
-        Obtain the remote servers from the environment.
-        Default to empty string if not found.
-        """
-        servers = ''
-        env_value = os.getenv(REMOTE_SERVERS_ENV_VAR)
-        if env_value is not None:
-            servers = env_value
-        return servers
-
-    def __add_remote_servers_to_args(self, args) -> None:
-        """
-        Add the remote servers to the arguments.
-        """
-        remote_servers = self.__get_remote_servers_from_env()
-        if remote_servers != '':
-            args.append(remote_servers)
-
     def __get_easy_mode_from_env(self) -> str:
         """
         Obtain the value present in 'ROS2_EASY_MODE' from the environment.
@@ -363,3 +353,24 @@ class Parser:
             raise RuntimeError(f'{os.name} not supported')
 
         return shm_path
+
+    def __notify_output(self, output):
+        """
+        Notify the output of the command to the user.
+        """
+        if output:
+            print(output.strip())
+
+            if 'Error starting Server' in output:
+                raise SystemExit(1)  # Exit with error code
+            elif 'Error: DS for Domain' in output:
+                # Different error code to notify Fast DDS RTPSDomain method.
+                raise SystemExit(2)
+        else:
+            print("No output received.")
+
+    def __check_unknown_args(self, unknown_args, command_int):
+        # The 'start' or 'auto' commands require an <IP>:<domain> argument
+        if len(unknown_args) != 1:
+            print(f"Error: Command '{int_to_command[command_int].value}' requires a single <IP>:<domain> argument.")
+            raise SystemExit(1)
