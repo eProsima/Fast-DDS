@@ -61,8 +61,6 @@ int main (
     switch (command_int)
     {
         case ToolCommand::AUTO:
-            return cli_manager.fastdds_discovery_auto_start(options, parse);
-            break;
         case ToolCommand::START:
             return cli_manager.fastdds_discovery_auto_start(options, parse);
             break;
