@@ -171,30 +171,42 @@ private:
             const std::string& file_path,
             bool* was_lock_created)
     {
-        auto fd = open(file_path.c_str(), O_RDONLY, 0);
-
-        if (fd != -1)
+        int fd = -1;
+        do
         {
-            *was_lock_created = false;
-        }
-        else
-        {
-            *was_lock_created = true;
-            fd = open(file_path.c_str(), O_CREAT | O_RDONLY, 0666);
-        }
+            fd = open(file_path.c_str(), O_RDONLY, 0);
 
-        if (fd == -1)
-        {
-            return -1;
-        }
+            if (fd != -1)
+            {
+                *was_lock_created = false;
+            }
+            else
+            {
+                *was_lock_created = true;
+                fd = open(file_path.c_str(), O_CREAT | O_RDONLY, 0666);
+            }
 
-        // Lock the file
-        if (0 != flock(fd, LOCK_EX | LOCK_NB))
-        {
-            close(fd);
-            return -1;
-        }
+            if (fd == -1)
+            {
+                return -1;
+            }
 
+            // Lock the file
+            if (0 != flock(fd, LOCK_EX | LOCK_NB))
+            {
+                close(fd);
+                return -1;
+            }
+
+            // Check if file was deleted by clean up script between open and lock
+            // if yes, repeat file creation
+            struct stat buffer = {};
+            if (stat(file_path.c_str(), &buffer) != 0 && errno == ENOENT)
+            {
+                close(fd);
+                fd = -1;
+            }
+        } while (fd == -1);
         return fd;
     }
 
