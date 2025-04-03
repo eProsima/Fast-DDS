@@ -67,6 +67,8 @@ using eprosima::fastdds::rtps::UDPTransportDescriptor;
 using eprosima::fastdds::rtps::UDPv4TransportDescriptor;
 using eprosima::fastdds::rtps::UDPv6TransportDescriptor;
 using eprosima::fastdds::rtps::IPLocator;
+using eprosima::fastdds::rtps::BuiltinTransports;
+using eprosima::fastdds::rtps::BuiltinTransportsOptions;
 
 using SampleLostStatusFunctor = std::function<void (const eprosima::fastdds::dds::SampleLostStatus&)>;
 using SampleRejectedStatusFunctor = std::function<void (const eprosima::fastdds::dds::SampleRejectedStatus&)>;
@@ -1051,15 +1053,15 @@ public:
     }
 
     PubSubReader& setup_transports(
-            eprosima::fastdds::rtps::BuiltinTransports transports)
+            BuiltinTransports transports)
     {
         participant_qos_.setup_transports(transports);
         return *this;
     }
 
     PubSubReader& setup_transports(
-            eprosima::fastdds::rtps::BuiltinTransports transports,
-            const eprosima::fastdds::rtps::BuiltinTransportsOptions& options)
+            BuiltinTransports transports,
+            const BuiltinTransportsOptions& options)
     {
         participant_qos_.setup_transports(transports, options);
         return *this;
@@ -1068,9 +1070,10 @@ public:
     PubSubReader& setup_large_data_tcp(
             bool v6 = false,
             const uint16_t& port = 0,
-            const uint32_t& tcp_negotiation_timeout = 0)
+            const BuiltinTransportsOptions& options = BuiltinTransportsOptions())
     {
         participant_qos_.transport().use_builtin_transports = false;
+        participant_qos_.transport().max_msg_size_no_frag = options.maxMessageSize;
 
         /* Transports configuration */
         // UDP transport for PDP over multicast
@@ -1088,7 +1091,10 @@ public:
             data_transport->check_crc = false;
             data_transport->apply_security = false;
             data_transport->enable_tcp_nodelay = true;
-            data_transport->tcp_negotiation_timeout = tcp_negotiation_timeout;
+            data_transport->maxMessageSize = options.maxMessageSize;
+            data_transport->sendBufferSize = options.sockets_buffer_size;
+            data_transport->receiveBufferSize = options.sockets_buffer_size;
+            data_transport->tcp_negotiation_timeout = options.tcp_negotiation_timeout;
             participant_qos_.transport().user_transports.push_back(data_transport);
         }
         else
@@ -1102,7 +1108,10 @@ public:
             data_transport->check_crc = false;
             data_transport->apply_security = false;
             data_transport->enable_tcp_nodelay = true;
-            data_transport->tcp_negotiation_timeout = tcp_negotiation_timeout;
+            data_transport->maxMessageSize = options.maxMessageSize;
+            data_transport->sendBufferSize = options.sockets_buffer_size;
+            data_transport->receiveBufferSize = options.sockets_buffer_size;
+            data_transport->tcp_negotiation_timeout = options.tcp_negotiation_timeout;
             participant_qos_.transport().user_transports.push_back(data_transport);
         }
 
