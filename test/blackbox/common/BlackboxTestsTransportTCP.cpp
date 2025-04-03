@@ -1271,9 +1271,10 @@ TEST_P(TransportTCP, large_message_large_data_send_receive)
     PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
 
-    uint32_t tcp_negotiation_timeout = 100;
-    writer.setup_large_data_tcp(use_ipv6, 0, tcp_negotiation_timeout);
-    reader.setup_large_data_tcp(use_ipv6, 0, tcp_negotiation_timeout);
+    BuiltinTransportsOptions options;
+    options.tcp_negotiation_timeout = 100;
+    writer.setup_large_data_tcp(use_ipv6, 0, options);
+    reader.setup_large_data_tcp(use_ipv6, 0, options);
 
     // Init participants
     writer.init();
@@ -1555,6 +1556,50 @@ TEST_P(TransportTCP, best_effort_reader_tcp_resources_creation)
     ASSERT_TRUE(data.empty());
 
     reader.block_for_all();
+}
+
+TEST_P(TransportTCP, large_data_tcp_no_frag)
+{
+    /* Test configuration */
+    PubSubWriter<Data100kbPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<Data100kbPubSubType> reader(TEST_TOPIC_NAME);
+
+    // Reliable keep all to wait of all acked as end condition
+    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS);
+
+    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS);
+
+    // Builtin transport configuration according to test_case
+    BuiltinTransportsOptions options;
+    options.maxMessageSize = 200000;
+    options.sockets_buffer_size = 200000;
+    writer.setup_large_data_tcp(use_ipv6, 0, options);
+    reader.setup_large_data_tcp(use_ipv6, 0, options);
+
+    /* Run test */
+    // Init writer
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Init reader
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Send data
+    auto data = default_data100kb_data_generator();
+    reader.startReception(data);
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+
+    // Wait for reception acknowledgement
+    reader.block_for_all();
+    EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(3)));
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
