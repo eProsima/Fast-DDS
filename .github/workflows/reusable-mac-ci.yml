@@ -27,7 +27,7 @@ on:
         description: 'Branch or tag of Fast CDR repository (https://github.com/eProsima/Fast-CDR)'
         required: false
         type: string
-        default: 'master'
+        default: '1.0.x'
       use-ccache:
         description: 'Use CCache to speed up the build'
         required: false
