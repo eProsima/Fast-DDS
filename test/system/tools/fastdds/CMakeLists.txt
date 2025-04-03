@@ -64,21 +64,28 @@ if(Python3_Interpreter_FOUND)
         set(DISCOVERY_PARSER_TESTS
             TestDiscoveryParser.test_parser_shutdown_when_on
             TestDiscoveryParser.test_parser_shutdown_when_off
+            TestDiscoveryParser.test_parser_auto_fails_ip
+            TestDiscoveryParser.test_parser_auto_fails_domain
+            TestDiscoveryParser.test_parser_auto_fails_extra_arg
             TestDiscoveryParser.test_parser_auto
-            TestDiscoveryParser.test_parser_auto_domain_arg
+            TestDiscoveryParser.test_parser_auto_reverse
             TestDiscoveryParser.test_parser_auto_domain_env
-            TestDiscoveryParser.test_parser_auto_easy_mode_domain_env
-            TestDiscoveryParser.test_parser_auto_ros_static_peers
+            TestDiscoveryParser.test_parser_start_fails_ip
+            TestDiscoveryParser.test_parser_start_fails_domain
+            TestDiscoveryParser.test_parser_start_fails_extra_arg
             TestDiscoveryParser.test_parser_start
-            TestDiscoveryParser.test_parser_start_ros_static_peers
-            TestDiscoveryParser.test_parser_start_with_arg
+            TestDiscoveryParser.test_parser_start_domain_env
             TestDiscoveryParser.test_parser_stop_when_off
             TestDiscoveryParser.test_parser_stop_when_on
             TestDiscoveryParser.test_parser_stop_whith_unknown_args
             TestDiscoveryParser.test_parser_list_when_off
             TestDiscoveryParser.test_parser_list_when_on
+            TestDiscoveryParser.test_parser_add_fails_domain
+            TestDiscoveryParser.test_parser_add_fails_ip
             TestDiscoveryParser.test_parser_add_when_off
             TestDiscoveryParser.test_parser_add_when_on
+            TestDiscoveryParser.test_parser_set_fails_domain
+            TestDiscoveryParser.test_parser_set_fails_ip
             TestDiscoveryParser.test_parser_set_when_off
             TestDiscoveryParser.test_parser_set_when_on
         )
