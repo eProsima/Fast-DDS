@@ -24,7 +24,6 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 
-constexpr const char* domain_env_var = "ROS_DOMAIN_ID";
 constexpr const char* remote_servers_env_var = "ROS_STATIC_PEERS";
 constexpr const char* default_ip = "0.0.0.0";
 
@@ -271,7 +270,7 @@ public:
     /**
      * @brief Launch the AUTO mode of the CLI. It checks if a new Discovery Server exists in the
      * specified domain. It it does not exist, it creates a new one. If it exists, it does nothing.
-     * Remote servers are added with the ROS_STATIC_PEERS environment variable or directly from the CLI.
+     * Remote server is added directly from the argument passed to the CLI, which is mandatory.
      * @param options The options received from the CLI
      * @param parse The parser object to be used
      */

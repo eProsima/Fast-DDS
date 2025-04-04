@@ -922,21 +922,23 @@ int CliDiscoveryManager::fastdds_discovery_auto_start(
         const std::vector<option::Option>& options,
         option::Parser& parse)
 {
+    // Check initial options allowing unknown args
     if (initial_options_fail(options, parse, false))
     {
         return 1;
     }
-    // Start a server for the domain specified
+
     int return_value = 0;
     // Servers are added directly to the CLI with no arg associated
-    int numServs = parse.nonOptionsCount();
-    if (numServs > 1)
+    int numServerArgs = parse.nonOptionsCount();
+    if (numServerArgs > 1)
     {
         EPROSIMA_LOG_ERROR(CLI_START,
                 "Too many arguments specified. Expected format is: start -d <domain> <ip:domain;ip:domain...>");
         return 1;
     }
 
+    // Check if there is a server running in the domain specified
     const option::Option* pOp = options[DOMAIN_OPT];
     DomainId_t id = get_domain_id(pOp);
     if (is_server_running(id))
@@ -951,9 +953,14 @@ int CliDiscoveryManager::fastdds_discovery_auto_start(
     {
         return 1;
     }
-    std::string servers = get_remote_servers(parse, numServs);
+    std::string servers = get_remote_servers(parse, numServerArgs);
     rtps::LocatorList_t serverList;
-    load_environment_server_info(servers, serverList);
+    if (!load_environment_server_info(servers, serverList))
+    {
+        EPROSIMA_LOG_ERROR(CLI_START,
+                "Error parsing servers. Expected format is: <ip:domain;ip:domain...>");
+        return 1;
+    }
     for (rtps::Locator_t& locator : serverList)
     {
         locator.kind = LOCATOR_KIND_UDPv4;
@@ -1048,6 +1055,13 @@ int CliDiscoveryManager::fastdds_discovery_add(
                 "No servers specified to add. Use ROS_STATIC_PEERS or format: add -d <domain> <ip:domain;ip:domain...>");
         return 1;
     }
+    rtps::LocatorList_t serverList;
+    if (!load_environment_server_info(servers, serverList))
+    {
+        EPROSIMA_LOG_ERROR(CLI_ADD,
+                "Error parsing servers. Expected format is: <ip:domain;ip:domain...>");
+        return 1;
+    }
     std::cout << "Signaling Server for Domain ID [" << id << "] to add: " << servers << std::endl;
     write_servers_to_file(file_name.str(), servers);
     kill(server_pid, SIGUSR1);
@@ -1092,6 +1106,19 @@ int CliDiscoveryManager::fastdds_discovery_set(
     std::stringstream file_name;
     file_name << intraprocess_dir_ << "/" << port << "_servers.txt";
     std::string servers = get_remote_servers(parse, numServs);
+    if (servers.empty())
+    {
+        EPROSIMA_LOG_ERROR(CLI_ADD,
+                "No servers specified to add. Use ROS_STATIC_PEERS or format: add -d <domain> <ip:domain;ip:domain...>");
+        return 1;
+    }
+    rtps::LocatorList_t serverList;
+    if (!load_environment_server_info(servers, serverList))
+    {
+        EPROSIMA_LOG_ERROR(CLI_ADD,
+                "Error parsing servers. Expected format is: <ip:domain;ip:domain...>");
+        return 1;
+    }
     std::cout << "Signaling Server for Domain ID [" << id << "] to set: " << servers << std::endl;
     write_servers_to_file(file_name.str(), servers);
     kill(server_pid, SIGUSR2);
