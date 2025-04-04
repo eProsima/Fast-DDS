@@ -1,0 +1,77 @@
+name: Fast DDS Sanitizers CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      label:
+        description: 'ID associated to the workflow'
+        required: true
+        type: string
+      run_asan_fastdds:
+        description: 'Run Addess Sanitizer job for Fast DDS'
+        required: false
+        type: boolean
+      run_asan_discovery_server:
+        description: 'Run Addess Sanitizer job for Discovery Server'
+        required: false
+        type: boolean
+      run_tsan_fastdds:
+        description: 'Run Thread Sanitizer job for Fast DDS'
+        required: false
+        type: boolean
+      colcon_build_args:
+        description: 'Optional colcon build arguments'
+        required: false
+        type: string
+      colcon_test_args:
+        description: 'Optional colcon test arguments'
+        required: false
+        type: string
+      cmake_args:
+        description: 'Optional CMake Compilation Flags'
+        required: false
+        type: string
+      ctest_args:
+        description: 'Optional CTest Testing Flags'
+        required: false
+        type: string
+      fastdds_ref:
+        description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
+        required: true
+      discovery_server_ref:
+        description: >
+          Branch or tag of Discovery Server repository (https://github.com/eProsima/Discovery-Server)
+          Required only if the Discovery Server job is requested
+        required: false
+
+  pull_request:
+    types:
+      - review_requested
+    paths-ignore:
+        - '**.md'
+        - '**.txt'
+        - '!**/CMakeLists.txt'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sanitizers-ci:
+    if: ${{ (
+              !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+              !contains(github.event.pull_request.labels.*.name, 'no-test') &&
+              !contains(github.event.pull_request.labels.*.name, 'conflicts')
+            ) }}
+    uses: ./.github/workflows/reusable-sanitizers-ci.yml
+    with:
+      label: ${{ inputs.label || 'fastdds-sanitizers-ci' }}
+      run_asan_fastdds: ${{ ((inputs.run_asan_fastdds == true) && true) || github.event_name == 'pull_request' }}
+      run_asan_discovery_server: ${{ ((inputs.run_asan_discovery_server == true) && true) || github.event_name == 'pull_request' }}
+      run_tsan_fastdds: ${{ ((inputs.run_tsan_fastdds == true) && true) || github.event_name == 'pull_request' }}
+      colcon_build_args: ${{ inputs.colcon_build_args || '' }}
+      colcon_test_args: ${{ inputs.colcon_test_args || '' }}
+      cmake_args: ${{ inputs.cmake_args || '' }}
+      ctest_args: ${{ inputs.ctest_args || '' }}
+      fastdds_ref: ${{ inputs.fastdds_ref || github.ref || 'master' }}
+      discovery_server_ref: ${{ inputs.discovery_server_ref || 'master' }}
