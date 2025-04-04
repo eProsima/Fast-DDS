@@ -51,20 +51,49 @@ struct asio_helpers
         asio::error_code ec;
 
         final_buffer_value = initial_buffer_value;
-        while (final_buffer_value >= minimum_buffer_value)
+        while (final_buffer_value > minimum_buffer_value)
         {
-            socket.set_option(BufferOptionType(static_cast<int32_t>(final_buffer_value)), ec);
+            int32_t value_to_set = static_cast<int32_t>(final_buffer_value);
+            socket.set_option(BufferOptionType(value_to_set), ec);
             if (!ec)
             {
+                BufferOptionType option;
+                socket.get_option(option, ec);
+                if (!ec)
+                {
+                    if (option.value() == value_to_set)
+                    {
+                        // Option actually set to the desired value
+                        return true;
+                    }
+                    // Try again with the value actually set
+                    final_buffer_value = option.value();
+                    continue;
+                }
+                // Could not determine the actual value, but the option was set successfully.
+                // Assume the option was set to the desired value.
                 return true;
             }
 
             final_buffer_value /= 2;
         }
 
+        // Perform a final attempt to set the minimum value
         final_buffer_value = minimum_buffer_value;
-        socket.set_option(BufferOptionType(final_buffer_value), ec);
-        return !ec;
+        int32_t value_to_set = static_cast<int32_t>(final_buffer_value);
+        socket.set_option(BufferOptionType(value_to_set), ec);
+        if (!ec)
+        {
+            // Last attempt was successful. Get the actual value set.
+            BufferOptionType option;
+            socket.get_option(option, ec);
+            if (!ec)
+            {
+                final_buffer_value = option.value();
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
