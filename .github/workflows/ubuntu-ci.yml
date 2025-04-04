@@ -1,0 +1,72 @@
+name: Fast DDS Ubuntu CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      label:
+        description: 'ID associated to the workflow'
+        required: true
+        type: string
+      colcon-args:
+        description: 'Extra arguments for colcon cli'
+        required: false
+        type: string
+      cmake-args:
+        description: 'Extra arguments for cmake cli'
+        required: false
+        type: string
+      ctest-args:
+        description: 'Extra arguments for ctest cli'
+        required: false
+        type: string
+      fastdds_branch:
+        description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
+        type: string
+        required: true
+      security:
+        description: 'Enable security features'
+        required: false
+        type: boolean
+        default: true
+      run-tests:
+        description: 'Run suite of tests of Fast DDS, Fast DDS python, and Fast DDS Discovery Server'
+        required: false
+        type: boolean
+        default: true
+      use-ccache:
+        description: 'Use CCache to speed up the build'
+        required: false
+        type: boolean
+        default: false
+
+  pull_request:
+    types:
+      - review_requested
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '!**/CMakeLists.txt'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ubuntu-ci:
+
+    if: ${{ !(github.event_name == 'pull_request') || !contains(github.event.pull_request.labels.*.name, 'conflicts') }}
+    uses: ./.github/workflows/reusable-ubuntu-ci.yml
+    with:
+      # It would be desirable to have a matrix of ubuntu OS for this job, but due to the issue opened in this ticket:
+      # https://github.com/orgs/community/discussions/128118 , it has been set as a single OS job.
+      os-image: 'ubuntu-22.04'
+      label: ${{ inputs.label || 'ubuntu-ci' }}
+      colcon-args: ${{ inputs.colcon-args }}
+      cmake-args: ${{ inputs.cmake-args }}
+      ctest-args: ${{ inputs.ctest-args || '-LE xfail' }}
+      fastdds-branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
+      security: ${{ ((inputs.security == true) && true) || github.event_name == 'pull_request' }}
+      run-build: ${{ !(github.event_name == 'pull_request') || !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
+      run-tests: ${{ ((inputs.run-tests == true) && true) || (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'no-test')) }}
+      use-ccache: ${{ ((inputs.use-ccache == true) && true) || false }}
+      add-label: ${{ (github.event_name == 'pull_request') && (github.event.pull_request.head.repo.full_name == github.repository) && true || false }}

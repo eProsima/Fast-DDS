@@ -1,17 +1,13 @@
 name: Fast DDS Windows CI (nightly)
 
 on:
-  pull_request:
-    types:
-      - review_requested
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '!**/CMakeLists.txt'
+  workflow_dispatch:
+  schedule:
+    - cron: '0 22 * * *' # At 22:00 GMT
 
 jobs:
-  nightly-windows-ci-fix22592:
-    name: nightly-windows-ci-fix22592 (${{ matrix.cmake_build_type }}, SEC=${{ matrix.security }}, ${{ matrix.test_filter }})
+  nightly-windows-ci-master:
+    name: nightly-windows-ci-master (${{ matrix.cmake_build_type }}, SEC=${{ matrix.security }}, ${{ matrix.test_filter }})
     strategy:
       fail-fast: false
       matrix:
@@ -26,10 +22,10 @@ jobs:
           - 'unittest'
         filter_expression:
           - 'BlackboxTests|example_tests|ParticipantTests|SecureDiscoverServer'
-    uses: eProsima/Fast-DDS/.github/workflows/reusable-windows-ci.yml@fix/22592
+    uses: eProsima/Fast-DDS/.github/workflows/reusable-windows-ci.yml@master
     with:
-      label: nightly-sec-${{ matrix.security }}-${{ matrix.cmake_build_type }}-${{ matrix.test_filter }}-windows-ci-fix22592
+      label: nightly-sec-${{ matrix.security }}-${{ matrix.cmake_build_type }}-${{ matrix.test_filter }}-windows-ci-master
       cmake-config: ${{ matrix.cmake_build_type }}
       cmake-args: "-DSECURITY=${{ matrix.security }}"
       ctest-args: -LE xfail ${{ matrix.test_filter == 'blackbox' && format('-R "{0}"', matrix.filter_expression) || format('-E "{0}" -j 4', matrix.filter_expression) }}
-      fastdds_branch: 'fix/22592'
+      fastdds_branch: 'master'
