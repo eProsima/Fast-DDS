@@ -474,6 +474,7 @@ bool StatelessWriter::matched_reader_add(
                     {
                         filter_remote_locators(*reader.general_locator_selector_entry(),
                         m_att.external_unicast_locators, m_att.ignore_non_matching_locators);
+                        mp_RTPSParticipant->createSenderResources(data.remote_locators(), m_att);
                         update_reader_info(true);
                     }
                     return true;
@@ -549,6 +550,13 @@ bool StatelessWriter::matched_reader_add(
                                                         << " as remote reader");
     }
 
+<<<<<<< HEAD
+=======
+    // Create sender resources for the case when we send to a single reader
+    mp_RTPSParticipant->createSenderResources(data.remote_locators(), m_att);
+
+    // Create sender resources for the case when we send to all readers
+>>>>>>> 2c7e56f4 (Fix assertion on `OutputTrafficManager` (#5704) (#5711))
     update_reader_info(true);
 
     if (nullptr != mp_listener)
