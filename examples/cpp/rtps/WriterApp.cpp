@@ -157,10 +157,12 @@ void WriterApp::run()
         if (data_->index() == 1u)
         {
             bool sample_acked = false;
-            do{
+            do
+            {
                 dds::Duration_t acked_wait{1, 0};
                 sample_acked = rtps_writer_->wait_for_all_acked(acked_wait);
-            }while (!sample_acked);
+            }
+            while (!sample_acked);
         }
 
         // Wait for period or stop event
