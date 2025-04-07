@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 import sys
 import os
 from pathlib import Path
@@ -25,7 +25,10 @@ sys.path.insert(0, str(Path(os.getenv('TOOL_PATH'), 'bin')))
 # Import the Parser class from the parser module
 from parser import Parser, command_to_int, Command
 
-
+# This test class is used to test that the parser module produces the expected
+# commands and calls to the daemon when the user runs the command line tool.
+# It does not check the daemon behavior, which should be tested in separate
+# blackbox tests, like the ones in the discovery server repo.
 class TestDiscoveryParser(unittest.TestCase):
     def __init__(self, methodName = "test_fastdds_daemon"):
         super().__init__(methodName)
@@ -37,14 +40,19 @@ class TestDiscoveryParser(unittest.TestCase):
         self.third_attr = ''
 
     def side_effect_rpc(self, *args, **kwargs):
-        domain = args[0]
-        used_cmd = args[1]
-        third_attr = args[2]
-        assert(domain == self.domain)
-        assert(len(used_cmd) == len(self.check_command))
-        assert(third_attr == self.third_attr)
-        for i in range(len(self.check_command)):
-            assert(used_cmd[i] == self.check_command[i])
+        try:
+            domain = args[0]
+            used_cmd = args[1]
+            third_attr = args[2]
+            assert(domain == self.domain)
+            assert(len(used_cmd) == len(self.check_command))
+            for i in range(len(self.check_command)):
+                assert(used_cmd[i] == self.check_command[i])
+            assert(third_attr == self.third_attr)
+        except Exception as e:
+            print(f"Error in mock 'side_effect_rpc': {e}")
+            # Raise exception to detect error in the test
+            raise e
         return 'Mocked request'
 
     def set_env_values(self, env_var_name, value):
@@ -57,6 +65,7 @@ class TestDiscoveryParser(unittest.TestCase):
     @patch('parser.client_cli.run_request_nb')
     @patch('parser.client_cli.stop_all_request')
     def test_parser_shutdown_when_on(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_shutdown, mock_is_running, mock_exit):
+        """ Test that the stop command shutdowns the daemon when it is running """
         mock_rpc_stopall.return_value = 'Mocked request'
         mock_rpc_nbrequest.return_value = 'Mocked request'
         mock_rpc_brequest.return_value = 'Mocked request'
@@ -80,6 +89,7 @@ class TestDiscoveryParser(unittest.TestCase):
     @patch('parser.client_cli.run_request_nb')
     @patch('parser.client_cli.stop_all_request')
     def test_parser_shutdown_when_off(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_shutdown, mock_is_running, mock_exit):
+        """ Test that the stop command does nothing when it is not running """
         mock_rpc_stopall.return_value = 'Mocked request'
         mock_rpc_nbrequest.return_value = 'Mocked request'
         mock_rpc_brequest.return_value = 'Mocked request'
@@ -106,16 +116,87 @@ class TestDiscoveryParser(unittest.TestCase):
     @patch('parser.client_cli.run_request_b')
     @patch('parser.client_cli.run_request_nb')
     @patch('parser.client_cli.stop_all_request')
-    def test_parser_auto(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+    def test_parser_auto_fails_ip(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+        """ Test that the auto command fails to call 'run_request_nb' if no ip arg is passed. """
         mock_rpc_stopall.return_value = 'Mocked request'
         mock_rpc_nbrequest.return_value = 'Mocked request'
         mock_rpc_brequest.return_value = 'Mocked request'
         mock_spawn.return_value = True
 
-        self.check_command = [str(command_to_int[Command.AUTO]), '-d', '0']
+        argv = ['auto', '-d', '42']
+        parser = Parser(argv)
+
+        mock_is_running.assert_not_called()
+        mock_spawn.assert_not_called()
+        mock_rpc_stopall.assert_not_called()
+        mock_rpc_nbrequest.assert_not_called()
+        mock_rpc_brequest.assert_not_called()
+        mock_exit.assert_called_once()
+
+    @patch('parser.sys.exit')
+    @patch('parser.is_daemon_running')
+    @patch('parser.spawn_daemon')
+    @patch('parser.client_cli.run_request_b')
+    @patch('parser.client_cli.run_request_nb')
+    @patch('parser.client_cli.stop_all_request')
+    def test_parser_auto_fails_domain(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+        """ Test that the auto command fails to call 'run_request_nb' if no domain arg is passed. """
+        mock_rpc_stopall.return_value = 'Mocked request'
+        mock_rpc_nbrequest.return_value = 'Mocked request'
+        mock_rpc_brequest.return_value = 'Mocked request'
+
+        argv = ['auto', '127.0.0.1:42']
+        parser = Parser(argv)
+
+        mock_is_running.assert_not_called()
+        mock_spawn.assert_not_called()
+        mock_rpc_stopall.assert_not_called()
+        mock_rpc_nbrequest.assert_not_called()
+        mock_rpc_brequest.assert_not_called()
+        mock_exit.assert_called_once()
+
+    @patch('parser.sys.exit')
+    @patch('parser.is_daemon_running')
+    @patch('parser.spawn_daemon')
+    @patch('parser.client_cli.run_request_b')
+    @patch('parser.client_cli.run_request_nb')
+    @patch('parser.client_cli.stop_all_request')
+    def test_parser_auto_fails_extra_arg(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+        """ Test that the auto command does not allow extra arguments. """
+        mock_rpc_stopall.return_value = 'Mocked request'
+        mock_rpc_nbrequest.return_value = 'Mocked request'
+        mock_rpc_brequest.return_value = 'Mocked request'
+        mock_spawn.return_value = True
+
+        argv = ['auto', '-d', '42', '127.0.0.1:42', 'extra_arg']
+        parser = Parser(argv)
+
+        mock_is_running.assert_not_called()
+        mock_spawn.assert_not_called()
+        mock_rpc_stopall.assert_not_called()
+        mock_rpc_nbrequest.assert_not_called()
+        mock_rpc_brequest.assert_not_called()
+        mock_exit.assert_called_once()
+
+    @patch('parser.sys.exit')
+    @patch('parser.is_daemon_running')
+    @patch('parser.spawn_daemon')
+    @patch('parser.client_cli.run_request_b')
+    @patch('parser.client_cli.run_request_nb')
+    @patch('parser.client_cli.stop_all_request')
+    def test_parser_auto(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+        """ Test that the auto command can parse the arg '-d' correctly. """
+        mock_rpc_stopall.return_value = 'Mocked request'
+        mock_rpc_nbrequest.return_value = 'Mocked request'
+        mock_rpc_brequest.return_value = 'Mocked request'
+        mock_spawn.return_value = True
+
+        self.domain = 7
+        self.third_attr = '192.168.1.42'
+        self.check_command = [str(command_to_int[Command.AUTO]), '-d', '7', '192.168.1.42:42']
         mock_rpc_nbrequest.side_effect = self.side_effect_rpc
 
-        argv = ['auto']
+        argv = ['auto', '-d', '7', '192.168.1.42:42']
         parser = Parser(argv)
 
         mock_is_running.assert_not_called()
@@ -131,19 +212,20 @@ class TestDiscoveryParser(unittest.TestCase):
     @patch('parser.client_cli.run_request_b')
     @patch('parser.client_cli.run_request_nb')
     @patch('parser.client_cli.stop_all_request')
-    def test_parser_auto_domain_arg(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+    def test_parser_auto_reverse(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+        """ Test that the auto command can parse the arg '-d' correctly. """
         mock_rpc_stopall.return_value = 'Mocked request'
         mock_rpc_nbrequest.return_value = 'Mocked request'
         mock_rpc_brequest.return_value = 'Mocked request'
         mock_spawn.return_value = True
 
         self.domain = 7
-        self.check_command = [str(command_to_int[Command.AUTO]), '-d', '7']
+        self.third_attr = '192.168.1.42'
+        self.check_command = [str(command_to_int[Command.AUTO]), '-d', '7', '192.168.1.42:42']
         mock_rpc_nbrequest.side_effect = self.side_effect_rpc
 
-        argv = ['auto', '-d', '7']
+        argv = ['auto', '192.168.1.42:42', '-d', '7']
         parser = Parser(argv)
-        print('End of test')
 
         mock_is_running.assert_not_called()
         mock_spawn.assert_called_once()
@@ -159,47 +241,20 @@ class TestDiscoveryParser(unittest.TestCase):
     @patch('parser.client_cli.run_request_nb')
     @patch('parser.client_cli.stop_all_request')
     def test_parser_auto_domain_env(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+        """ Test that the auto command ignores the ROS_DOMAIN_ID env var correctly. """
         mock_rpc_stopall.return_value = 'Mocked request'
         mock_rpc_nbrequest.return_value = 'Mocked request'
         mock_rpc_brequest.return_value = 'Mocked request'
         mock_spawn.return_value = True
 
         self.set_env_values('ROS_DOMAIN_ID', '42')
-        self.domain = 42
-        self.check_command = [str(command_to_int[Command.AUTO]), '-d', '42']
-        mock_rpc_nbrequest.side_effect = self.side_effect_rpc
-
-        argv = ['auto']
-        parser = Parser(argv)
-
-        mock_is_running.assert_not_called()
-        mock_spawn.assert_called_once()
-        mock_rpc_stopall.assert_not_called()
-        mock_rpc_nbrequest.assert_called_once()
-        mock_rpc_brequest.assert_not_called()
-        mock_exit.assert_not_called()
-
-    @patch('parser.sys.exit')
-    @patch('parser.is_daemon_running')
-    @patch('parser.spawn_daemon')
-    @patch('parser.client_cli.run_request_b')
-    @patch('parser.client_cli.run_request_nb')
-    @patch('parser.client_cli.stop_all_request')
-    def test_parser_auto_easy_mode_domain_env(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
-        mock_rpc_stopall.return_value = 'Mocked request'
-        mock_rpc_nbrequest.return_value = 'Mocked request'
-        mock_rpc_brequest.return_value = 'Mocked request'
-        mock_spawn.return_value = True
-
-        self.set_env_values('ROS2_EASY_MODE', '127.0.0.1')
-        self.domain = 42
+        self.set_env_values('ROS2_EASY_MODE', '1.1.1.1')
+        self.domain = 7
         self.third_attr = '127.0.0.1'
-        self.check_command = [str(command_to_int[Command.AUTO]), '-d', '42', '127.0.0.1:42']
+        self.check_command = [str(command_to_int[Command.AUTO]), '-d', '7', '127.0.0.1:7']
         mock_rpc_nbrequest.side_effect = self.side_effect_rpc
 
-        # The parser is not responsible of adding the ROS2_EASY_MODE argument to the command. This is done in Fast DDS.
-        # The parser only checks if the ROS2_EASY_MODE variable is set to pass it to the RPC server as third argument
-        argv = ['auto', '-d', '42', '127.0.0.1:42']
+        argv = ['auto', '-d', '7', '127.0.0.1:7']
         parser = Parser(argv)
 
         mock_is_running.assert_not_called()
@@ -215,25 +270,67 @@ class TestDiscoveryParser(unittest.TestCase):
     @patch('parser.client_cli.run_request_b')
     @patch('parser.client_cli.run_request_nb')
     @patch('parser.client_cli.stop_all_request')
-    def test_parser_auto_ros_static_peers(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+    def test_parser_start_fails_ip(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+        """ Test that the start command fails to call 'run_request_nb' if no ip arg is passed. """
         mock_rpc_stopall.return_value = 'Mocked request'
         mock_rpc_nbrequest.return_value = 'Mocked request'
         mock_rpc_brequest.return_value = 'Mocked request'
         mock_spawn.return_value = True
 
-        self.set_env_values('ROS_STATIC_PEERS', '127.0.0.1:1')
-        self.check_command = [str(command_to_int[Command.AUTO]), '-d', '0', '127.0.0.1:1']
-        mock_rpc_nbrequest.side_effect = self.side_effect_rpc
-
-        argv = ['auto']
+        argv = ['start', '-d', '42']
         parser = Parser(argv)
 
         mock_is_running.assert_not_called()
-        mock_spawn.assert_called_once()
+        mock_spawn.assert_not_called()
         mock_rpc_stopall.assert_not_called()
-        mock_rpc_nbrequest.assert_called_once()
+        mock_rpc_nbrequest.assert_not_called()
         mock_rpc_brequest.assert_not_called()
-        mock_exit.assert_not_called()
+        mock_exit.assert_called_once()
+
+    @patch('parser.sys.exit')
+    @patch('parser.is_daemon_running')
+    @patch('parser.spawn_daemon')
+    @patch('parser.client_cli.run_request_b')
+    @patch('parser.client_cli.run_request_nb')
+    @patch('parser.client_cli.stop_all_request')
+    def test_parser_start_fails_domain(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+        """ Test that the start command fails to call 'run_request_nb' if no domain arg is passed. """
+        mock_rpc_stopall.return_value = 'Mocked request'
+        mock_rpc_nbrequest.return_value = 'Mocked request'
+        mock_rpc_brequest.return_value = 'Mocked request'
+
+        argv = ['start', '127.0.0.1:42']
+        parser = Parser(argv)
+
+        mock_is_running.assert_not_called()
+        mock_spawn.assert_not_called()
+        mock_rpc_stopall.assert_not_called()
+        mock_rpc_nbrequest.assert_not_called()
+        mock_rpc_brequest.assert_not_called()
+        mock_exit.assert_called_once()
+
+    @patch('parser.sys.exit')
+    @patch('parser.is_daemon_running')
+    @patch('parser.spawn_daemon')
+    @patch('parser.client_cli.run_request_b')
+    @patch('parser.client_cli.run_request_nb')
+    @patch('parser.client_cli.stop_all_request')
+    def test_parser_start_fails_extra_arg(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+        """ Test that the start command does not allow extra arguments. """
+        mock_rpc_stopall.return_value = 'Mocked request'
+        mock_rpc_nbrequest.return_value = 'Mocked request'
+        mock_rpc_brequest.return_value = 'Mocked request'
+        mock_spawn.return_value = True
+
+        argv = ['start', '-d', '42', '127.0.0.1:42', 'extra_arg']
+        parser = Parser(argv)
+
+        mock_is_running.assert_not_called()
+        mock_spawn.assert_not_called()
+        mock_rpc_stopall.assert_not_called()
+        mock_rpc_nbrequest.assert_not_called()
+        mock_rpc_brequest.assert_not_called()
+        mock_exit.assert_called_once()
 
     @patch('parser.sys.exit')
     @patch('parser.is_daemon_running')
@@ -242,15 +339,18 @@ class TestDiscoveryParser(unittest.TestCase):
     @patch('parser.client_cli.run_request_nb')
     @patch('parser.client_cli.stop_all_request')
     def test_parser_start(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+        """ Test that the start command can parse the arg '-d' correctly. """
         mock_rpc_stopall.return_value = 'Mocked request'
         mock_rpc_nbrequest.return_value = 'Mocked request'
         mock_rpc_brequest.return_value = 'Mocked request'
         mock_spawn.return_value = True
 
-        self.check_command = [str(command_to_int[Command.START]), '-d', '0']
+        self.domain = 7
+        self.third_attr = '192.168.1.42'
+        self.check_command = [str(command_to_int[Command.START]), '-d', '7', '192.168.1.42:42']
         mock_rpc_nbrequest.side_effect = self.side_effect_rpc
 
-        argv = ['start']
+        argv = ['start', '-d', '7', '192.168.1.42:42']
         parser = Parser(argv)
 
         mock_is_running.assert_not_called()
@@ -266,42 +366,21 @@ class TestDiscoveryParser(unittest.TestCase):
     @patch('parser.client_cli.run_request_b')
     @patch('parser.client_cli.run_request_nb')
     @patch('parser.client_cli.stop_all_request')
-    def test_parser_start_ros_static_peers(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+    def test_parser_start_domain_env(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+        """ Test that the start command ignores the ROS_DOMAIN_ID env var correctly. """
         mock_rpc_stopall.return_value = 'Mocked request'
         mock_rpc_nbrequest.return_value = 'Mocked request'
         mock_rpc_brequest.return_value = 'Mocked request'
         mock_spawn.return_value = True
 
-        self.set_env_values('ROS_STATIC_PEERS', '127.0.0.1:1;127.0.0.1:2')
-        self.check_command = [str(command_to_int[Command.START]), '-d', '0', '127.0.0.1:1;127.0.0.1:2']
+        self.set_env_values('ROS_DOMAIN_ID', '42')
+        self.set_env_values('ROS2_EASY_MODE', '1.1.1.1')
+        self.domain = 7
+        self.third_attr = '127.0.0.1'
+        self.check_command = [str(command_to_int[Command.START]), '-d', '7', '127.0.0.1:7']
         mock_rpc_nbrequest.side_effect = self.side_effect_rpc
 
-        argv = ['start']
-        parser = Parser(argv)
-
-        mock_is_running.assert_not_called()
-        mock_spawn.assert_called_once()
-        mock_rpc_stopall.assert_not_called()
-        mock_rpc_nbrequest.assert_called_once()
-        mock_rpc_brequest.assert_not_called()
-        mock_exit.assert_not_called()
-
-    @patch('parser.sys.exit')
-    @patch('parser.is_daemon_running')
-    @patch('parser.spawn_daemon')
-    @patch('parser.client_cli.run_request_b')
-    @patch('parser.client_cli.run_request_nb')
-    @patch('parser.client_cli.stop_all_request')
-    def test_parser_start_with_arg(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
-        mock_rpc_stopall.return_value = 'Mocked request'
-        mock_rpc_nbrequest.return_value = 'Mocked request'
-        mock_rpc_brequest.return_value = 'Mocked request'
-        mock_spawn.return_value = True
-
-        self.check_command = [str(command_to_int[Command.START]), '-d', '0', '127.0.0.1:4;127.0.0.1:2']
-        mock_rpc_nbrequest.side_effect = self.side_effect_rpc
-
-        argv = ['start', '127.0.0.1:4;127.0.0.1:2']
+        argv = ['start', '-d', '7', '127.0.0.1:7']
         parser = Parser(argv)
 
         mock_is_running.assert_not_called()
@@ -318,6 +397,7 @@ class TestDiscoveryParser(unittest.TestCase):
     @patch('parser.client_cli.run_request_nb')
     @patch('parser.client_cli.stop_request')
     def test_parser_stop_when_off(self, mock_rpc_stop_once, mock_rpc_nbrequest, mock_rpc_brequest, mock_shutdown, mock_is_running, mock_exit):
+        """ Test that the stop command with arg does nothing when it is not running """
         mock_rpc_stop_once.return_value = 'Mocked request'
         mock_rpc_nbrequest.return_value = 'Mocked request'
         mock_rpc_brequest.return_value = 'Mocked request'
@@ -348,6 +428,7 @@ class TestDiscoveryParser(unittest.TestCase):
     @patch('parser.client_cli.run_request_nb')
     @patch('parser.client_cli.stop_request')
     def test_parser_stop_when_on(self, mock_rpc_stop_once, mock_rpc_nbrequest, mock_rpc_brequest, mock_shutdown, mock_is_running, mock_exit):
+        """ Test that the stop command calls 'stop_request' the daemon when it is running. """
         mock_rpc_stop_once.return_value = 'Mocked request'
         mock_rpc_nbrequest.return_value = 'Mocked request'
         mock_rpc_brequest.return_value = 'Mocked request'
@@ -374,6 +455,7 @@ class TestDiscoveryParser(unittest.TestCase):
     @patch('parser.client_cli.run_request_nb')
     @patch('parser.client_cli.stop_request')
     def test_parser_stop_whith_unknown_args(self, mock_rpc_stop_once, mock_rpc_nbrequest, mock_rpc_brequest, mock_shutdown, mock_is_running, mock_exit):
+        """ Test that the stop command exits when called with unknown args. """
         mock_rpc_stop_once.return_value = 'Mocked request'
         mock_rpc_nbrequest.return_value = 'Mocked request'
         mock_rpc_brequest.return_value = 'Mocked request'
@@ -400,6 +482,7 @@ class TestDiscoveryParser(unittest.TestCase):
     @patch('parser.client_cli.run_request_nb')
     @patch('parser.client_cli.stop_all_request')
     def test_parser_list_when_off(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+        """ Test that the list command does nothing if the daemon is not running. """
         mock_rpc_stopall.return_value = 'Mocked request'
         mock_rpc_nbrequest.return_value = 'Mocked request'
         mock_rpc_brequest.return_value = 'Mocked request'
@@ -431,6 +514,7 @@ class TestDiscoveryParser(unittest.TestCase):
     @patch('parser.client_cli.run_request_nb')
     @patch('parser.client_cli.stop_all_request')
     def test_parser_list_when_on(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+        """ Test that the list command calls 'run_request_b' if the daemon is running. """
         mock_rpc_stopall.return_value = 'Mocked request'
         mock_rpc_nbrequest.return_value = 'Mocked request'
         mock_rpc_brequest.return_value = 'Mocked request'
@@ -457,7 +541,52 @@ class TestDiscoveryParser(unittest.TestCase):
     @patch('parser.client_cli.run_request_b')
     @patch('parser.client_cli.run_request_nb')
     @patch('parser.client_cli.stop_all_request')
+    def test_parser_add_fails_domain(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+        """ Test that the add command fails to call 'run_request_b' if no domain arg is passed. """
+        mock_rpc_stopall.return_value = 'Mocked request'
+        mock_rpc_nbrequest.return_value = 'Mocked request'
+        mock_rpc_brequest.return_value = 'Mocked request'
+
+        argv = ['add', '127.0.0.1:42']
+        parser = Parser(argv)
+
+        mock_is_running.assert_not_called()
+        mock_spawn.assert_not_called()
+        mock_rpc_stopall.assert_not_called()
+        mock_rpc_nbrequest.assert_not_called()
+        mock_rpc_brequest.assert_not_called()
+        mock_exit.assert_called_once()
+
+    @patch('parser.sys.exit')
+    @patch('parser.is_daemon_running')
+    @patch('parser.spawn_daemon')
+    @patch('parser.client_cli.run_request_b')
+    @patch('parser.client_cli.run_request_nb')
+    @patch('parser.client_cli.stop_all_request')
+    def test_parser_add_fails_ip(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+        """ Test that the add command fails to call 'run_request_b' if no ip arg is passed. """
+        mock_rpc_stopall.return_value = 'Mocked request'
+        mock_rpc_nbrequest.return_value = 'Mocked request'
+        mock_rpc_brequest.return_value = 'Mocked request'
+
+        argv = ['add', '-d', '42']
+        parser = Parser(argv)
+
+        mock_is_running.assert_not_called()
+        mock_spawn.assert_not_called()
+        mock_rpc_stopall.assert_not_called()
+        mock_rpc_nbrequest.assert_not_called()
+        mock_rpc_brequest.assert_not_called()
+        mock_exit.assert_called_once()
+
+    @patch('parser.sys.exit')
+    @patch('parser.is_daemon_running')
+    @patch('parser.spawn_daemon')
+    @patch('parser.client_cli.run_request_b')
+    @patch('parser.client_cli.run_request_nb')
+    @patch('parser.client_cli.stop_all_request')
     def test_parser_add_when_off(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+        """ Test that the add command does nothing if the daemon is not running. """
         mock_rpc_stopall.return_value = 'Mocked request'
         mock_rpc_nbrequest.return_value = 'Mocked request'
         mock_rpc_brequest.return_value = 'Mocked request'
@@ -468,7 +597,7 @@ class TestDiscoveryParser(unittest.TestCase):
         self.check_command = [str(command_to_int[Command.ADD]), '-d', '0']
         mock_rpc_brequest.side_effect = self.side_effect_rpc
 
-        argv = ['add']
+        argv = ['add', '-d', '0', '127.0.0.1:42']
         try:
             parser = Parser(argv)
         except SystemExit as e:
@@ -489,6 +618,7 @@ class TestDiscoveryParser(unittest.TestCase):
     @patch('parser.client_cli.run_request_nb')
     @patch('parser.client_cli.stop_all_request')
     def test_parser_add_when_on(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+        """ Test that the add command calls 'run_request_b' if the daemon is running. """
         mock_rpc_stopall.return_value = 'Mocked request'
         mock_rpc_nbrequest.return_value = 'Mocked request'
         mock_rpc_brequest.return_value = 'Mocked request'
@@ -496,10 +626,10 @@ class TestDiscoveryParser(unittest.TestCase):
         mock_spawn.return_value = True
 
         self.third_attr = True
-        self.check_command = [str(command_to_int[Command.ADD]), '-d', '0']
+        self.check_command = [str(command_to_int[Command.ADD]), '-d', '0', '127.0.0.1:42']
         mock_rpc_brequest.side_effect = self.side_effect_rpc
 
-        argv = ['add']
+        argv = ['add', '-d', '0', '127.0.0.1:42']
         parser = Parser(argv)
 
         mock_is_running.assert_called_once()
@@ -515,7 +645,52 @@ class TestDiscoveryParser(unittest.TestCase):
     @patch('parser.client_cli.run_request_b')
     @patch('parser.client_cli.run_request_nb')
     @patch('parser.client_cli.stop_all_request')
+    def test_parser_set_fails_domain(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+        """ Test that the set command fails to call 'run_request_b' if no domain arg is passed. """
+        mock_rpc_stopall.return_value = 'Mocked request'
+        mock_rpc_nbrequest.return_value = 'Mocked request'
+        mock_rpc_brequest.return_value = 'Mocked request'
+
+        argv = ['set', '127.0.0.1:42']
+        parser = Parser(argv)
+
+        mock_is_running.assert_not_called()
+        mock_spawn.assert_not_called()
+        mock_rpc_stopall.assert_not_called()
+        mock_rpc_nbrequest.assert_not_called()
+        mock_rpc_brequest.assert_not_called()
+        mock_exit.assert_called_once()
+
+    @patch('parser.sys.exit')
+    @patch('parser.is_daemon_running')
+    @patch('parser.spawn_daemon')
+    @patch('parser.client_cli.run_request_b')
+    @patch('parser.client_cli.run_request_nb')
+    @patch('parser.client_cli.stop_all_request')
+    def test_parser_set_fails_ip(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+        """ Test that the set command fails to call 'run_request_b' if no ip arg is passed. """
+        mock_rpc_stopall.return_value = 'Mocked request'
+        mock_rpc_nbrequest.return_value = 'Mocked request'
+        mock_rpc_brequest.return_value = 'Mocked request'
+
+        argv = ['set', '-d', '42']
+        parser = Parser(argv)
+
+        mock_is_running.assert_not_called()
+        mock_spawn.assert_not_called()
+        mock_rpc_stopall.assert_not_called()
+        mock_rpc_nbrequest.assert_not_called()
+        mock_rpc_brequest.assert_not_called()
+        mock_exit.assert_called_once()
+
+    @patch('parser.sys.exit')
+    @patch('parser.is_daemon_running')
+    @patch('parser.spawn_daemon')
+    @patch('parser.client_cli.run_request_b')
+    @patch('parser.client_cli.run_request_nb')
+    @patch('parser.client_cli.stop_all_request')
     def test_parser_set_when_off(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+        """ Test that the set command does nothing if the daemon is not running. """
         mock_rpc_stopall.return_value = 'Mocked request'
         mock_rpc_nbrequest.return_value = 'Mocked request'
         mock_rpc_brequest.return_value = 'Mocked request'
@@ -523,10 +698,10 @@ class TestDiscoveryParser(unittest.TestCase):
         mock_spawn.return_value = True
 
         self.third_attr = True
-        self.check_command = [str(command_to_int[Command.SET]), '-d', '0']
+        self.check_command = [str(command_to_int[Command.SET]), '-d', '0', '127.0.0.1:42']
         mock_rpc_brequest.side_effect = self.side_effect_rpc
 
-        argv = ['set']
+        argv = ['set', '-d', '0', '127.0.0.1:42']
         try:
             parser = Parser(argv)
         except SystemExit as e:
@@ -547,6 +722,7 @@ class TestDiscoveryParser(unittest.TestCase):
     @patch('parser.client_cli.run_request_nb')
     @patch('parser.client_cli.stop_all_request')
     def test_parser_set_when_on(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
+        """ Test that the set command calls 'run_request_b' if the daemon is running. """
         mock_rpc_stopall.return_value = 'Mocked request'
         mock_rpc_nbrequest.return_value = 'Mocked request'
         mock_rpc_brequest.return_value = 'Mocked request'
@@ -554,10 +730,10 @@ class TestDiscoveryParser(unittest.TestCase):
         mock_spawn.return_value = True
 
         self.third_attr = True
-        self.check_command = [str(command_to_int[Command.SET]), '-d', '0']
+        self.check_command = [str(command_to_int[Command.SET]), '-d', '0', '127.0.0.1:42']
         mock_rpc_brequest.side_effect = self.side_effect_rpc
 
-        argv = ['set']
+        argv = ['set', '-d', '0', '127.0.0.1:42']
         parser = Parser(argv)
 
         mock_is_running.assert_called_once()

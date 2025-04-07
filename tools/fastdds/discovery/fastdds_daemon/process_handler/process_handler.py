@@ -47,15 +47,11 @@ class ProcessHandler:
     def run_process_nb(self, domain: int, command: list, easy_mode: str):
         """
         Used for starting new servers. Commands 'start' and 'auto'.
-        If @easy_mode is empty, it means the 'ROS2_EASY_MODE' variable was not set, that is,
-        it is a direct call from the CLI.
-        Note that 'easy_mode' has already been added to the command string in the parser,
-        it is only used here to avoid using regex to find its value and differentiate
-        'auto' and 'start' commands.
+        Param @easy_mode indicates the remote_connection that should be used.
         """
         with self._lock:
             if domain in self.processes:
-                if easy_mode != '' and easy_mode != self.remote_connections[domain]:
+                if easy_mode != self.remote_connections[domain]:
                     return f"Error: DS for Domain '{domain}' already points to '{self.remote_connections[domain]}'."
                 return f"Discovery server for Domain '{domain}' is already running."
             # Start a new subprocess in a non-blocking way
@@ -64,7 +60,7 @@ class ProcessHandler:
                                        stdout=subprocess.PIPE,
                                        stderr=subprocess.PIPE,
                                        preexec_fn=os.setsid)
-            # Check output to see if the process started correctly or it issued an error
+            # Check output to see if the process started correctly or if it issued an error
             try:
                 output = os.read(process.stdout.fileno(), 1024).decode('utf-8')
             except Exception as e:
@@ -72,16 +68,7 @@ class ProcessHandler:
 
             if 'started' in output:
                 self.processes[domain] = process
-                # Remote connections are always the last element of the command
-                # Cpp tool should fail if more than one argument is received
-                remote_connection = ''
-                if len(command) > 4:
-                    ip_re = r"(\d{1,3}(?:\.\d{1,3}){3})"
-                    match = re.search(ip_re, command[-1])
-                    if match:
-                        ip = match.group(1)
-                        remote_connection = ip
-                self.remote_connections[domain] = remote_connection
+                self.remote_connections[domain] = easy_mode
             else:
                 # Strip ANSI colors from the error message
                 stderr = os.read(process.stderr.fileno(), 1024).decode('utf-8')
@@ -104,9 +91,30 @@ class ProcessHandler:
                                         stderr=subprocess.PIPE,
                                         text=True,
                                         check=True)
-                return result.stdout
+
+                output = result.stdout
+                # When the command received matches the Command.SET value (4), the remote connection needs to be modified
+                if command[1] == '4':
+                    # Remote connections are always the last element of the command
+                    # Cpp tool should fail if more than one argument is received
+                    remote_connection = ''
+                    if len(command) > 4:
+                        ip_re = r"(\d{1,3}(?:\.\d{1,3}){3})"
+                        match = re.search(ip_re, command[-1])
+                        if match:
+                            ip = match.group(1)
+                            remote_connection = ip
+                            output += f"Remote connection modified to {command[-1]}. Use this value for the ROS2_EASY_MODE. "
+                        else:
+                            output += f"Not able to modify the remote connection to {command[-1]}. "
+                    self.remote_connections[domain] = remote_connection
+                return output
             except subprocess.CalledProcessError as e:
-                return e.stdout
+                # Strip ANSI colors from the error message
+                ansi_escape = re.compile(r'\x1b[^m]*m')
+                stripped_output = ansi_escape.sub('', e.stderr)
+                output = f"Command not executed: {stripped_output}"
+                return output
 
     def stop_process(self, domain: int, sig: int):
         with self._lock:

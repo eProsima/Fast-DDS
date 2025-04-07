@@ -211,12 +211,8 @@ const option::Descriptor usage[] = {
       "\t               tool.\n"},
 
     { UNKNOWN,   0, "",   "",             Arg::None,
-      "\nDaemon options:\n  auto\t Handle the daemon start-up automatically. It will create\n"
-      "\t a Discovery Server in the specified domain."},
-
-    { UNKNOWN,   0, "",   "",             Arg::None,
-      "\n  start\t Start the Discovery Server daemon with the remote connections\n"
-      "\t specified. (Example: start -d 1 \"127.0.0.1:2;10.0.0.3:42\")."},
+      "\nDaemon options:\n  start\t Start the Discovery Server daemon with the remote connections\n"
+      "\t specified. (Example: start -d 1 \"10.0.0.1:1\")."},
 
     { UNKNOWN,   0, "",   "",             Arg::None,
       "\n  stop\t Stop the Discovery Server daemon if it is active. If a domain\n"
@@ -298,8 +294,8 @@ const std::string EXAMPLES =
 
         "Daemon Examples:\n"
 
-        "\t1.  Start a DS in the default domain 0:\n\n"
-        "\t    $ " FAST_SERVER_BINARY " auto\n\n"
+        "\t1.  Start a DS in domain 0:\n\n"
+        "\t    $ " FAST_SERVER_BINARY " start -d 0 127.0.0.1:0\n\n"
 
         "\t2.  Stop all running DS and shut down Fast DDS daemon:\n\n"
         "\t    $ " FAST_SERVER_BINARY " stop\n\n"
@@ -307,21 +303,16 @@ const std::string EXAMPLES =
         "\t3.  Stop DS running in domain 0:\n\n"
         "\t    $ " FAST_SERVER_BINARY " stop -d 0\n\n"
 
-        "\t4.  Start a DS in the domain 42:\n\n"
-        "\t    $ " FAST_SERVER_BINARY " auto -d 42\n"
-        "\t    OR\n"
-        "\t    $ ROS_DOMAIN_ID=42 " FAST_SERVER_BINARY " auto\n\n"
-
-        "\t5.  Start a DS in domain 4 pointing to remote DS in domain 4:\n\n"
+        "\t4.  Start a DS in domain 4 pointing to remote DS in domain 4:\n\n"
         "\t    $ " FAST_SERVER_BINARY " start -d 4 10.0.0.7:4\n\n"
 
-        "\t6.  Add a new remote server to DS running in domain 4 :\n\n"
+        "\t5.  Add a new remote server to DS running in domain 4 :\n\n"
         "\t    $ " FAST_SERVER_BINARY " add -d 4 10.0.0.7:4\n\n"
 
-        "\t7.  List all servers running locally:\n\n"
+        "\t6.  List all servers running locally:\n\n"
         "\t    $ " FAST_SERVER_BINARY " list\n\n"
 
-        "\t8.  Starts a DS in domain 3 pointing to local DS in domain 6:\n\n"
+        "\t7.  Starts a DS in domain 3 pointing to local DS in domain 6:\n\n"
         "\t    $ " FAST_SERVER_BINARY " start -d 3 127.0.0.1:6\n\n"
 ;
 
