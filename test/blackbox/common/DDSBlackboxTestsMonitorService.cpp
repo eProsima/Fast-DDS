@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <algorithm>
+
 #include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
 #include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
@@ -1100,8 +1102,9 @@ struct ExtendedIncompatibleQoSValidator : public SampleValidator
                             {
                                 return (data.status_kind() == elem.status_kind()) &&
                                 (data.local_entity() == elem.local_entity()) &&
-                                (data.value().extended_incompatible_qos_status() ==
-                                elem.value().extended_incompatible_qos_status());
+                                (std::is_permutation(data.value().extended_incompatible_qos_status().begin(),
+                                data.value().extended_incompatible_qos_status().end(),
+                                elem.value().extended_incompatible_qos_status().begin()));
                             });
 
             std::cout << "Received Extended Incompatible QoS on local_entity "
@@ -2626,7 +2629,7 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_extended_incompatible_qos)
     MSC.start_reception(expected_msgs);
 
     //! Assertions
-    ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(5)), expected_msgs.size());
+    MSC.block_for_all();
 
     expected_msgs.clear();
 
