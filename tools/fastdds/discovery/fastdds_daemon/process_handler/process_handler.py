@@ -93,6 +93,7 @@ class ProcessHandler:
                                         check=True)
 
                 output = result.stdout
+                # When the command received matches the Command.SET value (4), the remote connection needs to be modified
                 if command[1] == '4':
                     # Remote connections are always the last element of the command
                     # Cpp tool should fail if more than one argument is received

@@ -117,7 +117,7 @@ class TestDiscoveryParser(unittest.TestCase):
     @patch('parser.client_cli.run_request_nb')
     @patch('parser.client_cli.stop_all_request')
     def test_parser_auto_fails_ip(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
-        """ Test that the auto command calls 'run_request_nb' with domain 0 if no domain is specified. """
+        """ Test that the auto command fails to call 'run_request_nb' if no ip arg is passed. """
         mock_rpc_stopall.return_value = 'Mocked request'
         mock_rpc_nbrequest.return_value = 'Mocked request'
         mock_rpc_brequest.return_value = 'Mocked request'
@@ -271,7 +271,7 @@ class TestDiscoveryParser(unittest.TestCase):
     @patch('parser.client_cli.run_request_nb')
     @patch('parser.client_cli.stop_all_request')
     def test_parser_start_fails_ip(self, mock_rpc_stopall, mock_rpc_nbrequest, mock_rpc_brequest, mock_spawn, mock_is_running, mock_exit):
-        """ Test that the start command calls 'run_request_nb' with domain 0 if no domain is specified. """
+        """ Test that the start command fails to call 'run_request_nb' if no ip arg is passed. """
         mock_rpc_stopall.return_value = 'Mocked request'
         mock_rpc_nbrequest.return_value = 'Mocked request'
         mock_rpc_brequest.return_value = 'Mocked request'
