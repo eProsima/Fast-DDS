@@ -26,6 +26,12 @@
                 <max_samples_per_instance>100</max_samples_per_instance>
             </resourceLimitsQos>
         </topic>
+        <times>
+            <heartbeat_period>
+                <sec>0</sec>
+                <nanosec>100000000</nanosec>
+            </heartbeat_period>
+        </times>
     </data_writer>
 
     <data_reader profile_name="hello_world_datareader_profile" is_default_profile="true">
