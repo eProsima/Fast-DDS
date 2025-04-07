@@ -154,6 +154,17 @@ void WriterApp::run()
             std::cout << "Message " << data_->message() << " with index " << data_->index() << " SENT" << std::endl;
         }
 
+        if (data_->index() == 1u)
+        {
+            bool sample_acked = false;
+            do
+            {
+                dds::Duration_t acked_wait{1, 0};
+                sample_acked = rtps_writer_->wait_for_all_acked(acked_wait);
+            }
+            while (!sample_acked);
+        }
+
         // Wait for period or stop event
         std::unique_lock<std::mutex> period_lock(terminate_cv_mtx_);
         terminate_cv_.wait_for(period_lock, std::chrono::milliseconds(period_ms_), [&]()

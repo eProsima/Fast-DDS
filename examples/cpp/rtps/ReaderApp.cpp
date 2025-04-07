@@ -78,6 +78,7 @@ ReaderApp::ReaderApp(
         const CLIParser::rtps_config& config,
         const std::string& topic_name)
     : samples_(config.samples)
+    , samples_received_(0)
     , rtps_participant_(nullptr)
     , rtps_reader_(nullptr)
     , reader_history_(nullptr)
