@@ -12,11 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "ReplierImpl.hpp"
+
+#include <string>
+
+#include <fastdds/dds/core/detail/DDSReturnCode.hpp>
+#include <fastdds/dds/core/LoanableCollection.hpp>
+#include <fastdds/dds/core/LoanableSequence.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
+#include <fastdds/dds/domain/qos/ReplierQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/rpc/RequestInfo.hpp>
 #include <fastdds/rtps/common/WriteParams.hpp>
 
-#include "ReplierImpl.hpp"
 #include "ServiceImpl.hpp"
 
 namespace eprosima {
