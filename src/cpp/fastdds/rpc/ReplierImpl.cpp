@@ -23,6 +23,7 @@
 #include <fastdds/dds/domain/qos/ReplierQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/rpc/RequestInfo.hpp>
+#include <fastdds/rtps/common/SampleIdentity.hpp>
 #include <fastdds/rtps/common/WriteParams.hpp>
 
 #include "ServiceImpl.hpp"
@@ -37,7 +38,24 @@ static void fill_related_sample_identity(
 {
     // When sending a reply, the code here expects that related_sample_identity
     // has the sample_identity of the corresponding request.
-    info.related_sample_identity = info.sample_identity;
+
+    static const rtps::SampleIdentity unknown_identity = rtps::SampleIdentity::unknown();
+
+    // If the related guid is unknown, we consider that the request is not related to a previous one,
+    // so we set the related sample identity to the received sample identity
+    if (unknown_identity.writer_guid() == info.related_sample_identity.writer_guid())
+    {
+        info.related_sample_identity = info.sample_identity;
+        return;
+    }
+
+    // There is a special case where only the related guid is set.
+    // This is used in ROS 2 to convey the GUID of the reply reader.
+    // In this case we just set the sequence number of the related sample identity
+    if (unknown_identity.sequence_number() == info.related_sample_identity.sequence_number())
+    {
+        info.related_sample_identity.sequence_number() = info.sample_identity.sequence_number();
+    }
 }
 
 ReplierImpl::ReplierImpl(
