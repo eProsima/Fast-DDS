@@ -32,6 +32,14 @@ namespace fastdds {
 namespace dds {
 namespace rpc {
 
+static void fill_related_sample_identity(
+        RequestInfo& info)
+{
+    // When sending a reply, the code here expects that related_sample_identity
+    // has the sample_identity of the corresponding request.
+    info.related_sample_identity = info.sample_identity;
+}
+
 ReplierImpl::ReplierImpl(
         ServiceImpl* service,
         const ReplierQos& qos)
@@ -87,8 +95,7 @@ ReturnCode_t ReplierImpl::take_request(
     }
 
     retcode = replier_reader_->take_next_sample(data, &info);
-    // Related sample identity is stored in sample_indentity member of info. Change it to related_sample_identity
-    info.related_sample_identity = info.sample_identity;
+    fill_related_sample_identity(info);
 
     return retcode;
 }
@@ -112,7 +119,7 @@ ReturnCode_t ReplierImpl::take_request(
     // Fill related_sample_identity attribute
     for (LoanableCollection::size_type i = 0; i < info.length(); ++i)
     {
-        info[i].related_sample_identity = info[i].sample_identity;
+        fill_related_sample_identity(info[i]);
     }
 
     return retcode;
