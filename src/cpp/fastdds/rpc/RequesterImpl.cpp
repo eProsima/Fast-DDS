@@ -71,7 +71,7 @@ ReturnCode_t RequesterImpl::send_request(
         {
             info.related_sample_identity = wparams.related_sample_identity();
         }
-        
+
         // Set the sequence number of the related sample identity when it is unknown
         if (rtps::SequenceNumber_t::unknown() == info.related_sample_identity.sequence_number())
         {
