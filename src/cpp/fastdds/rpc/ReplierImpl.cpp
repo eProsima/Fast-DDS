@@ -33,6 +33,14 @@ namespace fastdds {
 namespace dds {
 namespace rpc {
 
+/**
+ * @brief Fills the related sample identity of the request.
+ *
+ * This will fill the related sample identity of the request with values taken from the sample identity.
+ * Values different from unknown are preserved.
+ *
+ * @param info [in,out] The request information to update.
+ */
 static void fill_related_sample_identity(
         RequestInfo& info)
 {
