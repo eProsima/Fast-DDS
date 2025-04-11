@@ -284,6 +284,62 @@ TEST_P(PubSubBasic, ReqRepAsReliableHelloworld)
     }
 }
 
+TEST_P(PubSubBasic, ReqRepAsReliableHelloworldReaderGUID)
+{
+    ReqRepHelloWorldRequester requester;
+    ReqRepHelloWorldReplier replier;
+    const uint16_t nmsgs = 10;
+
+    requester.init();
+
+    ASSERT_TRUE(requester.isInitialized());
+
+    replier.init();
+
+    requester.wait_discovery();
+    replier.wait_discovery();
+
+    ASSERT_TRUE(replier.isInitialized());
+
+    for (uint16_t count = 0; count < nmsgs; ++count)
+    {
+        eprosima::fastdds::rtps::SampleIdentity related_sample_identity{};
+        related_sample_identity.writer_guid(requester.get_reader_guid());
+        requester.send(count, related_sample_identity);
+        requester.block(std::chrono::seconds(5));
+    }
+}
+
+TEST_P(PubSubBasic, ReqRepAsReliableHelloworldConsecutive)
+{
+    ReqRepHelloWorldRequester requester;
+    ReqRepHelloWorldReplier replier;
+    const uint16_t nmsgs = 10;
+
+    requester.init();
+
+    ASSERT_TRUE(requester.isInitialized());
+
+    replier.init();
+
+    requester.wait_discovery();
+    replier.wait_discovery();
+
+    ASSERT_TRUE(replier.isInitialized());
+
+    requester.send(0);
+    requester.block(std::chrono::seconds(5));
+
+    eprosima::fastdds::rtps::SampleIdentity related_sample_identity{};
+    related_sample_identity = requester.get_last_related_sample_identity();
+
+    for (uint16_t count = 1; count < nmsgs; ++count)
+    {
+        requester.send(count, related_sample_identity);
+        requester.block(std::chrono::seconds(5));
+    }
+}
+
 TEST_P(PubSubBasic, PubSubAsReliableData64kb)
 {
     PubSubReader<Data64kbPubSubType> reader(TEST_TOPIC_NAME);

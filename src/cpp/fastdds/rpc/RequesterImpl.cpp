@@ -12,11 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "RequesterImpl.hpp"
+
+#include <string>
+
+#include <fastdds/dds/core/detail/DDSReturnCode.hpp>
+#include <fastdds/dds/core/LoanableCollection.hpp>
+#include <fastdds/dds/core/LoanableSequence.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
+#include <fastdds/dds/domain/qos/RequesterQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/rpc/RequestInfo.hpp>
+#include <fastdds/rtps/common/Guid.hpp>
+#include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/common/WriteParams.hpp>
 
-#include "RequesterImpl.hpp"
 #include "ServiceImpl.hpp"
 
 namespace eprosima {
@@ -59,11 +69,24 @@ ReturnCode_t RequesterImpl::send_request(
     }
 
     rtps::WriteParams wparams;
+    wparams.related_sample_identity(info.related_sample_identity);
     ReturnCode_t ret = requester_writer_->write(data, wparams);
     if (RETCODE_OK == ret)
     {
         // Fill RequestInfo's related sample identity with the information expected for the corresponding reply
-        info.related_sample_identity = wparams.related_sample_identity();
+        info.sample_identity = wparams.sample_identity();
+
+        // Set the full related sample identity when the writer guid is unknown
+        if (rtps::GUID_t::unknown() == info.related_sample_identity.writer_guid())
+        {
+            info.related_sample_identity = wparams.related_sample_identity();
+        }
+
+        // Set the sequence number of the related sample identity when it is unknown
+        if (rtps::SequenceNumber_t::unknown() == info.related_sample_identity.sequence_number())
+        {
+            info.related_sample_identity.sequence_number() = wparams.related_sample_identity().sequence_number();
+        }
     }
     return ret;
 }

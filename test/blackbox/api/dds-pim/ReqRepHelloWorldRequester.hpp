@@ -32,6 +32,7 @@
 #include <fastdds/dds/rpc/Requester.hpp>
 #include <fastdds/dds/rpc/RequestInfo.hpp>
 #include <fastdds/dds/rpc/Service.hpp>
+#include <fastdds/rtps/common/SampleIdentity.hpp>
 
 #include "../../common/BlackboxTests.hpp"
 
@@ -80,12 +81,20 @@ public:
     void send(
             const uint16_t number);
 
+    void send(
+            const uint16_t number,
+            const eprosima::fastdds::rtps::SampleIdentity& related_sample_identity);
+
     const eprosima::fastdds::dds::Duration_t datawriter_latency_budget_duration() const;
 
     const eprosima::fastdds::dds::Duration_t datareader_latency_budget_duration() const;
 
     eprosima::fastdds::dds::RequesterQos create_requester_qos(
             bool volatile_durability_qos = false);
+
+    const eprosima::fastdds::rtps::GUID_t& get_reader_guid() const;
+
+    const eprosima::fastdds::rtps::SampleIdentity& get_last_related_sample_identity() const;
 
 private:
 

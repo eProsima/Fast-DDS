@@ -12,17 +12,59 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "ReplierImpl.hpp"
+
+#include <string>
+
+#include <fastdds/dds/core/detail/DDSReturnCode.hpp>
+#include <fastdds/dds/core/LoanableCollection.hpp>
+#include <fastdds/dds/core/LoanableSequence.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
+#include <fastdds/dds/domain/qos/ReplierQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/rpc/RequestInfo.hpp>
+#include <fastdds/rtps/common/SampleIdentity.hpp>
 #include <fastdds/rtps/common/WriteParams.hpp>
 
-#include "ReplierImpl.hpp"
 #include "ServiceImpl.hpp"
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 namespace rpc {
+
+/**
+ * @brief Fills the related sample identity of the request.
+ *
+ * This will fill the related sample identity of the request with values taken from the sample identity.
+ * Values different from unknown are preserved.
+ *
+ * @param info [in,out] The request information to update.
+ */
+static void fill_related_sample_identity(
+        RequestInfo& info)
+{
+    // When sending a reply, the code here expects that related_sample_identity
+    // has the sample_identity of the corresponding request.
+
+    static const rtps::SampleIdentity unknown_identity = rtps::SampleIdentity::unknown();
+
+    // If the related guid is unknown, we consider that the request is not related to a previous one,
+    // so we set the related sample identity to the received sample identity
+    if (unknown_identity.writer_guid() == info.related_sample_identity.writer_guid())
+    {
+        info.related_sample_identity = info.sample_identity;
+        return;
+    }
+
+    // There is a special case where only the related guid is set.
+    // This is used in ROS 2 to convey the GUID of the reply reader.
+    // In this case we just set the sequence number of the related sample identity
+    if (unknown_identity.sequence_number() == info.related_sample_identity.sequence_number())
+    {
+        info.related_sample_identity.sequence_number() = info.sample_identity.sequence_number();
+    }
+}
 
 ReplierImpl::ReplierImpl(
         ServiceImpl* service,
@@ -79,8 +121,7 @@ ReturnCode_t ReplierImpl::take_request(
     }
 
     retcode = replier_reader_->take_next_sample(data, &info);
-    // Related sample identity is stored in sample_indentity member of info. Change it to related_sample_identity
-    info.related_sample_identity = info.sample_identity;
+    fill_related_sample_identity(info);
 
     return retcode;
 }
@@ -104,7 +145,7 @@ ReturnCode_t ReplierImpl::take_request(
     // Fill related_sample_identity attribute
     for (LoanableCollection::size_type i = 0; i < info.length(); ++i)
     {
-        info[i].related_sample_identity = info[i].sample_identity;
+        fill_related_sample_identity(info[i]);
     }
 
     return retcode;
