@@ -189,6 +189,37 @@ void ReqRepHelloWorldRequester::send(
     ASSERT_NE(related_sample_identity_.sequence_number(), SequenceNumber_t());
 }
 
+void ReqRepHelloWorldRequester::send(
+        const uint16_t number,
+        const eprosima::fastdds::rtps::SampleIdentity& related_sample_identity)
+{
+    RequestInfo info;
+    info.related_sample_identity = related_sample_identity;
+    HelloWorld hello;
+    hello.index(number);
+    hello.message("HelloWorld");
+
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+        current_number_ = number;
+    }
+
+    ASSERT_EQ(requester_->send_request((void*)&hello, info), RETCODE_OK);
+    related_sample_identity_ = info.related_sample_identity;
+
+    ASSERT_NE(related_sample_identity_.sequence_number(), SequenceNumber_t());
+
+    if (eprosima::fastdds::rtps::GUID_t::unknown() != related_sample_identity.writer_guid())
+    {
+        ASSERT_EQ(related_sample_identity_.writer_guid(), related_sample_identity.writer_guid());
+    }
+
+    if (eprosima::fastdds::rtps::SequenceNumber_t::unknown() != related_sample_identity.sequence_number())
+    {
+        ASSERT_EQ(related_sample_identity_.sequence_number(), related_sample_identity.sequence_number());
+    }
+}
+
 const Duration_t ReqRepHelloWorldRequester::datawriter_latency_budget_duration() const
 {
     return requester_->get_requester_writer()->get_qos().latency_budget().duration;
@@ -197,6 +228,16 @@ const Duration_t ReqRepHelloWorldRequester::datawriter_latency_budget_duration()
 const Duration_t ReqRepHelloWorldRequester::datareader_latency_budget_duration() const
 {
     return requester_->get_requester_reader()->get_qos().latency_budget().duration;
+}
+
+const eprosima::fastdds::rtps::GUID_t& ReqRepHelloWorldRequester::get_reader_guid() const
+{
+    return requester_->get_requester_reader()->guid();
+}
+
+const eprosima::fastdds::rtps::SampleIdentity& ReqRepHelloWorldRequester::get_last_related_sample_identity() const
+{
+    return related_sample_identity_;
 }
 
 void ReqRepHelloWorldRequester::init_processing_thread()
