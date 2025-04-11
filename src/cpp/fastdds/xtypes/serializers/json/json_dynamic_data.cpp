@@ -242,8 +242,6 @@ ReturnCode_t json_deserialize_member(
                     " found.");
             return RETCODE_BAD_PARAMETER;
     }
-
-    return RETCODE_OK;
 }
 
 ReturnCode_t json_deserialize_basic_member(
