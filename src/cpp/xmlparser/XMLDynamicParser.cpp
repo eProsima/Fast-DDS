@@ -1833,6 +1833,13 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
 
         DynamicTypeBuilder::_ref_type wstring_builder = factory->create_wstring_type(bound);
 
+        if (nullptr == wstring_builder)
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER,
+                    "Error creating wstring type: " << memberType);
+            return {};
+        }
+
         if (!isArray)
         {
             member = wstring_builder->build();
