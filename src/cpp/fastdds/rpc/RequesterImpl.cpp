@@ -59,11 +59,24 @@ ReturnCode_t RequesterImpl::send_request(
     }
 
     rtps::WriteParams wparams;
+    wparams.related_sample_identity(info.related_sample_identity);
     ReturnCode_t ret = requester_writer_->write(data, wparams);
     if (RETCODE_OK == ret)
     {
         // Fill RequestInfo's related sample identity with the information expected for the corresponding reply
-        info.related_sample_identity = wparams.related_sample_identity();
+        info.sample_identity = wparams.sample_identity();
+
+        // Set the full related sample identity when the writer guid is unknown
+        if (rtps::GUID_t::unknown() == info.related_sample_identity.writer_guid())
+        {
+            info.related_sample_identity = wparams.related_sample_identity();
+        }
+        
+        // Set the sequence number of the related sample identity when it is unknown
+        if (rtps::SequenceNumber_t::unknown() == info.related_sample_identity.sequence_number())
+        {
+            info.related_sample_identity.sequence_number() = wparams.related_sample_identity().sequence_number();
+        }
     }
     return ret;
 }
