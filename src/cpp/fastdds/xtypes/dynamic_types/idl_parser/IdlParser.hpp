@@ -242,11 +242,6 @@ struct action<identifier>
                         state["current_struct_member_name"] = identifier_name;
                     }
                 }
-                else
-                {
-                    // The identifier is a type
-                    state["type"] = identifier_name;
-                }
             }
         }
         else if (state.count("union_name"))
@@ -407,6 +402,10 @@ struct action<scoped_name>
             //
             //    In case of sequence types, case 2 is possible but already handled in the previous else if statement.
             state["alias"] = identifier_name;
+        }
+        else
+        {
+            state["type"] = identifier_name;
         }
     }
 
