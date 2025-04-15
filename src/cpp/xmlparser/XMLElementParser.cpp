@@ -3069,24 +3069,11 @@ XMLP_ret XMLParser::getXMLLocatorUDPv4(
             {
                 return XMLP_ret::XML_ERROR;
             }
-            // Check whether the address is IPv4
-            if (!IPLocator::isIPv4(s))
+            if (!IPLocator::setIPv4(locator, s))
             {
-                auto response = rtps::IPLocator::resolveNameDNS(s);
-
-                // Add the first valid IPv4 address that we can find
-                if (response.first.size() > 0)
-                {
-                    s = response.first.begin()->data();
-                }
-                else
-                {
-                    EPROSIMA_LOG_ERROR(XMLPARSER,
-                            "DNS server did not return any IPv4 address for: '" << s << "'. Name: " << name);
-                    return XMLP_ret::XML_ERROR;
-                }
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Failed to parse UDPv4 locator's " << ADDRESS << " tag");
+                return XMLP_ret::XML_ERROR;
             }
-            IPLocator::setIPv4(locator, s);
         }
         else
         {
@@ -3142,24 +3129,11 @@ XMLP_ret XMLParser::getXMLLocatorUDPv6(
             {
                 return XMLP_ret::XML_ERROR;
             }
-            // Check whether the address is IPv6
-            if (!IPLocator::isIPv6(s))
+            if (!IPLocator::setIPv6(locator, s))
             {
-                auto response = rtps::IPLocator::resolveNameDNS(s);
-
-                // Add the first valid IPv6 address that we can find
-                if (response.second.size() > 0)
-                {
-                    s = response.second.begin()->data();
-                }
-                else
-                {
-                    EPROSIMA_LOG_ERROR(XMLPARSER,
-                            "DNS server did not return any IPv6 address for: '" << s << "'. Name: " << name);
-                    return XMLP_ret::XML_ERROR;
-                }
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Failed to parse UDPv6 locator's " << ADDRESS << " tag");
+                return XMLP_ret::XML_ERROR;
             }
-            IPLocator::setIPv6(locator, s);
         }
         else
         {
@@ -3230,7 +3204,11 @@ XMLP_ret XMLParser::getXMLLocatorTCPv4(
             {
                 return XMLP_ret::XML_ERROR;
             }
-            IPLocator::setIPv4(locator, s);
+            if (!IPLocator::setIPv4(locator, s))
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Failed to parse TCPv4 locator's " << ADDRESS << " tag");
+                return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, WAN_ADDRESS) == 0)
         {
@@ -3240,7 +3218,11 @@ XMLP_ret XMLParser::getXMLLocatorTCPv4(
             {
                 return XMLP_ret::XML_ERROR;
             }
-            IPLocator::setWan(locator, s);
+            if (!IPLocator::setWan(locator, s))
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Failed to parse TCPv4 locator's " << WAN_ADDRESS << " tag");
+                return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, UNIQUE_LAN_ID) == 0)
         {
@@ -3319,7 +3301,11 @@ XMLP_ret XMLParser::getXMLLocatorTCPv6(
             {
                 return XMLP_ret::XML_ERROR;
             }
-            IPLocator::setIPv6(locator, s);
+            if (!IPLocator::setIPv6(locator, s))
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Failed to parse TCPv6 locator's " << ADDRESS << " tag");
+                return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
