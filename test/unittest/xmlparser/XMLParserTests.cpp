@@ -79,6 +79,12 @@ TEST_F(XMLParserTests, regressions)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/20610_profile_bin.xml", root));
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/20732_profile_bin.xml", root));
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/22535_profile_bin.xml", root));
+<<<<<<< HEAD
+=======
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/22843_profile_bin.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/22844_profile_bin.xml", root));
+    Log::Flush();
+>>>>>>> dc26c40e (Solve fuzz XMLParser Null-dereference (#5668))
 }
 
 TEST_F(XMLParserTests, NoFile)
