@@ -908,7 +908,10 @@ bool LatencyTestPublisher::test(
     }
 
     // Drop the first measurement, as it's usually not representative
-    rt_times_.erase(rt_times_.begin());
+    if (rt_times_.size() > 0)
+    {
+        rt_times_.erase(rt_times_.begin());
+    }
 
     // Log all data to CSV file if specified
     if (raw_data_file_ != "")
@@ -927,79 +930,93 @@ void LatencyTestPublisher::analyze_times(
     // Collect statistics
     TimeStats stats;
     stats.bytes_ = datasize;
-    stats.received_ = received_count_ - 1;  // Because we are not counting the first one.
-    stats.minimum_ = *min_element(rt_times_.begin(), rt_times_.end());
-    stats.maximum_ = *max_element(rt_times_.begin(), rt_times_.end());
-    stats.mean_ = accumulate(rt_times_.begin(), rt_times_.end(),
-                    std::chrono::duration<double, std::micro>(0)).count() / rt_times_.size();
-
-    double aux_stdev = 0;
-    for (std::vector<std::chrono::duration<double, std::micro>>::iterator tit = rt_times_.begin(); tit != rt_times_.end();
-            ++tit)
+    stats.received_ = received_count_ != 0 ? received_count_ - 1 : 0;  // Because we are not counting the first one.
+    if (rt_times_.size() == 0)
     {
-        aux_stdev += pow(((*tit).count() - stats.mean_), 2);
-    }
-    aux_stdev = sqrt(aux_stdev / rt_times_.size());
-    stats.stdev_ = aux_stdev;
-
-    /* Percentiles */
-    sort(rt_times_.begin(), rt_times_.end());
-
-    size_t elem = 0;
-    elem = static_cast<size_t>(rt_times_.size() * 0.5);
-    if (elem > 0 && elem <= rt_times_.size())
-    {
-        stats.percentile_50_ = rt_times_.at(--elem).count();
+        EPROSIMA_LOG_ERROR(LatencyTest, "No roundtrip times to analyze");
     }
     else
     {
-        stats.percentile_50_ = NAN;
-    }
+        stats.minimum_ = *min_element(rt_times_.begin(), rt_times_.end());
+        stats.maximum_ = *max_element(rt_times_.begin(), rt_times_.end());
+        stats.mean_ = accumulate(rt_times_.begin(), rt_times_.end(),
+                        std::chrono::duration<double, std::micro>(0)).count() / rt_times_.size();
 
-    elem = static_cast<size_t>(rt_times_.size() * 0.9);
-    if (elem > 0 && elem <= rt_times_.size())
-    {
-        stats.percentile_90_ = rt_times_.at(--elem).count();
-    }
-    else
-    {
-        stats.percentile_90_ = NAN;
-    }
+        double aux_stdev = 0;
+        for (std::vector<std::chrono::duration<double, std::micro>>::iterator tit = rt_times_.begin(); tit != rt_times_.end();
+                ++tit)
+        {
+            aux_stdev += pow(((*tit).count() - stats.mean_), 2);
+        }
+        aux_stdev = sqrt(aux_stdev / rt_times_.size());
+        stats.stdev_ = aux_stdev;
 
-    elem = static_cast<size_t>(rt_times_.size() * 0.99);
-    if (elem > 0 && elem <= rt_times_.size())
-    {
-        stats.percentile_99_ = rt_times_.at(--elem).count();
-    }
-    else
-    {
-        stats.percentile_99_ = NAN;
-    }
+        /* Percentiles */
+        sort(rt_times_.begin(), rt_times_.end());
 
-    elem = static_cast<size_t>(rt_times_.size() * 0.9999);
-    if (elem > 0 && elem <= rt_times_.size())
-    {
-        stats.percentile_9999_ = rt_times_.at(--elem).count();
-    }
-    else
-    {
-        stats.percentile_9999_ = NAN;
+        size_t elem = 0;
+        elem = static_cast<size_t>(rt_times_.size() * 0.5);
+        if (elem > 0 && elem <= rt_times_.size())
+        {
+            stats.percentile_50_ = rt_times_.at(--elem).count();
+        }
+        else
+        {
+            stats.percentile_50_ = NAN;
+        }
+
+        elem = static_cast<size_t>(rt_times_.size() * 0.9);
+        if (elem > 0 && elem <= rt_times_.size())
+        {
+            stats.percentile_90_ = rt_times_.at(--elem).count();
+        }
+        else
+        {
+            stats.percentile_90_ = NAN;
+        }
+
+        elem = static_cast<size_t>(rt_times_.size() * 0.99);
+        if (elem > 0 && elem <= rt_times_.size())
+        {
+            stats.percentile_99_ = rt_times_.at(--elem).count();
+        }
+        else
+        {
+            stats.percentile_99_ = NAN;
+        }
+
+        elem = static_cast<size_t>(rt_times_.size() * 0.9999);
+        if (elem > 0 && elem <= rt_times_.size())
+        {
+            stats.percentile_9999_ = rt_times_.at(--elem).count();
+        }
+        else
+        {
+            stats.percentile_9999_ = NAN;
+        }
     }
 
     // Writing times analysis
-    stats.writing_minimum_ = *min_element(writing_times_.begin(), writing_times_.end());
-    stats.writing_maximum_ = *max_element(writing_times_.begin(), writing_times_.end());
-    stats.writing_mean_ = accumulate(writing_times_.begin(), writing_times_.end(),
-                    std::chrono::duration<double, std::micro>(0)).count() / writing_times_.size();
-
-    aux_stdev = 0;
-    for (std::vector<std::chrono::duration<double, std::micro>>::iterator tit = writing_times_.begin(); tit != writing_times_.end();
-            ++tit)
+    if (writing_times_.size() == 0)
     {
-        aux_stdev += pow(((*tit).count() - stats.mean_), 2);
+        EPROSIMA_LOG_ERROR(LatencyTest, "No writing times to analyze");
     }
-    aux_stdev = sqrt(aux_stdev / writing_times_.size());
-    stats.writing_stdev_ = aux_stdev;
+    else
+    {
+        stats.writing_minimum_ = *min_element(writing_times_.begin(), writing_times_.end());
+        stats.writing_maximum_ = *max_element(writing_times_.begin(), writing_times_.end());
+        stats.writing_mean_ = accumulate(writing_times_.begin(), writing_times_.end(),
+                        std::chrono::duration<double, std::micro>(0)).count() / writing_times_.size();
+
+        double aux_stdev = 0;
+        for (std::vector<std::chrono::duration<double, std::micro>>::iterator tit = writing_times_.begin(); tit != writing_times_.end();
+                ++tit)
+        {
+            aux_stdev += pow(((*tit).count() - stats.mean_), 2);
+        }
+        aux_stdev = sqrt(aux_stdev / writing_times_.size());
+        stats.writing_stdev_ = aux_stdev;
+    }
 
     stats_.push_back(stats);
 }
