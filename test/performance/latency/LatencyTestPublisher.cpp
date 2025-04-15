@@ -622,8 +622,8 @@ void LatencyTestPublisher::run()
 
     // Print a summary table with the measurements
     printf("Printing round-trip times in us, statistics for %d samples\n", samples_);
-    printf("   Bytes, Samples,   stdev,    mean,     min,     50%%,     90%%,     99%%,  99.99%%,     max,   w_min,  w_mean, w_stdev,   w_max\n");
-    printf("--------,--------,--------,--------,--------,--------,--------,--------,--------,--------,--------,--------,--------,--------,\n");
+    printf("    Bytes,  Samples,    stdev,     mean,      min,      50%%,      90%%,      99%%,   99.99%%,      max,    w_min,   w_mean,  w_stdev,    w_max\n");
+    printf("---------,---------,---------,---------,---------,---------,---------,---------,---------,---------,---------,---------,---------,---------,\n");
     for (uint16_t i = 0; i < stats_.size(); i++)
     {
         print_stats(DATA_BASE_INDEX + i, stats_[i]);
@@ -1034,13 +1034,13 @@ void LatencyTestPublisher::print_stats(
 
 
 #ifdef _WIN32
-    printf("%8I64u,%8u,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f \n",
+    printf("%9I64u,%9u,%9.3f,%9.3f,%9.3f,%9.3f,%9.3f,%9.3f,%9.3f,%9.3f,%9.3f,%9.3f,%9.3f,%9.3f \n",
             stats.bytes_, stats.received_, stats.stdev_, stats.mean_, stats.minimum_.count(), stats.percentile_50_,
             stats.percentile_90_, stats.percentile_99_, stats.percentile_9999_, stats.maximum_.count(),
             stats.writing_minimum_.count(), stats.writing_mean_, stats.writing_stdev_,
             stats.writing_maximum_.count());
 #else
-    printf("%8" PRIu64 ",%8u,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f \n",
+    printf("%9" PRIu64 ",%9u,%9.3f,%9.3f,%9.3f,%9.3f,%9.3f,%9.3f,%9.3f,%9.3f,%9.3f,%9.3f,%9.3f,%9.3f \n",
             stats.bytes_, stats.received_, stats.stdev_, stats.mean_, stats.minimum_.count(), stats.percentile_50_,
             stats.percentile_90_, stats.percentile_99_, stats.percentile_9999_, stats.maximum_.count(),
             stats.writing_minimum_.count(), stats.writing_mean_, stats.writing_stdev_,
