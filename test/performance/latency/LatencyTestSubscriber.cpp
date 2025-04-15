@@ -136,7 +136,7 @@ bool LatencyTestSubscriber::init(
     // Register the command type
     if (RETCODE_OK != latency_command_type_.register_type(participant_))
     {
-        EPROSIMA_LOG_ERROR(LATENCYSUBSCRIBER, "ERROR registering the COMMAND type");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR registering the COMMAND type");
         return false;
     }
 
@@ -144,7 +144,7 @@ bool LatencyTestSubscriber::init(
     publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
     if (publisher_ == nullptr)
     {
-        EPROSIMA_LOG_ERROR(LATENCYSUBSCRIBER, "ERROR creating PUBLISHER");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR creating PUBLISHER");
         return false;
     }
 
@@ -152,7 +152,7 @@ bool LatencyTestSubscriber::init(
     subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
     if (subscriber_ == nullptr)
     {
-        EPROSIMA_LOG_ERROR(LATENCYSUBSCRIBER, "ERROR creating SUBSCRIBER");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR creating SUBSCRIBER");
         return false;
     }
 
@@ -165,14 +165,14 @@ bool LatencyTestSubscriber::init(
 
             if ( RETCODE_OK != publisher_->get_datawriter_qos_from_profile(pub_profile_name, dw_qos_))
             {
-                EPROSIMA_LOG_ERROR(LATENCYSUBSCRIBER,
+                EPROSIMA_LOG_ERROR(LatencyTest,
                         "ERROR unable to retrieve the " << pub_profile_name << "from XML file");
                 return false;
             }
 
             if ( RETCODE_OK != subscriber_->get_datareader_qos_from_profile(sub_profile_name, dr_qos_))
             {
-                EPROSIMA_LOG_ERROR(LATENCYSUBSCRIBER, "ERROR unable to retrieve the " << sub_profile_name);
+                EPROSIMA_LOG_ERROR(LatencyTest, "ERROR unable to retrieve the " << sub_profile_name);
                 return false;
             }
         }
@@ -613,7 +613,7 @@ void LatencyTestSubscriber::destroy_user_entities()
             || nullptr != latency_data_sub_topic_
             || !latency_data_type_)
     {
-        EPROSIMA_LOG_ERROR(LATENCYSUBSCRIBER, "ERROR unregistering the DATA type and/or removing the endpoints");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR unregistering the DATA type and/or removing the endpoints");
     }
 
     subscriber_->delete_datareader(command_reader_);
@@ -773,12 +773,12 @@ bool LatencyTestSubscriber::init_dynamic_types()
     // Check if it has been initialized before
     if (dynamic_pub_sub_type_)
     {
-        EPROSIMA_LOG_ERROR(LATENCYSUBSCRIBER, "ERROR DYNAMIC DATA type already initialized");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR DYNAMIC DATA type already initialized");
         return false;
     }
     else if (participant_->find_type(LatencyDataType::type_name_))
     {
-        EPROSIMA_LOG_ERROR(LATENCYSUBSCRIBER, "ERROR DYNAMIC DATA type already registered");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR DYNAMIC DATA type already registered");
         return false;
     }
 
@@ -805,7 +805,7 @@ bool LatencyTestSubscriber::init_dynamic_types()
     // Register the data type
     if (RETCODE_OK != dynamic_pub_sub_type_.register_type(participant_))
     {
-        EPROSIMA_LOG_ERROR(LATENCYSUBSCRIBER, "ERROR registering the DYNAMIC DATA type");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR registering the DYNAMIC DATA type");
         return false;
     }
 
@@ -820,12 +820,12 @@ bool LatencyTestSubscriber::init_static_types(
     // Check if it has been initialized before
     if (latency_data_type_)
     {
-        EPROSIMA_LOG_ERROR(LATENCYSUBSCRIBER, "ERROR STATIC DATA type already initialized");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR STATIC DATA type already initialized");
         return false;
     }
     else if (participant_->find_type(LatencyDataType::type_name_))
     {
-        EPROSIMA_LOG_ERROR(LATENCYSUBSCRIBER, "ERROR STATIC DATA type already registered");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR STATIC DATA type already registered");
         return false;
     }
 
@@ -837,7 +837,7 @@ bool LatencyTestSubscriber::init_static_types(
     // Register the static type
     if (RETCODE_OK != latency_data_type_.register_type(participant_))
     {
-        EPROSIMA_LOG_ERROR(LATENCYSUBSCRIBER, "ERROR registering the STATIC DATA type");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR registering the STATIC DATA type");
         return false;
     }
 

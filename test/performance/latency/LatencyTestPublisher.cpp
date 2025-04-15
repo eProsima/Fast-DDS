@@ -182,7 +182,7 @@ bool LatencyTestPublisher::init(
     // Register the command type
     if (RETCODE_OK != latency_command_type_.register_type(participant_))
     {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR registering the COMMAND type");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR registering the COMMAND type");
         return false;
     }
 
@@ -190,7 +190,7 @@ bool LatencyTestPublisher::init(
     publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
     if (publisher_ == nullptr)
     {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR creating PUBLISHER");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR creating PUBLISHER");
         return false;
     }
 
@@ -198,7 +198,7 @@ bool LatencyTestPublisher::init(
     subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
     if (subscriber_ == nullptr)
     {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR creating SUBSCRIBER");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR creating SUBSCRIBER");
         return false;
     }
 
@@ -212,14 +212,14 @@ bool LatencyTestPublisher::init(
 
             if (RETCODE_OK != publisher_->get_datawriter_qos_from_profile(pub_profile_name, dw_qos_))
             {
-                EPROSIMA_LOG_ERROR(LATENCYPUBLISHER,
+                EPROSIMA_LOG_ERROR(LatencyTest,
                         "ERROR unable to retrive the " << pub_profile_name << "from XML file");
                 return false;
             }
 
             if (RETCODE_OK != subscriber_->get_datareader_qos_from_profile(sub_profile_name, dr_qos_))
             {
-                EPROSIMA_LOG_ERROR(LATENCYPUBLISHER,
+                EPROSIMA_LOG_ERROR(LatencyTest,
                         "ERROR unable to retrive the " << sub_profile_name << "from XML file");
             }
         }
@@ -654,7 +654,7 @@ void LatencyTestPublisher::destroy_user_entities()
             || nullptr != latency_data_sub_topic_
             || !latency_data_type_)
     {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR unregistering the DATA type and/or removing the endpoints");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR unregistering the DATA type and/or removing the endpoints");
     }
 
     subscriber_->delete_datareader(command_reader_);
@@ -698,14 +698,14 @@ bool LatencyTestPublisher::test(
 
         if (nullptr == dynamic_data_in_)
         {
-            EPROSIMA_LOG_ERROR(LATENCYPUBLISHER,
+            EPROSIMA_LOG_ERROR(LatencyTest,
                     "Iteration failed: Failed to create Dynamic Data In");
             return false;
         }
 
         if (nullptr == dynamic_data_out_)
         {
-            EPROSIMA_LOG_ERROR(LATENCYPUBLISHER,
+            EPROSIMA_LOG_ERROR(LatencyTest,
                     "Iteration failed: Failed to create Dynamic Data Out");
             return false;
         }
@@ -740,7 +740,7 @@ bool LatencyTestPublisher::test(
     }
     else
     {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "Error preparing types and endpoints for testing");
+        EPROSIMA_LOG_ERROR(LatencyTest, "Error preparing types and endpoints for testing");
         return false;
     }
 
@@ -906,7 +906,7 @@ bool LatencyTestPublisher::test(
     // Remove endpoints associated with the given payload size
     else if (!destroy_data_endpoints())
     {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "Endpoints for payload size " << datasize << " could not been removed");
+        EPROSIMA_LOG_ERROR(LatencyTest, "Endpoints for payload size " << datasize << " could not been removed");
         return false;
     }
 
@@ -936,7 +936,7 @@ void LatencyTestPublisher::analyze_times(
     stats.received_ = received_count_ != 0 ? received_count_ - 1 : 0;  // Because we are not counting the first one.
     if (rt_times_.size() == 0)
     {
-        EPROSIMA_LOG_ERROR(LatencyTest, "No roundtrip times to analyze");
+        EPROSIMA_LOG_ERROR(LatencyTest, "No roundtrip times to analyze with " << datasize << " bytes");
     }
     else
     {
@@ -1002,7 +1002,7 @@ void LatencyTestPublisher::analyze_times(
     // Writing times analysis
     if (writing_times_.size() == 0)
     {
-        EPROSIMA_LOG_ERROR(LatencyTest, "No writing times to analyze");
+        EPROSIMA_LOG_ERROR(LatencyTest, "No writing times to analyze with " << datasize << " bytes");
     }
     else
     {
@@ -1084,12 +1084,12 @@ bool LatencyTestPublisher::init_dynamic_types()
     // Check if it has been initialized before
     if (dynamic_pub_sub_type_)
     {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR DYNAMIC DATA type already initialized");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR DYNAMIC DATA type already initialized");
         return false;
     }
     else if (participant_->find_type(LatencyDataType::type_name_))
     {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR DYNAMIC DATA type already registered");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR DYNAMIC DATA type already registered");
         return false;
     }
 
@@ -1116,7 +1116,7 @@ bool LatencyTestPublisher::init_dynamic_types()
     // Register the data type
     if (RETCODE_OK != dynamic_pub_sub_type_.register_type(participant_))
     {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR registering the DYNAMIC DATA type");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR registering the DYNAMIC DATA type");
         return false;
     }
 
@@ -1131,12 +1131,12 @@ bool LatencyTestPublisher::init_static_types(
     // Check if it has been initialized before
     if (latency_data_type_)
     {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR STATIC DATA type already initialized");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR STATIC DATA type already initialized");
         return false;
     }
     else if (participant_->find_type(LatencyDataType::type_name_))
     {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR STATIC DATA type already registered");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR STATIC DATA type already registered");
         return false;
     }
 
@@ -1148,7 +1148,7 @@ bool LatencyTestPublisher::init_static_types(
     // Register the static type
     if (RETCODE_OK != latency_data_type_.register_type(participant_))
     {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR registering the STATIC DATA type");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR registering the STATIC DATA type");
         return false;
     }
 
@@ -1159,25 +1159,25 @@ bool LatencyTestPublisher::create_data_endpoints()
 {
     if (nullptr != latency_data_pub_topic_ || nullptr != latency_data_sub_topic_)
     {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR latency_data_pub_topic_ already initialized");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR latency_data_pub_topic_ already initialized");
         return false;
     }
 
     if (nullptr != latency_data_sub_topic_)
     {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR latency_data_sub_topic_ already initialized");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR latency_data_sub_topic_ already initialized");
         return false;
     }
 
     if (nullptr != data_writer_)
     {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR data_writer_ already initialized");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR data_writer_ already initialized");
         return false;
     }
 
     if (nullptr != data_reader_)
     {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR data_reader_ already initialized");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR data_reader_ already initialized");
         return false;
     }
 
@@ -1197,7 +1197,7 @@ bool LatencyTestPublisher::create_data_endpoints()
 
     if (nullptr == latency_data_pub_topic_)
     {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR creating latency_data_pub_topic_");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR creating latency_data_pub_topic_");
         return false;
     }
 
@@ -1218,7 +1218,7 @@ bool LatencyTestPublisher::create_data_endpoints()
 
     if (latency_data_sub_topic_ == nullptr)
     {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR creating latency_data_sub_topic_");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR creating latency_data_sub_topic_");
         return false;
     }
 
@@ -1257,7 +1257,7 @@ bool LatencyTestPublisher::destroy_data_endpoints()
     if (nullptr == data_writer_
             || RETCODE_OK != publisher_->delete_datawriter(data_writer_))
     {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR destroying the DataWriter");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR destroying the DataWriter");
         return false;
     }
     data_writer_ = nullptr;
@@ -1266,7 +1266,7 @@ bool LatencyTestPublisher::destroy_data_endpoints()
     if (nullptr == data_reader_
             || RETCODE_OK != subscriber_->delete_datareader(data_reader_))
     {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR destroying the DataReader");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR destroying the DataReader");
         return false;
     }
     data_reader_ = nullptr;
@@ -1276,7 +1276,7 @@ bool LatencyTestPublisher::destroy_data_endpoints()
     if (nullptr == latency_data_pub_topic_
             || RETCODE_OK != participant_->delete_topic(latency_data_pub_topic_))
     {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR destroying the DATA PUB topic");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR destroying the DATA PUB topic");
         return false;
     }
     latency_data_pub_topic_ = nullptr;
@@ -1284,7 +1284,7 @@ bool LatencyTestPublisher::destroy_data_endpoints()
     if (nullptr == latency_data_sub_topic_
             || RETCODE_OK != participant_->delete_topic(latency_data_sub_topic_))
     {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR destroying the DATA SUB topic");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR destroying the DATA SUB topic");
         return false;
     }
     latency_data_sub_topic_ = nullptr;
@@ -1292,7 +1292,7 @@ bool LatencyTestPublisher::destroy_data_endpoints()
     // Delete the Type
     if (RETCODE_OK != participant_->unregister_type(LatencyDataType::type_name_))
     {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR unregistering the DATA type");
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR unregistering the DATA type");
         return false;
     }
 
