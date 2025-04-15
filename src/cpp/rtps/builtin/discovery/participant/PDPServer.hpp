@@ -138,6 +138,14 @@ public:
             bool dispose = false);
 
     /**
+     * Sends own DATA(p) to the participant specified in @p pdata.
+     * Used to send first DATA(p) to new clients after discover them.
+     * @param pdata Pointer to the RTPSParticipantProxyData object.
+     *  */
+    void send_own_pdp(
+            ParticipantProxyData* pdata);
+
+    /**
      * These methods wouldn't be needed under perfect server operation (no need of dynamic endpoint allocation)
      * but must be implemented to solve server shutdown situations.
      * @param pdata Pointer to the RTPSParticipantProxyData object.
