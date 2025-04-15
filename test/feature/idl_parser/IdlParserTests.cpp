@@ -374,11 +374,10 @@ TEST_F(IdlParserTests, structures)
     DynamicType::_ref_type type21 = builder21->build();
     ASSERT_TRUE(type21);
 
-    // TODO StructSequence is skipped since sequence parsing is not supported.
-    // DynamicTypeBuilder::_ref_type builder22 = factory->create_type_w_uri("IDL/structures.idl", "StructSequence", include_paths);
-    // EXPECT_TRUE(builder22);
-    // DynamicType::_ref_type type22 = builder22->build();
-    // ASSERT_TRUE(type22);
+    DynamicTypeBuilder::_ref_type builder22 = factory->create_type_w_uri("IDL/structures.idl", "StructSequence", include_paths);
+    EXPECT_TRUE(builder22);
+    DynamicType::_ref_type type22 = builder22->build();
+    ASSERT_TRUE(type22);
 
     // TODO StructMap is skipped since map parsing is not supported.
     // DynamicTypeBuilder::_ref_type builder23 = factory->create_type_w_uri("IDL/structures.idl", "StructMap", include_paths);
@@ -546,11 +545,10 @@ TEST_F(IdlParserTests, aliases)
     DynamicType::_ref_type type20 = builder20->build();
     ASSERT_TRUE(type20);
 
-    // TODO AliasSequence is skipped since sequence parsing is not supported.
-    // DynamicTypeBuilder::_ref_type builder21 = factory->create_type_w_uri("IDL/aliases.idl", "AliasSequence", include_paths);
-    // EXPECT_TRUE(builder21);
-    // DynamicType::_ref_type type21 = builder21->build();
-    // ASSERT_TRUE(type21);
+    DynamicTypeBuilder::_ref_type builder21 = factory->create_type_w_uri("IDL/aliases.idl", "AliasSequence", include_paths);
+    EXPECT_TRUE(builder21);
+    DynamicType::_ref_type type21 = builder21->build();
+    ASSERT_TRUE(type21);
 
     // TODO AliasMap is skipped since map parsing is not supported.
     // DynamicTypeBuilder::_ref_type builder22 = factory->create_type_w_uri("IDL/aliases.idl", "AliasMap", include_paths);
@@ -710,11 +708,10 @@ TEST_F(IdlParserTests, arrays)
     DynamicType::_ref_type type22 = builder22->build();
     ASSERT_TRUE(type22);
 
-    // TODO ArraySequence is skipped since sequence parsing is not supported.
-    // DynamicTypeBuilder::_ref_type builder23 = factory->create_type_w_uri("IDL/arrays.idl", "ArraySequence", include_paths);
-    // EXPECT_TRUE(builder23);
-    // DynamicType::_ref_type type23 = builder23->build();
-    // ASSERT_TRUE(type23);
+    DynamicTypeBuilder::_ref_type builder23 = factory->create_type_w_uri("IDL/arrays.idl", "ArraySequence", include_paths);
+    EXPECT_TRUE(builder23);
+    DynamicType::_ref_type type23 = builder23->build();
+    ASSERT_TRUE(type23);
 
     // TODO ArrayMap is skipped since map parsing is not supported.
     // DynamicTypeBuilder::_ref_type builder24 = factory->create_type_w_uri("IDL/arrays.idl", "ArrayMap", include_paths);
@@ -862,11 +859,10 @@ TEST_F(IdlParserTests, arrays)
     DynamicType::_ref_type type47 = builder47->build();
     ASSERT_TRUE(type47);
 
-    // TODO ArrayMultiDimensionSequence is skipped since sequence parsing is not supported.
-    // DynamicTypeBuilder::_ref_type builder48 = factory->create_type_w_uri("IDL/arrays.idl", "ArrayMultiDimensionSequence", include_paths);
-    // EXPECT_TRUE(builder48);
-    // DynamicType::_ref_type type48 = builder48->build();
-    // ASSERT_TRUE(type48);
+    DynamicTypeBuilder::_ref_type builder48 = factory->create_type_w_uri("IDL/arrays.idl", "ArrayMultiDimensionSequence", include_paths);
+    EXPECT_TRUE(builder48);
+    DynamicType::_ref_type type48 = builder48->build();
+    ASSERT_TRUE(type48);
 
     // TODO ArrayMultiDimensionMap is skipped since map parsing is not supported.
     // DynamicTypeBuilder::_ref_type builder49 = factory->create_type_w_uri("IDL/arrays.idl", "ArrayMultiDimensionMap", include_paths);
@@ -1038,11 +1034,10 @@ TEST_F(IdlParserTests, arrays)
     DynamicType::_ref_type type73 = builder73->build();
     ASSERT_TRUE(type73);
 
-    // TODO ArraySingleDimensionLiteralsSequence is skipped since sequence parsing is not supported.
-    // DynamicTypeBuilder::_ref_type builder74 = factory->create_type_w_uri("IDL/arrays.idl", "ArraySingleDimensionLiteralsSequence", include_paths);
-    // EXPECT_TRUE(builder74);
-    // DynamicType::_ref_type type74 = builder74->build();
-    // ASSERT_TRUE(type74);
+    DynamicTypeBuilder::_ref_type builder74 = factory->create_type_w_uri("IDL/arrays.idl", "ArraySingleDimensionLiteralsSequence", include_paths);
+    EXPECT_TRUE(builder74);
+    DynamicType::_ref_type type74 = builder74->build();
+    ASSERT_TRUE(type74);
 
     // TODO ArraySingleDimensionLiteralsMap is skipped since map parsing is not supported.
     // DynamicTypeBuilder::_ref_type builder75 = factory->create_type_w_uri("IDL/arrays.idl", "ArraySingleDimensionLiteralsMap", include_paths);
@@ -1209,11 +1204,10 @@ TEST_F(IdlParserTests, arrays)
     DynamicType::_ref_type type98 = builder98->build();
     ASSERT_TRUE(type98);
 
-    // TODO ArrayMultiDimensionLiteralsSequence is skipped since sequence parsing is not supported.
-    // DynamicTypeBuilder::_ref_type builder99 = factory->create_type_w_uri("IDL/arrays.idl", "ArrayMultiDimensionLiteralsSequence", include_paths);
-    // EXPECT_TRUE(builder99);
-    // DynamicType::_ref_type type99 = builder99->build();
-    // ASSERT_TRUE(type99);
+    DynamicTypeBuilder::_ref_type builder99 = factory->create_type_w_uri("IDL/arrays.idl", "ArrayMultiDimensionLiteralsSequence", include_paths);
+    EXPECT_TRUE(builder99);
+    DynamicType::_ref_type type99 = builder99->build();
+    ASSERT_TRUE(type99);
 
     // TODO ArrayMultiDimensionLiteralsMap is skipped since map parsing is not supported.
     // DynamicTypeBuilder::_ref_type builder100 = factory->create_type_w_uri("IDL/arrays.idl", "ArrayMultiDimensionLiteralsMap", include_paths);
@@ -1407,7 +1401,7 @@ TEST_F(IdlParserTests, unions)
     data = DynamicDataFactory::get_instance()->create_data(type);
     ASSERT_TRUE(data);
 
-    builder = factory->create_type_w_uri("IDL/unions.idl", "Union_BoundedString", include_paths);
+     builder = factory->create_type_w_uri("IDL/unions.idl", "Union_BoundedString", include_paths);
     EXPECT_TRUE(builder);
     type = builder->build();
     ASSERT_TRUE(type);
@@ -1450,13 +1444,12 @@ TEST_F(IdlParserTests, unions)
     data = DynamicDataFactory::get_instance()->create_data(type);
     ASSERT_TRUE(data);
 
-    // TODO Union_Sequence is skipped since sequence parsing is not supported.
-    // builder = factory->create_type_w_uri("IDL/unions.idl", "Union_Sequence", include_paths);
-    // EXPECT_TRUE(builder);
-    // type = builder->build();
-    // ASSERT_TRUE(type);
-    // data = DynamicDataFactory::get_instance()->create_data(type);
-    // ASSERT_TRUE(data);
+    builder = factory->create_type_w_uri("IDL/unions.idl", "Union_Sequence", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
 
     // TODO Union_Map is skipped since map parsing is not supported.
     // builder = factory->create_type_w_uri("IDL/unions.idl", "Union_Map", include_paths);
@@ -1579,21 +1572,19 @@ TEST_F(IdlParserTests, unions)
     data = DynamicDataFactory::get_instance()->create_data(type);
     ASSERT_TRUE(data);
 
-    // TODO Union_Several_Fields is skipped since sequence parsing is not supported.
-    // builder = factory->create_type_w_uri("IDL/unions.idl", "Union_Several_Fields", include_paths);
-    // EXPECT_TRUE(builder);
-    // type = builder->build();
-    // ASSERT_TRUE(type);
-    // data = DynamicDataFactory::get_instance()->create_data(type);
-    // ASSERT_TRUE(data);
+    builder = factory->create_type_w_uri("IDL/unions.idl", "Union_Several_Fields", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
 
-    // TODO Union_Several_Fields_With_Default is skipped since sequence parsing is not supported.
-    // builder = factory->create_type_w_uri("IDL/unions.idl", "Union_Several_Fields_With_Default", include_paths);
-    // EXPECT_TRUE(builder);
-    // type = builder->build();
-    // ASSERT_TRUE(type);
-    // data = DynamicDataFactory::get_instance()->create_data(type);
-    // ASSERT_TRUE(data);
+    builder = factory->create_type_w_uri("IDL/unions.idl", "Union_Several_Fields_With_Default", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
 
     // TODO Union_Fixed_String_In_Module_Alias is skipped since module parsing is not supported.
     // builder = factory->create_type_w_uri("IDL/unions.idl", "Union_Fixed_String_In_Module_Alias", include_paths);
@@ -1751,13 +1742,12 @@ TEST_F(IdlParserTests, unions)
     data = DynamicDataFactory::get_instance()->create_data(type);
     ASSERT_TRUE(data);
 
-    // TODO UnionSequence is skipped since sequence parsing is not supported.
-    // builder = factory->create_type_w_uri("IDL/unions.idl", "UnionSequence", include_paths);
-    // EXPECT_TRUE(builder);
-    // type = builder->build();
-    // ASSERT_TRUE(type);
-    // data = DynamicDataFactory::get_instance()->create_data(type);
-    // ASSERT_TRUE(data);
+    builder = factory->create_type_w_uri("IDL/unions.idl", "UnionSequence", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
 
     // TODO UnionMap is skipped since map parsing is not supported.
     // builder = factory->create_type_w_uri("IDL/unions.idl", "UnionMap", include_paths);
@@ -1880,23 +1870,276 @@ TEST_F(IdlParserTests, unions)
     data = DynamicDataFactory::get_instance()->create_data(type);
     ASSERT_TRUE(data);
 
-    // TODO UnionSeveralFields is skipped since sequence parsing is not supported.
-    // builder = factory->create_type_w_uri("IDL/unions.idl", "UnionSeveralFields", include_paths);
-    // EXPECT_TRUE(builder);
-    // type = builder->build();
-    // ASSERT_TRUE(type);
-    // data = DynamicDataFactory::get_instance()->create_data(type);
-    // ASSERT_TRUE(data);
+    builder = factory->create_type_w_uri("IDL/unions.idl", "UnionSeveralFields", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
 
-    // TODO UnionSeveralFieldsWithDefault is skipped since sequence parsing is not supported.
-    // builder = factory->create_type_w_uri("IDL/unions.idl", "UnionSeveralFieldsWithDefault", include_paths);
-    // EXPECT_TRUE(builder);
-    // type = builder->build();
-    // ASSERT_TRUE(type);
-    // data = DynamicDataFactory::get_instance()->create_data(type);
-    // ASSERT_TRUE(data);
+    builder = factory->create_type_w_uri("IDL/unions.idl", "UnionSeveralFieldsWithDefault", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
 
     // TODO The rest types are skipped since annotation/module parsing are not supported.
+}
+
+TEST_F(IdlParserTests, sequences)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    std::vector<std::string> include_paths;
+    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+
+    /* sequence<short> */
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceShort", include_paths);
+    EXPECT_TRUE(builder);
+    DynamicType::_ref_type type = builder->build();
+    ASSERT_TRUE(type);
+    DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(type)};
+    ASSERT_TRUE(data);
+
+    /* sequence<unsigned short> */
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceUShort", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* sequence<long> */
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceLong", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* sequence<unsigned long> */
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceULong", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* sequence<long long> */
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceLongLong", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* sequence<unsigned long long> */
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceULongLong", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* sequence<float> */
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceFloat", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* sequence<double> */
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceDouble", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* sequence<long double> */
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceLongDouble", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* sequence<boolean> */
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceBoolean", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* sequence<octet> */
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceOctet", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* sequence<char> */
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceChar", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* sequence<wchar> */
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceWChar", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* sequence<string> */
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceString", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* sequence<wstring> */
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceWString", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* sequence<Inner_alias_bounded_string_helper> */
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceStringBounded", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* sequence<Inner_alias_bounded_wstring_helper> */
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceWStringBounded", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* sequence<InnerEnumHelper> */
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceEnum", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* sequence<InnerBitMaskHelper> */
+    // TODO: SequenceBitMask is skipped since bitmask parsing is not supported.
+    // builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceBitMask", include_paths);
+    // EXPECT_TRUE(builder);
+    // type = builder->build();
+    // ASSERT_TRUE(type);
+    // data = DynamicDataFactory::get_instance()->create_data(type);
+    // ASSERT_TRUE(data);
+
+    /* sequence<InnerAliasHelper> */
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceAlias", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* sequence<Inner_alias_array_helper> */
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceShortArray", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* sequence<Inner_alias_sequence_helper> */
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceSequence", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* sequence<Inner_alias_map_helper> */
+    // TODO: SequenceMap is skipped since map parsing is not supported.
+    // builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceMap", include_paths);
+    // EXPECT_TRUE(builder);
+    // type = builder->build();
+    // ASSERT_TRUE(type);
+    // data = DynamicDataFactory::get_instance()->create_data(type);
+    // ASSERT_TRUE(data);
+
+    /* sequence<InnerUnionHelper> */
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceUnion", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* sequence<InnerStructureHelper> */
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceStructure", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* sequence<InnerBitsetHelper> */
+    // TODO: SequenceBitset is skipped since bitset parsing is not supported.
+    // builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceBitset", include_paths);
+    // EXPECT_TRUE(builder);
+    // type = builder->build();
+    // ASSERT_TRUE(type);
+    // data = DynamicDataFactory::get_instance()->create_data(type);
+    // ASSERT_TRUE(data);
+
+    /**
+     * sequence<short, 1>
+     * sequence<string, 5>
+     */
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "BoundedSmallSequences", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /**
+     * sequence<short, 41925>
+     * sequence<string, 256>
+     */
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "BoundedBigSequences", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    // TODO: The rest types are skipped since module parsing is not supported.
+    // builder = factory->create_type_w_uri("IDL/sequences.idl", "Common_Module", include_paths);
+    // EXPECT_TRUE(builder);
+    // type = builder->build();
+    // ASSERT_TRUE(type);
+    // data = DynamicDataFactory::get_instance()->create_data(type);
+    // ASSERT_TRUE(data);
+
+    // builder = factory->create_type_w_uri("IDL/sequences.idl", "NoCommon_Module", include_paths);
+    // EXPECT_TRUE(builder);
+    // type = builder->build();
+    // ASSERT_TRUE(type);
+    // data = DynamicDataFactory::get_instance()->create_data(type);
+    // ASSERT_TRUE(data);
 }
 
 int main(
