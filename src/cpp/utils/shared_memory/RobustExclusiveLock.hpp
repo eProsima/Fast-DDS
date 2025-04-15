@@ -17,6 +17,8 @@
 
 #ifdef  _MSC_VER
 #include <io.h>
+#elif defined(MINGW_COMPILER)
+#include <io.h>
 #else
 #include <sys/file.h>
 #endif // ifdef  _MSC_VER
@@ -142,6 +144,45 @@ private:
 
         int fd;
         ret = _sopen_s(&fd, file_path.c_str(), O_CREAT | O_RDONLY, _SH_DENYRW, _S_IREAD | _S_IWRITE);
+
+        if (ret != 0)
+        {
+            return -1;
+        }
+
+        *was_lock_created = true;
+
+        return fd;
+    }
+
+    static void unlock_and_close(
+            int fd,
+            const std::string& name)
+    {
+        _close(fd);
+
+        if (0 != std::remove(SharedDir::get_lock_path(name).c_str()))
+        {
+            EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, "Failed to remove " << SharedDir::get_lock_path(name));
+        }
+    }
+
+#elif defined(MINGW_COMPILER)
+    static int open_and_lock_file(
+            const std::string& file_path,
+            bool* was_lock_created)
+    {
+        int test_exist;
+        auto ret = _sopen_s(&test_exist, file_path.c_str(), O_RDONLY, 0x0010, _S_IREAD | _S_IWRITE);
+
+        if (ret == 0)
+        {
+            *was_lock_created = false;
+            return test_exist;
+        }
+
+        int fd;
+        ret = _sopen_s(&fd, file_path.c_str(), O_CREAT | O_RDONLY, 0x0010, _S_IREAD | _S_IWRITE);
 
         if (ret != 0)
         {
