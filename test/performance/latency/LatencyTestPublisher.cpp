@@ -578,7 +578,7 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
             if (roundtrip.count() > 0
                     && !(pub->data_loans_ && roundtrip.count() > 10000))
             {
-                pub->times_.push_back(roundtrip);
+                pub->rt_times_.push_back(roundtrip);
                 ++pub->received_count_;
             }
 
@@ -635,8 +635,8 @@ void LatencyTestPublisher::run()
 
     // Print a summary table with the measurements
     printf("Printing round-trip times in us, statistics for %d samples\n", samples_);
-    printf("   Bytes, Samples,   stdev,    mean,     min,     50%%,     90%%,     99%%,  99.99%%,     max\n");
-    printf("--------,--------,--------,--------,--------,--------,--------,--------,--------,--------,\n");
+    printf("   Bytes, Samples,   stdev,    mean,     min,     50%%,     90%%,     99%%,  99.99%%,     max,   w_min,  w_mean, w_stdev,   w_max\n");
+    printf("--------,--------,--------,--------,--------,--------,--------,--------,--------,--------,--------,--------,--------,--------,\n");
     for (uint16_t i = 0; i < stats_.size(); i++)
     {
         print_stats(DATA_BASE_INDEX + i, stats_[i]);
@@ -760,7 +760,8 @@ bool LatencyTestPublisher::test(
     }
 
     // Signal the subscribers the publisher is READY
-    times_.clear();
+    rt_times_.clear();
+    writing_times_.clear();
     TestCommandType command;
     command.m_command = READY;
     if (!command_writer_->write(&command))
@@ -861,6 +862,9 @@ bool LatencyTestPublisher::test(
             return false;
         }
 
+        end_time_ = std::chrono::steady_clock::now();
+        writing_times_.push_back(std::chrono::duration<double, std::micro>(end_time_ - start_time_));
+
         std::unique_lock<std::mutex> lock(mutex_);
         // the wait timeouts due possible message leaks
         data_msg_cv_.wait_for(lock,
@@ -922,7 +926,7 @@ bool LatencyTestPublisher::test(
     }
 
     // Drop the first measurement, as it's usually not representative
-    times_.erase(times_.begin());
+    rt_times_.erase(rt_times_.begin());
 
     // Log all data to CSV file if specified
     if (raw_data_file_ != "")
@@ -942,63 +946,78 @@ void LatencyTestPublisher::analyze_times(
     TimeStats stats;
     stats.bytes_ = datasize;
     stats.received_ = received_count_ - 1;  // Because we are not counting the first one.
-    stats.minimum_ = *min_element(times_.begin(), times_.end());
-    stats.maximum_ = *max_element(times_.begin(), times_.end());
-    stats.mean_ = accumulate(times_.begin(), times_.end(),
-                    std::chrono::duration<double, std::micro>(0)).count() / times_.size();
+    stats.minimum_ = *min_element(rt_times_.begin(), rt_times_.end());
+    stats.maximum_ = *max_element(rt_times_.begin(), rt_times_.end());
+    stats.mean_ = accumulate(rt_times_.begin(), rt_times_.end(),
+                    std::chrono::duration<double, std::micro>(0)).count() / rt_times_.size();
 
     double aux_stdev = 0;
-    for (std::vector<std::chrono::duration<double, std::micro>>::iterator tit = times_.begin(); tit != times_.end();
+    for (std::vector<std::chrono::duration<double, std::micro>>::iterator tit = rt_times_.begin(); tit != rt_times_.end();
             ++tit)
     {
         aux_stdev += pow(((*tit).count() - stats.mean_), 2);
     }
-    aux_stdev = sqrt(aux_stdev / times_.size());
+    aux_stdev = sqrt(aux_stdev / rt_times_.size());
     stats.stdev_ = aux_stdev;
 
     /* Percentiles */
-    sort(times_.begin(), times_.end());
+    sort(rt_times_.begin(), rt_times_.end());
 
     size_t elem = 0;
-    elem = static_cast<size_t>(times_.size() * 0.5);
-    if (elem > 0 && elem <= times_.size())
+    elem = static_cast<size_t>(rt_times_.size() * 0.5);
+    if (elem > 0 && elem <= rt_times_.size())
     {
-        stats.percentile_50_ = times_.at(--elem).count();
+        stats.percentile_50_ = rt_times_.at(--elem).count();
     }
     else
     {
         stats.percentile_50_ = NAN;
     }
 
-    elem = static_cast<size_t>(times_.size() * 0.9);
-    if (elem > 0 && elem <= times_.size())
+    elem = static_cast<size_t>(rt_times_.size() * 0.9);
+    if (elem > 0 && elem <= rt_times_.size())
     {
-        stats.percentile_90_ = times_.at(--elem).count();
+        stats.percentile_90_ = rt_times_.at(--elem).count();
     }
     else
     {
         stats.percentile_90_ = NAN;
     }
 
-    elem = static_cast<size_t>(times_.size() * 0.99);
-    if (elem > 0 && elem <= times_.size())
+    elem = static_cast<size_t>(rt_times_.size() * 0.99);
+    if (elem > 0 && elem <= rt_times_.size())
     {
-        stats.percentile_99_ = times_.at(--elem).count();
+        stats.percentile_99_ = rt_times_.at(--elem).count();
     }
     else
     {
         stats.percentile_99_ = NAN;
     }
 
-    elem = static_cast<size_t>(times_.size() * 0.9999);
-    if (elem > 0 && elem <= times_.size())
+    elem = static_cast<size_t>(rt_times_.size() * 0.9999);
+    if (elem > 0 && elem <= rt_times_.size())
     {
-        stats.percentile_9999_ = times_.at(--elem).count();
+        stats.percentile_9999_ = rt_times_.at(--elem).count();
     }
     else
     {
         stats.percentile_9999_ = NAN;
     }
+
+    // Writing times analysis
+    stats.writing_minimum_ = *min_element(writing_times_.begin(), writing_times_.end());
+    stats.writing_maximum_ = *max_element(writing_times_.begin(), writing_times_.end());
+    stats.writing_mean_ = accumulate(writing_times_.begin(), writing_times_.end(),
+                    std::chrono::duration<double, std::micro>(0)).count() / writing_times_.size();
+
+    aux_stdev = 0;
+    for (std::vector<std::chrono::duration<double, std::micro>>::iterator tit = writing_times_.begin(); tit != writing_times_.end();
+            ++tit)
+    {
+        aux_stdev += pow(((*tit).count() - stats.mean_), 2);
+    }
+    aux_stdev = sqrt(aux_stdev / writing_times_.size());
+    stats.writing_stdev_ = aux_stdev;
 
     stats_.push_back(stats);
 }
@@ -1013,13 +1032,17 @@ void LatencyTestPublisher::print_stats(
 
 
 #ifdef _WIN32
-    printf("%8I64u,%8u,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f \n",
+    printf("%8I64u,%8u,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f \n",
             stats.bytes_, stats.received_, stats.stdev_, stats.mean_, stats.minimum_.count(), stats.percentile_50_,
-            stats.percentile_90_, stats.percentile_99_, stats.percentile_9999_, stats.maximum_.count());
+            stats.percentile_90_, stats.percentile_99_, stats.percentile_9999_, stats.maximum_.count(),
+            stats.writing_minimum_.count(), stats.writing_mean_, stats.writing_stdev_,
+            stats.writing_maximum_.count());
 #else
-    printf("%8" PRIu64 ",%8u,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f \n",
+    printf("%8" PRIu64 ",%8u,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f \n",
             stats.bytes_, stats.received_, stats.stdev_, stats.mean_, stats.minimum_.count(), stats.percentile_50_,
-            stats.percentile_90_, stats.percentile_99_, stats.percentile_9999_, stats.maximum_.count());
+            stats.percentile_90_, stats.percentile_99_, stats.percentile_9999_, stats.maximum_.count(),
+            stats.writing_minimum_.count(), stats.writing_mean_, stats.writing_stdev_,
+            stats.writing_maximum_.count());
 #endif // ifdef _WIN32
 }
 
@@ -1028,7 +1051,7 @@ void LatencyTestPublisher::export_raw_data(
 {
     std::ofstream data_file;
     data_file.open(raw_data_file_, std::fstream::app);
-    for (std::vector<std::chrono::duration<double, std::micro>>::iterator tit = times_.begin(); tit != times_.end();
+    for (std::vector<std::chrono::duration<double, std::micro>>::iterator tit = rt_times_.begin(); tit != rt_times_.end();
             ++tit)
     {
         data_file << ++raw_sample_count_ << "," << datasize << "," << (*tit).count() << std::endl;
