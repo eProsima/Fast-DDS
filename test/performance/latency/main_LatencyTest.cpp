@@ -64,8 +64,7 @@ enum  optionIndex
     FORCED_DOMAIN,
     FILE_R,
     DATA_SHARING,
-    DATA_LOAN,
-    SHARED_MEMORY
+    DATA_LOAN
 };
 
 enum TestAgent
@@ -99,8 +98,6 @@ const option::Descriptor usage[] = {
       "               --data_sharing=[on|off]             Explicitly enable/disable data sharing feature." },
     { DATA_LOAN,        0, "l", "data_loans",            Arg::None,
       "               --data_loans          Use loan sample API." },
-    { SHARED_MEMORY,    0, "", "shared_memory", Arg::Enabler,
-      "               --shared_memory=[on|off]             Explicitly enable/disable shared memory transport." },
 #if HAVE_SECURITY
     {
         USE_SECURITY,    0, "",  "security",        Arg::Required,
@@ -183,6 +180,12 @@ bool load_demands_payload(
     return true;
 }
 
+void print_usage_test(int columns)
+{
+    option::printUsage(fwrite, stdout, usage, columns);
+    std::cout << "\nTransports need to be configured using FASTDDS_BUILTIN_TRANSPORTS env. var." << std::endl;
+}
+
 int main(
         int argc,
         char** argv)
@@ -229,7 +232,6 @@ int main(
     std::string demands_file = "";
     Arg::EnablerValue data_sharing = Arg::EnablerValue::NO_SET;
     bool data_loans = false;
-    Arg::EnablerValue shared_memory = Arg::EnablerValue::NO_SET;
 
     argc -= (argc > 0);
     argv += (argc > 0); // skip program name argv[0] if present
@@ -249,13 +251,13 @@ int main(
         }
         else
         {
-            option::printUsage(fwrite, stdout, usage, columns);
+            print_usage_test(columns);
             return 0;
         }
     }
     else
     {
-        option::printUsage(fwrite, stdout, usage, columns);
+        print_usage_test(columns);
         return 0;
     }
 
@@ -272,7 +274,7 @@ int main(
 
     if (options[HELP])
     {
-        option::printUsage(fwrite, stdout, usage, columns);
+        print_usage_test(columns);
         return 0;
     }
 
@@ -295,7 +297,7 @@ int main(
                 }
                 else
                 {
-                    option::printUsage(fwrite, stdout, usage, columns);
+                    print_usage_test(columns);
                     return 0;
                 }
                 break;
@@ -319,7 +321,7 @@ int main(
                 }
                 else
                 {
-                    option::printUsage(fwrite, stdout, usage, columns);
+                    print_usage_test(columns);
                     return 0;
                 }
                 break;
@@ -339,7 +341,7 @@ int main(
                 }
                 else
                 {
-                    option::printUsage(fwrite, stdout, usage, columns);
+                    print_usage_test(columns);
                     return 0;
                 }
                 break;
@@ -350,7 +352,7 @@ int main(
                 }
                 else
                 {
-                    option::printUsage(fwrite, stdout, usage, columns);
+                    print_usage_test(columns);
                     return 0;
                 }
                 break;
@@ -372,7 +374,7 @@ int main(
                 }
                 else
                 {
-                    option::printUsage(fwrite, stdout, usage, columns);
+                    print_usage_test(columns);
                     return -1;
                 }
                 break;
@@ -397,19 +399,9 @@ int main(
             case DATA_LOAN:
                 data_loans = true;
                 break;
-            case SHARED_MEMORY:
-                if (0 == strncasecmp(opt.arg, "on", 2))
-                {
-                    shared_memory = Arg::EnablerValue::ON;
-                }
-                else
-                {
-                    shared_memory = Arg::EnablerValue::OFF;
-                }
-                break;
             case UNKNOWN_OPT:
             default:
-                option::printUsage(fwrite, stdout, usage, columns);
+                print_usage_test(columns);
                 return 0;
                 break;
         }
@@ -448,7 +440,7 @@ int main(
     {
         if (certs_path.empty())
         {
-            option::printUsage(fwrite, stdout, usage, columns);
+            print_usage_test(columns);
             return -1;
         }
 
@@ -501,7 +493,7 @@ int main(
         LatencyTestPublisher latency_publisher;
         if (latency_publisher.init(subscribers, samples, reliable, seed, hostname, export_csv, export_prefix,
                 raw_data_file, pub_part_property_policy, pub_property_policy, xml_config_file,
-                dynamic_types, data_sharing, data_loans, shared_memory, forced_domain, data_sizes))
+                dynamic_types, data_sharing, data_loans, forced_domain, data_sizes))
         {
             latency_publisher.run();
             latency_publisher.destroy_user_entities();
@@ -517,7 +509,7 @@ int main(
         LatencyTestSubscriber latency_subscriber;
         if (latency_subscriber.init(echo, samples, reliable, seed, hostname, sub_part_property_policy,
                 sub_property_policy,
-                xml_config_file, dynamic_types, data_sharing, data_loans, shared_memory, forced_domain, data_sizes))
+                xml_config_file, dynamic_types, data_sharing, data_loans, forced_domain, data_sizes))
         {
             latency_subscriber.run();
             latency_subscriber.destroy_user_entities();
@@ -537,7 +529,7 @@ int main(
         LatencyTestPublisher latency_publisher;
         bool pub_init = latency_publisher.init(subscribers, samples, reliable, seed, hostname, export_csv,
                         export_prefix, raw_data_file, pub_part_property_policy, pub_property_policy,
-                        xml_config_file, dynamic_types, data_sharing, data_loans, shared_memory, forced_domain,
+                        xml_config_file, dynamic_types, data_sharing, data_loans, forced_domain,
                         data_sizes);
 
         // Initialize subscribers
@@ -550,7 +542,6 @@ int main(
             sub_init &= latency_subscribers.back()->init(echo, samples, reliable, seed, hostname,
                             sub_part_property_policy,
                             sub_property_policy, xml_config_file, dynamic_types, data_sharing, data_loans,
-                            shared_memory,
                             forced_domain, data_sizes);
         }
 

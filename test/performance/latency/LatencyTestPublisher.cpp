@@ -79,7 +79,6 @@ bool LatencyTestPublisher::init(
         bool dynamic_data,
         Arg::EnablerValue data_sharing,
         bool data_loans,
-        Arg::EnablerValue shared_memory,
         int forced_domain,
         LatencyDataSizes& latency_data_sizes)
 {
@@ -93,7 +92,6 @@ bool LatencyTestPublisher::init(
     dynamic_types_ = dynamic_data;
     data_sharing_ = data_sharing;
     data_loans_ = data_loans;
-    shared_memory_ = shared_memory;
     forced_domain_ = forced_domain;
     raw_data_file_ = raw_data_file;
     pid_ = pid;
@@ -168,24 +166,8 @@ bool LatencyTestPublisher::init(
         pqos.properties(part_property_policy);
     }
 
-    // Set shared memory transport if it was enable/disable explicitly.
-    if (Arg::EnablerValue::ON == shared_memory_)
-    {
-        std::shared_ptr<eprosima::fastdds::rtps::SharedMemTransportDescriptor> shm_transport =
-                std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
-        std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> udp_transport =
-                std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
-        pqos.transport().user_transports.push_back(shm_transport);
-        pqos.transport().user_transports.push_back(udp_transport);
-        pqos.transport().use_builtin_transports = false;
-    }
-    else if (Arg::EnablerValue::OFF == shared_memory_)
-    {
-        std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> udp_transport =
-                std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
-        pqos.transport().user_transports.push_back(udp_transport);
-        pqos.transport().use_builtin_transports = false;
-    }
+    // Set builtin transports to true and rely on environment variable to configure transports.
+    pqos.transport().use_builtin_transports = true;
 
     // Create the participant
     participant_ =
