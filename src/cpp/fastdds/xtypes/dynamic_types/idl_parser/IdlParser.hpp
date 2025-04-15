@@ -263,21 +263,25 @@ struct action<identifier>
                 }
                 else if (!state["type"].empty())
                 {
-                    // Union member type is primitive type
-                    state["union_member_types"] += state["type"];
-                    state["union_member_names"] += identifier_name;
-                }
-                else
-                {
-                    if (state["union_expecting_member_name"] == "true")
+                    if (state["type"] == "sequence")
                     {
-                        state["union_member_names"] += identifier_name;
-                        state["union_expecting_member_name"] = "";
+                        // In case of the union member is a sequence, two possible cases:
+                        // 1. Matched identifier is the element type of the sequence. In this case, element type
+                        //    should be previously declared, so updating state should be managed in action<scoped_name>.
+                        //    Here, we only need to set the member name: check only if element_type is not empty
+                        //    (in case it is empty, it means that the identifier is the element type,
+                        //    because it is parsed before the member name).
+                        // 2. Matched identifier is the member name. In this case, update state with the member name.
+                        if ((!state["element_type"].empty()) && state["current_union_member_name"].empty())
+                        {
+                            // The identifier is the member name
+                            state["current_union_member_name"] = identifier_name;
+                        }
                     }
-                    else
+                    else if (state["current_union_member_name"].empty())
                     {
-                        state["union_member_types"] += identifier_name;
-                        state["union_expecting_member_name"] = "true";
+                        // The identifier is a member name
+                        state["current_union_member_name"] = identifier_name;
                     }
                 }
             }
@@ -358,7 +362,7 @@ struct action<scoped_name>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& operands)
     {
-        debug_action("scoped_name", in, state, operands.size());
+        // debug_action("scoped_name", in, state, operands.size());
         Module& module = ctx->module();
         std::string identifier_name = in.string();
 
@@ -422,50 +426,82 @@ struct action<semicolon>
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         debug_action("semicolon", in, state, 0);
-        if (!state["type"].empty() && state.count("current_struct_member_name") &&
-                !state["current_struct_member_name"].empty())
+        if (!state["type"].empty())
         {
-            // Add the type and name to the member lists
-            // NOTE: For sequence types, the type stored in "struct_member_types"
-            // is the type of each element in the sequence, not "sequence".
-            // Sequence type can be inferred by checking if "sequence_sizes" contains a valid value for this member.
-            std::string current_member_type = (state["type"] == "sequence") ? state["element_type"] : state["type"];
-            state["struct_member_types"] += current_member_type + ";";
-            state["struct_member_names"] += state["current_struct_member_name"] + ";";
+            if (state.count("current_struct_member_name") && !state["current_struct_member_name"].empty())
+            {
+                // Add the type and name to the member lists
+                // NOTE: For sequence types, the type stored in "struct_member_types"
+                // is the type of each element in the sequence, not "sequence".
+                // Sequence type can be inferred by checking if "sequence_sizes" contains a valid value for this member.
+                std::string current_member_type = (state["type"] == "sequence") ? state["element_type"] : state["type"];
+                state["struct_member_types"] += current_member_type + ";";
+                state["struct_member_names"] += state["current_struct_member_name"] + ";";
 
-            // Add the array dimensions for this member to `all_array_sizes`
-            std::string current_array_sizes = state["current_array_sizes"].empty() ? "0" : state["current_array_sizes"];
-            if (!state["all_array_sizes"].empty())
-            {
-                state["all_array_sizes"] += ";" + current_array_sizes;
-            }
-            else
-            {
-                state["all_array_sizes"] = current_array_sizes;
-            }
+                // Add the array dimensions for this member to `all_array_sizes`
+                std::string current_array_sizes = state["current_array_sizes"].empty() ? "0" : state["current_array_sizes"];
+                if (!state["all_array_sizes"].empty())
+                {
+                    state["all_array_sizes"] += ";" + current_array_sizes;
+                }
+                else
+                {
+                    state["all_array_sizes"] = current_array_sizes;
+                }
 
-            // Add the sequence size for this member to "sequence_sizes"
-            std::string current_sequence_size;
-            if (state.count("sequence_size"))
-            {
-                current_sequence_size = state["sequence_size"];
+                // Add the sequence size for this member to "sequence_sizes"
+                std::string current_sequence_size;
+                if (state.count("sequence_size"))
+                {
+                    current_sequence_size = state["sequence_size"];
 
-                // Key not more needed, remove it
-                state.erase("sequence_size");
-            }
-            else
-            {
-                current_sequence_size = "0";
-            }
+                    // Key not more needed, remove it
+                    state.erase("sequence_size");
+                }
+                else
+                {
+                    current_sequence_size = "0";
+                }
 
-            // Add the sequence size to the member list
-            if (!state["sequence_sizes"].empty())
-            {
-                state["sequence_sizes"] += ";" + current_sequence_size;
+                // Add the sequence size to the member list
+                if (!state["sequence_sizes"].empty())
+                {
+                    state["sequence_sizes"] += ";" + current_sequence_size;
+                }
+                else
+                {
+                    state["sequence_sizes"] = current_sequence_size;
+                }
             }
-            else
+            else if (state.count("union_name") && !state["union_name"].empty())
             {
-                state["sequence_sizes"] = current_sequence_size;
+                // TODO (Carlosespicur): Probably, this could be refactored to be unified with the previous case after
+                // supporting array types in unions.
+
+                // Add the type and name to the member lists
+                // NOTE: For sequence types, the type stored in "union_member_types"
+                // is the type of each element in the sequence, not "sequence".
+                // Sequence type can be inferred by checking if "sequence_sizes" contains a valid value for this member.
+                std::string current_member_type = (state["type"] == "sequence") ? state["element_type"] : state["type"];
+                state["union_member_types"] += current_member_type;
+                state["union_member_names"] += state["current_union_member_name"];
+
+                // Add the sequence size for this member to "sequence_sizes"
+                std::string current_sequence_size;
+                if (state.count("sequence_size"))
+                {
+                    current_sequence_size = state["sequence_size"];
+
+                    // Key not more needed, remove it
+                    state.erase("sequence_size");
+                }
+                else
+                {
+                    current_sequence_size = "0";
+                }
+
+                // Add the sequence size to the member list
+                state["sequence_sizes"] += current_sequence_size;
             }
 
             // Clear the temporary states for the next member
@@ -481,8 +517,21 @@ struct action<semicolon>
             {
                 state.erase("alias");
             }
-            state["current_struct_member_name"].clear();
-            state["current_array_sizes"].clear();
+
+            if (state.count("current_struct_member_name"))
+            {
+                state["current_struct_member_name"].clear();
+            }
+
+            if (state.count("current_union_member_name"))
+            {
+                state["current_union_member_name"].clear();
+            }
+
+            if (state.count("current_array_sizes"))
+            {
+                state["current_array_sizes"].clear();
+            }
         }
     }
 
@@ -872,12 +921,12 @@ struct action<kw_sequence>
 {
     template<typename Input>
     static void apply(
-            const Input& in/*in*/,
+            const Input& /*in*/,
             Context* /*ctx*/,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
-        debug_action("kw_sequence", in, state, 0);
+        // debug_action("kw_sequence", in, state, 0);
         state["type"] = "sequence";
         // Set the default sequence size to LENGTH_UNLIMITED. In case of bounded sequence, it will be overrided later.
         state["sequence_size"] = std::to_string(LENGTH_UNLIMITED);
@@ -1487,9 +1536,12 @@ struct action<union_forward_dcl>
         state.erase("union_name");
         state.erase("union_discriminant");
         state.erase("union_labels");
-        state.erase("union_member_types");
         state.erase("union_member_names");
-        state.erase("union_expecting_member_name");
+        state.erase("union_member_types");
+        state.erase("current_union_member_name");
+        state.erase("sequence_sizes");
+        state.erase("type");
+        // state.erase("union_expecting_member_name");
     }
 
     template<typename Input>
@@ -1689,7 +1741,7 @@ struct action<struct_def>
 
     template<typename Input>
     static void apply(
-            const Input& in /*in*/,
+            const Input& in/*in*/,
             Context* ctx,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
@@ -1823,18 +1875,21 @@ struct action<kw_union>
 {
     template<typename Input>
     static void apply(
-            const Input& /*in*/,
+            const Input& in /*in*/,
             Context* /*ctx*/,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
+        debug_action("kw_union", in, state, 0);
         // Create empty union states to indicate the start of parsing union
         state["union_name"] = "";
         state["union_discriminant"] = "";
         state["union_labels"] = "";
         state["union_member_names"] = "";
         state["union_member_types"] = "";
-        state["union_expecting_member_name"] = "";
+        state["current_union_member_name"] = "";
+        state["sequence_sizes"] = "";
+        // state["union_expecting_member_name"] = "";
         state["type"] = "";
     }
 
@@ -1959,6 +2014,7 @@ struct action<switch_case>
         state["union_labels"] += ";";
         state["union_member_types"] += ";";
         state["union_member_names"] += ";";
+        state["sequence_sizes"] += ";";
     }
 
 };
@@ -1975,12 +2031,13 @@ struct action<union_def>
         state.erase("union_labels");
         state.erase("union_member_types");
         state.erase("union_member_names");
-        state.erase("union_expecting_member_name");
+        state.erase("sequence_sizes");
+        // state.erase("union_expecting_member_name");
     }
 
     template<typename Input>
     static void apply(
-            const Input& /*in*/,
+            const Input& in/*in*/,
             Context* ctx,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
@@ -1997,6 +2054,7 @@ struct action<union_def>
         }
         cleanup_guard{state};
 
+        debug_action("union_def", in, state, 0);
         Module& module = ctx->module();
         const std::string& union_name = state["union_name"];
 
@@ -2016,6 +2074,7 @@ struct action<union_def>
         std::vector<std::string> label_groups = ctx->split_string(state["union_labels"], ';');
         std::vector<std::string> types = ctx->split_string(state["union_member_types"], ';');
         std::vector<std::string> names = ctx->split_string(state["union_member_names"], ';');
+        std::vector<std::string> sequence_sizes = ctx->split_string(state["sequence_sizes"], ';');
 
         std::vector<std::vector<int32_t>> labels(types.size());
         int default_label_index = -1;
@@ -2047,14 +2106,49 @@ struct action<union_def>
             }
         }
 
-        for (uint32_t i = 0; i < (uint32_t)types.size(); i++)
+        for (size_t i = 0; i < types.size(); i++)
         {
+            // For sequences, ctx->get_type() should return the type of each element
             DynamicType::_ref_type member_type = ctx->get_type(state, types[i]);
             if (!member_type)
             {
                 EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] member type not supported: " << types[i]);
                 return;
             }
+
+            // If a non-null sequence size is specified for this member, create a sequence type.
+            // sequence_sizes elements can be:
+            // - 0: member is not a sequence
+            // - LENGTH_UNLIMITED: unbounded sequence
+            // - positive integer: bounded sequence
+            if (i < sequence_sizes.size() && sequence_sizes[i] != "0")
+            {
+                uint32_t size;
+
+                if (module.has_constant(sequence_sizes[i]))
+                {
+                    DynamicData::_ref_type xdata = module.constant(sequence_sizes[i]);
+                    int64_t size_val = 0;
+                    xdata->get_int64_value(size_val, MEMBER_ID_INVALID);
+                    size = static_cast<uint32_t>(size_val);
+                }
+                else
+                {
+                    size = static_cast<uint32_t>(std::stoul(sequence_sizes[i]));
+                }
+
+                // Create the sequence type
+                DynamicTypeBuilder::_ref_type sequence_builder {factory->create_sequence_type(member_type, size)};
+                if (!sequence_builder)
+                {
+                    EPROSIMA_LOG_ERROR(IDLPARSER, "Error creating sequence member.");
+                }
+                else
+                {
+                    member_type = sequence_builder->build();
+                }
+            }
+
             MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
             member_descriptor->name(names[i]);
             member_descriptor->type(member_type);
