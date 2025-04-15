@@ -474,11 +474,9 @@ public:
     {
         if (name.find("::") != std::string::npos || has_alias(name))
         {
-            // __FLAG__
-            EPROSIMA_LOG_ERROR(IDLPARSER, "Cannot define alias '" << name << "' with scoped name or already defined.");
-            ////////////////
             return false; // Cannot define alias with scoped name (or already defined).
         }
+
         std::string name_space = scope();
         TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
         builder->get_descriptor(type_descriptor);
@@ -553,46 +551,7 @@ public:
     }
 
 protected:
-    // __FLAG__
-    void info() const
-    {
-        std::cout << "[IDLMODULE] Module info: " << "\n";
-        std::cout << "      Name: " << name_ << "\n";
-        std::cout << "      Outer scope: " << (outer_ ? outer_->scope() : "nullptr") << "\n";
-        std::cout << "      Inner scopes: " << inner_.size() << "\n";
-        for (std::map<std::string, std::shared_ptr<Module>>::const_iterator it = inner_.begin(); it != inner_.end(); ++it)
-        {
-            std::cout << "          - " << it->first << "\n";
-        }
-        std::cout << "      Aliases: " << aliases_.size() << "\n";
-        for (std::map<std::string, DynamicTypeBuilder::_ref_type>::const_iterator it = aliases_.begin(); it != aliases_.end(); ++it)
-        {
-            std::cout << "          - " << it->first << "\n";
-        }
-        std::cout << "      Constants: " << constants_.size() << "\n";
-        for (std::map<std::string, DynamicData::_ref_type>::const_iterator it = constants_.begin(); it != constants_.end(); ++it)
-        {
-            std::cout << "          - " << it->first << "\n";
-        }
-        std::cout << "      Enumerations: " << enumerations_32_.size() << "\n";
-        for (std::map<std::string, DynamicTypeBuilder::_ref_type>::const_iterator it = enumerations_32_.begin(); it != enumerations_32_.end(); ++it)
-        {
-            std::cout << "          - " << it->first << "\n";
-        }
-        std::cout << "      Structures: " << structs_.size() << "\n";
-        for (std::map<std::string, DynamicTypeBuilder::_ref_type>::const_iterator it = structs_.begin(); it != structs_.end(); ++it)
-        {
-            std::cout << "          - " << it->first << "\n";
-        }
-        std::cout << "      Unions: " << unions_.size() << "\n";
-        for (std::map<std::string, DynamicTypeBuilder::_ref_type>::const_iterator it = unions_.begin(); it != unions_.end(); ++it)
-        {
-            std::cout << "          - " << it->first << "\n";
-        }
 
-        std::cout << "--------------------------------" << std::endl;
-    }
-    ////////////////////
     std::map<std::string, DynamicTypeBuilder::_ref_type> aliases_;
     // std::map<std::string, Type> constants_types_;
     std::map<std::string, DynamicData::_ref_type> constants_;

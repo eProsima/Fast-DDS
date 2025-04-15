@@ -144,30 +144,6 @@ private:
 
 }; // class Context
 
-// TODO (Carlosespicur): Perhaps would be better to define state tags as constexpr variables (IDLParserTags.hpp??)
-
-// __FLAG__
-template<typename Input>
-void debug_action(
-        const std::string& rule_name,
-        const Input& in,
-        const std::map<std::string, std::string>& state,
-        size_t operand_size)
-{
-    std::cout << "[DEBUG] Rule: " << rule_name << "\n";
-    std::cout << "        Input: \"" << in.string() << "\"\n";
-    std::cout << "        Operands stack: " << operand_size << "\n";
-    std::cout << "        State:\n";
-
-    for (std::map<std::string, std::string>::const_iterator it = state.begin(); it != state.end(); ++it)
-    {
-        std::cout << "          - " << it->first << ": " << it->second << "\n";
-    }
-
-    std::cout << "-----------------------------------\n";
-}
-
-/////////////////
 
 // Actions
 template<typename Rule>
@@ -195,7 +171,6 @@ struct action<identifier>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
-        debug_action("identifier", in, state, 0);
         std::string identifier_name = in.string();
 
         if (state.count("enum_name"))
@@ -362,7 +337,6 @@ struct action<scoped_name>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& operands)
     {
-        // debug_action("scoped_name", in, state, operands.size());
         Module& module = ctx->module();
         std::string identifier_name = in.string();
 
@@ -420,12 +394,11 @@ struct action<semicolon>
 {
     template<typename Input>
     static void apply(
-            const Input& in /*in*/,
+            const Input& /*in*/,
             Context* /*ctx*/,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
-        debug_action("semicolon", in, state, 0);
         if (!state["type"].empty())
         {
             if (state.count("current_struct_member_name") && !state["current_struct_member_name"].empty())
@@ -475,9 +448,6 @@ struct action<semicolon>
             }
             else if (state.count("union_name") && !state["union_name"].empty())
             {
-                // TODO (Carlosespicur): Probably, this could be refactored to be unified with the previous case after
-                // supporting array types in unions.
-
                 // Add the type and name to the member lists
                 // NOTE: For sequence types, the type stored in "union_member_types"
                 // is the type of each element in the sequence, not "sequence".
@@ -505,7 +475,6 @@ struct action<semicolon>
             }
 
             // Clear the temporary states for the next member
-            // TODO (Carlosespicur): Maybe I could clean variables always in a clean guard class
             state["type"].clear();
 
             if (state.count("element_type"))
@@ -561,7 +530,6 @@ struct action<semicolon>
             } \
             else if (state.count("parsing_sequence") && (state["parsing_sequence"] == "true")) \
             { \
-                std::cout << "[DEBUG] Parsing sequence type: " << type << "\n"; \
                 state["element_type"] = type; \
                 state["arithmetic_expr"] = ""; \
             } \
@@ -593,12 +561,6 @@ load_type_action(long_double_type, long double)
 load_type_action(string_type, string)
 load_type_action(wide_string_type, wstring)
 load_type_action(sequence_type, sequence)
-
-// TODO (Carlosespicur): Sequences could contain other types (declared before), so maybe i could add here a macro
-// to load the name of the type or create a new one. Probably, the first one is the best option because all the types above
-// can also be the internal type of a sequence. Ej: sequence<int32>. In this case:
-// load_type_action(type_spec, customType). How to get custom type name:
-// Maybe check if state["parsing_sequence"] == "true" and state.count("member_type_name") > 0 in macro?
 
 template<>
 struct action<char_type>
@@ -700,24 +662,6 @@ struct action<open_bracket>
 
 };
 
-// TODO (Carlosespicur): Maybe a better approach is erase "arithmetic_expr"
-// after closing the bracket (I think it is more general)
-// template<>
-// struct action<close_bracket>
-// {
-//     template<typename Input>
-//     static void apply(
-//             const Input& /*in*/,
-//             Context* /*ctx*/,
-//             std::map<std::string, std::string>& state,
-//             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
-//     {
-//         if (state.count)
-//         state.erase("arithmetic_expr");
-//     }
-
-// };
-
 template<>
 struct action<fixed_array_size>
 {
@@ -767,7 +711,6 @@ struct action<fixed_array_size>
 
 };
 
-// TODO (Carlosespicur): Perhaps the following action can be unified with load_stringsize_action
 template<>
 struct action<sequence_size>
 {
@@ -852,8 +795,6 @@ struct action<kw_wstring>
 
 };
 
-
-
 template<>
 struct action<open_ang_bracket>
 {
@@ -926,7 +867,6 @@ struct action<kw_sequence>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
-        // debug_action("kw_sequence", in, state, 0);
         state["type"] = "sequence";
         // Set the default sequence size to LENGTH_UNLIMITED. In case of bounded sequence, it will be overrided later.
         state["sequence_size"] = std::to_string(LENGTH_UNLIMITED);
@@ -940,24 +880,6 @@ struct action<kw_sequence>
         }
     }
 };
-
-// template<>
-// struct action<sequence_type>
-// {
-//     template<typename Input>
-//     static void apply(
-//             const Input& in,
-//             Context* /*ctx*/,
-//             std::map<std::string, std::string>& state,
-//             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
-//     {
-//         state["type"] = in.string();
-//         // TODO (Carlosespicur): Implement sequence type parsing
-
-//         // Should "sequence_sizes" state key be bconfigured here or add an action<sequence_size>?
-//         EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] sequence_type parsing not supported: " << state["type"]);
-//     }
-// };
 
 template<>
 struct action<map_type>
@@ -1091,7 +1013,6 @@ struct action<boolean_literal>
             std::map<std::string, std::string>& state, \
             std::vector<traits<DynamicData>::ref_type>& operands) \
         { \
-            debug_action(#Rule, in, state, operands.size()); \
             if (state.count("arithmetic_expr")) \
             { \
                 state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{#id}; \
@@ -1125,11 +1046,8 @@ struct action<boolean_literal>
             DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)}; \
             xdata->set_value(MEMBER_ID_INVALID, value); \
  \
-            std::cout << "Before pushing..." << std::endl; \
-            debug_action(#Rule, in, state, operands.size()); \
             if (state.count("arithmetic_expr")) \
             { \
-                std::cout << "Pushing back " << #id << " literal: " << in.string() << "\n"; \
                 operands.push_back(xdata); \
             } \
         } \
@@ -1732,7 +1650,6 @@ struct action<struct_def>
         state.erase("struct_member_types");
         state.erase("struct_member_names");
         state.erase("current_struct_member_name");
-        // TODO (Carlosespicur): I think I should remove each unnecesary key after building the type. 
         state["type"] = "";
         state["all_array_sizes"] = "";
         state["current_array_sizes"] = "";
@@ -1741,7 +1658,7 @@ struct action<struct_def>
 
     template<typename Input>
     static void apply(
-            const Input& in/*in*/,
+            const Input& /*in*/,
             Context* ctx,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
@@ -1758,8 +1675,6 @@ struct action<struct_def>
         }
         cleanup_guard{state};
 
-        debug_action("struct_def", in, state, 0);
-
         Module& module = ctx->module();
         const std::string& struct_name = state["struct_name"];
 
@@ -1772,8 +1687,6 @@ struct action<struct_def>
         std::vector<std::string> types = ctx->split_string(state["struct_member_types"], ';');
         std::vector<std::string> names = ctx->split_string(state["struct_member_names"], ';');
         std::vector<std::string> all_array_sizes = ctx->split_string(state["all_array_sizes"], ';');
-        // TODO (Carlosespicur): Probably here I need add a "sequence_sizes" key to state map
-        // i.e: state["sequence_sizes"] = "size_1;size_2;...;size_n";
         std::vector<std::string> sequence_sizes = ctx->split_string(state["sequence_sizes"], ';');
 
         for (size_t i = 0; i < types.size(); i++)
@@ -1875,12 +1788,11 @@ struct action<kw_union>
 {
     template<typename Input>
     static void apply(
-            const Input& in /*in*/,
+            const Input& /*in*/,
             Context* /*ctx*/,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
-        debug_action("kw_union", in, state, 0);
         // Create empty union states to indicate the start of parsing union
         state["union_name"] = "";
         state["union_discriminant"] = "";
@@ -1889,7 +1801,6 @@ struct action<kw_union>
         state["union_member_types"] = "";
         state["current_union_member_name"] = "";
         state["sequence_sizes"] = "";
-        // state["union_expecting_member_name"] = "";
         state["type"] = "";
     }
 
@@ -2032,12 +1943,11 @@ struct action<union_def>
         state.erase("union_member_types");
         state.erase("union_member_names");
         state.erase("sequence_sizes");
-        // state.erase("union_expecting_member_name");
     }
 
     template<typename Input>
     static void apply(
-            const Input& in/*in*/,
+            const Input& /*in*/,
             Context* ctx,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
@@ -2054,7 +1964,6 @@ struct action<union_def>
         }
         cleanup_guard{state};
 
-        debug_action("union_def", in, state, 0);
         Module& module = ctx->module();
         const std::string& union_name = state["union_name"];
 
@@ -2063,7 +1972,7 @@ struct action<union_def>
         DynamicType::_ref_type discriminant_type = ctx->get_type(state, state["union_discriminant"]);
         if (!discriminant_type)
         {
-            EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] union type not supported: " << state["union_discriminant"]);
+            EPROSIMA_LOG_WARNING(IDLPARSER, "[TODO] union type not supported: " << state["union_discriminant"]);
             return;
         }
         type_descriptor->kind(TK_UNION);
@@ -2194,8 +2103,6 @@ struct action<kw_typedef>
         // Create empty alias states to indicate the start of parsing alias
         state["alias"] = "";
         state["current_array_sizes"] = "";
-
-        // TODO (Carlosespicur): Think about it is necessary to reset state["current_sequence_size"] here.
     }
 
 };
@@ -2221,7 +2128,7 @@ struct action<typedef_dcl>
 
     template<typename Input>
     static void apply(
-            const Input& in /*in*/,
+            const Input& /*in*/,
             Context* ctx,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
@@ -2237,8 +2144,6 @@ struct action<typedef_dcl>
 
         }
         cleanup_guard{state};
-
-        debug_action("typedef_dcl", in, state, 0);
 
         Module& module = ctx->module();
 
@@ -2271,10 +2176,8 @@ struct action<typedef_dcl>
 
         if (!alias_type)
         {
-            EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] alias type not supported: " << state["type"]);
+            EPROSIMA_LOG_WARNING(IDLPARSER, "[TODO] alias type not supported: " << state["type"]);
             return;
-
-            // throw std::runtime_error("Alias type not supported: " + state["type"]);
         }
 
         DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
@@ -2458,7 +2361,7 @@ public:
         else
         {
             context_->success = false;
-            EPROSIMA_LOG_INFO(IDLPARSER, "IDL parsing failed.");
+            EPROSIMA_LOG_ERROR(IDLPARSER, "IDL parsing failed.");
             return false;
         }
     }
