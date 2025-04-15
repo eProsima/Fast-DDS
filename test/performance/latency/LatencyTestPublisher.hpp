@@ -51,6 +51,10 @@ public:
         , percentile_9999_(0)
         , mean_(0)
         , stdev_(0)
+        , writing_mean_(0)
+        , writing_stdev_(0)
+        , writing_minimum_(0)
+        , writing_maximum_(0)
     {
     }
 
@@ -58,8 +62,11 @@ public:
     {
     }
 
+    // General stats
     uint64_t bytes_;
     unsigned int received_;
+
+    // Time stats for round trip
     std::chrono::duration<double, std::micro> minimum_;
     std::chrono::duration<double, std::micro> maximum_;
     double percentile_50_;
@@ -68,6 +75,12 @@ public:
     double percentile_9999_;
     double mean_;
     double stdev_;
+
+    // Time stats for write() operation
+    double writing_mean_;
+    double writing_stdev_;
+    std::chrono::duration<double, std::micro> writing_minimum_;
+    std::chrono::duration<double, std::micro> writing_maximum_;
 };
 
 class LatencyTestPublisher
@@ -167,7 +180,8 @@ private:
     std::chrono::steady_clock::time_point start_time_;
     std::chrono::steady_clock::time_point end_time_;
     std::chrono::duration<double, std::micro> overhead_time_;
-    std::vector<std::chrono::duration<double, std::micro>> times_;
+    std::vector<std::chrono::duration<double, std::micro>> rt_times_;
+    std::vector<std::chrono::duration<double, std::micro>> writing_times_;
 
     /* Data */
     eprosima::fastdds::dds::SampleInfo sampleinfo_;
