@@ -615,6 +615,11 @@ public:
         return PubSubReader<MonitorServiceType>::block_for_all(time);
     }
 
+    void block_for_all()
+    {
+        PubSubReader<MonitorServiceType>::block_for_all();
+    }
+
     void stop()
     {
         destroy();
@@ -2302,6 +2307,193 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_multiple_late_joiners)
 }
 
 /**
+<<<<<<< HEAD
+=======
+ * Refers to DDS-MS-ADV-05 from the test plan.
+ *
+ * Multiple MSPs notifiy MSC with the correct extended QoS incompatibilities. 4 MSPs
+ * are created, one with a writer and the others with one an incompatible qos reader
+ * in the same topic. It is checked that the MSC receives the corresponding extended
+ * incompatibility notifications.
+ */
+
+void add_extended_incompatible_policy(
+        std::list<MonitorServiceType::type>& expected_msgs,
+        const statistics::detail::GUID_s& source_entity_guid,
+        const std::vector<std::pair<statistics::detail::GUID_s,
+        std::vector<uint32_t>>>& remote_entity_guids_and_policies)
+{
+    MonitorServiceType::type endpoint_ext_incmpqos_msg;
+    StatisticsGUIDList r_guids;
+    statistics::ExtendedIncompatibleQoSStatusSeq_s ext_incompatible_qos_seq;
+    statistics::ExtendedIncompatibleQoSStatus_s ext_incompatible_qos;
+
+    endpoint_ext_incmpqos_msg.status_kind(eprosima::fastdds::statistics::StatusKind::EXTENDED_INCOMPATIBLE_QOS);
+    endpoint_ext_incmpqos_msg.local_entity(source_entity_guid);
+
+    for (const auto& remote_entity_guid_and_policies : remote_entity_guids_and_policies)
+    {
+        ext_incompatible_qos.remote_guid(remote_entity_guid_and_policies.first);
+        ext_incompatible_qos.current_incompatible_policies(remote_entity_guid_and_policies.second);
+        ext_incompatible_qos_seq.push_back(ext_incompatible_qos);
+    }
+
+    endpoint_ext_incmpqos_msg.value().extended_incompatible_qos_status(ext_incompatible_qos_seq);
+    expected_msgs.push_back(endpoint_ext_incmpqos_msg);
+}
+
+TEST(DDSMonitorServiceTest, monitor_service_advanced_extended_incompatible_qos)
+{
+#ifdef FASTDDS_STATISTICS
+
+    //! Validate EXTENDED_INCOMPATIBLE_QOS and PROXY samples only
+    std::bitset<statistics::StatusKind::STATUSES_SIZE> validation_mask;
+    //! In this test we will only expect the disposal proxy samples, not discovery ones
+    validation_mask[statistics::StatusKind::PROXY] = true;
+    validation_mask[statistics::StatusKind::EXTENDED_INCOMPATIBLE_QOS] = true;
+
+    //! Setup
+    size_t n_participants = 4;
+    std::vector<MonitorServiceParticipant> MSPs;
+    MSPs.resize(n_participants);
+    //! By validating PROXY we will receive extra msgs such as discovery proxies or instance unregistrations
+    //! (We are only interested in the disposals from the PROXY status kind)
+    //! but we are not interested in them in this test, so we set assert_on_non_expected_msgs to false
+    MonitorServiceConsumer MSC(validation_mask, false);
+    MSC.init_monitor_service_reader();
+
+    //! Procedure
+    std::list<MonitorServiceType::type> expected_msgs;
+
+    size_t idx = 0;
+    statistics::detail::GUID_s w_guid;
+    for (auto& MSP : MSPs)
+    {
+        MSP.setup();
+        MSP.enable_monitor_service();
+
+        switch (idx)
+        {
+            case 0:
+            {
+                DataWriterQos dw_qos;
+                dw_qos.durability().kind = eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS;
+
+                MSP.create_and_add_writer(dw_qos);
+
+                ASSERT_EQ(MSP.get_writer_guids().size(), 1);
+                w_guid = MSP.get_writer_guids().back();
+
+                break;
+            }
+            case 1:
+            {
+                DataReaderQos dr_qos;
+                dr_qos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+
+                MSP.create_and_add_reader(dr_qos);
+
+                //! Add extended qos incompatibilities
+                //! for the reader (reader -> writer)
+                add_extended_incompatible_policy(
+                    expected_msgs,
+                    MSP.get_reader_guids().back(),
+                    {{w_guid, {DURABILITY_QOS_POLICY_ID}}}
+                    );
+
+                break;
+            }
+            case 2:
+            {
+                DataReaderQos dr_qos;
+                dr_qos.liveliness().kind = eprosima::fastdds::dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+
+                MSP.create_and_add_reader(dr_qos);
+
+                //! Add extended qos incompatibilities
+                //! for the reader (reader -> writer)
+                add_extended_incompatible_policy(
+                    expected_msgs,
+                    MSP.get_reader_guids().back(),
+                    {{w_guid, {LIVELINESS_QOS_POLICY_ID}}}
+                    );
+
+                break;
+            }
+            case 3:
+            {
+                DataReaderQos dr_qos;
+                dr_qos.ownership().kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
+
+                MSP.create_and_add_reader(dr_qos);
+
+                //! Add extended qos incompatibilities
+                //! for the reader (reader -> writer)
+                add_extended_incompatible_policy(
+                    expected_msgs,
+                    MSP.get_reader_guids().back(),
+                    {{w_guid, {OWNERSHIP_QOS_POLICY_ID}}}
+                    );
+
+                break;
+            }
+        }
+
+        idx++;
+    }
+
+    //! Finally, add the extended incompatibility for the writer
+    //! Note: we may receive intermediate incompatibility messages like
+    //!      {MSPs[1].get_reader_guids().back(), {DURABILITY_QOS_POLICY_ID}},
+    //! and
+    //!      {MSPs[1].get_reader_guids().back(), {DURABILITY_QOS_POLICY_ID}},
+    //!      {MSPs[2].get_reader_guids().back(), {LIVELINESS_QOS_POLICY_ID}},
+    //! but the important thing is that we receive the folowing one
+    add_extended_incompatible_policy(
+        expected_msgs,
+        w_guid,
+    {
+        {MSPs[1].get_reader_guids().back(), {DURABILITY_QOS_POLICY_ID}},
+        {MSPs[2].get_reader_guids().back(), {LIVELINESS_QOS_POLICY_ID}},
+        {MSPs[3].get_reader_guids().back(), {OWNERSHIP_QOS_POLICY_ID}}});
+
+    MSC.start_reception(expected_msgs);
+
+    //! Assertions
+    ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(5)), expected_msgs.size());
+
+    expected_msgs.clear();
+
+    //! Now we are about to remove readers, prepare the expected messages.
+    //! Empty extended incompatible qos lists
+    add_extended_incompatible_policy(
+        expected_msgs,
+        w_guid,
+        {});
+
+    //! readers disposals
+    for (size_t i = 1; i < n_participants; i++)
+    {
+        MonitorServiceType::type reader_disposal_msg;
+        reader_disposal_msg.local_entity(MSPs[i].get_reader_guids().back());
+        expected_msgs.push_back(reader_disposal_msg);
+    }
+
+    MSC.start_reception(expected_msgs);
+
+    for (size_t i = 1; i < n_participants; i++)
+    {
+        MSPs[i].delete_reader();
+    }
+
+    //! Assertions
+    MSC.block_for_all();
+
+#endif //FASTDDS_STATISTICS
+}
+
+/**
+>>>>>>> 6d0d853c (Fix `MacOS` nightly flaky tests (#5738))
  * Regression test for Redmine issue #20625.
  *
  * The monitor service writer must correctly handle instances, removing old changes
