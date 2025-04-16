@@ -118,10 +118,7 @@ ReaderProxyData& ReaderProxyData::operator =(
 
     set_qos(readerInfo, true);
 
-    if (readerInfo.has_type_information())
-    {
-        type_information = readerInfo.type_information;
-    }
+    type_information = readerInfo.type_information;
 
     if (readerInfo.history)
     {
