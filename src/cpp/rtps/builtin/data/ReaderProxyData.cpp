@@ -187,11 +187,6 @@ ReaderProxyData& ReaderProxyData::operator =(
         m_type = nullptr;
     }
 
-    if (readerInfo.has_type_information())
-    {
-        type_information = readerInfo.type_information;
-    }
-
     return *this;
 }
 

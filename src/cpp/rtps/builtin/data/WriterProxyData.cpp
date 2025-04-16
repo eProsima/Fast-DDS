@@ -184,11 +184,6 @@ WriterProxyData& WriterProxyData::operator =(
         m_type = nullptr;
     }
 
-    if (writerInfo.type_information.assigned())
-    {
-        type_information = writerInfo.type_information;
-    }
-
     return *this;
 }
 
