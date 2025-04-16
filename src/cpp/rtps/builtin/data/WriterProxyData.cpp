@@ -108,10 +108,7 @@ WriterProxyData& WriterProxyData::operator =(
 
     set_qos(writerInfo, true);
 
-    if (writerInfo.has_type_information())
-    {
-        type_information = writerInfo.type_information;
-    }
+    type_information = writerInfo.type_information;
 
     if (writerInfo.history)
     {
@@ -182,11 +179,6 @@ WriterProxyData& WriterProxyData::operator =(
     {
         delete m_type;
         m_type = nullptr;
-    }
-
-    if (writerInfo.type_information.assigned())
-    {
-        type_information = writerInfo.type_information;
     }
 
     return *this;
