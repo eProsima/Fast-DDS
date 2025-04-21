@@ -51,7 +51,7 @@ jobs:
     with:
       label: ${{ inputs.label || 'mac-ci' }}
       colcon-args: ${{ inputs.colcon-args }}
-      cmake-args: '-DSECURITY=ON ${{ inputs.cmake-args }}'
+      cmake-args: '-DSECURITY=ON ${{ inputs.cmake-args }} -DTHIRDPARTY_Asio=FORCE'
       ctest-args: ${{ inputs.ctest-args }}
       fastdds-branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
       use-ccache: ${{ ((inputs.use-ccache == true) && true) || false }}
