@@ -194,21 +194,20 @@ struct action<identifier>
             {
                 if (!state["type"].empty())
                 {
+                    // In case of the struct member is a sequence, two possible cases:
                     if (state["type"] == "sequence")
                     {
-                        // In case of the struct member is a sequence, two possible cases:
-                        // 1. Matched identifier is the element type of the sequence. In this case, element type
-                        //    should be previously declared, so updating state should be managed in action<scoped_name>.
-                        //    Here, we only need to set the member name: check only if element_type is not empty
-                        //    (in case it is empty, it means that the identifier is the element type,
-                        //    because it is parsed before the member name).
-                        // 2. Matched identifier is the member name. In this case, update state with the member name.
+                        // 1. Matched identifier is the member name. In this case, update state with the member name.
                         if ((!state["element_type"].empty()) && state["current_struct_member_name"].empty())
                         {
                             // The identifier is the member name
                             state["current_struct_member_name"] = identifier_name;
                         }
+                        // 2. Matched identifier is the element type of the sequence.
+                        //    Element type should be previously declared, so updating state
+                        //    should be managed in action<scoped_name> and not here.
                     }
+
                     // In case a struct member is an array and the array size is an identifier,
                     // use below check to avoid overwriting the member name with the size identifier.
                     else if (state["current_struct_member_name"].empty())
@@ -238,21 +237,22 @@ struct action<identifier>
                 }
                 else if (!state["type"].empty())
                 {
+                    // In case of the union member is a sequence, two possible cases:
                     if (state["type"] == "sequence")
                     {
-                        // In case of the union member is a sequence, two possible cases:
-                        // 1. Matched identifier is the element type of the sequence. In this case, element type
-                        //    should be previously declared, so updating state should be managed in action<scoped_name>.
-                        //    Here, we only need to set the member name: check only if element_type is not empty
-                        //    (in case it is empty, it means that the identifier is the element type,
-                        //    because it is parsed before the member name).
-                        // 2. Matched identifier is the member name. In this case, update state with the member name.
+                        // 1. Matched identifier is the member name. In this case, update state with the member name.
                         if ((!state["element_type"].empty()) && state["current_union_member_name"].empty())
                         {
                             // The identifier is the member name
                             state["current_union_member_name"] = identifier_name;
                         }
+                        // 2. Matched identifier is the element type of the sequence. In this case, element type
+                        //    should be previously declared,
+                        //    so updating state should be managed in action<scoped_name> ad not here.
                     }
+
+                    // In case a union member is an array and the array size is an identifier,
+                    // use below check to avoid overwriting the member name with the size identifier.
                     else if (state["current_union_member_name"].empty())
                     {
                         // The identifier is a member name
@@ -263,58 +263,45 @@ struct action<identifier>
         }
         else if (state.count("alias"))
         {
-            // Store the new alias name into state["alias"]
-            //
-            // We should make sure that aliased type is already parsed. There are two possible cases:
+            // Store the new alias name into state["alias"]. There are different cases:
+
             // 1. The aliased type is a custom and previously declared type (parsed using action<scoped_name>),
             //    and identifier_name refers to the name of the alias.
-            //    In this case, aliased type name is stored in state["alias"], so state["alias"] is not empty.
-            //    Append the identifier name to state["alias"].
-            //
+            if (!state["alias"].empty())
+            {
+                // Append the identifier name to state["alias"].
+                state["alias"] += "," + identifier_name;
+            }
+
             // 2. The aliased type is not a previously declared type
             //    (i.e: typedef <type> <alias>, when <type> is a Primitive type, string type, sequence type or map type
             //    not previously declared).
             //    In this case, aliased type info is stored in state["type"] and other additional state keys,
-            //    so state["alias"] is empty and state["type"] is non-empty. There are additional subcases:
-            //
-            //    2.1: Declared type contains internal types (e.g: element types in a sequence),
-            //         and these types are previosly declared by the user,
-            //         i.e: <type>:=external_type<internal_type_1,...>, when <internal_type_i> is a previously declared type.
-            //         It can occur when external_type is a sequence or a map. In this case, the identifier_name matched correspond
-            //         to an internal type name, should be stored in specific states keys and must be handled depending on state["type"].
-            //         Since it is a custom type parsing case, state updates should be handled in action<scoped_name>.
-            //         We only need to check it here if we are in this case or not.
-            //
-            //    2.2: Declared type does not contain internal types, or its internal types are not previously declared by the user.
-            //         In this case, the identifier_name matched correspond to the alias name, so it should be stored in state["alias"].
-
-            //    In case of sequence and map types, cases 2.1 and 2.2 are both possible.
-            //    For sequence types, element types are stored in state["element_type"], so check if it is empty or not.
-            //
-            // 3. The aliased type is a custom and prviously delared type,
-            //    and the identifier_name refers to the name of the aliased type or its scope.
-            //    In this case, the aliased type is not parsed yet,
-            //    so do nothing (state updates should be handled in action<scoped_name>).
-            //    In this case, state["alias"] and state["type"] should be both empty.
-            //
-            if (!state["alias"].empty())
-            {
-                // Case 1
-                state["alias"] += "," + identifier_name;
-            }
+            //    so state["alias"] is empty and state["type"] is non-empty.
             else if (!state["type"].empty())
             {
-                // Case 2
+
+                // 2.1. Declared type contains internal types (e.g: element types in a sequence),
+                //      and these types are previosly declared by the user,
+                //      i.e: <type>:=external_type<internal_type_1,...>, being <internal_type_i> a previously declared type.
+                //      In this case, identifier_name should be stored in specific states keys and must be handled depending on state["type"].
                 if ((state["type"] == "sequence") && state.count("element_type") && state["element_type"].empty())
                 {
-                    // Case 2.1. Handle it in action<scoped_name>
+                    // State updates should be handled in action<scoped_name>.
                     return;
                 }
+
+                // 2.2: Declared type does not contain internal types, or its internal types are not previously declared by the user.
+                //      In this case, the identifier_name matched correspond to the alias name, so it should be stored in state["alias"].
                 state["alias"] = identifier_name;
             }
+
+            // 3. The aliased type is a custom and previously declared type,
+            //    and the identifier_name refers to the name of the aliased type or its scope.
+            //    In this case, state["alias"] and state["type"] should be both empty.
             else
             {
-                // Case 3. Handle it in action<scoped_name>
+                // State updates should be handled in action<scoped_name>.
                 return;
             }
         }
@@ -363,22 +350,7 @@ struct action<scoped_name>
         }
         else if (state.count("alias"))
         {
-            // <scoped_name> makes reference to the aliased type.
-            //
-            // There are two possible cases:
-            // 1. The aliased type is a custom and previously declared type.
-            //    In this case, <scoped_name> is the aliased type name and should be stored in state["alias"].
-            //
-            // 2. The aliased type is not a previously declared type
-            //    (i.e: typedef <type> <alias>, when <type> is a Primitive type, string type, sequence type or map type
-            //    not previously declared), it contains internal types (e.g: the type of elements in a sequence),
-            //    and these types are previosly declared by the user,
-            //    i.e: <type>:=external_type<internal_type_1,...>, when <internal_type_i> is a previously declared type.
-            //    It can occur when external_type is a sequence or a map. In this case, the identifier_name matched correspond
-            //    to an internal type name, should be stored in specific states keys (leaving state["alias"] empty)
-            //    and must be handled depending on state["type"].
-            //
-            //    In case of sequence types, case 2 is possible but already handled in the previous else if statement.
+            // <scoped_name> makes reference to the aliased type name.
             state["alias"] = identifier_name;
         }
         else
@@ -423,17 +395,13 @@ struct action<semicolon>
                 }
 
                 // Add the sequence size for this member to "sequence_sizes"
-                std::string current_sequence_size;
+                std::string current_sequence_size = "0";
                 if (state.count("sequence_size"))
                 {
                     current_sequence_size = state["sequence_size"];
 
                     // Key not more needed, remove it
                     state.erase("sequence_size");
-                }
-                else
-                {
-                    current_sequence_size = "0";
                 }
 
                 // Add the sequence size to the member list
@@ -457,17 +425,13 @@ struct action<semicolon>
                 state["union_member_names"] += state["current_union_member_name"];
 
                 // Add the sequence size for this member to "sequence_sizes"
-                std::string current_sequence_size;
+                std::string current_sequence_size = "0";
                 if (state.count("sequence_size"))
                 {
                     current_sequence_size = state["sequence_size"];
 
                     // Key not more needed, remove it
                     state.erase("sequence_size");
-                }
-                else
-                {
-                    current_sequence_size = "0";
                 }
 
                 // Add the sequence size to the member list
@@ -517,8 +481,7 @@ struct action<semicolon>
             std::map<std::string, std::string>& state, \
             std::vector<traits<DynamicData>::ref_type>& /*operands*/) \
         { \
-            std::string type{#id \
-            }; \
+            std::string type{#id}; \
             if (type == "sequence") \
             { \
                 state["type"] = type; \
@@ -1697,8 +1660,6 @@ struct action<struct_def>
             {
                 EPROSIMA_LOG_WARNING(IDLPARSER, "[TODO] member type not supported: " << types[i]);
                 return;
-                // EPROSIMA_LOG_ERROR(IDLPARSER, "Member type not supported: " << types[i]);
-                // throw std::runtime_error("Member type not supported: " + types[i]);
             }
 
             // If array sizes are specified for this member, create an array type
@@ -1734,10 +1695,7 @@ struct action<struct_def>
             }
 
             // If a non-null sequence size is specified for this member, create a sequence type.
-            // sequence_sizes elements can be:
-            // - 0: member is not a sequence
-            // - LENGTH_UNLIMITED: unbounded sequence
-            // - positive integer: bounded sequence
+            // If the member is not a sequence, it has a sequence size of 0 assigned.
             if (i < sequence_sizes.size() && sequence_sizes[i] != "0")
             {
                 uint32_t size;
@@ -2026,10 +1984,7 @@ struct action<union_def>
             }
 
             // If a non-null sequence size is specified for this member, create a sequence type.
-            // sequence_sizes elements can be:
-            // - 0: member is not a sequence
-            // - LENGTH_UNLIMITED: unbounded sequence
-            // - positive integer: bounded sequence
+            // If the member is not a sequence, it has a sequence size of 0 assigned.
             if (i < sequence_sizes.size() && sequence_sizes[i] != "0")
             {
                 uint32_t size;
