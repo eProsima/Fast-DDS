@@ -1,0 +1,270 @@
+// Copyright 2025 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#include <csignal>
+#include <cstdlib>
+#include <iostream>
+
+#include <fastdds/dds/log/Log.hpp>
+
+#ifndef FASTDDS_EXAMPLES_CPP_RPC_CLIENT_SERVER_BASIC__CLIPARSER_HPP
+#define FASTDDS_EXAMPLES_CPP_RPC_CLIENT_SERVER_BASIC__CLIPARSER_HPP
+
+namespace eprosima {
+namespace fastdds {
+namespace examples {
+namespace rpc_client_server {
+
+using dds::Log;
+
+class CLIParser
+{
+public:
+
+    CLIParser() = delete;
+
+    //! Entity kind enumeration
+    enum class EntityKind : uint8_t
+    {
+        CLIENT,
+        SERVER,
+        UNDEFINED
+    };
+
+    //! Operation kind enumeration
+    enum class OperationKind : uint8_t
+    {
+        ADDITION,
+        SUBSTRACTION,
+        REPRESENTATION_LIMITS,
+        UNDEFINED
+    };
+
+    //! Configuration structure for the application
+    struct config
+    {
+        CLIParser::EntityKind entity = CLIParser::EntityKind::UNDEFINED;
+        CLIParser::OperationKind operation = CLIParser::OperationKind::UNDEFINED;
+        std::int32_t x = 0;
+        std::int32_t y = 0;
+    };
+
+    /**
+     * @brief Print usage help message and exit with the given return code
+     *
+     * @param [in] return_code return code to exit with
+     *
+     * @warning This method finishes the execution of the program with the input return code
+     */
+    static void print_help(
+            const std::uint8_t return_code)
+    {
+        std::cout << "Service to perform basic arithmetic operations  "                                    << std::endl;
+        std::cout << "(addition and subtraction) on two 32-bit integers"                                   << std::endl;
+        std::cout << "or compute the representation limits of a 32-bit integer."                           << std::endl;
+        std::cout << ""                                                                                    << std::endl;
+        std::cout << "Usage: calculator <entity> [options]"                                                << std::endl;
+        std::cout << ""                                                                                    << std::endl;
+        std::cout << "Entities:"                                                                           << std::endl;
+        std::cout << "  server                                               Run a server entity"          << std::endl;
+        std::cout << "  client                                               Run a client entity"          << std::endl;
+        std::cout << ""                                                                                    << std::endl;
+        std::cout << "Common options:"                                                                     << std::endl;
+        std::cout << "  -h, --help                                           Print this help message"      << std::endl;
+        std::cout << ""                                                                                    << std::endl;
+        std::cout << "Client arguments:"                                                                   << std::endl;
+        std::cout << "  -a <num_1> <num_2>, --addition <num_1> <num_2>       Adds two numbers"             << std::endl;
+        std::cout << "                                                       [-2^31 <= <num_i> <= 2^31-1]" << std::endl;
+        std::cout << "  -s <num_1> <num_2>, --substraction <num_1> <num_2>   Substracts two numbers"       << std::endl;
+        std::cout << "                                                       [-2^31 <= <num_i> <= 2^31-1]" << std::endl;
+        std::cout << "  -r, --representation-limits                          Computes the representation"  << std::endl;
+        std::cout << "                                                       limits of a 32-bit integer"   << std::endl;
+        std::exit(return_code);
+    }
+
+    /**
+     * @brief Parse the command line options and return the config object
+     *
+     * @param [in] argc number of arguments
+     * @param [in] argv array of arguments
+     * @return config object with the parsed options
+     *
+     * @warning This method finishes the execution of the program if the input arguments are invalid
+     */
+    static config parse_cli_options(
+            int argc,
+            char* argv[])
+    {
+        config config;
+
+        if (argc < 2)
+        {
+            EPROSIMA_LOG_ERROR(CLI_PARSER, "missing entity argument");
+            print_help(EXIT_FAILURE);
+        }
+
+        std::string first_argument = argv[1];
+
+        if (first_argument == "server" )
+        {
+            config.entity = CLIParser::EntityKind::SERVER;
+        }
+        else if (first_argument == "client")
+        {
+            config.entity = CLIParser::EntityKind::CLIENT;
+        }
+        else if (first_argument == "-h" || first_argument == "--help")
+        {
+            print_help(EXIT_SUCCESS);
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing entity argument " + first_argument);
+            print_help(EXIT_FAILURE);
+        }
+
+        for (int i = 2; i < argc; ++i)
+        {
+            std::string arg = argv[i];
+            if (arg == "-h" || arg == "--help")
+            {
+                print_help(EXIT_SUCCESS);
+            }
+            else if (arg == "-a" || arg == "--addition")
+            {
+                if (config.entity == CLIParser::EntityKind::CLIENT)
+                {
+                    if (argc != 4)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "Incorrect number of arguments for client entity");
+                        print_help(EXIT_FAILURE);
+                    }
+
+                    config.operation = CLIParser::OperationKind::ADDITION;
+                    consume_client_arguments(argv, config);
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "addition argument is only valid for client entity");
+                    print_help(EXIT_FAILURE);
+                }
+            }
+            else if (arg == "-s" || arg == "--substraction")
+            {
+                if (config.entity == CLIParser::EntityKind::CLIENT)
+                {
+                    if (argc != 4)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "Incorrect number of arguments for client entity");
+                        print_help(EXIT_FAILURE);
+                    }
+
+                    config.operation = CLIParser::OperationKind::SUBSTRACTION;
+                    consume_client_arguments(argv, config);
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "addition argument is only valid for client entity");
+                    print_help(EXIT_FAILURE);
+                }
+            }
+            else if (arg == "-r" || arg == "--representation-limits")
+            {
+                if (config.entity == CLIParser::EntityKind::CLIENT)
+                {
+                    config.operation = CLIParser::OperationKind::REPRESENTATION_LIMITS;
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "representation-limits argument is only valid for client entity");
+                    print_help(EXIT_FAILURE);
+                }
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(CLI_PARSER, "unknown option " + arg);
+                print_help(EXIT_FAILURE);
+            }
+        }
+
+        return config;
+    }
+
+private:
+
+    /**
+     * @brief Consume the client arguments and store them in the config object
+     *
+     * @pre argc == 4
+     *
+     * @param [in] argv array of arguments
+     * @param [in,out] config config object to store the arguments
+     *
+     * @warning This method finishes the execution of the program if the input arguments are invalid
+     */
+    static void consume_client_arguments(
+        const char* const argv[],
+        config& config)
+    {
+        config.x = consume_int32_argument(argv[2]);
+        config.y = consume_int32_argument(argv[3]);
+    }
+
+    /**
+     * @brief Consume an int32 argument and return it
+     *
+     * @param [in] arg string argument to consume
+     *
+     * @return std::int32_t int32 argument
+     *
+     * @warning This method finishes the execution of the program if the input arguments are invalid
+     */
+    static std::int32_t consume_int32_argument(
+            const std::string& arg)
+    {
+        std::int32_t value = 0;
+
+        try
+        {
+            int input = std::stoi(arg);
+
+            if (input < std::numeric_limits<std::int32_t>::min() ||
+                    input > std::numeric_limits<std::int32_t>::max())
+            {
+                throw std::out_of_range("int32 argument out of range");
+            }
+
+            value = static_cast<std::int32_t>(input);
+        }
+        catch (const std::invalid_argument& e)
+        {
+            EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid int32 argument for " + arg + ": " + e.what());
+            print_help(EXIT_FAILURE);
+        }
+        catch (const std::out_of_range& e)
+        {
+            EPROSIMA_LOG_ERROR(CLI_PARSER, "int32 argument out of range for " + arg + ": " + e.what());
+            print_help(EXIT_FAILURE);
+        }
+
+        return value;
+    }
+};
+
+} // namespace rpc_client_server
+} // namespace examples
+} // namespace fastdds
+} // namespace eprosima
+
+#endif // FASTDDS_EXAMPLES_CPP_RPC_CLIENT_SERVER_BASIC__CLIPARSER_HPP
