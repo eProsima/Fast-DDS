@@ -23,7 +23,7 @@ This period applies since the end of standard support date to the end of life (E
 |3.1|[3.1.x](https://github.com/eProsima/Fast-DDS/tree/3.1.x)|[v3.1.2](https://github.com/eProsima/Fast-DDS/releases/tag/v3.1.2)|October 2024|April 2025|April 2025|
 |2.14|[2.14.x](https://github.com/eProsima/Fast-DDS/tree/2.14.x) (LTS)|[v2.14.4](https://github.com/eProsima/Fast-DDS/releases/tag/v2.14.4)|March 2024|March 2025 [^*]|March 2025 [^*]|
 |2.10|[2.10.x](https://github.com/eProsima/Fast-DDS/tree/2.10.x) (LTS)|[v2.10.6](https://github.com/eProsima/Fast-DDS/releases/tag/v2.10.6)|March 2023|May 2025 [^*]|May 2025|
-|2.6|[2.6.x](https://github.com/eProsima/Fast-DDS/tree/2.6.x) (LTS)|[v2.6.9](https://github.com/eProsima/Fast-DDS/releases/tag/v2.6.9)|March 2022|July 2024|May 2025[^*]|
+|2.6|[2.6.x](https://github.com/eProsima/Fast-DDS/tree/2.6.x) (LTS)|[v2.6.10](https://github.com/eProsima/Fast-DDS/releases/tag/v2.6.10)|March 2022|July 2024|May 2025[^*]|
 
 [^*]: Support may be extended.
 
