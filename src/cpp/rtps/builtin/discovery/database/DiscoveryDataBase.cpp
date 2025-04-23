@@ -654,7 +654,7 @@ void DiscoveryDataBase::match_new_server_(
         }
     }
     // The resources needed for TCP new connections are created during the matching process when the
-    // DATA(p) is receieved by each server.
+    // DATA(p) is received by each server.
 
     // Create virtual endpoints
     create_virtual_endpoints_(participant_prefix);
@@ -782,11 +782,46 @@ void DiscoveryDataBase::update_participant_from_change_(
 {
     fastdds::rtps::GUID_t change_guid = guid_from_change(ch);
 
+    assert(ch->kind == eprosima::fastdds::rtps::ALIVE);
+
+    // If the change corresponds to a previously removed participant, update map with new data and behave as if it was a
+    // new participant. Remove also the old change from the disposals collection, if it was added just before
+    if (participant_info.change()->kind != eprosima::fastdds::rtps::ALIVE)
+    {
+        // If it is local and server we have to create virtual endpoints, except for our own server
+        if (change_guid.guidPrefix != server_guid_prefix_ && !change_data.is_client() && change_data.is_local())
+        {
+            // Match new server and create virtual endpoints
+            match_new_server_(change_guid.guidPrefix, change_data.is_superclient());
+        }
+
+        // Update the change data
+        participant_info.participant_change_data(change_data);
+
+        // Remove old change from disposals if it was added just before to avoid sending data UP
+        auto it = std::find(disposals_.begin(), disposals_.end(), participant_info.change());
+        if (it != disposals_.end())
+        {
+            disposals_.erase(it);
+        }
+
+        // Update change. This should add the UNALIVE change to changes_to_release_, which should later both remove the
+        // change from the writer's history and release the change
+        update_change_and_unmatch_(ch, participant_info);
+
+        // Treat as a new participant found
+        new_updates_++;
+        if (change_guid.guidPrefix != server_guid_prefix_)
+        {
+            server_acked_by_all(false);
+        }
+    }
+
     // Specific case when a Data(P) from an entity A known as remote comes from the very entity A (we have
     // the Data(P) because of other server B, but now it arrives from A itself)
     // The entity A changes to local
     // Must be local data, or else it is a remote endpoint and should not be changed
-    if (change_guid.guidPrefix != server_guid_prefix_ && change_data.is_local() &&
+    else if (change_guid.guidPrefix != server_guid_prefix_ && change_data.is_local() &&
             DiscoveryDataBase::participant_data_has_changed_(participant_info, change_data))
     {
         // If the participant changes to server local, virtual endpoints must be added
@@ -807,7 +842,7 @@ void DiscoveryDataBase::update_participant_from_change_(
         server_acked_by_all(false);
 
         // It is possible that this Data(P) is in our history if it has not been acked by all
-        // In this case we have to resent it with the new update
+        // In this case we have to resend it with the new update
         if (!participant_info.is_acked_by_all())
         {
             add_pdp_to_send_(ch);
