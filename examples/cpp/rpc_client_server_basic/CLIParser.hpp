@@ -58,6 +58,7 @@ public:
         CLIParser::OperationKind operation = CLIParser::OperationKind::UNDEFINED;
         std::int32_t x = 0;
         std::int32_t y = 0;
+        std::size_t connection_attempts = 10;
     };
 
     /**
@@ -90,6 +91,9 @@ public:
         std::cout << "                                                       [-2^31 <= <num_i> <= 2^31-1]" << std::endl;
         std::cout << "  -r, --representation-limits                          Computes the representation"  << std::endl;
         std::cout << "                                                       limits of a 32-bit integer"   << std::endl;
+        std::cout << "      --connection-attempts <num>                      Number of attempts to connect"<< std::endl;
+        std::cout << "                                                       to a server before failing"   << std::endl;
+        std::cout << "                                                       [default: 10]"                << std::endl;
         std::exit(return_code);
     }
 
@@ -116,7 +120,7 @@ public:
 
         std::string first_argument = argv[1];
 
-        if (first_argument == "server" )
+        if (first_argument == "server")
         {
             config.entity = CLIParser::EntityKind::SERVER;
         }
@@ -145,9 +149,29 @@ public:
             {
                 if (config.entity == CLIParser::EntityKind::CLIENT)
                 {
-                    if (argc != 4)
+                    if (CLIParser::OperationKind::UNDEFINED != config.operation)
                     {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, "Incorrect number of arguments for client entity");
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "Only one operation can be selected");
+                        print_help(EXIT_FAILURE);
+                    }
+
+                    if (++i < argc)
+                    {
+                        config.x = consume_integer_argument<std::int32_t>(argv[i], arg);
+
+                        if (++i < argc)
+                        {
+                            config.y = consume_integer_argument<std::int32_t>(argv[i], arg);
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(CLI_PARSER, "missing addition argument");
+                            print_help(EXIT_FAILURE);
+                        }
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "missing addition argument");
                         print_help(EXIT_FAILURE);
                     }
 
@@ -164,9 +188,29 @@ public:
             {
                 if (config.entity == CLIParser::EntityKind::CLIENT)
                 {
-                    if (argc != 4)
+                    if (CLIParser::OperationKind::UNDEFINED != config.operation)
                     {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, "Incorrect number of arguments for client entity");
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "Only one operation can be selected");
+                        print_help(EXIT_FAILURE);
+                    }
+
+                    if (++i < argc)
+                    {
+                        config.x = consume_integer_argument<std::int32_t>(argv[i], arg);
+
+                        if (++i < argc)
+                        {
+                            config.y = consume_integer_argument<std::int32_t>(argv[i], arg);
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(CLI_PARSER, "missing substraction argument");
+                            print_help(EXIT_FAILURE);
+                        }
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "missing substraction argument");
                         print_help(EXIT_FAILURE);
                     }
 
@@ -183,11 +227,37 @@ public:
             {
                 if (config.entity == CLIParser::EntityKind::CLIENT)
                 {
+                    if (CLIParser::OperationKind::UNDEFINED != config.operation)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "Only one operation can be selected");
+                        print_help(EXIT_FAILURE);
+                    }
+
                     config.operation = CLIParser::OperationKind::REPRESENTATION_LIMITS;
                 }
                 else
                 {
                     EPROSIMA_LOG_ERROR(CLI_PARSER, "representation-limits argument is only valid for client entity");
+                    print_help(EXIT_FAILURE);
+                }
+            }
+            else if (arg == "--connection-attempts")
+            {
+                if (config.entity == CLIParser::EntityKind::CLIENT)
+                {
+                    if (++i < argc)
+                    {
+                        config.connection_attempts = consume_integer_argument<std::size_t>(argv[i], arg);
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "missing connection-attempts argument");
+                        print_help(EXIT_FAILURE);
+                    }
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "connection-attempts argument is only valid for client entity");
                     print_help(EXIT_FAILURE);
                 }
             }
@@ -201,60 +271,101 @@ public:
         return config;
     }
 
-private:
-
     /**
-     * @brief Consume the client arguments and store them in the config object
+     * @brief Parse the signal number into the signal name
      *
-     * @pre argc == 4
+     * @param [in] signum signal number
      *
-     * @param [in] argv array of arguments
-     * @param [in,out] config config object to store the arguments
-     *
-     * @warning This method finishes the execution of the program if the input arguments are invalid
+     * @return std::string signal name
      */
-    static void consume_client_arguments(
-        const char* const argv[],
-        config& config)
+    static std::string parse_signal(
+        const int& signum)
     {
-        config.x = consume_int32_argument(argv[2]);
-        config.y = consume_int32_argument(argv[3]);
+        switch (signum)
+        {
+            case SIGINT:
+                return "SIGINT";
+            case SIGTERM:
+                return "SIGTERM";
+#ifndef _WIN32
+            case SIGQUIT:
+                return "SIGQUIT";
+            case SIGHUP:
+                return "SIGHUP";
+#endif // _WIN32
+            default:
+                return "UNKNOWN SIGNAL";
+        }
     }
 
     /**
-     * @brief Consume an int32 argument and return it
+     * @brief Parse the entity kind into std::string
      *
-     * @param [in] arg string argument to consume
+     * @param [in] entity entity kind
      *
-     * @return std::int32_t int32 argument
+     * @return std::string entity kind
+     */
+    static std::string parse_entity_kind(
+            const EntityKind& entity)
+    {
+        switch (entity)
+        {
+            case EntityKind::SERVER:
+                return "Server";
+            case EntityKind::CLIENT:
+                return "Client";
+            case EntityKind::UNDEFINED:
+            default:
+                return "Undefined entity";
+        }
+    }
+
+private:
+
+    /**
+     * @brief Consume an integer argument and return it
+     *
+     * @param [in] arg_value string argument value to consume
+     * @param [in] arg_name name of the argument to print in case of error
+     *
+     * @return integer argument of a given type
      *
      * @warning This method finishes the execution of the program if the input arguments are invalid
      */
-    static std::int32_t consume_int32_argument(
-            const std::string& arg)
+    template <typename T>
+    static T consume_integer_argument(
+            const std::string& arg_value,
+            const std::string& arg_name)
     {
-        std::int32_t value = 0;
+        T value = 0;
 
         try
         {
-            int input = std::stoi(arg);
+            long long input = std::stoll(arg);
 
-            if (input < std::numeric_limits<std::int32_t>::min() ||
-                    input > std::numeric_limits<std::int32_t>::max())
+            if (std::is_unsigned<T>::value && (input < 0))
             {
-                throw std::out_of_range("int32 argument out of range");
+                throw std::invalid_argument("negative value for unsigned integer");
             }
 
-            value = static_cast<std::int32_t>(input);
+            if (input < std::numeric_limits<T>::min() ||
+                    input > std::numeric_limits<T>::max())
+            {
+                throw std::out_of_range("integer argument out of range");
+            }
+
+            value = static_cast<T>(input);
         }
         catch (const std::invalid_argument& e)
         {
-            EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid int32 argument for " + arg + ": " + e.what());
+            EPROSIMA_LOG_ERROR(CLI_PARSER,
+                    "invalid integer value for argument " << arg_name << ": [ " + arg + " ]. " + e.what());
             print_help(EXIT_FAILURE);
         }
         catch (const std::out_of_range& e)
         {
-            EPROSIMA_LOG_ERROR(CLI_PARSER, "int32 argument out of range for " + arg + ": " + e.what());
+            EPROSIMA_LOG_ERROR(CLI_PARSER,
+                    "integer value out of range for argument " << arg_name << ": [ " + arg + " ]. " + e.what());
             print_help(EXIT_FAILURE);
         }
 
