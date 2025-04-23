@@ -16,7 +16,7 @@ jobs:
     uses: eProsima/Fast-DDS/.github/workflows/reusable-mac-ci.yml@master
     with:
       label: 'nightly-sec-${{ matrix.security }}-mac-ci-master'
-      cmake-args: "-DSECURITY=${{ matrix.security }}"
+      cmake-args: "-DSECURITY=${{ matrix.security }} -DTHIRDPARTY_Asio=FORCE"
       ctest-args: "-LE xfail"
       fastdds-branch: 'master'
       use-ccache: false
