@@ -494,9 +494,6 @@ void DiscoveryDataBase::process_pdp_data_queue()
     // Lock(exclusive mode) mutex locally
     std::lock_guard<std::recursive_mutex> guard(mutex_);
 
-    // Swap DATA queues
-    pdp_data_queue_.Swap();
-
     // Process all messages in the queque
     while (!pdp_data_queue_.Empty())
     {
@@ -533,9 +530,6 @@ bool DiscoveryDataBase::process_edp_data_queue()
 
     // Lock(exclusive mode) mutex locally
     std::lock_guard<std::recursive_mutex> guard(mutex_);
-
-    // Swap DATA queues
-    edp_data_queue_.Swap();
 
     eprosima::fastdds::rtps::CacheChange_t* change;
     std::string topic_name;
@@ -1616,6 +1610,14 @@ bool DiscoveryDataBase::delete_entity_of_change(
 bool DiscoveryDataBase::data_queue_empty()
 {
     return (pdp_data_queue_.BothEmpty() && edp_data_queue_.BothEmpty());
+}
+
+void DiscoveryDataBase::swap_data_queues()
+{
+    // Swap EDP before PDP to avoid race condition in which both data P and w/r are received at the same time,
+    // just after having swapped the PDP queue
+    edp_data_queue_.Swap();
+    pdp_data_queue_.Swap();
 }
 
 bool DiscoveryDataBase::is_participant(
