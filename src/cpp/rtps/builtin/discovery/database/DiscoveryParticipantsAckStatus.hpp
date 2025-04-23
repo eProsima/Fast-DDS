@@ -47,9 +47,9 @@ public:
 
     enum class ParticipantState : uint8_t
     {
-        UNMATCHED,  // Data(p) has not been sent yet
-        SENT,       // Data(p) has already been sent
-        MATCHED     // Data(p) has been acked
+        PENDING_SEND,  // Data(p) has not been sent yet
+        WAITING_ACK,   // Data(p) has already been sent but ACK has not been received
+        ACKED          // Data(p) has been acked
     };
 
     void add_or_update_participant(
@@ -61,7 +61,7 @@ public:
 
     void unmatch_all();
 
-    bool is_sent(
+    bool is_waiting_ack(
             const GuidPrefix_t& guid_p) const;
 
     bool is_matched(
@@ -88,14 +88,14 @@ inline std::ostream& operator <<(
 {
     switch (child)
     {
-        case DiscoveryParticipantsAckStatus::ParticipantState::UNMATCHED:
-            os << "UNMATCHED";
+        case DiscoveryParticipantsAckStatus::ParticipantState::PENDING_SEND:
+            os << "PENDING_SEND";
             break;
-        case DiscoveryParticipantsAckStatus::ParticipantState::SENT:
-            os << "SENT";
+        case DiscoveryParticipantsAckStatus::ParticipantState::WAITING_ACK:
+            os << "WAITING_ACK";
             break;
-        case DiscoveryParticipantsAckStatus::ParticipantState::MATCHED:
-            os << "MATCHED";
+        case DiscoveryParticipantsAckStatus::ParticipantState::ACKED:
+            os << "ACKED";
             break;
         default:
             os << "UNKNOWN";

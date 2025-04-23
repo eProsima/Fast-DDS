@@ -36,7 +36,7 @@ DiscoverySharedInfo::DiscoverySharedInfo(
     : change_(change)
 {
     // the server already knows every message
-    add_or_update_ack_participant(known_participant, DiscoveryParticipantsAckStatus::ParticipantState::MATCHED);
+    add_or_update_ack_participant(known_participant, DiscoveryParticipantsAckStatus::ParticipantState::ACKED);
 }
 
 CacheChange_t* DiscoverySharedInfo::update_and_unmatch(
