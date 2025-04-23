@@ -945,6 +945,25 @@ void DiscoveryDataBase::create_writers_from_change_(
     // The writer was NOT known by the database
     else
     {
+        // Check if corresponding participant is known, abort otherwise
+        // NOTE: Processing a data w should always be preceded by the reception and processing of its corresponding
+        // participant. However, one may receive a data w just after the participant has been removed, case in which the
+        // former should no longer be processed.
+        std::map<eprosima::fastdds::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator writer_part_it =
+                participants_.find(writer_guid.guidPrefix);
+        if (writer_part_it == participants_.end())
+        {
+            EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE,
+                    "Writer " << writer_guid << " has no associated participant. Skipping");
+            return;
+        }
+        else if (writer_part_it->second.change()->kind != fastdds::rtps::ChangeKind_t::ALIVE)
+        {
+            EPROSIMA_LOG_WARNING(DISCOVERY_DATABASE,
+                    "Writer " << writer_guid << " is associated to a removed participant. Skipping");
+            return;
+        }
+
         // Add entry to writers_
         DiscoveryEndpointInfo tmp_writer(
             ch,
@@ -965,18 +984,7 @@ void DiscoveryDataBase::create_writers_from_change_(
         new_updates_++;
 
         // Add entry to participants_[guid_prefix]::writers
-        std::map<eprosima::fastdds::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator writer_part_it =
-                participants_.find(writer_guid.guidPrefix);
-        if (writer_part_it != participants_.end())
-        {
-            writer_part_it->second.add_writer(writer_guid);
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE,
-                    "Writer " << writer_guid << " has no associated participant. Skipping");
-            return;
-        }
+        writer_part_it->second.add_writer(writer_guid);
 
         // Add writer to writers_by_topic_[topic_name]
         add_writer_to_topic_(writer_guid, topic_name);
@@ -1063,6 +1071,25 @@ void DiscoveryDataBase::create_readers_from_change_(
     // The reader was NOT known by the database
     else
     {
+        // Check if corresponding participant is known, abort otherwise
+        // NOTE: Processing a data r should always be preceded by the reception and processing of its corresponding
+        // participant. However, one may receive a data r just after the participant has been removed, case in which the
+        // former should no longer be processed.
+        std::map<eprosima::fastdds::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator reader_part_it =
+                participants_.find(reader_guid.guidPrefix);
+        if (reader_part_it == participants_.end())
+        {
+            EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE,
+                    "Reader " << reader_guid << " has no associated participant. Skipping");
+            return;
+        }
+        else if (reader_part_it->second.change()->kind != fastdds::rtps::ChangeKind_t::ALIVE)
+        {
+            EPROSIMA_LOG_WARNING(DISCOVERY_DATABASE,
+                    "Reader " << reader_guid << " is associated to a removed participant. Skipping");
+            return;
+        }
+
         // Add entry to readers_
         DiscoveryEndpointInfo tmp_reader(
             ch,
@@ -1083,18 +1110,7 @@ void DiscoveryDataBase::create_readers_from_change_(
         new_updates_++;
 
         // Add entry to participants_[guid_prefix]::readers
-        std::map<eprosima::fastdds::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator reader_part_it =
-                participants_.find(reader_guid.guidPrefix);
-        if (reader_part_it != participants_.end())
-        {
-            reader_part_it->second.add_reader(reader_guid);
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE,
-                    "Reader " << reader_guid << " has no associated participant. Skipping");
-            return;
-        }
+        reader_part_it->second.add_reader(reader_guid);
 
         // Add reader to readers_by_topic_[topic_name]
         add_reader_to_topic_(reader_guid, topic_name);
@@ -1376,7 +1392,7 @@ void DiscoveryDataBase::process_dispose_participant_(
         delete_reader_entity_(reader_guid);
     }
 
-    // All participant endoints must be already unmatched in others endopoints relevant_ack maps
+    // All participant endpoints must be already unmatched in others endopoints relevant_ack maps
 
     // Unmatch own participant
     unmatch_participant_(participant_guid.guidPrefix);
