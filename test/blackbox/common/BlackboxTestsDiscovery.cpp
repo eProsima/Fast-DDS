@@ -2341,15 +2341,15 @@ TEST_P(Discovery, discovery_server_edp_messages_sent)
 
     // Init client 1
     client_1.set_wire_protocol_qos(client_qos)
-                .setup_transports(eprosima::fastdds::rtps::BuiltinTransports::UDPv4)
-                .init();
+            .setup_transports(eprosima::fastdds::rtps::BuiltinTransports::UDPv4)
+            .init();
 
     // Init client 2
     client_qos.builtin.discovery_config.m_DiscoveryServers.clear();
     client_qos.builtin.discovery_config.m_DiscoveryServers.push_back(locator_server_2);
     client_2.set_wire_protocol_qos(client_qos)
-                .setup_transports(eprosima::fastdds::rtps::BuiltinTransports::UDPv4)
-                .init();
+            .setup_transports(eprosima::fastdds::rtps::BuiltinTransports::UDPv4)
+            .init();
 
     ASSERT_TRUE(client_1.isInitialized());
     ASSERT_TRUE(client_2.isInitialized());

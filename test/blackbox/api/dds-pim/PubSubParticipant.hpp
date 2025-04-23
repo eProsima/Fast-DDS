@@ -676,7 +676,7 @@ public:
     }
 
     PubSubParticipant& setup_transports(
-        eprosima::fastdds::rtps::BuiltinTransports transports)
+            eprosima::fastdds::rtps::BuiltinTransports transports)
     {
         participant_qos_.setup_transports(transports);
         return *this;
