@@ -72,7 +72,7 @@ jobs:
       - name: Install brew dependencies
         uses: eProsima/eProsima-CI/macos/install_brew_packages@v0
         with:
-          packages: llvm asio tinyxml2 openssl@3.0
+          packages: llvm tinyxml2 openssl@3.0
           update: false
           upgrade: false
 
