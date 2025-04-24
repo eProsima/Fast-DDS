@@ -34,6 +34,8 @@
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
+#include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
 #include <gtest/gtest.h>
 
 #include "../utils/filter_helpers.hpp"
@@ -2130,4 +2132,129 @@ TEST(DDSDiscovery, client_server_participants_with_different_domain_ids_discover
 
     // All data received
     EXPECT_EQ(client_domain_3.block_for_all(std::chrono::seconds(3)), data_size);
+}
+
+/*!
+ * @test: This test asserts the correct discovery of endpoints with
+ *        different type propagation (enabled/disabled).
+ *
+ */
+TEST(DDSDiscovery, participants_with_different_type_propagations_discover)
+{
+    using namespace eprosima;
+    using namespace eprosima::fastdds::dds;
+    using namespace eprosima::fastdds::rtps;
+    using namespace eprosima::fastdds::dds::xtypes;
+
+    /**
+     * A dummy type support class.
+     */
+    class HelloWorldDummyType : public TopicDataType
+    {
+    public:
+        using type = int32_t;
+
+        HelloWorldDummyType()
+            : TopicDataType()
+        {
+            set_name("HelloWorld");
+            is_compute_key_provided = false;
+            max_serialized_type_size = 16;
+            std::string empty_struct_name = "empty_structure";
+            CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(
+                eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
+                eprosima::fastcdr::optional<AppliedAnnotationSeq>(), empty_struct_name);
+            CompleteStructHeader header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
+            CompleteStructType struct_type = TypeObjectUtils::build_complete_struct_type(0, header, CompleteStructMemberSeq());
+            TypeObjectUtils::build_and_register_struct_type_object(struct_type, empty_struct_name, type_identifiers_);
+        }
+
+        bool serialize(
+                const void* const,
+                fastdds::rtps::SerializedPayload_t&,
+                fastdds::dds::DataRepresentationId_t) override
+        {
+            return true;
+        }
+
+        bool deserialize(
+                fastdds::rtps::SerializedPayload_t&,
+                void*) override
+        {
+            return true;
+        }
+
+        uint32_t calculate_serialized_size(
+                const void* const,
+                fastdds::dds::DataRepresentationId_t) override
+        {
+            return 0u;
+        }
+
+        void* create_data() override
+        {
+            return nullptr;
+        }
+
+        void delete_data(
+                void*) override
+        {
+        }
+
+        bool compute_key(
+                fastdds::rtps::SerializedPayload_t&,
+                fastdds::rtps::InstanceHandle_t&,
+                bool) override
+        {
+            return true;
+        }
+
+        bool compute_key(
+                const void* const,
+                fastdds::rtps::InstanceHandle_t&,
+                bool) override
+        {
+            return false;
+        }
+
+    private:
+
+        using TopicDataType::calculate_serialized_size;
+        using TopicDataType::serialize;
+    };
+
+
+    PubSubWriter<HelloWorldPubSubType> writer_hw(TEST_TOPIC_NAME);
+    std::vector<std::shared_ptr<PubSubReader<HelloWorldDummyType>>> readers_hw;
+    std::vector<std::shared_ptr<PubSubReader<HelloWorldDummyType>>> readers_hw2;
+
+    writer_hw.init();
+
+    for (int i = 0; i < 50; ++i)
+    {
+        auto reader = std::make_shared<PubSubReader<HelloWorldDummyType>>(TEST_TOPIC_NAME);
+        readers_hw.push_back(reader);
+        readers_hw.back()->init();
+    }
+
+    // should not discover
+    writer_hw.wait_discovery(std::chrono::seconds(10));
+
+    std::cout << "######################################" << std::endl;
+
+    for (int i = 0; i < 50; ++i)
+    {
+        readers_hw[i]->destroy();
+
+        auto reader = std::make_shared<PubSubReader<HelloWorldDummyType>>(TEST_TOPIC_NAME);
+        readers_hw2.push_back(reader);
+        PropertyPolicy property_policy;
+        property_policy.properties().emplace_back("fastdds.type_propagation", "disabled");
+        readers_hw2.back()->property_policy(property_policy);
+        readers_hw2.back()->init();
+    }
+
+    // should discover
+    writer_hw.wait_discovery(50u, std::chrono::seconds(19));
+    ASSERT_EQ(writer_hw.get_matched(), 50u);
 }
