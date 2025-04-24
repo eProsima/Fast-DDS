@@ -176,7 +176,6 @@ public:
                     }
 
                     config.operation = CLIParser::OperationKind::ADDITION;
-                    consume_client_arguments(argv, config);
                 }
                 else
                 {
@@ -215,7 +214,6 @@ public:
                     }
 
                     config.operation = CLIParser::OperationKind::SUBSTRACTION;
-                    consume_client_arguments(argv, config);
                 }
                 else
                 {
@@ -341,15 +339,25 @@ private:
 
         try
         {
-            long long input = std::stoll(arg);
+            long long input = std::stoll(arg_value);
 
-            if (std::is_unsigned<T>::value && (input < 0))
+            if (std::is_unsigned<T>::value)
             {
-                throw std::invalid_argument("negative value for unsigned integer");
-            }
+                if (input < 0)
+                {
+                    throw std::invalid_argument("negative value for unsigned integer");
+                }
 
-            if (input < std::numeric_limits<T>::min() ||
-                    input > std::numeric_limits<T>::max())
+                // Cast to unsigned long long safe because input is >= 0
+                unsigned long long unsigned_input = static_cast<unsigned long long>(input);
+                if (unsigned_input < std::numeric_limits<T>::min() ||
+                        unsigned_input > std::numeric_limits<T>::max())
+                {
+                    throw std::out_of_range("unsigned integer argument out of range");
+                }
+            }
+            else if (input < static_cast<long long>(std::numeric_limits<T>::min()) ||
+                    input > static_cast<long long>(std::numeric_limits<T>::max()))
             {
                 throw std::out_of_range("integer argument out of range");
             }
@@ -359,13 +367,13 @@ private:
         catch (const std::invalid_argument& e)
         {
             EPROSIMA_LOG_ERROR(CLI_PARSER,
-                    "invalid integer value for argument " << arg_name << ": [ " + arg + " ]. " + e.what());
+                    "invalid integer value for argument " << arg_name << ": [ " + arg_value + " ]. " + e.what());
             print_help(EXIT_FAILURE);
         }
         catch (const std::out_of_range& e)
         {
             EPROSIMA_LOG_ERROR(CLI_PARSER,
-                    "integer value out of range for argument " << arg_name << ": [ " + arg + " ]. " + e.what());
+                    "integer value out of range for argument " << arg_name << ": [ " + arg_value + " ]. " + e.what());
             print_help(EXIT_FAILURE);
         }
 
