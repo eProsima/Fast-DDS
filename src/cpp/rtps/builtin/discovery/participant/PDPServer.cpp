@@ -665,6 +665,15 @@ void PDPServer::assignRemoteEndpoints(
     {
         perform_builtin_endpoints_matching(*pdata);
     }
+<<<<<<< HEAD
+=======
+
+    // Send the Data(p) to the client
+    if (part_type == ParticipantType::CLIENT || part_type == ParticipantType::SUPER_CLIENT)
+    {
+        send_own_pdp(pdata);
+    }
+>>>>>>> 0fa7b1eb (Improve DS routines (#5764))
 }
 
 void PDPServer::notifyAboveRemoteEndpoints(
@@ -1688,7 +1697,26 @@ void PDPServer::send_announcement(
             EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Error sending announcement from server to clients");
         }
     }
+}
 
+void PDPServer::send_own_pdp(
+        ParticipantProxyData* pdata)
+{
+    std::vector<GUID_t> remote_readers;
+    LocatorList locators;
+
+    remote_readers.emplace_back(pdata->guid.guidPrefix, c_EntityId_SPDPReader);
+
+    for (auto& locator : pdata->metatraffic_locators.unicast)
+    {
+        locators.push_back(locator);
+    }
+
+    send_announcement(
+        discovery_db().cache_change_own_participant(),
+        remote_readers,
+        locators
+        );
 }
 
 bool PDPServer::read_backup(
