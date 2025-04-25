@@ -55,8 +55,13 @@ public:
             eprosima::fastrtps::rtps::CacheChange_t* change);
 
     void add_or_update_ack_participant(
+<<<<<<< HEAD
             const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p,
             bool status = false)
+=======
+            const GuidPrefix_t& guid_p,
+            DiscoveryParticipantsAckStatus::ParticipantState status = DiscoveryParticipantsAckStatus::ParticipantState::PENDING_SEND)
+>>>>>>> 0fa7b1eb (Improve DS routines (#5764))
     {
         EPROSIMA_LOG_INFO(
             DISCOVERY_DATABASE,
@@ -70,6 +75,12 @@ public:
             const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p)
     {
         relevant_participants_builtin_ack_status_.remove_participant(guid_p);
+    }
+
+    bool is_waiting_ack(
+            const GuidPrefix_t& guid_p) const
+    {
+        return relevant_participants_builtin_ack_status_.is_waiting_ack(guid_p);
     }
 
     bool is_matched(
