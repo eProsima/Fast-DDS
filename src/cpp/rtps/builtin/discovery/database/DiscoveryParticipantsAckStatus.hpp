@@ -45,14 +45,29 @@ public:
 
     ~DiscoveryParticipantsAckStatus() = default;
 
+    enum class ParticipantState : uint8_t
+    {
+        PENDING_SEND,  // Data(p) has not been sent yet
+        WAITING_ACK,   // Data(p) has already been sent but ACK has not been received
+        ACKED          // Data(p) has been acked
+    };
+
     void add_or_update_participant(
+<<<<<<< HEAD
             const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p,
             bool status);
+=======
+            const GuidPrefix_t& guid_p,
+            ParticipantState status);
+>>>>>>> 0fa7b1eb (Improve DS routines (#5764))
 
     void remove_participant(
             const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p);
 
     void unmatch_all();
+
+    bool is_waiting_ack(
+            const GuidPrefix_t& guid_p) const;
 
     bool is_matched(
             const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p) const;
@@ -69,8 +84,34 @@ public:
 
 private:
 
+<<<<<<< HEAD
     std::map<eprosima::fastrtps::rtps::GuidPrefix_t, bool> relevant_participants_map_;
+=======
+    std::map<GuidPrefix_t, ParticipantState> relevant_participants_map_;
+>>>>>>> 0fa7b1eb (Improve DS routines (#5764))
 };
+
+inline std::ostream& operator <<(
+        std::ostream& os,
+        DiscoveryParticipantsAckStatus::ParticipantState child)
+{
+    switch (child)
+    {
+        case DiscoveryParticipantsAckStatus::ParticipantState::PENDING_SEND:
+            os << "PENDING_SEND";
+            break;
+        case DiscoveryParticipantsAckStatus::ParticipantState::WAITING_ACK:
+            os << "WAITING_ACK";
+            break;
+        case DiscoveryParticipantsAckStatus::ParticipantState::ACKED:
+            os << "ACKED";
+            break;
+        default:
+            os << "UNKNOWN";
+            break;
+    }
+    return os;
+}
 
 } /* namespace ddb */
 } /* namespace rtps */
