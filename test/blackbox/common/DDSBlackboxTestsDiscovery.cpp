@@ -2131,3 +2131,183 @@ TEST(DDSDiscovery, client_server_participants_with_different_domain_ids_discover
     // All data received
     EXPECT_EQ(client_domain_3.block_for_all(std::chrono::seconds(3)), data_size);
 }
+
+/*!
+ * @test: This test asserts the correct discovery of endpoints with
+ *        different type propagation (enabled/disabled).
+ *
+ */
+TEST(DDSDiscovery, participants_with_different_type_propagations_discover)
+{
+    using namespace eprosima;
+    using namespace eprosima::fastdds::dds;
+    using namespace eprosima::fastdds::rtps;
+    using namespace eprosima::fastdds::dds::xtypes;
+
+    /**
+     * A dummy type support class.
+     */
+    class HelloWorldDummyType : public TopicDataType
+    {
+    public:
+        //using type = int32_t;
+
+        HelloWorldDummyType()
+            : TopicDataType()
+        {
+            set_name("HelloWorld");
+            is_compute_key_provided = false;
+            max_serialized_type_size = 16;
+            /*std::string empty_struct_name = "empty_structure";
+            CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(
+                eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
+                eprosima::fastcdr::optional<AppliedAnnotationSeq>(), empty_struct_name);
+            CompleteStructHeader header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
+            CompleteStructType struct_type = TypeObjectUtils::build_complete_struct_type(0, header, CompleteStructMemberSeq());
+            TypeObjectUtils::build_and_register_struct_type_object(struct_type, empty_struct_name, type_identifiers_);*/
+        }
+
+        bool serialize(
+                const void* const,
+                fastdds::rtps::SerializedPayload_t&,
+                fastdds::dds::DataRepresentationId_t) override
+        {
+            return true;
+        }
+
+        bool deserialize(
+                fastdds::rtps::SerializedPayload_t&,
+                void*) override
+        {
+            return true;
+        }
+
+        uint32_t calculate_serialized_size(
+                const void* const,
+                fastdds::dds::DataRepresentationId_t) override
+        {
+            return 0u;
+        }
+
+        void* create_data() override
+        {
+            return nullptr;
+        }
+
+        void delete_data(
+                void*) override
+        {
+        }
+
+        bool compute_key(
+                fastdds::rtps::SerializedPayload_t&,
+                fastdds::rtps::InstanceHandle_t&,
+                bool) override
+        {
+            return true;
+        }
+
+        bool compute_key(
+                const void* const,
+                fastdds::rtps::InstanceHandle_t&,
+                bool) override
+        {
+            return false;
+        }
+
+    private:
+
+        using TopicDataType::calculate_serialized_size;
+        using TopicDataType::serialize;
+    };
+
+    struct CustomParticipantReaders
+    {
+        CustomParticipantReaders(
+                const std::vector<std::pair<std::string, TypeSupport>>& topics_and_types,
+                uint32_t ms_delay_between_creations = 300)
+        {
+            DomainParticipantQos pqos;
+            pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
+            pqos.wire_protocol().builtin.discovery_config.leaseDuration = Duration_t(1, 10);
+            pqos.transport().use_builtin_transports = false;
+            auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+            pqos.transport().user_transports.push_back(udp_transport);
+
+            participant_ = DomainParticipantFactory::get_instance()->create_participant(
+                (uint32_t)GET_PID() % 230, pqos, nullptr);
+
+            if (participant_ == nullptr)
+            {
+                std::cerr << "Error creating participant" << std::endl;
+            };
+
+            subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+
+            if (subscriber_ == nullptr)
+            {
+                std::cerr << "Error creating subscriber" << std::endl;
+            };
+
+            for(auto& topic_and_type : topics_and_types)
+            {
+                participant_->register_type(topic_and_type.second);
+
+                Topic* topic;
+
+                std::ostringstream t;
+                t << topic_and_type.first << "_" << asio::ip::host_name() << "_" << GET_PID();
+
+                topic = participant_->create_topic(t.str(), topic_and_type.second->get_name(), TOPIC_QOS_DEFAULT);
+
+                if (topic == nullptr)
+                {
+                    std::cerr << "Error creating topic" << std::endl;
+                };
+
+                DataReader* reader;
+                reader = subscriber_->create_datareader(&(*topic), DATAREADER_QOS_DEFAULT);
+                if (reader == nullptr)
+                {
+                    std::cerr << "Error creating reader" << std::endl;
+                }
+
+                topics_and_readers_.push_back({topic, reader});
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(ms_delay_between_creations));
+            }
+        }
+
+        ~CustomParticipantReaders()
+        {
+            if(participant_)
+            {
+                participant_->delete_contained_entities();
+                DomainParticipantFactory::get_instance()->delete_participant(participant_);
+            }
+        }
+
+        DomainParticipant* participant_;
+        std::vector<std::pair<Topic*,DataReader*>> topics_and_readers_;
+        Subscriber* subscriber_;
+    };
+
+    PubSubWriter<HelloWorldPubSubType> writer_hw(TEST_TOPIC_NAME);
+
+    std::vector<std::pair<std::string, TypeSupport>> topics_and_types;
+    topics_and_types.reserve(6);
+    topics_and_types.push_back(std::make_pair("OtherTopic", TypeSupport(new Data64kbPubSubType())));
+    topics_and_types.push_back(std::make_pair("OtherTopic2", TypeSupport(new Data64kbPubSubType())));
+    topics_and_types.push_back(std::make_pair("OtherTopic3", TypeSupport(new Data64kbPubSubType())));
+    topics_and_types.push_back(std::make_pair("OtherTopic4", TypeSupport(new Data64kbPubSubType())));
+    topics_and_types.push_back(std::make_pair("OtherTopic5", TypeSupport(new Data64kbPubSubType())));
+    topics_and_types.push_back(std::make_pair(TEST_TOPIC_NAME, TypeSupport(new HelloWorldDummyType())));
+
+    writer_hw.init();
+
+    CustomParticipantReaders readers(
+        topics_and_types);
+
+    writer_hw.wait_discovery(std::chrono::seconds(5));
+    ASSERT_EQ(writer_hw.get_matched(), 1u);
+}
