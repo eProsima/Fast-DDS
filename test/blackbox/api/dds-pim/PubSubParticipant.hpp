@@ -675,6 +675,13 @@ public:
         return *this;
     }
 
+    PubSubParticipant& setup_transports(
+            eprosima::fastdds::rtps::BuiltinTransports transports)
+    {
+        participant_qos_.setup_transports(transports);
+        return *this;
+    }
+
     PubSubParticipant& user_data(
             const std::vector<eprosima::fastdds::rtps::octet>& user_data)
     {

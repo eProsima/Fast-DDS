@@ -34,7 +34,7 @@ namespace ddb {
 
 void DiscoveryParticipantsAckStatus::add_or_update_participant(
         const GuidPrefix_t& guid_p,
-        bool status = false)
+        ParticipantState status = ParticipantState::PENDING_SEND)
 {
     relevant_participants_map_[guid_p] = status;
 }
@@ -45,13 +45,24 @@ void DiscoveryParticipantsAckStatus::remove_participant(
     relevant_participants_map_.erase(guid_p);
 }
 
+bool DiscoveryParticipantsAckStatus::is_waiting_ack(
+        const GuidPrefix_t& guid_p) const
+{
+    auto it = relevant_participants_map_.find(guid_p);
+    if (it != relevant_participants_map_.end())
+    {
+        return it->second >= ParticipantState::WAITING_ACK;
+    }
+    return false;
+}
+
 bool DiscoveryParticipantsAckStatus::is_matched(
         const GuidPrefix_t& guid_p) const
 {
     auto it = relevant_participants_map_.find(guid_p);
     if (it != relevant_participants_map_.end())
     {
-        return it->second;
+        return it->second == ParticipantState::ACKED;
     }
     return false;
 }
@@ -60,7 +71,7 @@ void DiscoveryParticipantsAckStatus::unmatch_all()
 {
     for (auto it = relevant_participants_map_.begin(); it != relevant_participants_map_.end(); ++it)
     {
-        it->second = false;
+        it->second = ParticipantState::PENDING_SEND;
     }
 }
 
@@ -89,7 +100,7 @@ bool DiscoveryParticipantsAckStatus::is_acked_by_all() const
 {
     for (auto it = relevant_participants_map_.begin(); it != relevant_participants_map_.end(); ++it)
     {
-        if (!it->second)
+        if (it->second != ParticipantState::ACKED)
         {
             return false;
         }
