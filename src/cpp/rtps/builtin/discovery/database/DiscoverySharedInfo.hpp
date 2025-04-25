@@ -56,7 +56,7 @@ public:
 
     void add_or_update_ack_participant(
             const GuidPrefix_t& guid_p,
-            bool status = false)
+            DiscoveryParticipantsAckStatus::ParticipantState status = DiscoveryParticipantsAckStatus::ParticipantState::PENDING_SEND)
     {
         EPROSIMA_LOG_INFO(
             DISCOVERY_DATABASE,
@@ -70,6 +70,12 @@ public:
             const GuidPrefix_t& guid_p)
     {
         relevant_participants_builtin_ack_status_.remove_participant(guid_p);
+    }
+
+    bool is_waiting_ack(
+            const GuidPrefix_t& guid_p) const
+    {
+        return relevant_participants_builtin_ack_status_.is_waiting_ack(guid_p);
     }
 
     bool is_matched(
