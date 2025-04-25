@@ -1,6 +1,9 @@
 Forthcoming
 -----------
 
+Version v3.2.2
+--------------
+
 * Improve `IDLParser` adding support to new types:
   * Add support for parsing sequence types.
   * Move logic for managing `state["type"]` changes to `action<scoped_name>`.
