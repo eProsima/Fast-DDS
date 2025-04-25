@@ -351,9 +351,6 @@ public:
             fastdds::rtps::WriterHistory* writer_history,
             const fastdds::rtps::GuidPrefix_t& entity_guid_prefix);
 
-    // Add own Data(p) in pdp_to_send if not already in it
-    bool add_own_pdp_to_send_();
-
 protected:
 
     // Change a cacheChange by update or new disposal
