@@ -2185,6 +2185,8 @@ TEST_P(Discovery, discovery_server_pdp_messages_sent)
     EXPECT_EQ(num_data_p_sends.load(std::memory_order::memory_order_seq_cst), 3u);
 }
 
+// This test checks that a Discover Server does not send duplicated EDP messages when its routine
+// is triggered by EDP Listeners while it waits for ACKs
 TEST_P(Discovery, discovery_server_edp_messages_sent)
 {
     // Skip test in intraprocess and datasharing mode
@@ -2363,4 +2365,155 @@ TEST_P(Discovery, discovery_server_edp_messages_sent)
 
     EXPECT_EQ(num_data_r_w_sends_s1.load(std::memory_order::memory_order_seq_cst), 2u);
     EXPECT_EQ(num_data_r_w_sends_s2.load(std::memory_order::memory_order_seq_cst), 2u);
+}
+
+// This is a regression test for Redmine #23088, which corrects the following data race in the discovery server:
+// a) When a participant is being removed (either because it is being deleted or because its lease duration has expired),
+//    it is not deleted from participants_ map until the server has received all ACKs from clients of the Data(Up).
+// b) If the same participant is re-discovered (Data(p) received) while the server is waiting for the Data(Up) ACKs,
+//    it will not be updated in the participants_ map as ALIVE.
+// c) If the Data(Up) ACKs and the Data(r/w) of the rediscovered participant are received at the same time,
+//    the server will delete the participant and try to process the Data(r/w) messages in the same routine.
+//    The server will try to register a reader/writer from a deleted participant, which will result in the error:
+//    "Matching unexisting participant from reader/writer".
+// This test checks that this does not happen after fixing point b) and updating the participant to ALIVE.
+TEST_P(Discovery, discovery_server_rediscover_participant_being_removed)
+{
+    // Skip test in intraprocess and datasharing mode
+    if (TRANSPORT != GetParam())
+    {
+        GTEST_SKIP() << "Only makes sense on TRANSPORT";
+        return;
+    }
+
+    using namespace eprosima::fastdds::dds;
+
+    // One discovery server will be created, with two direct clients connected to it.
+    // Client 1 will be removed and then relaunched, while the Client 2 will be kept alive.
+    // Client 2 ACKs will be blocked to simulate a slow discovery process.
+
+    std::atomic<bool> filter_activated { false };
+    auto block_data_up_acks = [&filter_activated](CDRMessage_t& msg)
+            {
+                // Filter Data(Up) ACKs messages
+                if (filter_activated.load(std::memory_order::memory_order_seq_cst))
+                {
+                    // Go back to submsgkind
+                    auto submsgkind_pos = msg.pos - 4;
+                    auto acknack_submsg = eprosima::fastdds::helpers::cdr_parse_acknack_submsg(
+                        (char*)&msg.buffer[submsgkind_pos],
+                        msg.length - submsgkind_pos);
+
+                    assert(acknack_submsg.submsgHeader().submessageId() == ACKNACK);
+
+                    if (eprosima::fastdds::rtps::c_EntityId_SPDPWriter ==
+                            *reinterpret_cast<EntityId_t*>(&acknack_submsg.writerId()) ||
+                            eprosima::fastdds::rtps::c_EntityId_SEDPPubWriter ==
+                            *reinterpret_cast<EntityId_t*>(&acknack_submsg.writerId()))
+                    {
+                        std::cout << "Blocking Data(Up) ACKs" << std::endl;
+                        return true;
+                    }
+                }
+                return false;
+            };
+
+    // Declare a test transport that will count the number of Data(p) messages sent
+    auto default_udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    test_transport->drop_ack_nack_messages_filter_ = [&](CDRMessage_t& msg)
+            {
+                return block_data_up_acks(msg);
+            };
+
+    // Create the main participant
+    auto server = std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(0, 0, 0, 0);
+
+    Locator_t locator_server;  // UDPv4 locator by default
+    eprosima::fastdds::rtps::IPLocator::setIPv4(locator_server, 127, 0, 0, 1);
+    eprosima::fastdds::rtps::IPLocator::setPhysicalPort(locator_server, global_port);
+
+    WireProtocolConfigQos server_wp_qos;
+    server_wp_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SERVER;
+    server_wp_qos.builtin.metatrafficUnicastLocatorList.push_back(locator_server);
+    // Raise the routine period to control the discovery process
+    server_wp_qos.builtin.discovery_config.discoveryServer_client_syncperiod = { 5, 0 };
+    server_wp_qos.builtin.discovery_config.leaseDuration = { 60, 0 };
+    server_wp_qos.builtin.discovery_config.leaseDuration_announcementperiod = { 59, 0 };
+    server_wp_qos.builtin.discovery_config.initial_announcements.count = 1;
+
+    // The main participant will use the test transport and a specific announcements configuration
+    server->disable_builtin_transport()
+            .add_user_transport_to_pparams(default_udp_transport)
+            .wire_protocol(server_wp_qos);
+
+    // Start the main participant
+    ASSERT_TRUE(server->init_participant());
+
+    // Create clients
+    std::shared_ptr<PubSubParticipant<HelloWorldPubSubType>> client_1 =
+            std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(1u, 0u, 0u, 1u);
+    std::shared_ptr<PubSubParticipant<HelloWorldPubSubType>> client_2 =
+            std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(0u, 1u, 1u, 0u);
+    // Set participant as client
+    WireProtocolConfigQos client_qos;
+    client_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::CLIENT;
+    client_qos.builtin.discovery_config.m_DiscoveryServers.push_back(locator_server);
+    client_qos.builtin.discovery_config.leaseDuration = { 60, 0 };
+    client_qos.builtin.discovery_config.leaseDuration_announcementperiod = { 59, 0 };
+    client_qos.builtin.discovery_config.initial_announcements.count = 1;
+    std::istringstream("64.61.74.61.5f.72.61.63.65.5f.64.73") >> client_qos.prefix;
+
+    // Init client 1
+    client_1->wire_protocol(client_qos)
+            .setup_transports(eprosima::fastdds::rtps::BuiltinTransports::UDPv4)
+            .pub_topic_name(TEST_TOPIC_NAME);
+    ASSERT_TRUE(client_1->init_participant());
+    ASSERT_TRUE(client_1->init_publisher(0u));
+
+    // Init client 2
+    WireProtocolConfigQos client2_qos = client_qos;
+    std::istringstream("73.61.74.61.5f.72.61.63.65.5f.64.73") >> client2_qos.prefix;
+    client_2->wire_protocol(client2_qos)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(test_transport)
+            .sub_topic_name(TEST_TOPIC_NAME);
+    ASSERT_TRUE(client_2->init_participant());
+    ASSERT_TRUE(client_2->init_subscriber(0u));
+
+    // Wait at least the servers routine period to discover endpoints
+    ASSERT_TRUE(server->wait_discovery(std::chrono::seconds(6), 2, true));
+    client_2->sub_wait_discovery(1);
+    client_1->pub_wait_discovery(1);
+
+    // Server discovered both clients, activate filter to block Data(Up) ACKs
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::cout << "Blocking Data(Up) ACKs activated" << std::endl;
+    filter_activated.store(true, std::memory_order::memory_order_seq_cst);
+
+    // Remove client 1
+    client_1.reset();
+    ASSERT_TRUE(client_1 == nullptr);
+    // Ensure client 2 has unmatched the client 1
+    client_2->sub_wait_discovery(0);
+    std::this_thread::sleep_for(std::chrono::seconds(3));
+
+    // Relaunch client 1 and deactivate the filter
+    client_1 = std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(1u, 0u, 0u, 1u);
+    client_1->wire_protocol(client_qos)
+            .setup_transports(eprosima::fastdds::rtps::BuiltinTransports::UDPv4)
+            .pub_topic_name(TEST_TOPIC_NAME);
+    // Init only the participant, publisher will be initialized later
+    ASSERT_TRUE(client_1->init_participant());
+    std::cout << "Blocking Data(Up) ACKs deactivated" << std::endl;
+    filter_activated.store(false, std::memory_order::memory_order_seq_cst);
+
+    // Give time to receive Data(Up) ACK, process the Data(p) and update the participant,
+    // but do it before a whole period of the server's routine.
+    // In this way new Data(w) and Data(Up) ACK are processed in the same routine
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    ASSERT_TRUE(client_1->init_publisher(0u));
+
+    // Client 2 should discover client 1 again and log error "Writer has no associated participant." should not appear
+    client_2->sub_wait_discovery(1);
 }
