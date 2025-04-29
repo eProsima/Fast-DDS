@@ -1752,7 +1752,7 @@ inline bool QosPoliciesSerializer<RTPSReliableReaderQos>::add_to_cdr_message(
 
     // Add content to cdr_message
     // reader times
-    bool valid = rtps::CDRMessage::add_duration_t(cdr_message,
+    valid &= rtps::CDRMessage::add_duration_t(cdr_message,
                     qos_policy.times.initial_acknack_delay);
     valid &= rtps::CDRMessage::add_duration_t(cdr_message,
                     qos_policy.times.heartbeat_response_delay);
