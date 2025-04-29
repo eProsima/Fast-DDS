@@ -1296,8 +1296,11 @@ inline bool QosPoliciesSerializer<RTPSEndpointQos>::add_to_cdr_message(
         const RTPSEndpointQos& qos_policy,
         rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = true;
+    // Add common to cdr_message
+    bool valid = rtps::CDRMessage::addUInt16(cdr_message, PID_RTPS_ENDPOINT);
+    valid &= rtps::CDRMessage::addUInt16(cdr_message, cdr_serialized_size(qos_policy) - 4);
 
+    // Add content to cdr_message
     // Unicast locator list
     valid &= rtps::CDRMessage::addUInt32(cdr_message, (uint32_t)qos_policy.unicast_locator_list.size());
     for (rtps::LocatorListConstIterator it = qos_policy.unicast_locator_list.begin();
@@ -1430,7 +1433,12 @@ inline bool QosPoliciesSerializer<WriterDataLifecycleQosPolicy>::add_to_cdr_mess
         const WriterDataLifecycleQosPolicy& qos_policy,
         rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = rtps::CDRMessage::addOctet(cdr_message, qos_policy.autodispose_unregistered_instances);
+    // Add common to cdr_message
+    bool valid = rtps::CDRMessage::addUInt16(cdr_message, PID_WRITER_DATA_LIFECYCLE);
+    valid &= rtps::CDRMessage::addUInt16(cdr_message, PARAMETER_BOOL_LENGTH);
+
+    // Add content to cdr_message
+    valid &= rtps::CDRMessage::addOctet(cdr_message, qos_policy.autodispose_unregistered_instances);
     valid &= rtps::CDRMessage::addOctet(cdr_message, 0); // padding
     valid &= rtps::CDRMessage::addOctet(cdr_message, 0); // padding
     valid &= rtps::CDRMessage::addOctet(cdr_message, 0); // padding
@@ -1474,7 +1482,12 @@ inline bool QosPoliciesSerializer<PublishModeQosPolicy>::add_to_cdr_message(
         const PublishModeQosPolicy& qos_policy,
         rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = rtps::CDRMessage::addOctet(cdr_message, qos_policy.kind);
+    // Add common to cdr_message
+    bool valid = rtps::CDRMessage::addUInt16(cdr_message, PID_PUBLISH_MODE);
+    valid &= rtps::CDRMessage::addUInt16(cdr_message, cdr_serialized_size(qos_policy) - 4);
+
+    // Add content to cdr_message
+    valid &= rtps::CDRMessage::addOctet(cdr_message, qos_policy.kind);
     valid &= rtps::CDRMessage::addOctet(cdr_message, 0); // padding
     valid &= rtps::CDRMessage::addOctet(cdr_message, 0); // padding
     valid &= rtps::CDRMessage::addOctet(cdr_message, 0); // padding
@@ -1531,8 +1544,13 @@ inline bool QosPoliciesSerializer<RTPSReliableWriterQos>::add_to_cdr_message(
         const RTPSReliableWriterQos& qos_policy,
         rtps::CDRMessage_t* cdr_message)
 {
+    // Add common to cdr_message
+    bool valid = rtps::CDRMessage::addUInt16(cdr_message, PID_RTPS_RELIABLE_WRITER);
+    valid &= rtps::CDRMessage::addUInt16(cdr_message, 48); // 32 + 12 + 4
+
+    // Add content to cdr_message
     // times
-    bool valid = rtps::CDRMessage::add_duration_t(cdr_message,
+    valid &= rtps::CDRMessage::add_duration_t(cdr_message,
                     qos_policy.times.initial_heartbeat_delay);
     valid &= rtps::CDRMessage::add_duration_t(cdr_message,
                     qos_policy.times.heartbeat_period);
@@ -1604,8 +1622,13 @@ inline bool QosPoliciesSerializer<WriterResourceLimitsQos>::add_to_cdr_message(
         const WriterResourceLimitsQos& qos_policy,
         rtps::CDRMessage_t* cdr_message)
 {
+    // Add common to cdr_message
+    bool valid = rtps::CDRMessage::addUInt16(cdr_message, PID_WRITER_RESOURCE_LIMITS);
+    valid &= rtps::CDRMessage::addUInt16(cdr_message, 48);
+
+    // Add content to cdr_message
     // matched_subscriber_allocation
-    bool valid = rtps::CDRMessage::add_resource_limited_container_config(cdr_message,
+    valid &= rtps::CDRMessage::add_resource_limited_container_config(cdr_message,
                     qos_policy.matched_subscriber_allocation);
     // reader_filters_allocation
     valid &= rtps::CDRMessage::add_resource_limited_container_config(cdr_message, qos_policy.reader_filters_allocation);
@@ -1649,8 +1672,13 @@ inline bool QosPoliciesSerializer<ReaderDataLifecycleQosPolicy>::add_to_cdr_mess
         const ReaderDataLifecycleQosPolicy& qos_policy,
         rtps::CDRMessage_t* cdr_message)
 {
+    // Add common to cdr_message
+    bool valid = rtps::CDRMessage::addUInt16(cdr_message, PID_READER_DATA_LIFECYCLE);
+    valid &= rtps::CDRMessage::addUInt16(cdr_message, 16);
+
+    // Add content to cdr_message
     // autopurge_no_writer_samples_delay
-    bool valid = rtps::CDRMessage::add_duration_t(cdr_message,
+    valid &= rtps::CDRMessage::add_duration_t(cdr_message,
                     qos_policy.autopurge_no_writer_samples_delay);
 
     // autopurge_disposed_samples_delay
@@ -1698,6 +1726,11 @@ inline bool QosPoliciesSerializer<RTPSReliableReaderQos>::add_to_cdr_message(
         const RTPSReliableReaderQos& qos_policy,
         rtps::CDRMessage_t* cdr_message)
 {
+    // Add common to cdr_message
+    bool valid = rtps::CDRMessage::addUInt16(cdr_message, PID_RTPS_RELIABLE_READER);
+    valid &= rtps::CDRMessage::addUInt16(cdr_message, 28); // 16 + 12
+
+    // Add content to cdr_message
     // reader times
     bool valid = rtps::CDRMessage::add_duration_t(cdr_message,
                     qos_policy.times.initial_acknack_delay);
@@ -1756,8 +1789,13 @@ inline bool QosPoliciesSerializer<ReaderResourceLimitsQos>::add_to_cdr_message(
         const ReaderResourceLimitsQos& qos_policy,
         rtps::CDRMessage_t* cdr_message)
 {
+    // Add common to cdr_message
+    bool valid = rtps::CDRMessage::addUInt16(cdr_message, PID_READER_RESOURCE_LIMITS);
+    valid &= rtps::CDRMessage::addUInt16(cdr_message, 76); // 72 + 4
+
+    // Add content to cdr_message
     // matched_publisher_allocation
-    bool valid = rtps::CDRMessage::add_resource_limited_container_config(cdr_message,
+    valid &= rtps::CDRMessage::add_resource_limited_container_config(cdr_message,
                     qos_policy.matched_publisher_allocation);
 
     // sample_infos_allocation
