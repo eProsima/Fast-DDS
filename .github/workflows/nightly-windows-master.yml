@@ -21,7 +21,7 @@ jobs:
           - 'blackbox'
           - 'unittest'
         filter_expression:
-          - 'BlackboxTests|example_tests|ParticipantTests|SecureDiscoverServer'
+          - 'BlackboxTests|example_tests|ParticipantTests|SecureDiscoverServer|SimpleCommunication|system.'
     uses: eProsima/Fast-DDS/.github/workflows/reusable-windows-ci.yml@master
     with:
       label: nightly-sec-${{ matrix.security }}-${{ matrix.cmake_build_type }}-${{ matrix.test_filter }}-windows-ci-master
