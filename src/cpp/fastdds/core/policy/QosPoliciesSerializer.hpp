@@ -1285,7 +1285,7 @@ inline uint32_t QosPoliciesSerializer<RTPSEndpointQos>::cdr_serialized_size(
     // + multicast locator list size
     ret_val += 4;
     for (rtps::LocatorListConstIterator it = qos_policy.multicast_locator_list.begin();
-            it != qos_policy.unicast_locator_list.end();
+            it != qos_policy.multicast_locator_list.end();
             ++it)
     {
         // kind + port + address
@@ -1295,7 +1295,7 @@ inline uint32_t QosPoliciesSerializer<RTPSEndpointQos>::cdr_serialized_size(
     // + remote locator list
     ret_val += 4;
     for (rtps::LocatorListConstIterator it = qos_policy.remote_locator_list.begin();
-            it != qos_policy.unicast_locator_list.end();
+            it != qos_policy.remote_locator_list.end();
             ++it)
     {
         // kind + port + address
