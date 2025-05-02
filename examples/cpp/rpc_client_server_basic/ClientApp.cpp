@@ -73,7 +73,7 @@ OperationStatus Ping::execute()
         {
             client_server_error("ClientApp", "RPC exception ocurred: " << e.what());
 
-            return OperationStatus::FAILURE;
+            return OperationStatus::ERROR;
         }
     }
     else
@@ -116,7 +116,7 @@ OperationStatus RepresentationLimits::execute()
         {
             client_server_error("ClientApp", "RPC exception ocurred: " << e.what());
 
-            return OperationStatus::FAILURE;
+            return OperationStatus::ERROR;
         }
     }
     else
@@ -161,7 +161,7 @@ OperationStatus Addition::execute()
         {
             client_server_error("ClientApp", "RPC exception ocurred: " << e.what());
 
-            return OperationStatus::FAILURE;
+            return OperationStatus::ERROR;
         }
     }
     else
@@ -207,7 +207,7 @@ OperationStatus Substraction::execute()
         {
             client_server_error("ClientApp", "RPC exception ocurred: " << e.what());
 
-            return OperationStatus::FAILURE;
+            return OperationStatus::ERROR;
         }
     }
     else
