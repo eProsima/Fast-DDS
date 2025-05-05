@@ -1332,7 +1332,7 @@ inline bool QosPoliciesSerializer<RTPSEndpointQos>::add_to_cdr_message(
 {
     // Add common to cdr_message
     bool valid = rtps::CDRMessage::addUInt16(cdr_message, PID_RTPS_ENDPOINT);
-    valid &= rtps::CDRMessage::addUInt16(cdr_message, cdr_serialized_size(qos_policy) - 4);
+    valid &= rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(cdr_serialized_size(qos_policy) - 4));
 
     // Add content to cdr_message
     // Unicast locator list
@@ -1518,7 +1518,7 @@ inline bool QosPoliciesSerializer<PublishModeQosPolicy>::add_to_cdr_message(
 {
     // Add common to cdr_message
     bool valid = rtps::CDRMessage::addUInt16(cdr_message, PID_PUBLISH_MODE);
-    valid &= rtps::CDRMessage::addUInt16(cdr_message, cdr_serialized_size(qos_policy) - 4);
+    valid &= rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(cdr_serialized_size(qos_policy) - 4));
 
     // Add content to cdr_message
     valid &= rtps::CDRMessage::addOctet(cdr_message, qos_policy.kind);
