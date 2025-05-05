@@ -69,6 +69,16 @@ public:
         return !(qos_policy == QosPolicy());
     }
 
+    static bool should_be_sent(
+        const fastcdr::optional<QosPolicy>& optional_qos_policy)
+    {
+        if (optional_qos_policy.has_value())
+        {
+            return should_be_sent(optional_qos_policy.value());
+        }
+        return false;
+    }
+
 private:
 
     static bool add_content_to_cdr_message(

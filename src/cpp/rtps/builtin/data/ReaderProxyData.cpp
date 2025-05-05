@@ -369,7 +369,7 @@ uint32_t ReaderProxyData::get_serialized_size(
             type_information);
     }
 
-    if (dds::QosPoliciesSerializer<dds::HistoryQosPolicy>::should_be_sent(history.value()))
+    if (dds::QosPoliciesSerializer<dds::HistoryQosPolicy>::should_be_sent(history))
     {
         ret_val += dds::QosPoliciesSerializer<dds::HistoryQosPolicy>::cdr_serialized_size(history.value());
     }
@@ -397,30 +397,30 @@ uint32_t ReaderProxyData::get_serialized_size(
 
     if (serialize_optional_qos)
     {
-        if (dds::QosPoliciesSerializer<dds::ResourceLimitsQosPolicy>::should_be_sent(resource_limits.value()))
+        if (dds::QosPoliciesSerializer<dds::ResourceLimitsQosPolicy>::should_be_sent(resource_limits))
         {
             ret_val += dds::QosPoliciesSerializer<dds::ResourceLimitsQosPolicy>::cdr_serialized_size(
                 resource_limits.value());
         }
 
-        if (dds::QosPoliciesSerializer<dds::ReaderDataLifecycleQosPolicy>::should_be_sent(reader_data_lifecycle.value()))
+        if (dds::QosPoliciesSerializer<dds::ReaderDataLifecycleQosPolicy>::should_be_sent(reader_data_lifecycle))
         {
             ret_val += dds::QosPoliciesSerializer<dds::ReaderDataLifecycleQosPolicy>::cdr_serialized_size(
                 reader_data_lifecycle.value());
         }
 
-        if (dds::QosPoliciesSerializer<dds::RTPSReliableReaderQos>::should_be_sent(rtps_reliable_reader.value()))
+        if (dds::QosPoliciesSerializer<dds::RTPSReliableReaderQos>::should_be_sent(rtps_reliable_reader))
         {
             ret_val += dds::QosPoliciesSerializer<dds::RTPSReliableReaderQos>::cdr_serialized_size(
                 rtps_reliable_reader.value());
         }
 
-        if (dds::QosPoliciesSerializer<dds::RTPSEndpointQos>::should_be_sent(endpoint.value()))
+        if (dds::QosPoliciesSerializer<dds::RTPSEndpointQos>::should_be_sent(endpoint))
         {
             ret_val += dds::QosPoliciesSerializer<dds::RTPSEndpointQos>::cdr_serialized_size(endpoint.value());
         }
 
-        if (dds::QosPoliciesSerializer<dds::ReaderResourceLimitsQos>::should_be_sent(reader_resource_limits.value()))
+        if (dds::QosPoliciesSerializer<dds::ReaderResourceLimitsQos>::should_be_sent(reader_resource_limits))
         {
             ret_val += dds::QosPoliciesSerializer<dds::ReaderResourceLimitsQos>::cdr_serialized_size(
                 reader_resource_limits.value());
@@ -711,7 +711,7 @@ bool ReaderProxyData::write_to_cdr_message(
         }
     }
 
-    if (dds::QosPoliciesSerializer<dds::HistoryQosPolicy>::should_be_sent(history.value()))
+    if (dds::QosPoliciesSerializer<dds::HistoryQosPolicy>::should_be_sent(history))
     {
         if (!dds::QosPoliciesSerializer<dds::HistoryQosPolicy>::add_to_cdr_message(
                     history.value(), msg))
@@ -743,7 +743,7 @@ bool ReaderProxyData::write_to_cdr_message(
 
     if (serialize_optional_qos)
     {
-        if (dds::QosPoliciesSerializer<dds::ResourceLimitsQosPolicy>::should_be_sent(resource_limits.value()))
+        if (dds::QosPoliciesSerializer<dds::ResourceLimitsQosPolicy>::should_be_sent(resource_limits))
         {
             if (!dds::QosPoliciesSerializer<dds::ResourceLimitsQosPolicy>::add_to_cdr_message(
                         resource_limits.value(), msg))
@@ -752,7 +752,7 @@ bool ReaderProxyData::write_to_cdr_message(
             }
         }
 
-        if (dds::QosPoliciesSerializer<dds::ReaderDataLifecycleQosPolicy>::should_be_sent(reader_data_lifecycle.value()))
+        if (dds::QosPoliciesSerializer<dds::ReaderDataLifecycleQosPolicy>::should_be_sent(reader_data_lifecycle))
         {
             if (!dds::QosPoliciesSerializer<dds::ReaderDataLifecycleQosPolicy>::add_to_cdr_message(
                         reader_data_lifecycle.value(), msg))
@@ -761,7 +761,7 @@ bool ReaderProxyData::write_to_cdr_message(
             }
         }
 
-        if (dds::QosPoliciesSerializer<dds::RTPSReliableReaderQos>::should_be_sent(rtps_reliable_reader.value()))
+        if (dds::QosPoliciesSerializer<dds::RTPSReliableReaderQos>::should_be_sent(rtps_reliable_reader))
         {
             if (!dds::QosPoliciesSerializer<dds::RTPSReliableReaderQos>::add_to_cdr_message(
                         rtps_reliable_reader.value(), msg))
@@ -770,7 +770,7 @@ bool ReaderProxyData::write_to_cdr_message(
             }
         }
 
-        if (dds::QosPoliciesSerializer<dds::RTPSEndpointQos>::should_be_sent(endpoint.value()))
+        if (dds::QosPoliciesSerializer<dds::RTPSEndpointQos>::should_be_sent(endpoint))
         {
             if (!dds::QosPoliciesSerializer<dds::RTPSEndpointQos>::add_to_cdr_message(
                         endpoint.value(), msg))
@@ -779,7 +779,7 @@ bool ReaderProxyData::write_to_cdr_message(
             }
         }
 
-        if (dds::QosPoliciesSerializer<dds::ReaderResourceLimitsQos>::should_be_sent(reader_resource_limits.value()))
+        if (dds::QosPoliciesSerializer<dds::ReaderResourceLimitsQos>::should_be_sent(reader_resource_limits))
         {
             if (!dds::QosPoliciesSerializer<dds::ReaderResourceLimitsQos>::add_to_cdr_message(
                         reader_resource_limits.value(), msg))
