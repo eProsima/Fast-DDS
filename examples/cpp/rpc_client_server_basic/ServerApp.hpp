@@ -51,7 +51,7 @@ private:
             const std::string& server_name);
 
     std::shared_ptr<calculator_example::CalculatorServer> server_;
-    dds::DomainParticipant participant_;
+    dds::DomainParticipant* participant_;
     size_t thread_pool_size_;
     std::atomic<bool> stop_;
 
