@@ -784,8 +784,9 @@ void DiscoveryDataBase::update_participant_from_change_(
 
     assert(ch->kind == eprosima::fastdds::rtps::ALIVE);
 
-    // If the change corresponds to a previously removed participant, update map with new data and behave as if it was a
-    // new participant. Remove also the old change from the disposals collection, if it was added just before
+    // If the change corresponds to a previously removed participant (which hasn't yet been removed from the map since
+    // the DATA(Up) is still unacked), update map with new data and behave as if it was a new participant.
+    // Remove also the old change from the disposals collection, if it was added just before
     if (participant_info.change()->kind != eprosima::fastdds::rtps::ALIVE)
     {
         // If it is local and server we have to create virtual endpoints, except for our own server
@@ -946,8 +947,8 @@ void DiscoveryDataBase::create_writers_from_change_(
     else
     {
         // Check if corresponding participant is known, abort otherwise
-        // NOTE: Processing a data w should always be preceded by the reception and processing of its corresponding
-        // participant. However, one may receive a data w just after the participant has been removed, case in which the
+        // NOTE: Processing a DATA(w) should always be preceded by the reception and processing of its corresponding
+        // participant. However, one may receive a DATA(w) just after the participant has been removed, case in which the
         // former should no longer be processed.
         std::map<eprosima::fastdds::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator writer_part_it =
                 participants_.find(writer_guid.guidPrefix);
@@ -1072,8 +1073,8 @@ void DiscoveryDataBase::create_readers_from_change_(
     else
     {
         // Check if corresponding participant is known, abort otherwise
-        // NOTE: Processing a data r should always be preceded by the reception and processing of its corresponding
-        // participant. However, one may receive a data r just after the participant has been removed, case in which the
+        // NOTE: Processing a DATA(r) should always be preceded by the reception and processing of its corresponding
+        // participant. However, one may receive a DATA(r) just after the participant has been removed, case in which the
         // former should no longer be processed.
         std::map<eprosima::fastdds::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator reader_part_it =
                 participants_.find(reader_guid.guidPrefix);
@@ -1392,7 +1393,7 @@ void DiscoveryDataBase::process_dispose_participant_(
         delete_reader_entity_(reader_guid);
     }
 
-    // All participant endpoints must be already unmatched in others endopoints relevant_ack maps
+    // All participant endpoints must be already unmatched in others endpoints relevant_ack maps
 
     // Unmatch own participant
     unmatch_participant_(participant_guid.guidPrefix);
