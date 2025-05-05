@@ -1494,7 +1494,7 @@ inline uint32_t QosPoliciesSerializer<PublishModeQosPolicy>::cdr_serialized_size
     // p_id + p_length + kind(1) + padding(3)
     uint32_t ret_val = 2 + 2 + 1 + 3;
     // + str_size + str_data (including null char)
-    ret_val += 4 + static_cast<uint32_t>(qos_policy.flow_controller_name.size());
+    ret_val += 4 + static_cast<uint32_t>(qos_policy.flow_controller_name.size() + 1);
     // align
     ret_val = (ret_val + 3) & ~3;
 
