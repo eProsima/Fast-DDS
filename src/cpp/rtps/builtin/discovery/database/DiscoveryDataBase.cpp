@@ -956,12 +956,14 @@ void DiscoveryDataBase::create_writers_from_change_(
         {
             EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE,
                     "Writer " << writer_guid << " has no associated participant. Skipping");
+            changes_to_release_.push_back(ch); // Release change so it can be reused
             return;
         }
         else if (writer_part_it->second.change()->kind != fastdds::rtps::ChangeKind_t::ALIVE)
         {
             EPROSIMA_LOG_WARNING(DISCOVERY_DATABASE,
                     "Writer " << writer_guid << " is associated to a removed participant. Skipping");
+            changes_to_release_.push_back(ch); // Release change so it can be reused
             return;
         }
 
@@ -1082,12 +1084,14 @@ void DiscoveryDataBase::create_readers_from_change_(
         {
             EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE,
                     "Reader " << reader_guid << " has no associated participant. Skipping");
+            changes_to_release_.push_back(ch); // Release change so it can be reused
             return;
         }
         else if (reader_part_it->second.change()->kind != fastdds::rtps::ChangeKind_t::ALIVE)
         {
             EPROSIMA_LOG_WARNING(DISCOVERY_DATABASE,
                     "Reader " << reader_guid << " is associated to a removed participant. Skipping");
+            changes_to_release_.push_back(ch); // Release change so it can be reused
             return;
         }
 
