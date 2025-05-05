@@ -21,6 +21,8 @@
 
 #include "fastdds/dds/domain/DomainParticipant.hpp"
 
+#include "Application.hpp"
+#include "CLIParser.hpp"
 #include "types/calculatorServer.hpp"
 
 namespace eprosima {
@@ -49,6 +51,11 @@ private:
 
     void create_server(
             const std::string& server_name);
+
+    bool is_stopped()
+    {
+        return stop_.load();
+    }
 
     std::shared_ptr<calculator_example::CalculatorServer> server_;
     dds::DomainParticipant* participant_;
