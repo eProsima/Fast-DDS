@@ -52,6 +52,8 @@ public:
     };
 
     //! Configuration structure for the application
+
+    // TODO (Carlosespicur): separate in client and server configs?
     struct config
     {
         CLIParser::EntityKind entity = CLIParser::EntityKind::UNDEFINED;
@@ -59,6 +61,7 @@ public:
         std::int32_t x = 0;
         std::int32_t y = 0;
         std::size_t connection_attempts = 10;
+        std::size_t thread_pool_size = 0;
     };
 
     /**
@@ -94,6 +97,14 @@ public:
         std::cout << "      --connection-attempts <num>                      Number of attempts to connect"<< std::endl;
         std::cout << "                                                       to a server before failing"   << std::endl;
         std::cout << "                                                       [default: 10]"                << std::endl;
+        std::cout << "Server arguments:"                                                                   << std::endl;
+        std::cout << "      --thread-pool-size <num>                         The size of the thread pool"  << std::endl;
+        std::cout << "                                                       to use for processing"        << std::endl;
+        std::cout << "                                                       requests."                    << std::endl;
+        std::cout << "                                                       When set to 0, a new thread"  << std::endl;
+        std::cout << "                                                       will be created when"         << std::endl;
+        std::cout << "                                                       no threads are available"     << std::endl;
+        std::cout << "                                                       [default: 0] "                << std::endl;
         std::exit(return_code);
     }
 
@@ -256,6 +267,26 @@ public:
                 else
                 {
                     EPROSIMA_LOG_ERROR(CLI_PARSER, "connection-attempts argument is only valid for client entity");
+                    print_help(EXIT_FAILURE);
+                }
+            }
+            else if (arg == "--thread-pool-size")
+            {
+                if (config.entity == CLIParser::EntityKind::SERVER)
+                {
+                    if (++i < argc)
+                    {
+                        config.thread_pool_size = consume_integer_argument<std::size_t>(argv[i], arg);
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "missing thread-pool-size argument");
+                        print_help(EXIT_FAILURE);
+                    }
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "thread-pool-size argument is only valid for server entity");
                     print_help(EXIT_FAILURE);
                 }
             }
