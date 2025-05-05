@@ -325,6 +325,8 @@ inline bool QosPoliciesSerializer<ResourceLimitsQosPolicy>::add_content_to_cdr_m
             rtps::CDRMessage::addInt32(cdr_message, qos_policy.max_instances);
     valid &= rtps::CDRMessage::addInt32(cdr_message,
                     qos_policy.max_samples_per_instance);
+    valid &= rtps::CDRMessage::addInt32(cdr_message, qos_policy.allocated_samples);
+    valid &= rtps::CDRMessage::addInt32(cdr_message, qos_policy.extra_samples);
     return valid;
 }
 
@@ -334,7 +336,7 @@ inline bool QosPoliciesSerializer<ResourceLimitsQosPolicy>::read_content_from_cd
         rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length < 12)
+    if (parameter_length < 20)
     {
         return false;
     }
@@ -345,6 +347,8 @@ inline bool QosPoliciesSerializer<ResourceLimitsQosPolicy>::read_content_from_cd
                     &qos_policy.max_instances);
     valid &= rtps::CDRMessage::readInt32(cdr_message,
                     &qos_policy.max_samples_per_instance);
+    valid &= rtps::CDRMessage::readInt32(cdr_message, &qos_policy.allocated_samples);
+    valid &= rtps::CDRMessage::readInt32(cdr_message, &qos_policy.extra_samples);
     return valid;
 }
 

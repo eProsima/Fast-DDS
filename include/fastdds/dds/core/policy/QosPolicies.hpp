@@ -1762,7 +1762,7 @@ public:
      * @brief Constructor
      */
     FASTDDS_EXPORTED_API ResourceLimitsQosPolicy()
-        : Parameter_t(PID_RESOURCE_LIMITS, 4 + 4 + 4)
+        : Parameter_t(PID_RESOURCE_LIMITS, 4 * 5)
         , QosPolicy(false)
         , max_samples(5000)
         , max_instances(10)
