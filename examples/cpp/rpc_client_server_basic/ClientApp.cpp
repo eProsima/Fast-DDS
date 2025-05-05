@@ -220,6 +220,7 @@ ClientApp::ClientApp(
         const CLIParser::config& config,
         const std::string& service_name)
     : client_(nullptr)
+    , participant_(nullptr)
     , config_(config)
     , stop_(false)
 {
