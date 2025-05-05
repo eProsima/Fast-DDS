@@ -63,6 +63,12 @@ public:
         return ParameterSerializer<QosPolicy>::cdr_serialized_size(qos_policy);
     }
 
+    static bool should_be_sent(
+            const QosPolicy& qos_policy)
+    {
+        return !(qos_policy == QosPolicy());
+    }
+
 private:
 
     static bool add_content_to_cdr_message(
@@ -818,6 +824,13 @@ inline bool QosPoliciesSerializer<DisablePositiveACKsQosPolicy>::read_content_fr
 }
 
 template<>
+inline bool QosPoliciesSerializer<DisablePositiveACKsQosPolicy>::should_be_sent(
+        const DisablePositiveACKsQosPolicy& qos_policy)
+{
+    return !(qos_policy == DisablePositiveACKsQosPolicy()) && qos_policy.enabled;
+}
+
+template<>
 inline uint32_t QosPoliciesSerializer<DataSharingQosPolicy>::cdr_serialized_size(
         const DataSharingQosPolicy& qos_policy)
 {
@@ -880,6 +893,13 @@ inline bool QosPoliciesSerializer<DataSharingQosPolicy>::read_content_from_cdr_m
     uint32_t length_diff = cdr_message->pos - pos_ref;
     valid &= (parameter_length == length_diff);
     return valid;
+}
+
+template<>
+inline bool QosPoliciesSerializer<DataSharingQosPolicy>::should_be_sent(
+        const DataSharingQosPolicy& qos_policy)
+{
+    return !(qos_policy == DataSharingQosPolicy()) && qos_policy.kind() != fastdds::dds::OFF;
 }
 
 template<>
