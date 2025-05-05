@@ -517,7 +517,6 @@ void BaseReader::setup_datasharing(
 
     if (att.endpoint.data_sharing_configuration().kind() != fastdds::dds::DataSharingKind::OFF)
     {
-        using std::placeholders::_1;
         std::shared_ptr<DataSharingNotification> notification = DataSharingNotification::create_notification(
             getGuid(), att.endpoint.data_sharing_configuration().shm_directory());
         if (notification)
