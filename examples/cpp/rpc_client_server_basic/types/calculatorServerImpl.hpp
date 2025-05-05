@@ -45,9 +45,9 @@ struct CalculatorServerImplementation :
             /*out*/ int32_t& max_value) override
     {
         static_cast<void>(info);
-        static_cast<void>(min_value);
-        static_cast<void>(max_value);
-        throw frpc::RemoteUnsupportedError("Operation 'representation_limits' is not implemented");
+
+        min_value = std::numeric_limits<int32_t>::min();
+        max_value = std::numeric_limits<int32_t>::max();
     }
 
     int32_t addition(
@@ -56,9 +56,18 @@ struct CalculatorServerImplementation :
             /*in*/ int32_t value2) override
     {
         static_cast<void>(info);
-        static_cast<void>(value1);
-        static_cast<void>(value2);
-        throw frpc::RemoteUnsupportedError("Operation 'addition' is not implemented");
+
+        int32_t result = value1 + value2;
+        bool negative_1 = value1 < 0;
+        bool negative_2 = value2 < 0;
+        bool negative_result = result < 0;
+
+        if ((negative_1 == negative_2) && (negative_result != negative_1))
+        {
+            throw calculator_example::OverflowException();
+        }
+
+        return result;
     }
 
     int32_t subtraction(
@@ -67,9 +76,18 @@ struct CalculatorServerImplementation :
             /*in*/ int32_t value2) override
     {
         static_cast<void>(info);
-        static_cast<void>(value1);
-        static_cast<void>(value2);
-        throw frpc::RemoteUnsupportedError("Operation 'subtraction' is not implemented");
+
+        int32_t result = value1 - value2;
+        bool negative_1 = value1 < 0;
+        bool negative_2 = value2 < 0;
+        bool negative_result = result < 0;
+
+        if ((negative_1 != negative_2) && (negative_result != negative_1))
+        {
+            throw calculator_example::OverflowException();
+        }
+
+        return result;
     }
 
 };
