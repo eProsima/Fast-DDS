@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#ifndef FASTDDS_EXAMPLES_CPP_RPC_CLIENT_SERVER_FEED__CLIPARSER_HPP
+#define FASTDDS_EXAMPLES_CPP_RPC_CLIENT_SERVER_FEED__CLIPARSER_HPP
+
 #include <csignal>
 #include <cstdlib>
 #include <iostream>
 
 #include <fastdds/dds/log/Log.hpp>
-
-#ifndef FASTDDS_EXAMPLES_CPP_RPC_CLIENT_SERVER_FEED__CLIPARSER_HPP
-#define FASTDDS_EXAMPLES_CPP_RPC_CLIENT_SERVER_FEED__CLIPARSER_HPP
 
 namespace eprosima {
 namespace fastdds {
@@ -49,6 +49,9 @@ public:
         SUBSTRACTION,
         REPRESENTATION_LIMITS,
         FIBONACCI,
+        SUM_ALL,
+        ACCUMULATOR,
+        FILTER,
         UNDEFINED
     };
 
@@ -64,6 +67,7 @@ public:
         std::size_t connection_attempts = 10; // Number of attempts to connect to the server
         std::size_t thread_pool_size = 0; // Size of the thread pool for the server
         std::uint32_t n_results = 0; // Number of results to return in the Fibonacci sequence
+        std::uint8_t filter_kind = 0; // Filter kind for the input feed
     };
 
     /**
@@ -92,13 +96,32 @@ public:
         std::cout << "Client arguments:"                                                                   << std::endl;
         std::cout << "  -a <num_1> <num_2>, --addition <num_1> <num_2>       Adds two numbers"             << std::endl;
         std::cout << "                                                       [-2^31 <= <num_i> <= 2^31-1]" << std::endl;
+        std::cout << "                                                                                   " << std::endl;
         std::cout << "  -s <num_1> <num_2>, --substraction <num_1> <num_2>   Substracts two numbers"       << std::endl;
         std::cout << "                                                       [-2^31 <= <num_i> <= 2^31-1]" << std::endl;
+        std::cout << "                                                                                   " << std::endl;
         std::cout << "  -r, --representation-limits                          Computes the representation"  << std::endl;
         std::cout << "                                                       limits of a 32-bit integer"   << std::endl;
+        std::cout << "                                                                                   " << std::endl;
         std::cout << "  -f <num>, --fibonacci <num>                          Returns a feed of results"    << std::endl;
         std::cout << "                                                       with the <num> first elements"<< std::endl;
         std::cout << "                                                       of the Fibonacci sequence"    << std::endl;
+        std::cout << "                                                                                   " << std::endl;
+        std::cout << "      --sum-all                                        Sum all the values provided"  << std::endl;
+        std::cout << "                                                       in the input feed"            << std::endl;
+        std::cout << "                                                                                   " << std::endl;
+        std::cout << "      --accumulator                                    Return a feed of results"     << std::endl;
+        std::cout << "                                                       with the sum of all received" << std::endl;
+        std::cout << "                                                       values from an input feed"    << std::endl;
+        std::cout << "                                                                                   " << std::endl;
+        std::cout << "      --filter <filter_kind>                           Return a feed of results"     << std::endl;
+        std::cout << "                                                       with the values that match"   << std::endl;
+        std::cout << "                                                       the input filter kind"        << std::endl;
+        std::cout << "                                                       [<filter_kind> = 0, 1, 2]"    << std::endl;
+        std::cout << "                                                       [0 = EVEN,"                   << std::endl;
+        std::cout << "                                                        1 = ODD,"                    << std::endl;
+        std::cout << "                                                        2 = PRIME]"                  << std::endl;
+        std::cout << "                                                                                   " << std::endl;
         std::cout << "      --connection-attempts <num>                      Number of attempts to connect"<< std::endl;
         std::cout << "                                                       to a server before failing"   << std::endl;
         std::cout << "                                                       [default: 10]"                << std::endl;
@@ -280,6 +303,76 @@ public:
                 else
                 {
                     EPROSIMA_LOG_ERROR(CLI_PARSER, "fibonacci argument is only valid for client entity");
+                    print_help(EXIT_FAILURE);
+                }
+            }
+            else if (arg == "--sum-all")
+            {
+                if (config.entity == CLIParser::EntityKind::CLIENT)
+                {
+                    if (CLIParser::OperationKind::UNDEFINED != config.operation)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "Only one operation can be selected");
+                        print_help(EXIT_FAILURE);
+                    }
+
+                    config.operation = CLIParser::OperationKind::SUM_ALL;
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "sum-all argument is only valid for client entity");
+                    print_help(EXIT_FAILURE);
+                }
+            }
+            else if (arg == "--accumulator")
+            {
+                if (config.entity == CLIParser::EntityKind::CLIENT)
+                {
+                    if (CLIParser::OperationKind::UNDEFINED != config.operation)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "Only one operation can be selected");
+                        print_help(EXIT_FAILURE);
+                    }
+
+                    config.operation = CLIParser::OperationKind::ACCUMULATOR;
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "accumulator argument is only valid for client entity");
+                    print_help(EXIT_FAILURE);
+                }
+            }
+            else if (arg == "--filter")
+            {
+                if (config.entity == CLIParser::EntityKind::CLIENT)
+                {
+                    if (CLIParser::OperationKind::UNDEFINED != config.operation)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "Only one operation can be selected");
+                        print_help(EXIT_FAILURE);
+                    }
+
+                    if (++i < argc)
+                    {
+                        config.filter_kind = consume_integer_argument<std::uint8_t>(argv[i], arg);
+
+                        if (config.filter_kind > 2)
+                        {
+                            EPROSIMA_LOG_ERROR(CLI_PARSER, "filter kind must be 0, 1 or 2");
+                            print_help(EXIT_FAILURE);
+                        }
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "missing filter argument");
+                        print_help(EXIT_FAILURE);
+                    }
+
+                    config.operation = CLIParser::OperationKind::FILTER;
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "filter argument is only valid for client entity");
                     print_help(EXIT_FAILURE);
                 }
             }
