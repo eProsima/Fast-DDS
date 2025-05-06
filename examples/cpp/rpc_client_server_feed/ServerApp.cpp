@@ -32,7 +32,6 @@ namespace examples {
 namespace rpc_client_server {
 
 using namespace calculator_example;
-using namespace calculator_example::detail;
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::dds::rpc;
 
@@ -113,7 +112,7 @@ void ServerApp::create_server(
         const std::string& service_name)
 {
     // Create the server with default QoS
-    std::shared_ptr<CalculatorServer::IServerImplementation> server_impl =
+    std::shared_ptr<CalculatorServer_IServerImplementation> server_impl =
             std::make_shared<CalculatorServerImplementation>();
 
     server_ = create_CalculatorServer(
