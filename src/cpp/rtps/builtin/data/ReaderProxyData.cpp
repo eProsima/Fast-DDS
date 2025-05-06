@@ -357,11 +357,6 @@ uint32_t ReaderProxyData::get_serialized_size(
             representation);
     }
 
-    if (dds::QosPoliciesSerializer<dds::TypeConsistencyEnforcementQosPolicy>::should_be_sent(type_consistency))
-    {
-        ret_val += dds::QosPoliciesSerializer<dds::TypeConsistencyEnforcementQosPolicy>::cdr_serialized_size(
-            type_consistency);
-    }
     if (type_information.assigned())
     {
         ret_val +=
