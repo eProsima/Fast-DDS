@@ -364,6 +364,104 @@ OperationStatus SumAll::execute()
     }
 }
 
+Accumulator::Accumulator(
+        std::shared_ptr<calculator_example::Calculator> client)
+    : client_(client)
+    , writer_(nullptr)
+    , reader_(nullptr)
+    , valid_user_input_(false)
+{
+}
+
+OperationStatus Accumulator::execute()
+{
+    if (auto client = client_.lock())
+    {
+        if (!reader_)
+        {
+            assert(writer_ == nullptr);
+            reader_ = client->accumulator(writer_);
+
+            if (!reader_ || !writer_)
+            {
+                client_server_error("ClientApp", "Failed to create Client Reader/Writer");
+
+                return OperationStatus::ERROR;
+            }
+
+            InputFeedProcessor::print_help();
+        }
+
+        // Send a new value or close the input feed
+        try
+        {
+            while(!valid_user_input_)
+            {
+                auto input = InputFeedProcessor::get_input();
+
+                // Check the input status
+                switch (input.first)
+                {
+                    // Valid number received
+                    case InputFeedProcessor::Status::VALID_INPUT:
+                        // Send the number to the server
+                        writer_->write(input.second);
+                        client_server_info("ClientApp", "Input sent: " << input.second);
+                        valid_user_input_ = true;
+                        break;
+
+                    // Invalid input received
+                    case InputFeedProcessor::Status::INVALID_INPUT:
+                        client_server_error("ClientApp", "Invalid input. Please enter a valid number.");
+                        break;
+
+                    // Input feed closed
+                    case InputFeedProcessor::Status::FEED_CLOSED:
+                        client_server_info("ClientApp", "Input feed closed.");
+                        writer_->finish();
+                        valid_user_input_ = true;
+                        break;
+
+                    default:
+                        client_server_error("ClientApp", "Unknown input status.");
+                        break;
+                }
+            }
+
+            valid_user_input_ = false;
+
+            // Read the next value from the output feed
+            int32_t value;
+            if (reader_->read(value))
+            {
+                client_server_info("ClientApp", "Accumulated sum: " << value);
+
+                // Output feed not closed yet
+                return OperationStatus::PENDING;
+            }
+            else
+            {
+                client_server_info("ClientApp", "Accumulator feed finished");
+
+                reader_.reset();
+                writer_.reset();
+
+                return OperationStatus::SUCCESS;
+            }
+        }
+        catch(const RpcException& e)
+        {
+            client_server_error("ClientApp", "RPC exception ocurred: " << e.what());
+
+            return OperationStatus::ERROR;
+        }
+    }
+    else
+    {
+        throw std::runtime_error("Client reference expired");
+    }
+}
+
 ClientApp::ClientApp(
         const CLIParser::config& config,
         const std::string& service_name)
@@ -529,6 +627,9 @@ void ClientApp::set_operation(
             break;
         case CLIParser::OperationKind::SUM_ALL:
             operation_ = std::unique_ptr<Operation>(new SumAll(client_));
+            break;
+        case CLIParser::OperationKind::ACCUMULATOR:
+            operation_ = std::unique_ptr<Operation>(new Accumulator(client_));
             break;
         default:
             throw std::runtime_error("Invalid operation");

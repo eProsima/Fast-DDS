@@ -169,6 +169,25 @@ private:
 
 };
 
+class Accumulator : public Operation
+{
+
+public:
+
+    Accumulator(
+            std::shared_ptr<calculator_example::Calculator> client);
+
+    OperationStatus execute() override;
+
+private:
+
+    std::weak_ptr<calculator_example::Calculator> client_;
+    std::shared_ptr<eprosima::fastdds::dds::rpc::RpcClientWriter<int32_t>> writer_;
+    std::shared_ptr<eprosima::fastdds::dds::rpc::RpcClientReader<int32_t>> reader_;
+    bool valid_user_input_;
+
+};
+
 class ClientApp : public Application
 {
 public:
