@@ -172,6 +172,21 @@ public:
             const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
 
     /**
+     * Add a local reader to the BuiltinProtocols.
+     *
+     * @param rtps_reader             Pointer to the RTPSReader.
+     * @param topic                   Information regarding the topic where the writer is registering
+     * @param sub_builtin_topic_data  Information on the subscription endpoint
+     * @param content_filter          Optional content filtering information.
+     * @return True if correct.
+     */
+    bool add_reader(
+        RTPSReader* rtps_reader,
+        const TopicDescription& topic,
+        const SubscriptionBuiltinTopicData& sub_builtin_topic_data,
+        const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
+
+    /**
      * Update a local Writer QOS
      * @param rtps_writer      Writer to update
      * @param wqos             New Writer QoS

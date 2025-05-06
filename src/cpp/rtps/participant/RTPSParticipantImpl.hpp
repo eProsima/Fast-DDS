@@ -956,6 +956,22 @@ public:
             const ContentFilterProperty* content_filter = nullptr);
 
     /**
+     * Register a Reader in the BuiltinProtocols.
+     *
+     * @param Reader                  Pointer to the RTPSReader.
+     * @param topic                   Information regarding the topic where the reader is registering.
+     * @param sub_builtin_topic_data  Information on the subscription endpoint.
+     * @param content_filter          Optional content filtering information.
+     *
+     * @return True if correctly registered.
+     */
+    bool register_reader(
+        RTPSReader* Reader,
+        const TopicDescription& topic,
+        const SubscriptionBuiltinTopicData& sub_builtin_topic_data,
+        const ContentFilterProperty* content_filter = nullptr);
+
+    /**
      * Update participant attributes.
      * @param patt New participant attributes.
      */

@@ -1436,6 +1436,15 @@ bool RTPSParticipantImpl::register_reader(
     return this->mp_builtinProtocols->add_reader(rtps_reader, topic, qos, content_filter);
 }
 
+bool RTPSParticipantImpl::register_reader(
+        RTPSReader* rtps_reader,
+        const TopicDescription& topic,
+        const SubscriptionBuiltinTopicData& sub_builtin_topic_data,
+        const ContentFilterProperty* content_filter)
+{
+    return this->mp_builtinProtocols->add_reader(rtps_reader, topic, sub_builtin_topic_data, content_filter);
+}
+
 void RTPSParticipantImpl::update_attributes(
         const RTPSParticipantAttributes& patt)
 {

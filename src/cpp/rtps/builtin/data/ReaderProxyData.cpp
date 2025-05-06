@@ -1671,6 +1671,31 @@ void ReaderProxyData::set_qos(
         data_sharing = qos.data_sharing;
         data_sharing.hasChanged = true;
     }
+
+    if (first_time && qos.history.has_value())
+    {
+        history = qos.history;
+    }
+    if (first_time && qos.resource_limits.has_value())
+    {
+        resource_limits = qos.resource_limits;
+    }
+    if (first_time && qos.reader_data_lifecycle.has_value())
+    {
+        reader_data_lifecycle = qos.reader_data_lifecycle;
+    }
+    if (first_time && qos.rtps_reliable_reader.has_value())
+    {
+        rtps_reliable_reader = qos.rtps_reliable_reader;
+    }
+    if (first_time && qos.endpoint.has_value())
+    {
+        endpoint = qos.endpoint;
+    }
+    if (first_time && qos.reader_resource_limits.has_value())
+    {
+        reader_resource_limits = qos.reader_resource_limits;
+    }
 }
 
 void ReaderProxyData::set_qos(

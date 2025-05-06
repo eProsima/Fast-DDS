@@ -178,6 +178,12 @@ public:
             RTPSWriter * Writer,
             const fastdds::rtps::TopicDescription& topic,
             const fastdds::rtps::PublicationBuiltinTopicData& pub_builtin_topic_data));
+
+    MOCK_METHOD4(register_reader, bool(
+            RTPSReader * Reader,
+            const fastdds::rtps::TopicDescription& topic,
+            const fastdds::rtps::SubscriptionBuiltinTopicData& sub_builtin_topic_data,
+            const fastdds::rtps::ContentFilterProperty* content_filter));
     // *INDENT-ON*
 
     bool createWriter(

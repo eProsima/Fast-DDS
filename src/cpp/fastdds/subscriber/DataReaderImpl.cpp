@@ -283,21 +283,11 @@ ReturnCode_t DataReaderImpl::enable()
     topic_desc.type_name = topic_->get_type_name();
     subscriber_->get_participant_impl()->fill_type_information(type_, topic_desc.type_information);
 
-    ReaderQos rqos = qos_.get_readerqos(subscriber_->get_qos());
-    if (!is_data_sharing_compatible_)
+    SubscriptionBuiltinTopicData subscription_data;
+    if (get_subscription_builtin_topic_data(subscription_data) != RETCODE_OK)
     {
-        rqos.data_sharing.off();
-    }
-    if (endpoint_partitions)
-    {
-        std::istringstream partition_string(*endpoint_partitions);
-        std::string partition_name;
-        rqos.m_partition.clear();
-
-        while (std::getline(partition_string, partition_name, ';'))
-        {
-            rqos.m_partition.push_back(partition_name.c_str());
-        }
+        EPROSIMA_LOG_ERROR(DATA_WRITER, "Error getting subscription data. RTPS Writer not enabled.");
+        return RETCODE_ERROR;
     }
 
     rtps::ContentFilterProperty* filter_property = nullptr;
@@ -305,11 +295,9 @@ ReturnCode_t DataReaderImpl::enable()
     {
         filter_property = &content_topic->filter_property;
     }
-    if (!subscriber_->rtps_participant()->register_reader(
-                reader_,
-                topic_desc,
-                rqos,
-                filter_property))
+
+    RTPSParticipantImpl* rtps = RTPSDomainImpl::find_local_participant(subscriber_->rtps_participant()->getGuid());
+    if (!rtps->register_reader(reader_, topic_desc, subscription_data, filter_property))
     {
         EPROSIMA_LOG_ERROR(DATA_READER, "Could not register reader on discovery protocols");
 
@@ -2294,6 +2282,15 @@ ReturnCode_t DataReaderImpl::get_subscription_builtin_topic_data(
             subscription_data.partition.push_back(partition_name.c_str());
         }
     }
+
+    subscription_data.history = qos_.history();
+
+    // Optional QoS
+    subscription_data.resource_limits = qos_.resource_limits();
+    subscription_data.reader_data_lifecycle = qos_.reader_data_lifecycle();
+    subscription_data.rtps_reliable_reader = qos_.reliable_reader_qos();
+    subscription_data.endpoint = qos_.endpoint();
+    subscription_data.reader_resource_limits = qos_.reader_resource_limits();
 
     return RETCODE_OK;
 }

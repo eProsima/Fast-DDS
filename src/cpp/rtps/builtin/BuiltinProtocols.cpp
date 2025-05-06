@@ -294,6 +294,37 @@ bool BuiltinProtocols::add_reader(
     return ok;
 }
 
+bool BuiltinProtocols::add_reader(
+    RTPSReader* rtps_reader,
+    const TopicDescription& topic,
+    const SubscriptionBuiltinTopicData& sub_builtin_topic_data,
+    const fastdds::rtps::ContentFilterProperty* content_filter)
+{
+    bool ok = true;
+
+    if (nullptr != mp_PDP)
+    {
+        ok = mp_PDP->get_edp()->new_reader_proxy_data(rtps_reader, topic, sub_builtin_topic_data, content_filter);
+
+        if (!ok)
+        {
+            EPROSIMA_LOG_WARNING(RTPS_EDP, "Failed register ReaderProxyData in EDP");
+            return false;
+        }
+    }
+    else
+    {
+        EPROSIMA_LOG_WARNING(RTPS_EDP, "EDP is not used in this Participant, register a Reader is impossible");
+    }
+
+    if (nullptr != mp_WLP)
+    {
+        ok &= mp_WLP->add_local_reader(rtps_reader, sub_builtin_topic_data.liveliness);
+    }
+
+    return ok;
+}
+
 bool BuiltinProtocols::update_writer(
         RTPSWriter* rtps_writer,
         const fastdds::dds::WriterQos& wqos)

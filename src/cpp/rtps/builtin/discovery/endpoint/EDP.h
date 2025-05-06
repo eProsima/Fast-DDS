@@ -178,6 +178,23 @@ public:
             const TopicDescription& topic,
             const fastdds::dds::ReaderQos& qos,
             const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
+
+    /**
+     * Create a new ReaderPD for a local Reader.
+     *
+     * @param rtps_reader             Pointer to the RTPSReader.
+     * @param topic                   Information regarding the topic where the writer is registering.
+     * @param sub_builtin_topic_data  QoS policies dictated by the subscriber.
+     * @param content_filter          Optional content filtering information.
+     *
+     * @return True if correct.
+     */
+    bool new_reader_proxy_data(
+        RTPSReader* rtps_reader,
+        const TopicDescription& topic,
+        const SubscriptionBuiltinTopicData& sub_builtin_topic_data,
+        const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
+
     /**
      * Create a new WriterPD for a local Writer.
      *

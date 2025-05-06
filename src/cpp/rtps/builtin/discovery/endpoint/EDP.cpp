@@ -241,6 +241,151 @@ bool EDP::new_reader_proxy_data(
     return true;
 }
 
+bool EDP::new_reader_proxy_data(
+    RTPSReader* rtps_reader,
+    const TopicDescription& topic,
+    const SubscriptionBuiltinTopicData& sub_builtin_topic_data,
+    const fastdds::rtps::ContentFilterProperty* content_filter)
+{
+    EPROSIMA_LOG_INFO(RTPS_EDP,
+            "Adding " << rtps_reader->getGuid().entityId << " in topic " <<
+            topic.topic_name.to_string());
+
+    auto init_fun = [this, rtps_reader, &topic, &sub_builtin_topic_data, content_filter](
+        ReaderProxyData* rpd,
+        bool updating,
+        const ParticipantProxyData& participant_data)
+            {
+                if (updating)
+                {
+                    EPROSIMA_LOG_ERROR(RTPS_EDP,
+                            "Adding already existent reader " << rtps_reader->getGuid().entityId << " in topic "
+                                                            << topic.topic_name.to_string());
+                    return false;
+                }
+
+                const NetworkFactory& network = mp_RTPSParticipant->network_factory();
+                const auto& ratt = rtps_reader->getAttributes();
+
+                rpd->is_alive(true);
+                rpd->expects_inline_qos = rtps_reader->expects_inline_qos();
+                rpd->guid = rtps_reader->getGuid();
+                rpd->participant_guid = participant_data.guid;
+                rpd->key() = rpd->guid;
+                if (ratt.multicastLocatorList.empty() && ratt.unicastLocatorList.empty())
+                {
+                    rpd->set_locators(participant_data.default_locators);
+                }
+                else
+                {
+                    rpd->set_multicast_locators(ratt.multicastLocatorList, network,
+                            participant_data.is_from_this_host());
+                    rpd->set_announced_unicast_locators(ratt.unicastLocatorList);
+                    fastdds::rtps::network::external_locators::add_external_locators(*rpd,
+                            ratt.external_unicast_locators);
+                }
+                rpd->rtps_participant_key() = mp_RTPSParticipant->getGuid();
+                rpd->topic_name = topic.topic_name;
+                rpd->type_name = topic.type_name;
+                rpd->topic_kind = (rpd->guid.entityId.value[3] & 0x0F) == 0x07 ? WITH_KEY : NO_KEY;
+
+                using dds::utils::TypePropagation;
+                using dds::xtypes::TypeInformationParameter;
+
+                auto type_propagation = mp_RTPSParticipant->type_propagation();
+                assert(TypePropagation::TYPEPROPAGATION_UNKNOWN != type_propagation);
+
+                const auto& type_info = topic.type_information;
+                if (type_info.assigned())
+                {
+                    switch (type_propagation)
+                    {
+                        case TypePropagation::TYPEPROPAGATION_ENABLED:
+                        {
+                            rpd->type_information = type_info;
+                            break;
+                        }
+                        case TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH:
+                        {
+                            TypeInformationParameter minimal;
+                            minimal.type_information.minimal(type_info.type_information.minimal());
+                            minimal.assigned(true);
+                            rpd->type_information = minimal;
+                            break;
+                        }
+                        case TypePropagation::TYPEPROPAGATION_REGISTRATION_ONLY:
+                        default:
+                        {
+                            if (rpd->has_type_information())
+                            {
+                                rpd->type_information.assigned(false);
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                rpd->set_qos(sub_builtin_topic_data, true);
+                rpd->user_defined_id(ratt.getUserDefinedID());
+                if (nullptr != content_filter)
+                {
+                    // Check content of ContentFilterProperty.
+                    if (!(0 < content_filter->content_filtered_topic_name.size() &&
+                            0 < content_filter->related_topic_name.size() &&
+                            0 < content_filter->filter_class_name.size() &&
+                            0 < content_filter->filter_expression.size()
+                            ))
+                    {
+                        return false;
+                    }
+
+                    rpd->content_filter = *content_filter;
+                }
+
+    #if HAVE_SECURITY
+                if (mp_RTPSParticipant->is_secure())
+                {
+                    rpd->security_attributes_ = ratt.security_attributes().mask();
+                    rpd->plugin_security_attributes_ = ratt.security_attributes().plugin_endpoint_attributes;
+                }
+                else
+                {
+                    rpd->security_attributes_ = 0UL;
+                    rpd->plugin_security_attributes_ = 0UL;
+                }
+    #endif // if HAVE_SECURITY
+
+                return true;
+            };
+
+    //ADD IT TO THE LIST OF READERPROXYDATA
+    GUID_t participant_guid;
+    ReaderProxyData* reader_data = this->mp_PDP->addReaderProxyData(
+        rtps_reader->getGuid(), participant_guid, init_fun);
+    if (reader_data == nullptr)
+    {
+        return false;
+    }
+
+    #ifdef FASTDDS_STATISTICS
+    // notify monitor service about the new local entity proxy
+    if (nullptr != this->mp_PDP->get_proxy_observer())
+    {
+        this->mp_PDP->get_proxy_observer()->on_local_entity_change(reader_data->guid, true);
+    }
+    #endif //FASTDDS_STATISTICS
+
+    //PAIRING
+    if (this->mp_PDP->getRTPSParticipant()->should_match_local_endpoints())
+    {
+        pairing_reader_proxy_with_any_local_writer(participant_guid, reader_data);
+    }
+    pairingReader(rtps_reader, participant_guid, *reader_data);
+    //DO SOME PROCESSING DEPENDING ON THE IMPLEMENTATION (SIMPLE OR STATIC)
+    process_reader_proxy_data(rtps_reader, reader_data);
+    return true;
+}
+
 bool EDP::new_writer_proxy_data(
         RTPSWriter* rtps_writer,
         const TopicDescription& topic,
