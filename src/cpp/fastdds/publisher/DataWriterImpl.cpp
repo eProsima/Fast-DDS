@@ -1812,49 +1812,41 @@ void DataWriterImpl::set_qos(
         if (!(to.durability() == from.durability()))
         {
             to.durability() = from.durability();
-            to.durability().hasChanged = true;
         }
 
         if (!(to.durability_service() == from.durability_service()))
         {
             to.durability_service() = from.durability_service();
-            to.durability_service().hasChanged = true;
         }
 
         if (!(to.liveliness() == from.liveliness()))
         {
             to.liveliness() = from.liveliness();
-            to.liveliness().hasChanged = true;
         }
 
         if (!(to.reliability().kind == from.reliability().kind))
         {
             to.reliability().kind = from.reliability().kind;
-            to.reliability().hasChanged = true;
         }
 
         if (!(to.destination_order() == from.destination_order()))
         {
             to.destination_order() = from.destination_order();
-            to.destination_order().hasChanged = true;
         }
 
         if (!(to.history() == from.history()))
         {
             to.history() = from.history();
-            to.history().hasChanged = true;
         }
 
         if (!(to.resource_limits() == from.resource_limits()))
         {
             to.resource_limits() = from.resource_limits();
-            to.resource_limits().hasChanged = true;
         }
 
         if (!(to.ownership() == from.ownership()))
         {
             to.ownership() = from.ownership();
-            to.ownership().hasChanged = true;
         }
 
         to.publish_mode() = from.publish_mode();
@@ -1862,7 +1854,6 @@ void DataWriterImpl::set_qos(
         if (!(to.representation() == from.representation()))
         {
             to.representation() = from.representation();
-            to.representation().hasChanged = true;
         }
 
         to.properties() = from.properties();
@@ -1884,43 +1875,36 @@ void DataWriterImpl::set_qos(
     if (!(to.deadline() == from.deadline()))
     {
         to.deadline() = from.deadline();
-        to.deadline().hasChanged = true;
     }
 
     if (!(to.latency_budget() == from.latency_budget()))
     {
         to.latency_budget() = from.latency_budget();
-        to.latency_budget().hasChanged = true;
     }
 
     if (!(to.reliability().max_blocking_time == from.reliability().max_blocking_time))
     {
         to.reliability().max_blocking_time = from.reliability().max_blocking_time;
-        to.reliability().hasChanged = true;
     }
 
     if (!(to.transport_priority() == from.transport_priority()))
     {
         to.transport_priority() = from.transport_priority();
-        to.transport_priority().hasChanged = true;
     }
 
     if (!(to.lifespan() == from.lifespan()))
     {
         to.lifespan() = from.lifespan();
-        to.lifespan().hasChanged = true;
     }
 
     if (!(to.user_data() == from.user_data()))
     {
         to.user_data() = from.user_data();
-        to.user_data().hasChanged = true;
     }
 
     if (!(to.ownership_strength() == from.ownership_strength()))
     {
         to.ownership_strength() = from.ownership_strength();
-        to.ownership_strength().hasChanged = true;
     }
 
     if (!(to.writer_data_lifecycle() == from.writer_data_lifecycle()))

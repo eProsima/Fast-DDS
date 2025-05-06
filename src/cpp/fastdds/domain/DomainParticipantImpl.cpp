@@ -2382,7 +2382,6 @@ bool DomainParticipantImpl::set_qos(
     if (!(to.user_data() == from.user_data()))
     {
         to.user_data() = from.user_data();
-        to.user_data().hasChanged = true;
         if (!first_time)
         {
             qos_should_be_updated = true;
@@ -2399,7 +2398,6 @@ bool DomainParticipantImpl::set_qos(
     if (!(to.wire_protocol() == from.wire_protocol()))
     {
         to.wire_protocol() = from.wire_protocol();
-        to.wire_protocol().hasChanged = true;
         if (!first_time)
         {
             qos_should_be_updated = true;

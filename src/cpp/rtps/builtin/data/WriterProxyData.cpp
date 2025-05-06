@@ -1520,65 +1520,53 @@ void WriterProxyData::set_qos(
     if (first_time)
     {
         durability = qos.durability;
-        durability.hasChanged = true;
     }
     if (first_time || deadline.period != qos.deadline.period)
     {
         deadline = qos.deadline;
-        deadline.hasChanged = true;
     }
     if (latency_budget.duration != qos.latency_budget.duration)
     {
         latency_budget = qos.latency_budget;
-        latency_budget.hasChanged = true;
     }
     if (first_time)
     {
         liveliness = qos.liveliness;
-        liveliness.hasChanged = true;
     }
     if (first_time)
     {
         reliability = qos.reliability;
-        reliability.hasChanged = true;
     }
     if (first_time)
     {
         ownership = qos.ownership;
-        ownership.hasChanged = true;
     }
     if (destination_order.kind != qos.destination_order.kind)
     {
         destination_order = qos.destination_order;
-        destination_order.hasChanged = true;
     }
     if (first_time || user_data.data_vec() != qos.user_data.data_vec())
     {
         user_data = qos.user_data;
-        user_data.hasChanged = true;
     }
     if (first_time || presentation.access_scope != qos.presentation.access_scope ||
             presentation.coherent_access != qos.presentation.coherent_access ||
             presentation.ordered_access != qos.presentation.ordered_access)
     {
         presentation = qos.presentation;
-        presentation.hasChanged = true;
     }
     if (first_time || qos.partition.names() != partition.names())
     {
         partition = qos.partition;
-        partition.hasChanged = true;
     }
 
     if (first_time || topic_data.getValue() != qos.topic_data.getValue())
     {
         topic_data = qos.topic_data;
-        topic_data.hasChanged = true;
     }
     if (first_time || group_data.getValue() != qos.group_data.getValue())
     {
         group_data = qos.group_data;
-        group_data.hasChanged = true;
     }
     if (first_time || durability_service.history_kind != qos.durability_service.history_kind ||
             durability_service.history_depth != qos.durability_service.history_depth ||
@@ -1589,22 +1577,18 @@ void WriterProxyData::set_qos(
             )
     {
         durability_service = qos.durability_service;
-        durability_service.hasChanged = true;
     }
     if (lifespan.duration != qos.lifespan.duration)
     {
         lifespan = qos.lifespan;
-        lifespan.hasChanged = true;
     }
     if (qos.ownership_strength.value != ownership_strength.value)
     {
         ownership_strength = qos.ownership_strength;
-        ownership_strength.hasChanged = true;
     }
     if (first_time)
     {
         disable_positive_acks = qos.disable_positive_acks;
-        disable_positive_acks.hasChanged = true;
     }
     // Writers only manages the first element in the list of data representations.
     if (qos.representation.m_value.size() != representation.m_value.size() ||
@@ -1612,12 +1596,10 @@ void WriterProxyData::set_qos(
             *qos.representation.m_value.begin() != *representation.m_value.begin()))
     {
         representation = qos.representation;
-        representation.hasChanged = true;
     }
     if (first_time && !(data_sharing == qos.data_sharing))
     {
         data_sharing = qos.data_sharing;
-        data_sharing.hasChanged = true;
     }
     if (first_time && qos.history.has_value())
     {
@@ -1660,65 +1642,53 @@ void WriterProxyData::set_qos(
     if (first_time)
     {
         durability = qos.m_durability;
-        durability.hasChanged = true;
     }
     if (first_time || deadline.period != qos.m_deadline.period)
     {
         deadline = qos.m_deadline;
-        deadline.hasChanged = true;
     }
     if (latency_budget.duration != qos.m_latencyBudget.duration)
     {
         latency_budget = qos.m_latencyBudget;
-        latency_budget.hasChanged = true;
     }
     if (first_time)
     {
         liveliness = qos.m_liveliness;
-        liveliness.hasChanged = true;
     }
     if (first_time)
     {
         reliability = qos.m_reliability;
-        reliability.hasChanged = true;
     }
     if (first_time)
     {
         ownership = qos.m_ownership;
-        ownership.hasChanged = true;
     }
     if (destination_order.kind != qos.m_destinationOrder.kind)
     {
         destination_order = qos.m_destinationOrder;
-        destination_order.hasChanged = true;
     }
     if (first_time || user_data.data_vec() != qos.m_userData.data_vec())
     {
         user_data = qos.m_userData;
-        user_data.hasChanged = true;
     }
     if (first_time || presentation.access_scope != qos.m_presentation.access_scope ||
             presentation.coherent_access != qos.m_presentation.coherent_access ||
             presentation.ordered_access != qos.m_presentation.ordered_access)
     {
         presentation = qos.m_presentation;
-        presentation.hasChanged = true;
     }
     if (first_time || qos.m_partition.names() != partition.names())
     {
         partition = qos.m_partition;
-        partition.hasChanged = true;
     }
 
     if (first_time || topic_data.getValue() != qos.m_topicData.getValue())
     {
         topic_data = qos.m_topicData;
-        topic_data.hasChanged = true;
     }
     if (first_time || group_data.getValue() != qos.m_groupData.getValue())
     {
         group_data = qos.m_groupData;
-        group_data.hasChanged = true;
     }
     if (first_time || durability_service.history_kind != qos.m_durabilityService.history_kind ||
             durability_service.history_depth != qos.m_durabilityService.history_depth ||
@@ -1729,22 +1699,18 @@ void WriterProxyData::set_qos(
             )
     {
         durability_service = qos.m_durabilityService;
-        durability_service.hasChanged = true;
     }
     if (lifespan.duration != qos.m_lifespan.duration)
     {
         lifespan = qos.m_lifespan;
-        lifespan.hasChanged = true;
     }
     if (qos.m_ownershipStrength.value != ownership_strength.value)
     {
         ownership_strength = qos.m_ownershipStrength;
-        ownership_strength.hasChanged = true;
     }
     if (first_time)
     {
         disable_positive_acks = qos.m_disablePositiveACKs;
-        disable_positive_acks.hasChanged = true;
     }
     // Writers only manages the first element in the list of data representations.
     if (qos.representation.m_value.size() != representation.m_value.size() ||
@@ -1752,17 +1718,14 @@ void WriterProxyData::set_qos(
             *qos.representation.m_value.begin() != *representation.m_value.begin()))
     {
         representation = qos.representation;
-        representation.hasChanged = true;
     }
     if (first_time && !(data_sharing == qos.data_sharing))
     {
         data_sharing = qos.data_sharing;
-        data_sharing.hasChanged = true;
     }
     if (first_time)
     {
         publish_mode = qos.m_publishMode;
-        publish_mode->hasChanged = true;
     }
 }
 

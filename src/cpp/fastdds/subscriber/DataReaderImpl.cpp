@@ -1685,57 +1685,46 @@ void DataReaderImpl::set_qos(
     if (first_time && to.durability().kind != from.durability().kind)
     {
         to.durability() = from.durability();
-        to.durability().hasChanged = true;
     }
     if (to.deadline().period != from.deadline().period)
     {
         to.deadline() = from.deadline();
-        to.deadline().hasChanged = true;
     }
     if (to.latency_budget().duration != from.latency_budget().duration)
     {
         to.latency_budget() = from.latency_budget();
-        to.latency_budget().hasChanged = true;
     }
     if (first_time && !(to.liveliness() == from.liveliness()))
     {
         to.liveliness() = from.liveliness();
-        to.liveliness().hasChanged = true;
     }
     if (first_time && !(to.reliability() == from.reliability()))
     {
         to.reliability() = from.reliability();
-        to.reliability().hasChanged = true;
     }
     if (first_time && to.ownership().kind != from.ownership().kind)
     {
         to.ownership() = from.ownership();
-        to.ownership().hasChanged = true;
     }
     if (first_time && to.destination_order().kind != from.destination_order().kind)
     {
         to.destination_order() = from.destination_order();
-        to.destination_order().hasChanged = true;
     }
     if (to.user_data().data_vec() != from.user_data().data_vec())
     {
         to.user_data() = from.user_data();
-        to.user_data().hasChanged = true;
     }
     if (to.time_based_filter().minimum_separation != from.time_based_filter().minimum_separation )
     {
         to.time_based_filter() = from.time_based_filter();
-        to.time_based_filter().hasChanged = true;
     }
     if (first_time || !(to.durability_service() == from.durability_service()))
     {
         to.durability_service() = from.durability_service();
-        to.durability_service().hasChanged = true;
     }
     if (to.lifespan().duration != from.lifespan().duration )
     {
         to.lifespan() = from.lifespan();
-        to.lifespan().hasChanged = true;
     }
     if (first_time && !(to.reliable_reader_qos() == from.reliable_reader_qos()))
     {
@@ -1744,23 +1733,19 @@ void DataReaderImpl::set_qos(
     if (first_time || !(to.type_consistency() == from.type_consistency()))
     {
         to.type_consistency() = from.type_consistency();
-        to.type_consistency().hasChanged = true;
     }
     if (first_time || !(to.representation() == from.representation()))
     {
         to.representation() = from.representation();
-        to.representation().hasChanged = true;
     }
     if (first_time && (to.history().kind != from.history().kind ||
             to.history().depth != from.history().depth))
     {
         to.history() = from.history();
-        to.history().hasChanged = true;
     }
     if (first_time && !(to.resource_limits() == from.resource_limits()))
     {
         to.resource_limits() = from.resource_limits();
-        to.resource_limits().hasChanged = true;
     }
     if (!(to.reader_data_lifecycle() == from.reader_data_lifecycle()))
     {
