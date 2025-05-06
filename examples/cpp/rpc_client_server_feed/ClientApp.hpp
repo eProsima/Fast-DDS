@@ -22,9 +22,11 @@
 
 #include <atomic>
 #include <memory>
+#include <string>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/rpc/interfaces/RpcClientReader.hpp>
+#include <fastdds/dds/rpc/interfaces/RpcClientWriter.hpp>
 
 #include "Application.hpp"
 #include "CLIParser.hpp"
@@ -42,6 +44,8 @@ enum class OperationStatus
     TIMEOUT,
     ERROR
 };
+
+// TODO (Carlosespicur): Move operations to a different file?
 
 class Operation
 {
@@ -143,6 +147,25 @@ private:
     std::uint32_t n_results_;
     std::weak_ptr<calculator_example::Calculator> client_;
     std::shared_ptr<eprosima::fastdds::dds::rpc::RpcClientReader<int32_t>> reader_;
+
+};
+
+class SumAll : public Operation
+{
+
+public:
+
+    SumAll(
+            std::shared_ptr<calculator_example::Calculator> client);
+
+    OperationStatus execute() override;
+
+private:
+
+    std::weak_ptr<calculator_example::Calculator> client_;
+    std::shared_ptr<eprosima::fastdds::dds::rpc::RpcClientWriter<int32_t>> writer_;
+    std::int32_t result_;
+    bool input_feed_closed_;
 
 };
 
