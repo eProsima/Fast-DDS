@@ -242,7 +242,7 @@ uint32_t WriterProxyData::get_serialized_size(
         // PID_PERSISTENCE_GUID
         ret_val += 4 + PARAMETER_GUID_LENGTH;
     }
-    if (dds::QosPoliciesSerializer<dds::DurabilityQosPolicy>::should_be_sent(durability))
+    if (dds::QosPoliciesSerializer<dds::DurabilityQosPolicy>::should_be_sent(durability, true))
     {
         ret_val +=
                 dds::QosPoliciesSerializer<dds::DurabilityQosPolicy>::cdr_serialized_size(durability);
@@ -265,7 +265,7 @@ uint32_t WriterProxyData::get_serialized_size(
         ret_val +=
                 dds::QosPoliciesSerializer<dds::LivelinessQosPolicy>::cdr_serialized_size(liveliness);
     }
-    if (dds::QosPoliciesSerializer<dds::ReliabilityQosPolicy>::should_be_sent(reliability))
+    if (dds::QosPoliciesSerializer<dds::ReliabilityQosPolicy>::should_be_sent(reliability, true))
     {
         ret_val += dds::QosPoliciesSerializer<dds::ReliabilityQosPolicy>::cdr_serialized_size(reliability);
     }
@@ -527,7 +527,7 @@ bool WriterProxyData::write_to_cdr_message(
             return false;
         }
     }
-    if (dds::QosPoliciesSerializer<dds::DurabilityQosPolicy>::should_be_sent(durability))
+    if (dds::QosPoliciesSerializer<dds::DurabilityQosPolicy>::should_be_sent(durability, true))
     {
         if (!dds::QosPoliciesSerializer<dds::DurabilityQosPolicy>::add_to_cdr_message(durability, msg))
         {
@@ -563,7 +563,7 @@ bool WriterProxyData::write_to_cdr_message(
             return false;
         }
     }
-    if (dds::QosPoliciesSerializer<dds::ReliabilityQosPolicy>::should_be_sent(reliability))
+    if (dds::QosPoliciesSerializer<dds::ReliabilityQosPolicy>::should_be_sent(reliability, true))
     {
         if (!dds::QosPoliciesSerializer<dds::ReliabilityQosPolicy>::add_to_cdr_message(reliability, msg))
         {

@@ -245,7 +245,7 @@ uint32_t ReaderProxyData::get_serialized_size(
     // PID_VENDORID
     ret_val += 4 + 4;
 
-    if (dds::QosPoliciesSerializer<dds::DurabilityQosPolicy>::should_be_sent(durability))
+    if (dds::QosPoliciesSerializer<dds::DurabilityQosPolicy>::should_be_sent(durability, false))
     {
         ret_val +=
                 dds::QosPoliciesSerializer<dds::DurabilityQosPolicy>::cdr_serialized_size(durability);
@@ -264,7 +264,7 @@ uint32_t ReaderProxyData::get_serialized_size(
         ret_val +=
                 dds::QosPoliciesSerializer<dds::LivelinessQosPolicy>::cdr_serialized_size(liveliness);
     }
-    if (dds::QosPoliciesSerializer<dds::ReliabilityQosPolicy>::should_be_sent(reliability))
+    if (dds::QosPoliciesSerializer<dds::ReliabilityQosPolicy>::should_be_sent(reliability, false))
     {
         ret_val += dds::QosPoliciesSerializer<dds::ReliabilityQosPolicy>::cdr_serialized_size(
             reliability);
@@ -525,7 +525,7 @@ bool ReaderProxyData::write_to_cdr_message(
             return false;
         }
     }
-    if (dds::QosPoliciesSerializer<dds::DurabilityQosPolicy>::should_be_sent(durability))
+    if (dds::QosPoliciesSerializer<dds::DurabilityQosPolicy>::should_be_sent(durability, false))
     {
         if (!dds::QosPoliciesSerializer<dds::DurabilityQosPolicy>::add_to_cdr_message(durability, msg))
         {
@@ -554,7 +554,7 @@ bool ReaderProxyData::write_to_cdr_message(
             return false;
         }
     }
-    if (dds::QosPoliciesSerializer<dds::ReliabilityQosPolicy>::should_be_sent(reliability))
+    if (dds::QosPoliciesSerializer<dds::ReliabilityQosPolicy>::should_be_sent(reliability, false))
     {
         if (!dds::QosPoliciesSerializer<dds::ReliabilityQosPolicy>::add_to_cdr_message(
                     reliability, msg))

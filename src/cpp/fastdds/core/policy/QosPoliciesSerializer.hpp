@@ -63,14 +63,39 @@ public:
         return ParameterSerializer<QosPolicy>::cdr_serialized_size(qos_policy);
     }
 
+    /**
+     * * @brief Check if the QosPolicy should be sent by checking if it is default.
+     * @param qos_policy QosPolicy to check
+     * @return true if the QosPolicy should be sent, false otherwise.
+     */
     static bool should_be_sent(
             const QosPolicy& qos_policy)
     {
         return !(qos_policy == QosPolicy());
     }
 
+    /**
+     * * @brief Check if the QosPolicy should be sent. Default implementation checks if the QosPolicy is not default
+     *          by calling the should_be_sent method.
+     * @param qos_policy QosPolicy to check
+     * @param is_writer  Flag to indicate if the QosPolicy is for a writer. This flag is only used in overwrite methods
+     *                   of QosPolicies that have different default values for readers and writers.
+     * @return true if the QosPolicy should be sent, false otherwise.
+     */
     static bool should_be_sent(
-        const fastcdr::optional<QosPolicy>& optional_qos_policy)
+            const QosPolicy& qos_policy,
+            bool is_writer)
+    {
+        return should_be_sent(qos_policy);
+    }
+
+    /**
+     * * @brief Check if the QosPolicy should be sent. Default implementation checks if the QosPolicy is not default.
+     * @param optional_qos_policy Optional QosPolicy to check.
+     * @return true if the QosPolicy should be sent, false otherwise.
+     */
+    static bool should_be_sent(
+            const fastcdr::optional<QosPolicy>& optional_qos_policy)
     {
         if (optional_qos_policy.has_value())
         {
@@ -99,6 +124,20 @@ private:
     }
 
 };
+
+template<>
+inline bool QosPoliciesSerializer<DurabilityQosPolicy>::should_be_sent(
+        const DurabilityQosPolicy& qos_policy,
+        bool is_writer)
+{
+    if (is_writer)
+    {
+        // Writer is Transient Local by default
+        return (qos_policy.kind != TRANSIENT_LOCAL_DURABILITY_QOS);
+    }
+    // Reader is Volatile by default
+    return (qos_policy.kind != VOLATILE_DURABILITY_QOS);
+}
 
 template<>
 inline bool QosPoliciesSerializer<DurabilityQosPolicy>::add_content_to_cdr_message(
@@ -225,6 +264,21 @@ inline bool QosPoliciesSerializer<LivelinessQosPolicy>::read_content_from_cdr_me
     valid &= rtps::CDRMessage::readUInt32(cdr_message, &frac);
     qos_policy.lease_duration.fraction(frac);
     return valid;
+}
+
+template<>
+inline bool QosPoliciesSerializer<ReliabilityQosPolicy>::should_be_sent(
+        const ReliabilityQosPolicy& qos_policy,
+        bool is_writer)
+{
+    if (is_writer)
+    {
+        // Writer is Reliable by default
+        return (qos_policy.kind != RELIABLE_RELIABILITY_QOS) ||
+               (qos_policy.max_blocking_time != Duration_t(0, 100000000));
+    }
+    // Reader is BestEffort by default
+    return (qos_policy.kind != BEST_EFFORT_RELIABILITY_QOS);
 }
 
 template<>
