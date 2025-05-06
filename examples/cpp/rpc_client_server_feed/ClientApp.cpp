@@ -216,6 +216,68 @@ OperationStatus Substraction::execute()
     }
 }
 
+FibonacciSeq::FibonacciSeq(
+    std::shared_ptr<calculator_example::Calculator> client,
+    std::uint32_t n_results)
+: n_results_(n_results)
+, client_(client)
+, reader_(nullptr)
+{
+}
+
+OperationStatus FibonacciSeq::execute()
+{
+    // If no requests have been sent, send a new request to the server
+    // If a request has been sent and the feed is still open, wait for the next value
+    if (auto client = client_.lock())
+    {
+        // Send a new request to the server if no request has been sent yet
+        if (!reader_)
+        {
+            reader_ = client->fibonacci_seq(n_results_);
+
+            if (!reader_)
+            {
+                client_server_error("ClientApp", "Failed to create Client Reader");
+
+                return OperationStatus::ERROR;
+            }
+        }
+
+        // Read the next value from the feed
+        int32_t value;
+        try
+        {
+            if (reader_->read(value))
+            {
+                client_server_info("ClientApp", "Fibonacci sequence value: " << value);
+
+                // Output feed not closed yet
+                return OperationStatus::PENDING;
+            }
+            else
+            {
+                client_server_info("ClientApp", "Fibonacci sequence feed finished");
+
+                // Request finished, unset the reader before the next request
+                reader_.reset();
+
+                return OperationStatus::SUCCESS;
+            }
+        }
+        catch (const RpcException& e)
+        {
+            client_server_error("ClientApp", "RPC exception ocurred: " << e.what());
+
+            return OperationStatus::ERROR;
+        }
+    }
+    else
+    {
+        throw std::runtime_error("Client reference expired");
+    }
+}
+
 ClientApp::ClientApp(
         const CLIParser::config& config,
         const std::string& service_name)
@@ -288,7 +350,17 @@ void ClientApp::run()
         // Server available. Execute the operation.
         set_operation();
 
-        if (OperationStatus::SUCCESS != operation_->execute())
+        OperationStatus status = operation_->execute();
+
+        while (OperationStatus::PENDING == status && !is_stopped())
+        {
+            // Wait before checking the next value
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            // Get the next value of the feed
+            status = operation_->execute();
+        }
+
+        if (OperationStatus::SUCCESS != status)
         {
             client_server_error("ClientApp", "Operation failed");
             throw std::runtime_error("Operation failed");
@@ -365,6 +437,9 @@ void ClientApp::set_operation(
             break;
         case CLIParser::OperationKind::REPRESENTATION_LIMITS:
             operation_ = std::unique_ptr<Operation>(new RepresentationLimits(client_));
+            break;
+        case CLIParser::OperationKind::FIBONACCI:
+            operation_ = std::unique_ptr<Operation>(new FibonacciSeq(client_, config_.n_results));
             break;
         default:
             throw std::runtime_error("Invalid operation");

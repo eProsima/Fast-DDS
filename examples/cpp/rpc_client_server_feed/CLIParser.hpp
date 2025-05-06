@@ -48,6 +48,7 @@ public:
         ADDITION,
         SUBSTRACTION,
         REPRESENTATION_LIMITS,
+        FIBONACCI,
         UNDEFINED
     };
 
@@ -56,12 +57,13 @@ public:
     // TODO (Carlosespicur): separate in client and server configs?
     struct config
     {
-        CLIParser::EntityKind entity = CLIParser::EntityKind::UNDEFINED;
-        CLIParser::OperationKind operation = CLIParser::OperationKind::UNDEFINED;
-        std::int32_t x = 0;
-        std::int32_t y = 0;
-        std::size_t connection_attempts = 10;
-        std::size_t thread_pool_size = 0;
+        CLIParser::EntityKind entity = CLIParser::EntityKind::UNDEFINED; // Entity kind (Client or Server)
+        CLIParser::OperationKind operation = CLIParser::OperationKind::UNDEFINED; // Operation kind
+        std::int32_t x = 0; // First operand for addition and substraction
+        std::int32_t y = 0; // Second operand for addition and substraction
+        std::size_t connection_attempts = 10; // Number of attempts to connect to the server
+        std::size_t thread_pool_size = 0; // Size of the thread pool for the server
+        std::uint32_t n_results = 0; // Number of results to return in the Fibonacci sequence
     };
 
     /**
@@ -94,6 +96,9 @@ public:
         std::cout << "                                                       [-2^31 <= <num_i> <= 2^31-1]" << std::endl;
         std::cout << "  -r, --representation-limits                          Computes the representation"  << std::endl;
         std::cout << "                                                       limits of a 32-bit integer"   << std::endl;
+        std::cout << "  -f <num>, --fibonacci <num>                          Returns a feed of results"    << std::endl;
+        std::cout << "                                                       with the <num> first elements"<< std::endl;
+        std::cout << "                                                       of the Fibonacci sequence"    << std::endl;
         std::cout << "      --connection-attempts <num>                      Number of attempts to connect"<< std::endl;
         std::cout << "                                                       to a server before failing"   << std::endl;
         std::cout << "                                                       [default: 10]"                << std::endl;
@@ -247,6 +252,34 @@ public:
                 else
                 {
                     EPROSIMA_LOG_ERROR(CLI_PARSER, "representation-limits argument is only valid for client entity");
+                    print_help(EXIT_FAILURE);
+                }
+            }
+            else if (arg == "-f" || arg == "--fibonacci")
+            {
+                if (config.entity == CLIParser::EntityKind::CLIENT)
+                {
+                    if (CLIParser::OperationKind::UNDEFINED != config.operation)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "Only one operation can be selected");
+                        print_help(EXIT_FAILURE);
+                    }
+
+                    if (++i < argc)
+                    {
+                        config.n_results = consume_integer_argument<std::uint32_t>(argv[i], arg);
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "missing fibonacci argument");
+                        print_help(EXIT_FAILURE);
+                    }
+
+                    config.operation = CLIParser::OperationKind::FIBONACCI;
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "fibonacci argument is only valid for client entity");
                     print_help(EXIT_FAILURE);
                 }
             }

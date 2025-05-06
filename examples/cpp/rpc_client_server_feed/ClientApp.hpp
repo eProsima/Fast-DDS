@@ -24,6 +24,7 @@
 #include <memory>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/rpc/interfaces/RpcClientReader.hpp>
 
 #include "Application.hpp"
 #include "CLIParser.hpp"
@@ -36,7 +37,7 @@ namespace rpc_client_server {
 
 enum class OperationStatus
 {
-    PENDING, // TODO (Carlosespicur): Perhaps it is unnecessary (for non-feed operations)
+    PENDING,
     SUCCESS,
     TIMEOUT,
     ERROR
@@ -123,6 +124,25 @@ private:
     std::int32_t y_;
     std::int32_t result_;
     std::weak_ptr<calculator_example::Calculator> client_;
+
+};
+
+class FibonacciSeq : public Operation
+{
+
+public:
+
+    FibonacciSeq(
+            std::shared_ptr<calculator_example::Calculator> client,
+            std::uint32_t n_results);
+
+    OperationStatus execute() override;
+
+private:
+
+    std::uint32_t n_results_;
+    std::weak_ptr<calculator_example::Calculator> client_;
+    std::shared_ptr<eprosima::fastdds::dds::rpc::RpcClientReader<int32_t>> reader_;
 
 };
 
