@@ -31,7 +31,7 @@
 
 namespace calculator_example {
 
-extern CALCULATOR_DllAPI std::shared_ptr<Calculator> create_CalculatorClient(
+extern eProsima_user_DllExport std::shared_ptr<Calculator> create_CalculatorClient(
         eprosima::fastdds::dds::DomainParticipant& part,
         const char* service_name,
         const eprosima::fastdds::dds::RequesterQos& qos);

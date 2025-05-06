@@ -29,18 +29,12 @@ namespace calculator_example {
 
 //{ interface Calculator
 
-namespace detail {
-
-namespace fdds = eprosima::fastdds::dds;
-namespace frpc = eprosima::fastdds::dds::rpc;
-namespace frtps = eprosima::fastdds::rtps;
-
 struct CalculatorServerImplementation :
-    public CalculatorServer::IServerImplementation
+    public CalculatorServer_IServerImplementation
 {
 
     void representation_limits(
-            const CalculatorServer::ClientContext& info,
+            const CalculatorServer_ClientContext& info,
             /*out*/ int32_t& min_value,
             /*out*/ int32_t& max_value) override
     {
@@ -51,7 +45,7 @@ struct CalculatorServerImplementation :
     }
 
     int32_t addition(
-            const CalculatorServer::ClientContext& info,
+            const CalculatorServer_ClientContext& info,
             /*in*/ int32_t value1,
             /*in*/ int32_t value2) override
     {
@@ -71,7 +65,7 @@ struct CalculatorServerImplementation :
     }
 
     int32_t subtraction(
-            const CalculatorServer::ClientContext& info,
+            const CalculatorServer_ClientContext& info,
             /*in*/ int32_t value1,
             /*in*/ int32_t value2) override
     {
@@ -91,9 +85,9 @@ struct CalculatorServerImplementation :
     }
 
     void fibonacci_seq(
-            const CalculatorServer::ClientContext& info,
+            const CalculatorServer_ClientContext& info,
             /*in*/ uint32_t n_results,
-            /*result*/ frpc::RpcServerWriter<int32_t>& result_writer) override
+            /*result*/ eprosima::fastdds::dds::rpc::RpcServerWriter<int32_t>& result_writer) override
     {
         static_cast<void>(info);
 
@@ -118,7 +112,7 @@ struct CalculatorServerImplementation :
     }
 
     int32_t sum_all(
-            const CalculatorServer::ClientContext& info,
+            const CalculatorServer_ClientContext& info,
             /*in*/ eprosima::fastdds::dds::rpc::RpcServerReader<int32_t>& value) override
     {
         static_cast<void>(info);
@@ -141,7 +135,7 @@ struct CalculatorServerImplementation :
                 sum_all_result = new_sum;
             }
         }
-        catch (const frpc::RpcFeedCancelledException& ex)
+        catch (const eprosima::fastdds::dds::rpc::RpcFeedCancelledException& ex)
         {
             static_cast<void>(ex);
             // Feed was cancelled, do nothing and return the current sum
@@ -151,9 +145,9 @@ struct CalculatorServerImplementation :
     }
 
     void accumulator(
-            const CalculatorServer::ClientContext& info,
+            const CalculatorServer_ClientContext& info,
             /*in*/ eprosima::fastdds::dds::rpc::RpcServerReader<int32_t>& value,
-            /*result*/ frpc::RpcServerWriter<int32_t>& result_writer) override
+            /*result*/ eprosima::fastdds::dds::rpc::RpcServerWriter<int32_t>& result_writer) override
     {
         static_cast<void>(info);
 
@@ -176,7 +170,7 @@ struct CalculatorServerImplementation :
                 result_writer.write(current_sum);
             }
         }
-        catch (const frpc::RpcFeedCancelledException& ex)
+        catch (const eprosima::fastdds::dds::rpc::RpcFeedCancelledException& ex)
         {
             static_cast<void>(ex);
             // Feed was cancelled, do nothing
@@ -184,10 +178,10 @@ struct CalculatorServerImplementation :
     }
 
     void filter(
-            const CalculatorServer::ClientContext& info,
+            const CalculatorServer_ClientContext& info,
             /*in*/ eprosima::fastdds::dds::rpc::RpcServerReader<int32_t>& value,
             /*in*/ calculator_example::FilterKind filter_kind,
-            /*result*/ frpc::RpcServerWriter<int32_t>& result_writer) override
+            /*result*/ eprosima::fastdds::dds::rpc::RpcServerWriter<int32_t>& result_writer) override
     {
         static_cast<void>(info);
 
@@ -213,16 +207,16 @@ struct CalculatorServerImplementation :
                         break;
 
                     case calculator_example::FilterKind::PRIME:
-                        throw frpc::RemoteUnsupportedError(
+                        throw eprosima::fastdds::dds::rpc::RemoteUnsupportedError(
                             "Prime filter is not implemented in this example.");
 
                     default:
                         // Invalid filter kind
-                        throw frpc::RemoteInvalidArgumentError();
+                        throw eprosima::fastdds::dds::rpc::RemoteInvalidArgumentError();
                 }
             }
         }
-        catch (const frpc::RpcFeedCancelledException& ex)
+        catch (const eprosima::fastdds::dds::rpc::RpcFeedCancelledException& ex)
         {
             static_cast<void>(ex);
             // Feed was cancelled, do nothing
@@ -231,12 +225,9 @@ struct CalculatorServerImplementation :
 
 };
 
-}  // namespace detail
-
 //} interface Calculator
 
 
 } // namespace calculator_example
-
 
 #endif  // FAST_DDS_GENERATED__CALCULATOR_SERVERIMPL_HPP
