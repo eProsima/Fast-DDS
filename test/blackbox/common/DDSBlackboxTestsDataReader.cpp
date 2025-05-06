@@ -93,6 +93,151 @@ public:
 
 };
 
+auto check_qos_in_data_r = [](rtps::CDRMessage_t& msg, std::atomic<uint8_t>& qos_found, std::vector<uint16_t>& expected_qos_pids)
+            {
+                uint32_t qos_size = 0;
+                uint32_t original_pos = msg.pos;
+                bool is_sentinel = false;
+
+                while (!is_sentinel)
+                {
+                    msg.pos = original_pos + qos_size;
+
+                    uint16_t pid = eprosima::fastdds::helpers::cdr_parse_u16(
+                        (char*)&msg.buffer[msg.pos]);
+                    msg.pos += 2;
+                    uint16_t plength = eprosima::fastdds::helpers::cdr_parse_u16(
+                        (char*)&msg.buffer[msg.pos]);
+                    msg.pos += 2;
+                    bool valid = true;
+
+                    // If inline_qos submessage is found we will have an additional Sentinel
+                    if (pid == eprosima::fastdds::dds::PID_SENTINEL)
+                    {
+                        // PID_SENTINEL is always considered of length 0
+                        plength = 0;
+                        // If the PID is not inline qos, then we need to set the sentinel
+                        // to true, as it is the last PID
+                        is_sentinel = true;
+                    }
+
+                    qos_size += (4 + plength);
+
+                    // Align to 4 byte boundary and prepare for next iteration
+                    qos_size = (qos_size + 3) & ~3;
+
+                    if (!valid || ((msg.pos + plength) > msg.length))
+                    {
+                        return false;
+                    }
+                    else if (!is_sentinel)
+                    {
+                        if (pid == eprosima::fastdds::dds::PID_DURABILITY)
+                        {
+                            std::cout << "Durability found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_DEADLINE)
+                        {
+                            std::cout << "Deadline found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_LATENCY_BUDGET)
+                        {
+                            std::cout << "Latency found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_LIVELINESS)
+                        {
+                            std::cout << "Liveliness found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_RELIABILITY)
+                        {
+                            std::cout << "Reliability found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_LIFESPAN)
+                        {
+                            std::cout << "Lifespan found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_USER_DATA)
+                        {
+                            std::cout << "User data found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_TIME_BASED_FILTER)
+                        {
+                            std::cout << "Time base filter found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_OWNERSHIP)
+                        {
+                            std::cout << "Ownership found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_DESTINATION_ORDER)
+                        {
+                            std::cout << "Destination Order found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_PRESENTATION)
+                        {
+                            std::cout << "Presentation found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_PARTITION)
+                        {
+                            std::cout << "Partition found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_TOPIC_DATA)
+                        {
+                            std::cout << "Topic data found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_DISABLE_POSITIVE_ACKS)
+                        {
+                            std::cout << "Disable positive acks found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_DATASHARING)
+                        {
+                            std::cout << "Data sharing found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_GROUP_DATA)
+                        {
+                            std::cout << "Group data found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_DATA_REPRESENTATION)
+                        {
+                            std::cout << "Data representation found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_HISTORY)
+                        {
+                            std::cout << "History found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_TYPE_CONSISTENCY_ENFORCEMENT)
+                        {
+                            std::cout << "Type consistency enforcement found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        // Delete the PID from the expected list if present
+                        expected_qos_pids.erase(
+                            std::remove(expected_qos_pids.begin(), expected_qos_pids.end(), pid),
+                            expected_qos_pids.end());
+                    }
+                }
+
+                // Do not drop the packet in any case
+                return false;
+            };
+
 TEST_P(DDSDataReader, LivelinessChangedStatusGet)
 {
     static constexpr int32_t num_times = 3u;
@@ -825,6 +970,182 @@ TEST_P(DDSDataReader, datareader_get_matched_publications_multiple_participants_
     ASSERT_EQ(ret, eprosima::fastdds::dds::RETCODE_OK);
     ASSERT_EQ(pub_handles_p2.size(), 1u);
     ASSERT_EQ(pub_handles_p2[0], part_1.get_native_writer(0).get_instance_handle());
+}
+
+// This tests checks that non-default QoS are correctly sent in the Data(r)
+// Only half of the QoS are modified, so the other half should be the default ones and they should not
+// be sent. The opposite scenario will be checked in the following test.
+// QoS that should be sent:
+// - DurabilityQosPolicy
+// - DeadlineQosPolicy
+// - LatencyBudgetQosPolicy
+// - LivelinessQosPolicy
+// - ReliabilityQosPolicy
+// - LifespanQosPolicy
+// - UserDataQosPolicy
+// - TimeBasedFilterQosPolicy
+// - OwnershipQosPolicy
+// - DestinationOrderQosPolicy can NOT be tested, as it is not implemented yet so the default value cannot be modified
+TEST_P(DDSDataReader, datareader_sends_non_default_qos_a)
+{
+    if (TRANSPORT != GetParam())
+    {
+        GTEST_SKIP() << "Only makes sense on TRANSPORT";
+        return;
+    }
+
+    std::atomic<uint8_t> qos_found { 0 };
+    std::vector<uint16_t> expected_qos_pids = {
+        eprosima::fastdds::dds::PID_DURABILITY,
+        eprosima::fastdds::dds::PID_DEADLINE,
+        eprosima::fastdds::dds::PID_LATENCY_BUDGET,
+        eprosima::fastdds::dds::PID_LIVELINESS,
+        eprosima::fastdds::dds::PID_RELIABILITY,
+        eprosima::fastdds::dds::PID_LIFESPAN,
+        eprosima::fastdds::dds::PID_USER_DATA,
+        eprosima::fastdds::dds::PID_TIME_BASED_FILTER,
+        eprosima::fastdds::dds::PID_OWNERSHIP,
+    };
+    const uint8_t expected_qos_size = expected_qos_pids.size();
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+    test_transport->drop_builtin_data_messages_filter_ = [&](rtps::CDRMessage_t& msg)
+            {
+                return check_qos_in_data_r(msg, qos_found, expected_qos_pids);
+            };
+
+    // Modify writer's QoS just to match the reader's
+    eprosima::fastdds::dds::DataWriterQos dw_qos;
+    dw_qos.durability().kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    dw_qos.deadline().period = { 7, 0 };  // Lower than reader's
+    dw_qos.latency_budget().duration = { 7, 0 };  // Lower than reader's
+    dw_qos.liveliness().lease_duration = { 7, 0 };  // Lower than reader's
+    dw_qos.liveliness().announcement_period = { 5, 0 };  // Lower than writer's lease duration
+    dw_qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    dw_qos.ownership().kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
+    dw_qos.data_sharing().off();
+
+    eprosima::fastdds::dds::DataReaderQos dr_qos;
+    dr_qos.durability().kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    dr_qos.deadline().period = { 42, 0 };
+    dr_qos.latency_budget().duration = { 42, 0 };
+    dr_qos.liveliness().lease_duration = { 42, 0 };
+    dr_qos.liveliness().announcement_period = { 39, 0 };
+    dr_qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    dr_qos.lifespan().duration = { 42, 0 };
+    std::vector<eprosima::fastdds::rtps::octet> vec;
+    eprosima::fastdds::rtps::octet val = 42;
+    vec.push_back(val);
+    dr_qos.user_data().data_vec(vec);
+    dr_qos.time_based_filter().minimum_separation = { 42, 0 };
+    dr_qos.ownership().kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
+    dr_qos.destination_order().kind = eprosima::fastdds::dds::BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS;
+    dr_qos.data_sharing().off();
+
+    writer.data_writer_qos(dw_qos);
+    reader.disable_builtin_transport()
+          .add_user_transport_to_pparams(test_transport)
+          .data_reader_qos(dr_qos);
+
+    writer.init();
+    reader.init();
+    ASSERT_TRUE(writer.isInitialized());
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    EXPECT_EQ(qos_found.load(), expected_qos_size);
+    EXPECT_EQ(expected_qos_pids.size(), 0u);
+}
+
+// This tests checks that non-default QoS are correctly sent in the Data(r)
+// Only half of the QoS are modified, so the other half should be the default ones and they should not
+// be sent. The opposite scenario will be checked in the previous test.
+// QoS that should be sent:
+// - PresentationQosPolicy
+// - PartitionQosPolicy
+// - GroupDataQosPolicy
+// - DisablePositiveACKsQosPolicy
+// - TypeConsistencyEnforcementQosPolicy
+// - DataSharingQosPolicy
+// - DataRepresentationQosPolicy
+// - HistoryQosPolicy
+TEST_P(DDSDataReader, datareader_sends_non_default_qos_b)
+{
+    if (TRANSPORT != GetParam())
+    {
+        GTEST_SKIP() << "Only makes sense on TRANSPORT";
+        return;
+    }
+
+    std::atomic<uint8_t> qos_found { 0 };
+    std::vector<uint16_t> expected_qos_pids = {
+        eprosima::fastdds::dds::PID_PRESENTATION,
+        eprosima::fastdds::dds::PID_PARTITION,
+        eprosima::fastdds::dds::PID_GROUP_DATA,
+        eprosima::fastdds::dds::PID_DISABLE_POSITIVE_ACKS,
+        eprosima::fastdds::dds::PID_TYPE_CONSISTENCY_ENFORCEMENT,
+        eprosima::fastdds::dds::PID_DATASHARING,
+        eprosima::fastdds::dds::PID_DATA_REPRESENTATION,
+        eprosima::fastdds::dds::PID_HISTORY
+    };
+    const uint8_t expected_qos_size = expected_qos_pids.size();
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+    test_transport->drop_builtin_data_messages_filter_ = [&](rtps::CDRMessage_t& msg)
+            {
+                return check_qos_in_data_r(msg, qos_found, expected_qos_pids);
+            };
+
+    // Modify writer's QoS just to match the reader's
+    eprosima::fastdds::dds::PublisherQos pub_qos;
+    pub_qos.partition().push_back("partition_1");
+    eprosima::fastdds::dds::DataWriterQos dw_qos;
+    dw_qos.durability().kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    dw_qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    dw_qos.reliable_writer_qos().disable_positive_acks.enabled = true;
+    dw_qos.data_sharing().on("/dev/shm");
+
+    eprosima::fastdds::dds::SubscriberQos sub_qos;
+    sub_qos.presentation().access_scope = eprosima::fastdds::dds::GROUP_PRESENTATION_QOS;
+    sub_qos.partition().push_back("partition_1");
+    std::vector<eprosima::fastdds::rtps::octet> vec;
+    eprosima::fastdds::rtps::octet val = 42;
+    vec.push_back(val);
+    sub_qos.group_data().data_vec(vec);
+    eprosima::fastdds::dds::DataReaderQos dr_qos;
+    dr_qos.reliable_reader_qos().disable_positive_acks.enabled = true;
+    dr_qos.reliable_reader_qos().disable_positive_acks.duration = { 42, 0 };
+    dr_qos.data_sharing().on("/dev/shm");
+    dr_qos.representation().m_value.push_back(eprosima::fastdds::dds::DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    dr_qos.type_consistency().m_kind = eprosima::fastdds::dds::DISALLOW_TYPE_COERCION;
+    dr_qos.history().kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
+    dr_qos.history().depth = 42;
+
+    writer.publisher_qos(pub_qos)
+          .data_writer_qos(dw_qos);
+    reader.disable_builtin_transport()
+          .add_user_transport_to_pparams(test_transport)
+          .subscriber_qos(sub_qos)
+          .data_reader_qos(dr_qos);
+
+    writer.init();
+    reader.init();
+    ASSERT_TRUE(writer.isInitialized());
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    EXPECT_EQ(qos_found.load(), expected_qos_size);
+    EXPECT_EQ(expected_qos_pids.size(), 0u);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
