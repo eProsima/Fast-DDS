@@ -22,16 +22,19 @@
 #include <chrono>
 #include <memory>
 #include <thread>
+#include <string>
 
-#include <fastdds/dds/domain/qos/RequesterQos.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantExtendedQos.hpp>
+#include <fastdds/dds/domain/qos/RequesterQos.hpp>
+#include <fastdds/dds/rpc/exceptions.hpp>
 #include <fastdds/dds/rpc/interfaces/RpcFuture.hpp>
 #include <fastdds/dds/rpc/exceptions.hpp>
 
-#include "types/calculatorClient.hpp"
-#include "CLIParser.hpp"
 #include "app_utils.hpp"
+#include "CLIParser.hpp"
+#include "InputFeedProcessor.hpp"
+#include "types/calculatorClient.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -278,6 +281,89 @@ OperationStatus FibonacciSeq::execute()
     }
 }
 
+SumAll::SumAll(
+        std::shared_ptr<calculator_example::Calculator> client)
+    : client_(client)
+    , writer_(nullptr)
+    , result_(0)
+    , input_feed_closed_(false)
+{
+}
+
+OperationStatus SumAll::execute()
+{
+    if (auto client = client_.lock())
+    {
+        RpcFuture<int32_t> future;
+        // Parse the input data and send it to the server
+        // until the input feed is closed
+        try
+        {
+            while (!input_feed_closed_)
+            {
+                if (!writer_)
+                {
+                    future = client->sum_all(writer_);
+                    if (!writer_)
+                    {
+                        client_server_error("ClientApp", "Failed to create Client Writer");
+
+                        return OperationStatus::ERROR;
+                    }
+
+                    InputFeedProcessor::print_help();
+                }
+
+                // Get the input from the user
+                auto input = InputFeedProcessor::get_input();
+
+                // Check the input status
+                switch (input.first)
+                {
+                    // Valid number received
+                    case InputFeedProcessor::Status::VALID_INPUT:
+                        // Send the number to the server
+                        writer_->write(input.second);
+                        client_server_info("ClientApp", "Input sent: " << input.second);
+                        break;
+
+                    // Invalid input received
+                    case InputFeedProcessor::Status::INVALID_INPUT:
+                        client_server_error("ClientApp", "Invalid input. Please enter a valid number.");
+                        break;
+
+                    // Input feed closed
+                    case InputFeedProcessor::Status::FEED_CLOSED:
+                        client_server_info("ClientApp", "Input feed closed.");
+                        input_feed_closed_ = true;
+                        writer_->finish();
+                        break;
+
+                    default:
+                        client_server_error("ClientApp", "Unknown input status.");
+                        break;
+                }
+            }
+
+            result_ = future.get();
+            client_server_info("ClientApp", "Sum result: " << result_);
+            writer_.reset();
+
+            return OperationStatus::SUCCESS;
+        }
+        catch (const RpcException& e)
+        {
+            client_server_error("ClientApp", "Exception ocurred: " << e.what());
+
+            return OperationStatus::ERROR;
+        }
+    }
+    else
+    {
+        throw std::runtime_error("Client reference expired");
+    }
+}
+
 ClientApp::ClientApp(
         const CLIParser::config& config,
         const std::string& service_name)
@@ -440,6 +526,9 @@ void ClientApp::set_operation(
             break;
         case CLIParser::OperationKind::FIBONACCI:
             operation_ = std::unique_ptr<Operation>(new FibonacciSeq(client_, config_.n_results));
+            break;
+        case CLIParser::OperationKind::SUM_ALL:
+            operation_ = std::unique_ptr<Operation>(new SumAll(client_));
             break;
         default:
             throw std::runtime_error("Invalid operation");
