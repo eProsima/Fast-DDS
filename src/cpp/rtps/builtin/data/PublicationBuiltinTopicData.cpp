@@ -27,6 +27,7 @@ namespace rtps {
 PublicationBuiltinTopicData::PublicationBuiltinTopicData()
 {
     reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
+    durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
 }
 
 PublicationBuiltinTopicData::PublicationBuiltinTopicData(
