@@ -61,6 +61,7 @@ class ReaderProxyData;
 class WriterProxyData;
 class ReaderAttributes;
 class NetworkFactory;
+struct TopicDescription;
 
 #if HAVE_SECURITY
 namespace security {
@@ -172,6 +173,11 @@ public:
             bool (RTPSReader** reader, ReaderAttributes& param, ReaderHistory* hist,
             ReaderListener* listen,
             const EntityId_t& entityId, bool isBuiltin, bool enable));
+
+    MOCK_METHOD3(register_writer, bool(
+            RTPSWriter * Writer,
+            const fastdds::rtps::TopicDescription& topic,
+            const fastdds::rtps::PublicationBuiltinTopicData& pub_builtin_topic_data));
     // *INDENT-ON*
 
     bool createWriter(

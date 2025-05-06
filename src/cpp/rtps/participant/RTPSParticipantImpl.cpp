@@ -1419,6 +1419,14 @@ bool RTPSParticipantImpl::register_writer(
     return this->mp_builtinProtocols->add_writer(rtps_writer, topic, qos);
 }
 
+bool RTPSParticipantImpl::register_writer(
+    RTPSWriter* rtps_writer,
+    const TopicDescription& topic,
+    const PublicationBuiltinTopicData& pub_builtin_topic_data)
+{
+    return this->mp_builtinProtocols->add_writer(rtps_writer, topic, pub_builtin_topic_data);
+}
+
 bool RTPSParticipantImpl::register_reader(
         RTPSReader* rtps_reader,
         const TopicDescription& topic,

@@ -191,6 +191,21 @@ public:
             RTPSWriter* rtps_writer,
             const TopicDescription& topic,
             const fastdds::dds::WriterQos& qos);
+
+    /**
+     * Create a new WriterPD for a local Writer.
+     *
+     * @param rtps_writer             Pointer to the RTPSWriter.
+     * @param topic                   Information regarding the topic where the writer is registering.
+     * @param pub_builtin_topic_data  Information on the publication endpoint.
+     *
+     * @return True if correct.
+     */
+    bool new_writer_proxy_data(
+        RTPSWriter* rtps_writer,
+        const TopicDescription& topic,
+        const PublicationBuiltinTopicData& pub_builtin_topic_data);
+
     /**
      * A previously created Reader has been updated
      * @param rtps_reader      Pointer to the RTPSReader.

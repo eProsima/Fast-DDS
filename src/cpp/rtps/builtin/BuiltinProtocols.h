@@ -141,6 +141,21 @@ public:
             RTPSWriter* rtps_writer,
             const TopicDescription& topic,
             const fastdds::dds::WriterQos& qos);
+
+    /**
+     * Add a local writer to the BuiltinProtocols.
+     *
+     * @param writer                  Pointer to the RTPSWriter
+     * @param topic                   Information regarding the topic where the writer is registering
+     * @param pub_builtin_topic_data  Information on the publication endpoint
+     *
+     * @return True if correct.
+     */
+    bool add_writer(
+        RTPSWriter* rtps_writer,
+        const TopicDescription& topic,
+        const PublicationBuiltinTopicData& pub_builtin_topic_data);
+
     /**
      * Add a local reader to the BuiltinProtocols.
      *

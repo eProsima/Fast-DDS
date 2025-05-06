@@ -373,6 +373,138 @@ bool EDP::new_writer_proxy_data(
     return true;
 }
 
+bool EDP::new_writer_proxy_data(
+    RTPSWriter* rtps_writer,
+    const TopicDescription& topic,
+    const PublicationBuiltinTopicData& pub_builtin_topic_data)
+{
+    EPROSIMA_LOG_INFO(RTPS_EDP,
+            "Adding " << rtps_writer->getGuid().entityId << " in topic " <<
+            topic.topic_name.to_string());
+
+    auto init_fun = [this, rtps_writer, &topic, &pub_builtin_topic_data](
+        WriterProxyData* wpd,
+        bool updating,
+        const ParticipantProxyData& participant_data)
+            {
+                if (updating)
+                {
+                    EPROSIMA_LOG_ERROR(RTPS_EDP,
+                            "Adding already existent writer " << rtps_writer->getGuid().entityId << " in topic "
+                                                            << topic.topic_name.to_string());
+                    return false;
+                }
+
+                const NetworkFactory& network = mp_RTPSParticipant->network_factory();
+                const auto& watt = rtps_writer->getAttributes();
+
+                wpd->guid = rtps_writer->getGuid();
+                wpd->participant_guid = participant_data.guid;
+                wpd->key() = wpd->guid;
+                if (watt.multicastLocatorList.empty() && watt.unicastLocatorList.empty())
+                {
+                    wpd->set_locators(participant_data.default_locators);
+                }
+                else
+                {
+                    wpd->set_multicast_locators(watt.multicastLocatorList, network,
+                            participant_data.is_from_this_host());
+                    wpd->set_announced_unicast_locators(watt.unicastLocatorList);
+                    fastdds::rtps::network::external_locators::add_external_locators(*wpd,
+                            watt.external_unicast_locators);
+                }
+                wpd->rtps_participant_key() = mp_RTPSParticipant->getGuid();
+                from_guid_prefix_to_topic_key(mp_RTPSParticipant->getGuid().guidPrefix, wpd->participant_key.value);
+                from_entity_id_to_topic_key(wpd->guid.entityId, wpd->PublicationBuiltinTopicData::key.value);
+                wpd->topic_name = topic.topic_name;
+                wpd->type_name = topic.type_name;
+                wpd->topic_kind = (wpd->guid.entityId.value[3] & 0x0F) == 0x02 ? WITH_KEY : NO_KEY;
+
+                using dds::utils::TypePropagation;
+                using dds::xtypes::TypeInformationParameter;
+
+                auto type_propagation = mp_RTPSParticipant->type_propagation();
+                assert(TypePropagation::TYPEPROPAGATION_UNKNOWN != type_propagation);
+
+                const auto& type_info = topic.type_information;
+                if (type_info.assigned())
+                {
+                    switch (type_propagation)
+                    {
+                        case TypePropagation::TYPEPROPAGATION_ENABLED:
+                        {
+                            wpd->type_information = type_info;
+                            break;
+                        }
+                        case TypePropagation::TYPEPROPAGATION_MINIMAL_BANDWIDTH:
+                        {
+                            TypeInformationParameter minimal;
+                            minimal.type_information.minimal(type_info.type_information.minimal());
+                            minimal.assigned(true);
+                            wpd->type_information = minimal;
+                            break;
+                        }
+                        case TypePropagation::TYPEPROPAGATION_REGISTRATION_ONLY:
+                        default:
+                        {
+                            if (wpd->has_type_information())
+                            {
+                                wpd->type_information.assigned(false);
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                BaseWriter* base_writer = BaseWriter::downcast(rtps_writer);
+                assert(base_writer->get_history() != nullptr);
+                wpd->type_max_serialized(base_writer->get_history()->getTypeMaxSerialized());
+                wpd->set_qos(pub_builtin_topic_data, true);
+                wpd->user_defined_id(watt.getUserDefinedID());
+                wpd->persistence_guid = watt.persistence_guid;
+    #if HAVE_SECURITY
+                if (mp_RTPSParticipant->is_secure())
+                {
+                    wpd->security_attributes_ = watt.security_attributes().mask();
+                    wpd->plugin_security_attributes_ = watt.security_attributes().plugin_endpoint_attributes;
+                }
+                else
+                {
+                    wpd->security_attributes_ = 0UL;
+                    wpd->plugin_security_attributes_ = 0UL;
+                }
+    #endif // if HAVE_SECURITY
+
+                return true;
+            };
+
+    //ADD IT TO THE LIST OF READERPROXYDATA
+    GUID_t participant_guid;
+    WriterProxyData* writer_data = this->mp_PDP->addWriterProxyData(rtps_writer->getGuid(), participant_guid, init_fun);
+    if (writer_data == nullptr)
+    {
+        return false;
+    }
+
+    #ifdef FASTDDS_STATISTICS
+    // notify monitor service about the new local entity proxy
+    if (nullptr != this->mp_PDP->get_proxy_observer())
+    {
+        this->mp_PDP->get_proxy_observer()->on_local_entity_change(writer_data->guid, true);
+    }
+    #endif //FASTDDS_STATISTICS
+
+    //PAIRING
+    if (this->mp_PDP->getRTPSParticipant()->should_match_local_endpoints())
+    {
+        pairing_writer_proxy_with_any_local_reader(participant_guid, writer_data);
+    }
+    pairingWriter(rtps_writer, participant_guid, *writer_data);
+    //DO SOME PROCESSING DEPENDING ON THE IMPLEMENTATION (SIMPLE OR STATIC)
+    process_writer_proxy_data(rtps_writer, writer_data);
+    return true;
+}
+
 bool EDP::update_reader(
         RTPSReader* rtps_reader,
         const fastdds::dds::ReaderQos& rqos,

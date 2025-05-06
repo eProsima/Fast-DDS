@@ -926,6 +926,20 @@ public:
             const fastdds::dds::WriterQos& qos);
 
     /**
+     * Register a Writer in the BuiltinProtocols.
+     *
+     * @param Writer                  Pointer to the RTPSWriter.
+     * @param topic                   Information regarding the topic where the writer is registering.
+     * @param pub_builtin_topic_data  Information on the publication endpoint.
+     *
+     * @return True if correctly registered.
+     */
+    bool register_writer(
+        RTPSWriter* Writer,
+        const TopicDescription& topic,
+        const PublicationBuiltinTopicData& pub_builtin_topic_data);
+
+    /**
      * Register a Reader in the BuiltinProtocols.
      *
      * @param Reader          Pointer to the RTPSReader.

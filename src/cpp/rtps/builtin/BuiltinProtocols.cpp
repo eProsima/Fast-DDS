@@ -229,6 +229,40 @@ bool BuiltinProtocols::add_writer(
     return ok;
 }
 
+bool BuiltinProtocols::add_writer(
+    RTPSWriter* rtps_writer,
+    const TopicDescription& topic,
+    const PublicationBuiltinTopicData& pub_builtin_topic_data)
+{
+    bool ok = true;
+
+    if (nullptr != mp_PDP)
+    {
+        ok = mp_PDP->get_edp()->new_writer_proxy_data(rtps_writer, topic, pub_builtin_topic_data);
+
+        if (!ok)
+        {
+            EPROSIMA_LOG_WARNING(RTPS_EDP, "Failed register WriterProxyData in EDP");
+            return false;
+        }
+    }
+    else
+    {
+        EPROSIMA_LOG_WARNING(RTPS_EDP, "EDP is not used in this Participant, register a Writer is impossible");
+    }
+
+    if (nullptr != mp_WLP)
+    {
+        ok &= mp_WLP->add_local_writer(rtps_writer, pub_builtin_topic_data.liveliness);
+    }
+    else
+    {
+        EPROSIMA_LOG_WARNING(RTPS_LIVELINESS,
+                "LIVELINESS is not used in this Participant, register a Writer is impossible");
+    }
+    return ok;
+}
+
 bool BuiltinProtocols::add_reader(
         RTPSReader* rtps_reader,
         const TopicDescription& topic,

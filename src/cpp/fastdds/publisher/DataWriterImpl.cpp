@@ -464,24 +464,24 @@ ReturnCode_t DataWriterImpl::enable()
     topic_desc.type_name = topic_->get_type_name();
     publisher_->get_participant_impl()->fill_type_information(type_, topic_desc.type_information);
 
-    WriterQos wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
-    if (!is_data_sharing_compatible_)
+    PublicationBuiltinTopicData publication_data;
+    if (get_publication_builtin_topic_data(publication_data) != RETCODE_OK)
     {
-        wqos.data_sharing.off();
+        EPROSIMA_LOG_ERROR(DATA_WRITER, "Error getting publication data. RTPS Writer not enabled.");
+        return RETCODE_ERROR;
     }
-    if (endpoint_partitions)
+    RTPSParticipantImpl* rtps = RTPSDomainImpl::find_local_participant(publisher_->rtps_participant()->getGuid());
+    if (!rtps->register_writer(writer_, topic_desc, publication_data))
     {
-        std::istringstream partition_string(*endpoint_partitions);
-        std::string partition_name;
-        wqos.m_partition.clear();
+        EPROSIMA_LOG_ERROR(DATA_WRITER, "Could not register writer on discovery protocols");
+        writer_->set_listener(nullptr);
+        RTPSDomain::removeRTPSWriter(writer_);
+        writer_ = nullptr;
+        history_.reset();
+        release_payload_pool();
 
-        while (std::getline(partition_string, partition_name, ';'))
-        {
-            wqos.m_partition.push_back(partition_name.c_str());
-        }
+        return RETCODE_ERROR;
     }
-    publisher_->rtps_participant()->register_writer(writer_, topic_desc, wqos);
-
     return RETCODE_OK;
 }
 
@@ -1762,6 +1762,17 @@ ReturnCode_t DataWriterImpl::get_publication_builtin_topic_data(
             publication_data.partition.push_back(partition_name.c_str());
         }
     }
+
+    publication_data.history = qos_.history();
+
+    // Optional QoS
+    publication_data.resource_limits = qos_.resource_limits();
+    publication_data.transport_priority = qos_.transport_priority();
+    publication_data.writer_data_lifecycle = qos_.writer_data_lifecycle();
+    publication_data.publish_mode = qos_.publish_mode();
+    publication_data.rtps_reliable_writer = qos_.reliable_writer_qos();
+    publication_data.endpoint = qos_.endpoint();
+    publication_data.writer_resource_limits = qos_.writer_resource_limits();
 
     return RETCODE_OK;
 }
