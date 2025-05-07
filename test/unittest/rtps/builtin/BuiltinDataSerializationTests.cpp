@@ -2833,9 +2833,8 @@ TEST(BuiltinDataSerializationTests, optional_qos_extensions_reader_serialize_non
     reader_resource_limits.max_samples_per_read = 55;
     in.reader_resource_limits = reader_resource_limits;
 
-    // Set serialize_optional_qos properties to true
-    in.properties.set_max_size(50);
-    in.properties.push_back(fastdds::dds::parameter_serialize_optional_qos, "true");
+    // Enable optional qos serialization
+    in.should_send_optional_qos(true);
 
     // Perform serialization
     uint32_t msg_size = in.get_serialized_size(true);
@@ -2928,9 +2927,8 @@ TEST(BuiltinDataSerializationTests, optional_qos_extensions_writer_serialize_non
     writer_resource_limits.reader_filters_allocation.maximum = 8;
     in.writer_resource_limits = writer_resource_limits;
 
-    // Set serialize_optional_qos properties to true
-    in.properties.set_max_size(50);
-    in.properties.push_back(fastdds::dds::parameter_serialize_optional_qos, "true");
+    // Enable optional qos serialization
+    in.should_send_optional_qos(true);
 
     // Perform serialization
     uint32_t msg_size = in.get_serialized_size(true);

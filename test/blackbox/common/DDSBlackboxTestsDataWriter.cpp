@@ -224,6 +224,41 @@ auto check_qos_in_data_w = [](rtps::CDRMessage_t& msg, std::atomic<uint8_t>& qos
                             std::cout << "History found" << std::endl;
                             qos_found.fetch_add(1u, std::memory_order_seq_cst);
                         }
+                        else if (pid == eprosima::fastdds::dds::PID_RESOURCE_LIMITS)
+                        {
+                            std::cout << "Optional Resource limits found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_TRANSPORT_PRIORITY)
+                        {
+                            std::cout << "Optional Transport priority found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_WRITER_DATA_LIFECYCLE)
+                        {
+                            std::cout << "Optional Writer data lifecycle found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_PUBLISH_MODE)
+                        {
+                            std::cout << "Optional Publish mode found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_RTPS_RELIABLE_WRITER)
+                        {
+                            std::cout << "Optional RTPS reliable writer found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_RTPS_ENDPOINT)
+                        {
+                            std::cout << "Optional RTPS endpoint found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_WRITER_RESOURCE_LIMITS)
+                        {
+                            std::cout << "Optional Writer resource limits found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
                         // Delete the PID from the expected list if present
                         expected_qos_pids.erase(
                             std::remove(expected_qos_pids.begin(), expected_qos_pids.end(), pid),
@@ -1134,6 +1169,117 @@ TEST_P(DDSDataWriter, datawriter_sends_non_default_qos_b)
 
     EXPECT_EQ(qos_found.load(), expected_qos_size);
     EXPECT_EQ(expected_qos_pids.size(), 0u);
+}
+
+// This tests checks that non-default optional QoS are correctly sent in the Data(r)
+// QoS that should be sent:
+// - ResourceLimitsQosPolicy
+// - TransportPriorityQosPolicy
+// - WriterDataLifecycleQosPolicy
+// - PublishModeQosPolicy
+// - RTPSReliableWriterQos
+// - RTPSEndpointQos
+// - WriterResourceLimitsQos
+// a) The test is run with the property set to false, so the optional QoS are not serialized.
+// b) The test is run with the property set to true, so the optional QoS are serialized.
+// c) The test is run with the default QoS and the property set to true, so the optional QoS are not serialized.
+TEST_P(DDSDataWriter, datawriter_sends_non_default_qos_optional)
+{
+    if (TRANSPORT != GetParam())
+    {
+        GTEST_SKIP() << "Only makes sense on TRANSPORT";
+        return;
+    }
+
+    std::atomic<uint8_t> qos_found { 0 };
+    std::vector<uint16_t> expected_qos_pids = {
+        eprosima::fastdds::dds::PID_RESOURCE_LIMITS,
+        eprosima::fastdds::dds::PID_TRANSPORT_PRIORITY,
+        eprosima::fastdds::dds::PID_WRITER_DATA_LIFECYCLE,
+        eprosima::fastdds::dds::PID_PUBLISH_MODE,
+        eprosima::fastdds::dds::PID_RTPS_RELIABLE_WRITER,
+        eprosima::fastdds::dds::PID_RTPS_ENDPOINT,
+        eprosima::fastdds::dds::PID_WRITER_RESOURCE_LIMITS,
+    };
+    const uint8_t expected_qos_size = expected_qos_pids.size();
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+    test_transport->drop_builtin_data_messages_filter_ = [&](rtps::CDRMessage_t& msg)
+            {
+                return check_qos_in_data_w(msg, qos_found, expected_qos_pids);
+            };
+
+    eprosima::fastdds::dds::DataWriterQos dw_qos = eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
+    dw_qos.resource_limits().max_samples = 1000;
+    dw_qos.writer_data_lifecycle().autodispose_unregistered_instances = false;
+    dw_qos.transport_priority().value = 42;
+    dw_qos.reliable_writer_qos().times.initial_heartbeat_delay = { 4, 0 };
+    dw_qos.endpoint().entity_id = 42;
+    dw_qos.publish_mode().kind = eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE;
+    dw_qos.writer_resource_limits().matched_subscriber_allocation.initial = 1;
+    dw_qos.data_sharing().off();
+
+    // Default writer's QoS
+    eprosima::fastdds::dds::DataReaderQos dr_qos = eprosima::fastdds::dds::DATAREADER_QOS_DEFAULT;
+    dr_qos.data_sharing().off();
+
+    writer.disable_builtin_transport()
+          .add_user_transport_to_pparams(test_transport)
+          .data_writer_qos(dw_qos);
+    reader.data_reader_qos(dr_qos);
+
+    // a) Init both entities without setting the property
+    writer.init();
+    reader.init();
+    ASSERT_TRUE(writer.isInitialized());
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // No optional QoS should be sent
+    EXPECT_EQ(qos_found.load(), 0u);
+    EXPECT_EQ(expected_qos_pids.size(), expected_qos_size);
+
+    // b) Now set the property to serialize optional QoS and re-init the writer
+    writer.destroy();
+    reader.wait_writer_undiscovery();
+
+    eprosima::fastdds::dds::PropertyPolicyQos properties;
+    properties.properties().emplace_back("fastdds.serialize_optional_qos", "true");
+    writer.property_policy(properties);
+
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Check that the optional QoS are serialized
+    EXPECT_EQ(qos_found.load(), expected_qos_size);
+    EXPECT_EQ(expected_qos_pids.size(), 0u);
+
+    // c) Now re-init the writer with default QoS and the property set
+    writer.destroy();
+    reader.wait_writer_undiscovery();
+
+    dw_qos = eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
+    dw_qos.data_sharing().off();
+
+    qos_found.store(0);
+
+    writer.data_writer_qos(dw_qos)
+          .init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Check that no optional QoS are serialized
+    EXPECT_EQ(qos_found.load(), 0u);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

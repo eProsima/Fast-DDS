@@ -227,6 +227,31 @@ auto check_qos_in_data_r = [](rtps::CDRMessage_t& msg, std::atomic<uint8_t>& qos
                             std::cout << "Type consistency enforcement found" << std::endl;
                             qos_found.fetch_add(1u, std::memory_order_seq_cst);
                         }
+                        else if (pid == eprosima::fastdds::dds::PID_RESOURCE_LIMITS)
+                        {
+                            std::cout << "Optional Resource limits found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_READER_DATA_LIFECYCLE)
+                        {
+                            std::cout << "Optional Reader data lifecycle found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_RTPS_RELIABLE_READER)
+                        {
+                            std::cout << "Optional RTPS reliable reader found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_RTPS_ENDPOINT)
+                        {
+                            std::cout << "Optional RTPS endpoint found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_READER_RESOURCE_LIMITS)
+                        {
+                            std::cout << "Optional Reader resource limits found" << std::endl;
+                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                        }
                         // Delete the PID from the expected list if present
                         expected_qos_pids.erase(
                             std::remove(expected_qos_pids.begin(), expected_qos_pids.end(), pid),
@@ -1146,6 +1171,111 @@ TEST_P(DDSDataReader, datareader_sends_non_default_qos_b)
 
     EXPECT_EQ(qos_found.load(), expected_qos_size);
     EXPECT_EQ(expected_qos_pids.size(), 0u);
+}
+
+// This tests checks that non-default optional QoS are correctly sent in the Data(r)
+// QoS that should be sent:
+// - ResourceLimitsQosPolicy
+// - ReaderDataLifecycleQosPolicy
+// - RTPSReliableReaderQos
+// - RTPSEndpointQos
+// - ReaderResourceLimitsQos
+// a) The test is run with the property set to false, so the optional QoS are not serialized.
+// b) The test is run with the property set to true, so the optional QoS are serialized.
+// c) The test is run with the default QoS and the property set to true, so the optional QoS are not serialized.
+TEST_P(DDSDataReader, datareader_sends_non_default_qos_optional)
+{
+    if (TRANSPORT != GetParam())
+    {
+        GTEST_SKIP() << "Only makes sense on TRANSPORT";
+        return;
+    }
+
+    std::atomic<uint8_t> qos_found { 0 };
+    std::vector<uint16_t> expected_qos_pids = {
+        eprosima::fastdds::dds::PID_RESOURCE_LIMITS,
+        eprosima::fastdds::dds::PID_READER_DATA_LIFECYCLE,
+        eprosima::fastdds::dds::PID_RTPS_RELIABLE_READER,
+        eprosima::fastdds::dds::PID_RTPS_ENDPOINT,
+        eprosima::fastdds::dds::PID_READER_RESOURCE_LIMITS,
+    };
+    const uint8_t expected_qos_size = expected_qos_pids.size();
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+    test_transport->drop_builtin_data_messages_filter_ = [&](rtps::CDRMessage_t& msg)
+            {
+                return check_qos_in_data_r(msg, qos_found, expected_qos_pids);
+            };
+
+    // Default writer's QoS
+    eprosima::fastdds::dds::DataWriterQos dw_qos = eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
+    dw_qos.data_sharing().off();
+
+    eprosima::fastdds::dds::DataReaderQos dr_qos;
+    dr_qos.resource_limits().max_samples = 1000;
+    dr_qos.reader_data_lifecycle().autopurge_disposed_samples_delay = { 4, 0 };
+    dr_qos.reliable_reader_qos().times.initial_acknack_delay = { 4, 0 };
+    dr_qos.endpoint().entity_id = 42;
+    dr_qos.reader_resource_limits().matched_publisher_allocation.initial = 1;
+    dr_qos.data_sharing().off();
+
+    writer.data_writer_qos(dw_qos);
+    reader.disable_builtin_transport()
+          .add_user_transport_to_pparams(test_transport)
+          .data_reader_qos(dr_qos);
+
+    // a) Init both entities without setting the property
+    writer.init();
+    reader.init();
+    ASSERT_TRUE(writer.isInitialized());
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // No optional QoS should be sent
+    EXPECT_EQ(qos_found.load(), 0u);
+    EXPECT_EQ(expected_qos_pids.size(), expected_qos_size);
+
+    // b) Now set the property to serialize optional QoS and re-init the reader
+    reader.destroy();
+    writer.wait_reader_undiscovery();
+
+    eprosima::fastdds::dds::PropertyPolicyQos properties;
+    properties.properties().emplace_back("fastdds.serialize_optional_qos", "true");
+    reader.property_policy(properties);
+
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Check that the optional QoS are serialized
+    EXPECT_EQ(qos_found.load(), expected_qos_size);
+    EXPECT_EQ(expected_qos_pids.size(), 0u);
+
+    // c) Now re-init the reader with default QoS and the property set
+    reader.destroy();
+    writer.wait_reader_undiscovery();
+
+    dr_qos = eprosima::fastdds::dds::DATAREADER_QOS_DEFAULT;
+    dr_qos.data_sharing().off();
+
+    qos_found.store(0);
+
+    reader.data_reader_qos(dr_qos)
+          .init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Check that no optional QoS are serialized
+    EXPECT_EQ(qos_found.load(), 0u);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
