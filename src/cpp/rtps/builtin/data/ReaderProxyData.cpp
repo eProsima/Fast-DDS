@@ -369,28 +369,8 @@ uint32_t ReaderProxyData::get_serialized_size(
         ret_val += dds::QosPoliciesSerializer<dds::HistoryQosPolicy>::cdr_serialized_size(history.value());
     }
 
-    // Check if serialize_optional_qos property is set to true
-    bool serialize_optional_qos = false;
-    if (properties.size() > 0)
-    {
-        auto serialize_opt_qos_property = std::find_if(
-            properties.begin(),
-            properties.end(),
-            [](const fastdds::dds::ParameterProperty_t& property)
-            {
-                return property.first() == fastdds::dds::parameter_serialize_optional_qos;
-            });
-
-        if (serialize_opt_qos_property != properties.end())
-        {
-            if (serialize_opt_qos_property->second() == "true")
-            {
-                serialize_optional_qos = true;
-            }
-        }
-    }
-
-    if (serialize_optional_qos)
+    // Send the optional QoS policies if they are enabled
+    if (should_send_optional_qos())
     {
         if (dds::QosPoliciesSerializer<dds::ResourceLimitsQosPolicy>::should_be_sent(resource_limits))
         {
@@ -715,28 +695,8 @@ bool ReaderProxyData::write_to_cdr_message(
         }
     }
 
-    // Check if serialize_optional_qos property is set to true
-    bool serialize_optional_qos = false;
-    if (properties.size() > 0)
-    {
-        auto serialize_opt_qos_property = std::find_if(
-            properties.begin(),
-            properties.end(),
-            [](const fastdds::dds::ParameterProperty_t& property)
-            {
-                return property.first() == fastdds::dds::parameter_serialize_optional_qos;
-            });
-
-        if (serialize_opt_qos_property != properties.end())
-        {
-            if (serialize_opt_qos_property->second() == "true")
-            {
-                serialize_optional_qos = true;
-            }
-        }
-    }
-
-    if (serialize_optional_qos)
+    // Send the optional QoS policies if they are enabled
+    if (should_send_optional_qos())
     {
         if (dds::QosPoliciesSerializer<dds::ResourceLimitsQosPolicy>::should_be_sent(resource_limits))
         {

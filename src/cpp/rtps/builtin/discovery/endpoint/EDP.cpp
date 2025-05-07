@@ -242,10 +242,11 @@ bool EDP::new_reader_proxy_data(
 }
 
 bool EDP::new_reader_proxy_data(
-    RTPSReader* rtps_reader,
-    const TopicDescription& topic,
-    const SubscriptionBuiltinTopicData& sub_builtin_topic_data,
-    const fastdds::rtps::ContentFilterProperty* content_filter)
+        RTPSReader* rtps_reader,
+        const TopicDescription& topic,
+        const SubscriptionBuiltinTopicData& sub_builtin_topic_data,
+        bool should_send_opt_qos,
+        const fastdds::rtps::ContentFilterProperty* content_filter)
 {
     EPROSIMA_LOG_INFO(RTPS_EDP,
             "Adding " << rtps_reader->getGuid().entityId << " in topic " <<
@@ -366,6 +367,7 @@ bool EDP::new_reader_proxy_data(
     {
         return false;
     }
+    reader_data->should_send_optional_qos(should_send_opt_qos);
 
     #ifdef FASTDDS_STATISTICS
     // notify monitor service about the new local entity proxy
@@ -521,7 +523,8 @@ bool EDP::new_writer_proxy_data(
 bool EDP::new_writer_proxy_data(
     RTPSWriter* rtps_writer,
     const TopicDescription& topic,
-    const PublicationBuiltinTopicData& pub_builtin_topic_data)
+    const PublicationBuiltinTopicData& pub_builtin_topic_data,
+    bool should_send_opt_qos)
 {
     EPROSIMA_LOG_INFO(RTPS_EDP,
             "Adding " << rtps_writer->getGuid().entityId << " in topic " <<
@@ -630,6 +633,7 @@ bool EDP::new_writer_proxy_data(
     {
         return false;
     }
+    writer_data->should_send_optional_qos(should_send_opt_qos);
 
     #ifdef FASTDDS_STATISTICS
     // notify monitor service about the new local entity proxy

@@ -972,6 +972,11 @@ public:
         const ContentFilterProperty* content_filter = nullptr);
 
     /**
+     * Check if the property @parameter_serialize_optional_qos is set to enable the sent of optional QoS.
+     */
+    bool should_send_optional_qos() const;
+
+    /**
      * Update participant attributes.
      * @param patt New participant attributes.
      */

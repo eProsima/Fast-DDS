@@ -1424,7 +1424,10 @@ bool RTPSParticipantImpl::register_writer(
     const TopicDescription& topic,
     const PublicationBuiltinTopicData& pub_builtin_topic_data)
 {
-    return this->mp_builtinProtocols->add_writer(rtps_writer, topic, pub_builtin_topic_data);
+    // Check if optional QoS serialization is enabled in the participant properties.
+    // If so, the optional QoS in the builtin topic data needs to be sent.
+    bool should_send_opt_qos = should_send_optional_qos();
+    return this->mp_builtinProtocols->add_writer(rtps_writer, topic, pub_builtin_topic_data, should_send_opt_qos);
 }
 
 bool RTPSParticipantImpl::register_reader(
@@ -1442,7 +1445,35 @@ bool RTPSParticipantImpl::register_reader(
         const SubscriptionBuiltinTopicData& sub_builtin_topic_data,
         const ContentFilterProperty* content_filter)
 {
-    return this->mp_builtinProtocols->add_reader(rtps_reader, topic, sub_builtin_topic_data, content_filter);
+    // Check if optional QoS serialization is enabled in the participant properties.
+    // If so, the optional QoS in the builtin topic data needs to be sent.
+    bool should_send_opt_qos = should_send_optional_qos();
+    return this->mp_builtinProtocols->add_reader(rtps_reader, topic, sub_builtin_topic_data, should_send_opt_qos, content_filter);
+}
+
+bool RTPSParticipantImpl::should_send_optional_qos() const
+{
+    bool should_send_opt_qos = false;
+    if (m_att.properties.properties().size() > 0)
+    {
+        auto serialize_opt_qos_property = std::find_if(
+            m_att.properties.properties().begin(),
+            m_att.properties.properties().end(),
+            [](const fastdds::rtps::Property& property)
+            {
+                return property.name() == fastdds::dds::parameter_serialize_optional_qos;
+            });
+
+        if (serialize_opt_qos_property != m_att.properties.properties().end())
+        {
+            if (serialize_opt_qos_property->value() == "true" ||
+                    serialize_opt_qos_property->value() == "1")
+            {
+                should_send_opt_qos = true;
+            }
+        }
+    }
+    return should_send_opt_qos;
 }
 
 void RTPSParticipantImpl::update_attributes(

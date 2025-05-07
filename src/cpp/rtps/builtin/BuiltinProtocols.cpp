@@ -232,13 +232,14 @@ bool BuiltinProtocols::add_writer(
 bool BuiltinProtocols::add_writer(
     RTPSWriter* rtps_writer,
     const TopicDescription& topic,
-    const PublicationBuiltinTopicData& pub_builtin_topic_data)
+    const PublicationBuiltinTopicData& pub_builtin_topic_data,
+    bool should_send_opt_qos)
 {
     bool ok = true;
 
     if (nullptr != mp_PDP)
     {
-        ok = mp_PDP->get_edp()->new_writer_proxy_data(rtps_writer, topic, pub_builtin_topic_data);
+        ok = mp_PDP->get_edp()->new_writer_proxy_data(rtps_writer, topic, pub_builtin_topic_data, should_send_opt_qos);
 
         if (!ok)
         {
@@ -298,13 +299,14 @@ bool BuiltinProtocols::add_reader(
     RTPSReader* rtps_reader,
     const TopicDescription& topic,
     const SubscriptionBuiltinTopicData& sub_builtin_topic_data,
+    bool should_send_opt_qos,
     const fastdds::rtps::ContentFilterProperty* content_filter)
 {
     bool ok = true;
 
     if (nullptr != mp_PDP)
     {
-        ok = mp_PDP->get_edp()->new_reader_proxy_data(rtps_reader, topic, sub_builtin_topic_data, content_filter);
+        ok = mp_PDP->get_edp()->new_reader_proxy_data(rtps_reader, topic, sub_builtin_topic_data, should_send_opt_qos, content_filter);
 
         if (!ok)
         {

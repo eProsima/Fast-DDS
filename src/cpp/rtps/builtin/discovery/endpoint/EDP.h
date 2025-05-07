@@ -186,6 +186,7 @@ public:
      * @param topic                   Information regarding the topic where the writer is registering.
      * @param sub_builtin_topic_data  QoS policies dictated by the subscriber.
      * @param content_filter          Optional content filtering information.
+     * @param should_send_opt_qos     True if optional QoS policies should be sent.
      *
      * @return True if correct.
      */
@@ -193,6 +194,7 @@ public:
         RTPSReader* rtps_reader,
         const TopicDescription& topic,
         const SubscriptionBuiltinTopicData& sub_builtin_topic_data,
+        bool should_send_opt_qos,
         const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
 
     /**
@@ -215,13 +217,15 @@ public:
      * @param rtps_writer             Pointer to the RTPSWriter.
      * @param topic                   Information regarding the topic where the writer is registering.
      * @param pub_builtin_topic_data  Information on the publication endpoint.
+     * @param should_send_opt_qos     True if optional QoS policies should be sent.
      *
      * @return True if correct.
      */
     bool new_writer_proxy_data(
         RTPSWriter* rtps_writer,
         const TopicDescription& topic,
-        const PublicationBuiltinTopicData& pub_builtin_topic_data);
+        const PublicationBuiltinTopicData& pub_builtin_topic_data,
+        bool should_send_opt_qos);
 
     /**
      * A previously created Reader has been updated
