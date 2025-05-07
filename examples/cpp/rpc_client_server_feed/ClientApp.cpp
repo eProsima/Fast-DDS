@@ -74,7 +74,7 @@ OperationStatus Ping::execute()
         }
         catch (const RpcException& e)
         {
-            client_server_error("ClientApp", "RPC exception ocurred: " << e.what());
+            client_server_error("ClientApp", "RPC exception occurred: " << e.what());
 
             return OperationStatus::ERROR;
         }
@@ -117,7 +117,7 @@ OperationStatus RepresentationLimits::execute()
         }
         catch (const RpcException& e)
         {
-            client_server_error("ClientApp", "RPC exception ocurred: " << e.what());
+            client_server_error("ClientApp", "RPC exception occurred: " << e.what());
 
             return OperationStatus::ERROR;
         }
@@ -162,7 +162,7 @@ OperationStatus Addition::execute()
         }
         catch (const RpcException& e)
         {
-            client_server_error("ClientApp", "RPC exception ocurred: " << e.what());
+            client_server_error("ClientApp", "RPC exception occurred: " << e.what());
 
             return OperationStatus::ERROR;
         }
@@ -208,7 +208,7 @@ OperationStatus Substraction::execute()
         }
         catch (const RpcException& e)
         {
-            client_server_error("ClientApp", "RPC exception ocurred: " << e.what());
+            client_server_error("ClientApp", "RPC exception occurred: " << e.what());
 
             return OperationStatus::ERROR;
         }
@@ -270,7 +270,7 @@ OperationStatus FibonacciSeq::execute()
         }
         catch (const RpcException& e)
         {
-            client_server_error("ClientApp", "RPC exception ocurred: " << e.what());
+            client_server_error("ClientApp", "RPC exception occurred: " << e.what());
 
             return OperationStatus::ERROR;
         }
@@ -451,7 +451,7 @@ OperationStatus Accumulator::execute()
         }
         catch(const RpcException& e)
         {
-            client_server_error("ClientApp", "RPC exception ocurred: " << e.what());
+            client_server_error("ClientApp", "RPC exception occurred: " << e.what());
 
             return OperationStatus::ERROR;
         }
