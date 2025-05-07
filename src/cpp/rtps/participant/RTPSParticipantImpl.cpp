@@ -1420,9 +1420,9 @@ bool RTPSParticipantImpl::register_writer(
 }
 
 bool RTPSParticipantImpl::register_writer(
-    RTPSWriter* rtps_writer,
-    const TopicDescription& topic,
-    const PublicationBuiltinTopicData& pub_builtin_topic_data)
+        RTPSWriter* rtps_writer,
+        const TopicDescription& topic,
+        const PublicationBuiltinTopicData& pub_builtin_topic_data)
 {
     // Check if optional QoS serialization is enabled in the participant properties.
     // If so, the optional QoS in the builtin topic data needs to be sent.
@@ -1448,7 +1448,8 @@ bool RTPSParticipantImpl::register_reader(
     // Check if optional QoS serialization is enabled in the participant properties.
     // If so, the optional QoS in the builtin topic data needs to be sent.
     bool should_send_opt_qos = should_send_optional_qos();
-    return this->mp_builtinProtocols->add_reader(rtps_reader, topic, sub_builtin_topic_data, should_send_opt_qos, content_filter);
+    return this->mp_builtinProtocols->add_reader(rtps_reader, topic, sub_builtin_topic_data, should_send_opt_qos,
+                   content_filter);
 }
 
 bool RTPSParticipantImpl::should_send_optional_qos() const
@@ -2700,7 +2701,8 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
             // search for the next if any
             ++it;
         }
-    } while (it != UnicastLocatorList.end());
+    }
+    while (it != UnicastLocatorList.end());
 
     // TCP is a special case because physical ports are taken from the TransportDescriptors
     // besides WAN address may be added by the transport

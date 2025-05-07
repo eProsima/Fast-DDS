@@ -1840,14 +1840,14 @@ public:
     }
 
     PubSubWriter& data_writer_qos(
-        const eprosima::fastdds::dds::DataWriterQos& dw_qos)
+            const eprosima::fastdds::dds::DataWriterQos& dw_qos)
     {
         datawriter_qos_ = dw_qos;
         return *this;
     }
 
     PubSubWriter& publisher_qos(
-        const eprosima::fastdds::dds::PublisherQos& pub_qos)
+            const eprosima::fastdds::dds::PublisherQos& pub_qos)
     {
         publisher_qos_ = pub_qos;
         return *this;

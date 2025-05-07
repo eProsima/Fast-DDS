@@ -261,7 +261,7 @@ bool EDP::new_reader_proxy_data(
                 {
                     EPROSIMA_LOG_ERROR(RTPS_EDP,
                             "Adding already existent reader " << rtps_reader->getGuid().entityId << " in topic "
-                                                            << topic.topic_name.to_string());
+                                                              << topic.topic_name.to_string());
                     return false;
                 }
 
@@ -521,10 +521,10 @@ bool EDP::new_writer_proxy_data(
 }
 
 bool EDP::new_writer_proxy_data(
-    RTPSWriter* rtps_writer,
-    const TopicDescription& topic,
-    const PublicationBuiltinTopicData& pub_builtin_topic_data,
-    bool should_send_opt_qos)
+        RTPSWriter* rtps_writer,
+        const TopicDescription& topic,
+        const PublicationBuiltinTopicData& pub_builtin_topic_data,
+        bool should_send_opt_qos)
 {
     EPROSIMA_LOG_INFO(RTPS_EDP,
             "Adding " << rtps_writer->getGuid().entityId << " in topic " <<
@@ -539,7 +539,7 @@ bool EDP::new_writer_proxy_data(
                 {
                     EPROSIMA_LOG_ERROR(RTPS_EDP,
                             "Adding already existent writer " << rtps_writer->getGuid().entityId << " in topic "
-                                                            << topic.topic_name.to_string());
+                                                              << topic.topic_name.to_string());
                     return false;
                 }
 

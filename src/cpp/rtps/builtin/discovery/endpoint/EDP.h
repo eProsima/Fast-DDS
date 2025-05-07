@@ -191,11 +191,11 @@ public:
      * @return True if correct.
      */
     bool new_reader_proxy_data(
-        RTPSReader* rtps_reader,
-        const TopicDescription& topic,
-        const SubscriptionBuiltinTopicData& sub_builtin_topic_data,
-        bool should_send_opt_qos,
-        const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
+            RTPSReader* rtps_reader,
+            const TopicDescription& topic,
+            const SubscriptionBuiltinTopicData& sub_builtin_topic_data,
+            bool should_send_opt_qos,
+            const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
 
     /**
      * Create a new WriterPD for a local Writer.
@@ -222,10 +222,10 @@ public:
      * @return True if correct.
      */
     bool new_writer_proxy_data(
-        RTPSWriter* rtps_writer,
-        const TopicDescription& topic,
-        const PublicationBuiltinTopicData& pub_builtin_topic_data,
-        bool should_send_opt_qos);
+            RTPSWriter* rtps_writer,
+            const TopicDescription& topic,
+            const PublicationBuiltinTopicData& pub_builtin_topic_data,
+            bool should_send_opt_qos);
 
     /**
      * A previously created Reader has been updated

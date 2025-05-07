@@ -93,175 +93,176 @@ public:
 
 };
 
-auto check_qos_in_data_r = [](rtps::CDRMessage_t& msg, std::atomic<uint8_t>& qos_found, std::vector<uint16_t>& expected_qos_pids)
+auto check_qos_in_data_r =
+        [](rtps::CDRMessage_t& msg, std::atomic<uint8_t>& qos_found, std::vector<uint16_t>& expected_qos_pids)
+        {
+            uint32_t qos_size = 0;
+            uint32_t original_pos = msg.pos;
+            bool is_sentinel = false;
+
+            while (!is_sentinel)
             {
-                uint32_t qos_size = 0;
-                uint32_t original_pos = msg.pos;
-                bool is_sentinel = false;
+                msg.pos = original_pos + qos_size;
 
-                while (!is_sentinel)
+                uint16_t pid = eprosima::fastdds::helpers::cdr_parse_u16(
+                    (char*)&msg.buffer[msg.pos]);
+                msg.pos += 2;
+                uint16_t plength = eprosima::fastdds::helpers::cdr_parse_u16(
+                    (char*)&msg.buffer[msg.pos]);
+                msg.pos += 2;
+                bool valid = true;
+
+                // If inline_qos submessage is found we will have an additional Sentinel
+                if (pid == eprosima::fastdds::dds::PID_SENTINEL)
                 {
-                    msg.pos = original_pos + qos_size;
-
-                    uint16_t pid = eprosima::fastdds::helpers::cdr_parse_u16(
-                        (char*)&msg.buffer[msg.pos]);
-                    msg.pos += 2;
-                    uint16_t plength = eprosima::fastdds::helpers::cdr_parse_u16(
-                        (char*)&msg.buffer[msg.pos]);
-                    msg.pos += 2;
-                    bool valid = true;
-
-                    // If inline_qos submessage is found we will have an additional Sentinel
-                    if (pid == eprosima::fastdds::dds::PID_SENTINEL)
-                    {
-                        // PID_SENTINEL is always considered of length 0
-                        plength = 0;
-                        // If the PID is not inline qos, then we need to set the sentinel
-                        // to true, as it is the last PID
-                        is_sentinel = true;
-                    }
-
-                    qos_size += (4 + plength);
-
-                    // Align to 4 byte boundary and prepare for next iteration
-                    qos_size = (qos_size + 3) & ~3;
-
-                    if (!valid || ((msg.pos + plength) > msg.length))
-                    {
-                        return false;
-                    }
-                    else if (!is_sentinel)
-                    {
-                        if (pid == eprosima::fastdds::dds::PID_DURABILITY)
-                        {
-                            std::cout << "Durability found" << std::endl;
-                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
-                        }
-                        else if (pid == eprosima::fastdds::dds::PID_DEADLINE)
-                        {
-                            std::cout << "Deadline found" << std::endl;
-                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
-                        }
-                        else if (pid == eprosima::fastdds::dds::PID_LATENCY_BUDGET)
-                        {
-                            std::cout << "Latency found" << std::endl;
-                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
-                        }
-                        else if (pid == eprosima::fastdds::dds::PID_LIVELINESS)
-                        {
-                            std::cout << "Liveliness found" << std::endl;
-                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
-                        }
-                        else if (pid == eprosima::fastdds::dds::PID_RELIABILITY)
-                        {
-                            std::cout << "Reliability found" << std::endl;
-                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
-                        }
-                        else if (pid == eprosima::fastdds::dds::PID_LIFESPAN)
-                        {
-                            std::cout << "Lifespan found" << std::endl;
-                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
-                        }
-                        else if (pid == eprosima::fastdds::dds::PID_USER_DATA)
-                        {
-                            std::cout << "User data found" << std::endl;
-                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
-                        }
-                        else if (pid == eprosima::fastdds::dds::PID_TIME_BASED_FILTER)
-                        {
-                            std::cout << "Time base filter found" << std::endl;
-                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
-                        }
-                        else if (pid == eprosima::fastdds::dds::PID_OWNERSHIP)
-                        {
-                            std::cout << "Ownership found" << std::endl;
-                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
-                        }
-                        else if (pid == eprosima::fastdds::dds::PID_DESTINATION_ORDER)
-                        {
-                            std::cout << "Destination Order found" << std::endl;
-                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
-                        }
-                        else if (pid == eprosima::fastdds::dds::PID_PRESENTATION)
-                        {
-                            std::cout << "Presentation found" << std::endl;
-                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
-                        }
-                        else if (pid == eprosima::fastdds::dds::PID_PARTITION)
-                        {
-                            std::cout << "Partition found" << std::endl;
-                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
-                        }
-                        else if (pid == eprosima::fastdds::dds::PID_TOPIC_DATA)
-                        {
-                            std::cout << "Topic data found" << std::endl;
-                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
-                        }
-                        else if (pid == eprosima::fastdds::dds::PID_DISABLE_POSITIVE_ACKS)
-                        {
-                            std::cout << "Disable positive acks found" << std::endl;
-                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
-                        }
-                        else if (pid == eprosima::fastdds::dds::PID_DATASHARING)
-                        {
-                            std::cout << "Data sharing found" << std::endl;
-                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
-                        }
-                        else if (pid == eprosima::fastdds::dds::PID_GROUP_DATA)
-                        {
-                            std::cout << "Group data found" << std::endl;
-                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
-                        }
-                        else if (pid == eprosima::fastdds::dds::PID_DATA_REPRESENTATION)
-                        {
-                            std::cout << "Data representation found" << std::endl;
-                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
-                        }
-                        else if (pid == eprosima::fastdds::dds::PID_HISTORY)
-                        {
-                            std::cout << "History found" << std::endl;
-                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
-                        }
-                        else if (pid == eprosima::fastdds::dds::PID_TYPE_CONSISTENCY_ENFORCEMENT)
-                        {
-                            std::cout << "Type consistency enforcement found" << std::endl;
-                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
-                        }
-                        else if (pid == eprosima::fastdds::dds::PID_RESOURCE_LIMITS)
-                        {
-                            std::cout << "Optional Resource limits found" << std::endl;
-                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
-                        }
-                        else if (pid == eprosima::fastdds::dds::PID_READER_DATA_LIFECYCLE)
-                        {
-                            std::cout << "Optional Reader data lifecycle found" << std::endl;
-                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
-                        }
-                        else if (pid == eprosima::fastdds::dds::PID_RTPS_RELIABLE_READER)
-                        {
-                            std::cout << "Optional RTPS reliable reader found" << std::endl;
-                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
-                        }
-                        else if (pid == eprosima::fastdds::dds::PID_RTPS_ENDPOINT)
-                        {
-                            std::cout << "Optional RTPS endpoint found" << std::endl;
-                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
-                        }
-                        else if (pid == eprosima::fastdds::dds::PID_READER_RESOURCE_LIMITS)
-                        {
-                            std::cout << "Optional Reader resource limits found" << std::endl;
-                            qos_found.fetch_add(1u, std::memory_order_seq_cst);
-                        }
-                        // Delete the PID from the expected list if present
-                        expected_qos_pids.erase(
-                            std::remove(expected_qos_pids.begin(), expected_qos_pids.end(), pid),
-                            expected_qos_pids.end());
-                    }
+                    // PID_SENTINEL is always considered of length 0
+                    plength = 0;
+                    // If the PID is not inline qos, then we need to set the sentinel
+                    // to true, as it is the last PID
+                    is_sentinel = true;
                 }
 
-                // Do not drop the packet in any case
-                return false;
-            };
+                qos_size += (4 + plength);
+
+                // Align to 4 byte boundary and prepare for next iteration
+                qos_size = (qos_size + 3) & ~3;
+
+                if (!valid || ((msg.pos + plength) > msg.length))
+                {
+                    return false;
+                }
+                else if (!is_sentinel)
+                {
+                    if (pid == eprosima::fastdds::dds::PID_DURABILITY)
+                    {
+                        std::cout << "Durability found" << std::endl;
+                        qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_DEADLINE)
+                    {
+                        std::cout << "Deadline found" << std::endl;
+                        qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_LATENCY_BUDGET)
+                    {
+                        std::cout << "Latency found" << std::endl;
+                        qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_LIVELINESS)
+                    {
+                        std::cout << "Liveliness found" << std::endl;
+                        qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_RELIABILITY)
+                    {
+                        std::cout << "Reliability found" << std::endl;
+                        qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_LIFESPAN)
+                    {
+                        std::cout << "Lifespan found" << std::endl;
+                        qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_USER_DATA)
+                    {
+                        std::cout << "User data found" << std::endl;
+                        qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_TIME_BASED_FILTER)
+                    {
+                        std::cout << "Time base filter found" << std::endl;
+                        qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_OWNERSHIP)
+                    {
+                        std::cout << "Ownership found" << std::endl;
+                        qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_DESTINATION_ORDER)
+                    {
+                        std::cout << "Destination Order found" << std::endl;
+                        qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_PRESENTATION)
+                    {
+                        std::cout << "Presentation found" << std::endl;
+                        qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_PARTITION)
+                    {
+                        std::cout << "Partition found" << std::endl;
+                        qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_TOPIC_DATA)
+                    {
+                        std::cout << "Topic data found" << std::endl;
+                        qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_DISABLE_POSITIVE_ACKS)
+                    {
+                        std::cout << "Disable positive acks found" << std::endl;
+                        qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_DATASHARING)
+                    {
+                        std::cout << "Data sharing found" << std::endl;
+                        qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_GROUP_DATA)
+                    {
+                        std::cout << "Group data found" << std::endl;
+                        qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_DATA_REPRESENTATION)
+                    {
+                        std::cout << "Data representation found" << std::endl;
+                        qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_HISTORY)
+                    {
+                        std::cout << "History found" << std::endl;
+                        qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_TYPE_CONSISTENCY_ENFORCEMENT)
+                    {
+                        std::cout << "Type consistency enforcement found" << std::endl;
+                        qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_RESOURCE_LIMITS)
+                    {
+                        std::cout << "Optional Resource limits found" << std::endl;
+                        qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_READER_DATA_LIFECYCLE)
+                    {
+                        std::cout << "Optional Reader data lifecycle found" << std::endl;
+                        qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_RTPS_RELIABLE_READER)
+                    {
+                        std::cout << "Optional RTPS reliable reader found" << std::endl;
+                        qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_RTPS_ENDPOINT)
+                    {
+                        std::cout << "Optional RTPS endpoint found" << std::endl;
+                        qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_READER_RESOURCE_LIMITS)
+                    {
+                        std::cout << "Optional Reader resource limits found" << std::endl;
+                        qos_found.fetch_add(1u, std::memory_order_seq_cst);
+                    }
+                    // Delete the PID from the expected list if present
+                    expected_qos_pids.erase(
+                        std::remove(expected_qos_pids.begin(), expected_qos_pids.end(), pid),
+                        expected_qos_pids.end());
+                }
+            }
+
+            // Do not drop the packet in any case
+            return false;
+        };
 
 TEST_P(DDSDataReader, LivelinessChangedStatusGet)
 {
@@ -1072,8 +1073,8 @@ TEST_P(DDSDataReader, datareader_sends_non_default_qos_a)
 
     writer.data_writer_qos(dw_qos);
     reader.disable_builtin_transport()
-          .add_user_transport_to_pparams(test_transport)
-          .data_reader_qos(dr_qos);
+            .add_user_transport_to_pparams(test_transport)
+            .data_reader_qos(dr_qos);
 
     writer.init();
     reader.init();
@@ -1155,11 +1156,11 @@ TEST_P(DDSDataReader, datareader_sends_non_default_qos_b)
     dr_qos.history().depth = 42;
 
     writer.publisher_qos(pub_qos)
-          .data_writer_qos(dw_qos);
+            .data_writer_qos(dw_qos);
     reader.disable_builtin_transport()
-          .add_user_transport_to_pparams(test_transport)
-          .subscriber_qos(sub_qos)
-          .data_reader_qos(dr_qos);
+            .add_user_transport_to_pparams(test_transport)
+            .subscriber_qos(sub_qos)
+            .data_reader_qos(dr_qos);
 
     writer.init();
     reader.init();
@@ -1224,8 +1225,8 @@ TEST_P(DDSDataReader, datareader_sends_non_default_qos_optional)
 
     writer.data_writer_qos(dw_qos);
     reader.disable_builtin_transport()
-          .add_user_transport_to_pparams(test_transport)
-          .data_reader_qos(dr_qos);
+            .add_user_transport_to_pparams(test_transport)
+            .data_reader_qos(dr_qos);
 
     // a) Init both entities without setting the property
     writer.init();
@@ -1268,7 +1269,7 @@ TEST_P(DDSDataReader, datareader_sends_non_default_qos_optional)
     qos_found.store(0);
 
     reader.data_reader_qos(dr_qos)
-          .init();
+            .init();
     ASSERT_TRUE(reader.isInitialized());
 
     writer.wait_discovery();

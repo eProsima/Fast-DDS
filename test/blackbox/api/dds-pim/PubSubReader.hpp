@@ -200,7 +200,8 @@ protected:
                 do
                 {
                     reader_.receive(datareader, ret);
-                } while (ret);
+                }
+                while (ret);
             }
         }
 
@@ -1716,14 +1717,14 @@ public:
     }
 
     PubSubReader& data_reader_qos(
-        const eprosima::fastdds::dds::DataReaderQos& dr_qos)
+            const eprosima::fastdds::dds::DataReaderQos& dr_qos)
     {
         datareader_qos_ = dr_qos;
         return *this;
     }
 
     PubSubReader& subscriber_qos(
-        const eprosima::fastdds::dds::SubscriberQos& sub_qos)
+            const eprosima::fastdds::dds::SubscriberQos& sub_qos)
     {
         subscriber_qos_ = sub_qos;
         return *this;
@@ -2420,7 +2421,8 @@ protected:
                     do
                     {
                         reader_.receive(reader_.datareader_, ret);
-                    } while (ret);
+                    }
+                    while (ret);
                 }
             }
 
@@ -2456,7 +2458,8 @@ protected:
                     do
                     {
                         reader_.receive(reader_.datareader_, ret);
-                    } while (ret);
+                    }
+                    while (ret);
                 }
             }
         }

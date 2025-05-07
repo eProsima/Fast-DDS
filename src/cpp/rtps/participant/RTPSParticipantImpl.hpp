@@ -935,9 +935,9 @@ public:
      * @return True if correctly registered.
      */
     bool register_writer(
-        RTPSWriter* Writer,
-        const TopicDescription& topic,
-        const PublicationBuiltinTopicData& pub_builtin_topic_data);
+            RTPSWriter* Writer,
+            const TopicDescription& topic,
+            const PublicationBuiltinTopicData& pub_builtin_topic_data);
 
     /**
      * Register a Reader in the BuiltinProtocols.
@@ -966,10 +966,10 @@ public:
      * @return True if correctly registered.
      */
     bool register_reader(
-        RTPSReader* Reader,
-        const TopicDescription& topic,
-        const SubscriptionBuiltinTopicData& sub_builtin_topic_data,
-        const ContentFilterProperty* content_filter = nullptr);
+            RTPSReader* Reader,
+            const TopicDescription& topic,
+            const SubscriptionBuiltinTopicData& sub_builtin_topic_data,
+            const ContentFilterProperty* content_filter = nullptr);
 
     /**
      * Check if the property @parameter_serialize_optional_qos is set to enable the sent of optional QoS.

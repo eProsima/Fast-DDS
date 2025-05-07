@@ -153,10 +153,10 @@ public:
      * @return True if correct.
      */
     bool add_writer(
-        RTPSWriter* rtps_writer,
-        const TopicDescription& topic,
-        const PublicationBuiltinTopicData& pub_builtin_topic_data,
-        bool should_send_opt_qos);
+            RTPSWriter* rtps_writer,
+            const TopicDescription& topic,
+            const PublicationBuiltinTopicData& pub_builtin_topic_data,
+            bool should_send_opt_qos);
 
     /**
      * Add a local reader to the BuiltinProtocols.
@@ -184,11 +184,11 @@ public:
      * @return True if correct.
      */
     bool add_reader(
-        RTPSReader* rtps_reader,
-        const TopicDescription& topic,
-        const SubscriptionBuiltinTopicData& sub_builtin_topic_data,
-        bool should_send_opt_qos,
-        const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
+            RTPSReader* rtps_reader,
+            const TopicDescription& topic,
+            const SubscriptionBuiltinTopicData& sub_builtin_topic_data,
+            bool should_send_opt_qos,
+            const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
 
     /**
      * Update a local Writer QOS
