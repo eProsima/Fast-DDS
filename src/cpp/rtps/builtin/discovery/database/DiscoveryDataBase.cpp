@@ -789,13 +789,6 @@ void DiscoveryDataBase::update_participant_from_change_(
     // Remove also the old change from the disposals collection, if it was added just before
     if (participant_info.change()->kind != eprosima::fastdds::rtps::ALIVE)
     {
-        // If it is local and server we have to create virtual endpoints, except for our own server
-        if (change_guid.guidPrefix != server_guid_prefix_ && !change_data.is_client() && change_data.is_local())
-        {
-            // Match new server and create virtual endpoints
-            match_new_server_(change_guid.guidPrefix, change_data.is_superclient());
-        }
-
         // Update the change data
         participant_info.participant_change_data(change_data);
 
@@ -809,6 +802,15 @@ void DiscoveryDataBase::update_participant_from_change_(
         // Update change. This should add the UNALIVE change to changes_to_release_, which should later both remove the
         // change from the writer's history and release the change
         update_change_and_unmatch_(ch, participant_info);
+
+        // If it is local and server we have to create virtual endpoints, except for our own server
+        if (change_guid.guidPrefix != server_guid_prefix_ && !change_data.is_client() && change_data.is_local())
+        {
+            // Match new server and create virtual endpoints
+            // NOTE: match after having updated the change, so virtual endpoints are not discarded for having
+            // an associated unalive participant
+            match_new_server_(change_guid.guidPrefix, change_data.is_superclient());
+        }
 
         // Treat as a new participant found
         new_updates_++;
@@ -825,18 +827,19 @@ void DiscoveryDataBase::update_participant_from_change_(
     else if (change_guid.guidPrefix != server_guid_prefix_ && change_data.is_local() &&
             DiscoveryDataBase::participant_data_has_changed_(participant_info, change_data))
     {
-        // If the participant changes to server local, virtual endpoints must be added
-        // If it is local and server the only possibility is it was a remote server and it must be converted to local
-        if (!change_data.is_client())
-        {
-            match_new_server_(change_guid.guidPrefix, change_data.is_superclient());
-        }
-
         // Update the change data
         participant_info.participant_change_data(change_data);
 
         // Update change
         update_change_and_unmatch_(ch, participant_info);
+
+        // If the participant changes to server local, virtual endpoints must be added
+        // If it is local and server the only possibility is it was a remote server and it must be converted to local
+        if (!change_data.is_client())
+        {
+            // NOTE: match after having updated the change in order to send the new Data(P)
+            match_new_server_(change_guid.guidPrefix, change_data.is_superclient());
+        }
 
         // Treat as a new participant found
         new_updates_++;
@@ -956,6 +959,7 @@ void DiscoveryDataBase::create_writers_from_change_(
         {
             EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE,
                     "Writer " << writer_guid << " has no associated participant. Skipping");
+            assert(topic_name != virtual_topic_);
             changes_to_release_.push_back(ch); // Release change so it can be reused
             return;
         }
@@ -963,6 +967,7 @@ void DiscoveryDataBase::create_writers_from_change_(
         {
             EPROSIMA_LOG_WARNING(DISCOVERY_DATABASE,
                     "Writer " << writer_guid << " is associated to a removed participant. Skipping");
+            assert(topic_name != virtual_topic_);
             changes_to_release_.push_back(ch); // Release change so it can be reused
             return;
         }
@@ -1084,6 +1089,7 @@ void DiscoveryDataBase::create_readers_from_change_(
         {
             EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE,
                     "Reader " << reader_guid << " has no associated participant. Skipping");
+            assert(topic_name != virtual_topic_);
             changes_to_release_.push_back(ch); // Release change so it can be reused
             return;
         }
@@ -1091,6 +1097,7 @@ void DiscoveryDataBase::create_readers_from_change_(
         {
             EPROSIMA_LOG_WARNING(DISCOVERY_DATABASE,
                     "Reader " << reader_guid << " is associated to a removed participant. Skipping");
+            assert(topic_name != virtual_topic_);
             changes_to_release_.push_back(ch); // Release change so it can be reused
             return;
         }
