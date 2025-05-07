@@ -297,17 +297,16 @@ ReturnCode_t DataReaderImpl::enable()
     }
 
     RTPSParticipantImpl* rtps = RTPSDomainImpl::find_local_participant(subscriber_->rtps_participant()->getGuid());
-    if (rtps->register_reader(reader_, topic_desc, subscription_data, filter_property) != RETCODE_OK)
+    ReturnCode_t register_reader_code = rtps->register_reader(reader_, topic_desc, subscription_data, filter_property);
+    if (register_reader_code != RETCODE_OK)
     {
         EPROSIMA_LOG_ERROR(DATA_READER, "Could not register reader on discovery protocols");
 
         reader_->set_listener(nullptr);
         stop();
-
-        return RETCODE_ERROR;
     }
 
-    return RETCODE_OK;
+    return register_reader_code;
 }
 
 void DataReaderImpl::disable()

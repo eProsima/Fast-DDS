@@ -471,7 +471,8 @@ ReturnCode_t DataWriterImpl::enable()
         return RETCODE_ERROR;
     }
     RTPSParticipantImpl* rtps = RTPSDomainImpl::find_local_participant(publisher_->rtps_participant()->getGuid());
-    if (rtps->register_writer(writer_, topic_desc, publication_data) != RETCODE_OK)
+    ReturnCode_t register_writer_code = rtps->register_writer(writer_, topic_desc, publication_data);
+    if (register_writer_code != RETCODE_OK)
     {
         EPROSIMA_LOG_ERROR(DATA_WRITER, "Could not register writer on discovery protocols");
         writer_->set_listener(nullptr);
@@ -479,10 +480,9 @@ ReturnCode_t DataWriterImpl::enable()
         writer_ = nullptr;
         history_.reset();
         release_payload_pool();
-
-        return RETCODE_ERROR;
     }
-    return RETCODE_OK;
+
+    return register_writer_code;
 }
 
 void DataWriterImpl::disable()
