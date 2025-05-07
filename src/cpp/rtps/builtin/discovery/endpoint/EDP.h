@@ -20,6 +20,7 @@
 #ifndef FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT__EDP_H
 #define FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT__EDP_H
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
@@ -188,9 +189,9 @@ public:
      * @param content_filter          Optional content filtering information.
      * @param should_send_opt_qos     True if optional QoS policies should be sent.
      *
-     * @return True if correct.
+     * @return OK if correct, ERROR otherwise.
      */
-    bool new_reader_proxy_data(
+    dds::ReturnCode_t new_reader_proxy_data(
             RTPSReader* rtps_reader,
             const TopicDescription& topic,
             const SubscriptionBuiltinTopicData& sub_builtin_topic_data,
@@ -219,9 +220,9 @@ public:
      * @param pub_builtin_topic_data  Information on the publication endpoint.
      * @param should_send_opt_qos     True if optional QoS policies should be sent.
      *
-     * @return True if correct.
+     * @return OK if correct, ERROR otherwise.
      */
-    bool new_writer_proxy_data(
+    dds::ReturnCode_t new_writer_proxy_data(
             RTPSWriter* rtps_writer,
             const TopicDescription& topic,
             const PublicationBuiltinTopicData& pub_builtin_topic_data,

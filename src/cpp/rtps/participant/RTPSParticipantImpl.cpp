@@ -26,7 +26,6 @@
 #include <mutex>
 #include <sstream>
 
-#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/LibrarySettings.hpp>
@@ -1419,7 +1418,7 @@ bool RTPSParticipantImpl::register_writer(
     return this->mp_builtinProtocols->add_writer(rtps_writer, topic, qos);
 }
 
-bool RTPSParticipantImpl::register_writer(
+dds::ReturnCode_t RTPSParticipantImpl::register_writer(
         RTPSWriter* rtps_writer,
         const TopicDescription& topic,
         const PublicationBuiltinTopicData& pub_builtin_topic_data)
@@ -1439,7 +1438,7 @@ bool RTPSParticipantImpl::register_reader(
     return this->mp_builtinProtocols->add_reader(rtps_reader, topic, qos, content_filter);
 }
 
-bool RTPSParticipantImpl::register_reader(
+dds::ReturnCode_t RTPSParticipantImpl::register_reader(
         RTPSReader* rtps_reader,
         const TopicDescription& topic,
         const SubscriptionBuiltinTopicData& sub_builtin_topic_data,

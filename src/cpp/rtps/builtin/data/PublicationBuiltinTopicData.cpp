@@ -27,7 +27,6 @@ namespace rtps {
 PublicationBuiltinTopicData::PublicationBuiltinTopicData()
 {
     reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
-    durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
 }
 
 PublicationBuiltinTopicData::PublicationBuiltinTopicData(
@@ -40,7 +39,6 @@ PublicationBuiltinTopicData::PublicationBuiltinTopicData(
     partition.set_max_size(static_cast<uint32_t>(data_limits.max_partitions));
     data_sharing.set_max_domains(static_cast<uint32_t>(data_limits.max_datasharing_domains));
     reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
-    durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
 }
 
 }   // namespace rtps

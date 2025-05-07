@@ -1092,6 +1092,7 @@ TEST_P(DDSDataReader, datareader_sends_non_default_qos_a)
 // Only half of the QoS are modified, so the other half should be the default ones and they should not
 // be sent. The opposite scenario will be checked in the previous test.
 // QoS that should be sent:
+// - DurabilityQosPolicy (always sent)
 // - PresentationQosPolicy
 // - PartitionQosPolicy
 // - GroupDataQosPolicy
@@ -1110,6 +1111,7 @@ TEST_P(DDSDataReader, datareader_sends_non_default_qos_b)
 
     std::atomic<uint8_t> qos_found { 0 };
     std::vector<uint16_t> expected_qos_pids = {
+        eprosima::fastdds::dds::PID_DURABILITY,
         eprosima::fastdds::dds::PID_PRESENTATION,
         eprosima::fastdds::dds::PID_PARTITION,
         eprosima::fastdds::dds::PID_GROUP_DATA,
@@ -1237,13 +1239,14 @@ TEST_P(DDSDataReader, datareader_sends_non_default_qos_optional)
     writer.wait_discovery();
     reader.wait_discovery();
 
-    // No optional QoS should be sent
-    EXPECT_EQ(qos_found.load(), 0u);
+    // No optional QoS should be sent. Only PID_DURABILITY as it is always sent
+    EXPECT_EQ(qos_found.load(), 1u);
     EXPECT_EQ(expected_qos_pids.size(), expected_qos_size);
 
     // b) Now set the property to serialize optional QoS and re-init the reader
     reader.destroy();
     writer.wait_reader_undiscovery();
+    qos_found.store(0);
 
     eprosima::fastdds::dds::PropertyPolicyQos properties;
     properties.properties().emplace_back("fastdds.serialize_optional_qos", "true");
@@ -1255,18 +1258,17 @@ TEST_P(DDSDataReader, datareader_sends_non_default_qos_optional)
     writer.wait_discovery();
     reader.wait_discovery();
 
-    // Check that the optional QoS are serialized
-    EXPECT_EQ(qos_found.load(), expected_qos_size);
+    // Check that the optional QoS are serialized + PID_DURABILITY as it is always sent
+    EXPECT_EQ(qos_found.load(), expected_qos_size + 1u);
     EXPECT_EQ(expected_qos_pids.size(), 0u);
 
     // c) Now re-init the reader with default QoS and the property set
     reader.destroy();
     writer.wait_reader_undiscovery();
+    qos_found.store(0);
 
     dr_qos = eprosima::fastdds::dds::DATAREADER_QOS_DEFAULT;
     dr_qos.data_sharing().off();
-
-    qos_found.store(0);
 
     reader.data_reader_qos(dr_qos)
             .init();
@@ -1275,8 +1277,8 @@ TEST_P(DDSDataReader, datareader_sends_non_default_qos_optional)
     writer.wait_discovery();
     reader.wait_discovery();
 
-    // Check that no optional QoS are serialized
-    EXPECT_EQ(qos_found.load(), 0u);
+    // Check that no optional QoS are serialized. Only PID_DURABILITY as it is always sent
+    EXPECT_EQ(qos_found.load(), 1u);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

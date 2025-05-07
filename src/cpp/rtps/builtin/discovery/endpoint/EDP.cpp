@@ -241,7 +241,7 @@ bool EDP::new_reader_proxy_data(
     return true;
 }
 
-bool EDP::new_reader_proxy_data(
+dds::ReturnCode_t EDP::new_reader_proxy_data(
         RTPSReader* rtps_reader,
         const TopicDescription& topic,
         const SubscriptionBuiltinTopicData& sub_builtin_topic_data,
@@ -365,7 +365,7 @@ bool EDP::new_reader_proxy_data(
         rtps_reader->getGuid(), participant_guid, init_fun);
     if (reader_data == nullptr)
     {
-        return false;
+        return dds::RETCODE_ERROR;
     }
     reader_data->should_send_optional_qos(should_send_opt_qos);
 
@@ -385,7 +385,7 @@ bool EDP::new_reader_proxy_data(
     pairingReader(rtps_reader, participant_guid, *reader_data);
     //DO SOME PROCESSING DEPENDING ON THE IMPLEMENTATION (SIMPLE OR STATIC)
     process_reader_proxy_data(rtps_reader, reader_data);
-    return true;
+    return dds::RETCODE_OK;
 }
 
 bool EDP::new_writer_proxy_data(
@@ -520,7 +520,7 @@ bool EDP::new_writer_proxy_data(
     return true;
 }
 
-bool EDP::new_writer_proxy_data(
+dds::ReturnCode_t EDP::new_writer_proxy_data(
         RTPSWriter* rtps_writer,
         const TopicDescription& topic,
         const PublicationBuiltinTopicData& pub_builtin_topic_data,
@@ -631,7 +631,7 @@ bool EDP::new_writer_proxy_data(
     WriterProxyData* writer_data = this->mp_PDP->addWriterProxyData(rtps_writer->getGuid(), participant_guid, init_fun);
     if (writer_data == nullptr)
     {
-        return false;
+        return dds::RETCODE_ERROR;
     }
     writer_data->should_send_optional_qos(should_send_opt_qos);
 
@@ -651,7 +651,7 @@ bool EDP::new_writer_proxy_data(
     pairingWriter(rtps_writer, participant_guid, *writer_data);
     //DO SOME PROCESSING DEPENDING ON THE IMPLEMENTATION (SIMPLE OR STATIC)
     process_writer_proxy_data(rtps_writer, writer_data);
-    return true;
+    return dds::RETCODE_OK;
 }
 
 bool EDP::update_reader(

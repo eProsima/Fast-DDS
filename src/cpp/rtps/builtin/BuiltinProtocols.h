@@ -23,6 +23,7 @@
 
 #include <list>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/builtin/data/TopicDescription.hpp>
@@ -150,9 +151,9 @@ public:
      * @param pub_builtin_topic_data  Information on the publication endpoint
      * @param should_send_opt_qos     True if optional QoS policies should be sent.
      *
-     * @return True if correct.
+     * @return OK if correct, ERROR otherwise.
      */
-    bool add_writer(
+    dds::ReturnCode_t add_writer(
             RTPSWriter* rtps_writer,
             const TopicDescription& topic,
             const PublicationBuiltinTopicData& pub_builtin_topic_data,
@@ -165,6 +166,7 @@ public:
      * @param topic           Information regarding the topic where the writer is registering
      * @param qos             QoS policies dictated by the subscriber
      * @param content_filter  Optional content filtering information.
+     *
      * @return True if correct.
      */
     bool add_reader(
@@ -181,9 +183,10 @@ public:
      * @param sub_builtin_topic_data  Information on the subscription endpoint
      * @param should_send_opt_qos     True if optional QoS policies should be sent.
      * @param content_filter          Optional content filtering information.
-     * @return True if correct.
+     *
+     * @return OK if correct, ERROR otherwise.
      */
-    bool add_reader(
+    dds::ReturnCode_t add_reader(
             RTPSReader* rtps_reader,
             const TopicDescription& topic,
             const SubscriptionBuiltinTopicData& sub_builtin_topic_data,

@@ -17,6 +17,7 @@
 
 #include <gtest/gtest.h>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 

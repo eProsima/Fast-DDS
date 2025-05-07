@@ -37,6 +37,7 @@
 #include <unistd.h>
 #endif // if defined(_WIN32)
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/builtin/data/SubscriptionBuiltinTopicData.hpp>
@@ -932,9 +933,9 @@ public:
      * @param topic                   Information regarding the topic where the writer is registering.
      * @param pub_builtin_topic_data  Information on the publication endpoint.
      *
-     * @return True if correctly registered.
+     * @return OK if correctly registered, ERROR otherwise.
      */
-    bool register_writer(
+    dds::ReturnCode_t register_writer(
             RTPSWriter* Writer,
             const TopicDescription& topic,
             const PublicationBuiltinTopicData& pub_builtin_topic_data);
@@ -963,9 +964,9 @@ public:
      * @param sub_builtin_topic_data  Information on the subscription endpoint.
      * @param content_filter          Optional content filtering information.
      *
-     * @return True if correctly registered.
+     * @return OK if correctly registered, ERROR otherwise.
      */
-    bool register_reader(
+    dds::ReturnCode_t register_reader(
             RTPSReader* Reader,
             const TopicDescription& topic,
             const SubscriptionBuiltinTopicData& sub_builtin_topic_data,

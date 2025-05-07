@@ -127,16 +127,11 @@ private:
 
 template<>
 inline bool QosPoliciesSerializer<DurabilityQosPolicy>::should_be_sent(
-        const DurabilityQosPolicy& qos_policy,
-        bool is_writer)
+        const DurabilityQosPolicy& /*qos_policy*/,
+        bool /*is_writer*/)
 {
-    if (is_writer)
-    {
-        // Writer is Transient Local by default
-        return (qos_policy.kind != TRANSIENT_LOCAL_DURABILITY_QOS);
-    }
-    // Reader is Volatile by default
-    return (qos_policy.kind != VOLATILE_DURABILITY_QOS);
+    // DurabilityQosPolicy is always sent to ensure matching
+    return true;
 }
 
 template<>
