@@ -462,6 +462,106 @@ OperationStatus Accumulator::execute()
     }
 }
 
+Filter::Filter(
+        std::shared_ptr<calculator_example::Calculator> client,
+        std::uint8_t filter_kind)
+    : client_(client)
+    , writer_(nullptr)
+    , reader_(nullptr)
+    , filter_kind_(filter_kind)
+    , input_feed_closed_(false)
+{
+}
+
+OperationStatus Filter::execute()
+{
+    if (auto client = client_.lock())
+    {
+        // Parse the input data and send it to the server
+        // until the input feed is closed
+        try
+        {
+            while (!input_feed_closed_)
+            {
+                if (!writer_)
+                {
+                    assert(reader_ == nullptr);
+                    reader_ = client->filter(writer_, get_filter_kind(filter_kind_));
+
+                    if (!reader_ || !writer_)
+                    {
+                        client_server_error("ClientApp", "Failed to create Client Reader/Writer");
+
+                        return OperationStatus::ERROR;
+                    }
+
+                    InputFeedProcessor::print_help();
+                }
+
+                // Get the input from the user
+                auto input = InputFeedProcessor::get_input();
+
+                // Check the input status
+                switch (input.first)
+                {
+                    // Valid number received
+                    case InputFeedProcessor::Status::VALID_INPUT:
+                        // Send the number to the server
+                        writer_->write(input.second);
+                        client_server_info("ClientApp", "Input sent: " << input.second);
+                        break;
+
+                    // Invalid input received
+                    case InputFeedProcessor::Status::INVALID_INPUT:
+                        client_server_error("ClientApp", "Invalid input. Please enter a valid number.");
+                        break;
+
+                    // Input feed closed
+                    case InputFeedProcessor::Status::FEED_CLOSED:
+                        client_server_info("ClientApp", "Input feed closed.");
+                        input_feed_closed_ = true;
+                        writer_->finish();
+                        break;
+
+                    default:
+                        client_server_error("ClientApp", "Unknown input status.");
+                        break;
+                }
+            }
+
+            // Get the next value from the output feed
+            int32_t value;
+            if (reader_->read(value))
+            {
+                client_server_info("ClientApp", "Filtered sequence value: " << value);
+
+                // Output feed not closed yet
+                return OperationStatus::PENDING;
+            }
+            else
+            {
+                client_server_info("ClientApp", "Filtered sequence feed finished");
+
+                reader_.reset();
+                writer_.reset();
+                input_feed_closed_ = false;
+
+                return OperationStatus::SUCCESS;
+            }
+        }
+        catch (const RpcException& e)
+        {
+            client_server_error("ClientApp", "Exception ocurred: " << e.what());
+
+            return OperationStatus::ERROR;
+        }
+    }
+    else
+    {
+        throw std::runtime_error("Client reference expired");
+    }
+}
+
 ClientApp::ClientApp(
         const CLIParser::config& config,
         const std::string& service_name)
@@ -630,6 +730,9 @@ void ClientApp::set_operation(
             break;
         case CLIParser::OperationKind::ACCUMULATOR:
             operation_ = std::unique_ptr<Operation>(new Accumulator(client_));
+            break;
+        case CLIParser::OperationKind::FILTER:
+            operation_ = std::unique_ptr<Operation>(new Filter(client_, config_.filter_kind));
             break;
         default:
             throw std::runtime_error("Invalid operation");
