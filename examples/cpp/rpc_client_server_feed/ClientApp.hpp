@@ -188,6 +188,27 @@ private:
 
 };
 
+class Filter : public Operation
+{
+
+public:
+
+    Filter(
+            std::shared_ptr<calculator_example::Calculator> client,
+            std::uint8_t filter_kind);
+
+    OperationStatus execute() override;
+
+private:
+
+    std::weak_ptr<calculator_example::Calculator> client_;
+    std::shared_ptr<eprosima::fastdds::dds::rpc::RpcClientWriter<int32_t>> writer_;
+    std::shared_ptr<eprosima::fastdds::dds::rpc::RpcClientReader<int32_t>> reader_;
+    std::uint8_t filter_kind_;
+    bool input_feed_closed_;
+
+};
+
 class ClientApp : public Application
 {
 public:
