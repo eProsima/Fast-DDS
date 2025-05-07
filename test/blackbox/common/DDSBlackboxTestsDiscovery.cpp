@@ -2147,7 +2147,9 @@ TEST(DDSDiscovery, proxy_data_assignment_operator_always_include_type_informatio
     using namespace eprosima::fastdds::dds::xtypes;
 
     /**
-     * A dummy type support class with the same type name as HelloWorldPubSubType
+     * A dummy type support class with the same type name as HelloWorldPubSubType.
+     * Does not register any TypeIdentifier so related proxies will have no
+     * type_information assigned.
      */
     class HelloWorldDummyType : public TopicDataType
     {
@@ -2221,6 +2223,12 @@ TEST(DDSDiscovery, proxy_data_assignment_operator_always_include_type_informatio
         {
         public:
 
+            ReadersListener(
+                    std::condition_variable& cv)
+                : cv_(cv)
+            {
+            }
+
             void on_subscription_matched(
                     eprosima::fastdds::dds::DataReader* /*datareader*/,
                     const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override
@@ -2229,23 +2237,27 @@ TEST(DDSDiscovery, proxy_data_assignment_operator_always_include_type_informatio
                 {
                     std::cout << "Subscriber matched publisher " << info.last_publication_handle << std::endl;
                     n_matches_++;
+                    cv_.notify_one();
                 }
                 else
                 {
                     std::cout << "Subscriber unmatched publisher " << info.last_publication_handle << std::endl;
                     n_matches_--;
+                    cv_.notify_one();
                 }
             }
 
             std::atomic<uint16_t> n_matches_{0};
+            std::condition_variable& cv_;
 
-        }
-        readers_listener_;
+        };
 
         CustomParticipantReaders(
                 const std::vector<std::pair<std::string, TypeSupport>>& topics_and_types,
-                uint32_t ms_delay_between_creations = 1000)
+                uint32_t ms_delay_between_creations = 10)
         {
+            readers_listeners_.reserve(topics_and_types.size());
+
             DomainParticipantQos pqos;
 
             pqos.transport().use_builtin_transports = false;
@@ -2284,8 +2296,11 @@ TEST(DDSDiscovery, proxy_data_assignment_operator_always_include_type_informatio
                     std::cerr << "Error creating topic" << std::endl;
                 }
 
+                readers_listeners_.emplace_back(std::make_shared<ReadersListener>(cv_));
+
                 DataReader* reader;
-                reader = subscriber_->create_datareader(&(*topic), DATAREADER_QOS_DEFAULT, &readers_listener_);
+                reader = subscriber_->create_datareader(&(*topic), DATAREADER_QOS_DEFAULT,
+                                readers_listeners_.back().get());
                 if (reader == nullptr)
                 {
                     std::cerr << "Error creating reader" << std::endl;
@@ -2298,27 +2313,50 @@ TEST(DDSDiscovery, proxy_data_assignment_operator_always_include_type_informatio
         }
 
         bool wait_discovery(
-                unsigned int expected_matches,
+                const std::vector<unsigned int>& expected_matches,
                 std::chrono::seconds timeout = std::chrono::seconds::zero())
         {
+            if (expected_matches.size() != readers_listeners_.size())
+            {
+                EPROSIMA_LOG_ERROR(TEST, "Expected matches size does not match readers listeners size");
+                return false;
+            }
+
+            bool ret = false;
             std::unique_lock<std::mutex> lock(discovery_mutex_);
 
             if (timeout == std::chrono::seconds::zero())
             {
                 cv_.wait(lock, [&]()
                         {
-                            return readers_listener_.n_matches_.load() == expected_matches;
+                            for (size_t i = 0; i < readers_listeners_.size(); ++i)
+                            {
+                                if (readers_listeners_[i]->n_matches_.load() < expected_matches[i])
+                                {
+                                    return false;
+                                }
+                            }
+                            ret = true;
+                            return true;
                         });
             }
             else
             {
                 cv_.wait_for(lock, timeout, [&]()
                         {
-                            return readers_listener_.n_matches_.load() == expected_matches;
+                            for (size_t i = 0; i < readers_listeners_.size(); ++i)
+                            {
+                                if (readers_listeners_[i]->n_matches_.load() < expected_matches[i])
+                                {
+                                    return false;
+                                }
+                            }
+                            ret = true;
+                            return true;
                         });
             }
 
-            return readers_listener_.n_matches_.load() == expected_matches;
+            return ret;
         }
 
         ~CustomParticipantReaders()
@@ -2335,41 +2373,35 @@ TEST(DDSDiscovery, proxy_data_assignment_operator_always_include_type_informatio
         Subscriber* subscriber_;
         std::mutex discovery_mutex_;
         std::condition_variable cv_;
+        std::vector<std::shared_ptr<ReadersListener>> readers_listeners_;
     };
 
-    PubSubWriter<HelloWorldPubSubType> writer_1(TEST_TOPIC_NAME);
-    writer_1.disable_builtin_transport();
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    writer.disable_builtin_transport();
     auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
-    writer_1.add_user_transport_to_pparams(udp_transport);
+    writer.add_user_transport_to_pparams(udp_transport);
 
     std::vector<std::pair<std::string, TypeSupport>> topics_and_types;
     topics_and_types.reserve(2);
     topics_and_types.push_back(std::make_pair("OtherTopic", TypeSupport(new Data64kbPubSubType())));
     topics_and_types.push_back(std::make_pair(TEST_TOPIC_NAME, TypeSupport(new HelloWorldDummyType())));
 
-    writer_1.init();
+    writer.init();
 
     // Create two readers in the same participant on different topics
-    // Wait one second between each creation
-    // When the second reader is registered, it will try to match with any already
-    // discovered writer, so it lookups and loads its ReaderProxyData into a temporal reader proxy pool
-    // which is not cleared before. If the assignment operation in the ReaderProxyData does not
-    // always copy the type_information, the second reader will not be able to match with the writer.
+    // When the second reader is registered, it will try to match with the writer,
+    // so it lookups and loads its ReaderProxyData into a temporal reader proxy pool
+    // previously filled with the Data64k type (with type_information), which is not cleared before.
+    // If the assignment operation in the ReaderProxyData for the HelloworldDummy type does not
+    // always copy the type_information into the temporal proxydata,
+    // the second reader will not be able to match with the writer, failing at EDP::valid_matching
     CustomParticipantReaders readers(
         topics_and_types);
 
-    // Create a second writer
-    PubSubWriter<HelloWorldPubSubType> writer_2(TEST_TOPIC_NAME);
-    writer_2.disable_builtin_transport();
-    auto udp_transport_2 = std::make_shared<UDPv4TransportDescriptor>();
-    writer_2.add_user_transport_to_pparams(udp_transport_2);
-    writer_2.init();
+    // Wait for the writer to match the second reader
+    writer.wait_discovery();
+    ASSERT_EQ(writer.get_matched(), 1u);
 
-    writer_1.wait_discovery();
-    ASSERT_EQ(writer_1.get_matched(), 1u);
-    writer_2.wait_discovery();
-    ASSERT_EQ(writer_2.get_matched(), 1u);
-
-    // One discovery should happen per reader
-    ASSERT_TRUE(readers.wait_discovery(2u, std::chrono::seconds(2)));
+    // The second reader should match with the writer
+    ASSERT_TRUE(readers.wait_discovery({0u, 1u}, std::chrono::seconds(3)));
 }
