@@ -2851,6 +2851,7 @@ public:
 };
 
 //! Qos Policy to configure the endpoint
+FASTDDS_TODO_BEFORE(4, 0, "Make all eProsima extended QoS inherit from Parameter_t and QosPolicy if possible.");
 class RTPSEndpointQos
 {
 public:
