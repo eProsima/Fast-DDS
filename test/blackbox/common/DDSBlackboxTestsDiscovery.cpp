@@ -2131,3 +2131,277 @@ TEST(DDSDiscovery, client_server_participants_with_different_domain_ids_discover
     // All data received
     EXPECT_EQ(client_domain_3.block_for_all(std::chrono::seconds(3)), data_size);
 }
+
+/*!
+ * @test: regression test for redmine issue #23047
+ *
+ * This test checks that type_information is always copied between
+ * proxy data copies/assignments, even if the type information is not assigned.
+ *
+ */
+TEST(DDSDiscovery, proxy_data_assignment_operator_always_include_type_information)
+{
+    using namespace eprosima;
+    using namespace eprosima::fastdds::dds;
+    using namespace eprosima::fastdds::rtps;
+    using namespace eprosima::fastdds::dds::xtypes;
+
+    /**
+     * A dummy type support class with the same type name as HelloWorldPubSubType.
+     * Does not register any TypeIdentifier so related proxies will have no
+     * type_information assigned.
+     */
+    class HelloWorldDummyType : public TopicDataType
+    {
+    public:
+
+        HelloWorldDummyType()
+            : TopicDataType()
+        {
+            set_name("HelloWorld");
+            is_compute_key_provided = false;
+            max_serialized_type_size = 16;
+        }
+
+        bool serialize(
+                const void* const,
+                fastdds::rtps::SerializedPayload_t&,
+                fastdds::dds::DataRepresentationId_t) override
+        {
+            return true;
+        }
+
+        bool deserialize(
+                fastdds::rtps::SerializedPayload_t&,
+                void*) override
+        {
+            return true;
+        }
+
+        uint32_t calculate_serialized_size(
+                const void* const,
+                fastdds::dds::DataRepresentationId_t) override
+        {
+            return 0u;
+        }
+
+        void* create_data() override
+        {
+            return nullptr;
+        }
+
+        void delete_data(
+                void*) override
+        {
+        }
+
+        bool compute_key(
+                fastdds::rtps::SerializedPayload_t&,
+                fastdds::rtps::InstanceHandle_t&,
+                bool) override
+        {
+            return true;
+        }
+
+        bool compute_key(
+                const void* const,
+                fastdds::rtps::InstanceHandle_t&,
+                bool) override
+        {
+            return false;
+        }
+
+    private:
+
+        using TopicDataType::calculate_serialized_size;
+        using TopicDataType::serialize;
+    };
+
+    struct CustomParticipantReaders
+    {
+        class ReadersListener : public eprosima::fastdds::dds::DataReaderListener
+        {
+        public:
+
+            ReadersListener(
+                    std::condition_variable& cv)
+                : cv_(cv)
+            {
+            }
+
+            void on_subscription_matched(
+                    eprosima::fastdds::dds::DataReader* /*datareader*/,
+                    const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override
+            {
+                if (0 < info.current_count_change)
+                {
+                    std::cout << "Subscriber matched publisher " << info.last_publication_handle << std::endl;
+                    n_matches_++;
+                    cv_.notify_one();
+                }
+                else
+                {
+                    std::cout << "Subscriber unmatched publisher " << info.last_publication_handle << std::endl;
+                    n_matches_--;
+                    cv_.notify_one();
+                }
+            }
+
+            std::atomic<uint16_t> n_matches_{0};
+            std::condition_variable& cv_;
+
+        };
+
+        CustomParticipantReaders(
+                const std::vector<std::pair<std::string, TypeSupport>>& topics_and_types,
+                uint32_t ms_delay_between_creations = 10)
+        {
+            readers_listeners_.reserve(topics_and_types.size());
+
+            DomainParticipantQos pqos;
+
+            pqos.transport().use_builtin_transports = false;
+            auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+            pqos.transport().user_transports.push_back(udp_transport);
+
+            participant_ = DomainParticipantFactory::get_instance()->create_participant(
+                (uint32_t)GET_PID() % 230, pqos, nullptr);
+
+            if (participant_ == nullptr)
+            {
+                std::cerr << "Error creating participant" << std::endl;
+            }
+
+            subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+
+            if (subscriber_ == nullptr)
+            {
+                std::cerr << "Error creating subscriber" << std::endl;
+            }
+
+            for (auto& topic_and_type : topics_and_types)
+            {
+                participant_->register_type(topic_and_type.second);
+
+                Topic* topic;
+
+                // Magic to fit with the same one in PubSubWriter/Reader
+                std::ostringstream t;
+                t << topic_and_type.first << "_" << asio::ip::host_name() << "_" << GET_PID();
+
+                topic = participant_->create_topic(t.str(), topic_and_type.second->get_name(), TOPIC_QOS_DEFAULT);
+
+                if (topic == nullptr)
+                {
+                    std::cerr << "Error creating topic" << std::endl;
+                }
+
+                readers_listeners_.emplace_back(std::make_shared<ReadersListener>(cv_));
+
+                DataReader* reader;
+                reader = subscriber_->create_datareader(&(*topic), DATAREADER_QOS_DEFAULT,
+                                readers_listeners_.back().get());
+                if (reader == nullptr)
+                {
+                    std::cerr << "Error creating reader" << std::endl;
+                }
+
+                topics_and_readers_.push_back({topic, reader});
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(ms_delay_between_creations));
+            }
+        }
+
+        bool wait_discovery(
+                const std::vector<unsigned int>& expected_matches,
+                std::chrono::seconds timeout = std::chrono::seconds::zero())
+        {
+            if (expected_matches.size() != readers_listeners_.size())
+            {
+                EPROSIMA_LOG_ERROR(TEST, "Expected matches size does not match readers listeners size");
+                return false;
+            }
+
+            bool ret = false;
+            std::unique_lock<std::mutex> lock(discovery_mutex_);
+
+            if (timeout == std::chrono::seconds::zero())
+            {
+                cv_.wait(lock, [&]()
+                        {
+                            for (size_t i = 0; i < readers_listeners_.size(); ++i)
+                            {
+                                if (readers_listeners_[i]->n_matches_.load() < expected_matches[i])
+                                {
+                                    return false;
+                                }
+                            }
+                            ret = true;
+                            return true;
+                        });
+            }
+            else
+            {
+                cv_.wait_for(lock, timeout, [&]()
+                        {
+                            for (size_t i = 0; i < readers_listeners_.size(); ++i)
+                            {
+                                if (readers_listeners_[i]->n_matches_.load() < expected_matches[i])
+                                {
+                                    return false;
+                                }
+                            }
+                            ret = true;
+                            return true;
+                        });
+            }
+
+            return ret;
+        }
+
+        ~CustomParticipantReaders()
+        {
+            if (participant_)
+            {
+                participant_->delete_contained_entities();
+                DomainParticipantFactory::get_instance()->delete_participant(participant_);
+            }
+        }
+
+        DomainParticipant* participant_;
+        std::vector<std::pair<Topic*, DataReader*>> topics_and_readers_;
+        Subscriber* subscriber_;
+        std::mutex discovery_mutex_;
+        std::condition_variable cv_;
+        std::vector<std::shared_ptr<ReadersListener>> readers_listeners_;
+    };
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    writer.disable_builtin_transport();
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+    writer.add_user_transport_to_pparams(udp_transport);
+
+    std::vector<std::pair<std::string, TypeSupport>> topics_and_types;
+    topics_and_types.reserve(2);
+    topics_and_types.push_back(std::make_pair("OtherTopic", TypeSupport(new Data64kbPubSubType())));
+    topics_and_types.push_back(std::make_pair(TEST_TOPIC_NAME, TypeSupport(new HelloWorldDummyType())));
+
+    writer.init();
+
+    // Create two readers in the same participant on different topics
+    // When the second reader is registered, it will try to match with the writer,
+    // so it lookups and loads its ReaderProxyData into a temporal reader proxy pool
+    // previously filled with the Data64k type (with type_information), which is not cleared before.
+    // If the assignment operation in the ReaderProxyData for the HelloworldDummy type does not
+    // always copy the type_information into the temporal proxydata,
+    // the second reader will not be able to match with the writer, failing at EDP::valid_matching
+    CustomParticipantReaders readers(
+        topics_and_types);
+
+    // Wait for the writer to match the second reader
+    writer.wait_discovery();
+    ASSERT_EQ(writer.get_matched(), 1u);
+
+    // The second reader should match with the writer
+    ASSERT_TRUE(readers.wait_discovery({0u, 1u}, std::chrono::seconds(3)));
+}
