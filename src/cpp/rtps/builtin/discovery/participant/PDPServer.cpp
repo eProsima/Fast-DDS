@@ -1081,6 +1081,9 @@ bool PDPServer::remove_remote_participant(
 bool PDPServer::process_data_queues()
 {
     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "process_data_queues start");
+    // Swap both as a first step in order to avoid the following race condition: reception of data w/r while processing
+    // the PDP queue, not having processed yet the corresponding data P (also received while processing the queue).
+    discovery_db_.swap_data_queues();
     discovery_db_.process_pdp_data_queue();
     return discovery_db_.process_edp_data_queue();
 }
