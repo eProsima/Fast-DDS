@@ -1456,21 +1456,12 @@ bool RTPSParticipantImpl::should_send_optional_qos() const
     bool should_send_opt_qos = false;
     if (m_att.properties.properties().size() > 0)
     {
-        auto serialize_opt_qos_property = std::find_if(
-            m_att.properties.properties().begin(),
-            m_att.properties.properties().end(),
-            [](const fastdds::rtps::Property& property)
-            {
-                return property.name() == fastdds::dds::parameter_serialize_optional_qos;
-            });
+        const Property* const serialize_optional_qos_property =
+                PropertyPolicyHelper::get_property(m_att.properties, fastdds::dds::parameter_serialize_optional_qos);
 
-        if (serialize_opt_qos_property != m_att.properties.properties().end())
+        if (serialize_optional_qos_property != nullptr)
         {
-            if (serialize_opt_qos_property->value() == "true" ||
-                    serialize_opt_qos_property->value() == "1")
-            {
-                should_send_opt_qos = true;
-            }
+            should_send_opt_qos = PropertyParser::as_bool(*serialize_optional_qos_property);
         }
     }
     return should_send_opt_qos;

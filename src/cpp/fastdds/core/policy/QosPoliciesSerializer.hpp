@@ -86,6 +86,7 @@ public:
             const QosPolicy& qos_policy,
             bool is_writer)
     {
+        (void)is_writer;
         return should_be_sent(qos_policy);
     }
 

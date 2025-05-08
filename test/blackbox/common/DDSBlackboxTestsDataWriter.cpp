@@ -1039,7 +1039,7 @@ TEST_P(DDSDataWriter, datawriter_sends_non_default_qos_a)
         eprosima::fastdds::dds::PID_OWNERSHIP,
         eprosima::fastdds::dds::PID_OWNERSHIP_STRENGTH
     };
-    const uint8_t expected_qos_size = expected_qos_pids.size();
+    const uint8_t expected_qos_size = static_cast<uint8_t>(expected_qos_pids.size());
 
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
@@ -1121,7 +1121,7 @@ TEST_P(DDSDataWriter, datawriter_sends_non_default_qos_b)
         eprosima::fastdds::dds::PID_DATA_REPRESENTATION,
         eprosima::fastdds::dds::PID_HISTORY
     };
-    const uint8_t expected_qos_size = expected_qos_pids.size();
+    const uint8_t expected_qos_size = static_cast<uint8_t>(expected_qos_pids.size());
 
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
@@ -1204,7 +1204,7 @@ TEST_P(DDSDataWriter, datawriter_sends_non_default_qos_optional)
         eprosima::fastdds::dds::PID_RTPS_ENDPOINT,
         eprosima::fastdds::dds::PID_WRITER_RESOURCE_LIMITS,
     };
-    const uint8_t expected_qos_size = expected_qos_pids.size();
+    const uint8_t expected_qos_size = static_cast<uint8_t>(expected_qos_pids.size());
 
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);

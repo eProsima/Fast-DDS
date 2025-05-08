@@ -475,11 +475,6 @@ ReturnCode_t DataWriterImpl::enable()
     if (register_writer_code != RETCODE_OK)
     {
         EPROSIMA_LOG_ERROR(DATA_WRITER, "Could not register writer on discovery protocols");
-        writer_->set_listener(nullptr);
-        RTPSDomain::removeRTPSWriter(writer_);
-        writer_ = nullptr;
-        history_.reset();
-        release_payload_pool();
     }
 
     return register_writer_code;
