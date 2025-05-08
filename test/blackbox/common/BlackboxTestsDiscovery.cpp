@@ -2068,3 +2068,630 @@ TEST(Discovery, MulticastInitialPeer)
     writer.wait_discovery();
     reader.wait_discovery();
 }
+<<<<<<< HEAD
+=======
+
+//! Regression test for redmine issue 17162
+TEST(Discovery, MultipleXMLProfileLoad)
+{
+    // These test may fail because one of the participants disappear before the other has found it.
+    // Thus, use condition variable so threads only finish once the discovery has taken place.
+    std::condition_variable cv;
+    std::mutex cv_mtx;
+    std::atomic<int> n_discoveries(0);
+
+    auto participant_creation_reader = [&]()
+            {
+                PubSubReader<HelloWorldPubSubType> participant(TEST_TOPIC_NAME);
+                participant.init();
+                participant.wait_discovery();
+
+                // Notify discovery has happen
+                {
+                    std::unique_lock<std::mutex> lock(cv_mtx);
+                    n_discoveries++;
+                }
+                cv.notify_all();
+
+                std::unique_lock<std::mutex> lock(cv_mtx);
+                cv.wait(
+                    lock,
+                    [&]()
+                    {
+                        return n_discoveries >= 2;
+                    }
+                    );
+            };
+
+    auto participant_creation_writer = [&]()
+            {
+                PubSubWriter<HelloWorldPubSubType> participant(TEST_TOPIC_NAME);
+                participant.init();
+                participant.wait_discovery();
+
+                // Notify discovery has happen
+                {
+                    std::unique_lock<std::mutex> lock(cv_mtx);
+                    n_discoveries++;
+                }
+                cv.notify_all();
+
+                std::unique_lock<std::mutex> lock(cv_mtx);
+                cv.wait(
+                    lock,
+                    [&]()
+                    {
+                        return n_discoveries >= 2;
+                    }
+                    );
+            };
+
+    // Start thread creating second participant
+    std::thread thr_reader(participant_creation_reader);
+    std::thread thr_writer(participant_creation_writer);
+
+    thr_reader.join();
+    thr_writer.join();
+}
+
+//! Regression test for redmine issue 20641
+TEST(Discovery, discovery_cyclone_participant_with_custom_pid)
+{
+    using namespace eprosima::fastdds::dds;
+    using namespace eprosima::fastdds::rtps;
+
+    /* Custom participant listener to count number of discovered participants */
+    class DiscoveryListener : public DomainParticipantListener
+    {
+    public:
+
+        void on_participant_discovery(
+                DomainParticipant*,
+                ParticipantDiscoveryStatus status,
+                const ParticipantBuiltinTopicData& /*info*/,
+                bool& should_be_ignored) override
+        {
+            should_be_ignored = false;
+            if (ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT == status)
+            {
+                discovered_participants_++;
+            }
+            else if (ParticipantDiscoveryStatus::REMOVED_PARTICIPANT == status)
+            {
+                discovered_participants_--;
+            }
+        }
+
+        uint8_t discovered_participants() const
+        {
+            return discovered_participants_;
+        }
+
+    private:
+
+        using DomainParticipantListener::on_participant_discovery;
+
+        std::atomic<uint8_t> discovered_participants_{0};
+    };
+
+    /* Create a datagram injection transport */
+    using eprosima::fastdds::rtps::DatagramInjectionTransportDescriptor;
+    using eprosima::fastdds::rtps::DatagramInjectionTransport;
+    auto low_level_transport = std::make_shared<UDPv4TransportDescriptor>();
+    auto transport = std::make_shared<DatagramInjectionTransportDescriptor>(low_level_transport);
+
+    /* Disable builtin transport and add custom one */
+    DomainParticipantQos participant_qos = PARTICIPANT_QOS_DEFAULT;
+    participant_qos.transport().use_builtin_transports = false;
+    participant_qos.transport().user_transports.clear();
+    participant_qos.transport().user_transports.push_back(transport);
+
+    /* Create participant with custom transport and listener */
+    DiscoveryListener listener;
+    /* We need to match the domain id in the datagram */
+    uint32_t domain_id = 0;
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+    DomainParticipant* participant = factory->create_participant(domain_id, participant_qos, &listener);
+    ASSERT_NE(nullptr, participant);
+
+    /* Inject a Cyclone DDS Data(p) with a custom PID that we also use */
+    auto receivers = transport->get_receivers();
+    ASSERT_FALSE(receivers.empty());
+    DatagramInjectionTransport::deliver_datagram_from_file(receivers, "datagrams/20641.bin");
+
+    /* Assert that the participant is discovered */
+    ASSERT_EQ(listener.discovered_participants(), 1u);
+
+    /* Clean up */
+    factory->delete_participant(participant);
+}
+
+// This test checks that a Discover Server does not send duplicated PDP messages of itself when new clients
+// are discovered
+TEST_P(Discovery, discovery_server_pdp_messages_sent)
+{
+    // Skip test in intraprocess and datasharing mode
+    if (TRANSPORT != GetParam())
+    {
+        GTEST_SKIP() << "Only makes sense on TRANSPORT";
+        return;
+    }
+
+    using namespace eprosima::fastdds::dds;
+
+    // One discovery server will be created, with multiple direct clients connected to it.
+    // Initial announcements will be disabled and lease announcements will be configured to control discovery sequence.
+    // The main participant will use the test transport to count the number of Data(p) sent.
+
+    // Look for the PID_DOMAIN_ID in the message as it is only present in Data(p) messages
+    auto builtin_msg_is_data_p = [](CDRMessage_t& msg, std::atomic<size_t>& num_data_p)
+            {
+                uint32_t qos_size = 0;
+                uint32_t original_pos = msg.pos;
+                bool is_sentinel = false;
+                bool inline_qos_msg = false;
+
+                while (!is_sentinel)
+                {
+                    msg.pos = original_pos + qos_size;
+
+                    uint16_t pid = eprosima::fastdds::helpers::cdr_parse_u16(
+                        (char*)&msg.buffer[msg.pos]);
+                    msg.pos += 2;
+                    uint16_t plength = eprosima::fastdds::helpers::cdr_parse_u16(
+                        (char*)&msg.buffer[msg.pos]);
+                    msg.pos += 2;
+                    bool valid = true;
+
+                    // If inline_qos submessage is found we will have an additional Sentinel
+                    if (pid == eprosima::fastdds::dds::PID_RELATED_SAMPLE_IDENTITY)
+                    {
+                        inline_qos_msg = true;
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_SENTINEL)
+                    {
+                        // PID_SENTINEL is always considered of length 0
+                        plength = 0;
+                        if (!inline_qos_msg)
+                        {
+                            // If the PID is not inline qos, then we need to set the sentinel
+                            // to true, as it is the last PID
+                            is_sentinel = true;
+                        }
+                    }
+
+                    qos_size += (4 + plength);
+
+                    // Align to 4 byte boundary and prepare for next iteration
+                    qos_size = (qos_size + 3) & ~3;
+
+                    if (!valid || ((msg.pos + plength) > msg.length))
+                    {
+                        return false;
+                    }
+                    else if (!is_sentinel)
+                    {
+                        if (pid == eprosima::fastdds::dds::PID_DOMAIN_ID)
+                        {
+                            std::cout << "Data(p) sent by the server" << std::endl;
+                            inline_qos_msg = false;
+                            num_data_p.fetch_add(1u, std::memory_order_seq_cst);
+                            break;
+                        }
+                    }
+                }
+
+                // Do not drop the packet in any case
+                return false;
+            };
+
+    // Declare a test transport that will count the number of Data(p) messages sent
+    std::atomic<size_t> num_data_p_sends{ 0 };
+    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    test_transport->drop_builtin_data_messages_filter_ = [&](CDRMessage_t& msg)
+            {
+                return builtin_msg_is_data_p(msg, num_data_p_sends);
+            };
+
+    // Create the main participant
+    auto server = std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(0, 0, 0, 0);
+
+    Locator_t locator_server;  // UDPv4 locator by default
+    eprosima::fastdds::rtps::IPLocator::setIPv4(locator_server, 127, 0, 0, 1);
+    eprosima::fastdds::rtps::IPLocator::setPhysicalPort(locator_server, global_port);
+
+    WireProtocolConfigQos server_wp_qos;
+    server_wp_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SERVER;
+    server_wp_qos.builtin.metatrafficUnicastLocatorList.push_back(locator_server);
+
+    server_wp_qos.builtin.discovery_config.leaseDuration = c_TimeInfinite;
+    server_wp_qos.builtin.discovery_config.leaseDuration_announcementperiod = c_TimeInfinite;
+    server_wp_qos.builtin.discovery_config.initial_announcements.count = 0;
+
+    // The main participant will use the test transport and a specific announcements configuration
+    server->disable_builtin_transport().add_user_transport_to_pparams(test_transport)
+            .wire_protocol(server_wp_qos);
+
+    // Start the main participant
+    ASSERT_TRUE(server->init_participant());
+
+    // Create a client that connects to the first server
+    PubSubParticipant<HelloWorldPubSubType> client_1(0u, 0u, 0u, 0u);
+    PubSubParticipant<HelloWorldPubSubType> client_2(0u, 0u, 0u, 0u);
+    PubSubParticipant<HelloWorldPubSubType> client_3(0u, 0u, 0u, 0u);
+    // Set participant as client
+    WireProtocolConfigQos client_qos;
+    client_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::CLIENT;
+    client_qos.builtin.discovery_config.m_DiscoveryServers.push_back(locator_server);
+    client_qos.builtin.discovery_config.leaseDuration = c_TimeInfinite;
+    client_qos.builtin.discovery_config.leaseDuration_announcementperiod = c_TimeInfinite;
+    client_qos.builtin.discovery_config.initial_announcements.count = 1;
+    // Init client 1
+    ASSERT_TRUE(client_1.wire_protocol(client_qos)
+                    .setup_transports(eprosima::fastdds::rtps::BuiltinTransports::UDPv4)
+                    .init_participant());
+
+    // Wait for the initial announcements to be sent
+    server->wait_discovery(std::chrono::seconds(5), 1, true);
+    // Let some time for the server to run the internal routine and check if it sent Data(p)
+    std::this_thread::sleep_for(std::chrono::seconds(3));
+    EXPECT_EQ(num_data_p_sends.load(std::memory_order::memory_order_seq_cst), 1u);
+
+    // Init client 2
+    ASSERT_TRUE(client_2.wire_protocol(client_qos)
+                    .setup_transports(eprosima::fastdds::rtps::BuiltinTransports::UDPv4)
+                    .init_participant());
+
+
+    // Wait for the initial announcements to be sent
+    server->wait_discovery(std::chrono::seconds(5), 2, true);
+    // Let some time for the server to run the internal routine and check if it sent Data(p)
+    std::this_thread::sleep_for(std::chrono::seconds(3));
+    EXPECT_EQ(num_data_p_sends.load(std::memory_order::memory_order_seq_cst), 2u);
+
+    // Init client 3
+    ASSERT_TRUE(client_3.wire_protocol(client_qos)
+                    .setup_transports(eprosima::fastdds::rtps::BuiltinTransports::UDPv4)
+                    .init_participant());
+
+
+    // Wait for the initial announcements to be sent
+    server->wait_discovery(std::chrono::seconds(5), 3, true);
+    // Let some time for the server to run the internal routine and check if it sent Data(p)
+    std::this_thread::sleep_for(std::chrono::seconds(3));
+    EXPECT_EQ(num_data_p_sends.load(std::memory_order::memory_order_seq_cst), 3u);
+}
+
+// This test checks that a Discover Server does not send duplicated EDP messages when its routine
+// is triggered by EDP Listeners while it waits for ACKs
+TEST_P(Discovery, discovery_server_edp_messages_sent)
+{
+    // Skip test in intraprocess and datasharing mode
+    if (TRANSPORT != GetParam())
+    {
+        GTEST_SKIP() << "Only makes sense on TRANSPORT";
+        return;
+    }
+
+    using namespace eprosima::fastdds::dds;
+
+    // Two discovery servers will be created, each with a direct client connected to them.
+    // Initial announcements will be disabled and lease announcements will be configured to control discovery sequence.
+    // The main participant will use the test transport to count the number of Data(r/w) sent.
+
+    // Look for the PID_ENDPOINT_GUID in the message as it is only present in Data(r/w) messages
+    auto builtin_msg_is_data_r_w = [](CDRMessage_t& msg, std::atomic<size_t>& num_data_r_w)
+            {
+                uint32_t qos_size = 0;
+                uint32_t original_pos = msg.pos;
+                bool is_sentinel = false;
+                bool inline_qos_msg = false;
+
+                while (!is_sentinel)
+                {
+                    msg.pos = original_pos + qos_size;
+
+                    uint16_t pid = eprosima::fastdds::helpers::cdr_parse_u16(
+                        (char*)&msg.buffer[msg.pos]);
+                    msg.pos += 2;
+                    uint16_t plength = eprosima::fastdds::helpers::cdr_parse_u16(
+                        (char*)&msg.buffer[msg.pos]);
+                    msg.pos += 2;
+                    bool valid = true;
+
+                    if (pid == eprosima::fastdds::dds::PID_RELATED_SAMPLE_IDENTITY)
+                    {
+                        inline_qos_msg = true;
+                    }
+                    else if (pid == eprosima::fastdds::dds::PID_SENTINEL)
+                    {
+                        // PID_SENTINEL is always considered of length 0
+                        plength = 0;
+                        if (!inline_qos_msg)
+                        {
+                            // If the PID is not inline qos, then we need to set the sentinel
+                            // to true, as it is the last PID
+                            is_sentinel = true;
+                        }
+                    }
+
+                    qos_size += (4 + plength);
+
+                    // Align to 4 byte boundary and prepare for next iteration
+                    qos_size = (qos_size + 3) & ~3;
+
+                    if (!valid || ((msg.pos + plength) > msg.length))
+                    {
+                        return false;
+                    }
+                    else if (!is_sentinel)
+                    {
+                        if (pid == eprosima::fastdds::dds::PID_ENDPOINT_GUID)
+                        {
+                            std::cout << "Data (r/w) sent by the server" << std::endl;
+                            num_data_r_w.fetch_add(1u, std::memory_order_seq_cst);
+                            break;
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_VENDORID)
+                        {
+                            // Vendor ID is present in both Data(p) and Data(r/w) messages
+                            inline_qos_msg = false;
+                        }
+                    }
+                }
+
+                // Do not drop the packet in any case
+                return false;
+            };
+
+    // Declare a test transport that will count the number of Data(r/w) messages sent
+    std::atomic<size_t> num_data_r_w_sends_s1{ 0 };
+    std::atomic<size_t> num_data_r_w_sends_s2{ 0 };
+    auto test_transport_s1 = std::make_shared<test_UDPv4TransportDescriptor>();
+    test_transport_s1->drop_builtin_data_messages_filter_ = [&](CDRMessage_t& msg)
+            {
+                return builtin_msg_is_data_r_w(msg, num_data_r_w_sends_s1);
+            };
+
+    auto test_transport_s2 = std::make_shared<test_UDPv4TransportDescriptor>();
+    test_transport_s2->drop_builtin_data_messages_filter_ = [&](CDRMessage_t& msg)
+            {
+                return builtin_msg_is_data_r_w(msg, num_data_r_w_sends_s2);
+            };
+
+    // Create server 1
+    auto server_1 = std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(0, 0, 0, 0);
+
+    Locator_t locator_server_1;  // UDPv4 locator by default
+    eprosima::fastdds::rtps::IPLocator::setIPv4(locator_server_1, 127, 0, 0, 1);
+    eprosima::fastdds::rtps::IPLocator::setPhysicalPort(locator_server_1, global_port);
+
+    WireProtocolConfigQos server_wp_qos_1;
+    server_wp_qos_1.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SERVER;
+    server_wp_qos_1.builtin.metatrafficUnicastLocatorList.push_back(locator_server_1);
+
+    server_wp_qos_1.builtin.discovery_config.leaseDuration = c_TimeInfinite;
+    server_wp_qos_1.builtin.discovery_config.leaseDuration_announcementperiod = c_TimeInfinite;
+    server_wp_qos_1.builtin.discovery_config.initial_announcements.count = 0;
+
+    // The main participant will use the test transport and a specific announcements configuration
+    server_1->disable_builtin_transport().add_user_transport_to_pparams(test_transport_s1)
+            .wire_protocol(server_wp_qos_1);
+
+    // Start the main participant
+    ASSERT_TRUE(server_1->init_participant());
+
+    // Create server 2
+    auto server_2 = std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(0, 0, 0, 0);
+
+    Locator_t locator_server_2 = locator_server_1;  // UDPv4 locator by default
+    eprosima::fastdds::rtps::IPLocator::setPhysicalPort(locator_server_2, global_port + 1);
+
+    WireProtocolConfigQos server_wp_qos_2 = server_wp_qos_1;
+    server_wp_qos_2.builtin.metatrafficUnicastLocatorList.clear();
+    server_wp_qos_2.builtin.metatrafficUnicastLocatorList.push_back(locator_server_2);
+    // Configure 1 initial announcement as this Server will connect to the first one
+    server_wp_qos_2.builtin.discovery_config.initial_announcements.count = 1;
+    server_wp_qos_2.builtin.discovery_config.m_DiscoveryServers.push_back(locator_server_1);
+
+    // The main participant will use the test transport and a specific announcements configuration
+    server_2->disable_builtin_transport().add_user_transport_to_pparams(test_transport_s2)
+            .wire_protocol(server_wp_qos_2);
+
+    // Start the main participant
+    ASSERT_TRUE(server_2->init_participant());
+
+    // Both servers match
+    server_1->wait_discovery(std::chrono::seconds(5), 1, true);
+    server_2->wait_discovery(std::chrono::seconds(5), 1, true);
+    // Let some time for the server to run the internal routine and match virtual endpoints
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+
+    // Create a client that connects to their corresponding server
+    PubSubWriter<HelloWorldPubSubType> client_1(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> client_2(TEST_TOPIC_NAME);
+    // Set participant as client
+    WireProtocolConfigQos client_qos;
+    client_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::CLIENT;
+    client_qos.builtin.discovery_config.m_DiscoveryServers.push_back(locator_server_1);
+    client_qos.builtin.discovery_config.leaseDuration = c_TimeInfinite;
+    client_qos.builtin.discovery_config.leaseDuration_announcementperiod = { 15, 0 };
+    client_qos.builtin.discovery_config.initial_announcements.count = 0;
+
+    // Init client 1
+    client_1.set_wire_protocol_qos(client_qos)
+            .setup_transports(eprosima::fastdds::rtps::BuiltinTransports::UDPv4)
+            .init();
+
+    // Init client 2
+    client_qos.builtin.discovery_config.m_DiscoveryServers.clear();
+    client_qos.builtin.discovery_config.m_DiscoveryServers.push_back(locator_server_2);
+    client_2.set_wire_protocol_qos(client_qos)
+            .setup_transports(eprosima::fastdds::rtps::BuiltinTransports::UDPv4)
+            .init();
+
+    ASSERT_TRUE(client_1.isInitialized());
+    ASSERT_TRUE(client_2.isInitialized());
+
+    // Wait the lease announcement period to discover endpoints
+    server_1->wait_discovery(std::chrono::seconds(5), 2, true);
+    server_2->wait_discovery(std::chrono::seconds(5), 2, true);
+
+    // Ensure that no additional Data(r/w) messages are sent by DS routine
+    std::this_thread::sleep_for(std::chrono::seconds(15));
+
+    EXPECT_EQ(num_data_r_w_sends_s1.load(std::memory_order::memory_order_seq_cst), 2u);
+    EXPECT_EQ(num_data_r_w_sends_s2.load(std::memory_order::memory_order_seq_cst), 2u);
+}
+
+// This is a regression test for Redmine #23088, which corrects the following data race in the discovery server:
+// a) When a participant is being removed (either because it is being deleted or because its lease duration has expired),
+//    it is not deleted from participants_ map until the server has received all ACKs from clients of the Data(Up).
+// b) If the same participant is re-discovered (Data(p) received) while the server is waiting for the Data(Up) ACKs,
+//    it will not be updated in the participants_ map as ALIVE.
+// c) If the Data(Up) ACKs and the Data(r/w) of the rediscovered participant are received at the same time,
+//    the server will delete the participant and try to process the Data(r/w) messages in the same routine.
+//    The server will try to register a reader/writer from a deleted participant, which will result in the error:
+//    "Matching unexisting participant from reader/writer".
+// This test checks that this does not happen after fixing point b) and updating the participant to ALIVE.
+TEST_P(Discovery, discovery_server_rediscover_participant_being_removed)
+{
+    // Skip test in intraprocess and datasharing mode
+    if (TRANSPORT != GetParam())
+    {
+        GTEST_SKIP() << "Only makes sense on TRANSPORT";
+        return;
+    }
+
+    using namespace eprosima::fastdds::dds;
+
+    // One discovery server will be created, with two direct clients connected to it.
+    // Client 1 will be removed and then relaunched, while the Client 2 will be kept alive.
+    // Client 2 ACKs will be blocked to simulate a slow discovery process.
+
+    std::atomic<bool> filter_activated { false };
+    auto block_data_up_acks = [&filter_activated](CDRMessage_t& msg)
+            {
+                // Filter Data(Up) ACKs messages
+                if (filter_activated.load(std::memory_order::memory_order_seq_cst))
+                {
+                    // Go back to submsgkind
+                    auto submsgkind_pos = msg.pos - 4;
+                    auto acknack_submsg = eprosima::fastdds::helpers::cdr_parse_acknack_submsg(
+                        (char*)&msg.buffer[submsgkind_pos],
+                        msg.length - submsgkind_pos);
+
+                    assert(acknack_submsg.submsgHeader().submessageId() == ACKNACK);
+
+                    if (eprosima::fastdds::rtps::c_EntityId_SPDPWriter ==
+                            *reinterpret_cast<EntityId_t*>(&acknack_submsg.writerId()) ||
+                            eprosima::fastdds::rtps::c_EntityId_SEDPPubWriter ==
+                            *reinterpret_cast<EntityId_t*>(&acknack_submsg.writerId()))
+                    {
+                        std::cout << "Blocking Data(Up) ACKs" << std::endl;
+                        return true;
+                    }
+                }
+                return false;
+            };
+
+    // Declare a test transport that will count the number of Data(p) messages sent
+    auto default_udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    test_transport->drop_ack_nack_messages_filter_ = [&](CDRMessage_t& msg)
+            {
+                return block_data_up_acks(msg);
+            };
+
+    // Create the main participant
+    auto server = std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(0, 0, 0, 0);
+
+    Locator_t locator_server;  // UDPv4 locator by default
+    eprosima::fastdds::rtps::IPLocator::setIPv4(locator_server, 127, 0, 0, 1);
+    eprosima::fastdds::rtps::IPLocator::setPhysicalPort(locator_server, global_port);
+
+    WireProtocolConfigQos server_wp_qos;
+    server_wp_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SERVER;
+    server_wp_qos.builtin.metatrafficUnicastLocatorList.push_back(locator_server);
+    // Raise the routine period to control the discovery process
+    server_wp_qos.builtin.discovery_config.discoveryServer_client_syncperiod = { 5, 0 };
+    server_wp_qos.builtin.discovery_config.leaseDuration = { 60, 0 };
+    server_wp_qos.builtin.discovery_config.leaseDuration_announcementperiod = { 59, 0 };
+    server_wp_qos.builtin.discovery_config.initial_announcements.count = 1;
+
+    // The main participant will use the test transport and a specific announcements configuration
+    server->disable_builtin_transport()
+            .add_user_transport_to_pparams(default_udp_transport)
+            .wire_protocol(server_wp_qos);
+
+    // Start the main participant
+    ASSERT_TRUE(server->init_participant());
+
+    // Create clients
+    std::shared_ptr<PubSubParticipant<HelloWorldPubSubType>> client_1 =
+            std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(1u, 0u, 0u, 1u);
+    std::shared_ptr<PubSubParticipant<HelloWorldPubSubType>> client_2 =
+            std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(0u, 1u, 1u, 0u);
+    // Set participant as client
+    WireProtocolConfigQos client_qos;
+    client_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::CLIENT;
+    client_qos.builtin.discovery_config.m_DiscoveryServers.push_back(locator_server);
+    client_qos.builtin.discovery_config.leaseDuration = { 60, 0 };
+    client_qos.builtin.discovery_config.leaseDuration_announcementperiod = { 59, 0 };
+    client_qos.builtin.discovery_config.initial_announcements.count = 1;
+    std::istringstream("64.61.74.61.5f.72.61.63.65.5f.64.73") >> client_qos.prefix;
+
+    // Init client 1
+    client_1->wire_protocol(client_qos)
+            .setup_transports(eprosima::fastdds::rtps::BuiltinTransports::UDPv4)
+            .pub_topic_name(TEST_TOPIC_NAME);
+    ASSERT_TRUE(client_1->init_participant());
+    ASSERT_TRUE(client_1->init_publisher(0u));
+
+    // Init client 2
+    WireProtocolConfigQos client2_qos = client_qos;
+    std::istringstream("73.61.74.61.5f.72.61.63.65.5f.64.73") >> client2_qos.prefix;
+    client_2->wire_protocol(client2_qos)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(test_transport)
+            .sub_topic_name(TEST_TOPIC_NAME);
+    ASSERT_TRUE(client_2->init_participant());
+    ASSERT_TRUE(client_2->init_subscriber(0u));
+
+    // Wait at least the servers routine period to discover endpoints
+    ASSERT_TRUE(server->wait_discovery(std::chrono::seconds(6), 2, true));
+    client_2->sub_wait_discovery(1);
+    client_1->pub_wait_discovery(1);
+
+    // Server discovered both clients, activate filter to block Data(Up) ACKs
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::cout << "Blocking Data(Up) ACKs activated" << std::endl;
+    filter_activated.store(true, std::memory_order::memory_order_seq_cst);
+
+    // Remove client 1
+    client_1.reset();
+    ASSERT_TRUE(client_1 == nullptr);
+    // Ensure client 2 has unmatched the client 1
+    client_2->sub_wait_discovery(0);
+    std::this_thread::sleep_for(std::chrono::seconds(3));
+
+    // Relaunch client 1 and deactivate the filter
+    client_1 = std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(1u, 0u, 0u, 1u);
+    client_1->wire_protocol(client_qos)
+            .setup_transports(eprosima::fastdds::rtps::BuiltinTransports::UDPv4)
+            .pub_topic_name(TEST_TOPIC_NAME);
+    // Init only the participant, publisher will be initialized later
+    ASSERT_TRUE(client_1->init_participant());
+    std::cout << "Blocking Data(Up) ACKs deactivated" << std::endl;
+    filter_activated.store(false, std::memory_order::memory_order_seq_cst);
+
+    // Give time to receive Data(Up) ACK, process the Data(p) and update the participant,
+    // but do it before a whole period of the server's routine.
+    // In this way new Data(w) and Data(Up) ACK are processed in the same routine
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    ASSERT_TRUE(client_1->init_publisher(0u));
+
+    // Client 2 should discover client 1 again and log error "Writer has no associated participant." should not appear
+    client_2->sub_wait_discovery(1);
+}
+>>>>>>> ec666f72 (Solve Discovery Server race conditions (#5780))

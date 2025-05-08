@@ -300,6 +300,9 @@ public:
     // Check if the data queue is empty
     bool data_queue_empty();
 
+    // Swap both EDP and PDP data queues
+    void swap_data_queues();
+
     void to_json(
             nlohmann::json& j) const;
 
