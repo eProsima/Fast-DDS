@@ -470,8 +470,8 @@ ReturnCode_t DataWriterImpl::enable()
         EPROSIMA_LOG_ERROR(DATA_WRITER, "Error getting publication data. RTPS Writer not enabled.");
         return RETCODE_ERROR;
     }
-    RTPSParticipantImpl* rtps = RTPSDomainImpl::find_local_participant(publisher_->rtps_participant()->getGuid());
-    ReturnCode_t register_writer_code = rtps->register_writer(writer_, topic_desc, publication_data);
+    ReturnCode_t register_writer_code = publisher_->rtps_participant()->register_writer(writer_, topic_desc,
+                    publication_data);
     if (register_writer_code != RETCODE_OK)
     {
         EPROSIMA_LOG_ERROR(DATA_WRITER, "Could not register writer on discovery protocols");

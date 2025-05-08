@@ -23,6 +23,7 @@
 #include <cstdlib>
 #include <memory>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
@@ -151,6 +152,20 @@ public:
             const fastdds::dds::WriterQos& qos);
 
     /**
+     * Register a Writer in the BuiltinProtocols.
+     *
+     * @param rtps_writer             Pointer to the RTPSWriter.
+     * @param topic                   Information regarding the topic where the writer is registering.
+     * @param pub_builtin_topic_data  Information on the publication endpoint.
+     *
+     * @return True if correctly registered.
+     */
+    dds::ReturnCode_t register_writer(
+            RTPSWriter* rtps_writer,
+            const TopicDescription& topic,
+            const PublicationBuiltinTopicData& pub_builtin_topic_data);
+
+    /**
      * Register a Reader in the BuiltinProtocols.
      *
      * @param rtps_reader     Pointer to the RTPSReader.
@@ -164,6 +179,22 @@ public:
             RTPSReader* rtps_reader,
             const TopicDescription& topic,
             const fastdds::dds::ReaderQos& qos,
+            const ContentFilterProperty* content_filter = nullptr);
+
+    /**
+     * Register a Reader in the BuiltinProtocols.
+     *
+     * @param rtps_reader             Pointer to the RTPSReader.
+     * @param topic                   Information regarding the topic where the reader is registering.
+     * @param sub_builtin_topic_data  Information on the subscription endpoint.
+     * @param content_filter          Optional content filtering information.
+     *
+     * @return True if correctly registered.
+     */
+    dds::ReturnCode_t register_reader(
+            RTPSReader* rtps_reader,
+            const TopicDescription& topic,
+            const SubscriptionBuiltinTopicData& sub_builtin_topic_data,
             const ContentFilterProperty* content_filter = nullptr);
 
     /**

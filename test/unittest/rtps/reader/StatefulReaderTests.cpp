@@ -94,8 +94,8 @@ TEST(StatefulReaderTests, RTPSCorrectGAPProcessing)
     TopicDescription topic_desc;
     topic_desc.type_name = "string";
     topic_desc.topic_name = "topic";
-    part->register_reader(reader, topic_desc, {});
-    part->register_writer(writer, topic_desc, {});
+    part->register_reader(reader, topic_desc, fastdds::dds::ReaderQos());
+    part->register_writer(writer, topic_desc, fastdds::dds::WriterQos());
 
     // After registration, the writer should be matched
     auto writer_guid = writer->getGuid();
