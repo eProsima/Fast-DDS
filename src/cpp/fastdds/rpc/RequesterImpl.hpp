@@ -156,6 +156,13 @@ private:
      */
     ReturnCode_t delete_contained_entities();
 
+    /**
+     * @brief Check if the requester is fully matched with a replier
+     *
+     * @return true if the requester is fully matched, false otherwise
+     */
+    bool is_fully_matched() const;
+
     DataReader* requester_reader_;
     DataWriter* requester_writer_;
     RequesterQos qos_;
