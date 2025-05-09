@@ -21,6 +21,7 @@
 
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
+#include <cstdint>
 #include <memory>
 #include <regex>
 
