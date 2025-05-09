@@ -870,5 +870,5 @@ jobs:
       - name: GCC latest colcon build
         run: |
           cd ${{ github.workspace }}/src/fastdds/.github/workflows/docker/ubuntu/alternative_builds
-          docker build -t fastdds_gcc_latest .
+          docker build -t fastdds_gcc_latest -f fastdds_gcc_latest.Dockerfile .
           docker run --rm -v ${{ github.workspace }}:/root fastdds_gcc_latest
