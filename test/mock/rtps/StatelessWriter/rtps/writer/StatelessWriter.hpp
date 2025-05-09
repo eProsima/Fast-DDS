@@ -35,7 +35,8 @@ public:
 
     StatelessWriter(
             RTPSParticipantImpl* participant)
-        : participant_(participant)
+        : BaseWriter(participant)
+        , participant_(participant)
     {
     }
 

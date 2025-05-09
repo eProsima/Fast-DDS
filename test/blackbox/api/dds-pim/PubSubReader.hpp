@@ -200,7 +200,8 @@ protected:
                 do
                 {
                     reader_.receive(datareader, ret);
-                } while (ret);
+                }
+                while (ret);
             }
         }
 
@@ -1715,6 +1716,20 @@ public:
         return *this;
     }
 
+    PubSubReader& data_reader_qos(
+            const eprosima::fastdds::dds::DataReaderQos& dr_qos)
+    {
+        datareader_qos_ = dr_qos;
+        return *this;
+    }
+
+    PubSubReader& subscriber_qos(
+            const eprosima::fastdds::dds::SubscriberQos& sub_qos)
+    {
+        subscriber_qos_ = sub_qos;
+        return *this;
+    }
+
     bool update_partition(
             const std::string& partition)
     {
@@ -2363,6 +2378,7 @@ protected:
 
             if (triggered_statuses.is_active(eprosima::fastdds::dds::StatusMask::requested_deadline_missed()))
             {
+                std::cout << "Incompatible qos in reader" << std::endl;
                 eprosima::fastdds::dds::RequestedDeadlineMissedStatus status;
                 reader_.datareader_->get_requested_deadline_missed_status(status);
                 times_deadline_missed_ = status.total_count;
@@ -2405,7 +2421,8 @@ protected:
                     do
                     {
                         reader_.receive(reader_.datareader_, ret);
-                    } while (ret);
+                    }
+                    while (ret);
                 }
             }
 
@@ -2441,7 +2458,8 @@ protected:
                     do
                     {
                         reader_.receive(reader_.datareader_, ret);
-                    } while (ret);
+                    }
+                    while (ret);
                 }
             }
         }

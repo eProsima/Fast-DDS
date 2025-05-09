@@ -20,6 +20,7 @@
 #ifndef FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT__EDP_H
 #define FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT__EDP_H
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
@@ -178,6 +179,25 @@ public:
             const TopicDescription& topic,
             const fastdds::dds::ReaderQos& qos,
             const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
+
+    /**
+     * Create a new ReaderPD for a local Reader.
+     *
+     * @param rtps_reader             Pointer to the RTPSReader.
+     * @param topic                   Information regarding the topic where the writer is registering.
+     * @param sub_builtin_topic_data  QoS policies dictated by the subscriber.
+     * @param content_filter          Optional content filtering information.
+     * @param should_send_opt_qos     True if optional QoS policies should be sent.
+     *
+     * @return OK if correct, ERROR otherwise.
+     */
+    dds::ReturnCode_t new_reader_proxy_data(
+            RTPSReader* rtps_reader,
+            const TopicDescription& topic,
+            const SubscriptionBuiltinTopicData& sub_builtin_topic_data,
+            bool should_send_opt_qos,
+            const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
+
     /**
      * Create a new WriterPD for a local Writer.
      *
@@ -191,6 +211,23 @@ public:
             RTPSWriter* rtps_writer,
             const TopicDescription& topic,
             const fastdds::dds::WriterQos& qos);
+
+    /**
+     * Create a new WriterPD for a local Writer.
+     *
+     * @param rtps_writer             Pointer to the RTPSWriter.
+     * @param topic                   Information regarding the topic where the writer is registering.
+     * @param pub_builtin_topic_data  Information on the publication endpoint.
+     * @param should_send_opt_qos     True if optional QoS policies should be sent.
+     *
+     * @return OK if correct, ERROR otherwise.
+     */
+    dds::ReturnCode_t new_writer_proxy_data(
+            RTPSWriter* rtps_writer,
+            const TopicDescription& topic,
+            const PublicationBuiltinTopicData& pub_builtin_topic_data,
+            bool should_send_opt_qos);
+
     /**
      * A previously created Reader has been updated
      * @param rtps_reader      Pointer to the RTPSReader.

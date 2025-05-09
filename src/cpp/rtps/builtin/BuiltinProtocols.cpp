@@ -229,6 +229,45 @@ bool BuiltinProtocols::add_writer(
     return ok;
 }
 
+dds::ReturnCode_t BuiltinProtocols::add_writer(
+        RTPSWriter* rtps_writer,
+        const TopicDescription& topic,
+        const PublicationBuiltinTopicData& pub_builtin_topic_data,
+        bool should_send_opt_qos)
+{
+    dds::ReturnCode_t ret_code = dds::RETCODE_OK;
+
+    if (nullptr != mp_PDP)
+    {
+        ret_code = mp_PDP->get_edp()->new_writer_proxy_data(rtps_writer, topic, pub_builtin_topic_data,
+                        should_send_opt_qos);
+
+        if (ret_code != dds::RETCODE_OK)
+        {
+            EPROSIMA_LOG_WARNING(RTPS_EDP, "Failed register WriterProxyData in EDP");
+            return ret_code;
+        }
+    }
+    else
+    {
+        EPROSIMA_LOG_WARNING(RTPS_EDP, "EDP is not used in this Participant, register a Writer is impossible");
+    }
+
+    if (nullptr != mp_WLP)
+    {
+        if (!mp_WLP->add_local_writer(rtps_writer, pub_builtin_topic_data.liveliness))
+        {
+            ret_code = dds::RETCODE_ERROR;
+        }
+    }
+    else
+    {
+        EPROSIMA_LOG_WARNING(RTPS_LIVELINESS,
+                "LIVELINESS is not used in this Participant, register a Writer is impossible");
+    }
+    return ret_code;
+}
+
 bool BuiltinProtocols::add_reader(
         RTPSReader* rtps_reader,
         const TopicDescription& topic,
@@ -258,6 +297,43 @@ bool BuiltinProtocols::add_reader(
     }
 
     return ok;
+}
+
+dds::ReturnCode_t BuiltinProtocols::add_reader(
+        RTPSReader* rtps_reader,
+        const TopicDescription& topic,
+        const SubscriptionBuiltinTopicData& sub_builtin_topic_data,
+        bool should_send_opt_qos,
+        const fastdds::rtps::ContentFilterProperty* content_filter)
+{
+    dds::ReturnCode_t ret_code = dds::RETCODE_OK;
+
+    if (nullptr != mp_PDP)
+    {
+        ret_code = mp_PDP->get_edp()->new_reader_proxy_data(rtps_reader, topic, sub_builtin_topic_data,
+                        should_send_opt_qos,
+                        content_filter);
+
+        if (ret_code != dds::RETCODE_OK)
+        {
+            EPROSIMA_LOG_WARNING(RTPS_EDP, "Failed register ReaderProxyData in EDP");
+            return ret_code;
+        }
+    }
+    else
+    {
+        EPROSIMA_LOG_WARNING(RTPS_EDP, "EDP is not used in this Participant, register a Reader is impossible");
+    }
+
+    if (nullptr != mp_WLP)
+    {
+        if (!mp_WLP->add_local_reader(rtps_reader, sub_builtin_topic_data.liveliness))
+        {
+            ret_code = dds::RETCODE_ERROR;
+        }
+    }
+
+    return ret_code;
 }
 
 bool BuiltinProtocols::update_writer(

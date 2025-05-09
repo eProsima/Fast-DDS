@@ -38,7 +38,8 @@ public:
 
     StatefulWriter(
             RTPSParticipantImpl* participant)
-        : participant_(participant)
+        : BaseWriter(participant)
+        , participant_(participant)
         , mp_history(new WriterHistory())
     {
         mp_history->m_att.initialReservedCaches = 0;

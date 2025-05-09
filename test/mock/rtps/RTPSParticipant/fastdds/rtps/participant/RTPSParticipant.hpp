@@ -193,6 +193,11 @@ public:
                 const fastdds::rtps::TopicDescription& topic,
                 const fastdds::dds::WriterQos& qos));
 
+    MOCK_METHOD3(register_writer, dds::ReturnCode_t(
+                RTPSWriter * Writer,
+                const fastdds::rtps::TopicDescription& topic,
+                const fastdds::rtps::PublicationBuiltinTopicData& pub_builtin_topic_data));
+
     MOCK_METHOD2(update_writer, bool(
                 RTPSWriter * Writer,
                 const fastdds::dds::WriterQos& wqos));
@@ -201,6 +206,12 @@ public:
                 RTPSReader * Reader,
                 const fastdds::rtps::TopicDescription& topic,
                 const fastdds::dds::ReaderQos& qos,
+                const fastdds::rtps::ContentFilterProperty* content_filter));
+
+    MOCK_METHOD4(register_reader, dds::ReturnCode_t(
+                RTPSReader * Reader,
+                const fastdds::rtps::TopicDescription& topic,
+                const fastdds::rtps::SubscriptionBuiltinTopicData& sub_builtin_topic_data,
                 const fastdds::rtps::ContentFilterProperty* content_filter));
 
     MOCK_METHOD3(update_reader, bool(

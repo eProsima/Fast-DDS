@@ -235,6 +235,17 @@ public:
     {
     }
 
+    bool should_send_optional_qos() const
+    {
+        return m_should_send_optional_qos;
+    }
+
+    void should_send_optional_qos(
+            bool should_send_optional_qos)
+    {
+        m_should_send_optional_qos = should_send_optional_qos;
+    }
+
 private:
 
     void init(
@@ -252,6 +263,7 @@ private:
     InstanceHandle_t m_key;
     InstanceHandle_t m_rtps_participant_key;
     uint16_t m_user_defined_id;
+    bool m_should_send_optional_qos = false;
 
 };
 

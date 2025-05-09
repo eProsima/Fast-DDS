@@ -59,6 +59,12 @@ public:
         return false;
     }
 
+    static RTPSParticipantImpl* find_local_participant(
+            const GUID_t& /* guid */)
+    {
+        return nullptr;
+    }
+
     static BaseWriter* find_local_writer(
             const GUID_t& /* writer_guid */ )
     {

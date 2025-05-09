@@ -106,6 +106,7 @@ using PolicyMask = std::bitset<NEXT_QOS_POLICY_ID>;
 /**
  * Class QosPolicy, base for all QoS policies defined for Writers and Readers.
  */
+FASTDDS_TODO_BEFORE(4, 0, "Remove 'hasChanged' and 'send_always_' as they were replaced by 'should_be_sent'.");
 class QosPolicy
 {
 public:
@@ -1762,7 +1763,7 @@ public:
      * @brief Constructor
      */
     FASTDDS_EXPORTED_API ResourceLimitsQosPolicy()
-        : Parameter_t(PID_RESOURCE_LIMITS, 4 + 4 + 4)
+        : Parameter_t(PID_RESOURCE_LIMITS, 4 * 5)
         , QosPolicy(false)
         , max_samples(5000)
         , max_instances(10)
@@ -2850,6 +2851,7 @@ public:
 };
 
 //! Qos Policy to configure the endpoint
+FASTDDS_TODO_BEFORE(4, 0, "Make all eProsima extended QoS inherit from Parameter_t and QosPolicy if possible.");
 class RTPSEndpointQos
 {
 public:

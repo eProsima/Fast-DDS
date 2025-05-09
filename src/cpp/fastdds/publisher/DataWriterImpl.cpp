@@ -464,25 +464,20 @@ ReturnCode_t DataWriterImpl::enable()
     topic_desc.type_name = topic_->get_type_name();
     publisher_->get_participant_impl()->fill_type_information(type_, topic_desc.type_information);
 
-    WriterQos wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
-    if (!is_data_sharing_compatible_)
+    PublicationBuiltinTopicData publication_data;
+    if (get_publication_builtin_topic_data(publication_data) != RETCODE_OK)
     {
-        wqos.data_sharing.off();
+        EPROSIMA_LOG_ERROR(DATA_WRITER, "Error getting publication data. RTPS Writer not enabled.");
+        return RETCODE_ERROR;
     }
-    if (endpoint_partitions)
+    ReturnCode_t register_writer_code = publisher_->rtps_participant()->register_writer(writer_, topic_desc,
+                    publication_data);
+    if (register_writer_code != RETCODE_OK)
     {
-        std::istringstream partition_string(*endpoint_partitions);
-        std::string partition_name;
-        wqos.m_partition.clear();
-
-        while (std::getline(partition_string, partition_name, ';'))
-        {
-            wqos.m_partition.push_back(partition_name.c_str());
-        }
+        EPROSIMA_LOG_ERROR(DATA_WRITER, "Could not register writer on discovery protocols");
     }
-    publisher_->rtps_participant()->register_writer(writer_, topic_desc, wqos);
 
-    return RETCODE_OK;
+    return register_writer_code;
 }
 
 void DataWriterImpl::disable()
@@ -1763,6 +1758,17 @@ ReturnCode_t DataWriterImpl::get_publication_builtin_topic_data(
         }
     }
 
+    publication_data.history = qos_.history();
+
+    // Optional QoS
+    publication_data.resource_limits = qos_.resource_limits();
+    publication_data.transport_priority = qos_.transport_priority();
+    publication_data.writer_data_lifecycle = qos_.writer_data_lifecycle();
+    publication_data.publish_mode = qos_.publish_mode();
+    publication_data.rtps_reliable_writer = qos_.reliable_writer_qos();
+    publication_data.endpoint = qos_.endpoint();
+    publication_data.writer_resource_limits = qos_.writer_resource_limits();
+
     return RETCODE_OK;
 }
 
@@ -1801,49 +1807,41 @@ void DataWriterImpl::set_qos(
         if (!(to.durability() == from.durability()))
         {
             to.durability() = from.durability();
-            to.durability().hasChanged = true;
         }
 
         if (!(to.durability_service() == from.durability_service()))
         {
             to.durability_service() = from.durability_service();
-            to.durability_service().hasChanged = true;
         }
 
         if (!(to.liveliness() == from.liveliness()))
         {
             to.liveliness() = from.liveliness();
-            to.liveliness().hasChanged = true;
         }
 
         if (!(to.reliability().kind == from.reliability().kind))
         {
             to.reliability().kind = from.reliability().kind;
-            to.reliability().hasChanged = true;
         }
 
         if (!(to.destination_order() == from.destination_order()))
         {
             to.destination_order() = from.destination_order();
-            to.destination_order().hasChanged = true;
         }
 
         if (!(to.history() == from.history()))
         {
             to.history() = from.history();
-            to.history().hasChanged = true;
         }
 
         if (!(to.resource_limits() == from.resource_limits()))
         {
             to.resource_limits() = from.resource_limits();
-            to.resource_limits().hasChanged = true;
         }
 
         if (!(to.ownership() == from.ownership()))
         {
             to.ownership() = from.ownership();
-            to.ownership().hasChanged = true;
         }
 
         to.publish_mode() = from.publish_mode();
@@ -1851,7 +1849,6 @@ void DataWriterImpl::set_qos(
         if (!(to.representation() == from.representation()))
         {
             to.representation() = from.representation();
-            to.representation().hasChanged = true;
         }
 
         to.properties() = from.properties();
@@ -1873,43 +1870,36 @@ void DataWriterImpl::set_qos(
     if (!(to.deadline() == from.deadline()))
     {
         to.deadline() = from.deadline();
-        to.deadline().hasChanged = true;
     }
 
     if (!(to.latency_budget() == from.latency_budget()))
     {
         to.latency_budget() = from.latency_budget();
-        to.latency_budget().hasChanged = true;
     }
 
     if (!(to.reliability().max_blocking_time == from.reliability().max_blocking_time))
     {
         to.reliability().max_blocking_time = from.reliability().max_blocking_time;
-        to.reliability().hasChanged = true;
     }
 
     if (!(to.transport_priority() == from.transport_priority()))
     {
         to.transport_priority() = from.transport_priority();
-        to.transport_priority().hasChanged = true;
     }
 
     if (!(to.lifespan() == from.lifespan()))
     {
         to.lifespan() = from.lifespan();
-        to.lifespan().hasChanged = true;
     }
 
     if (!(to.user_data() == from.user_data()))
     {
         to.user_data() = from.user_data();
-        to.user_data().hasChanged = true;
     }
 
     if (!(to.ownership_strength() == from.ownership_strength()))
     {
         to.ownership_strength() = from.ownership_strength();
-        to.ownership_strength().hasChanged = true;
     }
 
     if (!(to.writer_data_lifecycle() == from.writer_data_lifecycle()))

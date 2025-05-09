@@ -674,17 +674,14 @@ void SubscriberImpl::set_qos(
     if (first_time || !(to.presentation() == from.presentation()))
     {
         to.presentation() = from.presentation();
-        to.presentation().hasChanged = true;
     }
     if (!(to.partition() == from.partition()))
     {
         to.partition() = from.partition();
-        to.partition().hasChanged = true;
     }
     if (to.group_data().getValue() != from.group_data().getValue())
     {
         to.group_data() = from.group_data();
-        to.group_data().hasChanged = true;
     }
     if (to.entity_factory().autoenable_created_entities != from.entity_factory().autoenable_created_entities)
     {

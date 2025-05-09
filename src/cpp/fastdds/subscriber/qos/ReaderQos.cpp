@@ -31,69 +31,56 @@ void ReaderQos::setQos(
     if (first_time)
     {
         m_durability = qos.m_durability;
-        m_durability.hasChanged = true;
     }
     if (first_time || m_deadline.period != qos.m_deadline.period)
     {
         m_deadline = qos.m_deadline;
-        m_deadline.hasChanged = true;
     }
     if (m_latencyBudget.duration != qos.m_latencyBudget.duration)
     {
         m_latencyBudget = qos.m_latencyBudget;
-        m_latencyBudget.hasChanged = true;
     }
     if (first_time)
     {
         m_liveliness = qos.m_liveliness;
-        m_liveliness.hasChanged = true;
     }
     if (first_time)
     {
         m_reliability = qos.m_reliability;
-        m_reliability.hasChanged = true;
     }
     if (first_time)
     {
         m_ownership = qos.m_ownership;
-        m_ownership.hasChanged = true;
     }
     if (m_destinationOrder.kind != qos.m_destinationOrder.kind)
     {
         m_destinationOrder = qos.m_destinationOrder;
-        m_destinationOrder.hasChanged = true;
     }
     if (first_time || m_userData.data_vec() != qos.m_userData.data_vec())
     {
         m_userData = qos.m_userData;
-        m_userData.hasChanged = true;
     }
     if (m_timeBasedFilter.minimum_separation != qos.m_timeBasedFilter.minimum_separation )
     {
         m_timeBasedFilter = qos.m_timeBasedFilter;
-        m_timeBasedFilter.hasChanged = true;
     }
     if (first_time || m_presentation.access_scope != qos.m_presentation.access_scope ||
             m_presentation.coherent_access != qos.m_presentation.coherent_access ||
             m_presentation.ordered_access != qos.m_presentation.ordered_access)
     {
         m_presentation = qos.m_presentation;
-        m_presentation.hasChanged = true;
     }
     if (first_time || qos.m_partition.names() != m_partition.names())
     {
         m_partition = qos.m_partition;
-        m_partition.hasChanged = true;
     }
     if (first_time || m_topicData.getValue() != qos.m_topicData.getValue())
     {
         m_topicData = qos.m_topicData;
-        m_topicData.hasChanged = true;
     }
     if (first_time || m_groupData.getValue() != qos.m_groupData.getValue())
     {
         m_groupData = qos.m_groupData;
-        m_groupData.hasChanged = true;
     }
     if (first_time || m_durabilityService.history_kind != qos.m_durabilityService.history_kind ||
             m_durabilityService.history_depth != qos.m_durabilityService.history_depth ||
@@ -103,23 +90,19 @@ void ReaderQos::setQos(
             m_durabilityService.service_cleanup_delay != qos.m_durabilityService.service_cleanup_delay)
     {
         m_durabilityService = qos.m_durabilityService;
-        m_durabilityService.hasChanged = true;
     }
     if (m_lifespan.duration != qos.m_lifespan.duration )
     {
         m_lifespan = qos.m_lifespan;
-        m_lifespan.hasChanged = true;
     }
     if (first_time)
     {
         m_disablePositiveACKs = qos.m_disablePositiveACKs;
-        m_disablePositiveACKs.hasChanged = true;
     }
 
     if (representation.m_value != qos.representation.m_value)
     {
         representation = qos.representation;
-        representation.hasChanged = true;
     }
 
     if (first_time ||
@@ -131,13 +114,11 @@ void ReaderQos::setQos(
             type_consistency.m_prevent_type_widening != qos.type_consistency.m_prevent_type_widening)
     {
         type_consistency = qos.type_consistency;
-        type_consistency.hasChanged = true;
     }
 
     if (!(data_sharing == qos.data_sharing))
     {
         data_sharing = qos.data_sharing;
-        data_sharing.hasChanged = true;
     }
 }
 
