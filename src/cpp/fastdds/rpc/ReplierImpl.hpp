@@ -156,6 +156,28 @@ private:
      */
     ReturnCode_t delete_contained_entities();
 
+    /**
+     * @brief Possible states of the replier with respect to a requester
+     */
+    enum class RequesterMatchStatus
+    {
+        UNMATCHED,          // Request topic not matched
+        PARTIALLY_MATCHED,  // Request topic matched but Reply topic not matched
+        MATCHED             // Both topics matched
+    };
+
+    /**
+     * @brief Check the matched status of the replier with respect to a requester
+     *
+     * @param info Information about the request for which to check the status
+     *
+     * @return The matched status of the replier with respect to the requester that sent the request
+     */
+    RequesterMatchStatus requester_match_status(
+            const RequestInfo& info) const;
+
+    bool is_fully_matched() const;
+
     DataReader* replier_reader_;
     DataWriter* replier_writer_;
     ReplierQos qos_;
