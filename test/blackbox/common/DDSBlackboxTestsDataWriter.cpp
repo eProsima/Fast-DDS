@@ -1144,7 +1144,6 @@ TEST_P(DDSDataWriter, datawriter_sends_non_default_qos_b)
     dw_qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     dw_qos.reliable_writer_qos().disable_positive_acks.enabled = true;
     dw_qos.reliable_writer_qos().disable_positive_acks.duration = { 42, 0 };
-    dw_qos.data_sharing().on("/dev/shm");
     dw_qos.representation().m_value.push_back(eprosima::fastdds::dds::DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
     dw_qos.history().kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
     dw_qos.history().depth = 42;
@@ -1153,7 +1152,19 @@ TEST_P(DDSDataWriter, datawriter_sends_non_default_qos_b)
     eprosima::fastdds::dds::SubscriberQos sub_qos;
     sub_qos.partition().push_back("partition_1");
     eprosima::fastdds::dds::DataReaderQos dr_qos;
+
+#ifdef _WIN32
+    dw_qos.data_sharing().on("c:\\programdata\\eprosima\\fastdds_interprocess\\");
+    dr_qos.data_sharing().on("c:\\programdata\\eprosima\\fastdds_interprocess\\");
+#elif __APPLE__
+    dw_qos.data_sharing().on("/private/tmp/boost_interprocess/");
+    dr_qos.data_sharing().on("/private/tmp/boost_interprocess/");
+#elif __linux__
+    dw_qos.data_sharing().on("/dev/shm");
     dr_qos.data_sharing().on("/dev/shm");
+#else
+    throw std::runtime_error(std::string("Platform not supported"));
+#endif // ifdef _WIN32
 
     writer.disable_builtin_transport()
             .add_user_transport_to_pparams(test_transport)

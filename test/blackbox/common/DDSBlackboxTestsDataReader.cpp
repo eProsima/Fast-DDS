@@ -1139,7 +1139,6 @@ TEST_P(DDSDataReader, datareader_sends_non_default_qos_b)
     dw_qos.durability().kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
     dw_qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     dw_qos.reliable_writer_qos().disable_positive_acks.enabled = true;
-    dw_qos.data_sharing().on("/dev/shm");
 
     eprosima::fastdds::dds::SubscriberQos sub_qos;
     sub_qos.presentation().access_scope = eprosima::fastdds::dds::GROUP_PRESENTATION_QOS;
@@ -1151,11 +1150,23 @@ TEST_P(DDSDataReader, datareader_sends_non_default_qos_b)
     eprosima::fastdds::dds::DataReaderQos dr_qos;
     dr_qos.reliable_reader_qos().disable_positive_acks.enabled = true;
     dr_qos.reliable_reader_qos().disable_positive_acks.duration = { 42, 0 };
-    dr_qos.data_sharing().on("/dev/shm");
     dr_qos.representation().m_value.push_back(eprosima::fastdds::dds::DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
     dr_qos.type_consistency().m_kind = eprosima::fastdds::dds::DISALLOW_TYPE_COERCION;
     dr_qos.history().kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
     dr_qos.history().depth = 42;
+
+#ifdef _WIN32
+    dw_qos.data_sharing().on("c:\\programdata\\eprosima\\fastdds_interprocess\\");
+    dr_qos.data_sharing().on("c:\\programdata\\eprosima\\fastdds_interprocess\\");
+#elif __APPLE__
+    dw_qos.data_sharing().on("/private/tmp/boost_interprocess/");
+    dr_qos.data_sharing().on("/private/tmp/boost_interprocess/");
+#elif __linux__
+    dw_qos.data_sharing().on("/dev/shm");
+    dr_qos.data_sharing().on("/dev/shm");
+#else
+    throw std::runtime_error(std::string("Platform not supported"));
+#endif // ifdef _WIN32
 
     writer.publisher_qos(pub_qos)
             .data_writer_qos(dw_qos);
