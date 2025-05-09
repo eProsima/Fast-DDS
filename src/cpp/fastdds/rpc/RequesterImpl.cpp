@@ -19,7 +19,9 @@
 #include <fastdds/dds/core/detail/DDSReturnCode.hpp>
 #include <fastdds/dds/core/LoanableCollection.hpp>
 #include <fastdds/dds/core/LoanableSequence.hpp>
+#include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
+#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/domain/qos/RequesterQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/rpc/RequestInfo.hpp>
@@ -68,6 +70,12 @@ ReturnCode_t RequesterImpl::send_request(
         return RETCODE_PRECONDITION_NOT_MET;
     }
 
+    if (!is_fully_matched())
+    {
+        EPROSIMA_LOG_WARNING(REQUESTER, "Trying to send a request with an unmatched requester");
+        return RETCODE_PRECONDITION_NOT_MET;
+    }
+
     rtps::WriteParams wparams;
     wparams.related_sample_identity(info.related_sample_identity);
     ReturnCode_t ret = requester_writer_->write(data, wparams);
@@ -103,6 +111,12 @@ ReturnCode_t RequesterImpl::take_reply(
         return RETCODE_PRECONDITION_NOT_MET;
     }
 
+    if (!is_fully_matched())
+    {
+        EPROSIMA_LOG_WARNING(REQUESTER, "Trying to take a reply with an unmatched requester");
+        return RETCODE_PRECONDITION_NOT_MET;
+    }
+
     return requester_reader_->take_next_sample(data, &info);
 }
 
@@ -117,6 +131,13 @@ ReturnCode_t RequesterImpl::take_reply(
         EPROSIMA_LOG_ERROR(REQUESTER, "Trying to take a reply with a disabled requester");
         return RETCODE_PRECONDITION_NOT_MET;
     }
+
+    if (!is_fully_matched())
+    {
+        EPROSIMA_LOG_WARNING(REQUESTER, "Trying to take a reply with an unmatched requester");
+        return RETCODE_PRECONDITION_NOT_MET;
+    }
+
     return requester_reader_->take(data, info);
 }
 
@@ -243,6 +264,21 @@ ReturnCode_t RequesterImpl::delete_contained_entities()
     requester_reader_ = nullptr;
 
     return RETCODE_OK;
+}
+
+bool RequesterImpl::is_fully_matched() const
+{
+    PublicationMatchedStatus pub_status;
+    SubscriptionMatchedStatus sub_status;
+
+    if ((RETCODE_OK == requester_reader_->get_subscription_matched_status(sub_status)) &&
+            (RETCODE_OK == requester_writer_->get_publication_matched_status(pub_status)))
+    {
+        return (pub_status.current_count > 0) && (pub_status.current_count == sub_status.current_count);
+    }
+
+    EPROSIMA_LOG_ERROR(REQUESTER, "Error getting matched subscriptions or publications");
+    return false;
 }
 
 } // namespace rpc
