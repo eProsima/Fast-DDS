@@ -1232,6 +1232,13 @@ const char* const parameter_enable_monitor_service = "fastdds.enable_monitor_ser
 const char* const parameter_policy_type_propagation = "fastdds.type_propagation";
 
 /**
+ * Parameter property value for configuring serialization of optional QoS in Data(r/w)
+ *
+ * @ingroup PARAMETER_MODULE
+ */
+const char* const parameter_serialize_optional_qos = "fastdds.serialize_optional_qos";
+
+/**
  * @ingroup PARAMETER_MODULE
  */
 class ParameterPropertyList_t : public Parameter_t

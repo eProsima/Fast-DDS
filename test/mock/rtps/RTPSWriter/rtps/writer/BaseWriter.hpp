@@ -32,6 +32,8 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+class RTPSParticipantImpl;
+
 class BaseWriter : public RTPSWriter
 {
 
@@ -41,6 +43,14 @@ public:
         : general_locator_selector_(*this, ResourceLimitedContainerConfig())
         , async_locator_selector_(*this, ResourceLimitedContainerConfig())
     {
+    }
+
+    BaseWriter(
+            RTPSParticipantImpl* participant)
+        : general_locator_selector_(*this, ResourceLimitedContainerConfig())
+        , async_locator_selector_(*this, ResourceLimitedContainerConfig())
+    {
+        mp_RTPSParticipant = participant;
     }
 
     virtual ~BaseWriter() = default;
@@ -78,7 +88,7 @@ public:
 
     RTPSParticipantImpl* get_participant_impl()
     {
-        return nullptr;
+        return mp_RTPSParticipant;
     }
 
     // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
@@ -186,6 +196,8 @@ public:
     LocatorSelectorSender general_locator_selector_;
 
     LocatorSelectorSender async_locator_selector_;
+
+    RTPSParticipantImpl* mp_RTPSParticipant = nullptr;
 
 };
 

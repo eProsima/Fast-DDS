@@ -2574,8 +2574,9 @@ TEST(BuiltinDataSerializationTests, optional_qos_extensions_reader)
         0x40, 0x00, 0x08, 0x00,
         0x01, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
         // Resource limits
-        0x41, 0x00, 0x0c, 0x00,
-        0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00,
+        0x41, 0x00, 0x14, 0x00,
+        0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00,
+        0x05, 0x00, 0x00, 0x00,
         // Reader Data Lifecycle
         0x00, 0x82, 0x10, 0x00,
         0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -2615,6 +2616,8 @@ TEST(BuiltinDataSerializationTests, optional_qos_extensions_reader)
     ASSERT_EQ(rpd.resource_limits->max_samples, 1);
     ASSERT_EQ(rpd.resource_limits->max_instances, 2);
     ASSERT_EQ(rpd.resource_limits->max_samples_per_instance, 3);
+    ASSERT_EQ(rpd.resource_limits->allocated_samples, 4);
+    ASSERT_EQ(rpd.resource_limits->extra_samples, 5);
 
     ASSERT_TRUE(rpd.reader_data_lifecycle);
     ASSERT_EQ(rpd.reader_data_lifecycle->autopurge_no_writer_samples_delay.seconds, 2);
@@ -2686,8 +2689,9 @@ TEST(BuiltinDataSerializationTests, optional_qos_extensions_writer)
         0x40, 0x00, 0x08, 0x00,
         0x01, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
         // Resource limits
-        0x41, 0x00, 0x0c, 0x00,
-        0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00,
+        0x41, 0x00, 0x14, 0x00,
+        0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00,
+        0x05, 0x00, 0x00, 0x00,
         // Endpoint
         0x10, 0x80, 0x38, 0x00,//56 (1 locator)
         0x01, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00, 0x7F, 0x00, 0x00, 0x00,
@@ -2729,6 +2733,8 @@ TEST(BuiltinDataSerializationTests, optional_qos_extensions_writer)
     ASSERT_EQ(wpd.resource_limits->max_samples, 1);
     ASSERT_EQ(wpd.resource_limits->max_instances, 2);
     ASSERT_EQ(wpd.resource_limits->max_samples_per_instance, 3);
+    ASSERT_EQ(wpd.resource_limits->allocated_samples, 4);
+    ASSERT_EQ(wpd.resource_limits->extra_samples, 5);
 
     ASSERT_TRUE(wpd.endpoint);
     ASSERT_EQ(wpd.endpoint->unicast_locator_list.size(), 1u);
@@ -2765,6 +2771,186 @@ TEST(BuiltinDataSerializationTests, optional_qos_extensions_writer)
     ASSERT_EQ(wpd.writer_resource_limits->reader_filters_allocation.initial, 4u);
     ASSERT_EQ(wpd.writer_resource_limits->reader_filters_allocation.maximum, 5u);
     ASSERT_EQ(wpd.writer_resource_limits->reader_filters_allocation.increment, 6u);
+}
+
+/**
+ * This test checks that a correct serialization is obtained
+ * when non-default eProsima's optional qos extensions are used in ReaderProxyData.
+ * History Qos is additionally tested.
+ */
+TEST(BuiltinDataSerializationTests, optional_qos_extensions_reader_serialize_non_default_values)
+{
+    ReaderProxyData in(max_unicast_locators, max_multicast_locators);
+    ReaderProxyData out(max_unicast_locators, max_multicast_locators);
+
+    // Topic and type name cannot be empty
+    in.topic_name = "TEST";
+    in.type_name = "TestType";
+
+    // Fill HistoryQos
+    dds::HistoryQosPolicy history;
+    history.kind = dds::KEEP_ALL_HISTORY_QOS;
+    history.depth = 42;
+    in.history = history;
+    // Fill ResourceLimitsQos
+    dds::ResourceLimitsQosPolicy resource_limits;
+    resource_limits.max_samples = 1000;
+    resource_limits.max_instances = 20;
+    resource_limits.max_samples_per_instance = 30;
+    resource_limits.allocated_samples = 40;
+    resource_limits.extra_samples = 50;
+    in.resource_limits = resource_limits;
+    // Fill ReaderDataLifecycleQos
+    dds::ReaderDataLifecycleQosPolicy reader_data_lifecycle;
+    reader_data_lifecycle.autopurge_disposed_samples_delay = dds::Duration_t(4, 0);
+    reader_data_lifecycle.autopurge_no_writer_samples_delay = dds::Duration_t(2, 0);
+    in.reader_data_lifecycle = reader_data_lifecycle;
+    // Fill RTPSReliableReaderQos
+    dds::RTPSReliableReaderQos rtps_reliable_reader;
+    rtps_reliable_reader.times.initial_acknack_delay = dds::Duration_t(4, 0);
+    rtps_reliable_reader.times.heartbeat_response_delay = dds::Duration_t(2, 0);
+    rtps_reliable_reader.disable_positive_acks.enabled = true;
+    rtps_reliable_reader.disable_positive_acks.duration = dds::Duration_t(42, 0);
+    in.rtps_reliable_reader = rtps_reliable_reader;
+    // Fill RTPSEndpointQos
+    dds::RTPSEndpointQos endpoint;
+    rtps::Locator locator;
+    locator.port = 11235;
+    endpoint.unicast_locator_list.push_back(locator);
+    endpoint.multicast_locator_list.push_back(locator);
+    endpoint.remote_locator_list.push_back(locator);
+    // External locators are not serialized yet
+    endpoint.ignore_non_matching_locators = true;
+    endpoint.entity_id = 42;
+    endpoint.user_defined_id = 42;
+    endpoint.history_memory_policy = DYNAMIC_RESERVE_MEMORY_MODE;
+    in.endpoint = endpoint;
+    // Fill ReaderResourceLimitsQos
+    dds::ReaderResourceLimitsQos reader_resource_limits;
+    reader_resource_limits.matched_publisher_allocation.initial = 1;
+    reader_resource_limits.matched_publisher_allocation.increment = 1;
+    reader_resource_limits.matched_publisher_allocation.maximum = 2;
+    reader_resource_limits.sample_infos_allocation.initial = 3;
+    reader_resource_limits.sample_infos_allocation.increment = 5;
+    reader_resource_limits.sample_infos_allocation.maximum = 8;
+    reader_resource_limits.outstanding_reads_allocation.initial = 13;
+    reader_resource_limits.outstanding_reads_allocation.increment = 21;
+    reader_resource_limits.outstanding_reads_allocation.maximum = 34;
+    reader_resource_limits.max_samples_per_read = 55;
+    in.reader_resource_limits = reader_resource_limits;
+
+    // Enable optional qos serialization
+    in.should_send_optional_qos(true);
+
+    // Perform serialization
+    uint32_t msg_size = in.get_serialized_size(true);
+    CDRMessage_t msg(msg_size);
+    EXPECT_TRUE(in.write_to_cdr_message(&msg, true));
+
+    // Perform deserialization
+    msg.pos = 0;
+    EXPECT_TRUE(out.read_from_cdr_message(&msg));
+
+    ASSERT_EQ(in.history, out.history);
+    ASSERT_EQ(in.resource_limits, out.resource_limits);
+    ASSERT_EQ(in.reader_data_lifecycle, out.reader_data_lifecycle);
+    ASSERT_EQ(in.rtps_reliable_reader, out.rtps_reliable_reader);
+    ASSERT_EQ(in.endpoint, out.endpoint);
+    ASSERT_EQ(in.reader_resource_limits, out.reader_resource_limits);
+}
+
+/**
+ * This test checks that a correct serialization is obtained
+ * when non-default eProsima's optional qos extensions are used in WriterProxyData.
+ * History Qos is additionally tested.
+ */
+TEST(BuiltinDataSerializationTests, optional_qos_extensions_writer_serialize_non_default_values)
+{
+    WriterProxyData in(max_unicast_locators, max_multicast_locators);
+    WriterProxyData out(max_unicast_locators, max_multicast_locators);
+
+    // Topic and type name cannot be empty
+    in.topic_name = "TEST";
+    in.type_name = "TestType";
+
+    // Fill HistoryQos
+    dds::HistoryQosPolicy history;
+    history.kind = dds::KEEP_ALL_HISTORY_QOS;
+    history.depth = 42;
+    in.history = history;
+    // Fill ResourceLimitsQos
+    dds::ResourceLimitsQosPolicy resource_limits;
+    resource_limits.max_samples = 1000;
+    resource_limits.max_instances = 20;
+    resource_limits.max_samples_per_instance = 30;
+    resource_limits.allocated_samples = 40;
+    resource_limits.extra_samples = 50;
+    in.resource_limits = resource_limits;
+    // Fill TransportPriorityQos
+    dds::TransportPriorityQosPolicy transport_priority;
+    transport_priority.value = 42;
+    in.transport_priority = transport_priority;
+    // Fill WriterDataLifecycleQos
+    dds::WriterDataLifecycleQosPolicy writer_data_lifecycle;
+    writer_data_lifecycle.autodispose_unregistered_instances = false;
+    in.writer_data_lifecycle = writer_data_lifecycle;
+    // Fill RTPSReliableWriterQos
+    dds::RTPSReliableWriterQos rtps_reliable_writer;
+    dds::Duration_t nack_supression_duration {0, 0};
+    rtps_reliable_writer.times.initial_heartbeat_delay = dds::Duration_t(4, 0);
+    rtps_reliable_writer.times.heartbeat_period = dds::Duration_t(2, 0);
+    rtps_reliable_writer.times.nack_response_delay = dds::Duration_t(2, 0);
+    rtps_reliable_writer.times.nack_supression_duration = dds::Duration_t(2, 0);
+    rtps_reliable_writer.disable_positive_acks.enabled = true;
+    rtps_reliable_writer.disable_positive_acks.duration = dds::Duration_t(42, 0);
+    rtps_reliable_writer.disable_heartbeat_piggyback = true;
+    in.rtps_reliable_writer = rtps_reliable_writer;
+    // Fill PublishModeQos
+    dds::PublishModeQosPolicy publish_mode;
+    publish_mode.kind = dds::ASYNCHRONOUS_PUBLISH_MODE;
+    publish_mode.flow_controller_name = "example_test";
+    in.publish_mode = publish_mode;
+    // Fill RTPSEndpointQos
+    dds::RTPSEndpointQos endpoint;
+    rtps::Locator locator;
+    locator.port = 11235;
+    endpoint.unicast_locator_list.push_back(locator);
+    endpoint.multicast_locator_list.push_back(locator);
+    endpoint.remote_locator_list.push_back(locator);
+    // External locators are not serialized yet
+    endpoint.ignore_non_matching_locators = true;
+    endpoint.entity_id = 42;
+    endpoint.user_defined_id = 42;
+    endpoint.history_memory_policy = DYNAMIC_RESERVE_MEMORY_MODE;
+    in.endpoint = endpoint;
+    // Fill WriterResourceLimitsQos
+    dds::WriterResourceLimitsQos writer_resource_limits;
+    writer_resource_limits.matched_subscriber_allocation.initial = 1;
+    writer_resource_limits.matched_subscriber_allocation.increment = 1;
+    writer_resource_limits.matched_subscriber_allocation.maximum = 2;
+    writer_resource_limits.reader_filters_allocation.initial = 3;
+    writer_resource_limits.reader_filters_allocation.increment = 5;
+    writer_resource_limits.reader_filters_allocation.maximum = 8;
+    in.writer_resource_limits = writer_resource_limits;
+
+    // Enable optional qos serialization
+    in.should_send_optional_qos(true);
+
+    // Perform serialization
+    uint32_t msg_size = in.get_serialized_size(true);
+    CDRMessage_t msg(msg_size);
+    EXPECT_TRUE(in.write_to_cdr_message(&msg, true));
+
+    // Perform deserialization
+    msg.pos = 0;
+    EXPECT_TRUE(out.read_from_cdr_message(&msg));
+
+    ASSERT_EQ(in.history, out.history);
+    ASSERT_EQ(in.resource_limits, out.resource_limits);
+    ASSERT_EQ(in.writer_data_lifecycle, out.writer_data_lifecycle);
+    ASSERT_EQ(in.rtps_reliable_writer, out.rtps_reliable_writer);
+    ASSERT_EQ(in.endpoint, out.endpoint);
+    ASSERT_EQ(in.writer_resource_limits, out.writer_resource_limits);
 }
 
 } // namespace rtps
