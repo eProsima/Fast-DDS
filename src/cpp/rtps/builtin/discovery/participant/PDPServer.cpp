@@ -1627,7 +1627,7 @@ void PDPServer::send_own_pdp(
     std::vector<GUID_t> remote_readers;
     LocatorList locators;
 
-    remote_readers.emplace_back(pdata->guid.guidPrefix, c_EntityId_SPDPReader);
+    remote_readers.emplace_back(pdata->m_guid.guidPrefix, c_EntityId_SPDPReader);
 
     for (auto& locator : pdata->metatraffic_locators.unicast)
     {
