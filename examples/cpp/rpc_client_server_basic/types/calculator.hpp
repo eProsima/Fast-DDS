@@ -61,7 +61,7 @@ namespace calculator_example {
  * @brief This class implements the user exception calculator_example::OverflowException
  * @ingroup calculator
  */
-class CALCULATOR_DllAPI OverflowException : public eprosima::fastdds::dds::rpc::RpcOperationError
+class eProsima_user_DllExport OverflowException : public eprosima::fastdds::dds::rpc::RpcOperationError
 {
 public:
 
@@ -119,7 +119,7 @@ private:
  * @brief This class represents the interface Calculator defined by the user in the IDL file.
  * @ingroup calculator
  */
-class CALCULATOR_DllAPI Calculator 
+class eProsima_user_DllExport Calculator 
 {
 public:
     virtual ~Calculator() = default;
