@@ -36,7 +36,6 @@ namespace rpc_client_server {
 
 enum class OperationStatus
 {
-    PENDING, // TODO (Carlosespicur): Perhaps it is unnecessary (for non-feed operations)
     SUCCESS,
     TIMEOUT,
     ERROR
@@ -147,10 +146,6 @@ private:
 
     //! Create a client
     void create_client(const std::string& service_name);
-
-    //! Test connection to the server. Returns true if the server is reachable and false otherwise
-    bool ping_server(
-            std::chrono::milliseconds wait_time = std::chrono::milliseconds(1000));
 
     //! Set the operation to be executed. If ping is true, a ping operation is set
     void set_operation(

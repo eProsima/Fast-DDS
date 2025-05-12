@@ -39,6 +39,7 @@
 #include <fastdds/dds/core/Time_t.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/qos/ReplierQos.hpp>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/rpc/exceptions.hpp>
 #include <fastdds/dds/rpc/interfaces.hpp>
 #include <fastdds/dds/rpc/RequestInfo.hpp>
@@ -74,7 +75,7 @@ public:
             const char* service_name,
             const eprosima::fastdds::dds::ReplierQos& qos,
             size_t thread_pool_size,
-            std::shared_ptr<IServerImplementation> implementation)
+            std::shared_ptr<CalculatorServer_IServerImplementation> implementation)
         : CalculatorServer()
         , participant_(part)
         , thread_pool_(*this, thread_pool_size)
@@ -157,12 +158,21 @@ public:
 
     void stop() override
     {
+        // Notify all threads to finish
         finish_condition_.set_trigger_value(true);
-        thread_pool_.stop();
 
-        std::lock_guard<std::mutex> _(mtx_);
-        // TODO: Cancel all pending requests
-        processing_requests_.clear();
+        // Cancel all pending requests
+        {
+            std::lock_guard<std::mutex> _(mtx_);
+            for (auto& it : processing_requests_)
+            {
+                it.second->cancel();
+            }
+            processing_requests_.clear();
+        }
+
+        // Wait for all threads to finish
+        thread_pool_.stop();
     }
 
 private:
@@ -184,6 +194,7 @@ private:
         virtual ~IInputFeedProcessor() = default;
         virtual bool process_additional_request(
                 const RequestType& request) = 0;
+        virtual void cancel_input_feed() = 0;
     };
 
     //} Input feed helpers
@@ -200,7 +211,7 @@ private:
 
     //} operation subtraction
 
-    struct RequestContext : ClientContext
+    struct RequestContext : CalculatorServer_ClientContext
     {
         RequestType request;
         frpc::RequestInfo info;
@@ -262,35 +273,21 @@ private:
             should_erase = false;
             if (ctx->info.related_sample_identity == info.related_sample_identity)
             {
-                if (ctx->request.feed_cancel_.has_value())
+                // Pass request to input feed processors
+                should_erase = true;
+                for (const auto& input_feed : input_feed_processors_)
                 {
-                    if (output_feed_cancellator_)
+                    if (input_feed->process_additional_request(ctx->request))
                     {
-                        output_feed_cancellator_->cancel();
-                    }
-                    else
-                    {
-                        // TODO: Log error
+                        should_erase = false;
+                        break;
                     }
                 }
-                else
-                {
-                    // Pass request to input feed processors
-                    should_erase = true;
-                    for (const auto& input_feed : input_feed_processors_)
-                    {
-                        if (input_feed->process_additional_request(ctx->request))
-                        {
-                            should_erase = false;
-                            break;
-                        }
-                    }
 
-                    // If no input feed processor handled the request, send an exception
-                    if (should_erase)
-                    {
-                        send_exception(frpc::RemoteExceptionCode_t::REMOTE_EX_INVALID_ARGUMENT, replier);
-                    }
+                // If no input feed processor handled the request, send an exception
+                if (should_erase)
+                {
+                    send_exception(frpc::RemoteExceptionCode_t::REMOTE_EX_INVALID_ARGUMENT, replier);
                 }
             }
             else
@@ -330,6 +327,21 @@ private:
             ReplyType reply{};
             reply.remoteEx = ex;
             replier->send_reply(&reply, info);
+        }
+
+        void cancel()
+        {
+            // Cancel output feed
+            if (output_feed_cancellator_)
+            {
+                output_feed_cancellator_->cancel();
+            }
+
+            // Cancel input feeds
+            for (const auto& input_feed : input_feed_processors_)
+            {
+                input_feed->cancel_input_feed();
+            }
         }
 
     private:
@@ -572,7 +584,7 @@ private:
     std::mutex mtx_;
     std::map<frtps::SampleIdentity, std::shared_ptr<RequestContext>> processing_requests_;
     ThreadPool thread_pool_;
-    std::shared_ptr<IServerImplementation> implementation_;
+    std::shared_ptr<CalculatorServer_IServerImplementation> implementation_;
 
 };
 
@@ -583,7 +595,7 @@ std::shared_ptr<CalculatorServer> create_CalculatorServer(
         const char* service_name,
         const eprosima::fastdds::dds::ReplierQos& qos,
         size_t thread_pool_size,
-        std::shared_ptr<CalculatorServer::IServerImplementation> implementation)
+        std::shared_ptr<CalculatorServer_IServerImplementation> implementation)
 {
     return std::make_shared<detail::CalculatorServerLogic>(
         part, service_name, qos, thread_pool_size, implementation);

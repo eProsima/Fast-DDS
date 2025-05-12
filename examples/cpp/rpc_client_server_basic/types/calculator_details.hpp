@@ -104,9 +104,6 @@ namespace calculator_example {
         eprosima::fastcdr::optional<Calculator_representation_limits_In> representation_limits; 
         eprosima::fastcdr::optional<Calculator_addition_In> addition;   
         eprosima::fastcdr::optional<Calculator_subtraction_In> subtraction;   
-
-        // TODO (Carlosespicur): remove this when fixed in fastddsgen PR
-        eprosima::fastcdr::optional<bool> feed_cancel_;
     };
 
     struct Calculator_Reply

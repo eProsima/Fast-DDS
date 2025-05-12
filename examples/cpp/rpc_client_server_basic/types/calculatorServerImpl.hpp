@@ -29,18 +29,12 @@ namespace calculator_example {
 
 //{ interface Calculator
 
-namespace detail {
-
-namespace fdds = eprosima::fastdds::dds;
-namespace frpc = eprosima::fastdds::dds::rpc;
-namespace frtps = eprosima::fastdds::rtps;
-
 struct CalculatorServerImplementation :
-    public CalculatorServer::IServerImplementation
+    public CalculatorServer_IServerImplementation
 {
 
     void representation_limits(
-            const CalculatorServer::ClientContext& info,
+            const CalculatorServer_ClientContext& info,
             /*out*/ int32_t& min_value,
             /*out*/ int32_t& max_value) override
     {
@@ -51,7 +45,7 @@ struct CalculatorServerImplementation :
     }
 
     int32_t addition(
-            const CalculatorServer::ClientContext& info,
+            const CalculatorServer_ClientContext& info,
             /*in*/ int32_t value1,
             /*in*/ int32_t value2) override
     {
@@ -71,7 +65,7 @@ struct CalculatorServerImplementation :
     }
 
     int32_t subtraction(
-            const CalculatorServer::ClientContext& info,
+            const CalculatorServer_ClientContext& info,
             /*in*/ int32_t value1,
             /*in*/ int32_t value2) override
     {
@@ -91,8 +85,6 @@ struct CalculatorServerImplementation :
     }
 
 };
-
-}  // namespace detail
 
 //} interface Calculator
 
