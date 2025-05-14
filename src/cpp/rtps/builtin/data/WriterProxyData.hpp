@@ -329,15 +329,24 @@ public:
     /**
      * Get the size in bytes of the CDR serialization of this object.
      * @param include_encapsulation Whether to include the size of the encapsulation info.
+     * @param force_including_optional_qos Whether to force including the optional QoS in the size.
      * @return size in bytes of the CDR serialization.
      */
     uint32_t get_serialized_size(
-            bool include_encapsulation) const;
+            bool include_encapsulation,
+            bool force_including_optional_qos = false) const;
 
-    //!Write as a parameter list on a CDRMessage_t
+    /**
+     * Write as a parameter list on a CDRMessage_t
+     * @param msg Pointer to the CDRmessage.
+     * @param write_encapsulation Whether to write the encapsulation info.
+     * @param force_write_optional_qos Whether to write the optional QoS.
+     * @return True on success
+     */
     bool write_to_cdr_message(
             CDRMessage_t* msg,
-            bool write_encapsulation) const;
+            bool write_encapsulation,
+            bool force_write_optional_qos = false) const;
 
     /**
      * Read the information from a CDRMessage_t. The position of the message must be in the beginning on the
@@ -438,7 +447,7 @@ private:
     dds::TypeObjectV1* m_type;
 
     //!Whether optional QoS should be serialized and added to Data(r)
-    bool m_should_send_optional_qos;
+    bool m_should_send_optional_qos{false};
 };
 
 } // namespace rtps
