@@ -96,6 +96,8 @@ target_include_directories(BlackboxTests_RTPS PRIVATE
     ${Asio_INCLUDE_DIR})
 target_link_libraries(BlackboxTests_RTPS fastdds fastcdr foonathan_memory GTest::gtest)
 gtest_discover_tests(BlackboxTests_RTPS
+    PROPERTIES
+            ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
     TEST_PREFIX "BlackboxTests_RTPS."
     TEST_FILTER ${BLACKBOX_HIGH_LEVEL_IGNORED_TESTS}
     NO_PRETTY_VALUES

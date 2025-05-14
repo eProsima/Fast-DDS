@@ -462,6 +462,13 @@ public:
         return *this;
     }
 
+    RTPSWithRegistrationWriter& add_participant_properties(
+            const eprosima::fastdds::rtps::PropertyPolicy& props)
+    {
+        participant_attr_.properties = props;
+        return *this;
+    }
+
     RTPSWithRegistrationWriter& persistence_guid_att(
             const eprosima::fastdds::rtps::GuidPrefix_t& guidPrefix,
             const eprosima::fastdds::rtps::EntityId_t& entityId)
