@@ -464,6 +464,20 @@ void PDP::initializeParticipantProxyData(
 
     // Set properties that will be sent to Proxy Data
     set_external_participant_properties_(participant_data);
+
+    // Fill wire_protocol qos
+    participant_data->wire_protocol = dds::WireProtocolConfigQos();
+    participant_data->wire_protocol->prefix = participant_data->guid.guidPrefix;
+    participant_data->wire_protocol->participant_id = attributes.participantID;
+    participant_data->wire_protocol->builtin = attributes.builtin;
+    participant_data->wire_protocol->port = attributes.port;
+    participant_data->wire_protocol->default_unicast_locator_list = attributes.defaultUnicastLocatorList;
+    participant_data->wire_protocol->default_multicast_locator_list = attributes.defaultMulticastLocatorList;
+    participant_data->wire_protocol->default_external_unicast_locators = attributes.default_external_unicast_locators;
+    participant_data->wire_protocol->ignore_non_matching_locators = attributes.ignore_non_matching_locators;
+
+    // Mark whether this participant should send optional QoS
+    participant_data->should_send_optional_qos(mp_RTPSParticipant->should_send_optional_qos());
 }
 
 bool PDP::initPDP(
