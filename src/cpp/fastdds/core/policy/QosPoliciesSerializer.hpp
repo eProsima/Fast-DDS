@@ -441,12 +441,33 @@ inline bool QosPoliciesSerializer<ResourceLimitsQosPolicy>::add_content_to_cdr_m
 }
 
 template<>
+inline bool QosPoliciesSerializer<ResourceLimitsQosPolicy>::read_from_cdr_message(
+    const fastdds::rtps::VendorId_t& vendor_id,
+    ResourceLimitsQosPolicy& qos_policy,
+    rtps::CDRMessage_t* cdr_message,
+    const uint16_t parameter_length)
+{
+    return read_content_from_cdr_message(vendor_id, qos_policy, cdr_message, parameter_length);
+}
+
+template<>
+inline bool QosPoliciesSerializer<ResourceLimitsQosPolicy>::read_from_cdr_message(
+    ResourceLimitsQosPolicy& qos_policy,
+    rtps::CDRMessage_t* cdr_message,
+    const uint16_t parameter_length)
+{
+    EPROSIMA_LOG_ERROR(RTPS_QOS, "ResourceLimitsQosPolicy requires 'vendor_id' to be read from cdr message");
+    return false;
+}
+
+template<>
 inline bool QosPoliciesSerializer<ResourceLimitsQosPolicy>::read_content_from_cdr_message(
+        const fastdds::rtps::VendorId_t& vendor_id,
         ResourceLimitsQosPolicy& qos_policy,
         rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    if (parameter_length < 20)
+    if (parameter_length < 12)
     {
         return false;
     }
@@ -457,8 +478,16 @@ inline bool QosPoliciesSerializer<ResourceLimitsQosPolicy>::read_content_from_cd
                     &qos_policy.max_instances);
     valid &= rtps::CDRMessage::readInt32(cdr_message,
                     &qos_policy.max_samples_per_instance);
-    valid &= rtps::CDRMessage::readInt32(cdr_message, &qos_policy.allocated_samples);
-    valid &= rtps::CDRMessage::readInt32(cdr_message, &qos_policy.extra_samples);
+
+    if (vendor_id == rtps::c_VendorId_eProsima)
+    {
+        // The following two fields are not mandatory according the DDS specification
+        if (parameter_length >= 20)
+        {
+            valid &= rtps::CDRMessage::readInt32(cdr_message, &qos_policy.allocated_samples);
+            valid &= rtps::CDRMessage::readInt32(cdr_message, &qos_policy.extra_samples);
+        }
+    }
     return valid;
 }
 
