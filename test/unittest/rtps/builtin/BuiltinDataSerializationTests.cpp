@@ -2953,6 +2953,109 @@ TEST(BuiltinDataSerializationTests, optional_qos_extensions_writer_serialize_non
     ASSERT_EQ(in.writer_resource_limits, out.writer_resource_limits);
 }
 
+/*!
+ * This test checks that a correct ParticipantProxyData is obtained
+ * from eProsima's optional qos extensions in ParticipantBuiltinTopicData
+ */
+TEST(BuiltinDataSerializationTests, optional_qos_extensions_participant)
+{
+    RTPSParticipantAllocationAttributes allocation;
+
+    ParticipantProxyData in(allocation);
+    ParticipantProxyData out(allocation);
+
+    dds::WireProtocolConfigQos wire_protocol_qos;
+    std::istringstream guidprefix_is("01.02.03.04.05.06.07.08.09.0A.0B.0C");
+    guidprefix_is >> wire_protocol_qos.prefix;
+    wire_protocol_qos.participant_id = 0x2;
+
+    rtps::Locator locator;
+    rtps::LocatorWithMask locator_mask;
+    //builtin
+    {
+        //discovery config
+        wire_protocol_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SUPER_CLIENT;
+        wire_protocol_qos.builtin.discovery_config.leaseDuration = dds::Duration_t(10, 0);
+        wire_protocol_qos.builtin.discovery_config.leaseDuration_announcementperiod = dds::Duration_t(5, 0);
+        wire_protocol_qos.builtin.discovery_config.initial_announcements.count = 3;
+        wire_protocol_qos.builtin.discovery_config.initial_announcements.period = dds::Duration_t(1, 0);
+        wire_protocol_qos.builtin.discovery_config.discoveryServer_client_syncperiod = dds::Duration_t(2, 0);
+        locator.port = 11235;
+        locator.kind = LOCATOR_KIND_UDPv4;
+        IPLocator::setIPv4(locator, 127, 0, 0, 1);
+        wire_protocol_qos.builtin.discovery_config.m_DiscoveryServers.reserve(2);
+        wire_protocol_qos.builtin.discovery_config.m_DiscoveryServers.push_back(locator);
+        locator.port = 11236;
+        wire_protocol_qos.builtin.discovery_config.m_DiscoveryServers.push_back(locator);
+        wire_protocol_qos.builtin.discovery_config.ignoreParticipantFlags =
+                ParticipantFilteringFlags::FILTER_DIFFERENT_HOST;
+        wire_protocol_qos.builtin.discovery_config.static_edp_xml_config("/path/to/file.xml");
+
+        wire_protocol_qos.builtin.network_configuration = 0x2;
+        locator.port = 11237;
+        IPLocator::setIPv4(locator, 10, 34, 0, 2);
+        wire_protocol_qos.builtin.metatrafficUnicastLocatorList.push_back(locator);
+        locator.port = 11238;
+        wire_protocol_qos.builtin.metatrafficMulticastLocatorList.push_back(locator);
+        locator.port = 11239;
+        locator_mask.port = 11240;
+        IPLocator::setIPv4(locator_mask, 10, 34, 0, 3);
+        locator_mask.mask(0xA7);
+        wire_protocol_qos.builtin.metatraffic_external_unicast_locators[0][0].push_back(locator_mask);
+        locator_mask.port = 11241;
+        IPLocator::setIPv4(locator_mask, 172, 10, 0, 1);
+        locator_mask.mask(0xB4);
+        wire_protocol_qos.builtin.metatraffic_external_unicast_locators[0][1].push_back(locator_mask);
+        IPLocator::setIPv4(locator_mask, 172, 10, 0, 2);
+        wire_protocol_qos.builtin.metatraffic_external_unicast_locators[1][0].push_back(locator_mask);
+        locator.port = 11242;
+        IPLocator::setIPv4(locator, 192, 34, 0, 100);
+        wire_protocol_qos.builtin.initialPeersList.push_back(locator);
+        wire_protocol_qos.builtin.readerHistoryMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+        wire_protocol_qos.builtin.readerPayloadSize = 100;
+        wire_protocol_qos.builtin.writerHistoryMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+        wire_protocol_qos.builtin.writerPayloadSize = 200;
+        wire_protocol_qos.builtin.mutation_tries = 13;
+        wire_protocol_qos.builtin.avoid_builtin_multicast = true;
+        wire_protocol_qos.builtin.flow_controller_name = "example_builtin_flow_controller";
+    }
+
+    wire_protocol_qos.port.portBase = 7450;
+    wire_protocol_qos.port.domainIDGain = 0x2;
+    wire_protocol_qos.port.participantIDGain = 0x3;
+    wire_protocol_qos.port.offsetd0 = 50;
+    wire_protocol_qos.port.offsetd1 = 100;
+    wire_protocol_qos.port.offsetd2 = 150;
+    wire_protocol_qos.port.offsetd3 = 200;
+    wire_protocol_qos.port.offsetd4 = 250;
+
+    locator.port = 11811;
+    locator.kind = LOCATOR_KIND_UDPv4;
+    IPLocator::setIPv4(locator, 127, 0, 0, 1);
+    wire_protocol_qos.default_unicast_locator_list.push_back(locator);
+    wire_protocol_qos.default_multicast_locator_list.push_back(locator);
+    wire_protocol_qos.default_external_unicast_locators[3][5].push_back(locator_mask);
+
+    wire_protocol_qos.ignore_non_matching_locators = true;
+    wire_protocol_qos.easy_mode("192.168.0.97");
+
+    in.wire_protocol = wire_protocol_qos;
+
+    // Enable optional qos serialization
+    in.should_send_optional_qos(true);
+
+    // Perform serialization
+    uint32_t msg_size = in.get_serialized_size(true);
+    CDRMessage_t msg(msg_size);
+    EXPECT_TRUE(in.write_to_cdr_message(&msg, true));
+
+    // Perform deserialization
+    msg.pos = 0;
+    EXPECT_TRUE(out.read_from_cdr_message(&msg, true, network, false, c_VendorId_eProsima));
+
+    ASSERT_EQ(in.wire_protocol.value(), out.wire_protocol.value());
+}
+
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima

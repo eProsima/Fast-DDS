@@ -131,7 +131,7 @@ inline void read_statistics_submessage(
 
     // Read all fields
     using namespace eprosima::fastdds::rtps;
-    CDRMessage::readLocator(msg, &data.destination);
+    CDRMessage::read_locator(msg, &data.destination);
     CDRMessage::readInt32(msg, &data.ts.seconds);
     CDRMessage::readUInt32(msg, &data.ts.fraction);
     CDRMessage::readUInt64(msg, &data.seq.sequence);

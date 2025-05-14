@@ -143,6 +143,8 @@ public:
 
     MOCK_METHOD0(get_persistence_guid_prefix, GuidPrefix_t());
 
+    MOCK_METHOD0(should_send_optional_qos, bool());
+
 #if HAVE_SECURITY
     MOCK_CONST_METHOD0(security_attributes, const security::ParticipantSecurityAttributes& ());
 

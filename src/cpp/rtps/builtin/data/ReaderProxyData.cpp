@@ -208,7 +208,8 @@ void ReaderProxyData::init(
 }
 
 uint32_t ReaderProxyData::get_serialized_size(
-        bool include_encapsulation) const
+        bool include_encapsulation,
+        bool force_including_optional_qos) const
 {
     uint32_t ret_val = include_encapsulation ? 4 : 0;
 
@@ -370,7 +371,7 @@ uint32_t ReaderProxyData::get_serialized_size(
     }
 
     // Send the optional QoS policies if they are enabled
-    if (should_send_optional_qos())
+    if (force_including_optional_qos || should_send_optional_qos())
     {
         if (dds::QosPoliciesSerializer<dds::ResourceLimitsQosPolicy>::should_be_sent(resource_limits))
         {
@@ -408,7 +409,8 @@ uint32_t ReaderProxyData::get_serialized_size(
 
 bool ReaderProxyData::write_to_cdr_message(
         CDRMessage_t* msg,
-        bool write_encapsulation) const
+        bool write_encapsulation,
+        bool force_write_optional_qos) const
 {
     if (write_encapsulation)
     {
@@ -696,7 +698,7 @@ bool ReaderProxyData::write_to_cdr_message(
     }
 
     // Send the optional QoS policies if they are enabled
-    if (should_send_optional_qos())
+    if (force_write_optional_qos || should_send_optional_qos())
     {
         if (dds::QosPoliciesSerializer<dds::ResourceLimitsQosPolicy>::should_be_sent(resource_limits))
         {
