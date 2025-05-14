@@ -1186,8 +1186,8 @@ bool PDP::get_serialized_proxy(
             if ((*part_proxy)->guid == guid)
             {
                 msg->msg_endian = LITTLEEND;
-                msg->max_size = msg->reserved_size = (*part_proxy)->get_serialized_size(true);
-                ret = (*part_proxy)->write_to_cdr_message(msg, true);
+                msg->max_size = msg->reserved_size = (*part_proxy)->get_serialized_size(true, true);
+                ret = (*part_proxy)->write_to_cdr_message(msg, true, true);
                 found = true;
                 break;
             }
@@ -1209,8 +1209,8 @@ bool PDP::get_serialized_proxy(
                 {
                     if (reader.second->guid == guid)
                     {
-                        msg->max_size = msg->reserved_size = reader.second->get_serialized_size(true);
-                        ret = reader.second->write_to_cdr_message(msg, true);
+                        msg->max_size = msg->reserved_size = reader.second->get_serialized_size(true, true);
+                        ret = reader.second->write_to_cdr_message(msg, true, true);
                         found = true;
                         break;
                     }
@@ -1235,8 +1235,8 @@ bool PDP::get_serialized_proxy(
                 {
                     if (writer.second->guid == guid)
                     {
-                        msg->max_size = msg->reserved_size = writer.second->get_serialized_size(true);
-                        ret = writer.second->write_to_cdr_message(msg, true);
+                        msg->max_size = msg->reserved_size = writer.second->get_serialized_size(true, true);
+                        ret = writer.second->write_to_cdr_message(msg, true, true);
                         found = true;
                         break;
                     }
