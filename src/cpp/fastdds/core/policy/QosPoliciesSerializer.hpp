@@ -1926,6 +1926,442 @@ inline bool QosPoliciesSerializer<ReaderResourceLimitsQos>::read_content_from_cd
     return valid;
 }
 
+template<>
+inline uint32_t QosPoliciesSerializer<WireProtocolConfigQos>::cdr_serialized_size(
+        const WireProtocolConfigQos& qos_policy)
+{
+    // p_id + p_length
+    uint32_t ret_val = 2 + 2;
+    // + prefix(12) + participant_id(4)
+    ret_val += 12 + 4;
+    // + builtin
+    {
+        // discovery config
+        {
+            // up to m_discovery_servers
+            ret_val += 44;
+            // m_discovery_servers
+            ret_val += 4;
+            ret_val +=  qos_policy.builtin.discovery_config.m_DiscoveryServers.size() * (4 + 4 + 16); // kind + port + address
+            // ignore_participant_flags
+            ret_val += 4;
+            // easy_mode (str_size + str_data (including null char))
+            ret_val += 4 +
+                    static_cast<uint32_t>(strlen(qos_policy.builtin.discovery_config.static_edp_xml_config()) +
+                    1);
+            // align
+            ret_val = (ret_val + 3) & ~3;
+        }
+
+        // up to metatraffic_unicast_locator_list
+        ret_val += 8;
+        // metatraffic_unicast_locator_list
+        ret_val += 4;
+        ret_val += qos_policy.builtin.metatrafficUnicastLocatorList.size() * (4 + 4 + 16); // kind + port + address
+        // metatraffic_multicast_locator_list
+        ret_val += 4;
+        ret_val += qos_policy.builtin.metatrafficMulticastLocatorList.size() * (4 + 4 + 16); // kind + port + address
+        // metatraffic_external_unicast_locators
+        ret_val += 4;
+        for (const auto& externality__cost_locator_list : qos_policy.builtin.metatraffic_external_unicast_locators)
+        {
+            for (const auto& cost__locator_list : externality__cost_locator_list.second)
+            {
+                ret_val += cost__locator_list.second.size() * (4 + 4 + 16 + 4); // kind + port + address + externality + cost + mask
+            }
+        }
+        // initial_peers_list
+        ret_val += 4;
+        ret_val += qos_policy.builtin.initialPeersList.size() * (4 + 4 + 16); // kind + port + address
+        // up to flow_controller_name
+        ret_val += 24;
+        // flow_controller_name (str_size + str_data (including null char))
+        ret_val += 4 + static_cast<uint32_t>(qos_policy.builtin.flow_controller_name.size() + 1);
+        // align
+        ret_val = (ret_val + 3) & ~3;
+    }
+    // port
+    ret_val += 16;
+    // default_unicast_locator_list
+    ret_val += 4;
+    ret_val += qos_policy.default_unicast_locator_list.size() * (4 + 4 + 16); // kind + port + address
+    // default_multicast_locator_list
+    ret_val += 4;
+    ret_val += qos_policy.default_multicast_locator_list.size() * (4 + 4 + 16); // kind + port + address
+    // default_external_unicast_locators
+    ret_val += 4;
+    for (const auto& externality__cost_locator_list : qos_policy.default_external_unicast_locators)
+    {
+        for (const auto& cost__locator_list : externality__cost_locator_list.second)
+        {
+            ret_val += cost__locator_list.second.size() * (4 + 4 + 16 + 4); // kind + port + address + externality + cost + mask
+        }
+    }
+    // + ignore_non_matching_locators
+    ret_val += 4;
+    // easy_mode (str_size + str_data (including null char))
+    ret_val += 4 + static_cast<uint32_t>(qos_policy.easy_mode().size() + 1);
+    // align
+    ret_val = (ret_val + 3) & ~3;
+
+    return ret_val;
+}
+
+template<>
+inline bool QosPoliciesSerializer<WireProtocolConfigQos>::add_to_cdr_message(
+        const WireProtocolConfigQos& qos_policy,
+        rtps::CDRMessage_t* cdr_message)
+{
+    // Add common to cdr_message
+    bool valid = rtps::CDRMessage::addUInt16(cdr_message, PID_WIREPROTOCOL_CONFIG);
+    valid &= rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(cdr_serialized_size(qos_policy) - 4));
+
+    // Add content to cdr_message
+    // prefix
+    valid &= rtps::CDRMessage::addData(cdr_message, qos_policy.prefix.value, 12);
+    // participant_id
+    valid &= rtps::CDRMessage::addInt32(cdr_message, qos_policy.participant_id);
+    //builtin
+    {
+        // discovery_config
+        {
+            // discovery_protocol
+            valid &=
+                    rtps::CDRMessage::addOctet(cdr_message,
+                            static_cast<fastdds::rtps::octet>(qos_policy.builtin.discovery_config.discoveryProtocol));
+            // use_simple_edp
+            valid &=
+                    rtps::CDRMessage::addOctet(cdr_message,
+                            static_cast<fastdds::rtps::octet>(qos_policy.builtin.discovery_config.
+                                    use_SIMPLE_EndpointDiscoveryProtocol));
+            // use_static_edp
+            valid &=
+                    rtps::CDRMessage::addOctet(cdr_message,
+                            static_cast<fastdds::rtps::octet>(qos_policy.builtin.discovery_config.
+                                    use_STATIC_EndpointDiscoveryProtocol));
+            valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); //padding
+            // lease_duration
+            valid &= rtps::CDRMessage::add_duration_t(cdr_message, qos_policy.builtin.discovery_config.leaseDuration);
+            // lease_duration_announcement_period
+            valid &= rtps::CDRMessage::add_duration_t(cdr_message,
+                            qos_policy.builtin.discovery_config.leaseDuration_announcementperiod);
+            //initial_announcements_config
+            {
+                // count
+                valid &= rtps::CDRMessage::addUInt32(cdr_message,
+                                qos_policy.builtin.discovery_config.initial_announcements.count);
+                // period
+                valid &= rtps::CDRMessage::add_duration_t(cdr_message,
+                                qos_policy.builtin.discovery_config.initial_announcements.period);
+            }
+            // m_simple_edp
+            {
+                // use_PublicationWriterANDSubscriptionReader
+                valid &=
+                        rtps::CDRMessage::addOctet(cdr_message,
+                                static_cast<fastdds::rtps::octet>(qos_policy.builtin.discovery_config.m_simpleEDP.
+                                        use_PublicationWriterANDSubscriptionReader));
+                // use_PublicationReaderANDSubscriptionWriter
+                valid &=
+                        rtps::CDRMessage::addOctet(cdr_message,
+                                static_cast<fastdds::rtps::octet>(qos_policy.builtin.discovery_config.m_simpleEDP.
+                                        use_PublicationReaderANDSubscriptionWriter));
+#if HAVE_SECURITY
+                // enable_builtin_secure_publications_writer_and_subscriptions_reader
+                valid &=
+                        rtps::CDRMessage::addOctet(cdr_message,
+                                static_cast<fastdds::rtps::octet>(qos_policy.builtin.discovery_config.m_simpleEDP.
+                                        enable_builtin_secure_publications_writer_and_subscriptions_reader));
+                // enable_builtin_secure_subscriptions_writer_and_publications_reader
+                valid &=
+                        rtps::CDRMessage::addOctet(cdr_message,
+                                static_cast<fastdds::rtps::octet>(qos_policy.builtin.discovery_config.m_simpleEDP.
+                                        enable_builtin_secure_subscriptions_writer_and_publications_reader));
+#else
+                valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
+                valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
+#endif // if HAVE_SECURITY
+            }
+            // discoveryServer_client_syncperiod
+            valid &= rtps::CDRMessage::add_duration_t(cdr_message,
+                            qos_policy.builtin.discovery_config.discoveryServer_client_syncperiod);
+            // m_discovery_servers
+            valid &= rtps::CDRMessage::add_locator_list(cdr_message, qos_policy.builtin.discovery_config.m_DiscoveryServers);
+            // ignore_participant_flags
+            valid &=
+                    rtps::CDRMessage::addUInt32(cdr_message,
+                             qos_policy.builtin.discovery_config.
+                                    ignoreParticipantFlags);
+
+            // static_edp_xml_config
+            valid &= rtps::CDRMessage::add_string(cdr_message,
+                            qos_policy.builtin.discovery_config.static_edp_xml_config());
+        }
+        // use_WLP
+        valid &=
+                rtps::CDRMessage::addOctet(cdr_message,
+                        static_cast<fastdds::rtps::octet>(qos_policy.builtin.use_WriterLivelinessProtocol));
+        valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
+        valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
+        valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
+        // network_configuration
+        valid &=
+                rtps::CDRMessage::addUInt32(cdr_message,
+                        qos_policy.builtin.network_configuration);
+        // metatraffic_unicast_locator_list
+        valid &= rtps::CDRMessage::add_locator_list(cdr_message, qos_policy.builtin.metatrafficUnicastLocatorList);
+        // metatraffic_multicast_locator_list
+        valid &= rtps::CDRMessage::add_locator_list(cdr_message, qos_policy.builtin.metatrafficMulticastLocatorList);
+        // metatraffic_external_unicast_locators
+        valid &= rtps::CDRMessage::add_external_locator_list(cdr_message,
+            qos_policy.builtin.metatraffic_external_unicast_locators);
+        // initial_peers_list
+        valid &= rtps::CDRMessage::add_locator_list(cdr_message, qos_policy.builtin.initialPeersList);
+        // reader_history_memory_policy
+        valid &=
+                rtps::CDRMessage::addOctet(cdr_message,
+                        static_cast<fastdds::rtps::octet>(qos_policy.builtin.readerHistoryMemoryPolicy));
+        valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
+        valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
+        valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
+        // reader_payload_size
+        valid &=
+                rtps::CDRMessage::addUInt32(cdr_message,
+                        qos_policy.builtin.readerPayloadSize);
+        // writer_history_memory_policy
+        valid &=
+                rtps::CDRMessage::addOctet(cdr_message,
+                        static_cast<fastdds::rtps::octet>(qos_policy.builtin.writerHistoryMemoryPolicy));
+        valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
+        valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
+        valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
+        // writer_payload_size
+        valid &=
+                rtps::CDRMessage::addUInt32(cdr_message,
+                        qos_policy.builtin.writerPayloadSize);
+        // mutation_tries
+        valid &=
+                rtps::CDRMessage::addUInt32(cdr_message,
+                        qos_policy.builtin.mutation_tries);
+        // avoid_builtin_multicast
+        valid &=
+                rtps::CDRMessage::addOctet(cdr_message,
+                        static_cast<fastdds::rtps::octet>(qos_policy.builtin.avoid_builtin_multicast));
+        valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
+        valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
+        valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
+        // flow_controller_name
+        valid &= rtps::CDRMessage::add_string(cdr_message, qos_policy.builtin.flow_controller_name);
+    }
+    // port
+    {
+        // port base
+        valid &= rtps::CDRMessage::addUInt16(cdr_message, qos_policy.port.portBase);
+        // domain_id_gain
+        valid &= rtps::CDRMessage::addUInt16(cdr_message, qos_policy.port.domainIDGain);
+        // participant_id_gain
+        valid &= rtps::CDRMessage::addUInt16(cdr_message, qos_policy.port.participantIDGain);
+        // offset_d0
+        valid &= rtps::CDRMessage::addUInt16(cdr_message, qos_policy.port.offsetd0);
+        // offset_d1
+        valid &= rtps::CDRMessage::addUInt16(cdr_message, qos_policy.port.offsetd1);
+        // offset_d2
+        valid &= rtps::CDRMessage::addUInt16(cdr_message, qos_policy.port.offsetd2);
+        // offset_d3
+        valid &= rtps::CDRMessage::addUInt16(cdr_message, qos_policy.port.offsetd3);
+        // offset_d4
+        valid &= rtps::CDRMessage::addUInt16(cdr_message, qos_policy.port.offsetd4);
+    }
+    // default_unicast_locator_list
+    valid &= rtps::CDRMessage::add_locator_list(cdr_message, qos_policy.default_unicast_locator_list);
+    // default_multicast_locator_list
+    valid &= rtps::CDRMessage::add_locator_list(cdr_message, qos_policy.default_multicast_locator_list);
+    // default_external_unicast_locators
+    valid &= rtps::CDRMessage::add_external_locator_list(cdr_message,
+                    qos_policy.default_external_unicast_locators);
+    // ignore_non_matching_locators
+    valid &=
+            rtps::CDRMessage::addOctet(cdr_message,
+                    static_cast<fastdds::rtps::octet>(qos_policy.ignore_non_matching_locators));
+    valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
+    valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
+    valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
+
+    // easy_mode
+    valid &= rtps::CDRMessage::add_string(cdr_message, qos_policy.easy_mode());
+
+    return valid;
+}
+
+template<>
+inline bool QosPoliciesSerializer<WireProtocolConfigQos>::read_content_from_cdr_message(
+        WireProtocolConfigQos& qos_policy,
+        rtps::CDRMessage_t* cdr_message,
+        const uint16_t parameter_length)
+{
+    // Account for the mandatory fields
+    // (0 sized collections and empty strings)
+    if (parameter_length < 152)
+    {
+        return false;
+    }
+
+    uint32_t pos_ref = cdr_message->pos;
+
+    // prefix
+    bool valid =  rtps::CDRMessage::readData(cdr_message, qos_policy.prefix.value, 12);
+    // participant_id
+    valid &= rtps::CDRMessage::readInt32(cdr_message, &qos_policy.participant_id);
+    // builtin
+    {
+        // discovery_config
+        {
+            // discovery_protocol
+            valid &= rtps::CDRMessage::readOctet(cdr_message,
+                            (fastdds::rtps::octet*)&qos_policy.builtin.discovery_config.discoveryProtocol);
+            // use_simple_edp
+            valid &= rtps::CDRMessage::readOctet(cdr_message,
+                            (fastdds::rtps::octet*)&qos_policy.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol);
+            // use_static_edp
+            valid &= rtps::CDRMessage::readOctet(cdr_message,
+                            (fastdds::rtps::octet*)&qos_policy.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol);
+            cdr_message->pos += 1; //padding
+            // lease_duration
+            valid &= rtps::CDRMessage::read_duration_t(cdr_message,
+                            qos_policy.builtin.discovery_config.leaseDuration);
+            // lease_duration_announcement_period
+            valid &= rtps::CDRMessage::read_duration_t(cdr_message,
+                            qos_policy.builtin.discovery_config.leaseDuration_announcementperiod);
+            //initial_announcements_config
+            {
+                // count
+                valid &= rtps::CDRMessage::readUInt32(cdr_message,
+                                &qos_policy.builtin.discovery_config.initial_announcements.count);
+                // period
+                valid &= rtps::CDRMessage::read_duration_t(cdr_message,
+                                qos_policy.builtin.discovery_config.initial_announcements.period);
+            }
+            // m_simple_edp
+            {
+                // use_PublicationWriterANDSubscriptionReader
+                valid &= rtps::CDRMessage::readOctet(cdr_message,
+                                (fastdds::rtps::octet*)&qos_policy.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader);
+                // use_PublicationReaderANDSubscriptionWriter
+                valid &= rtps::CDRMessage::readOctet(cdr_message,
+                                (fastdds::rtps::octet*)&qos_policy.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter);
+#if HAVE_SECURITY
+                // enable_builtin_secure_publications_writer_and_subscriptions_reader
+                valid &= rtps::CDRMessage::readOctet(cdr_message,
+                                (fastdds::rtps::octet*)&qos_policy.builtin.discovery_config.m_simpleEDP.enable_builtin_secure_publications_writer_and_subscriptions_reader);
+                // enable_builtin_secure_subscriptions_writer_and_publications_reader
+                valid &= rtps::CDRMessage::readOctet(cdr_message,
+                                (fastdds::rtps::octet*)&qos_policy.builtin.discovery_config.m_simpleEDP.enable_builtin_secure_subscriptions_writer_and_publications_reader);
+#else
+                cdr_message->pos += 2; // padding
+#endif // if HAVE_SECURITY
+            }
+            // discoveryServer_client_syncperiod
+            valid &= rtps::CDRMessage::read_duration_t(cdr_message,
+                            qos_policy.builtin.discovery_config.discoveryServer_client_syncperiod);
+            // m_discovery_servers
+            valid &= rtps::CDRMessage::read_locator_list(cdr_message, &qos_policy.builtin.discovery_config.m_DiscoveryServers);
+            // ignore_participant_flags
+            valid &= rtps::CDRMessage::readUInt32(cdr_message,
+                            (uint32_t*)&qos_policy.builtin.discovery_config.ignoreParticipantFlags);
+            // static_edp_xml_config
+            std::string static_edp_xml_config;
+            valid &= rtps::CDRMessage::read_string(cdr_message,
+                            &static_edp_xml_config);
+            qos_policy.builtin.discovery_config.static_edp_xml_config(static_edp_xml_config.c_str());
+        }
+        // use_WLP
+        valid &= rtps::CDRMessage::readOctet(cdr_message,
+                        (fastdds::rtps::octet*)&qos_policy.builtin.use_WriterLivelinessProtocol);
+        cdr_message->pos += 3; // padding
+        // network_configuration
+        valid &= rtps::CDRMessage::readUInt32(cdr_message,
+                        (uint32_t*)&qos_policy.builtin.network_configuration);
+        // metatraffic_unicast_locator_list
+        valid &= rtps::CDRMessage::read_locator_list(cdr_message, &qos_policy.builtin.metatrafficUnicastLocatorList);
+        // metatraffic_multicast_locator_list
+        valid &= rtps::CDRMessage::read_locator_list(cdr_message, &qos_policy.builtin.metatrafficMulticastLocatorList);
+        // metatraffic_external_unicast_locators
+        valid &= rtps::CDRMessage::read_external_locator_list(cdr_message, &qos_policy.builtin.metatraffic_external_unicast_locators);
+        // initial_peers_list
+        valid &= rtps::CDRMessage::read_locator_list(cdr_message, &qos_policy.builtin.initialPeersList);
+        // reader_history_memory_policy
+        valid &= rtps::CDRMessage::readOctet(cdr_message,
+                        (fastdds::rtps::octet*)&qos_policy.builtin.readerHistoryMemoryPolicy);
+        cdr_message->pos += 3; // padding
+        // reader_payload_size
+        valid &= rtps::CDRMessage::readUInt32(cdr_message,
+                        (uint32_t*)&qos_policy.builtin.readerPayloadSize);
+        // writer_history_memory_policy
+        valid &= rtps::CDRMessage::readOctet(cdr_message,
+                        (fastdds::rtps::octet*)&qos_policy.builtin.writerHistoryMemoryPolicy);
+        cdr_message->pos += 3; // padding
+        // writer_payload_size
+        valid &= rtps::CDRMessage::readUInt32(cdr_message,
+                        (uint32_t*)&qos_policy.builtin.writerPayloadSize);
+        // mutation_tries
+        valid &= rtps::CDRMessage::readUInt32(cdr_message,
+                        (uint32_t*)&qos_policy.builtin.mutation_tries);
+        // avoid_builtin_multicast
+        valid &= rtps::CDRMessage::readOctet(cdr_message,
+                        (fastdds::rtps::octet*)&qos_policy.builtin.avoid_builtin_multicast);
+        cdr_message->pos += 3; // padding
+        // flow_controller_name
+        valid &= rtps::CDRMessage::read_string(cdr_message,
+                        &qos_policy.builtin.flow_controller_name);
+    }
+    // port
+    {
+        // port base
+        valid &= rtps::CDRMessage::readUInt16(cdr_message,
+                        (uint16_t*)&qos_policy.port.portBase);
+        // domain_id_gain
+        valid &= rtps::CDRMessage::readUInt16(cdr_message,
+                        (uint16_t*)&qos_policy.port.domainIDGain);
+        // participant_id_gain
+        valid &= rtps::CDRMessage::readUInt16(cdr_message,
+                        (uint16_t*)&qos_policy.port.participantIDGain);
+        // offset_d0
+        valid &= rtps::CDRMessage::readUInt16(cdr_message,
+                        (uint16_t*)&qos_policy.port.offsetd0);
+        // offset_d1
+        valid &= rtps::CDRMessage::readUInt16(cdr_message,
+                        (uint16_t*)&qos_policy.port.offsetd1);
+        // offset_d2
+        valid &= rtps::CDRMessage::readUInt16(cdr_message,
+                        (uint16_t*)&qos_policy.port.offsetd2);
+        // offset_d3
+        valid &= rtps::CDRMessage::readUInt16(cdr_message,
+                        (uint16_t*)&qos_policy.port.offsetd3);
+        // offset_d4
+        valid &= rtps::CDRMessage::readUInt16(cdr_message,
+                        (uint16_t*)&qos_policy.port.offsetd4);
+    }
+    // default_unicast_locator_list
+    valid &= rtps::CDRMessage::read_locator_list(cdr_message, &qos_policy.default_unicast_locator_list);
+    // default_multicast_locator_list
+    valid &= rtps::CDRMessage::read_locator_list(cdr_message, &qos_policy.default_multicast_locator_list);
+    // default_external_unicast_locators
+    valid &= rtps::CDRMessage::read_external_locator_list(cdr_message, &qos_policy.default_external_unicast_locators);
+    // ignore_non_matching_locators
+    valid &= rtps::CDRMessage::readOctet(cdr_message,
+                    (fastdds::rtps::octet*)&qos_policy.ignore_non_matching_locators);
+    cdr_message->pos += 3; // padding
+    // easy_mode
+    std::string easy_mode;
+    valid &= rtps::CDRMessage::read_string(cdr_message,
+                    &easy_mode);
+    qos_policy.easy_mode(easy_mode);
+
+    uint32_t length_diff = cdr_message->pos - pos_ref;
+    valid &= (parameter_length == length_diff);
+    return valid;
+}
+
 } //namespace dds
 } //namespace fastdds
 } //namespace eprosima
