@@ -1453,18 +1453,22 @@ dds::ReturnCode_t RTPSParticipantImpl::register_reader(
 
 bool RTPSParticipantImpl::should_send_optional_qos() const
 {
-    bool should_send_opt_qos = false;
-    if (m_att.properties.properties().size() > 0)
+    if (should_send_optional_qos_ < 0) // not evaluated yet
     {
-        const Property* const serialize_optional_qos_property =
-                PropertyPolicyHelper::get_property(m_att.properties, fastdds::dds::parameter_serialize_optional_qos);
-
-        if (serialize_optional_qos_property != nullptr)
+        should_send_optional_qos_ = false;
+        if (m_att.properties.properties().size() > 0)
         {
-            should_send_opt_qos = PropertyParser::as_bool(*serialize_optional_qos_property);
+            const Property* const serialize_optional_qos_property =
+                    PropertyPolicyHelper::get_property(m_att.properties, fastdds::dds::parameter_serialize_optional_qos);
+
+            if (serialize_optional_qos_property != nullptr)
+            {
+                should_send_optional_qos_ = PropertyParser::as_bool(*serialize_optional_qos_property);
+            }
         }
     }
-    return should_send_opt_qos;
+
+    return should_send_optional_qos_ > 0;
 }
 
 void RTPSParticipantImpl::update_attributes(
