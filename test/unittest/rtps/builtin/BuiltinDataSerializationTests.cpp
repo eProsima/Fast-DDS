@@ -2187,6 +2187,88 @@ TEST(BuiltinDataSerializationTests, interoperability_with_intercomdds)
 }
 
 /*!
+ * This test checks that Fast DDS can properly serialize ResourceLimitsQos in DATA(w) when it has more fields than
+ * max_samples, max_instances and max_samples_per_instance. It also checks that those fields are not serialized
+ * into the allocated_samples and extra samples fields.
+ */
+TEST(BuiltinDataSerializationTests, interoperability_with_other_vendor_writer_resource_limits)
+{
+    const VendorId_t other_vendor_id = { 0, 1 };
+    // DATA(w)
+    {
+        octet data_w_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            // Resource limits
+            0x41, 0x00, 0x14, 0x00,
+            0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00,
+            0x05, 0x00, 0x00, 0x00,
+            // Sentinel
+            0x01, 0x00, 0x00, 0x00
+        };
+
+        CDRMessage_t msg(0);
+        msg.init(data_w_buffer, static_cast<uint32_t>(sizeof(data_w_buffer)));
+        msg.length = msg.max_size;
+
+        WriterProxyData wpd(max_unicast_locators, max_multicast_locators);
+        EXPECT_NO_THROW(EXPECT_TRUE(wpd.read_from_cdr_message(&msg, other_vendor_id)));
+
+        ASSERT_TRUE(wpd.resource_limits);
+        ASSERT_EQ(wpd.resource_limits->max_samples, 1);
+        ASSERT_EQ(wpd.resource_limits->max_instances, 2);
+        ASSERT_EQ(wpd.resource_limits->max_samples_per_instance, 3);
+        // Allocated samples and extra samples should have default values as they should not be read because
+        // they come from another vendor
+        dds::ResourceLimitsQosPolicy default_values {};
+        ASSERT_EQ(wpd.resource_limits->allocated_samples, default_values.allocated_samples);
+        ASSERT_EQ(wpd.resource_limits->extra_samples, default_values.extra_samples);
+    }
+}
+
+/*!
+ * This test checks that Fast DDS can properly serialize ResourceLimitsQos in DATA(r) when it has more fields than
+ * max_samples, max_instances and max_samples_per_instance. It also checks that those fields are not serialized
+ * into the allocated_samples and extra samples fields.
+ */
+TEST(BuiltinDataSerializationTests, interoperability_with_other_vendor_reader_resource_limits)
+{
+    const VendorId_t other_vendor_id = { 0, 1 };
+    // DATA(r)
+    {
+        uint8_t data_r_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            // Resource limits
+            0x41, 0x00, 0x14, 0x00,
+            0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00,
+            0x05, 0x00, 0x00, 0x00,
+            // Sentinel
+            0x01, 0x00, 0x00, 0x00
+        };
+
+        CDRMessage_t msg(0);
+        msg.init(data_r_buffer, static_cast<uint32_t>(sizeof(data_r_buffer)));
+        msg.length = msg.max_size;
+
+        ReaderProxyData rpd(max_unicast_locators, max_multicast_locators);
+        EXPECT_NO_THROW(EXPECT_TRUE(rpd.read_from_cdr_message(&msg, other_vendor_id)));
+
+        ASSERT_TRUE(rpd.resource_limits);
+        ASSERT_EQ(rpd.resource_limits->max_samples, 1);
+        ASSERT_EQ(rpd.resource_limits->max_instances, 2);
+        ASSERT_EQ(rpd.resource_limits->max_samples_per_instance, 3);
+        // Allocated samples and extra samples should have default values as they should not be read because
+        // they come from another vendor
+        dds::ResourceLimitsQosPolicy default_values {};
+        ASSERT_EQ(rpd.resource_limits->allocated_samples, default_values.allocated_samples);
+        ASSERT_EQ(rpd.resource_limits->extra_samples, default_values.extra_samples);
+    }
+}
+
+/*!
  * This is a regression test for redmine issue #21537
  *
  * It checks deserialization of builtin data with big parameters.
@@ -2655,6 +2737,41 @@ TEST(BuiltinDataSerializationTests, optional_qos_extensions_reader)
 }
 
 /*!
+ * This test checks that a correct ReaderProxyData is obtained when sending only max_samples, max_instances
+ * and max_samples_per_instance in the ResourceLimits QoS policy
+ */
+TEST(BuiltinDataSerializationTests, optional_qos_extensions_reader_resource_limits)
+{
+    // DATA(r)
+    uint8_t data_r_buffer[] =
+    {
+        // Encapsulation
+        0x00, 0x03, 0x00, 0x00,
+        // Resource limits (without allocated samples nor extra samples)
+        0x41, 0x00, 0x0c, 0x00,
+        0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00,
+        // Sentinel
+        0x01, 0x00, 0x00, 0x00
+    };
+
+    CDRMessage_t msg(0);
+    msg.init(data_r_buffer, static_cast<uint32_t>(sizeof(data_r_buffer)));
+    msg.length = msg.max_size;
+
+    ReaderProxyData rpd(max_unicast_locators, max_multicast_locators);
+    EXPECT_NO_THROW(EXPECT_TRUE(rpd.read_from_cdr_message(&msg, c_VendorId_eProsima)));
+
+    ASSERT_TRUE(rpd.resource_limits);
+    ASSERT_EQ(rpd.resource_limits->max_samples, 1);
+    ASSERT_EQ(rpd.resource_limits->max_instances, 2);
+    ASSERT_EQ(rpd.resource_limits->max_samples_per_instance, 3);
+    // Allocated samples and extra samples should have default values as they are not present in the data
+    dds::ResourceLimitsQosPolicy default_values {};
+    ASSERT_EQ(rpd.resource_limits->allocated_samples, default_values.allocated_samples);
+    ASSERT_EQ(rpd.resource_limits->extra_samples, default_values.extra_samples);
+}
+
+/*!
  * This test checks that a correct WriterProxyData is obtained
  * from eProsima's optional qos extensions in PublicationBuiltinTopicData
  */
@@ -2771,6 +2888,41 @@ TEST(BuiltinDataSerializationTests, optional_qos_extensions_writer)
     ASSERT_EQ(wpd.writer_resource_limits->reader_filters_allocation.initial, 4u);
     ASSERT_EQ(wpd.writer_resource_limits->reader_filters_allocation.maximum, 5u);
     ASSERT_EQ(wpd.writer_resource_limits->reader_filters_allocation.increment, 6u);
+}
+
+/*!
+ * This test checks that a correct WriterProxyData is obtained when sending only max_samples, max_instances
+ * and max_samples_per_instance in the ResourceLimits QoS policy
+ */
+TEST(BuiltinDataSerializationTests, optional_qos_extensions_writer_resource_limits)
+{
+    // DATA(w)
+    octet data_w_buffer[] =
+    {
+        // Encapsulation
+        0x00, 0x03, 0x00, 0x00,
+        // Resource limits (without allocated samples nor extra samples)
+        0x41, 0x00, 0x0c, 0x00,
+        0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00,
+        // Sentinel
+        0x01, 0x00, 0x00, 0x00
+    };
+
+    CDRMessage_t msg(0);
+    msg.init(data_w_buffer, static_cast<uint32_t>(sizeof(data_w_buffer)));
+    msg.length = msg.max_size;
+
+    WriterProxyData wpd(max_unicast_locators, max_multicast_locators);
+    EXPECT_NO_THROW(EXPECT_TRUE(wpd.read_from_cdr_message(&msg, c_VendorId_eProsima)));
+
+    ASSERT_TRUE(wpd.resource_limits);
+    ASSERT_EQ(wpd.resource_limits->max_samples, 1);
+    ASSERT_EQ(wpd.resource_limits->max_instances, 2);
+    ASSERT_EQ(wpd.resource_limits->max_samples_per_instance, 3);
+    // Allocated samples and extra samples should have default values as they are not present in the data
+    dds::ResourceLimitsQosPolicy default_values {};
+    ASSERT_EQ(wpd.resource_limits->allocated_samples, default_values.allocated_samples);
+    ASSERT_EQ(wpd.resource_limits->extra_samples, default_values.extra_samples);
 }
 
 /**
