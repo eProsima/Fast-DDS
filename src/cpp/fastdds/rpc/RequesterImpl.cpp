@@ -111,12 +111,6 @@ ReturnCode_t RequesterImpl::take_reply(
         return RETCODE_PRECONDITION_NOT_MET;
     }
 
-    if (!is_fully_matched())
-    {
-        EPROSIMA_LOG_WARNING(REQUESTER, "Trying to take a reply with an unmatched requester");
-        return RETCODE_PRECONDITION_NOT_MET;
-    }
-
     return requester_reader_->take_next_sample(data, &info);
 }
 
@@ -129,12 +123,6 @@ ReturnCode_t RequesterImpl::take_reply(
     if (!enabled_)
     {
         EPROSIMA_LOG_ERROR(REQUESTER, "Trying to take a reply with a disabled requester");
-        return RETCODE_PRECONDITION_NOT_MET;
-    }
-
-    if (!is_fully_matched())
-    {
-        EPROSIMA_LOG_WARNING(REQUESTER, "Trying to take a reply with an unmatched requester");
         return RETCODE_PRECONDITION_NOT_MET;
     }
 
