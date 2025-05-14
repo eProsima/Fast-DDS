@@ -1391,7 +1391,7 @@ inline bool QosPoliciesSerializer<RTPSEndpointQos>::add_to_cdr_message(
             it != qos_policy.unicast_locator_list.end();
             ++it)
     {
-        valid &= rtps::CDRMessage::addLocator(cdr_message, *it);
+        valid &= rtps::CDRMessage::add_locator(cdr_message, *it);
     }
 
     // Multicast locator list
@@ -1400,7 +1400,7 @@ inline bool QosPoliciesSerializer<RTPSEndpointQos>::add_to_cdr_message(
             it != qos_policy.multicast_locator_list.end();
             ++it)
     {
-        valid &= rtps::CDRMessage::addLocator(cdr_message, *it);
+        valid &= rtps::CDRMessage::add_locator(cdr_message, *it);
     }
 
     // Remote locator list
@@ -1409,7 +1409,7 @@ inline bool QosPoliciesSerializer<RTPSEndpointQos>::add_to_cdr_message(
             it != qos_policy.remote_locator_list.end();
             ++it)
     {
-        valid &= rtps::CDRMessage::addLocator(cdr_message, *it);
+        valid &= rtps::CDRMessage::add_locator(cdr_message, *it);
     }
 
     // Do not serialize external_locators yet.
@@ -1456,7 +1456,7 @@ inline bool QosPoliciesSerializer<RTPSEndpointQos>::read_content_from_cdr_messag
     for (uint32_t i = 0; i < locators_size; ++i)
     {
         rtps::Locator_t loc;
-        valid &= rtps::CDRMessage::readLocator(cdr_message, &loc);
+        valid &= rtps::CDRMessage::read_locator(cdr_message, &loc);
         qos_policy.unicast_locator_list.push_back(loc);
     }
 
@@ -1466,7 +1466,7 @@ inline bool QosPoliciesSerializer<RTPSEndpointQos>::read_content_from_cdr_messag
     for (uint32_t i = 0; i < locators_size; ++i)
     {
         rtps::Locator_t loc;
-        valid &= rtps::CDRMessage::readLocator(cdr_message, &loc);
+        valid &= rtps::CDRMessage::read_locator(cdr_message, &loc);
         qos_policy.multicast_locator_list.push_back(loc);
     }
 
@@ -1476,7 +1476,7 @@ inline bool QosPoliciesSerializer<RTPSEndpointQos>::read_content_from_cdr_messag
     for (uint32_t i = 0; i < locators_size; ++i)
     {
         rtps::Locator_t loc;
-        valid &= rtps::CDRMessage::readLocator(cdr_message, &loc);
+        valid &= rtps::CDRMessage::read_locator(cdr_message, &loc);
         qos_policy.remote_locator_list.push_back(loc);
     }
 
@@ -1599,7 +1599,7 @@ inline bool QosPoliciesSerializer<PublishModeQosPolicy>::read_content_from_cdr_m
                     (fastdds::rtps::octet*)&qos_policy.kind);
     cdr_message->pos += 3; //padding
 
-    rtps::CDRMessage::readString(cdr_message, &qos_policy.flow_controller_name);
+    rtps::CDRMessage::read_string(cdr_message, &qos_policy.flow_controller_name);
 
     uint32_t length_diff = cdr_message->pos - pos_ref;
     valid &= (parameter_length == length_diff);

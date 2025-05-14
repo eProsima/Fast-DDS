@@ -242,7 +242,7 @@ inline bool ParameterSerializer<ParameterLocator_t>::add_content_to_cdr_message(
         const ParameterLocator_t& parameter,
         rtps::CDRMessage_t* cdr_message)
 {
-    return rtps::CDRMessage::addLocator(cdr_message, parameter.locator);
+    return rtps::CDRMessage::add_locator(cdr_message, parameter.locator);
 }
 
 template<>
@@ -256,7 +256,7 @@ inline bool ParameterSerializer<ParameterLocator_t>::read_content_from_cdr_messa
         return false;
     }
     parameter.length = parameter_length;
-    return rtps::CDRMessage::readLocator(cdr_message, &parameter.locator);
+    return rtps::CDRMessage::read_locator(cdr_message, &parameter.locator);
 }
 
 template<>
@@ -324,7 +324,7 @@ inline bool ParameterSerializer<ParameterString_t>::read_content_from_cdr_messag
 
     parameter.length = parameter_length;
     fastcdr::string_255 aux;
-    bool valid = rtps::CDRMessage::readString(cdr_message, &aux);
+    bool valid = rtps::CDRMessage::read_string(cdr_message, &aux);
     parameter.setName(aux.c_str());
     return valid;
 }
@@ -963,7 +963,7 @@ public:
             }
             if (valid)
             {
-                valid = rtps::CDRMessage::readString(cdr_message, &parameter.filter_expression) &&
+                valid = rtps::CDRMessage::read_string(cdr_message, &parameter.filter_expression) &&
                         (0 < parameter.filter_expression.size());
             }
 
